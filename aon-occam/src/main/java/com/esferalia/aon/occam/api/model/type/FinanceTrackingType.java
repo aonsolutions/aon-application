@@ -1,20 +1,25 @@
 package com.esferalia.aon.occam.api.model.type;
 
 public enum FinanceTrackingType {
-	BATCHED("Remesado"),
-	PAID("Pagado"),
-	RETURNED("Devuelto"),
-    FRACTIONED("Fraccionado"),
-    SETTLED("Saldado");
+	BATCHED("Remesado", FinanceStatus.BATCHED ),
+	PAID("Pagado", FinanceStatus.PAID ),
+	RETURNED("Devuelto", FinanceStatus.RETURNED),
+    FRACTIONED("Fraccionado", FinanceStatus.PENDING),
+    SETTLED("Saldado", FinanceStatus.SETTLED);
 	
 	private String description;
+	private FinanceStatus financeStatus;
 	
-	private FinanceTrackingType(String description) {
+	private FinanceTrackingType(String description, FinanceStatus financeStatus) {
 		this.description = description;
+		this.financeStatus = financeStatus;
 	}
 	
 	public String getDescription() {
 		return description;
+	}
+	public FinanceStatus getFinanceStatus() {
+		return this.financeStatus;
 	}
 	
 	public byte value() {

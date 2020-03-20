@@ -133,81 +133,81 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		Label label = new Label(AON.MSG.accountAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		label = new Label(AON.MSG.taxableBaseAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		
 		vatPercentLabel = new Label("% IVA");
 		vatPercentLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, vatPercentLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		
 		vatQuotaLabel = new Label(AON.MSG.vatQuota());
 		vatQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, vatQuotaLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		reLabel = new Label("% RE");
 		reLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, reLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		reQuotaLabel = new Label(AON.MSG.surchargeQuota());
 		reQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, reQuotaLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		
 		investAssetLabel = new Label(AON.MSG.actInvestAsset());
 		investAssetLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, investAssetLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		dedPercentLabel = new Label(AON.MSG.dedPercent());
 		dedPercentLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, dedPercentLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		dedQuotaLabel = new Label(AON.MSG.dedQuota());
 		dedQuotaLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, dedQuotaLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		adjAccountLabel = new Label(AON.MSG.adjAccount());
 		adjAccountLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, adjAccountLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		inputVatLabel = new Label(AON.MSG.inputVatAccount());
 		inputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, inputVatLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		outputVatLabel = new Label(AON.MSG.outputVatAccount());
 		outputVatLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, outputVatLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		withholdingLabel = new Label("IRPF");
 		withholdingLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, withholdingLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 		
 		prepaymentLabel = new Label("Supl.");
 		prepaymentLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, prepaymentLabel);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 
 		label = new Label("X");
 		tab.setWidget(row, col, label);
-		decorateHeader(row, col, "0.1%");
+		decorateHeader(row, col, "1%");
 		++col;
 
 		label = new Label();
@@ -217,7 +217,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 	
 	private void decorateHeader(int row, int col, String width) {
-		tab.getCellFormatter().setWidth(row, col, width);
+		tab.getColumnFormatter().setWidth(col, width);
 		tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonTextCenter());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontMedium());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());

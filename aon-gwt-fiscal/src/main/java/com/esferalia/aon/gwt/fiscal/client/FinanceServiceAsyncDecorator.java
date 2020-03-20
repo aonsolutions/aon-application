@@ -48,5 +48,17 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		fsa.getFinanceTracking(domainName, domainId, user, finance, new AsyncCallbackWrapper<LinkedList<FinanceTracking>>(callback));
 	}
 
+	@Override
+	public void settleFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback) {
+		AON.start();
+		fsa.settleFinance(domainName, domainId, user, finance, new AsyncCallbackWrapper<Finance>(callback));
+	}
+
+	@Override
+	public void undoFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback) {
+		AON.start();
+		fsa.undoFinance(domainName, domainId, user, finance, new AsyncCallbackWrapper<Finance>(callback));
+	}
+
 	
 }

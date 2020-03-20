@@ -97,6 +97,8 @@ public interface IFinance {
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params);
 	public Invoice missingFinanceInvoicesFix(AONContext ctx, Integer invoice);
 	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
+	Finance settleFinance(AONContext ctx, Integer finance);
+	Finance undoFinance(AONContext ctx, Integer finance);
 	
 }
 	

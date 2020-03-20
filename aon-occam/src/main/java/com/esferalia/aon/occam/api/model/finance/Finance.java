@@ -337,6 +337,18 @@ public class Finance implements Serializable, HasAudit {
 		return FinanceStatus.PENDING == getFinanceStatus();
 	}
 	
+	public boolean isSettled() {
+		return FinanceStatus.SETTLED == getFinanceStatus();
+	}
+
+	public boolean isReturned() {
+		return FinanceStatus.RETURNED == getFinanceStatus();
+	}
+
+	public boolean isPaid() {
+		return FinanceStatus.PAID == getFinanceStatus();
+	}
+
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}

@@ -8,10 +8,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
-import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -22,7 +20,7 @@ public class FinanceValidation {
 	/**
 	 * El dominio del vencimiento  no puede estar vacio.
 	 */
-	public static BiConsumer<Finance,AONContext> CHECK_EMPTY_DOMAIN = (finance,ctx) -> {
+	private static BiConsumer<Finance,AONContext> CHECK_EMPTY_DOMAIN = (finance,ctx) -> {
 		if (finance.getDomain() == null) 
 			throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
 	};
@@ -30,88 +28,23 @@ public class FinanceValidation {
 	/**
 	 * La importe del vencmiento no puede ser cero.
 	 */
-	public static BiConsumer<Finance,AONContext> CHECK_AMOUNT_ZERO = (finance,ctx) -> {
+	private static BiConsumer<Finance,AONContext> CHECK_AMOUNT_ZERO = (finance,ctx) -> {
 		if (AonMathUtils.isZero(finance.getAmount()))
 			throw new AonCoreException(AonError.FINANCE_AMOUNT_ZERO.getMessage());
 	};
 	
 	/**
-	 * Si no hay registry, se rellena con el de invoice (si hay). 
-	 */
-	public static BiConsumer<Finance,AONContext> FILL_REGISTRY_IF_EMPTY = (finance,ctx) -> {
-		if (!finance.isEmptyInvoice() && (finance.getRegistry() == null || finance.getRegistry().getId() == null)) {
-			finance.setRegistry(new Registry().setId(finance.getInvoice().getRegistry()));
-		}
-	};
-	
-	/**
-	 * Se rellenan los datos de registry, bien de la factura o del registry. 
-	 */
-	public static BiConsumer<Finance,AONContext> FILL_REGISTRY_DOCUMENT_IF_EMPTY = (finance,ctx) -> {
-		if (AonStringUtils.isEmpty(finance.getRegistryDocument())) {
-			finance.setRegistryDocument( !finance.isEmptyInvoice() 
-					? finance.getInvoice().getRegistryDocument() 
-					: finance.getRegistry().getDocument());
-			finance.setRegistryDocumentType( !finance.isEmptyInvoice() 
-					? finance.getInvoice().getRegistryDocumentType() 
-					: finance.getRegistry().getDocumentType());
-			finance.setRegistryDocumentCountry( !finance.isEmptyInvoice() 
-					? finance.getInvoice().getRegistryDocumentCountry() 
-					: finance.getRegistry().getDocumentCountry());
-		}
-	};
-
-	/**
-	 * Se rellena el concepto si no existe. 
-	 */
-	public static BiConsumer<Finance,AONContext> FILL_CONCEPT_IF_EMPTY = (finance,ctx) -> {
-		if (!finance.isEmptyInvoice() && AonStringUtils.isBlank( finance.getConcept() )) {
-	        finance.setConcept(finance.getInvoice().getDocumentNumber()); 
-		}
-	};
-	
-	/**
-	 * Se rellena el nivel de seguridad. 
-	 */
-	public static BiConsumer<Finance,AONContext> FILL_SECURITY_LEVEL_IF_EMPTY = (finance,ctx) -> {
-		if (finance.getSecurityLevel() == null) {
-			if (!finance.isEmptyInvoice()) {
-				finance.setSecurityLevel(finance.getInvoice().getSecurityLevel());
-			} else {
-				finance.setSecurityLevel(SecurityLevel.OFFICIAL);
-			}
-		}
-	};
-	
-	/**
-	 * Se rellena el nivel de seguridad. 
-	 */
-	public static BiConsumer<Finance,AONContext> FILL_SCOPE_IF_EMPTY = (finance,ctx) -> {
-		if (finance.getScope() == null || finance.getScope().getId() == null) {
-			if (!finance.isEmptyInvoice()) {
-				finance.setScope(finance.getInvoice().getScope());
-			} else {
-				if (!finance.isPayroll()) {
-					finance.setScope(SecurityDAO.getScopeFromRegistry(ctx,finance.isPayment(), finance.getRegistry().getId()));
-				} else {
-					finance.setScope(SecurityDAO.getScopeFromContract(ctx,finance.getDueDate(), finance.getRegistry().getId()));
-				}
-			}
-		}
-	};
-	
-	/**
 	 * El scope del vencimiento no puede estar vacio.
 	 */
-	public static BiConsumer<Finance,AONContext> CHECK_EMPTY_SCOPE = (finance,ctx) -> {
+	private static BiConsumer<Finance,AONContext> CHECK_EMPTY_SCOPE = (finance,ctx) -> {
 		if (finance.getScope() == null || finance.getScope().getId() == null) 
 			throw new AonCoreException(AonError.FINANCE_EMPTY_SCOPE.getMessage());
 	};
-	
+
 	/**
 	 * La cuenta bancaria debe ser valida.
 	 */
-	public static BiConsumer<Finance,AONContext> CHECK_BANK_ACCOUNT = (finance,ctx) -> {
+	private static BiConsumer<Finance,AONContext> CHECK_BANK_ACCOUNT = (finance,ctx) -> {
 		if (finance.getBankAccount() == null || AonStringUtils.isEmpty(finance.getBankAccount().getBban())) {
 			finance.setBankAccount(null);
 			finance.setBankAlias(null);
@@ -131,11 +64,6 @@ public class FinanceValidation {
 	public static void validateSave(AONContext ctx, Finance finance) throws AonCoreException {
 			CHECK_EMPTY_DOMAIN
 			.andThen(CHECK_AMOUNT_ZERO)
-			.andThen(FILL_REGISTRY_IF_EMPTY)
-			.andThen(FILL_REGISTRY_DOCUMENT_IF_EMPTY)
-			.andThen(FILL_CONCEPT_IF_EMPTY)
-			.andThen(FILL_SECURITY_LEVEL_IF_EMPTY)
-			.andThen(FILL_SCOPE_IF_EMPTY)
 			.andThen(CHECK_EMPTY_SCOPE)
 			.andThen(CHECK_BANK_ACCOUNT)
 			.accept(finance, ctx);
@@ -144,7 +72,7 @@ public class FinanceValidation {
 	/**
 	 * Para borrar el status debe ser PENDING
 	 */
-	public static BiConsumer<Finance,AONContext> CHECK_DELETE_STATUS = (finance,ctx) -> {
+	private static BiConsumer<Finance,AONContext> CHECK_DELETE_STATUS = (finance,ctx) -> {
 		if (finance.getFinanceStatus() != null && finance.getFinanceStatus() != FinanceStatus.PENDING) 
 			throw new AonCoreException(AonError.DELETE_STATUS_WRONG.getMessage());
 	};
@@ -156,10 +84,20 @@ public class FinanceValidation {
 		
 	}
 
+	/*
+	 *  **********************************************************************************************
+	 *  **********************************************************************************************
+ 						VALIDACIONES A LA HORA DE GRABAR UN APUNTE DE TESORERIA
+	 *  **********************************************************************************************
+	 *  **********************************************************************************************
+	 */
+	// TODO ¿Debe estar aquí?
+	
+	
 	/**
 	 * Para borrar el asiento, este no puede venir de remesa
 	 */
-	public static BiConsumer<FinanceEntry,AONContext> CHECK_IF_IS_FROM_FBATCH = (entry,ctx) -> {
+	private static BiConsumer<FinanceEntry,AONContext> CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH = (entry,ctx) -> {
 		if (ctx.getDslContext()
 			.select(ACCOUNT_ENTRY_FBATCH.FBATCH)
 			.from(ACCOUNT_ENTRY_FBATCH)
@@ -172,9 +110,9 @@ public class FinanceValidation {
 	};
 	
 	/**
-	 * Para borrar, no purde haber movimientos posteriores
+	 * Para borrar, no puede haber movimientos posteriores
 	 */
-	public static BiConsumer<FinanceEntry,AONContext> CHECK_TRACKINGS_STATUS = (entry,ctx) -> {
+	private static BiConsumer<FinanceEntry,AONContext> CHECK_IF_TRACKINGS_ARE_LAST_TRACKING = (entry,ctx) -> {
 		for (FinanceTracking ft : entry.getTrackings().values()) {
 			if (!ft.isLastTracking())
 				throw new AonCoreException(AonError.FINANCE_ENTRY_LATER_TRACKINGS.getMessage());
@@ -182,9 +120,67 @@ public class FinanceValidation {
 	};
 
 	public static void validateDelete(AONContext ctx, FinanceEntry entry) {
-		CHECK_IF_IS_FROM_FBATCH
-		.andThen(CHECK_TRACKINGS_STATUS)
+		CHECK_IF_ACCOUNT_ENTRY_IS_FROM_FBATCH
+			.andThen(CHECK_IF_TRACKINGS_ARE_LAST_TRACKING)
 			.accept(entry, ctx);
 	}
 
+	/*
+	 *  **********************************************************************************************
+	 *  **********************************************************************************************
+ 						VALIDACIONES A LA HORA DE GRABAR UN TRACKING
+	 *  **********************************************************************************************
+	 *  **********************************************************************************************
+	 */
+	/**
+	 * El vencimiento debe estar pendiente para ser saldado.
+	 */
+	private static BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_SETTLING = (finance,ctx) -> {
+		if (!finance.isPending()) 
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_SETTLED.getMessage());
+	};
+
+	public static Finance validateSettleTracking(AONContext ctx, Integer financeId) {
+		Finance finance = FinanceDAO.getFinance(ctx, financeId);
+		if (finance == null ) {
+			if (finance == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
+		}
+		CHECK_PENDING_FOR_SETTLING
+			.accept(finance, ctx);
+		return finance;
+	}
+
+	private static BiConsumer<FinanceTracking,AONContext> CHECK_IF_TRACKING_IS_FROM_BATCH_FOR_UNDOING = (financeTracking,ctx) -> {
+		if (financeTracking != null && financeTracking.isBatched()) 
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El último movimiento procede de una remesa"));
+	};
+
+	private static BiConsumer<FinanceTracking,AONContext> CHECK_IF_TRACKING_IS_FRACTIONED_LINK_FOR_UNDOING = (financeTracking,ctx) -> {
+		if (financeTracking != null && financeTracking.isFractioned()) 
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El último movimiento procede de un fraccionamiento"));
+	};
+	
+	private static BiConsumer<FinanceTracking,AONContext> CHECK_IF_TRACKING_IS_FROM_STATEMENT_LINK_FOR_UNDOING = (financeTracking,ctx) -> {
+		if (financeTracking != null && financeTracking.getBankStatementLink() != null) 
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El último movimiento procede de una extracto bancario"));
+	};
+
+	private static BiConsumer<FinanceTracking,AONContext> CHECK_IF_FINANCE_IS_GROUPED_FOR_UNDOING = (financeTracking,ctx) -> {
+		if (financeTracking != null && financeTracking.getFinance().getFinanceGroup() != null) 
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_UNDOING.format("El vencimiento se encuentra agrupado"));
+	};
+
+	public static FinanceTracking validateUndoTracking(AONContext ctx, Integer financeId) {
+		Finance finance = FinanceDAO.getFinance(ctx, financeId);
+		if (finance == null ) {
+			if (finance == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
+		}
+		FinanceTracking tracking = FinanceDAO.getLastTracking( ctx, financeId);
+		CHECK_IF_TRACKING_IS_FROM_BATCH_FOR_UNDOING
+			.andThen(CHECK_IF_TRACKING_IS_FROM_STATEMENT_LINK_FOR_UNDOING)
+			.andThen(CHECK_IF_TRACKING_IS_FRACTIONED_LINK_FOR_UNDOING)
+			.andThen(CHECK_IF_FINANCE_IS_GROUPED_FOR_UNDOING)
+			.accept(tracking, ctx);
+		return tracking;
+	}
 }

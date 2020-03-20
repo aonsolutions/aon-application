@@ -602,7 +602,7 @@ public class AccountEntryDAO {
 			}
 
 			private void removeFinance(AccountEntry entry) {
-				FinanceDAO.deleteAccountEntryTrackings(ctx, entry.getId());
+				FinanceDAO.deleteAccountEntryFinanceTrackings(ctx, entry.getId());
 			}
 
 			
@@ -618,7 +618,6 @@ public class AccountEntryDAO {
 						.findFirst()
 						.orElse( Integer.MIN_VALUE );
 				if (invoiceId != null && invoiceId != Integer.MIN_VALUE) {
-					FinanceDAO.deleteAllPendingFinances(ctx,invoiceId);
 					int count = ctx.getDslContext()
 						.delete(ACCOUNT_ENTRY_INVOICE)
 						.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(entry.getId()))

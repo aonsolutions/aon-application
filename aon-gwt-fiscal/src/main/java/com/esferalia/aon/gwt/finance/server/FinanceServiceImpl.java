@@ -41,4 +41,14 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 			throws AonCoreException {
 		return AON.getFinancesForInvoice(domainName, domainId,user, invoice);
 	}
+
+	@Override
+	public Finance settleFinance(String domainName, int domainId, String user, Integer finance) throws AonCoreException {
+		return AON.settleFinance(domainName, domainId,user, finance);
+	}
+
+	@Override
+	public Finance undoFinance(String domainName, int domainId, String user, Integer finance) throws AonCoreException {
+		return AON.undoFinance(domainName, domainId,user, finance);
+	}
 }

@@ -1196,7 +1196,7 @@ public class InvoiceDAO {
 							rectified.setRectificationType(RectificationType.RECTIFIED);							
 							rectified.setRectificationInvoice(rectifier.getId());
 						} else {
-							// Segunda iteracion. Hay mas de una, debe continuar a null.
+							// Segunda iteracion y sucesivas. Hay mas de una, debe continuar a null.
 							rectified.setRectificationInvoice(null);
 						}
 					});
@@ -1235,6 +1235,8 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().info("DELETE INVOICE_ATTACH adjuntos de la factura: " + id + " ("+count+" filas)");
 		
+		FinanceDAO.deleteAllPendingFinances(ctx,id);
+
 		count = ctx.getDslContext()
 			.delete(INVOICE)
 			.where(INVOICE.ID.equal(id))
@@ -1345,8 +1347,8 @@ public class InvoiceDAO {
 			Integer financeId = FinanceDAO.insert(ctx, finance);
 			
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceDAO.settle(ctx, oldId    ,finance.getAmount());
-				FinanceDAO.settle(ctx, financeId,finance.getAmount());
+				FinanceDAO.settle(ctx, oldId    );
+				FinanceDAO.settle(ctx, financeId);
 			}
 			
 		}

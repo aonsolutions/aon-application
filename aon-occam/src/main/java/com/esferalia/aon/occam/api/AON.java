@@ -333,11 +333,17 @@ public class AON {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getCommon().getConfiguration(ctx, atDate);
+			return getConfiguration(ctx, atDate);
 		} finally {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	public static AonConfiguration getConfiguration(AONContext ctx) {
+		return getConfiguration(ctx, null);  
+	}
+	public static AonConfiguration getConfiguration(AONContext ctx,Date atDate) {
+		return getCommon().getConfiguration(ctx, atDate);
 	}
 	// ********************************************
 	// ******************************** SECURITY **
@@ -5791,6 +5797,28 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFinance().getFinancesForInvoice(ctx, invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Finance settleFinance(String domainName, int domainId, String user, Integer finance) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().settleFinance(ctx, finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Finance undoFinance(String domainName, int domainId, String user, Integer finance) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().undoFinance(ctx, finance);
 		} finally {
 			if (ctx != null)
 				ctx.close();

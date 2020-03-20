@@ -239,5 +239,20 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FinanceDAO.getFinancesForInvoice(ctx, invoice));
 	}
+
+	@Override
+	public Finance settleFinance(AONContext ctx, Integer finance) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			FinanceDAO.settle(ctx, finance);
+			return FinanceDAO.getFinance(ctx, finance);
+		});			
+	}
 	
+	@Override
+	public Finance undoFinance(AONContext ctx, Integer finance) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			FinanceDAO.undo(ctx, finance);
+			return FinanceDAO.getFinance(ctx, finance);
+		});			
+	}
 }

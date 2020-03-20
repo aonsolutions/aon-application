@@ -3506,7 +3506,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00BFDesea saldar el vencimiento?")
 	String settleFinanceAction();
 
-	@DefaultMessage("\u00BFDesea marcar como pendiente vencimiento?")
+	@DefaultMessage("\u00BFDesea deshacer el \u00FAltimo movimiento del vencimiento?")
 	String undoFinanceAction();
 
 	@DefaultMessage("Pagar vencimiento")
@@ -3518,8 +3518,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Saldar")
 	String toSettle();
 
-	@DefaultMessage("Cambiar a pendiente")
-	String toPending();
+	@DefaultMessage("Deshacer")
+	String undo();
 
 	@DefaultMessage("Devolver")
 	String toReturn();

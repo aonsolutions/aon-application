@@ -1015,7 +1015,7 @@ public class AccountingInvoiceDAO {
 		for (Finance finance : ai.getInvoice().getFinances()) {
 			Integer oldId = finance.getId();
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceDAO.settle(ctx, oldId    ,finance.getAmount());
+				FinanceDAO.settle(ctx, oldId);
 			} 
 			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
 			finance.setInvoice(null);
@@ -1026,7 +1026,7 @@ public class AccountingInvoiceDAO {
 		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
 		for (Finance finance : ai.getInvoice().getFinances()) {
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceDAO.settle(ctx, finance.getId() ,finance.getAmount());
+				FinanceDAO.settle(ctx, finance.getId());
 				finance.setFinanceStatus(FinanceStatus.SETTLED);
 			} 
 		}

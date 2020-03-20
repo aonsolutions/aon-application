@@ -183,6 +183,15 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		this.deleted = deleted;
 		return this;
 	}
+	public boolean isFractioned() {
+		return getType() == FinanceTrackingType.FRACTIONED;
+	}
+	public boolean isBatched() {
+		return getType() == FinanceTrackingType.BATCHED;
+	}
+	public boolean isSettled() {
+		return getType() == FinanceTrackingType.SETTLED;
+	}
 
 }
 

@@ -129,14 +129,15 @@ public enum AonError implements Serializable{
 	// --------------------------------------------- FINANCE
 	,FINANCE_NOT_FOUND("Vencimiento no encontrado.")	
 	,FINANCE_CAN_NOT_BE_SETTLED("El vencimiento no se puede saldar, no está pendiente.")
-	,FINANCE_CAN_NOT_BE_UNSETTLED("El vencimiento no se dejat pendiente, no está saldado.")
+	,FINANCE_CAN_NOT_BE_UNDOING("El vencimiento no se dejar pendiente, no está saldado. {}")
 	,FINANCE_AMOUNT_ZERO("El importe del vencimiento no puede ser cero.")	
 	,FINANCE_EMPTY_SCOPE("No es posible encontrar un \u00E1mbito v\u00E1lido para el vencimiento.")
 	,FINANCE_WRONG_IBAN_LENGTH("Longitud de IBAN incorrecta.")
 	,FINANCE_WRONG_ACCOUNT_BANK("Cuenta Bancaria incorrecta.")
 	,FINANCE_WRONG_IBAN("IBAN incorrecto.")
 	,DELETE_STATUS_WRONG("No se permite el borrado de vencimientos que no est\u00E9n pendientes.")
-	
+	,FINANCE_TRACKING_LATER_TRACKINGS("No se puede borrar el movimiento, tiene movimientos posteriores.")
+	,FINANCE_TRACKING_RECORDED("No se puede borrar el movimiento, está contabilizado y no tiene permisos de borrado.")
 	,FINANCE_ENTRY_LATER_TRACKINGS("No se puede borrar el asiento, alguno de los vencimientos tiene movimientos posteriores.")
 	,FINANCE_ENTRY_FROM_FBATCH("No se puede borrar el asiento. Procede de remesa, deshaga el apunte desde la pantalla de remesas.")
 	,INVOICE_FINANCES_AMOUNT("La suma de los importes de los vencimientos no coincide con el total factura")
