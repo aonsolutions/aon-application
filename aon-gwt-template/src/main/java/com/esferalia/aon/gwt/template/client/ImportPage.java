@@ -133,6 +133,8 @@ public class ImportPage extends AonTemplate2{
 		
 		ImportContent ic = (ImportContent) getContent().getWidget();
 		ic.htmlPanel.add(table);
+		
+		Window.open("https://drive.google.com/file/d/1h53wZafzd__Bo0VZOQNMz7a0dYXU2lQV/view?usp=sharing", "_blank", null);
 	}
 	
 	private void content() {
