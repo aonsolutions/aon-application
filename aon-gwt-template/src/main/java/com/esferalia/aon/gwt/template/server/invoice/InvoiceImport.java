@@ -230,8 +230,7 @@ public class InvoiceImport {
 			} else inv.setRef(o.toString());
 			return ;
 		}
-		if("NIF".equalsIgnoreCase(title)
-				|| "DOCUMENTO".equalsIgnoreCase(title)) {
+		if("NIF".equalsIgnoreCase(title)) {
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
 				inv.setNif(NumberToTextConverter.toText(cell.getNumericCellValue()));
 			} else inv.setNif(o.toString());
@@ -248,7 +247,8 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("CONCEPTO".equalsIgnoreCase(title)) {
+		if("CONCEPTO".equalsIgnoreCase(title)
+				|| "OBSERVACIONES".equalsIgnoreCase(title)) {
 			inv.setConcept(o.toString());
 			return;
 		}
@@ -371,7 +371,8 @@ public class InvoiceImport {
 			invoice.setReferenceCode(ivs.get(i).getRef());
 			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
 					&& ivs.get(i).getRetentionQuota() > 0);
-
+			invoice.setRemarks(ivs.get(i).getConcept());
+			
 			RAddress address = new RAddress();
 			address.setDomain(domain.getId());
 			address.setType((byte) 0);
@@ -382,6 +383,9 @@ public class InvoiceImport {
 				GeoZone prgz = null;
 				GeoZone crgz = null;
 				Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
+				if(pr == null && ivs.get(i).getZip() != null ) {
+					pr = Provinces.getProvinceById(ivs.get(i).getZip().substring(0,2));
+ 				}
 				for(GeoZone gz : aonCtx.getGeozones()) {
 					if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
 						crgz = gz;
@@ -411,12 +415,14 @@ public class InvoiceImport {
 			ai.setInvoice(invoice);
 
 			String reference = ivs.get(i).getRef();
+			String serie = ivs.get(i).getSerie();
+			Integer number = ivs.get(i).getNumber();
 			Double total = 0.0;
 			Double retBase = 0.0;
 			Double retQuota = 0.0;
 			Double retPercentage = 0.0;
 			Integer j = i;
-			while(ivs.size() > j && reference.equals(ivs.get(j).getRef())) {
+			while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
 				if(ivs.get(i).getRetentionQuota() != null 
 						&& ivs.get(i).getRetentionQuota() > 0) {
 					retBase = retBase + ivs.get(j).getBase();
@@ -746,6 +752,16 @@ public class InvoiceImport {
 			return acc.substring(0, 4) + generateZeros(9 - acc.length()) + acc.substring(4);
 		}
 		return acc;
+	}
+	
+	private static Boolean isSameReference(String reference, String serie, Integer number, InvoiceImportClass iic) {
+		Boolean snBool = false;
+		if(serie != null && number != null) {
+			snBool = serie.equals(iic.getSerie()) && number.equals(iic.getNumber());
+		} else if( serie == null && number != null) {
+			snBool = number.equals(iic.getNumber());
+		}
+		return reference.equals(iic.getRef()) || snBool;
 	}
 	
 	private String generateZeros(Integer index) {

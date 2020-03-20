@@ -78,10 +78,20 @@ public enum Provinces implements Serializable {
 	}
 	
 	public static Provinces getProvince(String value) {
-		Provinces pr = ARABA;
+		Provinces pr = null;
 		for(Integer i = 0; i < Provinces.values().length; i++) {
 			if(Provinces.values()[i].getName().equalsIgnoreCase(value)
 			 || Provinces.values()[i].toString().equalsIgnoreCase(value)) {
+				pr = Provinces.values()[i];
+			}
+		}
+		return pr;
+	}
+	
+	public static Provinces getProvinceById(String value) {
+		Provinces pr = null;
+		for(Integer i = 0; i < Provinces.values().length; i++) {
+			if(Provinces.values()[i].getId().equalsIgnoreCase(value)) {
 				pr = Provinces.values()[i];
 			}
 		}
