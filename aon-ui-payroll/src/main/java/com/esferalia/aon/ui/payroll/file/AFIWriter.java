@@ -388,8 +388,8 @@ public class AFIWriter implements Serializable {
 		FAB fab = new FAB();
 		fab.setAccion(autoComplete(detail.getActionType().getValue(), 3, " ", false));
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getRealDate())));
+		Double ereFactor = obtainEreFactor(detail.getContract(), detail.getRealDate());
 		if(isFirstDay) {			
-			Double ereFactor = obtainEreFactor(detail.getContract(), detail.getRealDate());
 			if(ereFactor != 0.0) {
 				if(ereFactor<1.0)
 					fab.setTipoInactividad(T41.T41_J.getCode());
@@ -402,8 +402,22 @@ public class AFIWriter implements Serializable {
 				else
 					fab.setTipoInactividad(T41.T41_V.getCode());
 			}
-			fab.setCoeficienteActividadHuelgaParcialEre((int)(ereFactor*1000));
+			if(ereFactor == 1.0) // Si el factor es 1 es total por que lo que no tiene coeficiente
+				fab.setCoeficienteActividadHuelgaParcialEre(000);
+			else 
+				fab.setCoeficienteActividadHuelgaParcialEre((int)(ereFactor*1000));
 			
+		}else {
+			Date endDate = null;
+			if(ereFactor != 0.0)
+				endDate = obtainEndDateEreFactor(detail.getContract(), detail.getRealDate());
+			else
+				endDate = obtainEndDateEreFzaFactor(detail.getContract(), detail.getRealDate());
+			
+			if(null != endDate) {
+				endDate = DateUtils.addDays(endDate, 1);
+				fab.setFechaReal(Integer.parseInt(dateFormatter.format(endDate)));
+			}
 		}
 		return fab;
 	}
@@ -444,6 +458,44 @@ public class AFIWriter implements Serializable {
 			// NADA
 		}
 		return strikeFactor;
+	}
+	
+	private Date obtainEndDateEreFactor(Contract contract, Date date) {
+		Date endDate = null;
+		try {
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.ERE_FACTOR.getName());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
+			
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && !list.isEmpty())
+				endDate = ((ContractData)list.get(0)).getEndDate();	
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return endDate;
+	}
+	
+	private Date obtainEndDateEreFzaFactor(Contract contract, Date date) {
+		Date endDate = null;
+		try {
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), "COEFICIENTE_ERE_FZA");
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
+			
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && !list.isEmpty())
+				endDate = ((ContractData)list.get(0)).getEndDate();	
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return endDate;
 	}
 	
 	
