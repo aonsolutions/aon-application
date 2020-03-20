@@ -167,6 +167,7 @@ public class DownloadProjectCommercialExcelServlet extends HttpServlet {
     	
     	cont = 1;
     	AON.getProjectCommercialStream(domain.getName(), domain.getId(), userName, f -> projectCommercialFilter(req, f))
+    	.sorted((p1, p2)->p2.getDate().compareTo(p1.getDate()))
     	.forEach(result -> {
     		row = hoja.createRow(cont++);
     		
