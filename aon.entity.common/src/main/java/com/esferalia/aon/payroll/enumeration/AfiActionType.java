@@ -51,7 +51,12 @@ public enum AfiActionType implements IResourceable, IStringEnum {
 	/**
 	 * MHU - Mecanización de HUelga
 	 */
-	MHU("MHU")
+	MHU("MHU"),
+	
+	/**
+	 * MIN - Mecanización de Inactividad
+	 */
+	MIN("MIN")
 
 	;
 

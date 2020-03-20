@@ -41,6 +41,8 @@ public enum T41 implements IPayrollTablesEnum {
 	T41_J( "J", "Suspensión parcial ERE fuerza mayor", null, null ),
 	T41_K( "K", "Suspensión parcial ERE fuerza mayor + huelga parcial", null, null ),
 	T41_T( "T", "Salarios de Tramitación", null, null ),
+	T41_V( "V", "Suspension total ERE COVID-19", null, null ),
+	T41_W( "W", "Suspension parcial ERE COVID-19", null, null ),
 	;
 	public static final String TABLE_NAME = "T41";
 	public static final String TABLE_DESCRIPTION = "T41.txt";
