@@ -231,6 +231,22 @@ public class AFIWriter implements Serializable {
 			tra = createTRARecord(detail);
 			tra.setFab( createFABStrikeRecord(detail, false) );
 			emp.getTrabajadores().add(tra);
+		} else if(detail.getActionType()==AfiActionType.MIN){
+			TRA tra = null;
+			
+			/*
+			 *  segmento TRA para inicio ERE
+			 */
+			tra = createTRARecord(detail);
+			tra.setFab( createFABEreRecord(detail, true) );
+			emp.getTrabajadores().add(tra);
+			
+			/*
+			 *  segmento TRA para fin ERE
+			 */
+			tra = createTRARecord(detail);
+			tra.setFab( createFABEreRecord(detail, false) );
+			emp.getTrabajadores().add(tra);
 		}
 	}
 	
@@ -327,7 +343,6 @@ public class AFIWriter implements Serializable {
 			fab.setSexo(1);
 		}
 		
-		
 		// TODO TipoInactividad
 		fab.setTipoInactividad(null);
 		// TODO ExclusionDesempleo
@@ -367,6 +382,68 @@ public class AFIWriter implements Serializable {
 			fab.setCoeficienteActividadHuelgaParcialEre((int)(strikeFactor*1000));
 		}
 		return fab;
+	}
+	
+	private FAB createFABEreRecord(ContractBatchDetail detail, boolean isFirstDay) {
+		FAB fab = new FAB();
+		fab.setAccion(autoComplete(detail.getActionType().getValue(), 3, " ", false));
+		fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getRealDate())));
+		if(isFirstDay) {			
+			Double ereFactor = obtainEreFactor(detail.getContract(), detail.getRealDate());
+			if(ereFactor != 0.0) {
+				if(ereFactor<1.0)
+					fab.setTipoInactividad(T41.T41_J.getCode());
+				else
+					fab.setTipoInactividad(T41.T41_I.getCode());
+			} else {
+				ereFactor = obtainEreFzaFactor(detail.getContract(), detail.getRealDate());
+				if(ereFactor<1.0)
+					fab.setTipoInactividad(T41.T41_W.getCode());
+				else
+					fab.setTipoInactividad(T41.T41_V.getCode());
+			}
+			fab.setCoeficienteActividadHuelgaParcialEre((int)(ereFactor*1000));
+			
+		}
+		return fab;
+	}
+	
+	private Double obtainEreFactor(Contract contract, Date date) {
+		Double strikeFactor = 0.0;
+		try {
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), ContextVariable.ERE_FACTOR.getName());
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
+			
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && !list.isEmpty())
+				strikeFactor = Double.valueOf(((ContractData)list.get(0)).getExpression());	
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return strikeFactor;
+	}
+	
+	private Double obtainEreFzaFactor(Contract contract, Date date) {
+		Double strikeFactor = 0.0;
+		try {
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), "COEFICIENTE_ERE_FZA");
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
+			
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && !list.isEmpty())
+				strikeFactor = Double.valueOf(((ContractData)list.get(0)).getExpression());	
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+		return strikeFactor;
 	}
 	
 	

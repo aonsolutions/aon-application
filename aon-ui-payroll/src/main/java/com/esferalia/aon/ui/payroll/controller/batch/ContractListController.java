@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.batch;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -128,6 +129,7 @@ public class ContractListController extends BasicController implements BatchList
 		searchMJR();
 		searchCIT();
 		searchMHU();
+		searchMIN();
 		setModel(new SerializableListDataModel(pendingList));
 	}
 	
@@ -285,6 +287,36 @@ public class ContractListController extends BasicController implements BatchList
 			bean.getList(criteria).forEach(to -> {
 				ContractData data = (ContractData) to;
 				addPendingList(data.getContract(), AfiActionType.MHU, data.getStartDate());
+			});
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSearch exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * MIN - Mecanización de Inactividad
+	 */
+	private void searchMIN(){
+		try {
+			ArrayList<String> names = new ArrayList<String>();
+			names.add(ContextVariable.ERE_FACTOR.getName());
+			names.add("COEFECIENTE_ERE_FZA");
+			
+			Criteria criteria = new Criteria();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			criteria.addInExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), names);
+			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
+			if(getDateFrom()!=null){
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), getDateFrom());
+			}
+			if(getDateTo()!=null){
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_END_DATE), getDateTo());
+			}
+			bean.getList(criteria).forEach(to -> {
+				ContractData data = (ContractData) to;
+				addPendingList(data.getContract(), AfiActionType.MIN, data.getStartDate());
 			});
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSearch exception: ",e);
