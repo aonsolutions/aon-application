@@ -19,11 +19,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AyudaTWarnDelete;
 import net.aonsolutions.db.up2date.payroll.EreFzaInsert;
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateIV;
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateV;
 import net.aonsolutions.db.up2date.payroll.IndemnizacionDescriptionUpdate;
 import net.aonsolutions.db.up2date.payroll.IndemnizacionEditableUpdate;
+import net.aonsolutions.db.up2date.tgss.SMIWarn2020Delete;
 
 public class Up2Date {
 
@@ -101,7 +103,9 @@ public class Up2Date {
     		//FundUpvUpdateV.FUNDUPV_UPDATE_V
     		//IndemnizacionEditableUpdate.INDEMNIZACIONEDITABLEUPDATE,
     		//IndemnizacionDescriptionUpdate.INDEMNIZACIONDESCRIPTIONUPDATE
-    		EreFzaInsert.EREFZAINSERT
+    		//EreFzaInsert.EREFZAINSERT
+    		SMIWarn2020Delete.SMIWARN2020DELETE,
+    		AyudaTWarnDelete.AYUDATWARNDELETE
     };
 
 
