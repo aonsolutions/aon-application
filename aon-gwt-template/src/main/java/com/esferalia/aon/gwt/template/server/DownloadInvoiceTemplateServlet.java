@@ -40,25 +40,27 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
         columnList.add("FECHA");
         columnList.add("SERIE");
         columnList.add("NÚMERO");
+        columnList.add("REFERENCIA");
         columnList.add("NIF");
         columnList.add("NOMBRE");
+        columnList.add("OBSERVACIONES");
         columnList.add("DIRECCIÓN");
         columnList.add("CIUDAD");
         columnList.add("PROVINCIA");
         columnList.add("CÓDIGO POSTAL");
         columnList.add("PAÍS");
-        columnList.add("CUENTA BASE");
-        columnList.add("BASE");
-        columnList.add("%Impuesto");
+        columnList.add("CUENTA EXPLOTACIÓN");
+        columnList.add("DESCRIPCIÓN CUENTA");
+        columnList.add("BASE IMPONIBLE");
+        columnList.add("%IMPUESTO");
         columnList.add("%RE");
         columnList.add("CUOTA RE");
         columnList.add("%RETENCIÓN");
         columnList.add("CUOTA RETENCIÓN");
-        columnList.add("TOTAL FACTURA");
+        columnList.add("TOTAL");
         columnList.add("CLAVE RETENCIÓN");
         columnList.add("SUBCLAVE RETENCIÓN");
 
-        
 		HSSFWorkbook libro = new HSSFWorkbook();
         ByteArrayOutputStream archivo = new ByteArrayOutputStream();
         HSSFSheet hoja = libro.createSheet("Plantilla 1");

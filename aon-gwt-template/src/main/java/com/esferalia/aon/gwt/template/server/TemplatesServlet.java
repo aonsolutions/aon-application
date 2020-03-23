@@ -2650,7 +2650,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	public Error insertInvoices(Domain domain, User user) {
 		try {
 			InvoiceImport.insertInvoices(domain, user, ivs);
-			return new Error();
+			return new Error().setError(true);
 		} catch (Exception e) {
 			return new Error()
 				.setError(false)
@@ -2663,7 +2663,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	public Error insertRegistries(Domain domain, User user) {
 		try {
 			RegistryImport.insertRegistries(domain, user, rvs);			
-			return new Error();
+			return new Error().setError(true);
 		} catch (Exception e) {
 			return new Error()
 				.setError(false)
@@ -2675,7 +2675,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	public Error insertDiary(Domain domain, User user) {
 		try {
 			DiaryImport.insertDiary(domain, user, dvs);			
-			return new Error();
+			return new Error().setError(true);
 		} catch (Exception e) {
 			return new Error()
 				.setError(false)

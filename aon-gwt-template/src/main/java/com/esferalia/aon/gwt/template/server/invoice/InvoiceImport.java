@@ -177,8 +177,14 @@ public class InvoiceImport {
 		if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 			return cell.getNumericCellValue();
 		}
-		if(CellType.FORMULA == cell.getCellTypeEnum())
+		
+		if(CellType.FORMULA == cell.getCellTypeEnum() && CellType.NUMERIC == cell.getCachedFormulaResultTypeEnum()) {
+			return cell.getNumericCellValue();
+		} else if(CellType.FORMULA == cell.getCellTypeEnum() && CellType.STRING == cell.getCachedFormulaResultTypeEnum()) {
+			return cell.getStringCellValue();
+		} else if(CellType.FORMULA == cell.getCellTypeEnum()) {
 			return cell.getCellFormula();
+		}
 		if(CellType.BOOLEAN == cell.getCellTypeEnum()) {
 			return cell.getBooleanCellValue() ? 1.0 : 0.0;
 		}
@@ -282,7 +288,9 @@ public class InvoiceImport {
 		}
 		
 		if("CUENTA BASE".equalsIgnoreCase(title)
-				|| "CUENTA CONTABLE".equalsIgnoreCase(title)) {
+				|| "CUENTA CONTABLE".equalsIgnoreCase(title)
+				|| "CUENTA EXPLOTACIÓN".equalsIgnoreCase(title)
+				|| "CUENTA EXPLOTACION".equalsIgnoreCase(title)) {
 			String acc = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
@@ -291,11 +299,13 @@ public class InvoiceImport {
 			return;
 		}
 		
-		if("DESCRIPCIÓN CUENTA".equalsIgnoreCase(title)){
+		if("DESCRIPCIÓN CUENTA".equalsIgnoreCase(title)
+				|| "DESCRIPCION CUENTA".equalsIgnoreCase(title)){
 			inv.setAccountDescription(o.toString());
 			return;
 		}
-		if("BASE".equalsIgnoreCase(title)) {
+		if("BASE".equalsIgnoreCase(title)
+				|| "BASE IMPONIBLE".equalsIgnoreCase(title)) {
 			inv.setBase(Double.parseDouble(o.toString()));
 			return;
 		}
@@ -303,7 +313,8 @@ public class InvoiceImport {
 			inv.setPercentage(Double.parseDouble(o.toString()));
 			return;
 		}
-		if("CUOTA Impuesto".equalsIgnoreCase(title)) {
+		if("CUOTA Impuesto".equalsIgnoreCase(title)
+				|| "CUOTA IVA".equalsIgnoreCase(title)) {
 			inv.setQuota(Double.parseDouble(o.toString()));
 			return;
 		}
@@ -366,8 +377,12 @@ public class InvoiceImport {
 			invoice.setType(ivs.get(i).getInvoiceType() != null
 					? ivs.get(i).getInvoiceType()
 					: getInvoiceType(ivs.get(i).getAccount()));
-			invoice.setSeries(ivs.get(i).getSerie());
-			invoice.setNumber(ivs.get(i).getNumber());	
+			if(ivs.get(i).getSerie() != null) {
+				invoice.setSeries(ivs.get(i).getSerie());
+			} 
+			if(ivs.get(i).getNumber() != null) {
+				invoice.setNumber(ivs.get(i).getNumber());	
+			}
 			invoice.setReferenceCode(ivs.get(i).getRef());
 			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
 					&& ivs.get(i).getRetentionQuota() > 0);
