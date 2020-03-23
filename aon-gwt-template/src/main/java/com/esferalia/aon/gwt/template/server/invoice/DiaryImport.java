@@ -215,15 +215,6 @@ public class DiaryImport {
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			String contrapartida = acc.substring(0,4) + acc.substring(7);
 			diary.get(asiento).getDetails().get(apunte-1).setBalancingAccountCode(contrapartida);
-			if(invoice && diary.get(asiento).getEntryType() == null) {
-				if("7".equals(contrapartida.substring(0, 1))) {
-					diary.get(asiento).setEntryType(AccountEntryType.SALES_INVOICE); 
-				} else if("60".equals(contrapartida.substring(0, 2))) {
-					diary.get(asiento).setEntryType(AccountEntryType.PURCHASE_INVOICE);
-				} else if("6".equals(contrapartida.substring(0, 1))) {
-					diary.get(asiento).setEntryType(AccountEntryType.EXPENSE_INVOICE);
-				}
-			}
 			return;
 		}
 		
