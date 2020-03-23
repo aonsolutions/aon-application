@@ -930,6 +930,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 						addDropDay(cs);
 						break;
 					case 3:
+						addEreDay(cs);
+						break;
+					case 4:
 						addEreFzaDay(cs);
 						break;
 					default:
@@ -957,7 +960,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 						addDropDay(cs);
 						break;
 					case 3:
+						addEreDay(cs);
+						break;
+					case 4:
 						addEreFzaDay(cs);
+						break;
 					default:
 						break;
 					}
@@ -1409,8 +1416,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				if(DayType.EREFZADAY == dayType){
-					calendarGrid.getWidget(row, i).setTitle("ERE (Fuerza Mayor)");
-					calendarGrid.getWidget(row+1, i).setTitle("ERE (Fuerza Mayor)");
+					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
+					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
 				}
 				
 				if(DayType.DROPDAY == dayType){
@@ -1527,8 +1534,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 			
 			if(DayType.EREFZADAY == dayType){
-				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE (Fuerza Mayor)");
-				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE (Fuerza Mayor)");
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
 			}
 			
 			if(DayType.DROPDAY == dayType){
