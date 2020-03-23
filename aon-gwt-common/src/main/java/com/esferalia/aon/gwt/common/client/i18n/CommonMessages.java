@@ -3750,5 +3750,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Suplido")
 	String prepayment();
 
+	@DefaultMessage("Fecha de Pago")
+	String payDate();
+
 }
 

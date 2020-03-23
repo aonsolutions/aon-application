@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.math.BigInteger;
 
-import com.esferalia.aon.occam.api.model.type.BankConfig;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -13,6 +12,10 @@ public class BankAccount implements Serializable {
 	private static final long serialVersionUID = 8997466979099180561L;
 	
 	private static final int[] DIGITS = new int[] { 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 };
+
+	private static final int DEFAULT_BANK_ID_LENGTH = 4;
+	private static final int DEFAULT_IBAN_LENGTH = 34;
+	
 	private Country country;
 	private String check;
 	private String bban1;
@@ -129,13 +132,11 @@ public class BankAccount implements Serializable {
 	}
 
 	public int getBankCodeLength() {
-		BankConfig bankConfig = BankConfig.valueOf(getCountry().getIso2());
-		return bankConfig.getBankIdLength();
+		return getCountry() == null ? DEFAULT_BANK_ID_LENGTH : getCountry().getBankIdLength();
 	}
 	
 	public int getIbanLength() {
-		BankConfig bankConfig = BankConfig.valueOf(getCountry().getIso2());
-		return bankConfig.getIbanLength();
+		return getCountry() == null ? DEFAULT_IBAN_LENGTH : getCountry().getIbanLength();
 	}
 
 	public String getBban() {
@@ -262,9 +263,7 @@ public class BankAccount implements Serializable {
 		if (getCountry() == null) {
 			return false;
 		}
-
-		BankConfig bankConfig = BankConfig.valueOf(getCountry().getIso2());
-		return bankConfig.getBbanLength() == 0 || getBban().length() == bankConfig.getBbanLength();
+		return getBban().length() == getCountry().getBbanLength();
 	}
 
 	public String calculateBbanControlDigit() {
@@ -315,9 +314,7 @@ public class BankAccount implements Serializable {
 		if (getCountry() == null) {
 			return false;
 		}
-
-		BankConfig bankConfig = BankConfig.valueOf(getCountry().getIso2());
-		return bankConfig.getBbanLength() == 0  || getIban().length() == bankConfig.getIbanLength();
+		return getIban().length() == getCountry().getIbanLength();
 	}
 
 	public String calculateIbanControlDigit() {

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
@@ -13,6 +14,8 @@ import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel.FinancePayPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -541,13 +544,32 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			FlowPanel actionsPanel = new FlowPanel();
 			if (finance.isFullPending() && finance.getId() != null) {
 				actionsPanel.add(payButton);
-				payButton.setText( AON.MSG.toPay());
+				payButton.setText(AON.MSG.toPay());
 				payButton.setStyleName(AON.AON_CSS.aonActionButton());
+				final CustomDialog dialog = new CustomDialog();
+				dialog.setCaption(AON.MSG.payFinance());
 				payButton.addClickHandler(new ClickHandler() {
-					
+
 					@Override
 					public void onClick(ClickEvent event) {
-						MessageDialog.error("Opci\u00F3n no implementada");
+						FinancePayPanel payPanel = new FinancePayPanel();
+						payPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
+								callback.getCurrentUser(), callback.getConfiguration(), finance,
+								new FinancePayPanelCallback() {
+
+									@Override
+									public void onCancel() {
+										dialog.hide();
+									}
+
+									@Override
+									public void onAccept(Finance finance) {
+										dialog.hide();
+									}
+								});
+						dialog.setWidget(payPanel);
+						dialog.center();
+						dialog.show();
 					}
 				});
 			}
