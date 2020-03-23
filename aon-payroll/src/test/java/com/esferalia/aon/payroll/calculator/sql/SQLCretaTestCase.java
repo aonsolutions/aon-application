@@ -13,7 +13,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_LACK_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_DAYS;
@@ -204,6 +206,68 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	}
 
+	// -------------------------------------------------------------------------
+	@Test
+	public void testCretaITDailyI()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "10");
+		addData(aonContext, 
+				contract, 
+				getFirstDayOfYear(getToday()), 
+				null,
+				MONTH_DAYS.getName(),
+				NATURAL_MONTH_DAYS.getName()
+				);	
+		
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				getFirstDayOfYear(getToday()), 
+				null, 
+				null);
+		//@formatter:on
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosBases = 
+		getBases(connection, contract, startDate, endDate, ccc);
+		
+		org.junit.Assert.assertEquals(1, tramosBases.size());
+		
+		tramosBases.get(0).getDatosTramo().getDato().forEach(d -> {
+			org.junit.Assert.assertNotEquals("51", d.getCodigo());
+			
+		});
+		double _500 =
+		tramosBases.get(0).getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+
+		double _563 =
+		tramosBases.get(0).getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("563")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals( _500 * 0.75, _563, DELTA);
+		
+	}
 	// -------------------------------------------------------------------------
 	@Test
 	public void testCretaITMaternityFullTimeI()

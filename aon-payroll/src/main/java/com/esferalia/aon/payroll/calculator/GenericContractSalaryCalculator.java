@@ -20,6 +20,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
@@ -1553,6 +1554,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		fillData(ctx, 
 				new String[] { 
 				TC2.getName(), 
+				MONTH_DAYS.getName(), 
 				QUOTE_DAYS.getName(), 
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
