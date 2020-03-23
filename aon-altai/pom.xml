@@ -31,7 +31,7 @@
 			                <archive>
 			                <manifest>
 			                    <mainClass>
-			                        com.esferalia.aon.altai.Altai2Aon
+			                        com.esferalia.aon.altai.Siltra2Aon
 			                    </mainClass>
 			                </manifest>
 			                </archive>

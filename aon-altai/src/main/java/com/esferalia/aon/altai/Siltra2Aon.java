@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,8 +20,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.altai.tgss.creta.Bases2Aon;
+import com.esferalia.aon.altai.tgss.creta.CRA2Aon;
 import com.esferalia.aon.altai.tgss.creta.Calculos2Aon;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -99,6 +100,14 @@ public class Siltra2Aon {
 		     .withArgName("directory")
 		     .withDescription("SLD-Ficheros de Bases directory.")
 		     .create("b");
+		
+		@SuppressWarnings("static-access")
+		Option craOption = OptionBuilder
+		     .hasArg()
+		     .withLongOpt("cra")
+		     .withArgName("directory")
+		     .withDescription("Conceptos Retributidos Abonados (CRA) directory.")
+		     .create("a");		
 
 		@SuppressWarnings("static-access")
 		Option dateOption = OptionBuilder
@@ -108,6 +117,14 @@ public class Siltra2Aon {
 		     .withDescription("Date to compare.")
 		     .create();
 
+		@SuppressWarnings("static-access")
+		Option whereOption = OptionBuilder
+		     .hasArg()
+		     .withLongOpt("where")
+		     .withArgName("where")
+		     .withDescription("Only selected contracts. Quotes are mandatory.")
+		     .create();
+		
 		Options options = new Options();
 		options.addOption(basesOption);
 		options.addOption(helpOption);
@@ -118,6 +135,8 @@ public class Siltra2Aon {
 		options.addOption(passwordOption);
 		options.addOption(calculosOption);
 		options.addOption(dateOption);
+		options.addOption(whereOption);
+		options.addOption(craOption);
 		 
 		Connection connection = null;
 		try {
@@ -130,6 +149,8 @@ public class Siltra2Aon {
 			String user = commandLine.getOptionValue(userOption.getLongOpt());
 			String password = commandLine.getOptionValue(passwordOption.getLongOpt());
 			String database = commandLine.getOptionValue(databaseOption.getLongOpt());
+			String where = commandLine.getOptionValue(whereOption.getLongOpt(), "`domain`.`name` LIKE 'altai%'");
+			String craPaths [] = Optional.ofNullable(commandLine.getOptionValues(craOption.getLongOpt())).orElse(new String[] {});;
 			String basesPaths [] = Optional.ofNullable(commandLine.getOptionValues(basesOption.getLongOpt())).orElse(new String[] {});;
 			String calculosPaths [] = Optional.ofNullable(commandLine.getOptionValues(calculosOption.getLongOpt())).orElse(new String[] {});;
 			Date date = Optional.ofNullable(commandLine.getOptionValue(dateOption.getLongOpt())).map(s -> parse(s)).orElse(null);
@@ -158,18 +179,31 @@ public class Siltra2Aon {
 				});
 			}
 			
-			Calculos2Aon calculos2Aon = new Calculos2Aon(connection, date);
+			Calculos2Aon calculos2Aon = new Calculos2Aon(connection, DSL.condition(where));
 			
 			for (String calculosPath : calculosPaths) {
 				Arrays.stream(new File(calculosPath).listFiles(f-> f.isFile() ))
 				.forEach(f -> {
 					try {
-						calculos2Aon.parse(f);
+						calculos2Aon.fix(f);
 					} catch (IOException e) {
 						System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
 					}
 				});
 			}
+			
+			CRA2Aon cra2Aon = new CRA2Aon(connection, DSL.condition(where));
+			
+			for (String craPath : craPaths) {
+				Arrays.stream(new File(craPath).listFiles(f-> f.isFile() ))
+				.forEach(f -> {
+					try {
+						cra2Aon.fix(f);
+					} catch (IOException e) {
+						System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
+					}
+				});
+			}			
 
 		} catch (ParseException e) {
 			// oops, somthing went wrong
