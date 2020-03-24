@@ -1922,6 +1922,99 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		
 	}
 	
+	@Test
+	public void testCommonOccupationalDiseaseITQuoteDaysI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put(ContextVariable.MONTH_DAYS.getName(), "30");
+					}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_IT_COTIZADOS=%f\r\n', DIAS_IT_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("%s * BASE_REGULADORA * 0.75",  OCCUPATIONAL_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.set(Calendar.MONTH, Calendar.MAY);
+		calendar.set(Calendar.DAY_OF_MONTH, 4 );
+		Date startITDate = new Date(calendar.getTimeInMillis());
+		
+		calendar.set(Calendar.DAY_OF_MONTH, 10 );
+		Date endITDate = new Date(calendar.getTimeInMillis());		
+		
+		addIT(aonContext, contract, LeaveType.COMMON_OCCUPATIONAL_DISEASE, startITDate,
+				endITDate, 100.00);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startITDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.forEach(data->System.out.println(data.getName() + " = " + data.getExpression() + "(" + data.getStartDate() + "..." + data.getEndDate() + ")"));
+		;
+		// + 4
+		long count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 1)
+		.peek(data->Assert.assertEquals(1750.00 * 4/30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		
+		Assert.assertEquals(1, count);
+		
+		// + 5 ( Here ADJUST )
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == add(startITDate,DAY_OF_MONTH,1).getDate())
+		.peek(data->Assert.assertEquals(100.00 * 5.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);		
+		
+		// + 21
+		count = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.filter(data->data.getStartDate().getDate() == 11)
+		.peek(data->Assert.assertEquals(1750.00 * 21/30.00, Double.parseDouble(data.getExpression())))
+		.count();
+		Assert.assertEquals(1, count);
+		//  = 30
+		
+		
+	}
 	
 	@Test
 	public void testMaternityITQuoteDaysI() throws ExpressionException, SQLException,

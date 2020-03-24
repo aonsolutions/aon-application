@@ -1851,6 +1851,59 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaTrabajadoresYTramosCommonATEP()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIT = add(startDate, DAY_OF_MONTH, 10);
+		Date endIT = add(startIT, DAY_OF_MONTH, 4);
+		
+		//@formatter:off
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_OCCUPATIONAL_DISEASE, 
+				startIT, 
+				endIT, 
+				null/*1750.00/30*/);
+		//@formatter:on
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(3, tramos.size());
+		
+		//Activo
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("11", tramo0.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo0);
+		
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("12", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("15", tramo1.getFechaHasta().getDia());
+		assertTramoITATEPPagoDelegado(tramo1);
+		
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("16", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo2);
+
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosATEP()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();

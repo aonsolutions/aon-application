@@ -89,6 +89,8 @@ public class ContractLeaveLoader {
 			}
 		}
 	}
+	
+
 
 	// @formatter:off
 	protected static final DaysRange _COMMON_RANGES[] = { new DaysRange(1, 3), new DaysRange(4, 15),
@@ -244,7 +246,9 @@ public class ContractLeaveLoader {
 
 	public void loadContractLeave(final Integer id, final Date leaveStart, final Date leaveEnd, final long parentDays,
 			final LeaveType type, String dailyRegBase, final ExpressionContext exprCtx) throws ExpressionException {
-
+		
+		startDate= getStartDate(type, leaveStart);
+		
 		final ITimedVariable<?> contractStart = exprCtx.getVariable(ContextVariable.CONTRACT_START, startDate, endDate);
 		final Date realStartDate =  Period.max(startDate, (Date) contractStart.getValue(contractStart.getPeriod()));
 		final Date start = Period.max(leaveStart,  realStartDate );
@@ -616,6 +620,57 @@ public class ContractLeaveLoader {
 		}
 		
 		return directPayStart;
+	}
+	
+	private static Date getStartDate(LeaveType type, Date startDate) {
+		return type.accept(new LeaveTypeVisitor<Date>() {
+
+			@Override
+			public Date visitCommonDisease(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitOcupationalDisease(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitMaternity(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitPaternity(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitPregnacyRisk(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitBreastFeedingRisk(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitNonOcupationalDisease(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitCommonDiseaseAtLack(LeaveType leaveType) {
+				return startDate;
+			}
+
+			@Override
+			public Date visitCommonProfessionalDisease(LeaveType leaveType) {
+				return AonDateUtils.add(startDate, DAY_OF_MONTH,1);
+			}
+			
+		});
 	}
 	
 
