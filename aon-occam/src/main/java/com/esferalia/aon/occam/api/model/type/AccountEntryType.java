@@ -201,4 +201,29 @@ public enum AccountEntryType  implements Serializable {
 		return AccountEntryType.values()[i];
 	}
 	
+	public static AccountEntryType safeValueOf( String str ) {
+		if (str == null) return null;
+		if(OPENING.getDescription().equalsIgnoreCase(str)) return OPENING; 
+		if(CLOSING.getDescription().equalsIgnoreCase(str)) return CLOSING;
+		if(OPERATING.getDescription().equalsIgnoreCase(str)) return OPERATING;
+		if(MANUAL.getDescription().equalsIgnoreCase(str)) return MANUAL;
+		if(SALES_INVOICE.getDescription().equalsIgnoreCase(str)) return SALES_INVOICE;
+		if(PURCHASE_INVOICE.getDescription().equalsIgnoreCase(str)) return PURCHASE_INVOICE;
+		if(EXPENSE_INVOICE.getDescription().equalsIgnoreCase(str)) return EXPENSE_INVOICE;
+		if(EXPENSES.getDescription().equalsIgnoreCase(str)) return EXPENSES;
+		if(SALARY.getDescription().equalsIgnoreCase(str)) return SALARY;
+		if(TAX.getDescription().equalsIgnoreCase(str)) return TAX;
+		if(LOAN.getDescription().equalsIgnoreCase(str)) return LOAN;
+		if(PAYMENT.getDescription().equalsIgnoreCase(str)) return PAYMENT;
+		if(COLLECTION.getDescription().equalsIgnoreCase(str)) return COLLECTION;
+		if(AMORTIZATION.getDescription().equalsIgnoreCase(str)) return AMORTIZATION;
+		if(SOCIAL_INSURANCE.getDescription().equalsIgnoreCase(str)) return SOCIAL_INSURANCE;
+		if(LOAN_FEE.getDescription().equalsIgnoreCase(str)) return LOAN_FEE;
+		if(RETURNED_PAYMENT.getDescription().equalsIgnoreCase(str)) return RETURNED_PAYMENT;
+		if(RETURNED_COLLECTION.getDescription().equalsIgnoreCase(str)) return RETURNED_COLLECTION;
+		if(SOCIAL_INSURANCE_ADJUST.getDescription().equalsIgnoreCase(str)) return SOCIAL_INSURANCE_ADJUST;
+		if(FINANCE.getDescription().equalsIgnoreCase(str)) return FINANCE;
+		return null;
+	}
+	
 }

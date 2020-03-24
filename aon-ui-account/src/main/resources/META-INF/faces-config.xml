@@ -122,6 +122,13 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
     com.code.aon.ui.account.controller.AccountImporter</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
+  
+   <!--  ********* PGC EXPORT GWT CONTROLLER  ***************** -->
+  <managed-bean>
+		<managed-bean-name>pgcExport</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.account.controller.PGCExportGwtController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
   <!-- ****************************************** -->
   <!-- ******** NAVIGATION RULES **************** -->
   <!-- ****************************************** -->

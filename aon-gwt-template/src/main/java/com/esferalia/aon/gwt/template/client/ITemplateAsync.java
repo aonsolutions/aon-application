@@ -55,6 +55,8 @@ public interface ITemplateAsync {
 	void insertRegistries(Domain domain, User user, AsyncCallback<Error> callback);
 	
 	void insertDiary(Domain domain, User user, AsyncCallback<Error> callback);
+	
+	void insertPGC(Domain domain, User user, AsyncCallback<Error> callback);
 
 	void insertCustomerIban(Domain domain, User user, AsyncCallback<Error> callback);
 

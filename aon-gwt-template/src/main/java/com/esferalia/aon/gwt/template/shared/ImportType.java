@@ -11,7 +11,8 @@ public enum ImportType {
 	CUSTOMER_IBAN,
 	INVOICE,
 	REGISTRY,
-	DIARY
+	DIARY,
+	PGC
 	;
 	
 }

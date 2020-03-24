@@ -50,7 +50,7 @@ public class ImportPage extends AonTemplate2{
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Importar Excel");		
-		Button downloadTemplate = toolbar.addButton("Plantilla Facturas", AON.AON_CSS.aonIconExcel());
+		Button downloadTemplate = toolbar.addButton("Descargar Plantillas", AON.AON_CSS.aonIconExcel());
 		downloadTemplate.setVisible(true);
 		downloadTemplate.addClickHandler(new ClickHandler() {
 			
@@ -73,7 +73,15 @@ public class ImportPage extends AonTemplate2{
 	}
 	
 	private void downloadInvoiceTemplate() {
-		Window.open( GWT.getModuleBaseURL()+ "/gwt_download_invoice_template", "_blank",null);
+		Window.open( GWT.getModuleBaseURL()+ "/gwt_download_template"
+				+ "?type=invoice", "_blank",null);
+		Window.open( GWT.getModuleBaseURL()+ "/gwt_download_template"
+				+ "?type=registry", "_blank",null);
+		Window.open( GWT.getModuleBaseURL()+ "/gwt_download_template"
+				+ "?type=diary", "_blank",null);
+		Window.open( GWT.getModuleBaseURL()+ "/gwt_download_template"
+				+ "?type=pgc", "_blank",null);
+		
 	}
 	
 	private void info() {

@@ -116,10 +116,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
 				}
 				else if(dialog.getType().contains("import") || dialog.getType().contains("export") 
 						|| dialog.getType().equals("editEcommerceTemplate")){
-					if("importResponse".equals(dialog.getType()) || "importDelivery".equals(dialog.getType())
-							|| "importProjectCommercial".equals(dialog.getType()) || "importCustomerIban".equals(dialog.getType())
-							|| "importInvoices".equals(dialog.getType())|| "importRegistries".equals(dialog.getType())
-							|| "importOnly".equals(dialog.getType())){
+					if("importResponse".equals(dialog.getType()) || "importOnly".equals(dialog.getType())){
 						onAccept();
 					} else {
 						ListBox lb1 = (ListBox) flex_table.getWidget(0, 1);
@@ -203,20 +200,13 @@ public abstract class TemplatesDialog extends CustomDialogB {
 		case "importEcommerceTemplate": importEcommerce(dialog);break;
 		case "editEcommerceTemplate": editEcommerce(dialog);break;
 		case "exportEcommerce":exportEcommerce(dialog);break;
-		case "importDelivery":importOnly(dialog.getUrl());break;
-		case "importProjectCommercial":importOnly(dialog.getUrl());break;
-		case "importCustomerIban":importOnly(dialog.getUrl());break;
-		case "importInvoices":importOnly(dialog.getUrl());break;
-		case "importRegistries":importOnly(dialog.getUrl());break;
 		case "importOnly":importOnly(dialog.getUrl());break;
 
 		default:
 			break;
 		}
 	} 
-	
-	
-	
+
 	private void importar(Dialog dialog){
 		dialogAux = dialog;
 		flex_table.setStyleName("aon-panelGrid");

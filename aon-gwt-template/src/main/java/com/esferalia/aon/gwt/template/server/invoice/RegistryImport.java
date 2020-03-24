@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -23,14 +24,17 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
+import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.registry.Registry;
+import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
 
 
 public class RegistryImport {
@@ -39,6 +43,7 @@ public class RegistryImport {
 		private Registry registry;
 		private Account account;
 		private String iban;
+		private String type;
 		
 		public RegistryImportClass() {
 			this.registry = new Registry()
@@ -69,7 +74,32 @@ public class RegistryImport {
 		public void setIban(String iban) {
 			this.iban = iban;
 		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
 		
+		public Boolean isCustomer() {
+			return this.type != null && (this.type.equalsIgnoreCase("C") || this.type.equalsIgnoreCase("CUSTOMER")
+					|| (this.account != null && this.account.getCode() != null 
+						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("430")));
+		}
+		
+		public Boolean isSupplier() {
+			return this.type != null && (this.type.equalsIgnoreCase("P") || this.type.equalsIgnoreCase("PROVEEDOR")
+					|| (this.account != null && this.account.getCode() != null 
+						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("400")));
+		}
+		
+		public Boolean isCreditor() {
+			return this.type != null && (this.type.equalsIgnoreCase("A") || this.type.equalsIgnoreCase("ACREEDOR")
+					|| (this.account != null && this.account.getCode() != null 
+						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("410")));
+		}
 	}
 	
 	public static RegistryImport getInstance() {
@@ -152,13 +182,11 @@ public class RegistryImport {
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				reg = new RegistryImportClass();
-				
+				Integer indexTitle = Utils.isAyudaT(domain.getName()) ? 3 : 0;
 				cellStream.forEach(cell -> {
-					if(row.getRowNum()< 3) {
-						
-					} else if(row.getRowNum() == 3) {
+					if(row.getRowNum() == indexTitle) {
 						titleList.add(cell.getStringCellValue());
-					} else {
+					} else if(row.getRowNum() > indexTitle){
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell);			
 					}
@@ -182,32 +210,18 @@ public class RegistryImport {
 		}
 		return null;
 	}
-	
-	private Object getObjectValue(Cell cell){
-		if(CellType.STRING == cell.getCellTypeEnum()) {
-			return cell.getStringCellValue();
-		}
-		if(CellType.NUMERIC == cell.getCellTypeEnum()) {
-			return cell.getNumericCellValue();
-		}
-		if(CellType.FORMULA == cell.getCellTypeEnum())
-			return cell.getCellFormula();
-		if(CellType.BOOLEAN == cell.getCellTypeEnum()) {
-			return cell.getBooleanCellValue() ? 1.0 : 0.0;
-		}
-		return null;
-	}
 
  	private void check(Domain domain , String login, String title, Cell cell) {
-		Object o = getObjectValue(cell);
+		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
 	
-		if("CUENTA".equalsIgnoreCase(title)) {
+		if("CUENTA".equalsIgnoreCase(title)
+				|| "CUENTA CONTABLE".equalsIgnoreCase(title)) {
 			String acc = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
-			reg.getAccount().setCode(acc.substring(0,4) + acc.substring(7));
+			reg.getAccount().setCode(Utils.calculateAccount(acc));
 			return;
 		}
 
@@ -227,17 +241,22 @@ public class RegistryImport {
 			}
 			return ;
 		}
-		if("DOMICILIO".equalsIgnoreCase(title)) {
+		if("DOMICILIO".equalsIgnoreCase(title)
+				|| "DIRECCION".equalsIgnoreCase(title)
+				|| "DIRECCIÓN".equalsIgnoreCase(title)) {
 			reg.getRegistry().getAddress().setAddress(o.toString());
 			return;
 		}
 		
-		if("C.P.".equalsIgnoreCase(title)) {
+		if("C.P.".equalsIgnoreCase(title)
+				|| "CODIGO POSTAL".equalsIgnoreCase(title)
+				|| "CÓDIGO POSTAL".equalsIgnoreCase(title)) {
 			reg.getRegistry().getAddress().setZip(o.toString());
 			return;
 		}
 		
-		if("Población".equalsIgnoreCase(title) || "POBLACION".equalsIgnoreCase(title)) {	
+		if("Población".equalsIgnoreCase(title) || "POBLACION".equalsIgnoreCase(title)
+				|| "CIUDAD".equalsIgnoreCase(title)) {	
 			reg.getRegistry().getAddress().setCity(o.toString());
 			return ;
 		}
@@ -291,14 +310,15 @@ public class RegistryImport {
 				acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
 			}
 			
-			if("430".equals(r.getAccount().getCode().substring(0, 3))) {
-				Integer registryId = reg.getId();
+			Integer registryId = reg.getId();
+			Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+			f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+				.findFirst().orElse(new Scope());
+			
+			if(r.isCustomer()) {
 				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f->
 					f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq( registryId )));
 				if(customer == null || customer.getId() == null) {
-					Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
-					f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-						.findFirst().orElse(new Scope());
 					Customer c = new Customer()
 						.setAccount(acc.getId())
 						.setDomain(domain.getId())
@@ -307,86 +327,47 @@ public class RegistryImport {
 						.setStatus(CustomerStatus.ACTIVE);
 					AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
 				}
+			} 
+			
+			if(!Utils.isAyudaT(domain.getName()) && r.isSupplier()) {
+				Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f->
+					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
+				if(!supplier.isPresent()) {
+					Supplier sup = new Supplier()
+						.setAccount(acc.getId())
+						.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+						.setStatus(SupplierStatus.ACTIVE);
+					sup.setId(registryId);
+					sup.setDomain(domain.getId());
+				}
+			}
+			
+			if(!Utils.isAyudaT(domain.getName()) && r.isCreditor()) {
+				
+				Optional<Creditor> creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f->
+					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
+				if(!creditor.isPresent()) {
+					Supplier cre = new Supplier()
+						.setAccount(acc.getId())
+						.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+						.setStatus(SupplierStatus.ACTIVE);
+					cre.setId(registryId);
+					cre.setDomain(domain.getId());
+				}
 			}
 		}
 	}
 
 	private static DocumentType getDocumentType(String document) {
-		if(isValidCIF(document)) {
+		if(document == null) {
 			return DocumentType.CIF;
-		} else if(isValidNIE(document)) {
+		} else if(AonDocumentUtil.isValidCIF(document.toCharArray())){
+			return DocumentType.CIF;
+		} else if(AonDocumentUtil.isValidNIE(document.toCharArray())) {
 			return DocumentType.NIE;
-		} else if(isValidNIF(document)) {
+		} else if(AonDocumentUtil.isValidNIF(document.toCharArray())) {
 			return DocumentType.NIF;
 		} else return DocumentType.OTHER;
 	}
-	
-	private static final char[] DNI_LETTERS = { 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D',
-			'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E' };
-	private static final char[] NIF_LETTERS = { 'J', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' };
 
-	public static boolean isValidNIE(String document) {
-		char[] doc = document.toCharArray();
-		if (doc == null || doc.length != 9) {
-			return false;
-		}
-		doc[0] = (doc[0] == 'X') ? '0' : doc[0];
-		doc[0] = (doc[0] == 'Y') ? '1' : doc[0];
-		doc[0] = (doc[0] == 'Z') ? '2' : doc[0];
-		String numbers = new String(doc, 0, 8);
-		if (!AonStringUtils.isNumeric(numbers)) {
-			return false;
-		}
-		return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
-	}
-
-	public static boolean isValidNIF(String document) {
-		char[] doc = document.toCharArray();
-		if (doc == null || doc.length != 9) {
-			return false;
-		}
-		doc[0] = (doc[0] == 'K' || doc[0] == 'L' || doc[0] == 'M') ? '0' : doc[0];
-		String numbers = new String(doc, 0, 8);
-		if (!AonStringUtils.isNumeric(numbers)) {
-			return false;
-		}
-		return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
-	}
-
-	public static boolean isValidCIF(String document) {
-		char[] doc = document.toCharArray();
-		if (doc == null || doc.length != 9) {
-			return false;
-		}
-		int lInDC = 0;
-		for (int i = 1; i < 8; ++i) {
-			String strDigit = new String(doc, i, 1);
-			if (!AonStringUtils.isNumeric(strDigit)) {
-				return false;
-			}
-			int digit = Integer.parseInt(strDigit);
-			if ((i % 2) != 0) {
-				digit *= 2;
-				if (digit >= 10) {
-					digit -= 9;
-				}
-			}
-			lInDC += digit;
-		}
-		// Buscamos el multiplo de diez mas cercano mayor al numero calculado.
-		lInDC = (((lInDC / 10) + 1) * 10) - lInDC;
-		if (lInDC == 10) {
-			lInDC = 0;
-		}
-		String first = new String(doc,0,1);
-		if (first.matches("[P|N|S|Q|R|W]")) {
-			return (NIF_LETTERS[lInDC] == doc[8]);
-		}
-		String strDC = new String(doc, 8, 1);
-		if (!AonStringUtils.isNumeric(strDC)) {
-			return false;
-		}
-		return (Integer.parseInt(strDC) == lInDC);
-	}
-	
 }

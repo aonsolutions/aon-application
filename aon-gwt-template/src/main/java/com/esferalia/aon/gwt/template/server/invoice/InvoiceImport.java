@@ -170,29 +170,8 @@ public class InvoiceImport {
 		return null;
 	}
 
-	private Object getObjectValue(Cell cell){
-		if(CellType.STRING == cell.getCellTypeEnum()) {
-			return cell.getStringCellValue();
-		}
-		if(CellType.NUMERIC == cell.getCellTypeEnum()) {
-			return cell.getNumericCellValue();
-		}
-		
-		if(CellType.FORMULA == cell.getCellTypeEnum() && CellType.NUMERIC == cell.getCachedFormulaResultTypeEnum()) {
-			return cell.getNumericCellValue();
-		} else if(CellType.FORMULA == cell.getCellTypeEnum() && CellType.STRING == cell.getCachedFormulaResultTypeEnum()) {
-			return cell.getStringCellValue();
-		} else if(CellType.FORMULA == cell.getCellTypeEnum()) {
-			return cell.getCellFormula();
-		}
-		if(CellType.BOOLEAN == cell.getCellTypeEnum()) {
-			return cell.getBooleanCellValue() ? 1.0 : 0.0;
-		}
-		return null;
-	}
-
  	private void check(Domain domain , String login, String title, Cell cell) {
-		Object o = getObjectValue(cell);
+		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
 	
 		if("TIPO OPERACIÓN".equalsIgnoreCase(title)
@@ -295,7 +274,7 @@ public class InvoiceImport {
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
-			inv.setAccount(calculateAccount(acc));
+			inv.setAccount(Utils.calculateAccount(acc));
 			return;
 		}
 		
@@ -759,16 +738,7 @@ public class InvoiceImport {
 		});
 		return accountEntry;
 	}
-	
-	private String calculateAccount(String acc) {
-		if(acc.length() > 9) {
-			return acc.substring(0,4) + acc.substring((acc.length() - 9) + 4);
-		} else if(acc.length() < 9) {
-			return acc.substring(0, 4) + generateZeros(9 - acc.length()) + acc.substring(4);
-		}
-		return acc;
-	}
-	
+
 	private static Boolean isSameReference(String reference, String serie, Integer number, InvoiceImportClass iic) {
 		Boolean snBool = false;
 		if(serie != null && number != null) {
@@ -779,11 +749,5 @@ public class InvoiceImport {
 		return reference.equals(iic.getRef()) || snBool;
 	}
 	
-	private String generateZeros(Integer index) {
-		String zeros = "";
-		for(Integer i = 0; i < index; i++) {
-			zeros = zeros + "0";
-		}
-		return zeros;
-	}
+
 }

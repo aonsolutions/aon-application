@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.template.server;
+package com.esferalia.aon.gwt.template.server.invoice;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -23,18 +23,44 @@ import org.apache.poi.ss.usermodel.Row;
 
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
-@WebServlet(name = "DownloadTemplates", urlPatterns = { "/aon_gwt_template/gwt_download_invoice_template/*"
-														,"/aon_gwt_aio/gwt_download_invoice_template/*"})
-public class DownloadInvoiceTemplateServlet extends HttpServlet {
+@WebServlet(name = "DownloadImportTemplate", urlPatterns = { "/aon_gwt_template/gwt_download_template/*"
+														,"/aon_gwt_aio/gwt_download_template/*"})
+public class DownloadImportTemplateServlet extends HttpServlet {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7638560042733639057L;
 
-	@Override
-    protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{        
-        LinkedList<String> columnList = new LinkedList<String>();
+	private LinkedList<String> getColumnList(String type) {	
+		if("registry".equalsIgnoreCase(type)) {
+			return getRegistryColumnList();
+		} else if("invoice".equalsIgnoreCase(type)) {
+			return getInvoiceColumnList();
+		} else if("diary".equalsIgnoreCase(type)) {
+			return getDiaryColumnList();
+		} else if("pgc".equalsIgnoreCase(type)) {
+			return getPgcColumnList();
+		}
+		return new LinkedList<>();
+	}
+	
+	private LinkedList<String> getRegistryColumnList() {
+		LinkedList<String> columnList = new LinkedList<String>();
+        columnList.add("TIPO");
+        columnList.add("CUENTA CONTABLE");
+        columnList.add("CIF");
+        columnList.add("NOMBRE");
+        columnList.add("DIRECCIÓN");
+        columnList.add("CÓDIGO POSTAL");
+        columnList.add("CIUDAD");
+        columnList.add("PROVINCIA");
+        columnList.add("PAÍS");
+        return columnList;
+	}
+	
+	private LinkedList<String> getInvoiceColumnList() {
+		LinkedList<String> columnList = new LinkedList<String>();
         columnList.add("TIPO OPERACIÓN");
         columnList.add("TIPO FACTURA");
         columnList.add("FECHA");
@@ -53,6 +79,7 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
         columnList.add("DESCRIPCIÓN CUENTA");
         columnList.add("BASE IMPONIBLE");
         columnList.add("%IMPUESTO");
+        columnList.add("CUOTA IMPUESTO");
         columnList.add("%RE");
         columnList.add("CUOTA RE");
         columnList.add("%RETENCIÓN");
@@ -60,7 +87,38 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
         columnList.add("TOTAL");
         columnList.add("CLAVE RETENCIÓN");
         columnList.add("SUBCLAVE RETENCIÓN");
-
+        return columnList;
+	}
+	
+	private LinkedList<String> getDiaryColumnList() {
+		LinkedList<String> columnList = new LinkedList<String>();
+        columnList.add("ASIENTO");
+        columnList.add("APUNTE");
+        columnList.add("FECHA");
+        columnList.add("FACTURA");
+        columnList.add("DOCUMENTO");
+        columnList.add("SUBCUENTA");
+        columnList.add("TÍTULO DE SUBCUENTA");
+        columnList.add("CONTRAPARTIDA");
+        columnList.add("CONCEPTO");
+        columnList.add("REFERENCIA");
+        columnList.add("DEBE");
+        columnList.add("HABER");        
+        return columnList;
+	}
+	
+	private LinkedList<String> getPgcColumnList() {
+		LinkedList<String> columnList = new LinkedList<String>();
+        columnList.add("CÓDIGO");
+        columnList.add("DESCRIPCIÓN");
+        columnList.add("ALIAS");   
+        return columnList;
+	}
+	
+	@Override
+    protected void doGet(HttpServletRequest p_request, HttpServletResponse p_response)throws ServletException, IOException{        
+		String type = p_request.getParameter("type");
+		LinkedList<String> columnList = getColumnList(type);
 		HSSFWorkbook libro = new HSSFWorkbook();
         ByteArrayOutputStream archivo = new ByteArrayOutputStream();
         HSSFSheet hoja = libro.createSheet("Plantilla 1");
@@ -100,11 +158,6 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
         }
         Cell celdaf = fila.createCell(columns);
         celdaf.setCellStyle(style);
-       /* for(Integer i = 0; i<= aux.getColumns().size(); i++){
-        	if(aux.getColumns().size()!=i && ( aux.getColumns().get(i).equals("Producto") || aux.getColumns().get(i).equals("Nombre")))
-        		hoja.setDefaultColumnStyle(i, style3);
-        	else hoja.setDefaultColumnStyle(i, style2);
-        }*/
 
         for(Integer h = 0; h< columns;h++){
         	hoja.autoSizeColumn(h);
@@ -117,7 +170,7 @@ public class DownloadInvoiceTemplateServlet extends HttpServlet {
         Integer length = data.length;
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         
-        p_response.addHeader("Content-Disposition","attachment; filename=\"invoiceTemplate.xls" +"\"");
+        p_response.addHeader("Content-Disposition","attachment; filename=\""+ type + "Template.xls" +"\"");
         p_response.setContentType("application/msexcel");
 
         if (length > 0 && length <= Integer.MAX_VALUE);

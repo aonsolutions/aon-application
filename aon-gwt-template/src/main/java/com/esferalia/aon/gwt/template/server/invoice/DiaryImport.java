@@ -105,51 +105,45 @@ public class DiaryImport {
 		LinkedList<String> titleList = new LinkedList<>();
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
+		apunte = 0;
 		rowStream.forEach(row ->{
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
-			
+			Integer indexTitle = Utils.isAyudaT(domain.getName()) ? 3 : 0;
 			cellStream.forEach(cell -> {
-				if(row.getRowNum()< 3) {
-					
-				} else if(row.getRowNum() == 3) {
+				if(row.getRowNum() == indexTitle) {
 					titleList.add(cell.getStringCellValue());
-				} else {
+				} else if(row.getRowNum() > indexTitle){
 					String title = titleList.get(cell.getColumnIndex());
 					check(domain, login, title, cell, aonCtx);			
 				}
 			});
 		});
 	}
-	
-	private Object getObjectValue(Cell cell){
-		if(CellType.STRING == cell.getCellTypeEnum()) {
-			return cell.getStringCellValue();
-		}
-		if(CellType.NUMERIC == cell.getCellTypeEnum()) {
-			return cell.getNumericCellValue();
-		}
-		if(CellType.FORMULA == cell.getCellTypeEnum())
-			return cell.getCellFormula();
-		if(CellType.BOOLEAN == cell.getCellTypeEnum()) {
-			return cell.getBooleanCellValue() ? 1.0 : 0.0;
-		}
-		return null;
-	}
 
  	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
-		Object o = getObjectValue(cell);
+		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
-	
-		if("ASIENTO".equalsIgnoreCase(title)) {
+		if("ASIENTO".equalsIgnoreCase(title)
+				|| "Nº DIARIO".equalsIgnoreCase(title)) {
 			Double d = Double.parseDouble(o.toString());
 			asiento = d.intValue();
 			if(!diary.containsKey(asiento)) {
+				apunte = 1;
 				EnterpriseActivity ea = aonCtx.getMainActivity();	
 				diary.put(asiento, new AccountEntry()
 						.setDomain(domain.getId())
-						.setActivity(ea==null ? null : ea.getId()));
+						.setActivity(ea==null ? null : ea.getId())
+						.addDetail(new AccountEntryDetail()
+								.setDomain(domain.getId())
+								.setLine(apunte))
+						);
+			} else {
+				diary.get(asiento).addDetail(
+						new AccountEntryDetail()
+						.setDomain(domain.getId())
+						.setLine(apunte++));	
 			}
 			return;
 		}
@@ -189,6 +183,22 @@ public class DiaryImport {
 			diary.get(asiento).setPeriodStatus(ap.getStatus());
 			return ;
 		}
+		
+		if("TIPO".equalsIgnoreCase(title)) {
+			diary.get(asiento).setEntryType(AccountEntryType.safeValueOf(o.toString()));
+			return;
+		}
+		
+		if("SEGURIDAD".equalsIgnoreCase(title)) {
+			// TODO
+			return;
+		}
+		
+		if("ACTIVIDAD".equalsIgnoreCase(title)) {
+			// TODO
+			return;
+		}	
+		
 		if("FACTURA".equalsIgnoreCase(title)) {	
 			invoice = o != null && !"".equals(o.toString()) && !" ".equals(o.toString());
 			return;
@@ -199,22 +209,31 @@ public class DiaryImport {
 			return;
 		}
 		
-		if("SUBCUENTA".equalsIgnoreCase(title)) {	
+		if("SUBCUENTA".equalsIgnoreCase(title)
+				|| "CUENTA".equalsIgnoreCase(title)) {	
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			String subaccount = acc.substring(0,4) + acc.substring(7);
 			diary.get(asiento).getDetails().get(apunte-1).setAccountCode(subaccount);
 			return ;
 		}
-		if("TITULO DE SUBCUENTA".equalsIgnoreCase(title) || "Título de Subcuenta".equalsIgnoreCase(title)) {
+		if("TITULO DE SUBCUENTA".equalsIgnoreCase(title) || "Título de Subcuenta".equalsIgnoreCase(title)
+				|| "DESC. CUENTA".equalsIgnoreCase(title)) {
 			String subAccountTitle = o.toString();	
 			diary.get(asiento).getDetails().get(apunte-1).setAccountDescription(subAccountTitle);
 			return;
 		}
 		
-		if("CONTRAPARTIDA".equalsIgnoreCase(title)) {
+		if("CONTRAPARTIDA".equalsIgnoreCase(title)
+				|| "CONTRAP.".equalsIgnoreCase(title)) {
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			String contrapartida = acc.substring(0,4) + acc.substring(7);
 			diary.get(asiento).getDetails().get(apunte-1).setBalancingAccountCode(contrapartida);
+			return;
+		}
+		
+		if("DESC. CONTRAP.".equalsIgnoreCase(title)) {
+			String contrapartidaTitle = o.toString();
+			diary.get(asiento).getDetails().get(apunte-1).setBalancingAccountDescription(contrapartidaTitle);
 			return;
 		}
 		
@@ -255,6 +274,11 @@ public class DiaryImport {
 			if(credit != null && credit < 0) {
 				diary.get(asiento).getDetails().get(apunte-1).setDebit(credit);
 			} else diary.get(asiento).getDetails().get(apunte-1).setCredit(credit);
+			return;
+		}
+		
+		if("COMENTARIOS".equalsIgnoreCase(title)) {
+			diary.get(asiento).setComments(o.toString());
 			return;
 		}
 	}

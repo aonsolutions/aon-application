@@ -58,7 +58,6 @@ public class AccountDAO {
 		return ctx.getDslContext()
 				.selectFrom(ACCOUNT)
 				.where(ACCOUNT_PROPERTIES.getConditions(filter))
-				.and(ACCOUNT.ENTRYENABLED.eq((byte) 1))
 				.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 				.orderBy(ACCOUNT.CODE)
 				.fetch()

@@ -78,6 +78,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			:(query);
 		return ACCOUNTING.getAccounts(domainName, domain,user,
 				p ->  p.getActiveProperty().eq((byte) 1)
+					.and(p.getEntryEnabledProperty().eq((byte) 1))
 					.and(p.getCodeProperty().like(q)
 					 .or(p.getDescriptionProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))

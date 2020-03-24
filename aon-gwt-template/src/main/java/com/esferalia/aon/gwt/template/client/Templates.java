@@ -53,6 +53,7 @@ public class Templates extends Composite implements EntryPoint {
 	private static final String TEMPLATES = "templates";
 	private static final String DOWNLOAD_AMAZON_DELIVERY = "download_amazon_delivery";
 	private static final String CONTRACT_MEDIA = "contract_media";
+	private static final String IMPORT_ONLY= "importOnly";
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
 	final IMarketplaceAsync mpimpl = GWT.create(IMarketplace.class);
@@ -140,6 +141,7 @@ public class Templates extends Composite implements EntryPoint {
 						exportDelivery(me);
 						exportProjectCommercial(me);
 						exportProjectCommercialx(me);
+						exportPGCx(me);
 						exportOfferx(me);
 						exportOfferPdfx(me);
 						exportFullExpedient(me);
@@ -281,7 +283,7 @@ public class Templates extends Composite implements EntryPoint {
 	}
 
 	private void importDelivery(){
-		Dialog d = new Dialog("Importar Albaranes de Venta","Importar",true,"Cancelar",true,"importDelivery");
+		Dialog d = new Dialog("Importar Albaranes de Venta","Importar",true,"Cancelar",true, IMPORT_ONLY);
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
@@ -362,7 +364,7 @@ public class Templates extends Composite implements EntryPoint {
 	
 	private void importProjectCommercial(){
 		
-		Dialog d = new Dialog("Importar Operación Commercial","Importar",true,"Cancelar",true,"importProjectCommercial");
+		Dialog d = new Dialog("Importar Operación Commercial","Importar",true,"Cancelar",true, IMPORT_ONLY);
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
@@ -445,7 +447,7 @@ public class Templates extends Composite implements EntryPoint {
 	
 	private void importInvoices(){
 		
-		Dialog d = new Dialog("Importar Invoice","Importar",true,"Cancelar",true,"importInvoices");
+		Dialog d = new Dialog("Importar Invoice","Importar",true,"Cancelar",true, IMPORT_ONLY);
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
@@ -527,7 +529,7 @@ public class Templates extends Composite implements EntryPoint {
 	
 	private void importCustomerIban(){
 		
-		Dialog d = new Dialog("Importar Cuenta Bancaria","Importar",true,"Cancelar",true,"importCustomerIban");
+		Dialog d = new Dialog("Importar Cuenta Bancaria","Importar",true,"Cancelar",true, IMPORT_ONLY);
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(getAonData(), d) {
 			
@@ -1908,6 +1910,27 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportProjectCommercialx(Templates thiz) /*-{
 		$wnd.projectCommercialx = function(name, source, seller, target, fromDate, toDate, comments, status, probability) {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::projectCommercialx(*)(name, source, seller, target, fromDate, toDate, comments, status, probability);
+		}
+	}-*/;
+	
+	public void pgcx(String code, String description, String alias, String active, String costCenter, String entryEnabled){
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "download_pgc_excel/"
+				+ "?domain=" + getDomain().getName()
+				+ "&domain_id=" + getDomain().getId()
+            	+ "&username="+ getUser().getLogin()
+            	+ "&code=" + code
+            	+ "&description=" + description
+            	+ "&alias=" + alias
+            	+ "&active=" + active
+            	+ "&costCenter=" + costCenter
+            	+ "&entryEnabled=" + entryEnabled;
+		
+		Window.open( fileDownloadURL, "_blank",null);
+	}
+
+	public static native void exportPGCx(Templates thiz) /*-{
+		$wnd.pgcx = function(code, description, alias, active, costCenter, entryEnabled) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::pgcx(*)(code, description, alias, active, costCenter, entryEnabled);
 		}
 	}-*/;
 	
