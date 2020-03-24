@@ -247,11 +247,11 @@ public class ContractLeaveLoader {
 	public void loadContractLeave(final Integer id, final Date leaveStart, final Date leaveEnd, final long parentDays,
 			final LeaveType type, String dailyRegBase, final ExpressionContext exprCtx) throws ExpressionException {
 		
-		startDate= getStartDate(type, leaveStart);
+		Date itStart = getStartDate(type, leaveStart);
 		
 		final ITimedVariable<?> contractStart = exprCtx.getVariable(ContextVariable.CONTRACT_START, startDate, endDate);
 		final Date realStartDate =  Period.max(startDate, (Date) contractStart.getValue(contractStart.getPeriod()));
-		final Date start = Period.max(leaveStart,  realStartDate );
+		final Date start = Period.max(itStart,  realStartDate );
 
 		final ITimedVariable<?> contractEnd = exprCtx.getVariable(ContextVariable.CONTRACT_END, startDate, endDate);
 		final Date end = Period.min(leaveEnd, (Date) contractEnd.getValue(contractEnd.getPeriod()));
@@ -259,7 +259,7 @@ public class ContractLeaveLoader {
 
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
 
-		exprCtx.setVariable(ContextVariable.IT_START, leaveStart, start, end);
+		exprCtx.setVariable(ContextVariable.IT_START, itStart, start, end);
 
 		ExpressionImpl exp = new ExpressionImpl();
 		exp.setName(ContextVariable.REGULATORY_BASE.getName());
@@ -278,7 +278,7 @@ public class ContractLeaveLoader {
 			public Void visitCommonDisease(LeaveType leaveType) {
 
 				//for (DaysRange range : COMMON_RANGES) {
-				for (DaysRange range : getCommonRanges(leaveStart, exprCtx)) {
+				for (DaysRange range : getCommonRanges(itStart, exprCtx)) {
 
 					String name = range.getName(ContextVariable.COMMON_DISEASE_DAYS);
 
@@ -329,7 +329,7 @@ public class ContractLeaveLoader {
 			public Void visitOcupationalDisease(LeaveType leaveType) {
 
 				// for (DaysRange range : PROFESSIONAL_RANGES) {
-				for (DaysRange range : getProfessionalRanges(leaveStart, exprCtx)) {
+				for (DaysRange range : getProfessionalRanges(itStart, exprCtx)) {
 
 					String name = range.getName(ContextVariable.OCCUPATIONAL_DISEASE_DAYS);
 
