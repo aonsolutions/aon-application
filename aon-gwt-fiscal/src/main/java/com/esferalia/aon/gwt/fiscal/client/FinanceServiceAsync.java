@@ -21,6 +21,7 @@ public interface FinanceServiceAsync {
 	
 	void settleFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback);
 	void undoFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback);
+	void payFinance(String domainName, int domainId, String user, Finance finance, AsyncCallback<Finance> callback);
 	
 
 }

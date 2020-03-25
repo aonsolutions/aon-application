@@ -565,6 +565,22 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 									@Override
 									public void onAccept(Finance finance) {
 										dialog.hide();
+										FINANCE_SERVICE.payFinance(callback.getCurrentDomainName()
+												,callback.getCurrentDomainId()
+												,callback.getCurrentUser()
+												, finance
+												,new AsyncCallback<Finance>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														MessageDialog.error("Se ha producido un error al pagar el vencimiento. ["+caught.getMessage()+"]");
+													}
+
+													@Override
+													public void onSuccess(Finance fin) {
+														updateAndRefresh( callback ,fin );
+													}
+												});
 									}
 								});
 						dialog.setWidget(payPanel);

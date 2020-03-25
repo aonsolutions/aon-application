@@ -170,6 +170,44 @@ public class BankAccount implements Serializable {
 		return sb.toString();
 	}	
 
+	public String getCCC1() {
+		return AonStringUtils.defaultString(getBban1());
+	}
+	public void setCCC1(String ccc1) {
+		setBban1(ccc1);
+	}
+	public String getCCC2() {
+		return AonStringUtils.defaultString(getBban2());
+	}
+	public void setCCC2(String ccc2) {
+		setBban2(ccc2);
+	}
+	public String getCCC3() {
+		return AonStringUtils.substring(getBban3(), 0, 2);
+		
+	}
+	public void setCCC3(String ccc3) {
+		String second = getBban3();
+		setBban3(
+			AonStringUtils.defaultString(AonStringUtils.substring(ccc3, 0, 2))
+		  + AonStringUtils.defaultString(AonStringUtils.substring(second, 2, 4)));
+		
+	}
+	public String getCCC4() {
+		return AonStringUtils.defaultString(AonStringUtils.substring(getBban3(), 2, 4))
+			+ AonStringUtils.defaultString(getBban4()) 
+			+ AonStringUtils.defaultString(getBban5());
+	}
+	public void setCCC4(String ccc4) {
+		String first = getBban3();
+		setBban3(
+			  AonStringUtils.defaultString(AonStringUtils.substring(first, 0, 4))
+			+ AonStringUtils.defaultString(AonStringUtils.substring(ccc4, 0, 2))
+		  );
+		setBban4(AonStringUtils.defaultString(AonStringUtils.substring(ccc4, 2, 6)));
+		setBban5(AonStringUtils.defaultString(AonStringUtils.substring(ccc4, 6, 10)));
+	}
+
 	public String getPureCCC() {
 		StringBuilder sb = new StringBuilder();
 		if (AonStringUtils.isNotBlank(getBban1())) {

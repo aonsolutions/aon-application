@@ -255,4 +255,12 @@ public class FinanceImpl implements IFinance {
 			return FinanceDAO.getFinance(ctx, finance);
 		});			
 	}
+
+	@Override
+	public Finance payFinance(AONContext ctx, Finance finance) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			FinanceDAO.pay(ctx, finance);
+			return FinanceDAO.getFinance(ctx, finance.getId());
+		});			
+	}
 }

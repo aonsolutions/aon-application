@@ -136,8 +136,16 @@ public class FinanceValidation {
 	 * El vencimiento debe estar pendiente para ser saldado.
 	 */
 	private static BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_SETTLING = (finance,ctx) -> {
-		if (!finance.isPending()) 
+		if (!finance.isPending() && !finance.isReturned()) 
 			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_SETTLED.getMessage());
+	};
+
+	/**
+	 * El vencimiento debe estar pendiente para ser saldado.
+	 */
+	private static BiConsumer<Finance,AONContext> CHECK_PENDING_FOR_PAYING = (finance,ctx) -> {
+		if (!finance.isPending() && !finance.isReturned()) 
+			throw new AonCoreException(AonError.FINANCE_CAN_NOT_BE_PAYING.getMessage());
 	};
 
 	public static Finance validateSettleTracking(AONContext ctx, Integer financeId) {
@@ -182,5 +190,17 @@ public class FinanceValidation {
 			.andThen(CHECK_IF_FINANCE_IS_GROUPED_FOR_UNDOING)
 			.accept(tracking, ctx);
 		return tracking;
+	}
+
+	public static Finance validatePay(AONContext ctx, Finance finance) {
+		Finance original = FinanceDAO.getFinance(ctx, finance.getId());
+		if (original == null ) {
+			if (original == null) throw new AonCoreException(AonError.FINANCE_NOT_FOUND.getMessage());
+		}
+		CHECK_PENDING_FOR_PAYING
+			.accept(original, ctx);
+		CHECK_AMOUNT_ZERO
+			.accept(finance, ctx);
+		return finance;
 	}
 }

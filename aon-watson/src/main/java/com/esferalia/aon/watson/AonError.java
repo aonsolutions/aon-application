@@ -2,6 +2,8 @@ package com.esferalia.aon.watson;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public enum AonError implements Serializable{
 	// Á --> \u00C1 á --> \u00E1
@@ -30,6 +32,7 @@ public enum AonError implements Serializable{
 	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_YEAR("El ejercicio debe tener un valor real")
 	,EMPTY_PERIOD("El periodo es un dato obligatorio, no puede estar vac\u00EDo")
+	,WRONG_PERIOD("No se ha encontrado un periodo contable para la fecha \"{0}\"")
 	,EMPTY_EPIGRAPH("El ep\u00EDgrafe es un dato obligatorio, no puede estar vac\u00EDo")
 	,INVALID_LENGTH("La longitud del dato \"{0}\" no puede superar los {1} car\u00E1cteres")
 	
@@ -128,8 +131,9 @@ public enum AonError implements Serializable{
 	,INVOICE_CANT_DELETE_RECTIFIED("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa.")
 	// --------------------------------------------- FINANCE
 	,FINANCE_NOT_FOUND("Vencimiento no encontrado.")	
-	,FINANCE_CAN_NOT_BE_SETTLED("El vencimiento no se puede saldar, no está pendiente.")
-	,FINANCE_CAN_NOT_BE_UNDOING("El vencimiento no se dejar pendiente, no está saldado. {}")
+	,FINANCE_CAN_NOT_BE_SETTLED("El vencimiento no se puede saldar, no está pendiente ni devuelto.")
+	,FINANCE_CAN_NOT_BE_PAYING("El vencimiento no se puede pagar, no está pendiente ni devuelto.")	
+	,FINANCE_CAN_NOT_BE_UNDOING("El vencimiento no se dejar pendiente, no está saldado. {0}.")
 	,FINANCE_AMOUNT_ZERO("El importe del vencimiento no puede ser cero.")	
 	,FINANCE_EMPTY_SCOPE("No es posible encontrar un \u00E1mbito v\u00E1lido para el vencimiento.")
 	,FINANCE_WRONG_IBAN_LENGTH("Longitud de IBAN incorrecta.")
@@ -137,6 +141,8 @@ public enum AonError implements Serializable{
 	,FINANCE_WRONG_IBAN("IBAN incorrecto.")
 	,DELETE_STATUS_WRONG("No se permite el borrado de vencimientos que no est\u00E9n pendientes.")
 	,FINANCE_TRACKING_LATER_TRACKINGS("No se puede borrar el movimiento, tiene movimientos posteriores.")
+	,FINANCE_TRACKING_NO_BANK_ACCOUNT("No se puede pagar el vencimiento, no se ha indicado la cuenta contable del banco o caja.")
+	,FINANCE_TRACKING_NO_REGISTRY_ACCOUNT("No se puede pagar el vencimiento, no se ha indicado la cuenta contable del titular del vencimiento.")
 	,FINANCE_TRACKING_RECORDED("No se puede borrar el movimiento, está contabilizado y no tiene permisos de borrado.")
 	,FINANCE_ENTRY_LATER_TRACKINGS("No se puede borrar el asiento, alguno de los vencimientos tiene movimientos posteriores.")
 	,FINANCE_ENTRY_FROM_FBATCH("No se puede borrar el asiento. Procede de remesa, deshaga el apunte desde la pantalla de remesas.")
@@ -157,4 +163,8 @@ public enum AonError implements Serializable{
 		return MessageFormat.format(msg, arguments);
 	}
 
+	public static void main(String[] args) {
+		Date now = new Date();
+		System.out.println( WRONG_PERIOD.format( new SimpleDateFormat("dd/MM/yyyy").format( now )) );
+	}
 }

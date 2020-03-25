@@ -5824,4 +5824,15 @@ public class AON {
 				ctx.close();
 		}
 	}
+
+	public static Finance payFinance(String domainName, int domainId, String user, Finance finance) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().payFinance(ctx, finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
 }

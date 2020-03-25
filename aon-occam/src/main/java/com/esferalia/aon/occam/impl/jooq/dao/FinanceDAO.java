@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
+import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -37,12 +38,14 @@ import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
 import com.esferalia.aon.occam.api.model.finance.FinanceRecorder;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -492,7 +495,7 @@ public class FinanceDAO {
 					deleteFinanceTracking(ctx, ft);
 				} else {
 					if (ft.getAccountEntry() == null) {
-						pay(ctx,ft,entry);	
+						pay(ctx,ft.getFinance(),entry);	
 					}
 				}
 			}
@@ -509,19 +512,17 @@ public class FinanceDAO {
 				entry.setId(entryId);
 				financeEntry.setAccountEntry(entry);
 				for (FinanceTracking finance : financeEntry.getTrackings().values()) {
-					pay(ctx,finance,entry);
+					pay(ctx,finance.getFinance(),entry);
 				}
 			}
 		}
 		return financeEntry;
 	}
 	
-	private static void pay(AONContext ctx,FinanceTracking finance,AccountEntry entry) {
-		finance.getFinance().setFinanceStatus(FinanceStatus.PAID);
-		
-
+	private static void pay(AONContext ctx,Finance finance,AccountEntry entry) {
+		finance.setFinanceStatus(FinanceStatus.PAID);
 		FinanceTracking ft = new FinanceTracking()
-				.setFinance(finance.getFinance())
+				.setFinance(finance)
 				.setDomain(ctx.getDomainId())
 				.setTrackingDate(entry.getEntryDate())
 				.setType(FinanceTrackingType.PAID)
@@ -529,9 +530,9 @@ public class FinanceDAO {
 				.setRegistryBank(null)
 				.setPayMethodTypeDetail(null)
 				.setBankStatementLink(null)
-				.setAmount(finance.getFinance().getAmount())
+				.setAmount(finance.getAmount())
 				.setRecorded(true);
-		updateFinanceStatus(ctx,finance.getFinance().getId(),FinanceStatus.PAID);
+		updateFinanceStatus(ctx,finance.getId(),FinanceStatus.PAID);
 		Integer trackingId = insertTracking(ctx, ft);
 		ctx.getDslContext()
 			.insertInto(ACCOUNT_ENTRY_FINANCE_TRACKING)
@@ -882,6 +883,115 @@ public class FinanceDAO {
 			}
 		} else {
 			deleteFinanceTracking(ctx, financeTracking);
+		}
+	}
+
+	/*  FRACTION
+		if (!AonNumberUtils.equals( original.getAmount(), finance.getAmount())) {
+			ctx.log().info(" ----- START FINANCE FRACTION----- ");
+			double newAmount = AonMathUtils.round(original.getAmount() - finance.getAmount() );
+			original.setId( null )
+				.setAmount(newAmount)
+				.setFinanceStatus( FinanceStatus.PENDING );
+			Integer originalId = save(ctx, original);
+			FinanceTracking ft = new FinanceTracking()
+				.setFinance(original)
+				.setDomain(original.getDomain())
+				.setTrackingDate(new Date())
+				.setType(FinanceTrackingType.FRACTIONED)
+				.setDescription("Fracci\u00F3n 1/2")
+				.setRegistryBank(null)
+				.setPayMethodTypeDetail(null)
+				.setBankStatementLink(null)
+				.setAmount(newAmount)
+				.setRecorded(true);
+			insertTracking(ctx, ft)
+			
+			
+			ctx.log().info("INSERT FINANCE ( AMOUNT DIFERENCE " + newAmount +") id: " + originalId);
+			ctx.log().info(" ----- END FINANCE FRACTION----- ");
+		}
+ 
+	 */
+	
+	public static AccountEntry[] getFinanceEntry(AONContext ctx, Finance finance) {
+		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, finance.getDueDate());
+		if (period == null) {
+			throw new AonCoreException( AonError.WRONG_PERIOD.format( finance.getDueDate() ) );
+		}
+		AccountEntry ae = new AccountEntry()
+			.setDomain(finance.getDomain())
+			.setPeriod(period.getId())
+			.setEntryDate(finance.getDueDate())
+			.setEntryType(AccountEntryType.FINANCE)
+			.setActivity(finance.getInvoice()==null?null:finance.getInvoice().getActivity())
+			.setSecurityLevel(finance.getSecurityLevel());
+		FinanceEntry financeEntry = new FinanceEntry();
+		financeEntry.setAccountEntry(ae);
+		financeEntry.setBankAccount( AccountDAO.get( ctx, finance.getPayAccountId()) );
+		if (finance.getRegistryAccountId() == null) {
+			Invoice invoice = finance.getInvoice();
+			if (invoice == null || finance.getRegistry() == null || finance.getRegistry().getId() == null) {
+				throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
+			}
+			invoice.getType().visit(invoice, new IInvoiceTypeVisitor() {
+				private void fill( Account acc) {
+					if (acc == null) {
+						throw new AonCoreException( AonError.FINANCE_TRACKING_NO_REGISTRY_ACCOUNT.getMessage() );	
+					}
+					finance.setRegistryAccountId(acc.getId());
+					finance.setRegistryAccountCode(acc.getCode());
+					finance.setRegistryAccountDescription(acc.getDescription());
+				}
+				
+				@Override
+				public void visitSales(Invoice invoice) {
+					fill( RegistryDAO.getCustomerAccount(ctx, finance.getRegistry().getId()));
+				}
+				
+				@Override
+				public void visitPurchase(Invoice invoice) {
+					fill( RegistryDAO.getSupplierAccount(ctx, finance.getRegistry().getId()));
+				}
+				
+				@Override
+				public void visitExpenses(Invoice invoice) {
+					fill( RegistryDAO.getCreditorAccount(ctx, finance.getRegistry().getId()));
+				}
+				@Override
+				public void visitUndeductible(Invoice invoice) {
+					visitExpenses(invoice);
+				}
+				
+			});
+		}
+		financeEntry.add(finance);
+		return FinanceRecorder.recordFinanceEntry(financeEntry);
+	}
+
+	public static void pay(AONContext ctx, Finance finance) {
+		ctx.log().info(" ----- START FINANCE PAY ----- ");
+		try {
+			ctx.checkWrite();
+			Finance original = FinanceValidation.validatePay(ctx, finance);
+			AccountEntry entry = null;
+			if (finance.getPayAccountId() != null) {
+				AccountEntry[] entries = getFinanceEntry(ctx, original);
+				if (entries != null && entries.length == 1) {
+					entry = entries[0];	
+					Integer entryId = AccountEntryDAO.save(ctx, entry);
+					entry.setId(entryId);
+					pay(ctx,finance,entry);
+				}
+			} else {
+				// TODO ¿Si no se quiere contabilizar el pago?
+				throw new AonCoreException(AonError.FINANCE_TRACKING_NO_BANK_ACCOUNT.getMessage());
+			}
+		} catch (Throwable t) {
+			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			throw t;
+		} finally {
+			ctx.log().info(" ----- END FINANCE PAY ----- ");
 		}
 	}
 

@@ -3,12 +3,15 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ErrorPanel;
 import com.esferalia.aon.gwt.fiscal.client.widget.BankAccountBox;
 import com.esferalia.aon.gwt.fiscal.client.widget.BankAccountBox.BankAccountBoxOptions;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -19,6 +22,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -49,8 +54,11 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 		
 		final ListBox payMethodBox = new ListBox();
 		final BankAccountBox bankAccountBox = new BankAccountBox( new BankAccountBoxOptions()
-				.setBankAccount(finance.getBankAccount()));
+				.setBankAccount(finance.getBankAccount())
+				.setBICEditable(false)
+				);
 		final DoubleBox amount = new DoubleBox();
+		final AccountBox payAccount = new AccountBox(domainName,domain, user);
 		
 		
 		FlowPanel rootPanel = new FlowPanel();
@@ -71,6 +79,9 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 
 		
 		FlexTable table = new FlexTable();
+		table.getColumnFormatter().setWidth(0, "50px");
+		table.getColumnFormatter().setWidth(1, "auto");
+		
 		table.setStyleName(AON.AON_CSS.aonPanelGrid());
 		table.addStyleName(AON.AON_CSS.aonWidthAll());
 		int row = 0;
@@ -125,28 +136,39 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 
 		table.setWidget(row,0,new InlineLabel(AON.MSG.bankAccount()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-//		companyBanksBox.addValueChangeHandler( new ValueChangeHandler<String>() {
-//			
-//			@Override
-//			public void onValueChange(ValueChangeEvent<String> event) {
-//				String bank = event.getValue();
-//				BankAccount bankAccount = (AonStringUtils.isBlank(bank))? null : new BankAccount(bank);
-//				finance.setBankAccount(bankAccount);
-//			}
-//		});
-//		bankAccountBox.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-//			
-//			@Override
-//			public void onSelection(SelectionEvent<Suggestion> event) {
-//				IbanSuggestion suggestion = (IbanSuggestion) event.getSelectedItem();
-//				IIbanContainer cont = suggestion.getIbanContainer();
-//				bankAccountBox.setValue(cont.getIBan());
-//				BankAccount bankAccount = (AonStringUtils.isBlank(cont.getIBan()))? null : new BankAccount(cont.getIBan());
-//				finance.setBankAccount(bankAccount);
-//			}
-//		});
+		bankAccountBox.addValueChangeHandler( new ValueChangeHandler<BankAccount>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<BankAccount> event) {
+				finance.setBankAccount(event.getValue());
+			}
+		});
 		
 		table.setWidget(row,1,bankAccountBox);
+		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+		row++;
+
+		table.setWidget(row,0,new InlineLabel(AON.MSG.account()));
+		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		payAccount.setValue(finance.getPayAccountId(),finance.getPayAccountCode(),finance.getPayAccountDescription());
+		payAccount.addSelectionHandler( new SelectionHandler<Account>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+				Account account = event.getSelectedItem();
+				if (account == null) {
+					finance.setPayAccountId(null);
+					finance.setPayAccountCode(null);
+					finance.setPayAccountDescription(null);
+				} else {
+					finance.setPayAccountId(account.getId());
+					finance.setPayAccountCode(account.getCode());
+					finance.setPayAccountDescription(account.getDescription());
+				}
+				
+			}
+		});
+		table.setWidget(row,1,payAccount);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 

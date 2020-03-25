@@ -478,6 +478,7 @@ public class InvoiceDAO {
 					.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
 					.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 					.setRegistryName(record.getValue(INVOICE.RNAME))
+					.setActivity(record.getValue(INVOICE.ACTIVITY))
 					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				;
 		}
