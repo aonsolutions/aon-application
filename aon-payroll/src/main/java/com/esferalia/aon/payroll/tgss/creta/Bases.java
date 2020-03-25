@@ -8,6 +8,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
@@ -1575,12 +1576,28 @@ public class Bases {
 	private static class CompositeCCretaData
 			extends AbstractCCretaData {
 
-		protected String variables[];
+		protected List<String> variables;
 
-		public CompositeCCretaData(String... variables) {
-			this.variables = variables;
+		public CompositeCCretaData() {
+			this.variables = new ArrayList<String>();
 		}
-
+		
+		public CompositeCCretaData add(String name) {
+			this.variables.add(name);
+			return this;
+		}
+		
+		public CompositeCCretaData add(ContextVariable var) {
+			this.variables.add(var.getName());
+			return this;
+		}
+		
+		public CompositeCCretaData add(ContextVariable ...vars) {
+			for ( ContextVariable var : vars)
+				this.variables.add(var.getName());
+			
+			return this;
+		}		
 		// AbstractCCretaData -------------------------------------------------
 
 		@Override
@@ -1624,7 +1641,7 @@ public class Bases {
 					// Try next variable
 				}
 			}
-			throw new NoSuchVariablesException(variables);
+			throw new NoSuchVariablesException(variables.toArray(String[]::new));
 		}
 
 		@Override
@@ -1639,11 +1656,6 @@ public class Bases {
 
 	private static class NonNegativeCompositeCCretaData extends  CompositeCCretaData {
 
-		public NonNegativeCompositeCCretaData(String... variables) {
-			super(variables);
-		}
-		
-		
 		@Override
 		protected Double check(Double value, Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
@@ -1658,7 +1670,7 @@ public class Bases {
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs) {
 			for (BasesCallback cb : cbs)  {
-				cb.negativeDato(variables[variables.length-1], value, datoSolicitado, tramo, salary);
+				cb.negativeDato(variables.get(variables.size()-1), value, datoSolicitado, tramo, salary);
 			}
 		}
 	}
@@ -1707,31 +1719,28 @@ public class Bases {
 			put("51", new MonthlySalaryCretaData());
 
 			
-			put("509", new NonNegativeCompositeCCretaData(
-					MATERNITY_BASE.getName(), 		// Base de contigencias comunes en maternidad/parternidad/riesgo
-					ERE_BASE.getName(),				// Base de contingencias comunes empresarial en ERE
-					ERE_BASE_FORCE.getName(),		// Base de contingencias comunes empresarial en ERE por Fuerza Mayor
-					DIRECT_BASE.getName(),			// Base Pago Directo  
-					CGC_BASE.getName(),
-					CGC_BASE_ENTERPRISE.getName()	// Base de contingencias comunes empresarial  
-					));
+			put("509", new NonNegativeCompositeCCretaData()
+					.add(MATERNITY_BASE) 		
+					.add(ERE_BASES)
+					.add(DIRECT_BASE)
+					.add(CGC_BASE)
+					.add(CGC_BASE_ENTERPRISE)
+					);
 			
-			put("603", new NonNegativeCompositeCCretaData(
-					MATERNITY_BASE.getName(),
-					ERE_BASE.getName(), 
-					ERE_BASE_FORCE.getName(), 
-					DIRECT_BASE.getName(),			//   
-					CGP_BASE.getName(),
-					CGC_BASE_ENTERPRISE.getName()	  
-					));
-			put("613", new NonNegativeCompositeCCretaData(
-					MATERNITY_BASE.getName(),
-					ERE_BASE.getName(),
-					ERE_BASE_FORCE.getName(), 
-					CGP_BASE.getName(),
-					DIRECT_BASE.getName(),			//   
-					CGC_BASE_ENTERPRISE.getName()	  
-					));
+			put("603", new NonNegativeCompositeCCretaData()
+					.add(MATERNITY_BASE)
+					.add(ERE_BASES )
+					.add(DIRECT_BASE)		//   
+					.add(CGP_BASE)
+					.add(CGC_BASE_ENTERPRISE)	  
+					);
+			put("613", new NonNegativeCompositeCCretaData()
+					.add(MATERNITY_BASE)
+					.add(ERE_BASES)
+					.add(CGP_BASE)
+					.add(DIRECT_BASE)			//   
+					.add(CGC_BASE_ENTERPRISE)	  
+					);
 
 			put("702", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 		}

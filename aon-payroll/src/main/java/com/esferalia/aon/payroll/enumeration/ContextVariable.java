@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.enumeration;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,6 +54,7 @@ public enum ContextVariable implements IResourceable {
 	STRIKE_DAYS("DIAS_HUELGA", VariableType.INTEGER, false), 
 	ERE_DAYS("DIAS_ERE", VariableType.INTEGER, false),
 	ERE_DAYS_FORCE("DIAS_ERE_FZA", VariableType.INTEGER, false),
+	ERE_DAYS_FORCE_OFF("DIAS_ERE_FZA_EXONERADO", VariableType.INTEGER, false),
 	GUARANTEED_DAYS("DIAS_GARANTIZADOS", VariableType.INTEGER, false),
 	ACTIVE_DAYS("DIAS_ALTA", VariableType.INTEGER, false), 
 	MONDAY_DAYS("DIAS_LUNES", VariableType.DOUBLE, false),
@@ -107,6 +110,7 @@ public enum ContextVariable implements IResourceable {
 	NON_STRUCTURAL_OVERTIME_BASE("BASE_NESTR", VariableType.DOUBLE), MATERNITY_BASE("BASE_MTNAD", VariableType.DOUBLE),
 	ERE_BASE("BASE_ERE", VariableType.DOUBLE), 
 	ERE_BASE_FORCE("BASE_ERE_FZA", VariableType.DOUBLE), 
+	ERE_BASE_FORCE_OFF("BASE_ERE_FZA_EXONERADO", VariableType.DOUBLE), 
 	DIRECT_BASE("BASE_PAGO_DIRECTO", VariableType.DOUBLE),
 	ADDITIONAL_BASE("BASE_HORAS_COMPL", VariableType.DOUBLE),
 
@@ -141,7 +145,8 @@ public enum ContextVariable implements IResourceable {
 	CONTRACT_END_DESC("DESC_FIN_CONTRATO", VariableType.STRING, false),
 	PARTIAL_FACTOR("COEFICIENTE_PARCIALIDAD", VariableType.STRING, false),
 	ERE_FACTOR("COEFICIENTE_ERE", VariableType.INTEGER, false),
-	ERE_FORCE_FACTOR("COEFICIENTE_ERE_FZA", VariableType.INTEGER, false),
+	ERE_FACTOR_FORCE("COEFICIENTE_ERE_FZA", VariableType.INTEGER, false),
+	ERE_FACTOR_FORCE_OFF("COEFICIENTE_ERE_FZA_EXONERADO", VariableType.INTEGER, false),
 	STRIKE_FACTOR("COEFICIENTE_HUELGA", VariableType.INTEGER, false),
 	PATERNITY_FACTOR("COEFICIENTE_PATERNIDAD", VariableType.DOUBLE, false),
 	MATERNITY_FACTOR("COEFICIENTE_MATERNIDAD", VariableType.DOUBLE, false),
@@ -149,6 +154,7 @@ public enum ContextVariable implements IResourceable {
 	// Bajas, Incapacidad Temporal
 	ERE("ERE", VariableType.BOOLEAN), 
 	ERE_FORCE("ERE_FZA", VariableType.BOOLEAN), 
+	ERE_FORCE_OFF("ERE_FZA_EXONERADO", VariableType.BOOLEAN), 
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
 	QUOTE_IT("COTIZACION_IT", VariableType.QUOTE_IT_DROP),
 
@@ -294,8 +300,26 @@ public enum ContextVariable implements IResourceable {
 	}); 
 
 	public static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+
+	public static ContextVariable [] ERES  =
+	Arrays.stream(ContextVariable.values())
+	.filter(v->v.getName().startsWith(ERE.getName()))
+	.toArray(ContextVariable[]::new);
 	
+	public static ContextVariable [] ERE_BASES  =
+	Arrays.stream(ContextVariable.values())
+	.filter(v->v.getName().startsWith(ERE_BASE.getName()))
+	.toArray(ContextVariable[]::new);
 	
+	public static ContextVariable [] ERE_DAYSS  =
+	Arrays.stream(ContextVariable.values())
+	.filter(v->v.getName().startsWith(ERE_DAYS.getName()))
+	.toArray(ContextVariable[]::new);
+	
+	public static ContextVariable [] ERE_FACTORS  =
+	Arrays.stream(ContextVariable.values())
+	.filter(v->v.getName().startsWith(ERE_FACTOR.getName()))
+	.toArray(ContextVariable[]::new);
 
 	private final String name;
 	private VariableType type;

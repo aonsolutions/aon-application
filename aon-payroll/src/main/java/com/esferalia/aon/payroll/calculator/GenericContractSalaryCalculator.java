@@ -13,6 +13,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
@@ -40,6 +41,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.salary.expression.ExpressionScope.APPLICATION;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +56,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -691,8 +694,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 //			if (directPayBase != null)
 //				cgcBase += directPayBase;
 			salaryBuilder.setCgcBase(cgcBase);
-
-			copyResults(expressionContext, CGC_BASE_ENTERPRISE, ERE_BASE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
+			
+			copyResults(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
+			copyResults(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
 //			if (cgcBase != null)
 //				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
 			
@@ -721,7 +725,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 //				cgpBase += directPayBase;
 			salaryBuilder.setCgpBase(cgpBase);
 
-			copyResults(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
+			copyResults(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
+			copyResults(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
 			copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
 //			if (cgpBase != null)
 //				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
@@ -1558,8 +1563,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				QUOTE_DAYS.getName(), 
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
-				ERE_BASE.getName(), 
-				ERE_BASE_FORCE.getName(), 
 				DIRECT_BASE.getName(), 
 				MATERNITY_BASE.getName(), 
 				ADDITIONAL_BASE.getName(), 
@@ -1579,8 +1582,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				
 				PREST_IT
 				});
+		fillData(ctx, ERE_BASES);
+		
 	}
-
+	
+	protected void fillData(IContractSalaryCalculatorContext ctx, ContextVariable  vars []) throws SalaryException {
+		String names [] = Arrays.stream(vars).map(v->v.getName()).toArray(String[]::new);
+		fillData(ctx, names);
+	}
+	
 	protected void fillData(IContractSalaryCalculatorContext ctx, String  names []) throws SalaryException {
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 		for (String name : names) {
@@ -1726,6 +1736,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 		}
 	}
+	
 
 	// ------------------------------------------------------------------------
 

@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
@@ -16,13 +17,9 @@ import static java.util.Calendar.DAY_OF_MONTH;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -36,10 +33,10 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
-import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.payment.IPayment;
+
+import junit.framework.Assert;
 
 public class SQLERETestCase extends AbstractSQLTestCase {
 
@@ -59,7 +56,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, ereDay, ereDay,
 				new HashMap<String, String>() {
 					{
-						put(ERE_FACTOR.getName(), "1");
+						put(getFactorVariable().getName(), "1");
 					}
 				});
 
@@ -106,7 +103,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, startEre, endEre,
 				new HashMap<String, String>() {
 					{
-						put(ERE_FACTOR.getName(), "1");
+						put(getFactorVariable().getName(), "1");
 					}
 				});
 
@@ -146,7 +143,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 			addData(aonContext, contract, date, date,
 					new HashMap<String, String>() {
 						{
-							put(ERE_FACTOR.getName(), "1");
+							put(getFactorVariable().getName(), "1");
 						}
 					});
 		}
@@ -195,7 +192,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, startDate, null,
 				new HashMap<String, String>() {
 					{
-						put(ERE_FACTOR.getName(), "1");
+						put(getFactorVariable().getName(), "1");
 					}
 				});
 
@@ -230,7 +227,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, startDate, null,
 				new HashMap<String, String>() {
 					{
-						put(ERE_FACTOR.getName(), "0.75");
+						put(getFactorVariable().getName(), "0.75");
 					}
 				});
 
@@ -266,7 +263,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, startEre, endEre,
 				new HashMap<String, String>() {
 					{
-						put(ERE_FACTOR.getName(), "0.60");
+						put(getFactorVariable().getName(), "0.60");
 					}
 				});
 
@@ -309,7 +306,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 			addData(aonContext, contract, date, date,
 					new HashMap<String, String>() {
 						{
-							put(ERE_FACTOR.getName(), "0.3");
+							put(getFactorVariable().getName(), "0.3");
 						}
 					});
 		}
@@ -388,18 +385,18 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
 
 		Date startEre = getFirstDayOfMonth(getToday());
-		int ereDays = (int) (Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1));
+		int ereDays = (int) (0.25/*Math.random()*/ * (getMax(getToday(), DAY_OF_MONTH) - 1));
 		Date endEre = add(startEre, DAY_OF_MONTH, ereDays - 1);
 
 		addData(aonContext, contract, startEre, endEre,
 				new HashMap<String, String>() {
 					{
-						put(ERE_FACTOR.getName(), "1");
+						put(getFactorVariable().getName(), "1");
 					}
 				});
 		
-		PaymentConceptRecord ere = addConcept(aonContext, ERE.getName());
-		addPayment(aonContext, contract, ere, "0.00" , "DIAS_ERE * BASE_REGULADORA");
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
 		
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -412,11 +409,11 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
-//		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-//				.getSalaryPayments()) {
-//			System.out.println(payment.getName() + " = " + payment.getAmount()
-//					+ " (" + payment.getExpression() + ")");
-//		}
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getQuote() + ")");
+		}
 
 		Assert.assertEquals(
 				(1750.00 * 1.10) * (get(endDate, DAY_OF_MONTH) - (ereDays))
@@ -464,12 +461,12 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, startEre, null,
 				new HashMap<String, String>() {
 					{
-						put(ERE_FACTOR.getName(), "0.50");
+						put(getFactorVariable().getName(), "0.50");
 					}
 				});
 		
 		PaymentConceptRecord ere = addConcept(aonContext, ERE.getName());
-		addPayment(aonContext, contract, ere, "0.00" , "DIAS_ERE * BASE_REGULADORA");
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
 		Date startDate = getFirstDayOfMonth(getToday());
@@ -482,11 +479,11 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
-//		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-//				.getSalaryPayments()) {
-//			System.out.println(payment.getName() + " = " + payment.getAmount()
-//					+ " (" + payment.getExpression() + ")");
-//		}
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
 
 		Assert.assertEquals(
 				(1750.00 * 1.10) * 0.50
@@ -501,5 +498,16 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
+	}
+	
+	protected ContextVariable getEreVariable() {
+		return ERE;
+	}	
+
+	protected ContextVariable getFactorVariable() {
+		return ERE_FACTOR;
+	}
+	protected ContextVariable getDaysVariable() {
+		return ERE_DAYS;
 	}
 }

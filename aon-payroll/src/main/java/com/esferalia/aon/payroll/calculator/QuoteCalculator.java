@@ -11,7 +11,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_RAW
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
@@ -21,6 +23,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -258,6 +261,8 @@ public abstract class QuoteCalculator {
 	}
 
 	public static class GeneralQuote extends QuoteCalculator {
+		
+
 
 		private Double cgcBase;
 		private Double cgpBase;
@@ -301,13 +306,10 @@ public abstract class QuoteCalculator {
 
 		@Override
 		public Double getEreBase() throws AonException {
-			return (bases.containsKey(ERE.getName()) ? 
-					bases.get(ERE.getName())
-					: 0.00)
-					+(bases.containsKey(ERE_FORCE.getName()) ? 
-					bases.get(ERE_FORCE.getName())
-					: 0.00)
-					;
+			Double ereBase = 0.0;
+			for ( ContextVariable v : ERES ) 
+				ereBase += (bases.containsKey(v.getName()) ? bases.get(v.getName()): 0.00);
+			return ereBase;
 		}
 
 		@Override
@@ -409,8 +411,7 @@ public abstract class QuoteCalculator {
 				add(String.format("BASE_%s", name), quote, context, start, end);
 
 				if (AonStringUtils.equals(MATERNITY.getName(), name)
-						|| AonStringUtils.equals(ERE.getName(), name)
-						|| AonStringUtils.equals(ERE_FORCE.getName(), name)
+						|| matchAny(ContextVariable.ERES, payment.getName()) 
 						|| AonStringUtils.equals(DIRECT_PAY.getName(), name)) {
 
 					if (context.containsVariable(CGC_BASE.getName(), start,
@@ -424,9 +425,8 @@ public abstract class QuoteCalculator {
 								context, 
 								start, 
 								end, 
+								ERE_BASES,
 								MATERNITY_BASE,
-								ERE_BASE,
-								ERE_BASE_FORCE,
 								DIRECT_BASE
 								));
 						//@formatter:on
@@ -438,9 +438,8 @@ public abstract class QuoteCalculator {
 								CGP_BASE_MIN, 
 								CGP_BASE_MAX,
 								context, start, end, 
+								ERE_BASES, 
 								MATERNITY_BASE,
-								ERE_BASE, 
-								ERE_BASE_FORCE,
 								DIRECT_BASE));
 
 					return quotesImpl;
@@ -512,9 +511,8 @@ public abstract class QuoteCalculator {
 							CGC_BASE_MIN, 
 							CGC_BASE_MAX,
 							context, start, end, 
+							ERE_BASES, 
 							MATERNITY_BASE,
-							ERE_BASE, 
-							ERE_BASE_FORCE,
 							DIRECT_BASE));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
@@ -542,8 +540,8 @@ public abstract class QuoteCalculator {
 							CGC_BASE_MIN, 
 							CGC_BASE_MAX,
 							context, start, end, 
+							ERE_BASES, 
 							MATERNITY_BASE,
-							ERE_BASE, 
 							DIRECT_BASE));
 					GeneralQuote.this.rawCgcBase += quote;
 				}
@@ -559,8 +557,8 @@ public abstract class QuoteCalculator {
 					context,
 					start, 
 					end, 
+					ERE_BASES, 
 					MATERNITY_BASE, 
-					ERE_BASE, 
 					DIRECT_BASE));
 
 			SalaryType salaryType = payment.getSalaryType();
@@ -598,6 +596,19 @@ public abstract class QuoteCalculator {
 			});
 
 			return quotesImpl;
+		}
+
+
+
+		protected List<ITimedResult<Double>> limit(ContextVariable limit, ContextVariable raw,
+				ContextVariable min, ContextVariable max,
+				ExpressionContext ctx, Date start, Date end, ContextVariable othersArr [], ContextVariable... othersArgs) {
+			List<ContextVariable> others = new ArrayList<ContextVariable>();
+			others.addAll(Arrays.asList(othersArr));
+			others.addAll(Arrays.asList(othersArgs));
+			
+			return QuoteCalculator.limit(limit, raw, min,
+					max, ctx, start, end, others.toArray(ContextVariable[]::new));
 		}
 
 		protected List<ITimedResult<Double>> limit(ContextVariable limit, ContextVariable raw,
@@ -1109,4 +1120,11 @@ public abstract class QuoteCalculator {
 		
 		return context;
 	}
+	
+	protected static boolean matchAny(ContextVariable vars [] , String name ) {
+		if ( AonStringUtils.isBlank(name))
+			return false;
+		return Arrays.stream(vars).anyMatch(v->AonStringUtils.equals(v.getName(), name ));
+	}
+
 }

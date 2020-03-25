@@ -19,6 +19,7 @@ import static java.util.Calendar.YEAR;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -335,7 +336,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENgit statusSIONES Y SIST. ALTERNATIVOS 					
 				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
 				|| isFixBaseCgcMin(payment) 
-				|| ContextVariable.ERE.getName().equals(payment.getName()) 
+				|| matchAny(ContextVariable.ERES, payment.getName()) 
 				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
 				|| ContextVariable.MATERNITY.getName().equals(payment.getName())
@@ -1201,5 +1202,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	private static boolean isFixBaseCgcMin(IContractPayment p) {
 		return AonStringUtils.startsWith(p.getQuoteExpression(), "/*fixBaseCgcMin*/");
 	}
+	
+
 	
 }
