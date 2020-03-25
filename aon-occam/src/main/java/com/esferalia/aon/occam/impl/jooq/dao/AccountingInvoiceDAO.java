@@ -399,6 +399,7 @@ public class AccountingInvoiceDAO {
 			final Integer activity, final Date issueDate) {
 		AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
 					, filter -> filter.getIdProperty().eq(registry))
+				.filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
 				.findFirst()
 				.orElse(null);
 		if (reg == null) {
