@@ -33,6 +33,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date, Double> mapExtraHours;
 	private Map<Date, Double> mapDaysCoefficientEre;
 	private Map<Date, Double> mapDaysCoefficientEreFza;
+	private Map<Date, Double> mapDaysCoefficientEreFzaExon;
 	private Map<Date, Double> mapDaysCoefficientStrike;
 	private Map<Date, Double> mapDaysCoefficientDrop;
 	private ArrayList<Date> festiveWorkingDays;
@@ -40,6 +41,7 @@ public class EmployeeCalendarDraftObjectData {
 	private Map<Date,Double> draftMapDaysHour;
 	private Map<Date, DayType> draftMapDaysType;
 	private Map<Date, Double> draftMapDaysCoefficientEre;
+	private Map<Date, Double> draftMapDaysCoefficientEreFzaExon;
 	private Map<Date, Double> draftMapDaysCoefficientEreFza;
 	private Map<Date, Double> draftMapDaysCoefficientStrike;
 	private Map<Date, Double> draftMapDaysCoefficientDrop;
@@ -91,6 +93,7 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_AUSENCIA", DayType.DROPDAY);
 			put("DIAS_PARCIALIDAD", DayType.PARTIALITY);
 			put("DIAS_ERE_FZA", DayType.EREFZADAY);
+			put("DIAS_ERE_FZA_EXONERADO", DayType.EREFZAEXONDAY);
 		}
 	};
 	
@@ -103,6 +106,7 @@ public class EmployeeCalendarDraftObjectData {
 		T visitDropDay(DayType dayType);
 		T visitEreDay(DayType dayType);
 		T visitEreFzaDay(DayType dayType);
+		T visitEreFzaExonDay(DayType dayType);
 		T visitStrikeDay(DayType dayType);
 		T visitReductionDay(DayType dayType);
 		T visitSuspensionDay(DayType dayType);
@@ -154,6 +158,12 @@ public class EmployeeCalendarDraftObjectData {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitEreFzaDay(this);
+			}
+		},
+		EREFZAEXONDAY {
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitEreFzaExonDay(this);
 			}
 		},
 		REDUCTIONDAY {
@@ -364,6 +374,33 @@ public class EmployeeCalendarDraftObjectData {
 		
 	}
 	
+	class SetEreFzaExonEdit implements Undoable {
+
+		private Double oldEre;
+		private Double newEre;
+		private Date day;
+		
+		public SetEreFzaExonEdit(Double oldT, Double newT, Date actualDay) {
+			this.oldEre = oldT;
+			this.newEre = newT;
+			this.day = actualDay;
+		}
+		
+		@Override
+		public void undo() {
+			if (oldEre == null)
+				draftMapDaysCoefficientEreFzaExon.remove(day);
+			else
+				draftMapDaysCoefficientEreFzaExon.put(day, oldEre);
+		}
+		
+		@Override
+		public void redo() {
+			draftMapDaysCoefficientEreFzaExon.put(day, newEre);
+		}
+		
+	}
+	
 	class SetInactiveEdit implements Undoable {
 
 		private String oldEre;
@@ -512,6 +549,7 @@ public class EmployeeCalendarDraftObjectData {
 		this.mapExtraHours = new HashMap<Date,Double>();
 		this.mapDaysCoefficientEre = new HashMap<Date,Double>();
 		this.mapDaysCoefficientEreFza = new HashMap<Date,Double>();
+		this.mapDaysCoefficientEreFzaExon = new HashMap<Date,Double>();
 		this.mapDaysCoefficientStrike = new HashMap<Date,Double>();
 		this.mapDaysCoefficientDrop = new HashMap<Date,Double>();
 		this.mapInactivityDays = new HashMap<Date,String>();
@@ -522,6 +560,7 @@ public class EmployeeCalendarDraftObjectData {
 		this.draftMapDaysType = new HashMap<Date,DayType>();
 		this.draftMapDaysCoefficientEre = new HashMap<Date,Double>();
 		this.draftMapDaysCoefficientEreFza = new HashMap<Date,Double>();
+		this.draftMapDaysCoefficientEreFzaExon = new HashMap<Date,Double>();
 		this.draftMapDaysCoefficientStrike = new HashMap<Date,Double>();
 		this.draftMapDaysCoefficientDrop = new HashMap<Date,Double>();
 		this.draftMapExtraHours = new HashMap<Date,Double>();
@@ -710,6 +749,17 @@ public class EmployeeCalendarDraftObjectData {
 			Double oldCE = draftMapDaysCoefficientEreFza.put(day, ce);
 			undos.add(new SetTypeEdit(oldType, ereFzaType, day));
 			undos.add(new SetEreFzaEdit(oldCE, ce, day));
+		}
+		undoManager.add(new CompositeUndoable<Undoable>(undos));
+	}
+	
+	public void setEreFzaExonCoefficientDays(List<Date> ereDays, DayType ereFzaExonType, double ce) {
+		List<Undoable> undos = new ArrayList<Undoable>();
+		for (Date day : ereDays){
+			DayType oldType = draftMapDaysType.put(day, ereFzaExonType);
+			Double oldCE = draftMapDaysCoefficientEreFzaExon.put(day, ce);
+			undos.add(new SetTypeEdit(oldType, ereFzaExonType, day));
+			undos.add(new SetEreFzaExonEdit(oldCE, ce, day));
 		}
 		undoManager.add(new CompositeUndoable<Undoable>(undos));
 	}
@@ -1186,6 +1236,7 @@ public class EmployeeCalendarDraftObjectData {
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> typesList = result.getContractTypeDaysList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreList = result.getContractCoefficientEREDayTypeList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreFzaList = result.getContractCoefficientEREFzaDayTypeList();
+				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreFzaExonList = result.getContractCoefficientEREFzaExonDayTypeList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientStrikeList = result.getContractCoefficientStrikeDayTypeList();
 //				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientInactivityList = result.getContractCoefficientInactivityDayTypeList();
 				List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientDropList = result.getContractCoefficientDropDayTypeList();
@@ -1204,6 +1255,7 @@ public class EmployeeCalendarDraftObjectData {
 				initializeITDaysTypeMap(ITDaysList);
 				initializeMapDaysCoefficientEre(daysCoefficientEreList);
 				initializeMapDaysCoefficientEreFza(daysCoefficientEreFzaList);
+				initializeMapDaysCoefficientEreFzaExon(daysCoefficientEreFzaExonList);
 				initializeMapDaysCoefficientStrike(daysCoefficientStrikeList);
 //				initializeMapDaysCoefficientInactivity(daysCoefficientInactivityList);
 				initializeMapDaysCoefficientDrop(daysCoefficientDropList);
@@ -1452,6 +1504,14 @@ public class EmployeeCalendarDraftObjectData {
 				
 			}
 			
+			private void initializeMapDaysCoefficientEreFzaExon(
+					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreFzaExonList) {
+				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientEreFzaExonList){
+					mapDaysCoefficientEreFzaExon.put(dayCoefficient.getStartDate(), Double.parseDouble(dayCoefficient.getExpression()));
+				}
+				
+			}
+			
 //			private void initializeMapDaysCoefficientInactivity(
 //					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientInactivityList) {
 //				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientInactivityList){
@@ -1487,6 +1547,7 @@ public class EmployeeCalendarDraftObjectData {
 		updateInfo.setStrikeDaysValues(createUpdateDaysCoefficientStrike());
 		updateInfo.setEreDaysValues(createUpdateDaysCoefficientEre());
 		updateInfo.setEreFzaDaysValues(createUpdateDaysCoefficientEreFza());
+		updateInfo.setEreFzaExonDaysValues(createUpdateDaysCoefficientEreFzaExon());
 //		updateInfo.setInactivityDaysValues(createUpdateDaysCoefficientInactivity());
 		updateInfo.setDropDaysValues(createUpdateDaysCoefficientDrop());
 		updateInfo.setMapInactivityDays(createUpdateInactivity());
@@ -1506,6 +1567,7 @@ public class EmployeeCalendarDraftObjectData {
 				draftMapDaysType.clear();
 				draftMapDaysCoefficientEre.clear();
 				draftMapDaysCoefficientEreFza.clear();
+				draftMapDaysCoefficientEreFzaExon.clear();
 				draftMapDaysCoefficientStrike.clear();
 //				draftMapDaysCoefficientInactivity.clear();
 				draftMapDaysCoefficientDrop.clear();
@@ -1532,6 +1594,7 @@ public class EmployeeCalendarDraftObjectData {
 				draftMapDaysType.clear();
 				draftMapDaysCoefficientEre.clear();
 				draftMapDaysCoefficientEreFza.clear();
+				draftMapDaysCoefficientEreFzaExon.clear();
 				draftMapDaysCoefficientStrike.clear();
 //				draftMapDaysCoefficientInactivity.clear();
 				draftMapDaysCoefficientDrop.clear();
@@ -1714,6 +1777,20 @@ public class EmployeeCalendarDraftObjectData {
 		}
 		
 		return updateMapDaysCoefficientEreFza;
+	}
+	
+	private Map<Date, Double> createUpdateDaysCoefficientEreFzaExon() {
+		Map<Date, Double> updateMapDaysCoefficientEreFzaExon = new HashMap<Date, Double>();
+		
+		for(Entry<Date, Double> entry : mapDaysCoefficientEreFzaExon.entrySet()){
+			updateMapDaysCoefficientEreFzaExon.put(entry.getKey(), entry.getValue());
+		}
+		
+		for(Entry<Date, Double> entry : draftMapDaysCoefficientEreFzaExon.entrySet()){
+			updateMapDaysCoefficientEreFzaExon.put(entry.getKey(), entry.getValue());
+		}
+		
+		return updateMapDaysCoefficientEreFzaExon;
 	}
 	
 	private Map<java.util.Date, String> createUpdateInactivity() {

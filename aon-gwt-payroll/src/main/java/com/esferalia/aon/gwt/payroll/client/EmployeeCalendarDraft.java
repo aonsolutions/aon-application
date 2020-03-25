@@ -121,6 +121,12 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				@Override
+				public Void visitEreFzaExonDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.ereFzaExonStyle());	
+					return null;
+				}
+				
+				@Override
 				public Void visitDropDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.dropStyle());
 					return null;
@@ -291,6 +297,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String partialityStyle();
 		String ereStyle();
 		String ereFzaStyle();
+		String ereFzaExonStyle();
 		String strikeStyle();
 		String reductionStyle();
 		String dropStyle();
@@ -912,68 +919,42 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("dropDayButton")
 	public void onDropDaysClick(ClickEvent event) {
-		EmployeeCalendarPercentDialog percentDialog;
-		if(fullTimeJourney){
-			percentDialog = new EmployeeCalendarPercentDialog("Dias Ausencia", "8") {
-				
-				@Override
-				protected void onAccept() {
-					double cs = this.getPercentValue();
-					switch (this.getTypeDrop()) {
-					case 0:
-						addStrikeDay(cs);
-						break;
-					case 1:
-						addEreDay(cs);
-						break;
-					case 2:
-						addDropDay(cs);
-						break;
-					case 3:
-						addEreDay(cs);
-						break;
-					case 4:
-						addEreFzaDay(cs);
-						break;
-					default:
-						break;
-					}
-				}
-				
-			};
-		}else{
+		Double hours = 8.00;
+		if(!fullTimeJourney) {
 			Date date = selectedDates.getSelectedList().get(0);
-			Double hours = calendarEmployeeInfo.getHourByDay(date);
-			percentDialog = new EmployeeCalendarPercentDialog("Dias Ausencia", hours.toString()) {
-				
-				@Override
-				protected void onAccept() {
-					double cs = this.getPercentValue();
-					switch (this.getTypeDrop()) {
-					case 0:
-						addStrikeDay(cs);
-						break;
-					case 1:
-						addEreDay(cs);
-						break;
-					case 2:
-						addDropDay(cs);
-						break;
-					case 3:
-						addEreDay(cs);
-						break;
-					case 4:
-						addEreFzaDay(cs);
-						break;
-					default:
-						break;
-					}
-				}
-				
-			};
+			hours = calendarEmployeeInfo.getHourByDay(date);
+			if(null == hours)
+				hours = 8.00;
 		}
+		
+		EmployeeCalendarPercentDialog percentDialog  = new EmployeeCalendarPercentDialog("Dias Ausencia", hours.toString()) {
+			
+			@Override
+			protected void onAccept() {
+				double cs = this.getPercentValue();
+				switch (this.getTypeDrop()) {
+				case 0:
+					addStrikeDay(cs);
+					break;
+				case 1:
+					addEreDay(cs);
+					break;
+				case 2:
+					addDropDay(cs);
+					break;
+				case 3:
+					addEreFzaDay(cs);
+					break;
+				case 4:
+					addEreFzaExonDay(cs);
+					break;
+				default:
+					break;
+				}
+			}
+			
+		};
 
-//		percentDialog.setLabelText("Horas:");
 		percentDialog.show();
 		percentDialog.center();
 	}
@@ -1416,8 +1397,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				if(DayType.EREFZADAY == dayType){
-					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
-					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
+					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor");
+					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor");
+				}
+				
+				if(DayType.EREFZAEXONDAY == dayType){
+					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
 				}
 				
 				if(DayType.DROPDAY == dayType){
@@ -1534,8 +1520,13 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 			
 			if(DayType.EREFZADAY == dayType){
-				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
-				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor");
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor");
+			}
+			
+			if(DayType.EREFZAEXONDAY == dayType){
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
 			}
 			
 			if(DayType.DROPDAY == dayType){
@@ -1975,24 +1966,6 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		calendarEmployeeInfo.setNonWorkingDays(nonWorkingDatesList, nonWorkingDay, hour);
 		selectedDates.clear();
 	}
-
-	private void applyEREFzaDayTypeSelectedDates(double ce, DayType erefzaday) {
-		cleanStyles(selectedDates.getSelectedList());
-		List<Date> ereDatesList = new LinkedList<Date>();
-		
-		for (Date date : selectedDates.getSelectedList()) {
-			int pos = calculateDatePosition(date);
-			if(pos != -1){
-				int column = calculatePositionCol(pos);
-				int row = calculatePositionRow(pos);
-				cells[row][column].unSelect(row, column);
-				cellsType[row][column].setAsType(erefzaday, row, column);
-				ereDatesList.add(cellsDates[row][column]);
-			}
-		}
-		calendarEmployeeInfo.setEreFzaCoefficientDays(ereDatesList, erefzaday, ce);
-		selectedDates.clear();
-	}
 	
 	private void applyEREDayTypeSelectedDates(double ce, DayType ereday) {
 		cleanStyles(selectedDates.getSelectedList());
@@ -2005,10 +1978,49 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				int row = calculatePositionRow(pos);
 				cells[row][column].unSelect(row, column);
 				cellsType[row][column].setAsType(ereday, row, column);
+				calendarGrid.getWidget(row, column).setTitle("ERE");
 				ereDatesList.add(cellsDates[row][column]);
 			}
 		}
 		calendarEmployeeInfo.setEreCoefficientDays(ereDatesList, ereday, ce);
+		selectedDates.clear();
+	}
+
+	private void applyEREFzaDayTypeSelectedDates(double ce, DayType erefzaday) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> ereDatesList = new LinkedList<Date>();
+		
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
+			if(pos != -1){
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(erefzaday, row, column);
+				calendarGrid.getWidget(row, column).setTitle("ERE Fuerza Mayor");
+				ereDatesList.add(cellsDates[row][column]);
+			}
+		}
+		calendarEmployeeInfo.setEreFzaCoefficientDays(ereDatesList, erefzaday, ce);
+		selectedDates.clear();
+	}
+	
+	private void applyEREFzaExonDayTypeSelectedDates(double ce, DayType erefzaday) {
+		cleanStyles(selectedDates.getSelectedList());
+		List<Date> ereDatesList = new LinkedList<Date>();
+		
+		for (Date date : selectedDates.getSelectedList()) {
+			int pos = calculateDatePosition(date);
+			if(pos != -1){
+				int column = calculatePositionCol(pos);
+				int row = calculatePositionRow(pos);
+				cells[row][column].unSelect(row, column);
+				cellsType[row][column].setAsType(erefzaday, row, column);
+				calendarGrid.getWidget(row, column).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+				ereDatesList.add(cellsDates[row][column]);
+			}
+		}
+		calendarEmployeeInfo.setEreFzaExonCoefficientDays(ereDatesList, erefzaday, ce);
 		selectedDates.clear();
 	}
 	
@@ -2233,6 +2245,9 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	}
 	private void addEreFzaDay(double ce) {
 		applyEREFzaDayTypeSelectedDates(ce, DayType.EREFZADAY);
+	}
+	private void addEreFzaExonDay(double ce) {
+		applyEREFzaExonDayTypeSelectedDates(ce, DayType.EREFZAEXONDAY);
 	}
 	private void addInactivityDays(String typeInactivity) {
 		applyInactivityDaySelectedDates(DayType.INACTIVITY, typeInactivity);

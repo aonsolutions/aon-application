@@ -185,6 +185,13 @@
 			padding: 3px;
 			color: #ffffff;
 		}
+		
+		.ereFzaExonStyle {
+			background-color: rgba(185, 18, 87, 0.4);
+			border-radius: 20%;
+			padding: 3px;
+			color: #ffffff;
+		}
 
 		.inactivityStyle {
 			background-color: #71b1e8;
