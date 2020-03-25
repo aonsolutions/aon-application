@@ -347,8 +347,8 @@ public class InvoiceImport {
 			Invoice invoice = new Invoice();
 			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
 			
-			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
-			invoice.setInvestment(InvoiceOpType.EIB.equals(ivs.get(i).getType())|| InvoiceOpType.AIB.equals(ivs.get(i).getType()));
+			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType())
+					|| InvoiceOpType.EIB.equals(ivs.get(i).getType())|| InvoiceOpType.AIB.equals(ivs.get(i).getType()));
 			invoice.setTransaction(getTransaction(ivs.get(i)));
 			invoice.setDomain(domain.getId());
 			invoice.setIssueDate(ivs.get(i).getDate());
