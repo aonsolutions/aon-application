@@ -17,6 +17,7 @@ public class EmployeeCalendarData implements Serializable {
 	private ArrayList<Quartet<Date, Date, String, String>> contractITDayTypeList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREFzaDayTypeList;
+	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREFzaExonDayTypeList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList;
 //	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientInactivityDayTypeList;
 	private ArrayList<Quartet<Date, Date, String, String>> contractCoefficientDropDayTypeList;
@@ -44,6 +45,7 @@ public class EmployeeCalendarData implements Serializable {
 			boolean fullTimeJourney,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREFzaDayTypeList,
+			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREFzaExonDayTypeList,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList,
 //			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientInactivityDayTypeList,
 			ArrayList<Quartet<Date, Date, String, String>> contractCoefficientDropDayTypeList,
@@ -61,6 +63,7 @@ public class EmployeeCalendarData implements Serializable {
 		this.fullTimeJourney = fullTimeJourney;
 		this.contractCoefficientEREDayTypeList = contractCoefficientEREDayTypeList;
 		this.contractCoefficientEREFzaDayTypeList = contractCoefficientEREFzaDayTypeList;
+		this.contractCoefficientEREFzaExonDayTypeList = contractCoefficientEREFzaExonDayTypeList;
 		this.contractCoefficientStrikeDayTypeList = contractCoefficientStrikeDayTypeList;
 //		this.contractCoefficientInactivityDayTypeList = contractCoefficientInactivityDayTypeList;
 		this.contractCoefficientDropDayTypeList = contractCoefficientDropDayTypeList;
@@ -141,6 +144,10 @@ public class EmployeeCalendarData implements Serializable {
 	
 	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientEREFzaDayTypeList() {
 		return contractCoefficientEREFzaDayTypeList;
+	}
+	
+	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientEREFzaExonDayTypeList() {
+		return contractCoefficientEREFzaExonDayTypeList;
 	}
 
 	public ArrayList<Quartet<Date, Date, String, String>> getContractCoefficientStrikeDayTypeList() {

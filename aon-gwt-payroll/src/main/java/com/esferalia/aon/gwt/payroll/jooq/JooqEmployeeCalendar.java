@@ -72,9 +72,7 @@ public class JooqEmployeeCalendar {
 		varNames.add(ContextVariable.EXTRA_HOURS.getName());
 		// DAY TYPES
 		varNames.add(ContextVariable.STRIKE_DAYS.getName());
-		varNames.add(ContextVariable.ERE_DAYS.getName());
 		varNames.add(ContextVariable.HOLIDAYS.getName());
-		varNames.add(ContextVariable.ERE_FACTOR.getName());
 		varNames.add(ContextVariable.STRIKE_FACTOR.getName());
 		varNames.add("DIAS_INACTIVIDAD");
 		varNames.add("NO_LABORABLE");
@@ -93,8 +91,14 @@ public class JooqEmployeeCalendar {
 		// PARTIALITY
 		varNames.add("COEFICIENTE_PARCIALIDAD");
 		varNames.add("DIAS_PARCIALIDAD");
+		// ERE TYPES
+		varNames.add(ContextVariable.ERE_DAYS.getName());
+		varNames.add(ContextVariable.ERE_FACTOR.getName());
 		varNames.add("DIAS_ERE_FZA");
 		varNames.add("COEFICIENTE_ERE_FZA");
+		varNames.add("DIAS_ERE_FZA_EXONERADO");
+		varNames.add("COEFICIENTE_ERE_FZA_EXONERADO");
+		
 		
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
@@ -115,6 +119,7 @@ public class JooqEmployeeCalendar {
 		ArrayList<Quartet<Date, Date, String, String>> contractDayTypesList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREFzaDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
+		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientEREFzaExonDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientStrikeDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 //		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientInactivityDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
 		ArrayList<Quartet<Date, Date, String, String>> contractCoefficientDropDayTypeList = new ArrayList<Quartet<Date, Date, String, String>>();
@@ -265,6 +270,7 @@ public class JooqEmployeeCalendar {
 					.and(CONTRACT_DATA.NAME.in(
 							ContextVariable.ERE_DAYS.getName()
 							,"DIAS_ERE_FZA"
+							,"DIAS_ERE_FZA_EXONERADO"
 							,ContextVariable.STRIKE_DAYS.getName()
 							,ContextVariable.HOLIDAYS.getName()
 							,"NO_LABORABLE"
@@ -377,6 +383,25 @@ public class JooqEmployeeCalendar {
 			
 			contractCoefficientEREFzaDayTypeList.add(quarterCoeficcientEREFzaTypeEmployee);
 		}
+		
+		// ------------- COEFICIENTE_ERE_FZA_EXONERADO
+				Result<Record> coeficientsEREFzaExoneradoEmployeeInfo = dslContext
+						.select()
+						.from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contract))
+						.and(CONTRACT_DATA.NAME.in("COEFICIENTE_ERE_FZA_EXONERADO"))
+						.fetch();
+			
+				for(Record r: coeficientsEREFzaExoneradoEmployeeInfo){
+					Quartet<Date, Date, String, String> quarterCoeficcientEREFzaExonTypeEmployee = new Quartet<Date, Date, String, String>();
+					
+					quarterCoeficcientEREFzaExonTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+					.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+					.setName(r.get(CONTRACT_DATA.NAME))
+					.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+					
+					contractCoefficientEREFzaExonDayTypeList.add(quarterCoeficcientEREFzaExonTypeEmployee);
+				}
 		
 		// ------------- STRIKE_FACTOR
 		Result<Record> coeficientsStrikeEmployeeInfo = dslContext
@@ -565,7 +590,8 @@ public class JooqEmployeeCalendar {
 		// ------------------------------------------------ RESULTADO -------------------------------------------------------------
 		
 		employeeInfoCalendar = new EmployeeCalendarData(contractHoursList, contractExtraHoursList, contractDayTypesList, contractITDayTypeList, 
-				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney, contractCoefficientEREDayTypeList, contractCoefficientEREFzaDayTypeList, contractCoefficientStrikeDayTypeList,
+				contractFestiveDaysList, contractNonWorkingDaysList, fullTimeJourney, contractCoefficientEREDayTypeList, contractCoefficientEREFzaDayTypeList, 
+				contractCoefficientEREFzaExonDayTypeList, contractCoefficientStrikeDayTypeList,
 				/*contractCoefficientInactivityDayTypeList,*/ contractCoefficientDropDayTypeList,
 				contractInactivityDaysList, contractPartialityDaysList, contractType, festiveWorkingDays);
 		
@@ -802,8 +828,7 @@ public class JooqEmployeeCalendar {
 		dslContext.delete(CONTRACT_DATA)
 		   .where(CONTRACT_DATA.CONTRACT.eq(contract))
 		   .and(CONTRACT_DATA.NAME.in(
-				  ContextVariable.ERE_DAYS.getName()
-				  ,ContextVariable.STRIKE_DAYS.getName()
+				  ContextVariable.STRIKE_DAYS.getName()
 				  ,ContextVariable.HOLIDAYS.getName()
 				  ,ContextVariable.ERE_FACTOR.getName()
 				  ,ContextVariable.STRIKE_FACTOR.getName()
@@ -817,14 +842,20 @@ public class JooqEmployeeCalendar {
 				  ,"DIAS_AUSENCIA"
 				  ,"PEONADAS"
 				  ,"FESTIVE_WORKING"
-				  , "DIAS_ERE_FZA"
-				  ,"COEFICIENTE_ERE_FZA"))
+				  // ERE TYPES
+				  ,ContextVariable.ERE_DAYS.getName()
+				  ,ContextVariable.ERE_FACTOR.getName()
+				  ,"DIAS_ERE_FZA"
+				  ,"COEFICIENTE_ERE_FZA"
+				  ,"DIAS_ERE_FZA_EXONERADO"
+				  ,"COEFICIENTE_ERE_FZA_EXONERADO"))
 		   .execute();
 		
 		HashMap<java.util.Date, DayType> updateDaysTypeMap = updateInfo.getDaysTypeMap();
 		Map<java.util.Date, Double> strikeDaysValues = updateInfo.getMapDaysCoefficientStrike();
 		Map<java.util.Date, Double> ereDaysValues = updateInfo.getMapDaysCoefficientEre();
 		Map<java.util.Date, Double> ereFzaDaysValues = updateInfo.getMapDaysCoefficientEreFza();
+		Map<java.util.Date, Double> ereFzaExonDaysValues = updateInfo.getMapDaysCoefficientEreFzaExon();
 //		Map<java.util.Date, Double> inactivityCoeficientDaysValues = updateInfo.getMapDaysCoefficientInactivity();
 		Map<java.util.Date, Double> dropDaysValues = updateInfo.getMapDaysCoefficientDrop();
 		Map<java.util.Date, String> inactivityDaysValues = updateInfo.getMapInactivityDays();
@@ -886,6 +917,13 @@ public class JooqEmployeeCalendar {
 									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 									CONTRACT_DATA.END_DATE)
 									.values(domain, "COEFICIENTE_ERE_FZA", contract, coeficiente, 
+											sqlStartDateType, sqlEndDateType).execute();
+						}else if(dayType.equals("DIAS_ERE_FZA_EXONERADO")){
+							String coeficiente = ereFzaExonDaysValues.get(auxStartDateType).toString();
+							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+									CONTRACT_DATA.END_DATE)
+									.values(domain, "COEFICIENTE_ERE_FZA_EXONERADO", contract, coeficiente, 
 											sqlStartDateType, sqlEndDateType).execute();
 						}else if(dayType.equals("DIAS_INACTIVIDAD")){
 							//Tipo inactividad
@@ -985,6 +1023,13 @@ public class JooqEmployeeCalendar {
 						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
 						CONTRACT_DATA.END_DATE)
 						.values(domain, "COEFICIENTE_ERE_FZA", contract, coeficiente, 
+								sqlStartDateType, sqlEndDateType).execute();
+			}else if(dayType.equals("DIAS_ERE_FZA_EXONERADO")){
+				String coeficiente = ereFzaExonDaysValues.get(auxStartDateType).toString();
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, "COEFICIENTE_ERE_FZA_EXONERADO", contract, coeficiente, 
 								sqlStartDateType, sqlEndDateType).execute();
 			}else if(dayType.equals("DIAS_INACTIVIDAD")){
 				String typeInactivity = inactivityDaysValues.get(auxStartDateType);
@@ -1327,7 +1372,7 @@ public class JooqEmployeeCalendar {
 	private static boolean validDayType(String dayType) {
 		return dayType.equals("DIAS_ERE") || dayType.equals("DIAS_HUELGA") || dayType.equals("NO_LABORABLE") 
 				|| dayType.equals("DIAS_VACACIONES") || dayType.equals("DIAS_INACTIVIDAD") || dayType.equals("PEONADAS")
-				|| dayType.equals("DIAS_AUSENCIA") || dayType.equals("DIAS_ERE_FZA");
+				|| dayType.equals("DIAS_AUSENCIA") || dayType.equals("DIAS_ERE_FZA") || dayType.equals("DIAS_ERE_FZA_EXONERADO");
 				//|| dayType.equals("DIAS_PARCIALIDAD");
 	}
 
@@ -1360,6 +1405,9 @@ public class JooqEmployeeCalendar {
 //			break;
 		case EREFZADAY:
 			result = "DIAS_ERE_FZA";
+			break;
+		case EREFZAEXONDAY:
+			result = "DIAS_ERE_FZA_EXONERADO";
 			break;
 		case FREEDAY:
 			result = "";

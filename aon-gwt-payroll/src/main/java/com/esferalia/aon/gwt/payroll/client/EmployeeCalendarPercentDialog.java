@@ -55,7 +55,7 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 		typeDrop.addItem("ERE");
 		typeDrop.addItem("Ausencia Injustificada");
 		typeDrop.addItem("ERE Fuerza mayor");
-		typeDrop.addItem("ERE Fuerza mayor (Exoneracio" + String.valueOf("\u00F3") + "n de cuotas)");
+		typeDrop.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
 		
 		messageLabel.setText("Horas Jornada = " + hoursContract);
 		
