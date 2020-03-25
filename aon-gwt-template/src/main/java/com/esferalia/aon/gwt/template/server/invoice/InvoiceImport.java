@@ -489,7 +489,7 @@ public class InvoiceImport {
 					:aonCtx.getDefaultChargedRetAccount();
 			
 				InvoiceWithholding iw = new InvoiceWithholding()
-					.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey()))
+					.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey(), ivs.get(i).getAccount()))
 					.setBase(retBase)
 					.setPercentage(retPercentage)
 					.setQuota(retQuota)
@@ -509,11 +509,12 @@ public class InvoiceImport {
 			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
 		}
 	}
-	private static WithholdingType getWithholdingType(InvoiceClaveRetencion icr) {
+	private static WithholdingType getWithholdingType(InvoiceClaveRetencion icr, String account) {
 		if(InvoiceClaveRetencion.PR.equals(icr)
 			|| InvoiceClaveRetencion.G.equals(icr)) {
 			return WithholdingType.PROFESSIONAL;
-		} else if(InvoiceClaveRetencion.AR.equals(icr)) {
+		} else if(InvoiceClaveRetencion.AR.equals(icr)
+				|| account.substring(0, 3).equals("621")) {
 			return WithholdingType.RENTING;
 		} else if(InvoiceClaveRetencion.CM.equals(icr)
 			|| InvoiceClaveRetencion.C.equals(icr)) {
@@ -521,7 +522,8 @@ public class InvoiceImport {
 		} else if(InvoiceClaveRetencion.AG.equals(icr)
 			|| InvoiceClaveRetencion.H.equals(icr)) {
 			return WithholdingType.FARMER;
-		} else if(InvoiceClaveRetencion.TA.equals(icr)) {
+		} else if(InvoiceClaveRetencion.TA.equals(icr)
+				|| account.substring(0, 3).equals("624")) {
 			return WithholdingType.TRANSPORT_OPERATOR;
 		}
 		return WithholdingType.PROFESSIONAL;
