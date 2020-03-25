@@ -301,14 +301,14 @@
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="template-import-configuration"
 													action="gwt_import" title="Importar Excel">
-												<aon:outputText value="Importar Excel - Carga de Datos" />
+												<aon:outputText value="Carga de datos desde ficheros Excel (Predefinidos)" />
 											</aon:commandLink>
 										</aon:div>
 									</aon:if>								
 									<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="template-configuration"
 													action="gwt_templates" title="#{bundle.aon_templates}">
-												<aon:outputText value="Plantillas - Carga de Datos" />
+												<aon:outputText value="Gestión Plantillas para carga de datos" />
 											</aon:commandLink>
 									</aon:div>
 									<aon:if
@@ -316,7 +316,7 @@
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aonLoader" action="aonLoader_form"
 												actionListener="#{aonLoader.onStart}"
-												value="#{bundle.aon_loader_module}" />
+												value="Carga de datos desde ficheros Texto (CSV)" />
 										</aon:div>
 										
 										<aon:div styleClass="aon-direct-access-list-element">

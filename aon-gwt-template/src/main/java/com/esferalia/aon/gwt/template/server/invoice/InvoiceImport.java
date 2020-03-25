@@ -366,6 +366,7 @@ public class InvoiceImport {
 			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
 					&& ivs.get(i).getRetentionQuota() > 0);
 			invoice.setRemarks(ivs.get(i).getConcept());
+			invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
 			
 			RAddress address = new RAddress();
 			address.setDomain(domain.getId());
@@ -514,7 +515,8 @@ public class InvoiceImport {
 			|| InvoiceClaveRetencion.G.equals(icr)) {
 			return WithholdingType.PROFESSIONAL;
 		} else if(InvoiceClaveRetencion.AR.equals(icr)
-				|| account.substring(0, 3).equals("621")) {
+				|| account.substring(0, 3).equals("621")
+				|| account.substring(0, 3).equals("752")) {
 			return WithholdingType.RENTING;
 		} else if(InvoiceClaveRetencion.CM.equals(icr)
 			|| InvoiceClaveRetencion.C.equals(icr)) {

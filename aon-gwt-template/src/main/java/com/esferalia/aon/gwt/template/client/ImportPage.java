@@ -85,7 +85,7 @@ public class ImportPage extends AonTemplate2{
 	}
 	
 	private void info() {
-		Window.open("https://drive.google.com/file/d/1MCUtHZWcKZurs8n5B9P_n6ZyZIXNJv1v/view?usp=sharing", "_blank", null);
+		Window.open("https://drive.google.com/file/d/1tw-LHm-NnGqMZoEHNWR1kNR1enAp2Unq/view?usp=sharing", "_blank", null);
 	}
 	
 	private void content() {

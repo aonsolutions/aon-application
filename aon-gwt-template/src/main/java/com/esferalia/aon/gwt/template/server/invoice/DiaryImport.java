@@ -111,6 +111,7 @@ public class DiaryImport {
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 			Integer indexTitle = Utils.isAyudaT(domain.getName()) ? 3 : 0;
+			invoice = false;
 			cellStream.forEach(cell -> {
 				if(row.getRowNum() == indexTitle) {
 					titleList.add(cell.getStringCellValue());
@@ -184,11 +185,6 @@ public class DiaryImport {
 			return ;
 		}
 		
-		if("TIPO".equalsIgnoreCase(title)) {
-			diary.get(asiento).setEntryType(AccountEntryType.safeValueOf(o.toString()));
-			return;
-		}
-		
 		if("SEGURIDAD".equalsIgnoreCase(title)) {
 			// TODO
 			return;
@@ -200,17 +196,20 @@ public class DiaryImport {
 		}	
 		
 		if("FACTURA".equalsIgnoreCase(title)) {	
+			diary.get(asiento).getDetails().get(apunte-1).setDocumentNumber(o.toString());
 			invoice = o != null && !"".equals(o.toString()) && !" ".equals(o.toString());
 			return;
 		}
 		
 		if("DOCUMENTO".equalsIgnoreCase(title)) {
-			// TODO
+			if(!invoice) {
+				diary.get(asiento).getDetails().get(apunte-1).setDocumentNumber(o.toString());
+			}
 			return;
 		}
 		
 		if("SUBCUENTA".equalsIgnoreCase(title)
-				|| "CUENTA".equalsIgnoreCase(title)) {	
+				|| "CUENTA".equalsIgnoreCase(title)) {
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			String subaccount = acc.substring(0,4) + acc.substring(7);
 			diary.get(asiento).getDetails().get(apunte-1).setAccountCode(subaccount);
@@ -246,7 +245,9 @@ public class DiaryImport {
 			return;
 		}
 		
-		if("REFERENCIA".equalsIgnoreCase(title)) {
+		if("REFERENCIA".equalsIgnoreCase(title)
+				|| "TIPO".equalsIgnoreCase(title)) {
+			diary.get(asiento).setEntryType(AccountEntryType.safeValueOf(o.toString()));	
 			if(diary.get(asiento).getEntryType() == null) {
 				if("&AP".equals(o.toString())) {
 					diary.get(asiento).setEntryType(AccountEntryType.OPENING); 
