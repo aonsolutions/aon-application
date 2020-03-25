@@ -607,7 +607,7 @@ public abstract class QuoteCalculator {
 			others.addAll(Arrays.asList(othersArr));
 			others.addAll(Arrays.asList(othersArgs));
 			
-			return QuoteCalculator.limit(limit, raw, min,
+			return limit(limit, raw, min,
 					max, ctx, start, end, others.toArray(ContextVariable[]::new));
 		}
 
