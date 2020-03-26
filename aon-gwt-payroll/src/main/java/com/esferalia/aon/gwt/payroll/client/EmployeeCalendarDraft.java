@@ -73,20 +73,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			dayType.visit(new DayTypeVisitor<Void>() {
 				
 				@Override
-				public Void visitSuspensionDay(DayType dayType) {
-					calendarGrid.getWidget(row, col).addStyleName(style.suspensionStyle());
-					return null;
-				}
-				
-				@Override
 				public Void visitStrikeDay(DayType dayType) {
 					calendarGrid.getWidget(row, col).addStyleName(style.strikeStyle());	
-					return null;
-				}
-				
-				@Override
-				public Void visitReductionDay(DayType dayType) {
-					calendarGrid.getWidget(row, col).addStyleName(style.reductionStyle());	
 					return null;
 				}
 				
@@ -299,9 +287,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		String ereFzaStyle();
 		String ereFzaExonStyle();
 		String strikeStyle();
-		String reductionStyle();
 		String dropStyle();
-		String suspensionStyle();
 		String itStyle();
 		String inactivityStyle();
 		String peonadasStyle();
@@ -1633,8 +1619,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.dropStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.strikeStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.ereStyle());
-				calendarGrid.getWidget(row, col).removeStyleName(style.reductionStyle());
-				calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.ereFzaStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.ereFzaExonStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.nonWorkingStyle());
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
@@ -1649,8 +1635,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		calendarGrid.getWidget(row, col).removeStyleName(style.dropStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.strikeStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.ereStyle());
-		calendarGrid.getWidget(row, col).removeStyleName(style.reductionStyle());
-		calendarGrid.getWidget(row, col).removeStyleName(style.suspensionStyle());
+		calendarGrid.getWidget(row, col).removeStyleName(style.ereFzaStyle());
+		calendarGrid.getWidget(row, col).removeStyleName(style.ereFzaExonStyle());
 		calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
 		calendarGrid.getWidget(row, col).setStyleName(style.blockStyle());
 		cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);

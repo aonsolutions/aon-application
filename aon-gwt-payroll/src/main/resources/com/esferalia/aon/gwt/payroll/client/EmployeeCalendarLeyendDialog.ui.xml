@@ -13,6 +13,10 @@
 		.noWorkingColor{
 			background-color: salmon;
 		}
+		
+		.holidayColor{
+			background-color: #52ab3c;
+		}
 
 		.inactivityColor{
 			background-color: #71b1e8;
@@ -33,25 +37,21 @@
 		.ereFzaColor{
 			background-color: rgba(185, 18, 87, 0.7);
 		}
-
-		.holidayColor{
-			background-color: green;
+		
+		.ereFzaExonColor{
+			background-color: rgba(185, 18, 87, 0.4);
+		}
+		
+		.peonadasColor{
+			background-color: #d692f9;
 		}
 
 		.sundayColor{
 			background-color: rgb(68, 90, 105);
 		}
 
-		.suspensionColor{
-			background-color: #b74b17;
-		}
-
 		.itColor{
 			background-color: rgba(255, 0, 0, 0.72);
-		}
-
-		.reductionColor{
-			background-color: #065b69;
 		}
 		
 		.partialityColor{
@@ -106,10 +106,18 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label>ERE (Fuerza Mayor)</g:Label>
+					<g:Label>ERE Fuerza Mayor</g:Label>
 				</td>
 				<td>
 					<g:Label styleName="{style.colorButton} {style.ereFzaColor}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label>ERE Fuerza Mayor (Exoneración de cuotas)</g:Label>
+				</td>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.ereFzaExonColor}"/>
 				</td>
 			</tr>
 			<tr>
@@ -138,14 +146,6 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label>Suspensión</g:Label>
-				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.suspensionColor}"/>
-				</td>
-			</tr>
-			<tr>
-				<td>
 					<g:Label>Baja IT</g:Label>
 				</td>
 				<td>
@@ -154,18 +154,18 @@
 			</tr>
 			<tr>
 				<td>
-					<g:Label>Reducción</g:Label>
-				</td>
-				<td>
-					<g:Label styleName="{style.colorButton} {style.reductionColor}"/>
-				</td>
-			</tr>
-			<tr>
-				<td>
 					<g:Label>Parcialidad</g:Label>
 				</td>
 				<td>
 					<g:Label styleName="{style.colorButton} {style.partialityColor}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<g:Label>Peonadas</g:Label>
+				</td>
+				<td>
+					<g:Label styleName="{style.colorButton} {style.peonadasColor}"/>
 				</td>
 			</tr>
 		</table>

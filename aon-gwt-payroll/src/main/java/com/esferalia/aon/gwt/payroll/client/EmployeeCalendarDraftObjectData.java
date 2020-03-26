@@ -108,8 +108,6 @@ public class EmployeeCalendarDraftObjectData {
 		T visitEreFzaDay(DayType dayType);
 		T visitEreFzaExonDay(DayType dayType);
 		T visitStrikeDay(DayType dayType);
-		T visitReductionDay(DayType dayType);
-		T visitSuspensionDay(DayType dayType);
 		T visitITDay(DayType dayType);
 		T visitNoTypeDay(DayType dayType);
 		T visitInactivityDay(DayType dayType);
@@ -164,18 +162,6 @@ public class EmployeeCalendarDraftObjectData {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitEreFzaExonDay(this);
-			}
-		},
-		REDUCTIONDAY {
-			@Override
-			public <T> T visit(DayTypeVisitor<T> visitor) {
-				return visitor.visitReductionDay(this);
-			}
-		}, 
-		SUSPENSIONDAY {
-			@Override
-			public <T> T visit(DayTypeVisitor<T> visitor) {
-				return visitor.visitSuspensionDay(this);
 			}
 		},
 		BAJAIT {

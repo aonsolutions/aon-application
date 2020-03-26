@@ -218,29 +218,19 @@
 			background-color: rgb(68, 90, 105);
 			padding: 3px;
 			color: #ffffff;
-		}		
-
-		.reductionStyle {
-			background-color: #065b69;
-			color: #ffffff;
-			margin-top: 0px;
 		}
 		
 		.dropStyle {
 			background-color: #733969;
+			border-radius: 20%;
 			padding: 3px;
 			color: #ffffff;
 			
 		}
 		
-		.suspensionStyle {
-			background-color: #b74b17;
-			color: #ffffff;
-			margin-top: 0px;
-		}
-		
 		.itStyle {
 			background-color: rgba(255, 0, 0, 0.72);
+			border-radius: 20%;
 			color: #ffffff;
 			margin-top: 0px;
 		}
