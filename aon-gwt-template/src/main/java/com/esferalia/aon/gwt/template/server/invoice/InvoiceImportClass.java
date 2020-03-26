@@ -34,6 +34,7 @@ public class InvoiceImportClass {
 	Double total;
 	InvoiceClaveRetencion retentionKey;
 	InvoiceSubClaveRetencion retentionSubKey;
+	Integer line;
 	
 	public InvoiceImportClass() {
 		// TODO Auto-generated constructor stub
@@ -281,6 +282,17 @@ public class InvoiceImportClass {
 		this.accountDescription = accountDescription;
 		return this;
 	}
+	
+	public Integer getLine() {
+		return line;
+	}
+
+	public InvoiceImportClass setLine(Integer line) {
+		this.line = line;
+		return this;
+	}
+
+
 
 	public enum InvoiceOpType {
 		EX,

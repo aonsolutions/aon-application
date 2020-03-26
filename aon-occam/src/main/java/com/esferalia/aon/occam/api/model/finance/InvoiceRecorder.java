@@ -198,7 +198,9 @@ public class InvoiceRecorder {
 						fillBalancingAccount(detail,invoice);
 						map.put(account,detail);
 					}
-					detail.setDebit(amount);
+					if(amount < 0) {
+						detail.setCredit(amount);
+					} else detail.setDebit(amount);
 				}
 			}
 
@@ -223,7 +225,10 @@ public class InvoiceRecorder {
 						fillBalancingAccount(detail,invoice);
 						map.put(invoice.getRegistry().getAccountId(),detail);
 					}
-					detail.setCredit(amount);
+					
+					if(amount < 0) {
+						detail.setDebit(amount);
+					} else detail.setCredit(amount);
 				}
 			}
 	 	})
@@ -260,7 +265,9 @@ public class InvoiceRecorder {
 										;
 									map.put(id,detail);
 								}
-								detail.addDebit( amount );
+								if(amount < 0) {
+									detail.addCredit( amount );
+								} else detail.addDebit( amount );
 							}
 						}
 					}
@@ -300,7 +307,9 @@ public class InvoiceRecorder {
 											;
 									map.put(id,detail);
 								}
-								detail.addCredit( amount );
+								if(amount < 0) {
+									detail.addDebit( amount );
+								} else detail.addCredit( amount );
 							}
 						}
 					}
@@ -342,7 +351,7 @@ public class InvoiceRecorder {
 										.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 									map.put(id,detail);
 								}
-								if (invoice.isOutputVatEnabled()) {
+								if (invoice.isOutputVatEnabled() || amount < 0) {
 									detail.addCredit( amount );
 								} else {
 									detail.addDebit( amount );
@@ -375,7 +384,9 @@ public class InvoiceRecorder {
 								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 						map.put(invoice.getWithholdingData().getAccountId(),detail);
 					}
-					detail.addDebit( invoice.getWithholdingData().getQuota() );
+					if(invoice.getWithholdingData().getQuota() < 0) {
+						detail.addCredit( invoice.getWithholdingData().getQuota() );
+					} else detail.addDebit( invoice.getWithholdingData().getQuota() );
 				}
 			}
 			 
@@ -401,7 +412,9 @@ public class InvoiceRecorder {
 								.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 						map.put(invoice.getWithholdingData().getAccountId(),detail);
 					}
-					detail.addCredit( invoice.getWithholdingData().getQuota() );
+					if(invoice.getWithholdingData().getQuota() < 0) {
+						detail.addDebit(invoice.getWithholdingData().getQuota());
+					} else detail.addCredit( invoice.getWithholdingData().getQuota() );
 				}
 			}
 	 	})
@@ -424,7 +437,9 @@ public class InvoiceRecorder {
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 								map.put(vat.getExpAccountId(), detail);
 							}
-							detail.addCredit( amount );		
+							if(amount < 0 ) {
+								detail.addDebit(amount);
+							} else detail.addCredit( amount );		
 						}
 					}
 				}
@@ -450,7 +465,9 @@ public class InvoiceRecorder {
 									.setBalancingAccountDescription(obtainRegistryAccountDescription(invoice));
 								map.put(vat.getExpAccountId(),detail);
 							}
-							detail.addDebit( amount );
+							if(amount < 0) {
+								detail.addCredit(amount);
+							} else detail.addDebit( amount );
 						}
 					}
 				}

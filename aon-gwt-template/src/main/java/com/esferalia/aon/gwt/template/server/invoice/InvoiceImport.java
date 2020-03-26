@@ -54,6 +54,7 @@ import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
@@ -150,7 +151,8 @@ public class InvoiceImport {
 						check(domain, login, title, cell);			
 					}
 				});
-				if(row.getRowNum() != 0) {
+				if(row.getRowNum() != 0 && (inv.getSerie()!= null
+					|| inv.getNumber() != null || inv.getRef() != null)) {
 					list.add(inv);
 				}
 			});
@@ -203,7 +205,7 @@ public class InvoiceImport {
 		
 		if("NUMERO".equalsIgnoreCase(title)
 				|| "NÚMERO".equalsIgnoreCase(title)) {
-			inv.setNumber(AonNumberUtils.toInteger(o.toString()));
+			inv.setNumber(AonNumberUtils.toDouble(o.toString()).intValue());
 			return;
 		}
 		
@@ -347,8 +349,7 @@ public class InvoiceImport {
 			Invoice invoice = new Invoice();
 			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
 			
-			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType())
-					|| InvoiceOpType.EIB.equals(ivs.get(i).getType())|| InvoiceOpType.AIB.equals(ivs.get(i).getType()));
+			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
 			invoice.setTransaction(getTransaction(ivs.get(i)));
 			invoice.setDomain(domain.getId());
 			invoice.setIssueDate(ivs.get(i).getDate());
@@ -367,19 +368,24 @@ public class InvoiceImport {
 					&& ivs.get(i).getRetentionQuota() > 0);
 			invoice.setRemarks(ivs.get(i).getConcept());
 			invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
+			if(ivs.get(i).getTotal() < 0) {
+				invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
+			}
+
 			
 			RAddress address = new RAddress();
 			address.setDomain(domain.getId());
 			address.setType((byte) 0);
 			address.setAddress(ivs.get(i).getAddress());
 			address.setCity(ivs.get(i).getCity());
-			address.setZip(ivs.get(i).getZip());
+			address.setZip(ivs.get(i).getZip() != null && ivs.get(i).getZip().length() < 5 
+					? "0" + ivs.get(i).getZip() : ivs.get(i).getZip());
 			if(ivs.get(i).getProvince() != null) {
 				GeoZone prgz = null;
 				GeoZone crgz = null;
 				Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
-				if(pr == null && ivs.get(i).getZip() != null ) {
-					pr = Provinces.getProvinceById(ivs.get(i).getZip().substring(0,2));
+				if(pr == null && address.getZip() != null ) {
+					pr = Provinces.getProvinceById(address.getZip().substring(0,2));
  				}
 				for(GeoZone gz : aonCtx.getGeozones()) {
 					if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
@@ -472,11 +478,15 @@ public class InvoiceImport {
 						.setInputAccountDescription(inputAccount.getDescription())
 						.setInputAccountId(inputAccount.getId())
 
-						.setAdjAccountCode(adjAccount.getCode())
-						.setAdjAccountDescription(adjAccount.getDescription())
-						.setAdjAccountId(adjAccount.getId());
+						.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
+						.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
+						.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
 				ai.addVat(vat);
-				total = total + ivs.get(j).getTotal();
+				if(invoice.mustApplyISP()) {
+					total = total + ivs.get(j).getBase();
+				} else {
+					total = total + ivs.get(j).getTotal();
+				}
 
 				j++;
 			}
@@ -502,8 +512,8 @@ public class InvoiceImport {
 			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
 			
 			Finance f = new Finance()
-					.setAmount(invoice.getTotal())
-					.setDueDate(invoice.getIssueDate())
+					.setAmount(ai.getInvoice().getTotal())
+					.setDueDate(ai.getInvoice().getIssueDate())
 					.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
 			ai.getInvoice().addFinance(f);
 
@@ -663,11 +673,23 @@ public class InvoiceImport {
 	private static Integer getScopeId(Domain domain, User user) {
 		Integer scope = domain.getScope();
 		if(domain.getScope() == null) {
+
 			Scope s = AON.getUserScopeStream(domain.getName(), domain.getId(), user.getLogin(), user.getId(), 
 					f -> f.getDescriptionProperty().eq("GENERAL")).findFirst().orElse(null);
 			if(s == null) {
 				Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-				scope = scopes.length > 0 ? scopes[0] : null;
+				if(scopes != null && scopes.length > 0)
+					scope = scopes[0];
+				else {
+					s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(),  f ->
+						f.getDomainProperty().eq(domain.getId())).findFirst().orElse(null);
+					if(s == null) {
+						s = AON.insertScope(domain.getName(), domain.getId(), user.getLogin(), new Scope()
+							.setDescription("GENERAL")
+							.setDomain(domain.getId()));
+					}
+					scope = s.getId();
+				}
 			} else scope = s.getId();
 		}
 		return scope;
@@ -750,7 +772,7 @@ public class InvoiceImport {
 		} else if( serie == null && number != null) {
 			snBool = number.equals(iic.getNumber());
 		}
-		return reference.equals(iic.getRef()) || snBool;
+		return snBool || (reference != null && reference.equals(iic.getRef()));
 	}
 	
 

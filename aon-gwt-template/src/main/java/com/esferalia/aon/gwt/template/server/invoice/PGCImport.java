@@ -10,7 +10,9 @@ import java.util.stream.StreamSupport;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -60,7 +62,6 @@ public class PGCImport {
 					}
 				});
 				if(row.getRowNum() != 0) {
-					
 					list.add(account);
 				}
 			});
@@ -134,7 +135,11 @@ public class PGCImport {
 		if(o == null) return;	
 		if("CODIGO".equalsIgnoreCase(title)
 				|| "CÓDIGO".equalsIgnoreCase(title)) {
-			account.setCode(o.toString());
+			String acc = o.toString();
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
+			}
+			account.setCode(Utils.calculateAccount(acc));
 			return;
 		}
 
@@ -153,7 +158,6 @@ public class PGCImport {
 	public static void insertPGC(Domain domain, User user,LinkedList<Account> accountList) {
 		accountList.stream().sorted((a1, a2) -> a1.getCode().compareTo(a2.getCode()))
 		.forEach(acc -> {
-			System.out.println(acc.getCode());
 			Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), acc.getCode());
 			if(account == null || account.getId() == null) {
 				checkLowLevelAccount(domain, user, acc);
@@ -167,12 +171,14 @@ public class PGCImport {
 		if (level>1) {
 			int parentLevel = level - 1;
 			String parentCode = AonStringUtils.substring(acc.getCode(),0, parentLevel);
-			Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), acc.getCode());
+			Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), parentCode);
 			if (account == null || account.getId() == null) {
 				account = new Account()
+						.setDomain(domain.getId())
 						.setCode(parentCode)
 						.setDescription(acc.getDescription())
-						.setAlias(acc.getAlias());
+						.setAlias(acc.getAlias())
+						.setActive(true);
 				checkLowLevelAccount(domain, user, account);
 				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
 			}

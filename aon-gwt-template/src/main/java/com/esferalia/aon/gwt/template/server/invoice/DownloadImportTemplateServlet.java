@@ -92,18 +92,19 @@ public class DownloadImportTemplateServlet extends HttpServlet {
 	
 	private LinkedList<String> getDiaryColumnList() {
 		LinkedList<String> columnList = new LinkedList<String>();
+		columnList.add("TIPO");
         columnList.add("ASIENTO");
         columnList.add("APUNTE");
         columnList.add("FECHA");
-        columnList.add("FACTURA");
         columnList.add("DOCUMENTO");
-        columnList.add("SUBCUENTA");
-        columnList.add("TÍTULO DE SUBCUENTA");
+        columnList.add("CUENTA");
+        columnList.add("DESC. CUENTA");
         columnList.add("CONTRAPARTIDA");
+        columnList.add("DESC. CONTRAP.");
         columnList.add("CONCEPTO");
-        columnList.add("REFERENCIA");
         columnList.add("DEBE");
-        columnList.add("HABER");        
+        columnList.add("HABER");   
+        columnList.add("COMENTARIOS");   
         return columnList;
 	}
 	

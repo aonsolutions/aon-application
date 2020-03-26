@@ -551,7 +551,7 @@ public class Invoice implements Serializable, HasAudit {
 		return getType() == InvoiceType.UNDEDUCTIBLE;
 	}
 	
-	private boolean mustApplyISP() {
+	public boolean mustApplyISP() {
 		return (isPurchase() && isIntracommunity())					// Compra intracomunitaria
 			|| (isPurchase() && isIsp())							// Compra Inversion Sujeto Pasivo
 			|| (isPurchase() && isExtracommunity() && isService())	// Compra extracomunitaria de servicio
