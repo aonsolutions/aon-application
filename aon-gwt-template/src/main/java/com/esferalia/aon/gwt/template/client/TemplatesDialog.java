@@ -146,7 +146,8 @@ public abstract class TemplatesDialog extends CustomDialogB {
 					}
 					else {
 						label.setText(MSG.error1());
-						label.getElement().getStyle().setColor("red");					}
+						label.getElement().getStyle().setColor("red");					
+					}
 				}
 			}
 		});

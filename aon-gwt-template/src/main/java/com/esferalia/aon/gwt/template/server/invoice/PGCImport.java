@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import com.esferalia.aon.gwt.template.shared.Error;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -24,6 +25,31 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PGCImport {
 
+	public class AccountImportClass {
+		private Account account;
+		private Integer line;
+		
+		public AccountImportClass() {
+			this.account = new Account();
+		}
+
+		public Account getAccount() {
+			return account;
+		}
+
+		public void setAccount(Account account) {
+			this.account = account;
+		}
+	
+		public Integer getLine() {
+			return line;
+		}
+
+		public void setLine(Integer line) {
+			this.line = line;
+		}
+	}
+	
 	public static PGCImport getInstance() {
 		return new PGCImport();
 	}
@@ -32,9 +58,9 @@ public class PGCImport {
 
 	}
 	
-	Account account; 
+	AccountImportClass account; 
 	
-	public LinkedList<Account> importation(Domain domain, String login, byte[] data){
+	public LinkedList<AccountImportClass> importation(Domain domain, String login, byte[] data){
 		HSSFWorkbook workbook = null;
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -43,7 +69,7 @@ public class PGCImport {
 			HSSFSheet sheet = workbook.getSheetAt(0);
 
 			LinkedList<String> titleList = new LinkedList<>();
-			LinkedList<Account> list = new LinkedList<>();
+			LinkedList<AccountImportClass> list = new LinkedList<>();
 			Iterator<Row> rowIterator = sheet.iterator();
 			Iterable<Row> rowIterable = () -> rowIterator;
 			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
@@ -52,7 +78,9 @@ public class PGCImport {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
-				account = new Account().setDomain(domain.getId());
+				account = new AccountImportClass();
+				account.getAccount().setDomain(domain.getId());
+				account.setLine(row.getRowNum() + 1);
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
 						titleList.add(cell.getStringCellValue());
@@ -81,7 +109,7 @@ public class PGCImport {
 		return null;
 	}
 
-	public LinkedList<Account> importationX(Domain domain, String login, byte[] data){
+	public LinkedList<AccountImportClass> importationX(Domain domain, String login, byte[] data){
 		XSSFWorkbook workbook = null;
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
@@ -90,7 +118,7 @@ public class PGCImport {
 			XSSFSheet sheet = workbook.getSheetAt(0);
 
 			LinkedList<String> titleList = new LinkedList<>();
-			LinkedList<Account> list = new LinkedList<>();
+			LinkedList<AccountImportClass> list = new LinkedList<>();
 			
 			Iterator<Row> rowIterator = sheet.iterator();
 			Iterable<Row> rowIterable = () -> rowIterator;
@@ -100,8 +128,9 @@ public class PGCImport {
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
-				account = new Account().setDomain(domain.getId());
-				
+				account = new AccountImportClass();
+				account.getAccount().setDomain(domain.getId());
+				account.setLine(row.getRowNum() + 1);				
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
 						titleList.add(cell.getStringCellValue());
@@ -139,31 +168,40 @@ public class PGCImport {
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
 			}
-			account.setCode(Utils.calculateAccount(acc));
+			account.getAccount().setCode(Utils.calculateAccount(acc));
 			return;
 		}
 
 		if("DESCRIPCION".equalsIgnoreCase(title)
 				|| "DESCRIPCIÓN".equalsIgnoreCase(title)) {
-			account.setDescription(o.toString());
+			account.getAccount().setDescription(o.toString());
 			return;
 		}
 		
 		if("ALIAS".equalsIgnoreCase(title)) {
-			account.setAlias(o.toString());
+			account.getAccount().setAlias(o.toString());
 			return ;
 		}
 	}
 
-	public static void insertPGC(Domain domain, User user,LinkedList<Account> accountList) {
-		accountList.stream().sorted((a1, a2) -> a1.getCode().compareTo(a2.getCode()))
+	public static Error insertPGC(Domain domain, User user,LinkedList<AccountImportClass> accountList) {
+		Error error = new Error().setError(true);
+		LinkedList<String> verror = new LinkedList<String>();
+		accountList.stream().sorted((a1, a2) -> a1.getAccount().getCode().compareTo(a2.getAccount().getCode()))
 		.forEach(acc -> {
-			Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), acc.getCode());
-			if(account == null || account.getId() == null) {
-				checkLowLevelAccount(domain, user, acc);
-				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), acc);
+			try {
+				Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), acc.getAccount().getCode());
+				if(account == null || account.getId() == null) {
+					checkLowLevelAccount(domain, user, acc.getAccount());
+					ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), acc.getAccount());
+				}
+			} catch (Exception e) {
+				error.setError(false);
+				verror.add("Línea " + acc.getLine() + ": " + e.getMessage());
 			}
 		});
+		error.setTextError(verror);
+		return error;
 	}
 	
 	private static void checkLowLevelAccount(Domain domain, User user, Account acc) {

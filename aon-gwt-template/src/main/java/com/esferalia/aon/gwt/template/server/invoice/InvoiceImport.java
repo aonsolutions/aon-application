@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import com.esferalia.aon.gwt.template.shared.Error;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -93,6 +94,7 @@ public class InvoiceImport {
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				inv = new InvoiceImportClass();
+				inv.setLine(row.getRowNum() + 1);	
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
 						titleList.add(cell.getStringCellValue());
@@ -142,7 +144,7 @@ public class InvoiceImport {
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				inv = new InvoiceImportClass();
-				
+				inv.setLine(row.getRowNum() + 1);	
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
 						titleList.add(cell.getStringCellValue());
@@ -199,7 +201,11 @@ public class InvoiceImport {
 		}
 		
 		if("SERIE".equalsIgnoreCase(title)) {
-			inv.setSerie(o.toString());
+			String serie = o.toString();
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
+				serie = Integer.toString(AonNumberUtils.toDouble(o.toString()).intValue());
+			} 
+			inv.setSerie(serie);
 			return;
 		}
 		
@@ -290,7 +296,8 @@ public class InvoiceImport {
 			inv.setBase(Double.parseDouble(o.toString()));
 			return;
 		}
-		if("%Impuesto".equalsIgnoreCase(title)) {
+		if("%Impuesto".equalsIgnoreCase(title)
+				|| "%IVA".equalsIgnoreCase(title)) {
 			inv.setPercentage(Double.parseDouble(o.toString()));
 			return;
 		}
@@ -336,105 +343,109 @@ public class InvoiceImport {
 		}	
 	}
 
-	public static void insertInvoices(Domain domain, User user,LinkedList<InvoiceImportClass> ivs) {
+	public static Error insertInvoices(Domain domain, User user,LinkedList<InvoiceImportClass> ivs) {
+		Error error = new Error().setError(true);
+		LinkedList<String> verror = new LinkedList<String>();
+		
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 		Account outputAccount = aonCtx.getDefaultChargedVatAccount();
 		Account inputAccount = aonCtx.getDefaultPaidVatAccount();
 		Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
 		
 		for(Integer i = 0; i < ivs.size(); i++) {
-			AccountingInvoice ai = new AccountingInvoice();
-			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
+			try {
+				AccountingInvoice ai = new AccountingInvoice();
+				ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
-			Invoice invoice = new Invoice();
-			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+				Invoice invoice = new Invoice();
+				invoice.setScope(new Scope().setId(getScopeId(domain, user)));
 			
-			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
-			invoice.setTransaction(getTransaction(ivs.get(i)));
-			invoice.setDomain(domain.getId());
-			invoice.setIssueDate(ivs.get(i).getDate());
-			invoice.setTaxDate(ivs.get(i).getDate());
-			invoice.setType(ivs.get(i).getInvoiceType() != null
+				invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
+				invoice.setTransaction(getTransaction(ivs.get(i)));
+				invoice.setDomain(domain.getId());
+				invoice.setIssueDate(ivs.get(i).getDate());
+				invoice.setTaxDate(ivs.get(i).getDate());
+				invoice.setType(ivs.get(i).getInvoiceType() != null
 					? ivs.get(i).getInvoiceType()
 					: getInvoiceType(ivs.get(i).getAccount()));
-			if(ivs.get(i).getSerie() != null) {
-				invoice.setSeries(ivs.get(i).getSerie());
-			} 
-			if(ivs.get(i).getNumber() != null) {
-				invoice.setNumber(ivs.get(i).getNumber());	
-			}
-			invoice.setReferenceCode(ivs.get(i).getRef());
-			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
+				if(ivs.get(i).getSerie() != null) {
+					invoice.setSeries(ivs.get(i).getSerie());
+				} 
+				if(ivs.get(i).getNumber() != null) {
+					invoice.setNumber(ivs.get(i).getNumber());	
+				}
+				invoice.setReferenceCode(ivs.get(i).getRef());
+				invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
 					&& ivs.get(i).getRetentionQuota() > 0);
-			invoice.setRemarks(ivs.get(i).getConcept());
-			invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
-			if(ivs.get(i).getTotal() < 0) {
-				invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
-			}
+				invoice.setRemarks(ivs.get(i).getConcept());
+				invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
+				if(ivs.get(i).getTotal() < 0) {
+					invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
+				}
 
 			
-			RAddress address = new RAddress();
-			address.setDomain(domain.getId());
-			address.setType((byte) 0);
-			address.setAddress(ivs.get(i).getAddress());
-			address.setCity(ivs.get(i).getCity());
-			address.setZip(ivs.get(i).getZip() != null && ivs.get(i).getZip().length() < 5 
+				RAddress address = new RAddress();
+				address.setDomain(domain.getId());
+				address.setType((byte) 0);
+				address.setAddress(ivs.get(i).getAddress());
+				address.setCity(ivs.get(i).getCity());
+				address.setZip(ivs.get(i).getZip() != null && ivs.get(i).getZip().length() < 5 
 					? "0" + ivs.get(i).getZip() : ivs.get(i).getZip());
-			if(ivs.get(i).getProvince() != null) {
-				GeoZone prgz = null;
-				GeoZone crgz = null;
-				Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
-				if(pr == null && address.getZip() != null ) {
-					pr = Provinces.getProvinceById(address.getZip().substring(0,2));
- 				}
-				for(GeoZone gz : aonCtx.getGeozones()) {
-					if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
-						crgz = gz;
+				if(ivs.get(i).getProvince() != null) {
+					GeoZone prgz = null;
+					GeoZone crgz = null;
+					Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
+					if(pr == null && address.getZip() != null ) {
+						pr = Provinces.getProvinceById(address.getZip().substring(0,2));
+ 					}
+					for(GeoZone gz : aonCtx.getGeozones()) {
+						if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
+							crgz = gz;
+						}
+						if(gz.getCode().equals(pr.getId())) {
+							prgz = gz;
+						}
 					}
-					if(gz.getCode().equals(pr.getId())) {
-						prgz = gz;
-					}
-				}
 				
-				if(prgz != null) {
-					address.setGeozone(prgz.getId());
-					address.setGeozoneCode(prgz.getCode());
-					address.setGeozoneName(prgz.getName());
-				} else if(crgz != null) {
-					address.setGeozone(crgz.getId());
-					address.setGeozoneCode(crgz.getCode());
-					address.setGeozoneName(crgz.getName());
+					if(prgz != null) {
+						address.setGeozone(prgz.getId());
+						address.setGeozoneCode(prgz.getCode());
+						address.setGeozoneName(prgz.getName());
+					} else if(crgz != null) {
+						address.setGeozone(crgz.getId());
+						address.setGeozoneCode(crgz.getCode());
+						address.setGeozoneName(crgz.getName());
+					}
 				}
-			}
 
-			String nif = ivs.get(i).getNif();
-			String name = ivs.get(i).getName();
+				String nif = ivs.get(i).getNif();
+				String name = ivs.get(i).getName();
 			
-			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address);			
-			invoice.setRegistry(ar.getId());
-			ai.setRegistry(ar);
-			ai.setInvoice(invoice);
+				AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address);			
+				invoice.setRegistry(ar.getId());
+				ai.setRegistry(ar);
+				ai.setInvoice(invoice);
 
-			String reference = ivs.get(i).getRef();
-			String serie = ivs.get(i).getSerie();
-			Integer number = ivs.get(i).getNumber();
-			Double total = 0.0;
-			Double retBase = 0.0;
-			Double retQuota = 0.0;
-			Double retPercentage = 0.0;
-			Integer j = i;
-			while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
-				if(ivs.get(i).getRetentionQuota() != null 
-						&& ivs.get(i).getRetentionQuota() > 0) {
-					retBase = retBase + ivs.get(j).getBase();
-					retPercentage = ivs.get(j).getRetentionPercentage();
-					retQuota = retQuota + ivs.get(j).getRetentionQuota();
-					ai.getInvoice().setWithholding(true);
-				}
+				String reference = ivs.get(i).getRef();
+				String serie = ivs.get(i).getSerie();
+				Integer number = ivs.get(i).getNumber();
+				Double total = 0.0;
+				Double retBase = 0.0;
+				Double retQuota = 0.0;
+				Double retPercentage = 0.0;
+				Integer j = i;
+				while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
+					if(ivs.get(i).getRetentionQuota() != null 
+							&& ivs.get(i).getRetentionQuota() > 0) {
+						retBase = retBase + ivs.get(j).getBase();
+						retPercentage = ivs.get(j).getRetentionPercentage();
+						retQuota = retQuota + ivs.get(j).getRetentionQuota();
+						ai.getInvoice().setWithholding(true);
+					}
 				
-				Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(j).getAccount());
-				if(expAccount == null) {
-					expAccount = new Account()
+					Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(j).getAccount());
+					if(expAccount == null) {
+						expAccount = new Account()
 							.setCode(ivs.get(j).getAccount())
 							.setDescription(ivs.get(i).getAccountDescription() != null 
 									? ivs.get(i).getAccountDescription()
@@ -444,10 +455,10 @@ public class InvoiceImport {
 									:"SIN DESCRIPCIÓN")
 							.setDomain(domain.getId())
 							.setActive(true);
-					expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
-				}
+						expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
+					}
 				
-				InvoiceVAT vat = new InvoiceVAT()
+					InvoiceVAT vat = new InvoiceVAT()
 						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 						.setBase(ivs.get(j).getBase() != null 
 								? ivs.get(j).getBase() : 0.0)
@@ -481,44 +492,46 @@ public class InvoiceImport {
 						.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
 						.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
 						.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
-				ai.addVat(vat);
-				if(invoice.mustApplyISP()) {
-					total = total + ivs.get(j).getBase();
-				} else {
-					total = total + ivs.get(j).getTotal();
+					ai.addVat(vat);
+					total = total + (invoice.mustApplyISP() ? ivs.get(j).getBase() : ivs.get(j).getTotal());
+
+					j++;
 				}
+				i = j-1;
 
-				j++;
-			}
-			i = j-1;
-
-			ai.getInvoice().setTotal(total);
+				ai.getInvoice().setTotal(total);
 			
-			if(ai.getInvoice().isWithholding()) {
-				Account retentionAccount = (invoice.isSales() )
-					?aonCtx.getDefaultPaidRetAccount()
-					:aonCtx.getDefaultChargedRetAccount();
+				if(ai.getInvoice().isWithholding()) {
+					Account retentionAccount = (invoice.isSales() )
+							?aonCtx.getDefaultPaidRetAccount()
+							:aonCtx.getDefaultChargedRetAccount();
 			
-				InvoiceWithholding iw = new InvoiceWithholding()
-					.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey(), ivs.get(i).getAccount()))
-					.setBase(retBase)
-					.setPercentage(retPercentage)
-					.setQuota(retQuota)
-					.setAccountCode(retentionAccount.getCode())
-					.setAccountDescription(retentionAccount.getDescription())
-					.setAccountId(retentionAccount.getId());
-				ai.setWithholdingData(iw);
-			}
-			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
+					InvoiceWithholding iw = new InvoiceWithholding()
+						.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey(), ivs.get(i).getAccount()))
+						.setBase(retBase)
+						.setPercentage(retPercentage)
+						.setQuota(retQuota)
+						.setAccountCode(retentionAccount.getCode())
+						.setAccountDescription(retentionAccount.getDescription())
+						.setAccountId(retentionAccount.getId());
+					ai.setWithholdingData(iw);
+				}
+				ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
 			
-			Finance f = new Finance()
+				Finance f = new Finance()
 					.setAmount(ai.getInvoice().getTotal())
 					.setDueDate(ai.getInvoice().getIssueDate())
 					.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
-			ai.getInvoice().addFinance(f);
+				ai.getInvoice().addFinance(f);
 
-			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+			} catch (Exception e) {
+				error.setError(false);
+				verror.add("Línea " + ivs.get(i).getLine() + ": " + e.getMessage());
+			}
 		}
+		error.setTextError(verror);
+		return error;
 	}
 	private static WithholdingType getWithholdingType(InvoiceClaveRetencion icr, String account) {
 		if(InvoiceClaveRetencion.PR.equals(icr)

@@ -335,7 +335,6 @@ public class ImportContent extends Composite {
 									
 									@Override
 									public void onSuccess(Error result) {
-							
 										pbd.completed();
 										pbd.hide();
 										Dialog d2 = new Dialog("Importar Facturas","Aceptar",true,"Cancelar",false,"importResponse");

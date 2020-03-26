@@ -78,8 +78,8 @@ public class DownloadImportTemplateServlet extends HttpServlet {
         columnList.add("CUENTA EXPLOTACIÓN");
         columnList.add("DESCRIPCIÓN CUENTA");
         columnList.add("BASE IMPONIBLE");
-        columnList.add("%IMPUESTO");
-        columnList.add("CUOTA IMPUESTO");
+        columnList.add("%IVA");
+        columnList.add("CUOTA IVA");
         columnList.add("%RE");
         columnList.add("CUOTA RE");
         columnList.add("%RETENCIÓN");
