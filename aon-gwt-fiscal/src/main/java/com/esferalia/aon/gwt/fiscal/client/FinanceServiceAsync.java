@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FinanceServiceAsync {
@@ -22,6 +23,8 @@ public interface FinanceServiceAsync {
 	void settleFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback);
 	void undoFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback);
 	void payFinance(String domainName, int domainId, String user, Finance finance, AsyncCallback<Finance> callback);
+	void getCompanyBanks(String domainName, int domainId, String user, AsyncCallback<LinkedList<RegistryBank>> callback);
+	void getRegistryBanks(String domainName, int domainId, String user, Integer registry,AsyncCallback<LinkedList<RegistryBank>> callback);
 	
 
 }

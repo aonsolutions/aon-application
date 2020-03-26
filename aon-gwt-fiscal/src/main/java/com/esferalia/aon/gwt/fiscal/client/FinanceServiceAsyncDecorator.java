@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
@@ -65,6 +66,20 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 			AsyncCallback<Finance> callback) {
 		AON.start();
 		fsa.payFinance(domainName, domainId, user, finance, new AsyncCallbackWrapper<Finance>(callback));
+	}
+
+	@Override
+	public void getCompanyBanks(String domainName, int domainId, String user,
+			AsyncCallback<LinkedList<RegistryBank>> callback) {
+		AON.start();
+		fsa.getCompanyBanks(domainName, domainId, user, new AsyncCallbackWrapper<LinkedList<RegistryBank>>(callback));
+	}
+
+	@Override
+	public void getRegistryBanks(String domainName, int domainId, String user, Integer registry,
+			AsyncCallback<LinkedList<RegistryBank>> callback) {
+		AON.start();
+		fsa.getRegistryBanks(domainName, domainId, user, registry, new AsyncCallbackWrapper<LinkedList<RegistryBank>>(callback));
 	}
 
 	

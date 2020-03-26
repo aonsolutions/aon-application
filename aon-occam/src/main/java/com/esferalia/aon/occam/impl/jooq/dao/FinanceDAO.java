@@ -862,57 +862,37 @@ public class FinanceDAO {
 	}
 
 	public static void undo(AONContext ctx, Integer financeId) {
-		ctx.checkWrite();
-		FinanceTracking financeTracking = FinanceValidation.validateUndoTracking(ctx, financeId);
-		Integer accountEntryId = ctx.getDslContext()
-			.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
-				.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
-				.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.eq(financeTracking.getId()))
-			.fetch()
-			.stream()
-			.map( rec -> rec.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
-			.findFirst()
-			.orElse(null);
-		if (accountEntryId != null) {
-			FinanceEntry fe = getFinanceEntry(ctx, accountEntryId);
-			if (fe.getTrackings().size() == 1) {
-				AccountEntryDAO.delete(ctx, accountEntryId);
+		ctx.log().info(" ----- START FINANCE UNDO ----- ");
+		try {
+			ctx.checkWrite();
+			FinanceTracking financeTracking = FinanceValidation.validateUndoTracking(ctx, financeId);
+			Integer accountEntryId = ctx.getDslContext()
+				.select(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY)
+					.from(ACCOUNT_ENTRY_FINANCE_TRACKING)
+					.where(ACCOUNT_ENTRY_FINANCE_TRACKING.FINANCE_TRACKING.eq(financeTracking.getId()))
+				.fetch()
+				.stream()
+				.map( rec -> rec.getValue(ACCOUNT_ENTRY_FINANCE_TRACKING.ACCOUNT_ENTRY))
+				.findFirst()
+				.orElse(null);
+			if (accountEntryId != null) {
+				FinanceEntry fe = getFinanceEntry(ctx, accountEntryId);
+				if (fe.getTrackings().size() == 1) {
+					AccountEntryDAO.delete(ctx, accountEntryId);
+				} else {
+					fe.getTrackings().get(financeId).setDeleted(true);
+					update(ctx, fe);
+				}
 			} else {
-				fe.getTrackings().get(financeId).setDeleted(true);
-				update(ctx, fe);
+				deleteFinanceTracking(ctx, financeTracking);
 			}
-		} else {
-			deleteFinanceTracking(ctx, financeTracking);
+		} catch (Throwable t) {
+			ctx.log().info(" ----- [ERROR] " + t.getMessage());
+			throw t;
+		} finally {
+			ctx.log().info(" ----- END FINANCE UNDO ----- ");
 		}
 	}
-
-	/*  FRACTION
-		if (!AonNumberUtils.equals( original.getAmount(), finance.getAmount())) {
-			ctx.log().info(" ----- START FINANCE FRACTION----- ");
-			double newAmount = AonMathUtils.round(original.getAmount() - finance.getAmount() );
-			original.setId( null )
-				.setAmount(newAmount)
-				.setFinanceStatus( FinanceStatus.PENDING );
-			Integer originalId = save(ctx, original);
-			FinanceTracking ft = new FinanceTracking()
-				.setFinance(original)
-				.setDomain(original.getDomain())
-				.setTrackingDate(new Date())
-				.setType(FinanceTrackingType.FRACTIONED)
-				.setDescription("Fracci\u00F3n 1/2")
-				.setRegistryBank(null)
-				.setPayMethodTypeDetail(null)
-				.setBankStatementLink(null)
-				.setAmount(newAmount)
-				.setRecorded(true);
-			insertTracking(ctx, ft)
-			
-			
-			ctx.log().info("INSERT FINANCE ( AMOUNT DIFERENCE " + newAmount +") id: " + originalId);
-			ctx.log().info(" ----- END FINANCE FRACTION----- ");
-		}
- 
-	 */
 	
 	public static AccountEntry[] getFinanceEntry(AONContext ctx, Finance finance) {
 		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx, finance.getDueDate());

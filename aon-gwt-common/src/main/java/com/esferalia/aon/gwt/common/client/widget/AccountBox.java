@@ -456,4 +456,5 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 	        }
 	    });		
 	}
+
 }

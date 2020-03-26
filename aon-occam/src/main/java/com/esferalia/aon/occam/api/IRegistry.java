@@ -124,7 +124,7 @@ public interface IRegistry {
 	public Stream<RegistryBank> getRBankStream(AONContext ctx, RegistryBankFilter filter);
 	public RegistryBank insertRBank(AONContext ctx, RegistryBank rbank);
 	public RegistryBank updateRBank(AONContext ctx, RegistryBank rbank);
-	public RegistryBank deleteRBank(AONContext ctx, RegistryBankFilter filter);
+	public void deleteRBank(AONContext ctx, Integer id);
 	
 	// ------------------- RPAYMETHOD
 	

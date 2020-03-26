@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Finance Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Finance" })
@@ -55,5 +56,25 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 	@Override
 	public Finance payFinance(String domainName, int domainId, String user, Finance finance) throws AonCoreException {
 		return AON.payFinance(domainName, domainId,user, finance);
+	}
+
+	@Override
+	public LinkedList<RegistryBank> getCompanyBanks(String domainName, int domainId, String user) throws AonCoreException {
+		try {
+			return AON.getCompanyRegistryBanks(domainName, domainId,user);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+	}
+
+	@Override
+	public LinkedList<RegistryBank> getRegistryBanks(String domainName, int domainId, String user, Integer registry) throws AonCoreException {
+		try {
+			return AON.getRegistryBanks(domainName, domainId,user, registry);
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 }

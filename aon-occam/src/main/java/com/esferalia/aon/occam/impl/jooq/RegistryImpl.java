@@ -342,9 +342,8 @@ public class RegistryImpl implements IRegistry{
 	}
 
 	@Override
-	public RegistryBank deleteRBank(AONContext ctx, RegistryBankFilter filter) {
-		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryDAO.deleteRBank(ctx, filter));
+	public void deleteRBank(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(configuration -> RegistryDAO.deleteRBank(ctx, id));
 	}
 
 	// -------------------- RPAYMETHOD

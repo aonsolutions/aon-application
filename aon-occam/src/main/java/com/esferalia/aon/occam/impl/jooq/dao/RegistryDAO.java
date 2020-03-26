@@ -40,6 +40,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Param;
 import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.CategoryRecord;
@@ -135,7 +136,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;import jdk.nashorn.internal.runtime.Context.ThrowErrorManager;
 
 public class RegistryDAO {
 	
@@ -1241,20 +1242,45 @@ public class RegistryDAO {
 	}
 	
 	// ------------------- RBANK
-	
-	public static Stream<RegistryBank> getRBankStream(AONContext ctx, RegistryBankFilter filter){
+	private static SelectConditionStep<Record> getRegistryBankSelect(AONContext ctx, RegistryBankFilter filter) {
+		ctx.checkRead();
 		return ctx.getDslContext().select()
 				.from(RBANK)
-				.where(RBANK_PROPERTIES.getConditions(filter))
-				.fetch().stream().map(new RegistryBankFiller());
+				.leftOuterJoin(ACCOUNT).on(ACCOUNT.ID.eq(RBANK.ACCOUNT))				
+				.where(RBANK_PROPERTIES.getConditions(filter));
+	}
+	public static RegistryBank getRegistryBank(AONContext ctx, Integer id){
+		return getRegistryBankSelect(ctx,filter -> filter.getIdProperty().eq(id))
+				.fetch()
+				.stream()
+				.map(new RegistryBankFiller())
+				.findFirst()
+				.orElse(new RegistryBank());
+	}
+	public static Stream<RegistryBank> getRBankStream(AONContext ctx, RegistryBankFilter filter){
+		return getRegistryBankSelect(ctx,filter)
+				.fetch()
+				.stream()
+				.map(new RegistryBankFiller());
 	}
 	
 	public static RegistryBank insertRBank(AONContext ctx, RegistryBank rbank){
-		return ctx.getDslContext().insertInto(RBANK, RBANK.ACCOUNT, RBANK.ACTIVE, RBANK.ALIAS, RBANK.BANK_ACCOUNT, 
-				RBANK.BIC, RBANK.DOMAIN, RBANK.REGISTRY, RBANK.SUFIX)
-			.values(rbank.getAccount(), rbank.isActive() ? (byte) 1 : (byte) 0, rbank.getAlias(), rbank.getBankAccount(),
-					rbank.getBic(), rbank.getDomain(), rbank.getRegistry(), rbank.getSuffix()).returning()
-			.fetch().stream().map(new RegistryBankFiller()).findFirst().orElse(new RegistryBank());
+		ctx.checkWrite();	
+		Integer id = ctx.getDslContext()
+			.insertInto(RBANK)
+			.set(RBANK.ACCOUNT, rbank.getAccount())
+			.set(RBANK.ACTIVE, rbank.isActive() ? (byte) 1 : (byte) 0) 
+			.set(RBANK.ALIAS, rbank.getAlias())
+			.set(RBANK.BANK_ACCOUNT, rbank.getBankAccount()) 
+			.set(RBANK.BIC, rbank.getBic())
+			.set(RBANK.DOMAIN, rbank.getDomain())
+			.set(RBANK.REGISTRY, rbank.getRegistry()) 
+			.set(RBANK.SUFIX, rbank.getSuffix()) 
+			.returning( RBANK.ID )
+			.fetchOne()
+			.getValue(REGISTRY.ID);
+		ctx.log().info("INSERT RBANK id: " + id);
+		return getRegistryBank(ctx, id);
 	}
 	
 	public static RegistryBank updateRBank(AONContext ctx, RegistryBank rbank){
@@ -1262,10 +1288,12 @@ public class RegistryDAO {
 		return new RegistryBank();
 	}
 	
-	public static RegistryBank deleteRBank(AONContext ctx, RegistryBankFilter filter){
-		return ctx.getDslContext().delete(RBANK)
-				.where(RBANK_PROPERTIES.getConditions(filter)).returning()
-				.fetch().stream().map(new RegistryBankFiller()).findFirst().orElse(new RegistryBank());
+	public static void deleteRBank(AONContext ctx, Integer id){
+		ctx.checkWrite();
+		int i = ctx.getDslContext().delete(RBANK)
+			.where(RBANK.ID.equal(id))
+			.execute();
+		ctx.log().info("DELETE RBANK ("+i+") id: " + id);
 	}
 	
 	// ------------------- RPAYMETHOD
@@ -1398,6 +1426,8 @@ public class RegistryDAO {
 					.setRegistry(r.getValue(RBANK.REGISTRY))
 					.setDomain(r.getValue(RBANK.DOMAIN))
 					.setAccount(r.getValue(RBANK.ACCOUNT))
+					.setAccountCode(r.getValue(ACCOUNT.CODE))
+					.setAccountDescription(r.getValue(ACCOUNT.DESCRIPTION))
 					.setActive(r.getValue(RBANK.ACTIVE) == 1)
 					.setAlias(r.getValue(RBANK.ALIAS))
 					.setBankAccount(r.getValue(RBANK.BANK_ACCOUNT))

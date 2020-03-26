@@ -3,11 +3,8 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 
 public class RegistryBank implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = 3208247929297185256L;
 	
 	private Integer id;
 	private Integer domain;
@@ -17,6 +14,8 @@ public class RegistryBank implements Serializable {
 	private String suffix;
 	private String alias;
 	private Integer account;
+	private String accountCode;
+	private String accountDescription;
 	private Boolean active;
 
 	
@@ -52,6 +51,24 @@ public class RegistryBank implements Serializable {
 		this.bankAccount = bankAccount;
 		return this;
 	}
+	
+	public String getAccountCode() {
+		return accountCode;
+	}
+	public RegistryBank setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+		return this;
+	}
+
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+	public RegistryBank setAccountDescription(String accountDescription) {
+		this.accountDescription = accountDescription;
+		return this;
+
+	}
+
 	public String getBic() {
 		return bic;
 	}

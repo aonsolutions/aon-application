@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResul
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 
 public interface IFinance {
 	
@@ -100,6 +101,9 @@ public interface IFinance {
 	public Finance settleFinance(AONContext ctx, Integer finance);
 	public Finance undoFinance(AONContext ctx, Integer finance);
 	public Finance payFinance(AONContext ctx, Finance finance);
+	
+	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry);
+	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx);
 	
 }
 	

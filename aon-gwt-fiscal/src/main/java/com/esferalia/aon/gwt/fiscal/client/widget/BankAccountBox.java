@@ -26,8 +26,6 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 	public static class BankAccountBoxOptions {
 		private BankAccount bankAccount;
 		private boolean aliasEditable;
-		private boolean BICEditable;
-		
 		
 		public boolean isAliasEditable() {
 			return aliasEditable;
@@ -37,13 +35,6 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 			return this;
 		}
 		
-		public boolean isBICEditable() {
-			return BICEditable;
-		}
-		public BankAccountBoxOptions setBICEditable(boolean bICEditable) {
-			this.BICEditable = bICEditable;
-			return this;
-		}
 		public BankAccount getBankAccount() {
 			return bankAccount;
 		}
@@ -70,7 +61,6 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 	private TextBox ccc3 = new TextBox();
 	private TextBox ccc4 = new TextBox();
 	
-	private TextBox bic = new TextBox();
 	private InlineLabel okIcon = new InlineLabel(); 
 	private InlineLabel koIcon = new InlineLabel();
 	
@@ -366,20 +356,6 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		row++;
 		col = 0;
 		
-		if (options.isBICEditable()) {
-			InlineLabel bicLabel = new InlineLabel("BIC");
-			bicLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-			tab.setWidget(row, col, bicLabel);
-			col++;
-			
-			bic.setStyleName(AON.AON_CSS.aonInputText());
-			bic.setMaxLength(11);
-			bic.setVisibleLength(10);
-			tab.setWidget(row, col, bic);
-			tab.getFlexCellFormatter().setColSpan(row, col, 4);
-			col++;
-		}
-		
 		validate();
 		enableWidgets();
 	}
@@ -436,15 +412,6 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		return this.bankAccount;
 	}
 	
-	public String getBic() {
-		return bic.getValue();
-	}
-	
-	public void setValue(BankAccount bankAccount, String bic2 ) {
-		setValue(bankAccount);
-		bic.setValue( bic2 );		
-	}
-
 	public void setValue(BankAccount bankAccount) {
 		countryBox.setValue(bankAccount==null?null:bankAccount.getCountry() );
 		check.setValue(bankAccount==null?null:bankAccount.getCheck() );
@@ -478,7 +445,6 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban6.setEnabled(enabled);
 		bban7.setEnabled(enabled);
 		bban8.setEnabled(enabled);
-		bic.setEnabled(enabled);
 	}
 
 	@Override

@@ -2,10 +2,12 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
@@ -27,10 +29,13 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResul
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 
 public class FinanceImpl implements IFinance {
 
@@ -262,5 +267,22 @@ public class FinanceImpl implements IFinance {
 			FinanceDAO.pay(ctx, finance);
 			return FinanceDAO.getFinance(ctx, finance.getId());
 		});			
+	}
+
+	@Override
+	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			return RegistryDAO.getRBankStream(ctx, filter -> filter.getRegistryProperty().eq(registry))
+					.collect(Collectors.toCollection(LinkedList::new));
+		});			
+	}
+
+	@Override
+	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			Company company = CompanyDAO.getCompany(ctx, ctx.getDomainId());
+			return RegistryDAO.getRBankStream(ctx, filter -> filter.getRegistryProperty().eq(company.getId()))
+					.collect(Collectors.toCollection(LinkedList::new));
+		});
 	}
 }

@@ -4262,11 +4262,11 @@ public class AON {
 		}
 	}
 	
-	public static RegistryBank deleteRBank(String domainName, Integer domainId, String login, RegistryBankFilter filter) {
+	public static void deleteRBank(String domainName, Integer domainId, String login, Integer id) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getRegistry().deleteRBank(ctx, filter);
+			getRegistry().deleteRBank(ctx, id);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -5830,6 +5830,28 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFinance().payFinance(ctx, finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<RegistryBank> getRegistryBanks(String domainName, int domainId, String user, Integer registry) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getRegistryBanks(ctx, registry);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<RegistryBank> getCompanyRegistryBanks(String domainName, int domainId, String user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().getCompanyRegistryBanks(ctx);
 		} finally {
 			if (ctx != null)
 				ctx.close();

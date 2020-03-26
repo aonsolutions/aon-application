@@ -3753,5 +3753,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha de Pago")
 	String payDate();
 
+	@DefaultMessage("Bancos definidos")
+	String banks();
+
 }
 
