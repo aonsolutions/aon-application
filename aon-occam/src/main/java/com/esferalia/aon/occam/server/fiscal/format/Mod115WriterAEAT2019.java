@@ -24,9 +24,9 @@ public class Mod115WriterAEAT2019 implements IMod115Writer{
 			   ,(wr, mod) -> wr.append("0000>")
 			   ,(wr, mod) -> wr.append("<AUX>")
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 70))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text("2020", 4))
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 9))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(AonFiscalFileUtils.DEVELOPER_NIF, 9))
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 213))
 			   ,(wr, mod) -> wr.append("</AUX>")
 			   
