@@ -257,7 +257,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    
 	    // Add Selection Column to table
 	    salaryDataGrid.addColumn(checkColumn,selectAllHeader);
-	    salaryDataGrid.setColumnWidth(checkColumn, 60, Unit.PX);
+	    salaryDataGrid.setColumnWidth(checkColumn, 5, Unit.PCT);
 	    checkColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		
 		//----------------------------------------------------------------------
@@ -274,6 +274,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 
 	    // Make the employee name column sortable.
 	    employeeNameColumn.setSortable(true);
+	    salaryDataGrid.setColumnWidth(employeeNameColumn, 30, Unit.PCT);
 	    
 	    // Create workplace name column.
 	    TextColumn<SalaryInfo> workplaceNameColumn = new TextColumn<SalaryInfo>() {
@@ -296,6 +297,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 
 	    // Make the  start date column sortable.
 	    startDateColumn.setSortable(true);
+	    salaryDataGrid.setColumnWidth(startDateColumn, 10, Unit.PCT);
 	    
 	    // Create end date column.
 	    TextColumn<SalaryInfo> endDateColumn = new TextColumn<SalaryInfo>() {
@@ -307,6 +309,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 
 	    // Make the end date column sortable.
 	    endDateColumn.setSortable(true);
+	    salaryDataGrid.setColumnWidth(endDateColumn, 10, Unit.PCT);
 	    
 	    // Create type column.
 	    TextColumn<SalaryInfo> typeColumn = new TextColumn<SalaryInfo>() {
@@ -318,6 +321,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    
 	    // Make the type column sortable.
 	    typeColumn.setSortable(true);
+	    salaryDataGrid.setColumnWidth(typeColumn, 10, Unit.PCT);
 	    
 	    // Create total payment column.
 	    TextColumn<SalaryInfo> totalPaymentColumn = new TextColumn<SalaryInfo>() {
@@ -330,6 +334,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    };
 	 
 	    totalPaymentColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+	    salaryDataGrid.setColumnWidth(totalPaymentColumn, 10, Unit.PCT);
 	    
 	    // Create total deduction column.
 	    TextColumn<SalaryInfo> totalDeductionColumn = new TextColumn<SalaryInfo>() {
@@ -342,6 +347,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    };
 	    
 	    totalDeductionColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+	    salaryDataGrid.setColumnWidth(totalDeductionColumn, 10, Unit.PCT);
 	    
 	    // Create total liquid column.
 	    TextColumn<SalaryInfo> totalLiquidColumn = new TextColumn<SalaryInfo>() {
@@ -354,8 +360,9 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	    };
 	    
 	    totalLiquidColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+	    salaryDataGrid.setColumnWidth(totalLiquidColumn, 10, Unit.PCT);
 	    
-	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<SalaryInfo>("Borrador", new ActionCell.Delegate<SalaryInfo>() {
+	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<SalaryInfo>("", new ActionCell.Delegate<SalaryInfo>() {
 
 			@Override
 			public void execute(SalaryInfo salary) {
@@ -382,7 +389,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		};
 		
 		draftColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		salaryDataGrid.setColumnWidth(draftColumn, 100, Unit.PX);
+		salaryDataGrid.setColumnWidth(draftColumn, 5, Unit.PCT);
 		
 	    // Add the columns.
 		salaryDataGrid.addColumn(employeeNameColumn, "Empleado");
@@ -396,7 +403,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		salaryDataGrid.addColumn(totalDeductionColumn, "Deducciones");
 		salaryDataGrid.addColumn(totalLiquidColumn, "L"+String.valueOf("\u00ED")+"quido");
 	    
-		salaryDataGrid.addColumn(draftColumn, "Borrador");
+		salaryDataGrid.addColumn(draftColumn, "");
 	      
 	}
 	
