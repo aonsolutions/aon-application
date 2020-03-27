@@ -261,6 +261,41 @@ public class JooqEmployeeCalendar {
 			}
 		}
 		
+		// ---------------------------------------------- TIPOS DIAS (PARCIALIDAD) -------------------------------------------------
+		
+				Result<Record> contractDayPartialityTypesEmployeeInfo = dslContext
+						.select()
+						.from(CONTRACT_DATA)
+						.where(CONTRACT_DATA.CONTRACT.eq(contract))
+						.and(CONTRACT_DATA.NAME.in("DIAS_PARCIALIDAD"))
+						.fetch();
+				
+				if(null == contractDayPartialityTypesEmployeeInfo || contractDayPartialityTypesEmployeeInfo.isEmpty()) {
+					contractDayPartialityTypesEmployeeInfo = dslContext
+							.select()
+							.from(CONTRACT_DATA)
+							.where(CONTRACT_DATA.CONTRACT.eq(contract))
+							.and(CONTRACT_DATA.NAME.in("COEFICIENTE_PARCIALIDAD"))
+							.fetch();
+				}
+			
+				for(Record r: contractDayPartialityTypesEmployeeInfo){
+					Quartet<Date, Date, String, String> quarterDayTypeEmployee = new Quartet<Date, Date, String, String>();
+					
+					Date endDate = r.get(CONTRACT_DATA.END_DATE);
+					if(null == endDate) {
+						java.util.Date lastDayOfYear = DateUtils.getLastDayOfYear(new java.util.Date());
+						endDate = new Date(DateUtils.copyDateOnly(lastDayOfYear).getTime());
+					}
+					
+					quarterDayTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+					.setEndDate(endDate)
+					.setName("DIAS_PARCIALIDAD")
+					.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+					
+					contractDayTypesList.add(quarterDayTypeEmployee);
+				}
+		
 		// ---------------------------------------------- TIPOS DIAS ---------------------------------------------------------
 		
 		Result<Record> contractDayTypesEmployeeInfo = dslContext
@@ -305,41 +340,6 @@ public class JooqEmployeeCalendar {
 			.setExpression("");
 			
 			contractITDayTypeList.add(quarterITDayEmployee);
-		}
-		
-		// ---------------------------------------------- TIPOS DIAS (PARCIALIDAD) -------------------------------------------------
-		
-		Result<Record> contractDayPartialityTypesEmployeeInfo = dslContext
-				.select()
-				.from(CONTRACT_DATA)
-				.where(CONTRACT_DATA.CONTRACT.eq(contract))
-				.and(CONTRACT_DATA.NAME.in("DIAS_PARCIALIDAD"))
-				.fetch();
-		
-		if(null == contractDayPartialityTypesEmployeeInfo || contractDayPartialityTypesEmployeeInfo.isEmpty()) {
-			contractDayPartialityTypesEmployeeInfo = dslContext
-					.select()
-					.from(CONTRACT_DATA)
-					.where(CONTRACT_DATA.CONTRACT.eq(contract))
-					.and(CONTRACT_DATA.NAME.in("COEFICIENTE_PARCIALIDAD"))
-					.fetch();
-		}
-	
-		for(Record r: contractDayPartialityTypesEmployeeInfo){
-			Quartet<Date, Date, String, String> quarterDayTypeEmployee = new Quartet<Date, Date, String, String>();
-			
-			Date endDate = r.get(CONTRACT_DATA.END_DATE);
-			if(null == endDate) {
-				java.util.Date lastDayOfYear = DateUtils.getLastDayOfYear(new java.util.Date());
-				endDate = new Date(DateUtils.copyDateOnly(lastDayOfYear).getTime());
-			}
-			
-			quarterDayTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
-			.setEndDate(endDate)
-			.setName("DIAS_PARCIALIDAD")
-			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
-			
-			contractDayTypesList.add(quarterDayTypeEmployee);
 		}
 	
 		
