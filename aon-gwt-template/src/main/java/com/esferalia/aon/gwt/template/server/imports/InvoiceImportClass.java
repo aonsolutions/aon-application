@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.template.server.invoice;
+package com.esferalia.aon.gwt.template.server.imports;
 
 import java.util.Date;
 

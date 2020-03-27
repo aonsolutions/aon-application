@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.template.server.invoice;
+package com.esferalia.aon.gwt.template.server.imports;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,6 +8,10 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceClaveRetencion;
+import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceOpType;
+import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceSubClaveRetencion;
 import com.esferalia.aon.gwt.template.shared.Error;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -19,9 +23,6 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass.InvoiceClaveRetencion;
-import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass.InvoiceOpType;
-import com.esferalia.aon.gwt.template.server.invoice.InvoiceImportClass.InvoiceSubClaveRetencion;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -264,7 +265,11 @@ public class InvoiceImport {
 		
 		if("CODIGO POSTAL".equalsIgnoreCase(title)
 				|| "CÓDIGO POSTAL".equalsIgnoreCase(title)) {
-			inv.setZip(o.toString());
+			String zip = o.toString();
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+				zip = Integer.toString(AonNumberUtils.toDouble(zip).intValue());
+			}
+			inv.setZip(zip.length() < 5 ? "0" + zip : zip);
 			return;
 		}
 		

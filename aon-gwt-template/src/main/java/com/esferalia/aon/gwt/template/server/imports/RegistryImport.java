@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.template.server.invoice;
+package com.esferalia.aon.gwt.template.server.imports;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
 public class RegistryImport {
@@ -266,7 +267,11 @@ public class RegistryImport {
 		if("C.P.".equalsIgnoreCase(title)
 				|| "CODIGO POSTAL".equalsIgnoreCase(title)
 				|| "CÓDIGO POSTAL".equalsIgnoreCase(title)) {
-			reg.getRegistry().getAddress().setZip(o.toString().length() < 5 ? "0" + o.toString() : o.toString());
+			String zip = o.toString();
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+				zip = Integer.toString(AonNumberUtils.toDouble(zip).intValue());
+			}
+			reg.getRegistry().getAddress().setZip(zip.length() < 5 ? "0" + zip : zip);
 			return;
 		}
 		
