@@ -48,6 +48,7 @@
 										
 										<rich:inplaceSelect id="suspensionCause"
 											required="#{true}" 
+											reRender="generationForm"
 										 	value="#{contractCertificados.suspensionCause}"
 										 	listHeight="300px" listWidth="300px"
 										 	style="background-color: #CEE3F6; margin-left: 10px; width:300px; overflow:hidden; white-space:normal; border-bottom-style:none; cursor: pointer;"
@@ -55,8 +56,21 @@
 											<f:selectItems value="#{sepeCollections.suspensionCauses}" />
 										</rich:inplaceSelect>
 										
-										<aon:outputText value="&#160;" />
 
+										<aon:outputText value="&#160;" />
+										
+										<aon:div >
+											<aon:outputText value="N&#186; ERE : " />
+											<aon:inputText id="ereNumber" 
+											required="#{false}" 
+											style="width: 50%;"
+											value="#{contractCertificados.ereNumber}" 
+											/>
+
+										</aon:div>
+
+										<aon:outputText value="&#160;" />
+										
 										<aon:commandButton id="confirm-accept"
 											styleClass="aon-commandButton"
 											value="#{bundle.aon_accept}"

@@ -182,7 +182,6 @@
 			<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
 				<aon:menuItem id="certificados-communication-log"
 					value="#{bundle.sepe_certificados}"
-					disabled="#{empty contract.to.endDate}"
 					rendered="#{true}" ajaxSingle="true"
 					reRender="showCertificadosCommunicationWindow"
 					actionListener="#{contract.onCertificadosCommunicationShow}"

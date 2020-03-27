@@ -11,12 +11,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -43,15 +49,19 @@ import com.code.aon.faces.component.util.DownloadUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificate;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.SepeBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
+import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.CertificadoEmpresa;
 import com.esferalia.aon.ui.sepe.file.CertificadosWriter;
 import com.esferalia.aon.ui.sepe.utils.CertificadosCommunicator;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
@@ -63,6 +73,8 @@ public class CertificadosController implements ISepeHandler, Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CertificadosController.class.getName());
+	
+	private final String CERTIFICA2_MODEL_PATH = "com.esferalia.aon.sepe.api.certificados.certificadoEmpresa";
 	
 	private boolean showLoginWindow;
 	private boolean showGenerationWindow;
@@ -76,6 +88,8 @@ public class CertificadosController implements ISepeHandler, Serializable {
 
 	private Contract contract;
 	private SuspensionCause suspensionCause;
+	private String ereNumber;
+	
 	
 	private IAttachment generatedFile;
 	private IAttachment communicationIdFile;
@@ -193,12 +207,28 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		this.contract = contract;
 	}
 	
+	public String getEreNumber() {
+		return ereNumber;
+	}
+	
+	public void setEreNumber(String ereNumber) {
+		this.ereNumber = ereNumber;
+	}
+	
 	public SuspensionCause getSuspensionCause() {
 		return suspensionCause;
 	}
 	public void setSuspensionCause(SuspensionCause suspensionCause) {
 		this.suspensionCause = suspensionCause;
 	}
+	
+	public boolean isEreSuspensionCause() {
+		return suspensionCause == SuspensionCause.C16 
+				|| suspensionCause == SuspensionCause.C17
+				|| suspensionCause == SuspensionCause.C18
+				;
+	}
+	
 	@Override
 	public boolean isCommunicationIdReceived(){
 		return getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null;
@@ -338,6 +368,7 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		Criteria criteria = null;
 		for(ITransferObject to: detailList){
 			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
+			detail.setEreNumber(getEreNumber());
 			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), detail.getContract().getId());
 			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
@@ -409,6 +440,7 @@ public class CertificadosController implements ISepeHandler, Serializable {
 			Certifica2BatchDetail detail = new Certifica2BatchDetail();
 			detail.setCertifica2Batch(batch);
 			detail.setContract(getContract());
+			detail.setEreNumber(getEreNumber());
 			detail.setSuspensionCause(getSuspensionCause());
 			detail.setStatus(FileStatus.PENDING);
 			bean.insert(detail);
@@ -420,6 +452,44 @@ public class CertificadosController implements ISepeHandler, Serializable {
 			throw new AbortProcessingException(msg, e);
 		}
 	}
+	
+	public void onDownloadSepePdf(ActionEvent event){
+		SEPEUtils utils = SEPEUtils.getInstance();
+		byte[] xml = getGeneratedFile().getData();
+		InputStream pdfIn = null ;
+		InputStream xmlIn = null ; 
+		try {
+			xmlIn = new ByteArrayInputStream(xml); 
+			CertificadoEmpresa certificadoEmpresa = ( CertificadoEmpresa )
+			JAXBContext.newInstance(CertificadoEmpresa.class)
+			.createUnmarshaller().unmarshal(xmlIn);
+
+			EnterpriseCertificate certificate = new EnterpriseCertificate();
+			certificate.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+			String tc2 = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.TC2.getName());
+			ContractCode code = ContractCode.getContractCodeByValue(tc2);
+			certificate.loadPdfFieldValues(code, contract, Collections.singletonList(certificadoEmpresa));
+			
+			byte[] pdf = certificate.buildPdf(false);
+			pdfIn = new ByteArrayInputStream(pdf);
+			long size = ArrayUtils.getLength(pdf);
+			DownloadUtil.downloadAttachment("certificado-empresa_"+getContract().getPerson().getFullName(), MimeType.MIME_PDF, pdfIn, size);
+
+		} catch (Exception e) {
+			String msg = "Error al generar el documento pdf del certificado." ;
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage("[" + e + "]");
+			throw new AbortProcessingException(msg, e);
+		} finally {
+//			pdfIn.close();
+			if ( xmlIn != null)
+				try {
+					xmlIn.close();
+				} catch (IOException e) {
+				}
+		}
+		
+	}	
 	
 	@Override
 	public void onDownloadSepeXml(ActionEvent event){

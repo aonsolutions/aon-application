@@ -63,6 +63,8 @@ import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.REPRESENTANTET
 import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE;
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.sun.tools.javac.util.Context;
 
 public class CertificadosWriter implements Serializable {
 	
@@ -300,6 +302,24 @@ public class CertificadosWriter implements Serializable {
 		String quoteGroup = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.QUOTE_GROUP.getName());
 		String tc2 = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.TC2.getName());
 		String occupation = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.CNO.getName());
+		
+		Date endDate = contract.getEndDate();
+		ContractData ereFactor = null;
+		//C17=Suspensión del contrato ERE or C18=Reducción temporal de jornada ERE		
+		if ( batchDetail.getSuspensionCause() == SuspensionCause.C17 
+			|| batchDetail.getSuspensionCause() == SuspensionCause.C18  ) {
+			Map<String, ContractData> dataMap = utils.getContractDataMap(contract, null, null );
+			for (ContextVariable var : ContextVariable.ERE_FACTORS) {
+				if (dataMap.containsKey(var.getName())) {
+					ereFactor = dataMap.get(var.getName());
+					Date startDate = ereFactor.getStartDate();
+					endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
+					break;
+				}
+			}
+		}
+		
+		
 
 		TRABAJADORTYPE o = new TRABAJADORTYPE();
 		
@@ -312,7 +332,7 @@ public class CertificadosWriter implements Serializable {
 			o.setGrupoCotizacion(quoteGroup!=null?quoteGroup:null);
 		}
 		o.setTipoContrato(tc2);
-		o.setDuracionContrato(completeLength(differenceBetweenDates(contract.getStartDate(), contract.getEndDate()).toString(),5,false));
+		o.setDuracionContrato(completeLength(differenceBetweenDates(contract.getStartDate(), endDate).toString(),5,false));
 		o.setIndicadorDuracionContrato(null);
 
 		o.setCodProfesion(completeLength(occupation,7, true));
@@ -325,13 +345,26 @@ public class CertificadosWriter implements Serializable {
 			
 		o.setFechaAltaEmpresa(createFechaSimpleType(contract.getStartDate()));
 		o.setCodCausaSuspension(batchDetail.getSuspensionCause()!=null?batchDetail.getSuspensionCause().getValue():null);
-		o.setFechaSuspensionExtincion(createFechaSimpleType(contract.getEndDate()));
+		o.setFechaSuspensionExtincion(createFechaSimpleType(endDate));
 		o.setFechaFinSuspension(null);
-		o.setERE(null);
-		o.setPorcentualReduccionERE(null);
+		o.setERE(batchDetail.getEreNumber());
+		
+		
+		if ( batchDetail.getSuspensionCause() == SuspensionCause.C18 ) {
+			try {
+				Double coeficenteReduccion = Double.parseDouble(ereFactor.getExpression()) * 100.00;
+				o.setPorcentualReduccionERE(completeLength(coeficenteReduccion.toString(),4,false));
+			} catch ( Exception e ) {
+				o.setPorcentualReduccionERE(null);
+			}
+		} else {
+			o.setPorcentualReduccionERE(null);
+		
+		}
+		
 		o.setPorcentualReduccionOTROS(null);
 		o.setCodCausaPorcentReduccion(null);
-		o.setFechaDesdePeriodoSalarios(null);
+		o.setFechaDesdePeriodoSalarios(null); 
 		o.setFechaHastaPeriodoSalarios(null);
 		o.setDiasSalarioTramitacion("00000");
 		
@@ -340,7 +373,7 @@ public class CertificadosWriter implements Serializable {
 		}
 		
 		if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
-			for(COTIZACIONTYPE cotizacion: getCotizacionList(batchDetail)){
+			for(COTIZACIONTYPE cotizacion: getCotizacionList(batchDetail, contract.getStartDate(), endDate)){
 				o.getDatosCotizacion().add(cotizacion);
 			}
 			o.setDatosVacacionesCotizadas(createVacacionesCotizadasType(contract));
@@ -526,19 +559,19 @@ public class CertificadosWriter implements Serializable {
 		return o;
 	}
 	
-	private List<COTIZACIONTYPE> getCotizacionList(Certifica2BatchDetail detail) {
+	private List<COTIZACIONTYPE> getCotizacionList(Certifica2BatchDetail detail, Date inicio, Date fin) {
 		List<ISalary> salaryList = null;
 		List<COTIZACIONTYPE> cotizacionList = null;
 		Integer totalDias = 0;
 		Calendar calInicio = new GregorianCalendar();
 		Calendar calFin = new GregorianCalendar();
-		calInicio.setTime(detail.getContract().getStartDate());
-		calFin.setTime(detail.getContract().getEndDate());
+		calInicio.setTime(inicio);
+		calFin.setTime(fin);
 		calFin.set(Calendar.DAY_OF_MONTH, calFin.getActualMaximum(Calendar.DAY_OF_MONTH));
 		cotizacionList = new ArrayList<COTIZACIONTYPE>();
 		List<ISalary> delayList;
 		try {
-			delayList = getSalaries(detail.getContract(), detail.getContract().getStartDate(), detail.getContract().getEndDate(), SalaryType.DELAY);
+			delayList = getSalaries(detail.getContract(), inicio, fin, SalaryType.DELAY);
 			while((calInicio.before(calFin) || calInicio.equals(calFin)) && totalDias < 180) {
 				Calendar startDate = new GregorianCalendar();
 				Calendar endDate = new GregorianCalendar();
@@ -558,11 +591,17 @@ public class CertificadosWriter implements Serializable {
 						baseAcc += getDelayBaseAmount(delayList, startDate.getTime(), endDate.getTime(), ContextVariable.CGP_BASE);
 					}
 					
-					totalDias += salary.getTimeUnits();
+					int salaryDays = differenceBetweenDates(salary.getStartDate(), salary.getEndDate());
+					int cotizacionDays = differenceBetweenDates(salary.getStartDate(), minBetweenDates(salary.getEndDate(), fin));
+					cotizacionDays = Math.min(cotizacionDays, 180 - totalDias );
+					baseCg = baseCg / salaryDays * cotizacionDays;
+					baseAcc = baseAcc / salaryDays * cotizacionDays;
+					
+					totalDias += cotizacionDays;
 					Calendar cal = new GregorianCalendar();
 					cal.setTime(salary.getEndDate());
 					COTIZACIONTYPE cotizacion = createCotizacionType( cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, 
-							salary.getTimeUnits(), baseCg, baseAcc, null);
+							cotizacionDays, baseCg, baseAcc, null);
 					cotizacionList.add(cotizacion);
 				}
 			}
@@ -1343,6 +1382,14 @@ public class CertificadosWriter implements Serializable {
 		return completeLength(String.valueOf(var.intValue()), lon, dir);
 	}
 	
+	private Date minBetweenDates(Date from, Date to) {		
+		return ( from.before(to)) ? from: to;
+	}
+
+	private Date maxBetweenDates(Date from, Date to) {		
+		return ( from.after(to)) ? from: to;
+	}
+
 	private Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);
 		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
