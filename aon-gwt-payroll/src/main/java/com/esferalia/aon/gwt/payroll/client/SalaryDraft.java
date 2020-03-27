@@ -269,7 +269,8 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_ENFERMEDAD_COMUN_366", // internals
 			"DIAS_ENFERMEDAD_PROFESIONAL_366", // internals
 			"DIAS_ENFERMEDAD_COMUN_CARENCIA", // internals
-			"DIAS_ERE","DIAS_ERE_FZA", "DIAS_PATERNIDAD", // internals
+			"DIAS_ERE","DIAS_ERE_FZA", "DIAS_ERE_FZA_EXONERADO",
+			"DIAS_PATERNIDAD", // internals
 			"DIAS_TRABAJADOS", 
 			"DIAS_AUSENCIA",
 			"DIAS_INACTIVIDAD",
@@ -309,15 +310,18 @@ public class SalaryDraft extends ResizeComposite
 			"PORCENTAJE_FP_E",
 			"PORCENTAJE_DESMPL",
 			"PORCENTAJE_DESMPL_E",
+			"PORCENTAJE_EXONERADO"
 	};
 
 	// @formatter:off
 	private static String[] SKIP_NULL_VARIABLES = {
 		"DIAS_ERE",	
 		"DIAS_ERE_FZA",	
+		"DIAS_ERE_FZA_EXONERADO",	
 		"DIAS_HUELGA",	
 		"COEFICIENTE_ERE",	
 		"COEFICIENTE_ERE_FZA",	
+		"COEFICIENTE_ERE_FZA_EXONERADO",	
 		"COEFICIENTE_HUELGA",	
 	};
 
@@ -5843,7 +5847,20 @@ public class SalaryDraft extends ResizeComposite
 			new StringsListBoxFactory("GRUPO_COTIZACION",
 					new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" }),
 			new StringsListBoxFactory("TC2", Employee.TC2.getCodes(), Employee.TC2.getDescriptions()),
-			new CalendarConstantEditorFactory("HORAS_NOMINA", "HORAS_TRABAJADAS", "HORAS_SEMANA", "DIAS_NOMINA", "DIAS_TRABAJADOS", "DIAS_PAGA", "DIAS_COTIZADOS", "DIAS_HUELGA", "DIAS_NATURALES_MES", "COEFICIENTE_ERE",  "COEFICIENTE_ERE_FZA", "COEFICIENTE_HUELGA"  ), 
+			new CalendarConstantEditorFactory(
+					"HORAS_NOMINA", 
+					"HORAS_TRABAJADAS", 
+					"HORAS_SEMANA", 
+					"DIAS_NOMINA", 
+					"DIAS_TRABAJADOS", 
+					"DIAS_PAGA", 
+					"DIAS_COTIZADOS", 
+					"DIAS_HUELGA", 
+					"DIAS_NATURALES_MES", 
+					"COEFICIENTE_ERE",  
+					"COEFICIENTE_ERE_FZA", 
+					"COEFICIENTE_ERE_FZA_EXONERADO", 
+					"COEFICIENTE_HUELGA"  ), 
 			new AgreementConstantEditorFactory(), 
 			new ConstantEditorFactory("SMI"), 
 			new BooleanEditorFactory(), 

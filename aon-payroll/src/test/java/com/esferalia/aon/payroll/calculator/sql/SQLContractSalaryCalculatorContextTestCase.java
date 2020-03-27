@@ -13,16 +13,17 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import junit.framework.Assert;
-
+import org.graalvm.compiler.graph.SuccessorEdges;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mvel2.CompileException;
 
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
@@ -34,10 +35,10 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.enumeration.CCCType;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -48,10 +49,14 @@ import com.esferalia.aon.salary.expression.Period;
 //import com.esferalia.aon.salary.expression.CompileException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import org.mvel2.CompileException;
+import junit.framework.Assert;
 
 public class SQLContractSalaryCalculatorContextTestCase extends
 		AbstractSQLTestCase {
+	
+	private static class SuccessException extends Exception {
+		
+	}
 
 	@Test
 	public void testSystemCosts() throws SQLException, AonException {
@@ -583,6 +588,34 @@ public class SQLContractSalaryCalculatorContextTestCase extends
 		} catch ( CompileException e ) {
 		}
 	}
+	
+	@Test
+	public void testAddContractBonus() throws SQLException, AonException{
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+				CCCType.TRAINING, getFirstDayOfYear(getToday()),
+				Collections.emptyMap(), new String[] {}, new String[] {}, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+		ISQLContractSalaryCalculatorContext ctx = 
+		getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+
+		try {
+			ctx.getExpressionContext().eval("SELF.addBonus('BONIFICACIÓN', 'CUOTA_EMPRESARIAL'); 0.00", startDate, endDate);
+			for ( IContractBonus bonus: ctx.getContractBonus()) {
+				System.out.println(bonus.getDescription() + " = " + bonus.getExpression());
+				throw new SuccessException();
+			}
+			org.junit.Assert.fail();
+		} catch ( SuccessException e ) {
+		}
+	}
+	
 
 	// ------------------------------------------------------------------------
 

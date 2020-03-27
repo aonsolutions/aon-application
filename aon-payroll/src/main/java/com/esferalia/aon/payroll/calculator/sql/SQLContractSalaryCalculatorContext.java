@@ -19,9 +19,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_S
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EVERYTHING;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
@@ -153,6 +151,7 @@ import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.AbstractContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.CompositeCollection;
 import com.esferalia.aon.payroll.calculator.CompositeCosts;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.ContextFunctions;
@@ -174,6 +173,7 @@ import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
+import com.esferalia.aon.payroll.calculator.SimpleSystemCost;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
@@ -202,6 +202,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -1234,6 +1235,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private Map<Double, Double> liquids;
 	private Map<Double, Double> payments;
+	
+	private List<IContractBonus> contextBonus; 
 
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
@@ -1341,6 +1344,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.liquids = new HashMap<Double, Double>();
 		this.payments = new HashMap<Double, Double>();
+		this.contextBonus = new ArrayList<IContractBonus>();
 
 	}
 
@@ -1653,7 +1657,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			bonusStmt.setInt(1, id);
 			ResultSet rs = bonusStmt.executeQuery();
 			this.sqlContractBonus.setResultSet(rs);
-			return sqlContractBonus;
+			return new CompositeCollection<IContractBonus>( contextBonus, sqlContractBonus );
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -1944,6 +1948,71 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		for (Leave l : leaveLoader.getLeaves())
 			periods.add(l);
 		return periods;
+	}
+
+	public void addBonus (String description, String expression) {
+		addBonus(getStartDate(), null, description, expression);
+	}
+
+	public void addBonus (Date startDate, String description, String expression) {
+		addBonus(startDate, null, description, expression);
+	}
+	
+	public void addBonus (Date startDate, Date endDate, String description, String expression) {
+		IContractBonus bonus = new IContractBonus() {
+			
+			@Override
+			public Date getStartDate() {
+				return startDate;
+			}
+			
+			@Override
+			public Date getEndDate() {
+				return endDate;
+			}
+			
+			@Override
+			public BonusType getType() {
+				return BonusType.ERE;
+			}
+			
+			@Override
+			public double getAmount() {
+				return 0;
+			}
+			
+			@Override
+			public boolean isReadOnly() {
+				return true;
+			}
+			
+			@Override
+			public ExpressionScope getScope() {
+				return ExpressionScope.APPLICATION;
+			}
+			
+			@Override
+			public String getName() {
+				return null;
+			}
+			
+			@Override
+			public Integer getId() {
+				return Integer.MAX_VALUE;
+			}
+			
+			@Override
+			public String getExpression() {
+				return String.format("/*read-only*/%s/**/", expression);
+			}
+			
+			@Override
+			public String getDescription() {
+				return description;
+			}
+		};
+		
+		contextBonus.add(bonus);
 	}
 	
 	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
@@ -3221,6 +3290,23 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return (availableDays == monthDays ? ctxMonthDays : availableDays) * factor;
 	}
 
+	private double getEreDays(ExpressionContext ctx, Period p, double factor) {
+		double availableDays = getAvailableDays(p.getStart(), p.getEnd());
+		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
+		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
+		
+		availableDays *= factor;
+		
+		if ( availableDays == naturalMonthDays )
+			return ctxMonthDays ;
+		
+		if ( ctxMonthDays == naturalMonthDays )
+			return availableDays;
+		
+		//return (availableDays + (30 - naturalMonthDays)) * factor;
+		return (availableDays) + (30 - naturalMonthDays);
+	}
+
 	private double getQuoteDays(ExpressionContext ctx, Period p, double factor) {
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
@@ -3228,7 +3314,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		double prevAdjustDays = getActiveDays(p) ;
 		
-		return ( availableDays + prevAdjustDays ) == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays;
+		return (( availableDays + prevAdjustDays ) == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays);
 	}
 
 	private int getSeniorityYears(Period period) {
@@ -4181,7 +4267,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					@Override
 					public Double getValue(Period p) {
-						return getDays(ctx, p, factor);
+						return getEreDays(ctx, p, factor);
 					}
 
 				};

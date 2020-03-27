@@ -431,7 +431,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		salaryBuilder.setTotalDeduction(totalDeduction + totalEmbargos);
 
 		Double totalCost = fillCosts(contractSalaryCalculatorContext);
-		expressionContext.setVariable(ENTERPRISE_QUOTA, totalCost, start, end);
+//		expressionContext.setVariable(ENTERPRISE_QUOTA, totalCost, start, end);
 		Double totalBonus = fillBonus(contractSalaryCalculatorContext);
 
 		Double totalEnterprise = totalCost - totalBonus;
@@ -695,8 +695,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 //				cgcBase += directPayBase;
 			salaryBuilder.setCgcBase(cgcBase);
 			
-			copyResults(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
-			copyResults(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  ERE_BASES);
+			addVars(expressionContext, CGC_BASE_ENTERPRISE,  MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
 //			if (cgcBase != null)
 //				expressionContext.setVariable(CGC_BASE_ENTERPRISE, cgcBase, start, end);
 			
@@ -725,9 +725,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 //				cgpBase += directPayBase;
 			salaryBuilder.setCgpBase(cgpBase);
 
-			copyResults(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
-			copyResults(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, CGC_BASE);
-			copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
+			addVars(expressionContext, CGP_BASE_ENTERPRISE, ERE_BASES);
+			addVars(expressionContext, CGP_BASE_ENTERPRISE, MATERNITY_BASE, DIRECT_BASE, CGP_BASE);
+			//copyResults(expressionContext, CGP_BASE, CGP_BASE_ENTERPRISE);
 //			if (cgpBase != null)
 //				expressionContext.setVariable(CGP_BASE_ENTERPRISE, cgpBase, start, end);
 
@@ -915,8 +915,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						Double value = amount.getValue();
 						if (value != null) {
 							String description = null;
+							Period period = amount.getPeriod();
 							try {
-								Period period = amount.getPeriod();
+								
 								description = expressionContext.evalTemplate(contractCost.getDescription(),
 										period.getStart(), period.getEnd());
 							} catch (CompileException e) {
@@ -929,9 +930,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							}
 							salaryBuilder.addCost(value, description, contractCost, amount.getContext());
 							cost += value;
+							addResult(expressionContext, ENTERPRISE_QUOTA.getName(), period.getStart(), period.getEnd(), value);
 						}
 					}
 					total += cost;
+					
 				} catch (RemoveException | RemoveVariableError e) {
 					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
@@ -997,10 +1000,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			for (ITimedResult<Double> amount : amounts) {
 				Double value = amount.getValue();
+				Period period = amount.getPeriod();
 				if (value != null) {
 					String description = null;
 					try {
-						Period period = amount.getPeriod();
 						description = expressionContext.evalTemplate(contractBonus.getDescription(),
 								period.getStart(), period.getEnd());
 					} catch (CompileException e) {
@@ -1015,6 +1018,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				}
 				if (amount.getValue() != null)
 					bonus += amount.getValue();
+				
+				
 			}
 			return bonus;
 
@@ -1479,6 +1484,17 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		for (ITimedVariable<Object> var : expressionContext.getVariables(name)) {
 			expressionContext.putVariable(surName, var);
 		}
+	}
+
+	private static void addVars(ExpressionContext expressionContext, ContextVariable dest, ContextVariable ...adds) {
+		for (ContextVariable add : adds) {
+			addVar(expressionContext, dest.getName(), add.getName());
+		}
+	}
+	private static void addVar(ExpressionContext expressionContext, String dest, String add) {
+		List<ITimedVariable<Number>> adds = expressionContext.getVariables(add);
+		adds.stream().filter(v -> v.getValue(v.getPeriod()) != null )
+		.forEach( v -> addResult(expressionContext, dest, v.getPeriod().getStart(), v.getPeriod().getEnd(), v.getValue(v.getPeriod()).doubleValue()));
 	}
 
 	public static final String DAY_FOMAT = "%s ( %te )";
