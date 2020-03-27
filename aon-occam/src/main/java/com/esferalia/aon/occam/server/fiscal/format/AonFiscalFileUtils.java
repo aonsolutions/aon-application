@@ -37,6 +37,8 @@ public class AonFiscalFileUtils {
 	private static final String EMPTY_ZERO_DATE = AonStringUtils.repeat('0', 8);
 	
 	private static final String AEAT_MARK = "X";
+	
+	public static String DEVELOPER_NIF = "B01487271";
 
 	public static String changeInvalidCharacters(String token) {
 		if (AonStringUtils.isNotBlank(token)) {
