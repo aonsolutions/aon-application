@@ -178,7 +178,8 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			if (cellsDates[row][col] != null) {
 				calendarGrid.getWidget(row, col).removeStyleName(style.isSelectedStyle());	
 				calendarGrid.getWidget(row, col).setTitle("");
-				calendarGrid.getWidget(row, col).getElement().getStyle().clearOpacity();
+				if(cellsType[row][col].getType() != DayType.PARTIALITY)
+					calendarGrid.getWidget(row, col).getElement().getStyle().clearOpacity();
 			}
 		}
 		@Override
@@ -1623,6 +1624,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.ereFzaExonStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.itStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.nonWorkingStyle());
+				calendarGrid.getWidget(row, col).removeStyleName(style.partialityStyle());
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 			}
 		}
