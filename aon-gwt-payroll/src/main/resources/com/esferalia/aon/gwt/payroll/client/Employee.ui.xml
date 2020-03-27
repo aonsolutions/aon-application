@@ -461,7 +461,7 @@
 							</td>
 							<td colspan="3">
 								<g:HorizontalPanel styleName="{style.maxWidth}">
-									<g:TextBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox}'></g:TextBox>
+									<g:SuggestBox ui:field="account" debugId="account" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
 									<g:Label ui:field="accountStatus" debugId="ssNumberStatus"></g:Label>
 								</g:HorizontalPanel>
 							</td>

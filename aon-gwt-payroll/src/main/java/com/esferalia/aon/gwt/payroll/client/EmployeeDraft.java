@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -39,7 +40,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeDraft extends Composite {
@@ -576,10 +578,39 @@ public class EmployeeDraft extends Composite {
 		}
 
 		@Override
-		public void onEmployeeBICChange() {}
+		public void onEmployeeBICChange() {
+			String value = employee.bic.getValue();
+			employeeDraftObject.setEmployeeBIC(value);
+			saving();
+		}
 
 		@Override
-		public void onEmployeeAccountChange() {}
+		public void onEmployeeAccountChange() {
+			String value = employee.account.getValue();
+			
+			if(value.length() >= 24) {
+				reformatAccount(employee.account);
+				
+				if(Iban.validateIBAN(value)) {
+					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}else {
+					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				}
+				
+				Rbank rbank = employeeDraftObject.getRbank(value);
+				if(null != rbank) {
+					employee.bic.setValue(rbank.getBic(), false);
+					employeeDraftObject.setEmployeeBIC(rbank.getBic());
+					employeeDraftObject.setEmployeeRbankId(rbank.getId());
+				}
+				
+				
+				employeeDraftObject.setEmployeeAccount(value);
+				saving();
+			}
+		}
 		
 	}
 	
@@ -857,42 +888,41 @@ public class EmployeeDraft extends Composite {
 			saving();
 		});
 		
-		employee.bic.addKeyUpHandler(e-> {
-			
-			String value = employee.bic.getValue();
-			String saved = employeeDraftObject.getEmployeeBIC();
-			if ( AonStringUtils.equals(value, saved))
-				return;
-			
-			employeeDraftObject.setEmployeeBIC(value);
-			saving();
-		});
-		
-		employee.account.addKeyUpHandler(e-> {
-			
-			String value = employee.account.getValue();
-			value = value.replaceAll("\\W+", "");
-			
-			String saved = employeeDraftObject.getEmployeeAccount();
-			
-			if ( AonStringUtils.equals(value, saved))
-				return;
-			
-			if(value.length() >= 24) {
-				reformatAccount(employee.account);
-				
-				if(Iban.validateIBAN(value)) {
-					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				}else {
-					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-				}
-				
-				employeeDraftObject.setEmployeeAccount(value);
-				saving();
-			}
-		});
+//		employee.bic.addKeyUpHandler(e-> {
+//			
+//			String value = employee.bic.getValue();
+//			String saved = employeeDraftObject.getEmployeeBIC();
+//			if ( AonStringUtils.equals(value, saved))
+//				return;
+//			
+//			employeeDraftObject.setEmployeeBIC(value);
+//			saving();
+//		});
+//		
+//		employee.account.addKeyUpHandler(e-> {
+//			String value = employee.account.getValue();
+//			value = value.replaceAll("\\W+", "");
+//			
+//			String saved = employeeDraftObject.getEmployeeAccount();
+//			
+//			if ( AonStringUtils.equals(value, saved))
+//				return;
+//			
+//			if(value.length() >= 24) {
+//				reformatAccount(employee.account);
+//				
+//				if(Iban.validateIBAN(value)) {
+//					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+//					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+//				}else {
+//					employee.accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+//					employee.accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+//				}
+//				
+//				employeeDraftObject.setEmployeeAccount(value);
+//				saving();
+//			}
+//		});
 		
 	}
 		
@@ -930,6 +960,7 @@ public class EmployeeDraft extends Composite {
 		initWorkplaces();
 		initContractType();
 		initAgreements();
+		initIbans();
 		initHandlers();
 		
 		if (employeeDraftObject.getContractSSRegimen() == 3) {
@@ -997,6 +1028,7 @@ public class EmployeeDraft extends Composite {
 		
 		this.employee.account.setValue("");
 		this.employee.bic.setValue("");
+		
 	}
 
 	private void initActivitiesCCC() {
@@ -1025,6 +1057,17 @@ public class EmployeeDraft extends Composite {
 		List<Agreement> agreements = employeeDraftObject.getActiveAgreements();
 		for (Agreement agreement : agreements)
 			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+	}
+	
+	private void initIbans() {
+		//DOCUMENT
+		List<String> employeeIbans = employeeDraftObject.getExistingIban();
+		List<String> employeesIbanSuggest = new ArrayList<String>();
+		for(String iban : employeeIbans)
+			employeesIbanSuggest.add(iban);
+		MultiWordSuggestOracle orclIbans = (MultiWordSuggestOracle) this.employee.account.getSuggestOracle();
+		orclIbans.addAll(employeesIbanSuggest);
+		this.employee.document.setAutoSelectEnabled(true);
 	}
 
 	private void fillContractFreelancerTable() {
@@ -1332,7 +1375,7 @@ public class EmployeeDraft extends Composite {
 		return age;
 	}
 	
-	private void reformatAccount(TextBox accountField) {
+	private void reformatAccount(SuggestBox accountField) {
 	    String accountText = accountField.getText();
 	    accountText = accountText.replaceAll("\\W+", "");
 	    if (accountText.length() >= 24) {

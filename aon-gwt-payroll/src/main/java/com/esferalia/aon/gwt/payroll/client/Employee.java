@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -203,7 +204,7 @@ public abstract class Employee extends ResizeComposite {
 	TextBox bic;
 	
 	@UiField
-	TextBox account;
+	SuggestBox account;
 	
 	@UiField
 	Label accountStatus;
@@ -436,7 +437,7 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	@UiHandler("account")
-	void onAccountChangeValue(ChangeEvent event) {
+	void onAccountChangeValue(ValueChangeEvent<String> event) {
 		onEmployeeAccountChange();
 	}
 

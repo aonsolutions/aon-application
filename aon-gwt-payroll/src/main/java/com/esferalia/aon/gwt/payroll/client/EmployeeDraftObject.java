@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -736,6 +737,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setBic(rbankBIC);
 	}
 	
+	public void setEmployeeRbankId(Integer rbankId) {
+		employeeData.setRbankId(rbankId);
+	}
+	
 	// ---------------------------------------------- AUX METHODS  -------------------------------------------------
 	
 
@@ -830,6 +835,23 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			return true;
 		else
 			return false;
+	}
+	
+	public Rbank getRbank(String iban) {
+		for(Rbank rbank : employeeData.getRbanks()) {
+			if(rbank.getIban().equals(iban))
+				return rbank;
+		}
+		
+		return null;
+	}
+	
+	public ArrayList<String> getExistingIban(){
+		ArrayList<String> ibans = new ArrayList<String>();
+		for(Rbank rbank : employeeData.getRbanks())
+			ibans.add(rbank.getIban());
+		
+		return ibans;
 	}
 	
 }

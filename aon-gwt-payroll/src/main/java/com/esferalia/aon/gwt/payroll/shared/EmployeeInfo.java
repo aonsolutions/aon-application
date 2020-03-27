@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -60,6 +61,9 @@ public class EmployeeInfo implements Serializable{
 	private String account;
 	private String bic;
 	
+	//Rbanks 
+	private ArrayList<Rbank> rbanks;
+	
 	public EmployeeInfo() {
 		super();
 		this.domain = null;
@@ -96,6 +100,7 @@ public class EmployeeInfo implements Serializable{
 		this.rbankId = null;
 		this.account = null;
 		this.bic = null;
+		this.rbanks = new ArrayList<Rbank>();
 	}
 
 	public EmployeeInfo(Integer employeeId, String name, String surName, String document, String ssNumber) {
@@ -402,6 +407,14 @@ public class EmployeeInfo implements Serializable{
 		getName();
 	}
 	
+	public void addRbank(Integer id, String iban, String bic) {
+		this.rbanks.add(new Rbank(id, iban, bic));
+	}
+	
+	public ArrayList<Rbank> getRbanks() {
+		return rbanks;
+	}
+
 	public String toString(){
 		String result = "";
 		
