@@ -120,21 +120,21 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 		
 		// Adquisiciones intracomunitarias de bienes y servicios. base y cuota.
 		,CT_C10(Mod303Key.CT_C10
-			,(mod,vat) -> adqIntracomunitariasFilterGene(vat,mod)
+			,(mod,vat) -> adqIntracomunitariasFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C10,mod,vat.getBase())
 			,null,null,null)
 		,CT_C11(Mod303Key.CT_C11
-			,(mod,vat) -> adqIntracomunitariasFilterGene(vat,mod)
+			,(mod,vat) -> adqIntracomunitariasFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C11,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Otras operaciones con inversión del sujeto pasivo (excepto. adq. intracom). Base y cuota
 		,CT_C12(Mod303Key.CT_C12
-			,(mod,vat) -> operacionesISPFilterGene(vat,mod)
+			,(mod,vat) -> operacionesISPFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C12,mod,vat.getBase())
 			,null,null,null)
 		,CT_C13(Mod303Key.CT_C13
-			,(mod,vat) -> operacionesISPFilterGene(vat,mod)
+			,(mod,vat) -> operacionesISPFilterNoRECT(vat,mod)
 			,(ctx,mod,vat) -> add(Mod303Key.CT_C13,mod,vat.getQuota())
 			,null,null,null)
 		
@@ -1905,6 +1905,9 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 	private static boolean adqIntracomunitariasFilterGene(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && adqIntracomunitariasFilter(vat,mod);
 	}
+	private static boolean adqIntracomunitariasFilterNoRECT(VatContext vat, Mod303 mod) {
+		return !vat.isRectification() && adqIntracomunitariasFilterGene(vat,mod); 
+	}
 	private static boolean adqIntracomunitariasFilterSimp(VatContext vat, Mod303 mod) {
 		return vat.isVatSimplifiedRegime(mod.getDefaultVATRegime()) 
 				&& vat.isIntracommunityPurchase()
@@ -1936,6 +1939,9 @@ public class AEAT_2018_Declaration extends Mod303Declaration {
 	private static boolean operacionesISPFilterGene(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
 				&& operacionesISPFilter(vat,mod);
+	}
+	private static boolean operacionesISPFilterNoRECT(VatContext vat, Mod303 mod) {
+		return !vat.isRectification() && operacionesISPFilterGene(vat,mod); 
 	}
 	private static boolean modificacionBasesYCuotasFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime()
