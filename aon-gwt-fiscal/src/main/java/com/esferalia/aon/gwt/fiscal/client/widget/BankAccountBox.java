@@ -78,7 +78,7 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab.getColumnFormatter().setWidth(0, "1%");
+		tab.getColumnFormatter().setWidth(0, "50px;");
 		tab.getColumnFormatter().setWidth(1,"auto");
 		int row = 0; 
 		int col = 0;
@@ -422,7 +422,10 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban5.setValue( bankAccount==null?null:bankAccount.getBban5() );
 		bban6.setValue( bankAccount==null?null:bankAccount.getBban6() );
 		bban7.setValue( bankAccount==null?null:bankAccount.getBban7() );
-		bban8.setValue( bankAccount==null?null:bankAccount.getBban8() );
+		ccc1.setValue( bankAccount==null?null:bankAccount.getCCC1() );
+		ccc2.setValue( bankAccount==null?null:bankAccount.getCCC2() );
+		ccc3.setValue( bankAccount==null?null:bankAccount.getCCC3() );
+		ccc4.setValue( bankAccount==null?null:bankAccount.getCCC4() );
 	}
 	@Override
 	public boolean isEnabled() {

@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
 import static com.esferalia.aon.jooq.tables.AccountEntryFinanceTracking.ACCOUNT_ENTRY_FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
@@ -8,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
+import static com.esferalia.aon.jooq.tables.PmTypeDetail.PM_TYPE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
@@ -41,6 +43,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
@@ -67,6 +70,20 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class FinanceDAO {
 	
 	// ------------------------------------------------------------- PAY_METHOD
+	public static LinkedList<PayMethodTypeDetail>  getPayMethodTypeDetails(AONContext ctx) {
+		return ctx.getDslContext()
+				.select()
+				.from(PM_TYPE_DETAIL)
+				.leftOuterJoin(ACCOUNT).on(ACCOUNT.ID.eq(PM_TYPE_DETAIL.ACCOUNT))
+				.where(PM_TYPE_DETAIL.DOMAIN.eq(ctx.getDomainId()))
+				.orderBy(PM_TYPE_DETAIL.DESCRIPTION)
+				.fetch()
+				.stream()
+				.map( new FullPayMethodTypeDetailFiller())
+				.collect(Collectors.toCollection(LinkedList::new))
+				;
+	}
+	
 	public static LinkedList<PayMethod>  getPayMethods(AONContext ctx) {
 		return ctx.getDslContext()
 				.selectFrom(PAY_METHOD)
@@ -380,6 +397,20 @@ public class FinanceDAO {
 	}
 	
 	// ---------------------------------------------------------- MAP
+	private static class FullPayMethodTypeDetailFiller  implements Function<Record,PayMethodTypeDetail> {
+		@Override
+		public PayMethodTypeDetail apply(Record record) {
+			return new PayMethodTypeDetail()
+				.setId(record.getValue(PM_TYPE_DETAIL.ID))
+				.setDomain(record.getValue(PM_TYPE_DETAIL.DOMAIN))
+				.setDescription(record.getValue(PM_TYPE_DETAIL.DESCRIPTION))
+				.setType(PayMethodType.safeValueOf( record.getValue(PM_TYPE_DETAIL.TYPE)))
+				.setAccount(new Account()
+					.setId(record.getValue(ACCOUNT.ID))
+					.setCode(record.getValue(ACCOUNT.CODE))
+					.setDescription(record.getValue(ACCOUNT.DESCRIPTION)));
+		}
+	}
 	private static class FullPayMethodFiller  implements Function<Record,PayMethod> {
 		@Override
 		public PayMethod apply(Record record) {
@@ -389,8 +420,6 @@ public class FinanceDAO {
 				.setName(record.getValue(PAY_METHOD.NAME))
 				.setType(PayMethodType.safeValueOf( record.getValue(PAY_METHOD.TYPE)));
 		}
-		
-		
 	}
 	public static class FullFinanceFiller  implements Function<Record,Finance> {
 		@Override
@@ -1009,4 +1038,5 @@ public class FinanceDAO {
 			.execute();
 		ctx.log().info("DELETE ACCOUNT_ENTRY_FINANCE_TRACKING ("+i+") Tracking: " + ft.getId());
 	}
+
 }

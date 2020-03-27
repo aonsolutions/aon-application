@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -37,6 +38,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
@@ -54,9 +56,14 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private final DateBoxEx dueDate = new DateBoxEx();
+	
+	private static enum PANELS {
+		BANK, CASH, OTHER 
+	}
+	
+	private DeckPanel panels = new DeckPanel();
 	private InlineLabel registryBankIcon = new InlineLabel();
-	private Label banksLabel = new Label(AON.MSG.banks());
-	private Label bankAccountLabel = new Label(AON.MSG.bankAccount());
+	private Label bankAccountLabel = new Label();
 	
 	public void show(final String domainName
 			, final int domain
@@ -71,6 +78,8 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
 		
 		final ListBox payMethodBox = new ListBox();
+		final ListBox cashListBox = new ListBox();
+		final ListBox otherListBox = new ListBox();
 		final RegistryBankListBox registryBankListBox = new RegistryBankListBox();
 		final BankAccountBox bankAccountBox = new BankAccountBox( new BankAccountBoxOptions()
 				.setBankAccount(finance.getBankAccount())
@@ -145,7 +154,8 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 					finance.setPayMethod(pm.getId());
 					finance.setPayMethodName(pm.getName());
 					finance.setPayMethodType(pm.getType());
-					refreshBankAccountPanel(domainName, domain, user,config, finance,registryBankListBox,bankAccountBox,payAccount);
+					refreshBankAccountPanel(domainName, domain, user,config, finance,cashListBox,otherListBox,
+							registryBankListBox,bankAccountBox,payAccount);
 				}
 			}
 		});
@@ -153,13 +163,21 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 		
-		table.setWidget(row,0,banksLabel);
+		table.setWidget(row,0,bankAccountLabel);
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		FlowPanel registryBankPanel = new FlowPanel();
-		registryBankPanel.add(registryBankListBox);
+		
+		FlowPanel banksPanel = new FlowPanel();
+		panels.add(banksPanel);
+		
+		InlineLabel banksLabel = new InlineLabel("Bancos:");
+		banksLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		banksLabel.addStyleName(AON.AON_CSS.aonWidth50());
+		banksPanel.add(banksLabel); 
+		
+		banksPanel.add(registryBankListBox);
 		registryBankIcon.setStyleName(AON.AON_CSS.aonPaddingLeft20());
 		registryBankIcon.addStyleName(AON.AON_CSS.aonMarginLeft());
-		registryBankPanel.add(registryBankIcon);
+		banksPanel.add(registryBankIcon);
 		registryBankListBox.addChangeHandler( new ChangeHandler() {
 			
 			@Override
@@ -180,13 +198,6 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 				}
 			}
 		});
-		table.setWidget(row,1,registryBankPanel);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
-		row++;
-		
-		
-		table.setWidget(row,0,bankAccountLabel);
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		bankAccountBox.addValueChangeHandler( new ValueChangeHandler<BankAccount>() {
 			
 			@Override
@@ -194,30 +205,106 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 				finance.setBankAccount(event.getValue());
 			}
 		});
-		table.setWidget(row,1,bankAccountBox);
+		banksPanel.add(bankAccountBox);
+		
+		FlowPanel cashPanel = new FlowPanel();
+		cashListBox.addItem(" ---- ", "");
+		i = 1;
+		for (PayMethodTypeDetail pm : config.getPayMethodTypeDetails()) {
+			if ( pm.getType() == PayMethodType.CASH_BASIS) {
+				cashListBox.addItem(pm.getDescription(), AonNumberUtils.toString( pm.getId()));
+			}
+			i++;
+		}
+		cashListBox.addKeyUpHandler(keyUpHandler);
+		cashListBox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				int idx = cashListBox.getSelectedIndex();
+				idx = idx - 1;
+				if (idx < 0 ) {
+					payAccount.setAccount(null,true);
+				} else {
+					Integer selected = AonNumberUtils.toInteger(cashListBox.getSelectedValue());					
+					for (PayMethodTypeDetail pm : config.getPayMethodTypeDetails()) {
+						if (AonNumberUtils.equals(pm.getId() , selected)) {
+							payAccount.setAccount(pm.getAccount(),true);
+						}
+					};
+				}
+			}
+		});
+		cashPanel.add(cashListBox);
+		panels.add(cashPanel);
+		
+		FlowPanel otherPanel = new FlowPanel();
+		otherListBox.addItem(" ---- ", "");
+		i = 1;
+		for (PayMethodTypeDetail pm : config.getPayMethodTypeDetails()) {
+			if ( pm.getType() == PayMethodType.OTHER) {
+				otherListBox.addItem(pm.getDescription(), AonNumberUtils.toString( pm.getId()));
+			}
+			i++;
+		}
+		otherListBox.addKeyUpHandler(keyUpHandler);
+		otherListBox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				int idx = otherListBox.getSelectedIndex();
+				idx = idx - 1;
+				if (idx < 0 ) {
+					payAccount.setAccount(null,true);
+				} else {
+					Integer selected = AonNumberUtils.toInteger(otherListBox.getSelectedValue());					
+					for (PayMethodTypeDetail pm : config.getPayMethodTypeDetails()) {
+						if (AonNumberUtils.equals(pm.getId() , selected)) {
+							payAccount.setAccount(pm.getAccount(),true);
+						}
+					};
+				}
+			}
+		});
+		otherPanel.add(otherListBox);
+		panels.add(otherPanel);
+		
+
+		table.setWidget(row,1,panels);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 		
-		refreshBankAccountPanel(domainName, domain, user,config,finance,registryBankListBox,bankAccountBox,payAccount);
+		refreshBankAccountPanel(domainName, domain, user,config,finance,cashListBox,otherListBox,registryBankListBox,bankAccountBox,payAccount);
 
 		table.setWidget(row,0,new InlineLabel(AON.MSG.account()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
 		payAccount.setValue(finance.getPayAccountId(),finance.getPayAccountCode(),finance.getPayAccountDescription());
-		payAccount.addSelectionHandler( new SelectionHandler<Account>() {
+		payAccount.addValueChangeHandler( new ValueChangeHandler<String>() {
 			
 			@Override
-			public void onSelection(SelectionEvent<Account> event) {
-				Account account = event.getSelectedItem();
-				if (account == null) {
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if (payAccount.getId() == null) {
 					finance.setPayAccountId(null);
 					finance.setPayAccountCode(null);
 					finance.setPayAccountDescription(null);
 				} else {
-					finance.setPayAccountId(account.getId());
-					finance.setPayAccountCode(account.getCode());
-					finance.setPayAccountDescription(account.getDescription());
+					finance.setPayAccountId(payAccount.getId());
+					finance.setPayAccountCode(payAccount.getCode());
+					finance.setPayAccountDescription(payAccount.getDescription());
 				}
-				
+			}
+		});
+		payAccount.addSelectionHandler( new SelectionHandler<Account>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Account> event) {
+				if (payAccount.getId() == null) {
+					finance.setPayAccountId(null);
+					finance.setPayAccountCode(null);
+					finance.setPayAccountDescription(null);
+				} else {
+					finance.setPayAccountId(payAccount.getId());
+					finance.setPayAccountCode(payAccount.getCode());
+					finance.setPayAccountDescription(payAccount.getDescription());
+				}
 			}
 		});
 		table.setWidget(row,1,payAccount);
@@ -291,30 +378,33 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 	private void refreshBankAccountPanel(String domainName, int domain, String user
 			,AonConfiguration config
 			,Finance finance
+			,ListBox cashListBox
+			,ListBox otherListBox
 			,RegistryBankListBox registryBankListBox
 			,BankAccountBox bankAccountBox
 			,AccountBox payAccount
 			) {
 		
 		if (finance.getPayMethodType() == PayMethodType.CASH_BASIS) {
+			bankAccountLabel.setText( PayMethodType.CASH_BASIS.getDescription() );
+			panels.showWidget(PANELS.CASH.ordinal());
 			registryBankListBox.setValue(null); 
-			registryBankListBox.setVisible(false);
-			bankAccountBox.setVisible(false);
-			registryBankIcon.setVisible(false);
-			banksLabel.setVisible(false);
-			bankAccountLabel.setVisible(false);
-			
 			bankAccountBox.setValue(null);
+			cashListBox.setSelectedIndex(0);
 			Account cashAccount = config.getDefaultCashAccount();
 			payAccount.setAccount(cashAccount,true);
+		} else if (finance.getPayMethodType() == PayMethodType.OTHER) {
+			bankAccountLabel.setText( "Otras formas de pago" );
+			registryBankListBox.setValue(null); 
+			bankAccountBox.setValue(null);
+			otherListBox.setSelectedIndex(0);
+			panels.showWidget(PANELS.OTHER.ordinal());
+			payAccount.setAccount(null,true);
 		} else {
-			registryBankListBox.setVisible(true);
-			bankAccountBox.setVisible(true);
-			registryBankIcon.setVisible(true);
-			banksLabel.setVisible(true);
-			bankAccountLabel.setVisible(true);
-			
+			panels.showWidget(PANELS.BANK.ordinal());
+			bankAccountLabel.setText( AON.MSG.bankAccount() );
 			boolean mustShowRegistryBanks = false;
+			payAccount.setAccount(null,true);
 			if (finance.isPayment() && finance.getPayMethodType() == PayMethodType.BANK_TRANSFER) {
 				mustShowRegistryBanks = true;	
 			}
@@ -325,6 +415,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 			if (mustShowRegistryBanks) {
 				registryBankIcon.removeStyleName(AON.AON_CSS.aonIconCompany());
 				registryBankIcon.addStyleName(AON.AON_CSS.aonIconEmployee());
+				registryBankIcon.setTitle("Bancos definidos de \"" + finance.getRegistryName() + "\"");
 				FINANCE_SERVICE.getRegistryBanks(domainName, domain, user, finance.getRegistry().getId(), new AsyncCallback<LinkedList<RegistryBank>>() {
 					
 					@Override
@@ -346,6 +437,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 				});
 			} else {
 				registryBankIcon.addStyleName(AON.AON_CSS.aonIconCompany());
+				registryBankIcon.setTitle("Bancos definidos de \"" + config.getCompany().getName() + "\"");
 				registryBankIcon.removeStyleName(AON.AON_CSS.aonIconEmployee());
 				FINANCE_SERVICE.getCompanyBanks(domainName, domain, user, new AsyncCallback<LinkedList<RegistryBank>>() {
 					

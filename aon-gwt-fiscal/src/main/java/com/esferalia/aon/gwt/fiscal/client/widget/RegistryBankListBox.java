@@ -26,7 +26,11 @@ public class RegistryBankListBox extends ListBox {
 		addItem("----");
 		if (banks != null) {
 			for (RegistryBank bank : banks ) {
-				addItem(bank.getBankAccount() + bank.getAlias(), AonNumberUtils.toString( bank.getId()));	
+				addItem((AonStringUtils.isNotBlank(bank.getAlias())
+					?("("+bank.getAlias()+") - ")
+					:AonStringUtils.EMPTY)
+					+ bank.getBankAccount()
+					, AonNumberUtils.toString( bank.getId()));	
 			}
 		}
 	}

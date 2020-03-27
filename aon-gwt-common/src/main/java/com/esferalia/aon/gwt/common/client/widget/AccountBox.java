@@ -358,6 +358,10 @@ public class AccountBox extends ResizeComposite implements HasValue<String>
 		account.setValue(value,fireEvents);
 	}
 
+	public String getCode() {
+		return getValue();	
+	}
+
 	@Override
 	public String getDescription() {
 		return description;	
