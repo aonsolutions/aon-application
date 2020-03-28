@@ -35,6 +35,8 @@ public class InvoiceImportClass {
 	InvoiceClaveRetencion retentionKey;
 	InvoiceSubClaveRetencion retentionSubKey;
 	Integer line;
+	Date financeDate;
+	String financeAccount;
 	
 	public InvoiceImportClass() {
 		// TODO Auto-generated constructor stub
@@ -292,7 +294,23 @@ public class InvoiceImportClass {
 		return this;
 	}
 
+	public Date getFinanceDate() {
+		return financeDate;
+	}
 
+	public InvoiceImportClass setFinanceDate(Date financeDate) {
+		this.financeDate = financeDate;
+		return this;
+	}
+
+	public String getFinanceAccount() {
+		return financeAccount;
+	}
+
+	public InvoiceImportClass setFinanceAccount(String financeAccount) {
+		this.financeAccount = financeAccount;
+		return this;
+	}
 
 	public enum InvoiceOpType {
 		EX,

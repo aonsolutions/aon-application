@@ -114,6 +114,13 @@ public class RegistryImport {
 					|| (this.account != null && this.account.getCode() != null 
 						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("410"));
 		}
+		
+		public String getAccountPrefix() {
+			if(isCustomer()) return "430";
+			if(isSupplier()) return "400";
+			if(isCreditor()) return "410";
+			return null;
+		}
 	}
 	
 	public static RegistryImport getInstance() {
@@ -332,7 +339,11 @@ public class RegistryImport {
 						.setRegistry(reg.getId());
 					AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getAddress());
 				}
-			
+				if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {
+					String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix()); 
+					r.getAccount().setCode(code);
+				}
+				
 				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());
 				if(acc == null) {
 					Account account = r.getAccount()

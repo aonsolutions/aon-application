@@ -224,7 +224,7 @@ public class DiaryImport {
 		
 		if("FACTURA".equalsIgnoreCase(title)) {	
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(o.toString());
-			invoice = o != null && !"".equals(o.toString()) && !" ".equals(o.toString());
+			invoice = o != null && !o.toString().isBlank();
 			return;
 		}
 		

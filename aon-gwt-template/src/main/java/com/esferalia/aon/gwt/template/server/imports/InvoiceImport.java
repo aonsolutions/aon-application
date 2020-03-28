@@ -9,11 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceClaveRetencion;
-import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceOpType;
-import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceSubClaveRetencion;
-import com.esferalia.aon.gwt.template.shared.Error;
-
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,6 +18,10 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceClaveRetencion;
+import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceOpType;
+import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass.InvoiceSubClaveRetencion;
+import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -53,6 +52,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
@@ -62,6 +62,7 @@ import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class InvoiceImport {
@@ -346,6 +347,28 @@ public class InvoiceImport {
 			inv.setRetentionSubKey(InvoiceSubClaveRetencion.safeValueOf(o.toString()));
 			return;
 		}	
+		
+		if("VENCIMIENTO".equalsIgnoreCase(title)) {
+			Date date = new Date();
+			try{
+				date = cell.getDateCellValue();
+			} catch (Exception e) {
+				date = AonDateUtils.parse(o.toString(), "dd/MM/yyyy");
+			}
+			inv.setFinanceDate(date);
+			return;
+		}	
+		
+		if("CUENTA TESORERÍA".equalsIgnoreCase(title)
+				|| "CUENTA TESORERIA".equalsIgnoreCase(title)
+				|| "PAGO POR CAJA".equalsIgnoreCase(title)) {
+			String acc = o.toString();
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
+				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
+			}
+			inv.setFinanceAccount(Utils.calculateAccount(acc));
+			return;
+		}
 	}
 
 	public static Error insertInvoices(Domain domain, User user,LinkedList<InvoiceImportClass> ivs) {
@@ -364,7 +387,6 @@ public class InvoiceImport {
 
 				Invoice invoice = new Invoice();
 				invoice.setScope(new Scope().setId(getScopeId(domain, user)));
-			
 				invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
 				invoice.setTransaction(getTransaction(ivs.get(i)));
 				invoice.setDomain(domain.getId());
@@ -502,7 +524,11 @@ public class InvoiceImport {
 
 					j++;
 				}
+				Integer cci = i;
 				i = j-1;
+				for(Integer k = cci; k < j; k++) {
+					checkCuotas(domain, ivs.get(k));
+				}
 
 				ai.getInvoice().setTotal(total);
 			
@@ -522,14 +548,47 @@ public class InvoiceImport {
 					ai.setWithholdingData(iw);
 				}
 				ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
-			
+				Account financeAccount = new Account();
+				if(ivs.get(i).getFinanceAccount() != null && !ivs.get(i).getFinanceAccount().isBlank() ) {
+					financeAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(i).getFinanceAccount());
+					if(financeAccount == null || financeAccount.getId() == null) {
+						financeAccount = new Account()
+							.setCode(ivs.get(i).getFinanceAccount())
+							.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
+							.setAlias("SIN DESCRIPCIÓN")
+							.setDomain(domain.getId())
+							.setActive(true);
+						financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
+					}
+				}
 				Finance f = new Finance()
-					.setAmount(ai.getInvoice().getTotal())
-					.setDueDate(ai.getInvoice().getIssueDate())
-					.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
-				ai.getInvoice().addFinance(f);
+						.setPayAccountCode(financeAccount.getCode())
+						.setPayAccountDescription(financeAccount.getDescription())
+						.setPayAccountId(financeAccount.getId())
+						.setAmount(ai.getInvoice().getTotal())
+						.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
+						.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
+				
+				if(Utils.isAyudaT(domain.getName()) || (financeAccount != null && financeAccount.getId() != null)) {
+					ai.getInvoice().addFinance(f);
+				}
 
-				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+				ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+				
+				if(Utils.isAyudaT(domain.getName()) && (financeAccount == null || financeAccount.getId() ==null)){
+					f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
+						.setDomain(domain.getId())
+						.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
+						.setRegistryDocument(ai.getInvoice().getRegistryDocument())
+						.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
+						.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
+						.setRegistryName(ai.getInvoice().getRegistryName())
+						.setScope(ai.getInvoice().getScope())
+						.setSecurityLevel(ai.getInvoice().getSecurityLevel())
+						.setConcept(ai.getInvoice().getDocumentNumber())
+						.setFinanceStatus(FinanceStatus.PENDING);
+					AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
+				}
 			} catch (Exception e) {
 				error.setError(false);
 				verror.add("Línea " + ivs.get(i).getLine() + ": " + e.getMessage());
@@ -538,6 +597,28 @@ public class InvoiceImport {
 		error.setTextError(verror);
 		return error;
 	}
+	
+	
+	private static void checkCuotas(Domain domain, InvoiceImportClass iic) throws Exception {
+		if(iic.getBase() != null && iic.getPercentage() != null && iic.getQuota() != null) {
+			Double cuota = iic.getBase()*iic.getPercentage() / 100;
+			if(!iic.getQuota().equals(AonMathUtils.round(cuota))) {
+				throw new Exception("% IVA y Cuota IVA no coinciden.");
+			}
+		}
+
+		if(iic.getBase() != null && iic.getRetentionPercentage() != null && iic.getRetentionQuota() != null) {
+			Double retentionQuota = iic.getBase()*iic.getRetentionPercentage() / 100;
+			if(!iic.getRetentionQuota().equals(AonMathUtils.round(retentionQuota))) {
+				throw new Exception("% Retención y Cuota Retención no coinciden.");
+			}
+		}
+		
+		if(Utils.isAyudaT(domain.getName()) && AonDateUtils.getYear(iic.getDate()) < 2020) {
+			throw new Exception("La Factura es del ejercicio " + AonDateUtils.getYear(iic.getDate()));
+		}
+	}
+	
 	private static WithholdingType getWithholdingType(InvoiceClaveRetencion icr, String account) {
 		if(InvoiceClaveRetencion.PR.equals(icr)
 			|| InvoiceClaveRetencion.G.equals(icr)) {

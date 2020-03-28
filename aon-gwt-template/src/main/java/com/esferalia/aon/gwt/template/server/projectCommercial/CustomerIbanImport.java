@@ -147,7 +147,7 @@ public class CustomerIbanImport {
 		Object o = getObjectValue(cell);
 		if(o == null) return;
 		if("Nombre".equalsIgnoreCase(title)) {
-			ci.setName( o.toString() == null || "".equals(o.toString()) ? "-" : o.toString());
+			ci.setName(o == null || o.toString().isBlank() ? "-" : o.toString());
 			return;
 		}
 
@@ -162,7 +162,7 @@ public class CustomerIbanImport {
 		}
 		
 		if("cuenta bancaria".equalsIgnoreCase(title)) {
-			ci.setIban(o.toString() == null || "".equals(o.toString()) ? null : o.toString().replace(" ", ""));
+			ci.setIban(o == null || o.toString().isBlank() ? null : o.toString().trim());
 			return;
 		}
 	}
