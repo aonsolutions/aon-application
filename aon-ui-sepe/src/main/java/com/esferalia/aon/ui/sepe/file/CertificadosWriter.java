@@ -369,7 +369,7 @@ public class CertificadosWriter implements Serializable {
 		o.setDiasSalarioTramitacion("00000");
 		
 		if(!isFulltimeContract(batchDetail)){
-			o.setDistribucionJornadas(createDistribucionJornadasType(batchDetail));
+			o.setDistribucionJornadas(createDistribucionJornadasType(batchDetail,contract.getStartDate(), endDate));
 		}
 		
 		if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
@@ -398,7 +398,7 @@ public class CertificadosWriter implements Serializable {
 	 * 
 	 * @return
 	 */
-	private DISTRIBUCIONJORNADASTYPE createDistribucionJornadasType(Certifica2BatchDetail batchDetail){
+	private DISTRIBUCIONJORNADASTYPE createDistribucionJornadasType(Certifica2BatchDetail batchDetail, Date contractStart, Date contractEnd){
 		final String IRREGULAR_VALUE = "2";
 		final String REGULAR_VALUE = "1";
 		SEPEUtils utils = SEPEUtils.getInstance();
@@ -425,8 +425,6 @@ public class CertificadosWriter implements Serializable {
 				}
 			}
 		} else {
-			Date contractStart = batchDetail.getContract().getStartDate();
-			Date contractEnd = batchDetail.getContract().getEndDate();
 			List<ContractData[]> weekList = SEPEUtils.getInstance().obtainWeekList(batchDetail.getContract());
 			
 			weekList.forEach(week -> {

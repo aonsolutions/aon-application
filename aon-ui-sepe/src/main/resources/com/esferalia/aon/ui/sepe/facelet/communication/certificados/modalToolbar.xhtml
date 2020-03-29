@@ -70,8 +70,8 @@
 			            
 			            <aon:menuItem id="sepe-process-restart"
 							value="Reiniciar proceso"
-							rendered="#{(contractCertificados.communicationIdReceived and not contractCertificados.communicationAccepted)
-								or (contractCertificados.communicationResponseReceived and not contractCertificados.communicationFinished)}"
+							rendered="#{(not contractCertificados.communicationAccepted)
+								or (not contractCertificados.communicationFinished)}"
 							actionListener="#{contractCertificados.onRemoveSepeFiles}"
 							reRender="showCertificadosCommunicationWindow,#{(contractCertificados.batch.id!=null)?(''):('contractForm')}"
 							iconClass="aon-icon-refresh" 
@@ -79,19 +79,19 @@
 			            			
 						<aon:menuItem iconClass="aon-icon-pdf">
 							<aon:htmlCommandLink id="sepePdfdownload" 
-								value="#{bundle.aon_fileupload_download} PDF" target="_blank"
+								value="#{bundle.aon_fileupload_download} PDF." target="_blank"
 								actionListener="#{contractCertificados.onDownloadSepePdf}" />
 			     		</aon:menuItem>
 						<aon:menuItem iconClass="aon-icon-file-download">
 							<aon:htmlCommandLink id="sepeXmldownload" 
-								value="#{bundle.aon_fileupload_download} XML" target="_blank"
+								value="#{bundle.aon_fileupload_download} XML." target="_blank"
 								actionListener="#{contractCertificados.onDownloadSepeXml}" />
 			     		</aon:menuItem>
 						<aon:if test="#{!skipDownloadButton}">
 						</aon:if>
 						<aon:menuItem iconClass="aon-icon-file-upload">
 							<aon:htmlCommandLink id="sepeXmlupload" 
-								value="#{bundle.aon_file_upload} XML" target="_blank"
+								value="#{bundle.aon_file_upload} XML." target="_blank"
 								actionListener="#{contractCertificados.onDownloadSepeXml}" />
 			     		</aon:menuItem>
 					</aon:dropDownMenu>			
