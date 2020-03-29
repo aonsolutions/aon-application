@@ -1988,7 +1988,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			@Override
 			public ExpressionScope getScope() {
-				return ExpressionScope.APPLICATION;
+				return ExpressionScope.SYSTEM;
 			}
 			
 			@Override

@@ -86,6 +86,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.HasDirection.Direction;
+import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -211,6 +212,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 	};
 
+
 	private static Deduction.Type SYSTEM_DEDUCTION[] = { Deduction.Type.IRPF, Deduction.Type.COMMON_CONTINGENCY,
 			Deduction.Type.PROFESSIONAL_CONTINGENCY, Deduction.Type.UNEMPLOYMENT, Deduction.Type.JOB_TRAINING,
 			Deduction.Type.STRUCTURAL_OVERTIME, Deduction.Type.NON_STRUCTURAL_OVERTIME, Deduction.Type.FOGASA };
@@ -236,6 +238,7 @@ public class SalaryDraft extends ResizeComposite
 	private static final String PORCENTAJE_DESMPL = "PORCENTAJE_DESMPL";
 	private static final String PORCENTAJE_FOGASA = "PORCENTAJE_FOGASA";
 	private static final String PORCENTAJE_SHORT = "PORCENTAJE_CORTA_DURACION";
+	private static final String PORCENTAJE_OFF = "PORCENTAJE_EXONERADO";
 
 	// @formatter:off
 	private static String[] SKIP_VARIABLES = { 
@@ -3673,6 +3676,18 @@ public class SalaryDraft extends ResizeComposite
 		return row;
 	}
 
+	private int dumpSystemBonus(int row, Bonus bonus ) {
+		
+		String description = bonus.getDescription();
+
+		if (bonus.getAmount() != null) {
+			Double percent = getPercent(bonus, salaryDraftObject);
+			dumpSystemBonus(bonus, percent, description, row++, null);
+		} 
+
+		return row;
+	}
+
 	private void dumpPayment(Payment payment, int row, String iconStyleName,
 			ItemChangeHandler<TextBox, Payment> handler) {
 		boolean editable = 
@@ -3763,6 +3778,7 @@ public class SalaryDraft extends ResizeComposite
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
 	}
+
 
 	private <I extends Item> void dumpItem(I item, int row, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction) {
@@ -4043,6 +4059,7 @@ public class SalaryDraft extends ResizeComposite
 		paymentsTable.setWidget(row, 0, changedLabel);
 	}
 
+
 	private void dumpSystemItem(Item<?> deduction, String description, int row, Widget percentageWidget,
 			Button expandButton, String... iconStyles) {
 
@@ -4124,6 +4141,12 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
+	private void dumpSystemBonus(Bonus bonus, Double percent, String description, int row,
+			Button expandButton, String... iconStyles) {
+		Widget percentWidget = newPercentWidget(bonus, percent);
+		dumpSystemItem(bonus, description, row, percentWidget, expandButton, iconStyles);
+	}
+	
 	/*
 	 * 
 	 * @param context
@@ -4805,8 +4828,11 @@ public class SalaryDraft extends ResizeComposite
 
 		int idx = paymentsTable.getRowCount() - 3;
 		paymentsTable.insertRow(idx);
-
-		dumpItem(bonus, idx, iconStyleName, new BonusChangeHandler<TextBox>(bonus), true);
+		
+		if ( isSystemBonus(bonus) )
+			dumpSystemBonus(idx, bonus);
+		else 
+			dumpItem(bonus, idx, iconStyleName, new BonusChangeHandler<TextBox>(bonus), true);
 
 		CellFormatter fomatter = paymentsTable.getCellFormatter();
 		for (int col = 0; col < paymentsTable.getCellCount(idx); col++) {
@@ -4866,10 +4892,14 @@ public class SalaryDraft extends ResizeComposite
 			Bonus bonus = bonuses.get(i);
 			paymentsTable.insertRow(beforeRow + i);
 			if (bonus.getAmount() != null) {
-				dumpItem(bonus, beforeRow + i, getIconRowStyle(bonus), new BonusChangeHandler<TextBox>(bonus), true);
+				if ( isSystemBonus(bonus) )
+					dumpSystemBonus(beforeRow + i, bonus);
+				else 
+					dumpItem(bonus, beforeRow + i, getIconRowStyle(bonus), new BonusChangeHandler<TextBox>(bonus), true);
 			} else {
 				String styles[] = eventStyles.get(Event.Type.WARNING);
-				dumpItem(bonus, beforeRow + i, styles[0], new BonusChangeHandler<TextBox>(bonus), true);
+				if ( !isSystemBonus(bonus) )
+					dumpItem(bonus, beforeRow + i, styles[0], new BonusChangeHandler<TextBox>(bonus), true);
 				addStyle(paymentsTable, beforeRow + i, styles[1]);
 			}
 
@@ -4941,6 +4971,17 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
+	private Variable getPercentVariable(Bonus.Type type) {
+
+		switch (type) {
+		case ERE:
+			return getContextVariable(PORCENTAJE_OFF);
+		default:
+			return null;
+		}
+	}
+
+
 	private Widget newPercentWidget(Deduction deduction, Double percent) {
 		switch (deduction.getType()) {
 		case IRPF:
@@ -4953,6 +4994,16 @@ public class SalaryDraft extends ResizeComposite
 			return newPercentLabel(deduction, percent, getPercentVariable(deduction.getType()));
 		}
 	}
+	
+	private Widget newPercentWidget(Bonus bonus, Double percent) {
+		switch (bonus.getType()) {
+		case ERE:
+			return newPercentBox(PORCENTAJE_OFF, bonus, percent);
+		default:
+			return newPercentLabel(bonus, percent, getPercentVariable(bonus.getType()));
+		}
+		
+	}	
 
 	private Variable getContextVariable(String name) {
 		for (Variable var : salaryDraftObject.getDrafContext())
@@ -5057,7 +5108,7 @@ public class SalaryDraft extends ResizeComposite
 		return irpfPercentPanel;
 	}
 
-	private Widget newPercentBox(final String variable, final Deduction deduction, final Double percent) {
+	private Widget newPercentBox(final String variable, final Item deduction, final Double percent) {
 
 		final TextBox percentTexTBox = new ExpressionBox();
 		percentTexTBox.ensureDebugId("textBox_"+variable);
@@ -5644,6 +5695,10 @@ public class SalaryDraft extends ResizeComposite
 
 	// ------------------------------------------------------- Static 'Library'
 
+	private static boolean isSystemBonus(Bonus bonus) {
+		return bonus.getScope() == Scope.SYSTEM;
+	}
+	
 	private static boolean isSystemDeduction(Deduction deduction) {
 		for (Deduction.Type type : SYSTEM_DEDUCTION)
 			if (type == deduction.getType())
@@ -5672,19 +5727,70 @@ public class SalaryDraft extends ResizeComposite
 			
 		}
 		
-		
+		try {
+			Variable var = getPercentVariable(deduction.getExpression(), draftObject);
+			if ( var != null ) {
+				return Double.parseDouble(var.getValue().toString());
+			}
+		} catch (Exception e ) {
+			
+		}
 
 		return getPercent(deduction.getType(), 
 				deduction.getAmount(), 
 				draftObject.getIrpfBase(),
-				getContextVariable("BASE_CGC", draftObject), 
-				getContextVariable("BASE_CGP", draftObject),
+				getContextSumValue("BASE_CGC", draftObject), 
+				getContextSumValue("BASE_CGP", draftObject),
 				draftObject.gethExtraBase(),
 				draftObject.getNonHExtraBase()
 				);
 	}
 	
-	private static double getContextVariable(String name, SalaryDraftObject draftObject) {
+
+	private static Variable getPercentVariable(String str, SalaryDraftObject draftObject) {
+		RegExp regExp = 
+		RegExp.compile("PORCENTAJE_[A-Z_]+");
+		
+		MatchResult r = regExp.exec(str);
+		
+		if ( r != null )
+			return getContextVariable(r.getGroup(0), draftObject);
+		
+		return null;
+	}
+
+	private static Variable getContextVariable(String name, SalaryDraftObject salaryDraftObject) {
+		for (Variable var : salaryDraftObject.getDrafContext())
+			if (StringUtils.equals(var.getName(), name))
+				return var;
+
+		for (Variable var : salaryDraftObject.getContext())
+			if (StringUtils.equals(var.getName(), name))
+				return var;
+
+		return null;
+	}	
+	
+	private static Double getPercent(Bonus bonus, SalaryDraftObject draftObject) {
+		
+		try {
+			
+			return 
+			
+			draftObject.getContext().stream()
+			.filter( v -> v.getName().equals(PORCENTAJE_OFF))
+			.map(v -> Double.parseDouble(v.getValue().toString()))
+			.findFirst()
+			.orElse(100.00)
+			;
+
+		} catch ( Exception e ) {
+			return 100.00;
+		}
+		
+	}
+	
+	private static double getContextSumValue(String name, SalaryDraftObject draftObject) {
 		
 		return 
 		draftObject.getContext().stream()

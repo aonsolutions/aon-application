@@ -452,8 +452,7 @@ public class SalaryDraftBuilder
 
 	@Override
 	public void setTotalEnterprise(Double totalEnterprise) {
-		// TODO Auto-generated method stub
-
+		salaryDraft.setTotalEnterprise(totalEnterprise);
 	}
 
 	@Override
@@ -472,6 +471,7 @@ public class SalaryDraftBuilder
 		myBonus.setAmount(amount);
 		myBonus.setDescription(description);
 		myBonus.setDescriptionTemplate(myBonus.getDescription());
+
 
 		salaryDraft.addBonus(myBonus);
 
@@ -1057,7 +1057,7 @@ public class SalaryDraftBuilder
 	private Bonus newBonus(IContractBonus contractBonus) {
 		Bonus bonus = new Bonus();
 		bonus.setId(contractBonus.getId());
-		bonus.setScope(Scope.CONTRACT);
+		bonus.setScope(getScope(contractBonus.getScope()));
 		bonus.setName(bonus.getName());
 		bonus.setExpression(contractBonus.getExpression());
 		bonus.setType(getBonusType(contractBonus.getType()));

@@ -701,6 +701,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return salaryDraft.getTotalDeduction();
 	}
 
+	//@Override
+	public Double getTotalEnterprise() {
+		return salaryDraft.getTotalEnterprise();
+	}
+	
 	@Override
 	public String getEnterpriseName() {
 		return salaryDraft.getEnterpriseName();
