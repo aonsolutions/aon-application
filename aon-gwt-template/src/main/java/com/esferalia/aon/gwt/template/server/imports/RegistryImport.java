@@ -43,14 +43,14 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 
 public class RegistryImport {
-	
+
 	public class RegistryImportClass {
 		private Registry registry;
 		private Account account;
 		private String iban;
 		private String type;
 		private Integer line;
-		
+
 		public RegistryImportClass() {
 			this.registry = new Registry()
 				.setAddress(new RAddress());
@@ -88,7 +88,7 @@ public class RegistryImport {
 		public void setType(String type) {
 			this.type = type;
 		}
-	
+
 		public Integer getLine() {
 			return line;
 		}
@@ -99,22 +99,22 @@ public class RegistryImport {
 
 		public Boolean isCustomer() {
 			return (this.type != null && (this.type.equalsIgnoreCase("C") || this.type.equalsIgnoreCase("CUSTOMER")))
-					|| (this.account != null && this.account.getCode() != null 
+					|| (this.account != null && this.account.getCode() != null
 						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("430"));
 		}
-		
+
 		public Boolean isSupplier() {
 			return (this.type != null && (this.type.equalsIgnoreCase("P") || this.type.equalsIgnoreCase("PROVEEDOR")))
-					|| (this.account != null && this.account.getCode() != null 
+					|| (this.account != null && this.account.getCode() != null
 						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("400"));
 		}
-		
+
 		public Boolean isCreditor() {
 			return (this.type != null && (this.type.equalsIgnoreCase("A") || this.type.equalsIgnoreCase("ACREEDOR")))
-					|| (this.account != null && this.account.getCode() != null 
+					|| (this.account != null && this.account.getCode() != null
 						&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("410"));
 		}
-		
+
 		public String getAccountPrefix() {
 			if(isCustomer()) return "430";
 			if(isSupplier()) return "400";
@@ -122,7 +122,7 @@ public class RegistryImport {
 			return null;
 		}
 	}
-	
+
 	public static RegistryImport getInstance() {
 		return new RegistryImport();
 	}
@@ -130,9 +130,9 @@ public class RegistryImport {
 	public RegistryImport() {
 
 	}
-	
-	RegistryImportClass reg; 
-	
+
+	RegistryImportClass reg;
+
 	public LinkedList<RegistryImportClass> importation(Domain domain, String login, byte[] data){
 		HSSFWorkbook workbook = null;
 		try {
@@ -160,7 +160,7 @@ public class RegistryImport {
 						titleList.add(cell.getStringCellValue());
 					} else if(row.getRowNum() > indexTitle) {
 						String title = titleList.get(cell.getColumnIndex());
-						check(domain, login, title, cell, aonCtx);			
+						check(domain, login, title, cell, aonCtx);
 					}
 				});
 				if(row.getRowNum() > indexTitle) {
@@ -193,7 +193,7 @@ public class RegistryImport {
 
 			LinkedList<String> titleList = new LinkedList<>();
 			LinkedList<RegistryImportClass> list = new LinkedList<>();
-			
+
 			Iterator<Row> rowIterator = sheet.iterator();
 			Iterable<Row> rowIterable = () -> rowIterator;
 			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
@@ -211,7 +211,7 @@ public class RegistryImport {
 						titleList.add(cell.getStringCellValue());
 					} else if(row.getRowNum() > indexTitle){
 						String title = titleList.get(cell.getColumnIndex());
-						check(domain, login, title, cell, aonCtx);			
+						check(domain, login, title, cell, aonCtx);
 					}
 				});
 				if(row.getRowNum() > indexTitle) {
@@ -237,7 +237,12 @@ public class RegistryImport {
  	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
 		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
-	
+
+		if("TIPO".equalsIgnoreCase(title)) {
+			reg.setType(o.toString());
+			return;
+		}
+
 		if("CUENTA".equalsIgnoreCase(title)
 				|| "CUENTA CONTABLE".equalsIgnoreCase(title)) {
 			String acc = o.toString();
@@ -253,7 +258,7 @@ public class RegistryImport {
 			reg.getAccount().setAlias(o.toString());
 			return;
 		}
-		
+
 		if("NOMBRE".equalsIgnoreCase(title)) {
 			if(o.toString().length() > 63) {
 				reg.getRegistry().setName(o.toString().substring(0,63));
@@ -266,14 +271,14 @@ public class RegistryImport {
 		}
 		if("DOMICILIO".equalsIgnoreCase(title)
 				|| "DIRECCION".equalsIgnoreCase(title)
-				|| "DIRECCIÓN".equalsIgnoreCase(title)) {
+				|| "DIRECCIï¿½N".equalsIgnoreCase(title)) {
 			reg.getRegistry().getAddress().setAddress(o.toString());
 			return;
 		}
-		
+
 		if("C.P.".equalsIgnoreCase(title)
 				|| "CODIGO POSTAL".equalsIgnoreCase(title)
-				|| "CÓDIGO POSTAL".equalsIgnoreCase(title)) {
+				|| "Cï¿½DIGO POSTAL".equalsIgnoreCase(title)) {
 			String zip = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				zip = Integer.toString(AonNumberUtils.toDouble(zip).intValue());
@@ -281,9 +286,9 @@ public class RegistryImport {
 			reg.getRegistry().getAddress().setZip(zip.length() < 5 ? "0" + zip : zip);
 			return;
 		}
-		
-		if("Población".equalsIgnoreCase(title) || "POBLACION".equalsIgnoreCase(title)
-				|| "CIUDAD".equalsIgnoreCase(title)) {	
+
+		if("Poblaciï¿½n".equalsIgnoreCase(title) || "POBLACION".equalsIgnoreCase(title)
+				|| "CIUDAD".equalsIgnoreCase(title)) {
 			reg.getRegistry().getAddress().setCity(o.toString());
 			return ;
 		}
@@ -301,13 +306,13 @@ public class RegistryImport {
 			}
 			return;
 		}
-		
+
 		if("IBAN".equalsIgnoreCase(title)) {
 			reg.setIban(o.toString());
 			return;
 		}
-		
-		if("País".equalsIgnoreCase(title) || "PAIS".equalsIgnoreCase(title)) {
+
+		if("Paï¿½s".equalsIgnoreCase(title) || "PAIS".equalsIgnoreCase(title)) {
 			reg.getRegistry().setNationality(Country.safeValueOf(o.toString()));
 			return;
 		}
@@ -318,12 +323,12 @@ public class RegistryImport {
 		LinkedList<String> verror = new LinkedList<String>();
 		for (RegistryImportClass r : rvs) {
 			try {
-				LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f -> 
+				LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f ->
 					f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).collect(Collectors.toCollection(LinkedList::new));
 				Registry reg = new Registry();
 				if(regList.stream().filter(f -> f.getDomain().equals(domain.getId())).count() > 0) {
 					reg = regList.stream().filter(f -> f.getDomain().equals(domain.getId())).findFirst().get();
-				} else if(domain.getParentId() != null 
+				} else if(domain.getParentId() != null
 						&& regList.stream().filter(f -> f.getDomain().equals(domain.getParentId())).count() > 0) {
 					reg = regList.stream().filter(f -> f.getDomain().equals(domain.getParentId())).findFirst().get();
 				} else if(regList.stream().filter(f -> f.getDomain().equals(0)).count() > 0) {
@@ -340,10 +345,10 @@ public class RegistryImport {
 					AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getAddress());
 				}
 				if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {
-					String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix()); 
+					String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix());
 					r.getAccount().setCode(code);
 				}
-				
+
 				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());
 				if(acc == null) {
 					Account account = r.getAccount()
@@ -351,12 +356,12 @@ public class RegistryImport {
 						.setActive(true);
 					acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
 				}
-			
+
 				Integer registryId = reg.getId();
 				Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
 				f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
 						.findFirst().orElse(new Scope());
-			
+
 				if(r.isCustomer()) {
 					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f->
 						f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq( registryId )));
@@ -369,8 +374,8 @@ public class RegistryImport {
 								.setStatus(CustomerStatus.ACTIVE);
 						AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
 					}
-				} 
-			
+				}
+
 				if(!Utils.isAyudaT(domain.getName()) && r.isSupplier()) {
 					Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f->
 						f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
@@ -384,8 +389,8 @@ public class RegistryImport {
 						AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
 					}
 				}
-			
-				if(!Utils.isAyudaT(domain.getName()) && r.isCreditor()) {				
+
+				if(!Utils.isAyudaT(domain.getName()) && r.isCreditor()) {
 					Optional<Creditor> creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f->
 						f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
 					if(!creditor.isPresent()) {
@@ -401,7 +406,7 @@ public class RegistryImport {
 				}
 			} catch (Exception e) {
 				error.setError(false);
-				verror.add("Línea " + r.getLine() + ": " + e.getMessage());
+				verror.add("Lï¿½nea " + r.getLine() + ": " + e.getMessage());
 			}
 		}
 		error.setTextError(verror);
