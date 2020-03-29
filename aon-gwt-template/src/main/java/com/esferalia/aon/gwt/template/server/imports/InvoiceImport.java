@@ -403,7 +403,7 @@ public class InvoiceImport {
 				}
 				invoice.setReferenceCode(ivs.get(i).getRef());
 				invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
-					&& ivs.get(i).getRetentionQuota() > 0);
+					&& ivs.get(i).getRetentionQuota() != 0);
 				invoice.setRemarks(ivs.get(i).getConcept());
 				invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
 				if(ivs.get(i).getTotal() < 0) {
@@ -462,8 +462,7 @@ public class InvoiceImport {
 				Double retPercentage = 0.0;
 				Integer j = i;
 				while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
-					if(ivs.get(i).getRetentionQuota() != null 
-							&& ivs.get(i).getRetentionQuota() > 0) {
+					if(ivs.get(i).getRetentionQuota() != null) {
 						retBase = retBase + ivs.get(j).getBase();
 						retPercentage = ivs.get(j).getRetentionPercentage();
 						retQuota = retQuota + ivs.get(j).getRetentionQuota();
@@ -502,7 +501,7 @@ public class InvoiceImport {
 						.setDeductibleQuota(ivs.get(j).getQuota() != null
 								? ivs.get(j).getQuota() : 0.0)
 						.setWithholding(ivs.get(j).getRetentionQuota() != null
-								&& ivs.get(j).getRetentionQuota() > 0)
+								&& ivs.get(j).getRetentionQuota() != 0)
 						
 						.setExpAccountId(expAccount.getId())
 						.setExpAccountCode(expAccount.getCode())
@@ -569,6 +568,7 @@ public class InvoiceImport {
 						.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
 						.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
 				
+				ai.getInvoice().setFinances(new LinkedList<Finance>());
 				if(Utils.isAyudaT(domain.getName()) || (financeAccount != null && financeAccount.getId() != null)) {
 					ai.getInvoice().addFinance(f);
 				}
