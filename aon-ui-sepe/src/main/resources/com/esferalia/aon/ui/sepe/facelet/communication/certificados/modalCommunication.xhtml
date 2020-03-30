@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showCertificadosCommunicationWindow">
-		<aon:if test="#{controller.showCommunicationWindow}">
+		<aon:if test="#{controller.showCertifica2CommunicationWindow}">
 			<rich:modalPanel id="certificadosCommunicationLogModalPanel" minHeight="500"
-				minWidth="800" rendered="#{controller.showCommunicationWindow}"
+				minWidth="800" rendered="#{controller.showCertifica2CommunicationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -26,7 +26,7 @@
 							reRender="showCertificadosCommunicationWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{controller.showCommunicationWindow}"
+								target="#{controller.showCertifica2CommunicationWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>

@@ -65,7 +65,7 @@ public class ContrataBatchController extends BasicController {
 	private boolean recorded;
 	private ContrataBatchNewWizard newBatchWizard;
 	
-	private boolean showCommunicationWindow;
+	private boolean showContrataCommunicationWindow;
 	
 	public ContrataBatchNewWizard getNewBatchWizard() {
 		if(newBatchWizard==null){
@@ -94,12 +94,12 @@ public class ContrataBatchController extends BasicController {
 		this.recorded = recorded;
 	}
 	
-	public boolean isShowCommunicationWindow() {
-		return showCommunicationWindow;
+	public boolean isShowContrataCommunicationWindow() {
+		return showContrataCommunicationWindow;
 	}
 
-	public void setShowCommunicationWindow(boolean showCommunicationWindow) {
-		this.showCommunicationWindow = showCommunicationWindow;
+	public void setShowContrataCommunicationWindow(boolean showContrataCommunicationWindow) {
+		this.showContrataCommunicationWindow = showContrataCommunicationWindow;
 	}
 
 	public String getRowContractCode(){

@@ -54,7 +54,7 @@ public class Certifica2BatchController extends BasicController {
 	private boolean recorded;
 	private Certifica2BatchNewWizard newBatchWizard;
 	
-	private boolean showCommunicationWindow;
+	private boolean showCertifica2CommunicationWindow;
 	
 	
 	public Certifica2BatchNewWizard getNewBatchWizard() {
@@ -84,12 +84,12 @@ public class Certifica2BatchController extends BasicController {
 		this.recorded = recorded;
 	}
 	
-	public boolean isShowCommunicationWindow() {
-		return showCommunicationWindow;
+	public boolean isShowCertifica2CommunicationWindow() {
+		return showCertifica2CommunicationWindow;
 	}
 
-	public void setShowCommunicationWindow(boolean showCommunicationWindow) {
-		this.showCommunicationWindow = showCommunicationWindow;
+	public void setShowCertifica2CommunicationWindow(boolean showCertifica2CommunicationWindow) {
+		this.showCertifica2CommunicationWindow = showCertifica2CommunicationWindow;
 	}
 
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {

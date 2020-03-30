@@ -10,8 +10,8 @@
 
 	<aon:panelGroup id="showGenerationWindow">
 		<aon:if test="#{contractCertificados.showGenerationWindow}">
-			<rich:modalPanel id="generationModalPanel" minHeight="40"
-				minWidth="200" rendered="#{contractCertificados.showGenerationWindow}"
+			<rich:modalPanel id="generationModalPanel" minHeight="60"
+				minWidth="800" rendered="#{contractCertificados.showGenerationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -46,7 +46,8 @@
 										
 										<aon:outputText value="&#160;" />
 										
-										<rich:inplaceSelect id="suspensionCause"
+										<!--rich:inplaceSelect 
+											id="suspensionCause"
 											required="#{true}" 
 										 	value="#{contractCertificados.suspensionCause}"
 										 	listHeight="300px" listWidth="350px"
@@ -54,10 +55,21 @@
 											defaultLabel="#{bundle.sepe_certificados_suspensionCause_select}" 
 											reRender="generationForm" >
 											<f:selectItems value="#{sepeCollections.suspensionCauses}" />
-										</rich:inplaceSelect>
-										
-										<aon:outputText value="&#160;" />
-										<aon:div>
+										</rich:inplaceSelect-->
+
+										<aon:outputLabel for="suspensionCause" 
+											value="#{bundle.sepe_certificados_suspensionCause_select}" />
+										<aon:selectOneMenu 
+											id="suspensionCause" 
+											required="true"
+											reRender="generationForm"
+											value="#{contractCertificados.suspensionCause}" 
+											>
+											<f:selectItems value="#{sepeCollections.suspensionCauses}" />
+										</aon:selectOneMenu>
+												
+										<aon:div rendered="#{contractCertificados.ereSuspensionCause}" >
+											<aon:outputText value="&#160;" />
 											<aon:outputText value="N&#186; ERE : " />
 											<aon:inputText 
 											id="ereNumber" 

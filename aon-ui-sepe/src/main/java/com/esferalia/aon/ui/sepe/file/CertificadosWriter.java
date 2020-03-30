@@ -350,7 +350,13 @@ public class CertificadosWriter implements Serializable {
 		o.setCodCausaSuspension(batchDetail.getSuspensionCause()!=null?batchDetail.getSuspensionCause().getValue():null);
 		o.setFechaSuspensionExtincion(createFechaSimpleType(endDate));
 		o.setFechaFinSuspension(null);
-		o.setERE(batchDetail.getEreNumber());
+		
+		if ( batchDetail.getSuspensionCause() == SuspensionCause.C16
+			|| batchDetail.getSuspensionCause() == SuspensionCause.C17 
+			|| batchDetail.getSuspensionCause() == SuspensionCause.C18  )
+			o.setERE(batchDetail.getEreNumber());
+		else
+			o.setERE(null);
 		
 		
 		if ( batchDetail.getSuspensionCause() == SuspensionCause.C18 ) {

@@ -176,7 +176,7 @@
 				actionListener="#{contract.onSepeCommunicationShow}"
 				iconClass="aon-icon-sepe-contrata" >
 				<f:setPropertyActionListener
-					target="#{contract.showCommunicationWindow}" value="#{true}" />
+					target="#{contract.showContrataCommunicationWindow}" value="#{true}" />
 			</aon:menuItem>
 			
 			<aon:if test="#{actionDenied.moduleEnabled['payroll']}">
@@ -187,7 +187,7 @@
 					actionListener="#{contract.onCertificadosCommunicationShow}"
 					iconClass="aon-icon-sepe-certificados" >
 					<f:setPropertyActionListener
-						target="#{contract.showCommunicationWindow}" value="#{true}" />
+						target="#{contract.showCertifica2CommunicationWindow}" value="#{true}" />
 				</aon:menuItem>
 			</aon:if>
 </aon:if>			

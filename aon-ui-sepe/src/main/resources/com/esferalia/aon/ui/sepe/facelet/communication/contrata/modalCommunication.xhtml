@@ -9,9 +9,9 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="showContrataCommunicationWindow">
-		<aon:if test="#{controller.showCommunicationWindow and not empty contrata.handler}">
+		<aon:if test="#{controller.showContrataCommunicationWindow and not empty contrata.handler}">
 			<rich:modalPanel id="contrataCommunicationModalPanel" minHeight="500"
-				minWidth="800" rendered="#{controller.showCommunicationWindow}"
+				minWidth="800" rendered="#{controller.showContrataCommunicationWindow}"
 				showWhenRendered="true" zindex="90" style="overflow-y:auto">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -26,7 +26,7 @@
 							reRender="showContrataCommunicationWindow" immediate="true">
 							<aon:actionHotKey key="esc" />
 							<f:setPropertyActionListener
-								target="#{controller.showCommunicationWindow}"
+								target="#{controller.showContrataCommunicationWindow}"
 								value="#{false}" />
 						</aon:commandButton>
 					</aon:form>

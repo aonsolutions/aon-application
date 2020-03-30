@@ -629,6 +629,28 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		}
 	}
 	
+	public void onRemoveContractSepeFiles(ActionEvent event){
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
+			if(getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null){
+				bean.remove(getCommunicationIdFile());
+			}
+			if(getResponseFile()!=null && getResponseFile().getId()!=null){
+				bean.remove(getResponseFile());
+			}
+			if(getGeneratedFile()!=null && getGeneratedFile().getId()!=null){
+				bean.remove(getGeneratedFile());
+			}
+			initialize(getContract());
+		} catch (ManagerBeanException e) {
+			String msg = "No se han podido borrar los datos de Certific@2";
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+
 	@Override
 	public String getCommunicationLogContent() {
 		String communicationLogContent = "<div>";

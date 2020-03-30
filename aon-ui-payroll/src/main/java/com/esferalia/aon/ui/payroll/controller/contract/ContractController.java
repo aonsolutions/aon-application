@@ -147,7 +147,8 @@ public class ContractController extends BasicController {
 	private boolean showContractSalaryInfoWindow;
 	private boolean showWorkdayHoursWindow;
 	
-	private boolean showCommunicationWindow;
+	private boolean showContrataCommunicationWindow;
+	private boolean showCertifica2CommunicationWindow;
 	
 	private boolean showDocumentView;
 	
@@ -292,11 +293,17 @@ public class ContractController extends BasicController {
 	public void setShowWorkdayHoursWindow(boolean showWorkdayHoursWindow) {
 		this.showWorkdayHoursWindow = showWorkdayHoursWindow;
 	}
-	public boolean isShowCommunicationWindow() {
-		return showCommunicationWindow;
+	public boolean isShowCertifica2CommunicationWindow() {
+		return showCertifica2CommunicationWindow;
 	}
-	public void setShowCommunicationWindow(boolean showCommunicationWindow) {
-		this.showCommunicationWindow = showCommunicationWindow;
+	public void setShowCertifica2CommunicationWindow(boolean showCertifica2CommunicationWindow) {
+		this.showCertifica2CommunicationWindow = showCertifica2CommunicationWindow;
+	}
+	public boolean isShowContrataCommunicationWindow() {
+		return showContrataCommunicationWindow;
+	}
+	public void setShowContrataCommunicationWindow(boolean showContrataCommunicationWindow) {
+		this.showContrataCommunicationWindow = showContrataCommunicationWindow;
 	}
 	public Agreement getAgreement() {
 		return agreement;

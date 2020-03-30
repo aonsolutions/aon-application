@@ -72,7 +72,7 @@
 							value="Reiniciar proceso"
 							rendered="#{(not contractCertificados.communicationAccepted)
 								or (not contractCertificados.communicationFinished)}"
-							actionListener="#{contractCertificados.onRemoveSepeFiles}"
+							actionListener="#{contractCertificados.onRemoveContractSepeFiles}"
 							reRender="showCertificadosCommunicationWindow,#{(contractCertificados.batch.id!=null)?(''):('contractForm')}"
 							iconClass="aon-icon-refresh" 
 							/>
