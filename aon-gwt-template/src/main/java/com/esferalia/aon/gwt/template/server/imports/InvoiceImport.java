@@ -382,6 +382,10 @@ public class InvoiceImport {
 		
 		for(Integer i = 0; i < ivs.size(); i++) {
 			try {
+				if(ivs.get(i).getAccount() == null || ivs.get(i).getAccount().isBlank()) {
+					throw new Exception("La cuenta contable es un dato obligatorio.");
+				}
+				
 				AccountingInvoice ai = new AccountingInvoice();
 				ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
@@ -468,7 +472,7 @@ public class InvoiceImport {
 						retQuota = retQuota + ivs.get(j).getRetentionQuota();
 						ai.getInvoice().setWithholding(true);
 					}
-				
+					
 					Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(j).getAccount());
 					if(expAccount == null) {
 						expAccount = new Account()
@@ -560,6 +564,7 @@ public class InvoiceImport {
 						financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
 					}
 				}
+				
 				Finance f = new Finance()
 						.setPayAccountCode(financeAccount.getCode())
 						.setPayAccountDescription(financeAccount.getDescription())
