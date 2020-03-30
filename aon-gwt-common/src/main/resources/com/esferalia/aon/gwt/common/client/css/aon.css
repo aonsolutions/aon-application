@@ -1084,6 +1084,10 @@ input[type="checkbox"]:focus + label {
 	gwt-image: "aonIconInvoice";
 	width: auto;
 }
+@sprite .aon-icon-rectify-invoice {
+	gwt-image: "aonIconRectifyInvoice";
+	width: auto;
+}
 
 @sprite .aon-icon-attach {
 	gwt-image: "aonIconAttach";
@@ -2840,24 +2844,9 @@ input:disabled+label {
 	border: 1px solid darkgray;
 }
 
-@
-keyframes aon-toast { 0% {
-	top: 160px;
-	right: -300px;
-}
-
-100%{
-top
-:
-
-160
-px
-;
-
-right
-:
-15px;
-}
+@keyframes aon-toast { 
+	0% {top: 160px;right: -300px;}
+	100%{top:160px;right:15px;}
 }
 .aon-toast-header {
 	padding-left: 10px;

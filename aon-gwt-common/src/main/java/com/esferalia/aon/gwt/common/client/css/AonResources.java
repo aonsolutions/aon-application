@@ -247,6 +247,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-invoice.png")
 	ImageResource aonIconInvoice();
 	
+	@Source("images/aon-icon-rectify-invoice.png")
+	ImageResource aonIconRectifyInvoice();
+
 	@Source("images/aon-icon-diff.png")
 	ImageResource aonIconDiff();
 	

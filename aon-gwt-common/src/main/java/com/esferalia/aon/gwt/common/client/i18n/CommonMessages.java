@@ -3533,6 +3533,12 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Ver fact. rect.")
 	String seeRectInvoiceAbbr();
 
+	@DefaultMessage("Ver factura rectificada")
+	String seeRectifiedInvoice();
+	
+	@DefaultMessage("Ver factura rectificativa")
+	String seeRectifierInvoice();
+
 	@DefaultMessage("Manual")
 	String manual();
 	

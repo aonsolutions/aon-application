@@ -1190,6 +1190,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-invoice")
 	String aonIconInvoice();
 
+	@ClassName("aon-icon-rectify-invoice")
+	String aonIconRectifyInvoice();
+
 	@ClassName("aon-icon-attach")
 	String aonIconAttach();
 

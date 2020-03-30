@@ -1018,9 +1018,10 @@ public class AccountingInvoiceDAO {
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
 				FinanceDAO.settle(ctx, oldId);
 			} 
-			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)));
-			finance.setInvoice(null);
-			finance.setId( null );
+			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)))
+				.setInvoice(null)
+				.setId( null )
+				.setDirty(true);
 		}
 		AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
 		ai = save(ctx, config, ai);

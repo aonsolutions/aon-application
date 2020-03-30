@@ -92,6 +92,13 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		LOGGER.info("Editing invoice as account source");
 		centerContainer.clear();
 		EditableInvoicePanel eip = new EditableInvoicePanel(invoiceCallback);
+		eip.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
+			@Override
+			public void onSelection(SelectionEvent<AccountingInvoice> event) {
+				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
+			}
+		});
+		
 		centerContainer.setWidget( eip );
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
