@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.fiscal.d2_deposit.Provinces;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -55,7 +56,6 @@ import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
-import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
@@ -376,6 +376,8 @@ public class InvoiceImport {
 		LinkedList<String> verror = new LinkedList<String>();
 		
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
+	
+		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
 		Account outputAccount = aonCtx.getDefaultChargedVatAccount();
 		Account inputAccount = aonCtx.getDefaultPaidVatAccount();
 		Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
@@ -564,6 +566,7 @@ public class InvoiceImport {
 						financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
 					}
 				}
+					
 				
 				Finance f = new Finance()
 						.setPayAccountCode(financeAccount.getCode())
@@ -571,16 +574,17 @@ public class InvoiceImport {
 						.setPayAccountId(financeAccount.getId())
 						.setAmount(ai.getInvoice().getTotal())
 						.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
-						.setPayMethod(PayMethodType.BANK_TRANSFER.ordinal());
+						.setPayMethod(pm.getId());
+
 				
 				ai.getInvoice().setFinances(new LinkedList<Finance>());
-				if(Utils.isAyudaT(domain.getName()) || (financeAccount != null && financeAccount.getId() != null)) {
+				if(financeAccount != null && financeAccount.getId() != null) {
 					ai.getInvoice().addFinance(f);
 				}
 
 				ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
 				
-				if(Utils.isAyudaT(domain.getName()) && (financeAccount == null || financeAccount.getId() ==null)){
+				if(financeAccount == null || financeAccount.getId() == null){
 					f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
 						.setDomain(domain.getId())
 						.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
