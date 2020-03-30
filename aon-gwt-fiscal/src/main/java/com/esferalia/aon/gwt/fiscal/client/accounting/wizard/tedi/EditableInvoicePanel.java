@@ -63,6 +63,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -269,7 +270,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 		if ( invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getRegistry() != null) {
 			invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
-			registryBox.setValue(invoiceCallback.getInvoice().getRegistry());
+			registryBox.setValue(invoiceCallback.getInvoice().getRegistry(),false);
 		} else {
 			FlowPanel dropPanel = getDropFileZone( invoiceCallback );
 			invoicePanelContainer.setWidget(dropPanel);
@@ -451,7 +452,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 
-		fullDocument.setValue(inv.getRegistry().getDocumentType(),inv.getRegistry().getDocumentCountry(),inv.getRegistry().getDocument());
+		fullDocument.setValue(inv.getInvoice().getRegistryDocumentType(),inv.getInvoice().getRegistryDocumentCountry(),inv.getInvoice().getRegistryDocument());
 		rName.setValue(inv.getInvoice().getRegistryName());
 		taxDate.setValue(inv.getInvoice().getTaxDate());
 		service.setValue(inv.isService());
@@ -538,54 +539,25 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		headerPanel1.add(documentLabel);
 		
 		
-		fullDocument.getTypeWidget().addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
 		fullDocument.addTypeChangeHandler(new ChangeHandler() {
-			
 			@Override
 			public void onChange(ChangeEvent arg0) {
 				invoiceCallback.getInvoice().getInvoice().setRegistryDocumentType(fullDocument.getType());
 			}
 		});
-		fullDocument.getCountryWidget().addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
 		fullDocument.addCountryChangeHandler(new ChangeHandler() {
-			
 			@Override
 			public void onChange(ChangeEvent arg0) {
 				invoiceCallback.getInvoice().getInvoice().setRegistryDocumentCountry(fullDocument.getCountry());
 			}
 		});
-		fullDocument.getDocumentWidget().addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
 		fullDocument.addDocumentChangeHandler(new  ValueChangeHandler<String>() {
-			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> arg0) {
 				invoiceCallback.getInvoice().getInvoice().setRegistryDocument(fullDocument.getDocument());
 			}
 		});
 		headerPanel1.add(fullDocument);
-		
 		InlineLabel nameLabel = new InlineLabel(AON.MSG.name());
 		nameLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		headerPanel1.add(nameLabel);
@@ -593,15 +565,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		rName.setStyleName(AON.AON_CSS.aonInputText());
 		rName.setVisibleLength(50);
 		rName.setMaxLength(50);
-		rName.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-					registryBox.setFocus(true);
-		        }
-			}
-		});
 		rName.addValueChangeHandler(new  ValueChangeHandler<String>() {
 			
 			@Override
@@ -792,15 +755,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		headerPanel4.add(invoiceNumberLabel);
 		
 		FlowPanel numberPanel = new FlowPanel();
-		
-		series.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-		            registryBox.setFocus( true );
-		        }
-			}
-		});
 		series.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -834,14 +788,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		number.setStyleName(AON.AON_CSS.aonMarginLeft5());
 		number.addStyleName(AON.AON_CSS.aonInputText());
-		number.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-		            registryBox.setFocus( true );
-		        }
-			}
-		});
 		number.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			
 			@Override
@@ -857,14 +803,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		numberPanel.add(number);
 		
 		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
-		referenceCode.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
-		            registryBox.setFocus( true );
-		        }
-			}
-		});
 		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
