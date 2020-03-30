@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -36,6 +37,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SEPEUtils {
 	
@@ -259,6 +261,32 @@ public class SEPEUtils {
 		return list;
 	}
 	
+	public List<SalaryData> getSalaryDataList(Contract contract, Date startDate, Date endDate, String ...names) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(SalaryData.class);
+		List<Salary> salaryList = getSalaryList(contract, startDate, endDate);
+		List<Integer> salaryIdList = salaryList.stream().map(s -> s.getId()).collect(Collectors.toList());
+		Criteria criteria = new Criteria();
+		criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_SALARY_ID), salaryIdList);
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_START_DATE), endDate);
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_END_DATE), startDate);
+		criteria.addInExpression(bean.getFieldName(IEntityAlias.SALARY_DATA_NAME), names);
+		return
+		bean.getList(criteria).stream().map(to ->  (SalaryData) to )
+		.filter(d -> AonStringUtils.isNotBlank(d.getExpression()))
+		.collect( Collectors.toList())
+		;
+		
+	}
+
+	public List<Salary> getSalaryList(Contract contract, Date startDate, Date endDate) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), contract.getId());
+		criteria.addLessThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_START_DATE),endDate);
+		criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IEntityAlias.SALARY_END_DATE), startDate);
+		return bean.getList(criteria).stream().map(to ->  (Salary) to ).collect( Collectors.toList());		
+	}
+
 	public List<SalaryData> getSalaryDataList(ISalary salary, Date startDate, Date endDate) throws ManagerBeanException {
 		return getSalaryDataList(salary, startDate, endDate, null);
 	}

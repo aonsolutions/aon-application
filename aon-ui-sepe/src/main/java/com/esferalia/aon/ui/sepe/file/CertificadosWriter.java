@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
 import javax.xml.bind.JAXBContext;
@@ -22,6 +23,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.mvel2.MVEL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
@@ -373,7 +376,7 @@ public class CertificadosWriter implements Serializable {
 		}
 		
 		if(contract.getEnterpriseCCC().getType()!=CCCType.AGRICULTURAL){
-			for(COTIZACIONTYPE cotizacion: getCotizacionList(batchDetail, contract.getStartDate(), endDate)){
+			for(COTIZACIONTYPE cotizacion: __getCotizacionList(batchDetail, endDate)){
 				o.getDatosCotizacion().add(cotizacion);
 			}
 			o.setDatosVacacionesCotizadas(createVacacionesCotizadasType(contract));
@@ -612,6 +615,75 @@ public class CertificadosWriter implements Serializable {
 		return cotizacionList;
 	}
 	
+	private List<COTIZACIONTYPE> __getCotizacionList(Certifica2BatchDetail detail, Date endDate) {
+		 
+		Date startDate = AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, -179 );
+		
+		List<SalaryData> cgcBases;
+		try {
+			cgcBases = SEPEUtils.getInstance()
+					.getSalaryDataList(detail.getContract(), startDate, endDate, ContextVariable.CGC_BASE.getName() );
+		} catch (ManagerBeanException e) {
+			String msg = "Ha ocurrido un error al obtener datos de las nominas.";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg, e);
+		}
+		
+		cgcBases.stream().forEach(d -> System.out.println(d.getName() + " = " + d.getExpression() + "(" + d.getStartDate() + ".." + d.getEndDate()));
+		
+		Map<Date, List<SalaryData>> monthCgcBasesMap = cgcBases.stream()
+		.peek(d -> { 
+			if ( d.getEndDate().after(endDate)) {
+				double base = Double.parseDouble(d.getExpression()) / days(d.getStartDate(), d.getEndDate());
+				d.setEndDate(endDate);
+				d.setExpression(Double.toString(base * days(d.getStartDate(), endDate)));
+			}
+			if ( d.getStartDate().before(startDate) ) {
+				double base = Double.parseDouble(d.getExpression()) / days(d.getStartDate(), d.getEndDate());
+				d.setStartDate(startDate);
+				d.setExpression(Double.toString(base * days(startDate, d.getEndDate())));
+			}
+		})
+		.collect(Collectors.groupingBy(d -> AonDateUtils.getFirstDayOfMonth(d.getStartDate())));
+		
+		List<COTIZACIONTYPE> cotizacionList = new ArrayList<COTIZACIONTYPE>();
+		for ( Map.Entry<Date, List<SalaryData>> entry: monthCgcBasesMap.entrySet() ) {
+			Date date = entry.getKey();
+			List<SalaryData> datas = entry.getValue();
+			
+			int year = AonDateUtils.get(date, Calendar.YEAR);
+			int month = AonDateUtils.get(date, Calendar.MONTH) + 1;
+			
+			int days = 0;
+			double baseCgc = 0;
+			for ( SalaryData d: datas ) {				
+				baseCgc += Double.parseDouble(d.getExpression());
+				days += new Period(d.getStartDate(), d.getEndDate()).daysStream().count();
+			}
+			
+			COTIZACIONTYPE cotizacion = createCotizacionType( 
+					year, 
+					month, 
+					days, 
+					baseCgc, 
+					baseCgc, 
+					null);
+			
+			cotizacionList.add(cotizacion);
+		}
+		
+		cotizacionList.sort(  (c1, c2 ) -> 
+		c2.getAno().equals(c1.getAno()) ? 
+		Integer.parseInt(c2.getMes()) - Integer.parseInt(c1.getMes()): 
+		Integer.parseInt(c2.getAno()) - Integer.parseInt(c1.getAno())
+		);
+		
+		return cotizacionList;
+		
+		
+	}
+
 	/**
 	<xsd:complexType name="COTIZACION_REA_TYPE">
 		<xsd:sequence>
@@ -1397,6 +1469,10 @@ public class CertificadosWriter implements Serializable {
 			diffDays = (int)((Math.floor((to.getTime() - from.getTime()) / MS_PER_DAY + 0.5d) + 1));
 		}
 		return diffDays;
+	}
+	
+	private static long days( Date startDate, Date endDate ) {
+		return new Period(startDate, endDate).daysStream().count();
 	}
 	
 }
