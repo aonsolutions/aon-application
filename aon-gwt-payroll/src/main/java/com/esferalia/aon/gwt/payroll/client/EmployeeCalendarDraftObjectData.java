@@ -94,6 +94,7 @@ public class EmployeeCalendarDraftObjectData {
 			put("DIAS_PARCIALIDAD", DayType.PARTIALITY);
 			put("DIAS_ERE_FZA", DayType.EREFZADAY);
 			put("DIAS_ERE_FZA_EXONERADO", DayType.EREFZAEXONDAY);
+			put("DIAS_FESTIVOS", DayType.FREEDAY);
 		}
 	};
 	
@@ -1403,7 +1404,7 @@ public class EmployeeCalendarDraftObjectData {
 			
 			private void initializeFestivesDaysTypeMap(HashMap<java.util.Date, String> festivesList) {
 				for(Entry<java.util.Date, String> entry : festivesList.entrySet()){
-					mapDaysType.put(entry.getKey(), DayType.FREEDAY);
+//					mapDaysType.put(entry.getKey(), DayType.FREEDAY);
 					mapFestivesDays.put(entry.getKey(), entry.getValue());
 				}
 			}
@@ -1494,6 +1495,7 @@ public class EmployeeCalendarDraftObjectData {
 					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreFzaExonList) {
 				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientEreFzaExonList){
 					mapDaysCoefficientEreFzaExon.put(dayCoefficient.getStartDate(), Double.parseDouble(dayCoefficient.getExpression()));
+					mapDaysType.put(dayCoefficient.getStartDate(), DayType.EREFZAEXONDAY);
 				}
 				
 			}
@@ -1865,6 +1867,14 @@ public class EmployeeCalendarDraftObjectData {
 		if(!this.festiveWorkingDays.contains(date)) {
 			this.festiveWorkingDays.add(date);
 		}
+	}
+	
+	public boolean isFestiveWorking(Date date) {
+		return this.festiveWorkingDays.contains(date);
+	}
+	
+	public void removeFestiveWorking(Date date) {
+		this.festiveWorkingDays.remove(date);
 	}
 
 	

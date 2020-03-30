@@ -2281,8 +2281,11 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				calendarGrid.getWidget(row, col).removeStyleName(style.strikeStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.ereStyle());
 				calendarGrid.getWidget(row, col).removeStyleName(style.nonWorkingStyle());
-				if(cellsType[row][col].getType().equals(DayType.FREEDAY)) {
+				if(cellsType[row][col].getType().equals(DayType.FREEDAY) || cellsType[row][col].getType().equals(DayType.NOWORKINGDAY)) {
 					calendarEmployeeInfo.setFestiveWorking(date);
+				} else {
+					if(calendarEmployeeInfo.isFestiveWorking(date))
+						calendarEmployeeInfo.removeFestiveWorking(date);
 				}
 				cellsType[row][col].setAsType(DayType.NOTYPEDAY, row, col);
 				Double hour = calendarEmployeeInfo.getHourByDay(date);
