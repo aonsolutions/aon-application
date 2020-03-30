@@ -42,6 +42,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.calculator.CompositePayments.PeriodsContractPaymentIterator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -566,7 +567,26 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 		return fixed;
 	}
-	
+	 
+	protected List<ITimedResult<Double>> subtractOFFPart(List<ITimedResult<Double>> results, List<Period> its,
+			ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
+		Period period = results.get(0).getPeriod();
+		double days = getMonthDays(period, expressionContext);
+		Double value = results.get(0).getValue();
+		Map<String,ITimedVariable<?>> context = results.get(0).getContext();
+		
+		List<Period> actives = expressionContext.getPeriods(ContextVariable.WORKED_DAYS);//Period.sub(period, its);
+		List<ITimedResult<Double>> fixed = 
+				new ArrayList<ITimedResult<Double>>(actives.size());
+		
+		for ( Period active : actives  ) {
+			double activeDays = getDays(active, expressionContext, ContextVariable.WORKED_DAYS );
+			Double activeValue = value / days * activeDays; 
+			fixed.add( new TimedResult<Double>(activeValue, active, context));
+		}
+		return fixed;
+	}
+
 	protected List<ITimedResult<Double>> fixPartialFactor(
 			List<ITimedResult<Double>> results, 
 			ExpressionContext expressionContext) 
@@ -781,6 +801,23 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			Date start, 
 			Date end,
 			ExpressionContext expressionContext) throws UnsupportedOperationException {
+		
+		if (results.size() == 1
+			&& isWholeMonth(results.get(0))	
+			&& contractPayment.getScope() == ExpressionScope.AGREEMENT
+			&& allAgreementConstants(results.get(0).getContext()) ) {
+			try {
+				return subtractOFFPart(results, strikes, expressionContext);
+			} catch (UndefinedVariablesException e) {
+			} catch (ExpressionException e) {
+			}
+		} 
+		
+		List<Period> worked = expressionContext.getPeriods(ContextVariable.WORKED_DAYS);
+		
+		if ( Period.sub(strikes ,worked ).size() == 0  )
+			return results;
+		
 		return  shareExtraITResults(results.get(0), strikes);
 	}
 	
@@ -1081,6 +1118,27 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return days;
 	}
 
+	private static double getDays(Period period, ExpressionContext expressionContext, ContextVariable var) throws UndefinedVariablesException, ExpressionException {
+
+		List<ITimedResult<Number>> results = expressionContext.eval(var.getName(), period.getStart(), period.getEnd(), Number.class);
+		
+		double days = 0.00;
+		for ( ITimedResult<Number> result : results  ) {
+			days += result.getValue().doubleValue();
+		}
+		
+		return days;
+	}
+
+	private static double getMonthDays(Period period, ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
+
+		List<ITimedResult<Number>> results = expressionContext.eval(ContextVariable.MONTH_DAYS.getName(), period.getStart(), period.getEnd(), Number.class);
+		
+		for ( ITimedResult<Number> result : results  )
+			return result.getValue().doubleValue();
+		
+		return getDays(Collections.singletonList(period));
+	}
 	
 	private static boolean contains ( List<ITimedResult<Double>> results, ITimedResult<Double>  result ) {
 		for ( ITimedResult<Double> r: results ) { 

@@ -67,10 +67,13 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 					put(CGP_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
 				}
 			},
-			new String[] { "( P_1 + P_2 )* 0.10 ",
+			new String[] { 
+						"( P_1 + P_2 )* 0.10 ",
 						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
-						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", 
+						}
 			, new String[] {
+						"TRACE('DIAS_TRABAJADOS = %f\r\n', DIAS_TRABAJADOS);0.00", 
 						"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
 						"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"}
 			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
@@ -101,11 +104,11 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
-//		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
-//				.getSalaryPayments()) {
-//			System.out.println(payment.getName() + " = " + payment.getAmount()
-//					+ " (" + payment.getExpression() + ")");
-//		}
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println("P: " + payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
 		
 		for (com.esferalia.aon.payroll.SalaryCost cost : salary
 				.getSalaryCosts()) {

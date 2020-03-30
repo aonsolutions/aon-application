@@ -2130,6 +2130,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		activeDays += getExpressionContext().getVariables(ContextVariable.STRIKE_FACTOR, start, end)
 		.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
 		;
+
+//		for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS )
+//			activeDays += getExpressionContext().getVariables(ereFactor, start, end)
+//			.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
+//			;
+
 		return activeDays;
 	}
 
@@ -3253,33 +3259,42 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Date workStart = Period.max(p.getStart(), contractStartDate);
 		Date workEnd = Period.min(p.getEnd(), contractEndDate);
 		
-		Long availableDays = getAvailableDays(workStart,workEnd);
-
-		// Long leaveDays = getLeaveDays(p);
-
-		double workedDays = availableDays /*- leaveDays*/;
-		
-		
-		Collection<ContextVariable> ereFactors = getEreFactorsVars();
-		for ( ContextVariable ereFactor: ereFactors ) {
-			workedDays *= 1.00 - getCurrentBindings().get(ereFactor, obj -> ((Number) obj).doubleValue(), 0.00);
-		}
-
-		//workedDays -= getCurrentBindings().get(STRIKE_DAYS, obj -> ((Number) obj).doubleValue(), 0.00);
-		workedDays *= 1.00 - getCurrentBindings().get(STRIKE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
-		getCurrentBindings().get(STRIKE_DAYS);
-		
 		double workEndDay = AonDateUtils.get(workEnd, DAY_OF_MONTH);
 		double monthDays = AonDateUtils.getMax(p.getStart(), DAY_OF_MONTH);
 		
-		if ( workEndDay < monthDays )
-			return workedDays; // Not the last period or doesn't work the full month. 
-
-		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-
-		double prevAdjustDays = getActiveDays(p) ;
+		double availableDays = getAvailableDays(workStart,workEnd);
 		
-		return (workedDays + prevAdjustDays)  == monthDays ? (ctxMonthDays - prevAdjustDays) : workedDays;
+		if ( workEndDay == monthDays ) {
+			double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
+			double prevAdjustDays = getActiveDays(p) ;
+			availableDays = (availableDays + prevAdjustDays)  == monthDays ? (ctxMonthDays - prevAdjustDays) : availableDays;			
+		}
+
+		double workedDays = availableDays /*- leaveDays*/;
+		
+		for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS ) {
+			try {
+				getCurrentBindings().get(ereFactor);
+				workedDays *= 1.00 - getContexVariable(ctx, p, ereFactor);
+			}
+			catch ( Exception e ) {
+				
+			}
+		}
+
+		workedDays *= 1.00 - getCurrentBindings().get(STRIKE_FACTOR, obj -> ((Number) obj).doubleValue(), 0.00);
+		getCurrentBindings().get(STRIKE_DAYS);
+		
+//		if ( workEndDay < monthDays )
+//			return workedDays; // Not the last period or doesn't work the full month. 
+//
+//		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
+//
+//		double prevAdjustDays = getActiveDays(p) ;
+//		
+//		return (workedDays + prevAdjustDays)  == monthDays ? (ctxMonthDays - prevAdjustDays) : workedDays;
+		
+		return workedDays;
 	}
 	
 
@@ -3295,16 +3310,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
 		
-		availableDays *= factor;
+		//availableDays *= factor;
 		
 		if ( availableDays == naturalMonthDays )
-			return ctxMonthDays ;
+			return ctxMonthDays * factor;
 		
 		if ( ctxMonthDays == naturalMonthDays )
-			return availableDays;
+			return availableDays * factor;
 		
-		//return (availableDays + (30 - naturalMonthDays)) * factor;
-		return (availableDays) + (30 - naturalMonthDays);
+		return (availableDays + (30 - naturalMonthDays)) * factor;
+		//return (availableDays) + (30 - naturalMonthDays);
 	}
 
 	private double getQuoteDays(ExpressionContext ctx, Period p, double factor) {

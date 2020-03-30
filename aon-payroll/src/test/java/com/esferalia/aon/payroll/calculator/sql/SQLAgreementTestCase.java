@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -964,6 +965,222 @@ public class SQLAgreementTestCase extends AbstractSQLTestCase {
 		org.junit.Assert.assertEquals((3330) * 0.50, salary.getTotalPayment(), 0.00);
 	}
 
+	@Test
+	public void testFixedAmountsXII() throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] { new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.JULY;
+				this.start = "01/07 -1";
+				this.end = "30/06";
+				this.issue = "01/07";
+			}
+		}, new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.DECEMBER;
+				this.start = "01/01";
+				this.end = "31/12";
+				this.issue = "15/12";
+			}
+		}, }, new Payment[] { new Payment() {
+			{
+				this.expression = "SALARIO_MENSUAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_SALARIAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_TRANSPORTE";
+			}
+		} });
+
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String, String>() {
+			{
+				put("PLUS_SALARIAL", "300.00");
+				put("PLUS_TRANSPORTE", "30.00");
+				put("SALARIO_MENSUAL", "3000.00");
+			}
+		});
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date contractStartDate = firstDayOfYear;
+
+		ContractRecord contract = newContract(aonContext, contractStartDate,
+				new HashMap<String, String>() {
+					{
+						put("DIAS_MES", "30.00");
+					}
+				}, new String[] {}, new String[] { 
+						"BASE_CGC * 4.70 / 100.00", 
+						"BASE_CGP * 1.55 / 100.00",
+						"BASE_CGP * 0.10 / 100.00", 
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" },
+				category);
+		Date endDate = getLastDayOfMonth(contractStartDate);
+		
+		Date startEREDate = AonDateUtils.add(contractStartDate, Calendar.DAY_OF_MONTH, 15);
+		addData(aonContext, contract, startEREDate, null, ContextVariable.ERE_FACTOR, 1.00);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
+				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
+
+		;
+		org.junit.Assert.assertEquals((3330) / 2, salary.getTotalPayment(), 0.00);
+		org.junit.Assert.assertEquals((3300) / 12, salary.getExtraPayProration(), 0.00);
+	}
+
+	@Test
+	public void testFixedAmountsXIII() throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] { new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.JULY;
+				this.start = "01/07 -1";
+				this.end = "30/06";
+				this.issue = "01/07";
+			}
+		}, new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.DECEMBER;
+				this.start = "01/01";
+				this.end = "31/12";
+				this.issue = "15/12";
+			}
+		}, }, new Payment[] { new Payment() {
+			{
+				this.expression = "SALARIO_MENSUAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_SALARIAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_TRANSPORTE";
+			}
+		} });
+
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String, String>() {
+			{
+				put("PLUS_SALARIAL", "300.00");
+				put("PLUS_TRANSPORTE", "30.00");
+				put("SALARIO_MENSUAL", "3000.00");
+			}
+		});
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date contractStartDate = firstDayOfYear;
+
+		ContractRecord contract = newContract(aonContext, contractStartDate,
+				new HashMap<String, String>() {
+					{
+						put("DIAS_MES", "30.00");
+						put("TIEMPO_COMPLETO", "FALSO()");
+						put("COEFICIENTE_PARCIALIDAD", "0.50");						
+					}
+				}, new String[] {}, new String[] { 
+						"BASE_CGC * 4.70 / 100.00", 
+						"BASE_CGP * 1.55 / 100.00",
+						"BASE_CGP * 0.10 / 100.00", 
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" },
+				category);
+		Date endDate = getLastDayOfMonth(contractStartDate);
+		
+		Date startEREDate = AonDateUtils.add(contractStartDate, Calendar.DAY_OF_MONTH, 15);
+		addData(aonContext, contract, startEREDate, null, ContextVariable.ERE_FACTOR, 1.00);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
+				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
+
+		;
+		org.junit.Assert.assertEquals((3330/2)*0.5, salary.getTotalPayment(), 0.00);
+		org.junit.Assert.assertEquals((3300/12)*0.5, salary.getExtraPayProration(), 0.00);
+		
+	}
+
+	@Test
+	public void testFixedAmountsXIV() throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] { new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.JULY;
+				this.start = "01/07 -1";
+				this.end = "30/06";
+				this.issue = "01/07";
+			}
+		}, new Extra() {
+			{
+				this.expression = "SALARIO_MENSUAL + PLUS_SALARIAL";
+				this.month = Month.DECEMBER;
+				this.start = "01/01";
+				this.end = "31/12";
+				this.issue = "15/12";
+			}
+		}, }, new Payment[] { new Payment() {
+			{
+				this.expression = "SALARIO_MENSUAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_SALARIAL";
+			}
+		}, new Payment() {
+			{
+				this.expression = "PLUS_TRANSPORTE";
+			}
+		} });
+
+		addData(aonContext, category, getFirstDayOfYear(getToday()), null, new HashMap<String, String>() {
+			{
+				put("PLUS_SALARIAL", "300.00");
+				put("PLUS_TRANSPORTE", "30.00");
+				put("SALARIO_MENSUAL", "3000.00");
+			}
+		});
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date contractStartDate = firstDayOfYear;
+
+		ContractRecord contract = newContract(aonContext, contractStartDate,
+				new HashMap<String, String>() {
+					{
+						put("DIAS_MES", "30.00");
+					}
+				}, new String[] {}, new String[] { 
+						"BASE_CGC * 4.70 / 100.00", 
+						"BASE_CGP * 1.55 / 100.00",
+						"BASE_CGP * 0.10 / 100.00", 
+						"BASE_IRPF * PORCENTAJE_IRPF / 100.00" },
+				category);
+		Date endDate = getLastDayOfMonth(contractStartDate);
+		
+		Date startEREDate = AonDateUtils.add(contractStartDate, Calendar.DAY_OF_MONTH, 15);
+		addData(aonContext, contract, startEREDate, null, ContextVariable.ERE_FACTOR, 0.50);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(
+				getContractSalaryCalculatorContext(connection, contractStartDate, endDate, endDate, contract))
+
+		;
+		org.junit.Assert.assertEquals(3330/2.00 + 3330/4.00 , salary.getTotalPayment(), 0.00);
+		org.junit.Assert.assertEquals(3300/12.00 + 3300/24.00, salary.getExtraPayProration(), 0.00);
+	}
+	
 	@Test
 	public void testRedefinedDataI() throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();

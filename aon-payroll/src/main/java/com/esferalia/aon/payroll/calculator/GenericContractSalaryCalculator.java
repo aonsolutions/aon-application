@@ -12,9 +12,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
@@ -56,7 +55,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -515,6 +513,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			for ( Period p : expressionContext.getPeriods(OFF_DAYS))
 				if ( expressionContext.getVariable(WORKED_DAYS, p.getStart(), p.getEnd()) == null)
 					offPeriods.add(p);
+			
+			for ( ContextVariable ereFactor : ERE_FACTORS )
+				for ( Period p : expressionContext.getPeriods(ereFactor))
+						offPeriods.add(p);			
 
 			for (IContractPayment icontractPayment : contractPayments) {
 				INamedContractPayment contractPayment = new NamedContractPayment(icontractPayment);
