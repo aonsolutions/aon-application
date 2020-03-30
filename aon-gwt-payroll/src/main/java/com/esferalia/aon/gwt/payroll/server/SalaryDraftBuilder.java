@@ -1191,7 +1191,7 @@ public class SalaryDraftBuilder
 		
 		Variable vars [] = findVariable(name, value, startDate, endDate)
 		.filter(var->var.getScope().equals(scope))
-		.filter(var->var.getExpression().equals(expression))
+		.filter(var->AonStringUtils.equals(var.getExpression(),expression))
 		.toArray(Variable[]::new);
 		for ( Variable var : vars ){ 
 			salaryDraft.getContext().remove(var);
