@@ -349,14 +349,23 @@ public class CertificadosWriter implements Serializable {
 		o.setFechaAltaEmpresa(createFechaSimpleType(contract.getStartDate()));
 		o.setCodCausaSuspension(batchDetail.getSuspensionCause()!=null?batchDetail.getSuspensionCause().getValue():null);
 		o.setFechaSuspensionExtincion(createFechaSimpleType(endDate));
-		o.setFechaFinSuspension(null);
+		
 		
 		if ( batchDetail.getSuspensionCause() == SuspensionCause.C16
 			|| batchDetail.getSuspensionCause() == SuspensionCause.C17 
-			|| batchDetail.getSuspensionCause() == SuspensionCause.C18  )
-			o.setERE(batchDetail.getEreNumber());
-		else
+			|| batchDetail.getSuspensionCause() == SuspensionCause.C18  ) {
+			String ereNumber = batchDetail.getEreNumber();
+			if (ereNumber == null || ereNumber.length() == 0) {
+				ereNumber = "2020";
+			}
+			ereNumber = ereNumber.replaceAll("[^0-9]+", "");
+			    
+			o.setERE(completeLength(ereNumber,9,false));
+			o.setFechaFinSuspension(createFechaSimpleType(ereFactor.getEndDate()));
+		}else {
 			o.setERE(null);
+			o.setFechaFinSuspension(null);
+		}
 		
 		
 		if ( batchDetail.getSuspensionCause() == SuspensionCause.C18 ) {
