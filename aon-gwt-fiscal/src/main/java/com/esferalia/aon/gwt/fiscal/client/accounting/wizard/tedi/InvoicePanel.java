@@ -5,6 +5,9 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
+import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
@@ -54,7 +57,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice> {
+public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers {
 	
 	private static TediServiceAsync TEDI_SERVICE;
 
@@ -96,6 +99,13 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			@Override
 			public void onSelection(SelectionEvent<AccountingInvoice> event) {
 				SelectionEvent.<AccountingInvoice>fire( InvoicePanel.this, event.getSelectedItem());
+			}
+		});
+		eip.addSelectionHandler(new AccountEntrySelectionHandler() {
+			
+			@Override
+			public void onSelection(AccountEntrySelectionEvent event) {
+				AccountEntrySelectionEvent.fire( InvoicePanel.this, event.getSelectedItem(), null);
 			}
 		});
 		
@@ -317,6 +327,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountingInvoice> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
+	}
+	@Override
+	public HandlerRegistration addSelectionHandler(AccountEntrySelectionHandler handler) {
+		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
 	}
 
 	@Override

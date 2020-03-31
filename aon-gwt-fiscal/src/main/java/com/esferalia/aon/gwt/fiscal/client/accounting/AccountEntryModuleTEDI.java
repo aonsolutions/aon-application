@@ -742,26 +742,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		dialog.show(wizardContent.getMainEntry());
 	}
 
-	private void addSelectionEvent(final InvoicePanel panel) {
-		panel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<AccountingInvoice> event) {
-				panel.select(event.getSelectedItem(), new ISelectionCallback() {
-					@Override
-					public void onSuccess() {
-						syncCurrent();
-					}
-					
-					@Override
-					public void onFailure() {
-						invalidateModule("");
-					}
-				});
-			}
-		});
-	}
-
 	private void selectEntry(final Integer id) {
 		if (id != null) {
 			fiscalService.getAccountEntry(getOptions().getDomainName(),
@@ -922,7 +902,42 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	
 	private void createAndAttachInvoicePanel(IContentAttachCallback wizardCbk) {
 		InvoicePanel panel = new InvoicePanel(moduleCallback);
-		addSelectionEvent(panel);
+		panel.addSelectionHandler(new SelectionHandler<AccountingInvoice>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<AccountingInvoice> event) {
+				if (getOptions().isSessionLogTabVisible()) {
+					IWizardContent wc = AccountEntryModuleTEDI.this.wizardContent;
+					if (wc != null && wc.getEntryWrapper() != null ) {
+						sessionLog.addSuspended(wc.getEntryWrapper());
+					}
+				}
+				panel.select(event.getSelectedItem(), new ISelectionCallback() {
+					@Override
+					public void onSuccess() {
+						syncCurrent();
+					}
+					
+					@Override
+					public void onFailure() {
+						invalidateModule("");
+					}
+				});
+			}
+		});
+		panel.addSelectionHandler(new AccountEntrySelectionHandler() {
+			
+			@Override
+			public void onSelection(AccountEntrySelectionEvent event) {
+				if (getOptions().isSessionLogTabVisible()) {
+					IWizardContent wc = AccountEntryModuleTEDI.this.wizardContent;
+					if (wc != null && wc.getEntryWrapper() != null ) {
+						sessionLog.addSuspended(wc.getEntryWrapper());
+					}
+				}
+				selectEntry(event.getSelectedItem()==null?null:event.getSelectedItem().getId());
+			}
+		});
 		panel.attach(wizardCbk);
 	}
 

@@ -12,12 +12,15 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
+import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel;
@@ -85,7 +88,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelectionHandlers<AccountingInvoice>,Focusable {
+public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers,Focusable {
 	
 	private static final Logger LOGGER = Logger.getLogger(EditableInvoicePanel.class.getName());
 	static {
@@ -453,6 +456,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	public HandlerRegistration addSelectionHandler(SelectionHandler<AccountingInvoice> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
+	@Override
+	public HandlerRegistration addSelectionHandler(AccountEntrySelectionHandler handler) {
+		return super.addHandler(handler, AccountEntrySelectionEvent.getType());
+	}
 
 	private void decorateTaxDate(AccountingInvoice ai) {
 		Date issue = ai.getInvoice().getIssueDate();
@@ -630,6 +637,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		vatPanel = new InvoiceVATPanel( new EditableInvoicePanelCallback() );
 		financePanel = new InvoiceFinancePanel(invoiceCallback);
+		financePanel.addSelectionHandler(new AccountEntrySelectionHandler() {
+			@Override
+			public void onSelection(AccountEntrySelectionEvent event) {
+				AccountEntrySelectionEvent.fire( EditableInvoicePanel.this, event.getSelectedItem(), null);
+			}
+		});
 
 		FlowPanel invoicePanel = new FlowPanel();
 		invoicePanel.setStyleName(AON.AON_CSS.aonWidthAll());
