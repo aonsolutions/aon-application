@@ -881,7 +881,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		//@formatter:on
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfMonth(add(getToday(), MONTH, -1));
 		Date endDate = getLastDayOfMonth(startDate);
 
 
@@ -915,9 +915,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		double adjust = + ((monthDays-30) * 10.00/30.00 );
-		Assert.assertEquals(10.00 + adjust,delay.getIrpfBase(), DELTA);
-		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
 		Assert.assertEquals(10.00,delay.getCommonBase());
+		Assert.assertEquals(10.00 + adjust,delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(10.00 + adjust,delay.getIrpfBase(), DELTA);
 	}
 
 	@Test
@@ -960,7 +960,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				);
 		//@formatter:on
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfMonth(add(getToday(), MONTH, -1));
 		Date endDate = getLastDayOfMonth(startDate);
 
 
@@ -1043,7 +1043,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				);
 		//@formatter:on
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfMonth(add(getToday(), MONTH, -1));
+
 		Date endDate = getLastDayOfMonth(startDate);
 
 
@@ -1126,7 +1127,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				, PaymentType.CRA_0055);
 		//@formatter:on
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = getFirstDayOfMonth(add(getToday(), MONTH, -1));
 		Date endDate = getLastDayOfMonth(startDate);
 
 
