@@ -396,7 +396,7 @@ public class AFIWriter implements Serializable {
 				else
 					fab.setTipoInactividad(T41.T41_I.getCode());
 			} else {
-				ereFactor = obtainEreFzaFactor(detail.getContract(), detail.getRealDate());
+				ereFactor = obtainEreFzaExonFactor(detail.getContract(), detail.getRealDate());
 				if(ereFactor<1.0)
 					fab.setTipoInactividad(T41.T41_W.getCode());
 				else
@@ -441,13 +441,13 @@ public class AFIWriter implements Serializable {
 		return strikeFactor;
 	}
 	
-	private Double obtainEreFzaFactor(Contract contract, Date date) {
+	private Double obtainEreFzaExonFactor(Contract contract, Date date) {
 		Double strikeFactor = 0.0;
 		try {
 			Criteria criteria = new Criteria();
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), "COEFICIENTE_ERE_FZA");
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), "COEFICIENTE_ERE_FZA_EXONERADO");
 			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
 			
@@ -485,7 +485,7 @@ public class AFIWriter implements Serializable {
 			Criteria criteria = new Criteria();
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), "COEFICIENTE_ERE_FZA");
+			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_NAME), "COEFICIENTE_ERE_FZA_EXONERADO");
 			criteria.addNotNullExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_EXPRESSION));
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.CONTRACT_DATA_START_DATE), date);
 			
