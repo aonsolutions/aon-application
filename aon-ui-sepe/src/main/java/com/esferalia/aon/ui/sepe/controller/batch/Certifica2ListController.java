@@ -9,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.persistence.criteria.Expression;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -24,6 +25,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
@@ -51,6 +53,7 @@ public class Certifica2ListController extends BasicController {
 	private boolean showSuspensionCauseWindow;
 	private boolean rowSuspensionCauseSelected;
 	private SerializableListDataModel suspensionCauseModel;
+	private String ereNumberForAll;
 	private SuspensionCause suspensionCauseForAll;
 	private Contract selectedRowContract;
 
@@ -105,6 +108,14 @@ public class Certifica2ListController extends BasicController {
 
 	public void setSelectedRowContract(Contract selectedRowContract) {
 		this.selectedRowContract = selectedRowContract;
+	}
+
+	public String getEreNumberForAll() {
+		return ereNumberForAll;
+	}
+
+	public void setEreNumberForAll(String ereNumberForAll) {
+		this.ereNumberForAll = ereNumberForAll;
 	}
 
 	public SuspensionCause getSuspensionCauseForAll() {
@@ -188,6 +199,13 @@ public class Certifica2ListController extends BasicController {
 		return null;
 	}
 
+	public boolean isRowEreSuspensionCause() {
+		SuspensionCause suspensionCause = getRowSuspensionCause();
+		return suspensionCause == SuspensionCause.C16 
+				|| suspensionCause == SuspensionCause.C17 
+				|| suspensionCause == SuspensionCause.C18 ;
+	}
+
 	public void setRowSuspensionCause(SuspensionCause suspensionCause) {
 		try {
 			if ( suspensionCause!=null ) {
@@ -211,6 +229,43 @@ public class Certifica2ListController extends BasicController {
 		}
 	}
 	
+	public String getRowEreNumber() {
+		try {
+			(((Contract)getModel().getRowData())).getId();
+			if( batchDetailList.containsKey(getRowContract().getId()) ){
+				return batchDetailList.get( getRowContract().getId() ).getEreNumber();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> error on getRowChecked: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	public void setRowEreNumber(String ereNumber) {
+		try {
+			if ( ereNumber !=null ) {
+				if ( !batchDetailList.containsKey(getRowContract().getId()) ) {
+					Certifica2BatchDetail detail = new Certifica2BatchDetail();
+					detail.setContract(getRowContract());
+					detail.setEreNumber(ereNumber);
+					batchDetailList.put( getRowContract().getId(), detail );
+				} else {
+					batchDetailList.get( getRowContract().getId() ).setEreNumber(ereNumber);
+				}
+			} else {
+				if ( batchDetailList.containsKey(getRowContract().getId()) ) {
+					batchDetailList.get( getRowContract().getId() ).setEreNumber(null);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> error on setRowRemesableContract: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}	
+	
 	private Contract getRowContract() throws ManagerBeanException{
 		return (Contract) getModel().getRowData();
 	}
@@ -229,8 +284,9 @@ public class Certifica2ListController extends BasicController {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 		setEndDateFrom(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), CommonUtil.getDay(new Date())-10));
-		setEndDateTo(new Date());
+		//setEndDateTo(new Date());
 		setSuspensionCauseForAll(null);
+		setEreNumberForAll(null);
 	}
 	
 	public void checkValidEndDate(){
@@ -284,13 +340,14 @@ public class Certifica2ListController extends BasicController {
 		checkValidEndDate();
 		getCheckHandler().clearCheckedList();
 		setSuspensionCauseForAll(null);
+		setEreNumberForAll(null);
 		try {
 			this.setCriteria( new Criteria() );
 			SEPEUtils utils = SEPEUtils.getInstance();
 			if(getPerson()!=null && getPerson().getId()!=null){
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_PERSON_ID), getPerson().getId());
 			}
-			getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
+			//getCriteria().addNotNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE));
 			if(getEnterprise()!=null && getEnterprise().getId()!=null){
 				getCriteria().setSkipDomainFilter( true );
 				getCriteria().addEqualExpression(getFieldName(IEntityAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
@@ -300,12 +357,15 @@ public class Certifica2ListController extends BasicController {
 				getCriteria().addInExpression(getFieldName(IEntityAlias.CONTRACT_DOMAIN), utils.getCurrentChildDomainIds());
 			}
 			if(getEndDateFrom()!=null){
-				getCriteria().addGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateFrom());
+				getCriteria().addExpression(ExpressionUtilities.getOrExpression(
+				ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateFrom())
+				, ExpressionUtilities.getNullExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE))));
 			}
 			if(getEndDateTo()!=null){
 				getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), getEndDateTo());
-			} else {
-				getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), new Date());
+				
+			} else {				
+				//getCriteria().addLessThanOrEqualExpression(getFieldName(IEntityAlias.CONTRACT_END_DATE), new Date());
 			}
 			LinesController controller = (LinesController) AonUtil.getRegisteredBean(ISepeConstants.CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME);
 			// ******************************
@@ -370,10 +430,12 @@ public class Certifica2ListController extends BasicController {
 	
 	public void onApplyAllSuspensionCause(ActionEvent event) {
 		applyAllSuspensionCause(getSuspensionCauseForAll());
+		applyAllEreNumber(getEreNumberForAll());
 	}
 	
 	public void onApplyAllSuspensionCause(ValueChangeEvent event) {
 		applyAllSuspensionCause(getSuspensionCauseForAll());
+		applyAllEreNumber(getEreNumberForAll());
 	}
 	
 	private void applyAllSuspensionCause(SuspensionCause suspensionCause) {
@@ -382,6 +444,12 @@ public class Certifica2ListController extends BasicController {
 		}
 	}
 	
+	private void applyAllEreNumber(String ereNumber) {
+		for(Integer id: batchDetailList.keySet()){
+			((Certifica2BatchDetail)batchDetailList.get(id)).setEreNumber(ereNumber);
+		}
+	}
+
 	public void checkAllSuspensionCauses() {
         boolean incomplete = false;
 		for(Integer id: batchDetailList.keySet()){

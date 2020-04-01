@@ -36,6 +36,11 @@
 						<aon:outputText value="#{certifica2List.suspensionCauseForAll}" />
 					</rich:toolTip>
 				</aon:inputText>
+				<aon:outputText value=" N&#186; ERE: " />
+				<aon:inputText size="15"
+					value="#{certifica2List.ereNumberForAll}" >
+					<a4j:support event="onchange" reRender="suspensionCauseForAll-div" />
+				</aon:inputText>
 				<aon:commandButton id="apply-massiveSuspensionCause"
 					disabled="#{certifica2List.checkHandler.checkedCount le 0}"
 					value="#{bundle.payroll_apply_to_all}"

@@ -77,7 +77,37 @@
 					<aon:outputText value="#{controllerList.rowSuspensionCause}" />
 				</rich:toolTip>
 			</aon:inputText>
+			<!-- 
+			EREs, below speficic data for ERE's causes. 
+			-->
+			<aon:outputText 
+			value=" N&#186; ERE: " 
+			rendered="#{controllerList.rowEreSuspensionCause}"  
+			styleClass="aon-margin-left" />
+			<aon:inputText 
+				size="12"
+				styleClass="aon-margin-left"
+				value="#{controllerList.rowEreNumber}" 
+				rendered="#{controllerList.rowEreSuspensionCause}"
+			>
+			<a4j:support event="onchange" reRender="rowSuspensionCause-div"/>
+			</aon:inputText>
+		
 		</aon:div>
 	</aon:column>
-	
+	<!--  
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="N&#186; ERE" />
+		</f:facet>
+	    <aon:outputText rendered="#{!controllerList.checkHandler.rowChecked}" value="#{controllerList.rowEreNumber}" />
+		<aon:div id="rowEreCause-div" rendered="#{controllerList.checkHandler.rowChecked}">
+			<aon:inputText 
+				size="12"
+				value="#{controllerList.rowEreNumber}" >
+				<a4j:support event="onchange" reRender="rowEreCause-div"/>
+			</aon:inputText>
+		</aon:div>
+	</aon:column>
+	-->
 </ui:composition>

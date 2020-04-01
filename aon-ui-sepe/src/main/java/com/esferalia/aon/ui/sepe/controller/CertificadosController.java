@@ -368,7 +368,7 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		Criteria criteria = null;
 		for(ITransferObject to: detailList){
 			Certifica2BatchDetail detail = (Certifica2BatchDetail) to;
-			detail.setEreNumber(getEreNumber());
+			//detail.setEreNumber(getEreNumber());
 			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IEntityAlias.SALARY_CONTRACT_ID), detail.getContract().getId());
 			utils.completeChildDomainCriteria(criteria, bean.getFieldName(IEntityAlias.SALARY_DOMAIN));
@@ -496,7 +496,16 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		byte[] data = getGeneratedFile().getData();
 		InputStream in = new ByteArrayInputStream(data);
 		long size = ArrayUtils.getLength(data);
-		DownloadUtil.downloadAttachment("certificado-empresa_"+getContract().getPerson().getFullName(), MimeType.MIME_XML, in, size);
+		String fullName =  "";
+		try {
+			fullName = getContract().getPerson().getFullName();
+		} catch ( Exception e ) {
+		}
+		try {
+			fullName = getBatch().getEnterprise().getRegistry().getFullName();
+		} catch ( Exception e ) {
+		}
+		DownloadUtil.downloadAttachment("certificado-empresa_"+fullName, MimeType.MIME_XML, in, size);
 	}
 
 	public SelectSeekStep1<Record3<Integer,Timestamp,Integer>,Timestamp> getBatchSelect(AONContext ctx, Contract contract){
@@ -603,7 +612,7 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		// nada
 	}
 	
-	public void onRemoveSepeFiles(ActionEvent event){
+	public void __onRemoveSepeFiles(ActionEvent event){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 			if(getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null){
@@ -629,7 +638,7 @@ public class CertificadosController implements ISepeHandler, Serializable {
 		}
 	}
 	
-	public void onRemoveContractSepeFiles(ActionEvent event){
+	public void onRemoveSepeFiles(ActionEvent event){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2BatchAttachment.class);
 			if(getCommunicationIdFile()!=null && getCommunicationIdFile().getId()!=null){
@@ -641,7 +650,21 @@ public class CertificadosController implements ISepeHandler, Serializable {
 			if(getGeneratedFile()!=null && getGeneratedFile().getId()!=null){
 				bean.remove(getGeneratedFile());
 			}
-			initialize(getContract());
+			if ( getBatch() != null && getBatch().getId() != null ) {
+				IManagerBean detailBean = BeanManager.getManagerBean(Certifica2BatchDetail.class);
+				for ( ITransferObject o: getCertifica2DetailList(getBatch()) )
+					detailBean.remove(o);
+				
+				BeanManager.getManagerBean(Certifica2Batch.class).remove(getBatch());
+			}
+			Contract contract = getContract();
+			if ( contract != null ) {
+				initialize(getContract());
+			}
+			else { 
+				initialize(getBatch());
+				//setShowGenerationWindow(false);
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "No se han podido borrar los datos de Certific@2";
 			LOGGER.error(msg, e);

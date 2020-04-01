@@ -13,18 +13,6 @@ public class Certifica2BatchDetail extends Certifica2BatchDetailDB {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
-	private String ereNumber = null; 
-	
-	@Transient
-	public String getEreNumber() {
-		return ereNumber;
-	}
-	
-	@Transient
-	public void setEreNumber(String ereNumber) {
-		this.ereNumber = ereNumber;
-	}
-
 }
 
 
