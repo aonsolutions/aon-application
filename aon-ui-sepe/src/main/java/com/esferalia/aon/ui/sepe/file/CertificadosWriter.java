@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.faces.event.AbortProcessingException;
@@ -23,7 +24,6 @@ import javax.xml.bind.Marshaller;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.mvel2.MVEL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
@@ -67,7 +66,7 @@ import com.esferalia.aon.sepe.api.certificados.certificadoEmpresa.TRABAJADORTYPE
 import com.esferalia.aon.ui.sepe.utils.SEPEFileUtils;
 import com.esferalia.aon.ui.sepe.utils.SEPEUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.sun.tools.javac.util.Context;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CertificadosWriter implements Serializable {
 	
@@ -311,16 +310,59 @@ public class CertificadosWriter implements Serializable {
 		//C17=Suspensión del contrato ERE or C18=Reducción temporal de jornada ERE		
 		if ( batchDetail.getSuspensionCause() == SuspensionCause.C17 
 			|| batchDetail.getSuspensionCause() == SuspensionCause.C18  ) {
-			Map<String, ContractData> dataMap = utils.getContractDataMap(contract, null, null );
+//			Map<String, ContractData> dataMap = utils.getContractDataMap(contract, null, null );
+//			for (ContextVariable var : ContextVariable.ERE_FACTORS) {
+//				if (dataMap.containsKey(var.getName())) {
+//					ereFactor = dataMap.get(var.getName());
+//					Date startDate = ereFactor.getStartDate();
+//					endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
+//					break;
+//				}
+//			}
+			
 			for (ContextVariable var : ContextVariable.ERE_FACTORS) {
-				if (dataMap.containsKey(var.getName())) {
-					ereFactor = dataMap.get(var.getName());
-					Date startDate = ereFactor.getStartDate();
+				try {
+					List<ITransferObject> objects = 
+					utils.getContractData(contract, null, null, var.getName(), false);
+					ContractData data = 
+					objects.stream()
+					.map(o -> (ContractData)o )
+					.sorted((d1,d2)-> d1.getStartDate().compareTo(d2.getStartDate()))
+					.reduce((d,d1) -> {
+						
+						double factor = Double.parseDouble(d.getExpression());
+						double factor1 = Double.parseDouble(d1.getExpression());
+						if ( factor != factor1 )
+							return d;
+						
+						
+						Date end = d.getEndDate();
+						if ( end == null ) 
+							return d;
+						Date start = d1.getStartDate();
+						
+						if ( days(end, start) > 3 ) // ???
+							return d ;
+						
+						d.setEndDate(d1.getEndDate());
+						
+						return d;
+					} ).orElseThrow();
+					
+					Date startDate = data.getStartDate();
 					endDate = AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1);
+					ereFactor = data;
 					break;
+					
+				} catch (Exception e) {
 				}
 			}
+			
+			
+
 		}
+		
+		
 		
 		
 
@@ -355,13 +397,26 @@ public class CertificadosWriter implements Serializable {
 			|| batchDetail.getSuspensionCause() == SuspensionCause.C17 
 			|| batchDetail.getSuspensionCause() == SuspensionCause.C18  ) {
 			String ereNumber = batchDetail.getEreNumber();
-			if (ereNumber == null || ereNumber.length() == 0) {
-				ereNumber = "2020";
+			if (AonStringUtils.isBlank(ereNumber)) {
+				ereNumber = "12020";
+			}
+			ereNumber = ereNumber.replaceAll("[^0-9]+", "");
+			if ( AonStringUtils.length(ereNumber) <= 3) {
+					ereNumber += "2020";
 			}
 			ereNumber = ereNumber.replaceAll("[^0-9]+", "");
 			    
 			o.setERE(completeLength(ereNumber,9,false));
-			o.setFechaFinSuspension(createFechaSimpleType(ereFactor.getEndDate()));
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY,0);
+			calendar.set(Calendar.MINUTE,0);
+			calendar.set(Calendar.SECOND,0);
+			calendar.set(Calendar.MONTH,Calendar.MAY);
+			calendar.set(Calendar.DAY_OF_MONTH,2);
+			Date _02052020 = calendar.getTime();
+			
+			o.setFechaFinSuspension(createFechaSimpleType(Period.min(_02052020, ereFactor.getEndDate())));
 		}else {
 			o.setERE(null);
 			o.setFechaFinSuspension(null);

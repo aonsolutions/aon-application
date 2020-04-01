@@ -11,14 +11,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -228,6 +231,28 @@ public class CertificadosController implements ISepeHandler, Serializable {
 				|| suspensionCause == SuspensionCause.C18
 				;
 	}
+	
+	public List<SelectItem> getSuspensionCauses() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem>  suspensionCauses = new LinkedList<SelectItem>();
+		SuspensionCause[] causes = SuspensionCause.values();
+		
+		if ( getContract() != null && getContract().getEndDate() == null) {
+			causes = Arrays.stream(causes)
+					.filter( c -> c == SuspensionCause.C17 || c == SuspensionCause.C18 )
+					.toArray( SuspensionCause[]::new )
+					;
+			setSuspensionCause(SuspensionCause.C17);
+		}
+		
+		for (SuspensionCause c : causes) {
+			String name = c.getValue() + " " + c.getName(locale);
+			SelectItem item = new SelectItem(c, name);
+			suspensionCauses.add(item);
+		}
+		return suspensionCauses;
+	}
+	
 	
 	@Override
 	public boolean isCommunicationIdReceived(){
