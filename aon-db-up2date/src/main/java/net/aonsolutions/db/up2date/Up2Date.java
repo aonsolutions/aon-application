@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.AlterCertifica2BatchDetail4ERE;
 import net.aonsolutions.db.up2date.payroll.AyudaTWarnDelete;
 import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoInsert;
+import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoUpdate;
 import net.aonsolutions.db.up2date.payroll.EreFzaInsert;
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateIV;
 import net.aonsolutions.db.up2date.payroll.FundUpvUpdateV;
@@ -109,8 +110,8 @@ public class Up2Date {
     		//SMIWarn2020Delete.SMIWARN2020DELETE,
     		//AyudaTWarnDelete.AYUDATWARNDELETE,
     		//EreFzaExoneradoInsert.EREFZAEXONERADOINSERT
-    		AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE
-
+    		//AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE
+    		EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE
     };
 
 
