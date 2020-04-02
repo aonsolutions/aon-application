@@ -16,7 +16,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -36,8 +35,8 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 	@UiField
 	MyStyle style;
 	
-	@UiField
-	Label newJourney;
+//	@UiField
+//	Label newJourney;
 	
 	@UiField
 	Label saveJourney;
@@ -82,10 +81,10 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 		String backgroudGrey();
 	}
 	
-	@UiHandler("newJourney")
-	void onNewJourneyCleck(ClickEvent event) {
-		newJourneyBox();
-	}
+//	@UiHandler("newJourney")
+//	void onNewJourneyCleck(ClickEvent event) {
+//		newJourneyBox();
+//	}
 	
 	@UiHandler("startDatePeriod")
 	void onStartDateChanged(ValueChangeEvent<Date> event) {
@@ -187,6 +186,29 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 		this.contractStartDate = contractStartDate;
 		this.contractEndDate = contractEndDate;
 		this.contractJourneyDuration = contractJourneyDuration;
+		
+		newJourneyTable.addStyleName(style.hide());
+		journeyTable.getRowFormatter().addStyleName(0, style.backgroudGrey());
+		clearTable();
+		paintTable();
+		
+		this.saveJourney.addClickHandler(new ClickHandler() {	
+			@Override
+			public void onClick(ClickEvent event) {
+				hide();
+				onSave();
+			}
+		});
+	}
+	
+	public ContractJourneyDialog(Date contractStartDate, Date contractEndDate) {
+		setCaption("DURACION DE LA JORNADA");
+		
+		setWidget(binder.createAndBindUi(this));
+		
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
+		this.contractJourneyDuration = new ContractJourneyDuration();
 		
 		newJourneyTable.addStyleName(style.hide());
 		journeyTable.getRowFormatter().addStyleName(0, style.backgroudGrey());
@@ -339,7 +361,7 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 	}
 	
 
-	private String formatDate(Date date) {
+	protected String formatDate(Date date) {
 		return date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getYear()+1900);
 	}
 	
