@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -684,7 +685,6 @@ public class CertificadosWriter implements Serializable {
 		}
 		return cotizacionList;
 	}
-	
 	private List<COTIZACIONTYPE> __getCotizacionList(Certifica2BatchDetail detail, Date endDate) {
 		 
 		Date startDate = AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, -179 );
@@ -725,11 +725,32 @@ public class CertificadosWriter implements Serializable {
 			int year = AonDateUtils.get(date, Calendar.YEAR);
 			int month = AonDateUtils.get(date, Calendar.MONTH) + 1;
 			
+			Map<Period, List<SalaryData>> datasMap = 
+			datas.stream()
+			.collect(Collectors.groupingBy(d -> 
+			
+			new Period(d.getStartDate(), d.getEndDate()) {
+				@Override
+				public int hashCode() {
+					return Objects.hash(getStart(), getEnd());
+				}
+				
+			}
+			
+			));
+			
 			int days = 0;
 			double baseCgc = 0;
-			for ( SalaryData d: datas ) {				
-				baseCgc += Double.parseDouble(d.getExpression());
-				days += new Period(d.getStartDate(), d.getEndDate()).daysStream().count();
+//			for ( SalaryData d: datas ) {				
+//				baseCgc += Double.parseDouble(d.getExpression());
+//				days += new Period(d.getStartDate(), d.getEndDate()).daysStream().count();
+//			}
+			Period p1 = null; 
+			for ( Period p : datasMap.keySet()) {
+				days += p.daysStream().count();
+				baseCgc += datasMap.get(p)
+						.stream()
+						.collect(Collectors.summingDouble(d -> Double.parseDouble(d.getExpression())));
 			}
 			
 			COTIZACIONTYPE cotizacion = createCotizacionType( 
