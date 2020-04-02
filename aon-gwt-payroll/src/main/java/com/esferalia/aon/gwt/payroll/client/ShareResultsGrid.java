@@ -152,10 +152,8 @@ public class ShareResultsGrid extends CustomDataGrid<JsShareResult> implements
 
 			@Override
 			public String getValue(JsShareResult result) {
-				String description = result.getDescription();
-				return StringUtils.isBlank(description) ? result.getError()
-						: description;
-
+				String description = (result.getError() != null ? result.getError() : "" ) + result.getDescription();
+				return description;
 			}
 		});
 

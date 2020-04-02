@@ -48,7 +48,7 @@ public class Cost extends ResizeComposite {
 	}
 	
 	static interface Listener {
-		void onPublish(CostDocuments documents);
+		void onPublish(CostDocuments documents, String type);
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
@@ -151,6 +151,12 @@ public class Cost extends ResizeComposite {
 	@UiField
 	Label titleLabel;
 
+	
+	@UiField
+	Button publishButton;
+	
+	@UiField
+	Button bidoqPublishButton;
 
 	private int zoom = DEFAULT_ZOOM;
 
@@ -237,7 +243,7 @@ public class Cost extends ResizeComposite {
 		publishMenuItem.setScheduledCommand( new ScheduledCommand() {
 			@Override
 			public void execute() {
-				onPublish(costDocuments);
+				onPublish(costDocuments, "drive");
 			}
 		});
 
@@ -252,6 +258,9 @@ public class Cost extends ResizeComposite {
 		new TypeValueChangeHandler(delayCheckBox, Salary.Type.DELAY);
 		
 		listeners = new LinkedList<Listener>(); 
+
+		publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
+		bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 
 	}
 
@@ -276,16 +285,20 @@ public class Cost extends ResizeComposite {
 	
 	@UiHandler("publishButton")
 	void onPublisButtonClick(ClickEvent event) {
-		onPublish(costDocuments);
+		onPublish(costDocuments, "drive");
+	}
+	
+	@UiHandler("bidoqPublishButton")
+	void onBidoqPublisButtonClick(ClickEvent event) {
+		onPublish(costDocuments, "bidoq");
 	}
 	
 	
-	void onPublish(CostDocuments documents) {
+	void onPublish(CostDocuments documents, String type) {
 		for (Listener listener : listeners)
-			listener.onPublish(documents);
+			listener.onPublish(documents, type);
 	}
 	
-
 	private void getAsHTML() {
 		costDocuments.getAsHTML(zoom, new AsyncCallback<String>() {
 			@Override

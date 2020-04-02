@@ -64,7 +64,7 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	
 	//Listener to Publish Salaries
 	static interface Listener {
-		void onPublishSalaries(SalaryInfo salary);
+		void onPublishSalaries(SalaryInfo salary, String type);
 	}
 	
 	@UiField
@@ -82,6 +82,10 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	
 	@UiField
 	Button publishButton;
+	
+	@UiField
+	Button bidoqPublishButton;
+	
 	
 	@UiField
 	Button emailEnterpriseButton;
@@ -201,12 +205,14 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	            	deleteButton.setEnabled(true);
 	            	saveButton.setEnabled(true);
 	            	publishButton.setEnabled(true);
+	            	bidoqPublishButton.setEnabled(true);
 	            	emailEnterpriseButton.setEnabled(true);
 	            	emailEmployeesButton.setEnabled(true);
 	            }else {
 	            	deleteButton.setEnabled(false);
 	            	saveButton.setEnabled(false);
 	            	publishButton.setEnabled(false);
+	            	bidoqPublishButton.setEnabled(false);
 	            	emailEnterpriseButton.setEnabled(false);
 	            	emailEmployeesButton.setEnabled(false);
 	            }
@@ -481,19 +487,21 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		this.employeeSB.setValue("");
 	}
 
-	private void initSalariesTable() {		
+	private void initSalariesTable() {
 		//Reset Selection Model 
 		selectionModel.clear();
 		
 		//Show buttons
 		this.saveButton.setVisible(true);
-		this.publishButton.setVisible(true);
+		this.publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
+		this.bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		this.emailEmployeesButton.setVisible(true);
 		
 		//Disable buttons till any salary selected
 		deleteButton.setEnabled(false);
 		saveButton.setEnabled(false);
 		publishButton.setEnabled(false);
+		bidoqPublishButton.setEnabled(false);
 		emailEnterpriseButton.setEnabled(false);
 		emailEmployeesButton.setEnabled(false);
 		
@@ -636,7 +644,12 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 	
 	@UiHandler("publishButton")
 	public void onPublichalary(ClickEvent event) {
-		onPublish();
+		onPublish("drive");
+	}
+	
+	@UiHandler("bidoqPublishButton")
+	public void onBidoqPublichalary(ClickEvent event) {
+		onPublish("bidoq");
 	}
 	
 	@UiHandler("emailEnterpriseButton")
@@ -860,10 +873,10 @@ public class WorkplaceSalary extends Composite implements ContextMenuHandler {
 		listeners.add(listener);
 	}
 	
-	void onPublish() {
+	void onPublish(String type) {
 		for (Listener listener : listeners)
 			for(SalaryInfo salary : selectionModel.getSelectedSet())
-			listener.onPublishSalaries(salary);
+			listener.onPublishSalaries(salary, type);
 	}
 	
 	private Integer getSalaryType(int selectedIndex) {

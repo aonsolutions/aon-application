@@ -87,6 +87,7 @@
 							<g:Button ui:field='deleteButton' styleName='aon-finding-toolbar-item aon-icon-delete {style.pl20}' text=" BORRAR"/>
 							<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-pdf {style.pl20}' text=" PDF" />
 							<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive {style.pl20}' text=" PUBLICAR" />
+							<g:Button ui:field='bidoqPublishButton' styleName='aon-finding-toolbar-item aon-icon-bidoq {style.pl20}' text=" PUBLICAR" />
 							<g:Button ui:field='emailEnterpriseButton' styleName='aon-finding-toolbar-item aon-icon-mail {style.pl20}' text=" EMAIL EMPRESA" />
 							<g:Button ui:field='emailEmployeesButton' styleName='aon-finding-toolbar-item aon-icon-mail {style.pl20}' text=" EMAIL EMPLEADOS" />
 						</g:HTMLPanel>

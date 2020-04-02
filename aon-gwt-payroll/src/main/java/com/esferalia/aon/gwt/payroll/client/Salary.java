@@ -41,11 +41,10 @@ public class Salary extends ResizeComposite {
 	}
 
 	static interface Listener {
-		void onPublis(SalaryDocuments documents);
+		void onPublis(SalaryDocuments documents, String type);
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
-	
 	
 	private static String BLANK_PDF_URL = "data:application/pdf;base64,"
 	+"JVBERi0xLjYNJeLjz9MNCjI0IDAgb2JqDTw8L0ZpbHRlci9GbGF0ZURlY29kZS9GaXJzdCA0L0xl"
@@ -134,6 +133,12 @@ public class Salary extends ResizeComposite {
 	ListBox salaryTypeListBox;
 	@UiField
 	ListBox reportTypeListBox;
+	
+	@UiField
+	Button publishButton;
+
+	@UiField
+	Button bidoqPublishButton;
 
 	private int zoom = DEFAULT_ZOOM;
 
@@ -188,11 +193,14 @@ public class Salary extends ResizeComposite {
 
 			@Override
 			public void execute() {
-				onPublish(salaryDocuments);
+				onPublish(salaryDocuments, "drive");
 			}
 		});
-
+		
 		listeners = new LinkedList<Listener>();
+
+		publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
+		bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 
 	}
 
@@ -241,13 +249,18 @@ public class Salary extends ResizeComposite {
 
 	@UiHandler("publishButton")
 	void onPublishButtonClicked(ClickEvent e) {
-		onPublish(salaryDocuments);
+		onPublish(salaryDocuments, "drive");
+	}
+	
+	@UiHandler("bidoqPublishButton")
+	void onBidoqPublishButtonClicked(ClickEvent e) {
+		onPublish(salaryDocuments, "bidoq");
 	}
 
 	// ------------------------------------------------------------------------
-	void onPublish(SalaryDocuments documents) {
+	void onPublish(SalaryDocuments documents, String type) {
 		for (Listener listener : listeners)
-			listener.onPublis(salaryDocuments);
+			listener.onPublis(salaryDocuments, type);
 	}
 
 	// ------------------------------------------------------------------------

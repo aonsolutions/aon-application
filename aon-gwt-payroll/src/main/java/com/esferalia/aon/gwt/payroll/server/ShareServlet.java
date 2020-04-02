@@ -2,13 +2,18 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.gwt.payroll.server.PayrollServletUtils.getSalaryReport;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
@@ -46,7 +54,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class ShareServlet extends HttpServlet implements ShareService {
 
 	private static Locale ES = new Locale("es");
-
+	// REQUEST
+	private static final String BIDOQ_METHOD = "asesor_subir_nomina";
+	private static final String BIDOQ_SNAPSHOT = "https://dev.mispapeles.es/api/v2/index.php";
+	private static final String BIDOQ = "https://mispapeles.es/api/v2/index.php";
+		
 	static class SalaryProvider implements ICollectionProvider {
 
 		private Salary salary;
@@ -92,8 +104,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 			ReportManager reportManager = new StatelessReportManager();
 			reportManager.setOutputFormat(OutputFormat.PDF);
 
-			//Criteria criteria = getCriteria(beanManager, req);
-			//List<Salary> salaries = getSalaries(beanManager, criteria);
+			String type = req.getParameter("type");
 			Condition where = getCondition(req);
 			Collection<Salary> salaries = PayrollServletUtils.getSalary(connection, where/*, sortFields*/);
 
@@ -101,18 +112,7 @@ public class ShareServlet extends HttpServlet implements ShareService {
 
 			for (Salary salary : salaries) {
 				Domain domain = AON.getDomain(req.getServerName(), salary.getDomain(), "");
-				
-				LinkedList<String> emails = AON.getRMediaStream(domain.getName(), domain.getId(), "", 
-					f -> f.getRegistryProperty().eq(salary.getContract().getPerson().getId())
-					.and(f.getMediaProperty().eq(com.esferalia.aon.occam.api.model.type.MediaType.EMAIL.value())))
-					.map(r -> r.getValue()).collect(Collectors.toCollection(LinkedList::new));
-				if ( emails == null  || emails.isEmpty() ) {
-					doJson(salary, 0, null, "Trabajador sin email", os);
-					continue;
-				}
-				
-				DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
-				
+
 				reportManager.setCollectionProvider(new SalaryProvider(salary));
 				byte data[] = generate(domain.getName(), reportManager, salary);
 
@@ -125,10 +125,51 @@ public class ShareServlet extends HttpServlet implements ShareService {
 					.setDate(new Date(System.currentTimeMillis()))
 					.setDescription(getDescrition(salary))
 					.setDate(salary.getIssueDate());
-							
-				Boolean ok = DriveUtils.paysheet(domainGserviceaccount, attach, emails);
+					
+				if("drive".equalsIgnoreCase(type)) {
+					LinkedList<String> emails = AON.getRMediaStream(domain.getName(), domain.getId(), "", 
+						f -> f.getRegistryProperty().eq(salary.getContract().getPerson().getId())
+						.and(f.getMediaProperty().eq(com.esferalia.aon.occam.api.model.type.MediaType.EMAIL.value())))
+						.map(r -> r.getValue()).collect(Collectors.toCollection(LinkedList::new));
+					if ( emails == null  || emails.isEmpty() ) {
+						doJson(salary, 0, null, "Trabajador sin email", os);
+						continue;
+					}
+										
+					DomainGserviceaccount domainGserviceaccount = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), "");
+					
+					Boolean ok = DriveUtils.paysheet(domainGserviceaccount, attach, emails);
+					doJson(salary, data.length, attach.getDescription(), !ok ? "Error al compartir" : "",	os);
+				}
 				
-				doJson(salary, data.length, attach.getDescription(), !ok ? "Error al compartir" : "",	os);
+				if("bidoq".equalsIgnoreCase(type)) {
+					String image_content = Base64.getEncoder().encodeToString(data); // data in base64
+					String image_name = attach.getDescription();
+					String image_type = "pdf";
+					Integer image_size = data.length;
+
+					
+					JSONArray arr = new JSONArray();
+					JSONObject nomina = new JSONObject();
+					nomina.put("image_content", image_content);
+					nomina.put("image_name", image_name);
+					nomina.put("image_type", image_type);
+					nomina.put("image_size", image_size);
+					arr.put(nomina);
+					
+					String sendData = 
+							"method=" + BIDOQ_METHOD
+							+ "&app_code=8"
+							+ "&_token=uNzupDBQEB3FycnhcGML6dDQnEeBsacKNB4MQve7HSp6GAYJSB6dDQnEeB"
+							+ "&empleadoCIF=" + salary.getEmployeeDocument()
+							+ "&clienteCIF=" + salary.getEnterpriseDocument()
+							+ "&empleadoNomina=" + arr.toString();
+					
+					String response = post(BIDOQ, sendData);
+
+					doJson(salary, data.length, attach.getDescription(), response,	os);
+				}
+
 			}
 
 			os.close();
@@ -148,9 +189,8 @@ public class ShareServlet extends HttpServlet implements ShareService {
 			}	
 		}
 	}
-
+	
 	// -------------------------------------------------------- private methods
-
 
 	private void doJson(Salary salary, int size, String description,
 			String error, PrintStream os) {
@@ -303,4 +343,43 @@ public class ShareServlet extends HttpServlet implements ShareService {
 						salary.getType().getName(ES),
 						salary.getStartDate(), salary.getEndDate());
 	}
+	
+	
+	
+	public static String getTediURL(boolean snapshot) {
+		return snapshot? BIDOQ_SNAPSHOT : BIDOQ; 
+	}
+
+	protected String post(String bidoqUrl, String requestData) {
+		HttpsURLConnection conn = null;
+		try {
+			URL url = new URL(bidoqUrl);
+			conn = (HttpsURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+			OutputStream os = conn.getOutputStream();
+			os.write(requestData.getBytes());
+			os.flush();
+			
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					(conn.getInputStream())));
+				
+			String output;	
+			String response = "";
+			while ((output = br.readLine()) != null) {
+				response = output;	
+			}	
+			return new JSONObject(response).getString("message");
+		} catch (Throwable  e) {
+			e.printStackTrace();
+			return e.getMessage();
+		} finally {
+			if (conn != null) conn.disconnect();
+		}
+	}
+	
+	
 }

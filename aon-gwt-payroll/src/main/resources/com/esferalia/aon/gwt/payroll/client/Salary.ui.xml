@@ -65,6 +65,7 @@
 								<!--  g:Button ui:field='printButton' styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" /-->
 								<g:Button debugId='saveButton' ui:field='saveButton' styleName='aon-finding-toolbar-item aon-icon-mail-save' text="DESCARGAR" />
 								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
+								<g:Button ui:field='bidoqPublishButton' styleName='aon-finding-toolbar-item aon-icon-bidoq' text=" Publicar" />
 								<g:ListBox ui:field='salaryTypeListBox' styleName=''  />
 								<g:ListBox ui:field='dateListBox' styleName=''  />
 								<g:ListBox ui:field='reportTypeListBox' styleName='' visible="false" />

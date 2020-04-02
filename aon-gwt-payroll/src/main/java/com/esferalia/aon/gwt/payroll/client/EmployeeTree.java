@@ -2024,7 +2024,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	// --------------------------------------------------- Cost.Listener methods
 
 	@Override
-	public void onPublish(CostDocuments documents) {
+	public void onPublish(CostDocuments documents, String type) {
 		class Callback implements AsyncCallback<JsShareResult> {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -2043,7 +2043,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		com.esferalia.aon.gwt.payroll.shared.Cost cost = documents.getCosts()
 				.get(documents.getCurrentIndex());
-		share(cost, new Callback());
+		share(cost, type, new Callback());
 
 		showResultsPanel();
 
@@ -2052,7 +2052,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	// ------------------------------------------------- Salary.Listener methods
 
 	@Override
-	public void onPublishSalaries(SalaryInfo salary) {
+	public void onPublishSalaries(SalaryInfo salary, String type) {
 		class Callback implements AsyncCallback<JsShareResult> {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -2069,7 +2069,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		shareResultsProvider.getList().clear();
 		resultsPanel.setWidget(shareResultsGrid);
 		
-		shareSalary(salary, new Callback());
+		shareSalary(salary, type, new Callback());
 		showResultsPanel();
 
 	}
@@ -2077,7 +2077,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	// ------------------------------------------------- Salary.Listener methods
 
 		@Override
-		public void onPublis(SalaryDocuments documents) {
+		public void onPublis(SalaryDocuments documents, String type) {
 			class Callback implements AsyncCallback<JsShareResult> {
 				@Override
 				public void onFailure(Throwable caught) {
@@ -2096,7 +2096,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			com.esferalia.aon.gwt.payroll.shared.Salary salary = documents
 					.getSalaries().get(documents.getCurrentIndex());
-			share(salary, new Callback());
+			share(salary, type, new Callback());
 			showResultsPanel();
 
 		}
@@ -2907,12 +2907,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private static <T extends HasId<?>> void share(
 			com.esferalia.aon.gwt.payroll.shared.Salary salary,
+			String type,
 			final AsyncCallback<JsShareResult> callback) {
 
 		StringBuffer requestDataBuffer = new StringBuffer();
 
 		requestDataBuffer
-				.append("&" + ShareService.SALARY + "=" + salary.getId());
+				.append("&" + ShareService.SALARY + "=" + salary.getId())
+				.append("&type=" + type);
 
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString(), callback);
@@ -2921,12 +2923,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	private static <T extends HasId<?>> void shareSalary(
 			SalaryInfo salary,
+			String type,
 			final AsyncCallback<JsShareResult> callback) {
 
 		StringBuffer requestDataBuffer = new StringBuffer();
 
 		requestDataBuffer
-				.append("&" + ShareService.SALARY + "=" + salary.getId());
+				.append("&" + ShareService.SALARY + "=" + salary.getId())
+				.append("&type=" + type);
 
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString(), callback);
@@ -2935,6 +2939,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private static <T extends HasId<?>> void share(
 			com.esferalia.aon.gwt.payroll.shared.Cost cost,
+			String type,
 			final AsyncCallback<JsShareResult> callback) {
 
 		StringBuffer requestDataBuffer = new StringBuffer();
@@ -2950,7 +2955,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		else
 			requestDataBuffer.append("&" + ShareService.ENTERPRISE + "="
 					+ cost.getEnterpriseId());
-
+		requestDataBuffer.append("&type=" + type);
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString(), callback);
 	}
@@ -3231,11 +3236,5 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	/*-{
 		return eval(javascript);
 	}-*/;
-
-	
-
-	
-
-	
 
 }

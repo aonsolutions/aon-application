@@ -69,6 +69,7 @@
 								<g:Button ui:field='printButton'
 									styleName='aon-finding-toolbar-item aon-icon-pdf' text="Imprimir" />
 								<g:Button ui:field='publishButton' styleName='aon-finding-toolbar-item aon-icon-google-drive' text="Publicar" />
+								<g:Button ui:field='bidoqPublishButton' styleName='aon-finding-toolbar-item aon-icon-bidoq' text="Publicar" />
 								<g:ListBox ui:field='dateListBox' styleName='' />
 								<!-- g:ListBox ui:field='endDateBox' styleName='' / -->
 								

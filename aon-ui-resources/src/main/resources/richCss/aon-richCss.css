@@ -1621,12 +1621,12 @@ color:#000;
 	background-color:#f6f5e3; !important;
 	border:0;
 	text-align:right;	
-	}
+}
 .aon-panelGrid-search .aon-panelGrid-even{
 	background-color:#f6f5e3; !important;	
 	border:0;
 	padding:2px;
-	}
+}
 
 .aon-panelGrid-search-info{
 	background:transparent url(images/aon-content/aon-panelGrid-search-info.png) scroll left bottom repeat-x;
@@ -3159,6 +3159,10 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 
 .aon-icon-google-drive{
 	background:transparent url(images/aon-icon/aon-icon-google-drive.png) scroll left center no-repeat;	
+ }
+
+.aon-icon-bidoq{
+	background:transparent url(images/aon-icon/aon-icon-bidoq.png) scroll left center no-repeat;	
  }
  
  .aon-icon-google-drive-unknown{
