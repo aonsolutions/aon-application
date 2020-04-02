@@ -2683,9 +2683,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public double value(double x) {
 
 				try {
-					IContractSalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
+					ISQLContractSalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
 							contractCriteria, x);
-					ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
 					ISalary salary = calculator.calculate(ctx);
@@ -2841,7 +2841,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		}
 	}
 
-	protected IContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
+	protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria, final double x) {
 		SQLContractSalaryCalculatorContext ctx;
 		try {

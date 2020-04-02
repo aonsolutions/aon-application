@@ -669,7 +669,7 @@ public class EmployeesServiceHelper {
 			}
 
 			@Override
-			protected IContractSalaryCalculatorContext getPaymentCalculatorContext(
+			protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(
 					Connection conn, Date startDate, Date endDate,
 					Date issueDate, Criteria criteria, final double x) {
 				try {

@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
@@ -13,10 +12,7 @@ import static java.util.Calendar.DATE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.HashMap;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -28,13 +24,16 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
+
+import junit.framework.Assert;
 
 public class SQLGrossTestCase extends AbstractSQLTestCase {
 
@@ -367,6 +366,90 @@ public class SQLGrossTestCase extends AbstractSQLTestCase {
 		
 		
 	}
+	
+	@Test
+	public void testGrossExtrasProrratedI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA");
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+		// @formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				
+				new Extra[] { new Extra() {
+					{
+						this.concept = pagaExtraConcept.getId();
+						this.expression = "SALARIO_BASE";
+						this.expression = "0.00";
+						this.month = Month.DECEMBER;
+						this.start = "01/12";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.concept = pagaExtraConcept.getId();
+						this.expression = "SALARIO_BASE"; 
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, },
+				
+				new Payment [] {
+						new Payment() {
+						{
+							this.concept = salarioBaseConcept.getId();
+							this.expression = "1500.00 * DIAS_TRABAJADOS / DIAS_MES";
+						}
+					}
+				}
+		
+			);
+
+		
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+				}, new String[] { 
+						"BRUTO(3333.00 * DIAS_TRABAJADOS / DIAS_MES)" ,
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
+		//@formatter:on
+		
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(),pagaExtraConcept , "PAGA EXTRARODINARIA NAVIDAD", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(),pagaExtraConcept , "PAGA EXTRARODINARIA VERANO", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		for ( SalaryPayment p: salary.getSalaryPayments() ) {
+			System.out.println(p.getName() + ":" + p.getAmount() );
+		}
+		
+		//@formatter:off
+		Assert.assertEquals(
+				3333.00 , 
+				salary.getTotalPayment() 
+				, DELTA);
+		
+		
+		
+		//@formatter:on
+		
+		
+	}
+	
+	
 	// ------------------------------------------------------------------------
 
 
