@@ -15,6 +15,7 @@ public class ContractJourneyDuration implements Serializable {
 	
 	public ContractJourneyDuration(){
 		super();
+		this.contractJourneyDuration = new TreeMap<Date, ArrayList<JourneyDuration>>();
 	}
 	
 	public void setContractJourneyDuration(Map<Date, ArrayList<JourneyDuration>> journies) {
