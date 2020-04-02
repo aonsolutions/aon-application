@@ -521,7 +521,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 					hours = hoursDouble.toString();
 				}
 				
-				EmployeeCalendarPercentDialog percentDialog = new EmployeeCalendarPercentDialog("Dias Ausencia", hours) {
+				EmployeeCalendarPercentDialog percentDialog = new EmployeeCalendarPercentDialog("Dias Ausencia") {
 					
 					@Override
 					protected void onAccept() {
@@ -914,7 +914,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				hours = 8.00;
 		}
 		
-		EmployeeCalendarPercentDialog percentDialog  = new EmployeeCalendarPercentDialog("Dias Ausencia", hours.toString()) {
+		EmployeeCalendarPercentDialog percentDialog  = new EmployeeCalendarPercentDialog("Dias Ausencia") {
 			
 			@Override
 			protected void onAccept() {
@@ -2321,28 +2321,15 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				@Override
 				public void execute() {
 					EmployeeCalendarPercentDialog strikeDialog;
-					if(fullTimeJourney){
-						strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", "8") {
-							
-							@Override
-							protected void onAccept() {
-								double cs = this.getPercentValue();
-								addStrikeDay(cs);
-							}
-						};
-					}
-					else{
-						Date date = selectedDates.getSelectedList().get(0);
-						Double hours = calendarEmployeeInfo.getHourByDay(date);
-						strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
-							
-							@Override
-							protected void onAccept() {
-								double cs = this.getPercentValue();
-								addStrikeDay(cs);
-							}
-						};
-					}
+					strikeDialog = new EmployeeCalendarPercentDialog("Horas Huelga") {
+						
+						@Override
+						protected void onAccept() {
+							double cs = this.getPercentValue();
+							addStrikeDay(cs);
+						}
+					};
+					
 //					strikeDialog.setLabelText("Horas Huelga:");
 					strikeDialog.show();
 					strikeDialog.center();	
@@ -2352,27 +2339,15 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				@Override
 				public void execute() {
 					EmployeeCalendarPercentDialog ereDialog;
-					if(fullTimeJourney){
-						ereDialog = new EmployeeCalendarPercentDialog("Horas ERE", "8") {
-							
-							@Override
-							protected void onAccept() {
-								double cs = this.getPercentValue();
-								addEreDay(cs);
-							}
-						};
-					}else{
-						Date date = selectedDates.getSelectedList().get(0);
-						Double hours = calendarEmployeeInfo.getHourByDay(date);
-						ereDialog = new EmployeeCalendarPercentDialog("Horas Huelga", hours.toString()) {
-							
-							@Override
-							protected void onAccept() {
-								double cs = this.getPercentValue();
-								addEreDay(cs);
-							}
-						};
-					}
+					ereDialog = new EmployeeCalendarPercentDialog("Horas ERE") {
+						
+						@Override
+						protected void onAccept() {
+							double cs = this.getPercentValue();
+							addEreDay(cs);
+						}
+					};
+					
 //					ereDialog.setLabelText("Horas ERE:");
 					ereDialog.show();
 					ereDialog.center();
