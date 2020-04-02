@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -8,7 +9,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,9 +31,6 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	TextBox percentBox;
 	
 	@UiField
-	Label messageLabel;
-	
-	@UiField
 	Button cancelButton;
 	
 	@UiField
@@ -42,10 +39,8 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	// -------------------------------------------------------------------------------
 	// --------------------------------- MAIN CLASS ----------------------------------
 	// -------------------------------------------------------------------------------
-	
-	Double journeyHours;
 
-	public EmployeeCalendarPercentDialog(String caption, String hoursContract) {
+	public EmployeeCalendarPercentDialog(String caption) {
 		setCaption(caption);
 		
 		setWidget(binder.createAndBindUi(this));
@@ -56,8 +51,6 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 		typeDrop.addItem("Ausencia Injustificada");
 		typeDrop.addItem("ERE Fuerza mayor");
 		typeDrop.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
-		
-		messageLabel.setText("Horas Jornada = " + hoursContract);
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -73,8 +66,6 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 				onAccept();
 			}
 		});	
-		
-		this.journeyHours = Double.parseDouble(hoursContract);
 	}
 
 	protected abstract void onAccept();
@@ -88,14 +79,26 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 	}
 	
 	public double getPercentValue() {
-		if(percentBox.getValue().length() == 0)
+		if(StringUtils.isEmpty(percentBox.getValue())) {
 			return 1.00;
+		}
 		
-		Double hoursStrike = Double.parseDouble(percentBox.getValue());
-		if(hoursStrike >= this.journeyHours)
-			return 1.00;
+		Double percent;
 		
-		return hoursStrike/this.journeyHours;
+		try {
+			percent = Double.parseDouble(percentBox.getValue());
+			
+			if(percent == 0.00)
+				percent = 1.00;
+			else {
+				percent = percent / 100;
+			}
+		
+		} catch (NumberFormatException e) {
+			percent = 1.00;
+		}
+		
+		return percent;
 	}	
 
 }

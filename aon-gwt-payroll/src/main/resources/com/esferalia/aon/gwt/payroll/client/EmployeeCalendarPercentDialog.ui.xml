@@ -28,6 +28,11 @@
 		.w100{
 			width: 102%;
 		}
+		
+		.percentLabel{
+			font-weight: bold;
+			text-align: center;
+		}
 
 	</ui:style>
 
@@ -38,27 +43,35 @@
 			<table class="aon-width-all aon-height-all" style="padding: 5px;">
 				<tr>
 					<td>
-						<g:Label>Tipos de ausencia:</g:Label>
 					</td>
 					<td>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<g:Label>Tipos de ausencia:</g:Label>
+					</td>
+					<td colspan="3">
 						<g:ListBox ui:field="typeDrop" styleName="{style.w100}"></g:ListBox>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<g:Label>Horas:</g:Label>
+						<g:Label>Coeficiente reducción sobre horas totales :</g:Label>
 					</td>
 					<td>
 						<g:TextBox ui:field="percentBox" styleName="{style.hourTBx}"></g:TextBox>
 					</td>
-				</tr>
-				<tr>
 					<td colspan="2">
-						<g:Label ui:field="messageLabel" styleName="{style.hourLabel}"></g:Label>
+						<g:Label styleName="{style.percentLabel}" >%</g:Label>
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2" align="right" style="padding-top: 15px;">
+					<td colspan="4" align="right" style="padding-top: 15px;">
 						<g:Button ui:field="cancelButton">Cerrar</g:Button>
 			    		<g:Button ui:field="acceptButton">OK</g:Button>
 					</td>
