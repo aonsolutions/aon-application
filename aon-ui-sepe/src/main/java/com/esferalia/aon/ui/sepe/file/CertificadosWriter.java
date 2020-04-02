@@ -368,7 +368,7 @@ public class CertificadosWriter implements Serializable {
 
 		TRABAJADORTYPE o = new TRABAJADORTYPE();
 		
-		o.setDNINIE(contract.getPerson().getRegistry().getDocument());
+		o.setDNINIE(AonStringUtils.upperCase(contract.getPerson().getRegistry().getDocument()));
 		o.setNombre(createNombreSimpleType(name));
 		o.setApellido1(createApellidoSimpleType(surname1));
 		o.setApellido2(StringUtils.isBlank(surname2)?null:createApellidoSimpleType(surname2));
