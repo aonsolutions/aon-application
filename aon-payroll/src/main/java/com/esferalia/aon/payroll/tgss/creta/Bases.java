@@ -10,6 +10,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -372,6 +373,7 @@ public class Bases {
 
 	}
 
+	
 	private static class HCretaData extends CCretaData {
 
 		public HCretaData(String variable) {
@@ -775,6 +777,10 @@ public class Bases {
 				put("635", "Base AT Maternidad Tiempo Parcial");
 				put("634", "Base AT Maternidad Tiempo Parcial");
 				
+				put("536", "Base de contingencias comunes Expediente de Regulación de Empleo Parcial");
+				put("636", "Base AT Expediente de Regulación de Empleo Parcial");
+				put("637", "Base AT Expediente de Regulación de Empleo Parcial");
+
 				put("702", "Base de FOGASA");
 
 			}
@@ -1653,6 +1659,99 @@ public class Bases {
 
 		// --------------------------------------------------------------------
 	}
+	
+	private static class CompositeHCretaData
+	extends HCretaData {
+		
+		protected List<String> variables;
+		
+		public CompositeHCretaData() {
+			super(null);
+			this.variables = new ArrayList<String>();
+		}
+		
+		public CompositeHCretaData add(String name) {
+			this.variables.add(name);
+			return this;
+		}
+		
+		public CompositeHCretaData add(ContextVariable var) {
+			this.variables.add(var.getName());
+			return this;
+		}
+		
+		public CompositeHCretaData add(ContextVariable ...vars) {
+			for ( ContextVariable var : vars)
+				this.variables.add(var.getName());
+			
+			return this;
+		}		
+		// AbstractCCretaData -------------------------------------------------
+		
+		@Override
+		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder,
+				BasesCallback... cbs) {
+			try {
+				super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
+			} catch ( NoSuchVariablesException e ) {
+				for (BasesCallback cb : cbs)
+					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
+							isOptional(datoSolicitado));
+			}
+			
+		}
+		
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta)
+				throws NoSuchVariableException, UnMatchedVariableException {			
+			for ( String var: variables ) {
+				try {
+					variable = var;
+					Period p = new Period(toDate(desde), toDate(hasta));
+					return get(var, salary, p);
+				} catch ( NoSuchVariableException e ) {
+				} catch ( UnMatchedVariableException e ) {
+					
+				}
+			}
+			throw new NoSuchVariablesException(variables.toArray(String[]::new));
+		}
+		
+		protected static Double get(String variable,
+				Salary salary, Period p) throws NoSuchVariableException,
+						UnMatchedVariableException {
+			List<ContextData> datas = salary.getContextData()
+					.get(variable);
+			if (datas == null || datas.isEmpty())
+				throw new NoSuchVariableException(variable);
+			
+			boolean found=false;
+			double ret = 0.00;
+			for (ContextData data : datas) {
+
+				Period dataPeriod = new Period(data.getStartDate(),
+						data.getEndDate());
+
+				Period intersect = p.intersect(dataPeriod);
+				if (intersect == null)
+					continue;
+
+				if (data.getStartDate().before(p.getStart())
+						|| data.getEndDate().after(p.getEnd()))
+					throw new UnMatchedVariableException(variable,
+							data);
+				found = true;
+				ret += ExpressionContext.eval(data.getExpression(),
+						Double.class) * days(intersect) / days(p);
+				
+			}
+			if ( found )
+				return ret;
+
+			throw new NoSuchVariableException(variable);
+
+		}		
+	}
 
 	private static class NonNegativeCompositeCCretaData extends  CompositeCCretaData {
 
@@ -1680,6 +1779,7 @@ public class Bases {
 		{
 			put("500", new NonNegativeCCretaData(CGC_BASE.getName()));
 			put("535", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			put("536", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 			
 			put("537", new NonNegativeCCretaData(ADDITIONAL_BASE.getName()));
 
@@ -1692,6 +1792,8 @@ public class Bases {
 			put("611", new NonNegativeCCretaData(CGP_BASE.getName()));
 			put("635", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
 			put("634", new NonNegativeCCretaData(MATERNITY_BASE.getName()));
+			put("636", new NonNegativeCompositeCCretaData().add(ERE_BASES));
+			put("637", new NonNegativeCompositeCCretaData().add(ERE_BASES));
 
 			put("663", new CCretaData(ContextVariable.PREST_IT));
 
@@ -1715,6 +1817,15 @@ public class Bases {
 				};
 			});
 			put("02", new HCretaData(ADDITIONAL_HOURS.getName()));
+
+			put("05", new CompositeHCretaData() {
+					public Double get(Salary salary, Fecha desde, Fecha hasta) 
+					throws NoSuchVariableException 
+					,UnMatchedVariableException {
+						return (1.00 - super.get(salary, desde, hasta)) * 1000.00;
+					};
+					}.add(ERE_FACTORS)
+			);
 
 			put("51", new MonthlySalaryCretaData());
 

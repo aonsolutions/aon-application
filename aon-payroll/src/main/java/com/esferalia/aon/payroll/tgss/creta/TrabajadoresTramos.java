@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -296,13 +297,15 @@ public class TrabajadoresTramos {
 
 					Collections.sort(cgcBasePeriods); // sort & sort & sort again .
 					
-					for ( ContextData cgcData: salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList()) ) {
-						Period period = new Period(cgcData.getStartDate(), cgcData.getEndDate());
-						int insertionPoint = Collections.binarySearch(cgcBasePeriods, period);
-						if ( insertionPoint < 0 ) 
-							cgcBasePeriods.add((-(insertionPoint) - 1), period);
-					}
+					
+					for ( ContextData cgcData: salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList()) )
+						insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+					
 
+					for ( ContextVariable var : ContextVariable.ERE_BASES )
+						for ( ContextData cgcData: salary.getContextData().getOrDefault(var.getName(), Collections.emptyList()) )
+							insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+					
 					
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
 					for ( Period p: periods ) {
@@ -395,6 +398,16 @@ public class TrabajadoresTramos {
 							@Override
 							public void visitMaternidadPaternidadTiempoParcial() {
 							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoTotal() {
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcial() {
+							}
+							
+							
 							
 						};
 						
@@ -669,6 +682,34 @@ public class TrabajadoresTramos {
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
 								
 							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoTotal() {
+								visitMaternidadPaternidadTiempoCompleto();
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcial() {
+
+								visitTiempoParcialNormal();
+								
+								// Base de contingencias comunes en situación de Expediente de Regulación de Empleo
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("536");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Accidentes de Trabajo en situación de Expediente de Regulación de Empleo
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("636");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Coeficiente a tiempo parcial en situación de Expediente de Regulación de Empleo 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("05");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
 							
 							
 						}
@@ -753,6 +794,12 @@ public class TrabajadoresTramos {
 		LiquidacionMes liquidacionMes = liquidacionMesBuilder.create();
 		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes);
 	}
+
+	private static void insert(List<Period> periods, Period period) {
+		int insertionPoint = Collections.binarySearch(periods, period);
+		if ( insertionPoint < 0 ) 
+			periods.add((-(insertionPoint) - 1), period);
+	}
 	
 	private static List<Period> merge(Salary salary, List<Period> periods) {
 		LinkedList<Period> cretaPeriods = new LinkedList<Period>();
@@ -813,6 +860,16 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitMaternidadPaternidadTiempoParcial() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoTotal() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcial() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
 			};
@@ -877,6 +934,16 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitMaternidadPaternidadTiempoParcial() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoTotal() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcial() {
 					visitOthers();
 				}
 			};
@@ -944,6 +1011,16 @@ public class TrabajadoresTramos {
 				public void visitMaternidadPaternidadTiempoParcial() {
 					visitOthers();
 				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoTotal() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcial() {
+					visitOthers();
+				}
 			};
 
 			SalaryVisitor _fullMaternity = new SalaryVisitor(){
@@ -1009,6 +1086,16 @@ public class TrabajadoresTramos {
 				public void visitMaternidadPaternidadTiempoParcial() {
 					visitOthers();
 				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoTotal() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcial() {
+					visitOthers();
+				}
 			};
 
 			private Period period ;
@@ -1072,6 +1159,16 @@ public class TrabajadoresTramos {
 			@Override
 			public void visitMaternidadPaternidadTiempoParcial() {
 				state.visitMaternidadPaternidadTiempoParcial();
+			}
+
+			@Override
+			public void visitExpedienteRegulacionEmpleoTotal() {
+				state.visitExpedienteRegulacionEmpleoTotal();
+			}
+
+			@Override
+			public void visitExpedienteRegulacionEmpleoParcial() {
+				state.visitExpedienteRegulacionEmpleoParcial();
 			}
 		};
 		
@@ -1149,6 +1246,8 @@ public class TrabajadoresTramos {
 		void visitIncapacidadTemporalATEPPagoDelegado();
 		void visitMaternidadPaternidadTiempoCompleto();
 		void visitMaternidadPaternidadTiempoParcial();
+		void visitExpedienteRegulacionEmpleoTotal();
+		void visitExpedienteRegulacionEmpleoParcial();
 		
 	}
 	
@@ -1193,6 +1292,14 @@ public class TrabajadoresTramos {
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.OCCUPATIONAL_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
 		) > 0.00;
+		
+		double ereFactor = 0.00;
+		for ( ContextVariable ere : ContextVariable.ERE_FACTORS )
+			ereFactor = getContextData(ere.getName(), salary, startDate, endDate,  0.00) ;
+
+		boolean ereTotal = ( ereFactor == 1.00 ) ; 
+		boolean ereParcial = ( ereFactor > 0.00 && ereFactor < 1.00 ) ; 
+		
 
 		boolean tiempoCompleto = fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
 		
@@ -1217,6 +1324,10 @@ public class TrabajadoresTramos {
 			visitor.visitIncapacidadTemporalATEPPagoDelegado();
 		else if ( iTPagoDirecto )
 			visitor.visitIncapacidadTemporalPagoDirecto();
+		else if ( ereTotal )
+			visitor.visitExpedienteRegulacionEmpleoTotal();
+		else if ( ereParcial )
+			visitor.visitExpedienteRegulacionEmpleoParcial();
 		else if (tiempoCompleto)
 			visitor.visitTiempoCompletoNormal();
 		else 
