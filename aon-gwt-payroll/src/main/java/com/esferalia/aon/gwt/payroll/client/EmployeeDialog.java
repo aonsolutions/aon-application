@@ -13,11 +13,13 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
+import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -239,7 +241,7 @@ public class EmployeeDialog extends CustomDialog {
 				contractType = String.valueOf(this.contractType.getSelectedValue());
 				Integer contractTypeInt = Integer.parseInt(contractType);
 				
-				if((contractTypeInt >= 200 && contractTypeInt<300) || (contractTypeInt >= 500 && contractTypeInt<600))
+				if((contractTypeInt >= 200 && contractTypeInt<300) || (contractTypeInt >= 500 && contractTypeInt<600) || contractTypeInt == 0)
 					showPartialTimeContract();
 				else
 					this.showElementsFullTimeContract();
@@ -366,35 +368,34 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onContractJourneyDurationClick() {
-//			ContractJourneyDialog dialog = new ContractJourneyDialog(employeeDialogObject.getContractStartDate(), employeeDialogObject.getContractEndDate(),
-//					employeeDialogObject.getContractJourneyDuration()) {
-//
-//				@Override
-//				protected void onSave() {
-//					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
-//					if(contractJourneyDuration.getJourniesSize() != 0) {
-//						String result = "Desde ";
-//						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-//							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
-//							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
-//							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
-//							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
-//							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
-//							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
-//							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " )";
-//						}
-//						employee.journeyDuration.setText(result);
-//						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-//					}else {
-//						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-//						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-//						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
-//					}
-//					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
-//				}	
-//			};
-//			dialog.center();
-//			dialog.show();			
+			ContractJourneyDialog dialog = new ContractJourneyDialog(employeeDialogObject.getContractStartDate(), employeeDialogObject.getContractEndDate()) {
+
+				@Override
+				protected void onSave() {
+					ContractJourneyDuration contractJourneyDuration = this.getContractJourneyDuration();
+					if(contractJourneyDuration.getJourniesSize() != 0) {
+						String result = "Desde ";
+						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
+							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
+							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
+							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
+							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
+							if("HORAS_VIERNES" == journeyDuration.getName()) result += ", V : " + journeyDuration.getExpression() + " ";
+							if("HORAS_SABADO" == journeyDuration.getName()) result += ", S : " + journeyDuration.getExpression() + " ";
+							if("HORAS_DOMINGO" == journeyDuration.getName()) result += ", D : " + journeyDuration.getExpression() + " )";
+						}
+						employee.journeyDuration.setText(result);
+						employee.journeyDuration.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					}else {
+						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+					}
+					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
+				}	
+			};
+			dialog.center();
+			dialog.show();			
 		}
 		
 		// TABLA DATOS EMPLEADO
@@ -1007,6 +1008,7 @@ public class EmployeeDialog extends CustomDialog {
 	
 	private void showPartialTimeContract() {
 		employee.showElementsPartialTimeContract();
+		employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 		employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
 		employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
 		employee.journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");

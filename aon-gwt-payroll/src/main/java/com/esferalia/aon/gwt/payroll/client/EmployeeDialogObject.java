@@ -547,5 +547,13 @@ public class EmployeeDialogObject {
 		this.contractData = new ContractInfo();
 		this.contractData.setWorkplaceId(workplace.getId());
 	}
+
+	public Date getContractStartDate() {
+		return this.contractData.getStartDate();
+	}
+	
+	public Date getContractEndDate() {
+		return this.contractData.getEndDate();
+	}
 		
 }

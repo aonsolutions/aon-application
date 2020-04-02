@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -16,10 +18,11 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
+import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -176,10 +179,27 @@ public class EmployeeDraft extends Composite {
 			contractType = String.valueOf(this.contractType.getSelectedValue());
 			Integer contractTypeInt = Integer.parseInt(contractType);
 			
-			if((contractTypeInt >= 200 && contractTypeInt<300) || (contractTypeInt >= 500 && contractTypeInt<600))
+			if((contractTypeInt >= 200 && contractTypeInt<300) || (contractTypeInt >= 500 && contractTypeInt<600 || contractTypeInt == 0)) {
 				showElementsPartialTimeContract();
-			else
+				
+				ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
+				if(contractJourneyDuration.getJourniesSize() != 0) {
+					String result = contractJourneyDuration.getJourneyText();
+
+					employee.journeyDuration.setText(result);
+					employee.journeyDuration.setText(contractJourneyDuration.getJourneyText());
+					employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+					employee.journeyDuration.removeStyleName("aon-icon-exception aon-finding-toolbar-item-no-border");
+				}else {
+					employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+					employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+					employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+					employeeDraftObject.setContractJourneyDuration(new TreeMap<Date, ArrayList<JourneyDuration>>());
+				}
+		    } else {
 				this.showElementsFullTimeContract();
+				employeeDraftObject.setContractJourneyDuration(new TreeMap<Date, ArrayList<JourneyDuration>>());
+		    }
 			
 			List<ModelRecord> contractTypeModels = contractTypeClass.getModelsContractType(contractTypeInt);
 			for (ModelRecord model : contractTypeModels)
@@ -1049,7 +1069,7 @@ public class EmployeeDraft extends Composite {
 	private void initContractType() {
 		this.employee.contractType.addItem("-");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			this.employee.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), entry.getKey().toString());	
+			this.employee.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), StringUtils.leftPad(entry.getKey().toString(), 3, '0'));	
 	}
 	
 	private void initAgreements() {
@@ -1125,11 +1145,21 @@ public class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.contractType, employeeDraftObject.getContractType());
 		
 		Integer contractTypeId = employeeDraftObject.getContractTypeN();
-		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
+		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600 || contractTypeId == 0)) {
 			employee.showElementsPartialTimeContract();
-			employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-			employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-			employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+			ContractJourneyDuration contractJourneyDuration = employeeDraftObject.getContractJourneyDuration();
+			if(contractJourneyDuration.getJourniesSize() != 0) {
+				String result = contractJourneyDuration.getJourneyText();
+
+				employee.journeyDuration.setText(result);
+				employee.journeyDuration.setText(contractJourneyDuration.getJourneyText());
+				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+				employee.journeyDuration.removeStyleName("aon-icon-exception aon-finding-toolbar-item-no-border");
+			}else {
+				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+				employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+			}
 		} else
 			employee.showElementsFullTimeContract();
 		

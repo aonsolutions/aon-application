@@ -320,15 +320,18 @@ public class JooqEmployee {
 				.where(CONTRACT.ID.eq(contractId))
 				.execute();
 		
-			if(null != contractData.getContractType())
+			if(null != contractData.getContractType()) {
+				String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
+				
 				dslContext.insertInto(CONTRACT_DATA)
 					.set(CONTRACT_DATA.DOMAIN, domain)
 					.set(CONTRACT_DATA.NAME, "TC2")
 					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getContractType()))
+					.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractType))
 					.set(CONTRACT_DATA.START_DATE, contractStartDate)
 					.set(CONTRACT_DATA.END_DATE, contractEndDate)
 					.execute();
+			}
 		
 			/*ModelOption.values()[employeeContractData.getContract_model()].toString()*/
 			if(null != contractData.getContractModel())
@@ -413,24 +416,20 @@ public class JooqEmployee {
 			.execute();
 		
 		//ACTUALIZAR DURACION JORNADA
-//		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-//		if(null != contractJourneyDuration)
-//			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-//				 for(JourneyDuration journey : entry.getValue()) {
-//					 
-//					 java.util.Date endDateAux = null;
-//					 if(null == journey.getEndDate() && null != contractData.getEndDate())
-//						 endDateAux = DateUtils.copyDateOnly(contractData.getEndDate());
-//					 else
-//						 endDateAux = DateUtils.copyDateOnly(journey.getEndDate());
-//					 
-//					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-//								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-//							.values(domain, journey.getName(), contractId, journey.getExpression(), 
-//									new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
-//							.execute();
-//				 }
-//			}
+		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
+		if(null != contractJourneyDuration)
+			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+				 for(JourneyDuration journey : entry.getValue()) {
+					 
+					 java.util.Date endDateAux = journey.getEndDate();
+					 
+					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(domain, journey.getName(), contractId, journey.getExpression(), 
+									new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+							.execute();
+				 }
+			}
 		
 		return null;
 	}
@@ -1236,9 +1235,10 @@ public class JooqEmployee {
 			
 			if(null == contractData.getContracttypeId()){
 				if(null != contractData.getContractType()){
+					String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
 					ContractDataRecord tc2Record = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\""+ contractData.getContractType()+"\"", 
+						.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\"" + contractType + "\"", 
 								startDate, endDate)
 						.returning(CONTRACT_DATA.ID)
 						.fetchOne();
@@ -1251,8 +1251,9 @@ public class JooqEmployee {
 					contractData.setContractId(null);
 					contractData.setContractType(null);
 				}else{
+					String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
 					dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getContractType()+"\"")
+						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractType +"\"")
 						.set(CONTRACT_DATA.START_DATE, startDate)
 						.set(CONTRACT_DATA.END_DATE, endDate)
 						.where(CONTRACT_DATA.ID.eq(contractData.getContracttypeId()))
@@ -1567,37 +1568,41 @@ public class JooqEmployee {
 		}
 		
 		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-		 if(!contractJourneyDuration.isEmpty()){
-		 
+		if(contractJourneyDuration.isEmpty()) {
 			//ACTUALIZAR DURACION JORNADA
 			dslContext.delete(CONTRACT_DATA)
 				.where(CONTRACT_DATA.NAME.like("HORAS%"))
 				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
 				.execute();
-			 
-			 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-				 for(JourneyDuration journey : entry.getValue()) {
-					 java.util.Date endDateAux = null;
-					 if(null == journey.getEndDate() && null != contractData.getEndDate())
-						 endDateAux = DateUtils.copyDateOnly(contractData.getEndDate());
-					 else
-						 endDateAux = DateUtils.copyDateOnly(journey.getEndDate());
-					 
-					 if(null != journey.getExpression())
-						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-								.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
-										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
-								.execute();
-				 }
-			 }
-		 }else{
-			//ACTUALIZAR DURACION JORNADA
-			dslContext.delete(CONTRACT_DATA)
-				.where(CONTRACT_DATA.NAME.like("HORAS%"))
-				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-				.execute();
-		 }
+		}
+		
+//		if(!contractJourneyDuration.isEmpty()){
+//		 
+//			//ACTUALIZAR DURACION JORNADA
+//			dslContext.delete(CONTRACT_DATA)
+//				.where(CONTRACT_DATA.NAME.like("HORAS%"))
+//				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+//				.execute();
+//			 
+//			 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+//				 for(JourneyDuration journey : entry.getValue()) {
+//					 java.util.Date endDateAux = journey.getEndDate();
+//					  
+//					 if(null != journey.getExpression())
+//						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+//									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+//								.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
+//										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+//								.execute();
+//				 }
+//			 }
+//		 }else{
+//			//ACTUALIZAR DURACION JORNADA
+//			dslContext.delete(CONTRACT_DATA)
+//				.where(CONTRACT_DATA.NAME.like("HORAS%"))
+//				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+//				.execute();
+//		 }
 
 		//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
 		// contract_leave, contract_payment
