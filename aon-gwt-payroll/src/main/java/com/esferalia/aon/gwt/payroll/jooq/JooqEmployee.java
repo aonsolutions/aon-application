@@ -748,27 +748,32 @@ public class JooqEmployee {
 		}
 		
 		//CONTRACT INFO TABLE
-		Record contractInfoTable = dslContext.select().from(CONTRACT_INFO)
+		Result<Record> contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
 			.where(CONTRACT_INFO.CONTRACT.eq(contract))
 			.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
-			.fetchOne();
+			.fetch();
+		Record contractInfoTable = null;
 		
-		if(null == contractInfoTable) {
+		if(contractInfoTableRecords.isEmpty()) {
 			contractData.setContractmodelId(null);
 			contractData.setContractModel(null);
-		}else if(null == contractInfoTable.get(CONTRACT_INFO.EXPRESSION)){
-			contractData.setContractmodelId(contractInfoTable.get(CONTRACT_INFO.ID));
-			contractData.setContractModel(null);
 		}else {
-			String contractType = contractInfoTable.get(CONTRACT_INFO.EXPRESSION);
+			contractInfoTable = contractInfoTableRecords.get(0);
 			
-			if(contractType.contains("\""))
-				contractType = contractType.split("\"")[1];
-			
-			Integer ordinal = ModelOption.valueOf(contractType).ordinal();
-			
-			contractData.setContractmodelId(contractInfoTable.get(CONTRACT_INFO.ID));
-			contractData.setContractModel(ordinal);	
+			if(null == contractInfoTable.get(CONTRACT_INFO.EXPRESSION)){
+				contractData.setContractmodelId(contractInfoTable.get(CONTRACT_INFO.ID));
+				contractData.setContractModel(null);
+			}else {
+				String contractType = contractInfoTable.get(CONTRACT_INFO.EXPRESSION);
+				
+				if(contractType.contains("\""))
+					contractType = contractType.split("\"")[1];
+				
+				Integer ordinal = ModelOption.valueOf(contractType).ordinal();
+				
+				contractData.setContractmodelId(contractInfoTable.get(CONTRACT_INFO.ID));
+				contractData.setContractModel(ordinal);	
+			}
 		}
 		
 		contractInfoTable = dslContext.select().from(CONTRACT_INFO)
