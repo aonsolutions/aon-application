@@ -594,10 +594,10 @@
 					<textElement/>
 					<text><![CDATA[Contingencias comunes]]></text>
 				</staticText>
-				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="29a9594f-4fa2-4632-a144-523dec597014" style="amount" x="283" y="32" width="40" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getCgcPercent()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getCommonBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getCommonContingency().getAmount()/$F{salary}.getCommonBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="e60068b8-4525-4ca5-bf41-9e25c36c2b3e" style="amount" x="348" y="32" width="97" height="13"/>
@@ -609,10 +609,10 @@
 					<textElement/>
 					<text><![CDATA[Desempleo]]></text>
 				</staticText>
-				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="81bebab8-eca8-4d14-811f-223c7216be44" style="amount" x="283" y="45" width="40" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getUnemploymentPercent()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getUnemployment().getAmount()/$F{salary}.getProfessionalBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="f53573fc-46ef-4a11-ba25-b28c2eee32ad" style="amount" x="348" y="45" width="97" height="13"/>
@@ -624,10 +624,10 @@
 					<textElement/>
 					<text><![CDATA[Formación Profesional]]></text>
 				</staticText>
-				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="d8a6ead1-818c-45fd-9b7c-a46bf18e280f" style="amount" x="283" y="58" width="40" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getFpPercent()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getProfessionalBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getJobTraining().getAmount()/$F{salary}.getProfessionalBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="11b51246-d106-4a2b-b4a7-48836a9394d9" style="amount" x="348" y="58" width="97" height="13"/>
@@ -652,10 +652,11 @@
 					<textElement/>
 					<text><![CDATA[2. Impuesto sobre la renta de las personas físicas]]></text>
 				</staticText>
-				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="e69d9315-14fb-42e6-b72e-89eafffc7d47" style="amount" x="283" y="123" width="40" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getIrpfPercent()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getIrpfBase() == 0.00 ? 0.00 :
+    CommonUtil.round($F{salary}.getDeductions().getIrpf().getAmount()/$F{salary}.getIrpfBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="5c4ee81e-4c8e-445f-bb72-38356ffad593" style="amount" x="348" y="123" width="97" height="13"/>
@@ -749,15 +750,15 @@
 					<textElement/>
 					<text><![CDATA[Fuerza mayor o estructurales]]></text>
 				</staticText>
-				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="f62f5a06-349a-4179-9d66-402dd549a17f" style="amount" x="283" y="84" width="40" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getOvertimePercent()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getOvertimeBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getStructuralOvertime().getAmount()/$F{salary}.getOvertimeBase()*100)]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="f1476a3e-5bf3-4c92-b45c-57b68e336b5a" style="amount" x="283" y="97" width="40" height="13"/>
 					<textElement/>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercent()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{salary}.getNonEstructuralOvertimeBase() == 0.00 ? null : CommonUtil.round($F{salary}.getDeductions().getNonStructuralOvertime().getAmount()/$F{salary}.getNonEstructuralOvertimeBase()*100)]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="8464211f-5b94-461f-a27c-c5675ecc0ea9" style="amount" x="348" y="84" width="97" height="13"/>
@@ -1048,7 +1049,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getOvertimePercentEnterprise()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getOvertimePercent()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="f8ad3038-88c7-4826-8f1f-93cfea63518f" style="total1" x="448" y="133" width="97" height="13"/>
@@ -1125,7 +1126,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercentEnterprise()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$P{salaryScriptlet_SCRIPTLET}.getNonStructuralOvertimePercent()]]></textFieldExpression>
 				</textField>
 				<textField pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement uuid="8ca26f73-985c-436c-8fe1-e0541744275b" style="total1" x="448" y="146" width="97" height="13"/>

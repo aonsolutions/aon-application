@@ -762,14 +762,15 @@ public class PayrollServletUtils extends AonServletUtils {
 			.fetchInto(com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA)
 			.stream()
 			.map(p -> {
-				SalaryData salaryPayment = new SalaryData();
-				salaryPayment.setId(p.getId());
-				salaryPayment.setSalary(salary);
-				salaryPayment.setDomain(p.getDomain());
-				salaryPayment.setStartDate(p.getStartDate());
-				salaryPayment.setEndDate(p.getEndDate());
-				salaryPayment.setExpression(p.getExpression());
-				return salaryPayment;
+				SalaryData salaryData = new SalaryData();
+				salaryData.setId(p.getId());
+				salaryData.setSalary(salary);
+				salaryData.setName(p.getName());
+				salaryData.setDomain(p.getDomain());
+				salaryData.setStartDate(p.getStartDate());
+				salaryData.setEndDate(p.getEndDate());
+				salaryData.setExpression(p.getExpression());
+				return salaryData;
 			})
 			.collect(Collectors.toSet())
 			;

@@ -64,6 +64,7 @@ public class ReportUtils {
 		{
 			put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
 			put(CCCType.HOME_EMPLOYEES, SSRegimeType.DOMESTIC_EMPLOYEES);
+			put(CCCType.ARTIST, SSRegimeType.ARTIST);
 		}
 	};
 	
