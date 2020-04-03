@@ -19,9 +19,9 @@ import org.json.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.webservice.common.Utils;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -30,16 +30,6 @@ import com.esferalia.aon.occam.api.model.security.User;
 public class LoginServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(LoginServlet.class.getName());
-
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("Login Servlet - GET METHOD");
-		String token = req.getHeader("session_id");
-		System.out.println(token);
-		DecodedJWT jwt = JWT.decode(token);
-		System.out.println(jwt.getSubject());
-		Utils.giveBack(req, resp, jwt.getSubject(), new JSONObject());
-	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,57 +37,66 @@ public class LoginServlet extends HttpServlet{
 		JSONObject json = Utils.getRequestJSON(req);
 		String username = json.getString("username");
 		String password = json.getString("password");
-	
-	    JSONArray domainArray = new JSONArray();
-	    JSONArray userArray = new JSONArray();
-	    Boolean ok = false;
-	    if(isEmail(username)) {
-			LinkedList<User> users = AON_SOLUTIONS.getUsersByEmail(username);
 
-			for (User user : users) {
-				domainArray.put(user.getDomain());
-				userArray.put(user.getId());
-				try {
-					String pass = createPasswordHash(user.getLogin(), password, "digestCallback");
-					String expectedPass = AON_SOLUTIONS.getUserPassword(user.getId());
-					ok = ok || pass.equals(expectedPass);
-				} catch (LoginException e) {
-					e.printStackTrace();
+	    JSONArray tokenObject = new JSONArray();
+
+	    Boolean ok = false;
+	    Boolean empty = true;
+	    if(isEmail(username)) {	
+	    	for(String schema : AONContext.getSchemas()) {
+	    		System.out.println(schema);
+	    	    JSONObject object = new JSONObject();
+	    	    JSONArray domainArray = new JSONArray();
+	    	    JSONArray userArray = new JSONArray();
+	    	    LinkedList<User> users = AON_SOLUTIONS.getUsersByEmail(schema, username);
+
+	    	    for (User user : users) {
+					domainArray.put(user.getDomain());
+					userArray.put(user.getId());
+					try {
+						String pass = createPasswordHash(user.getLogin(), password, "digestCallback");
+						String expectedPass = AON_SOLUTIONS.getUserPassword(schema, user.getId());
+						ok = ok || pass.equals(expectedPass);
+					} catch (LoginException e) {
+						e.printStackTrace();
+					}
 				}
-			}
+	    	    
+	    	    object.put("schema", schema);
+			    object.put("domains", domainArray);
+			    object.put("users", userArray);
+			    object.put("email", username);
+			    tokenObject.put(object);
+			    if(!domainArray.isEmpty()) {
+			    	empty = false;
+			    }
+	    	}
 		}
-	    if(domainArray.isEmpty()) {
+	    if(empty) {
 	    	resp.sendError(401, "El Usuario No existe.");
 	    } else {
 	     
-		String token = "";
-		try {
-		    Algorithm algorithm = Algorithm.HMAC256("aonsecret");
+	    	String token = "";
+	    	try {
+	    		Algorithm algorithm = Algorithm.HMAC256("aonsecret");
 
-		    JSONObject object = new JSONObject();
-		    object.put("domains", domainArray);
-		    object.put("users", userArray);
-		    object.put("username", username);
+	    		token = JWT.create()
+	    				.withIssuer("auth0")
+	    				.withSubject(tokenObject.toString())
+	    				.withIssuedAt(new Date())
+	    				.sign(algorithm);
+	    	} catch (JWTCreationException exception){
 
-		    token = JWT.create()
-	    		.withIssuer("auth0")
-	    		.withSubject(object.toString())
-	    		.withIssuedAt(new Date())
-		        .sign(algorithm);
-		} catch (JWTCreationException exception){
-
-		}
+	    	}	
 		
-		// TODO ERRROR RESPONSE!!! 
-		JSONObject response = new JSONObject();
-		response.put("session_id", token);
-		response.put("domains", domainArray.length());
-		resp.setContentType("application/json;charset=UTF-8");
-		Utils.addCorsHeader(resp);
-		PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
-		os.println(response.toString());
-		os.flush();
-		os.close();
+	    	JSONObject response = new JSONObject();
+	    	response.put("session_id", token);
+	    	resp.setContentType("application/json;charset=UTF-8");
+	    	Utils.addCorsHeader(resp);
+	    	PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+	    	os.println(response.toString());
+	    	os.flush();
+	    	os.close();
 	    }
 	}
 	

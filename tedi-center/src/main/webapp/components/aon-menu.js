@@ -1,48 +1,23 @@
-import './aon-configuration.js'
+import './aon-configuration.js';
 
 function aonConfiguration() {
 	rootPanel('<aon-configuration></aon-configuration>');
 	getUsers();
 }
 
-function aonDesktop() {
-	rootPanel('<aon-desktop></aon-desktop>');
-}
-
 class AonMenu extends HTMLElement {
 	constructor () {
 		super();
 	}
-	
+
 	connectedCallback () {
 		this.innerHTML = `
-			<style>
-				.aon-right20 {
-					position: absolute;
-					right:20px;
-				}
-				
-				.aon-right160 {
-					position: absolute;
-					right:160px;
-				}
-				
-				.aon-menu-icon {
-					position: relative;
-					top: 7px;
-				}
-				.aon-toolbar-padding{
-					padding-top: 10px;
-					padding-left: 10px;
-				}
-				
-			</style>
-			
+
 			<div class="aon-toolbar-padding" >
 				<span style="margin-left:5px;">
-					<img style="cursor: pointer;"  src="../tedi-center/assets/logo.png" onclick="aonDesktop()"  width="240px" />
+					<img style="cursor: pointer;"  src="../tedi-center/assets/logo.png" onclick="load()"  width="240px" />
 				</span>
-				
+
 				<span style="margin-left:20px;">
 					<button class="mdl-button mdl-js-button" onclick="startModule('aon_gwt_aio', 'documents');">
 						Documental
@@ -53,13 +28,13 @@ class AonMenu extends HTMLElement {
 						Call Center
 					</button>
 				</span>
-				
+
 				<span style="margin-left:20px;">
 					<button class="mdl-button mdl-js-button" onclick="startModule('aon_gwt_aio', 'config');">
 						FACTURAS
 					</button>
 				</span>
-				
+
 				<span class="aon-right20" style="height: 60px;">
 					<button id="aon-user-menu" class="mdl-button mdl-js-button mdl-button--icon">
 						<i class="material-icons">account_circle</i>
@@ -85,4 +60,3 @@ class AonMenu extends HTMLElement {
 
 window.customElements.define('aon-menu', AonMenu);
 window.aonConfiguration = aonConfiguration;
-window.aonDesktop = aonDesktop;

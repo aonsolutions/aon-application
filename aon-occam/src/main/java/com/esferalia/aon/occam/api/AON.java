@@ -348,17 +348,6 @@ public class AON {
 	// ********************************************
 	// ******************************** SECURITY **
 	// ********************************************
-
-	public static User getUser(String token) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(token);
-			return getSecurity().getUser(ctx, ctx.getUser());
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	
 	public static LinkedList<User> getUsersByEmail(String domainName, Integer domainId, String userName, String email) {
 		AONContext ctx = null;
@@ -501,17 +490,6 @@ public class AON {
 	// ********************************************
 
 	// --------------------- DOMAIN
-
-	public static Domain getDomain(String token, Integer domainId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(token);
-			return getCommon().getDomain(ctx, domainId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 	
 	public static Domain getDomain(String domainName, Integer domainId,
 			String user) {

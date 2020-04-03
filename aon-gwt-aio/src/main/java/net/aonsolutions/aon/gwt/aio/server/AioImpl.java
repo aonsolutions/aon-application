@@ -18,15 +18,14 @@ public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 
 	private static final long serialVersionUID = 1L;
 
-	public AonData getAonData(String token, String domainId){
-		Domain domain = AON.getDomain(token, Integer.parseInt(domainId));
-		User user = AON.getUser(token);
-		Integer operator = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), 
-				f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user.getId()))).getId();
+	public AonData getAonData(String domainName, String domainId){
+		Domain domain = AON.getDomain(domainName, Integer.parseInt(domainId), "");
+		User user = new User().setLogin("");
+//		Integer operator = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), 
+//				f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user.getId()))).getId();
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
-				.setDomain(domain)
-				.setUserOperator(operator);
+				.setDomain(domain);
 	}
 	
 	public AonData getAonData(String domainName, Integer domainId, String login){

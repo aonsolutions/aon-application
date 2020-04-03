@@ -104,13 +104,6 @@ class AonDesktop extends HTMLElement {
 					margin: 20px;
 				}
 
-				.demo-card-wide > .mdl-card__title {
-
-				}
-				.demo-card-wide > .mdl-card__menu {
-
-				}
-
 				.dropzone {
 					min-height: 100px;
 					height: 100px;

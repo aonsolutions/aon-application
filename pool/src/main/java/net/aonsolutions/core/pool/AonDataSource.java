@@ -129,7 +129,7 @@ public class AonDataSource {
 		
 	}
 	
-	protected Connection getDatabaseConnection(String database) throws AonConnectionException {
+	public Connection getDatabaseConnection(String database) throws AonConnectionException {
 		try {
 			synchronized (INIT_POOL_MONITOR) {
 				if ( !poolsMap.containsKey(database) ) {

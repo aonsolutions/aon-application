@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -20,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonConnection;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDatabaseUtil;
@@ -73,18 +76,41 @@ public class AONContext {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}
+	
+	public static AONContext getAONContext(String schema) {
+		try {
+			return new AONContext(AonDataSource.getInstance().getDatabaseConnection(schema));
+		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		}
+	}
+	
+	public static AONContext getAONContext(AonConnection aonConnection) {
+		try {
+			return new AONContext(AonDataSource.getInstance().getDatabaseConnection(aonConnection.getSchema()), 
+					aonConnection.getDomains().toArray(new Integer[aonConnection.getDomains().size()]),
+					aonConnection.getUsers().toArray(new Integer[aonConnection.getUsers().size()]));
+		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		}
+	}
 
-	public static AONContext getAONContext(String token) {
-		JSONObject json = SECURITY.decodeJWT(token);	
-		JSONArray domains = json.getJSONArray("domains");
-		JSONArray users = json.getJSONArray("users");
-		Integer[] dArray = new Integer[domains.length()];
-		domains.toList().toArray(dArray);
-		System.out.println(dArray);
-		Integer[] uArray = new Integer[users.length()];
-		users.toList().toArray(uArray);
-		System.out.println(uArray);
-		return getAONContext(dArray, uArray);
+	public static LinkedList<AonConnection> getAonConnections(String token) {
+		JSONArray json = SECURITY.decodeJWT(token);
+		LinkedList<AonConnection> list = new LinkedList<>();
+		json.forEach(r -> list.add(AonConnection.parse((JSONObject) r)));
+		return list;
+	}
+	
+	public static AonConnection getAonConnection(String token, String domainName) {
+		try {
+			ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
+			String schema = ci.getDomainDatabase(domainName);
+			return getAonConnections(token).stream().filter(ac -> ac.getSchema().equals(schema))
+					.findFirst().orElse(new AonConnection());
+		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		}
 	}
 	
 	public static AONContext getAONContext(String domainName, int domainId, String user) {
@@ -99,6 +125,7 @@ public class AONContext {
 	public static AONContext getAONContext(Integer[] domains, Integer[] users) {
 		try {
 			ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+			connectionInfo.getSchemas();
 			String domain = connectionInfo.getSchemaFirstDomain("pro-aonsolutions-net");
 			
 			return new AONContext(AonDataSource.getInstance().getConnection(domain)
@@ -108,14 +135,15 @@ public class AONContext {
 		}
 	}
 	
-	public static AONContext getAONContext() {
+	public static List<String> getSchemas() {
+		ConnectionInfo connectionInfo = null;
 		try {
-			ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
-			String domain = connectionInfo.getSchemaFirstDomain("pro-aonsolutions-net");
-			
-			return new AONContext(AonDataSource.getInstance().getConnection(domain));
+			connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
+			return  connectionInfo.getSchemas();
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
+		} finally {
+			// TODO CLOSE!!!
 		}
 	}
 	

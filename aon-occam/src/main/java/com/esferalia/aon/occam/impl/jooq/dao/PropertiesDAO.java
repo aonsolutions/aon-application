@@ -49,6 +49,7 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -103,6 +104,7 @@ import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
@@ -146,6 +148,7 @@ import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
@@ -1458,6 +1461,30 @@ public class PropertiesDAO {
 		@Override public Property<String> getAttributeProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.ATTRIBUTE);}
 		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.VALUE);}
 		@Override public Property<Date> getValueDate() {return new FilterDAO.PropertyDAO<>(ITEM_ADDINFO.VALUE_DATE);}
+	}
+	
+	protected static class UserPropertiesDAO implements UserProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, UserFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(UserFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(USER.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(USER.NAME);}
+		@Override public Property<String> getLoginProperty() {return new FilterDAO.PropertyDAO<>(USER.LOGIN);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(USER.ACTIVE);}
+		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(USER.ENTERPRISE);}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(USER.REGISTRY);}
+
 	}
 	
 }

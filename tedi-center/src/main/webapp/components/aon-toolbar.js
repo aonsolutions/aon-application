@@ -29,7 +29,7 @@
 		</header>
 	  `;
 	  
-	class TediConfigurationToolbar extends HTMLElement {
+	class AonConfigurationToolbar extends HTMLElement {
 		
 		
 		constructor () {
@@ -44,6 +44,6 @@
 		}
 	}
 
-	window.customElements.define('tedi-configuration-toolbar', TediConfigurationToolbar);
+	window.customElements.define('aon-configuration-toolbar',  AonConfigurationToolbar);
 	
 })();	

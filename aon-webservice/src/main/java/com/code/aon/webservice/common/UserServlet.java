@@ -48,12 +48,12 @@ public class UserServlet extends HttpServlet{
 		LOGGER.info("User Servlet - GET METHOD");
 		String token = req.getHeader("session_id");
 		Integer domainId = Integer.parseInt(req.getHeader("domain_id"));
+		String domainName = req.getHeader("domain_name");
 		
-		Domain domain = AON.getDomain(token, domainId);
-		User user = AON.getUser(token);
+		Domain domain = AON.getDomain(domainName, domainId, "");
 		
 		JSONArray arr = new JSONArray();
-		AON.getUsers(domain.getId(), domain.getName(), user.getLogin()).stream().forEach(u -> {
+		AON.getUsers(domain.getId(), domain.getName(), "").stream().forEach(u -> {
 			arr.put(ToJSON.userToJSON(u));
 		});
 		

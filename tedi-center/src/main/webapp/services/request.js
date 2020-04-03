@@ -1,6 +1,6 @@
 	window.request = request;
 	window.requestFile = requestFile;
-	
+
 	function requestFile(url, token, formData){
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', "/tedi-center" + url, true);
@@ -9,7 +9,7 @@
 		xhr.setRequestHeader('domain_id', domainId);
 		xhr.send(formData);
 	}
-	
+
 	function request(method, url, token, sendData, fn){
 		let xhr = new XMLHttpRequest();
 		xhr.open(method, "/tedi-center" + url);
@@ -27,7 +27,7 @@
 				fn(xhr.response);
 			}
 		};
-	
+
 		xhr.onprogress = function(event) {
 			if (event.lengthComputable) {
 				console.log(`Received ${event.loaded} of ${event.total} bytes`);
@@ -35,7 +35,7 @@
 				console.log(`Received ${event.loaded} bytes`); // no Content-Length
 			}
 		};
-		
+
 		xhr.onerror = function() {
 			console.log("Request failed");
 		};

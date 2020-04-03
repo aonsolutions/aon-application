@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupPropertie
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.WarehouseTransferProperties;
@@ -508,5 +509,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface MailTemplateFilter{
 		Filter filter(MailTemplateProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface UserFilter{
+		Filter filter(UserProperties properties);
 	}
 }

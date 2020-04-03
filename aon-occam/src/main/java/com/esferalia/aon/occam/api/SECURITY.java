@@ -1,6 +1,6 @@
 package com.esferalia.aon.occam.api;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -23,9 +23,9 @@ public class SECURITY {
 		}
 	}
 	
-	public static JSONObject decodeJWT(String token) {
+	public static JSONArray decodeJWT(String token) {
 		DecodedJWT jwt = JWT.decode(token);
-		return new JSONObject(jwt.getSubject());
+		return new JSONArray(jwt.getSubject());
 	}
 
 }

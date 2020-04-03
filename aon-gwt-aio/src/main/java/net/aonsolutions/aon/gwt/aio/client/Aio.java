@@ -43,6 +43,11 @@ public class Aio implements EntryPoint {
 		return $wnd.localStorage.getItem("domain_id");
 	}-*/;
 	
+	public static native String getDomainName()
+	/*-{
+		return $wnd.localStorage.getItem("domain_name");
+	}-*/;
+	
 	public static native String getCurrentDomainName()
 	/*-{
 		return $wnd.getCurrentDomainName();
@@ -70,7 +75,7 @@ public class Aio implements EntryPoint {
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);		
 		if(getToken() != null) {
-			impl.getAonData(getToken(), getDomainId(), new AsyncCallback<AonData>() {
+			impl.getAonData(getDomainName(), getDomainId(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {
 					selection(entryPoint, result);

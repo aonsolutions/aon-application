@@ -13,6 +13,7 @@ public class Company extends Registry implements Serializable {
 	private String name;
 	
     private Integer domain;
+    private String domainName;
     private boolean active;
 	private boolean surcharge;
 	private boolean withholding;
@@ -79,6 +80,15 @@ public class Company extends Registry implements Serializable {
 
 	public Company setDomain(Integer domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public Company setDomainName(String domainName) {
+		this.domainName = domainName;
 		return this;
 	}
 

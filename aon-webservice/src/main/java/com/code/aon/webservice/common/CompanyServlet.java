@@ -12,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Company;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/company/*"})
@@ -25,8 +25,8 @@ public class CompanyServlet extends HttpServlet{
 		LOGGER.info("AON COMPANY SERVLET - GET METHOD");
 		String token = req.getHeader("session_id");
 		JSONArray jsArray = new JSONArray();
-		AON_SOLUTIONS.getDomainStream(token).forEach(
-			domain -> jsArray.put(domain2json(domain)));
+		AON_SOLUTIONS.getCompanyStream(token).forEach(
+			domain -> jsArray.put(company2json(domain)));
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, jsArray, new JSONObject());	
 	}
@@ -36,14 +36,12 @@ public class CompanyServlet extends HttpServlet{
 		LOGGER.info("COMPANY SERVLET - POST METHOD");
 	}
 	
-	private JSONObject domain2json(Domain domain) {
+	private JSONObject company2json(Company company) {
 		return new JSONObject()
-				.put("id", domain.getId())
-				.put("name", domain.getName())
-				.put("description", domain.getDescription())
-				.put("type", domain.getDomainType().ordinal())
-				.put("parent", domain.getParentId())
-				.put("scope", domain.getScope());
+				.put("id", company.getDomain())
+				.put("domain", company.getDomainName())
+				.put("name", company.getName())
+				.put("document", company.getDocument());
 	}
 	
 }

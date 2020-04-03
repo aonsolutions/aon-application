@@ -216,7 +216,18 @@ public class CompanyDAO {
 	
 	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){
 		return COMPANY_PROPERTIES.build(ctx.getDslContext().select()
-				.from(COMPANY).join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID)), filter)
+				.from(COMPANY).join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+				.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN)), filter)
+			.fetch().stream().map(new CompanyFiller());
+	}
+	
+	public static Stream<Company> getCompanyStream(AONContext ctx){
+		return ctx.getDslContext().select()
+			.from(COMPANY)
+			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+			.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+			.where(DOMAIN.ID.in(ctx.getDomains())
+				.or(DOMAIN.PARENT.in(ctx.getDomains())))
 			.fetch().stream().map(new CompanyFiller());
 	}
 

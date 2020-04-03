@@ -1,22 +1,9 @@
-import './request.js';
 import './aon-user.js';
 import './aon-toolbar.js';
 
 
 function getUsers(){
 	request('GET', '/ms/user', localStorage.getItem('session_id'), undefined, function (users) {
-		let header = [
-			{title: 'Nombre', attribute: 'name', func: (user) => createUser(user)},
-			{title: 'Usuario', attribute: 'login', func: (user) => createUser(user)}
-		];
-		let table = createTable(header, JSON.parse(users));
-		let content = document.getElementById("aon-configuration-content");
-		content.appendChild(table);
-	});
-}
-
-function getCompanies(){
-	request('GET', '/ms/company', localStorage.getItem('session_id'), undefined, function (users) {
 		let header = [
 			{title: 'Nombre', attribute: 'name', func: (user) => createUser(user)},
 			{title: 'Usuario', attribute: 'login', func: (user) => createUser(user)}
@@ -94,60 +81,6 @@ class AonConfiguration extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-
-			<style>
-				.aon-toolbar {
-					height:40px;
-					padding-left:16px;
-					border-top: 0px none;
-					border-bottom: 1px solid rgb(221, 221, 221);
-				}
-
-				.aon-table {
-					width: 100%;
-					border: 0px;
-				}
-
-				.aon-table-th {
-					text-align: center !important;
-				}
-
-				.sidenav {
-					height: 100%;
-					width: 0px;
-					position: fixed;
-					z-index: 1;
-					top: 105px;
-					left: 0;
-					background-color: #fff;
-					border-right: 1px solid #ddd;
-					overflow-x: hidden;
-				}
-
-				.aon-content {
-					display: block;
-					transition: 0.5s;
-				}
-
-				.aon-clip {
-					clip: rect(0px, 250px, 112px, 0px) !important;
-					opacity: 1;
-					z-index: 1;
-					width: 100%;
-				}
-
-				.aon-opacity {
-					opacity: 1 !important;
-					width: 100%;
-				}
-
-				.aon-menu-item-span {
-					position: absolute;
-					margin-left: 10px;
-					margin-top: 2px;
-					font-size: 16px;
-				}
-			</style>
 
 			<!-- AON CONFIGURATION TOOLBAR -->
 			<aon-configuration-toolbar> </aon-configuration-toolbar>
