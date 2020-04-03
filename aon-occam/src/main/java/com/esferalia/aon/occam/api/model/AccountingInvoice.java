@@ -32,6 +32,10 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private LinkedList<AccountEntry> accountEntries;
 	private boolean prepayments;
 	
+	private Integer payAccountId;
+	private String payAccountCode;
+	private String payAccountDescription;
+	
 	public boolean isTediParsed() {
 		return tediParsed;
 	}
@@ -245,4 +249,27 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 		this.prepayments = prepayments;
 		return this;
 	}
+	public Integer getPayAccountId() {
+		return payAccountId;
+	}
+	public AccountingInvoice setPayAccountId(Integer payAccountId) {
+		this.payAccountId = payAccountId;
+		return this;
+	}
+	public String getPayAccountCode() {
+		return payAccountCode;
+	}
+	public AccountingInvoice setPayAccountCode(String payAccountCode) {
+		this.payAccountCode = payAccountCode;
+		return this;
+	}
+	public String getPayAccountDescription() {
+		return payAccountDescription;
+	}
+	public AccountingInvoice setPayAccountDescription(String payAccountDescription) {
+		this.payAccountDescription = payAccountDescription;
+		return this;
+	}
+	
+	
 }

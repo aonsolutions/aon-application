@@ -46,7 +46,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
@@ -328,7 +328,7 @@ public class AccountingImpl implements IAccounting {
 	}
 	@Override
 	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params, int offset, int limit) {
-		return FinanceDAO.accountFetch(ctx, 
+		return FinanceEntryDAO.accountFetch(ctx, 
 					p -> FinanceUtils.getPendingFilter(p, params) 
 					,offset,limit)
 				;
@@ -336,12 +336,12 @@ public class AccountingImpl implements IAccounting {
 	@Override
 	public FinanceEntry save(AONContext ctx, FinanceEntry financeEntry) {
 		return ctx.getDslContext().transactionResult(
-			configuration -> FinanceDAO.save(ctx, financeEntry)
+			configuration -> FinanceEntryDAO.save(ctx, financeEntry)
 		 );		
 	}
 	@Override
 	public FinanceEntry getFinanceEntry(AONContext ctx, Integer accountEntry) {
-		return FinanceDAO.getFinanceEntry(ctx, accountEntry);
+		return FinanceEntryDAO.getFinanceEntry(ctx, accountEntry);
 	}
 	
 	// Accounting Utilities

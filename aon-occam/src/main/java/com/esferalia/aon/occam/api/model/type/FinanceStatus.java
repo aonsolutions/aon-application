@@ -2,13 +2,16 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
+
 public enum FinanceStatus implements Serializable {
 
-	PENDING("Pendiente"),
-	BATCHED("Remesado"),
-	RETURNED("Devuelto"),
-	PAID("Pagado"),
-	SETTLED("Saldado");
+	PENDING("Pendiente"){ @Override public void visit(IFinanceStatusVisitor visitor) { visitor.visitPending();} },
+	BATCHED("Remesado" ){ @Override public void visit(IFinanceStatusVisitor visitor) { visitor.visitBatched();} },
+	RETURNED("Devuelto"){ @Override public void visit(IFinanceStatusVisitor visitor) { visitor.visitReturned();} },
+	PAID("Pagado"      ){ @Override public void visit(IFinanceStatusVisitor visitor) { visitor.visitPaid();} },
+	SETTLED("Saldado"  ){ @Override public void visit(IFinanceStatusVisitor visitor) { visitor.visitSettled();} },
+	;
 
 	private String description;
 	
@@ -22,6 +25,9 @@ public enum FinanceStatus implements Serializable {
 	
 	public byte value() {
 		return (byte) this.ordinal();
+	}
+
+	public void visit(IFinanceStatusVisitor visitor) {
 	}
 
 	public static FinanceStatus safeValueOf( Byte i ) {

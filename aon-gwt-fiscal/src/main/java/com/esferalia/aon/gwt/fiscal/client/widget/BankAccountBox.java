@@ -23,26 +23,6 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class BankAccountBox extends SimplePanel implements HasValueChangeHandlers<BankAccount>, HasEnabled {
 	
-	public static class BankAccountBoxOptions {
-		private BankAccount bankAccount;
-		private boolean aliasEditable;
-		
-		public boolean isAliasEditable() {
-			return aliasEditable;
-		}
-		public BankAccountBoxOptions setAliasEditable(boolean aliasEditable) {
-			this.aliasEditable = aliasEditable;
-			return this;
-		}
-		
-		public BankAccount getBankAccount() {
-			return bankAccount;
-		}
-		public BankAccountBoxOptions setBankAccount(BankAccount bankAccount) {
-			this.bankAccount = bankAccount;			
-			return this;
-		}
-	}
 	private Country2ListBox countryBox = new Country2ListBox();
 	private TextBox check = new TextBox();
 	
@@ -67,11 +47,12 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 	private BankAccount bankAccount;
 	private boolean ibanMode = true;
 	
-	public BankAccountBox(BankAccountBoxOptions options) {
-		bankAccount = options.getBankAccount();
-		if (bankAccount == null) {
-			bankAccount = new BankAccount();
-		}
+	public BankAccountBox() {
+		this(null);
+	}
+	
+	public BankAccountBox(BankAccount ba) {
+		bankAccount = ba;
 		if (bankAccount.getCountry() == null) {
 			bankAccount.setCountry(Country.ES);
 		}

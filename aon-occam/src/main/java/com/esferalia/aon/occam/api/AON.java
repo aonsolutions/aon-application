@@ -5825,11 +5825,22 @@ public class AON {
 		}
 	}
 
-	public static Finance payFinance(String domainName, int domainId, String user, Finance finance) {
+	public static FinanceTracking payFinance(String domainName, int domainId, String user, FinanceTracking finance) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
 			return getFinance().payFinance(ctx, finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static FinanceTracking returnFinance(String domainName, int domainId, String user, FinanceTracking tracking) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, user);
+			return getFinance().returnFinance(ctx, tracking);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -5857,4 +5868,5 @@ public class AON {
 				ctx.close();
 		}
 	}
+
 }

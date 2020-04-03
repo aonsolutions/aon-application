@@ -34,7 +34,22 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		AON.start();
 		fsa.getInvoiceNextNumber(domainName,domainId,user, types, series, new AsyncCallbackWrapper<Integer>(callback));
 	}
+	
+	// --------------------------------------------------------------- REGISTRY BANKS
+	@Override
+	public void getCompanyBanks(String domainName, int domainId, String user,
+			AsyncCallback<LinkedList<RegistryBank>> callback) {
+		AON.start();
+		fsa.getCompanyBanks(domainName, domainId, user, new AsyncCallbackWrapper<LinkedList<RegistryBank>>(callback));
+	}
 
+	@Override
+	public void getRegistryBanks(String domainName, int domainId, String user, Integer registry,
+			AsyncCallback<LinkedList<RegistryBank>> callback) {
+		AON.start();
+		fsa.getRegistryBanks(domainName, domainId, user, registry, new AsyncCallbackWrapper<LinkedList<RegistryBank>>(callback));
+	}
+	
 	// --------------------------------------------------------------- FINANCE
 	@Override
 	public void getFinancesForInvoice(String domainName, int domainId, String user, Invoice invoice, AsyncCallback<LinkedList<Finance>> callback) {
@@ -62,24 +77,17 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 	}
 
 	@Override
-	public void payFinance(String domainName, int domainId, String user, Finance finance,
-			AsyncCallback<Finance> callback) {
+	public void payFinance(String domainName, int domainId, String user, FinanceTracking finance,
+			AsyncCallback<FinanceTracking> callback) {
 		AON.start();
-		fsa.payFinance(domainName, domainId, user, finance, new AsyncCallbackWrapper<Finance>(callback));
+		fsa.payFinance(domainName, domainId, user, finance, new AsyncCallbackWrapper<FinanceTracking>(callback));
 	}
 
 	@Override
-	public void getCompanyBanks(String domainName, int domainId, String user,
-			AsyncCallback<LinkedList<RegistryBank>> callback) {
+	public void returnFinance(String domainName, int domainId, String user, FinanceTracking finance,
+			AsyncCallback<FinanceTracking> callback) {
 		AON.start();
-		fsa.getCompanyBanks(domainName, domainId, user, new AsyncCallbackWrapper<LinkedList<RegistryBank>>(callback));
-	}
-
-	@Override
-	public void getRegistryBanks(String domainName, int domainId, String user, Integer registry,
-			AsyncCallback<LinkedList<RegistryBank>> callback) {
-		AON.start();
-		fsa.getRegistryBanks(domainName, domainId, user, registry, new AsyncCallbackWrapper<LinkedList<RegistryBank>>(callback));
+		fsa.returnFinance(domainName, domainId, user, finance, new AsyncCallbackWrapper<FinanceTracking>(callback));
 	}
 
 	

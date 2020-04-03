@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -1149,10 +1150,11 @@ public class DeliveryImport {
 				}
 
 				if(r.getCuentaBanco() != null) {
+					BankAccount bankAccount = new BankAccount(r.getCuentaBanco()); 
 					RegistryBank rbank = new RegistryBank()
 							.setDomain(domain.getId())
 							.setRegistry(registry.getId())
-							.setBankAccount(r.getCuentaBanco())
+							.setBankAccount(bankAccount)
 							.setBic(r.getBic())
 							.setSuffix("")
 							.setAlias(r.getBanco())

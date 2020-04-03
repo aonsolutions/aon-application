@@ -17,7 +17,6 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
-import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
@@ -45,18 +44,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class FinancePayPanel extends SimplePanel implements Focusable {
+public class FinanceReturnPanel extends SimplePanel implements Focusable {
 	
-	public static interface FinancePayPanelCallback {
+	public static interface FinanceReturnPanelCallback {
 		void onAccept(FinanceTracking tracking);
 		void onCancel();
 	}
 
 	private static FinanceServiceAsync FINANCE_SERVICE;
-	
-	private static enum PANELS {
-		BANK, CASH, OTHER 
-	}
 	
 	private DeckPanel panels = new DeckPanel();
 	
@@ -64,7 +59,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 	private int domain;
 	private String user;
 	private AonConfiguration config;
-	private final DateBoxEx dueDate = new DateBoxEx();
+	private final DateBoxEx returnDate = new DateBoxEx();
 	private ListBox cashListBox;
 	private ListBox otherListBox;
 	private InlineLabel registryBankIcon = new InlineLabel();
@@ -72,7 +67,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 	private Label bankAccountLabel = new Label();
 	private BankAccountBox bankAccountBox;
 	private AccountBox payAccount;
-	private ListBox payMethodBox;
+	private ListBox payMethodTypeBox;
 	private DoubleBox amount;
 	private FinanceTracking tracking;	
 	
@@ -80,26 +75,26 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 			, final int domain
 			, final String user
 			, final AonConfiguration config
-			, final Finance finance
-			, final FinancePayPanelCallback callback) {
+			, final Finance finance 
+			, final FinanceReturnPanelCallback callback) {
 		setWidth("700px");
 		setHeight("200px");
 		
 		this.tracking = new FinanceTracking()
 				.setDomain(domain)
 				.setFinance(finance)
-				.setTrackingDate( finance.getDueDate() )
+				.setTrackingDate( new Date() )
 				.setAmount(finance.getAmount() );
 		this.domainName = domainName;
 		this.domain = domain;
 		this.user = user;
 		this.config = config;
+		this.payMethodTypeBox  = new ListBox();
 		this.cashListBox = new ListBox();
 		this.otherListBox = new ListBox();
 		this.registryBankListBox = new RegistryBankListBox();
 		this.bankAccountBox = new BankAccountBox( tracking.getFinance().getBankAccount() );
 		this.payAccount = new AccountBox(domainName,domain, user);
-		this.payMethodBox = new ListBox();
 		this.amount = new DoubleBox();
 		
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
@@ -130,43 +125,38 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.payDate()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		dueDate.setValue(tracking.getTrackingDate());
-		dueDate.getTextBox().addKeyUpHandler( keyUpHandler);
-		dueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+		returnDate.setValue(finance.getDueDate());
+		returnDate.getTextBox().addKeyUpHandler( keyUpHandler);
+		returnDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				tracking.setTrackingDate(event.getValue());
 			}
 		});
-		table.setWidget(row,1,dueDate);
+		table.setWidget(row,1,returnDate);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
-		table.setWidget(row,0,new InlineLabel(AON.MSG.payMethod()));
+		table.setWidget(row,0,new InlineLabel(AON.MSG.deposit()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		payMethodBox.addKeyUpHandler(keyUpHandler);
-		payMethodBox.addItem(" ---- ", "");
-		int i = 1;
-		for (PayMethod pm : config.getPayMethods()) {
-			payMethodBox.addItem(pm.getName(), AonNumberUtils.toString( pm.getId()));
-			if ( AonNumberUtils.equals(pm.getId(), tracking.getFinance().getPayMethod()) ) {
-				payMethodBox.setSelectedIndex(i);
-			}
-			i++;
+		payMethodTypeBox.addKeyUpHandler(keyUpHandler);
+		for (PayMethodType payMethodType : PayMethodType.values()) {
+			payMethodTypeBox.addItem(payMethodType.getDescription());
 		}
-		payMethodBox.addChangeHandler(new ChangeHandler() {
+		if (finance.getPayMethodType() != null) {
+			payMethodTypeBox.setSelectedIndex(finance.getPayMethodType().ordinal());
+		} else {
+			payMethodTypeBox.setSelectedIndex(PayMethodType.NEGOTIABLE_DOCUMENT.ordinal());
+		}
+		payMethodTypeBox.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				int idx = payMethodBox.getSelectedIndex();
-				idx = idx - 1;
-				if (idx > 0 ) {
-					PayMethod payMethod = config.getPayMethods().get(idx);
-					refreshBankAccountPanel(payMethod.getType());
-				}
+				PayMethodType pm = PayMethodType.values()[payMethodTypeBox.getSelectedIndex()];
+				refreshBankAccountPanel( pm );
 			}
 		});
-		table.setWidget(row,1,payMethodBox);
+		table.setWidget(row,1,payMethodTypeBox);
 		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 		
@@ -191,6 +181,25 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 			public void onChange(ChangeEvent event) {
 				RegistryBank rbank = registryBankListBox.getValue();
 				if (rbank == null) {
+					finance.setBankAccount( null );
+					finance.setBankAlias(null);
+					finance.setBic(null);
+					bankAccountBox.setValue(null);
+				} else {
+					finance.setBankAccount( rbank.getBankAccount()  );
+					finance.setBankAlias(rbank.getAlias());
+					finance.setBic(rbank.getBic());
+					bankAccountBox.setValue(rbank.getBankAccount() );
+					payAccount.setValue(rbank.getAccount(),rbank.getAccountCode(),rbank.getAccountDescription(),true);
+				}
+			}
+		});
+		registryBankListBox.addChangeHandler( new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				RegistryBank rbank = registryBankListBox.getValue();
+				if (rbank == null) {
 					tracking.setRegistryBank(null);
 					bankAccountBox.setValue(null);
 				} else {
@@ -200,23 +209,14 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 				}
 			}
 		});
-//		bankAccountBox.addValueChangeHandler( new ValueChangeHandler<BankAccount>() {
-//			
-//			@Override
-//			public void onValueChange(ValueChangeEvent<BankAccount> event) {
-//				finance.setBankAccount(event.getValue());
-//			}
-//		});
 		banksPanel.add(bankAccountBox);
 		
 		FlowPanel cashPanel = new FlowPanel();
 		cashListBox.addItem(" ---- ", "");
-		i = 1;
 		for (PayMethodTypeDetail pm : config.getPayMethodTypeDetails()) {
 			if ( pm.getType() == PayMethodType.CASH_BASIS) {
 				cashListBox.addItem(pm.getDescription(), AonNumberUtils.toString( pm.getId()));
 			}
-			i++;
 		}
 		cashListBox.addKeyUpHandler(keyUpHandler);
 		cashListBox.addChangeHandler(new ChangeHandler() {
@@ -243,12 +243,10 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 		
 		FlowPanel otherPanel = new FlowPanel();
 		otherListBox.addItem(" ---- ", "");
-		i = 1;
 		for (PayMethodTypeDetail pm : config.getPayMethodTypeDetails()) {
 			if ( pm.getType() == PayMethodType.OTHER) {
 				otherListBox.addItem(pm.getDescription(), AonNumberUtils.toString( pm.getId()));
 			}
-			i++;
 		}
 		otherListBox.addKeyUpHandler(keyUpHandler);
 		otherListBox.addChangeHandler(new ChangeHandler() {
@@ -282,7 +280,7 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 
 		table.setWidget(row,0,new InlineLabel(AON.MSG.account()));
 		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
-		payAccount.setAccount(tracking.getPayAccount());
+		payAccount.setAccount( tracking.getPayAccount());
 		payAccount.addValueChangeHandler( new ValueChangeHandler<String>() {
 			
 			@Override
@@ -342,12 +340,9 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				if (tracking.getPayAccount() == null | tracking.getPayAccount().getId() == null) {
+				if (tracking.getPayAccount() == null || tracking.getPayAccount().getId() == null ) {
 					MessageDialog.error("No se ha indicado la cuenta contable del banco o caja.");
 					payAccount.setFocus(true);
-				} else if (finance.getPayMethod() == null) { 
-					MessageDialog.error("No se ha indicado forma de pago.");
-					payMethodBox.setFocus(true);
 				} else {
 					okButton.setEnabled(false);
 					callback.onAccept(tracking);
@@ -373,14 +368,20 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
     	buttons.add(cancelButton);
     	rootPanel.add(buttons);
 		setWidget(rootPanel);
-		dueDate.setFocus(true);
+		returnDate.setFocus(true);
+	}
+	private int getPanelIndex(final PayMethodType payMethodType) {
+		if (payMethodType == PayMethodType.CASH_BASIS) return 1;
+		if (payMethodType == PayMethodType.OTHER) return 2;
+		return 0;
 	}
 	
 	private void refreshBankAccountPanel(final PayMethodType payMethodType) {
+		
 		final Finance finance = tracking.getFinance();
+		panels.showWidget( getPanelIndex(payMethodType) );
 		if (payMethodType == PayMethodType.CASH_BASIS) {
 			bankAccountLabel.setText( PayMethodType.CASH_BASIS.getDescription() );
-			panels.showWidget(PANELS.CASH.ordinal());
 			registryBankListBox.setValue(null);
 			bankAccountBox.setValue(null);
 			cashListBox.setSelectedIndex(0);
@@ -393,12 +394,10 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 			registryBankListBox.setValue(null); 
 			bankAccountBox.setValue(null);
 			otherListBox.setSelectedIndex(0);
-			panels.showWidget(PANELS.OTHER.ordinal());
 			payAccount.setAccount(null);
 			tracking.setRegistryBank(null);
 			tracking.setPayAccount(null);
 		} else {
-			panels.showWidget(PANELS.BANK.ordinal());
 			bankAccountLabel.setText( AON.MSG.bankAccount() );
 			boolean mustShowRegistryBanks = false;
 			tracking.setRegistryBank(null);
@@ -478,24 +477,24 @@ public class FinancePayPanel extends SimplePanel implements Focusable {
 
 	@Override
 	public int getTabIndex() {
-		return dueDate.getTabIndex();
+		return returnDate.getTabIndex();
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-		dueDate.setAccessKey(key);
+		returnDate.setAccessKey(key);
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
-		dueDate.getTextBox().selectAll();
-		dueDate.setFocus(focused);
-		dueDate.hideDatePicker();
+		returnDate.getTextBox().selectAll();
+		returnDate.setFocus(focused);
+		returnDate.hideDatePicker();
 	}
 
 	@Override
 	public void setTabIndex(int index) {
-		dueDate.setTabIndex(index);
+		returnDate.setTabIndex(index);
 	}
 }
 

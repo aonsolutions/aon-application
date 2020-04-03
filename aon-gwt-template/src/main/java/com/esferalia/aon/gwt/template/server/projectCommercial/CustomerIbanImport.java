@@ -18,6 +18,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
@@ -174,10 +175,11 @@ public class CustomerIbanImport {
 			if(c != null && c.getId() != null) {
 				if(ci.getIban() != null && !"".equals(ci.getIban())) {
 					BankBic11 bbc = BankBic11.getBankBic11(ci.getIban().substring(4,8));
+					BankAccount bankAccount = new BankAccount(ci.getIban());
 					RegistryBank rbank = new RegistryBank()
 							.setDomain(domain.getId())
 							.setRegistry(c.getId())
-							.setBankAccount(ci.getIban())
+							.setBankAccount(bankAccount)
 							.setActive(true)
 							.setBic(bbc != null && bbc.getBic() != null ? bbc.getBic() : "");
 					rbank = AON.insertRBank(domain.getName(), domain.getId(), user.getLogin(), rbank);

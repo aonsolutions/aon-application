@@ -602,7 +602,7 @@ public class AccountEntryDAO {
 			}
 
 			private void removeFinance(AccountEntry entry) {
-				FinanceDAO.deleteAccountEntryFinanceTrackings(ctx, entry.getId());
+				FinanceEntryDAO.deleteAccountEntryFinanceTrackings(ctx, entry.getId());
 			}
 
 			

@@ -56,10 +56,6 @@ public class Finance implements Serializable, HasAudit {
 	private Integer sourceId;
 	private Integer financeGroup;
 	
-	private Integer payAccountId;
-	private String payAccountCode;
-	private String payAccountDescription;
-	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -349,6 +345,10 @@ public class Finance implements Serializable, HasAudit {
 		return FinanceStatus.PAID == getFinanceStatus();
 	}
 
+	public boolean isBatched() {
+		return FinanceStatus.BATCHED == getFinanceStatus();
+	}
+
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -426,31 +426,6 @@ public class Finance implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public Integer getPayAccountId() {
-		return payAccountId;
-	}
-	public Finance setPayAccountId(Integer payAccountId) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payAccountId, payAccountId) );
-		this.payAccountId = payAccountId;
-		return this;
-	}
-	public String getPayAccountCode() {
-		return payAccountCode;
-	}
-	public Finance setPayAccountCode(String payAccountCode) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payAccountCode, payAccountCode) );
-		this.payAccountCode = payAccountCode;
-		return this;
-	}
-	public String getPayAccountDescription() {
-		return payAccountDescription;
-	}
-	public Finance setPayAccountDescription(String payAccountDescription) {
-		this.setDirty( isDirty()?true:AonUtils.notEquals(this.payAccountDescription, payAccountDescription) );
-		this.payAccountDescription = payAccountDescription;
-		return this;
-	}
-
 	public PayMethodType getPayMethodType() {
 		return payMethodType;
 	}

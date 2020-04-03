@@ -18,8 +18,11 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel.FinancePayPanelCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceReturnPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceReturnPanel.FinanceReturnPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoicePanel.InvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
@@ -81,13 +84,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 	}
 	
 	private void updateAndRefresh(IInvoicePanelCallback callback, Finance fin) {
-		for (int i = 0; i < callback.getInvoice().getInvoice().getFinances().size(); i++) {
-			Finance f = callback.getInvoice().getInvoice().getFinances().get(i);
-			if (AonNumberUtils.equals(f.getId() , fin.getId())) {
-				callback.getInvoice().getInvoice().getFinances().set(i, fin);		
-			}
-		}
-		paint(callback); 
+		AccountEntrySelectionEvent.fire( InvoiceFinancePanel.this, callback.getInvoice().getAccountEntry(), null);		
 	}
 
 	void paint(IInvoicePanelCallback callback){
@@ -111,6 +108,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			@Override
 			public void onClick(ClickEvent event) {
 				Finance fin = new Finance()
+						.setPayment(!callback.getInvoice().isSales())
 						.setFinanceStatus(FinanceStatus.PENDING);
 				double amount = 0.0;
 				if (callback.getInvoice().getInvoice().getFinances() != null && callback.getInvoice().getInvoice().getFinances().size() > 0) {
@@ -395,11 +393,33 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			tab.getCellFormatter().setStyleName(currentRow, col, AON.AON_CSS.aonPadding2Left());
 			tab.getCellFormatter().addStyleName(currentRow, col, AON.AON_CSS.aonPadding2Right());
 			tab.getCellFormatter().addStyleName(currentRow, col, AON.AON_CSS.aonSimpleBorder());
-			if (finance.isFullPending()) {
-				status.setStyleName(AON.AON_CSS.aonColorRed());
-			} else {
-				status.setStyleName(AON.AON_CSS.aonColorGreen());
-			}
+			finance.getFinanceStatus().visit( new IFinanceStatusVisitor() {
+				@Override
+				public void visitSettled() {
+					status.setStyleName(AON.AON_CSS.aonColoRoyalblue());
+				}
+				
+				@Override
+				public void visitReturned() {
+					status.setStyleName(AON.AON_CSS.aonColorRed());
+					status.addStyleName(AON.AON_CSS.aonBold());
+				}
+				
+				@Override
+				public void visitPending() {
+					status.setStyleName(AON.AON_CSS.aonColorRed());
+				}
+				
+				@Override
+				public void visitPaid() {
+					status.setStyleName(AON.AON_CSS.aonColorGreen());
+				}
+				
+				@Override
+				public void visitBatched() {
+					status.setStyleName(AON.AON_CSS.aonColorGreen());
+				}
+			});
 			++col;
 
 			// **************************************************
@@ -559,7 +579,11 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				payButton.setText(AON.MSG.toPay());
 				payButton.setStyleName(AON.AON_CSS.aonActionButton());
 				final CustomDialog dialog = new CustomDialog();
-				dialog.setCaption(AON.MSG.payFinance());
+				String suffix = ( finance.isPayment()?" [PAGO":" [COBRO");
+				if (callback.getInvoice().isSales()) suffix += "DE UN CLIENTE]";
+				if (callback.getInvoice().isPurchase()) suffix += " A UN PROVEEDOR]";
+				if (callback.getInvoice().isExpenses() || callback.getInvoice().isUndeductible()) suffix += " A UN ACREEDOR]";
+				dialog.setCaption(AON.MSG.payFinance() + suffix );
 				payButton.addClickHandler(new ClickHandler() {
 
 					@Override
@@ -575,13 +599,13 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 									}
 
 									@Override
-									public void onAccept(Finance finance) {
+									public void onAccept(FinanceTracking tracking) {
 										dialog.hide();
 										FINANCE_SERVICE.payFinance(callback.getCurrentDomainName()
 												,callback.getCurrentDomainId()
 												,callback.getCurrentUser()
-												, finance
-												,new AsyncCallback<Finance>() {
+												, tracking
+												,new AsyncCallback<FinanceTracking>() {
 
 													@Override
 													public void onFailure(Throwable caught) {
@@ -589,8 +613,8 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 													}
 
 													@Override
-													public void onSuccess(Finance fin) {
-														updateAndRefresh( callback ,fin );
+													public void onSuccess(FinanceTracking tracking) {
+														updateAndRefresh( callback , tracking.getFinance() );
 													}
 												});
 									}
@@ -700,11 +724,46 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				actionsPanel.add(returnButton);
 				returnButton.setText( AON.MSG.toReturn() );
 				returnButton.setStyleName(AON.AON_CSS.aonActionButton());
+				final CustomDialog dialog = new CustomDialog();
+				dialog.setCaption(AON.MSG.returnFinance());
 				returnButton.addClickHandler(new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						MessageDialog.error("Opci\u00F3n no implementada");
+						FinanceReturnPanel returnPanel = new FinanceReturnPanel();
+						returnPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
+								callback.getCurrentUser(), callback.getConfiguration(), finance,
+								new FinanceReturnPanelCallback() {
+
+									@Override
+									public void onCancel() {
+										dialog.hide();
+									}
+
+									@Override
+									public void onAccept(FinanceTracking tracking) {
+										dialog.hide();
+										FINANCE_SERVICE.returnFinance(callback.getCurrentDomainName()
+												,callback.getCurrentDomainId()
+												,callback.getCurrentUser()
+												, tracking
+												,new AsyncCallback<FinanceTracking>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														MessageDialog.error("Se ha producido un devolver el pagar del vencimiento. ["+caught.getMessage()+"]");
+													}
+
+													@Override
+													public void onSuccess(FinanceTracking tracking) {
+														updateAndRefresh( callback ,tracking.getFinance() );
+													}
+												});
+									}
+								});
+						dialog.setWidget(returnPanel);
+						dialog.center();
+						dialog.show();
 					}
 				});
 			}

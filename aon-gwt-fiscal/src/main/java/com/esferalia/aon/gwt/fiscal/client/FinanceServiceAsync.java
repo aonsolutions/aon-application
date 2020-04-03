@@ -16,15 +16,17 @@ public interface FinanceServiceAsync {
 	void getInvoiceSeries(String domainName, int domainId, String  user, Date from, Date to, boolean taxDate,AsyncCallback<LinkedList<InvoiceSeries>> callback );
 	void getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series, AsyncCallback<Integer> callback);
 	
+	// --------------------------------------------------------------- REGISTRY BANKS
+	void getCompanyBanks(String domainName, int domainId, String user, AsyncCallback<LinkedList<RegistryBank>> callback);
+	void getRegistryBanks(String domainName, int domainId, String user, Integer registry,AsyncCallback<LinkedList<RegistryBank>> callback);
+
 	// --------------------------------------------------------------- FINANCE
 	void getFinancesForInvoice(String domainName, int domainId, String user, Invoice invoice, AsyncCallback<LinkedList<Finance>> callback);
 	void getFinanceTracking(String domainName, int domainId, String user, Integer finance,AsyncCallback<LinkedList<FinanceTracking>> callback);
-	
 	void settleFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback);
 	void undoFinance(String domainName, int domainId, String user, Integer finance, AsyncCallback<Finance> callback);
-	void payFinance(String domainName, int domainId, String user, Finance finance, AsyncCallback<Finance> callback);
-	void getCompanyBanks(String domainName, int domainId, String user, AsyncCallback<LinkedList<RegistryBank>> callback);
-	void getRegistryBanks(String domainName, int domainId, String user, Integer registry,AsyncCallback<LinkedList<RegistryBank>> callback);
+	void payFinance(String domainName, int domainId, String user, FinanceTracking finance, AsyncCallback<FinanceTracking> callback);
+	void returnFinance(String domainName, int domainId, String user, FinanceTracking finance,AsyncCallback<FinanceTracking> callback);
 	
 
 }

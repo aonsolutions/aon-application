@@ -566,12 +566,12 @@ public class InvoiceImport {
 						financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
 					}
 				}
-					
+				
+				ai.setPayAccountId(financeAccount.getId())
+				  .setPayAccountCode(financeAccount.getCode())
+				  .setPayAccountDescription(financeAccount.getDescription());
 				
 				Finance f = new Finance()
-						.setPayAccountCode(financeAccount.getCode())
-						.setPayAccountDescription(financeAccount.getDescription())
-						.setPayAccountId(financeAccount.getId())
 						.setAmount(ai.getInvoice().getTotal())
 						.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
 						.setPayMethod(pm.getId());

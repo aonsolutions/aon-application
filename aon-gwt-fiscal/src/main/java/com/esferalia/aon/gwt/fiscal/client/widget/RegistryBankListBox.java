@@ -40,7 +40,8 @@ public class RegistryBankListBox extends ListBox {
 		if (banks != null) {
 			int i = 1;
 			for (RegistryBank bank : banks ) {
-				if (AonStringUtils.equals(bank.getBankAccount(), bankAccount)) {
+				String ba = bank.getBankAccount() == null?null:bank.getBankAccount().getIban();
+				if (AonStringUtils.equals(bankAccount,ba)) {
 					setSelectedIndex(i);
 				}
 			}

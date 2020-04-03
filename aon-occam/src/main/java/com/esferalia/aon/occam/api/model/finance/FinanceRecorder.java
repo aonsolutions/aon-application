@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -24,13 +25,15 @@ public class FinanceRecorder {
 		void visit( FinanceEntry financeEntry, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map);
 	}
 	private static enum FinanceEntryDetailType implements Serializable {
+		 // COBRO
 		 COLLECTION( new IFinanceVisitor() {
 			@Override
 			public void visit(FinanceEntry financeEntry, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
-				if (!finance.isPayment()) {
+				AccountEntryType entryType = financeEntry.getAccountEntry().getEntryType();
+				if (!finance.isPayment() && entryType != AccountEntryType.RETURNED_COLLECTION ) {
 					AccountEntryDetail detail = map.get(finance.getId());
 					if (detail == null) {
-						String concept = obtainConcept(finance,financeEntry.getManualConcept());
+						String concept = obtainConcept(finance,entryType,financeEntry.getManualConcept());
 						String code = obtainAccountCode(finance);
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
@@ -50,13 +53,42 @@ public class FinanceRecorder {
 			}
 
 	 	})
+		 // DEVOLUCION DE PAGO
+		,RETURNED_COLLECTION( new IFinanceVisitor() {
+			@Override
+			public void visit(FinanceEntry financeEntry, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
+				AccountEntryType entryType = financeEntry.getAccountEntry().getEntryType();
+				if (!finance.isPayment() && entryType == AccountEntryType.RETURNED_COLLECTION ) {
+					AccountEntryDetail detail = map.get(finance.getId());
+					if (detail == null) {
+						String concept = obtainConcept(finance,entryType,financeEntry.getManualConcept());
+						String code = obtainAccountCode(finance);
+						String description = obtainAccountDescription(finance);
+						detail = new AccountEntryDetail()
+							.setAccount(finance.getRegistryAccountId())
+							.setAccountCode(code)
+							.setAccountDescription(description)
+							.setConcept(concept)
+							.setDocumentNumber(obtainDocumentNumber(finance))
+							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
+							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription())
+							;
+						map.put(finance.getId(),detail);
+					}
+					detail.setCredit(finance.getAmount());
+				}
+			}
+	 	})
+		 // PAGO
 		,PAYMENT( new IFinanceVisitor() {
 			@Override
 			public void visit(FinanceEntry financeEntry, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
-				if (finance.isPayment()) {
+				AccountEntryType entryType = financeEntry.getAccountEntry().getEntryType();
+				if (finance.isPayment() && entryType != AccountEntryType.RETURNED_PAYMENT ) {
 					AccountEntryDetail detail = map.get(finance.getId());
 					if (detail == null) {
-						String concept = obtainConcept(finance,financeEntry.getManualConcept());
+						String concept = obtainConcept(finance,entryType,financeEntry.getManualConcept());
 						String code = obtainAccountCode(finance); 
 						String description = obtainAccountDescription(finance);
 						detail = new AccountEntryDetail()
@@ -73,8 +105,33 @@ public class FinanceRecorder {
 					detail.setDebit(finance.getAmount());
 				}
 			}
+		})
+		 // DEVOLUCION DE PAGO
+		,RETURNED_PAYMENT( new IFinanceVisitor() {
+			@Override
+			public void visit(FinanceEntry financeEntry, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
+				AccountEntryType entryType = financeEntry.getAccountEntry().getEntryType();
+				if (finance.isPayment() && financeEntry.getAccountEntry().getEntryType() == AccountEntryType.RETURNED_PAYMENT ) {
+					AccountEntryDetail detail = map.get(finance.getId());
+					if (detail == null) {
+						String concept = obtainConcept(finance,entryType,financeEntry.getManualConcept());
+						String code = obtainAccountCode(finance); 
+						String description = obtainAccountDescription(finance);
+						detail = new AccountEntryDetail()
+							.setAccount(finance.getRegistryAccountId())
+							.setAccountCode(code)
+							.setAccountDescription(description)
+							.setConcept(concept)
+							.setDocumentNumber(obtainDocumentNumber(finance))
+							.setBalancingAccount(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getId())
+							.setBalancingAccountCode(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getCode())
+							.setBalancingAccountDescription(financeEntry.getBankAccount()==null?null:financeEntry.getBankAccount().getDescription());
+						map.put(finance.getId(),detail);
+					}
+					detail.setCredit(finance.getAmount());
+				}
+			}
 	 	})
-	 
 		;
 		private IFinanceVisitor visitor;
 		private FinanceEntryDetailType(IFinanceVisitor visitor) {
@@ -91,12 +148,12 @@ public class FinanceRecorder {
 	private static String obtainDocumentNumber(Finance finance) {
 		return finance.getInvoice()!=null?finance.getInvoice().getDocumentNumber():"";
 	}
-	private static String obtainConcept(Finance finance, String manualConcept) {
+	private static String obtainConcept(Finance finance, AccountEntryType entryType,String manualConcept) {
 		String prefix = null;
 		if (!finance.isPayment()) {
-			prefix = (finance.getAmount() < 0) ? REFU: CHAR;
+			prefix = (finance.getAmount() < 0 || entryType == AccountEntryType.RETURNED_COLLECTION ) ? REFU: CHAR;
 		} else {
-			prefix = (finance.getAmount() < 0) ? RETU : PAYM;
+			prefix = (finance.getAmount() < 0 || entryType == AccountEntryType.RETURNED_PAYMENT) ? RETU : PAYM;
 		}
 		prefix = prefix + " " + INVO + ": ";
 		String concept = (!finance.isEmptyInvoice()) ? prefix + finance.getInvoice().getReferenceCode() : finance.getConcept();
@@ -155,7 +212,7 @@ public class FinanceRecorder {
 			&& financeEntry.getExpensesAccount().getId() != null) {
 			String concept = AonStringUtils.defaultIfBlank(financeEntry.getManualConcept(),"GASTOS");
 			if (uniqueFinance != null) {
-				concept = obtainConcept(uniqueFinance,financeEntry.getManualConcept());
+				concept = obtainConcept(uniqueFinance,ae.getEntryType(),financeEntry.getManualConcept());
 			} 
 			AccountEntryDetail detail = new AccountEntryDetail()
 					.setAccount(financeEntry.getExpensesAccount().getId())
@@ -176,7 +233,7 @@ public class FinanceRecorder {
 			String documentNumber = null;
 			if (uniqueFinance != null) {
 				documentNumber = obtainDocumentNumber(uniqueFinance);
-				concept = obtainConcept(uniqueFinance,financeEntry.getManualConcept());
+				concept = obtainConcept(uniqueFinance,ae.getEntryType(),financeEntry.getManualConcept());
 				balancingAccount = uniqueFinance.getRegistryAccountId();
 				balancingAccountCode = obtainAccountCode(uniqueFinance); 
 				balancingAccountDescription = obtainAccountDescription(uniqueFinance);

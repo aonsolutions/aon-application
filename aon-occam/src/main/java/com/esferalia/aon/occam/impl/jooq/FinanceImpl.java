@@ -33,8 +33,10 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 
 public class FinanceImpl implements IFinance {
@@ -193,7 +195,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public PayMethod getPayMethod(AONContext ctx, String name) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> FinanceDAO.getPayMethod(ctx, name));
+				configuration -> PayMethodDAO.getPayMethod(ctx, name));
 	}
 
 	@Override
@@ -211,8 +213,9 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Finance insertFinance(AONContext ctx, Finance finance) {
 			
-		return ctx.getDslContext().transactionResult(configuration -> 
-		FinanceDAO.insertFinance(ctx, finance));
+		return ctx.getDslContext().transactionResult(configuration ->
+			FinanceDAO.getFinance(ctx, FinanceDAO.insert(ctx, finance))
+		);
 	}
 
 	@Override
@@ -236,7 +239,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public LinkedList<FinanceTracking> getFinanceTracking(AONContext ctx, Integer finance) {
 		return ctx.getDslContext().transactionResult(configuration
-				-> FinanceDAO.getFinanceTracking(ctx, finance));
+				-> FinanceTrackingDAO.getFinanceTrackings(ctx, finance));
 	}
 
 	@Override
@@ -248,7 +251,7 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Finance settleFinance(AONContext ctx, Integer finance) {
 		return ctx.getDslContext().transactionResult(configuration -> {
-			FinanceDAO.settle(ctx, finance);
+			FinanceTrackingDAO.settle(ctx, finance);
 			return FinanceDAO.getFinance(ctx, finance);
 		});			
 	}
@@ -256,16 +259,22 @@ public class FinanceImpl implements IFinance {
 	@Override
 	public Finance undoFinance(AONContext ctx, Integer finance) {
 		return ctx.getDslContext().transactionResult(configuration -> {
-			FinanceDAO.undo(ctx, finance);
+			FinanceTrackingDAO.undo(ctx, finance);
 			return FinanceDAO.getFinance(ctx, finance);
 		});			
 	}
 
 	@Override
-	public Finance payFinance(AONContext ctx, Finance finance) {
+	public FinanceTracking payFinance(AONContext ctx, FinanceTracking tracking) {
 		return ctx.getDslContext().transactionResult(configuration -> {
-			FinanceDAO.pay(ctx, finance);
-			return FinanceDAO.getFinance(ctx, finance.getId());
+			return  FinanceTrackingDAO.pay(ctx, tracking);
+		});			
+	}
+
+	@Override
+	public FinanceTracking returnFinance(AONContext ctx, FinanceTracking tracking) {
+		return ctx.getDslContext().transactionResult(configuration -> {
+			return  FinanceTrackingDAO.returnFinance(ctx, tracking);
 		});			
 	}
 

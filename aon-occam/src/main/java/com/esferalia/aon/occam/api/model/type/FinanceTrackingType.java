@@ -1,11 +1,19 @@
 package com.esferalia.aon.occam.api.model.type;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceTrackingTypeVisitor;
+
 public enum FinanceTrackingType {
-	BATCHED("Remesado", FinanceStatus.BATCHED ),
-	PAID("Pagado", FinanceStatus.PAID ),
-	RETURNED("Devuelto", FinanceStatus.RETURNED),
-    FRACTIONED("Fraccionado", FinanceStatus.PENDING),
-    SETTLED("Saldado", FinanceStatus.SETTLED);
+	BATCHED("Remesado", FinanceStatus.BATCHED) 
+		{ @Override public void visit(IFinanceTrackingTypeVisitor visitor) { visitor.visitBatched();} },
+	PAID("Pagado", FinanceStatus.PAID )
+		{ @Override public void visit(IFinanceTrackingTypeVisitor visitor) { visitor.visitPaid();} },
+	RETURNED("Devuelto", FinanceStatus.RETURNED)
+		{ @Override public void visit(IFinanceTrackingTypeVisitor visitor) { visitor.visitReturned();} },
+    FRACTIONED("Fraccionado", FinanceStatus.PENDING)
+    	{ @Override public void visit(IFinanceTrackingTypeVisitor visitor) { visitor.visitFractioned();} },
+    SETTLED("Saldado", FinanceStatus.SETTLED)
+		{ @Override public void visit(IFinanceTrackingTypeVisitor visitor) { visitor.visitSettled();} },
+    ;
 	
 	private String description;
 	private FinanceStatus financeStatus;
@@ -24,6 +32,9 @@ public enum FinanceTrackingType {
 	
 	public byte value() {
 		return (byte) this.ordinal();
+	}
+
+	public void visit(IFinanceTrackingTypeVisitor visitor) {
 	}
 
 	public static FinanceTrackingType safeValueOf( Byte i ) {

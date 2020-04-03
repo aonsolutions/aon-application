@@ -19,7 +19,7 @@ public interface FinanceService extends RemoteService {
 	LinkedList<InvoiceSeries> getInvoiceSeries(String domainName, int domainId, String  user,Date from, Date to, boolean taxDate) throws AonCoreException;
 	Integer getInvoiceNextNumber(String domainName, Integer domainId, String  user, Byte[] types, String series) throws AonCoreException;
 	
-	// --------------------------------------------------------------- REGISTRY
+	// --------------------------------------------------------------- REGISTRY BANKS
 	LinkedList<RegistryBank> getCompanyBanks(String domainName, int domainId, String  user) throws AonCoreException;
 	LinkedList<RegistryBank> getRegistryBanks(String domainName, int domainId, String  user,Integer registry) throws AonCoreException;
 	
@@ -28,6 +28,7 @@ public interface FinanceService extends RemoteService {
 	LinkedList<FinanceTracking> getFinanceTracking(String domainName, int domainId, String  user,Integer finance) throws AonCoreException;
 	Finance settleFinance(String domainName, int domainId, String user, Integer finance)  throws AonCoreException;
 	Finance undoFinance(String domainName, int domainId, String user, Integer finance) throws AonCoreException;
-	Finance payFinance(String domainName, int domainId, String user, Finance finance) throws AonCoreException;
+	FinanceTracking payFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;
+	FinanceTracking returnFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;
 
 }

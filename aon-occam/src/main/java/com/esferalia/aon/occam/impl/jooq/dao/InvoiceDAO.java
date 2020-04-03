@@ -1236,7 +1236,7 @@ public class InvoiceDAO {
 			.execute();
 		ctx.log().info("DELETE INVOICE_ATTACH adjuntos de la factura: " + id + " ("+count+" filas)");
 		
-		FinanceDAO.deleteAllPendingFinances(ctx,id);
+		FinanceDAO.deleteInvoiceFinances(ctx,id);
 
 		count = ctx.getDslContext()
 			.delete(INVOICE)
@@ -1348,8 +1348,8 @@ public class InvoiceDAO {
 			Integer financeId = FinanceDAO.insert(ctx, finance);
 			
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceDAO.settle(ctx, oldId    );
-				FinanceDAO.settle(ctx, financeId);
+				FinanceTrackingDAO.settle(ctx, oldId    );
+				FinanceTrackingDAO.settle(ctx, financeId);
 			}
 			
 		}

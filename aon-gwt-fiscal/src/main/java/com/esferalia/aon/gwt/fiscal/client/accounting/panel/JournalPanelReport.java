@@ -77,6 +77,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 	private IntegerBox id;
 	private ListBox order;
 	private Button cleanButton;
+	private Button refreshButton;
 
 	private boolean activitiesListBoxEnabled;
 	
@@ -354,6 +355,7 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		tab.getCellFormatter().setStyleName(0,7, AON.AON_CSS.aonPanelGridEven());	
 		
 		cleanButton = new Button();
+		cleanButton.setTitle(AON.MSG.clean());
 		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
 		cleanButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
 		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft());
@@ -376,6 +378,19 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 					activity.setSelectedIndex(0);
 				}
 				period.setFocus(true);
+				onSearch();
+			}
+		});
+
+		refreshButton = new Button();
+		refreshButton.setTitle(AON.MSG.refresh());
+		refreshButton.setStyleName(AON.AON_CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		refreshButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+		refreshButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 				onSearch();
 			}
 		});
@@ -435,8 +450,10 @@ public class JournalPanelReport extends DockLayoutPanel implements Focusable, Ha
 		tab.getCellFormatter().setStyleName(2,5, AON.AON_CSS.aonPanelGridEven());
 		tab.getFlexCellFormatter().setColSpan(2, 5, 2);
 		
-		cleanButton.setTitle(AON.MSG.clean());
-		tab.setWidget(2, 6, cleanButton);
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.add( cleanButton );
+		buttonsPanel.add( refreshButton );
+		tab.setWidget(2, 6, buttonsPanel);
 		tab.getCellFormatter().setStyleName(2,6, AON.AON_CSS.aonPanelGridEven());
 
 		ScrollPanel scrollPanel = new ScrollPanel();

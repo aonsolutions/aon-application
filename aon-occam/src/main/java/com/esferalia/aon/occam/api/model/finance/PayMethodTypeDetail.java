@@ -9,7 +9,7 @@ public class PayMethodTypeDetail implements Serializable {
 	private static final long serialVersionUID = -31089307097383442L;
 	
 	private Integer id;
-	private int domain;
+	private Integer domain;
 	private PayMethodType type;
 	private String description;
 	private Account account;
@@ -22,10 +22,10 @@ public class PayMethodTypeDetail implements Serializable {
 		return this;
 	}
 
-	public int getDomain() {
+	public Integer getDomain() {
 		return domain;
 	}
-	public PayMethodTypeDetail setDomain(int domain) {
+	public PayMethodTypeDetail setDomain(Integer domain) {
 		this.domain = domain;
 		return this;
 	}

@@ -100,7 +100,8 @@ public interface IFinance {
 	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
 	public Finance settleFinance(AONContext ctx, Integer finance);
 	public Finance undoFinance(AONContext ctx, Integer finance);
-	public Finance payFinance(AONContext ctx, Finance finance);
+	public FinanceTracking payFinance(AONContext ctx, FinanceTracking tracking);
+	public FinanceTracking returnFinance(AONContext ctx, FinanceTracking tracking);
 	
 	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry);
 	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx);

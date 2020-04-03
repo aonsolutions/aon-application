@@ -75,6 +75,7 @@ import com.esferalia.aon.occam.api.model.Properties.AccountingRegistryProperties
 import com.esferalia.aon.occam.api.model.Properties.RegistryAddressProperties;
 import com.esferalia.aon.occam.api.model.Properties.RegistryMediaProperties;
 import com.esferalia.aon.occam.api.model.commission.CommissionType;
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
@@ -1271,7 +1272,7 @@ public class RegistryDAO {
 			.set(RBANK.ACCOUNT, rbank.getAccount())
 			.set(RBANK.ACTIVE, rbank.isActive() ? (byte) 1 : (byte) 0) 
 			.set(RBANK.ALIAS, rbank.getAlias())
-			.set(RBANK.BANK_ACCOUNT, rbank.getBankAccount()) 
+			.set(RBANK.BANK_ACCOUNT, rbank.getBankAccount()==null?null:rbank.getBankAccount().getIban()) 
 			.set(RBANK.BIC, rbank.getBic())
 			.set(RBANK.DOMAIN, rbank.getDomain())
 			.set(RBANK.REGISTRY, rbank.getRegistry()) 
@@ -1430,7 +1431,7 @@ public class RegistryDAO {
 					.setAccountDescription(r.getValue(ACCOUNT.DESCRIPTION))
 					.setActive(r.getValue(RBANK.ACTIVE) == 1)
 					.setAlias(r.getValue(RBANK.ALIAS))
-					.setBankAccount(r.getValue(RBANK.BANK_ACCOUNT))
+					.setBankAccount(new BankAccount(r.getValue(RBANK.BANK_ACCOUNT)))
 					.setBic(r.getValue(RBANK.BIC))
 					.setSuffix(r.getValue(RBANK.SUFIX));
 		}

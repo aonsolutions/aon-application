@@ -809,7 +809,7 @@ public class AccountingInvoiceDAO {
 	private static LinkedList<AccountEntry> recordFinances(AONContext ctx, AccountingInvoice accInvoice) {
 		LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
 		for (Finance finance : accInvoice.getInvoice().getFinances() ) {
-			if (finance.isPending() && finance.getPayAccountId() != null) {
+			if (finance.isPending() && accInvoice.getPayAccountId() != null) {
 				if (finance.getId() == null) {
 					ctx.log().info("** FINANCE NOT SAVED, NO ENTRY WILL BE RECORDED.");
 				} else {
@@ -1016,7 +1016,7 @@ public class AccountingInvoiceDAO {
 		for (Finance finance : ai.getInvoice().getFinances()) {
 			Integer oldId = finance.getId();
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceDAO.settle(ctx, oldId);
+				FinanceTrackingDAO.settle(ctx, oldId);
 			} 
 			finance.setAmount(AonMathUtils.round(finance.getAmount() * (-1)))
 				.setInvoice(null)
@@ -1028,7 +1028,7 @@ public class AccountingInvoiceDAO {
 		InvoiceDAO.rectifyInvoiceUpdate(ctx, invoiceId, ai.getInvoice().getId(), oldRectificationType);
 		for (Finance finance : ai.getInvoice().getFinances()) {
 			if (data.isSettleFinances() && finance.getFinanceStatus() == FinanceStatus.PENDING) {
-				FinanceDAO.settle(ctx, finance.getId());
+				FinanceTrackingDAO.settle(ctx, finance.getId());
 				finance.setFinanceStatus(FinanceStatus.SETTLED);
 			} 
 		}

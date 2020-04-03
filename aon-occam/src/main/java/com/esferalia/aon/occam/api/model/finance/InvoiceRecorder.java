@@ -37,9 +37,9 @@ public class InvoiceRecorder {
 					String registryAccountDescription = invoice.getRegistry().getAccountDescription();
 					if (AonStringUtils.isBlank(registryAccountDescription)) registryAccountDescription = invoice.getRegistry().getName();
 					
-					Integer payAccount = finance.getPayAccountId();
-					String payAccountCode = finance.getPayAccountCode();
-					String payAccountDescription = finance.getPayAccountDescription();
+					Integer payAccount = invoice.getPayAccountId();
+					String payAccountCode = invoice.getPayAccountCode();
+					String payAccountDescription = invoice.getPayAccountDescription();
 					if (AonStringUtils.isBlank(payAccountDescription)) payAccountDescription = "COBRO FACTURA";
 					
 					AccountEntryDetail detail = map.get(invoice.getRegistry().getAccountId());
@@ -55,7 +55,7 @@ public class InvoiceRecorder {
 					}
 					detail.setCredit(amount);
 					
-					AccountEntryDetail payDetail = map.get(finance.getPayAccountId());
+					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
 					if (payDetail == null) {
 						payDetail = new AccountEntryDetail()
 							.setAccount(payAccount)
@@ -64,7 +64,7 @@ public class InvoiceRecorder {
 							.setBalancingAccount(registryAccount)
 							.setBalancingAccountCode(registryAccountCode)
 							.setBalancingAccountDescription(registryAccountDescription);
-						map.put(finance.getPayAccountId(),payDetail);
+						map.put(invoice.getPayAccountId(),payDetail);
 					}
 					payDetail.setDebit(amount);
 				}
@@ -85,9 +85,9 @@ public class InvoiceRecorder {
 					String registryAccountDescription = invoice.getRegistry().getAccountDescription();
 					if (AonStringUtils.isBlank(registryAccountDescription)) registryAccountDescription = invoice.getRegistry().getName();
 					
-					Integer payAccount = finance.getPayAccountId();
-					String payAccountCode = finance.getPayAccountCode();
-					String payAccountDescription = finance.getPayAccountDescription();
+					Integer payAccount = invoice.getPayAccountId();
+					String payAccountCode = invoice.getPayAccountCode();
+					String payAccountDescription = invoice.getPayAccountDescription();
 					if (AonStringUtils.isBlank(payAccountDescription)) payAccountDescription = "PAGO FACTURA";
 					
 					
@@ -104,7 +104,7 @@ public class InvoiceRecorder {
 					}
 					detail.setDebit(amount);
 					
-					AccountEntryDetail payDetail = map.get(finance.getPayAccountId());
+					AccountEntryDetail payDetail = map.get(invoice.getPayAccountId());
 					if (payDetail == null) {
 						payDetail = new AccountEntryDetail()
 							.setAccount(payAccount)
@@ -113,7 +113,7 @@ public class InvoiceRecorder {
 							.setBalancingAccount(registryAccount)
 							.setBalancingAccountCode(registryAccountCode)
 							.setBalancingAccountDescription(registryAccountDescription);
-						map.put(finance.getPayAccountId(),payDetail);
+						map.put(invoice.getPayAccountId(),payDetail);
 					}
 					payDetail.setCredit(amount);
 					

@@ -101,6 +101,12 @@ public class FinanceEntry implements Serializable, IAccountEntryWrapper {
 				.setLastTracking(true)
 				);
 	}
+	public void add(FinanceTracking tracking) {
+		getTrackings().put(tracking.getFinance().getId(), tracking
+				.setChecked(true)
+				.setLastTracking(true)
+				);
+	}
 	public void remove(Finance finance) {
 		getTrackings().remove(finance.getId());
 	}

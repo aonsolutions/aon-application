@@ -657,14 +657,14 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				if ( getWrapper().getInvoice().getFinances().get(0).isPending() ) {
 					if (event.getSelectedItem() != null) {
 						getWrapper().getInvoice().getFinances().get(0).setRecordable(true);
-						getWrapper().getInvoice().getFinances().get(0).setPayAccountId(event.getSelectedItem().getId());
-						getWrapper().getInvoice().getFinances().get(0).setPayAccountCode(event.getSelectedItem().getCode());
-						getWrapper().getInvoice().getFinances().get(0).setPayAccountDescription(event.getSelectedItem().getDescription());
+						getWrapper().setPayAccountId(event.getSelectedItem().getId());
+						getWrapper().setPayAccountCode(event.getSelectedItem().getCode());
+						getWrapper().setPayAccountDescription(event.getSelectedItem().getDescription());
 					} else {
 						getWrapper().getInvoice().getFinances().get(0).setRecordable(false);
-						getWrapper().getInvoice().getFinances().get(0).setPayAccountId(null);
-						getWrapper().getInvoice().getFinances().get(0).setPayAccountCode(null);
-						getWrapper().getInvoice().getFinances().get(0).setPayAccountDescription(null);
+						getWrapper().setPayAccountId(null);
+						getWrapper().setPayAccountCode(null);
+						getWrapper().setPayAccountDescription(null);
 					}
 					_paintEntry();
 					getWrapper().getAccountEntry().setDirty(true);
@@ -897,7 +897,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			if (invoice.getInvoice().getFinances().size() == 1) {
 				Finance finance = invoice.getInvoice().getFinances().get(0);
 				payDate.setValue(finance.getDueDate());
-				finance.setRecordable(finance.getPayAccountId() != null);
+				finance.setRecordable(invoice.getPayAccountId() != null);
 				if (finance.getId() == null) { // NUEVO
 //					finance.setPayMethod(payMethodList.getValue());
 //					if (payAccount.getId() != null) {
@@ -911,8 +911,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 //						finance.setPayAccountCode(null);
 //						finance.setPayAccountDescription(null);
 //					}
-					payAccount.setValue(finance.getPayAccountId(), finance.getPayAccountCode()
-							, finance.getPayAccountDescription(), false);
+					payAccount.setValue(invoice.getPayAccountId(), invoice.getPayAccountCode()
+							, invoice.getPayAccountDescription(), false);
 					payMethodList.setValue(finance.getPayMethod());
 					payAccountLabel.setVisible(true);
 					payAccount.setVisible(true);

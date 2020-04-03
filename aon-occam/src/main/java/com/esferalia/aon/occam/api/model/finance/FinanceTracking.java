@@ -3,7 +3,9 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.HasAudit;
+import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 
 public class FinanceTracking implements Serializable, HasAudit  {
@@ -14,12 +16,11 @@ public class FinanceTracking implements Serializable, HasAudit  {
 	private boolean checked;
 	
 	private boolean lastTracking;
-	
 	private Integer id;
-	private Integer registryBank;
+	private RegistryBank registryBank;
 	private Integer bankStatementLink;
 	private Finance finance;
-	private Integer payMethodTypeDetail;
+	private PayMethodTypeDetail payMethodTypeDetail;
 	private Integer domain;
 	private Date trackingDate;
 	private FinanceTrackingType type;
@@ -27,6 +28,8 @@ public class FinanceTracking implements Serializable, HasAudit  {
 	private double amount;
 	private boolean recorded;
 	private Integer accountEntry;
+	
+	private Account payAccount;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -41,10 +44,10 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		return this;
 	}
 
-	public Integer getRegistryBank() {
+	public RegistryBank getRegistryBank() {
 		return this.registryBank;
 	}
-	public FinanceTracking setRegistryBank(Integer registryBank) {
+	public FinanceTracking setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
 		return this;
 	}
@@ -65,10 +68,10 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		return this;
 	}
 
-	public Integer getPayMethodTypeDetail() {
+	public PayMethodTypeDetail getPayMethodTypeDetail() {
 		return this.payMethodTypeDetail;
 	}
-	public FinanceTracking setPayMethodTypeDetail(Integer payMethodTypeDetail) {
+	public FinanceTracking setPayMethodTypeDetail(PayMethodTypeDetail payMethodTypeDetail) {
 		this.payMethodTypeDetail = payMethodTypeDetail;
 		return this;
 	}
@@ -128,6 +131,13 @@ public class FinanceTracking implements Serializable, HasAudit  {
 		return this;
 	}
 
+	public Account getPayAccount() {
+		return payAccount;
+	}
+	public FinanceTracking setPayAccount(Account payAccount) {
+		this.payAccount = payAccount;
+		return this;
+	}
 
 	public String getCreationUser() {
 		return this.creationUser;
@@ -192,6 +202,6 @@ public class FinanceTracking implements Serializable, HasAudit  {
 	public boolean isSettled() {
 		return getType() == FinanceTrackingType.SETTLED;
 	}
-
+	
 }
 

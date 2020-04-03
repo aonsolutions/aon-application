@@ -3200,6 +3200,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Asiento contable")
 	String accountEntry();
  	
+ 	@DefaultMessage("Ir a asiento contable")
+	String gotoAccountEntry();
+
  	@DefaultMessage("Previsualizar asiento")
 	String previewAccountEntry();
  	

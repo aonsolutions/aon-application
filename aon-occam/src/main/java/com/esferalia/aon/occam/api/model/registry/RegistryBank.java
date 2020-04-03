@@ -2,6 +2,9 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.BankAccount;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class RegistryBank implements Serializable {
 	
 	private static final long serialVersionUID = 3208247929297185256L;
@@ -9,7 +12,7 @@ public class RegistryBank implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Integer registry;
-	private String bankAccount;
+	private BankAccount bankAccount;
 	private String bic;
 	private String suffix;
 	private String alias;
@@ -44,10 +47,10 @@ public class RegistryBank implements Serializable {
 		this.registry = registry;
 		return this;
 	}
-	public String getBankAccount() {
+	public BankAccount getBankAccount() {
 		return bankAccount;
 	}
-	public RegistryBank setBankAccount(String bankAccount) {
+	public RegistryBank setBankAccount(BankAccount bankAccount) {
 		this.bankAccount = bankAccount;
 		return this;
 	}
@@ -103,6 +106,29 @@ public class RegistryBank implements Serializable {
 	public RegistryBank setActive(Boolean active) {
 		this.active = active;
 		return this;
+	}
+	
+	public String getFullName() {
+		StringBuffer sb = new StringBuffer();
+		if (getBankAccount() != null && !AonStringUtils.isBlank(getBankAccount().getBban())) {
+			sb.append(getFullName(getBankAccount().toString()));
+		}
+		return sb.toString(); 
+	}
+	
+	private String getFullName(String bankAccount) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(bankAccount);
+		sb.append(" ");
+		if (!AonStringUtils.isBlank(getBic())) {
+			sb.append("[");
+			sb.append(getBic());
+			sb.append("] ");
+		}
+		if (!AonStringUtils.isBlank(getAlias())) {
+			sb.append(getAlias());	
+		}
+		return sb.toString(); 
 	}
 	
 }

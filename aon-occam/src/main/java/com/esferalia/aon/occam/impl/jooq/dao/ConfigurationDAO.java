@@ -59,8 +59,8 @@ public class ConfigurationDAO {
 							.and(p.getNameProperty().like(AppParam.ACC_COST_CENTER_.toString() + "%")))
 						.map( app -> app.getValue() )
 						.collect(Collectors.toCollection(LinkedList::new)))
-				.setPayMethods(FinanceDAO.getPayMethods(ctx))
-				.setPayMethodTypeDetails(FinanceDAO.getPayMethodTypeDetails(ctx))
+				.setPayMethods(PayMethodDAO.getPayMethods(ctx))
+				.setPayMethodTypeDetails(PayMethodDAO.getPayMethodTypeDetails(ctx))
 				.setDefaultVatPercent(defaultVatPercent == 0
 					?null
 					:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))

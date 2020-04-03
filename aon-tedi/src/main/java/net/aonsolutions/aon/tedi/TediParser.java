@@ -39,7 +39,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO.InvoiceRegistryInitializer;
-import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -104,9 +104,9 @@ public class TediParser {
 								if ( temp == PayMethodType.CASH_BASIS ) {
 									Account cashAccount = aonCtx.getDefaultCashAccount();
 									if (cashAccount != null) {
-										aon.setPayAccountId(cashAccount.getId());	
-										aon.setPayAccountCode(cashAccount.getCode());
-										aon.setPayAccountDescription(cashAccount.getDescription());
+										result.getAccountingInvoice().setPayAccountId(cashAccount.getId());	
+										result.getAccountingInvoice().setPayAccountCode(cashAccount.getCode());
+										result.getAccountingInvoice().setPayAccountDescription(cashAccount.getDescription());
 										aon.setRecordable(true);
 									}
 								}
@@ -436,7 +436,7 @@ public class TediParser {
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 		// ----
 		TediResult result = new TediResult(tedi, ai);
-		aonCtx.setPayMethods(FinanceDAO.getPayMethodsById(ctx));
+		aonCtx.setPayMethods(PayMethodDAO.getPayMethodsById(ctx));
 		TediInvoiceTransfer.toAon(ctx, aonCtx,result);
 		fillVats(ctx, aonCtx, result);
 		if (ai.getInvoice().getFinances() == null || ai.getInvoice().getFinances().size() == 0) {
