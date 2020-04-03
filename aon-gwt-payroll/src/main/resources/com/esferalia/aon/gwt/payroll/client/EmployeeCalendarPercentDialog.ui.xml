@@ -5,79 +5,81 @@
 	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
-    <ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
-    
+    <ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
     
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarPercentDialog.MyStyle">
 
 		.form {
 			padding: 10px;
 		}
-		
-		.hourTBx{
-			width: 100%;
-			text-align: center;
-			border: solid #808080 1px;
+
+		.typesPanel{
+			display: flex;
+			justify-content: space-between;
+			padding: 5px;
 		}
 		
-		.hourLabel{
-			color: #0000a1;
+		.typesLabel{
+			display: flex;
+			align-items: center;
+			margin-right: 5px;
 		}
 		
-		.w100{
-			width: 102%;
+		.types{}
+		
+		.percentPanel{
+			display: flex;
+			justify-content: space-between;
+			padding: 5px;
 		}
 		
 		.percentLabel{
-			font-weight: bold;
-			text-align: center;
+			display: flex;
+			align-items: center;
+			margin-right: 5px;
 		}
-
+		
+		.percentTBx{
+			width: 80px;
+		}
+		
+		.percent{
+			text-align: center;
+			font-weight: bold;
+			display: flex;
+			align-items: center;
+			margin-left: 5px;
+		}
+		
+		.buttonPanel{
+			display: flex;
+			justify-content: flex-end;
+			padding: 5px;
+			margin-top: 5px;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 	
 		<g:HTMLPanel styleName="aon-width-all aon-height-all">
-	
-			<table class="aon-width-all aon-height-all" style="padding: 5px;">
-				<tr>
-					<td>
-					</td>
-					<td>
-					</td>
-					<td>
-					</td>
-					<td>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<g:Label>Tipos de ausencia:</g:Label>
-					</td>
-					<td colspan="3">
-						<g:ListBox ui:field="typeDrop" styleName="{style.w100}"></g:ListBox>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<g:Label>Coeficiente reducción sobre horas totales :</g:Label>
-					</td>
-					<td>
-						<g:TextBox ui:field="percentBox" styleName="{style.hourTBx}"></g:TextBox>
-					</td>
-					<td colspan="2">
-						<g:Label styleName="{style.percentLabel}" >%</g:Label>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="4" align="right" style="padding-top: 15px;">
-						<g:Button ui:field="cancelButton">Cerrar</g:Button>
-			    		<g:Button ui:field="acceptButton">OK</g:Button>
-					</td>
-				</tr>
-			</table>
-				
+		
+			<g:HTMLPanel styleName="{style.typesPanel}">
+				<g:Label styleName="{style.typesLabel}">Tipos de ausencia:</g:Label>
+				<g:ListBox ui:field="typeDrop" styleName="{style.types}"></g:ListBox>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.percentPanel}">
+				<g:Label styleName="{style.percentLabel}">Coeficiente de reducción sobre las horas totales :</g:Label>
+				<g:TextBox ui:field="percentBox" styleName="{style.percentTBx}"></g:TextBox>
+				<g:Label styleName="{style.percent}" >%</g:Label>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.buttonPanel}">
+				<g:Button ui:field="cancelButton">Cerrar</g:Button>
+	    		<g:Button ui:field="acceptButton">OK</g:Button>
+			</g:HTMLPanel>
+		
 		</g:HTMLPanel>
 			
 	</g:HTMLPanel>
