@@ -25,8 +25,6 @@
 			margin-right: 5px;
 		}
 		
-		.types{}
-		
 		.percentPanel{
 			display: flex;
 			justify-content: space-between;
@@ -51,6 +49,12 @@
 			margin-left: 5px;
 		}
 		
+		.errorPanel{
+			font-weight: bold;
+			color: red;
+			padding: 0 5px;
+		}
+		
 		.buttonPanel{
 			display: flex;
 			justify-content: flex-end;
@@ -66,13 +70,18 @@
 		
 			<g:HTMLPanel styleName="{style.typesPanel}">
 				<g:Label styleName="{style.typesLabel}">Tipos de ausencia:</g:Label>
-				<g:ListBox ui:field="typeDrop" styleName="{style.types}"></g:ListBox>
+				<g:ListBox ui:field="typeDrop"></g:ListBox>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.percentPanel}">
-				<g:Label styleName="{style.percentLabel}">Coeficiente de reducción sobre las horas totales :</g:Label>
+				<g:Label styleName="{style.percentLabel}">Porcentaje de reducción sobre las horas totales:</g:Label>
 				<g:TextBox ui:field="percentBox" styleName="{style.percentTBx}"></g:TextBox>
 				<g:Label styleName="{style.percent}" >%</g:Label>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
+				<g:Label>El valor introducido no tiene formato de número.</g:Label>
+				<g:Label>Decimales separados por '.'</g:Label>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.buttonPanel}">
