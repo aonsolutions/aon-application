@@ -586,6 +586,18 @@ public class EmployeeCalendarDraftObjectData {
 		return mapPartialityDays.get(actualDay);
 	}
 	
+	public Double getEreCoeficient(Date actualDay) {
+		return mapDaysCoefficientEre.get(actualDay);
+	}
+	
+	public Double getEreFzaCoeficient(Date actualDay) {
+		return mapDaysCoefficientEreFza.get(actualDay);
+	}
+	
+	public Double getEreFzaExonCoeficient(Date actualDay) {
+		return mapDaysCoefficientEreFzaExon.get(actualDay);
+	}
+	
 	public Set<Entry<Date, Double>> getChangesHours(){
 		return draftMapDaysHour.entrySet();
 	}
@@ -1478,7 +1490,14 @@ public class EmployeeCalendarDraftObjectData {
 			private void initializeMapDaysCoefficientEre(
 					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreList) {
 				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientEreList){
-					mapDaysCoefficientEre.put(dayCoefficient.getStartDate(), Double.parseDouble(dayCoefficient.getExpression()));
+					Date iteratorDate = DateUtils.copyDateOnly(dayCoefficient.getStartDate());
+					while(iteratorDate.before(dayCoefficient.getEndDate()) || iteratorDate.equals(dayCoefficient.getEndDate())) {
+						Date startDate = DateUtils.copyDateOnly(iteratorDate);
+						DateUtils.resetTime(startDate);
+						mapDaysCoefficientEre.put(startDate, Double.parseDouble(dayCoefficient.getExpression()));
+						mapDaysType.put(startDate, DayType.EREDAY);
+						DateUtils.addDays2Date(iteratorDate, 1);
+					}
 				}
 				
 			}
@@ -1486,7 +1505,14 @@ public class EmployeeCalendarDraftObjectData {
 			private void initializeMapDaysCoefficientEreFza(
 					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreFzaList) {
 				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientEreFzaList){
-					mapDaysCoefficientEreFza.put(dayCoefficient.getStartDate(), Double.parseDouble(dayCoefficient.getExpression()));
+					Date iteratorDate = DateUtils.copyDateOnly(dayCoefficient.getStartDate());
+					while(iteratorDate.before(dayCoefficient.getEndDate()) || iteratorDate.equals(dayCoefficient.getEndDate())) {
+						Date startDate = DateUtils.copyDateOnly(iteratorDate);
+						DateUtils.resetTime(startDate);
+						mapDaysCoefficientEreFza.put(startDate, Double.parseDouble(dayCoefficient.getExpression()));
+						mapDaysType.put(startDate, DayType.EREFZADAY);
+						DateUtils.addDays2Date(iteratorDate, 1);
+					}
 				}
 				
 			}
@@ -1494,8 +1520,14 @@ public class EmployeeCalendarDraftObjectData {
 			private void initializeMapDaysCoefficientEreFzaExon(
 					List<Quartet<java.sql.Date, java.sql.Date, String, String>> daysCoefficientEreFzaExonList) {
 				for(Quartet<java.sql.Date, java.sql.Date, String, String> dayCoefficient : daysCoefficientEreFzaExonList){
-					mapDaysCoefficientEreFzaExon.put(dayCoefficient.getStartDate(), Double.parseDouble(dayCoefficient.getExpression()));
-					mapDaysType.put(dayCoefficient.getStartDate(), DayType.EREFZAEXONDAY);
+					Date iteratorDate = DateUtils.copyDateOnly(dayCoefficient.getStartDate());
+					while(iteratorDate.before(dayCoefficient.getEndDate()) || iteratorDate.equals(dayCoefficient.getEndDate())) {
+						Date startDate = DateUtils.copyDateOnly(iteratorDate);
+						DateUtils.resetTime(startDate);
+						mapDaysCoefficientEreFzaExon.put(startDate, Double.parseDouble(dayCoefficient.getExpression()));
+						mapDaysType.put(startDate, DayType.EREFZAEXONDAY);
+						DateUtils.addDays2Date(iteratorDate, 1);
+					}
 				}
 				
 			}

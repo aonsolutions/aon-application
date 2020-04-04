@@ -463,22 +463,22 @@ public class JooqEmployeeCalendar {
 		}
 		
 		// ------------- COEFICIENTE_ERE_FZA_EXONERADO
-				Result<Record> coeficientsEREFzaExoneradoEmployeeInfo = dslContext
-						.select()
-						.from(CONTRACT_DATA)
-						.where(CONTRACT_DATA.CONTRACT.eq(contract))
-						.and(CONTRACT_DATA.NAME.in("COEFICIENTE_ERE_FZA_EXONERADO"))
-						.fetch();
+		Result<Record> coeficientsEREFzaExoneradoEmployeeInfo = dslContext
+				.select()
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.and(CONTRACT_DATA.NAME.in("COEFICIENTE_ERE_FZA_EXONERADO"))
+				.fetch();
+	
+		for(Record r: coeficientsEREFzaExoneradoEmployeeInfo){
+			Quartet<Date, Date, String, String> quarterCoeficcientEREFzaExonTypeEmployee = new Quartet<Date, Date, String, String>();
 			
-				for(Record r: coeficientsEREFzaExoneradoEmployeeInfo){
-					Quartet<Date, Date, String, String> quarterCoeficcientEREFzaExonTypeEmployee = new Quartet<Date, Date, String, String>();
-					
-					quarterCoeficcientEREFzaExonTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
-					.setEndDate(r.get(CONTRACT_DATA.END_DATE))
-					.setName(r.get(CONTRACT_DATA.NAME))
-					.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
-					
-					contractCoefficientEREFzaExonDayTypeList.add(quarterCoeficcientEREFzaExonTypeEmployee);
+			quarterCoeficcientEREFzaExonTypeEmployee.setStartDate(r.get(CONTRACT_DATA.START_DATE))
+			.setEndDate(r.get(CONTRACT_DATA.END_DATE))
+			.setName(r.get(CONTRACT_DATA.NAME))
+			.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+			
+			contractCoefficientEREFzaExonDayTypeList.add(quarterCoeficcientEREFzaExonTypeEmployee);
 				}
 		
 		// ------------- STRIKE_FACTOR
@@ -915,30 +915,38 @@ public class JooqEmployeeCalendar {
 										.values(domain, "COEFICIENTE_HUELGA", contract, coeficiente, 
 												sqlStartDateType, sqlEndDateType).execute();
 						}else if(dayType.equals("DIAS_ERE")){
-							String coeficiente = ereDaysValues.get(auxStartDateType).toString();
-							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-									CONTRACT_DATA.END_DATE)
-									.values(domain, "COEFICIENTE_ERE", contract, coeficiente, 
-											sqlStartDateType, sqlEndDateType).execute();
+							createAndUpdateStrechCoeficientAux(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereDaysValues);
+							
+//							String coeficiente = ereDaysValues.get(auxStartDateType).toString();
+//							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//									CONTRACT_DATA.END_DATE)
+//									.values(domain, "COEFICIENTE_ERE", contract, coeficiente, 
+//											sqlStartDateType, sqlEndDateType).execute();
 						}else if(dayType.equals("DIAS_ERE_FZA")){
-							String coeficiente = ereFzaDaysValues.get(auxStartDateType).toString();
-							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-									CONTRACT_DATA.END_DATE)
-									.values(domain, "COEFICIENTE_ERE_FZA", contract, coeficiente, 
-											sqlStartDateType, sqlEndDateType).execute();
+							createAndUpdateStrechCoeficientAux(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaDaysValues);
+							
+//							String coeficiente = ereFzaDaysValues.get(auxStartDateType).toString();
+//							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//									CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//									CONTRACT_DATA.END_DATE)
+//									.values(domain, "COEFICIENTE_ERE_FZA", contract, coeficiente, 
+//											sqlStartDateType, sqlEndDateType).execute();
 						}else if(dayType.equals("DIAS_ERE_FZA_EXONERADO")){
-							if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
-								String coeficiente = ereFzaExonDaysValues.get(auxStartDateType).toString();
-								dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-										CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-										CONTRACT_DATA.END_DATE)
-										.values(domain, "COEFICIENTE_ERE_FZA_EXONERADO", contract, coeficiente, 
-												sqlStartDateType, sqlEndDateType).execute();
-							} else {
-								createAndUpdateStrechCoeficient(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaExonDaysValues);
-							}
+							createAndUpdateStrechCoeficientAux(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaExonDaysValues);
+							
+//							if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
+//								createAndUpdateStrechCoeficientSameMonth(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaExonDaysValues);
+//								
+////								String coeficiente = ereFzaExonDaysValues.get(auxStartDateType).toString();
+////								dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+////										CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+////										CONTRACT_DATA.END_DATE)
+////										.values(domain, "COEFICIENTE_ERE_FZA_EXONERADO", contract, coeficiente, 
+////												sqlStartDateType, sqlEndDateType).execute();
+//							} else {
+//								createAndUpdateStrechCoeficient(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaExonDaysValues);
+//							}
 						}else if(dayType.equals("DIAS_INACTIVIDAD")){
 							//Tipo inactividad
 							String typeInactivity = inactivityDaysValues.get(auxStartDateType);
@@ -984,7 +992,8 @@ public class JooqEmployeeCalendar {
 											sqlStartDateType, sqlEndDateType).execute();
 						}
 						
-						if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth() && !dayType.equals("DIAS_PARCIALIDAD")){
+						if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth() && !dayType.equals("DIAS_PARCIALIDAD") && 
+								!dayType.equals("DIAS_ERE_FZA_EXONERADO") && !dayType.equals("DIAS_ERE_FZA") && !dayType.equals("DIAS_ERE")){
 							String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
 									DateUtils.copyDateOnly(javaEndDateType));
 							
@@ -993,7 +1002,7 @@ public class JooqEmployeeCalendar {
 									CONTRACT_DATA.END_DATE)
 									.values(domain, dayType, contract, expression, 
 											sqlStartDateType, sqlEndDateType).execute();
-						}else{
+						}else if(!dayType.equals("DIAS_ERE_FZA_EXONERADO") && !dayType.equals("DIAS_ERE_FZA") && !dayType.equals("DIAS_ERE")){
 							createAndUpdateStrech(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType);
 						}
 						
@@ -1025,30 +1034,36 @@ public class JooqEmployeeCalendar {
 							.values(domain, "COEFICIENTE_HUELGA", contract, coeficiente, 
 									sqlStartDateType, sqlEndDateType).execute();
 			}else if(dayType.equals("DIAS_ERE")){
-				String coeficiente = ereDaysValues.get(auxStartDateType).toString();
-				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-						CONTRACT_DATA.END_DATE)
-						.values(domain, "COEFICIENTE_ERE", contract, coeficiente, 
-								sqlStartDateType, sqlEndDateType).execute();
+				createAndUpdateStrechCoeficientAux(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereDaysValues);
+				
+//				String coeficiente = ereDaysValues.get(auxStartDateType).toString();
+//				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//						CONTRACT_DATA.END_DATE)
+//						.values(domain, "COEFICIENTE_ERE", contract, coeficiente, 
+//								sqlStartDateType, sqlEndDateType).execute();
 			}else if(dayType.equals("DIAS_ERE_FZA")){
-				String coeficiente = ereFzaDaysValues.get(auxStartDateType).toString();
-				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-						CONTRACT_DATA.END_DATE)
-						.values(domain, "COEFICIENTE_ERE_FZA", contract, coeficiente, 
-								sqlStartDateType, sqlEndDateType).execute();
+				createAndUpdateStrechCoeficientAux(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaDaysValues);
+				
+//				String coeficiente = ereFzaDaysValues.get(auxStartDateType).toString();
+//				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//						CONTRACT_DATA.END_DATE)
+//						.values(domain, "COEFICIENTE_ERE_FZA", contract, coeficiente, 
+//								sqlStartDateType, sqlEndDateType).execute();
 			}else if(dayType.equals("DIAS_ERE_FZA_EXONERADO")){
-				if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
-					String coeficiente = ereFzaExonDaysValues.get(auxStartDateType).toString();
-					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
-							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
-							CONTRACT_DATA.END_DATE)
-							.values(domain, "COEFICIENTE_ERE_FZA_EXONERADO", contract, coeficiente, 
-									sqlStartDateType, sqlEndDateType).execute();
-				} else {
-					createAndUpdateStrechCoeficient(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaExonDaysValues);
-				}
+				createAndUpdateStrechCoeficientAux(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaExonDaysValues);
+//				
+//				if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth()){
+//					String coeficiente = ereFzaExonDaysValues.get(auxStartDateType).toString();
+//					dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//							CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//							CONTRACT_DATA.END_DATE)
+//							.values(domain, "COEFICIENTE_ERE_FZA_EXONERADO", contract, coeficiente, 
+//									sqlStartDateType, sqlEndDateType).execute();
+//				} else {
+//					createAndUpdateStrechCoeficient(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType, ereFzaExonDaysValues);
+//				}
 			}else if(dayType.equals("DIAS_INACTIVIDAD")){
 				String typeInactivity = inactivityDaysValues.get(auxStartDateType);
 				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
@@ -1077,7 +1092,8 @@ public class JooqEmployeeCalendar {
 //				
 //			}
 			
-			if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth() && !dayType.equals("DIAS_PARCIALIDAD")){
+			if(sqlStartDateType.getMonth() == sqlEndDateType.getMonth() && !dayType.equals("DIAS_PARCIALIDAD") && 
+					!dayType.equals("DIAS_ERE_FZA_EXONERADO") && !dayType.equals("DIAS_ERE_FZA") && !dayType.equals("DIAS_ERE")){
 				String expression = calculateExpression(DateUtils.copyDateOnly(auxStartDateType),
 						DateUtils.copyDateOnly(javaEndDateType));
 				
@@ -1086,7 +1102,7 @@ public class JooqEmployeeCalendar {
 						CONTRACT_DATA.END_DATE)
 						.values(domain, dayType, contract, expression, 
 								sqlStartDateType, sqlEndDateType).execute();
-			}else{
+			}else if(!dayType.equals("DIAS_ERE_FZA_EXONERADO") && !dayType.equals("DIAS_ERE_FZA") && !dayType.equals("DIAS_ERE")){
 				createAndUpdateStrech(dslContext, domain, dayType, contract, sqlStartDateType, sqlEndDateType);
 			}
 			
@@ -1303,6 +1319,93 @@ public class JooqEmployeeCalendar {
 				.values(domain, dayType, contract, expression.toString(), 
 						sqlStartDate, sqlEndDate).execute();
 		
+	}
+	
+	private static void createAndUpdateStrechCoeficientAux(DSLContext dslContext, Integer domain, String dayType, Integer contract,
+			Date sqlStartDateType, Date sqlEndDateType, Map<java.util.Date, Double> coefficientValues) {
+		
+		java.util.Date javaEndDate = DateUtils.copyDateOnly(new java.util.Date(sqlEndDateType.getTime()));
+		
+		java.util.Date iterableDate = DateUtils.copyDateOnly(new java.util.Date(sqlStartDateType.getTime()));
+		DateUtils.resetTime(iterableDate);
+		
+		java.util.Date javaStartDate = DateUtils.copyDateOnly(iterableDate);
+		
+		Double startCoefficient = coefficientValues.get(iterableDate);
+		
+		String coefficientType = getTypeCoefficient(dayType);
+		
+		while(iterableDate.before(javaEndDate) || iterableDate.equals(javaEndDate)) {
+			Double iterableCoefficient = coefficientValues.get(iterableDate);
+			
+			if(iterableDate.equals(javaEndDate)) {
+				//INSERTAR
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, coefficientType, contract, startCoefficient.toString(), 
+								new Date(javaStartDate.getTime()), new Date(iterableDate.getTime())).execute();
+				
+				int daysBetween = DateUtils.getDaysBetween(javaStartDate, iterableDate);
+				daysBetween++;
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, dayType, contract, daysBetween+"", 
+								new Date(javaStartDate.getTime()), new Date(iterableDate.getTime())).execute();
+				
+				DateUtils.addDays2Date(iterableDate, 1);
+				
+			}else if(iterableDate.getMonth() != javaStartDate.getMonth()) {
+				//INSERTAR
+				DateUtils.deleteDays2Date(iterableDate, 1);
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, coefficientType, contract, startCoefficient.toString(), 
+								new Date(javaStartDate.getTime()), new Date(iterableDate.getTime())).execute();
+				
+				int daysBetween = DateUtils.getDaysBetween(javaStartDate, iterableDate);
+				daysBetween++;
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, dayType, contract, daysBetween+"", 
+								new Date(javaStartDate.getTime()), new Date(iterableDate.getTime())).execute();
+				
+				DateUtils.addDays2Date(iterableDate, 1);
+				javaStartDate = DateUtils.copyDateOnly(iterableDate);
+				DateUtils.addDays2Date(iterableDate, 1);
+				startCoefficient = iterableCoefficient;
+			} else if (Double.compare(startCoefficient, iterableCoefficient) != 0) {
+				//INSERTAR
+				DateUtils.deleteDays2Date(iterableDate, 1);
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, coefficientType, contract, startCoefficient.toString(), 
+								new Date(javaStartDate.getTime()), new Date(iterableDate.getTime())).execute();
+				
+				int daysBetween = DateUtils.getDaysBetween(javaStartDate, iterableDate);
+				daysBetween ++;
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, dayType, contract, daysBetween+"", 
+								new Date(javaStartDate.getTime()), new Date(iterableDate.getTime())).execute();
+				
+				DateUtils.addDays2Date(iterableDate, 1);
+				javaStartDate = DateUtils.copyDateOnly(iterableDate);
+				DateUtils.addDays2Date(iterableDate, 1);
+				startCoefficient = iterableCoefficient;
+			} else {
+				DateUtils.addDays2Date(iterableDate, 1);
+			}
+		}
+		
 		
 	}
 	
@@ -1358,6 +1461,90 @@ public class JooqEmployeeCalendar {
 				.values(domain, coefficientType, contract, coefficient.toString(), 
 						sqlStartDate, sqlEndDate).execute();
 		
+		
+	}
+	
+	private static void createAndUpdateStrechCoeficientSameMonth(DSLContext dslContext, Integer domain, String dayType, Integer contract,
+			Date sqlStartDateType, Date sqlEndDateType, Map<java.util.Date, Double> coefficientValues) {
+		
+		java.util.Date startDate = new java.util.Date(sqlStartDateType.getTime());
+		java.util.Date endDate = new java.util.Date(sqlEndDateType.getTime());
+		
+		java.util.Date iterableDate = new java.util.Date();
+		iterableDate = DateUtils.copyDateOnly(startDate);
+		
+		Double startCoefficient = coefficientValues.get(startDate);
+		Double coefficient;
+		String coefficientType = getTypeCoefficient(dayType);
+		Date sqlStartDate;
+		Date sqlEndDate;
+		
+		while(iterableDate.before(endDate) || iterableDate.equals(endDate)){
+			if(Double.compare(startCoefficient, coefficientValues.get(iterableDate)) != 0) {
+				DateUtils.addDays2Date(iterableDate, -1);
+				
+				sqlStartDate = new Date(startDate.getTime());
+				sqlEndDate = new Date(iterableDate.getTime());
+				
+				coefficient = coefficientValues.get(sqlStartDate);
+				
+				dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+						CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+						CONTRACT_DATA.END_DATE)
+						.values(domain, coefficientType, contract, coefficient.toString(), 
+								sqlStartDate, sqlEndDate).execute();
+				
+				DateUtils.addDays2Date(iterableDate, 1);
+				startDate = DateUtils.copyDateOnly(iterableDate);
+				startCoefficient = coefficientValues.get(startDate);
+				DateUtils.addDays2Date(iterableDate, 1);
+			} else
+				DateUtils.addDays2Date(iterableDate, 1);
+		}
+		
+		dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+				CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+				CONTRACT_DATA.END_DATE)
+				.values(domain, coefficientType, contract, startCoefficient.toString(), 
+						new Date(startDate.getTime()), new Date(iterableDate.getTime())).execute();
+		
+//		//Resto un día para volver al mes anterior
+//		DateUtils.addDays2Date(iterableDate, -1);
+//		Date sqlStartDate = new Date(startDate.getTime());
+//		Date sqlEndDate = new Date(iterableDate.getTime());
+//		
+//		String coefficientType = getTypeCoefficient(dayType);
+//		Double coefficient = coefficientValues.get(sqlStartDate);
+//		
+//		dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//				CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//				CONTRACT_DATA.END_DATE)
+//				.values(domain, coefficientType, contract, coefficient.toString(), 
+//						sqlStartDate, sqlEndDate).execute();
+//		
+//		//Sumo un día para volver al primer día del mes siguiente
+//		expression = 0;
+//		DateUtils.addDays2Date(iterableDate, 1);
+//		startDate = DateUtils.copyDateOnly(iterableDate);
+//		
+//		while(!iterableDate.equals(endDate)){
+//			DateUtils.addDays2Date(iterableDate, 1);
+//			expression++;
+//		}
+//		expression++;
+//		
+//		sqlStartDate = new Date(startDate.getTime());
+//		sqlEndDate = new Date(endDate.getTime());
+//		
+//		coefficientType = getTypeCoefficient(dayType);
+//		coefficient = coefficientValues.get(sqlStartDate);
+//		
+//		dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME,
+//				CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, 
+//				CONTRACT_DATA.END_DATE)
+//				.values(domain, coefficientType, contract, coefficient.toString(), 
+//						sqlStartDate, sqlEndDate).execute();
+//		
 		
 	}
 
@@ -1497,6 +1684,9 @@ public class JooqEmployeeCalendar {
 	private static String getTypeCoefficient(String dayType) {
 		String result = "";
 		switch (dayType) {
+		case "DIAS_ERE":
+			result = "COEFICIENTE_ERE";
+			break;
 		case "DIAS_ERE_FZA":
 			result = "COEFICIENTE_ERE_FZA";
 			break;

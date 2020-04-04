@@ -779,25 +779,49 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 		//Pulsacion celda con SHIFT
 		} else if (event.isShiftKeyDown()){ 
 			int initialPosition = calculateDatePosition(selectedDates.getSelectedList().get(0));
+			
 			if(initialPosition != -1){
 				int endPosition = pos;
 				
+				// Por si seleccionan una fecha anterior a la previamente seleccionada
 				if (initialPosition > endPosition){
-					int posAux = initialPosition;
-					initialPosition = endPosition-1;
-					endPosition = posAux;
+					int lastPosAux = initialPosition;
+					int initialPosAux = endPosition;
+					initialPosition = initialPosAux;
+					endPosition = lastPosAux;
 				}
 				
-				while (initialPosition != endPosition){
-					//TODO: poner este codigo para bloquear no laborables -> || cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))
-					if (!(cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.BAJAIT)
-							/* || cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.FREEDAY)*/)){
-						cells[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)]
-								.select(calculatePositionRow(initialPosition+1), calculatePositionCol(initialPosition+1));
-					}
+				while (initialPosition <= endPosition){
+					int rowIdx = calculatePositionRow(initialPosition);
+					int colIdx = calculatePositionCol(initialPosition);
+					
+					if(!cellsType[rowIdx][colIdx].getType().equals(DayType.BAJAIT))
+						cells[rowIdx][colIdx].select(rowIdx, colIdx);
+					
 					initialPosition++;	
 				}
 			}
+			
+//			int initialPosition = calculateDatePosition(selectedDates.getSelectedList().get(0));
+//			if(initialPosition != -1){
+//				int endPosition = pos;
+//				
+//				if (initialPosition > endPosition){
+//					int posAux = initialPosition;
+//					initialPosition = endPosition-1;
+//					endPosition = posAux;
+//				}
+//				
+//				while (initialPosition != endPosition){
+//					//TODO: poner este codigo para bloquear no laborables -> || cellsType[calcularFila(posicionIncial+1)][calcularColumna(posicionIncial+1)].getType().equals(DayType.NOWORKINGDAY))
+//					if (!(cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.BAJAIT)
+//							/* || cellsType[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)].getType().equals(DayType.FREEDAY)*/)){
+//						cells[calculatePositionRow(initialPosition+1)][calculatePositionCol(initialPosition+1)]
+//								.select(calculatePositionRow(initialPosition+1), calculatePositionCol(initialPosition+1));
+//					}
+//					initialPosition++;	
+//				}
+//			}
 		
 		//Pulsacion una sola celda	
 		} else { 			
@@ -1379,18 +1403,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 				}
 				
 				if(DayType.EREDAY == dayType){
-					calendarGrid.getWidget(row, i).setTitle("ERE");
-					calendarGrid.getWidget(row+1, i).setTitle("ERE");
+					calendarGrid.getWidget(row, i).setTitle("ERE - Coeficiente : " + calendarEmployeeInfo.getEreCoeficient(actualDay));
+					calendarGrid.getWidget(row+1, i).setTitle("ERE - Coeficiente : " + calendarEmployeeInfo.getEreCoeficient(actualDay));
 				}
 				
 				if(DayType.EREFZADAY == dayType){
-					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor");
-					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor");
+					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor - Coeficiente : " + calendarEmployeeInfo.getEreFzaCoeficient(actualDay));
+					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor - Coeficiente : " + calendarEmployeeInfo.getEreFzaCoeficient(actualDay));
 				}
 				
 				if(DayType.EREFZAEXONDAY == dayType){
-					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
-					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+					calendarGrid.getWidget(row, i).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n) - Coeficiente : " + calendarEmployeeInfo.getEreFzaExonCoeficient(actualDay));
+					calendarGrid.getWidget(row+1, i).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n) - Coeficiente : " + calendarEmployeeInfo.getEreFzaExonCoeficient(actualDay));
 				}
 				
 				if(DayType.DROPDAY == dayType){
@@ -1502,18 +1526,18 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 			}
 			
 			if(DayType.EREDAY == dayType){
-				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE");
-				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE");
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE - Coeficiente : " + calendarEmployeeInfo.getEreCoeficient(actualDay));
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE - Coeficiente : " + calendarEmployeeInfo.getEreCoeficient(actualDay));
 			}
 			
 			if(DayType.EREFZADAY == dayType){
-				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor");
-				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor");
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor - Coeficiente : " + calendarEmployeeInfo.getEreFzaCoeficient(actualDay));
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor - Coeficiente : " + calendarEmployeeInfo.getEreFzaCoeficient(actualDay));
 			}
 			
 			if(DayType.EREFZAEXONDAY == dayType){
-				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
-				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+				calendarGrid.getWidget(row, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n) - Coeficiente : " + calendarEmployeeInfo.getEreFzaExonCoeficient(actualDay));
+				calendarGrid.getWidget(row+1, 7 + actualDayOfWeek).setTitle("ERE Fuerza Mayor (Exoneraci" + String.valueOf("\u00F3") + "n) - Coeficiente : " + calendarEmployeeInfo.getEreFzaExonCoeficient(actualDay));
 			}
 			
 			if(DayType.DROPDAY == dayType){
