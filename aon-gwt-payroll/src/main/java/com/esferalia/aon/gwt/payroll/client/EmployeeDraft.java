@@ -1351,6 +1351,21 @@ public class EmployeeDraft extends Composite {
 					result++;
 			}
 		}
+		
+		result = 0;
+		
+		if(null != agreementLevelId) {
+			for (Level levelRecord : levels) {
+				if(Integer.compare(agreementLevelId,levelRecord.getId()) != 0) {
+					Set<String> categories = agreement.getCategoriesMap().get(levelRecord.getId());
+					for (String categoryRecord : categories) {
+						result++;
+					}
+				} else {
+					return result;
+				}
+			}
+		}
 		return -1;
 	}
 	
