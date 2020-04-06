@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
@@ -27,7 +29,6 @@ import com.esferalia.aon.altai.parser.TSLABEMPParser;
 import com.esferalia.aon.altai.parser.TSLABTRABParser;
 import com.esferalia.aon.altai.parser.jooq.JooqTSLABEMPHandler;
 import com.esferalia.aon.altai.parser.jooq.JooqTSLABTRAHandler;
-import com.esferalia.aon.altai.parser.jooq.JooqTSLABTRAInsight;
 
 public class Altai2Aon {
 	
@@ -116,6 +117,14 @@ public class Altai2Aon {
 		     .create();
 
 		@SuppressWarnings("static-access")
+		Option fromOption = OptionBuilder
+		     .hasArg()
+		     .withLongOpt("from")
+		     .withArgName("date")
+		     .withDescription("Date from, default 01/01/2020")
+		     .create("f");
+
+		@SuppressWarnings("static-access")
 		Option helpOption = OptionBuilder
 			 .withLongOpt("help")
 	         .withDescription("Display this help and exit.")
@@ -132,6 +141,7 @@ public class Altai2Aon {
 		options.addOption(domainPreffix);
 		options.addOption(databaseOption);
 		options.addOption(passwordOption);
+		options.addOption(fromOption);
 		 
 		Connection connection = null;
 		try {
@@ -148,6 +158,7 @@ public class Altai2Aon {
 			String preffix = commandLine.getOptionValue(domainPreffix.getLongOpt(), "altai");
 			String emps [] = commandLine.getOptionValues(empOption.getLongOpt());
 			String tras [] = commandLine.getOptionValues(traOption.getLongOpt());
+			Date from = new SimpleDateFormat("dd/MM/yyyy").parse(commandLine.getOptionValue(fromOption.getLongOpt(), "01/01/2020"));
 	
 			Properties properties = new Properties();
 			properties.setProperty("user", user);
@@ -215,7 +226,7 @@ public class Altai2Aon {
 			for (File traFile : traFiles) {
 				InputStream in = new FileInputStream(traFile);
 				JooqTSLABTRAHandler tslabtraHandler = 
-						new JooqTSLABTRAHandler(connection, traFile);
+						new JooqTSLABTRAHandler(connection, from, traFile);
 				TSLABTRABParser.parse(in, tslabtraHandler);
 				tslabtraHandler.execute();
 				

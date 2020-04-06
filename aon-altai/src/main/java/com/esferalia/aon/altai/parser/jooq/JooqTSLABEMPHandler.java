@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -42,6 +43,72 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqTSLABEMPHandler implements TSLABEMPHandler {
+	
+	{
+		println(System.out);
+	}
+	
+	private static class ByOtherUser extends Exception {
+		
+		private Record records [];
+		
+		public ByOtherUser(Record records []) {
+			this.records = records;
+		}
+		
+		public void println() {
+			Arrays
+			.stream(records)
+			.forEach( r -> 
+					System.out.printf("\"%d\",\"%d\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n", 
+					r.get(DOMAIN.ID), 
+					r.get(REGISTRY.ID),
+					r.get(DOMAIN.NAME), 
+					r.get(REGISTRY.DOCUMENT), 
+					AonStringUtils.defaultIfBlank(r.get(REGISTRY.NAME),""), 
+					AonStringUtils.defaultIfBlank(r.get(DOMAIN.CREATION_USER), ""),
+					AonStringUtils.defaultIfBlank(r.get(DOMAIN.MODIFICATION_USER), "") ,
+					AonStringUtils.defaultIfBlank(r.get(REGISTRY.ALIAS) , "")
+					)
+			);
+		}
+		
+		
+		
+	}
+	
+	private static class InsertedByOtherUser extends ByOtherUser {
+
+		public InsertedByOtherUser(Record[] records) {
+			super(records);
+		}
+		
+	}
+	
+	private static class UpdatedByOtherUser extends ByOtherUser {
+
+		public UpdatedByOtherUser(Record[] records) {
+			super(records);
+		}
+		
+
+	}
+	
+	
+	private static void println(PrintStream os) {
+		{
+			os.printf("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n", 
+			"domain.id", 
+			"registry.id",
+			"domain.name", 
+			"registry.document", 
+			"registry.name", 
+			"domain.creation_user",
+			"domain.modification_user" ,
+			"registry.alias"
+			);			
+		}		
+	}
 	
 	File file;
 	Integer scopeId;
@@ -79,6 +146,9 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 		parentDomainRecord = dslContext.select().from(DOMAIN).where(DOMAIN.NAME.eq(parentDomainName)).fetchOneInto(DOMAIN);
 		
 		this.scopeId = parentDomainRecord.getScope(); 
+		
+		
+
 	}
 
 	@Override
@@ -91,14 +161,15 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 		//016004390R
 		String document = doc
 		.trim()
-		.replaceAll("^0([0-9a-zA-Z]{9})$", "$1");
+		.replaceAll("^0([0-9a-zA-Z]{9})$", "$1")
+		.toUpperCase();
 		
 		RegistryRecord registry =
 		dslContext
 		.select()
 		.from(REGISTRY)
 		.where(REGISTRY.DOMAIN.eq(0))
-		.and(REGISTRY.DOCUMENT.eq(document))
+		.and(REGISTRY.DOCUMENT.equalIgnoreCase(document))
 		.fetchOptionalInto(REGISTRY)
 		.orElseGet(() -> 
 		new RegistryRecord(
@@ -119,14 +190,19 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 
 		if ( AonStringUtils.isBlank(registry.getName()))
 			return; 
-		
-		if ( isInsertedByOtherUser(registry.getDocument())) {
-			System.err.printf("Enterprise [%s] '%s' has been inserted manually\r\n", registry.getDocument(), registry.getName() );
+		try {
+			CheckIfInsertedByOtherUser(registry.getDocument());
+		} catch (InsertedByOtherUser e) {
+			e.println();
 			return; 
 		}
 
-		if ( isUpdatedByOtherUser(registry.getDocument()))
+		try {
+			CheckIfUpdatedByOtherUser(registry.getDocument());
+		} catch (UpdatedByOtherUser e) {
+			e.println();
 			return; 
+		}
 
 		StringBuffer domainNameBuffer = new StringBuffer();
 		if ( AonStringUtils.isNotBlank(domainNamePreffix) ) {
@@ -479,7 +555,14 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 		)
 		;
 		
-		System.out.printf("EMP: %s %s\r\n", registry.getDocument(), registry.getName() );
+		System.out.printf("0,0,\"%s\",\"%s\",\"%s\",\"%s\",\"\",\"%s\"\r\n", 
+		domainName, 
+		registry.get(REGISTRY.DOCUMENT), 
+		registry.get(REGISTRY.NAME), 
+		creationUser,
+		registry.get(REGISTRY.ALIAS) 
+		);
+		
 	}
 
 	@Override
@@ -503,33 +586,39 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 	
 
 
-	private boolean isInsertedByOtherUser(String document) {
-		return 
-		dslContext.fetchCount(
-		DSL
-		.select(DOMAIN.ID)
+	private void CheckIfInsertedByOtherUser(String document) 
+	throws InsertedByOtherUser {
+		Record records [] =
+		dslContext
+		.select()
 		.from(DOMAIN)
 		.innerJoin(COMPANY).onKey()
 		.innerJoin(REGISTRY).onKey()
-		.where(REGISTRY.DOCUMENT.eq(document))
+		.where(REGISTRY.DOCUMENT.equalIgnoreCase(document))
 		.and(DOMAIN.CREATION_USER.ne(creationUser))
-		) > 0
+		.fetchArray()
 		;
+		
+		if ( records.length > 0 )
+			throw new InsertedByOtherUser(records);
+	
 	}
 
-	private boolean isUpdatedByOtherUser(String document) {
-		return 
-		dslContext.fetchCount(
-		DSL
-		.select(DOMAIN.ID)
+	private void CheckIfUpdatedByOtherUser(String document)
+	throws UpdatedByOtherUser {
+		Record records [] =
+		dslContext
+		.select()
 		.from(DOMAIN)
 		.innerJoin(COMPANY).onKey()
 		.innerJoin(REGISTRY).onKey()
-		.where(REGISTRY.DOCUMENT.eq(document))
+		.where(REGISTRY.DOCUMENT.equalIgnoreCase(document))
 		.and(DOMAIN.MODIFICATION_USER.isNotNull())
 		.and(DOMAIN.MODIFICATION_USER.ne(creationUser))
-		) > 0
-		;
+		.fetchArray()
+		; 	
+		if ( records.length > 0 )
+			throw new UpdatedByOtherUser(records);
 	}
 	
 	protected static String getAlias(String em01000, File file) {
@@ -553,8 +642,8 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 		 inserts.stream().forEach(consumer);
 	}
 
+
 	public static void main(String[] args) {
-		System.out.println("029625914M".replaceAll("^0([0-9a-zA-Z]{9})$", "$1"));
+//		println(System.out);
 	}
-	
 }

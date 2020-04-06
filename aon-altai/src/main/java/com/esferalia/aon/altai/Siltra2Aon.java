@@ -124,6 +124,12 @@ public class Siltra2Aon {
 		     .withArgName("where")
 		     .withDescription("Only selected contracts. Quotes are mandatory.")
 		     .create();
+
+		@SuppressWarnings("static-access")
+		Option checkOption = OptionBuilder
+			 .withLongOpt("check")
+	         .withDescription("Calculate and check against 'datos' od SDL ")
+	         .create();	
 		
 		Options options = new Options();
 		options.addOption(basesOption);
@@ -137,6 +143,7 @@ public class Siltra2Aon {
 		options.addOption(dateOption);
 		options.addOption(whereOption);
 		options.addOption(craOption);
+		options.addOption(checkOption);
 		 
 		Connection connection = null;
 		try {
@@ -154,6 +161,7 @@ public class Siltra2Aon {
 			String basesPaths [] = Optional.ofNullable(commandLine.getOptionValues(basesOption.getLongOpt())).orElse(new String[] {});;
 			String calculosPaths [] = Optional.ofNullable(commandLine.getOptionValues(calculosOption.getLongOpt())).orElse(new String[] {});;
 			Date date = Optional.ofNullable(commandLine.getOptionValue(dateOption.getLongOpt())).map(s -> parse(s)).orElse(null);
+			boolean check = commandLine.hasOption(checkOption.getLongOpt());
 			
 			Properties properties = new Properties();
 			properties.setProperty("user", user);
@@ -166,13 +174,16 @@ public class Siltra2Aon {
 			connection = DriverManager.getConnection(url, properties);
 			
 			
-			Bases2Aon bases2Aon = new Bases2Aon(connection);
+			Bases2Aon bases2Aon = new Bases2Aon(connection, DSL.condition(where));
 			
 			for (String basesPath : basesPaths) {
-				Arrays.stream(new File(basesPath).listFiles(f-> f.isFile() && AonStringUtils.startsWithIgnoreCase(f.getName(), "BASES")))
+				Arrays.stream(new File(basesPath).listFiles(f-> f.isFile()))
 				.forEach(f -> {
 					try {
-						bases2Aon.parse(f);
+						if ( check )
+							bases2Aon.check(f);
+						else
+							bases2Aon.fix(f);
 					} catch (IOException e) {
 						System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
 					}
@@ -185,7 +196,10 @@ public class Siltra2Aon {
 				Arrays.stream(new File(calculosPath).listFiles(f-> f.isFile() ))
 				.forEach(f -> {
 					try {
-						calculos2Aon.fix(f);
+						if ( check )
+							calculos2Aon.check(f);
+						else
+							calculos2Aon.fix(f);
 					} catch (IOException e) {
 						System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
 					}

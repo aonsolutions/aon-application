@@ -108,7 +108,7 @@ public class TSLABTRABParser {
 	}
 
 	private static String getField(String fields [] ) throws NoSuchFieldException {
-		if ( fields.length < 2 )
+		if ( fields.length < 3 )
 			throw new NoSuchFieldException("");
 		
 		return fields[0] + "-" + fields[1] + "-" + fields[2];
@@ -116,7 +116,7 @@ public class TSLABTRABParser {
 
 	
 	private static  Double getAmount(String fields [] ) throws NoSuchFieldException {
-		if ( fields.length < 3 )
+		if ( fields.length < 4 )
 			throw new NoSuchFieldException("");
 		
 		if ( !AonStringUtils.equals(fields[2], "N") )

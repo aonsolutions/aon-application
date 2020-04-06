@@ -1,4 +1,4 @@
-package com.esferalia.aon.altai.parser.jooq;
+ package com.esferalia.aon.altai.parser.jooq;
 
 import static com.esferalia.aon.altai.parser.jooq.JooqTSLABEMPHandler.insert;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,19 +50,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 	
-	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd");
+	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	private static final Pattern FULL_NAME_PATTERN = Pattern.compile("(?<firstsurname>[^\\s]+)\\s+(?<secondsurname>[^\\s,]+)[\\s,]+(?<name>.*)");
-	private static final Pattern FIRST_NAME_PATTERN = Pattern.compile("(?<firstsurname>[^\\s]+)\\s+(?<name>[^\\s]+)");
+	private static final Pattern FIRST_NAME_PATTERN = Pattern.compile("(?<firstsurname>[^\\s,]+)[\\s,]+(?<name>.*)");
 	
 	
 	File file;
+	java.util.Date fromdate;
 	DSLContext dslContext;
 	
 	
 	List<InsertOnDuplicateSetMoreStep<?>> inserts;
 
-
-	public JooqTSLABTRAHandler(Connection connection, File file) {
+	
+	
+	public JooqTSLABTRAHandler(Connection connection, java.util.Date fromdate, File file) {
 		Settings settings;
 
 		settings = new Settings();
@@ -71,6 +74,7 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
 		this.file = file;
+		this.fromdate = fromdate;
 		inserts = new ArrayList<InsertOnDuplicateSetMoreStep<?>>();
 	}
 	
@@ -86,19 +90,98 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		if ( AonStringUtils.isBlank(document) )
 			return;
 		
+		document = AonStringUtils.upperCase(document);
+		
+		String fullname = tra.get("fullname"); 
+
 		String alias = JooqTSLABEMPHandler.getAlias(em01000, file);
+		String tc2 = tra.get("tc2");
+		String cno = tra.get("cno");
+		String category = tra.getOrDefault("category", tra.get("categoryy"));
+		String quoteGroup = null;
+		try {
+			quoteGroup = String.format("%02d", Integer.parseInt(tra.get("quote_group")));
+		} catch (Throwable t) {
+			quoteGroup =tra.get("quote_group");
+		}
+
+		
+		
+		Date startdate = null ;
+		try {
+			startdate  = new Date(SIMPLE_DATE_FORMAT.parse(tra.get("startdate")).getTime());
+		} catch (Throwable t) {
+			System.out.printf(
+			"0,\"%s\",\"%s\",\"%s\",\"\",\"\",\"\",\"%s\",\"%s\",\"%s\",\"%s\",\"\"\r\n", 
+			alias,
+			document, 
+			fullname,
+			tc2,
+		    quoteGroup,
+			category,
+			AonStringUtils.defaultIfBlank(tra.get("startdate"), "")
+			);
+			return;
+		}
+		
+		Date enddate = null ;
+		try {
+			enddate  = new Date(SIMPLE_DATE_FORMAT.parse(tra.get("enddate")).getTime());
+			if ( enddate.compareTo(startdate) < 0 )
+				enddate = null;
+			else if ( enddate.compareTo(fromdate) < 0 )
+				return;
+			
+		} catch (Throwable t) {
+			
+		}
+		
+
 		
 		Integer domainId = 
 		dslContext
 		.select()
 		.from(REGISTRY)
-		.where(REGISTRY.ALIAS.eq(alias))
+		.where(REGISTRY.ALIAS.equalIgnoreCase(alias))
 		.fetchOptional(REGISTRY.DOMAIN)
 		.orElseGet(()-> null)
 		;
 		
-		if ( domainId == null )
+		
+		String name  = null;
+		String firstSurName = null ;
+		String secondSurName = null;
+		
+		Matcher fullNameMatcher = FULL_NAME_PATTERN.matcher(fullname);
+		if  ( fullNameMatcher.matches() ) {
+			name = fullNameMatcher.group("name");
+			firstSurName = fullNameMatcher.group("firstsurname");
+			secondSurName = fullNameMatcher.group("secondsurname");
+		} else { 
+			Matcher firstNameMatcher = FIRST_NAME_PATTERN.matcher(fullname);
+			if  ( firstNameMatcher.matches() ) {
+				name = firstNameMatcher.group("name");
+				firstSurName = firstNameMatcher.group("firstsurname");
+			}
+		}
+		
+		
+		if ( domainId == null ) {
+			System.out.printf(
+			"0,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%10$td/%10$tm/%10$ty\",\"\"\r\n", 
+			alias,
+			document, 
+			fullname,
+			AonStringUtils.defaultIfBlank(name,""),
+			AonStringUtils.defaultIfBlank(firstSurName,""),
+			AonStringUtils.defaultIfBlank(secondSurName,""),
+			AonStringUtils.defaultIfBlank(tc2, ""),
+			AonStringUtils.defaultIfBlank( quoteGroup, ""),
+			AonStringUtils.defaultIfBlank( category, ""),
+			startdate
+			);
 			return;
+		}
 		
 		SelectConditionStep<Record1<Integer>> registryId = 
 		DSL
@@ -106,10 +189,10 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		.from(DOMAIN)
 		.innerJoin(REGISTRY).onKey()
 		.where(DOMAIN.ID.eq(domainId))
-		.and(REGISTRY.DOCUMENT.eq( document ))
+		.and(REGISTRY.DOCUMENT.equalIgnoreCase( document ))
 		;
 		
-		String fullname = tra.get("fullname"); 
+		
 		
 		String nationality =  null;
 		Byte documentType = Utils.getType(document);
@@ -146,24 +229,6 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		} catch (Throwable t) {
 		}
 		
-		String name  = null;
-		String firstSurName = null ;
-		String secondSurName = null;
-		
-		Matcher fullNameMatcher = FULL_NAME_PATTERN.matcher(fullname);
-		if  ( fullNameMatcher.matches() ) {
-			name = fullNameMatcher.group("name");
-			firstSurName = fullNameMatcher.group("firstsurname");
-			secondSurName = fullNameMatcher.group("secondsurname");
-		} else { 
-			Matcher firstNameMatcher = FIRST_NAME_PATTERN.matcher(fullname);
-			if  ( firstNameMatcher.matches() ) {
-				name = firstNameMatcher.group("name");
-				firstSurName = firstNameMatcher.group("firstsurname");
-			}
-		}
-		
-		
 		inserts.add(
 		dslContext.insertInto(PERSON)
 		.set(PERSON.REGISTRY, registryId)
@@ -184,12 +249,6 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		;
 		
 		
-		Date startdate = null ;
-		try {
-			startdate  = new Date(SIMPLE_DATE_FORMAT.parse(tra.get("startdate")).getTime());
-		} catch (Throwable t) {
-			return;
-		}
 		
 		PayrollWorkplaceRecord workplace = dslContext
 		.select()
@@ -198,8 +257,6 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		.fetchOptionalInto(PAYROLL_WORKPLACE)
 		.orElseGet(()-> null)
 		;
-		if ( workplace == null )
-			return;
 
 		
 		SelectConditionStep<Record1<Integer>> contractId = 
@@ -233,16 +290,6 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
 		;
 		
-		String category = tra.getOrDefault("category", tra.get("categoryy"));
-		
-		
-		
-		Date enddate = null ;
-		try {
-			enddate  = new Date(SIMPLE_DATE_FORMAT.parse(tra.get("enddate")).getTime());
-		} catch (Throwable t) {
-		}
-
 
 		inserts.add(
 		dslContext.insertInto(CONTRACT)
@@ -268,20 +315,38 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		.set(CONTRACT.CATEGORY_DESCRIPTION, category)
 		)
 		;
-		
-		insertContractData("TC2", tra.get("tc2"), domainId, startdate, contractId, enddate);
-		insertContractData("CNO", tra.get("cno"), domainId, startdate, contractId, enddate);
-		String quoteGroup = null;
-		try {
-			quoteGroup = String.format("%02d", Integer.parseInt(tra.get("quote_group")));
-		} catch (Throwable t) {
-			quoteGroup =tra.get("quote_group");
-		}
+
+		insertContractData("TC2", tc2, domainId, startdate, contractId, enddate);
+		insertContractData("CNO", cno, domainId, startdate, contractId, enddate);
 		insertContractData("GRUPO_COTIZACION", quoteGroup, domainId, startdate, contractId, enddate);
 		
 
-		System.out.printf("TRA: %s %s\r\n", document, fullname );
+		System.out.printf(
+		"%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%11$td/%11$tm/%11$ty\",", 
+		domainId,
+		alias,
+		document, 
+		fullname,
+		AonStringUtils.defaultIfBlank(name,""),
+		AonStringUtils.defaultIfBlank(firstSurName,""),
+		AonStringUtils.defaultIfBlank(secondSurName,""),
+		AonStringUtils.defaultIfBlank(tc2, ""),
+		AonStringUtils.defaultIfBlank( quoteGroup, ""),
+		AonStringUtils.defaultIfBlank( category, ""),
+		startdate
+		);
 		
+		if ( enddate != null )
+			System.out.printf(
+					"\"%1$td/%1$tm/%1$ty\"\r\n", 
+					enddate
+					);
+		else 
+			System.out.printf(
+					"\"%s\"\r\n",
+					AonStringUtils.defaultIfBlank(tra.get("enddate"), "")
+					);
+			
 	}
 	
 	
@@ -333,6 +398,10 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 			
 //			throw new RollbackException();
 		});
+	}
+	
+	public static void main(String[] args) throws ParseException {
+		System.out.println(SIMPLE_DATE_FORMAT.parse("2019-10-01"));
 	}
 	
 	
