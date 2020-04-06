@@ -665,6 +665,17 @@ public class AccountingInvoiceDAO {
 				detail.setId(detail.getId() * -1);
 			}
 			accInvoice.getInvoice().getDetails().addAll(details);
+			
+			// Si sólo tiene un vencimiento y está pendiente, se actualiza el importe para que sea igual al total factura 
+			if (accInvoice.getInvoice().getFinances() != null && accInvoice.getInvoice().getFinances().size() == 1) {
+				Finance finance = accInvoice.getInvoice().getFinances().getFirst();
+				if (finance.isPending() && !AonNumberUtils.equals(accInvoice.getInvoice().getTotal(),finance.getAmount())) {
+					finance.setAmount(accInvoice.getInvoice().getTotal())
+						.setDirty(true);
+				}
+			}
+			// ---------------------------
+			
 			InvoiceDAO.update(ctx, config, accInvoice.getInvoice());
 			AccountEntry ae = InvoiceRecorder.getInvoiceEntry(accInvoice);
 			for (AccountEntryDetail detail : accInvoice.getAccountEntry().getDetails()) {
