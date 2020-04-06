@@ -620,6 +620,7 @@ public class AccountingInvoiceDAO {
 		@Override
 		public void visitCustomer(AccountingRegistry reg) {
 			visitCommon(reg);
+			invoice.setReferenceCode(null);
 			invoice.setNumber( InvoiceDAO.getNextNumber(ctx, new Byte[]{invoice.getType().value()}, invoice.getSeries()));
 		}
 
@@ -984,6 +985,7 @@ public class AccountingInvoiceDAO {
 			AccountingRegistry reg = ai.getRegistry(); 
 			reg.getType().visit(reg, new  InvoiceDuplicator(ctx, ai.getInvoice()));
 			for (Finance finance : ai.getInvoice().getFinances()) {
+				finance.setId(null);
 				finance.setId(null);
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}
