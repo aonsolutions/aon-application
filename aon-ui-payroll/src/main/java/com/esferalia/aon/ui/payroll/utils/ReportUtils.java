@@ -34,6 +34,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryDirStaff;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.Domain;
@@ -51,6 +52,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonUtils;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -296,6 +298,21 @@ public class ReportUtils {
 		return list;
 	}
 
+	public static final <T> List<T> filter(Collection<T> collection,
+			String property, Object... values) throws IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
+		List<T> list = new LinkedList<T>();
+		for (T t : collection) {
+			Object value = PropertyUtils.getProperty(t, property);
+			if (!contains(values, value)) {
+				list.add(t);
+			}
+		}
+		Comparator<T> comparator = new BeanComparator(property,PropertyComparator.INSTANCE);
+		Collections.sort(list, comparator);
+		return list;
+	}
+	
 	public static JRRenderable getRenderer(RegistryAttachment rattach) {
 		return JRImageRenderer.getInstance(rattach.getData());
 	}
@@ -536,7 +553,7 @@ public class ReportUtils {
 
 	private static boolean contains(Object values[], Object value) {
 		for (int i = 0; i < values.length; i++) {
-			if (values[i] == value)
+			if ( AonUtils.equals(values[i], value))
 				return true;
 		}
 		return false;
