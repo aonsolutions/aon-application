@@ -4,10 +4,13 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
@@ -25,14 +28,21 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
+import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Payment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
@@ -407,7 +417,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		Salary salary = new ContractSalaryCalculator<Salary>(
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
@@ -477,7 +487,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		Salary salary = new ContractSalaryCalculator<Salary>(
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
@@ -548,7 +558,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		Salary salary = new ContractSalaryCalculator<Salary>(
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
@@ -620,7 +630,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		Salary salary = new ContractSalaryCalculator<Salary>(
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
@@ -693,7 +703,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		Salary salary = new ContractSalaryCalculator<Salary>(
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
@@ -766,7 +776,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		Salary salary = new ContractSalaryCalculator<Salary>(
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
 				new SalaryBuilder(){
 				}).calculate(ctx);
 
@@ -792,6 +802,453 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				DELTA);
 	}
 	
+	@Test
+	public void testEREITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+				{
+					put(MONTH_DAYS.getName(), "30.00");
+					put(CGC_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+					put(CGP_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+					put(CGC_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+					put(CGP_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+				}
+			},
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+			, new String[] {
+						"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+						"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"}
+			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		Date startEre = getFirstDayOfMonth(getToday());
+		//int ereDays = (int) (Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1));
+		startEre = add(startEre, DAY_OF_MONTH, 15);
+		
+		addIT(
+		aonContext, 
+		contract, 
+		LeaveType.COMMON_DISEASE, 
+		getFirstDayOfMonth(getToday()), 
+		add(startEre, DAY_OF_MONTH,-1), 
+		null);
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+		addData(aonContext, contract, startEre, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		
+		PaymentConceptRecord ere = addConcept(aonContext,getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA", getDaysVariable()));
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new ContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ", " + payment.getQuote() + ")");
+		}
+
+		Assert.assertEquals(
+				(1750.00 * 1.10), salary.getCommonBase(),
+				DELTA);
+
+
+		Assert.assertEquals(
+				1750.00 * 1.10 * 12/30 * 0.60
+				, salary.getTotalPayment(),
+				DELTA);
+
+		Assert.assertEquals(
+				1750.00 * 1.10 * 0.50  * 0.15 
+				, salary.getSocialSecurityContributions(),
+				DELTA);
+	}
+	
+	@Test
+	public void testMultipleEREI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+				{
+					put(MONTH_DAYS.getName(), "30.00");
+					put(CGC_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+					put(CGP_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+					put(CGC_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+					put(CGP_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+				}
+			},
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+			, new String[] {
+						"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+						"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"}
+			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		Date startEreI = getFirstDayOfMonth(getToday());
+		//int ereDays = (int) (Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1));
+		startEreI = add(startEreI, DAY_OF_MONTH, 15);
+		Date endEreI = add(startEreI, DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, startEreI, endEreI,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		Date startEreII = add(endEreI, DAY_OF_MONTH, 1);
+		
+		addData(aonContext, contract, startEreII, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.50");
+					}
+				});
+
+		PaymentConceptRecord ere = addConcept(aonContext,getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA", getDaysVariable()));
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ", " + payment.getQuote() + ")");
+		}
+
+		Assert.assertEquals(
+				(1750.00 * 1.10), salary.getCommonBase(),
+				DELTA);
+
+
+		Assert.assertEquals(
+				(1750.00 * 1.10) * 15/30 + (1750.00 * 1.10) * 4 / 30 *0.5
+				, salary.getTotalPayment(),
+				DELTA);
+
+		Assert.assertEquals(
+				salary.getTotalPayment() * 0.15 
+				, salary.getSocialSecurityContributions(),
+				DELTA);
+	}
+	
+	@Test
+	public void testMultipleEREII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		int salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001).getId();
+		int plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001).getId();
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] { 
+		new Extra() {
+			{
+				this.expression = "(SALARIO_BASE + PLUS_SALARIAL)/12";
+				this.month = Month.JULY;
+				this.start = "01/07 -1";
+				this.end = "30/06";
+				this.issue = "01/07";
+				this.concept = pagaExtra.getId();
+			}
+		}, new Extra() {
+			{
+				this.expression = "(SALARIO_BASE + PLUS_SALARIAL)/12";
+				this.month = Month.DECEMBER;
+				this.start = "01/01";
+				this.end = "31/12";
+				this.issue = "15/12";
+				this.concept = pagaExtra.getId();
+			}
+		}, 
+		
+		}, new Payment[] 
+		{ 
+		new Payment() {
+			{
+				this.concept = salarioBase;
+				this.expression = "1500.00 * DIAS_TRABAJADOS / DIAS_MES";
+			}
+		}, 
+		new Payment() {
+			{
+				this.concept = plusSalarial;
+				this.expression = "250.00 * DIAS_TRABAJADOS / DIAS_MES";
+			}
+		}, 
+//		new Payment() {
+//			{
+//				this.expression = "PLUS_TRANSPORTE";
+//			}
+//		} 
+		});
+
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+				{
+					put(MONTH_DAYS.getName(), "30.00");
+//					put(CGC_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+//					put(CGP_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+//					put(CGC_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+//					put(CGP_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+				}
+			},
+			new String[] { 
+						"( SALARIO_BASE + PLUS_SALARIAL )* 0.10 ",
+//						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+//						"250.00 * DIAS_TRABAJADOS / DIAS_MES", 
+			}
+			, new String[] {
+						"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+						"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"
+			}
+			, category);
+		
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE + PLUS_SALARIAL", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE + PLUS_SALARIAL", "_P", PaymentType.CRA_0004);
+
+		Date startEreI = getFirstDayOfMonth(getToday());
+		//int ereDays = (int) (Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1));
+		startEreI = add(startEreI, DAY_OF_MONTH, 15);
+		Date endEreI = add(startEreI, DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, startEreI, endEreI,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		Date startEreII = add(endEreI, DAY_OF_MONTH, 1);
+		
+		addData(aonContext, contract, startEreII, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.50");
+					}
+				});
+
+		PaymentConceptRecord ere = addConcept(aonContext,getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA", getDaysVariable()));
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ", " + payment.getQuote() + ")");
+		}
+
+		Assert.assertEquals(
+				(1750.00 * 1.10) + (1750.00/6), salary.getCommonBase(),
+				DELTA);
+
+
+		Assert.assertEquals(
+				(1750.00 * 1.10 * 15/30) + (1750.00 * 1.10 * 4 / 30 *0.5) + (1750.00/6 * 15/30 ) + (1750.00/6 * 4 / 30* 0.5 )  
+				, salary.getTotalPayment(),
+				DELTA);
+
+		Assert.assertEquals(
+				salary.getTotalPayment() * 0.15 
+				, salary.getSocialSecurityContributions(),
+				DELTA);
+	}
+
+	@Test
+	public void testMultipleEREIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		int salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001).getId();
+		int plusSalarial = addConcept(aonContext, "PLUS_SALARIAL", PaymentType.CRA_0001).getId();
+		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] { 
+		new Extra() {
+			{
+				this.expression = "(SALARIO_BASE + PLUS_SALARIAL)";
+				this.month = Month.JULY;
+				this.start = "01/07 -1";
+				this.end = "30/06";
+				this.issue = "01/07";
+				this.concept = pagaExtra.getId();
+			}
+		}, new Extra() {
+			{
+				this.expression = "(SALARIO_BASE + PLUS_SALARIAL)";
+				this.month = Month.DECEMBER;
+				this.start = "01/01";
+				this.end = "31/12";
+				this.issue = "15/12";
+				this.concept = pagaExtra.getId();
+			}
+		}, 
+		
+		}, new Payment[] 
+		{ 
+		new Payment() {
+			{
+				this.concept = salarioBase;
+				this.expression = "1500.00 * DIAS_TRABAJADOS / DIAS_MES";
+			}
+		}, 
+		new Payment() {
+			{
+				this.concept = plusSalarial;
+				this.expression = "250.00 * DIAS_TRABAJADOS / DIAS_MES";
+			}
+		}, 
+//		new Payment() {
+//			{
+//				this.expression = "PLUS_TRANSPORTE";
+//			}
+//		} 
+		});
+
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+				{
+					put(MONTH_DAYS.getName(), "30.00");
+//					put(CGC_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+//					put(CGP_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+//					put(CGC_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+//					put(CGP_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+				}
+			},
+			new String[] { 
+						"( SALARIO_BASE + PLUS_SALARIAL )* 0.10 ",
+//						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+//						"250.00 * DIAS_TRABAJADOS / DIAS_MES", 
+			}
+			, new String[] {
+						"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+						"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"
+			}
+			, category);
+		
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE + PLUS_SALARIAL", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtra, "SALARIO_BASE + PLUS_SALARIAL", "_P", PaymentType.CRA_0004);
+
+		Date startEreI = getFirstDayOfMonth(getToday());
+		//int ereDays = (int) (Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1));
+		startEreI = add(startEreI, DAY_OF_MONTH, 15);
+		Date endEreI = add(startEreI, DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, startEreI, endEreI,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		Date startEreII = add(endEreI, DAY_OF_MONTH, 1);
+		
+		addData(aonContext, contract, startEreII, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.50");
+					}
+				});
+
+		PaymentConceptRecord ere = addConcept(aonContext,getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA", getDaysVariable()));
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ", " + payment.getQuote() + ")");
+		}
+
+		Assert.assertEquals(
+				(1750.00 * 1.10) + (1750.00/6), salary.getCommonBase(),
+				DELTA);
+
+
+		Assert.assertEquals(
+				(1750.00 * 1.10 * 15/30) + (1750.00 * 1.10 * 4 / 30 *0.5) + (1750.00/6 * 15/30 ) + (1750.00/6 * 4 / 30* 0.5 )  
+				, salary.getTotalPayment(),
+				DELTA);
+
+		Assert.assertEquals(
+				salary.getTotalPayment() * 0.15 
+				, salary.getSocialSecurityContributions(),
+				DELTA);
+	}
+
 	protected ContextVariable getEreVariable() {
 		return ERE;
 	}	

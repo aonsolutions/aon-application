@@ -802,6 +802,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			Date end,
 			ExpressionContext expressionContext) throws UnsupportedOperationException {
 		
+		if ( results.size() > 1  )
+			return results;
+
 		if (results.size() == 1
 			&& isWholeMonth(results.get(0))	
 			&& contractPayment.getScope() == ExpressionScope.AGREEMENT
@@ -817,6 +820,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		if ( Period.sub(strikes ,worked ).size() == 0  )
 			return results;
+		
 		
 		return  shareExtraITResults(results.get(0), strikes);
 	}
