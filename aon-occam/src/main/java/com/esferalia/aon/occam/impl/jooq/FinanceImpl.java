@@ -167,6 +167,13 @@ public class FinanceImpl implements IFinance {
 	}
 
 	@Override
+	public Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter,int offset,int limit) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceDAO.fetch(ctx,filter,offset,limit));
+
+	}
+
+	@Override
 	public Stream<Finance> getFinanceStream(AONContext ctx, FinanceFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FinanceDAO.getFinanceStream(ctx,filter));

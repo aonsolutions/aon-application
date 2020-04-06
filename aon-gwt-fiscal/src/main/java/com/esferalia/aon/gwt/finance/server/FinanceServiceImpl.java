@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -37,6 +38,11 @@ public class FinanceServiceImpl extends AonStatelessRemoteServiceServlet impleme
 		return AON.getFinanceTracking(domainName, domainId,user, finance);
 	}
 
+	@Override
+	public LinkedList<Finance> getFinances(String domainName, int domain, String user, FinanceParams params, int offset,
+			int limit) throws AonCoreException {
+		return AON.getFinances(domainName, domain,user, params, offset, limit );
+	}
 	@Override
 	public LinkedList<Finance> getFinancesForInvoice(String domainName, int domainId, String user, Invoice invoice)
 			throws AonCoreException {

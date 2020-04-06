@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -52,6 +53,13 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 	
 	// --------------------------------------------------------------- FINANCE
 	@Override
+	public void getFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit,
+			AsyncCallback<LinkedList<Finance>> callback) {
+		AON.start();
+		fsa.getFinances(domainName, domain, user, params, offset, limit, new AsyncCallbackWrapper<LinkedList<Finance>>(callback));
+	}
+	
+	@Override
 	public void getFinancesForInvoice(String domainName, int domainId, String user, Invoice invoice, AsyncCallback<LinkedList<Finance>> callback) {
 		AON.start();
 		fsa.getFinancesForInvoice(domainName, domainId, user, invoice, new AsyncCallbackWrapper<LinkedList<Finance>>(callback));
@@ -89,6 +97,7 @@ public class FinanceServiceAsyncDecorator implements FinanceServiceAsync {
 		AON.start();
 		fsa.returnFinance(domainName, domainId, user, finance, new AsyncCallbackWrapper<FinanceTracking>(callback));
 	}
+
 
 	
 }

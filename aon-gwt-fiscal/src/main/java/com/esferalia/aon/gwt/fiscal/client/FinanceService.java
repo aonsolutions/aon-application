@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client;
 import java.util.Date;
 import java.util.LinkedList;
 
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -24,6 +25,7 @@ public interface FinanceService extends RemoteService {
 	LinkedList<RegistryBank> getRegistryBanks(String domainName, int domainId, String  user,Integer registry) throws AonCoreException;
 	
 	// --------------------------------------------------------------- FINANCE
+	LinkedList<Finance> getFinances(String domainName, int domain, String  user, FinanceParams params, int offset,int limit) throws AonCoreException;
 	LinkedList<Finance> getFinancesForInvoice(String domainName, int domainId, String  user,Invoice invoice) throws AonCoreException;
 	LinkedList<FinanceTracking> getFinanceTracking(String domainName, int domainId, String  user,Integer finance) throws AonCoreException;
 	Finance settleFinance(String domainName, int domainId, String user, Integer finance)  throws AonCoreException;
