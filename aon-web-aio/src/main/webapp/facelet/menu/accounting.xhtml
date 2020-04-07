@@ -55,7 +55,7 @@
 										actionListener="#{financeTrackingEntry.onReset}"
 										value="#{bundle.accounting_entry_finance_tracking_module}" />
 								</aon:div>
-								<aon:if test="#{desktop.state.tediCenter and domainSwitcher.alphaUser}">
+								<aon:if test="#{domainSwitcher.alphaUser}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_accountEntryTEDI"
 											action="gwt_accountEntryTEDI-deposit"
