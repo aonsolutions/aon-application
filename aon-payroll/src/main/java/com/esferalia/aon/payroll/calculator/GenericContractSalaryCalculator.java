@@ -1581,6 +1581,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				QUOTE_DAYS.getName(), 
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
+				CGC_BASE_ENTERPRISE.getName(), 
+				CGP_BASE_ENTERPRISE.getName(),
 				DIRECT_BASE.getName(), 
 				MATERNITY_BASE.getName(), 
 				ADDITIONAL_BASE.getName(), 

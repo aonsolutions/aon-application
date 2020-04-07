@@ -5736,11 +5736,34 @@ public class SalaryDraft extends ResizeComposite
 			
 		}
 
+		Double cgcBase = null; 
+		Double cgpBase = null;
+		switch (deduction.getName()) {
+		case "IT_E":
+		case "IMS_E":
+		case "FP_E":
+		case "CGC_E":
+		case "ATEP_E":
+		case "EXTR_E":
+		case "NEXTR_E":
+		case "DESMPL_E":
+		case "FOGASA_E":
+			cgcBase = getContextSumValue("BASE_CGC_E", draftObject);
+			cgpBase = getContextSumValue("BASE_CGP_E", draftObject);
+			break;
+
+		default:
+			cgcBase = getContextSumValue("BASE_CGC", draftObject);
+			cgpBase = getContextSumValue("BASE_CGP", draftObject);
+			break;
+		} 		
+		
+		
 		return getPercent(deduction.getType(), 
 				deduction.getAmount(), 
 				draftObject.getIrpfBase(),
-				getContextSumValue("BASE_CGC", draftObject), 
-				getContextSumValue("BASE_CGP", draftObject),
+				cgcBase, 
+				cgpBase,
 				draftObject.gethExtraBase(),
 				draftObject.getNonHExtraBase()
 				);

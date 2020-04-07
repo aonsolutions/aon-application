@@ -115,7 +115,7 @@ public enum ContextVariable implements IResourceable {
 	ADDITIONAL_BASE("BASE_HORAS_COMPL", VariableType.DOUBLE),
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE), CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
-	CGC_BASE_ENTERPRISE("BASE_CGC_E", VariableType.DOUBLE), CGP_BASE_ENTERPRISE("BASE_CGP_E", VariableType.DOUBLE),
+	CGC_BASE_ENTERPRISE("BASE_CGC_E", VariableType.DOUBLE, false), CGP_BASE_ENTERPRISE("BASE_CGP_E", VariableType.DOUBLE, false),
 
 	REGULATORY_BASE("BASE_REGULADORA", VariableType.DOUBLE, false),
 
