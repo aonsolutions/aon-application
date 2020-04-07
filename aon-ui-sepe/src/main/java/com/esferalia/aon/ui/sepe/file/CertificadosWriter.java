@@ -426,7 +426,7 @@ public class CertificadosWriter implements Serializable {
 		
 		if ( batchDetail.getSuspensionCause() == SuspensionCause.C18 ) {
 			try {
-				Integer coeficenteReduccion = (int)Double.parseDouble(ereFactor.getExpression()) * 100;
+				Integer coeficenteReduccion = (int)(Double.parseDouble(ereFactor.getExpression()) * 10000.00);
 				o.setPorcentualReduccionERE(completeLength(coeficenteReduccion.toString(),4,false));
 			} catch ( Exception e ) {
 				o.setPorcentualReduccionERE(null);

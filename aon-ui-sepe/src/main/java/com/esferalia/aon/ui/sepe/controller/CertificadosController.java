@@ -242,7 +242,9 @@ public class CertificadosController implements ISepeHandler, Serializable {
 					.filter( c -> c == SuspensionCause.C17 || c == SuspensionCause.C18 )
 					.toArray( SuspensionCause[]::new )
 					;
-			setSuspensionCause(SuspensionCause.C17);
+			if ( getSuspensionCause() != SuspensionCause.C17 &&
+					getSuspensionCause() != SuspensionCause.C18	)
+				setSuspensionCause(SuspensionCause.C17); // default
 		}
 		
 		for (SuspensionCause c : causes) {
