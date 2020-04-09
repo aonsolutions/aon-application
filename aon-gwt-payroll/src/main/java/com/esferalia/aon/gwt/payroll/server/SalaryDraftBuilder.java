@@ -496,8 +496,8 @@ public class SalaryDraftBuilder
 	}
 
 	@Override
-	public void addCost(Double amount, String description, IDeduction cost,
-			Map<String, ITimedVariable<?>> context) {
+	public void addCost(Double amount, String description
+			, Date startDate, Date endDate,  IDeduction cost, Map<String, ITimedVariable<?>> context) {
 
 		addContext(context);
 
@@ -505,6 +505,8 @@ public class SalaryDraftBuilder
 		
 		Deduction draftCost = newDeduction(contractCost);
 		draftCost.setAmount(amount);
+		draftCost.setEndDate(endDate);
+		draftCost.setStartDate(startDate);
 		draftCost.setDescription(description);
 
 		CompositeDeduction compositeCost = getCost(contractCost.getId());

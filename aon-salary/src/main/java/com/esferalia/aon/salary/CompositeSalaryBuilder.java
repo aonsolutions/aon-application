@@ -285,10 +285,10 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 	}
 
 	@Override
-	public void addCost(Double amount, String description, IDeduction cost,
-			Map<String, ITimedVariable<?>> context) {
+	public void addCost(Double amount, String description, 
+			Date startDate, Date endDate,  IDeduction cost, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder<E> builder : builders)
-			builder.addCost(amount, description, cost, context);
+			builder.addCost(amount, description, startDate, endDate, cost, context);
 	}
 
 	@Override

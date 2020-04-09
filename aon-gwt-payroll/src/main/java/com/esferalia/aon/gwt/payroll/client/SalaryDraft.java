@@ -4851,7 +4851,8 @@ public class SalaryDraft extends ResizeComposite
 		int costsBeforeRow = paymentsTable.getRowCount()
 				- (/* 1 new line */+2 /* blanks line */);
 
-		int costsCount = salaryDraftObject.getCosts().size();
+		int costsCount = salaryDraftObject.getCosts().stream()
+		.collect(Collectors.summingInt(c ->  1 + ((c instanceof CompositeDeduction) ? ((CompositeDeduction)c).getChilds().size() : 0)));
 
 		if (show) {
 			dumpCosts(costsBeforeRow);
@@ -4866,23 +4867,46 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 
-	private void dumpCosts(int beforeRow) {
+	private void dumpCosts(int beforeRow ) {
 		List<Deduction> costs = salaryDraftObject.getCosts();
 		for (int i = 0; i < costs.size(); i++) {
 			Deduction cost = costs.get(i);
-			paymentsTable.insertRow(beforeRow + i);
+			paymentsTable.insertRow(beforeRow );
+			
 			Double percent = getPercent(cost, salaryDraftObject);
 			Deduction.Type type = cost.getType()  != null  ? cost.getType() : Deduction.Type.OTHER ;
+
+			Button expandButton = null;
+			if (cost instanceof CompositeDeduction) {
+				expandButton = new Button();
+				expandButton.setTabIndex(Short.MAX_VALUE);
+				expandButton.setStyleName(AON.AON_ICON_EXPAND);
+				expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+			}
 
 			String description = COSTS_DESCRIPTIONS.get(cost.getName());
 			if (AonStringUtils.isBlank(description))
 				description = type != Deduction.Type.OTHER ? type.getDescription() : cost.getDescription();
 			if (AonStringUtils.isBlank(description))
-				description = Deduction.Type.OTHER.getDescription();
-			
+				description = Deduction.Type.OTHER.getDescription();			
 
-			dumpSystemDeduction(cost, percent, description, beforeRow + i, null, AON.AON_ICON_COST,
-					AON.AON_EDIT_DATA_TABLE_BUTTON, AON.AON_PADDING_LEFT);
+			dumpSystemDeduction(cost, percent, description, beforeRow++ , expandButton);
+
+			if (cost instanceof CompositeDeduction) {
+				for (Deduction child : ((CompositeDeduction) cost).getChilds()) {
+					paymentsTable.insertRow(beforeRow );
+					dumpSystemItem(child,
+							"  " + description 
+							+ " " + formatChildDescriptionSuffix(child, salaryDraftObject)
+							,beforeRow, null, null);
+
+					paymentsTable.getRowFormatter().getElement(beforeRow++).getStyle().setDisplay(Display.NONE);
+				}
+			}
+			
+			
+//			dumpSystemDeduction(cost, percent, description, beforeRow + i, null, AON.AON_ICON_COST,
+//					AON.AON_EDIT_DATA_TABLE_BUTTON, AON.AON_PADDING_LEFT);
 		}
 	}
 
@@ -4908,10 +4932,14 @@ public class SalaryDraft extends ResizeComposite
 		newBonusHandler = insertNewBonusRow(beforeRow + bonuses.size());
 		newBonusHandler.initSuggestionItems();
 	}
+	
+	
+	
 
 	private void hideCosts(int beforeRow) {
 
-		int costs = salaryDraftObject.getCosts().size();
+		int costs = salaryDraftObject.getCosts().stream()
+				.collect(Collectors.summingInt(c ->  1 + ((c instanceof CompositeDeduction) ? ((CompositeDeduction)c).getChilds().size() : 0)));
 		for (int i = 0; i < costs; i++)
 			paymentsTable.removeRow(beforeRow);
 

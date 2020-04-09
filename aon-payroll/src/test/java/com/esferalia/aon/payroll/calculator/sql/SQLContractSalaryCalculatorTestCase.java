@@ -153,10 +153,10 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder() {
 			@Override
-			public void addCost(Double amount, String description,
+			public void addCost(Double amount, String description, java.util.Date start, java.util.Date end,
 					IDeduction cost, Map<String, ITimedVariable<?>> context) {
-				super.addCost(amount, description, cost, context);
 
+				super.addCost(amount, description, start, end, cost, context);
 				Map<String, Object> data = new HashMap<String, Object>();
 				load(context, data);
 

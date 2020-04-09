@@ -701,6 +701,153 @@ public class SQLWeekHoursTestCase extends AbstractSQLTestCase {
 			Assert.assertEquals(hoursVar, 3.00, Double.parseDouble(data.get(1).getExpression()));
 		}
 	}
+	@Test
+	public void testNullTimeWeekHoursI()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday())
+		, new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 1));
+						put(TUESDAY_HOURS.getName(), format("%d", 1));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 1));
+						put(THURSDAY_HOURS.getName(), format("%d", 1));
+						put(FRIDAY_HOURS.getName(), format("%d", 1));
+						put(SATURDAY_HOURS.getName(), format("%d", 1));
+						put(SUNDAY_HOURS.getName(), null);
+					}
+				}
+		,new String[] { 
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
+		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+			null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		Map<String, List<ContextData>> datas = AON
+				.getSalaries(aonContext,
+						props -> props.getContractProperty()
+								.eq(contract.getId()))
+				.findFirst().get().getContextData();
+		;
+
+		for ( String hoursVar : new String[]{						
+						MONDAY_HOURS.getName(),
+						TUESDAY_HOURS.getName(),
+						WEDNESDAY_HOURS.getName(),
+						THURSDAY_HOURS.getName(),
+						FRIDAY_HOURS.getName(),
+						SATURDAY_HOURS.getName()} ) 
+		{
+			List<ContextData> data = datas.get(hoursVar);
+			Assert.assertEquals(hoursVar, 1, data.size());
+			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
+			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
+			Assert.assertEquals(hoursVar, 1.00, Double.parseDouble(data.get(0).getExpression()));
+		}
+
+		for ( String hoursVar : new String[]{						
+				SUNDAY_HOURS.getName()} ) 
+		{
+			List<ContextData> data = datas.get(hoursVar);
+			Assert.assertEquals(hoursVar, 1, data.size());
+			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
+			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
+			Assert.assertEquals(hoursVar, 0.00, Double.parseDouble(data.get(0).getExpression()));
+		}
+
+	}
+	
+	@Test
+	public void testEmptyTimeWeekHoursI()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday())
+		, new HashMap<String, String>() {
+					{
+						put(ContextVariable.TC2.getName(), format("\"%s\"",
+								random(PARTIAL_TIME).getValue()));
+						put(MONDAY_HOURS.getName(), format("%d", 1));
+						put(TUESDAY_HOURS.getName(), format("%d", 1));
+						put(WEDNESDAY_HOURS.getName(), format("%d", 1));
+						put(THURSDAY_HOURS.getName(), format("%d", 1));
+						put(FRIDAY_HOURS.getName(), format("%d", 1));
+						put(SATURDAY_HOURS.getName(), format("%d", 1));
+						put(SUNDAY_HOURS.getName(), " ");
+					}
+				}
+		,new String[] { 
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES" },
+		new String[] { "BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" },
+			null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		Map<String, List<ContextData>> datas = AON
+				.getSalaries(aonContext,
+						props -> props.getContractProperty()
+								.eq(contract.getId()))
+				.findFirst().get().getContextData();
+		;
+
+		for ( String hoursVar : new String[]{						
+						MONDAY_HOURS.getName(),
+						TUESDAY_HOURS.getName(),
+						WEDNESDAY_HOURS.getName(),
+						THURSDAY_HOURS.getName(),
+						FRIDAY_HOURS.getName(),
+						SATURDAY_HOURS.getName()} ) 
+		{
+			List<ContextData> data = datas.get(hoursVar);
+			Assert.assertEquals(hoursVar, 1, data.size());
+			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
+			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
+			Assert.assertEquals(hoursVar, 1.00, Double.parseDouble(data.get(0).getExpression()));
+		}
+
+		for ( String hoursVar : new String[]{						
+				SUNDAY_HOURS.getName()} ) 
+		{
+			List<ContextData> data = datas.get(hoursVar);
+			Assert.assertEquals(hoursVar, 1, data.size());
+			Assert.assertEquals(hoursVar,startDate,data.get(0).getStartDate());
+			Assert.assertEquals(hoursVar,endDate, data.get(0).getEndDate());
+			Assert.assertEquals(hoursVar, 0.00, Double.parseDouble(data.get(0).getExpression()));
+		}
+
+	}
 	// ------------------------------------------------------------------------
 	protected static <T> T random(T arr[]) {
 		return arr[(int) ((int) (Math.random() * arr.length))];

@@ -930,7 +930,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							} catch (Exception e) {
 								onCheckError(contractCost, DESCRIPTION_UNKNOWN_ERROR);
 							}
-							salaryBuilder.addCost(value, description, contractCost, amount.getContext());
+							salaryBuilder.addCost(value, description, period.getStart(), period.getEnd(), contractCost, amount.getContext());
 							cost += value;
 							addResult(expressionContext, ENTERPRISE_QUOTA.getName(), period.getStart(), period.getEnd(), value);
 						}

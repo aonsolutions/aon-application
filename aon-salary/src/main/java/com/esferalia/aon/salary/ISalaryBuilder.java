@@ -115,8 +115,8 @@ public interface ISalaryBuilder<T extends ISalary> {
 
 	public void addData(String name, ITimedVariable<?> datas);
 
-	public void addCost(Double amount, String description, IDeduction cost,
-			Map<String, ITimedVariable<?>> context);
+	public void addCost(Double amount, String description, 
+			Date startDate, Date endDate, IDeduction cost, Map<String, ITimedVariable<?>> context);
 
 	public void addBonus(Double amount, String description, IBonus bonus,
 			Map<String, ITimedVariable<?>> context);

@@ -268,7 +268,8 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	}
 
 	@Override
-	public void addCost(Double amount, String description, IDeduction cost,
+	public void addCost(Double amount, String description, 
+			Date start, Date end, IDeduction cost,
 			Map<String, ITimedVariable<?>> context) {
 		SalaryCost salaryCost = new SalaryCost();
 

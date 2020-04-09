@@ -260,8 +260,8 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	}
 	
 	@Override
-	public void addCost(Double amount, String description,
-			IDeduction cost, Map<String, ITimedVariable<?>> context) {
+	public void addCost(Double amount, String description
+			, Date start, Date end,	IDeduction cost, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryCost salaryCost = 
 			new AbstractSQL.SalaryCost();
 		

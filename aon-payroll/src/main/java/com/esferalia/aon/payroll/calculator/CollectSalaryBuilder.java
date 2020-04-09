@@ -141,14 +141,17 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	}
 	
 	private static class Cost {
+		Date start;
+		Date end;
 		Double amount; 
 		IDeduction cost;		
 		String description;
 		Map<String, ITimedVariable<?>> context;
 		
-		public Cost(Double amount, IDeduction cost, String description, Map<String, ITimedVariable<?>> context) {
+		public Cost(Date start, Date end,Double amount, IDeduction cost, String description, Map<String, ITimedVariable<?>> context) {
 			super();
-			this.amount = amount;
+			this.start = start;
+			this.end = end;			this.amount = amount;
 			this.description = description;
 			this.context = context;
 			this.cost = new ContractDeduction(cost);
@@ -584,6 +587,8 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 			builder.addCost(
 					cost.amount, 
 					cost.description, 
+					cost.start, 
+					cost.end, 
 					cost.cost, 
 					cost.context);
 		
@@ -838,8 +843,8 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	}
 
 	@Override
-	public void addCost(Double amount, String description, IDeduction cost, Map<String, ITimedVariable<?>> context) {
-		costs.add(new Cost(amount, cost, description, context));
+	public void addCost(Double amount, String description, Date startDate, Date endDate, IDeduction cost, Map<String, ITimedVariable<?>> context) {
+		costs.add(new Cost(startDate, endDate, amount, cost, description, context));
 	}
 
 	@Override
