@@ -31,12 +31,12 @@ public abstract class AbstractItemSuggestionDisplay<T extends Item<?>> extends
 
 			SafeHtmlBuilder htmlBuilder = new SafeHtmlBuilder();
 
-			String clazz = null;
-			if (StringUtils.isEmpty(item.getName()))
-				clazz = item.getScope() == Scope.CONTRACT ? "employee"
-						: "enterprise";
-			else
-				clazz = "concept";
+			String clazz = "concept";
+//			if (StringUtils.isEmpty(item.getName()))
+//				clazz = item.getScope() == Scope.CONTRACT ? "employee"
+//						: "enterprise";
+//			else
+//				clazz = "concept";
 
 			htmlBuilder.appendHtmlConstant("<span class=\"" + clazz + "\" >");
 			htmlBuilder.appendHtmlConstant(suggestion.getDisplayString());
