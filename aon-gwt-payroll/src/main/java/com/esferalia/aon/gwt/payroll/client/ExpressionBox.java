@@ -3,12 +3,11 @@
  */
 package com.esferalia.aon.gwt.payroll.client;
 
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.TextTransform;
 import com.google.gwt.user.client.ui.TextBox;
-import com.ibm.icu.impl.duration.impl.DataRecord.EPluralization;
 
 /**
  * @author rtrepiana
@@ -50,8 +49,8 @@ public class ExpressionBox extends TextBox {
 	}
 
 	private String getExpression() {
-		return specialExpresion.replace(super.getText());
-//		return specialExpresion.replace(StringUtils.uppercase(super.getText()));
+//		return specialExpresion.replace(super.getText());
+		return specialExpresion.replace(AonStringUtils.upperCase(super.getText()));
 	}
 
 	// ------------------------------------------------------------------------
