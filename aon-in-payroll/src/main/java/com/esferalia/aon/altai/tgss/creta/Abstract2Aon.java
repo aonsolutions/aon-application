@@ -36,6 +36,7 @@ import org.jooq.SQLDialect;
 import org.jooq.SelectConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
+import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 import org.mvel2.MVEL;
 
@@ -123,6 +124,9 @@ public abstract class Abstract2Aon {
 	
 			d2.setStartDate(d1.getStartDate());
 			d2.store();
+			
+//			d1.setName("__JOIN_" + d1.getName());
+//			d1.update();
 			d1.delete();
 			
 		} 
@@ -217,6 +221,8 @@ public abstract class Abstract2Aon {
 				contractData.store();
 			});
 			
+//			d.setName("__FIX_" + d.getName());
+//			d.update();
 			d.delete();
 		});
 		
@@ -240,19 +246,26 @@ public abstract class Abstract2Aon {
 	private void expand(int contract, Date date, String ...names) {	
 		dslContext
 		.delete(CONTRACT_DATA)
-		.where(CONTRACT_DATA.NAME.in(names))
+//		.update(CONTRACT_DATA)
+//		.set(CONTRACT_DATA.NAME, 
+//		DSL.concat("__EXPAND_", CONTRACT_DATA.NAME))
+		.where(CONTRACT_DATA.CONTRACT.eq(contract))
+		.and(CONTRACT_DATA.NAME.in(names))
 		.and(CONTRACT_DATA.START_DATE.gt(date))
 		.execute();
 	
 		dslContext
 		.update(CONTRACT_DATA)
 		.set(CONTRACT_DATA.END_DATE, DSL.castNull(Date.class))
-		.where(CONTRACT_DATA.NAME.in(names))
+		.where(CONTRACT_DATA.CONTRACT.eq(contract))
+		.and(CONTRACT_DATA.NAME.in(names))
 		.and(CONTRACT_DATA.END_DATE.eq(date))
 		.execute();
 	}
 
 	protected void findContract(String ccc, String naf, Date fromDate, Date toDate, Consumer<? super Record> action) {
+		try {
+
 			dslContext
 			.select()
 			.from(CONTRACT)
@@ -269,8 +282,11 @@ public abstract class Abstract2Aon {
 			.and(where)
 			.fetchOptional()
 			.ifPresentOrElse(r -> { 
-				
-				action.accept(r);
+				try {
+					action.accept(r);
+				} catch ( Exception e  ) {
+					System.out.println(e.getMessage());
+				}
 				
 			}, () -> {
 				
@@ -283,7 +299,18 @@ public abstract class Abstract2Aon {
 	//					fromDate,
 	//					toDate
 	//					);			
-			});		
+			});
+		} catch ( TooManyRowsException e ) {
+						System.out.printf(
+								"\"%s\",\"%s\",\"%3$td/%3$tm/%3$tY\",\"%4$td/%4$tm/%4$tY\",\"%5$s\",\r\n",
+								ccc,
+								naf,
+								fromDate,
+								toDate,
+								e.getMessage()
+								);			
+			
+		}
 		}
 
 	protected void calculateAndsave(Record r, Date startDate, Date endDate)

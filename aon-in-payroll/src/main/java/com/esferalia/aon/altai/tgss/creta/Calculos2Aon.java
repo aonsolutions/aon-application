@@ -9,6 +9,7 @@ import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -22,6 +23,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,12 +40,14 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
@@ -66,6 +70,10 @@ public class Calculos2Aon extends Abstract2Aon{
 
 	public Calculos2Aon(Connection connection, Condition where ) {
 		super(connection, where);
+		System.out.printf(
+				"ccc,naf,trabajador,empresa,inicio_nomina,fin_nomina,base,c500,incio_contrato,fin_contrato\r\n"
+				);	
+		
 	}
 	
 	public void fix(File file) throws IOException {
@@ -89,7 +97,7 @@ public class Calculos2Aon extends Abstract2Aon{
 		try {
 			is = new FileInputStream(file);
 			parse(is, cb);
-		} catch ( JAXBException e ) {
+		} catch ( Exception e ) {
 		}
 		finally {
 			if ( is != null )
@@ -108,7 +116,6 @@ public class Calculos2Aon extends Abstract2Aon{
 	private void liquidacion2Aon(Liquidacion liquidacion, TramoCallback cb) {
 		CtaCot ctaCot = liquidacion.getCcc();
 		String ccc = String.format("%s%s", ctaCot.getProvincia() ,ctaCot.getNumero());
-
 		liquidacion.getTrabajadores().getTrabajador().stream()
 		.forEach(trabajador -> trabajador2Aon(ccc, trabajador,cb) );
 		;
@@ -142,24 +149,28 @@ public class Calculos2Aon extends Abstract2Aon{
 					
 					(( Math.round(commonBase) == Math.round(valorBase)) ? System.out : System.err )
 					.printf(
-							"\"%s\",\"%s\",\"%s\",\"%s\",\"%5$td/%5$tm/%5$tY\",\"%6$td/%6$tm/%6$tY\",\"%7$.2f\",\"%8$.2f\"\r\n",
-							salary.getSocialSecurityNumber(),
+							"\"%s\",\"%s\",\"%s\",\"%s\",\"%5$td/%5$tm/%5$tY\",\"%6$td/%6$tm/%6$tY\",\"%7$.2f\",\"%8$.2f\",\"%9$td/%9$tm/%9$tY\",\"%10$s\"\r\n",
+							AonStringUtils.leftPad(salary.getCcc(), 11, "0"),
+							AonStringUtils.leftPad(salary.getSocialSecurityNumber(), 12, "0"),
 							salary.getEmployeeName(),
-							salary.getCcc(),
 							salary.getEnterpriseName(),
 							salary.getStartDate(),
 							salary.getEndDate(),
 							commonBase,
-							valorBase
-							);	
+							valorBase,
+							r.get(CONTRACT.START_DATE),
+							r.get(CONTRACT.END_DATE) == null ? "" : String.format("%1$td/%1$tm/%1$tY", r.get(CONTRACT.END_DATE))
+ 							);	
 					if ( Math.round(commonBase) != Math.round(valorBase)) {
 						fixBaseCgcMin(r, valorBase, startDate, endDate);
 					} else {
 						calculateAndsave(r, startDate, endDate);
 					}
 					
-				} catch (NullPointerException e) {
+				}  catch (NullPointerException e) {
 				} catch (ExpressionException | SalaryException | SQLException e) {
+				} catch (ConcurrentModificationException e) {
+					System.out.printf(e.getMessage());
 				}
 			}
 			, () -> {});
@@ -181,7 +192,8 @@ public class Calculos2Aon extends Abstract2Aon{
 		findContract(ccc, naf, fromDate, toDate, r -> { 
 
 			System.out.printf(
-					"\"%s\",\"%s\",\"%s\"",
+					"\"%s\",\"%s\",\"%s\",\"%s\"",
+					r.get(ENTERPRISE_CCC.CCC),
 					r.get(PERSON.SOCIAL_SECURITY_NUM),
 					r.get(PERSON.FIRST_SURNAME),
 					r.get(PERSON.NAME)
@@ -386,7 +398,7 @@ public class Calculos2Aon extends Abstract2Aon{
 	
 
 	public static void main(String[] args) {
-		System.out.println("C700".matches("^C[56][0-9]{2}$"));
+		System.out.printf("%120s", 6666);
 	}
 	
 	

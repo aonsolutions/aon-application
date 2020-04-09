@@ -59,7 +59,7 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 	java.util.Date fromdate;
 	DSLContext dslContext;
 	
-	
+	Map<String, Integer> aliasDomainMap;
 	List<InsertOnDuplicateSetMoreStep<?>> inserts;
 
 	
@@ -75,7 +75,11 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		
 		this.file = file;
 		this.fromdate = fromdate;
-		inserts = new ArrayList<InsertOnDuplicateSetMoreStep<?>>();
+		this.inserts = new ArrayList<InsertOnDuplicateSetMoreStep<?>>();
+		this.aliasDomainMap = dslContext.select().from(REGISTRY)
+		.where(REGISTRY.ALIAS.like(JooqTSLABEMPHandler.getAlias("%",file)))
+		.fetchMap(REGISTRY.ALIAS, REGISTRY.DOMAIN);
+
 	}
 	
 	// ------------------------------------------------------------------------
@@ -139,12 +143,13 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 
 		
 		Integer domainId = 
-		dslContext
-		.select()
-		.from(REGISTRY)
-		.where(REGISTRY.ALIAS.equalIgnoreCase(alias))
-		.fetchOptional(REGISTRY.DOMAIN)
-		.orElseGet(()-> null)
+		aliasDomainMap.get(alias)
+//		dslContext
+//		.select()
+//		.from(REGISTRY)
+//		.where(REGISTRY.ALIAS.equalIgnoreCase(alias))
+//		.fetchOptional(REGISTRY.DOMAIN)
+//		.orElseGet(()-> null)
 		;
 		
 		
@@ -383,6 +388,9 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		)
 		;
 	}
+	
+	
+
 
 	
 	// ------------------------------------------------------------------------

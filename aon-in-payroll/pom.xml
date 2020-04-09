@@ -7,10 +7,10 @@
 		<version>9.23-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
-	<artifactId>aon.altai</artifactId>
+	<artifactId>aon.in.payroll</artifactId>
 	<packaging>jar</packaging>
 
-	<name>AON-ALTAI</name>
+	<name>AON-IN-PAYROLL</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

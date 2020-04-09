@@ -61,39 +61,31 @@ public class TSLABTRABParser {
 	}
 	
 	public static void parse(InputStream in, TSLABTRAHandler handler) throws IOException {
-		parse(new InputStreamReader(in), handler);
+		parse(new InputStreamReader(in, "ISO-8859-1"), handler);
 	}
 	
 
 	private static void parse( LineNumberReader i, TSLABTRAHandler handler) throws IOException{
 		
-		Map<String,Double> amounts = new HashMap<String,Double>();
 		
 		Map<String, String> tra01 = new HashMap<String, String>();
-		Map<String, String> tra02 = new HashMap<String, String>();
 		for ( String line = i.readLine(); line != null; line = i.readLine() ) {
 			String fields [] = split(line);
 			try {
 				String aonField = getTRA01Field(fields);
 				if ( tra01.containsKey(aonField)) {
-					handler.tra(tra01, amounts);
+					handler.tra(tra01, Collections.emptyMap());
 					tra01.clear();
-					amounts.clear();
 				}
 				tra01.put(aonField, fields[3]);
 				continue;
 			} catch ( NoSuchFieldException e ) {
 			}
 
-			try {
-				amounts.put(getField(fields), getAmount(fields));
-				continue;
-			} catch ( NoSuchFieldException e ) {
-			}
 		}
 
 		if ( !tra01.isEmpty() )
-			handler.tra(tra01, amounts);
+			handler.tra(tra01, Collections.emptyMap());
 	}
 
 	private static  String getTRA01Field(String fields [] ) throws NoSuchFieldException {

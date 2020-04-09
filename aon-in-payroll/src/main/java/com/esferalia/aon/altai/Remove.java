@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -20,7 +21,12 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
+import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryEmbargo.SALARY_EMBARGO;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -49,6 +55,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.jooq.tables.ContractAttach;
 import com.esferalia.aon.jooq.tables.ContractData;
 import com.esferalia.aon.jooq.tables.ContractInfo;
+import com.esferalia.aon.jooq.tables.Creditor;
 import com.esferalia.aon.jooq.tables.Customer;
 import com.esferalia.aon.jooq.tables.Enterprise;
 
@@ -197,10 +204,30 @@ public class Remove {
 				dslContext.update(REGISTRY).set(REGISTRY.ALIAS, uuid)
 				.where(REGISTRY.ID.in(DSL.select(CONTRACT.PERSON).from(CONTRACT).where(CONTRACT.DOMAIN.in(domains))))
 				.and(REGISTRY.ID.notIn(DSL.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(REGISTRY.DOMAIN.eq(ENTERPRISE.DOMAIN))))
+				.and(REGISTRY.ID.notIn(DSL.select(CREDITOR.REGISTRY).from(CREDITOR).where(REGISTRY.DOMAIN.eq(CREDITOR.DOMAIN))))
 				.execute();
+
 				System.out.printf("%d %ss found.\r\n", updated, REGISTRY.getName());
 				
-				int deleted = configuration.dsl().delete(CONTRACT_INFO).where(CONTRACT_INFO.DOMAIN.in(domains)).execute() ;
+				int deleted = configuration.dsl().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.DOMAIN.in(domains)).execute() ;
+				System.out.printf("%d %ss deleted.\r\n", deleted, SALARY_EMBARGO.getName());
+				
+				deleted = configuration.dsl().delete(SALARY_COST).where(SALARY_COST.DOMAIN.in(domains)).execute() ;
+				System.out.printf("%d %ss deleted.\r\n", deleted, SALARY_COST.getName());
+				
+				deleted = configuration.dsl().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.DOMAIN.in(domains)).execute() ;
+				System.out.printf("%d %ss deleted.\r\n", deleted, SALARY_DEDUCTION.getName());
+
+				deleted = configuration.dsl().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.DOMAIN.in(domains)).execute() ;
+				System.out.printf("%d %ss deleted.\r\n", deleted, SALARY_PAYMENT.getName());
+
+				deleted = configuration.dsl().delete(SALARY_DATA).where(SALARY_DATA.DOMAIN.in(domains)).execute() ;
+				System.out.printf("%d %ss deleted.\r\n", deleted, SALARY_DATA.getName());
+
+				deleted = configuration.dsl().delete(SALARY).where(SALARY.DOMAIN.in(domains)).execute() ;
+				System.out.printf("%d %ss deleted.\r\n", deleted, SALARY.getName());
+
+				deleted = configuration.dsl().delete(CONTRACT_INFO).where(CONTRACT_INFO.DOMAIN.in(domains)).execute() ;
 				System.out.printf("%d %ss deleted.\r\n", deleted, CONTRACT_INFO.getName());
 				
 				deleted = configuration.dsl().delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.DOMAIN.in(domains)).execute() ;
@@ -224,17 +251,20 @@ public class Remove {
 				deleted = configuration.dsl().delete(CONTRACT).where(CONTRACT.DOMAIN.in(domains)).execute() ;
 				System.out.printf("%d %ss deleted.\r\n", deleted, CONTRACT.getName());
 
-				deleted = configuration.dsl().delete(PAYROLL_WORKPLACE).where(PAYROLL_WORKPLACE.DOMAIN.in(domains)).execute() ;
-				System.out.printf("%d %ss deleted.\r\n", deleted, PAYROLL_WORKPLACE.getName());
+//				deleted = configuration.dsl().delete(PAYROLL_WORKPLACE).where(PAYROLL_WORKPLACE.DOMAIN.in(domains)).execute() ;
+//				System.out.printf("%d %ss deleted.\r\n", deleted, PAYROLL_WORKPLACE.getName());
 
-				deleted = configuration.dsl().delete(ENTERPRISE_CCC).where(ENTERPRISE_CCC.DOMAIN.in(domains)).execute() ;
-				System.out.printf("%d %ss deleted.\r\n", deleted, ENTERPRISE_CCC.getName());
+//				deleted = configuration.dsl().delete(ENTERPRISE_CCC).where(ENTERPRISE_CCC.DOMAIN.in(domains)).execute() ;
+//				System.out.printf("%d %ss deleted.\r\n", deleted, ENTERPRISE_CCC.getName());
 
 				deleted = configuration.dsl().delete(PERSON).where(PERSON.DOMAIN.in(domains)).execute() ;
 				System.out.printf("%d %ss deleted.\r\n", deleted, CONTRACT.getName());
 				
 				deleted = configuration.dsl().delete(CUSTOMER).where(CUSTOMER.DOMAIN.in(domains)).execute() ;
 				System.out.printf("%d %ss deleted.\r\n", deleted, CUSTOMER.getName());
+
+//				deleted = configuration.dsl().delete(CREDITOR).where(CREDITOR.DOMAIN.in(domains)).execute() ;
+//				System.out.printf("%d %ss deleted.\r\n", deleted, CREDITOR.getName());
 
 				SelectConditionStep<Record1<Integer>> registries = 
 				DSL.select(REGISTRY.ID).from(REGISTRY).where(REGISTRY.ALIAS.eq(uuid)).and(REGISTRY.DOMAIN.in(domains));
