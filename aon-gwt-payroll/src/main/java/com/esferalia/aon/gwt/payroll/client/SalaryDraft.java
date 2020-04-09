@@ -4094,7 +4094,7 @@ public class SalaryDraft extends ResizeComposite
 		// very ugly !!!!
 		boolean isCost = false;
 		for ( String style: iconStyles ) 
-			isCost |= AON.AON_ICON_COST.equals(style);
+			isCost |= "_cost".equals(style);
 		
 		amountLabel.ensureDebugId(deduction.getType().name().toLowerCase() + ( isCost ? "_cost"  : "" ) );
 
@@ -4890,7 +4890,7 @@ public class SalaryDraft extends ResizeComposite
 			if (AonStringUtils.isBlank(description))
 				description = Deduction.Type.OTHER.getDescription();			
 
-			dumpSystemDeduction(cost, percent, description, beforeRow++ , expandButton);
+			dumpSystemDeduction(cost, percent, description, beforeRow++ , expandButton, "_cost");
 
 			if (cost instanceof CompositeDeduction) {
 				for (Deduction child : ((CompositeDeduction) cost).getChilds()) {
