@@ -41,6 +41,8 @@ public class FiscalParametersController implements Serializable {
 	private static final String FS_TAX_REFUND_REGISTRY = "FS_TAX_REFUND_REGISTRY";
 	private static final String FS_TAX_REGIME = "FS_TAX_REGIME";
 	private static final String FS_ADMON_CREDITOR = "FS_ADMON_CREDITOR";
+	private static final String FS_ADMON_VAT_CREDITOR = "FS_ADMON_VAT_CREDITOR";
+	private static final String FS_ADMON_RETENTION_CREDITOR = "FS_ADMON_RETENTION_CREDITOR";
 	private static final String FS_PERM_ADDRESS_CHANGES = "FS_PERM_ADDRESS_CHANGES";
 	private static final String FS_CONCTACT_PERSON = "FS_CONCTACT_PERSON";
 	private static final String FS_CONCTACT_PHONE = "FS_CONCTACT_PHONE";
@@ -117,6 +119,8 @@ public class FiscalParametersController implements Serializable {
 						,FS_TAX_REFUND_REGISTRY
 						,FS_TAX_REGIME
 						,FS_ADMON_CREDITOR
+						,FS_ADMON_VAT_CREDITOR
+						,FS_ADMON_RETENTION_CREDITOR
 						,FS_PERM_ADDRESS_CHANGES
 						,FS_CONCTACT_PERSON
 						,FS_CONCTACT_PHONE
@@ -242,6 +246,56 @@ public class FiscalParametersController implements Serializable {
 	public void setAdmonCreditor(Creditor creditor) {
 		Integer id = (creditor==null?null:creditor.getId()); 
 		getParameters().get(FS_ADMON_CREDITOR).setValue(id==null?null:Integer.toString( id ));
+	}
+
+	public Creditor getAdmonVatCreditor() {
+		String value = getParameters().get(FS_ADMON_VAT_CREDITOR).getValue();
+		Creditor creditor = null;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
+			if (StringUtils.isNotBlank(value)) {
+				int id = Integer.parseInt(value);
+				creditor = (Creditor) bean.get(id);
+			}
+			if ( creditor == null ) {
+				getParameters().get(FS_ADMON_VAT_CREDITOR).setValue(null);
+				creditor = (Creditor) bean.createNewTo();	
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			creditor = new Creditor();
+		}
+		return creditor;
+	}
+	public void setAdmonVatCreditor(Creditor creditor) {
+		Integer id = (creditor==null?null:creditor.getId()); 
+		getParameters().get(FS_ADMON_VAT_CREDITOR).setValue(id==null?null:Integer.toString( id ));
+	}
+
+	public Creditor getAdmonRetentionCreditor() {
+		String value = getParameters().get(FS_ADMON_RETENTION_CREDITOR).getValue();
+		Creditor creditor = null;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Creditor.class);
+			if (StringUtils.isNotBlank(value)) {
+				int id = Integer.parseInt(value);
+				creditor = (Creditor) bean.get(id);
+			}
+			if ( creditor == null ) {
+				getParameters().get(FS_ADMON_RETENTION_CREDITOR).setValue(null);
+				creditor = (Creditor) bean.createNewTo();	
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			creditor = new Creditor();
+		}
+		return creditor;
+	}
+	public void setAdmonRetentionCreditor(Creditor creditor) {
+		Integer id = (creditor==null?null:creditor.getId()); 
+		getParameters().get(FS_ADMON_RETENTION_CREDITOR).setValue(id==null?null:Integer.toString( id ));
 	}
 
 	public Administration getDefaultAdministration() {

@@ -17,6 +17,8 @@ public class FiscalParameters implements Serializable {
 	private boolean taxRefundRegistry;
 	private Integer taxRegime;
 	private Integer admonCreditor;
+	private Integer admonVatCreditor;
+	private Integer admonRetentionCreditor;
 	private boolean permAddressChanges;
 	private String contactPerson;
 	private String contactPhone;
@@ -95,11 +97,21 @@ public class FiscalParameters implements Serializable {
 	public Integer getAdmonCreditor() {
 		return admonCreditor;
 	}
-
 	public void setAdmonCreditor(Integer admonCreditor) {
 		this.admonCreditor = admonCreditor;
 	}
-
+	public Integer getAdmonVatCreditor() {
+		return admonVatCreditor;
+	}
+	public void setAdmonVatCreditor(Integer admonVatCreditor) {
+		this.admonVatCreditor = admonVatCreditor;
+	}
+	public Integer getAdmonRetentionCreditor() {
+		return admonRetentionCreditor;
+	}
+	public void setAdmonRetentionCreditor(Integer admonRetentionCreditor) {
+		this.admonRetentionCreditor = admonRetentionCreditor;
+	}
 	public boolean isPermAddressChanges() {
 		return permAddressChanges;
 	}

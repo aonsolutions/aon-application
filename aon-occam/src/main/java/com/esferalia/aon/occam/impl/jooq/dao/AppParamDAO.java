@@ -49,6 +49,10 @@ public class AppParamDAO {
 			(params, value) -> params.setTaxRegime(Integer.parseInt(value)))
 		,FS_ADMON_CREDITOR("FS_ADMON_CREDITOR",
 			(params, value) -> params.setAdmonCreditor(Integer.parseInt(value)))
+		,FS_ADMON_VAT_CREDITOR("FS_ADMON_VAT_CREDITOR",
+			(params, value) -> params.setAdmonVatCreditor(Integer.parseInt(value)))
+		,FS_ADMON_RETENTION_CREDITOR("FS_ADMON_RETENTION_CREDITOR",
+			(params, value) -> params.setAdmonRetentionCreditor(Integer.parseInt(value)))
 		,FS_PERM_ADDRESS_CHANGES("FS_PERM_ADDRESS_CHANGES", 
 			(params, value) -> params.setPermAddressChanges(Boolean.parseBoolean(value) || AonStringUtils.equals(value, AonStringUtils.ONE)))
 		,FS_CONCTACT_PERSON("FS_CONCTACT_PERSON", 

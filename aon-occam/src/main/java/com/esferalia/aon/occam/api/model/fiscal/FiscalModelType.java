@@ -64,4 +64,31 @@ public enum FiscalModelType implements Serializable{
 		return this == M130 || this == M131;
 	}
 	
+	public boolean isVat() {
+		return this == M303_RG 
+			|| this == M303_RS 
+			|| this == M340 
+			|| this == M347 
+			|| this == M349 
+			|| this == M390
+			|| this == M390_HF 
+			|| this == M310 
+			|| this == M311 
+			|| this == M303;				
+	}
+
+	public boolean isRetention() {
+		return this == M111	 
+			|| this == M115	 
+			|| this == M123
+			|| this == M130
+			|| this == M131
+			|| this == M180
+			|| this == M184
+			|| this == M190
+			|| this == M193
+			|| this == M200
+			|| this == M202;
+	}
+	
 }

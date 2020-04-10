@@ -87,10 +87,25 @@
 				</aon:inputText>
 			</aon:if>						
 
-			<aon:outputLabel for="Creditor_id" value="#{bundle.fiscal_admon_creditor}" />
 			<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+				<ui:param name="skipLabel" value="#{false}"/>
+				<ui:param name="lookupLabel" value="#{bundle.fiscal_admon_creditor}"/>
 				<ui:param name="lookupTo" value="#{fiscalParams.admonCreditor}" />
-				<ui:param name="skipLabel" value="#{true}" />
+				<ui:param name="lookupSuffix" value="FS_ADMON_CREDITOR" />
+			</ui:include>
+			
+			<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+				<ui:param name="skipLabel" value="#{false}"/>
+				<ui:param name="lookupLabel" value="#{bundle.fiscal_admon_vat_creditor}"/>
+				<ui:param name="lookupTo" value="#{fiscalParams.admonVatCreditor}" />
+				<ui:param name="lookupSuffix" value="FS_ADMON_VAT_CREDITOR" />
+			</ui:include>
+			
+			<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+				<ui:param name="skipLabel" value="#{false}"/>
+				<ui:param name="lookupLabel" value="#{bundle.fiscal_admon_retention_creditor}"/>
+				<ui:param name="lookupTo" value="#{fiscalParams.admonRetentionCreditor}" />
+				<ui:param name="lookupSuffix" value="FS_ADMON_RETENTION_CREDITOR" />
 			</ui:include>
 
 			<aon:outputText value="&#160;" />

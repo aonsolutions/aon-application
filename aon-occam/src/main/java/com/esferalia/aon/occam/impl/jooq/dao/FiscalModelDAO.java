@@ -492,8 +492,17 @@ public class FiscalModelDAO {
 		fiscalModel.setDefaultDeclarationType();
 		if (fiscalModel.getDeclarationType().mustCreateFinance()) {
 			FiscalParameters params = AppParamDAO.getFiscalParameters(ctx);
-			Integer creditorId = params.getAdmonCreditor();
+			Integer credId = null;
+			if (fiscalModel.getModel() != null && fiscalModel.getModel().isVat()) {
+				credId = params.getAdmonVatCreditor();
+			} else if (fiscalModel.getModel() != null && fiscalModel.getModel().isRetention()) {
+				credId = params.getAdmonRetentionCreditor();
+			}
+			if ( credId == null ) {
+				credId = params.getAdmonCreditor();	
+			}
 			Creditor creditor = null;
+			Integer creditorId = credId;
 			if ( creditorId != null ) {
 				creditor = CreditorDAO
 						.getBasicCreditors(ctx, p -> p.getIdProperty().eq(creditorId))
