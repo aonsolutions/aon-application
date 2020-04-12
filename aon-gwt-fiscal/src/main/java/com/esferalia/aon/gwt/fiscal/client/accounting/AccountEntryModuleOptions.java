@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 public class AccountEntryModuleOptions implements Serializable {
@@ -19,8 +20,10 @@ public class AccountEntryModuleOptions implements Serializable {
 	private HasWidgets parentWidget;
 	private AonConfiguration configuration;
 	private AccountingInvoice accountingInvoice;
+	private TediResult tediResult;
 	private ModuleCallback externalCallback;
 
+	
 	private boolean embedded = false;
 	private boolean backButtonVisible = true;
 	private boolean errorLogTabVisible = true;
@@ -94,6 +97,14 @@ public class AccountEntryModuleOptions implements Serializable {
 		return this;
 	}
 
+	public TediResult getTediResult() {
+		return tediResult;
+	}
+	public AccountEntryModuleOptions setTediResult(TediResult tediResult) {
+		this.tediResult = tediResult;
+		return this;
+	}
+	
 	public ModuleCallback getExternalCallback() {
 		return externalCallback;
 	}

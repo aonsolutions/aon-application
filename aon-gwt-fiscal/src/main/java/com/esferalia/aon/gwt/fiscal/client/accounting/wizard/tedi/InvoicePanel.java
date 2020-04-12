@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
@@ -56,6 +57,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
+import net.aonsolutions.gwt.pdfjs.client.FullViewer.ViewerDefaultScale;
 
 public class InvoicePanel extends WizardContentBase<AccountingInvoice> implements HasSelectionHandlers<AccountingInvoice>,HasAccountEntrySelectionHandlers {
 	
@@ -131,7 +133,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			} else {
 				viewInvoice();
 			}
-			paintAttach();
+			paintAttach( false );
 		}
 		getCallback().getModule().onBalance(getWrapper());
 		getCallback().getModule().onPreview(getWrapper());
@@ -186,7 +188,13 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		} else {
 			if (wrp != null) {
 				AccountingInvoice ai = (AccountingInvoice) wrp;
-				select(ai,cbk);
+				if (getCallback().getModuleOptions() .getTediResult() != null) {
+					afterTediParse(getCallback().getModuleOptions() .getTediResult());
+					setWrapper(ai);
+					paintAttach( true );
+				} else {
+					select(ai,cbk);
+				}
 			} else {
 				getCallback().getModule().onError("[ERROR INTERNO] No hay que seleccionar.");
 			}
@@ -277,6 +285,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			return getCallback().getConfiguration();
 		}
 		@Override
+		public AccountEntryModuleOptions getModuleOptions() {
+			return getCallback().getModuleOptions();
+		}
+		@Override
 		public String getCurrentDomainName() {
 			return getCallback().getCurrentDomainName();
 		}
@@ -357,7 +369,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	public void confidentialChanged(boolean confidential) {
 	}
 	
-	protected void paintAttach() {
+	protected void paintAttach( boolean openWidget ) {
+		LOGGER.info("paintAttach ..: " + (getWrapper().isDocumentAttached()?"DOCUMENT PRESENT":"NO DOCUMENT"));
 		if (getWrapper().isDocumentAttached()) {
 			FlexTable hp = new FlexTable();
 			hp.setHeight("100%");
@@ -370,7 +383,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				@Override
 				public void onClick(ClickEvent event) {
 					if (rootPanel.getWidgetSize(attachPanel) <= 30) {
-						rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() / 3);
+						rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() - 900);
 					}
 					InvoicePanelCallback invoicePanelCallback = new InvoicePanelCallback();
 					InvoiceAttachPanel invoiceAttachPanel = new InvoiceAttachPanel(invoicePanelCallback);
@@ -382,7 +395,17 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			hp.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBackgroundHighlightedYellow());
 			hp.setWidget(0, 0, attachButton);
 			attachPanel.setWidget(hp);
-			rootPanel.setWidgetSize(attachPanel,20);
+			if (openWidget) {
+//				attachButton.click();
+				if (rootPanel.getWidgetSize(attachPanel) <= 30) {
+					rootPanel.setWidgetSize(attachPanel, Window.getClientWidth() / 3);
+				}
+				InvoicePanelCallback invoicePanelCallback = new InvoicePanelCallback();
+				InvoiceAttachPanel invoiceAttachPanel = new InvoiceAttachPanel(invoicePanelCallback);
+				attachPanel.setWidget(invoiceAttachPanel);
+			} else {
+				rootPanel.setWidgetSize(attachPanel,20);
+			}
 			new Timer() {
 				@Override
 				public void run() {
@@ -404,7 +427,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		LOGGER.info("MimeType ..: " + (mimeType==null?"NULL":mimeType.getName()));
 		if (mimeType != null && (mimeType.isPDF() || mimeType.isImage())) {
 			if (mimeType.isPDF()) {
-				FullViewer viewer = new FullViewer();
+				FullViewer viewer = new FullViewer( ViewerDefaultScale.PAGE_WIDTH );
 				viewer.addLoadHandler( new LoadHandler() {
 					
 					@Override
@@ -468,10 +491,12 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	protected void afterTediParse(TediResult result) {
 		AccountingInvoice ai = result.getAccountingInvoice();
 		LOGGER.info("setDocument result.isImportable() --- > " + result.isImportable());
+	setWrapper(ai);
+	getCallback().getModule().syncCurrent();
 		if (result.isImportable()) {
-			setWrapper(ai);
-			getCallback().getModule().syncCurrent();
 			editInvoice();
+			getCallback().getModule().onBalance(getWrapper());
+			getCallback().getModule().onPreview(getWrapper());
 		} else {
 			paintProblemsWidget(centerContainer, result);
 		}

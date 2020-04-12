@@ -12,10 +12,13 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -420,6 +423,25 @@ public class TEDI {
 		Tedi tedi = getTedi(ctx, snapshot);
 		return tedi.getRegistry(document);
 		
+	}
+
+	public static TediResult fillAttach(String domainName, int domain, boolean snapshot, String user, TediResult result) throws TediException {
+		if (result == null || result.getAccountingInvoice() == null) {
+			throw new TediException("No se ha encontrado una factura v\u00E1lida");
+		}
+		if (result.getTedi().getFile() != null) {
+			Attach attach = result.getAccountingInvoice().getAttach();
+			if (attach == null) {
+				String uuid = result.getTedi().getUuid();
+				String url = TEDI.getInvoiceAttach(domainName, domain, snapshot, user, uuid);
+				attach = new Attach();
+				attach.setMimeType( MimeType.safeValueFromContenType(result.getTedi().getFile().getContentType()) );
+				attach.setAttachType(AttachType.INVOICE);
+				attach.setAttachURL(url);
+				result.getAccountingInvoice().setAttach(attach);
+			}
+		}
+		return result;
 	}
 
 }

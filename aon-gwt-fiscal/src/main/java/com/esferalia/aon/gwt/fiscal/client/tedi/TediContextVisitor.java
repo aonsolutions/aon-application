@@ -274,23 +274,24 @@ public class TediContextVisitor implements ITediContextVisitor {
 
 	@Override
 	public void visitReferenceCode(ICallback callback) {
-		showReferenceCodeDialog(AON.MSG.invoiceNumber(), callback.getResult().getInvoice().getReferenceCode(),
-				new ITediCallback<String>() {
-					@Override
-					public ICallback getCallback() {
-						return callback;
-					}
-					@Override
-					public void onAccept(String referenceCode) {
-						callback.getResult().getInvoice().setReferenceCode(referenceCode);
-						callback.onAccept(callback.getResult());
-					}
-
-					@Override
-					public void onCancel() {
-						callback.onCancel();
-					}
-				});
+		noVisit();
+//		showReferenceCodeDialog(AON.MSG.invoiceNumber(), callback.getResult().getInvoice().getReferenceCode(),
+//				new ITediCallback<String>() {
+//					@Override
+//					public ICallback getCallback() {
+//						return callback;
+//					}
+//					@Override
+//					public void onAccept(String referenceCode) {
+//						callback.getResult().getInvoice().setReferenceCode(referenceCode);
+//						callback.onAccept(callback.getResult());
+//					}
+//
+//					@Override
+//					public void onCancel() {
+//						callback.onCancel();
+//					}
+//				});
 	}
 
 	@Override
@@ -507,7 +508,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 		if (callback.getCallback().getResult().getPosibleRegistries() != null) {
 			int index = 0;
 			for (AccountingRegistry ar : callback.getCallback().getResult().getPosibleRegistries() ) {
-				registryBox.addItem(ar.getDocument()  + " - " + ar.getName() + " (" + ar.getAccountCode() + ")", AonNumberUtils.toString(index));		
+				registryBox.addItem("[" + ar.getType().getDescription().substring(0, 3)+"] " + ar.getDocument()  + " - " + ar.getName() + " (" + ar.getAccountCode() + ")", AonNumberUtils.toString(index));		
 			}
 		}
 				
@@ -524,21 +525,21 @@ public class TediContextVisitor implements ITediContextVisitor {
 		container.add(dialog);
 	}
 
-	private void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
-		final TextBox referenceBox = new TextBox();
-		referenceBox.setStyleName(AON.AON_CSS.aonInputText());
-		referenceBox.setValue(referenceCode);
-		referenceBox.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				callback.onAccept(event.getValue());
-			}
-		});
-		BasicDialog dialog = new BasicDialog();
-		dialog.setContent(label, referenceBox);
-		container.add(dialog);
-	}
+//	private void showReferenceCodeDialog(String label, String referenceCode, ITediCallback<String> callback) {
+//		final TextBox referenceBox = new TextBox();
+//		referenceBox.setStyleName(AON.AON_CSS.aonInputText());
+//		referenceBox.setValue(referenceCode);
+//		referenceBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+//			
+//			@Override
+//			public void onValueChange(ValueChangeEvent<String> event) {
+//				callback.onAccept(event.getValue());
+//			}
+//		});
+//		BasicDialog dialog = new BasicDialog();
+//		dialog.setContent(label, referenceBox);
+//		container.add(dialog);
+//	}
 	             
 	private void showBankAccountDialog(String label, String referenceCode, ITediCallback<String> callback) {
 		final TextBox referenceBox = new TextBox();

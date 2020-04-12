@@ -26,9 +26,9 @@ public class InvoiceTypeVisitor implements TediInvoiceTypeVisitor {
 
 	@Override
 	public void visitRECIBIDA() {
-		invoiceType = (invoice.getCategory() == TediInvoiceCategory.C6000
-				|| invoice.getCategory() == TediInvoiceCategory.C6070) ? InvoiceType.PURCHASE
-						: InvoiceType.EXPENSES;
+		invoiceType = (invoice.getCategory() == TediInvoiceCategory.C6000|| invoice.getCategory() == TediInvoiceCategory.C6070) 
+			? InvoiceType.PURCHASE
+			: InvoiceType.EXPENSES;
 	}
 
 	@Override

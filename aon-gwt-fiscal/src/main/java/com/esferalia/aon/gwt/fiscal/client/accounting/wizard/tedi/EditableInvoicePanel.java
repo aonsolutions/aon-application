@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel;
@@ -162,6 +163,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		@Override
 		public AonConfiguration getConfiguration() {
 			return invCallback.getConfiguration();
+		}
+		
+		@Override
+		public AccountEntryModuleOptions getModuleOptions() {
+			return invCallback.getModuleOptions();
 		}
 
 		@Override
@@ -402,9 +408,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		LOGGER.info("EditablePanel Constructor " + (invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getInvoice().getId() != null));
 
-		if ( invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getRegistry() != null) {
-			invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
-			registryBox.setValue(invoiceCallback.getInvoice().getRegistry(),false);
+		if ( invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null) {
+			undeductible.setValue(invoiceCallback.getInvoice().isUndeductible());
+			if (invoiceCallback.getInvoice().getRegistry() != null) {
+				invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
+				registryBox.setValue(invoiceCallback.getInvoice().getRegistry(),false);
+			}
 		} else {
 			FlowPanel dropPanel = getDropFileZone( invoiceCallback );
 			invoicePanelContainer.setWidget(dropPanel);

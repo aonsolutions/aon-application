@@ -226,4 +226,14 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 			throw new AonCoreException(e);
 		}
 	}
+
+	@Override
+	public TediResult fillAttach(String domainName, String user, int domain, boolean snapshot, TediResult result) throws AonCoreException {
+		try {
+			return TEDI.fillAttach(domainName, domain, snapshot, user, result);
+		} catch ( TediException t) {
+			t.printStackTrace();
+			throw new AonCoreException(t);
+		}			
+	}
 }

@@ -130,6 +130,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		String getCurrentUser();
 		AccountEntryModuleTEDI getModule();
 		AonConfiguration getConfiguration();
+		AccountEntryModuleOptions getModuleOptions();
 	}
 
 	private static interface IEntryTypeVisitor {
@@ -176,6 +177,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		@Override
 		public AonConfiguration getConfiguration() {
 			return AccountEntryModuleTEDI.this.getOptions().getConfiguration();
+		};
+		@Override
+		public AccountEntryModuleOptions getModuleOptions() {
+			return AccountEntryModuleTEDI.this.getOptions();
 		};
 		@Override
 		public String getCurrentDomainName() {
@@ -1156,7 +1161,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 	
 	public void onPreview(IAccountEntryWrapper wrp) {
-		if (getOptions().isBalancesTabVisible()) {
+		if (getOptions().isPreviewSectionVisible()) {
 			if (wrp.getAccountEntry() != null 
 					&& wrp.getAccountEntry().getDetails() != null 
 					&& !wrp.getAccountEntry().getDetails().isEmpty() 

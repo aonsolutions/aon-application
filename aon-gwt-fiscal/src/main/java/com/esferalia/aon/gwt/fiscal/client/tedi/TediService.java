@@ -30,4 +30,6 @@ public interface TediService extends RemoteService {
 	void addTediCompany(String domainName, String user, int domain, boolean snapshot, TediCompanyResult company);
 	
 	TediResult parseInvoice(String domainName, String user, int domain, boolean snapshot, String fileName, String content) throws AonCoreException;
+	TediResult fillAttach(String domainName, String user, int domain, boolean snapshot, TediResult result) throws AonCoreException;
+	
 }

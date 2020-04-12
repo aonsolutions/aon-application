@@ -1,28 +1,21 @@
 package com.esferalia.aon.gwt.fiscal.client.tedi;
 
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediCenter.TediCenterCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -35,7 +28,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -44,11 +36,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import es.translogia.tedi.ewok.TediInvoiceFile;
-import net.aonsolutions.gwt.pdfjs.client.FullViewer;
-
 public class TediInvoiceList extends DockLayoutPanel {
-	private static  final Logger LOGGER = Logger.getLogger(TediInvoiceList.class.getName());
+
+//	private static  final Logger LOGGER = Logger.getLogger(TediInvoiceListOLD.class.getName());
 	
 	private static TediServiceAsync SERVICE;
 
@@ -140,7 +130,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(clean);
-
+/*
 		final Button acceptAll = new Button();
 		acceptAll.setText(AON.MSG.accept());
 		acceptAll.setTitle(AON.MSG.accept());
@@ -167,11 +157,12 @@ public class TediInvoiceList extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(rejectAll);
-
+*/
 		toolbarPanel.add(toolbar);
 		return toolbarPanel;
 	}
 
+	/*
 	private void onReject(TediResult result) {
 		SERVICE.rejectInvoice(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
 				result.getTedi(), new AsyncCallback<TediResult>() {
@@ -226,7 +217,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 			MessageDialog.error("No ha seleccionado ninguna factura");
 		}
 	}
-
+*/	
 	private void onAccept(TediResult result) {
 		SERVICE.acceptInvoice(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
 				result.getTedi(), new AsyncCallback<TediResult>() {
@@ -243,7 +234,7 @@ public class TediInvoiceList extends DockLayoutPanel {
 					}
 				});
 	}
-
+/*
 	private void onAcceptAll() {
 		LinkedList<TediResult> selectedList = getSelectedList();
 		if (selectedList != null && selectedList.size() > 0) {
@@ -281,8 +272,9 @@ public class TediInvoiceList extends DockLayoutPanel {
 			MessageDialog.error("No ha seleccionado ninguna factura");
 		}
 	}
+	*/
 
-	protected void refreshData() {
+	private void refreshData() {
 		FlowPanel p = new FlowPanel();
 		p.setStyleName(AON.AON_CSS.aonWidthAll());
 		p.addStyleName(AON.AON_CSS.aonTextCenter());
@@ -545,242 +537,65 @@ public class TediInvoiceList extends DockLayoutPanel {
 			callback.onAttachTab(result.getTedi().getUuid(), tediSplitPanel, closeTab);
 		}
 		if (paint) {
-			if (result.hasPDFAttach() || result.hasImageAttach()) {
-				SimpleLayoutPanel attachContainer = new SimpleLayoutPanel();
-				tediSplitPanel.addEast(attachContainer, 350);
-				tediSplitPanel.setWidgetToggleDisplayAllowed(attachContainer, true);
-				paintAttach(result, attachContainer);
-			}
 			SimpleLayoutPanel contentPanel = new SimpleLayoutPanel();
 			tediSplitPanel.add(contentPanel);
-			if (result.isImportable()) {
-				paintInvoice(contentPanel, result);
-			} else if (result.getInvoice().isUndeductible() && result.getInvoice().getRegistry() == null
-					&& result.getInvoice().getIssueDate() != null
-					&& (result.getInvoice().getDetails() == null || result.getInvoice().getDetails().size() == 0)) {
-				paintInvoice(contentPanel, result);
-			} else {
-				paintProblemsWidget(contentPanel, result);
-			}
+			paintAccountEntryModule(contentPanel, result);
 		}
 	}
-
-	private void paintAttach(TediResult result, SimpleLayoutPanel container) {
-		if (result.hasPDFAttach()) {
-			SERVICE.getInvoiceAttachURL(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
-					result.getTedi().getUuid(), new AsyncCallback<String>() {
-
-						@Override
-						public void onSuccess(String invoiceAttachURL) {
-							fillAttach( result, invoiceAttachURL );
-							LOGGER.info("Attemp to view PDF fr from [" + invoiceAttachURL + "]");
-							container.setWidget(new FullViewer(invoiceAttachURL));
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							Label label =  new Label("Se ha producido un error al intentar mostrar el documento de la factura.");
-							label.setStyleName(AON.AON_CSS.aonBold());
-							label.addStyleName(AON.AON_CSS.aonColorRed());
-							label.addStyleName(AON.AON_CSS.aonMargin());
-							label.addStyleName(AON.AON_CSS.aonTextCenter());
-							container.setWidget(label);
-						}
-					});
-		}
-		if (result.hasImageAttach()) {
-			Image image = new Image();
-			image.setStyleName(AON.AON_CSS.aonWidthAll());
-			image.addStyleName(AON.AON_CSS.aonHeightAll());
-			container.setWidget(image);
-			SERVICE.getInvoiceAttachURL(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(),
-					result.getTedi().getUuid(), new AsyncCallback<String>() {
-
-						@Override
-						public void onSuccess(String invoiceAttachURL) {
-							fillAttach( result, invoiceAttachURL );
-							image.setUrl(invoiceAttachURL);
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-							Label label =  new Label("Se ha producido un error al intentar mostrar el documento de la factura.");
-							label.setStyleName(AON.AON_CSS.aonBold());
-							label.addStyleName(AON.AON_CSS.aonColorRed());
-							container.setWidget(label);
-						}
-					});
-		}
-	}
-
-	protected void fillAttach(TediResult result, String invoiceAttachURL) {
-		Attach attach = result.getAccountingInvoice().getAttach();
-		if (AonStringUtils.isNotBlank( invoiceAttachURL) ) {
-			if (attach == null) {
-				attach = new Attach();
-				result.getAccountingInvoice().setAttach( attach ); 		
-			}
-			TediInvoiceFile file = result.getTedi().getFile();
-			if (file != null) {
-				attach.setMimeType(MimeType.safeValueFromContenType( file.getContentType() ));
-			}
-			attach.setAttachType(AttachType.INVOICE);
-			attach.setAttachURL(invoiceAttachURL );
-		}
-	}
-
-	private void paintInvoice(SimplePanel container, TediResult result) {
-		if (result.isImportable()) {
-			paintAccountEntryModule(container, result);
-		}
-
-		if (!result.isImportable()) {
-			if (result.getInvoice().isUndeductible() && result.getInvoice().getRegistry() == null
-					&& result.getInvoice().getIssueDate() != null
-					&& (result.getInvoice().getDetails() == null || result.getInvoice().getDetails().size() == 0)) {
-				paintAccountEntryModule(container, result);
-			}
-		}
-	};
-
+	
 	private void paintAccountEntryModule(SimplePanel container, TediResult result) {
-		AccountEntryModule module = new AccountEntryModule();
-		AccountingInvoice ai = result.getAccountingInvoice();
-		module.onModuleLoad(new AccountEntryModuleOptions().setParentWidget(container)
-				.setDomainName(this.currentDomainName).setUser(this.currentUser).setDomain(this.currentDomain)
-				.setConfiguration(this.configuration).setAccountingInvoice(ai).setBackButtonVisible(false)
-				.setSessionLogTabVisible(false).setPreviewSectionVisible(true).setBalancesSectionVisible(false)
-				.setStatementTabVisible(false).setJournalTabVisible(false).setExtraInfoTabVisible(false)
-				.setExternalCallback(new ModuleCallback() {
+		SERVICE.fillAttach(this.currentDomainName, this.currentUser, this.currentDomain, isTediSnapshot(), result, new AsyncCallback<TediResult>() {
 
 					@Override
-					public void onRemove(IAccountEntryWrapper removed) {
+					public void onSuccess(TediResult result) {
+						AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+						module.onModuleLoad(new AccountEntryModuleOptions()
+								.setParentWidget(container)
+								.setDomainName(TediInvoiceList.this.currentDomainName)
+								.setDomain(TediInvoiceList.this.currentDomain)
+								.setUser(TediInvoiceList.this.currentUser)
+								.setConfiguration(TediInvoiceList.this.configuration)
+								.setAccountingInvoice(result.getAccountingInvoice())
+								.setTediResult(result)
+								.setBackButtonVisible(false)
+								.setSessionLogTabVisible(false)
+								.setPreviewSectionVisible(true)
+								.setBalancesSectionVisible(false)
+								.setStatementTabVisible(false)
+								.setJournalTabVisible(false)
+								.setExtraInfoTabVisible(false)
+								.setExternalCallback(new ModuleCallback() {
+
+									@Override
+									public void onRemove(IAccountEntryWrapper removed) {
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+									}
+
+									@Override
+									public void onExit() {
+									}
+
+									@Override
+									public void onChange(IAccountEntryWrapper changed) {
+										result.setAon((AccountingInvoice) changed);
+										onAccept(result);
+									}
+								}));
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-					}
-
-					@Override
-					public void onExit() {
-					}
-
-					@Override
-					public void onChange(IAccountEntryWrapper changed) {
-						result.setAon((AccountingInvoice) changed);
-						onAccept(result);
-					}
-				}));
-	}
-
-	private void paintProblemsWidget(SimpleLayoutPanel contentPanel, TediResult result) {
-		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
-		FlowPanel mainPanel = new FlowPanel();
-		scrollPanel.setWidget(mainPanel);
-		if (result.getMessages() != null && result.getMessages().size() > 0) {
-			mainPanel.setStyleName(AON.AON_CSS.aonMarginTop5());
-			mainPanel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			mainPanel.addStyleName(AON.AON_CSS.aonSimpleBorder());
-			mainPanel.addStyleName(AON.AON_CSS.aonFixedFont());
-			for (TediError error : result.getMessages()) {
-				FlowPanel flowPanel = new FlowPanel();
-				InlineLabel colorLabel = new InlineLabel("");
-				colorLabel.setStyleName(AON.AON_CSS.aonPaddingLeft());
-				colorLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
-				colorLabel.getElement().getStyle().setBackgroundColor(getBackgroundColor(error.getLevel()));
-				flowPanel.add(colorLabel);
-
-				InlineLabel errLabel = new InlineLabel(error.getLevel().getLabel());
-				errLabel.setStyleName(AON.AON_CSS.aonClickableLabel());
-				errLabel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-				errLabel.addStyleName(AON.AON_CSS.aonPaddingRight());
-				errLabel.addStyleName(AON.AON_CSS.aonBold());
-				flowPanel.add(errLabel);
-
-				InlineLabel msgLabel = new InlineLabel(error.getMessage());
-				msgLabel.setStyleName(AON.AON_CSS.aonMarginLeft());
-				msgLabel.addStyleName(AON.AON_CSS.aonBorderBottomImportant());
-				flowPanel.add(msgLabel);
-
-				if (error.canBeFixed()) {
-					SimplePanel container = new SimplePanel();
-					container.setStyleName(AON.AON_CSS.aonMarginTop());
-					container.addStyleName(AON.AON_CSS.aonMarginBottom());
-					flowPanel.add(container);
-					TediContextVisitor tediContextVisitor = new TediContextVisitor(this.currentDomainName,
-							this.currentDomain, this.currentUser, this.configuration, container);
-					error.getContext().getKey().visit(tediContextVisitor, new ICallback() {
-
-						@Override
-						public TediResult getResult() {
-							return result;
-						}
-
-						@Override
-						public AonConfiguration getConfiguration() {
-							return configuration;
-						}
-
-						@Override
-						public void onCancel() {
-
-						}
-
-						@Override
-						public void onAccept(TediResult result) {
-							SERVICE.validateInvoice(TediInvoiceList.this.currentDomainName,
-									TediInvoiceList.this.currentUser, TediInvoiceList.this.currentDomain,
-									isTediSnapshot(), result, new AsyncCallback<TediResult>() {
-
-										@Override
-										public void onSuccess(TediResult result) {
-											onSelect(result, true);
-										}
-
-										@Override
-										public void onFailure(Throwable caught) {
-											MessageDialog
-													.error(AON.MSG.error() + " [Interno: " + caught.getMessage() + "]");
-										}
-									});
-						}
-					});
-				}
-				mainPanel.add(flowPanel);
-			}
-		}
-		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.AON_CSS.aonSimpleBorder());
-		buttonsPanel.addStyleName(AON.AON_CSS.aonMargin());
-		buttonsPanel.addStyleName(AON.AON_CSS.aonTextCenter());
-		Button rejectButton = new Button("Rechazar factura");
-		rejectButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
-		rejectButton.addStyleName(AON.AON_CSS.aonIconDelete());
-		rejectButton.addStyleName(AON.AON_CSS.aonMarginTop());
-		rejectButton.addStyleName(AON.AON_CSS.aonMarginBottom());
-		rejectButton.setTitle("Rechazar factura");
-		rejectButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm("Desea rechazar la factura?", new ConfirmDialogCallback() {
-
-					@Override
-					public void onCancel() {
-					}
-
-					@Override
-					public void onAccept() {
-						onReject(result);
+						Label label =  new Label("Se ha producido un error al intentar mostrar el documento de la factura.");
+						label.setStyleName(AON.AON_CSS.aonBold());
+						label.addStyleName(AON.AON_CSS.aonColorRed());
+						label.addStyleName(AON.AON_CSS.aonMargin());
+						label.addStyleName(AON.AON_CSS.aonTextCenter());
+						container.setWidget(label);
 					}
 				});
-			}
-		});
-		buttonsPanel.add(rejectButton);
-		mainPanel.add(buttonsPanel);
-		contentPanel.setWidget(scrollPanel);
 	}
 
 	private String getBackgroundColor(TediLevel curLevel) {

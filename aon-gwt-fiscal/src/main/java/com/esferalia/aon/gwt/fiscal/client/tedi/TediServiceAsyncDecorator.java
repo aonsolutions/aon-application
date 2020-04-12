@@ -115,4 +115,11 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 		AON.start();
 		fsa.parseInvoice(domainName, user, domain, snapshot,fileName , content, new AsyncCallbackWrapper<TediResult>(callback));		
 	}
+
+	@Override
+	public void fillAttach(String domainName, String user, int domain, boolean snapshot, TediResult result,
+			AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.fillAttach(domainName, user, domain, snapshot,result, new AsyncCallbackWrapper<TediResult>(callback));		
+	}
 }

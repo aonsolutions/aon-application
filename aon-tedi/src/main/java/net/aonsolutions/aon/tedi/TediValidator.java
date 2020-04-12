@@ -63,7 +63,7 @@ public class TediValidator {
 	 */
 	public static Consumer<ValidationContext> EMPTY_REFERENCE_CODE = (ctx) -> {
 		if (!ctx.getInvoice().isSales() && AonStringUtils.isBlank(ctx.getInvoice().getReferenceCode())) {
-			ctx.add( TediErrorMessages.C001.err(TediContextKey.REFERENCE_CODE));
+			ctx.add( TediErrorMessages.C001.wrn(TediContextKey.REFERENCE_CODE));
 		}
 	};
 	

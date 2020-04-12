@@ -13,11 +13,34 @@ public class FullViewer extends Frame {
 	private static final String URL_TO_AVOID_CORS = GWT.getModuleBaseURL() + "ms/AonPDFBridgeServlet?URL=";
 	private static final String VIEWER_PATH = GWT.getModuleName() + "/pdfjs/web/FullViewer.html";
 	
-	public FullViewer() {
-		this( null );
+	public static enum ViewerDefaultScale {
+		PAGE_WIDTH("page-width"), 
+		PAGE_HEIGHT("page-height"), 
+		PAGE_FIT("page-fit"), 
+		AUTO("auto")
+		;
+		private String value;
+		private ViewerDefaultScale(String value) {
+			this.value = value;
+		}
+		public String getValue() {
+			return value;
+		}
 	}
 	
+	public FullViewer() {
+		this( null, ViewerDefaultScale.AUTO);
+	}
+	public FullViewer(ViewerDefaultScale scale) {
+		this( null, scale);
+	}
 	public FullViewer(String url) {
+		this( url, ViewerDefaultScale.AUTO);
+	}
+	public FullViewer(String url, ViewerDefaultScale scale) {
+		if (scale == null) {
+			scale = ViewerDefaultScale.AUTO;
+		}
 		setWidth("100%");
 		setHeight("100%");
 		String fileURL = null;
@@ -27,14 +50,16 @@ public class FullViewer extends Frame {
 			} else {
 				fileURL = URL_TO_AVOID_CORS + url;
 			}
-			fileURL = VIEWER_PATH + "?file=" + encodeURIComponent(fileURL);
+			fileURL = getViewerPath(scale) + "file=" + encodeURIComponent(fileURL);
 			LOGGER.info("Attemp to load PDF file [" + fileURL + "]");
 			setUrl(fileURL);
 		} else {
-			setUrl(VIEWER_PATH + "?file=");
+			setUrl(getViewerPath(scale) + "file=");
 		}
 	}
-
+	private String getViewerPath(ViewerDefaultScale scale) {
+		return VIEWER_PATH + "?";// + "#" + scale.getValue() + "?";
+	}
 	private boolean isURLocal(String url) {
 		return AonStringUtils.contains(url,"ms/download_attachment");
 	}
