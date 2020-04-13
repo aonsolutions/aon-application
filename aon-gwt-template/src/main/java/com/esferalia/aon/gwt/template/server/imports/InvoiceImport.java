@@ -468,7 +468,7 @@ public class InvoiceImport {
 				Double retPercentage = 0.0;
 				Integer j = i;
 				while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
-					if(ivs.get(i).getRetentionQuota() != null) {
+					if(ivs.get(j).getRetentionQuota() != null) {
 						retBase = retBase + ivs.get(j).getBase();
 						retPercentage = ivs.get(j).getRetentionPercentage();
 						retQuota = retQuota + ivs.get(j).getRetentionQuota();
