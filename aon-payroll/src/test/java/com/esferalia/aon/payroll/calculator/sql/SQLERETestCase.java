@@ -901,6 +901,116 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testEREITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), 
+			new HashMap<String, String>() {
+				{
+					put(MONTH_DAYS.getName(), "30.00");
+					put(CGC_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+					put(CGP_BASE_MIN.getName(), Integer.toString(Integer.MIN_VALUE));
+					put(CGC_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+					put(CGP_BASE_MAX.getName(), Integer.toString(Integer.MAX_VALUE));
+				}
+			},
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+			, new String[] {
+						"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+						"TRACE('DIAS_COTIZADOS = %f\r\n', DIAS_COTIZADOS); BASE_CGP * 0.05"}
+			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+		
+		
+		Date firstDayOfMarch = add(getFirstDayOfYear(getToday()), Calendar.MONTH, 2  );
+
+		Date startEre = firstDayOfMarch;
+		//int ereDays = (int) (Math.random() * (getMax(getToday(), DAY_OF_MONTH) - 1));
+		startEre = add(startEre, DAY_OF_MONTH, 25);
+		
+		Date startIt = firstDayOfMarch;
+		startIt = add(startIt, DAY_OF_MONTH, -12);
+		Date endIt = add(startIt, DAY_OF_MONTH, 14);
+		
+		addIT(
+		aonContext, 
+		contract, 
+		LeaveType.COMMON_DISEASE, 
+		startIt, 
+		endIt, 
+		null);
+		
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		//@formatter:on
+		addData(aonContext, contract, startEre, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		
+		PaymentConceptRecord ere = addConcept(aonContext,getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA", getDaysVariable()));
+		
+
+		Date startDate = firstDayOfMarch;
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		Salary salary = new ContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ", " + payment.getQuote() + ")");
+		}
+		
+	
+
+		Assert.assertEquals(
+				(1750.00 * 1.10), salary.getCommonBase(),
+				DELTA);
+		
+
+//		Assert.assertEquals(
+//				1750.00 * 1.10 * 12/30 * 0.60
+//				, salary.getTotalPayment(),
+//				DELTA);
+//
+//		Assert.assertEquals(
+//				1750.00 * 1.10 * 0.50  * 0.15 
+//				, salary.getSocialSecurityContributions(),
+//				DELTA);
+	}
+
+	@Test
 	public void testMultipleEREI() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
