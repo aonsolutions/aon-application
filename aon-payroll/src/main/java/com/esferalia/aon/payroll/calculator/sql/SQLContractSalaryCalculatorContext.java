@@ -2793,6 +2793,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 								return solve * (_liquid / liquid);
 							}
 
+							@Override
+							protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
+								
+								getEreDaysVars().forEach( v -> ctx.removeVariable(v) );
+								getEreFactorsVars().forEach( v -> ctx.removeVariable(v) );
+
+								super.loadDaysContextVariables(ctx);
+							}
+							
 						};
 						ctx.leaveLoader = new NoopSQLContractLeaveLoader(startDate, endDate);
 						return new SQLIrpfCalculatorContext(connection, startDate, endDate, ctx) {
@@ -3016,6 +3025,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				return 0.00;
 			}
 			
+			@Override
+			protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
+				
+				getEreDaysVars().forEach( v -> ctx.removeVariable(v) );
+				getEreFactorsVars().forEach( v -> ctx.removeVariable(v) );
+
+				super.loadDaysContextVariables(ctx);
+			}
 			
 		};
 		ctx.leaveLoader = new NoopSQLContractLeaveLoader(this.startDate, this.getEnd()); 
