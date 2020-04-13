@@ -50,7 +50,7 @@ public interface ITemplateAsync {
 
 	void insertProjectCommercial(Domain domain, User user, AsyncCallback<Error> callback);
 	
-	void insertInvoices(Domain domain, User user, AsyncCallback<Error> callback);
+	void insertInvoices(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
 	
 	void insertRegistries(Domain domain, User user, AsyncCallback<Error> callback);
 	

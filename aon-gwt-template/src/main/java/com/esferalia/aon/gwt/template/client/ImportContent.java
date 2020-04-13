@@ -1,9 +1,13 @@
 package com.esferalia.aon.gwt.template.client;
 
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.shared.Dialog;
 import com.esferalia.aon.gwt.template.shared.Error;
 import com.esferalia.aon.gwt.template.shared.ImportType;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -17,6 +21,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ImportContent extends Composite {
+	final ITemplateAsync item = GWT.create(ITemplate.class);
 	
 	interface PageBinder extends UiBinder<Widget, ImportContent> {
 	}
@@ -29,7 +34,21 @@ public class ImportContent extends Composite {
 	
 	AonData aonData;	
 	ProgressBarDialog pbd;
+	LinkedList<String> verror = new LinkedList<>();
 
+	private AonData getAonData() {
+		return aonData;
+	}
+	
+	private Domain getDomain() {
+		return getAonData().getDomain();
+	}
+	
+	private User getUser() {
+		return getAonData().getUser();
+	}
+	
+	
 	public ImportContent(AonData aonData) {
 		this.aonData = aonData;
 		importButton = new Button();
@@ -316,12 +335,10 @@ public class ImportContent extends Composite {
 			protected void onAccept() {
 				item.excelRowNumber(new AsyncCallback<Integer>() {
 					@Override
-					public void onSuccess(Integer result) {
+					public void onSuccess(Integer lines) {
 						hide();
-						Double doubleValue = result.doubleValue();
-						pbd = new ProgressBarDialog(doubleValue , 0.46) {
-							
-						};
+
+						pbd = new ProgressBarDialog(lines.doubleValue(), 0.46, "Procesando Excel...") {};
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
@@ -331,39 +348,13 @@ public class ImportContent extends Composite {
 							
 							@Override
 							public void onSuccess(Integer result) {
-								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
-									
-									@Override
-									public void onSuccess(Error result) {
-										pbd.completed();
-										pbd.hide();
-										Dialog d2 = new Dialog("Importar Facturas","Aceptar",true,"Cancelar",false,"importResponse");
-										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
-
-											@Override
-											protected void onAccept() {
-												hide();			
-											}
-
-											@Override
-											protected void onCancel() {
-												hide();
-											}
-										};
-										popup2.addStyleName("gwt-PopupPanel-template");
-										popup2.setGlassEnabled(true);
-										popup2.show();
-									}
-										
-									@Override
-									public void onFailure(Throwable caught) {
-										//TODO 
-										pbd.completed();
-										pbd.hide();
-									}
-								};
-								item.insertInvoices(getDomain(), getUser(), callback);
+								pbd.completed();
+								pbd.hide();
+								pbd = new ProgressBarDialog("Importando Facturas...") {};
+								pbd.addStyleName("gwt-PopupPanel-template");
+								pbd.setGlassEnabled(true);
+								pbd.show();
+								insertInvoice(0, lines);
 							}
 						
 							@Override
@@ -381,5 +372,48 @@ public class ImportContent extends Composite {
 		popup.setGlassEnabled(true);
 		popup.center();
 	}
-	
+
+	private void insertInvoice(Integer index, Integer lines) {
+		item.insertInvoices(getDomain(), getUser(), index, new AsyncCallback<Error>() {
+			@Override
+			public void onSuccess(Error result) {
+				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
+				if(!result.getError()) {
+					verror.add(result.getTextError().getFirst());
+				}
+				pbd.updateProgress(progress.intValue());
+				if(result.getLine() < lines - 1) {
+					insertInvoice(result.getLine() + 1, lines);
+				} else {
+					pbd.completed();
+					pbd.hide();
+					Error error = new Error();
+					error.setError(verror.size() == 0);
+					error.setTextError(verror);
+					Dialog dialog = new Dialog("Importar Facturas","Aceptar",true,"Cancelar",false,"importResponse");
+					dialog.setError(error);
+					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
+
+						@Override
+						protected void onAccept() {
+							hide();			
+						}
+
+						@Override
+						protected void onCancel() {
+							hide();
+						}
+					};
+					popup2.addStyleName("gwt-PopupPanel-template");
+					popup2.setGlassEnabled(true);
+					popup2.show();
+				}
+			}
+			
+			@Override public void onFailure(Throwable caught) {
+				pbd.completed();
+				pbd.hide();
+			}
+		});
+	}
 }

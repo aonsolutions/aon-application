@@ -55,7 +55,7 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertProjectCommercial(Domain domain, User user);
 	
-	public Error insertInvoices(Domain domain, User user);
+	public Error insertInvoices(Domain domain, User user, Integer index);
 
 	public Error insertRegistries(Domain domain, User user);
 	

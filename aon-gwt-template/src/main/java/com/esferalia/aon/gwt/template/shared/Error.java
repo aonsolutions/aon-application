@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class Error implements IsSerializable{
 
 	Boolean error;
+	Integer line;
 	LinkedList<String> textError;
 	LinkedList<String> textWarning;
 	
@@ -18,7 +19,19 @@ public class Error implements IsSerializable{
 		return this;
 	}
 	
+	public Integer getLine() {
+		return line;
+	}
+	
+	public Error setLine(Integer line) {
+		this.line = line;
+		return this;
+	}
+	
 	public LinkedList<String> getTextError() {
+		if(textError == null) {
+			textError = new LinkedList<String>();
+		}
 		return textError;
 	}
 	public Error setTextError(LinkedList<String> textError) {

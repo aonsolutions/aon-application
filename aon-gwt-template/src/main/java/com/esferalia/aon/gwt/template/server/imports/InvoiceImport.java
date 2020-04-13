@@ -371,9 +371,12 @@ public class InvoiceImport {
 		}
 	}
 
-	public static Error insertInvoices(Domain domain, User user,LinkedList<InvoiceImportClass> ivs) {
+	public static Error insertInvoices(Domain domain, User user, Integer i, LinkedList<InvoiceImportClass> ivs) {
 		Error error = new Error().setError(true);
-		LinkedList<String> verror = new LinkedList<String>();
+		if(i >= ivs.size()) {
+			error.setLine(i);
+			return error;
+		}
 		
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
@@ -382,228 +385,222 @@ public class InvoiceImport {
 		Account inputAccount = aonCtx.getDefaultPaidVatAccount();
 		Account adjAccount = aonCtx.getVatNegativeAdjustAccount();
 		
-		for(Integer i = 0; i < ivs.size(); i++) {
-			try {
-				if(ivs.get(i).getAccount() == null || ivs.get(i).getAccount().isBlank()) {
-					throw new Exception("La cuenta contable es un dato obligatorio.");
-				}
-				
-				AccountingInvoice ai = new AccountingInvoice();
-				ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
-
-				Invoice invoice = new Invoice();
-				invoice.setScope(new Scope().setId(getScopeId(domain, user)));
-				invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
-				invoice.setTransaction(getTransaction(ivs.get(i)));
-				invoice.setDomain(domain.getId());
-				invoice.setIssueDate(ivs.get(i).getDate());
-				invoice.setTaxDate(ivs.get(i).getDate());
-				invoice.setType(ivs.get(i).getInvoiceType() != null
-					? ivs.get(i).getInvoiceType()
-					: getInvoiceType(ivs.get(i).getAccount()));
-				if(ivs.get(i).getSerie() != null) {
-					invoice.setSeries(ivs.get(i).getSerie());
-				} 
-				if(ivs.get(i).getNumber() != null) {
-					invoice.setNumber(ivs.get(i).getNumber());	
-				}
-				invoice.setReferenceCode(ivs.get(i).getRef());
-				invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
-					&& ivs.get(i).getRetentionQuota() != 0);
-				invoice.setRemarks(ivs.get(i).getConcept());
-				invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
-				if(ivs.get(i).getTotal() < 0) {
-					invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
-				}
-
-			
-				RAddress address = new RAddress();
-				address.setDomain(domain.getId());
-				address.setType((byte) 0);
-				address.setAddress(ivs.get(i).getAddress());
-				address.setCity(ivs.get(i).getCity());
-				address.setZip(ivs.get(i).getZip() != null && ivs.get(i).getZip().length() < 5 
-					? "0" + ivs.get(i).getZip() : ivs.get(i).getZip());
-				if(ivs.get(i).getProvince() != null) {
-					GeoZone prgz = null;
-					GeoZone crgz = null;
-					Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
-					if(pr == null && address.getZip() != null ) {
-						pr = Provinces.getProvinceById(address.getZip().substring(0,2));
- 					}
-					for(GeoZone gz : aonCtx.getGeozones()) {
-						if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
-							crgz = gz;
-						}
-						if(gz.getCode().equals(pr.getId())) {
-							prgz = gz;
-						}
-					}
-				
-					if(prgz != null) {
-						address.setGeozone(prgz.getId());
-						address.setGeozoneCode(prgz.getCode());
-						address.setGeozoneName(prgz.getName());
-					} else if(crgz != null) {
-						address.setGeozone(crgz.getId());
-						address.setGeozoneCode(crgz.getCode());
-						address.setGeozoneName(crgz.getName());
-					}
-				}
-
-				String nif = ivs.get(i).getNif();
-				String name = ivs.get(i).getName();
-			
-				AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address);			
-				invoice.setRegistry(ar.getId());
-				ai.setRegistry(ar);
-				ai.setInvoice(invoice);
-
-				String reference = ivs.get(i).getRef();
-				String serie = ivs.get(i).getSerie();
-				Integer number = ivs.get(i).getNumber();
-				Double total = 0.0;
-				Double retBase = 0.0;
-				Double retQuota = 0.0;
-				Double retPercentage = 0.0;
-				Integer j = i;
-				while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
-					if(ivs.get(j).getRetentionQuota() != null) {
-						retBase = retBase + ivs.get(j).getBase();
-						retPercentage = ivs.get(j).getRetentionPercentage();
-						retQuota = retQuota + ivs.get(j).getRetentionQuota();
-						ai.getInvoice().setWithholding(true);
-					}
-					
-					Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(j).getAccount());
-					if(expAccount == null) {
-						expAccount = new Account()
-							.setCode(ivs.get(j).getAccount())
-							.setDescription(ivs.get(i).getAccountDescription() != null 
-									? ivs.get(i).getAccountDescription()
-									: "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
-							.setAlias(ivs.get(i).getAccountDescription() != null 
-									? ivs.get(i).getAccountDescription()
-									:"SIN DESCRIPCIÓN")
-							.setDomain(domain.getId())
-							.setActive(true);
-						expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
-					}
-				
-					InvoiceVAT vat = new InvoiceVAT()
-						.setVatDeductionType(VatDeductionType.WITH_RIGHT)
-						.setBase(ivs.get(j).getBase() != null 
-								? ivs.get(j).getBase() : 0.0)
-						.setPercentage(ivs.get(j).getPercentage() != null
-								? ivs.get(j).getPercentage() : 0.0)
-						.setQuota(ivs.get(j).getQuota() != null
-								? ivs.get(j).getQuota() : 0.0)
-						.setSurcharge(ivs.get(j).getRePercentage() != null
-								? ivs.get(j).getRePercentage() : 0.0)
-						.setSurchargeQuota(ivs.get(j).getReQuota() != null
-								? ivs.get(j).getReQuota() : 0.0)
-						//.setInvestAsset(ivs.get(j).getInvestAsset())
-						.setDeductiblePercent(100.0)
-						.setDeductibleQuota(ivs.get(j).getQuota() != null
-								? ivs.get(j).getQuota() : 0.0)
-						.setWithholding(ivs.get(j).getRetentionQuota() != null
-								&& ivs.get(j).getRetentionQuota() != 0)
-						
-						.setExpAccountId(expAccount.getId())
-						.setExpAccountCode(expAccount.getCode())
-						.setExpAccountDescription(expAccount.getDescription())
-						
-						.setOutputAccountCode(outputAccount.getCode())
-						.setOutputAccountDescription(outputAccount.getDescription())
-						.setOutputAccountId(outputAccount.getId())
-						
-						.setInputAccountCode(inputAccount.getCode())
-						.setInputAccountDescription(inputAccount.getDescription())
-						.setInputAccountId(inputAccount.getId())
-
-						.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
-						.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
-						.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
-					ai.addVat(vat);
-					total = total + (invoice.mustApplyISP() ? ivs.get(j).getBase() : ivs.get(j).getTotal());
-
-					j++;
-				}
-				Integer cci = i;
-				i = j-1;
-				for(Integer k = cci; k < j; k++) {
-					checkCuotas(domain, ivs.get(k));
-				}
-
-				ai.getInvoice().setTotal(total);
-			
-				if(ai.getInvoice().isWithholding()) {
-					Account retentionAccount = (invoice.isSales() )
-							?aonCtx.getDefaultPaidRetAccount()
-							:aonCtx.getDefaultChargedRetAccount();
-			
-					InvoiceWithholding iw = new InvoiceWithholding()
-						.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey(), ivs.get(i).getAccount()))
-						.setBase(retBase)
-						.setPercentage(retPercentage)
-						.setQuota(retQuota)
-						.setAccountCode(retentionAccount.getCode())
-						.setAccountDescription(retentionAccount.getDescription())
-						.setAccountId(retentionAccount.getId());
-					ai.setWithholdingData(iw);
-				}
-				ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
-				Account financeAccount = new Account();
-				if(ivs.get(i).getFinanceAccount() != null && !ivs.get(i).getFinanceAccount().isBlank() ) {
-					financeAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(i).getFinanceAccount());
-					if(financeAccount == null || financeAccount.getId() == null) {
-						financeAccount = new Account()
-							.setCode(ivs.get(i).getFinanceAccount())
-							.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
-							.setAlias("SIN DESCRIPCIÓN")
-							.setDomain(domain.getId())
-							.setActive(true);
-						financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
-					}
-				}
-				
-				ai.setPayAccountId(financeAccount.getId())
-				  .setPayAccountCode(financeAccount.getCode())
-				  .setPayAccountDescription(financeAccount.getDescription());
-				
-				Finance f = new Finance()
-						.setAmount(ai.getInvoice().getTotal())
-						.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
-						.setPayMethod(pm.getId());
-
-				
-				ai.getInvoice().setFinances(new LinkedList<Finance>());
-				if(financeAccount != null && financeAccount.getId() != null) {
-					ai.getInvoice().addFinance(f);
-				}
-
-				ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
-				
-				if(financeAccount == null || financeAccount.getId() == null){
-					f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
-						.setDomain(domain.getId())
-						.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
-						.setRegistryDocument(ai.getInvoice().getRegistryDocument())
-						.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
-						.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
-						.setRegistryName(ai.getInvoice().getRegistryName())
-						.setScope(ai.getInvoice().getScope())
-						.setSecurityLevel(ai.getInvoice().getSecurityLevel())
-						.setConcept(ai.getInvoice().getDocumentNumber())
-						.setFinanceStatus(FinanceStatus.PENDING);
-					AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
-				}
-			} catch (Exception e) {
-				error.setError(false);
-				verror.add("Línea " + ivs.get(i).getLine() + ": " + e.getMessage());
+		try {
+			if(ivs.get(i).getAccount() == null || ivs.get(i).getAccount().isBlank()) {
+				throw new Exception("La cuenta contable es un dato obligatorio.");
 			}
+			
+			AccountingInvoice ai = new AccountingInvoice();
+			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
+
+			Invoice invoice = new Invoice();
+			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
+			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
+			invoice.setTransaction(getTransaction(ivs.get(i)));
+			invoice.setDomain(domain.getId());
+			invoice.setIssueDate(ivs.get(i).getDate());
+			invoice.setTaxDate(ivs.get(i).getDate());
+			invoice.setType(ivs.get(i).getInvoiceType() != null
+				? ivs.get(i).getInvoiceType()
+				: getInvoiceType(ivs.get(i).getAccount()));
+			if(ivs.get(i).getSerie() != null) {
+				invoice.setSeries(ivs.get(i).getSerie());
+			} 
+			if(ivs.get(i).getNumber() != null) {
+				invoice.setNumber(ivs.get(i).getNumber());	
+			}
+			invoice.setReferenceCode(ivs.get(i).getRef());
+			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
+				&& ivs.get(i).getRetentionQuota() != 0);
+			invoice.setRemarks(ivs.get(i).getConcept());
+			invoice.setSurcharge(ivs.get(i).getRePercentage() != null && ivs.get(i).getPercentage() > 0);
+			if(ivs.get(i).getTotal() < 0) {
+				invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
+			}
+		
+			RAddress address = new RAddress();
+			address.setDomain(domain.getId());
+			address.setType((byte) 0);
+			address.setAddress(ivs.get(i).getAddress());
+			address.setCity(ivs.get(i).getCity());
+			address.setZip(ivs.get(i).getZip() != null && ivs.get(i).getZip().length() < 5 
+				? "0" + ivs.get(i).getZip() : ivs.get(i).getZip());
+			if(ivs.get(i).getProvince() != null) {
+				GeoZone prgz = null;
+				GeoZone crgz = null;
+				Provinces pr = Provinces.getProvince(ivs.get(i).getProvince());
+				if(pr == null && address.getZip() != null ) {
+					pr = Provinces.getProvinceById(address.getZip().substring(0,2));
+				}
+				for(GeoZone gz : aonCtx.getGeozones()) {
+					if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
+						crgz = gz;
+					}
+					if(gz.getCode().equals(pr.getId())) {
+						prgz = gz;
+					}
+				}
+			
+				if(prgz != null) {
+					address.setGeozone(prgz.getId());
+					address.setGeozoneCode(prgz.getCode());
+					address.setGeozoneName(prgz.getName());
+				} else if(crgz != null) {
+					address.setGeozone(crgz.getId());
+					address.setGeozoneCode(crgz.getCode());
+					address.setGeozoneName(crgz.getName());
+				}
+			}
+
+			String nif = ivs.get(i).getNif();
+			String name = ivs.get(i).getName();
+			
+			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address);			
+			invoice.setRegistry(ar.getId());
+			ai.setRegistry(ar);
+			ai.setInvoice(invoice);
+
+			String reference = ivs.get(i).getRef();
+			String serie = ivs.get(i).getSerie();
+			Integer number = ivs.get(i).getNumber();
+			Double total = 0.0;
+			Double retBase = 0.0;
+			Double retQuota = 0.0;
+			Double retPercentage = 0.0;
+			Integer j = i;
+			while(ivs.size() > j && isSameReference(reference, serie, number, ivs.get(j))) {
+				if(ivs.get(j).getRetentionQuota() != null) {
+					retBase = retBase + ivs.get(j).getBase();
+					retPercentage = ivs.get(j).getRetentionPercentage();
+					retQuota = retQuota + ivs.get(j).getRetentionQuota();
+					ai.getInvoice().setWithholding(true);
+				}
+				
+				Account expAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(j).getAccount());
+				if(expAccount == null) {
+					expAccount = new Account()
+						.setCode(ivs.get(j).getAccount())
+						.setDescription(ivs.get(i).getAccountDescription() != null 
+								? ivs.get(i).getAccountDescription()
+								: "SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
+						.setAlias(ivs.get(i).getAccountDescription() != null 
+								? ivs.get(i).getAccountDescription()
+								:"SIN DESCRIPCIÓN")
+						.setDomain(domain.getId())
+						.setActive(true);
+					expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
+				}
+				
+				InvoiceVAT vat = new InvoiceVAT()
+					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
+					.setBase(ivs.get(j).getBase() != null 
+							? ivs.get(j).getBase() : 0.0)
+					.setPercentage(ivs.get(j).getPercentage() != null
+							? ivs.get(j).getPercentage() : 0.0)
+					.setQuota(ivs.get(j).getQuota() != null
+							? ivs.get(j).getQuota() : 0.0)
+					.setSurcharge(ivs.get(j).getRePercentage() != null
+							? ivs.get(j).getRePercentage() : 0.0)
+					.setSurchargeQuota(ivs.get(j).getReQuota() != null
+							? ivs.get(j).getReQuota() : 0.0)
+					//.setInvestAsset(ivs.get(j).getInvestAsset())
+					.setDeductiblePercent(100.0)
+					.setDeductibleQuota(ivs.get(j).getQuota() != null
+							? ivs.get(j).getQuota() : 0.0)
+					.setWithholding(ivs.get(j).getRetentionQuota() != null
+							&& ivs.get(j).getRetentionQuota() != 0)
+						
+					.setExpAccountId(expAccount.getId())
+					.setExpAccountCode(expAccount.getCode())
+					.setExpAccountDescription(expAccount.getDescription())
+						
+					.setOutputAccountCode(outputAccount.getCode())
+					.setOutputAccountDescription(outputAccount.getDescription())
+					.setOutputAccountId(outputAccount.getId())
+						
+					.setInputAccountCode(inputAccount.getCode())
+					.setInputAccountDescription(inputAccount.getDescription())
+					.setInputAccountId(inputAccount.getId())
+					.setAdjAccountCode(adjAccount != null ? adjAccount.getCode(): null)
+					.setAdjAccountDescription(adjAccount != null ? adjAccount.getDescription(): null)
+					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
+				ai.addVat(vat);
+				total = total + (invoice.mustApplyISP() ? ivs.get(j).getBase() : ivs.get(j).getTotal());
+				j++;
+			}
+			Integer cci = i;
+			i = j-1;
+			for(Integer k = cci; k < j; k++) {
+				checkCuotas(domain, ivs.get(k));
+			}
+			ai.getInvoice().setTotal(total);
+		
+			if(ai.getInvoice().isWithholding()) {
+				Account retentionAccount = (invoice.isSales() )
+						?aonCtx.getDefaultPaidRetAccount()
+						:aonCtx.getDefaultChargedRetAccount();
+		
+				InvoiceWithholding iw = new InvoiceWithholding()
+					.setWithholdingType(getWithholdingType(ivs.get(i).getRetentionKey(), ivs.get(i).getAccount()))
+					.setBase(retBase)
+					.setPercentage(retPercentage)
+					.setQuota(retQuota)
+					.setAccountCode(retentionAccount.getCode())
+					.setAccountDescription(retentionAccount.getDescription())
+					.setAccountId(retentionAccount.getId());
+				ai.setWithholdingData(iw);
+			}
+			ai.setAccountEntry(getEntryBase(domain, user.getLogin(), aonCtx, ai));
+			Account financeAccount = new Account();
+			if(ivs.get(i).getFinanceAccount() != null && !ivs.get(i).getFinanceAccount().isBlank() ) {
+				financeAccount = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), ivs.get(i).getFinanceAccount());
+				if(financeAccount == null || financeAccount.getId() == null) {
+					financeAccount = new Account()
+						.setCode(ivs.get(i).getFinanceAccount())
+						.setDescription("SIN DESCRIPCIÓN (CREADO DESDE IMPORTACIÓN DE FACTURAS)")
+						.setAlias("SIN DESCRIPCIÓN")
+						.setDomain(domain.getId())
+						.setActive(true);
+					financeAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), financeAccount);
+				}
+			}
+				
+			ai.setPayAccountId(financeAccount.getId())
+			  .setPayAccountCode(financeAccount.getCode())
+			  .setPayAccountDescription(financeAccount.getDescription());
+				
+			Finance f = new Finance()
+					.setAmount(ai.getInvoice().getTotal())
+					.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
+					.setPayMethod(pm.getId());
+
+			
+			ai.getInvoice().setFinances(new LinkedList<Finance>());
+			if(financeAccount != null && financeAccount.getId() != null) {
+				ai.getInvoice().addFinance(f);
+			}
+
+			ai = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ai);
+				
+			if(financeAccount == null || financeAccount.getId() == null){
+				f.setInvoice(new Invoice().setId(ai.getInvoice().getId()))
+					.setDomain(domain.getId())
+					.setRegistry(new Registry().setId(ai.getInvoice().getRegistry()))
+					.setRegistryDocument(ai.getInvoice().getRegistryDocument())
+					.setRegistryDocumentType(ai.getInvoice().getRegistryDocumentType())
+					.setRegistryDocumentCountry(ai.getInvoice().getRegistryDocumentCountry())
+					.setRegistryName(ai.getInvoice().getRegistryName())
+					.setScope(ai.getInvoice().getScope())
+					.setSecurityLevel(ai.getInvoice().getSecurityLevel())
+					.setConcept(ai.getInvoice().getDocumentNumber())
+					.setFinanceStatus(FinanceStatus.PENDING);
+				AON.insertFinance(domain.getName(), domain.getId(), user.getLogin(), f);
+			}
+		} catch (Exception e) {
+			error.setError(false);
+			error.setTextError("Línea " + ivs.get(i).getLine() + ": " + e.getMessage());
 		}
-		error.setTextError(verror);
+		error.setLine(i);
 		return error;
 	}
 	

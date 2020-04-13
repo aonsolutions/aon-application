@@ -2654,10 +2654,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		}
 		return new Error();
 	}
-
+	
 	@Override
-	public Error insertInvoices(Domain domain, User user) {
-		return InvoiceImport.insertInvoices(domain, user, ivs);
+	public Error insertInvoices(Domain domain, User user, Integer index) {
+		return InvoiceImport.insertInvoices(domain, user, index, ivs);
 	}
 	
 	@Override
@@ -2674,4 +2674,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	public Error insertPGC(Domain domain, User user) {
 		return PGCImport.insertPGC(domain, user, accounts);			
 	}
+
+	
 }

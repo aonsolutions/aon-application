@@ -46,6 +46,17 @@ public abstract class ProgressBarDialog extends CustomDialogB {
 		setWidget(binder.createAndBindUi(this));
 	}
 	
+	public ProgressBarDialog(String title) {
+		setCaption(title);
+		setWidth("400px");
+		panel = new SimplePanel();
+		apb = new AonProgressBar();
+		panel.add(apb);
+		panel.setStyleName(AON.AON_CSS.aonProgressBarDialogPanel());
+		this.progressBarCallback = new ProgressBarCallBack();
+		setWidget(binder.createAndBindUi(this));
+	}
+	
 	public ProgressBarDialog(Double d, Double d2, String title) {
 		setCaption(title);
 		setWidth("400px");
@@ -66,5 +77,9 @@ public abstract class ProgressBarDialog extends CustomDialogB {
 	
 	public void completed(){
 		apb.setProgress(100);
+	}
+	
+	public void updateProgress(Integer progress) {
+		apb.setProgress(progress);
 	}
 }
