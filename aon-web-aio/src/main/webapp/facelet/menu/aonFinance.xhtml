@@ -390,6 +390,14 @@
 											value="#{bundle.aon_loader_module}" />
 									</aon:div>										
 								</aon:if>
+								<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="invoiceRemover"
+											action="invoiceRemover_search"
+											actionListener="#{invoiceRemover.onEditSearch}"
+											value="#{bundle.finance_invoice_removing_module}"/>
+									</aon:div>
+								</aon:if>
 								<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount > 0}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceSigner-aonFinance"
