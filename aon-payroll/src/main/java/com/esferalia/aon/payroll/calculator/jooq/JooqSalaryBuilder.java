@@ -506,12 +506,12 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	// ------------------------------------------------------------------------
 
-	private void setDomain(Integer domainId) {
+	protected void setDomain(Integer domainId) {
 		this.domainId = domainId;
 		insertMoreSalary = insertMoreSalary.set(SALARY.DOMAIN, domainId);
 	}
 
-	private void setContract(Integer contractId) {
+	protected void setContract(Integer contractId) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.CONTRACT, contractId);
 	}
 
@@ -595,10 +595,6 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
 	// ------------------------------------------------------------------------
 
-	private static java.sql.Date toSqlDate(Date date) {
-		return date == null ? null : new java.sql.Date(date.getTime());
-	}
-
 	private boolean filter(String name, ITimedVariable<?> var) {
 		Period period = var.getPeriod();
 		Object value = var.getValue(period);
@@ -629,6 +625,10 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	// ------------------------------------------------------------------------
+
+	protected static java.sql.Date toSqlDate(Date date) {
+		return date == null ? null : new java.sql.Date(date.getTime());
+	}
 
 	private static boolean isAlreadyAtSalary(String name) {
 		if (ALREADY_AT_SALARY == null) {
