@@ -33,6 +33,9 @@ public class InvoiceCalculator {
 		ai.getInvoice().setVatQuota(AonMathUtils.round(vt));
 		ai.getInvoice().setRetentionQuota(AonMathUtils.round(rt));
 		ai.getInvoice().setTaxableBase(AonMathUtils.round(tb));
+		if (ai.getInvoice().hasFinances() && ai.getInvoice().getFinances().size() == 1 && ai.getInvoice().getFinances().get(0).isPending()) {
+			ai.getInvoice().getFinances().get(0).setAmount(t);
+		}
 	}
 	
 	public static void calculate(AccountingInvoice ai, InvoiceVAT vat) {

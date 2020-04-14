@@ -32,6 +32,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private LinkedList<AccountEntry> accountEntries;
 	private boolean prepayments;
 	
+	private boolean authFinanceCalculation;
 	private Integer payAccountId;
 	private String payAccountCode;
 	private String payAccountDescription;
@@ -247,6 +248,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	public AccountingInvoice setPrepayments(boolean prepayments) {
 		this.prepayments = prepayments;
+		return this;
+	}
+	public boolean isAuthFinanceCalculation() {
+		return authFinanceCalculation;
+	}
+	public AccountingInvoice setAuthFinanceCalculation(boolean authFinanceCaleulation) {
+		this.authFinanceCalculation = authFinanceCaleulation;
 		return this;
 	}
 	public Integer getPayAccountId() {

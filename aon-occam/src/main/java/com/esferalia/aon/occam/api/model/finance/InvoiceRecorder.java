@@ -29,7 +29,8 @@ public class InvoiceRecorder {
 		 CUSTOMER( new IFinanceVisitor() {
 			@Override
 			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
-				double amount = invoice.getTotalInvoice();
+				// double amount = invoice.getTotalInvoice();
+				double amount = finance.getAmount();
 				if (invoice.getRegistry().getType() == AccountingRegistryType.CUSTOMER) {
 					Integer registryAccount = invoice.getRegistry().getAccountId();
 					String registryAccountCode = invoice.getRegistry().getAccountCode();
@@ -73,7 +74,8 @@ public class InvoiceRecorder {
 		,SUPPLIER_CREDITOR( new IFinanceVisitor() {
 			@Override
 			public void visit(AccountingInvoice invoice, Finance finance,LinkedHashMap<Integer,AccountEntryDetail> map) {
-				double amount = invoice.getTotalInvoice();
+				// double amount = invoice.getTotalInvoice();
+				double amount = finance.getAmount();
 				if ( (invoice.getRegistry().getType() == AccountingRegistryType.SUPPLIER 
 					||invoice.getRegistry().getType() == AccountingRegistryType.CREDITOR
 					||invoice.getRegistry().getType() == AccountingRegistryType.UNDED_CREDITOR)) {
@@ -534,13 +536,14 @@ public class InvoiceRecorder {
 		AccountEntry ae = getInvoiceEntry(invoice);
 		if (invoice.getInvoice().hasFinances()) {
 			LinkedList<AccountEntry> entries = new LinkedList<AccountEntry>();
+			entries.add(ae);
 			for (Finance finance : invoice.getInvoice().getFinances()) {
-				if (finance.isRecordable()) {
+				if (finance.isRecordable() && !finance.isRemoved()) {
 					AccountEntry payEntry = getFinanceEntry(invoice,finance);
 					entries.add(payEntry);
 				}
 			}
-			entries.add(ae);
+			
 			return entries.toArray(new AccountEntry[entries.size()]);
 		}
 		return new AccountEntry[]{ae};

@@ -44,8 +44,8 @@ public class SessionLog extends ScrollPanel
 		add(wrapper,PREVIEW);
 	}
 	public void addPreview( final IAccountEntryWrapper[] wrappers) {
-		for (IAccountEntryWrapper wrapper : wrappers) {
-			add(wrapper,PREVIEW);
+		for (int counter = wrappers.length - 1; counter >= 0; counter--) {
+			add(wrappers[counter],PREVIEW);
 		}
 	}
 

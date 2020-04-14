@@ -436,7 +436,8 @@ public class AccountingInvoiceDAO {
 					.setReferenceCode(null)
 					.setFinances(new LinkedList<Finance>())
 				);
-		ai.getInvoice().getFinances().add(new Finance()
+		ai.setAuthFinanceCalculation(true)
+		  .getInvoice().getFinances().add(new Finance()
 				.setDueDate(issueDate)
 				.setPayment(!ai.isSales())
 				.setFinanceStatus(FinanceStatus.PENDING));
