@@ -129,7 +129,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeFinances(invoice);
 				removeInvoiceDetails(invoice);
 				removeInvoiceAddress(invoice);
-				if (invoice.isRectifier()) {
+				if (invoice.isRectifier() && invoice.getRectificationInvoice() != null) {
 					updateRectifiedInvoices(invoice);
 				}
 			} else {
