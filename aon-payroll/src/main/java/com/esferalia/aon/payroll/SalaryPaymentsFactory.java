@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -100,6 +101,8 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 						ContextVariable.BASE_SALARY)) {
 			payments.addBaseSalary(sp);
 			return;
+		} else if (value == 1 && isSpecialSecurityBenefits(sp) ) {			
+			payments.addSpecialSecurityBenefits(toSpecialSecurityBenefits(sp));
 		} else if (value == 2) {
 			payments.addNoEstructuralOvertimeHours(sp);
 		} else if (value == 3) {
@@ -108,6 +111,19 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			payments.addSalarySupplements(sp);
 		}
 
+	}
+	
+	private static boolean isSpecialSecurityBenefits(SalaryPayment sp) {
+		String name = sp.getName();
+		if ( StringUtils.isBlank(name) ) 
+			return false ;		
+		return Arrays.stream(ContextVariable.ERES).anyMatch( v -> StringUtils.equals(v.getName(), name ));
+	}
+	
+	private static SalaryPayment toSpecialSecurityBenefits(SalaryPayment sp) {
+		if ( sp.getAmount() == 0.00 )
+			sp.setAmount(sp.getQuote());
+		return sp;
 	}
 
 }
