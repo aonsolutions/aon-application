@@ -874,6 +874,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				invoiceCallback.getInvoice().getInvoice().setWithholding(withholding.getValue());
+				vatPanel.withholdingChanged( withholding.getValue() );
+				for (InvoiceVAT vat : invoiceCallback.getInvoice().getVats()) {
+					vat.setWithholding(withholding.getValue());
+				}
 				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
 				headerDataChanged(invoiceCallback);
 			}

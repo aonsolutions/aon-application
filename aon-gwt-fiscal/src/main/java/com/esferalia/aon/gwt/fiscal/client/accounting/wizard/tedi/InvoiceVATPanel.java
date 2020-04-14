@@ -817,7 +817,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 				ValueChangeEvent.fire(InvoiceVATPanel.this, vat );
 			}
 		}
-		private void calculate(InvoiceVAT vat) {
+		protected void calculate(InvoiceVAT vat) {
 			InvoiceCalculator.calculate(callback.getInvoice(),vat);
 			populate(vat);
 		}
@@ -933,5 +933,11 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 	private boolean isOutputVatEnabled(IEditableInvoicePanelCallback callback, InvoiceVAT vat) {
 		return isVatEnabled(callback,vat) && callback.getInvoice().isOutputVatEnabled(); 	
+	}
+
+	public void withholdingChanged(Boolean value) {
+		for (InvoicePanelRow vat : rows) {
+			vat.withholding.setValue(value,false);
+		}
 	}
 }
