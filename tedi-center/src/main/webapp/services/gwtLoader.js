@@ -6,6 +6,7 @@
 	function rootPanel(html) {
 		const myNode = document.getElementById("rootPanel");
 		myNode.innerHTML = html;
+		componentHandler.upgradeDom();
 	}
 
 	function drawChartsCallback(){

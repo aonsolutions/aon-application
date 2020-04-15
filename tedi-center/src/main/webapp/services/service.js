@@ -5,36 +5,18 @@ import '../components/aon-desktop.js'
 let companies;
 let company;
 
+let invoices;
+let invoice;
 
-window.load = load;
 window.closeSession = closeSession;
 window.login = login;
 window.getCompanies = getCompanies;
 window.getCompany = getCompany;
 window.companySelection = companySelection;
 
-function load() {
-	if(localStorage.getItem('session_id')){
-		getCompanies().then(companies => {
-			document.getElementById("aonLogin").style.display = 'none';
-			document.getElementById("aonHome").style.display = 'block';
-			if(companies.length === 1){
-				localStorage.setItem('domain_id', companies[0].id);
-				localStorage.setItem('domain_name', companies[0].domain);
-				rootPanel('<aon-desktop></aon-desktop>');
-			} else {
-				localStorage.removeItem('domain_id');
-				localStorage.removeItem('domain_name');
-				rootPanel('<aon-parent></aon-parent>');
-			}
-		}).catch(error => {
-			alert(error);
-		});
-	} else {
-		document.getElementById("aonLogin").style.display = 'block';
-		document.getElementById("aonHome").style.display = 'none';
-	};
-}
+window.getInvoices = getInvoices;
+window.getInvoice = getInvoice;
+window.invoiceSelection = invoiceSelection;
 
 function closeSession() {
 	localStorage.removeItem('session_id');
@@ -52,6 +34,7 @@ function login() {
 			password: password
 	}
 
+	console.log(JSON.stringify(data));
 	request('POST', '/login', undefined, data, function (token, error) {
 
 		localStorage.setItem('session_id', JSON.parse(token).session_id);
@@ -106,5 +89,33 @@ function getCompany() {
       });
     }
     resolve(company);
+  });
+}
+
+function invoiceSelection(inv) {
+	invoice = inv;
+//	rootPanel('<aon-invoice></aon-invoice>');
+}
+
+function getInvoices() {
+  return new Promise(function(resolve, reject){
+    if(invoices) {
+			resolve(invoices);
+    } else {
+      request('GET', '/ms/invoice', localStorage.getItem('session_id'), undefined, function (result, error) {
+        if(error) {
+          reject(error);
+        } else {
+          invoices = JSON.parse(result);
+          resolve(invoices);
+        }
+   	  });
+   	 }
+  });
+}
+
+function getInvoice() {
+  return new Promise(function(resolve, reject){
+    resolve(invoice);
   });
 }

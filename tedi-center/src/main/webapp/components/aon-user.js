@@ -40,11 +40,10 @@ class AonUser extends HTMLElement {
 				</div>
 				
 				<form action="#">
-					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" >
-						<input class="mdl-textfield__input" type="text" id="aon-user-name">
-						<label class="mdl-textfield__label" for="samp1">Nombre</label>
-					</div>
+					<aon-input-text id="aon-user-name" type="date" description="Nombre"></aon-input-text>
 				</form>
+		
+				
 			</div>
 		</div>
 			`;

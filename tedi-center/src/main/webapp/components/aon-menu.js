@@ -1,8 +1,16 @@
 import './aon-configuration.js';
+import './aon-invoice-panel.js';
+import './aon-invoice.js';
+import './aon-user.js';
+
 
 function aonConfiguration() {
 	rootPanel('<aon-configuration></aon-configuration>');
 	getUsers();
+}
+
+function aonInvoicePanel() {
+	rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 }
 
 class AonMenu extends HTMLElement {
@@ -30,7 +38,7 @@ class AonMenu extends HTMLElement {
 				</span>
 
 				<span style="margin-left:20px;">
-					<button class="mdl-button mdl-js-button" onclick="startModule('aon_gwt_aio', 'config');">
+					<button class="mdl-button mdl-js-button" onclick="aonInvoicePanel()">
 						FACTURAS
 					</button>
 				</span>
@@ -60,3 +68,4 @@ class AonMenu extends HTMLElement {
 
 window.customElements.define('aon-menu', AonMenu);
 window.aonConfiguration = aonConfiguration;
+window.aonInvoicePanel = aonInvoicePanel;

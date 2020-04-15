@@ -1,3 +1,5 @@
+import './aon-inputText.js';
+
 class AonLogin extends HTMLElement {
 
 	constructor () {
@@ -13,7 +15,7 @@ class AonLogin extends HTMLElement {
 					display: flex;
 					justify-content: center;
 					height:100%;
-					background-color: #377DFF;
+					background-color: #fff;
 				}
 
 				.sign-in {
@@ -56,17 +58,11 @@ class AonLogin extends HTMLElement {
 				</div>
 
 				<form action="#">
-					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" >
-						<input class="mdl-textfield__input" type="text" id="user">
-						<label class="mdl-textfield__label" for="sample1">Usuario</label>
-					</div>
+					<aon-input-text id="user" description="Usuario"></aon-input-text>
 				</form>
 
 				<form action="#">
-					<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-						<input class="mdl-textfield__input" type="password" id="password">
-						<label class="mdl-textfield__label" for="sample1">Contraseña</label>
-					</div>
+					<aon-input-text id="password" description="Contraseña" type="password"></aon-input-text>
 				</form>
 
 				<div style="position:relative;padding-bottom:5px; margin-bottom: 5px;">

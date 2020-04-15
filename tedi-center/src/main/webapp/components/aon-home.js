@@ -1,4 +1,5 @@
 import './aon-menu.js';
+import './aon-inputText.js';
 
 class AonHome extends HTMLElement {
 	constructor () {
@@ -19,9 +20,9 @@ class AonHome extends HTMLElement {
 				}
 
 			</style>
-
+						
 			<aon-menu></aon-menu>
-			<div id="rootPanel" class="root-panel" />
+			<div id="rootPanel" class="root-panel" ></div>
 
 		`;
   }

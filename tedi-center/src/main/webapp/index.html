@@ -9,9 +9,8 @@
 
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+
 	<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
-
 
 	<meta name="gwt:property" content="locale=es_ES" />
 
@@ -27,17 +26,10 @@
 	<script type="text/javascript" src="tedi-center/aon_gwt_aio/bower_components/webcomponentsjs/webcomponents-lite.js" ></script>
 	<script type="text/javascript" src="/tedi-center/services/gwtLoader.js"></script>
 	<script type="module" src="/tedi-center/services/service.js"></script>
-	<script type="text/javascript" src="/tedi-center/components/aon-login.js"></script>
-	<script type="module" src="/tedi-center/components/aon-home.js"></script>
+	<script type="module" src="/tedi-center/components/aon-module.js"></script>
 
 </head>
-<body onload="load();">
-	<div id="aonLogin" style="display:none">
-		<aon-login></aon-login>
-	</div>
-	<div id="aonHome" style="display:none">
-		<aon-home> </aon-home>
-	</div>
-
+<body>
+	<aon-module></aon-module>
 </body>
 </html>
