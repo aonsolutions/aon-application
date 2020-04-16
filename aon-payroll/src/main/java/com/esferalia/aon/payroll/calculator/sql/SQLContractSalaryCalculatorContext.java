@@ -1005,6 +1005,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				return 0.00;
 			}
 		}
+		
+		@Override
+		protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate,
+				Date endDate, Date issueDate, Criteria criteria, double x) {
+			return super.getPaymentCalculatorContext(conn, startDate, endDate, issueDate, criteria, x, (ctx) -> {
+				getEreDaysVars().forEach( v -> ctx.removeVariable(v) );
+				getEreFactorsVars().forEach( v -> ctx.removeVariable(v) );
+			});
+		}
 
 		// --------------------------------------------------------------------
 
@@ -2852,6 +2861,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria, final double x) {
+		return getPaymentCalculatorContext(conn, startDate, endDate, issueDate, criteria, x, (ctx) -> {});
+	}
+	
+	protected ISQLContractSalaryCalculatorContext getPaymentCalculatorContext(Connection conn, Date startDate, Date endDate,
+			Date issueDate, Criteria criteria, final double x, NextHook hook) {
 		SQLContractSalaryCalculatorContext ctx;
 		try {
 			ctx = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria) {
@@ -2928,9 +2942,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				public Collection<IContractCost> getContractCosts() throws AonException {
 					return Collections.emptyList();
 				}
+				
 			};
 			ctx.leaveLoader = leaveLoader;
-			ctx.next();
+			ctx.next(hook);
 			return ctx;
 		} catch (ExpressionException e) {
 			throw new ExpressionExceptionWrapper(e);

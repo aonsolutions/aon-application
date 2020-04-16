@@ -12,8 +12,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CATEGORY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
@@ -402,7 +400,9 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		prevPayment.setIrpf(tax);
 		prevPayment.setQuote(quote);
 		prevPayment.setAmount(amount);
-		prevPayment.setId(((IContractPayment) payment).getId());
+		
+		if ( payment instanceof IContractPayment )
+			prevPayment.setId(((IContractPayment) payment).getId());
 
 		putContext(context);
 	}
@@ -440,7 +440,9 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		}
 
 		prevDeduction.setAmount(amount);
-		prevDeduction.setId(((IContractDeduction) deduction).getId());
+		
+		if ( deduction instanceof IContractDeduction )
+			prevDeduction.setId(((IContractDeduction) deduction).getId());
 
 		putContext(context);
 	}
@@ -584,12 +586,17 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	 *         payment.
 	 */
 	private boolean isSiblingOfPrevious(IPayment payment) {
-		return (prevPayment.getId() != null) && (((IContractPayment) payment).getId() != null)
+		
+		return (prevPayment.getId() != null) 
+				&& (payment instanceof IContractPayment )
+				&& (((IContractPayment) payment).getId() != null)
 				&& ((IContractPayment) payment).getId().equals(prevPayment.getId());
 	}
 
 	private boolean isSiblingOfPrevious(IDeduction deduction) {
-		return (prevDeduction.getId() != null) && (((IContractDeduction) deduction).getId() != null)
+		return (prevDeduction.getId() != null) 
+				&& (deduction instanceof IContractDeduction )
+				&& (((IContractDeduction) deduction).getId() != null)
 				&& ((IContractDeduction) deduction).getId().equals(prevDeduction.getId());
 	}
 
@@ -620,7 +627,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		return true;
 	}
 
-	private boolean filter(Map.Entry<String, ITimedVariable<?>> entry) {
+	protected boolean filter(Map.Entry<String, ITimedVariable<?>> entry) {
 		return filter(entry.getKey(), entry.getValue());
 	}
 
@@ -646,7 +653,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			//ALREADY_AT_SALARY.add(NON_STRUCTURAL_OVERTIME_BASE.getName());
 
 			// I.R.P.F
-			ALREADY_AT_SALARY.add(IRPF_PERCENT.getName());
+			//ALREADY_AT_SALARY.add(IRPF_PERCENT.getName());
 			// Totals
 			ALREADY_AT_SALARY.add(TOTAL_LIQUID.getName());
 			ALREADY_AT_SALARY.add(TOTAL_PAYMENT.getName());
