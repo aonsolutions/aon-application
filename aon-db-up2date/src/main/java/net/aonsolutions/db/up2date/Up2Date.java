@@ -19,16 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AlterCertifica2BatchDetail4ERE;
-import net.aonsolutions.db.up2date.payroll.AyudaTWarnDelete;
-import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoInsert;
-import net.aonsolutions.db.up2date.payroll.EreFzaExoneradoUpdate;
-import net.aonsolutions.db.up2date.payroll.EreFzaInsert;
-import net.aonsolutions.db.up2date.payroll.FundUpvUpdateIV;
-import net.aonsolutions.db.up2date.payroll.FundUpvUpdateV;
-import net.aonsolutions.db.up2date.payroll.IndemnizacionDescriptionUpdate;
-import net.aonsolutions.db.up2date.payroll.IndemnizacionEditableUpdate;
-import net.aonsolutions.db.up2date.tgss.SMIWarn2020Delete;
+import net.aonsolutions.db.up2date.payroll.EresUpdate;
 
 public class Up2Date {
 
@@ -103,15 +94,16 @@ public class Up2Date {
     		//SalaryHoursUpdate.SALARYHOURSUPDATE
     		//RegistryInsert.REGISTRYINSERT
     		//FundUpvUpdateIV.FUNDUPV_UPDATE_IV,
-    		//FundUpvUpdateV.FUNDUPV_UPDATE_V
+    		//FundUpvUpdateV.FUNDUPV_UPDATE_V,
     		//IndemnizacionEditableUpdate.INDEMNIZACIONEDITABLEUPDATE,
     		//IndemnizacionDescriptionUpdate.INDEMNIZACIONDESCRIPTIONUPDATE,
     		//EreFzaInsert.EREFZAINSERT,
     		//SMIWarn2020Delete.SMIWARN2020DELETE,
     		//AyudaTWarnDelete.AYUDATWARNDELETE,
-    		//EreFzaExoneradoInsert.EREFZAEXONERADOINSERT
-    		//AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE
-    		EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE
+    		//EreFzaExoneradoInsert.EREFZAEXONERADOINSERT,
+    		//AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE,
+    		//EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE
+    		EresUpdate.ERESUPDATE
     };
 
 

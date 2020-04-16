@@ -102,7 +102,7 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 			payments.addBaseSalary(sp);
 			return;
 		} else if (value == 1 && isSpecialSecurityBenefits(sp) ) {			
-			payments.addSpecialSecurityBenefits(toSpecialSecurityBenefits(sp));
+			payments.addSpecialSecurityBenefits(sp);
 		} else if (value == 2) {
 			payments.addNoEstructuralOvertimeHours(sp);
 		} else if (value == 3) {
@@ -120,10 +120,5 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 		return Arrays.stream(ContextVariable.ERES).anyMatch( v -> StringUtils.equals(v.getName(), name ));
 	}
 	
-	private static SalaryPayment toSpecialSecurityBenefits(SalaryPayment sp) {
-		if ( sp.getAmount() == 0.00 )
-			sp.setAmount(sp.getQuote());
-		return sp;
-	}
 
 }
