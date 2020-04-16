@@ -197,32 +197,31 @@ public class PDF2Aon {
 			Class.forName("com.mysql.jdbc.Driver");
 			
 			
-			for (String calculosPath : pdfsPaths) {
-				Arrays.stream(new File(calculosPath).listFiles(f-> f.isFile() ))
-				.forEach(f -> {
-						try {
-							dslContext.transaction((c)->{
-								try {
-									ISalaryBuilder<?>  salaryBuilder = null;
-	
-									if ( check )
-										salaryBuilder = new SalaryBuilder();
-									else
-										salaryBuilder = new JooqPDFSalaryBuilder(dslContext, domain);
-									SalaryPDFParser.parse(f, salaryBuilder);
-								} catch (IOException | UnknownPDFException e) {
-									System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
-								}
-								
-//								throw new RollbackException();
-							});
-						} catch ( RollbackException e) {
-							
-						}
-						
+			try {
+				dslContext.transaction((c)->{
+					JooqPDFSalaryBuilder  salaryBuilder = 
+					new JooqPDFSalaryBuilder(dslContext, domain);
 					
+					for (String calculosPath : pdfsPaths) {
+						Arrays.stream(new File(calculosPath).listFiles(f-> f.isFile() ))
+						.forEach(f -> {
+							try {
+								SalaryPDFParser.parse(f, salaryBuilder);
+							} catch (IOException | UnknownPDFException e) {
+								System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
+							}
+										
+						});
+					}
+					
+					salaryBuilder.execute();
+//					throw new RollbackException();				
 				});
+			} catch ( RollbackException e) {
+				
 			}
+			
+		
 			
 
 		} catch (SQLException e) {

@@ -44,7 +44,7 @@ public class SalaryPDFParser {
 		
 		SalaryPDFTemplate template = null;
 		
-		for (int p = doc.getNumberOfPages(); p <= doc.getNumberOfPages(); p++) {
+		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
             // Set the page interval to extract. 
 			// If we don't, then all pages would be extracted.
 			stripper.setStartPage(p);
@@ -70,7 +70,8 @@ public class SalaryPDFParser {
 					System.err.println(e.getMessage());
 					return template;
 				} catch ( Exception e ) {
-					e.printStackTrace();
+//					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 			}
 			throw new UnknownPDFException();

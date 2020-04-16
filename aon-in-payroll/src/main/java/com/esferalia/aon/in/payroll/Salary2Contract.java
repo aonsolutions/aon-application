@@ -14,9 +14,14 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.conf.ParamType;
+import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.in.payroll.altai.jooq.JooqTSLABTRAInsight;
+import com.esferalia.aon.in.payroll.altai.jooq.RollbackException;
+import com.esferalia.aon.in.payroll.salary.jooq.JooqSalary2Contract;
 
 public class Salary2Contract {
 	
@@ -76,7 +81,7 @@ public class Salary2Contract {
 		     .hasArg()
 		     .withLongOpt("where")
 		     .withArgName("where")
-		     .withDescription("Insight only selected contracts. Quotes are mandatory.")
+		     .withDescription("Only selected contracts.")
 		     .create();
 
 		@SuppressWarnings("static-access")
@@ -94,51 +99,59 @@ public class Salary2Contract {
 		options.addOption(databaseOption);
 		options.addOption(passwordOption);
 		 
-		Connection connection = null;
+		CommandLine commandLine = null;
+		
 		try {
 			CommandLineParser parser = new GnuParser();
-			CommandLine commandLine = parser.parse(options, args);
-	
-			
-			String host = commandLine.getOptionValue(hostOption.getLongOpt());
-			String port = commandLine.getOptionValue(portOption.getLongOpt(), "3306");
-			String user = commandLine.getOptionValue(userOption.getLongOpt());
-			String password = commandLine.getOptionValue(passwordOption.getLongOpt());
-			String database = commandLine.getOptionValue(databaseOption.getLongOpt());
-			String where = commandLine.getOptionValue(whereOption.getLongOpt(), "`domain`.`name` LIKE 'altai%'");
-	
-			Properties properties = new Properties();
-			properties.setProperty("user", user);
-			properties.setProperty("password", password);
-			properties.setProperty("useSSL", "false");
-			properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
-			String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
-	
-			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection(url, properties);
-			
-			new JooqTSLABTRAInsight(connection, DSL.condition(where)).execute();
-
+			commandLine = parser.parse(options, args);
 		} catch (ParseException e) {
 			// oops, somthing went wrong
 			System.out.println("Error: " + e.getLocalizedMessage());
-			new HelpFormatter().printHelp(Salary2Contract.class.getSimpleName(), options);
-		} catch (SQLException e) {
-			System.out.println("Error: " + e.getLocalizedMessage());
+			new HelpFormatter().printHelp(PDF2Aon.class.getSimpleName(), options);
+			return;
+		} 
+		
+		String host = commandLine.getOptionValue(hostOption.getLongOpt());
+		String port = commandLine.getOptionValue(portOption.getLongOpt(), "3306");
+		String user = commandLine.getOptionValue(userOption.getLongOpt());
+		String password = commandLine.getOptionValue(passwordOption.getLongOpt());
+		String database = commandLine.getOptionValue(databaseOption.getLongOpt());
+		String where = commandLine.getOptionValue(whereOption.getLongOpt(), String.format("`salary`.`registration` = %d", Integer.MIN_VALUE));
+	
+		Properties properties = new Properties();
+		properties.setProperty("user", user);
+		properties.setProperty("password", password);
+		properties.setProperty("useSSL", "false");
+		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
+		String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
+
+		Settings settings;
+		settings = new Settings();
+		settings.setRenderSchema(false);
+		settings.setParamType(ParamType.INLINED);
+		
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
+			System.out.println("Error: " + e.getLocalizedMessage());
+		} 
+		
+		try (Connection connection = DriverManager.getConnection(url, properties);
+			DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings)) {
+			
+			dslContext.transaction(c -> {
+				JooqSalary2Contract.pullUp(dslContext, DSL.condition(where));
+//				throw new RollbackException();
+			});
+			
+
+		} catch (RollbackException e) {
+		} catch (SQLException e) {
 			System.out.println("Error: " + e.getLocalizedMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error: " + e.getLocalizedMessage());
-		} finally {
-			try {
-				if ( connection != null )
-					connection.close();
-			} catch ( SQLException e ) {
-				System.err.println("Oops, something went wrong, " + e.getLocalizedMessage());
-			}
-		}
-		 
+		} 
 	 }
 
 }

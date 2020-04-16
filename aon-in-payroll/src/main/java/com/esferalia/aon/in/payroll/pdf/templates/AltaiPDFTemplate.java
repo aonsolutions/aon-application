@@ -575,12 +575,14 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 			deduction(matcher, (amount, percent) -> {
 				salaryBuilder.addDeduction(
 						amount, 
-						"", 
+						DeductionType.IRPF.getName(SPAIN), 
 						startDate, 
 						endDate, 
 						new Deduction().setType(DeductionType.IRPF).setName("IRPF"), 
 						Collections.singletonMap("PORCENTAJE_IRPF", new TimedObject<Double>(percent, period )));
 				salaryBuilder.setTotalIrpf(amount);
+			}, () -> {
+				salaryBuilder.setTotalIrpf(0.000);
 			});
 
 			matcher = find(reader, ADVANCE );
@@ -757,6 +759,18 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 		
 	}
 	
+	private void deduction(Matcher matcher, BiConsumer<Double, Double> consumer, Runnable empty)  {
+		
+		try {
+			double percent = number(matcher, "percent").doubleValue();
+			double amount = number(matcher, "amount").doubleValue();
+			consumer.accept(amount, percent);
+		} catch (Exception e) {
+			empty.run();
+		}
+		
+	}
+
 	private void deduction(Matcher matcher, Consumer<Double> consumer)  {
 		
 		try {
