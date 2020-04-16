@@ -10,6 +10,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasKeyUpHandlers;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -21,7 +24,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class BankAccountBox extends SimplePanel implements HasValueChangeHandlers<BankAccount>, HasEnabled {
+public class BankAccountBox extends SimplePanel implements HasValueChangeHandlers<BankAccount>, HasKeyUpHandlers, HasEnabled {
 	
 	private Country2ListBox countryBox = new Country2ListBox();
 	private TextBox check = new TextBox();
@@ -52,10 +55,7 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 	}
 	
 	public BankAccountBox(BankAccount ba) {
-		bankAccount = ba;
-		if (bankAccount.getCountry() == null) {
-			bankAccount.setCountry(Country.ES);
-		}
+		setValue(ba);
 		
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonWidthAll());
@@ -79,7 +79,7 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 				ibanMode = !ibanMode;
 				ibanLabel.setText(ibanMode?"IBAN:":"CCC:");
 				if (!ibanMode) {
-					bankAccount.setCountry(Country.ES);
+					BankAccountBox.this.bankAccount.setCountry(Country.ES);
 				}
 				enableWidgets();
 				validate();
@@ -89,16 +89,16 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		col++;
 
 		dataPanel.setStyleName(AON.AON_CSS.aonNowrap());
-		countryBox.setValue(bankAccount.getCountry());
+		countryBox.setValue(this.bankAccount.getCountry());
 		countryBox.setVisible(ibanMode);
 		countryBox.addChangeHandler( new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				bankAccount.setCountry(countryBox.getValue());
+				BankAccountBox.this.bankAccount.setCountry(countryBox.getValue());
 				enableWidgets();
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(countryBox);
@@ -109,14 +109,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		check.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		check.setMaxLength(2);
 		check.setVisibleLength(2);
-		check.setValue( bankAccount.getCheck());
+		check.setValue( this.bankAccount.getCheck());
 		check.setVisible(ibanMode);
 		check.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setCheck(check.getValue());
+				BankAccountBox.this.bankAccount.setCheck(check.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(check);
@@ -129,14 +129,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		ccc1.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		ccc1.setMaxLength(4);
 		ccc1.setVisibleLength(4);
-		ccc1.setValue( bankAccount.getCCC1());
+		ccc1.setValue( this.bankAccount.getCCC1());
 		ccc1.setVisible(!ibanMode);
 		ccc1.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setCCC1(ccc1.getValue());
+				BankAccountBox.this.bankAccount.setCCC1(ccc1.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(ccc1);
@@ -145,14 +145,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		ccc2.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		ccc2.setMaxLength(4);
 		ccc2.setVisibleLength(4);
-		ccc2.setValue( bankAccount.getCCC2());
+		ccc2.setValue( this.bankAccount.getCCC2());
 		ccc2.setVisible(!ibanMode);
 		ccc2.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setCCC2(ccc2.getValue());
+				BankAccountBox.this.bankAccount.setCCC2(ccc2.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(ccc2);
@@ -161,14 +161,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		ccc3.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		ccc3.setMaxLength(2);
 		ccc3.setVisibleLength(2);
-		ccc3.setValue( bankAccount.getCCC3());
+		ccc3.setValue( this.bankAccount.getCCC3());
 		ccc3.setVisible(!ibanMode);
 		ccc3.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setCCC3(ccc3.getValue());
+				BankAccountBox.this.bankAccount.setCCC3(ccc3.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(ccc3);
@@ -177,14 +177,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		ccc4.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		ccc4.setMaxLength(10);
 		ccc4.setVisibleLength(10);
-		ccc4.setValue( bankAccount.getCCC4());
+		ccc4.setValue( this.bankAccount.getCCC4());
 		ccc4.setVisible(!ibanMode);
 		ccc4.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setCCC4(ccc4.getValue());
+				BankAccountBox.this.bankAccount.setCCC4(ccc4.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(ccc4);
@@ -193,14 +193,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban1.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban1.setMaxLength(4);
 		bban1.setVisibleLength(4);
-		bban1.setValue( bankAccount.getBban1());
+		bban1.setValue( this.bankAccount.getBban1());
 		bban1.setVisible(ibanMode);
 		bban1.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban1(bban1.getValue());
+				BankAccountBox.this.bankAccount.setBban1(bban1.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban1);
@@ -209,14 +209,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban2.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban2.setMaxLength(4);
 		bban2.setVisibleLength(4);
-		bban2.setValue( bankAccount.getBban2());
+		bban2.setValue( this.bankAccount.getBban2());
 		bban2.setVisible(ibanMode);
 		bban2.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban2(bban2.getValue());
+				BankAccountBox.this.bankAccount.setBban2(bban2.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban2);
@@ -225,14 +225,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban3.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban3.setMaxLength(4);
 		bban3.setVisibleLength(4);
-		bban3.setValue( bankAccount.getBban3());
+		bban3.setValue( this.bankAccount.getBban3());
 		bban3.setVisible(ibanMode);
 		bban3.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban3(bban3.getValue());
+				BankAccountBox.this.bankAccount.setBban3(bban3.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban3);
@@ -241,14 +241,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban4.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban4.setMaxLength(4);
 		bban4.setVisibleLength(4);
-		bban4.setValue( bankAccount.getBban4());
+		bban4.setValue( this.bankAccount.getBban4());
 		bban4.setVisible(ibanMode);
 		bban4.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban4(bban4.getValue());
+				BankAccountBox.this.bankAccount.setBban4(bban4.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban4);
@@ -257,14 +257,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban5.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban5.setMaxLength(4);
 		bban5.setVisibleLength(4);
-		bban5.setValue( bankAccount.getBban5());
+		bban5.setValue( this.bankAccount.getBban5());
 		bban5.setVisible(ibanMode);
 		bban5.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban5(bban5.getValue());
+				BankAccountBox.this.bankAccount.setBban5(bban5.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban5);
@@ -273,14 +273,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban6.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban6.setMaxLength(4);
 		bban6.setVisibleLength(4);
-		bban6.setValue( bankAccount.getBban6());
+		bban6.setValue( this.bankAccount.getBban6());
 		bban6.setVisible(ibanMode);
 		bban6.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban6(bban6.getValue());
+				BankAccountBox.this.bankAccount.setBban6(bban6.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban6);
@@ -289,14 +289,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban7.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban7.setMaxLength(4);
 		bban7.setVisibleLength(4);
-		bban7.setValue( bankAccount.getBban7());
+		bban7.setValue( this.bankAccount.getBban7());
 		bban7.setVisible(ibanMode);
 		bban7.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban7(bban7.getValue());
+				BankAccountBox.this.bankAccount.setBban7(bban7.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban7);
@@ -305,14 +305,14 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban8.addStyleName(AON.AON_CSS.aonMarginLeft5());
 		bban8.setMaxLength(2);
 		bban8.setVisibleLength(2);
-		bban8.setValue( bankAccount.getBban8());
+		bban8.setValue( this.bankAccount.getBban8());
 		bban8.setVisible(ibanMode);
 		bban8.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				bankAccount.setBban8(bban6.getValue());
+				BankAccountBox.this.bankAccount.setBban8(bban6.getValue());
 				validate();
-				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, bankAccount);
+				ValueChangeEvent.<BankAccount>fire(BankAccountBox.this, BankAccountBox.this.bankAccount);
 			}
 		});
 		dataPanel.add(bban8);
@@ -380,11 +380,11 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 
 	protected void validate() {
 		if (!ibanMode) {
-			bankAccount.setCheck(bankAccount.calculateIbanControlDigit());
-			check.setValue(bankAccount.getCheck());
-			ccc0.setText( bankAccount.getCountry() +  AonStringUtils.defaultString(bankAccount.getCheck()));
+			this.bankAccount.setCheck(this.bankAccount.calculateIbanControlDigit());
+			check.setValue(this.bankAccount.getCheck());
+			ccc0.setText( this.bankAccount.getCountry() +  AonStringUtils.defaultString(this.bankAccount.getCheck()));
 		}
-		boolean valid = bankAccount.isValidBankAccount();
+		boolean valid = this.bankAccount.isValidBankAccount();
 		okIcon.setVisible(valid);
 		koIcon.setVisible(!valid);
 	}
@@ -393,20 +393,25 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		return this.bankAccount;
 	}
 	
-	public void setValue(BankAccount bankAccount) {
-		countryBox.setValue(bankAccount==null?null:bankAccount.getCountry() );
-		check.setValue(bankAccount==null?null:bankAccount.getCheck() );
-		bban1.setValue( bankAccount==null?null:bankAccount.getBban1() );
-		bban2.setValue( bankAccount==null?null:bankAccount.getBban2() );
-		bban3.setValue( bankAccount==null?null:bankAccount.getBban3() );
-		bban4.setValue( bankAccount==null?null:bankAccount.getBban4() );
-		bban5.setValue( bankAccount==null?null:bankAccount.getBban5() );
-		bban6.setValue( bankAccount==null?null:bankAccount.getBban6() );
-		bban7.setValue( bankAccount==null?null:bankAccount.getBban7() );
-		ccc1.setValue( bankAccount==null?null:bankAccount.getCCC1() );
-		ccc2.setValue( bankAccount==null?null:bankAccount.getCCC2() );
-		ccc3.setValue( bankAccount==null?null:bankAccount.getCCC3() );
-		ccc4.setValue( bankAccount==null?null:bankAccount.getCCC4() );
+	public void setValue(BankAccount ba) {
+		this.bankAccount = (ba==null?new BankAccount():ba);
+		if (this.bankAccount.getCountry() == null) {
+			this.bankAccount.setCountry(Country.ES);
+		}
+		countryBox.setValue(this.bankAccount==null?null:this.bankAccount.getCountry() );
+		check.setValue(this.bankAccount==null?null:this.bankAccount.getCheck() );
+		bban1.setValue( this.bankAccount==null?null:this.bankAccount.getBban1() );
+		bban2.setValue( this.bankAccount==null?null:this.bankAccount.getBban2() );
+		bban3.setValue( this.bankAccount==null?null:this.bankAccount.getBban3() );
+		bban4.setValue( this.bankAccount==null?null:this.bankAccount.getBban4() );
+		bban5.setValue( this.bankAccount==null?null:this.bankAccount.getBban5() );
+		bban6.setValue( this.bankAccount==null?null:this.bankAccount.getBban6() );
+		bban7.setValue( this.bankAccount==null?null:this.bankAccount.getBban7() );
+		ccc1.setValue( this.bankAccount==null?null:this.bankAccount.getCCC1() );
+		ccc2.setValue( this.bankAccount==null?null:this.bankAccount.getCCC2() );
+		ccc3.setValue( this.bankAccount==null?null:this.bankAccount.getCCC3() );
+		ccc4.setValue( this.bankAccount==null?null:this.bankAccount.getCCC4() );
+		validate();
 	}
 	@Override
 	public boolean isEnabled() {
@@ -431,8 +436,28 @@ public class BankAccountBox extends SimplePanel implements HasValueChangeHandler
 		bban8.setEnabled(enabled);
 	}
 
+	
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<BankAccount> handler) {
 		return super.addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	@Override
+	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+		countryBox.addKeyUpHandler(handler);
+		check.addKeyUpHandler(handler);
+		ccc1.addKeyUpHandler(handler);
+		ccc2.addKeyUpHandler(handler);
+		ccc3.addKeyUpHandler(handler);
+		ccc4.addKeyUpHandler(handler);
+		bban1.addKeyUpHandler(handler);
+		bban2.addKeyUpHandler(handler);
+		bban3.addKeyUpHandler(handler);
+		bban4.addKeyUpHandler(handler);
+		bban5.addKeyUpHandler(handler);
+		bban6.addKeyUpHandler(handler);
+		bban7.addKeyUpHandler(handler);
+		bban8.addKeyUpHandler(handler);
+		return super.addHandler(handler, KeyUpEvent.getType());
 	}
 }

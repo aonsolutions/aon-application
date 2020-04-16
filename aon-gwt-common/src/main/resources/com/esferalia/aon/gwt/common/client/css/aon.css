@@ -786,6 +786,11 @@ input[type="checkbox"]:focus + label {
 	gwt-image: "aonIconNext";
 }
 
+@sprite .aon-icon-edit {
+	width: auto;
+	gwt-image: "aonIconEdit";
+}
+
 @sprite .aon-icon-reset {
 	width: auto;
 	gwt-image: "aonIconReset";

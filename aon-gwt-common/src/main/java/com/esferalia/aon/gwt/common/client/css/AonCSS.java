@@ -286,6 +286,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-next")
 	String aonIconNext();
 
+	@ClassName("aon-icon-edit")
+	String aonIconEdit();
+
 	@ClassName("aon-icon-reset")
 	String aonIconReset();
 

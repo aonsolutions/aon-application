@@ -17,6 +17,8 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceBankPanel;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceBankPanel.FinanceBankPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinancePayPanel.FinancePayPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.FinanceReturnPanel;
@@ -93,7 +95,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 		AccountEntrySelectionEvent.fire( InvoiceFinancePanel.this, callback.getInvoice().getAccountEntry(), null);		
 	}
 
-	void paint(IInvoicePanelCallback callback){
+	private void paint(IInvoicePanelCallback callback){
 		container.clear();
 		
 		
@@ -192,21 +194,37 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 					
 					int idx = callback.getInvoice().getInvoice().getFinances().size() - 1;
 					Finance last = callback.getInvoice().getInvoice().getFinances().get( idx );
+					BankAccount ba = new BankAccount( last.getBankAccount()==null?null:last.getBankAccount().getIban()  );
 					fin.setPayMethod(last.getPayMethod())
-						.setDueDate(last.getDueDate())
 						.setPayMethodName(last.getPayMethodName())
-						.setBankAccount(last.getBankAccount())
+						.setPayMethodType(last.getPayMethodType())
+						.setDueDate(last.getDueDate())
+						.setBankAccount(ba)
 						.setBic(last.getBic())
 						.setBankAlias(last.getBankAlias())
+						.setChequeNumber(last.getChequeNumber())
+						.setRegistry(last.getRegistry())
+						.setRegistryDocument(last.getRegistryDocument())
+						.setRegistryDocumentType(last.getRegistryDocumentType())
+						.setRegistryDocumentCountry(last.getRegistryDocumentCountry())
+						.setRegistryName(last.getRegistryName())
+						.setRegistryAccountId(last.getRegistryAccountId())
+						.setRegistryAccountCode(last.getRegistryAccountCode())
+						.setRegistryAccountDescription(last.getRegistryAccountDescription())
 					;
 				}
-				authFinanceCalculation.setValue(false, true);
+				authFinanceCalculation.setValue(false);
+				callback.getInvoice().setAuthFinanceCalculation(false);
 				fin.setAmount(AonMathUtils.round( amount ));
 				callback.getInvoice().getInvoice().addFinance( fin );
 				addRow(callback, fin, true);
 				checkAmounts( callback );
 				if (callback.getInvoice().getPayAccountId() != null) {
-					callback.paintEntry();
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							callback.paintEntry();
+						}
+					});
 				}
 			}
 		});
@@ -350,7 +368,10 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			if (callback.getInvoice().getPayAccountId() != null) {
 				callback.paintEntry();
 			}
-			authFinanceCalculation.setValue(false,true);
+			if (authFinanceCalculation != null) {
+				callback.getInvoice().setAuthFinanceCalculation(false);
+				authFinanceCalculation.setValue(false);
+			}
 		}
 		
 		private InvoiceFinancePanelRow(IInvoicePanelCallback callback, final Finance finance, FlexTable tab, boolean focus) {
@@ -402,8 +423,16 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 					
 					@Override
 					public void onChange(ChangeEvent event) {
-						finance.setPayMethod( AonNumberUtils.toInteger( payMethod.getSelectedValue() ));
-						finance.setPayMethodName( payMethod.getSelectedItemText());
+						if (payMethod.getSelectedIndex() > 0 ) {
+							PayMethod pm = callback.getConfiguration().getPayMethods().get(payMethod.getSelectedIndex()-1);
+							finance.setPayMethod( pm.getId() );
+							finance.setPayMethodName( pm.getName() );
+							finance.setPayMethodType( pm.getType() );
+						} else {
+							finance.setPayMethod( null );
+							finance.setPayMethodName( null );
+							finance.setPayMethodType( null );
+						}
 						somethingChanged(callback, dirty, finance );
 					}
 				});
@@ -411,24 +440,70 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			tab.setWidget(currentRow, col, payMethod);
 			++col;
 
+			FlowPanel bankAccountPanel = new FlowPanel();
+			bankAccountPanel.setStyleName(AON.AON_CSS.aonNowrap());
 			bankAccount.setStyleName(AON.AON_CSS.aonInputText());
 			bankAccount.setVisibleLength(25);
 			bankAccount.setMaxLength(34);
 			bankAccount.setValue(finance.getBankAccountSafeValue());
-			bankAccount.setEnabled(finance.isFullPending());
+			bankAccount.setReadOnly(true);
+			bankAccountPanel.add(bankAccount);
 			if (finance.isFullPending()) {
-				bankAccount.addValueChangeHandler( new ValueChangeHandler<String>() {
+				Button editBank = new Button();
+				editBank.setTitle("Editar banco");
+				editBank.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+				editBank.addStyleName(AON.AON_CSS.aonIconEdit());
+				editBank.addStyleName(AON.AON_CSS.aonClickable());
+				editBank.addStyleName(AON.AON_CSS.aonBorderNoneImportant());
+				editBank.addClickHandler(new ClickHandler() {
 					
 					@Override
-					public void onValueChange(ValueChangeEvent<String> event) {
-						BankAccount ba = new BankAccount( bankAccount.getValue() ); 
-						finance.setBankAccount( ba );
-						somethingChanged(callback, dirty, finance );
+					public void onClick(ClickEvent event) {
+						final CustomDialog dialog = new CustomDialog();
+						dialog.setCaption(AON.MSG.bankAccount());
+						FinanceBankPanel bankPanel = new FinanceBankPanel();
+						bankPanel.show(callback.getCurrentDomainName(), callback.getCurrentDomainId(),
+								callback.getCurrentUser(), callback.getConfiguration(), finance,
+								new FinanceBankPanelCallback() {
+
+									@Override
+									public void onCancel() {
+										dialog.hide();
+									}
+
+									@Override
+									public void onAccept(Finance fin) {
+										dialog.hide();
+										bankAccount.setValue(fin.getBankAccountSafeValue());
+										finance.setBankAccount(fin.getBankAccount());
+										finance.setPayMethod(fin.getPayMethod());
+										finance.setPayMethodName(fin.getPayMethodName());
+										finance.setPayMethodType(fin.getPayMethodType());
+										if (fin.getPayMethod() == null) {
+											payMethod.setSelectedIndex(0);
+										} else {
+											if ( payMethod.getItemCount() > 1) {
+												for (int i = 1; i < payMethod.getItemCount(); i++) {
+													if ( AonNumberUtils.equals(fin.getPayMethod(), AonNumberUtils.toInteger( payMethod.getValue(i)) )) {
+														payMethod.setSelectedIndex(i);
+													}
+												}
+											} else {
+												payMethod.setSelectedIndex(0);
+											}
+										}
+										somethingChanged(callback, dirty, finance );
+									}
+								});
+						dialog.setWidget(bankPanel);
+						dialog.center();
+						dialog.show();
 					}
-					
 				});
+				bankAccountPanel.add(editBank);
 			}
-			tab.setWidget(currentRow, col, bankAccount);
+			
+			tab.setWidget(currentRow, col, bankAccountPanel);
 			++col;
 
 			amount.setStyleName(AON.AON_CSS.aonInputText());
@@ -546,7 +621,6 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 						payMethod.removeStyleName(AON.AON_CSS.aonTextLineThrough());
 						payMethod.setEnabled(true);
 						bankAccount.removeStyleName(AON.AON_CSS.aonTextLineThrough());
-						bankAccount.setEnabled(true);
 						amount.removeStyleName(AON.AON_CSS.aonTextLineThrough());
 						amount.setEnabled(true);
 						status.removeStyleName(AON.AON_CSS.aonTextLineThrough());
@@ -581,7 +655,6 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 						payMethod.addStyleName(AON.AON_CSS.aonTextLineThrough());
 						payMethod.setEnabled(false);
 						bankAccount.addStyleName(AON.AON_CSS.aonTextLineThrough());
-						bankAccount.setEnabled(false);
 						amount.addStyleName(AON.AON_CSS.aonTextLineThrough());
 						amount.setEnabled(false);
 						status.addStyleName(AON.AON_CSS.aonTextLineThrough());
@@ -888,8 +961,8 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 				&& callback.getInvoice().getInvoice().getFinances().get(0).isFullPending()) {
 					firstAmount.setValue(callback.getInvoice().getTotalInvoice(),true,true);
 			}
-			checkAmounts(callback);
 		}
+		checkAmounts(callback);
 	}
 
 	private void generateFinances(IInvoicePanelCallback callback) {

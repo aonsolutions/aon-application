@@ -35,15 +35,16 @@ public class RegistryBankListBox extends ListBox {
 		}
 	}
 
-	public void setValue(String bankAccount ) {
+	public void setValue(String iban ) {
 		setSelectedIndex(0);
 		if (banks != null) {
 			int i = 1;
 			for (RegistryBank bank : banks ) {
 				String ba = bank.getBankAccount() == null?null:bank.getBankAccount().getIban();
-				if (AonStringUtils.equals(bankAccount,ba)) {
+				if (AonStringUtils.equals(iban,ba)) {
 					setSelectedIndex(i);
 				}
+				i++;
 			}
 		}
 	}

@@ -57,6 +57,17 @@ public class PayMethodDAO {
 				;
 	}
 
+	public static PayMethod  getPayMethod(AONContext ctx, Integer id) {
+		return ctx.getDslContext()
+				.selectFrom(PAY_METHOD)
+				.where(PAY_METHOD.DOMAIN.eq(ctx.getDomainId()))
+				.and(PAY_METHOD.ID.eq(id))
+				.fetch()
+				.stream()
+				.map( new FullPayMethodFiller())
+				.findFirst().orElse(new PayMethod());
+	}
+
 	public static PayMethod  getPayMethod(AONContext ctx, String name) {
 		return ctx.getDslContext()
 				.selectFrom(PAY_METHOD)

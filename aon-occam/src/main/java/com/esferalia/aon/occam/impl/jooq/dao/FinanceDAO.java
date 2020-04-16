@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
@@ -299,12 +300,15 @@ public class FinanceDAO {
 		int numberOfPymnts =  ((rPayMethod == null) || (rPayMethod.getNumberOfPymnts() == 0)) ? 1 : rPayMethod.getNumberOfPymnts();
 		int daysToFirstPymnt = ((rPayMethod == null) || (rPayMethod.getDaysToFirstPymnt() == 0)) ? 0 : rPayMethod.getDaysToFirstPymnt();
 		int daysBetwenPymnts = ((rPayMethod == null) || (rPayMethod.getDaysBetwenPymnts() == 0)) ? 0 : rPayMethod.getDaysBetwenPymnts();
-		Integer pm =  (rPayMethod==null) ? null : rPayMethod.getPayMethod();
+		PayMethod payMethod = null;
+		if (rPayMethod.getPayMethod() != null) {
+			payMethod = PayMethodDAO.getPayMethod(ctx, rPayMethod.getPayMethod());
+		}
 		double paymentPrice = AonMathUtils.round(invoice.getTotal() / numberOfPymnts);
 		for (int i = 0; i < numberOfPymnts; i++) {
 			int days = (i==0?daysToFirstPymnt:daysBetwenPymnts);
 			date = (rPayMethod==null? date : calculatePaymentDate(days, rPayMethod.getPymnt_days(), date));
-			Finance finance = buildFinance(invoice, date, pm , rBank, paymentPrice );  
+			Finance finance = buildFinance(invoice, date, payMethod , rBank, paymentPrice );  
 			finances.add(finance);
 		}
 		double lastPaymentPrice = AonMathUtils.round(invoice.getTotal() - (paymentPrice * (numberOfPymnts - 1)));
@@ -337,7 +341,7 @@ public class FinanceDAO {
 		return paymentDate;
 	}
 
-	private static Finance buildFinance(Invoice invoice, Date date, Integer payMethod, RegistryBank rBank, double totalPrice) {
+	private static Finance buildFinance(Invoice invoice, Date date, PayMethod payMethod, RegistryBank rBank, double totalPrice) {
 		return  new Finance()
 			.setDomain(invoice.getDomain())
 			.setPayment(!invoice.getType().equals(InvoiceType.SALES))
@@ -350,7 +354,9 @@ public class FinanceDAO {
 			.setConcept(invoice.getDocumentNumber())
 			.setInvoice(invoice)
 			.setDueDate(date)
-			.setPayMethod(payMethod)
+			.setPayMethod(payMethod==null?null:payMethod.getId())
+			.setPayMethodName(payMethod==null?null:payMethod.getName())
+			.setPayMethodType(payMethod==null?null:payMethod.getType())
 			.setBankAccount((rBank==null) ? null : rBank.getBankAccount() )
 			.setBankAlias((rBank==null) ? null : rBank.getAlias())
 			.setBic((rBank==null) ? null : rBank.getBic())
@@ -380,6 +386,8 @@ public class FinanceDAO {
 				.setInvoice(record.getValue(FINANCE.INVOICE)==null?null : new InvoiceDAO.MinimalInvoiceFiller().apply(record)) 
 				.setDueDate(record.getValue(FINANCE.DUE_DATE))
 				.setPayMethod(record.getValue(FINANCE.PAY_METHOD))
+				.setPayMethodName(record.getValue(PAY_METHOD.NAME))
+				.setPayMethodType(PayMethodType.safeValueOf( record.getValue(PAY_METHOD.TYPE)))
 				.setBankAccount( new BankAccount(record.getValue(FINANCE.BANK_ACCOUNT)) )
 				.setBankAlias(record.getValue(FINANCE.BANK_ALIAS))
 				.setBic(record.getValue(FINANCE.BIC))
