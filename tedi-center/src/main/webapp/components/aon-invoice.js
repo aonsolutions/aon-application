@@ -1,6 +1,7 @@
 import './aon-card.js';
 import './aon-inputText.js';
 import './aon-select.js';
+import './aon-address.js';
 import './aon-checkbox.js';
 import '../services/invoiceCategory.js';
 import '../services/country.js';
@@ -115,7 +116,7 @@ import '../services/transaction.js';
 					</form>
 
 					<form action="#" class="aon-margin-0">
-						<aon-input-text class="aon-width-100" id="address" description="Dirección"></aon-input-text>
+						<aon-address class="aon-width-100" id="address" description="Dirección"></aon-address>
 					</form>
 
 					<form action="#" class="aon-margin-0">
@@ -228,12 +229,11 @@ import '../services/transaction.js';
           nif: '',
           name: '',
           address: {
-              country: '',
+              country: 'ES',
               address: '',
               zip: '',
               city: '',
-              province: '',
-              prefix: 'ES'
+              province: ''
           },
           category: '',
 					transaction: 'NAC',
@@ -288,7 +288,8 @@ import '../services/transaction.js';
 			name.addEventListener('change', () => this.updateNif('name'));
 
 			let address = document.getElementById('address');
-			address.value = `${this._invoice.address.address}, ${this._invoice.address.zip} ${this._invoice.address.city}, ${this._invoice.address.province}, ${this._invoice.address.prefix}`;
+			address.value = JSON.stringify(this._invoice.address);
+			address.addEventListener('change', () => this.updateAddress());
 
 			let category = document.getElementById('category');
 			category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));
@@ -328,12 +329,8 @@ import '../services/transaction.js';
 		 	this._invoice[param] = value;
 		}
 
-		updateAddress(param, value) {
-			if(!value) {
-				value = document.getElementById(param).value;
-			}
-		 	this._invoice.address[param] = value;
-			document.getElementById('address').value = `${this._invoice.address.address}, ${this._invoice.address.zip} ${this._invoice.address.city}, ${this._invoice.address.province}, ${this._invoice.address.prefix}`;
+		updateAddress() {
+			this._invoice.address = JSON.parse(document.getElementById('address').value);
 		}
 
 		updateTotal(value) {
@@ -1024,14 +1021,6 @@ import '../services/transaction.js';
 		 			 total -= this._invoice.irpf.quota;
 		 	 }
 		 	 return this.round(total);
-		}
-
-		getCountryPrefix(value) {
-				for (var i = 0; i < this.countries.length; i++) {
-						if (this.countries[i].name == value) {
-								return this.countries[i].iso2;
-						}
-				}
 		}
 
 		totalBaseIRPF() {
