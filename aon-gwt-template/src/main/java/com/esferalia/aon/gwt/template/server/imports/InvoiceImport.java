@@ -299,7 +299,7 @@ public class InvoiceImport {
 		}
 		if("BASE".equalsIgnoreCase(title)
 				|| "BASE IMPONIBLE".equalsIgnoreCase(title)) {
-			inv.setBase(Double.parseDouble(o.toString()));
+			inv.setBase(AonMathUtils.round(Double.parseDouble(o.toString())));
 			return;
 		}
 		if("%Impuesto".equalsIgnoreCase(title)
@@ -309,7 +309,7 @@ public class InvoiceImport {
 		}
 		if("CUOTA Impuesto".equalsIgnoreCase(title)
 				|| "CUOTA IVA".equalsIgnoreCase(title)) {
-			inv.setQuota(Double.parseDouble(o.toString()));
+			inv.setQuota(AonMathUtils.round(Double.parseDouble(o.toString())));
 			return;
 		}
 		if("%RE".equalsIgnoreCase(title)) {
@@ -318,7 +318,7 @@ public class InvoiceImport {
 		}
 		
 		if("CUOTA RE".equalsIgnoreCase(title)) {
-			inv.setReQuota(Double.parseDouble(o.toString()));
+			inv.setReQuota(AonMathUtils.round(Double.parseDouble(o.toString())));
 			return;
 		}
 		
@@ -328,13 +328,13 @@ public class InvoiceImport {
 		}
 		
 		if("CUOTA RETENCIÓN".equalsIgnoreCase(title)) {
-			inv.setRetentionQuota(Double.parseDouble(o.toString()));
+			inv.setRetentionQuota(AonMathUtils.round(Double.parseDouble(o.toString())));
 			return;
 		}
 		
 		if("TOTAL FACTURA".equalsIgnoreCase(title)
 				|| "TOTAL".equalsIgnoreCase(title)) {
-			inv.setTotal(Double.parseDouble(o.toString()));
+			inv.setTotal(AonMathUtils.round(Double.parseDouble(o.toString())));
 			return;
 		}
 		
@@ -607,8 +607,9 @@ public class InvoiceImport {
 	
 	private static void checkCuotas(Domain domain, InvoiceImportClass iic) throws Exception {
 		if(iic.getBase() != null && iic.getPercentage() != null && iic.getQuota() != null) {
-			Double cuota = iic.getBase()*iic.getPercentage() / 100;
-			if(!iic.getQuota().equals(AonMathUtils.round(cuota))) {
+			Double cuota = AonMathUtils.round(iic.getBase()*iic.getPercentage() / 100);
+			Double iicQuota = AonMathUtils.round(iic.getQuota());
+			if(!iicQuota.equals(cuota)) {
 				throw new Exception("% IVA y Cuota IVA no coinciden.");
 			}
 		}
