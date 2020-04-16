@@ -393,8 +393,6 @@ import '../services/transaction.js';
 
 				let disableIRPF = !this._invoice.irpf ? 'disabled' : '';
 				let disableSuplido = !this._invoice.suplidos ? 'disabled' : '';
-				console.log("**********************************");
-				console.log(this._invoice.details[i].suplidos);
 				line = line + `
 					<form action="#" class="aon-margin-0 aon-width-90">
 						<aon-input-text class="aon-width-30" id='${'detail_description' + i}' value='${this._invoice.details[i].description}' description="Concepto" ></aon-input-text>
@@ -893,8 +891,8 @@ import '../services/transaction.js';
 
 		printVencimientos() {
 			let line = '';
-			for(let i = 0; i < this._invoice.taxes.length; i++) {
-				let button = this._invoice.details.length > 0 ? '' : `
+			for(let i = 0; i < this._invoice.finances.length; i++) {
+				let button = `
 					<button id='${'finance_remove_button' + i}' class="mdl-button mdl-js-button mdl-button--icon">
 						<i class="material-icons">remove_circle</i>
 					</button>
@@ -914,7 +912,7 @@ import '../services/transaction.js';
 			vto.innerHTML = line;
 			componentHandler.upgradeDom();
 
-			for(let i = 0; i < this._invoice.taxes.length; i++) {
+			for(let i = 0; i < this._invoice.finances.length; i++) {
 				document.getElementById('finance_date' + i)
 					.addEventListener('change', () => this.updateFechaVencimiento(i));
 				document.getElementById('finance_paymethod' + i)
