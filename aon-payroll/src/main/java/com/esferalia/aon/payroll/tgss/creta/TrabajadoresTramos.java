@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.tgss.creta;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CCC_TYPE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
@@ -16,7 +17,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -43,6 +43,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.calculator.ExcelFunctions;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
@@ -65,7 +66,6 @@ public class TrabajadoresTramos {
 	
 
 	public TrabajadoresTramos() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void main(String[] args) throws JAXBException,
@@ -364,6 +364,11 @@ public class TrabajadoresTramos {
 							@Override
 							public void visitTiempoCompletoNormal() {
 							}
+							
+							@Override
+							public void visitRegimenArtistasNormal() {
+							}
+							
 
 							@Override
 							public void visitGrupoCotizacionDiario() {
@@ -406,9 +411,7 @@ public class TrabajadoresTramos {
 							@Override
 							public void visitExpedienteRegulacionEmpleoParcial() {
 							}
-							
-							
-							
+
 						};
 						
 						SalaryFilter filter = new SalaryFilter();
@@ -492,6 +495,28 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setTipo("C");
 								dataSolicitadoBuilder.setCodigo("601");
 								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+							
+							@Override
+							public void visitRegimenArtistasNormal() {
+								// 5 Régimen Especial de Artistas 
+								// 5.1 Trabajador en situación de activo "normal"  
+
+								// Percepciones íntegras
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("300");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Horas Extras Fuerza Mayor
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("501");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base Otras Horas Extras
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("502");
+								dataSolicitadoBuilder.setObligatorio(false);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
 							}
 							
@@ -822,6 +847,11 @@ public class TrabajadoresTramos {
 				public void visitTiempoCompletoNormal() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
+				
+				@Override
+				public void visitRegimenArtistasNormal() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
 
 				@Override
 				public void visitGrupoCotizacionDiario() {
@@ -893,6 +923,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitTiempoCompletoNormal() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitRegimenArtistasNormal() {
 					visitOthers();
 				}
 
@@ -969,6 +1004,11 @@ public class TrabajadoresTramos {
 				public void visitTiempoCompletoNormal() {
 					visitOthers();
 				}
+				
+				@Override
+				public void visitRegimenArtistasNormal() {
+					visitOthers();
+				}
 
 				@Override
 				public void visitGrupoCotizacionDiario() {
@@ -1042,6 +1082,11 @@ public class TrabajadoresTramos {
 
 				@Override
 				public void visitTiempoCompletoNormal() {
+					visitOthers();
+				}
+				
+				@Override
+				public void visitRegimenArtistasNormal() {
 					visitOthers();
 				}
 
@@ -1122,6 +1167,11 @@ public class TrabajadoresTramos {
 			}
 
 			@Override
+			public void visitRegimenArtistasNormal() {
+				state.visitRegimenArtistasNormal();
+			}
+
+			@Override
 			public void visitGrupoCotizacionDiario() {
 				state.visitGrupoCotizacionDiario();
 			}
@@ -1170,6 +1220,7 @@ public class TrabajadoresTramos {
 			public void visitExpedienteRegulacionEmpleoParcial() {
 				state.visitExpedienteRegulacionEmpleoParcial();
 			}
+
 		};
 		
 		Visitor visitor = new Visitor();
@@ -1238,6 +1289,7 @@ public class TrabajadoresTramos {
 		void visitFormacionNormal();
 		void visitTiempoParcialNormal();
 		void visitTiempoCompletoNormal();
+		void visitRegimenArtistasNormal();
 		void visitGrupoCotizacionDiario();
 		void visitGrupoCotizacionMensual();
 		void visitIncapacidadTemporal15PrimerosDias();
@@ -1254,8 +1306,9 @@ public class TrabajadoresTramos {
 	private static void visit(Salary salary, Date startDate, Date endDate, SalaryVisitor visitor) {
 		String tc2 = getContextData(TC2.getName(),salary, startDate, endDate, "-");
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
+		int cccType = getContextData(CCC_TYPE.getName() ,salary, startDate, endDate, 0);
 		
-		
+		boolean regimenArtistas = CCCType.ARTIST.ordinal() == cccType;
 		
 		boolean iT15primerosDias = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_1_3.getName(), salary, startDate, endDate)
@@ -1328,6 +1381,8 @@ public class TrabajadoresTramos {
 			visitor.visitExpedienteRegulacionEmpleoTotal();
 		else if ( ereParcial )
 			visitor.visitExpedienteRegulacionEmpleoParcial();
+		else if ( regimenArtistas )
+			visitor.visitRegimenArtistasNormal();
 		else if (tiempoCompleto)
 			visitor.visitTiempoCompletoNormal();
 		else 
@@ -1414,5 +1469,6 @@ public class TrabajadoresTramos {
 		}
 		return data == null ? def : data ;
 	}
+	
 	
 }

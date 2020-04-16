@@ -128,6 +128,7 @@ public enum ContextVariable implements IResourceable {
 	EMPLOYEE_QUOTA("CUOTA_TRABAJADOR", VariableType.DOUBLE),
 
 	// Datos 'temporales' del contrato
+	
 	TC2("TC2", VariableType.TC2_DROP, false), CNO("CNO", VariableType.CNO_LOOKUP, false),
 	IPREM("IPREM", VariableType.DOUBLE, false), CATEGORY("CATEGORIA", VariableType.STRING, false),
 	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN, false), OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP, false),
@@ -219,8 +220,9 @@ public enum ContextVariable implements IResourceable {
 
 	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN),
 
-	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN)
+	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN),
 
+	CCC_TYPE("CCC_TYPE", VariableType.INTEGER)	
 	;
 
 	public static final String ALL = "_P";

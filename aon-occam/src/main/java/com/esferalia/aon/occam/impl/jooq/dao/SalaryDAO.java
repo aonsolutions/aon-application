@@ -5,7 +5,9 @@ import static com.esferalia.aon.jooq.Keys.FK_SALARY_COST_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DATA_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_DEDUCTION_SALARY;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_PAYMENT_SALARY;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
@@ -21,6 +23,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -31,6 +35,8 @@ import org.jooq.Record;
 import org.jooq.TableField;
 import org.jooq.lambda.Seq;
 
+import com.esferalia.aon.jooq.tables.Contract;
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -359,6 +365,8 @@ public class SalaryDAO {
 		ctx.getDslContext()
 		.select()
 		.from(SALARY)
+		.innerJoin(CONTRACT).onKey()
+		.leftJoin(ENTERPRISE_CCC).onKey()
 		.where(conditions)
 		.groupBy(SALARY.EMPLOYEE_DOCUMENT)
 		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
@@ -417,8 +425,25 @@ public class SalaryDAO {
 					.setEnterpriseCCC(rootRecord.getValue(SALARY.CCC))
 					.setStartDate(rootRecord.getValue(SALARY.START_DATE))
 					.setEndDate(rootRecord.getValue(SALARY.END_DATE))
+					.setTotalPayment(rootRecord.get(SALARY.TOTAL_PAYMENT))
 					;
 					
+					Optional.ofNullable(rootRecord.get(SALARY.TOTAL_PAYMENT))
+					.ifPresent( d ->  {
+						salary.setContextData(
+								"TOTAL_DEVENGADO", 
+								String.format(Locale.ROOT, "%f", d), 
+								rootRecord.getValue(SALARY.START_DATE), 
+								rootRecord.getValue(SALARY.END_DATE));
+					});
+					Optional.ofNullable(rootRecord.get(ENTERPRISE_CCC.TYPE))
+					.ifPresent( b ->  {
+						salary.setContextData(
+								"CCC_TYPE", 
+								String.format(Locale.ROOT, "%d", b), 
+								rootRecord.getValue(SALARY.START_DATE), 
+								rootRecord.getValue(SALARY.END_DATE));
+					});
 					
 					
 					Seq.limitWhile(

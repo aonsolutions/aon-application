@@ -20,6 +20,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDay;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
@@ -780,6 +781,8 @@ public class Bases {
 				put("536", "Base de contingencias comunes Expediente de Regulación de Empleo Parcial");
 				put("636", "Base AT Expediente de Regulación de Empleo Parcial");
 				put("637", "Base AT Expediente de Regulación de Empleo Parcial");
+				
+				put("300", "Percepciones íntegras Régimen Especial de Artistas");
 
 				put("702", "Base de FOGASA");
 
@@ -1852,8 +1855,10 @@ public class Bases {
 					.add(DIRECT_BASE)			//   
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
-
+			
 			put("702", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
+		
+			put("300", new NonNegativeCCretaData(TOTAL_PAYMENT.getName()));
 		}
 	};
 
