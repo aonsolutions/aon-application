@@ -64,6 +64,7 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Category;
@@ -307,14 +308,23 @@ public class JooqEmployees {
 		Cursor<Record> cursor = null;
 
 		try {
+			Integer month = endDate.getMonth();
+			Integer year = endDate.getYear();
+			month--;
+			if(month < 0) {
+				month = 11;
+				year--;
+			}
+			Date newEndDate = new Date(year, month, 1);
+			
 			// @formatter:off
 			SelectConditionStep<Record> select = 
 					getEmployeeSelect(context)
-					.where(CONTRACT.ID.ge(0))
-					.and(CONTRACT.WORKPLACE.eq(workplaceId))
+//					.where(CONTRACT.ID.ge(0))
+					.where(CONTRACT.WORKPLACE.eq(workplaceId))
 					.and(CONTRACT.END_DATE.isNull().or(
 							CONTRACT.END_DATE.greaterOrEqual(new java.sql.Date(
-									endDate.getTime()))));
+									newEndDate.getTime()))));
 
 			if (!StringUtils.isBlank(pattern))
 				select = select.and(DSL.concat(PERSON.FIRST_SURNAME,
@@ -333,6 +343,11 @@ public class JooqEmployees {
 			for (Record record : cursor) {
 				employees.add(newEmployee(record));
 			}
+			
+			// Check if has Salaries
+			for(Employee employee : employees) {
+				hasPayroll(context, employee);
+			}
 
 			return employees;
 
@@ -341,6 +356,18 @@ public class JooqEmployees {
 				cursor.close();
 		}
 	}
+	
+	private static void hasPayroll(DSLContext context, Employee employee) {
+		Result<Record> salaryRecords = context.select().from(SALARY)
+				.where(SALARY.CONTRACT.eq(employee.getId()))
+				.fetch();
+		
+		if(salaryRecords.isEmpty())
+			employee.setHasSalaries(false);
+		else
+			employee.setHasSalaries(true);
+	}
+
 	private static SelectOnConditionStep<Record> getEmployeeSelect(DSLContext context) {
 		return context
 				.select()

@@ -168,6 +168,8 @@ public class Employee implements Serializable, HasId<Integer> {
 	private String document;
 	
 	private Category category;
+	
+	private Boolean hasSalaries;
 
 	public Integer getId() {
 		return id;
@@ -285,6 +287,15 @@ public class Employee implements Serializable, HasId<Integer> {
 	
 	public Employee setCategory(Category category) {
 		this.category = category;
+		return this;
+	}
+	
+	public Boolean hasSalries() {
+		return this.hasSalaries;
+	}
+	
+	public Employee setHasSalaries(Boolean hasSalaries) {
+		this.hasSalaries = hasSalaries;
 		return this;
 	}
 

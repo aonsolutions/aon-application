@@ -355,20 +355,26 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		private void deleteContract(Employee employee,
 				final AsyncCallback<Void> callback) {
 
-			employees.getEmployeesService().moveContractId(employee,
-					new AsyncCallback<Void>() {
+			if(employee.hasSalries()) {
+				Window.alert("No se puede borrar un empleado con nominas.");
+				callback.onSuccess(null);
+			}else {
+				employees.getEmployeesService().moveContractId(employee,
+						new AsyncCallback<Void>() {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							callback.onFailure(caught);
-						}
+							@Override
+							public void onFailure(Throwable caught) {
+								callback.onFailure(caught);
+							}
 
-						@Override
-						public void onSuccess(Void result) {
-							employees.onEnterprise(enterprise);
-							callback.onSuccess(result);
-						}
-					});
+							@Override
+							public void onSuccess(Void result) {
+								employees.onEnterprise(enterprise);
+								callback.onSuccess(result);
+							}
+						});
+			}
+			
 		}
 
 	}
