@@ -1002,25 +1002,27 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceTotal.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
-				if (invoiceCallback.getInvoice().getVats() != null &&  invoiceCallback.getInvoice().getVats().size() == 1) {
-					InvoiceCalculator.reverseCalculate(invoiceCallback.getInvoice(),invoiceTotal.getValue());
-					vatPanel.populateFirstVat();
-					withholdingPanel.setValue( invoiceCallback.getInvoice().getWithholdingData() );
-					financePanel.invoiceTotalChanged( invoiceCallback );
+				if (AonNumberUtils.isNumber(invoiceTotal.getText())) {
+					if (invoiceTotal.getValue() == null) invoiceTotal.setValue(0.0, false);
+					if (invoiceCallback.getInvoice().getVats() != null &&  invoiceCallback.getInvoice().getVats().size() == 1) {
+						InvoiceCalculator.reverseCalculate(invoiceCallback.getInvoice(),invoiceTotal.getValue());
+						vatPanel.populateFirstVat();
+						withholdingPanel.setValue( invoiceCallback.getInvoice().getWithholdingData() );
+						financePanel.invoiceTotalChanged( invoiceCallback );
+					}
+					invoiceCallback.paintEntry();
+					invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
+					invoiceCallback.getModule().refreshIdLabel();
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							if (invoiceTotal.getValue() != null && invoiceTotal.getValue() != 0) {
+								fastSave.setEnabled(true);
+								fastSave.setFocus(true);
+							} else {
+								vatPanel.setFocus(true);
+							}
+					}});
 				}
-				invoiceCallback.paintEntry();
-				invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
-				invoiceCallback.getModule().refreshIdLabel();
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						if (invoiceTotal.getValue() != null && invoiceTotal.getValue() != 0) {
-							fastSave.setEnabled(true);
-							fastSave.setFocus(true);
-						} else {
-							vatPanel.setFocus(true);
-						}
-				}});
 			}
 		});
 		invoiceTotal.setVisibleLength(12);
