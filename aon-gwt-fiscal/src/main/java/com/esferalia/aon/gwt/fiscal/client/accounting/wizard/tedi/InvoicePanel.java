@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRecorder;
+import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.tedi.ICallback;
 import com.esferalia.aon.occam.api.model.tedi.TediError;
 import com.esferalia.aon.occam.api.model.tedi.TediLevel;
@@ -72,6 +73,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	private SimpleLayoutPanel centerContainer;
 	private SimpleLayoutPanel attachPanel;
 	private AccountingInvoice invoice;
+	private AccountingRegistry lastRegistry;
 	
 	public InvoicePanel(final IAccountEntryModuleCallback callback) {
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
@@ -264,6 +266,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			@Override
 			public void onSuccess(AccountingInvoice result) {
 				setWrapper(result);
+				lastRegistry = result.getRegistry();
 				cbk.onSuccess(getWrapper());
 			}
 
@@ -329,6 +332,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		
 		public void setDocument(final String doc, final String name, String type) {
 			InvoicePanel.this.setDocument(this, doc, name, type);
+		}
+		@Override
+		public AccountingRegistry getLastRegistry() {
+			return lastRegistry;
 		}
 	};
 

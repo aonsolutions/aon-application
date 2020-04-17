@@ -116,7 +116,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private InvoiceWithholdingPanel withholdingPanel;
 	private InvoiceFinancePanel financePanel;
 	
-	private AccountingRegistry lastRegistry;
 	private InvoicePanelCallback invCallback;
 	
 	protected static interface IEditableInvoicePanelCallback extends IInvoicePanelCallback {
@@ -174,6 +173,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		public void enableInvoiceTotal(boolean enabled) {
 			invoiceTotal.setEnabled(enabled);
 		}
+
+		@Override
+		public AccountingRegistry getLastRegistry() {
+			return invCallback.getLastRegistry();
+		}
 	}
 
 	public EditableInvoicePanel(final InvoicePanelCallback invoiceCallback) {
@@ -224,8 +228,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
 					if ( registryBox.getId() == null) {
-						if (lastRegistry != null) {
-							registryBox.set(lastRegistry);	
+						if (invoiceCallback.getLastRegistry() != null) {
+							registryBox.set(invoiceCallback.getLastRegistry());	
 						}
 					} else {
 						registryBox.setFocus( true );

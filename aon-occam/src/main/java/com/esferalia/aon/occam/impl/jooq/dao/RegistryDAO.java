@@ -137,7 +137,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.TargetPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
-import com.esferalia.aon.watson.util.AonStringUtils;import jdk.nashorn.internal.runtime.Context.ThrowErrorManager;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class RegistryDAO {
 	
