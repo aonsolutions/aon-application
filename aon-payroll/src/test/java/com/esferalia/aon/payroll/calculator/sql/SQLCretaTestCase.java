@@ -1472,6 +1472,258 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaTrabajadoresYTramosTiempoParcialAjuste()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "01");
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, add(endDate, DAY_OF_MONTH,-1), ContextVariable.PARTIAL_FACTOR, "0.5");
+		addData(aonContext, contract, endDate, null, ContextVariable.PARTIAL_FACTOR, "0.25");
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(1, tramos.size());
+		
+		Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoParcial(tramo);
+
+	}
+
+	@Test
+	public void testCretaTrabajadoresYTramosTiempoParcialSinAjuste()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "01");
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 3);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, add(endDate, DAY_OF_MONTH,-1), ContextVariable.PARTIAL_FACTOR, "0.5");
+		addData(aonContext, contract, endDate, null, ContextVariable.PARTIAL_FACTOR, "0.25");
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(2, tramos.size());
+		
+		Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("29", tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoParcial(tramo);
+
+		tramo = tramos.get(1); 
+		Assert.assertEquals("30", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoParcial(tramo);
+	}
+
+	@Test
+	public void testCretaTrabajadoresYTramosITTiempoParcial()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "01");
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, endDate, null, null);
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(2, tramos.size());
+		
+		Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoParcial(tramo);
+
+		tramo = tramos.get(1); 
+		Assert.assertEquals("31", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+		assertTramoIT15PrimerosDias(tramo);
+	}
+
+	@Test
+	public void testCretaTITTiempoParcial()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "01");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.PARTIAL_FACTOR.getName(), "0.25");
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, endDate, null, null);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> 
+		tramos = getBases(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(2, tramos.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+		double _500 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
+		double _601 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
+
+		tramo = tramos.get(1); 
+		Assert.assertEquals("31", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+		_500 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_500, (int)(1750.00 * 0.25 / 30.00 * 100.00), DELTA);
+		double _603 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("603")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_603, (int)(1750.00 * 0.25 / 30.00 * 100.00), DELTA);
+	}
+	
+	@Test
+	public void testCretaTiempoParcialAjusteMensual()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "01");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.PARTIAL_FACTOR.getName(), "0.25");
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, add(endDate, DAY_OF_MONTH,-1), ContextVariable.PARTIAL_FACTOR, "0.5");		
+		addData(aonContext, contract, endDate, null , ContextVariable.PARTIAL_FACTOR, "0.5");		
+				
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> 
+		tramos = getBases(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(1, tramos.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("30", tramo.getFechaHasta().getDia());
+		double _500 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_500, (1750.00 * 0.25) * 100, DELTA);
+		double _601 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_601, (1750.00 * 0.25) * 100, DELTA);
+
+	}
+
+	@Test
+	public void testCretaTiempoParcialAjusteMensualII()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C200, "01");
+		//addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.PARTIAL_FACTOR.getName(), "0.25");
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 2);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, add(endDate, DAY_OF_MONTH,-2), ContextVariable.PARTIAL_FACTOR, "0.25");		
+		addData(aonContext, contract, add(endDate, DAY_OF_MONTH,-1), null , ContextVariable.PARTIAL_FACTOR, "0.50");		
+				
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> 
+		tramos = getBases(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(2, tramos.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo = tramos.get(0); 
+		Assert.assertEquals("01", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("29", tramo.getFechaHasta().getDia());
+		double _500 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_500 / 100.00, (1750.00 * 0.25 / 30.00 * 29 ), DELTA);
+		double _601 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_601 / 100.00, (1750.00 * 0.25 / 30.00 * 29 ), DELTA);
+
+		tramo = tramos.get(1); 
+		Assert.assertEquals("30", tramo.getFechaDesde().getDia());
+		Assert.assertEquals("31", tramo.getFechaHasta().getDia());
+		_500 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_500/100.00, (1750.00 * 0.50 / 30.00), DELTA*1000);
+		_601 =
+		tramo.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_601/100.00, (1750.00 * 0.50 / 30.00 ), DELTA*1000);
+
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosIT15Days()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();

@@ -16,6 +16,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
@@ -1237,12 +1238,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.count();
 		Assert.assertEquals(1, count);
 		
-		// + 6 ( ADJUST )
+		// + 7 ( NOT ADJUST PARTIAL)
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 25)
 		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
-		.peek(data->Assert.assertEquals(100.00 * 6.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 7.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 		
@@ -1273,10 +1274,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
 		
-		// One period , 30 ( adjust ) 
+		// One period , 31 ( NO adjust partial ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 31.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 	}
@@ -5071,6 +5072,59 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( (1750.00 / 30.00 ) * get(endDate, Calendar.DAY_OF_MONTH) , salary.getTotalPayment(), 0.05);
 	}
 
+	@Test
+	public void testITDaysIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemPayments(aonContext);
+
+		Date startOfYear = getFirstDayOfYear(getToday());
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				startOfYear,
+				new HashMap<String,String>(){
+				{
+					put(MONTH_DAYS.getName(), "30");
+					put(QUOTE_GROUP.getName(), "\"01\"");
+					put(PARTIAL_FACTOR.getName(), "0.5" );
+				}
+				},
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		addPrestITs(aonContext, contract);
+
+		Date startITDate = add(add(startOfYear, MONTH, 2), DAY_OF_MONTH,11);
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startITDate,
+				null, null);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+
+		
+		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getTotalPayment(), 0.05);
+		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getCommonBase(), 0.05);
+
+	}
 
 	@Test
 	public void testBasesMinITI() throws ExpressionException, SQLException,
