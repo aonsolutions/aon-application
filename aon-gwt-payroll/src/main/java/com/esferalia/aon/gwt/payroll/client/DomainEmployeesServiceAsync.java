@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
@@ -440,6 +441,20 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getFilterSalaries(getCurrentDomainName(), filter, callback);
 	}
 	
+	// ----- New employee calendar
+	
+	public void getEmployeeCalendarInfo(Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback) {
+		employeesServiceAsync.getEmployeeCalendarInfo(getCurrentDomainName(), contractId, callback);
+	}
+	
+	public void setEmployeeCalendarInfo(Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback) {
+		employeesServiceAsync.setEmployeeCalendarInfo(getCurrentDomainName(), contractId, employeeCalendarInfo, callback);
+	}
+	
+	public void resetEmployeeCalendarInfo(Integer contractId, AsyncCallback<String> callback) {
+		employeesServiceAsync.resetEmployeeCalendarInfo(getCurrentDomainName(), contractId, callback);
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {
@@ -456,7 +471,5 @@ public class DomainEmployeesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }

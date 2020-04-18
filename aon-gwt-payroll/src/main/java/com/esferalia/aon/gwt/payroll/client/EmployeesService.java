@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -194,5 +195,12 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	List<EmployeeInfo> getEnterpriseActiveEmployees(String currentDomainName, Integer enterpriseId);
 
 	List<SalaryInfo> getFilterSalaries(String currentDomainName, SalaryInfoFilter filter);
+
+	EmployeeCalendarInfo getEmployeeCalendarInfo(String currentDomainName, Integer contractId);
+
+	String setEmployeeCalendarInfo(String currentDomainName, Integer contractId,
+			EmployeeCalendarInfo employeeCalendarInfo);
+
+	String resetEmployeeCalendarInfo(String currentDomainName, Integer contractId);
 
 }

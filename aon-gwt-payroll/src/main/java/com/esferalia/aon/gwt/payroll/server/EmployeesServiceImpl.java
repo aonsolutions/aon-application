@@ -63,7 +63,6 @@ import org.jooq.DSLContext;
 import org.jooq.SortField;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
-import org.mvel2.ast.IsDef;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.ICollectionProvider;
@@ -92,6 +91,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
@@ -114,6 +114,7 @@ import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarData;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
@@ -5121,6 +5122,44 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	private static boolean isDefault(Payment p) {
 		return AonStringUtils.startsWith(p.getExpression(), "/*default*/" );
+	}
+	
+	// ----- New employee calendar
+
+	@Override
+	public EmployeeCalendarInfo getEmployeeCalendarInfo(String domainName, Integer contractId) {
+		Connection connection = null;
+		try {
+			connection = AonServletUtils.getConnection(domainName);
+			return JooqEmployeeCalendarNew.getEmployeeCalendar(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if ( connection != null ) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	@Override
+	public String setEmployeeCalendarInfo(String domainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeCalendarNew.setEmployeeCalendar(connection, contractId, employeeCalendarInfo);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public String resetEmployeeCalendarInfo(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeCalendarNew.resetEmployeeCalendar(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 }

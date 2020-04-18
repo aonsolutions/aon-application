@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -219,5 +220,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void getFilterSalaries(String currentDomainName, SalaryInfoFilter filter, AsyncCallback<List<SalaryInfo>> callback);
 
+	void getEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<EmployeeCalendarInfo> callback);
+
+	void setEmployeeCalendarInfo(String currentDomainName, Integer contractId, EmployeeCalendarInfo employeeCalendarInfo, AsyncCallback<String> callback);
+
+	void resetEmployeeCalendarInfo(String currentDomainName, Integer contractId, AsyncCallback<String> callback);
 	
 }
