@@ -29,10 +29,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
@@ -42,14 +40,17 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.watson.util.AonDateUtils;
+
+import junit.framework.Assert;
 
 public class SQLBRTestCase extends AbstractSQLTestCase {
 
@@ -151,7 +152,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		
 		// Save a salry for first month
 		JooqSalaryBuilder salaryBuilder = new JooqSalaryBuilder(connection);
-		new ContractSalaryCalculator<ISalary>(salaryBuilder).calculate(ctx);
+		new SmartContractSalaryCalculator<ISalary>(salaryBuilder).calculate(ctx);
 		salaryBuilder.execute();
 
 		addPayment(aonContext, contract, "100", "100");
@@ -207,7 +208,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
 				"BASE_IRPF * 0.00/100" }, category);
-		addPayment(aonContext, contract,
+		addPayment(aonContext, contract, addConcept(aonContext, "PREST_IT"),
 				"TRACE('BASE_REGULADORA=%f\r\n',BASE_REGULADORA); "
 				//+"TRACE('DIAS_ENFERMEDAD_COMUN = %d \r\n',DIAS_ENFERMEDAD_COMUN);"
 				+"TRACE('%1$td/%1$tm/%1$tY \r\n',INICIO_IT);"
@@ -228,7 +229,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		ISalary salary = calculator.calculate(ctx);
@@ -303,6 +304,153 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCommonDiseaseITWithExtraHoursI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				},
+				new String[] {
+				"( P_1 + P_2 ) * 0.10",
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00"}, 
+				new String[] {
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * 0.00/100" }, category);
+		addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
+				"TRACE('BASE_REGULADORA=%f\r\n',BASE_REGULADORA); "
+				//+"TRACE('DIAS_ENFERMEDAD_COMUN = %d \r\n',DIAS_ENFERMEDAD_COMUN);"
+				+"TRACE('%1$td/%1$tm/%1$tY \r\n',INICIO_IT);"
+				+"0.00", 
+				//"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA"
+				"DIAS_COTIZADOS * BASE_REGULADORA"
+				);
+		;
+		addPayment(aonContext, 
+				contract, 
+				addConcept(aonContext, "HORAS_EXTRAORDINARIAS_FZA"), 
+				"HORAS EXTRAORDINARIAS FUERZA MAYOR ", 
+				"66.66", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0003);
+		//@formatter:on
+
+		Date startITDate = getToday();
+		Date endITDate = startITDate;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+		System.out.println("IT [" + startITDate + "...]");
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		ISalary salary = calculator.calculate(ctx);
+
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00 * 1.10
+				* (monthDays - 1) / 30 + 66.66, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
+				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+
+		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 1));
+		endDate = getLastDayOfMonth(startDate);
+
+		monthDays = 30; //get(endDate, DAY_OF_MONTH);
+		int leaveOffset = (int) (Math.random() * get(endDate, DAY_OF_MONTH));
+		startITDate = add(endDate, Calendar.DAY_OF_MONTH, (-1) * leaveOffset);
+		endITDate = null;
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+		System.out.println("IT [" + startITDate + "...]");
+		ctx = getContractSalaryCalculatorContext(connection, startDate,
+				endDate, endDate, contract);
+
+		salary = calculator.calculate(ctx);
+		int workDays = get(endDate, DAY_OF_MONTH) - (leaveOffset + 1);
+		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00 * 1.10
+				* (workDays) / monthDays + 66.66,
+				salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
+				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+		System.out.println("CGC_BASE [" + startDate + "..." + endDate + "] :"
+				+ salary.getCommonBase());
+
+		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 2));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(connection, startDate,
+				endDate, endDate, contract);
+
+		salary = calculator.calculate(ctx);
+		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 0.00,
+				salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
+				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+		System.out.println("CGC_BASE [" + startDate + "..." + endDate + "] :"
+				+ salary.getCommonBase());
+
+		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 3));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(connection, startDate,
+				endDate, endDate, contract);
+
+		salary = calculator.calculate(ctx);
+		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 0.00,
+				salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
+				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+		System.out.println("CGC_BASE [" + startDate + "..." + endDate + "] :"
+				+ salary.getCommonBase());
+
+		startDate = getFirstDayOfMonth(add(getToday(), MONTH, 4));
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(connection, startDate,
+				endDate, endDate, contract);
+
+		salary = calculator.calculate(ctx);
+		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 0.00,
+				salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(format("%s :", CGC_BASE), (1750.00 * 1.10)
+				* (1 + 1.00 / 12 + 1.00 / 12), salary.getCommonBase(), DELTA);
+		System.out.println("CGC_BASE [" + startDate + "..." + endDate + "] :"
+				+ salary.getCommonBase());
+	}
+
+
+	@Test
 	public void testCommonDiseaseITWithPayment() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
@@ -334,7 +482,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
 				"BASE_IRPF * 0.00/100" }, category);
-		addPayment(aonContext, contract,
+		addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
 				"0.00 ", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
 		//@formatter:on
@@ -351,7 +499,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		ISalary salary = calculator.calculate(ctx);
@@ -397,7 +545,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				"BASE_CGC * 0.0", 
 				"BASE_CGP * 0.00",
 				"BASE_IRPF * 0.00/100" }, category);
-		addPayment(aonContext, contract,
+		addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
 				"0.00 ", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
 		//@formatter:on
@@ -414,7 +562,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		ISalary salary = calculator.calculate(ctx);
@@ -458,7 +606,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				format("BRUTO(2000 * %s / %s)", ContextVariable.WORKED_DAYS , ContextVariable.MONTH_DAYS )}, 
 				new String[] {
 				"BASE_IRPF * PORCENTAJE_IRPF/100" }, category);
-		addPayment(aonContext, contract,
+		addPayment(aonContext, contract,addConcept(aonContext, "PREST_IT"),
 				"TRACE('BASE_REGULADORA=%f\r\n',DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA); "
 				+"0.00 ", 
 				"DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA");
@@ -476,7 +624,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		ISalary salary = calculator.calculate(ctx);
@@ -510,7 +658,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 
 		double totalIrpf = calculator.calculate(
@@ -580,9 +728,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				}, 
 				new String[] {
 				}, category);
-		addPayment(aonContext, contract,
+		addPayment(aonContext, contract, addConcept(aonContext, "GARANTIZADO"), 
 				"GTZDO( P_0 + P_1,1,365*2)", 
-				"0.00");
+				"0.00",
+				PaymentType.CRA_0055);
 		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 		addPayment(aonContext, contract, prestIT ,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
@@ -600,7 +749,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
 		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
@@ -681,9 +830,9 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				}, 
 				new String[] {
 				}, category);
-		addPayment(aonContext, contract,
+		addPayment(aonContext, contract, addConcept(aonContext, "GARANTIZADO"),
 				"GTZDO( P_0+ P_1,1)", 
-				"0.00");
+				"0.00", PaymentType.CRA_0055);
 		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 		addPayment(aonContext, contract, prestIT,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
@@ -699,7 +848,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = calculator.calculate(ctx);
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00,
@@ -760,9 +909,10 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 				}, 
 				new String[] {
 				}, category);
-		addPayment(aonContext, contract,
+		addPayment(aonContext, contract,addConcept(aonContext, "GARANTIZADO"), 
 				"GTZDO( P_0+ P_1)", 
-				"0.00");
+				"0.00"
+				,PaymentType.CRA_0055);
 		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
 		addPayment(aonContext, contract, prestIT,
 				"TRACE('DIAS_ENFERMEDAD_COMUN * BASE_REGULADORA=%f\r\n',BASE_REGULADORA * DIAS_ENFERMEDAD_COMUN); "
@@ -779,7 +929,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		ISalary salary = calculator.calculate(ctx);
 		Assert.assertEquals(format("%s :", TOTAL_PAYMENT), 1750.00,
@@ -925,7 +1075,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, marchStartDate, marchEndDate, marchEndDate, contract);
 		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
-		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 		jooqSalaryBuilder.execute();
 		
 		ctx = getContractSalaryCalculatorContext(
@@ -938,7 +1088,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, februaryStartDate, februaryEndDate, februaryEndDate, contract);
 		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
-		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 		jooqSalaryBuilder.execute();
 
 		ctx = getContractSalaryCalculatorContext(
@@ -951,7 +1101,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		ctx = getContractSalaryCalculatorContext(
 				connection, januaryStartDate, januaryEndDate, januaryEndDate, contract);
 		jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
-		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 		jooqSalaryBuilder.execute();
 
 		ctx = getContractSalaryCalculatorContext(
