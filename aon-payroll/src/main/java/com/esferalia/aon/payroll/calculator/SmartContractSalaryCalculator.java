@@ -553,6 +553,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
 		Period period = results.get(0).getPeriod();
 		double days = getDays(period, expressionContext);
+		double monthDays = getMonthDays(period, expressionContext);
+		days = Math.min(days,  monthDays );
 		Double value = results.get(0).getValue();
 		Map<String,ITimedVariable<?>> context = results.get(0).getContext();
 		
