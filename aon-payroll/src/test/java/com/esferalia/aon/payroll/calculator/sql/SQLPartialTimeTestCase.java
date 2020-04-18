@@ -141,11 +141,11 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 						put(ContextVariable.TC2.getName(), format("\"%s\"",
 								random(PARTIAL_TIME).getValue()));
 
-						put(MONDAY_HOURS.getName(), format("%d", 4));
-						put(TUESDAY_HOURS.getName(), format("%d", 4));
-						put(WEDNESDAY_HOURS.getName(), format("%d", 2));
+						put(MONDAY_HOURS.getName(), "4");
+						put(TUESDAY_HOURS.getName(), "4");
+						put(WEDNESDAY_HOURS.getName(), "2");
 						
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(MONTH_DAYS.getName(), "30.00");
 					}
 				},
 
