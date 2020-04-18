@@ -1,0 +1,71 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a="urn:import:com.esferalia.aon.gwt.common.client.widget">
+    
+	<ui:style>
+		
+		.form {
+			padding: 10px;
+		}
+		
+		.datesPanel{
+			display: flex;
+			flex-direction: column;
+			padding: 5px;
+			border: 1px solid #e1e1e1;
+			margin-bottom: 10px;
+		}
+		
+		.rowPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: 3px 0;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.labelStyle{
+			width: 60px;
+			display: flex;
+			align-items: center;
+		}
+		
+		.dateBox{
+			width: 120px !important;
+			text-align: center;
+		}
+		
+	</ui:style>
+	
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+		
+			<g:HTMLPanel styleName="{style.datesPanel}">
+			
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Inicio:</g:Label>
+					<a:DateBoxEx ui:field="startDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Fin:</g:Label>
+					<a:DateBoxEx ui:field="endDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
+				</g:HTMLPanel>
+			
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.buttonsPanel}">
+				<g:Button ui:field="cancelButton">Cerrar</g:Button>
+			    <g:Button ui:field="acceptButton">OK</g:Button>
+			</g:HTMLPanel>
+				
+		</g:HTMLPanel>
+		
+	</g:HTMLPanel>
+
+</ui:UiBinder>
