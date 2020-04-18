@@ -821,7 +821,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	public void testAdjustPartialMonthlyII()
+	public void testNotAdjustPartialMonthlyII()
 			throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -897,7 +897,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 				System.out.println(data.getName() + " = " + data.getExpression() );
 			}
 //			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getTotalPayment() , DELTA );
-			org.junit.Assert.assertEquals( 1750.00 / 2,  salary.getCommonBase() , DELTA );
+			org.junit.Assert.assertEquals( 1750.00 / 2 / 30 *  get(endDate, DAY_OF_MONTH),  salary.getCommonBase() , DELTA );
 			startDate = add(startDate, Calendar.MONTH, 1); 
 			
 		}
