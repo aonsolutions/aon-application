@@ -832,7 +832,7 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 				new HashMap<String, String>() {
 					{
 						put(ContextVariable.TC2.getName(), format("\"%s\"",C200.getValue()));
-						put(MONTH_DAYS.getName(), format("%f", 30.00));
+						put(MONTH_DAYS.getName(), "30.00");
 					}
 				},
 
