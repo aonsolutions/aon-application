@@ -1,31 +1,45 @@
 <ui:UiBinder 
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
-	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
-
-    <ui:with field='res'
-		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
     
-    
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarExtraDialog.MyStyle">
+	<ui:style>
 
 		.form {
 			padding: 10px;
+			min-width: 220px;
 		}
 		
-		.bottonExpandStyle{
-			height: 10px;
-    		border: none;
-    		padding-top: 15px;
-    		margin-left: 5px;
-    		width: 20px;
+		.datesPanel{
+			display: flex;
+			flex-direction: column;
+			padding: 5px;
+			border: 1px solid #e1e1e1;
+			margin-bottom: 10px;
+		}
+		
+		.rowPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: 3px 0;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.labelStyle{
+			width: 60px;
+			display: flex;
+			align-items: center;
 		}
 		
 		.borderBx{
 			border: solid #808080 1px;
+			text-align: center;
+			width: 70px;
 		}
+		
 
 	</ui:style>
 
@@ -33,33 +47,72 @@
 	
 		<g:HTMLPanel styleName="aon-width-all aon-height-all">
 	
-			<table class="aon-width-all aon-height-all" style="padding: 5px;">
-				<tr>
-					<td>
-						<g:Label>Mes:</g:Label>
-					</td>
-					<td>
-						<g:HorizontalPanel>
-							<g:SuggestBox ui:field="monthOpt" styleName="{style.borderBx}"/>
-		    				<g:Button ui:field="expandMonths" styleName="{style.bottonExpandStyle}"/>
-						</g:HorizontalPanel>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<g:Label>Horas extras:</g:Label>
-					</td>
-					<td>
-						<g:DoubleBox ui:field="extraHoursBox" styleName="{style.borderBx}"/>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" align="right" style="padding-top: 15px;">
-						<g:Button ui:field="cancelButton">Cerrar</g:Button>
-			    		<g:Button ui:field="acceptButton">OK</g:Button>
-					</td>
-				</tr>
-			</table>
+			<g:HTMLPanel styleName="{style.datesPanel}">
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Enero:</g:Label>
+					<g:TextBox ui:field="januaryTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Febrero:</g:Label>
+					<g:TextBox ui:field="februaryTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Marzo:</g:Label>
+					<g:TextBox ui:field="marchTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Abril:</g:Label>
+					<g:TextBox ui:field="aprilTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Mayo:</g:Label>
+					<g:TextBox ui:field="mayTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Junio:</g:Label>
+					<g:TextBox ui:field="juneTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Julio:</g:Label>
+					<g:TextBox ui:field="julyTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Agosto:</g:Label>
+					<g:TextBox ui:field="augustTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Septiembre:</g:Label>
+					<g:TextBox ui:field="septemberTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Octubre:</g:Label>
+					<g:TextBox ui:field="octoberTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Noviembre:</g:Label>
+					<g:TextBox ui:field="novemberTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Diciembre:</g:Label>
+					<g:TextBox ui:field="decemberTB" styleName="{style.borderBx}"/>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.buttonsPanel}">
+				<g:Button ui:field="cancelButton">Cerrar</g:Button>
+			    <g:Button ui:field="acceptButton">OK</g:Button>
+			</g:HTMLPanel>
 				
 		</g:HTMLPanel>
 		

@@ -1,41 +1,59 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
+import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DoubleBox;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class EmployeeCalendarExtraDialog extends CustomDialog {
+public class EmployeeCalendarExtraDialog extends CustomDialog {
 
 	interface Binder extends UiBinder<Widget, EmployeeCalendarExtraDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String bottonExpandStyle();
-	}
-	
-	@UiField(provided = true)
-	SuggestBox monthOpt;
+	TextBox januaryTB;
 	
 	@UiField
-	Button expandMonths;
+	TextBox februaryTB;
 	
 	@UiField
-	DoubleBox extraHoursBox;
+	TextBox marchTB;
+	
+	@UiField
+	TextBox aprilTB;
+	
+	@UiField
+	TextBox mayTB;
+	
+	@UiField
+	TextBox juneTB;
+	
+	@UiField
+	TextBox julyTB;
+	
+	@UiField
+	TextBox augustTB;
+	
+	@UiField
+	TextBox septemberTB;
+	
+	@UiField
+	TextBox octoberTB;
+	
+	@UiField
+	TextBox novemberTB;
+	
+	@UiField
+	TextBox decemberTB;
 	
 	@UiField
 	Button cancelButton;
@@ -47,38 +65,35 @@ public abstract class EmployeeCalendarExtraDialog extends CustomDialog {
 	// --------------------------------- MAIN CLASS ----------------------------------
 	// -------------------------------------------------------------------------------
 
-	public EmployeeCalendarExtraDialog(String caption) {
-		setCaption(caption);
+	private int year;
+	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
+	private TextBox[] textBoxes = new TextBox[12];
+	
+	public EmployeeCalendarExtraDialog(int year, EmployeeCalendarDraftObject employeeCalendarDraftObject) {
+		this.year = year;
+		this.employeeCalendarDraftObject = employeeCalendarDraftObject;
 		
-		ArrayList<String> suggestMonths = new ArrayList<String>();
-		MultiWordSuggestOracle oracleMonths = new MultiWordSuggestOracle();
-		suggestMonths.add("Enero");
-		suggestMonths.add("Febrero");
-		suggestMonths.add("Marzo");
-		suggestMonths.add("Abril");
-		suggestMonths.add("Mayo");
-		suggestMonths.add("Junio");
-		suggestMonths.add("Julio");
-		suggestMonths.add("Agosto");
-		suggestMonths.add("Septiembre");
-		suggestMonths.add("Octubre");
-		suggestMonths.add("Noviembre");
-		suggestMonths.add("Diciembre");
-		oracleMonths.setDefaultSuggestionsFromText(suggestMonths);
-		monthOpt = new SuggestBox(oracleMonths);
+		if(this.employeeCalendarDraftObject.isFullTimeJourney())
+			setCaption("HORAS EXTRAS " + (1900 + this.year));
+		else
+			setCaption("HORAS COMPLEMENTARIAS " + (1900 + this.year));
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		expandMonths.setStyleName("aon-icon-down-arrow");
-		expandMonths.addStyleName(style.bottonExpandStyle());
+		textBoxes[0] = this.januaryTB;
+		textBoxes[1] = this.februaryTB;
+		textBoxes[2] = this.marchTB;
+		textBoxes[3] = this.aprilTB;
+		textBoxes[4] = this.mayTB;
+		textBoxes[5] = this.juneTB;
+		textBoxes[6] = this.julyTB;
+		textBoxes[7] = this.augustTB;
+		textBoxes[8] = this.septemberTB;
+		textBoxes[9] = this.octoberTB;
+		textBoxes[10] = this.novemberTB;
+		textBoxes[11] = this.decemberTB;
 		
-		expandMonths.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				monthOpt.showSuggestionList();	
-			}
-		});
+		initExtraHourTB();
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -92,23 +107,31 @@ public abstract class EmployeeCalendarExtraDialog extends CustomDialog {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				onAccept();
+				accept();
 			}
 		});	
 		
 	}
 
-	protected abstract void onAccept();
-	
-	// -------------------------------------------------------------------------------
-	// -------------------------------- AUX METHODS ----------------------------------
-	// -------------------------------------------------------------------------------
-	
-	public String getSelectedMonth() {
-		return monthOpt.getValue();
+	private void initExtraHourTB() {
+		for(int month = 0; month < 12; month++) {
+			Date date = new Date(year, month, 1);
+			DateUtils.resetTime(date);
+			
+			String hourMonth = employeeCalendarDraftObject.getExtraHourByDate(date);
+			textBoxes[month].setValue(hourMonth);
+			
+		}
 	}
 	
-	public double getExtraHours(){
-		return extraHoursBox.getValue();
+	private void accept() {
+		for(int month = 0; month < 12; month++) {
+			String hourMonth = textBoxes[month].getValue();
+			
+			Date date = new Date(this.year, month, 1);
+			DateUtils.resetTime(date);
+			
+			employeeCalendarDraftObject.setExtraHourByDate(date, hourMonth);
+		}
 	}
 }
