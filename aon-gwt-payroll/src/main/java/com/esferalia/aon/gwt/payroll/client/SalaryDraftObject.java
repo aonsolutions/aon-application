@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -39,7 +38,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -269,7 +267,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	private ITDataObject dataObject;
 	private SalaryDraft salaryDraft;
 	private UndoManager<Undoable> undoManager;
-	private EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData;
+	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
 	private EmployeeEventsDraftObject employeeEventsDraftObject;
 	private DomainEmployeesServiceAsync employeesServiceAsync;
 
@@ -311,14 +309,14 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	}
 
 	public void save(final CalculateCallback callback) {
-		removeCalendarDraft();
+//		removeCalendarDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 		setIsolatedDraftPeriod(salaryDraft);
 
-		addCalendarVariablesDraft();
+//		addCalendarVariablesDraft();
 		addEventsVariablesDraft();
 		removeSalaryPart(salaryDraft);
-		employeeCalendarDraftObjectData.clearDraftHours();
+//		employeeCalendarDraftObject.clearDraftHours();
 		
 		employeesServiceAsync.saveSalaryDraft(salaryDraft,
 				new AsyncCallback<Void>() {
@@ -364,12 +362,12 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public void calculate(final CalculateCallback callback) {
 
 		setDraftType(salaryDraft);
-		removeCalendarDraft();
+//		removeCalendarDraft();
 		removeEventsDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
-		addCalendarVariablesDraft();
+//		addCalendarVariablesDraft();
 		addEventsVariablesDraft();
-		employeeCalendarDraftObjectData.getSalaryDraftChanged(salaryDraft);
+//		employeeCalendarDraftObjectData.getSalaryDraftChanged(salaryDraft);
 		
 		removeSalaryPart(salaryDraft);
 
@@ -412,14 +410,14 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	}
 
 	
-	public void addCalendarVariablesDraft(){
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListStrike(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
-		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListExtraHours(getDraftStartDate(), getDraftEndDate()));
-		
-	}
+//	public void addCalendarVariablesDraft(){
+//		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+//		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));
+//		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListStrike(getDraftStartDate(), getDraftEndDate()));
+//		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListHolidays(getDraftStartDate(), getDraftEndDate()));
+//		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListExtraHours(getDraftStartDate(), getDraftEndDate()));
+//		
+//	}
 	
 	public void addEventsVariablesDraft(){
 		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
@@ -1199,15 +1197,15 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 			setDeductionType(d, draft.getType());
 	}
 	
-	private void removeCalendarDraft() {
-		List<Variable> draftContext = salaryDraft.getDraftContext();
-		for ( int i = draftContext.size()-1; i >= 0; i--) {
-			Variable var = draftContext.get(i);
-			if (employeeCalendarDraftObjectData.isMine(var)){
-				draftContext.remove(i);
-			}
-		}
-	}
+//	private void removeCalendarDraft() {
+//		List<Variable> draftContext = salaryDraft.getDraftContext();
+//		for ( int i = draftContext.size()-1; i >= 0; i--) {
+//			Variable var = draftContext.get(i);
+//			if (employeeCalendarDraftObject.isMine(var)){
+//				draftContext.remove(i);
+//			}
+//		}
+//	}
 	
 	private void removeEventsDraft() {
 		List<Variable> draftContext = salaryDraft.getDraftContext();
@@ -1307,12 +1305,12 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 				return var;
 		return null;
 	}
-	public void setEmployeeCalendarDraftObjectData(EmployeeCalendarDraftObjectData employeeCalendarDraftObjectData) {
-		this.employeeCalendarDraftObjectData = employeeCalendarDraftObjectData;
+	public void setEmployeeCalendarDraftObject(EmployeeCalendarDraftObject employeeCalendarDraftObject) {
+		this.employeeCalendarDraftObject = employeeCalendarDraftObject;
 	}
 	
-	public EmployeeCalendarDraftObjectData getEmployeeCalendarDraftObjectData() {
-		return employeeCalendarDraftObjectData;
+	public EmployeeCalendarDraftObject getEmployeeCalendarDraftObject() {
+		return employeeCalendarDraftObject;
 	}
 	
 	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraftObject) {

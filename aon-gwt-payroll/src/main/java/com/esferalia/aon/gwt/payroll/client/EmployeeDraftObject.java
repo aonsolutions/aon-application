@@ -39,7 +39,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	private ActivitiesCCC activitiesCCC;
 	
-	private EmployeeCalendarDraftObjectData employeeCalendar;
+	private EmployeeCalendarDraftObject employeeCalendar;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
@@ -745,8 +745,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 
 	
-	public void setEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
-		this.employeeCalendar = employeeCalendarDraftobjectData;
+	public void setEmployeeCalendar(EmployeeCalendarDraftObject employeeCalendarDraftobject) {
+		this.employeeCalendar = employeeCalendarDraftobject;
 	}
 	
 	public Date getPayrollDate() {
@@ -754,7 +754,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 
 	
-	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
+	public EmployeeCalendarDraftObject getEmployeeCalendar() {
 		return this.employeeCalendar;
 	}
 	
