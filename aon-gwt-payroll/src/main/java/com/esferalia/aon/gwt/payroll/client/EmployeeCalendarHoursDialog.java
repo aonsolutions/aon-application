@@ -1,23 +1,25 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.OrderedMultiSelectionModel;
 
 public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 
@@ -26,74 +28,52 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String bottonExpandStyle();
-	}
+	DateBoxEx startDateDB;
 	
 	@UiField
-	TableRowElement mondayBlock;
-	
-	@UiField(provided = true)
-	SuggestBox mondayHoursOpt;
+	DateBoxEx endDateDB;
 	
 	@UiField
-	Button expandMondayHours;
+	HTMLPanel mondayBlock;
 	
 	@UiField
-	TableRowElement tuesdayBlock;
-	
-	@UiField(provided = true)
-	SuggestBox tuesdayHoursOpt;
+	TextBox mondayHoursOpt;
 	
 	@UiField
-	Button expandTuesdayHours;
+	HTMLPanel tuesdayBlock;
 	
 	@UiField
-	TableRowElement wednesdayBlock;
-	
-	@UiField(provided = true)
-	SuggestBox wednesdayHoursOpt;
+	TextBox tuesdayHoursOpt;
 	
 	@UiField
-	Button expandWednesdayHours;
+	HTMLPanel wednesdayBlock;
 	
 	@UiField
-	TableRowElement thursdayBlock;
-	
-	@UiField(provided = true)
-	SuggestBox thursdayHoursOpt;
+	TextBox wednesdayHoursOpt;
 	
 	@UiField
-	Button expandThursdayHours;
+	HTMLPanel thursdayBlock;
 	
 	@UiField
-	TableRowElement fridayBlock;
-	
-	@UiField(provided = true)
-	SuggestBox fridayHoursOpt;
+	TextBox thursdayHoursOpt;
 	
 	@UiField
-	Button expandFridayHours;
+	HTMLPanel fridayBlock;
 	
 	@UiField
-	TableRowElement saturdayBlock;
-	
-	@UiField(provided = true)
-	SuggestBox saturdayHoursOpt;
+	TextBox fridayHoursOpt;
 	
 	@UiField
-	Button expandSaturdayHours;
+	HTMLPanel saturdayBlock;
 	
 	@UiField
-	TableRowElement sundayBlock;
-	
-	@UiField(provided = true)
-	SuggestBox sundayHoursOpt;
+	TextBox saturdayHoursOpt;
 	
 	@UiField
-	Button expandSundayHours;
+	HTMLPanel sundayBlock;
+	
+	@UiField
+	TextBox sundayHoursOpt;
 	
 	@UiField
 	Button cancelButton;
@@ -105,187 +85,230 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	// --------------------------------- MAIN CLASS ----------------------------------
 	// -------------------------------------------------------------------------------
 	
-	private final static int MONDAY = 0;
-	private final static int TUESDAY = 1;
-	private final static int WEDNESDAY = 2;
-	private final static int THURSDAY = 3;
-	private final static int FRIDAY = 4;
-	private final static int SATURDAY = 5;
-	private final static int SUNDAY = 6;
-
-	private final SuggestBox suggestOpts[] = new SuggestBox[7];
-	private final TableRowElement blockDays[] = new TableRowElement[7];
+	private final HTMLPanel blockDays[] = new HTMLPanel[7];
 	private Double listOldHours[] = new Double[7];
-	private OrderedMultiSelectionModel<Date> selectedDates;
-	private EmployeeCalendarDraftObjectData calendarEmployeeInfo;
+	private Double listNewHours[] = new Double[7];
+	private Boolean showDays[] = new Boolean[7];
 	
-	public EmployeeCalendarHoursDialog(String caption, OrderedMultiSelectionModel<Date> selectedDates,
-			EmployeeCalendarDraftObjectData calendarEmployeeInfo) {
-		
-		this.selectedDates = selectedDates;
-		this.calendarEmployeeInfo = calendarEmployeeInfo;
-		
-		setCaption(caption);
-		
-		initSuggestBox();
+	
+	private EmployeeCalendarDraftObject employeeCalendarDraftObject;
+	private List<Date> selectedDates;
+	
+	private Date contractStartDate;
+	private Date contractEndDate;
+	
+	public EmployeeCalendarHoursDialog(List<Date> selectedDates, Date contractStartDate, Date contractEndDate, EmployeeCalendarDraftObject employeeCalendarDraftObject) {
+		setCaption("HORAS");
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		initBlockDays();
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
 		
-		clickEventOnExpandOpt(expandMondayHours, mondayHoursOpt);
-		clickEventOnExpandOpt(expandTuesdayHours, tuesdayHoursOpt);
-		clickEventOnExpandOpt(expandWednesdayHours, wednesdayHoursOpt);
-		clickEventOnExpandOpt(expandThursdayHours, thursdayHoursOpt);
-		clickEventOnExpandOpt(expandFridayHours, fridayHoursOpt);
-		clickEventOnExpandOpt(expandSaturdayHours, saturdayHoursOpt);
-		clickEventOnExpandOpt(expandSundayHours, sundayHoursOpt);
+		if(!selectedDates.isEmpty()) {
+			selectedDates.sort(null);
+			startDateDB.setValue(selectedDates.get(0));
+			endDateDB.setValue(selectedDates.get(selectedDates.size() - 1));
+		} else {
+			this.startDateDB.setValue(contractStartDate);
+			this.endDateDB.setValue(contractEndDate);
+		}
+		
+		this.selectedDates = selectedDates;
+		this.employeeCalendarDraftObject = employeeCalendarDraftObject;
+		
+		for(int i=0; i<7; i++)
+			showDays[i] = false;
+		
+		initBlockDays();	
+		checkShowingUpDays();
+		initDefaultValuesTB();
+		
+		startDateDB.getTextBox().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				startDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
+			}
+		});
+		
+		endDateDB.getTextBox().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				endDateDB.getDatePicker().getElement().setAttribute("style", "visibility: visible; overflow: visible; position: absolute; left: 0px; z-index: 108; ");
+			}
+		});
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				hide();
-				
 			}
 		});
 		
 		acceptButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				if(null != startDateDB.getValue()) {
+					accept();
+					onAccept();
+				}
 				hide();
-				onAccept();
+			}
+
+			private void accept() {
+				// Initialice listNewHours
+				listNewHours[0] = getSundayHours();
+				listNewHours[1] = getMondayHours();
+				listNewHours[2] = getTuesdayHours();
+				listNewHours[3] = getWednesdayHours();
+				listNewHours[4] = getThursdayHours();
+				listNewHours[5] = getFridayHours();
+				listNewHours[6] = getSaturdayHours();
+				
+				for(int day=0; day<7; day++) {
+					if(showDays[day]) {
+						Date startDate = getStartDate();
+						Date endDate = getEndDate();
+						Window.alert("ADDED -> StartDate : " + startDate + " EndDate : " + endDate + " Day : " + day + " Value : "+ listNewHours[day]);
+						employeeCalendarDraftObject.addDayHour(startDate, endDate, day, listNewHours[day]);
+					}
+				}
 			}
 		});	
-		
-		checkShowingUpDays();
-		
 	}
+	
+	// -------------------------------------------------------------------------------
+	// ----------------------------- ABSTRACT METHOD ---------------------------------
+	// -------------------------------------------------------------------------------
 	
 	protected abstract void onAccept();
-
+	
 	// -------------------------------------------------------------------------------
-	// -------------------------------- AUX METHODS ----------------------------------
+	// -------------------------------- UI HANDLERS ----------------------------------
 	// -------------------------------------------------------------------------------
-			
-	private void initSuggestBox() {
-		//Inicializamos todos los SuggestBox para insertar horas nuevas
-		ArrayList<String> suggestHours = new ArrayList<String>();
-		MultiWordSuggestOracle oracleL = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleM = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleX = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleJ = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleV = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleS = new MultiWordSuggestOracle();
-		MultiWordSuggestOracle oracleD = new MultiWordSuggestOracle();
-		suggestHours.add("2");
-		suggestHours.add("4");
-		suggestHours.add("6");
-		suggestHours.add("8");
-		oracleL.setDefaultSuggestionsFromText(suggestHours);
-		oracleM.setDefaultSuggestionsFromText(suggestHours);
-		oracleX.setDefaultSuggestionsFromText(suggestHours);
-		oracleJ.setDefaultSuggestionsFromText(suggestHours);
-		oracleV.setDefaultSuggestionsFromText(suggestHours);
-		oracleS.setDefaultSuggestionsFromText(suggestHours);
-		oracleD.setDefaultSuggestionsFromText(suggestHours);
-		
-		suggestOpts[MONDAY] = new SuggestBox(oracleL);
-		suggestOpts[TUESDAY] = new SuggestBox(oracleM);
-		suggestOpts[WEDNESDAY] = new SuggestBox(oracleX);
-		suggestOpts[THURSDAY] = new SuggestBox(oracleJ);
-		suggestOpts[FRIDAY] = new SuggestBox(oracleV);
-		suggestOpts[SATURDAY] = new SuggestBox(oracleS);
-		suggestOpts[SUNDAY] = new SuggestBox(oracleD);
-		
-		mondayHoursOpt = suggestOpts[MONDAY];
-		tuesdayHoursOpt = suggestOpts[TUESDAY];
-		wednesdayHoursOpt = suggestOpts[WEDNESDAY];
-		thursdayHoursOpt = suggestOpts[THURSDAY];
-		fridayHoursOpt = suggestOpts[FRIDAY];
-		saturdayHoursOpt = suggestOpts[SATURDAY];
-		sundayHoursOpt = suggestOpts[SUNDAY];
-		
-		suggestOpts[MONDAY].setAutoSelectEnabled(false);
-		suggestOpts[TUESDAY].setAutoSelectEnabled(false);
-		suggestOpts[WEDNESDAY].setAutoSelectEnabled(false);
-		suggestOpts[THURSDAY].setAutoSelectEnabled(false);
-		suggestOpts[FRIDAY].setAutoSelectEnabled(false);
-		suggestOpts[SATURDAY].setAutoSelectEnabled(false);
-		suggestOpts[SUNDAY].setAutoSelectEnabled(false);
-	}
 	
-	private void initBlockDays() {
-		blockDays[0] = mondayBlock;
-		blockDays[1] = tuesdayBlock;
-		blockDays[2] = wednesdayBlock;
-		blockDays[3] = thursdayBlock;
-		blockDays[4] = fridayBlock;
-		blockDays[5] = saturdayBlock;
-		blockDays[6] = sundayBlock;
-		
-	}
-	
-	private void clickEventOnExpandOpt(Button expandButton, SuggestBox suggestBox) {
-		expandButton.setStyleName("aon-icon-down-arrow");
-		expandButton.addStyleName(style.bottonExpandStyle());
-		
-		expandButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				suggestBox.showSuggestionList();	
-			}
-		});
-	}
-	
-	private void checkShowingUpDays() {
-		//Ocultar todos los dias
-		for (int i=0; i<7; i++)
-			blockDays[i].getStyle().setDisplay(Display.NONE);
-		
-		//Gestionar los dias seleccionados (mostrar y actualizar valor)
-		for (int i = 0; i < 7; i++){
-			final int c =i; 
-			try{
-				
-				Double minValue = Double.MIN_VALUE;
-				int days [] = {1,2,3,4,5,6,0};
-				
-				@SuppressWarnings("deprecation")
-				Double value = selectedDates.getSelectedList().stream()
-						.filter(d -> d.getDay() == days[c])
-						.map(d-> calendarEmployeeInfo.getHourByDay(d))
-						.peek(p -> blockDays[c].getStyle().clearDisplay())
-						.collect(Collectors.reducing(Double.MIN_VALUE,(h1,h2) -> minValue.equals(h1) || h2.equals(h1) ? h2: null ))
-						;
-
-				
-				if(value != null && value != Double.MAX_VALUE){
-					suggestOpts[c].setValue(value+"");
-					listOldHours[c] = value;
-				}else{
-					suggestOpts[c].setValue("null");
-					listOldHours[c] = null;
-				}
-				
-			} catch (Exception e) {
-				
-			}
+	@UiHandler("startDateDB")
+	public void onStartDateDBChange(ValueChangeEvent<Date> event) {
+		Date date = event.getValue();
+		if(null != date) {
+			if(date.before(contractStartDate))
+				startDateDB.setValue(contractStartDate);
 		}
 	}
 	
-	public Double[] getListOldHours() {
-		return listOldHours;
+	@UiHandler("endDateDB")
+	public void onEndDateDBChange(ValueChangeEvent<Date> event) {
+		Date date = event.getValue();
+		if(null != date && null != contractEndDate) {
+			if(date.after(contractEndDate))
+				endDateDB.setValue(contractEndDate);
+		}
+	}
+	
+	// -------------------------------------------------------------------------------
+	// -------------------------------- AUX METHODS ----------------------------------
+	// -------------------------------------------------------------------------------
+
+	private void initDefaultValuesTB() {
+		for(int i = 0; i<7; i++) {
+			Double hour = getListOldHours()[i];
+			switch (i) {
+				case 0:
+					this.sundayHoursOpt.setValue(null == hour ? "" : Double.toString(hour));
+					break;
+				case 1:
+					this.mondayHoursOpt.setValue(null == hour ? "" : Double.toString(hour));
+					break;
+				case 2:
+					this.tuesdayHoursOpt.setValue(null == hour ? "" : Double.toString(hour));
+					break;
+				case 3:
+					this.wednesdayHoursOpt.setValue(null == hour ? "" : Double.toString(hour));
+					break;
+				case 4:
+					this.thursdayHoursOpt.setValue(null == hour ? "" : Double.toString(hour));
+					break;
+				case 5:
+					this.fridayHoursOpt.setValue(null == hour ? "" : Double.toString(hour));
+					break;	
+				case 6:
+					this.saturdayHoursOpt.setValue(null == hour ? "" : Double.toString(hour));
+					break;
+				default:
+					break;
+			}
+		}
+	}
+			
+	private void initBlockDays() {
+		blockDays[0] = sundayBlock;
+		blockDays[1] = mondayBlock;
+		blockDays[2] = tuesdayBlock;
+		blockDays[3] = wednesdayBlock;
+		blockDays[4] = thursdayBlock;
+		blockDays[5] = fridayBlock;
+		blockDays[6] = saturdayBlock;
+	}
+	
+	private void checkShowingUpDays() {
+		if(!this.selectedDates.isEmpty()) {
+			//Ocultar todos los dias
+			for (int i=0; i<7; i++)
+				blockDays[i].getElement().getStyle().setDisplay(Display.NONE);
+			
+			//Gestionar los dias seleccionados (mostrar y actualizar valor)
+			for (int i = 0; i < 7; i++){
+				final int c =i; 
+				try{
+					Double minValue = Double.MIN_VALUE;
+					
+					@SuppressWarnings("deprecation")
+					Double value = this.selectedDates.stream()
+							.filter(d -> d.getDay() == c)
+							.map(d-> employeeCalendarDraftObject.getHourByDate(d))
+							.peek(p -> showDays[c] = true)
+							.peek(p -> blockDays[c].getElement().getStyle().clearDisplay())
+							.collect(Collectors.reducing(Double.MIN_VALUE, (h1,h2) -> minValue.equals(h1) || h2.equals(h1) ? h2: null ));
+	
+					
+					if(value != null && value != Double.MIN_VALUE){
+						listOldHours[c] = value;
+					}else{
+						listOldHours[c] = null;
+					}	
+				} catch (Exception e) {
+					Window.alert("Formato incorrecto");
+				}
+			}
+		} else {
+			for (int i=0; i<7; i++)
+				showDays[i] = true;
+		}
 	}
 	
 	// -------------------------------------------------------------------------------
 	// ---------------------------------- GET HOURS ----------------------------------
 	// -------------------------------------------------------------------------------
 	
+	public Double[] getListOldHours() {
+		return listOldHours;
+	}
+	
+	public Date getStartDate() {
+		return this.startDateDB.getValue();
+	}
+	
+	public Date getEndDate() {
+		return this.endDateDB.getValue();
+	}
+	
 	public Double getMondayHours(){
 		Double hour = null;
+		String hourStr = mondayHoursOpt.getValue();
 		try{
-			hour = Double.parseDouble(mondayHoursOpt.getValue());
+			if(StringUtils.isEmpty(hourStr))
+				return null;
+			hour = Double.parseDouble(hourStr);
 		}catch (NumberFormatException e) {}
 		
 		return hour;
@@ -293,8 +316,11 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	
 	public Double getTuesdayHours(){
 		Double hour = null;
+		String hourStr = tuesdayHoursOpt.getValue();
 		try{
-			hour = Double.parseDouble(tuesdayHoursOpt.getValue());
+			if(StringUtils.isEmpty(hourStr))
+				return null;
+			hour = Double.parseDouble(hourStr);
 		}catch (NumberFormatException e) {}
 		
 		return hour;
@@ -302,8 +328,11 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	
 	public Double getWednesdayHours(){
 		Double hour = null;
+		String hourStr = wednesdayHoursOpt.getValue();
 		try{
-			hour = Double.parseDouble(wednesdayHoursOpt.getValue());
+			if(StringUtils.isEmpty(hourStr))
+				return null;
+			hour = Double.parseDouble(hourStr);
 		}catch (NumberFormatException e) {}
 		
 		return hour;
@@ -311,8 +340,11 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	
 	public Double getThursdayHours(){
 		Double hour = null;
+		String hourStr = thursdayHoursOpt.getValue();
 		try{
-			hour = Double.parseDouble(thursdayHoursOpt.getValue());
+			if(StringUtils.isEmpty(hourStr))
+				return null;
+			hour = Double.parseDouble(hourStr);
 		}catch (NumberFormatException e) {}
 		
 		return hour;
@@ -320,8 +352,11 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	
 	public Double getFridayHours(){
 		Double hour = null;
+		String hourStr = fridayHoursOpt.getValue();
 		try{
-			hour = Double.parseDouble(fridayHoursOpt.getValue());
+			if(StringUtils.isEmpty(hourStr))
+				return null;
+			hour = Double.parseDouble(hourStr);
 		}catch (NumberFormatException e) {}
 		
 		return hour;
@@ -329,8 +364,11 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	
 	public Double getSaturdayHours(){
 		Double hour = null;
+		String hourStr = saturdayHoursOpt.getValue();
 		try{
-			hour = Double.parseDouble(saturdayHoursOpt.getValue());
+			if(StringUtils.isEmpty(hourStr))
+				return null;
+			hour = Double.parseDouble(hourStr);
 		}catch (NumberFormatException e) {}
 		
 		return hour;
@@ -338,10 +376,14 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 	
 	public Double getSundayHours(){
 		Double hour = null;
+		String hourStr = sundayHoursOpt.getValue();
 		try{
-			hour = Double.parseDouble(sundayHoursOpt.getValue());
+			if(StringUtils.isEmpty(hourStr))
+				return null;
+			hour = Double.parseDouble(hourStr);
 		}catch (NumberFormatException e) {}
 		
 		return hour;
 	}
+	
 }
