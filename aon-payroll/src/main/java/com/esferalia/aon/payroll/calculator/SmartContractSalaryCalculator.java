@@ -334,7 +334,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(new GUARENTEEDContractPayment(payment), start, end, amount);
 			}
 
-			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENgit statusSIONES Y SIST. ALTERNATIVOS 					
+			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENSIONES Y SIST. ALTERNATIVOS 					
 				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
 				|| isFixBaseCgcMin(payment) 
 				|| matchAny(ContextVariable.ERES, payment.getName()) 
@@ -589,6 +589,45 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return fixed;
 	}
 
+	protected List<ITimedResult<Double>> addOFFPart(ITimedResult<Double> result, List<Period> offs,
+			ExpressionContext expressionContext) throws UndefinedVariablesException, ExpressionException {
+				
+		List<Period> actives = expressionContext.getPeriods(ContextVariable.WORKED_DAYS);
+		double days = actives.stream().collect(Collectors.summingDouble(p -> {
+			try {
+				return getDays(p, expressionContext, ContextVariable.WORKED_DAYS);
+			} catch (ExpressionException e) {
+				return 0.00;
+			}	
+		}));
+		
+		double off = 0;
+		for ( ContextVariable ereDays : ContextVariable.ERE_DAYSS  ) {
+			try {
+				off += expressionContext.eval(
+				String.format("%s * %s", ContextVariable.REGULATORY_BASE.getName(), ereDays.getName()), 
+				result.getPeriod().getStart(), 
+				result.getPeriod().getEnd())
+				.stream()
+			 	.filter( r -> r.getValue() != null)
+				.filter( r -> r.getValue() instanceof Number)
+				.collect(Collectors.summingDouble(r -> ((Number)r.getValue()).doubleValue()));
+			} catch ( Exception e ) {
+				
+			}
+		}
+		
+		List<ITimedResult<Double>> fixed = 
+				new ArrayList<ITimedResult<Double>>(actives.size());
+		
+		for ( Period active : actives  ) {
+			double activeDays = getDays(active, expressionContext, ContextVariable.WORKED_DAYS );
+			Double activeValue = ( result.getValue() + off )/ days * activeDays; 
+			fixed.add( new TimedResult<Double>(activeValue, active, result.getContext()));
+		}
+		return fixed;
+	}
+
 	protected List<ITimedResult<Double>> fixPartialFactor(
 			List<ITimedResult<Double>> results, 
 			ExpressionContext expressionContext) 
@@ -806,6 +845,16 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 		if ( results.size() > 1  )
 			return results;
+
+		if (results.size() == 1 
+				&& ( results.get(0).getContext().containsKey(ContextVariable.GROSS)
+				|| results.get(0).getContext().containsKey(ContextVariable.LIQUID))) {
+			try {
+				return addOFFPart(results.get(0), strikes, expressionContext);
+			} catch (UndefinedVariablesException e) {
+			} catch (ExpressionException e) {
+			}
+		}
 
 		if (results.size() == 1
 			&& isWholeMonth(results.get(0))	
