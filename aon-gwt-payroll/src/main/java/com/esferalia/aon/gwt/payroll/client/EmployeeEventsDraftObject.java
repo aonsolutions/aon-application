@@ -134,7 +134,7 @@ public class EmployeeEventsDraftObject {
 	private Date endContractDate;
 	private DomainEmployeesServiceAsync employeesService;
 	public UndoManager<Undoable> undoManager;
-	private EmployeeCalendarDraftObjectData employeeCalendar;
+	private EmployeeCalendarDraftObject employeeCalendar;
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
 	private ArrayList<String> employeeContractVariables;
@@ -164,11 +164,11 @@ public class EmployeeEventsDraftObject {
 		return idEmployee;
 	}
 	
-	public void setEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
-		this.employeeCalendar = employeeCalendarDraftobjectData;
+	public void setEmployeeCalendar(EmployeeCalendarDraftObject employeeCalendarDraftobject) {
+		this.employeeCalendar = employeeCalendarDraftobject;
 	}
 	
-	public EmployeeCalendarDraftObjectData getEmployeeCalendar() {
+	public EmployeeCalendarDraftObject getEmployeeCalendar() {
 		return this.employeeCalendar;
 	}
 	
