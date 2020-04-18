@@ -1,34 +1,53 @@
 <ui:UiBinder 
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
-	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
-
-    <ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
     
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeCalendarPercentDialog.MyStyle">
-
+	<ui:style>
+	
 		.form {
 			padding: 10px;
 		}
-
-		.typesPanel{
+		
+		.datesPanel{
 			display: flex;
-			justify-content: space-between;
+			flex-direction: column;
 			padding: 5px;
+			border: 1px solid #e1e1e1;
+			margin-bottom: 10px;
 		}
 		
-		.typesLabel{
+		.rowPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: 3px 0;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.labelStyle{
+			width: 130px;
 			display: flex;
 			align-items: center;
-			margin-right: 5px;
 		}
 		
-		.percentPanel{
-			display: flex;
-			justify-content: space-between;
-			padding: 5px;
+		.dateBox{
+			width: 200px !important;
+			text-align: center;
+			border: solid #808080 1px;
+		}
+		
+		.w200{
+			width: 200px;
+		}
+		
+		.errorPanel{
+			font-weight: bold;
+			color: red;
+			padding: 0 5px;
 		}
 		
 		.percentLabel{
@@ -49,44 +68,46 @@
 			margin-left: 5px;
 		}
 		
-		.errorPanel{
-			font-weight: bold;
-			color: red;
-			padding: 0 5px;
-		}
-		
-		.buttonPanel{
-			display: flex;
-			justify-content: flex-end;
-			padding: 5px;
-			margin-top: 5px;
-		}
-		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 	
 		<g:HTMLPanel styleName="aon-width-all aon-height-all">
 		
-			<g:HTMLPanel styleName="{style.typesPanel}">
-				<g:Label styleName="{style.typesLabel}">Tipos de ausencia:</g:Label>
-				<g:ListBox ui:field="typeDrop"></g:ListBox>
+			<g:HTMLPanel styleName="{style.datesPanel}">
+			
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label>Fecha de inicio:</g:Label>
+					<a:DateBoxEx ui:field="startDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label>Fecha de fin:</g:Label>
+					<a:DateBoxEx ui:field="endDateDB" styleName="{style.dateBox}"></a:DateBoxEx>
+				</g:HTMLPanel>
+				
 			</g:HTMLPanel>
 			
-			<g:HTMLPanel styleName="{style.percentPanel}">
-				<g:Label styleName="{style.percentLabel}">Porcentaje de reducción sobre las horas totales:</g:Label>
-				<g:TextBox ui:field="percentBox" styleName="{style.percentTBx}"></g:TextBox>
-				<g:Label styleName="{style.percent}" >%</g:Label>
+			<g:HTMLPanel styleName="{style.datesPanel}">
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Tipos de ausencia:</g:Label>
+					<g:ListBox ui:field="typeDrop" styleName="{style.w200}"></g:ListBox>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.percentLabel}">Porcentaje de reducción sobre las horas totales:</g:Label>
+					<g:TextBox ui:field="percentBox" styleName="{style.percentTBx}"></g:TextBox>
+					<g:Label styleName="{style.percent}" >%</g:Label>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
 				<g:Label>El valor introducido no tiene formato de número.</g:Label>
 				<g:Label>Decimales separados por '.'</g:Label>
 			</g:HTMLPanel>
-			
-			<g:HTMLPanel styleName="{style.buttonPanel}">
+	
+			<g:HTMLPanel styleName="{style.buttonsPanel}">
 				<g:Button ui:field="cancelButton">Cerrar</g:Button>
-	    		<g:Button ui:field="acceptButton">OK</g:Button>
+			    <g:Button ui:field="acceptButton">OK</g:Button>
 			</g:HTMLPanel>
 		
 		</g:HTMLPanel>
