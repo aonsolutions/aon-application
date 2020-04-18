@@ -1924,6 +1924,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private EmployeeDraft employeeDraft;
 	private EmployeeNewDraft employeeNewDraft;
 	private EmployeeCalendarDraft employeeCalendarDraft;
+	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
 	private EmployeeSalary employeeSalary;
 	private CategoryDraft categoryDraft;
 	private AgreementDraft agreementDraft;
@@ -2246,6 +2247,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar) {
 		employeeDetail.setWidget(getEmployeeCalendarDraft());
 		getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(calendar);
+	}
+	
+	@Override
+	public void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar) {
+		employeeDetail.setWidget(getEmployeeCalendarDraftNew());
+		getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
 	}
 	
 	@Override
@@ -2615,6 +2622,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return employeeCalendarDraft;
 	}
 	
+	private EmployeeCalendarDraftNew getEmployeeCalendarDraftNew() {
+		if (employeeCalendarDraftNew == null)
+			employeeCalendarDraftNew = new EmployeeCalendarDraftNew();
+		return employeeCalendarDraftNew;
+	}
+	
 	private EmployeeSalary getEmployeeSalary() {
 		if (employeeSalary == null)
 			(employeeSalary = new EmployeeSalary()).addListener(this);
@@ -2848,15 +2861,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	protected static void showEmployeeCalendar() {
 		EmployeeTree employeeTree = getEmployeeTree();
-		EmployeeCalendarDraftObjectData calendar = employeeTree.getSalaryDraft().getSalaryDraftObject().getEmployeeCalendarDraftObjectData();
-		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraft());
-		employeeTree.getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(calendar);
+		EmployeeCalendarDraftObject calendar = employeeTree.getSalaryDraft().getSalaryDraftObject().getEmployeeCalendarDraftObject();
+		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraftNew());
+		employeeTree.getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
 	}
 	
-	protected static void showEmployeeCalendar(EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData) {
+	protected static void showEmployeeCalendar(EmployeeCalendarDraftObject employeeCalendarDraftobject) {
 		EmployeeTree employeeTree = getEmployeeTree();
-		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraft());
-		employeeTree.getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(employeeCalendarDraftobjectData);
+		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraftNew());
+		employeeTree.getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(employeeCalendarDraftobject);
 	}
 	
 	protected static void showNewWorkplace() {

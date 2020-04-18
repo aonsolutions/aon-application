@@ -338,5 +338,11 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 				
 	}
 
+	@Override
+	public void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

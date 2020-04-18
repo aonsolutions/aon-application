@@ -140,6 +140,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 		void onEmployeeCalendarSelected(EmployeeCalendarDraftObjectData calendar);
 		
+		void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar);
+		
 		void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary);
 
 		void onEmployeeCopy(Employee employee);
@@ -437,6 +439,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			onAgreementDraftSelected((AgreementDraftObject) userObject);
 		} else if (userObject instanceof EmployeeCalendarDraftObjectData) {
 			onEmployeeCalendarDraftSelected((EmployeeCalendarDraftObjectData) userObject);
+		} else if (userObject instanceof EmployeeCalendarDraftObject) {
+			onEmployeeNewCalendarDraftSelected((EmployeeCalendarDraftObject) userObject);
 		} else if (userObject instanceof EmployeeSalaryObject) {
 			onEmployeeSalarySelected((EmployeeSalaryObject) userObject);
 		} else if (userObject instanceof EmployeeDraftObject) {
@@ -1338,6 +1342,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 	
+	private void onEmployeeNewCalendarDraftSelected(EmployeeCalendarDraftObject employeeEventsDraftObject) {
+		for (Listener listener : listeners) {
+			listener.onEmployeeNewCalendarSelected(employeeEventsDraftObject);
+		}
+	}
+	
 	private void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
 		for (Listener listener : listeners) {
 			listener.onEmployeeSalarySelected(employeeSalaryObject);
@@ -1416,14 +1426,19 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 //		TreeItem salariestItem = addImageItem(employeeItem, "N\u00F3minas (Old)", images.salaries());
 //		salariestItem.ensureDebugId(getId(employee)+"-salaries");
 		
-		TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
-		EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 
-				employee.getStartDate(), employee.getEndDate(), employeesService);
-		calendarDraftItem.setUserObject(employeeCalendarDraftobjectData);
-		calendarDraftItem.ensureDebugId(getId(employee)+"-employeecalendar");
+		//Employee Calendar (BETA)
+		TreeItem calendarNewDraftItem = addImageItem(employeeItem, "Calendario (New)", images.laboralCalendar());
+		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(
+				employee.getId(), 
+				employee.getStartDate(), 
+				employee.getEndDate(), 
+				employeesService);
+		
+		calendarNewDraftItem.setUserObject(employeeCalendarDraftObject);
+		calendarNewDraftItem.ensureDebugId(getId(employee)+"-employeecalendarnew");
 		
 		//Add employeeCalendar to Draft
-		employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftobjectData);
+		//employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
 		
 
 		if (extended) {
@@ -1447,19 +1462,29 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			SalaryDraftObject draftObject = new SalaryDraftObject(salaryDraft, dataObject, employeesService);
 			salaryDraftItem.setUserObject(draftObject);
-			draftObject.setEmployeeCalendarDraftObjectData(employeeCalendarDraftobjectData);
 
 			final TreeItem employeeEventsItem = addImageItem(employeeItem, "Incidencias", images.data());
 			//final TreeItem employeeEventsItem = new TreeItem();
 			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId(),
 					employee.getStartDate(), employee.getEndDate(), employeesService);
-			employeeEventsDraftObject.setEmployeeCalendar(employeeCalendarDraftobjectData);
 			
 			employeeEventsItem.setUserObject(employeeEventsDraftObject);
 			
 			employeeEventsItem.ensureDebugId(getId(employee)+"-events");
 
 			draftObject.setEmployeeEventsDraftObject(employeeEventsDraftObject);
+			
+			//Employee Calendar (OLD)
+//			TreeItem calendarDraftItem = addImageItem(employeeItem, "Calendario (Old)", images.laboralCalendar());
+//			EmployeeCalendarDraftObjectData employeeCalendarDraftobjectData = new EmployeeCalendarDraftObjectData(employee.getId(), 
+//					employee.getStartDate(), employee.getEndDate(), employeesService);
+//			calendarDraftItem.setUserObject(employeeCalendarDraftobjectData);
+//			calendarDraftItem.ensureDebugId(getId(employee)+"-employeecalendar");
+			
+			//Add employeeCalendar to Draft
+			employeeDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
+			employeeEventsDraftObject.setEmployeeCalendar(employeeCalendarDraftObject);
+			draftObject.setEmployeeCalendarDraftObject(employeeCalendarDraftObject);
 						
 			// A.E.T
 			// addImageItem(employeeItem, "Regularizaciones", images.aet());
