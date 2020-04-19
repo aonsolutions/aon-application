@@ -285,7 +285,7 @@ public class SalaryDraft extends ResizeComposite
 			"SELF", 
 			"THIS", 
 			"CONCEPTO", // context
-			"MENUSALIDAD",
+			"MENSUALIDAD",
 
 			"HORAS_LUNES", 
 			"HORAS_MARTES", 
