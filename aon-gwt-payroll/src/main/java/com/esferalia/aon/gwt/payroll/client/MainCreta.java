@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.codemirror.client.ui.CodeMirror.Pos;
 import com.esferalia.aon.gwt.common.client.AON;
@@ -63,6 +63,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 //import com.google.gwt.storage.client.Storage;
@@ -288,18 +289,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		enterpriseCretaDetail = new EnterpriseCretaDetail();
 		enterprisesCretaDetail = new EnterprisesCretaDetail();
 		
-		progressPanel.addAttachHandler(e ->  {
-			// Synchronize cret@ messages. 
-			IndeterminateTask syncTask = new IndeterminateTask();
-			syncTask.setDescription("Sincronizando mensajes");
-			progressPanel.showIndeterminateTask(syncTask);
-			sync( new MainCretaSyncCallback(syncTask));
-		});
-		showProgressPanel();
-		
 		footPanel.addMinimizeHandler(e -> closeFootPanel());
 		footPanel.addMaximizeHandler(e -> maximizeFootPanel());
 		
+
 		MainCreta.this.enterprisesCretaDetail.addAttachHandler( e -> MainCreta.this.enterprisesCretaDetail.onTrabajadoresYTramos());
 	}
 	
@@ -397,6 +390,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		enterprisesContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		enterprisesContextMenu.setEnterprises(enterprises);
 		enterprisesContextMenu.show();
+	}
+	
+	@Override
+	public void onEnterprises(List<Enterprise> enterprises) {
+		progressPanel.addAttachHandler(e ->  {
+			// Synchronize cret@ messages. 
+			IndeterminateTask syncTask = new IndeterminateTask();
+			syncTask.setDescription("Sincronizando mensajes");
+			progressPanel.showIndeterminateTask(syncTask);
+			sync( new MainCretaSyncCallback(syncTask), enterprises.size() > 1 ? Collections.emptyList() : getCCCs(enterprises) );
+			
+		});
+		showProgressPanel();
 	}
 
 	// ------------------------------------------------------- UiHandler methods
@@ -1775,6 +1781,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		xmlHttpRequest.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary);
 
 		StringBuffer requestBuffer = new StringBuffer();
+		
 
 		for (Map.Entry<String, Collection<String>> entry : datas.entrySet()) {
 			for (String value : entry.getValue()) {
@@ -1879,7 +1886,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 	
+
+	
 	protected static void sync(final AsyncCallback<Void> cb) {
+		sync(cb, Collections.emptyMap());
+	}
+
+	protected static void sync(final AsyncCallback<Void> cb, Map<String, Collection<String>> options) {
 
 		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
 		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
@@ -1888,7 +1901,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		Collections.addAll(jsFiles, respuestas);
 		Collections.addAll(jsFiles, trabajadoresYTramos);
 
-		Map<String, Collection<String>> options = Collections.emptyMap();
 
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.TRABAJADORES_TRAMOS, options, jsFiles,
 				new ReadyStateChangeHandler() {
@@ -1930,8 +1942,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				});
 
 	}
-
 	protected static void sync(final SyncCallback cb) {
+		sync(cb, Collections.emptyMap());
+	}
+
+
+	protected static void sync(final SyncCallback cb, Collection<CCC> cccs) {
+		List<String> cccCodes = cccs.stream().map(ccc -> ccc.getCode()).collect(Collectors.toList());
+		Map<String, Collection<String>> options  = new HashMap<String, Collection<String>>();
+		options.put(CretaService.Parameter.CCC.name(), cccCodes );
+		sync(cb, options);
+	}
+
+	protected static void sync(final SyncCallback cb , Map<String, Collection<String>> options) {
 
 		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
 		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
@@ -1941,8 +1964,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		Collections.addAll(jsFiles, trabajadoresYTramos);
 
 		cb.onBegin();
-
-		Map<String, Collection<String>> options = Collections.emptyMap();
 
 		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.TRABAJADORES_TRAMOS, options, jsFiles,
 				new ReadyStateChangeHandler() {
@@ -2197,12 +2218,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return false;
 	}
 
-	private static List<String> getCCCs(Collection<Enterprise> enterprises) {
-		List<String> cccs = new ArrayList<String>();
+	private static List<CCC> getCCCs(Collection<Enterprise> enterprises) {
+		List<CCC> cccs = new ArrayList<CCC>();
 		for (Enterprise enterprise : enterprises)
 			for (Activity activity : enterprise.getActivities())
 				for (CCC ccc : activity.getCccs())
-					cccs.add(ccc.getRegime() + ccc.getGeozone() + ccc.getCode());
+					cccs.add(ccc);
 		return cccs;
 	}
 

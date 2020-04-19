@@ -70,6 +70,8 @@ public class FilterDAO implements Filter {
 		public Filter like(T t) {
 			if (t instanceof String) {
 				return new FilterDAO(field.like( (String) t));
+			} else if ( t instanceof byte[]) {
+				return new FilterDAO(field.like(new String((byte[])t)));
 			} else {
 				throw new UnsupportedOperationException();				
 			}

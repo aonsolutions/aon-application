@@ -2577,7 +2577,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				IndeterminateTask syncTask = new IndeterminateTask();
 				syncTask.setDescription("Sincronizando mensajes");
 				progressPanel.showIndeterminateTask(syncTask);
-				MainCreta.sync( new EmployeeTreeSyncCallback(syncTask));
+				MainCreta.sync( new EmployeeTreeSyncCallback(syncTask), getCCs() );
 			});
 			showProgressPanel();
 
@@ -2699,7 +2699,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		showResultsPanel();
 	}
 	
+	
+	private List<CCC> getCCs() {
 
+		List<CCC> ccs = new LinkedList<CCC>();
+
+		for (Activity activity : enterprise.getActivities()) {
+
+			List<CCC> cccs = activity.getCccs();
+			if (ccs == null) {
+				continue;
+			}
+
+			ccs.addAll(cccs);
+		}
+		return ccs;
+	}
 	// ------------------------------------------------------ Protected methods
 	
 	protected static JsBasesResult showBases(String json , DetailPanel detailPanel) {

@@ -45,10 +45,12 @@ import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -1287,9 +1289,10 @@ public class CretaServlet extends HttpServlet
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
 		
 		return
-		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from)
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from, cccs)
 		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, attach.getData()))
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
@@ -1302,9 +1305,10 @@ public class CretaServlet extends HttpServlet
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
 		
 		return
-		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from)
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_RESPUESTA, from, cccs)
 		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class, attach.getData()))
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
@@ -1317,9 +1321,10 @@ public class CretaServlet extends HttpServlet
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
 		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
 		
 		return distinct(
-			findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from)
+			findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from, cccs)
 			.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class, attach.getData()))
 			.filter(optional -> optional.isPresent())
 			.map(optional -> optional.get())
@@ -1448,6 +1453,24 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
+	private static Stream<Attach> findAttachs(String domainName, Integer domainId, String login, RegistryAttachmentType type, Date from, Collection<String>  cccs) {
+		return  AON.getAttachList(
+				domainName, 
+				domainId, 
+				login,    
+				p -> 
+					p.getDomainProperty().eq(domainId)
+					.and(p.getTypeProperty().eq((byte)type.ordinal()))
+					.and(p.getAttachDateProperty().ge(new java.sql.Date(from.getTime())))
+					.and(cccs.stream().map(ccc -> p.getDataProperty().like(("%"+ccc.substring(2)+"%").getBytes())).reduce((f1,f2)->f1.or(f2)).orElse(null))
+				,
+				AttachType.REGISTRY
+				)
+				.stream()
+				.filter(a -> checkData(a, login));
+		
+	}
+
 	private static void __onTrabajadoresYTramos (PrintWriter os, 
 			Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts,
 			Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> rs,
@@ -1658,11 +1681,11 @@ public class CretaServlet extends HttpServlet
 		
 	}
 	
-	private static String getParameter (HttpServletRequest req, CretaService.Parameter param, String def) {
-		String value = req.getParameter(param.name());
-		return value != null ? value : def;
-	}
 	
+	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param) {
+		return Optional.ofNullable(req.getParameterValues(param.name())).map(values -> Arrays.asList(values)).orElse(Collections.emptyList());
+	}
+
 	private static int getAnhoControl() {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONTH, -1);
@@ -1702,6 +1725,7 @@ public class CretaServlet extends HttpServlet
 		
 		throw new IllegalArgumentException();
 	}
+	
 	
 	
 }

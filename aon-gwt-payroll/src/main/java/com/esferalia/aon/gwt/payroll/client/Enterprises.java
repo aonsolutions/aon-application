@@ -53,6 +53,8 @@ public class Enterprises extends ResizeComposite implements
 		void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event);
 
 		void onEnterprisesContextMenu(List<Enterprise> enterprises, ContextMenuEvent event);
+
+		void onEnterprises(List<Enterprise> enterprises);
 	}
 
 	interface Binder extends UiBinder<Widget, Enterprises> {
@@ -162,6 +164,7 @@ public class Enterprises extends ResizeComposite implements
 
 	protected void onEnterprises(List<Enterprise> enterprises) {
 		
+
 		TreeItem enterprisesItem = new TreeItem(imageItemHTML(images.enterprises(), "EMPRESAS"));
 		enterprisesItem.setUserObject(enterprises);
 		tree.addItem(enterprisesItem);
@@ -171,6 +174,8 @@ public class Enterprises extends ResizeComposite implements
 		
 		enterprisesItem.setState(true, true);
 		tree.setSelectedItem(enterprisesItem);
+
+		onEnterpr1ses(enterprises);
 	}
 
 	public void clearEnterprise(Enterprise enterprise) {
@@ -278,6 +283,14 @@ public class Enterprises extends ResizeComposite implements
 		}
 		throw new NoSuchElementException();
 	}
+
+	protected Collection<Enterprise> getEnterprises( ) {
+		List<Enterprise> enterprises = new ArrayList<Enterprise>();
+		for ( int i = 0; i < tree.getItemCount(); i++)
+			enterprises.addAll(getEnterprises(tree.getItem(i)));
+		return enterprises;
+	}
+
 	// ------------------------------------------------------------------------
 
 
@@ -333,6 +346,11 @@ public class Enterprises extends ResizeComposite implements
 		}
 	}
 
+	private void onEnterpr1ses(List<Enterprise> enterprises) {
+		for (Listener listener : listeners) {
+			listener.onEnterprises(enterprises);
+		}
+	}
 
 	/**
 	 * A helper method to simplify adding tree items that have attached images.
@@ -364,13 +382,6 @@ public class Enterprises extends ResizeComposite implements
 	}
 	
 	
-	private Collection<Enterprise> getEnterprises( ) {
-		List<Enterprise> enterprises = new ArrayList<Enterprise>();
-		for ( int i = 0; i < tree.getItemCount(); i++)
-			enterprises.addAll(getEnterprises(tree.getItem(i)));
-		return enterprises;
-	}
-
 	private Collection<Enterprise> getEnterprises(TreeItem treeItem) {
 		Object userObject = treeItem.getUserObject();
 		if ( userObject instanceof Enterprise )
