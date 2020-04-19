@@ -262,39 +262,19 @@
 		<g:north size="55">
 			<g:FlowPanel>
 				<g:MenuBar>
-					<g:MenuItem text="Archivo" ui:field="archivoMenuItem">
+					<g:MenuItem text="Calendario" ui:field="archivoMenuItem">
 						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="workingDayMenuItem" text="Añadir día(s) laborables" />
-							<g:MenuItem ui:field="nonWorkingDayMenuItem" text="Añadir día(s) no laborables" />
-							<g:MenuItem ui:field="inactivityDayMenuItem" text="Añadir día(s) inactividad" />
-							<g:MenuItem ui:field="dropDayMenuItem" text="Añadir día(s) ausencia" />
-							<g:MenuItem ui:field="holidayDayMenuItem" text="Añadir día(s) vacaciones" />
-							<g:MenuItem ui:field="partialityDayMenuItem" text="Añadir día(s) parcialidad" />
-							<g:MenuItem ui:field="peonadasDayMenuItem" text="Añadir día(s) peonadas" />		
+							<g:MenuItem ui:field="nonWorkingMenuItem" text="Definir semana laboral" />	
+							<g:MenuItem ui:field="hourMenuItem" text="Definir horas semanales"></g:MenuItem>	
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
-							<g:MenuItem ui:field="eraseEventMenuItem" text="Borrar evento(s)" />
+							<g:MenuItem ui:field="resetMenuItem" text="Resetear calendario" />
 						</g:MenuBar>
-					</g:MenuItem>
-					<g:MenuItem text="Seleccionar" styleName="{style.hide}">
-						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="selectAllDaysMenuItem" text="Seleccionar todo" />
-							<g:MenuItem ui:field="selectUntillMenuItem" text="Seleccionar hasta" />
-							<g:MenuItem ui:field="selectAllSaturdaysMenuItem" text="Seleccionar sábados" />
-							<g:MenuItem ui:field="selectAllSundaysMenuItem" text="Seleccionar domingos" />
-						</g:MenuBar>
-					</g:MenuItem>
-					<g:MenuItem ui:field="hourMenuItem" text="Horas">
 					</g:MenuItem>
 					<g:MenuItem text="Ver" ui:field="viewMenuItem">
 						<g:MenuBar vertical="true">
 							<g:MenuItem ui:field="showHourMenuItem" text="Ocultar horas" />
-						</g:MenuBar>
-					</g:MenuItem>
-					<g:MenuItem text="Ajustes" ui:field="settingMenuItem">
-						<g:MenuBar vertical="true">
-							<g:MenuItem ui:field="nonWorkingMenuItem" text="Días no laborables" />
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>
@@ -311,18 +291,9 @@
 						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar {style.flex}">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group {style.hide}">
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" visible="true">
 							<g:Button debugId='undoAllButton' ui:field='undoAllButton'
-								styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}'
-								enabled="false" />
-							<g:Button ui:field="undoButton"
-								styleName='aon-finding-toolbar-item aon-icon-undo' enabled="false" />
-							<g:Button ui:field='redoButton'
-								styleName="aon-finding-toolbar-item aon-icon-redo" enabled="false" />
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-							<g:Button ui:field='resetButton'
-								styleName='aon-finding-toolbar-item aon-icon-cancel' text="RESETEAR" />
+									styleName='aon-finding-toolbar-item {res.css.aonIconUndoAll}' />
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							<g:Button ui:field='saveButton'

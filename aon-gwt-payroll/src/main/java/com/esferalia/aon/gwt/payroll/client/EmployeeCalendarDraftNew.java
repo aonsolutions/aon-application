@@ -302,30 +302,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	// ---------------------------- MenuItem (UiField)
+
+	@UiField
+	MenuItem nonWorkingMenuItem;
 	
 	@UiField
-	MenuItem workingDayMenuItem;
-	
-	@UiField
-	MenuItem nonWorkingDayMenuItem;
-	
-	@UiField
-	MenuItem inactivityDayMenuItem;
-	
-	@UiField
-	MenuItem dropDayMenuItem;
-	
-	@UiField
-	MenuItem holidayDayMenuItem;
-	
-	@UiField
-	MenuItem partialityDayMenuItem;
-	
-	@UiField
-	MenuItem peonadasDayMenuItem;
-	
-	@UiField
-	MenuItem eraseEventMenuItem;
+	MenuItem resetMenuItem;
 	
 	@UiField
 	MenuItem hourMenuItem;
@@ -336,16 +318,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	@UiField
 	MenuItem showHourMenuItem;
 	
-	@UiField
-	MenuItem settingMenuItem;
-	
-	@UiField
-	MenuItem nonWorkingMenuItem;
-	
 	// ---------------------------- Save / Reset
 	
-	Button resetButton;
+	@UiField
+	Button undoAllButton;
 	
+	@UiField
 	Button saveButton;
 	
 	// ---------------------------- Change Year (UiField)
@@ -438,6 +416,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		this.employeeCalendarDraftObject = employeeCalendarDraftObject;
 		
 		this.employeeCalendarDraftObject.initCalendarInfo(s -> {
+			// Init save and undo all
+			onSaved();
+			
 			initCalendar();
 		}, f -> {});
 		
@@ -448,60 +429,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	// ----------------------------------------------------------------------------------------------------
 	
 	private void initMenuItem() {
-		// Init DayTypes MenuItem
-		workingDayMenuItem.setScheduledCommand(new Command() {
+		// Set working and nonworking days
+		nonWorkingMenuItem.setScheduledCommand(new Command() {
 			@Override
 			public void execute() {
-				initDatesDialog(DayType.WORKINGDAY);
-			}
-		});
-		
-		nonWorkingDayMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.NOWORKINGDAY);
-			}
-		});
-		
-		inactivityDayMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initiInactivityDialog(DayType.INACTIVITY);
-			}
-		});
-		
-		dropDayMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initDropDialog(DayType.DROPDAY);
-			}
-		});
-		
-		holidayDayMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.HOLIDAY);
-			}
-		});
-		
-		partialityDayMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initPartialityDialog(DayType.PARTIALITY);
-			}
-		});
-		
-		peonadasDayMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.PEONADAS);
-			}
-		});
-		
-		eraseEventMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				initDatesDialog(DayType.NOTYPEDAY);
+				EmployeeCalendarNonWorkingDialog nonWorkingDialog = new EmployeeCalendarNonWorkingDialog(
+						employeeCalendarDraftObject.getNonWorkingDays()) {
+					
+					@Override
+					protected void onAccept() {
+						employeeCalendarDraftObject.setNonWorkingDays(getNonWorkingDays());
+						changeYear(0);
+					}
+				};
+				
+				nonWorkingDialog.center();
+				nonWorkingDialog.show();
 			}
 		});
 		
@@ -509,6 +452,28 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			@Override
 			public void execute() {
 				initHourDialog();
+			}
+		});
+		
+		resetMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea resetear el calendario con los valores iniciales?") {
+					
+					@Override
+					protected void onAccept() {
+						employeeCalendarDraftObject.resetCalendarInfo(
+								s -> {
+									// Init save and undo all
+									onSaved();
+									changeYear(0);
+								}, f -> {}
+						);
+					}
+				};
+				
+				dialog.center();
+				dialog.show();
 			}
 		});
 		
@@ -528,44 +493,33 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				}
 			}
 		});
-		
-		// Set working and nonworking days
-		nonWorkingMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				EmployeeCalendarNonWorkingDialog nonWorkingDialog = new EmployeeCalendarNonWorkingDialog(
-						employeeCalendarDraftObject.getNonWorkingDays()) {
-					
-					@Override
-					protected void onAccept() {
-						employeeCalendarDraftObject.setNonWorkingDays(getNonWorkingDays());
-						changeYear(0);
-					}
-				};
-				
-				nonWorkingDialog.center();
-				nonWorkingDialog.show();
-			}
-		});
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
 	//											UI HANDLERS
 	// ----------------------------------------------------------------------------------------------------
 	
-	@UiHandler("resetButton")
-	public void onResetButtonClick(ClickEvent event) {
-		this.employeeCalendarDraftObject.resetCalendarInfo(
-				s -> {
-					changeYear(0);
-				}, f -> {}
-		);
+	@UiHandler("undoAllButton")
+	public void onundoAllButtonClick(ClickEvent event) {
+		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea restaurar el calendario desde la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?") {
+			@Override
+			protected void onAccept() {
+				employeeCalendarDraftObject.initCalendarInfo(s -> {
+					onSaved();
+					initCalendar();
+				}, f -> {});
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
 	}
 	
 	@UiHandler("saveButton")
 	public void onSaveButtonClick(ClickEvent event) {
 		this.employeeCalendarDraftObject.saveCalendarInfo(
 				s -> {
+					onSaved();
 					changeYear(0);
 				},
 				f -> {}
@@ -713,7 +667,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Set fulltime journey
 		if(this.employeeCalendarDraftObject.isFullTimeJourney()) {
 			hideHoursRows();
-			showElement(settingMenuItem.getElement());
 			hideElement(viewMenuItem.getElement());
 			hideElement(hourMenuItem.getElement());
 			hideElement(hourButton.getElement());
@@ -721,7 +674,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		} else {
 			this.showHours = true;
 			showHoursRows();
-			hideElement(settingMenuItem.getElement());
 			showElement(viewMenuItem.getElement());
 			showElement(hourMenuItem.getElement());
 			showElement(hourButton.getElement());
@@ -731,10 +683,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Set agrarian contract
 		if(this.employeeCalendarDraftObject.isAgrarianContract()) {
 			showElement(peonadasDayButton.getElement());
-			showElement(peonadasDayMenuItem.getElement());
 		} else {
 			hideElement(peonadasDayButton.getElement());
-			hideElement(peonadasDayMenuItem.getElement());
 		}
 		
 		// Clear calendar
@@ -743,6 +693,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		initDayTypeCellsType();
 		cleanSelectedDates();
 		this.month = 0;
+		
 		//Crear calendario
 		for (int row = 1; row < totalRows; row += 2)
 			paintCalendar(row);		
@@ -976,6 +927,20 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
+	//										SAVE / UNDO ALL
+	// ----------------------------------------------------------------------------------------------------
+	
+	private void onSaved(){
+		saveButton.setVisible(false);
+		undoAllButton.setVisible(false);
+	}
+	
+	private void onChange(){
+		saveButton.setVisible(true);
+		undoAllButton.setVisible(true);
+	}
+	
+	// ----------------------------------------------------------------------------------------------------
 	//										CHANGE YEAR EVENT
 	// ----------------------------------------------------------------------------------------------------
 	
@@ -1192,11 +1157,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 	private void addDayType(Date startDate, Date endDate, DayType dayType, String expression) {
 		employeeCalendarDraftObject.addDayType(startDate, endDate, dayType, expression);
+		onChange();
 		changeYear(0);
 	}
 	
 	private void addPartialityDayType(Date startDate, Date endDate, DayType dayType, String expression) {
 		employeeCalendarDraftObject.addPartialityDayType(startDate, endDate, dayType, expression);
+		onChange();
 		changeYear(0);
 	}
 	
