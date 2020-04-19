@@ -20,10 +20,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,7 +53,6 @@ import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -231,9 +233,44 @@ public class CretaServlet extends HttpServlet
 								noDiffsBasesCb.getTipos(), noDiffsBasesCb.getAceptarBasesAnteriores(),
 								noDiffsBasesCb.getCCCs()));
 			} catch (NoneSkippedException e) {
-	//			os.printf("\"diff_bases\":null,\r\n");
+				//os.printf("\"diff_bases\":null,\r\n");
 			}
 	
+			try {
+				for (Part part : req.getParts()) {
+					try {
+						CretaService.File file = CretaService.File.valueOf(part.getName());
+						if (file == CretaService.File.TRABAJADORES_TRAMOS ){
+							part.getInputStream();
+							// full_bases generated from  'SDL Fichero de Trabajadores y Tramos' try from salaries 
+							Map<Parameter,Object> parameterMap = new HashMap<CretaService.Parameter, Object>();
+							parameterMap.put(Parameter.TIPO, pickerBasesCb.getTipo());
+							parameterMap.put(Parameter.AUTORIZADO, pickerBasesCb.getAutorizado());
+							parameterMap.put(Parameter.DESDE_MES, pickerBasesCb.getDesdeMes());
+							parameterMap.put(Parameter.DESDE_ANHO, pickerBasesCb.getDesdeAnho());
+							parameterMap.put(Parameter.HASTA_MES, pickerBasesCb.getHastaMes());
+							parameterMap.put(Parameter.HASTA_ANHO, pickerBasesCb.getHastaAnho());
+							parameterMap.put(Parameter.CTRL_MES, pickerBasesCb.getDesdeMes());
+							parameterMap.put(Parameter.CTRL_ANHO, pickerBasesCb.getDesdeAnho());
+							parameterMap.put(Parameter.CCC, pickerBasesCb.getCCCs());
+							trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, parameterMap ));
+							try {
+								os.printf("\"salary_bases\":\"%s\",\r\n", generateBases(connection, true, false, false, nafs, defaults,
+										trabajadoresYTramosIss, respuestasIss, 
+										customBasesCb, 
+										i54Callback , 
+										new CheckNotEqualsBasesCallback(pickerBasesCb.getBases()  )));
+							} catch (EmptyBasesException e) {
+							}
+						}
+					} catch (IllegalArgumentException e) {
+					}
+				}
+			}
+			catch ( Exception e ) { 
+				e.printStackTrace();
+			}
+
 			os.printf("\"errors\":%s,\r\n", toJSON(pickerBasesCb.errors));
 	
 			os.printf("\"unknown\":%s,\r\n", toJSON(pickerBasesCb.unknown));
@@ -469,6 +506,41 @@ public class CretaServlet extends HttpServlet
 		//return new ByteArrayInputStream(os.toByteArray());
 	
 	}
+	
+	private static InputStream generateTrabajadoresYTramos(Connection connection,Map<Parameter,Object> defs  ) throws JAXBException, IOException {
+		
+		String tipo = (String)defs.get(CretaService.Parameter.TIPO);
+		String cccs[] = (String[])defs.get(CretaService.Parameter.CCC);
+		String desdeMes = (String)defs.get(CretaService.Parameter.DESDE_MES);
+		String desdeAnho = (String)defs.get(CretaService.Parameter.DESDE_ANHO);
+		String hastaMes = (String)defs.get(CretaService.Parameter.HASTA_MES);
+		String hastaAnho = (String)defs.get(CretaService.Parameter.HASTA_ANHO);
+		String ctrlMes = (String)defs.get(CretaService.Parameter.CTRL_MES);
+		String ctrlAnho = (String)defs.get(CretaService.Parameter.CTRL_ANHO);
+		String autorizado = (String)defs.get(CretaService.Parameter.AUTORIZADO);
+		
+		
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		TrabajadoresTramos.generate(
+				connection, 
+				autorizado, 
+				desdeMes, 
+				desdeAnho, 
+				hastaMes, 
+				hastaAnho, 
+				ctrlMes, 
+				ctrlAnho, 
+				tipo, 
+				cccs, 
+				os);
+		os.close();
+		
+		return new StringBufferInputStream(String.format("%s", os.toString(), "UTF-8"));
+		//return new ByteArrayInputStream(os.toByteArray());
+	
+	}
+	
 	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
 			boolean acceptPrevBases, String nafs[], String defaults[], InputStream is, BasesCallback... cbs)
 					throws EmptyBasesException, JAXBException, XMLStreamException, FactoryConfigurationError,
@@ -935,12 +1007,63 @@ public class CretaServlet extends HttpServlet
 	}
 
 	private static class InfoPickerBasesCallback implements BasesCallback {
+		
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases;
 
 		private List<Event> errors = new ArrayList<Event>();
 		private List<Event> warnings = new ArrayList<Event>();
 
 		private List<UnknownDato> unknown = new ArrayList<UnknownDato>();
 
+		// --------------------------------------------------------------- Info
+		
+		@Override
+		public void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
+			this.bases = bases;
+		}
+		
+		public net.aonsolutions.core.tgss.creta.jaxb.bases.Bases getBases() {
+			return bases;
+		}
+		
+		public String getAutorizado() {
+			return bases.getAutorizado();
+		}
+		
+		public String getTipo() {
+			return getLiquidacion().getTipo();
+		}
+		
+		public String [] getCCCs() {
+			return 
+			bases.getLiquidacion()
+			.stream()
+			.map(l -> l.getCcc() )
+			.map(c -> c.getRegimen() + c.getProvincia() + c.getNumero() )
+			.toArray(String[]::new)
+			;
+		}
+		
+		public String getDesdeMes() {
+			return getLiquidacion().getPeriodoDesde().getMes();
+		}
+
+		public String getDesdeAnho() {
+			return getLiquidacion().getPeriodoDesde().getAnho();
+		}
+
+		public String getHastaMes() {
+			return getLiquidacion().getPeriodoHasta().getMes();
+		}
+
+		public String getHastaAnho() {
+			return getLiquidacion().getPeriodoHasta().getAnho();
+		}
+
+		public net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion getLiquidacion() {
+			return bases.getLiquidacion().stream().findFirst().orElseThrow(() -> new IllegalArgumentException());
+		}
+		
 		// ------------------------------------------------------------- Errors
 
 		@Override
@@ -1202,6 +1325,8 @@ public class CretaServlet extends HttpServlet
 							liquidacion.getCcc().getNumero()))
 					.setLiquidacion(liquidacion));
 		}
+		
+		
 
 		// ----------------------------------------------------- Private Static
 
@@ -1241,6 +1366,21 @@ public class CretaServlet extends HttpServlet
 			}
 		}
 
+	}
+	
+	private static class CheckNotEqualsBasesCallback implements BasesCallback {
+		
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases;
+		
+		public CheckNotEqualsBasesCallback(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
+			this.bases = bases;
+		}
+		
+		@Override
+		public void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
+			if ( compare(this.bases, bases, AonStringUtils::compareIgnoreCase) == 0)
+				throw new IllegalArgumentException();
+		}
 	}
 
 	public static class NoneSkippedException extends RuntimeException {
@@ -1726,6 +1866,110 @@ public class CretaServlet extends HttpServlet
 		throw new IllegalArgumentException();
 	}
 	
+	private static int compare( net.aonsolutions.core.tgss.creta.jaxb.bases.Bases b1, net.aonsolutions.core.tgss.creta.jaxb.bases.Bases b2, Comparator<String> c) {
+		return compare(b1.getLiquidacion(), b2.getLiquidacion(), (l1,l2) -> compare(l1,  l2, c) );
+	}
+	
+
+	private static <T extends Object > int compare(List<T> l1, List<T> l2, Comparator<T> c) {
+		int compare = l1.size() - l2.size();
+		if ( compare != 0 )
+			return compare;
+		
+		Collections.sort(l1, c);
+		Collections.sort(l2, c);
+		
+		Iterator<T> it1 = l1.iterator();
+		Iterator<T> it2 = l2.iterator();
+		while ( it1.hasNext() && it2.hasNext() ) {
+			compare = c.compare(it1.next(), it2.next());
+			if ( compare != 0 ) {
+				return compare;
+			}
+		}
+		return 0;
+	}
+
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion l1, net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion l2, Comparator<String> c) {
+		int compare = c.compare(l1.getTipo(), l2.getTipo());
+		if ( compare != 0 )
+			return compare;
+		compare = compare(l1.getCcc(), l2.getCcc(),c);
+		if ( compare != 0 )
+			return compare;
+		compare = compare(l1.getPeriodoDesde(), l2.getPeriodoDesde(),c);
+		if ( compare != 0 )
+			return compare;
+		compare = compare(l1.getPeriodoHasta(), l2.getPeriodoHasta(),c);
+		if ( compare != 0 )
+			return compare;
+		compare = compare(l1.getLiquidacionMes(), l2.getLiquidacionMes(),(lm1,lm2) -> compare(lm1,lm2,c));
+		if ( compare != 0 )
+			return compare;
+		
+		return c.compare(l1.getAceptarBasesAnteriores(), l2.getAceptarBasesAnteriores());
+		
+	}
+	
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes l1, net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes l2, Comparator<String> c) {
+		int compare = compare(l1.getMesLiquidativo(), l2.getMesLiquidativo(), c);
+		if ( compare != 0 )
+			return compare;
+		return compare(l1.getTrabajadores().getTrabajador(), l2.getTrabajadores().getTrabajador(), (t1,t2) -> compare(t1,t2,c));
+	}
+
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.CtaCot l1, net.aonsolutions.core.tgss.creta.jaxb.bases.CtaCot l2, Comparator<String> c) {
+		int compare = c.compare(l1.getNumero(),  l2.getNumero());
+		if ( compare != 0 )
+			return compare;
+		compare = c.compare(l1.getProvincia(),  l2.getProvincia());
+		if ( compare != 0 )
+			return compare;
+		return c.compare(l1.getNumero(),  l2.getNumero());
+	}
+
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Fecha l1, net.aonsolutions.core.tgss.creta.jaxb.bases.Fecha l2, Comparator<String> c) {
+		int compare = c.compare(l1.getDia(),  l2.getDia());
+		if ( compare != 0 )
+			return compare;
+		compare = c.compare(l1.getMes(),  l2.getMes());
+		if ( compare != 0 )
+			return compare;
+		return c.compare(l1.getAnho(),  l2.getAnho());
+	}
+
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Periodo l1, net.aonsolutions.core.tgss.creta.jaxb.bases.Periodo l2, Comparator<String> c) {
+		int compare = c.compare(l1.getMes(),  l2.getMes());
+		if ( compare != 0 )
+			return compare;
+		return c.compare(l1.getAnho(),  l2.getAnho());
+	}
 	
 	
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Dato d1, net.aonsolutions.core.tgss.creta.jaxb.bases.Dato d2, Comparator<String> c) {
+		int compare = c.compare(d1.getTipoDato(), d2.getTipoDato());
+		if ( compare != 0 )
+			return compare;
+		compare = c.compare(d1.getCodigo(), d2.getCodigo());
+		if ( compare != 0 )
+			return compare;
+		return c.compare(d1.getValor(), d2.getValor());
+	}
+
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador t1, net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador t2, Comparator<String> c) {
+		int compare = c.compare(t1.getNaf(),  t2.getNaf());
+		if ( compare != 0 )
+			return compare;
+		return compare(t1.getTramos().getTramo(),  t2.getTramos().getTramo(), (_t1,_t2) -> compare(_t1,_t2,c));
+	}
+
+	private static int compare(net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo t1, net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo t2, Comparator<String> c) {
+		int compare = compare(t1.getFechaDesde(), t2.getFechaDesde(),c);
+		if ( compare != 0 )
+			return compare;
+		compare = compare(t1.getFechaHasta(), t2.getFechaHasta(),c);
+		if ( compare != 0 )
+			return compare;
+		return compare(t1.getDatosTramo().getDato(),  t2.getDatosTramo().getDato(), (d1,d2) -> compare(d1,d2,c));
+	}
 }

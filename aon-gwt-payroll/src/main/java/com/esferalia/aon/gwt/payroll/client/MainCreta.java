@@ -631,42 +631,54 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			};
 
 			try {
-				mergeEditor.setText(result.getChangedBasesFile());
+				
+				mergeEditor.setText(result.getSalaryBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
-
+				
 				cretaResults.setSelectionHandler(e -> mergeEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
-
-			} catch (NoSuchElementException e1) {
+				
+			} catch ( NoSuchElementException e0 ) {
 				try {
-					mergeEditor.setShowDifferences(false);
-					mergeEditor.setText(result.getDraftRequestFile());
+					mergeEditor.setText(result.getChangedBasesFile());
 					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
+	
 					cretaResults.setSelectionHandler(e -> mergeEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
-				} catch ( NoSuchElementException e2 ){
-					FileEditor basesEditor = new BasesFileEditor();
-					basesEditor.setMode("text/xml");
-					basesEditor.setFoldGutter(true);
-					basesEditor.setLineNumbers(true);
-					basesEditor.setText(result.getBasesFile());
-					basesEditor.setTitle(CretaService.File.BASES.getFilename());
-					basesEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
-					detailPanel.setWidget(basesEditor);
-					basesEditor.autoRefresh();
-					cretaResults.setSelectionHandler(e -> basesEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
-
-					CheckBox reftification = new CheckBox("Reftificativa");
-					reftification.setValue(result.isRectifying());
-					reftification.setStyleName("aon-finding-toolbar-item");
-					reftification.addClickHandler(e-> onReftificativa.accept(null));
-					basesEditor.add(reftification);
+	
+				} catch (NoSuchElementException e1) {
+					try {
+						mergeEditor.setShowDifferences(false);
+						mergeEditor.setText(result.getDraftRequestFile());
+						mergeEditor.setTitle(CretaService.File.BASES.getFilename());
+						mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+						detailPanel.setWidget(mergeEditor);
+						mergeEditor.autoRefresh();
+						cretaResults.setSelectionHandler(e -> mergeEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
+					} catch ( NoSuchElementException e2 ){
+						FileEditor basesEditor = new BasesFileEditor();
+						basesEditor.setMode("text/xml");
+						basesEditor.setFoldGutter(true);
+						basesEditor.setLineNumbers(true);
+						basesEditor.setText(result.getBasesFile());
+						basesEditor.setTitle(CretaService.File.BASES.getFilename());
+						basesEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+						detailPanel.setWidget(basesEditor);
+						basesEditor.autoRefresh();
+						cretaResults.setSelectionHandler(e -> basesEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
+	
+						CheckBox reftification = new CheckBox("Reftificativa");
+						reftification.setValue(result.isRectifying());
+						reftification.setStyleName("aon-finding-toolbar-item");
+						reftification.addClickHandler(e-> onReftificativa.accept(null));
+						basesEditor.add(reftification);
+					}
 				}
-			}	
+			}
 
 			cretaResults.setJsFiles(getSelected());
 			cretaResults.addErrors(result.getErrors());

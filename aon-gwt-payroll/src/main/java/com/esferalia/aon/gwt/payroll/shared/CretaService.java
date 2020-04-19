@@ -267,6 +267,14 @@ public interface CretaService {
 
 		}
 
+		public final String getSalaryBasesFile() {
+			String bases = getSalaryBases();
+			if ( bases == null )
+				throw new NoSuchElementException();
+			return URL.decodeQueryString(bases);
+
+		}
+
 		public final String getDraftRequestFile() {
 			String draft = getDraftRequest();
 			if ( draft == null )
@@ -283,6 +291,10 @@ public interface CretaService {
 
 		public final native String getDiffBases() /*-{
 			return this.diff_bases;
+		}-*/;
+
+		public final native String getSalaryBases() /*-{
+			return this.salary_bases;
 		}-*/;
 
 		public final native String getDraftRequest() /*-{
