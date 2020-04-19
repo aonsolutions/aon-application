@@ -5,63 +5,60 @@
 
     <ui:style type="com.esferalia.aon.gwt.payroll.client.AcceptCancelDialog.MyStyle">
 
-		.paddingLabels{
-			padding-left: 5px;
-    		padding-right: 5px;
-		}
-
-		.width{
-			width: 350px;
-		}
-
-		.paddingBlocks{
-			padding-bottom: 5px;
-		}
-
 		.form {
 			padding: 10px;
 		}
-
-		.closeButton {
-			position: relative;
-    		left: 200px;
-			border: 1px solid #bbb;
-			border-radius: 3px;
-			cursor: pointer;
+		
+		.datesPanel{
+			display: flex;
+			flex-direction: column;
+			padding: 5px;
+			border: 1px solid #e1e1e1;
+			margin-bottom: 10px;
 		}
 		
-		.marginTop{
-			margin-top: 20px;
+		.rowPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: 3px 0;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.message{
+			color:red;
+			max-width: 450px;
+		}
+		
+		.dateBox{
+			width: 120px !important;
+			text-align: center;
 		}
 
 	</ui:style>
 
-	<g:HTMLPanel styleName="aon-width-all aon-height-all">
-		<table class="aon-width-all aon-height-all" >
-			<tr>
-				<td>
-					<g:Label ui:field="label1" styleName="{style.paddingLabels} {style.width}"></g:Label> 
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<g:Label ui:field="label2" styleName="{style.paddingLabels} {style.width}"></g:Label> 
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<g:Label ui:field="label3" styleName="{style.paddingLabels} {style.width}"></g:Label> 
-				</td>
-			</tr>
-			<tr>
-			</tr>
-			<tr>
-				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton" styleName="{style.marginTop}" debugId="paymetDialogCancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton" styleName="{style.marginTop}" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>
-				</td>
-			</tr>
-		</table>		
+	<g:HTMLPanel styleName="{style.form}">
+
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+		
+			<g:HTMLPanel styleName="{style.datesPanel}">
+			
+				<g:HTMLPanel styleName="{style.rowPanel} {style.message}">
+					<g:Label ui:field="message"></g:Label>
+				</g:HTMLPanel>
+			
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.buttonsPanel}">
+				<g:Button ui:field="cancelButton">Cerrar</g:Button>
+			    <g:Button ui:field="acceptButton">OK</g:Button>
+			</g:HTMLPanel>
+				
+		</g:HTMLPanel>
+		
 	</g:HTMLPanel>
 
 </ui:UiBinder>

@@ -303,7 +303,7 @@ public class EmployeeAFIDialog extends CustomDialog {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?", "", "") {
+						AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?") {
 							
 							@Override
 							protected void onAccept() {
@@ -514,7 +514,7 @@ public class EmployeeAFIDialog extends CustomDialog {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?", "", "") {
+					AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?") {
 						
 						@Override
 						protected void onAccept() {

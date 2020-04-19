@@ -33,13 +33,7 @@ public abstract class AcceptCancelDialog extends CustomDialog {
 	Button acceptButton;
 	
 	@UiField
-	Label label1;
-
-	@UiField
-	Label label2;
-	
-	@UiField
-	Label label3;
+	Label message;
 
 	public AcceptCancelDialog() {
 		setCaption("Aviso");
@@ -56,14 +50,12 @@ public abstract class AcceptCancelDialog extends CustomDialog {
 		
 	}
 	
-	public AcceptCancelDialog(String caption, String message1, String message2, String message3) {
+	public AcceptCancelDialog(String caption, String message) {
 		setCaption(caption);
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		label1.setText(message1);
-		label2.setText(message2);
-		label3.setText(message3);
+		this.message.setText(message);
 		
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override

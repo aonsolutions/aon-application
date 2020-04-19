@@ -1124,7 +1124,7 @@ public class EmployeeCalendarDraft extends Composite implements ContextMenuHandl
 	
 	@UiHandler("resetButton")
 	void onResetButtonClick(ClickEvent event) {
-		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea resetear el calendario?", "", "") {
+		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea resetear el calendario?") {
 			
 			@Override
 			protected void onAccept() {
