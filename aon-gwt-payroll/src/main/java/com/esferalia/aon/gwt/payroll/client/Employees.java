@@ -1427,7 +1427,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 //		salariestItem.ensureDebugId(getId(employee)+"-salaries");
 		
 		//Employee Calendar (BETA)
-		TreeItem calendarNewDraftItem = addImageItem(employeeItem, "Calendario (New)", images.laboralCalendar());
+		TreeItem calendarNewDraftItem = addImageItem(employeeItem, "Calendario", images.laboralCalendar());
 		EmployeeCalendarDraftObject employeeCalendarDraftObject = new EmployeeCalendarDraftObject(
 				employee.getId(), 
 				employee.getStartDate(), 
