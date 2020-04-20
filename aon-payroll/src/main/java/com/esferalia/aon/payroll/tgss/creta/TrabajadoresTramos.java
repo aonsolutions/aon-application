@@ -1347,8 +1347,8 @@ public class TrabajadoresTramos {
 		) > 0.00;
 		
 		double ereFactor = 0.00;
-		for ( ContextVariable ere : ContextVariable.ERE_FACTORS )
-			ereFactor = getContextData(ere.getName(), salary, startDate, endDate,  0.00) ;
+		for ( ContextVariable ere : ContextVariable.ERE_FACTORS ) 
+			ereFactor += getContextData(ere.getName(), salary, startDate, endDate,  0.00) ;
 
 		boolean ereTotal = ( ereFactor == 1.00 ) ; 
 		boolean ereParcial = ( ereFactor > 0.00 && ereFactor < 1.00 ) ; 
