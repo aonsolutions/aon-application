@@ -140,14 +140,20 @@ public class CalendarHours implements Serializable {
 						// Si el elemento de la lista tiene fecha fin null, tendremos que meter el nuevo tramo entre medias
 						if(isNullOrEndContract(dayHour.getEndDate())) {
 							if(isNullOrEndContract(newDayHour.getEndDate())) {
-								Date newEndDate = DateUtils.copyDateOnly(newDayHour.getStartDate());
-								newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
-								dayHour.setEndDate(newEndDate);
-								
-								newHourList.add(dayHour);
-								newHourList.add(newDayHour);
-								added = true;
-								continue;
+								if(dayHour.getStartDate().equals(newDayHour.getStartDate())) {
+									newHourList.add(newDayHour);
+									added = true;
+									continue;
+								}else {
+									Date newEndDate = DateUtils.copyDateOnly(newDayHour.getStartDate());
+									newEndDate = DateUtils.deleteDays2Date(newEndDate, 1);
+									dayHour.setEndDate(newEndDate);
+									
+									newHourList.add(dayHour);
+									newHourList.add(newDayHour);
+									added = true;
+									continue;
+								}
 							} else {
 								Date oldEndDate = null;
 								if(null != dayHour.getEndDate()) {

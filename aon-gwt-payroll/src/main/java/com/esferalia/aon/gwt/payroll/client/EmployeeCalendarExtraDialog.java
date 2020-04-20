@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeeCalendarExtraDialog extends CustomDialog {
+public abstract class EmployeeCalendarExtraDialog extends CustomDialog {
 
 	interface Binder extends UiBinder<Widget, EmployeeCalendarExtraDialog> {}
 
@@ -108,10 +108,13 @@ public class EmployeeCalendarExtraDialog extends CustomDialog {
 			public void onClick(ClickEvent event) {
 				hide();
 				accept();
+				onAccept();
 			}
 		});	
 		
 	}
+
+	public abstract void onAccept();
 
 	private void initExtraHourTB() {
 		for(int month = 0; month < 12; month++) {

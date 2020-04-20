@@ -220,25 +220,25 @@ public class JooqEmployeeCalendarNew {
 				
 				switch (dayName) {
 					case "HORAS_LUNES":
-						calendarHours.getDayHours()[0].addDayHour(newDayHour);
-						break;
-					case "HORAS_MARTES":
 						calendarHours.getDayHours()[1].addDayHour(newDayHour);
 						break;
-					case "HORAS_MIERCOLES":
+					case "HORAS_MARTES":
 						calendarHours.getDayHours()[2].addDayHour(newDayHour);
 						break;
-					case "HORAS_JUEVES":
+					case "HORAS_MIERCOLES":
 						calendarHours.getDayHours()[3].addDayHour(newDayHour);
 						break;
-					case "HORAS_VIERNES":
+					case "HORAS_JUEVES":
 						calendarHours.getDayHours()[4].addDayHour(newDayHour);
 						break;
-					case "HORAS_SABADO":
+					case "HORAS_VIERNES":
 						calendarHours.getDayHours()[5].addDayHour(newDayHour);
 						break;
-					case "HORAS_DOMINGO":
+					case "HORAS_SABADO":
 						calendarHours.getDayHours()[6].addDayHour(newDayHour);
+						break;
+					case "HORAS_DOMINGO":
+						calendarHours.getDayHours()[0].addDayHour(newDayHour);
 						break;
 					default:
 						break;

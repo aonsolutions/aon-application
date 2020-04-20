@@ -307,16 +307,22 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	MenuItem nonWorkingMenuItem;
 	
 	@UiField
-	MenuItem resetMenuItem;
-	
-	@UiField
 	MenuItem hourMenuItem;
 	
 	@UiField
-	MenuItem viewMenuItem;
+	MenuItem defintionMenuItemSeparator;
 	
 	@UiField
 	MenuItem showHourMenuItem;
+	
+	@UiField
+	MenuItem eraseEventMenuItem;
+	
+	@UiField
+	MenuItem undoAllMenuItem;
+	
+	@UiField
+	MenuItem resetMenuItem;
 	
 	// ---------------------------- Save / Reset
 	
@@ -439,6 +445,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					@Override
 					protected void onAccept() {
 						employeeCalendarDraftObject.setNonWorkingDays(getNonWorkingDays());
+						onChange();
 						changeYear(0);
 					}
 				};
@@ -452,28 +459,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			@Override
 			public void execute() {
 				initHourDialog();
-			}
-		});
-		
-		resetMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea resetear el calendario con los valores iniciales?") {
-					
-					@Override
-					protected void onAccept() {
-						employeeCalendarDraftObject.resetCalendarInfo(
-								s -> {
-									// Init save and undo all
-									onSaved();
-									changeYear(0);
-								}, f -> {}
-						);
-					}
-				};
-				
-				dialog.center();
-				dialog.show();
 			}
 		});
 		
@@ -493,6 +478,42 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				}
 			}
 		});
+		
+		eraseEventMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				initDatesDialog(DayType.NOTYPEDAY);
+			}
+		});
+		
+		undoAllMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				initUndoAll();
+			}
+		});
+		
+		resetMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"RESETEAR CALENDARIO con los valores INICIALES? Se BORRARAN todos los cambios realizados.") {
+					
+					@Override
+					protected void onAccept() {
+						employeeCalendarDraftObject.resetCalendarInfo(
+								s -> {
+									// Init save and undo all
+									onSaved();
+									changeYear(0);
+								}, f -> {}
+						);
+					}
+				};
+				
+				dialog.center();
+				dialog.show();
+			}
+		});
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
@@ -501,20 +522,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	
 	@UiHandler("undoAllButton")
 	public void onundoAllButtonClick(ClickEvent event) {
-		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"Realmente desea restaurar el calendario desde la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?") {
-			@Override
-			protected void onAccept() {
-				employeeCalendarDraftObject.initCalendarInfo(s -> {
-					onSaved();
-					initCalendar();
-				}, f -> {});
-			}
-		};
-		
-		dialog.center();
-		dialog.show();
+		initUndoAll();
 	}
-	
+
 	@UiHandler("saveButton")
 	public void onSaveButtonClick(ClickEvent event) {
 		this.employeeCalendarDraftObject.saveCalendarInfo(
@@ -637,7 +647,13 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	public void onExtraHoursButtonClick(ClickEvent event) {
 		EmployeeCalendarExtraDialog extraDialog = new EmployeeCalendarExtraDialog(
 				this.year,
-				this.employeeCalendarDraftObject);
+				this.employeeCalendarDraftObject) {
+			
+			@Override
+			public void onAccept() {
+				onChange();
+			}
+		};
 		
 		extraDialog.center();
 		extraDialog.show();
@@ -667,16 +683,18 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Set fulltime journey
 		if(this.employeeCalendarDraftObject.isFullTimeJourney()) {
 			hideHoursRows();
-			hideElement(viewMenuItem.getElement());
+			hideElement(showHourMenuItem.getElement());
 			hideElement(hourMenuItem.getElement());
 			hideElement(hourButton.getElement());
+			hideElement(defintionMenuItemSeparator.getElement());
 			extraHoursButton.setText("H. Extras");
 		} else {
 			this.showHours = true;
 			showHoursRows();
-			showElement(viewMenuItem.getElement());
+			showElement(showHourMenuItem.getElement());
 			showElement(hourMenuItem.getElement());
 			showElement(hourButton.getElement());
+			showElement(defintionMenuItemSeparator.getElement());
 			extraHoursButton.setText("H. Complementarias");
 		}
 		
@@ -931,13 +949,28 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	// ----------------------------------------------------------------------------------------------------
 	
 	private void onSaved(){
-		saveButton.setVisible(false);
-		undoAllButton.setVisible(false);
+		saveButton.setEnabled(false);
+		undoAllButton.setEnabled(false);
 	}
 	
 	private void onChange(){
-		saveButton.setVisible(true);
-		undoAllButton.setVisible(true);
+		saveButton.setEnabled(true);
+		undoAllButton.setEnabled(true);
+	}
+	
+	private void initUndoAll() {
+		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"RESTAURAR CALENDARIO con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?") {
+			@Override
+			protected void onAccept() {
+				employeeCalendarDraftObject.initCalendarInfo(s -> {
+					onSaved();
+					initCalendar();
+				}, f -> {});
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
 	}
 	
 	// ----------------------------------------------------------------------------------------------------
@@ -1120,6 +1153,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			@Override
 			protected void onAccept() {
 				cleanSelectedDates();
+				onChange();
 				changeYear(0);
 			}
 		};

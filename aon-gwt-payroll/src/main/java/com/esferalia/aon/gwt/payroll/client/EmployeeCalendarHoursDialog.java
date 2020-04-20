@@ -15,7 +15,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -169,7 +168,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 					if(showDays[day]) {
 						Date startDate = getStartDate();
 						Date endDate = getEndDate();
-						Window.alert("ADDED -> StartDate : " + startDate + " EndDate : " + endDate + " Day : " + day + " Value : "+ listNewHours[day]);
+//						Window.alert("ADDED -> StartDate : " + startDate + " EndDate : " + endDate + " Day : " + day + " Value : "+ listNewHours[day]);
 						employeeCalendarDraftObject.addDayHour(startDate, endDate, day, listNewHours[day]);
 					}
 				}
@@ -277,7 +276,7 @@ public abstract class EmployeeCalendarHoursDialog extends CustomDialog {
 						listOldHours[c] = null;
 					}	
 				} catch (Exception e) {
-					Window.alert("Formato incorrecto");
+//					Window.alert("Formato incorrecto");
 				}
 			}
 		} else {
