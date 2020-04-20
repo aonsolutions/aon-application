@@ -60,7 +60,7 @@
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
-				<g:Button ui:field="cancelButton">Cerrar</g:Button>
+				<g:Button ui:field="cancelButton">Cancelar</g:Button>
 			    <g:Button ui:field="acceptButton">OK</g:Button>
 			</g:HTMLPanel>
 				
