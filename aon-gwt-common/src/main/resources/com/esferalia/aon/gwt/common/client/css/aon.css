@@ -136,6 +136,9 @@ input[type="checkbox"]:focus + label {
 	width: 100px;
 }
 
+.aon-width-100-important {
+	width: 100px !important;
+}
 .aon-width-105 {
 	width: 105px;
 }
@@ -158,6 +161,9 @@ input[type="checkbox"]:focus + label {
 
 .aon-width-150 {
 	width: 150px;
+}
+.aon-width-150-important {
+	width: 150px !important;
 }
 
 .aon-width-160 {
@@ -2122,6 +2128,14 @@ input:disabled+label {
 	gwt-image: "aonIconCheckYes";
 	width: auto !important;
 	height: auto !important;
+}
+
+@sprite .aon-icon-check-no-raw {
+	gwt-image: "aonIconCheckNo";
+}
+
+@sprite .aon-icon-check-yes-raw {
+	gwt-image: "aonIconCheckYes";
 }
 
 .aon-fiscal-enterprise-suggest {

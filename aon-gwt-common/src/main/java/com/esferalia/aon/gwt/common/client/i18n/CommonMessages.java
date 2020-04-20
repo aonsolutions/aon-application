@@ -3491,6 +3491,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Rectificativas")
 	String rectified();
 	
+	@DefaultMessage("Fra. rectificativa")
+	String rectifiedInvoice();
+
 	@DefaultMessage("Crear factura rectificativa")
 	String rectifyInvoice();
 	

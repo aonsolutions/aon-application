@@ -151,6 +151,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-width-100")
 	String aonWidth100();
 
+	@ClassName("aon-width-100-important")
+	String aonWidth100Important();
+
 	@ClassName("aon-width-105")
 	String aonWidth105();
 
@@ -168,6 +171,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-width-150")
 	String aonWidth150();
+
+	@ClassName("aon-width-150-important")
+	String aonWidth150Important();
 
 	@ClassName("aon-width-160")
 	String aonWidth160();
@@ -815,6 +821,12 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-check-yes")
 	String aonIconCheckYes();
 
+	@ClassName("aon-icon-check-no-raw")
+	String aonIconCheckNoRaw();
+	
+	@ClassName("aon-icon-check-yes-raw")
+	String aonIconCheckYesRaw();
+	
 	/*
 	 * ProgressBar
 	 */
