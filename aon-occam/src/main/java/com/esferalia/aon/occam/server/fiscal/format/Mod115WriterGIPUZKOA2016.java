@@ -22,7 +22,7 @@ public class Mod115WriterGIPUZKOA2016 implements IMod115Writer{
 		   ,(wr, mod) -> wr.append("115")
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getPeriod().getFormatName( mod.getAdministration() ), 2))
 		   ,(wr, mod) -> wr.append("01")
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getFinanceCCC(), 20,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceCCC(), 20))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),4))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signed(mod.getAmount(Mod115Key.GP_C01),7,0))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signed(mod.getAmount(Mod115Key.GP_C02),13,2))

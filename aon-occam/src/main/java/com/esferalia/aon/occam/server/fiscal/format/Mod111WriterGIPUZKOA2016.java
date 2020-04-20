@@ -22,7 +22,7 @@ public class Mod111WriterGIPUZKOA2016 implements IMod111Writer{
 			   ,(wr, mod) -> wr.append(mod.getPeriod().isMonthPeriod()?"111":"110")
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getPeriod().getFormatName( mod.getAdministration() ), 2))
 			   ,(wr, mod) -> wr.append("01")
-			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getFinanceCCC(), 20,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceCCC(), 20))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),4))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signed(mod.getAmount(Mod111Key.GP_C01),7,0))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signed(mod.getAmount(Mod111Key.GP_C02),13,2))
