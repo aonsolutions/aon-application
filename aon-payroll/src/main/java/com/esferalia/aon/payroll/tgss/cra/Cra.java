@@ -226,7 +226,7 @@ public class Cra {
 				dde.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
 				dde.put("ccc", ccc);
 				dde.put("year", startDate.get(Calendar.YEAR));
-				dde.put("month", startDate.get(Calendar.MONTH));
+				dde.put("month", startDate.get(Calendar.MONTH)+1);
 				
 				// Prepare TRBS
 				JSONArray trbs = new JSONArray();
@@ -430,7 +430,7 @@ public class Cra {
 				finiq.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
 				finiq.put("ccc", ccc);
 				finiq.put("year", startDate.get(Calendar.YEAR));
-				finiq.put("month", startDate.get(Calendar.MONTH));
+				finiq.put("month", startDate.get(Calendar.MONTH)+1);
 				
 				// Prepare TRBSF
 				JSONArray trbsf = new JSONArray();

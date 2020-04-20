@@ -158,8 +158,8 @@ public class MainCRAGenerator {
 			this.empHeader = "DDE";
 			this.cccRegime = cccRegime;
 			this.ccc = ccc;
-			this.year = Integer.parseInt(year)+ "";
-			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
+			this.year = year;
+			this.month = StringUtils.leftPad(month, 2, '0');
 			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
 			this.cccConcert = StringUtils.leftPad("", 11, '0');
 			this.reserved31 = StringUtils.leftPad("", 31, ' ');
@@ -374,8 +374,8 @@ public class MainCRAGenerator {
 			this.empHeader = "DDE";
 			this.cccRegime = cccRegime;
 			this.ccc = ccc;
-			this.year = (Integer.parseInt(year) + 1900) + "";
-			this.month = StringUtils.leftPad((Integer.parseInt(month)+1)+"", 2, '0');
+			this.year = year;
+			this.month = StringUtils.leftPad(month, 2, '0');
 			this.cccRegimeConcert = StringUtils.leftPad("", 4, '0');
 			this.cccConcert = StringUtils.leftPad("", 11, '0');
 			this.reserved31 = StringUtils.leftPad("", 31, ' ');
