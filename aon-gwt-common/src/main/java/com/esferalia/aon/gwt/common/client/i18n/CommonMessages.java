@@ -3503,6 +3503,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Motivo")
 	String reason();
 
+	@DefaultMessage("Vencimiento agrupado")
+	String financeGrouped();
+
 	@DefaultMessage("Saldar vencimientos pendientes")
 	String settleFinances();
 	

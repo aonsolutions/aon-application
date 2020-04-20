@@ -830,7 +830,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 			// *******				UNSETTLE BUTTON		 				 		 *******
 			// *******															 *******
 			// *************************************************************************
-			boolean canUndo = finance.isSettled() || finance.isPaid() || finance.isReturned(); 
+			boolean canUndo = (finance.isSettled() && finance.getFinanceGroup() == null) || finance.isPaid() || finance.isReturned(); 
 			if (canUndo && finance.getId() != null) {
 				actionsPanel.add(undoButton);
 				undoButton.setText( AON.MSG.undo() );
@@ -868,6 +868,21 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 						});
 					}
 				});
+			}
+			if (finance.isSettled() && finance.getFinanceGroup() != null) {
+				Button groupedButton = new Button();
+				groupedButton.setTitle( AON.MSG.financeGrouped() );
+				groupedButton.setStyleName(AON.AON_CSS.aonIconRoot());
+				groupedButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+				groupedButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+				groupedButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						MessageDialog.show("No se puede deshacer.","El vencimiento pertence a una agrupaci\u00F3n de vencimientos");
+					}
+				});
+				actionsPanel.add(groupedButton);
 			}
 
 			// *************************************************************************
