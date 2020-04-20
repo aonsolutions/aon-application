@@ -19,7 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.EresUpdate;
+import net.aonsolutions.db.up2date.payroll.PrestITDescriptionsUpdateII;
 
 public class Up2Date {
 
@@ -103,7 +103,8 @@ public class Up2Date {
     		//EreFzaExoneradoInsert.EREFZAEXONERADOINSERT,
     		//AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE,
     		//EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE
-    		EresUpdate.ERESUPDATE
+    		//EresUpdate.ERESUPDATE
+    		PrestITDescriptionsUpdateII.PRESTITDESCRIPTIONSUPDATEII
     };
 
 
