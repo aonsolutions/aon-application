@@ -1,11 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod303;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -36,7 +40,9 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 	};
 	
 	private static enum Mod303KeyDAO implements IMod303KeyDAO {
-		 GP_A001	(Mod303Key.GP_A001)
+		 GP_I000	(Mod303Key.GP_I000
+			 ,null,null,(ctx,mod) -> addDeponentDocument(ctx,mod),null,null)
+		,GP_A001	(Mod303Key.GP_A001)
 		,GP_A002	(Mod303Key.GP_A002)
 		,CM_003		(Mod303Key.CM_003)
 		
@@ -398,6 +404,16 @@ public class GIPUZKOA_2017_Declaration extends Mod303Declaration {
 		return Mod303KeyDAO.values();
 	}
 	
+	private static void addDeponentDocument(AONContext ctx, Mod303 mod) {
+		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
+		if (!domain.isStandalone()) {
+			Company parentCompany = CompanyDAO.getCompany(ctx, domain.getParentId());
+			if (parentCompany != null) {
+				mod.ensureDetail(Mod303Key.GP_I000).setDescription(parentCompany.getDocument());	
+			}
+		}
+	}
+
 	@Override
 	public IMod303KeyDAO safeValueOf(Mod303 mod, String key) {
 		return Mod303KeyDAO.safeValueOf(mod, key);

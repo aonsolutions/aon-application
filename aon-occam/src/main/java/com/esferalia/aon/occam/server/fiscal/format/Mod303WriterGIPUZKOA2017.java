@@ -20,8 +20,7 @@ public class Mod303WriterGIPUZKOA2017 implements IMod303Writer{
 			
 // 			Los campos de Importes con signo, serán: Signo (0 o -) + X enteros + 2 decimales, excepto
 //			el Porcentaje de Gipuzkoa, que se compone de 3 posiciones enteras y 4 posiciones decimales			
-
-			 (wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))      // Nif presentador AN9
+			 (wr, mod) -> wr.append(AonFiscalFileUtils.text(AonStringUtils.defaultString(mod.getDescription(Mod303Key.GP_I000), mod.getDocument()),9))      // Nif presentador AN9
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))      // Nif declarante AN9
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))   // Ejercicio N4
 			,(wr, mod) -> wr.append(mod.getPeriod().isQuarterPeriod() ? "300" : "320") // Modelo 300 (si presentacion trimestral) o 320 (si presentacion mensual) AN3

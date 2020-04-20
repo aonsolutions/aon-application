@@ -62,6 +62,7 @@ public class Model3032017GIPUZKOA extends Model303Base {
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingLeft() );
 		table.getColumnFormatter().addStyleName(0, AON.AON_CSS.aonPaddingRight() );
 
+		paintTextBox(table, Mod303Key.GP_I000, 9, true);
 		paintWithoutActivityCheck(table);	// Sin actividad
 
 		paintCheck(Mod303Key.GP_A001,table);		// Autoliquidación concursal. PRE

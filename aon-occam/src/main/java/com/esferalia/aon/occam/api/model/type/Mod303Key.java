@@ -684,6 +684,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  BIZKAIA ----
 	// 	----------------------------------------------------------------------------------
+	,GP_I000("303-GPI00",false,null,"NIF del Presentador telem\u00E1tico (en caso de ser diferente del declarante)")
 	,GP_A001("303-GPA01",false,null,"Autoliquidaci\u00F3n concursal. PRE")
 	,GP_A002("303-GPA02",false,null,"Autoliquidaci\u00F3n concursal. POST")
 	

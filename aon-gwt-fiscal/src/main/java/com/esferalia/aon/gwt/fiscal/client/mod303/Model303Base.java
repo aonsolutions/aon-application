@@ -55,6 +55,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Model303Base extends DockLayoutPanel  {
@@ -784,6 +785,30 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			}
 		});
 		table.setWidget(row, 1, dateBox);
+	}
+
+	protected void paintTextBox(FlexTable table, final Mod303Key key, int fieldSize, boolean enabled) {
+		int row = table.getRowCount();
+		paintLabel(table, row, key.getDescription());
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonPaddingLeft() );
+		table.getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottomImportant() );
+		
+		final TextBox textBox = new TextBox();
+		textBox.setStyleName(AON.AON_CSS.aonInputText());
+		textBox.setVisibleLength(fieldSize+1);
+		textBox.setMaxLength(fieldSize);
+		textBox.setEnabled(enabled);
+		if (AonStringUtils.isNotEmpty( mod303.ensureDetail(key).getDescription() ) ) {
+			textBox.setValue( mod303.ensureDetail(key).getDescription() , false );
+		}
+		textBox.addValueChangeHandler( new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				mod303.ensureDetail(key).setDescription(textBox.getValue());
+				markAsDirty();
+			}
+		});
+		table.setWidget(row, 1, textBox);
 	}
 
 	protected void paintListBox(ListBox listBox, Mod303Key key, FlexTable table) {
