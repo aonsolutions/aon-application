@@ -391,6 +391,12 @@ public class CalendarDaysType implements Serializable {
 							added = true;
 							continue;
 						}
+					// Si el elemento a añadir es el mismo tramo de la lista
+					} else if(calendarDayType.getEndDate().equals(newCalendarDayType.getEndDate()) &&
+							calendarDayType.getStartDate().equals(newCalendarDayType.getStartDate())) {
+						newDayTypeList.add(newCalendarDayType);
+						added = true;
+						continue; 
 					// Si el elemento a añadir es posterior al tramo de la lista
 					} else if(calendarDayType.getEndDate().before(newCalendarDayType.getStartDate()) &&
 							!isBetween(calendarDayType, newCalendarDayType)) {
@@ -755,9 +761,9 @@ public class CalendarDaysType implements Serializable {
 //		
 //		// 01-09-2020
 //		// 15-09-2020
-//		Date startDate = new Date(120, 8, 1);
-//		Date endDate =  new Date(120, 8, 15);
-//		DayType dayType = DayType.EREDAY;
+//		Date startDate = new Date(120, 3, 16);
+//		Date endDate =  new Date(120, 3, 30);
+//		DayType dayType = DayType.EREFZAEXONDAY;
 //		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
 //		calendarDaysType.addDayType(calendarDayType);
 //		
@@ -765,9 +771,9 @@ public class CalendarDaysType implements Serializable {
 //		
 //		// 10-09-2020
 //		// 25-09-2020
-//		startDate = new Date(120, 8, 10);
-//		endDate = new Date(120, 8, 25);
-//		dayType = DayType.EREDAY;
+//		startDate = new Date(120, 3, 16);
+//		endDate = new Date(120, 3, 30);
+//		dayType = DayType.EREFZADAY;
 //		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
 //		calendarDaysType.addDayType(calendarDayType);
 //		
