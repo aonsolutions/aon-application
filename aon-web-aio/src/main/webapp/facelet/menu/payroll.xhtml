@@ -108,10 +108,13 @@
 										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="craBatch-payroll"
-										action="craBatch_search-payroll"
-										actionListener="#{craBatch.onEditSearch}"
-										value="#{bundle.payroll_craBatch_module}" />
+									<aon:commandLink id="gwt-cra-payroll"
+										action="gwt_main_cra"
+										title="#{bundle.payroll_cra_module}">
+										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="#{bundle.payroll_cra_module}" />												
+									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="leaveBatch-payroll"
@@ -131,11 +134,11 @@
 										value="#{bundle.payroll_afi_module}" />
 								</aon:div>
 								
-								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt-cra-payroll"
-										action="gwt_main_cra"
-										value="#{bundle.payroll_cra_module} (Beta)" />
+									<aon:commandLink id="craBatch-payroll"
+										action="craBatch_search-payroll"
+										actionListener="#{craBatch.onEditSearch}"
+										value="#{bundle.payroll_craBatch_module} (Antiguo)" />
 								</aon:div>
 								 
 								<!--
