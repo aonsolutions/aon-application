@@ -664,4 +664,34 @@ public class AonArrayUtils {
 			i++;
 		}
 	}
+	
+	public static Boolean constains(final String[] array, final String str) {
+		if (array == null) {
+			return false;
+		}
+		Boolean bool = false;
+		Integer i = 0;
+		while(i < array.length && !bool) {
+			if(str.equals(array[i])) {
+				bool = true;
+			}
+			i++;
+		}
+		return bool;
+	}
+	
+	public static Boolean constainsIgnoreCase(final String[] array, final String str) {
+		if (array == null) {
+			return false;
+		}
+		Boolean bool = false;
+		Integer i = 0;
+		while(i < array.length && !bool) {
+			if(str.equalsIgnoreCase(array[i])) {
+				bool = true;
+			}
+			i++;
+		}
+		return bool;
+	}
 }

@@ -38,6 +38,7 @@ import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -132,7 +133,7 @@ public class RegistryImport {
 	}
 
 	RegistryImportClass reg;
-
+	Integer indexTitle;
 	public LinkedList<RegistryImportClass> importation(Domain domain, String login, byte[] data){
 		HSSFWorkbook workbook = null;
 		try {
@@ -147,17 +148,23 @@ public class RegistryImport {
 			Iterable<Row> rowIterable = () -> rowIterator;
 			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 			AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), login);
-
+			indexTitle = 0;
 			rowStream.forEach(row ->{
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				reg = new RegistryImportClass();
 				reg.setLine(row.getRowNum() + 1);
-				Integer indexTitle = Utils.isAyudaT(domain.getName()) ? 3 : 0;
+
+
+				Object obj = Utils.getObjectValue(row.getCell(0)).toString();
+				if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.REGISTRY_TITLES, obj.toString()))) {
+					indexTitle = indexTitle + 1;
+				}
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == indexTitle) {
-						titleList.add(cell.getStringCellValue());
+						String title = Utils.getObjectValue(cell).toString();
+						titleList.add(title);
 					} else if(row.getRowNum() > indexTitle) {
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell, aonCtx);
@@ -198,17 +205,22 @@ public class RegistryImport {
 			Iterable<Row> rowIterable = () -> rowIterator;
 			Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 			AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), login);
-
+			indexTitle = 0;
 			rowStream.forEach(row ->{
 				Iterator<Cell> cellIterator = row.cellIterator();
 				Iterable<Cell> cellIterable = () -> cellIterator;
 				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
 				reg = new RegistryImportClass();
 				reg.setLine(row.getRowNum() + 1);
-				Integer indexTitle = Utils.isAyudaT(domain.getName()) ? 3 : 0;
+				
+				Object obj = Utils.getObjectValue(row.getCell(0));
+				if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.REGISTRY_TITLES, obj.toString()))) {
+					indexTitle = indexTitle + 1;
+				}
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == indexTitle) {
-						titleList.add(cell.getStringCellValue());
+						String title = Utils.getObjectValue(cell).toString();
+						titleList.add(title);
 					} else if(row.getRowNum() > indexTitle){
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell, aonCtx);
@@ -235,16 +247,15 @@ public class RegistryImport {
 	}
 
  	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
-		Object o = Utils.getObjectValue(cell);
+ 		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
 
-		if("TIPO".equalsIgnoreCase(title)) {
+		if(IConstants.TIPO.equalsIgnoreCase(title)) {
 			reg.setType(o.toString());
 			return;
 		}
 
-		if("CUENTA".equalsIgnoreCase(title)
-				|| "CUENTA CONTABLE".equalsIgnoreCase(title)) {
+		if(IConstants.CUENTA.equalsIgnoreCase(title) || IConstants.CUENTA_CONTABLE.equalsIgnoreCase(title)) {
 			String acc = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
@@ -253,13 +264,13 @@ public class RegistryImport {
 			return;
 		}
 
-		if("CIF".equalsIgnoreCase(title)) {
+		if(IConstants.CIF.equalsIgnoreCase(title)) {
 			reg.getRegistry().setDocument(o.toString());
 			reg.getAccount().setAlias(o.toString());
 			return;
 		}
 
-		if("NOMBRE".equalsIgnoreCase(title)) {
+		if(IConstants.NOMBRE.equalsIgnoreCase(title)) {
 			if(o.toString().length() > 63) {
 				reg.getRegistry().setName(o.toString().substring(0,63));
 				reg.getAccount().setDescription(o.toString().substring(0, 63));
@@ -269,16 +280,16 @@ public class RegistryImport {
 			}
 			return ;
 		}
-		if("DOMICILIO".equalsIgnoreCase(title)
-				|| "DIRECCION".equalsIgnoreCase(title)
-				|| "DIRECCIï¿½N".equalsIgnoreCase(title)) {
+		if(IConstants.DOMICILIO.equalsIgnoreCase(title)
+				|| IConstants.DIRECCION.equalsIgnoreCase(title)
+				|| IConstants.DIRECCIÓN.equalsIgnoreCase(title)) {
 			reg.getRegistry().getAddress().setAddress(o.toString());
 			return;
 		}
 
-		if("C.P.".equalsIgnoreCase(title)
-				|| "CODIGO POSTAL".equalsIgnoreCase(title)
-				|| "Cï¿½DIGO POSTAL".equalsIgnoreCase(title)) {
+		if(IConstants.CP.equalsIgnoreCase(title)
+				|| IConstants.CODIGO_POSTAL.equalsIgnoreCase(title)
+				|| IConstants.CÓDIGO_POSTAL.equalsIgnoreCase(title)) {
 			String zip = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
 				zip = Integer.toString(AonNumberUtils.toDouble(zip).intValue());
@@ -287,12 +298,12 @@ public class RegistryImport {
 			return;
 		}
 
-		if("Poblaciï¿½n".equalsIgnoreCase(title) || "POBLACION".equalsIgnoreCase(title)
-				|| "CIUDAD".equalsIgnoreCase(title)) {
+		if(IConstants.POBLACIÓN.equalsIgnoreCase(title) || IConstants.POBLACION.equalsIgnoreCase(title)
+				|| IConstants.CIUDAD.equalsIgnoreCase(title)) {
 			reg.getRegistry().getAddress().setCity(o.toString());
 			return ;
 		}
-		if("PROVINCIA".equalsIgnoreCase(title)) {
+		if(IConstants.PROVINCIA.equalsIgnoreCase(title)) {
 			Provinces pr = Provinces.getProvince(o.toString());
 			if(pr == null && reg.getRegistry().getAddress().getZip() != null ) {
 				pr = Provinces.getProvinceById(reg.getRegistry().getAddress().getZip().substring(0,2));
@@ -307,12 +318,12 @@ public class RegistryImport {
 			return;
 		}
 
-		if("IBAN".equalsIgnoreCase(title)) {
+		if(IConstants.IBAN.equalsIgnoreCase(title)) {
 			reg.setIban(o.toString());
 			return;
 		}
 
-		if("Paï¿½s".equalsIgnoreCase(title) || "PAIS".equalsIgnoreCase(title)) {
+		if(IConstants.PAÍS.equalsIgnoreCase(title) || IConstants.PAIS.equalsIgnoreCase(title)) {
 			reg.getRegistry().setNationality(Country.safeValueOf(o.toString()));
 			return;
 		}
