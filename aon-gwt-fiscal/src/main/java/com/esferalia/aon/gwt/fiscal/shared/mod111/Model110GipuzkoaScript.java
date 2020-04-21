@@ -37,6 +37,7 @@ public enum Model110GipuzkoaScript implements IModelScript<Mod111Key> {
 			 ,new Mod111Key[]{Mod111Key.GP_C24,Mod111Key.GP_C25,Mod111Key.GP_C26},NONE)
 	 ,R09 ("Total",new Mod111Key[]{Mod111Key.GP_C27,Mod111Key.GP_C28},COMPUTE)
 	 ,R10 ("A ingresar",new Mod111Key[]{Mod111Key.GP_C29},COMPUTE)
+	 ,X00 ("NIF del Presentador telem\u00E1tico (en caso de ser diferente del declarante)",new Mod111Key[]{Mod111Key.GP_X00},NONE)
 	;
 	
 	private String label;
@@ -71,7 +72,7 @@ public enum Model110GipuzkoaScript implements IModelScript<Mod111Key> {
 	};
 	@Override
 	public boolean hasGraphicParticularity() {
-		return false;
+		return (this == X00);
 	}
 
 	@Override

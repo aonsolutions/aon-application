@@ -6,15 +6,22 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.shared.mod111.Model110GipuzkoaScript;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
+import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class Model110Gipuzkoa extends Model111Base {
 	
@@ -22,6 +29,10 @@ public class Model110Gipuzkoa extends Model111Base {
 	
 	public Model110Gipuzkoa(IFiscalModelCallback<Mod111> callback, AonData aonData) {
 		super(callback, aonData);
+	}
+
+	protected void beforeTable() {
+		
 	}
 	
 	public FlowPanel getDeclarationPanel(){
@@ -118,5 +129,41 @@ public class Model110Gipuzkoa extends Model111Base {
 				+ "HxAEIBYB35xSagPKnGw2E3ZL-0rrjo5-AMzRZ9M/dl4/d5/L0lHSkovd0"
 				+ "RNQUxrQUVnQSEhLzRKVUUvZXM!/"));
 		return list;
+	}
+	
+	@Override
+	protected void paintParticularyRow(IFiscalModelCallback<Mod111> callback, IModelScript<Mod111Key> script) {
+		if (script == Model110GipuzkoaScript.X00) {
+			int row = getTable().getRowCount();
+			getTable().getFlexCellFormatter().setColSpan(row, 0, 8);
+			getTable().getFlexCellFormatter().setStyleName(row, 0,AON.AON_CSS.aonBold() );
+			getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextCenter() );
+			getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottom() );
+			getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderTop() );
+			getTable().setWidget(row, 0, new Label( "Informaci\u00F3n para la presentaci\u00F3n telem\u00E1tica"));
+			row++;
+			paintLabel(row, callback, script);
+			getTable().getFlexCellFormatter().setColSpan(row, 0, 6);
+			Mod111Key key = Mod111Key.GP_X00;
+			final FiscalModelDetail det1 = callback.getFiscalModel().ensureDetail(key);
+			final TextBox input = new TextBox();
+			input.setStyleName(AON.AON_CSS.aonInputText());
+			input.setVisibleLength(10);
+			input.setMaxLength(9);
+			input.setEnabled(callback.getFiscalModel().isNotFinished() && script.isEnabled()); 
+			input.setValue(det1.getDescription());
+			input.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					callback.getFiscalModel().ensureDetail(key).setDescription(input.getValue());	
+					if (input.isEnabled()) {
+						calculateAndRefresh( callback );
+					}
+					callback.markAsDirty();
+				}
+			});
+			getTable().setWidget(row, 1, input);
+		}
+		
 	}
 }

@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -76,6 +78,16 @@ public class Mod111DAO extends FiscalModelDAO {
 		void initialize(AONContext ctx,Mod111 mod);
 	}
 	
+	private static void addDeponentDocument(AONContext ctx, Mod111 mod) {
+		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
+		if (!domain.isStandalone()) {
+			Company parentCompany = CompanyDAO.getCompany(ctx, domain.getParentId());
+			if (parentCompany != null) {
+				mod.ensureDetail(Mod111Key.GP_X00).setDescription(parentCompany.getDocument());	
+			}
+		}
+	}
+
 	private static void addPerceptor(Mod111Key key,Mod111 mod
 			,Map<Mod111Key,Set<String>> docs
 			,Map<Mod111Key,Set<String>> pdocs
@@ -443,6 +455,12 @@ public class Mod111DAO extends FiscalModelDAO {
 		// *************************************************************************
 		// ************************************************************ GIPUZKOA ***
 		// *************************************************************************
+		,GP_X00 (Mod111Key.GP_X00,false
+			, (mod -> mod.isGipuzkoa())	
+			, null
+			, null
+			, (ctx,mod) -> addDeponentDocument(ctx,mod)
+			, null)
 		,GP_C01(Mod111Key.GP_C01,false
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isSalaryRetention()

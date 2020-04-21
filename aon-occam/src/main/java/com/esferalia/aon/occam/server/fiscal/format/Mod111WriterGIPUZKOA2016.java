@@ -16,7 +16,10 @@ public class Mod111WriterGIPUZKOA2016 implements IMod111Writer{
 	private static enum Mod111File {
 		
 		GIPUZKOA_2016 ( mod111 -> true ,new IPropertyFiller[] {
-				(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
+				(wr, mod) -> wr.append(AonFiscalFileUtils.text(
+						(AonStringUtils.isNotBlank(mod.getDescription(Mod111Key.GP_X00))
+								?mod.getDescription(Mod111Key.GP_X00)
+								:mod.getDocument()),9))      // Nif presentador AN9
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
 			   ,(wr, mod) -> wr.append(mod.getPeriod().isMonthPeriod()?"111":"110")

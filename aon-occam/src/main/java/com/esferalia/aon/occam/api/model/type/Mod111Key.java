@@ -124,6 +124,7 @@ public enum Mod111Key implements IFiscalModelKey {
 	,CT_TIP("111-CT-DT" ,  0)
 
 	// -------------------------------------------------------------- GIPUZKOA
+	,GP_X00("111-GP-X00",  0)
 	,GP_C01("111-GP-01" ,  1)
 	,GP_C02("111-GP-02" ,  2)
 	,GP_C03("111-GP-03" ,  3)
@@ -136,8 +137,8 @@ public enum Mod111Key implements IFiscalModelKey {
 	,GP_C10("111-GP-10" , 10)
 	,GP_C11("111-GP-11" , 11)
 	,GP_C12("111-GP-12" , 12)
-	,GP_C13("111-GP-T13" , 13)
-	,GP_C14("111-GP-T14" , 14)
+	,GP_C13("111-GP-T13", 13)
+	,GP_C14("111-GP-T14", 14)
 	,GP_C15("111-GP-13" , 15)
 	,GP_C16("111-GP-14" , 16)
 	,GP_C17("111-GP-15" , 17)
@@ -150,8 +151,8 @@ public enum Mod111Key implements IFiscalModelKey {
 	,GP_C24("111-GP-22" , 24)
 	,GP_C25("111-GP-23" , 25)
 	,GP_C26("111-GP-24" , 26)
-	,GP_C27("111-GP-T27" , 27)
-	,GP_C28("111-GP-T28" , 28)
+	,GP_C27("111-GP-T27", 27)
+	,GP_C28("111-GP-T28", 28)
 	,GP_C29("111-GP-25" , 29)
 	,GP_TIP("111-GP-DT" ,  0)
 
