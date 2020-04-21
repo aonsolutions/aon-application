@@ -156,7 +156,6 @@ public class RegistryImport {
 				reg = new RegistryImportClass();
 				reg.setLine(row.getRowNum() + 1);
 
-
 				Object obj = Utils.getObjectValue(row.getCell(0)).toString();
 				if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.REGISTRY_TITLES, obj.toString()))) {
 					indexTitle = indexTitle + 1;

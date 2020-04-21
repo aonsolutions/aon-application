@@ -31,6 +31,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonArrayUtils;
 
 
 public class DiaryImport {
@@ -72,6 +73,8 @@ public class DiaryImport {
 	Integer asiento;
 	Integer apunte;
 	Boolean invoice;
+	Integer indexTitle;
+	
 	public LinkedList<AccountEntryImportClass> importation(Domain domain, String login, byte[] data){
 		HSSFWorkbook workbook = null;
 		try {
@@ -129,11 +132,15 @@ public class DiaryImport {
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 		apunte = 0;
+		indexTitle = 0;
 		rowStream.forEach(row ->{
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
-			Integer indexTitle = Utils.isAyudaT(domain.getName()) ? 3 : 0;
+			Object obj = Utils.getObjectValue(row.getCell(0)).toString();
+			if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.DIARY_TITLES, obj.toString()))) {
+				indexTitle = indexTitle + 1;
+			}
 			invoice = false;
 			if(asiento != null && diary.get(asiento).getLine() == null) {
 				diary.get(asiento).setLine(row.getRowNum() + 1);
@@ -150,10 +157,10 @@ public class DiaryImport {
 	}
 
  	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
-		Object o = Utils.getObjectValue(cell);
+ 		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
-		if("ASIENTO".equalsIgnoreCase(title)
-				|| "Nº DIARIO".equalsIgnoreCase(title)) {
+		if(IConstants.ASIENTO.equalsIgnoreCase(title)
+				|| IConstants.N_DIARIO.equalsIgnoreCase(title)) {
 			Double d = Double.parseDouble(o.toString());
 			asiento = d.intValue();
 			if(!diary.containsKey(asiento)) {
@@ -176,7 +183,7 @@ public class DiaryImport {
 			return;
 		}
 
-		if("APUNTE".equalsIgnoreCase(title)) {
+		if(IConstants.APUNTE.equalsIgnoreCase(title)) {
 			Double d = Double.parseDouble(o.toString());
 			apunte = d.intValue();
 			if(!apunte.equals(diary.get(asiento).getEntry().getDetails().size())) {
@@ -187,7 +194,7 @@ public class DiaryImport {
 			return;
 		}
 		
-		if("FECHA".equalsIgnoreCase(title)) {
+		if(IConstants.FECHA.equalsIgnoreCase(title)) {
 			Date date = new Date();
 			try{
 				date = cell.getDateCellValue();
@@ -212,58 +219,58 @@ public class DiaryImport {
 			return ;
 		}
 		
-		if("SEGURIDAD".equalsIgnoreCase(title)) {
+		if(IConstants.SEGURIDAD.equalsIgnoreCase(title)) {
 			// TODO
 			return;
 		}
 		
-		if("ACTIVIDAD".equalsIgnoreCase(title)) {
+		if(IConstants.ACTIVIDAD.equalsIgnoreCase(title)) {
 			// TODO
 			return;
 		}	
 		
-		if("FACTURA".equalsIgnoreCase(title)) {	
+		if(IConstants.FACTURA.equalsIgnoreCase(title)) {	
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(o.toString());
 			invoice = o != null && !o.toString().isBlank();
 			return;
 		}
 		
-		if("DOCUMENTO".equalsIgnoreCase(title)) {
+		if(IConstants.DOCUMENTO.equalsIgnoreCase(title)) {
 			if(!invoice) {
 				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDocumentNumber(o.toString());
 			}
 			return;
 		}
 		
-		if("SUBCUENTA".equalsIgnoreCase(title)
-				|| "CUENTA".equalsIgnoreCase(title)) {
+		if(IConstants.SUBCUENTA.equalsIgnoreCase(title)
+				|| IConstants.CUENTA.equalsIgnoreCase(title)) {
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			String subaccount = acc.substring(0,4) + acc.substring(7);
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setAccountCode(subaccount);
 			return ;
 		}
-		if("TITULO DE SUBCUENTA".equalsIgnoreCase(title) || "Título de Subcuenta".equalsIgnoreCase(title)
-				|| "DESC. CUENTA".equalsIgnoreCase(title)) {
+		if(IConstants.TITULO_DE_SUBCUENTA.equalsIgnoreCase(title) || IConstants.TÍTULO_DE_SUBCUENTA.equalsIgnoreCase(title)
+				|| IConstants.DESC_CUENTA.equalsIgnoreCase(title)) {
 			String subAccountTitle = o.toString();	
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setAccountDescription(subAccountTitle);
 			return;
 		}
 		
-		if("CONTRAPARTIDA".equalsIgnoreCase(title)
-				|| "CONTRAP.".equalsIgnoreCase(title)) {
+		if(IConstants.CONTRAPARTIDA.equalsIgnoreCase(title)
+				|| IConstants.CONTRAP.equalsIgnoreCase(title)) {
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			String contrapartida = acc.substring(0,4) + acc.substring(7);
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setBalancingAccountCode(contrapartida);
 			return;
 		}
 		
-		if("DESC. CONTRAP.".equalsIgnoreCase(title)) {
+		if(IConstants.DESC_CONTRAP.equalsIgnoreCase(title)) {
 			String contrapartidaTitle = o.toString();
 			diary.get(asiento).getEntry().getDetails().get(apunte-1).setBalancingAccountDescription(contrapartidaTitle);
 			return;
 		}
 		
-		if("CONCEPTO".equalsIgnoreCase(title)) {
+		if(IConstants.CONCEPTO.equalsIgnoreCase(title)) {
 			String concept = o.toString();
 			if(concept.length() > 32) {
 				concept = concept.substring(0,32);
@@ -272,8 +279,8 @@ public class DiaryImport {
 			return;
 		}
 		
-		if("REFERENCIA".equalsIgnoreCase(title)
-				|| "TIPO".equalsIgnoreCase(title)) {
+		if(IConstants.REFERENCIA.equalsIgnoreCase(title)
+				|| IConstants.TIPO.equalsIgnoreCase(title)) {
 			diary.get(asiento).getEntry().setEntryType(AccountEntryType.safeValueOf(o.toString()));	
 			if(diary.get(asiento).getEntry().getEntryType() == null) {
 				if("&AP".equals(o.toString())) {
@@ -285,7 +292,7 @@ public class DiaryImport {
 			return;
 		}
 		
-		if("DEBE".equalsIgnoreCase(title)) {
+		if(IConstants.DEBE.equalsIgnoreCase(title)) {
 			if(CellType.FORMULA == cell.getCellTypeEnum())
 				return;
 			Double debit = Double.parseDouble(o.toString());
@@ -295,7 +302,7 @@ public class DiaryImport {
 			return;
 		}
 		
-		if("HABER".equalsIgnoreCase(title)) {
+		if(IConstants.HABER.equalsIgnoreCase(title)) {
 			if(CellType.FORMULA == cell.getCellTypeEnum())
 				return;
 			Double credit = Double.parseDouble(o.toString());
@@ -305,7 +312,7 @@ public class DiaryImport {
 			return;
 		}
 		
-		if("COMENTARIOS".equalsIgnoreCase(title)) {
+		if(IConstants.COMENTARIOS.equalsIgnoreCase(title)) {
 			diary.get(asiento).getEntry().setComments(o.toString());
 			return;
 		}
