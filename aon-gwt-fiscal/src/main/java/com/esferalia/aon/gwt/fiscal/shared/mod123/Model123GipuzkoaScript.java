@@ -7,8 +7,8 @@ import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
-import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 
 public enum Model123GipuzkoaScript implements IModelScript<Mod123Key> {
 	
@@ -17,6 +17,7 @@ public enum Model123GipuzkoaScript implements IModelScript<Mod123Key> {
 	,R02 ("Periodificaci\u00F3n. Ingresos de ejercicios anteriores.",new Mod123Key[]{Mod123Key.GP_C07},NONE)
 	,R03 ("Periodificaci\u00F3n. Regularizaci\u00F3n.",new Mod123Key[]{Mod123Key.GP_C08},NONE)
 	,R04 ("A Ingresar",new Mod123Key[]{Mod123Key.GP_C09},COMPUTE)
+	,X00 ("NIF del Presentador telem\u00E1tico (en caso de ser diferente del declarante)",new Mod123Key[]{Mod123Key.GP_X00},NONE)
 	;
 	
 	private String label;
@@ -51,7 +52,7 @@ public enum Model123GipuzkoaScript implements IModelScript<Mod123Key> {
 	}
 	@Override
 	public boolean hasGraphicParticularity() {
-		return false;
+		return (this == X00);
 	}
 
 	@Override

@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -64,6 +66,21 @@ public class Mod123DAO extends FiscalModelDAO {
 		void initialize(AONContext ctx,Mod123 mod,Set<String> docs,IrpfBreakdown br);
 	}
 	
+	@FunctionalInterface
+	public static interface IValueUniqueIntializer {
+		void initialize(AONContext ctx,Mod123 mod);
+	}
+
+	private static void addDeponentDocument(AONContext ctx, Mod123 mod) {
+		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
+		if (!domain.isStandalone()) {
+			Company parentCompany = CompanyDAO.getCompany(ctx, domain.getParentId());
+			if (parentCompany != null) {
+				mod.ensureDetail(Mod123Key.GP_X00).setDescription(parentCompany.getDocument());	
+			}
+		}
+	}
+
 	private static void addPerceptor(Mod123Key key,Mod123 mod,Set<String> docs,IrpfBreakdown br) {
 		if (!docs.contains(br.getRegistryDocument())) {
 			docs.add(br.getRegistryDocument());
@@ -93,34 +110,34 @@ public class Mod123DAO extends FiscalModelDAO {
 		// *************************************************************************
 		// *************************************************************** ALAVA ***
 		// *************************************************************************
-		 AR_907(Mod123Key.AR_907, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
-		,AR_908(Mod123Key.AR_908, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
-		,AR_909(Mod123Key.AR_909, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null)
+		 AR_907(Mod123Key.AR_907, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null,null)
+		,AR_908(Mod123Key.AR_908, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null,null)
+		,AR_909(Mod123Key.AR_909, false, (mod -> mod.isAraba() && mod.getYear() > 2015),null,null,null,null)
 		,AR_C01(Mod123Key.AR_C01, false
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.AR_C01,mod,docs,br)
-			,null)
+			,null,null)
 		,AR_C02(Mod123Key.AR_C02, true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addBase(Mod123Key.AR_C02,mod,br)
-			,null)
+			,null,null)
 		,AR_C03(Mod123Key.AR_C03, true
 			, (mod -> mod.isAraba())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.AR_C03,mod,br)
-			,null)
-		,AR_C04(Mod123Key.AR_C04, false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C05(Mod123Key.AR_C05, false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C06(Mod123Key.AR_C06, false, (mod -> mod.isAraba()),null,null,"AR_C03+AR_C05")
-		,AR_C07(Mod123Key.AR_C07, false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C08(Mod123Key.AR_C08, false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C09(Mod123Key.AR_C09, false, (mod -> mod.isAraba()),null,null,null)
-		,AR_C10(Mod123Key.AR_C10, false, (mod -> mod.isAraba()),null,null,"AR_C06-AR_C07+AR_C08+AR_C09")
+			,null,null)
+		,AR_C04(Mod123Key.AR_C04, false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C05(Mod123Key.AR_C05, false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C06(Mod123Key.AR_C06, false, (mod -> mod.isAraba()),null,null,null,"AR_C03+AR_C05")
+		,AR_C07(Mod123Key.AR_C07, false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C08(Mod123Key.AR_C08, false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C09(Mod123Key.AR_C09, false, (mod -> mod.isAraba()),null,null,null,null)
+		,AR_C10(Mod123Key.AR_C10, false, (mod -> mod.isAraba()),null,null,null,"AR_C06-AR_C07+AR_C08+AR_C09")
 		,AR_TIP(Mod123Key.AR_TIP, false
 			, (mod -> mod.isAraba() && mod.getYear() > 2015)
-			, null,null,null)
+			,null, null,null,null)
 		// *************************************************************************
 		// ************************************************************* BIZKAIA ***
 		// *************************************************************************
@@ -128,21 +145,21 @@ public class Mod123DAO extends FiscalModelDAO {
 			, (mod -> mod.isBizkaia())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C01,mod,docs,br)
-			,null)
+			,null,null)
 		,BZ_C02(Mod123Key.BZ_C02, true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C02,mod,br)
-			,null)
+			,null,null)
 		,BZ_C03(Mod123Key.BZ_C03, true
 			, (mod -> mod.isBizkaia())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C03,mod,br)
-			,null)
-		,BZ_C04(Mod123Key.BZ_C04, false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C05(Mod123Key.BZ_C05, false, (mod -> mod.isBizkaia()),null,null,null)
-		,BZ_C06(Mod123Key.BZ_C06, false, (mod -> mod.isBizkaia()),null,null,"BZ_C03+BZ_C05")
-		,BZ_TIP (Mod123Key.BZ_TIP, false , (mod -> mod.isBizkaia()), null,null,null)
+			,null,null)
+		,BZ_C04(Mod123Key.BZ_C04, false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C05(Mod123Key.BZ_C05, false, (mod -> mod.isBizkaia()),null,null,null,null)
+		,BZ_C06(Mod123Key.BZ_C06, false, (mod -> mod.isBizkaia()),null,null,null,"BZ_C03+BZ_C05")
+		,BZ_TIP (Mod123Key.BZ_TIP, false , (mod -> mod.isBizkaia()), null,null,null,null)
 		
 		// *************************************************************************
 		// **************************************************** COMMON TERRITORY ***
@@ -151,49 +168,57 @@ public class Mod123DAO extends FiscalModelDAO {
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.CT_C01,mod,docs,br)
-			,null)
+			,null,null)
 		,CT_C02(Mod123Key.CT_C02, true
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addBase(Mod123Key.CT_C02,mod,br)
+			,null
 			,null)
 		,CT_C03(Mod123Key.CT_C03, true
 			, (mod -> mod.isAEAT())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.CT_C03,mod,br)
+			,null
 			,null)
-		,CT_C04(Mod123Key.CT_C04, false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C05(Mod123Key.CT_C05, false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C06(Mod123Key.CT_C06, false, (mod -> mod.isAEAT()),null,null, "CT_C03+CT_C05" )
-		,CT_C07(Mod123Key.CT_C07, false, (mod -> mod.isAEAT()),null,null,null)
-		,CT_C08(Mod123Key.CT_C08, false, (mod -> mod.isAEAT()),null,null, "CT_C06-CT_C07" )
-		,CT_TIP (Mod123Key.CT_TIP, false , (mod -> mod.isAEAT()), null,null,null)
+		,CT_C04(Mod123Key.CT_C04, false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C05(Mod123Key.CT_C05, false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C06(Mod123Key.CT_C06, false, (mod -> mod.isAEAT()),null,null,null, "CT_C03+CT_C05" )
+		,CT_C07(Mod123Key.CT_C07, false, (mod -> mod.isAEAT()),null,null,null,null)
+		,CT_C08(Mod123Key.CT_C08, false, (mod -> mod.isAEAT()),null,null,null, "CT_C06-CT_C07" )
+		,CT_TIP (Mod123Key.CT_TIP, false , (mod -> mod.isAEAT()), null,null,null,null)
 		
 		// *************************************************************************
 		// ************************************************************ GIPUZKOA ***
 		// *************************************************************************
+		,GP_X00 (Mod123Key.GP_X00,false
+			, (mod -> mod.isGipuzkoa())	
+			, null
+			, null
+			, (ctx,mod) -> addDeponentDocument(ctx,mod)
+			, null)
 		,GP_C01(Mod123Key.GP_C01, false
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.GP_C01,mod,docs,br)
-			,null)
+			,null,null)
 		,GP_C02(Mod123Key.GP_C02, true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addBase(Mod123Key.GP_C02,mod,br)
-			,null)
+			,null,null)
 		,GP_C03(Mod123Key.GP_C03, true
 			, (mod -> mod.isGipuzkoa())
 			, (mod,br) -> br.isMovableCapital()
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.GP_C03,mod,br)
-			,null)
-		,GP_C04(Mod123Key.GP_C04, false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C05(Mod123Key.GP_C05, false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C06(Mod123Key.GP_C06, false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C07(Mod123Key.GP_C07, false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C08(Mod123Key.GP_C08, false, (mod -> mod.isGipuzkoa()),null,null,null)
-		,GP_C09(Mod123Key.GP_C09, false, (mod -> mod.isGipuzkoa()),null,null,"GP_C03+GP_C06+GP_C08")
-		,GP_TIP (Mod123Key.GP_TIP, false , (mod -> mod.isGipuzkoa()), null,null,null)
+			,null,null)
+		,GP_C04(Mod123Key.GP_C04, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C05(Mod123Key.GP_C05, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C06(Mod123Key.GP_C06, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C07(Mod123Key.GP_C07, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C08(Mod123Key.GP_C08, false, (mod -> mod.isGipuzkoa()),null,null,null,null)
+		,GP_C09(Mod123Key.GP_C09, false, (mod -> mod.isGipuzkoa()),null,null,null,"GP_C03+GP_C06+GP_C08")
+		,GP_TIP (Mod123Key.GP_TIP, false , (mod -> mod.isGipuzkoa()), null,null,null,null)
 		
 		// *************************************************************************
 		// ************************************************************* NAVARRA ***
@@ -202,8 +227,8 @@ public class Mod123DAO extends FiscalModelDAO {
 			, (mod -> mod.isNavarra())
 			, (mod,br) -> (br.isMovableCapital()) 
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.NF_C01,mod,br)
-			,null)
-		,NF_TIP (Mod123Key.NF_TIP, false , (mod -> mod.isNavarra()), null,null,null)
+			,null,null)
+		,NF_TIP (Mod123Key.NF_TIP, false , (mod -> mod.isNavarra()), null,null,null,null)
 		;
 		
 		private Mod123Key key;
@@ -211,14 +236,18 @@ public class Mod123DAO extends FiscalModelDAO {
 		private IModelAccepter acceptModel;
 		private IValueAccepter acceptValue;
 		private IValueIntializer initializer;
+		private IValueUniqueIntializer uniqueInitializer;
 		private String expression;
 
 		private Mod123KeyDAO(Mod123Key key, boolean diffEnabled, IModelAccepter acceptModel, IValueAccepter acceptValue
-				,IValueIntializer initializer,String expression) {
+				,IValueIntializer initializer
+				,IValueUniqueIntializer uniqueInitializer
+				,String expression) {
 			this.key = key;
 			this.acceptModel =  acceptModel;
 			this.acceptValue =  acceptValue;
 			this.initializer = initializer;
+			this.uniqueInitializer = uniqueInitializer;
 			this.expression =  expression;
 			this.diffEnabled = diffEnabled;
 		}
@@ -239,6 +268,11 @@ public class Mod123DAO extends FiscalModelDAO {
 		public void initialize(AONContext ctx,Mod123 mod,Set<String> docs,IrpfBreakdown  br) {
 			if (initializer != null) {
 				initializer.initialize(ctx, mod, docs, br);
+			}
+		}
+		public void uniqueInitialize(AONContext ctx,Mod123 mod) {
+			if (uniqueInitializer != null) {
+				uniqueInitializer.initialize(ctx, mod);
 			}
 		}
 		public String getExpression() {
@@ -334,6 +368,11 @@ public class Mod123DAO extends FiscalModelDAO {
 				detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
 				detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
 			}
+		}
+		for (Mod123KeyDAO key : Mod123KeyDAO.values()) {
+			if (key.acceptModel(mod123)) {
+				key.uniqueInitialize(ctx, mod123);
+			};
 		}
 		return calculateMod123(ctx, mod123);
 	}

@@ -6,15 +6,22 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
+import com.esferalia.aon.gwt.fiscal.shared.mod123.Model123GipuzkoaScript;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
+import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class Model123Gipuzkoa extends Model123Base {
 	
@@ -109,5 +116,41 @@ public class Model123Gipuzkoa extends Model123Base {
 			+ "cambiarLocale.do?cambiarLocale=true&idioma=es&tipoBusq="
 			+ "busq_mat&ms=1421096256948&ver=1648"));
 		return list;
+	}
+
+	@Override
+	protected void paintParticularyRow(IFiscalModelCallback<Mod123> callback, IModelScript<Mod123Key> script) {
+		if (script == Model123GipuzkoaScript.X00) {
+			int row = getTable().getRowCount();
+			getTable().getFlexCellFormatter().setColSpan(row, 0, 8);
+			getTable().getFlexCellFormatter().setStyleName(row, 0,AON.AON_CSS.aonBold() );
+			getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonTextCenter() );
+			getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderBottom() );
+			getTable().getFlexCellFormatter().addStyleName(row, 0,AON.AON_CSS.aonBorderTop() );
+			getTable().setWidget(row, 0, new Label( "Informaci\u00F3n para la presentaci\u00F3n telem\u00E1tica"));
+			row++;
+			paintLabel(row, callback, script);
+			getTable().getFlexCellFormatter().setColSpan(row, 0, 6);
+			Mod123Key key = Mod123Key.GP_X00;
+			final FiscalModelDetail det1 = callback.getFiscalModel().ensureDetail(key);
+			final TextBox input = new TextBox();
+			input.setStyleName(AON.AON_CSS.aonInputText());
+			input.setVisibleLength(10);
+			input.setMaxLength(9);
+			input.setEnabled(callback.getFiscalModel().isNotFinished() && script.isEnabled()); 
+			input.setValue(det1.getDescription());
+			input.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					callback.getFiscalModel().ensureDetail(key).setDescription(input.getValue());	
+					if (input.isEnabled()) {
+						calculateAndRefresh( callback );
+					}
+					callback.markAsDirty();
+				}
+			});
+			getTable().setWidget(row, 1, input);
+		}
+		
 	}
 }

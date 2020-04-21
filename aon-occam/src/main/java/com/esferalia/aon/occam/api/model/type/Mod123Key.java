@@ -44,6 +44,7 @@ public enum Mod123Key implements IFiscalModelKey {
 	,CT_TIP("123-CT-DT" ,  0,Administration.COMMON_TERRITORY)
 	
 	// ------------------------------------------------------------- GIPUZKOA
+	,GP_X00("123-GP-X0" ,  0,Administration.GIPUZKOA)
 	,GP_C01("123-01" 	,  1,Administration.GIPUZKOA)
 	,GP_C02("123-02" 	,  2,Administration.GIPUZKOA)
 	,GP_C03("123-03" 	,  3,Administration.GIPUZKOA)

@@ -16,7 +16,10 @@ public class Mod123WriterGIPUZKOA2016 implements IMod123Writer{
 	private static enum Mod123File {
 		
 		GIPUZKOA_2016 ( mod123 -> true ,new IPropertyFiller[] {
-			(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
+			(wr, mod) -> wr.append(AonFiscalFileUtils.text(
+					(AonStringUtils.isNotBlank(mod.getDescription(Mod123Key.GP_X00))
+							?mod.getDescription(Mod123Key.GP_X00)
+							:mod.getDocument()),9))      // Nif presentador AN9
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDocument(),9))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getYear(), 4,0))
 		   ,(wr, mod) -> wr.append("123")
