@@ -34,6 +34,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMS_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_LENGTH;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LIQUID;
@@ -705,7 +706,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					if (start < 0)
 						return;
-
+					Date leaveEnd4Length = leaveEnd;
+					leaveEnd= Period.min(endDate, leaveEnd);
+					
 					Period leavePeriod = new Period(leaveStart, leaveEnd);
 
 					Calendar leaveCalendar = Calendar.getInstance();
@@ -749,6 +752,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					// Adds 'BASE_REGULADORA' variable for guaranteed period
 					exprCtx.setVariable(IT_START, leaveStart, guarenteeStart, guarenteeEnd);
+					exprCtx.setVariable(IT_LENGTH, new Period(leaveStart, leaveEnd4Length), guarenteeStart, guarenteeEnd);
 					
 					Period period = new Period(Period.max(guarenteeStart, startDate), guarenteeEnd);
 //					int guaranteedDays = (int) getGuaranteedDays(exprCtx,period);

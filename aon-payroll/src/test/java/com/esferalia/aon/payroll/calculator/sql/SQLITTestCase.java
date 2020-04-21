@@ -135,6 +135,133 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		}
 	}
 	
+	@Test
+	public void testDuracionIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		Assert.assertEquals(1, results.size());
+		int itLenght = get(endDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 ;
+		Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+		
+		for ( int i = 1; i < 12 ; i++ ) {
+			startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,i);
+			endDate = getLastDayOfMonth(startDate);
+			ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+			System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
+			Assert.assertEquals(1, results.size());
+			itLenght += get(endDate, DAY_OF_MONTH);
+			Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+		}
+	}
+
+	@Test
+	public void testDuracionITI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endIt = add(startITDate, DAY_OF_MONTH, 33 );
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endIt, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(34, (int)results.get(0).getValue());
+		
+		startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(34, (int)results.get(0).getValue());
+
+	}
+
+	@Test
+	public void testDuracionITII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endIt = add(startITDate, DAY_OF_MONTH, 10 );
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endIt, null);
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(11, (int)results.get(0).getValue());
+		
+		startITDate = add(endIt, DAY_OF_MONTH,5);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		Assert.assertEquals(2, results.size());
+		Assert.assertEquals(11, (int)results.get(0).getValue());
+		int itLenght = get(endDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 ;
+		Assert.assertEquals(itLenght, (int)results.get(1).getValue());
+
+	}
 	
 	@Test
 	public void testCommonDiseaseITI() throws ExpressionException, SQLException,
@@ -175,6 +302,49 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testDuracionITIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,-100),
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+		//@formatter:on
+		
+		Date startITDate = add(add(getFirstDayOfMonth(getToday()), MONTH,-1), DAY_OF_MONTH,10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				null, null);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH,-1);
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		Assert.assertEquals(1, results.size());
+		int itLenght = get(getToday(), DAY_OF_MONTH) + (AonDateUtils.getMax(startITDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) + 1);
+		Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+		
+//		for ( int i = 1; i < 12 ; i++ ) {
+//			startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,i);
+//			endDate = getLastDayOfMonth(startDate);
+//			ctx = getContractSalaryCalculatorContext(
+//					connection, startDate, endDate, endDate, contract);
+//			results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+//			System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
+//			Assert.assertEquals(1, results.size());
+//			itLenght += get(endDate, DAY_OF_MONTH);
+//			Assert.assertEquals(itLenght, (int)results.get(0).getValue());
+//		}
+	}
 
 	@Test
 	public void testMaternityIT() throws ExpressionException, SQLException,

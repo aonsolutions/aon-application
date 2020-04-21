@@ -54,7 +54,10 @@ public class SQLContractLeaveLoader extends ContractLeaveLoader{
 				.getObject(ContractLeaveColumns.DAILY_REG_BASE);
 
 		Integer id = rs.getInt(ContractLeaveColumns.ID);
-		loadContractLeave(id, leaveStart, end, parentDays, type,
+		
+		Date leaveEnd4Length = leaveEnd == null ? Period.max(endDate, new Date()) : leaveEnd;
+		
+		loadContractLeave(id, leaveStart, leaveEnd4Length, parentDays, type,
 				(Double) dailyRegBase, exprCtx);
 		
 		Date lastDayOMonth = AonDateUtils.getLastDayOfMonth(startDate);

@@ -117,7 +117,7 @@ public class ContractLeaveLoader {
 			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365) , start, null);
 		
 
-		long delegatePayDays = directPayStart != null ? AonDateUtils.getDaysBetweenDates(start, directPayStart) : 365;
+		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, directPayStart) : 365;
 
 		DaysRange commonRanges[] = new DaysRange[5];
 		commonRanges[0] = new DaysRange(1, Math.min(delegatePayDays,3));
@@ -145,7 +145,7 @@ public class ContractLeaveLoader {
 		if ( directPayStart == null )
 			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365) , start, null);
 		
-		long delegatePayDays = directPayStart != null ? AonDateUtils.getDaysBetweenDates(start, directPayStart) : 365;
+		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, directPayStart) : 365;
 
 		DaysRange professionalRanges[] = new DaysRange[2];
 		professionalRanges[0] = new DaysRange(1, delegatePayDays) {
@@ -255,12 +255,13 @@ public class ContractLeaveLoader {
 		final Date start = Period.max(itStart,  realStartDate );
 
 		final ITimedVariable<?> contractEnd = exprCtx.getVariable(ContextVariable.CONTRACT_END, startDate, endDate);
-		final Date end = Period.min(leaveEnd, (Date) contractEnd.getValue(contractEnd.getPeriod()));
-
+		final Date end = Period.min(endDate, Period.min(leaveEnd, (Date) contractEnd.getValue(contractEnd.getPeriod())));
+		
 
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
 
 		exprCtx.setVariable(ContextVariable.IT_START, itStart, start, end);
+		exprCtx.setVariable(ContextVariable.IT_LENGTH, getDaysBetweenDates(itStart, leaveEnd) + 1, start, end);
 
 		ExpressionImpl exp = new ExpressionImpl();
 		exp.setName(ContextVariable.REGULATORY_BASE.getName());
@@ -526,6 +527,7 @@ public class ContractLeaveLoader {
 		exprCtx.removeVariable(ContextVariable.LEAVE_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, leave.getStart(), leave.getEnd());
 		exprCtx.removeVariable(ContextVariable.MATERNITY_DAYS, leave.getStart(), leave.getEnd());
+		exprCtx.removeVariable(ContextVariable.IT_LENGTH, leave.getStart(), leave.getEnd());
 
 	}
 
