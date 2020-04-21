@@ -43,6 +43,7 @@ public enum Mod115Key implements IFiscalModelKey {
 	,CT_TIP("115-CT-DT" ,  0,Administration.COMMON_TERRITORY)
 	
 	// ------------------------------------------------------------- GIPUZKOA
+	,GP_X00("115-GP-X00",  0,Administration.GIPUZKOA)
 	,GP_C01("115-01" 	,  1,Administration.GIPUZKOA)
 	,GP_C02("115-02" 	,  2,Administration.GIPUZKOA)
 	,GP_C03("115-03" 	,  3,Administration.GIPUZKOA)
