@@ -714,6 +714,8 @@ public class Cra {
 			return "0138";
 		case 7:
 			return "0163";
+		case 8:
+			return "0112";
 		default:
 			return "0111";
 		}
