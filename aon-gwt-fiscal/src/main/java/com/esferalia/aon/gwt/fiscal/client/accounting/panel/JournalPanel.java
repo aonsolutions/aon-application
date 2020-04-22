@@ -193,6 +193,9 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 								final FlowPanel entrycontainer = new FlowPanel();
 								container.add(entrycontainer);
 								paintEntry(entrycontainer, entry);
+								somethingPrinted = true;
+								oldId = -1;
+								entry = null;
 							} 
 						}
 						offset.setValue(ofs + count);
