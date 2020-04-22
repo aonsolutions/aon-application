@@ -75,7 +75,7 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_PERIOD_CLOSING("No se permite la introducci\u00F3n, modificaci\u00F3n  o borrado de asientos en el ejercicio {0} porque ya se ha realizado el asiento de cierre.")
 	,ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE("No se permite el borrado de asientos autom\u00E1ticos.")
 	,ACCOUNT_ENTRY_EMPTY_CONCEPT("El concepto del apunte es un dato obligatorio, no puede estar vac\u00EDo.")
-	,ACCOUNT_ENTRY_OVERFLOW_CONCEPT("El concepto del apunte no puede tener más de 32 caracteres.")
+	,ACCOUNT_ENTRY_OVERFLOW_CONCEPT("El concepto del apunte no puede tener m\u00E1s de 32 caracteres.")
 	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vac\u00EDo. (LINEA={0,number},CONCEPTO={1},DEBE={2,number},HABER={3,number})")
 	,ACCOUNT_ENTRY_NO_EXP_ACCOUNT("La cuenta contable de explotaci\u00F3nn es un dato obligatorio, no puede estar vac\u00EDa.")
 	,ACCOUNT_ENTRY_NO_TAX_ACCOUNT("La cuenta contable de IVA / IRPF es un dato obligatorio, no puede estar vac\u00EDa.")

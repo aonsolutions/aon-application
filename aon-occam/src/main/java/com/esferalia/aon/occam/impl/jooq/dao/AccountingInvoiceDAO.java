@@ -614,6 +614,10 @@ public class AccountingInvoiceDAO {
 			if (invoice.getDetails() != null) {
 				for (InvoiceDetail detail : invoice.getDetails() ) {
 					detail.setId( null );
+					detail.setItem(null);
+					detail.setWarehouse(null);
+					detail.setWarehouseName(null);
+					detail.setSource(InvoiceSource.ACCOUNT);
 				}
 			}
 		}
@@ -994,10 +998,10 @@ public class AccountingInvoiceDAO {
 		AccountingInvoice ai = (accountEntryId == null?null: getAccountingInvoice(ctx, accountEntryId));
 		if (ai != null) {
 			ai.setAccountEntry(null);
+			ai.setAttach(null);
 			AccountingRegistry reg = ai.getRegistry(); 
 			reg.getType().visit(reg, new  InvoiceDuplicator(ctx, ai.getInvoice()));
 			for (Finance finance : ai.getInvoice().getFinances()) {
-				finance.setId(null);
 				finance.setId(null);
 				finance.setFinanceStatus(FinanceStatus.PENDING);
 			}

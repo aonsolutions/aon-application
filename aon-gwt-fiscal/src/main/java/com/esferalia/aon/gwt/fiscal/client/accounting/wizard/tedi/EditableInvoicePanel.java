@@ -107,9 +107,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private CheckBox undeductible;
 	private InlineLabel invoiceTypeLabel;
 	private FlowPanel dropPanel; 	
-	private ListBox series = new ListBox();
-	private TextBox referenceCode = new TextBox();
-	private DoubleBox invoiceTotal = new DoubleBox();
+	private ListBox series;
+	private TextBox referenceCode;
+	private DoubleBox invoiceTotal;
 	private Button fastSave;
 	private DateBoxEx taxDate;
 	private InvoiceVATPanel vatPanel;
@@ -547,20 +547,23 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
-							result.setAccountEntry(invoiceCallback.getInvoice().getAccountEntry());
-							result.getInvoice().setIssueDate(invoiceCallback.getModule().getEntryDate());
-							result.getInvoice().setTaxDate(invoiceCallback.getModule().getEntryDate());
-							if (!result.getInvoice().isSales()) {
-								result.getInvoice().setReferenceCode(referenceCode.getValue());
+							if (result == null) {
+								invoiceCallback.getModule().onError("No se ha encontrado ninguna factura");
+							} else {
+								result.setAccountEntry(invoiceCallback.getInvoice().getAccountEntry());
+								result.getInvoice().setIssueDate(invoiceCallback.getModule().getEntryDate());
+								result.getInvoice().setTaxDate(invoiceCallback.getModule().getEntryDate());
+								if (!result.getInvoice().isSales()) {
+									result.getInvoice().setReferenceCode(referenceCode.getValue());
+								}
+								if (result.getInvoice().hasFinances()) {
+									result.getInvoice().getFinances().get(0).setDueDate(invoiceCallback.getModule().getEntryDate());
+									// TODO Manage due dates for all finances.
+								}
+								result.getInvoice().setId(null);
+								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+								
 							}
-							if (result.getInvoice().hasFinances()) {
-								result.getInvoice().getFinances().get(0).setDueDate(invoiceCallback.getModule().getEntryDate());
-								// TODO Manage due dates for all finances.
-							}
-							result.getInvoice().setId(null);
-							invoiceCallback.setInvoice(result);
-							editInvoice(invoiceCallback);
-							invoiceCallback.getModule().onBalance(invoiceCallback.getInvoice().getAccountEntry());
 							if (cbk != null) {
 								cbk.onSuccess();
 							}							
@@ -570,7 +573,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 						public void onFailure(Throwable caught) {
 							invoiceCallback.getModule().onError("No se ha encontrado ninguna factura");
 						}
-					});
+			});
 	}
 
 	private FlowPanel editInvoice(InvoicePanelCallback invoiceCallback) {
@@ -622,6 +625,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		taxDate.setValue(inv.getInvoice().getTaxDate());
 		transactionBox.setValue(inv.getTransaction());
 		
+		series = new ListBox();
+		referenceCode = new TextBox();
+		
 		if (inv.isSales()) {
 			series.addItem(" --- ","");
 			if (invoiceCallback.getConfiguration().getInvoiceSalesSeries() != null 
@@ -652,6 +658,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		number.setVisible( inv.isSales() );
 		referenceCode.setVisible( !inv.isSales() );
 		
+		invoiceTotal = new DoubleBox();
 		invoiceTotal.setValue(inv.getTotalInvoice());
 		manualConcept.setValue(inv.getManualConcept());
 		
