@@ -783,6 +783,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
 							new TimedObject<Double>(0.00, guarenteeStart, guarenteeEnd));
+					
+					exprCtx.setVariable(ContextVariable.LEAVE_DAYS, 0, guarenteeStart, guarenteeEnd);
 
 					type.accept(new LeaveTypeVisitor<Void>() {
 
