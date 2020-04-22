@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -62,7 +65,7 @@ public class AccountEntryValidation {
 	 * 		
 	 */
 	public static BiConsumer<AccountEntry,AONContext> ENTRY_PERIOD_CHECK = (ae,ctx) -> {
-		AccountPeriod period = AccountPeriodDAO.fetchOne(ctx,ae.getPeriod());
+		AccountPeriod period = AccountPeriodDAO.getPeriod(ctx,ae.getPeriod());
 		// El periodo debe existir y tener el mismo dominio que el asiento.
 		if (period == null) {
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_WRONG_DOMAIN.format(ae.getDomain()));
@@ -127,6 +130,14 @@ public class AccountEntryValidation {
 			throw new AonCoreException(AonError.ACCOUNT_ENTRY_EMPTY_CONCEPT.getMessage());
 	};
 	
+	/**
+	 * El concepto no debe superar la longitud de la columan.
+	 */
+	public static BiConsumer<AccountEntryDetail,AONContext> OVERFLOW_CONCEPT = (detail,ctx) -> {
+		if (AonStringUtils.length(detail.getConcept()) > ACCOUNT_ENTRY_DETAIL.CONCEPT.getDataType().length() )
+			throw new AonCoreException(AonError.ACCOUNT_ENTRY_OVERFLOW_CONCEPT.getMessage());
+	};
+
 	/**
 	 * La cuenta contable del apunte es un dato obligatorio.
 	 */
@@ -195,6 +206,7 @@ public class AccountEntryValidation {
 		EMPTY_ACCOUNT
 			.andThen(VALID_ACCOUNT)
 			.andThen(EMPTY_CONCEPT)
+			.andThen(OVERFLOW_CONCEPT)
 			.andThen(VALID_BALANCING_ACCOUNT)
 			.accept(detail, ctx);
 	}
