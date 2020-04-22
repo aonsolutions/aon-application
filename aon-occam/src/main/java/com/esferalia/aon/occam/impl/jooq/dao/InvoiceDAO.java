@@ -993,7 +993,7 @@ public class InvoiceDAO {
 			.set(INVOICE.SELLER, invoice.getSeller() )
 			.set(INVOICE.COMMENTS, invoice.getComments() )
 			.set(INVOICE.REMARKS, invoice.getRemarks() )
-			.set(INVOICE.CREATION_USER, invoice.getCreationUser() )
+			.set(INVOICE.CREATION_USER, ctx.getUser()) 
 			.set(INVOICE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(INVOICE.ID)
 			.fetchOne();
@@ -1036,7 +1036,7 @@ public class InvoiceDAO {
 			.set(INVOICE_DETAIL.SELLER,detail.getSeller() == null ? null : detail.getSeller().getId() )
 			.set(INVOICE_DETAIL.WORKPLACE,detail.getWorkPlace() )
 			.set(INVOICE_DETAIL.WAREHOUSE,detail.getWarehouse())
-			.set(INVOICE_DETAIL.CREATION_USER,ctx.getUser())
+			.set(INVOICE_DETAIL.CREATION_USER ,ctx.getUser())
 			.set(INVOICE_DETAIL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(INVOICE_DETAIL.ID)
 			.fetchOne();

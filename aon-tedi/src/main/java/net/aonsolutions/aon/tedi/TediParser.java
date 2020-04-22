@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
@@ -450,6 +451,9 @@ public class TediParser {
 		if (result.isImportable()) {
 			ai.setAccountEntry(InvoiceRecorder.getInvoiceEntry(ai));
 		}
+		// ----------
+		InvoiceCalculator.calculate(ai);
+		// ----------
 		TediValidator.validateInvoice(ctx,result);
 		return result; 
 	}
