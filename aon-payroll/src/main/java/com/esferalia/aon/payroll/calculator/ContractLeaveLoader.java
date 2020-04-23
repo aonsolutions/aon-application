@@ -261,7 +261,7 @@ public class ContractLeaveLoader {
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
 
 		exprCtx.setVariable(ContextVariable.IT_START, itStart, start, end);
-		exprCtx.setVariable(ContextVariable.IT_LENGTH, getDaysBetweenDates(itStart, leaveEnd) + 1, start, end);
+		exprCtx.setVariable(ContextVariable.IT_LENGTH, new Period(itStart, leaveEnd).daysStream().count(), start, end);
 
 		ExpressionImpl exp = new ExpressionImpl();
 		exp.setName(ContextVariable.REGULATORY_BASE.getName());
