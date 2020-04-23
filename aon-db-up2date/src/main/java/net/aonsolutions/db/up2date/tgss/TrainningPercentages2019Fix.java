@@ -99,7 +99,7 @@ public class TrainningPercentages2019Fix implements Update {
 			.set(SYSTEM_COST.CODE, "CGC_E" )
 			.set(SYSTEM_COST.START_DATE, _2019StartDate)
 			.set(SYSTEM_COST.DESCRIPTION, "CGC")
-			.set(SYSTEM_COST.EXPRESSION, "51.05" )
+			.set(SYSTEM_COST.EXPRESSION, "42.56" )
 			.set(SYSTEM_COST.END_DATE, DSL.castNull(SYSTEM_DEDUCTION.END_DATE))
 			.newRecord()
 			.set(SYSTEM_COST.DOMAIN, -101)
