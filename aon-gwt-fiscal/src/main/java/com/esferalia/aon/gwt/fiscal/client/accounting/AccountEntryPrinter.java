@@ -99,11 +99,13 @@ public class AccountEntryPrinter {
 	
 	public static Label getDetail(AccountEntryDetail det, boolean abbrv) {
 		Label detail = new Label(toString(det,abbrv));
+		detail.setStyleName(null);
 		return detail;
 	}
 	
 	public static Label getTotals(double deb, double cre, boolean abbrv) {
 		Label totals = new Label(toString(deb,cre,abbrv));
+		totals.setStyleName(AON.AON_CSS.aonBold());
 		return totals;
 	}
 

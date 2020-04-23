@@ -18,7 +18,6 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.mutable.MutableInt;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -53,7 +52,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 	private String domainName;
 	private String user;
 	private int domainId;
-	private final int limit = 100;
+	private final int limit = 101;
 	private Integer oldId = -1;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
@@ -151,7 +150,6 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 			@Override
 			public void onReadyStateChange(XMLHttpRequest xhr) {
 				int state = xhr.getReadyState();
-				boolean somethingPrinted = false;
 				boolean something = false;
 				if (state == XMLHttpRequest.DONE) {
 					String text = xhr.getResponseText();
@@ -162,50 +160,46 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 						}
 						JavaScriptObject unk = JsonUtils.safeEval(text);
 						JsArray<JsFlatAccountEntry> array = unk.cast();
-						for (int i = 0; i < array.length(); i++ ) {
-							JsFlatAccountEntry flatEntry = array.get(i);
+						for (; count < array.length(); count++ ) {
+							boolean last = (count == limit - 1);
+							JsFlatAccountEntry flatEntry = array.get(count);
 							if (!AonNumberUtils.equals( flatEntry.getEntryId(), oldId)) {
 								if (entry != null) {
 									final FlowPanel entrycontainer = new FlowPanel();
 									container.add(entrycontainer);
 									paintEntry(entrycontainer, entry);
-									somethingPrinted = true;
+									entry = null;
 								}
 								oldId = flatEntry.getEntryId();
-								entry = newAccountEntry(flatEntry);
-							} else {
+							}
+							
+							if (!last) {
 								if (entry == null) {
 									entry = newAccountEntry(flatEntry);
 								}
+								AccountEntryDetail detail = newAccountEntryDetail(flatEntry);
+								
+								entry.getDetails().add( detail );
+								something = true;
 							}
-							entry.getDetails().add( newAccountEntryDetail(flatEntry));
-							something = true;
-							count++;
 						}
-						if (something) {
-							double sumD = 0.0;
-							double sumC = 0.0;
-							for (AccountEntryDetail aed : entry.getDetails()) {
-								sumD = AonMathUtils.sum(sumD, aed.getDebit());	
-								sumC = AonMathUtils.sum(sumC, aed.getCredit());
-							}
-							if (AonNumberUtils.equals(sumD, sumC)) {
+						
+						if (array.length() < limit) {
+							if (entry != null) {
 								final FlowPanel entrycontainer = new FlowPanel();
 								container.add(entrycontainer);
 								paintEntry(entrycontainer, entry);
-								somethingPrinted = true;
-								oldId = -1;
-								entry = null;
-							} 
+							}
+							FlowPanel line = new FlowPanel();
+							InlineLabel label = new InlineLabel(AON.MSG.noData());
+							line.add(label);
+							container.add(line);
+							disableMoreData();
+						} else {
+							offset.setValue(ofs + count - 1);
+							enableMoreData();
 						}
-						offset.setValue(ofs + count);
-						enableMoreData();
 						
-						// Si el primer apunte tiene más de 100 líneas (más líneas que "limit"), se 
-						// fuerza una nueva búsqueda para mostrar algo puesto que no sale nada al no estar cuadrado.
-						if (something && !somethingPrinted) {
-							search(offset.getValue(),params);						
-						}
 					} catch (IndexOutOfBoundsException e) {
 						FlowPanel line = new FlowPanel();
 						InlineLabel label = new InlineLabel(e.getMessage());
