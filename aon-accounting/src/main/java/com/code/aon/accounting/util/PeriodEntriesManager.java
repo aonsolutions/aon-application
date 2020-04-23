@@ -259,6 +259,7 @@ public class PeriodEntriesManager {
 			sw.append(" OR accountEntry.securityLevel IS NULL) ");;
 		}
 		sw.append(" GROUP BY account.id HAVING SUM(debit) != SUM(credit)");
+		sw.append(" ORDER BY account.code ");
 		Query query = session.createQuery(sw.toString());
 		return query.list();
 	}

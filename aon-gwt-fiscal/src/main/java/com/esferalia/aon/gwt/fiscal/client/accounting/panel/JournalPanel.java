@@ -190,14 +190,20 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 								container.add(entrycontainer);
 								paintEntry(entrycontainer, entry);
 							}
-							FlowPanel line = new FlowPanel();
-							InlineLabel label = new InlineLabel(AON.MSG.noData());
-							line.add(label);
-							container.add(line);
+//							FlowPanel line = new FlowPanel();
+//							InlineLabel label = new InlineLabel(AON.MSG.noData());
+//							line.add(label);
+//							container.add(line);
 							disableMoreData();
 						} else {
 							offset.setValue(ofs + count - 1);
 							enableMoreData();
+						}
+						
+						// Si el primer apunte tiene más de 100 líneas (más líneas que "limit"), se 
+						// fuerza una nueva búsqueda para mostrar algo puesto que no sale nada.
+						if (container.getWidgetCount() == 0 && entry != null) {
+							search(offset.getValue(),params);						
 						}
 						
 					} catch (IndexOutOfBoundsException e) {
