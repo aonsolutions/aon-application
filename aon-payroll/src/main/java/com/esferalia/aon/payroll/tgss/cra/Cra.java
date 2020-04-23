@@ -253,8 +253,12 @@ public class Cra {
 					Double craAmount = 0.00;
 					
 					for (int i=0; i<salaryPaymentRecords.size(); i++) {
-						
-						PaymentType craType = PaymentType.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
+						// FIx CRA_000
+						PaymentType craType = null;
+						if(salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE) == 0)
+							craType = PaymentType.values()[1];
+						else
+							craType = PaymentType.values()[salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE)];
 						
 						if(typeCRA == craType) {
 							
@@ -480,15 +484,21 @@ public class Cra {
 						// Get typeCRA ¿always 6?
 						PaymentType typeCRA = PaymentType.values()[salaryPayment.get(SALARY_PAYMENT.TYPE)];
 						
-						// Try to add Cre to Cres
-						addCreToCres(salaryPayment.get(SALARY_PAYMENT.AMOUNT), typeCRA, cres);
+						Double amount = salaryPayment.get(SALARY_PAYMENT.AMOUNT);
+						
+						if(null != amount && 0.0 != amount) {
+							// Try to add Cre to Cres
+							addCreToCres(amount, typeCRA, cres);
+						}
 					}
 					
-					// Add CRES to TRBF
-					trbf.put("CRES", cres);
-					
-					// Add TRBF to TRBSF
-					trbsf.add(trbf);
+					if(!cres.isEmpty()) {
+						// Add CRES to TRBF
+						trbf.put("CRES", cres);
+						
+						// Add TRBF to TRBSF
+						trbsf.add(trbf);
+					}
 					
 				}
 				
