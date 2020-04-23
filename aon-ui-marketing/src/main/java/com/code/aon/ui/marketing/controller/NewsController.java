@@ -26,6 +26,7 @@ import com.code.aon.marketing.enumeration.NewsType;
 import com.code.aon.ui.common.ICommonMessages;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
 
@@ -158,6 +159,12 @@ public class NewsController extends BasicController {
 	public String getLabel() {
 		String key = type == NewsType.MESSAGE ? ICommonMessages.MESSAGES : ICommonMessages.MARKETING_NEWSS;
 		return AonUtil.getMessage(key);
+	}
+	
+	public void onViewChannel(ActionEvent event) {
+		ChannelController channelController = (ChannelController)FormUtil.getController("channel");
+		channelController.onSearch(null);
+		channelController.setExternalBackAction(getBeanName() + "_form");	
 	}
 	
 }

@@ -12,7 +12,9 @@ import com.code.aon.ui.form.BasicController;
 public class ChannelController extends BasicController {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-
+	
+	private String externalBackAction;
+	
 	@Override
 	public void onReset(ActionEvent event) {
 		super.onReset(event);
@@ -33,4 +35,21 @@ public class ChannelController extends BasicController {
 		return null;
 	}
 	
+	public String externalBackAction() {
+		String b = getExternalBackAction();
+		setExternalBackAction(null);
+		return b;
+	}
+	
+	public String getExternalBackAction() {
+		return externalBackAction;
+	}
+	
+	public void setExternalBackAction(String externalBackAction) {
+		this.externalBackAction = externalBackAction;
+	}
+
+	public boolean isBackActionEnabled() {
+		return getExternalBackAction() != null;
+	}	
 }

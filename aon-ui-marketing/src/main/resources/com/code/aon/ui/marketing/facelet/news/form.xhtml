@@ -35,15 +35,21 @@
 						value="#{(news.to.type  == 'NEWS')?bundle.aon_title:bundle.aon_subject}" />
 					<aon:inputText id="News_title" required="true"
 						value="#{news.to.title}" size="60" maxlength="128" />
-						
 					<aon:if test="#{news.to.type  == 'NEWS'}" >						
 						<aon:outputLabel for="News_category"
 							value="#{bundle.marketing_news_channel}" />
-						<aon:selectOneMenu id="News_category" required="true"
-							value="#{news.to.category}">
-							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{marketingCollections.channels}" />
-						</aon:selectOneMenu>
+						<aon:div>
+							<aon:selectOneMenu id="News_category" required="true"
+								value="#{news.to.category}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{marketingCollections.channels}" />
+							</aon:selectOneMenu>
+							<aon:commandLink id="channel_link" immediate="true"
+									styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+									value="&#160;" title="#{bundle.aon_go}"
+									actionListener="#{news.onViewChannel}"
+									action="channel_list" />
+						</aon:div>
 					</aon:if>												
 
 					<aon:outputLabel for="News_scope_id"

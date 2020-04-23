@@ -14,11 +14,21 @@
 	<ui:define name="content">
 
 		<aon:form id="channelList">
-		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{bundle.marketing_channel_module}" />
 				<ui:param name="controller" value="#{channel}" />
-			</ui:include>
+	
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="back" value="#{bundle.aon_back}"
+						accesskey="K" title="#{bundle.aon_back}"
+						action="#{channel.externalBackAction}"
+						rendered="#{channel.backActionEnabled}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true" />
+
+						
+				</ui:define>
+			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
