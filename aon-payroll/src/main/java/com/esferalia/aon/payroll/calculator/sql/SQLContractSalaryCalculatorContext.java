@@ -4415,7 +4415,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					}
 
 				};
-				ctx.putVariable(REGULATORY_BASE, ereBase);
+				ITimedVariable<?> userBr = getExpressionContext().getVariable(REGULATORY_BASE, period.getStart(),
+						period.getEnd());
+
+				if (userBr == null)
+					ctx.putVariable(REGULATORY_BASE, ereBase);
 			}
 		}
 
