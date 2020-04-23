@@ -271,7 +271,12 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	public void addCost(Double amount, String description, 
 			Date start, Date end, IDeduction cost,
 			Map<String, ITimedVariable<?>> context) {
-		SalaryCost salaryCost = new SalaryCost();
+		SalaryCost salaryCost = new SalaryCost(){
+			@Override
+			public boolean equals(Object obj) {
+				return this == obj;
+			}
+		};
 
 		salaryCost.setSalary(salary);
 		salaryCost.setType(cost.getType());
@@ -286,7 +291,12 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	public void addEmbargo(Integer id, Double amount, String description,
 			IDeduction embargo, Map<String, ITimedVariable<?>> context) {
 
-		SalaryEmbargo salaryEmbargo = new SalaryEmbargo();
+		SalaryEmbargo salaryEmbargo = new SalaryEmbargo(){
+			@Override
+			public boolean equals(Object obj) {
+				return this == obj;
+			}
+		};
 
 		salaryEmbargo.setSalary(salary);
 		// TODO setContractEmbargo(null)
@@ -346,7 +356,12 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 
 		// TODO: start & end dates ????
 		
-		SalaryDeduction salaryDeduction = new SalaryDeduction();
+		SalaryDeduction salaryDeduction = new SalaryDeduction() {
+			@Override
+			public boolean equals(Object obj) {
+				return this == obj;
+			}
+		};
 
 		DeductionType type = deduction.getType();
 
