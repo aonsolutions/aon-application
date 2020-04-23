@@ -69,7 +69,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		
 		getElementById("costsCheck-input").click();
 		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "51,05");
+		assertText("common_contingency_cost", "42,56");
 		assertText("unemployment_cost", "57,75");
 //		assertText("job_training_cost", "1,38");
 		
@@ -88,7 +88,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		//assertValue("cgcBaseLabel", "858,60");
 		//assertValue("cgpBaseLabel", "858,60");
 		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "51,05");
+		assertText("common_contingency_cost", "42,56");
 
 		draft("FORMACION Y APRENDIZAJE, IT");
 		calculate(Calendar.OCTOBER, 2018);
