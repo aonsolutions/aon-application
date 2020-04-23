@@ -6,6 +6,7 @@ import java.util.Date;
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -19,6 +20,8 @@ public interface IContractSalaryCalculatorContext extends
 
 		void onIrpf(IrpfOutcome irpfOutcome);
 
+		default void onLiquid(ISalary salary) {
+		};
 
 		default void onUndefinedData(IExpression expression,
 				String variableName, String message, Date start, Date end) {

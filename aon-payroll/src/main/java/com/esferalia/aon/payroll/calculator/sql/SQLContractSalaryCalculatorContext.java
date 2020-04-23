@@ -2,6 +2,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.code.aon.common.util.CommonUtil.getDaysBetweenDates;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ABS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGREEMENT;
@@ -75,6 +76,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_DAYS;
@@ -118,6 +120,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -2657,7 +2660,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					ISalary salary = calculator.calculate(((ISQLContractSalaryCalculatorContext) ctx));
 					
-					return liquid - salary.getTotalLiquid();
+					double zero = liquid - salary.getTotalLiquid();
+					
+					
+					if ( Math.abs(zero) <= solver.getAbsoluteAccuracy())
+						SQLContractSalaryCalculatorContext.this.onLiquid(salary);
+					
+					return zero;
 
 				} catch (SalaryException e) {
 					throw new RuntimeException(e);
@@ -2668,7 +2677,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		try {
 			result = getLiquidStartValue(start, liquid);
-			if ( Math.abs(univariateFunction.value(result)) <=  0.001 ) {
+			if ( Math.abs(univariateFunction.value(result)) <=  solver.getAbsoluteAccuracy() ) {
 				System.out.println("Wonderfull NETO calculated in one step!!!. " );
 				return result;
 			}
@@ -3780,7 +3789,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	protected ITimedVariable<Number> getExtraDays(ITimedVariable<Number> monthDays) {
 		return new ExtraDays(monthDays);
 	}
-
+	
 	/*
 	 * Inicializa el contexto dentro del cual se calcular\E1n ejecutar\E1n las
 	 * percepciones y deducciones de trabajador.
@@ -4024,11 +4033,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.gross(x, %2$s, %3$s ); };",
 						SELF, START, END, GROSS),
 				this.startDate, this.getEnd());
-		loadExpression(this.contractExpressionContext, LIQUID,
-				String.format(
-						"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.liquid(x, %2$s, %3$s ); };",
-						SELF, START, END, LIQUID),
-				this.startDate, this.getEnd());
+//		loadExpression(this.contractExpressionContext, LIQUID,
+//				String.format(
+//						"def(x){ x=%1$s.checkParametersNotConstant(x, '%4$s', '%2$s', '%3$s'); return %1$s.liquid(x, %2$s, %3$s ); };",
+//						SELF, START, END, LIQUID),
+//				this.startDate, this.getEnd());
+		MethodStub __netoStub = new MethodStub(SQLContractSalaryCalculatorContext.class, "__neto");
+		this.contractExpressionContext.setVariable("__NETO", __netoStub, this.startDate, this.getEnd());
+		MethodStub netoStub = new MethodStub(SQLContractSalaryCalculatorContext.class, "neto");
+		this.contractExpressionContext.setVariable(LIQUID, netoStub, this.startDate, this.getEnd());
+		
 		loadExpression(this.contractExpressionContext, SYSTEM, "def(x){ SELF.system(x)};", this.startDate,
 				this.getEnd());
 		loadExpression(this.contractExpressionContext, AGREEMENT, "def(x){ SELF.agreement(x)};", this.startDate,
@@ -4051,6 +4065,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 //				}
 //			});
 //		}
+		
+		
 
 		hook.beforeLoadDaysContextVariables(contractExpressionContext);
 		// --------------------------------------------------------------------
@@ -4059,6 +4075,58 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		loadDaysContextVariables(contractExpressionContext);
 		
 		ContextFunctions.loadDaysFunctions(contractExpressionContext, contractStartDate, contractEndDate);
+	}
+	
+	
+	
+	public static Double neto(Double liquido) throws MacroException {
+		
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.LIQUID),
+						String.format("%s\\(%s,", "__NETO", ContextVariable.SELF));
+			}
+		};
+	}
+
+	public static Object __neto(SQLContractSalaryCalculatorContext ctx, Double liquido) 
+	throws ExpressionException, SalaryException, SQLException {
+		liquido = ctx.checkParametersNotConstant(liquido, LIQUID, START.getName(), END.getName(),"__NETO");
+		return ctx.liquid(liquido, 
+		getCurrentBindings().get(START, v -> (Date)v ),  
+		getCurrentBindings().get(END, v -> (Date)v ));
+	}
+
+	public static Object __neto(SQLContractSalaryCalculatorContext ctx, Double bruto, Double liquido) 
+	throws ExpressionException, SalaryException, SQLException {
+		liquido = ctx.checkParametersNotConstant(liquido, LIQUID, START.getName(), END.getName(),"__NETO");
+		Date start = getCurrentBindings().get(START, v -> (Date)v );
+		Date end = getCurrentBindings().get(END, v -> (Date)v );
+		
+		ctx.addBonus("", 
+		String.format(Locale.ROOT,
+		"CHECK(%3$s(%2$s-%1$.2f) < 0.01, \""
+		+ "<div>El TOTAL L&Iacute;QUIDO no coincide con el introducido inicialmente %1$.2f.</div>"
+		+"<div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>"
+		+ "\")", 
+		liquido, 
+		TOTAL_LIQUID,
+		ABS
+		));
+		
+		return ctx.gross(bruto, start, end);
+	}
+
+	public static Double neto(Double liquido, Double bruto) throws MacroException {
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.LIQUID),
+						String.format("%s\\(%s,", "__NETO", ContextVariable.SELF));
+				
+			}
+		};
 	}
 
 	protected ContractExpressionContext newContractExpressionContext(ExpressionContext expressionContext,
@@ -4667,6 +4735,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	}
 
+	protected void onLiquid(ISalary salary) {
+		if (listener != null)
+			listener.onLiquid(salary);
+	}
+
 	protected void onMistakenPartialFactor(double monthHours, double workedHours, double factor) {
 		if (listener == null)
 			return;
@@ -4974,6 +5047,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public <T> T checkParametersNotConstant(T t, String func, String... params) {
+		getExpressionContext().getCurrentBindings().get(func);
 		if (listener == null)
 			return t;
 		getExpressionContext().getCurrentBindings().getPeriod();

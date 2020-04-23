@@ -2569,7 +2569,7 @@ public class SalaryDraft extends ResizeComposite
 
 		String expression = totalLiquidLabel.getValue();
 
-		draftPayment.setExpression("/*read-only*/NETO(" + (StringUtils.isBlank(expression) ? "0.00" : expression) + ")/**/");
+		draftPayment.setExpression("/*read-only*/NETO(" + (StringUtils.isBlank(expression) ? "0.00" : expression + " * DIAS_TRABAJADOS/DIAS_MES" ) + ")/**/");
 		draftPayment.setScope(Scope.SALARY);
 		draftPayment.setIrpfExpression("_P");
 		draftPayment.setQuoteExpression("_P");

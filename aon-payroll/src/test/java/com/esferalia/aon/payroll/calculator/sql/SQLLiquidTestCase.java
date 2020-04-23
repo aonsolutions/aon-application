@@ -173,7 +173,7 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		
 		for ( SalaryPayment s : salary.getSalaryPayments() ) 
-//TODO: Use log instead 			System.out.println(s.getDescription() + " = " + s.getAmount() +", " + s.getQuote());
+			System.out.println(s.getDescription() + " = " + s.getAmount() +", " + s.getQuote());
 		
 		
 		monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH); 
@@ -259,6 +259,71 @@ public class SQLLiquidTestCase extends AbstractSQLTestCase {
 				salary.getTotalLiquid() 
 				, DELTA);
 		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testLiquid2I() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:off
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>() {
+				}, new String[] { 
+						"( P_1 + P_2 )* 0.10 ",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+						"NETO(3333.00 * (1.0215), 3333.00)" ,
+						}
+				, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 2.00/100" 
+				}, category);
+		//@formatter:on
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		for ( SalaryPayment s : salary.getSalaryPayments() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() +", " + s.getQuote());
+		
+		System.out.println("BASE :" + salary.getCommonBase());
+		
+		
+		Assert.assertEquals(
+				3333.00 * (1.0215), 
+				salary.getTotalPayment() 
+				, DELTA);
+
 		
 		
 	}

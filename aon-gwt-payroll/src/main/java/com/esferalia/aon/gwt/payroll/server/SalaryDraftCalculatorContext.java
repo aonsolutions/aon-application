@@ -52,6 +52,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -324,6 +325,12 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		public void onIrpf(IrpfOutcome irpfOutcome) {
 			if ( listener != null )
 				listener.onIrpf(irpfOutcome);
+		}
+		
+		@Override
+		public void onLiquid(ISalary salary) {
+			if ( listener != null )
+				listener.onLiquid(salary);
 		}
 
 		public <U> U onConstantParameter(String func, U constant, ExpressionContext ctx) {

@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.MissingResourceException;
 import java.util.stream.Stream;
 
@@ -86,11 +89,14 @@ public class SalaryDraftBuilder
 	private SalaryDraft salaryDraft;
 
 	private Map<String, boolean[]> defined;
+	
+	private Runnable sed ;
 
 	public SalaryDraftBuilder(SalaryDraft salaryDraft) {
 		this.salaryDraft = salaryDraft;
 		defined = Collections.emptyMap();
 		clearSalaryDraft();
+		this.sed = () -> {};
 	}
 
 	public void setDefined(Map<String, boolean[]> defined) {
@@ -245,6 +251,7 @@ public class SalaryDraftBuilder
 
 	@Override
 	public ISalary getSalary() {
+		sed.run();
 		Collections.sort(salaryDraft.getPayments(),
 				new ItemComparator<Payment.Type>());
 		Collections.sort(salaryDraft.getDeductions(),
@@ -793,7 +800,16 @@ public class SalaryDraftBuilder
 	public void onIrpf(IrpfOutcome irpfOutcome) {
 		salaryDraft.setCommunity(irpfOutcome.getComunidadAutonoma());
 	}
+	
+	@Override
+	public void onLiquid(ISalary salary) {
+		double totalPayment = salary.getTotalPayment();
+		this.sed = () -> { replaceNETO(totalPayment); };
 
+	}
+	
+	
+	
 	@Override
 	public void onUndefinedData(IExpression expression, String variableName,
 			String message, Date start, Date end) {
@@ -1210,6 +1226,20 @@ public class SalaryDraftBuilder
 				defined);
 	}
 	
+	private void replaceNETO(Double totalPayment) {
+		salaryDraft.getPayments().stream()
+		.filter(p -> p.getExpression() != null )
+		.forEach(p -> replaceNETO(p, totalPayment))
+		;
+		salaryDraft.getDraftPayments().stream()
+		.filter(p -> p.getExpression() != null )
+		.forEach(p -> replaceNETO(p, totalPayment))
+		;
+	}
+
+	private static void replaceNETO(Payment p, Double totalPayment) {
+		p.setExpression(p.getExpression().replaceAll("NETO\\s*\\(", String.format(Locale.ROOT,"NETO(%.2f,", totalPayment)));
+	}
 
 	private static Payment.Type getPaymentType(PaymentType type) {
 		return type != null ? Payment.Type.values()[type.ordinal()] : null;
