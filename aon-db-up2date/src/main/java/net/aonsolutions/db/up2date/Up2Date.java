@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.DefaultAgreementUpdate2;
 import net.aonsolutions.db.up2date.payroll.GarantizadoUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITDescriptionsUpdateII;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Fix;
@@ -110,7 +111,8 @@ public class Up2Date {
     		PrestITDescriptionsUpdateII.PRESTITDESCRIPTIONSUPDATEII,
     		FellowsPercentages2019Fix.FELLOWSPERCENTAGES2019FIX,
     		TrainningPercentages2019Fix.TRAINNINGPERCENTAGES2019FIX,
-    		GarantizadoUpdate.GARANTIZADOUPDATE
+    		GarantizadoUpdate.GARANTIZADOUPDATE,
+    		DefaultAgreementUpdate2.DEFAULTAGREEMENTUPDATE2
     };
 
 
