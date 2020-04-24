@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "AccountBalanceReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/AccountBalanceReportExcelPrint" })
@@ -273,9 +274,11 @@ public class AccountBalanceReportExcelPrint extends HttpServlet {
 			
 			if (report.getParams().isBreakdownEnabled()) {
 				AccountBalance b = bal.getBreakdown();
-				cell = addCell(b!=null?b.getDebitBalance():0);
+				Double deb = b!=null && AonMathUtils.isGreatherThanZero(b.getDebitBalance())?b.getDebitBalance():null;
+				cell = addCell(deb);
 				cell.setCellStyle(wrappedItalicCellStyle);
-				cell = addCell(b!=null?b.getCreditBalance():0);
+				Double cre = b!=null && AonMathUtils.isGreatherThanZero(b.getCreditBalance())?b.getCreditBalance():null;
+				cell = addCell(cre);
 				cell.setCellStyle(wrappedItalicCellStyle);
 			}
 			for (String period : report.getPeriods()) {
