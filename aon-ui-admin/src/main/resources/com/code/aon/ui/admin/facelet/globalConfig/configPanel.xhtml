@@ -194,7 +194,7 @@
 									</aon:commandLink>
 								</aon:div>						
 							</aon:if>
-							<aon:if test="#{aonRole.config and (actionDenied.moduleEnabled['infoweb'] or (actionDenied.moduleEnabled['marketing'] and aonRole.commercialOperator))}">
+							<aon:if test="#{aonRole.config and actionDenied.moduleEnabled['infoweb']}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="publishParameters" 
 										reRender="configPanelBar,configContent"

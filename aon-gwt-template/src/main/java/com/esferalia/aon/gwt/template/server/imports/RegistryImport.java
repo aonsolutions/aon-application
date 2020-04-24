@@ -414,7 +414,7 @@ public class RegistryImport {
 				}
 			} catch (Exception e) {
 				error.setError(false);
-				verror.add("Lï¿½nea " + r.getLine() + ": " + e.getMessage());
+				verror.add("Línea " + r.getLine() + ": " + e.getMessage());
 			}
 		}
 		error.setTextError(verror);
