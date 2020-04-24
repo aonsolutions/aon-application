@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DefaultAgreementUpdate2;
+import net.aonsolutions.db.up2date.payroll.FixERESalaries;
 import net.aonsolutions.db.up2date.payroll.GarantizadoUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITDescriptionsUpdateII;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Fix;
@@ -108,11 +109,12 @@ public class Up2Date {
     		//AlterCertifica2BatchDetail4ERE.ALTER_CERTIFICA2_BATCH_DETAIL_ERE,
     		//EreFzaExoneradoUpdate.EREFZAEXONERADOUPDATE
     		//EresUpdate.ERESUPDATE
-    		PrestITDescriptionsUpdateII.PRESTITDESCRIPTIONSUPDATEII,
-    		FellowsPercentages2019Fix.FELLOWSPERCENTAGES2019FIX,
-    		TrainningPercentages2019Fix.TRAINNINGPERCENTAGES2019FIX,
-    		GarantizadoUpdate.GARANTIZADOUPDATE,
-    		DefaultAgreementUpdate2.DEFAULTAGREEMENTUPDATE2
+    		//PrestITDescriptionsUpdateII.PRESTITDESCRIPTIONSUPDATEII,
+    		//FellowsPercentages2019Fix.FELLOWSPERCENTAGES2019FIX,
+    		//TrainningPercentages2019Fix.TRAINNINGPERCENTAGES2019FIX,
+    		//GarantizadoUpdate.GARANTIZADOUPDATE,
+    		//DefaultAgreementUpdate2.DEFAULTAGREEMENTUPDATE2
+    		FixERESalaries.FIXERESALARIES
     };
 
 

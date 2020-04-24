@@ -35,6 +35,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.HOLIDAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMS_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INDEFINITE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_LENGTH;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_RATE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IT_START;
@@ -709,8 +710,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 					if (start < 0)
 						return;
-					Date leaveEnd4Length = leaveEnd;
-					leaveEnd= Period.min(endDate, leaveEnd);
+					Date leaveEnd4End = leaveEnd;
+					Date leaveEnd4Length = leaveEnd == null ? Period.max(endDate, new Date()) : leaveEnd;
+					leaveEnd = Period.min(endDate, leaveEnd);
 					
 					Period leavePeriod = new Period(leaveStart, leaveEnd);
 
@@ -756,6 +758,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					// Adds 'BASE_REGULADORA' variable for guaranteed period
 					exprCtx.setVariable(IT_START, leaveStart, guarenteeStart, guarenteeEnd);
 					exprCtx.setVariable(IT_LENGTH, new Period(leaveStart, leaveEnd4Length), guarenteeStart, guarenteeEnd);
+					if ( leaveEnd4End != null ) exprCtx.setVariable(IT_END, leaveEnd4End, guarenteeStart, guarenteeEnd);
 					
 					Period period = new Period(Period.max(guarenteeStart, startDate), guarenteeEnd);
 //					int guaranteedDays = (int) getGuaranteedDays(exprCtx,period);
@@ -4395,10 +4398,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				};
 				
+				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return period;
+					}
+
+					@Override
+					public Double getValue(Period p) {
+						return getEreDays(ctx, p, 1.00);
+					}
+
+				};
+
 				String daysVar = ereFactorVar.getName()
 				.replaceAll(ERE_FACTOR.getName(), ERE_DAYS.getName());
 				
 				ctx.putVariable(daysVar, ereDays);
+				ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
 
 				ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
 					@Override
