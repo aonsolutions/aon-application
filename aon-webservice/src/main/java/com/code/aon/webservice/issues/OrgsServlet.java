@@ -18,7 +18,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "OrgsServlet", urlPatterns = { "/orgs/*",
@@ -78,7 +78,7 @@ public class OrgsServlet extends HttpServlet{
 		
 		array.put(new User().setId(-1).setLogin("Sin Asignar").toJSON());
 		userList.forEach(l->{
-			if(l.getStatus().equals(CustomerStatus.ACTIVE)) 
+			if(l.getStatus().equals(RegistryStatus.ACTIVE)) 
 				array.put(l.toJSON());	
 		});
 		return array;
@@ -90,7 +90,7 @@ public class OrgsServlet extends HttpServlet{
 				.map(new WorkgroupToUserFiller());
 		array.put(new User().setId(-1).setLogin("Sin Asignar").toJSON());
 		userList.forEach(l->{
-			if(l.getStatus().equals(CustomerStatus.ACTIVE)) 
+			if(l.getStatus().equals(RegistryStatus.ACTIVE)) 
 				array.put(l.toJSON());	
 		});
 
@@ -112,7 +112,7 @@ public class OrgsServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getName())
-					.setStatus(r.getActive() == 1 ? CustomerStatus.ACTIVE : CustomerStatus.INACTIVE);  
+					.setStatus(r.getActive() == 1 ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE);  
 		}
 	}
 	
@@ -133,7 +133,7 @@ public class OrgsServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getDescription())
-					.setStatus(CustomerStatus.values()[r.getStatus()]);    
+					.setStatus(RegistryStatus.values()[r.getStatus()]);    
 		}
 	}
 }

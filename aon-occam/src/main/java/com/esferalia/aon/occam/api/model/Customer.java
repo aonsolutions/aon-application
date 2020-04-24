@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 @SuppressWarnings("serial")
 public class Customer  extends Registry implements Serializable{
@@ -22,7 +22,7 @@ public class Customer  extends Registry implements Serializable{
 	Byte projectGrouped;
 	Registry registry;
 	Integer scope;
-	CustomerStatus status;
+	RegistryStatus status;
 	Byte surcharge;
 	Integer tariff;
 	Byte transaction;
@@ -136,10 +136,10 @@ public class Customer  extends Registry implements Serializable{
 		this.scope = scope;
 		return this;
 	}
-	public CustomerStatus getStatus() {
+	public RegistryStatus getStatus() {
 		return status;
 	}
-	public Customer setStatus(CustomerStatus status) {
+	public Customer setStatus(RegistryStatus status) {
 		this.status = status;
 		return this;
 	}

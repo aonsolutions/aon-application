@@ -51,13 +51,11 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -681,7 +679,7 @@ public class InvoiceImport {
 				customer = new Customer()
 					.setDomain(domain.getId())
 					.setRegistry(reg)
-					.setStatus(CustomerStatus.ACTIVE)
+					.setStatus(RegistryStatus.ACTIVE)
 					.setTransaction(transaction.value())
 					.setScope(getScopeId(domain, user));
 				customer.setName(reg.getName());
@@ -717,7 +715,7 @@ public class InvoiceImport {
 				
 				supplier = new Supplier()
 						.setTransaction((short) transaction.ordinal())
-						.setStatus(SupplierStatus.ACTIVE)
+						.setStatus(RegistryStatus.ACTIVE)
 						.setScope(getScopeId(domain, user))
 						.setAccount(acc.getId());
 				supplier.setDomain(domain.getId());
@@ -756,7 +754,7 @@ public class InvoiceImport {
 						.setAccount(acc)
 						.setTransaction(transaction)
 						.setRegistry(reg)
-						.setStatus(CreditorStatus.ACTIVE)
+						.setStatus(RegistryStatus.ACTIVE)
 						.setScope(getScopeId(domain, user));
 				creditor.setDomain(domain.getId());
 				creditor.setId(reg.getId());

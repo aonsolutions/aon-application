@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.WorkgroupStatus;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -255,7 +255,7 @@ public class WorkServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getName())
-					.setStatus(r.getActive() == 1 ? CustomerStatus.ACTIVE : CustomerStatus.INACTIVE);  
+					.setStatus(r.getActive() == 1 ? RegistryStatus.ACTIVE : RegistryStatus.INACTIVE);  
 		}
 	}
 
@@ -266,7 +266,7 @@ public class WorkServlet extends HttpServlet{
 			return new User()
 					.setId(r.getId())
 					.setLogin(r.getDescription())
-					.setStatus(CustomerStatus.values()[r.getStatus()]);  
+					.setStatus(RegistryStatus.values()[r.getStatus()]);  
 		}
 	}
 }

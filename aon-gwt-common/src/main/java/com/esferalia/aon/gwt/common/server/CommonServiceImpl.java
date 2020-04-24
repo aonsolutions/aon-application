@@ -22,8 +22,8 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -110,7 +110,7 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
 		return AON.getBasicCreditors(domainName, domain,user,
-				p ->  p.getActiveProperty().eq( CreditorStatus.ACTIVE.value())
+				p ->  p.getActiveProperty().eq( RegistryStatus.ACTIVE.value())
 					.and(p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))

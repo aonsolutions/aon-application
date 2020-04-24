@@ -22,7 +22,7 @@ import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.fee.Fee;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
 
 
@@ -64,7 +64,7 @@ public class FeeDAO {
 				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
 				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 				.where(FEE_PROPERTIES.getConditions(filter))
-				.and(CUSTOMER.STATUS.eq(CustomerStatus.ACTIVE.value()))
+				.and(CUSTOMER.STATUS.eq(RegistryStatus.ACTIVE.value()))
 				.orderBy(CUSTOMER_FEE.LINE)
 			.fetch().stream().map(new FeeFiller());
 	}

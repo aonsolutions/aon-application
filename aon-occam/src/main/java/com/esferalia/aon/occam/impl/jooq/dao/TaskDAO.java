@@ -50,7 +50,6 @@ import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskComment;
@@ -60,9 +59,9 @@ import com.esferalia.aon.occam.api.model.task.TaskSource;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
 import com.esferalia.aon.occam.api.model.task.TaskTag;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Priority;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -876,17 +875,17 @@ public class TaskDAO {
 		}
 	}
 	
-	private static class TaskRegistryFiller implements Function<Record, Registry> {
-		@Override
-		public Registry apply(Record r) {
-			return new Registry().setId(r.getValue(REGISTRY.ID))
-					.setDomain(r.getValue(REGISTRY.DOMAIN))
-					.setAlias(r.getValue(REGISTRY.ALIAS))
-					.setName(r.getValue(REGISTRY.NAME))
-					.setType(r.getValue(REGISTRY.TYPE));
-		}
-	}
-	
+//	private static class TaskRegistryFiller implements Function<Record, Registry> {
+//		@Override
+//		public Registry apply(Record r) {
+//			return new Registry().setId(r.getValue(REGISTRY.ID))
+//					.setDomain(r.getValue(REGISTRY.DOMAIN))
+//					.setAlias(r.getValue(REGISTRY.ALIAS))
+//					.setName(r.getValue(REGISTRY.NAME))
+//					.setType(r.getValue(REGISTRY.TYPE));
+//		}
+//	}
+//	
 	private static class TaskFilterCustomerFiller implements Function<Record4<Integer, String, String, Byte>, Customer> {
 		@Override
 		public Customer apply(Record4<Integer, String, String, Byte> r) {
@@ -894,7 +893,7 @@ public class TaskDAO {
 			customer.setId(r.getValue(REGISTRY.ID));
 			customer.setName(r.getValue(REGISTRY.NAME));	
 			customer.setAlias(r.getValue(REGISTRY.ALIAS));
-			return customer.setStatus(CustomerStatus.values()[r.getValue(CUSTOMER.STATUS)]);
+			return customer.setStatus(RegistryStatus.values()[r.getValue(CUSTOMER.STATUS)]);
 		}
 	}
 	

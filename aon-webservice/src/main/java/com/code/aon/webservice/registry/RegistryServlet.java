@@ -19,7 +19,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.QuestionType;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -159,8 +159,8 @@ public class RegistryServlet extends HttpServlet{
 		AON.getRSellerStream(domain.getName(), domain.getId(), login, f-> f.getRegistryProperty().eq(registryId).and(f.getStatusProperty().eq(SellerStatus.ACTIVE.value())))
 		.forEach(s -> {commercial = commercial + " - " + s.getRegistryName();});
 		
-		CustomerStatus status = AON.getCustomer(domain.getName(), domain.getId(), login, registryId).getStatus();
-		String st = !CustomerStatus.ACTIVE.equals(status) ? status.getDescription() : "";
+		RegistryStatus status = AON.getCustomer(domain.getName(), domain.getId(), login, registryId).getStatus();
+		String st = !RegistryStatus.ACTIVE.equals(status) ? status.getDescription() : "";
 		String observation = AON.getRNote(domain.getName(), domain.getId(), login,
 				f -> f.getDomainProperty().eq(domain.getId())
     			.and(f.getRegistryProperty().eq(registryId))
@@ -214,7 +214,7 @@ public class RegistryServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getCustomerStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+    			.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value())))
     		.forEach(customer -> {
 				JSONObject json = new JSONObject();
 				json.put("id", customer.getId());
@@ -228,7 +228,7 @@ public class RegistryServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getSellerStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+    			.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value())))
     		.forEach(seller -> {
 				JSONObject json = new JSONObject();
 				json.put("id", seller.getId());
@@ -242,7 +242,7 @@ public class RegistryServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getSupplierStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+    			.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value())))
    		.forEach(seller -> {
     			array.put(ToJSON.objectToJSON(seller.getId(), seller.getName()));
     	});
@@ -253,7 +253,7 @@ public class RegistryServlet extends HttpServlet{
     	JSONArray array = new JSONArray();
     	AON.getTargetStream(domain.getName(), domain.getId(), login,
     			f -> f.getDomainProperty().eq(domain.getId())
-    			.and(f.getStatusProperty().eq(CustomerStatus.ACTIVE.value())))
+    			.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value())))
    		.forEach(target -> {
     			array.put(ToJSON.objectToJSON(target.getId(), target.getName()));
     	});

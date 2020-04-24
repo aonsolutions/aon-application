@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 public class User {
 
@@ -14,7 +14,7 @@ public class User {
 	String type;
 	String email;
 	String alias;
-	CustomerStatus status;
+	RegistryStatus status;
 	LinkedList<User> workgroups;
 	
 	public User() {}
@@ -77,11 +77,11 @@ public class User {
 		return this;
 	}
 
-	public CustomerStatus getStatus() {
+	public RegistryStatus getStatus() {
 		return status;
 	}
 
-	public User setStatus(CustomerStatus status) {
+	public User setStatus(RegistryStatus status) {
 		this.status = status;
 		return this;
 	}
@@ -98,9 +98,9 @@ public class User {
 			jsStatus.put("id", getStatus().value());
 			jsStatus.put("name", getStatus().getDescription());
 			json.put("customer_status", jsStatus);
-			if(getStatus().equals(CustomerStatus.BLOCKED))
+			if(getStatus().equals(RegistryStatus.BLOCKED))
 				json.put("description", "[B] " + getLogin());
-			if(getStatus().equals(CustomerStatus.INACTIVE))
+			if(getStatus().equals(RegistryStatus.INACTIVE))
 				json.put("description", "[I] " + getLogin());
 		}
 		if(getAlias() != null && !getAlias().equals("") && !getAlias().equals(" ")){

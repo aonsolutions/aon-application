@@ -34,10 +34,8 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
-import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -381,7 +379,7 @@ public class RegistryImport {
 								.setDomain(domain.getId())
 								.setRegistry(reg)
 								.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
-								.setStatus(CustomerStatus.ACTIVE);
+								.setStatus(RegistryStatus.ACTIVE);
 						AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
 					}
 				}
@@ -393,7 +391,7 @@ public class RegistryImport {
 						Supplier sup = new Supplier()
 								.setAccount(acc.getId())
 								.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
-								.setStatus(SupplierStatus.ACTIVE);
+								.setStatus(RegistryStatus.ACTIVE);
 						sup.setId(registryId);
 						sup.setDomain(domain.getId());
 						AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
@@ -407,7 +405,7 @@ public class RegistryImport {
 						Creditor cre = new Creditor()
 								.setAccount(acc)
 								.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
-								.setStatus(CreditorStatus.ACTIVE);
+								.setStatus(RegistryStatus.ACTIVE);
 						cre.setId(registryId);
 						cre.setRegistry(reg);
 						cre.setDomain(domain.getId());

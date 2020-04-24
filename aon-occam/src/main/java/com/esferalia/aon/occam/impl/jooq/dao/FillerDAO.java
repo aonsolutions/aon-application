@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
@@ -41,7 +42,6 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
-import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 
 import java.util.function.Function;
 
@@ -92,8 +92,6 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -107,9 +105,9 @@ import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.PurchaseDetailStatus;
 import com.esferalia.aon.occam.api.model.type.PurchaseSourceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
@@ -245,7 +243,7 @@ public class FillerDAO {
 					.setWithholdingFarmer(r.getValue(SUPPLIER.WITHHOLDING_FARMER).shortValue())
 					.setVatAccrualPayment(r.getValue(SUPPLIER.VAT_ACCRUAL_PAYMENT).shortValue())
 					.setTransaction(r.getValue(SUPPLIER.TRANSACTION).shortValue())
-					.setStatus(SupplierStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)))
+					.setStatus(RegistryStatus.safeValueOf(r.getValue(SUPPLIER.STATUS)))
 					.setPurchaseValuated(r.getValue(SUPPLIER.PURCHASE_VALUATED).shortValue())
 					.setCreationDate(r.getValue(SUPPLIER.CREATION_DATE))
 					.setCreationUser(r.getValue(SUPPLIER.CREATION_USER))
@@ -268,7 +266,7 @@ public class FillerDAO {
 					.setWithholding(r.getValue(CREDITOR.WITHHOLDING).shortValue() == 1)
 					.setVatAccrualPayment(r.getValue(CREDITOR.VAT_ACCRUAL_PAYMENT).shortValue() == 1)
 					.setTransaction(InvoiceTransactionType.safeValueOf(r.getValue(CREDITOR.TRANSACTION).intValue()))
-					.setStatus(CreditorStatus.safeValueOf(r.getValue(CREDITOR.STATUS)))
+					.setStatus(RegistryStatus.safeValueOf(r.getValue(CREDITOR.STATUS)))
 					.setCreationDate(r.getValue(CREDITOR.CREATION_DATE))
 					.setCreationUser(r.getValue(CREDITOR.CREATION_USER))
 					.setModificationDate(r.getValue(CREDITOR.MODIFICATION_DATE))
@@ -360,12 +358,12 @@ public class FillerDAO {
 					// TODO QUITAR!!! 
 					.setRegistry(new Registry().setId(r.getValue(CUSTOMER.REGISTRY)).setName(r.getValue(REGISTRY.NAME)))
 					.setScope(r.getValue(CUSTOMER.SCOPE))
-					.setStatus(CustomerStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
+					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)))
 					.setSurcharge(r.getValue(CUSTOMER.STATUS))
 					.setTariff(r.getValue(CUSTOMER.TARIFF))
 					.setTransaction(r.getValue(CUSTOMER.TRANSACTION))
 					.setWithholding(r.getValue(CUSTOMER.WITHHOLDING))
-					.setStatus(CustomerStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
+					.setStatus(RegistryStatus.safeValueOf(r.getValue(CUSTOMER.STATUS)));
 		}
 	}
 	

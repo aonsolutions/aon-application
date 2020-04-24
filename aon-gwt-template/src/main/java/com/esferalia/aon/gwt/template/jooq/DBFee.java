@@ -33,7 +33,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SellerStatus;
 
 public class DBFee {
@@ -205,7 +205,7 @@ public class DBFee {
 						.setDocument(result.get(index).getValue(REGISTRY.DOCUMENT))
 						.setName(result.get(index).getValue(REGISTRY.NAME));
 				customer.setRegistry(registry);
-				customer.setStatus(CustomerStatus.values()[result.get(index).value5()]);
+				customer.setStatus(RegistryStatus.values()[result.get(index).value5()]);
 			
 				return customer;
 			}

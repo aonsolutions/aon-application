@@ -61,11 +61,9 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountValidation;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -715,7 +713,7 @@ public class AccountingUtilitiesDAO {
 				.and(CUSTOMER.DOMAIN.eq(ctx.getDomainId())
 				.and(params.isShowInactives()
 						?DSL.trueCondition()
-						:CUSTOMER.STATUS.ne(CustomerStatus.INACTIVE.value()))
+						:CUSTOMER.STATUS.ne(RegistryStatus.INACTIVE.value()))
 				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CUSTOMER.SCOPE)))
 				.fetch()
 				.stream()
@@ -726,7 +724,7 @@ public class AccountingUtilitiesDAO {
 						.setRegistryType(AccountingRegistryType.CUSTOMER)
 						.setLinkedId(rec.getValue(REGISTRY.ID))
 						.setLinkedDescription(rec.getValue(REGISTRY.NAME))
-						.setLinkedInactive(rec.getValue(CUSTOMER.STATUS) == CustomerStatus.INACTIVE.value())
+						.setLinkedInactive(rec.getValue(CUSTOMER.STATUS) == RegistryStatus.INACTIVE.value())
 						.setAccountId(rec.getValue(ACCOUNT.ID))
 						.setAccountDomain(rec.getValue(ACCOUNT.DOMAIN))
 						.setAccountCode(rec.getValue(ACCOUNT.CODE))
@@ -749,7 +747,7 @@ public class AccountingUtilitiesDAO {
 				.and(SUPPLIER.DOMAIN.eq(ctx.getDomainId())
 				.and(params.isShowInactives()
 					?DSL.trueCondition()
-					:SUPPLIER.STATUS.ne(SupplierStatus.INACTIVE.value()))
+					:SUPPLIER.STATUS.ne(RegistryStatus.INACTIVE.value()))
 				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),SUPPLIER.SCOPE)))
 				.fetch()
 				.stream()
@@ -760,7 +758,7 @@ public class AccountingUtilitiesDAO {
 						.setRegistryType(AccountingRegistryType.SUPPLIER)
 						.setLinkedId(rec.getValue(REGISTRY.ID))
 						.setLinkedDescription(rec.getValue(REGISTRY.NAME))
-						.setLinkedInactive(rec.getValue(SUPPLIER.STATUS) == SupplierStatus.INACTIVE.value())
+						.setLinkedInactive(rec.getValue(SUPPLIER.STATUS) == RegistryStatus.INACTIVE.value())
 						.setAccountId(rec.getValue(ACCOUNT.ID))
 						.setAccountDomain(rec.getValue(ACCOUNT.DOMAIN))
 						.setAccountCode(rec.getValue(ACCOUNT.CODE))
@@ -783,7 +781,7 @@ public class AccountingUtilitiesDAO {
 				.and(CREDITOR.DOMAIN.eq(ctx.getDomainId())
 				.and(params.isShowInactives()
 					?DSL.trueCondition()
-					:CREDITOR.STATUS.ne(CreditorStatus.INACTIVE.value()))
+					:CREDITOR.STATUS.ne(RegistryStatus.INACTIVE.value()))
 				.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CREDITOR.SCOPE)))
 				.fetch()
 				.stream()
@@ -794,7 +792,7 @@ public class AccountingUtilitiesDAO {
 						.setRegistryType(AccountingRegistryType.CREDITOR)
 						.setLinkedId(rec.getValue(REGISTRY.ID))
 						.setLinkedDescription(rec.getValue(REGISTRY.NAME))
-						.setLinkedInactive(rec.getValue(CREDITOR.STATUS) == CreditorStatus.INACTIVE.value())
+						.setLinkedInactive(rec.getValue(CREDITOR.STATUS) == RegistryStatus.INACTIVE.value())
 						.setAccountId(rec.getValue(ACCOUNT.ID))
 						.setAccountDomain(rec.getValue(ACCOUNT.DOMAIN))
 						.setAccountCode(rec.getValue(ACCOUNT.CODE))

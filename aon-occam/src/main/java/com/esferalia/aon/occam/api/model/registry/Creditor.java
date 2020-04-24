@@ -5,8 +5,8 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.HasAudit;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 public class Creditor implements Serializable, HasAudit {
 
@@ -20,7 +20,7 @@ public class Creditor implements Serializable, HasAudit {
 	private boolean withholding;
 	private boolean vatAccrualPayment;
 	private InvoiceTransactionType transaction;
-	private CreditorStatus status;
+	private RegistryStatus status;
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -104,11 +104,11 @@ public class Creditor implements Serializable, HasAudit {
 		return this;
 	}
 
-	public CreditorStatus getStatus() {
+	public RegistryStatus getStatus() {
 		return status;
 	}
 
-	public Creditor setStatus(CreditorStatus status) {
+	public Creditor setStatus(RegistryStatus status) {
 		this.status = status;
 		return this;
 	}

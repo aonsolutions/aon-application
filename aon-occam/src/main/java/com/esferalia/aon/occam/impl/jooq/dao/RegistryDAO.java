@@ -100,13 +100,11 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.api.model.type.SupplierStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CreditorFiller;
@@ -350,7 +348,7 @@ public class RegistryDAO {
 						)
 					.from(SUPPLIER)
 					.where(SUPPLIER.DOMAIN.eq(ctx.getDomainId())
-					.and(SUPPLIER.STATUS.ne(SupplierStatus.INACTIVE.value()))
+					.and(SUPPLIER.STATUS.ne(RegistryStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),SUPPLIER.SCOPE)))
 				.unionAll(
 				ctx.getDslContext().select(CUS_TYPE.as(TYP_FIELD)
@@ -365,7 +363,7 @@ public class RegistryDAO {
 						)
 					.from(CUSTOMER)
 					.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId())
-					.and(CUSTOMER.STATUS.ne(CustomerStatus.INACTIVE.value()))
+					.and(CUSTOMER.STATUS.ne(RegistryStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CUSTOMER.SCOPE))))
 				.unionAll(
 				ctx.getDslContext().select(CRE_TYPE.as(TYP_FIELD)
@@ -380,7 +378,7 @@ public class RegistryDAO {
 						)
 					.from(CREDITOR)
 					.where(CREDITOR.DOMAIN.eq(ctx.getDomainId())
-					.and(CREDITOR.STATUS.ne(CreditorStatus.INACTIVE.value()))
+					.and(CREDITOR.STATUS.ne(RegistryStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CREDITOR.SCOPE))))
 				.asTable(AR)
 				)
@@ -581,7 +579,7 @@ public class RegistryDAO {
 					.set(SUPPLIER.TRANSACTION, reg.getTransaction() == null 
 						? InvoiceTransactionType.NATIONAL.value() 
 						: reg.getTransaction().value() )
-					.set(SUPPLIER.STATUS, SupplierStatus.ACTIVE.value() )
+					.set(SUPPLIER.STATUS, RegistryStatus.ACTIVE.value() )
 					.set(SUPPLIER.SCOPE, reg.getScope() )
 					.set(SUPPLIER.ACCOUNT, reg.getAccountId() )
 					.set(SUPPLIER.CREATION_USER, ctx.getUser() )
@@ -599,7 +597,7 @@ public class RegistryDAO {
 					.set(CUSTOMER.TRANSACTION, reg.getTransaction() == null 
 						? InvoiceTransactionType.NATIONAL.value() 
 						: reg.getTransaction().value() )
-					.set(CUSTOMER.STATUS, CustomerStatus.ACTIVE.value() )
+					.set(CUSTOMER.STATUS, RegistryStatus.ACTIVE.value() )
 					.set(CUSTOMER.SCOPE, reg.getScope() )
 					.set(CUSTOMER.ACCOUNT, reg.getAccountId() )
 					.set(CUSTOMER.CREATION_USER, ctx.getUser() )
@@ -617,7 +615,7 @@ public class RegistryDAO {
 				.set(CREDITOR.TRANSACTION, reg.getTransaction() == null 
 					? InvoiceTransactionType.NATIONAL.value() 
 					: reg.getTransaction().value() )
-				.set(CREDITOR.STATUS, CreditorStatus.ACTIVE.value() )
+				.set(CREDITOR.STATUS, RegistryStatus.ACTIVE.value() )
 				.set(CREDITOR.SCOPE, reg.getScope() )
 				.set(CREDITOR.ACCOUNT, reg.getAccountId() )
 				.set(CREDITOR.CREATION_USER, ctx.getUser() )
@@ -775,7 +773,7 @@ public class RegistryDAO {
 						.set(SUPPLIER.TRANSACTION, reg.getTransaction() == null 
 							? InvoiceTransactionType.NATIONAL.value() 
 							: reg.getTransaction().value() )
-						.set(SUPPLIER.STATUS, SupplierStatus.ACTIVE.value() )
+						.set(SUPPLIER.STATUS, RegistryStatus.ACTIVE.value() )
 						.set(SUPPLIER.SCOPE, reg.getScope() )
 						.set(SUPPLIER.ACCOUNT, reg.getAccountId() )
 						.set(SUPPLIER.CREATION_USER, ctx.getUser() )
@@ -793,7 +791,7 @@ public class RegistryDAO {
 						.set(CUSTOMER.TRANSACTION, reg.getTransaction() == null 
 							? InvoiceTransactionType.NATIONAL.value() 
 							: reg.getTransaction().value() )
-						.set(CUSTOMER.STATUS, CustomerStatus.ACTIVE.value() )
+						.set(CUSTOMER.STATUS, RegistryStatus.ACTIVE.value() )
 						.set(CUSTOMER.SCOPE, reg.getScope() )
 						.set(CUSTOMER.ACCOUNT, reg.getAccountId() )
 						.set(CUSTOMER.CREATION_USER, ctx.getUser() )
@@ -811,7 +809,7 @@ public class RegistryDAO {
 						.set(CREDITOR.TRANSACTION, reg.getTransaction() == null 
 							? InvoiceTransactionType.NATIONAL.value() 
 							: reg.getTransaction().value() )
-						.set(CREDITOR.STATUS, CreditorStatus.ACTIVE.value() )
+						.set(CREDITOR.STATUS, RegistryStatus.ACTIVE.value() )
 						.set(CREDITOR.SCOPE, reg.getScope() )
 						.set(CREDITOR.ACCOUNT, reg.getAccountId() )
 						.set(CREDITOR.CREATION_USER, ctx.getUser() )

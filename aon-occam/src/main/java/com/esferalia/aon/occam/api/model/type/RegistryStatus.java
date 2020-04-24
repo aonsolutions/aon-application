@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.type;
 import java.io.Serializable;
 
 
-public enum CustomerStatus implements Serializable {
+public enum RegistryStatus implements Serializable {
 
 	ACTIVE("Activo"),
 	INACTIVE("Inactivo"),
@@ -11,7 +11,7 @@ public enum CustomerStatus implements Serializable {
     
 	private String description;
 
-	private CustomerStatus(String description) {
+	private RegistryStatus(String description) {
 		this.description = description;
 	}
 
@@ -28,13 +28,13 @@ public enum CustomerStatus implements Serializable {
 		return (byte) this.ordinal();
 	}
 	
-	public static CustomerStatus safeValueOf( Byte i ) {
+	public static RegistryStatus safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
-	public static CustomerStatus safeValueOf( Integer i ) {
+	public static RegistryStatus safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i >= CustomerStatus.values().length) return null;
-		return CustomerStatus.values()[i];
+		if (i < 0 || i >= RegistryStatus.values().length) return null;
+		return RegistryStatus.values()[i];
 	}
 }

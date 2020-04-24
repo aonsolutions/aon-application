@@ -38,11 +38,11 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.CustomerStatus;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
@@ -1075,7 +1075,7 @@ public class DeliveryImport {
 						.setDomain(domain.getId())
 						.setRegistry(registry)
 						.setScope(scope)
-						.setStatus(CustomerStatus.ACTIVE)
+						.setStatus(RegistryStatus.ACTIVE)
 						.setTransaction(r.getTransaccion()!= null ? r.getTransaccion().byteValue() : 0)
 						.setAccount(account)
 						.setSurcharge(r.getRe() != null ? r.getRe().byteValue() : 0)

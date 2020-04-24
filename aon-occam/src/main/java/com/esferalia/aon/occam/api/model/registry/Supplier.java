@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.model.registry;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.type.SupplierStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 
 public class Supplier extends Registry implements Serializable{
 
@@ -17,7 +17,7 @@ public class Supplier extends Registry implements Serializable{
 	private Short withholdingFarmer;
 	private Short vatAccrualPayment;
 	private Short transaction;
-	private SupplierStatus status;
+	private RegistryStatus status;
 	private Integer scope;
 	private Short purchaseValuated;
 	private Integer account;
@@ -89,11 +89,11 @@ public class Supplier extends Registry implements Serializable{
 		return this;
 	}
 
-	public SupplierStatus getStatus() {
+	public RegistryStatus getStatus() {
 		return status;
 	}
 
-	public Supplier setStatus(SupplierStatus status) {
+	public Supplier setStatus(RegistryStatus status) {
 		this.status = status;
 		return this;
 	}

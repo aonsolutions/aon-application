@@ -10,7 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.type.CreditorStatus;
+import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -32,7 +32,7 @@ public class FiscalMSServiceServiceImpl extends AonStatelessRemoteServiceServlet
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
 		return AON.getBasicCreditors(domainName, domain,user,
-				p ->  p.getActiveProperty().eq( CreditorStatus.ACTIVE.value())
+				p ->  p.getActiveProperty().eq( RegistryStatus.ACTIVE.value())
 					.and(p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))
