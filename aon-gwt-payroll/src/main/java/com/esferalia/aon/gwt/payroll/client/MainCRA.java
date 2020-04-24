@@ -16,10 +16,13 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -258,7 +261,16 @@ public class MainCRA extends MainEntryPoint {
 		
 		//Set current date
 		Date currentDate = new Date();
-		this.monthList.setSelectedIndex(currentDate.getMonth());
+		
+		Integer selectedMonth = currentDate.getMonth();
+		if(selectedMonth == 0)
+			selectedMonth = 11;
+		else
+			selectedMonth--;
+		
+		this.monthList.setSelectedIndex(selectedMonth);
+		
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.monthList);
 		
 		//TABLE
 		initializeHeader();
