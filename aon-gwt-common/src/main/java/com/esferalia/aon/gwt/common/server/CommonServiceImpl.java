@@ -229,7 +229,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return   p.getDocumentTypeProperty().eq(params.getDocumentType().value())
 			.and(p.getDocumentCountryProperty().eq(params.getDocumentCountry().getIso2()))
 			.and(p.getDocumentProperty().eq(params.getDocument()))
+			// Dejo esto porque antes estaba en la select, al quitarlo lo pongo en el filtro para que
+			// los resultados sean iguales. 
 			.and(p.getStatusProperty().ne( RegistryStatus.INACTIVE.value()))
+			// ------------------------------------------
 		;
 	}
 	@Override
