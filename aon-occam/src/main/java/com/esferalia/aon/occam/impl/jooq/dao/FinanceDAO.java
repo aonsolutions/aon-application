@@ -301,7 +301,7 @@ public class FinanceDAO {
 		int daysToFirstPymnt = ((rPayMethod == null) || (rPayMethod.getDaysToFirstPymnt() == 0)) ? 0 : rPayMethod.getDaysToFirstPymnt();
 		int daysBetwenPymnts = ((rPayMethod == null) || (rPayMethod.getDaysBetwenPymnts() == 0)) ? 0 : rPayMethod.getDaysBetwenPymnts();
 		PayMethod payMethod = null;
-		if (rPayMethod.getPayMethod() != null) {
+		if (rPayMethod != null && rPayMethod.getPayMethod() != null) {
 			payMethod = PayMethodDAO.getPayMethod(ctx, rPayMethod.getPayMethod());
 		}
 		double paymentPrice = AonMathUtils.round(invoice.getTotal() / numberOfPymnts);
