@@ -85,6 +85,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
@@ -165,6 +166,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		int itLenght = get(endDate, DAY_OF_MONTH) - get(startITDate, DAY_OF_MONTH) +1 ;
 		Assert.assertEquals(itLenght, (int)results.get(0).getValue());
 		
+		try {
+			ctx.getExpressionContext().eval(ContextVariable.IT_END.getName(), startDate, endDate, Date.class);
+			org.junit.Assert.fail(String.format("'%s' must not be defined ", ContextVariable.IT_END));
+		} catch ( UndefinedVariablesException e ) {
+		}
+
 		for ( int i = 1; i < 12 ; i++ ) {
 			startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,i);
 			endDate = getLastDayOfMonth(startDate);
@@ -204,18 +211,22 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		
-		List<ITimedResult<Integer>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		List<ITimedResult<Object>> results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate);
 		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(34, (int)results.get(0).getValue());
+		Assert.assertEquals(34, ((Number)results.get(0).getValue()).intValue());
+
+		results = ctx.getExpressionContext().eval(ContextVariable.IT_END.getName(), startDate, endDate);
+		Assert.assertEquals(1, results.size());
+		Assert.assertEquals(endIt, (Date)results.get(0).getValue());
 		
 		startDate = AonDateUtils.add(getFirstDayOfMonth(getToday()), MONTH,1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate, Integer.class);
+		results = ctx.getExpressionContext().eval(ContextVariable.IT_LENGTH.getName(), startDate, endDate);
 		System.out.println(startDate + " : " + startITDate + ", " + results.get(0).getValue());
 		Assert.assertEquals(1, results.size());
-		Assert.assertEquals(34, (int)results.get(0).getValue());
+		Assert.assertEquals(34, ((Number)results.get(0).getValue()).intValue());
 
 	}
 

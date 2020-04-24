@@ -203,6 +203,7 @@ public enum ContextVariable implements IResourceable {
 	EVERYTHING("TODO", VariableType.DOUBLE),
 
 	IT_START("INICIO_IT", VariableType.DATE),
+	IT_END("FIN_IT", VariableType.DATE),
 	IT_LENGTH("DURACION_IT", VariableType.INTEGER),
 
 	PROFESSION("PROFESION", VariableType.STRING), ENTERPRISE_SITE_DATE("VISIONADOE", VariableType.DATE),

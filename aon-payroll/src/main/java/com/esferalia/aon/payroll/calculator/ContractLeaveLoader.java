@@ -249,6 +249,7 @@ public class ContractLeaveLoader {
 			final LeaveType type, String dailyRegBase, final ExpressionContext exprCtx) throws ExpressionException {
 		
 		Date itStart = getStartDate(type, leaveStart);
+		Date leave4Length = leaveEnd == null ? Period.max(endDate, new Date()) : leaveEnd;
 		
 		final ITimedVariable<?> contractStart = exprCtx.getVariable(ContextVariable.CONTRACT_START, startDate, endDate);
 		final Date realStartDate =  Period.max(startDate, (Date) contractStart.getValue(contractStart.getPeriod()));
@@ -261,7 +262,8 @@ public class ContractLeaveLoader {
 		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
 
 		exprCtx.setVariable(ContextVariable.IT_START, itStart, start, end);
-		exprCtx.setVariable(ContextVariable.IT_LENGTH, new Period(itStart, leaveEnd).daysStream().count(), start, end);
+		exprCtx.setVariable(ContextVariable.IT_LENGTH, new Period(itStart, leave4Length).daysStream().count(), start, end);
+		if ( leaveEnd != null ) exprCtx.setVariable(ContextVariable.IT_END, leaveEnd, start, end);
 
 		ExpressionImpl exp = new ExpressionImpl();
 		exp.setName(ContextVariable.REGULATORY_BASE.getName());
