@@ -3066,6 +3066,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 		};
 		ctx.leaveLoader = new NoopSQLContractLeaveLoader(this.startDate, this.getEnd()); 
+		ctx.liquids.putAll(this.liquids);
+		ctx.payments.putAll(this.payments);
 		//new SQLContractLeaveLoader(this.startDate, this.getEnd()); //leaveLoader;
 		return ctx;
 	}

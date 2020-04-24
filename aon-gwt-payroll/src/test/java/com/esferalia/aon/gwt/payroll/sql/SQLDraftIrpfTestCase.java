@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.sql;
 
+import static com.esferalia.aon.gwt.payroll.shared.Payment.Type.CRA_0001;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -15,6 +16,7 @@ import org.junit.Test;
 
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.gwt.payroll.server.EmployeesServiceHelper;
+import com.esferalia.aon.gwt.payroll.server.SalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
@@ -30,6 +32,7 @@ import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLIrpfTestCase;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
@@ -259,4 +262,75 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 			double deduccibleExpenses) {
 		super.assertDeduccibleExpenses(expected + (66666.00 * 0.15), deduccibleExpenses);
 	}
+	
+	@Test
+	public void testBRUTO() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				Collections.emptyMap(),
+				new String[] {
+					"1500.00 * DIAS_TRABAJADOS / DIAS_MES"	
+				},
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}
+				, null
+				);
+
+		
+		
+		Employee employee = new Employee();
+		employee.setId(contract.getId());
+		
+
+		Date startDate = AonDateUtils.getFirstDayOfMonth(getToday());
+		Date endDate = AonDateUtils.getLastDayOfMonth(startDate);
+		Date issueDate = AonDateUtils.getLastDayOfMonth(startDate);
+
+		SalaryDraft draft = new SalaryDraft();
+		draft.setEmployee(employee);
+		draft.setStartDate(startDate);
+		draft.setEndDate(endDate);
+		draft.setIssueDate(issueDate);
+		
+		com.esferalia.aon.gwt.payroll.shared.Payment draftPayment = new com.esferalia.aon.gwt.payroll.shared.Payment();
+		draftPayment.setStartDate(startDate);
+		draftPayment.setEndDate(endDate);
+		draftPayment.setExpression("BRUTO(3000.00 * DIAS_TRABAJADOS / DIAS_MES)");
+		draftPayment.setIrpfExpression("_P");
+		draftPayment.setQuoteExpression("_P");
+		draftPayment.setSalaryType(Salary.Type.SALARY);
+		draftPayment.setDescription("RETRIBUCION NO INCLUIDA EN OTROS APARTADOS");
+		draftPayment.setType(CRA_0001);
+
+		draft.addDraftPayment(draftPayment);
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx =
+		EmployeesServiceHelper.getSalaryCalculatorContext(connection, draft, null);
+		draftCtx.setListener(irpf -> {			
+//			org.junit.Assert.assertEquals(1500.00*2*12, irpf.getIrpfResult().getAnnualRemuneration(), 0.001 );
+			System.out.println("AnnualRemuneration : " + irpf.getIrpfResult().getAnnualRemuneration());
+		});
+
+		try {
+			com.esferalia.aon.payroll.Salary salary = 
+			new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>( new SalaryBuilder()).calculate(draftCtx);
+			for ( SalaryPayment p : salary.getSalaryPayments() ) {
+				System.out.println(p.getExpression() + ": " + p.getAmount() );
+			}
+			for ( SalaryDeduction d : salary.getSalaryDeductions() ) {
+				System.out.println(d.getExpression() + ": " + d.getAmount() );
+			}
+			org.junit.Assert.assertEquals(1500.00*2, salary.getTotalPayment(), 0.001 );
+			
+		} catch (SalaryException e1) {
+		}
+		
+	}
+	
 }
