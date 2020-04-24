@@ -140,6 +140,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class RegistryDAO {
 	
 	private static final Field<Integer> TYP_FIELD = DSL.field("typ", Integer.class);
+	private static final Field<Byte> STA_FIELD    = DSL.field("sta", Byte.class);
 	private static final Field<Integer> REG_FIELD = DSL.field("reg", REGISTRY.ID.getType() ); 
 	private static final Field<Integer> ACC_FIELD = DSL.field("acc", ACCOUNT.ID.getType() );
 	private static final Field<Integer> SCP_FIELD = DSL.field("scp", CUSTOMER.SCOPE.getType() );
@@ -153,12 +154,14 @@ public class RegistryDAO {
 	private static final Param<Integer> CUS_TYPE  = DSL.val( AccountingRegistryType.CUSTOMER.ordinal());
 	private static final Param<Integer> SUP_TYPE  = DSL.val( AccountingRegistryType.SUPPLIER.ordinal());
 	private static final Param<Integer> CRE_TYPE  = DSL.val( AccountingRegistryType.CREDITOR.ordinal());
-	static {
-		FALSE_TYPE.setInline(true);
-		CUS_TYPE.setInline(true);
-		SUP_TYPE.setInline(true);
-		CRE_TYPE.setInline(true);
-	}
+//	static {
+//		FALSE_TYPE.setInline(true);
+//		CUS_TYPE.setInline(true);
+//		SUP_TYPE.setInline(true);
+//		CRE_TYPE.setInline(true);
+//		
+//		System.out.println( CRE_TYPE.getClass().getName() ); 
+//	}
 	
 	private static final CustomerPropertiesDAO CUSTOMER_PROPERTIES = new CustomerPropertiesDAO();
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
@@ -196,6 +199,7 @@ public class RegistryDAO {
 		@Override public Property<String> getAccountDescriptionProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT.DESCRIPTION);}
 		@Override public Property<Byte> getDocumentTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.DOCUMENT_TYPE);}
 		@Override public Property<String> getDocumentCountryProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.DOCUMENT_COUNTRY);}
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<Byte>(STA_FIELD);}
 	}
 	
 	private static final RAddressPropertiesDAO RADDRESS_PROPERTIES = new RAddressPropertiesDAO();
@@ -330,7 +334,7 @@ public class RegistryDAO {
 		return 	ctx.getDslContext().select( 
 				 TYP_FIELD,REG_FIELD,ACC_FIELD
 				,SCP_FIELD,ITR_FIELD,WTH_FIELD
-				,WTF_FIELD,SUR_FIELD,VAP_FIELD
+				,WTF_FIELD,SUR_FIELD,VAP_FIELD,STA_FIELD
 				,REGISTRY.ID,REGISTRY.DOCUMENT,REGISTRY.DOCUMENT_TYPE
 				,REGISTRY.DOCUMENT_COUNTRY,REGISTRY.NAME,REGISTRY.ALIAS
 				,ACCOUNT.ID,ACCOUNT.CODE,ACCOUNT.DESCRIPTION
@@ -345,10 +349,10 @@ public class RegistryDAO {
 						,SUPPLIER.WITHHOLDING_FARMER.as(WTF_FIELD)
 						,FALSE_TYPE.as(SUR_FIELD)
 						,SUPPLIER.VAT_ACCRUAL_PAYMENT.as(VAP_FIELD)
+						,SUPPLIER.STATUS.as(STA_FIELD)
 						)
 					.from(SUPPLIER)
 					.where(SUPPLIER.DOMAIN.eq(ctx.getDomainId())
-					.and(SUPPLIER.STATUS.ne(RegistryStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),SUPPLIER.SCOPE)))
 				.unionAll(
 				ctx.getDslContext().select(CUS_TYPE.as(TYP_FIELD)
@@ -360,10 +364,10 @@ public class RegistryDAO {
 						,FALSE_TYPE.as(WTF_FIELD)
 						,CUSTOMER.SURCHARGE.as(SUR_FIELD)
 						,FALSE_TYPE.as(VAP_FIELD)
+						,CUSTOMER.STATUS.as(STA_FIELD)
 						)
 					.from(CUSTOMER)
 					.where(CUSTOMER.DOMAIN.eq(ctx.getDomainId())
-					.and(CUSTOMER.STATUS.ne(RegistryStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CUSTOMER.SCOPE))))
 				.unionAll(
 				ctx.getDslContext().select(CRE_TYPE.as(TYP_FIELD)
@@ -375,10 +379,10 @@ public class RegistryDAO {
 						,FALSE_TYPE.as(WTF_FIELD)
 						,FALSE_TYPE.as(SUR_FIELD)
 						,CREDITOR.VAT_ACCRUAL_PAYMENT.as(VAP_FIELD)
+						,CREDITOR.STATUS.as(STA_FIELD)
 						)
 					.from(CREDITOR)
 					.where(CREDITOR.DOMAIN.eq(ctx.getDomainId())
-					.and(CREDITOR.STATUS.ne(RegistryStatus.INACTIVE.value()))
 					.and(SecurityDAO.getUserScopesCondition(ctx,ctx.getUser(),CREDITOR.SCOPE))))
 				.asTable(AR)
 				)

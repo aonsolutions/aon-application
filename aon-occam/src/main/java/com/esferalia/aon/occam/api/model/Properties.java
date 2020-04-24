@@ -1202,6 +1202,7 @@ public interface Properties {
 		Property<String> getDocumentProperty();
 		Property<String> getAliasProperty();
 		Property<Byte> getSecurityLevelProperty();
+		Property<Byte> getStatusProperty();
 		
 	}
 	

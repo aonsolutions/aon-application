@@ -208,11 +208,12 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 			 	?(AonStringUtils.PERCENT + query + AonStringUtils.PERCENT)
 				:(query);
 		return ACCOUNTING.getAccountingRegistries(domainName, domain,user,
-				p ->     p.getDocumentProperty().like(q)
+				p ->     (p.getDocumentProperty().like(q)
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q))
 					 .or(p.getAccountCodeProperty().like(q))
-					 .or(p.getAccountDescriptionProperty().like(q))
+					 .or(p.getAccountDescriptionProperty().like(q)))
+				.and(p.getStatusProperty().ne( RegistryStatus.INACTIVE.value()))
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
@@ -225,9 +226,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	}
 	
 	private Filter getFilter(AccountingRegistryProperties p, AccountingRegistryParams params) {
-		return p.getDocumentTypeProperty().eq(params.getDocumentType().value())
+		return   p.getDocumentTypeProperty().eq(params.getDocumentType().value())
 			.and(p.getDocumentCountryProperty().eq(params.getDocumentCountry().getIso2()))
 			.and(p.getDocumentProperty().eq(params.getDocument()))
+			.and(p.getStatusProperty().ne( RegistryStatus.INACTIVE.value()))
 		;
 	}
 	@Override
