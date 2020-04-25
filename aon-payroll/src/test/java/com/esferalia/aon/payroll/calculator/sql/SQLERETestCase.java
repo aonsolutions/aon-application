@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,14 +34,14 @@ import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
-import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
-import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Payment;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
@@ -2109,6 +2110,277 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				salary.getTotalPayment() * 0.15 
 				, salary.getSocialSecurityContributions(),
 				DELTA);
+	}
+
+	@Test
+	public void testERESalaryHoursI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemSalaryHours(aonContext);
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+				{
+					put("DIAS_MES", "30.00");
+					put("GRUPO_COTIZACION", "\"01\"");
+				}
+			},
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+			, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05"}
+			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		Date startEre = add(getFirstDayOfMonth(getToday()),DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, startEre, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.5");
+					}
+				});
+		
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(
+				jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		
+		AON.getSalaryData(aonContext, p -> p.getContractProperty().eq(contract.getId()))
+		.forEach(s -> {
+			List<ContextData> salaryHours = s.getContextData().get(ContextVariable.SALARY_HOURS.getName());
+			org.junit.Assert.assertEquals(2, salaryHours.size());
+			Collections.sort(salaryHours, (d1,d2)-> d1.getStartDate().compareTo(d2.getEndDate()));
+			
+			org.junit.Assert.assertEquals(startDate, salaryHours.get(0).getStartDate());
+			org.junit.Assert.assertEquals(add(startEre, DAY_OF_MONTH,-1), salaryHours.get(0).getEndDate());
+			org.junit.Assert.assertEquals(Math.floor(1466.40/8.83 * 10 /30) , Double.parseDouble( salaryHours.get(0).getExpression()), DELTA);
+			
+			
+			org.junit.Assert.assertEquals(startEre, salaryHours.get(1).getStartDate());
+			org.junit.Assert.assertEquals(endDate, salaryHours.get(1).getEndDate());
+			org.junit.Assert.assertEquals(Math.floor(1466.40/8.83 * 20 /30 /2) , Double.parseDouble( salaryHours.get(1).getExpression()), DELTA);
+		});
+		;
+		
+	}
+
+	@Test
+	public void testERESalaryHoursII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemSalaryHours(aonContext);
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+				{
+					put("DIAS_MES", "30.00");
+					put("GRUPO_COTIZACION", "\"09\"");
+					put("COEFICIENTE_PARCIALIDAD", "0.5");
+				}
+			},
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+			, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05"}
+			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		Date startEre = add(getFirstDayOfMonth(getToday()),DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, startEre, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.35");
+					}
+				});
+		
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(
+				jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		
+		AON.getSalaryData(aonContext, p -> p.getContractProperty().eq(contract.getId()))
+		.forEach(s -> {
+			List<ContextData> salaryHours = s.getContextData().get(ContextVariable.SALARY_HOURS.getName());
+			org.junit.Assert.assertEquals(2, salaryHours.size());
+			Collections.sort(salaryHours, (d1,d2)-> d1.getStartDate().compareTo(d2.getEndDate()));
+			
+			org.junit.Assert.assertEquals(startDate, salaryHours.get(0).getStartDate());
+			org.junit.Assert.assertEquals(add(startEre, DAY_OF_MONTH,-1), salaryHours.get(0).getEndDate());
+			org.junit.Assert.assertEquals(Math.floor(1466.40/8.83 * 10 /30 /2) , Double.parseDouble( salaryHours.get(0).getExpression()), DELTA);
+			
+			
+			org.junit.Assert.assertEquals(startEre, salaryHours.get(1).getStartDate());
+			org.junit.Assert.assertEquals(endDate, salaryHours.get(1).getEndDate());
+			org.junit.Assert.assertEquals(Math.floor(1466.40/8.83 * 20 /30 /2 * 0.65) , Double.parseDouble( salaryHours.get(1).getExpression()), DELTA);
+		});
+		;
+		
+	}
+
+	@Test
+	public void testERESalaryHoursIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemSalaryHours(aonContext);
+		
+		ContractRecord contract = newContract(aonContext,
+			getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+				{
+					put("TC2", "\"200\"");
+//					put("DIAS_MES", "30.00");
+					put("GRUPO_COTIZACION", "\"10\"");
+					put("HORAS_LUNES", "1");
+					put("HORAS_MARTES", "1");
+					put("HORAS_MIERCOLES", "1");
+					put("HORAS_JUEVES", "1");
+					put("HORAS_VIERNES", "1");
+					put("HORAS_SABADO", "0");
+					put("HORAS_DOMINGO", "0");
+				}
+			},
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", 
+						"HORAS_TRABAJADAS * 1 "}
+			, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05"}
+			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		Date startEre = add(getFirstDayOfMonth(getToday()),DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, startEre, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.25");
+					}
+				});
+		
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(
+				jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		
+		AON.getSalaryData(aonContext, p -> p.getContractProperty().eq(contract.getId()))
+		.forEach(s -> {
+			
+			//s.getContextData().get(ContextVariable.WORKED_HOURS.getName()).forEach(d-> System.out.println(d.getExpression()));
+			
+			List<ContextData> salaryHours = s.getContextData().get(ContextVariable.SALARY_HOURS.getName());
+			org.junit.Assert.assertEquals(2, salaryHours.size());
+			Collections.sort(salaryHours, (d1,d2)-> d1.getStartDate().compareTo(d2.getEndDate()));
+			
+			org.junit.Assert.assertEquals(startDate, salaryHours.get(0).getStartDate());
+			org.junit.Assert.assertEquals(add(startEre, DAY_OF_MONTH,-1), salaryHours.get(0).getEndDate());
+			
+			double hours = 
+			new Period(salaryHours.get(0).getStartDate(), salaryHours.get(0).getEndDate())
+			.daysStream().collect(Collectors.summingDouble(c -> {
+				switch (c.get(Calendar.DAY_OF_WEEK)) {
+				case Calendar.SUNDAY:
+				case Calendar.SATURDAY:					
+					return 0.0;
+
+				default:
+					return 1.0;
+				}
+			}));
+			
+			org.junit.Assert.assertEquals(hours, Double.parseDouble( salaryHours.get(0).getExpression()), DELTA);
+			
+			org.junit.Assert.assertEquals(startEre, salaryHours.get(1).getStartDate());
+			org.junit.Assert.assertEquals(endDate, salaryHours.get(1).getEndDate());
+			hours = 
+			new Period(salaryHours.get(1).getStartDate(), salaryHours.get(1).getEndDate())
+			.daysStream().collect(Collectors.summingDouble(c -> {
+				switch (c.get(Calendar.DAY_OF_WEEK)) {
+				case Calendar.SUNDAY:
+				case Calendar.SATURDAY:					
+					return 0.0;
+
+				default:
+					return 1.0;
+				}
+			}));
+			
+			org.junit.Assert.assertEquals(Math.floor(hours * 0.75) , Double.parseDouble( salaryHours.get(1).getExpression()), DELTA);
+		});
+		;
+		
+	}
+
+
+	private void addSystemSalaryHours(AONContext aonContext) {
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				
+				put("HORAS_NOMINA", "MAX(1,FLOOR("
+						+ "[ "
+						+ " \"01\":(POR_HORAS() ? HORAS_TRABAJADAS : 1466.40 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 8.83 * COEFICIENTE_TRABAJADO)"
+						+ ",\"02\":(POR_HORAS() ? HORAS_TRABAJADAS : 1215.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 7.32 * COEFICIENTE_TRABAJADO)"
+						+ ",\"03\":(POR_HORAS() ? HORAS_TRABAJADAS : 1057.80 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.37 * COEFICIENTE_TRABAJADO)"
+						+ ",\"04\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ ",\"05\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ ",\"06\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ ",\"07\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ ",\"08\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ ",\"09\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ ",\"10\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ ",\"11\":(POR_HORAS() ? HORAS_TRABAJADAS : 1050.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) / 6.33 * COEFICIENTE_TRABAJADO)"
+						+ "] [GRUPO_COTIZACION]"
+						+ ")"
+						+ ")");
+				
+				put("POR_HORAS", "def () { isdef CONTEXT ? UTILIZADA('HORAS_TRABAJADAS') : FALSO() }");
+				
+			}
+		});
 	}
 
 	protected ContextVariable getEreVariable() {

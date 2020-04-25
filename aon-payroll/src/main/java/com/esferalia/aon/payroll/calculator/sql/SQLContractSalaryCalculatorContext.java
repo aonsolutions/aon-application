@@ -84,6 +84,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_DA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEEK_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
@@ -4258,21 +4259,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(SALARY_DAYS, salaryDays);
 			}
 			
-//			if (!containsVariable(SALARY_DAYS, period)) {
-//				ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
-//					@Override
-//					public Period getPeriod() {
-//						return period;
-//					}
-//
-//					@Override
-//					public Double getValue(Period p) {
-//						return getQuoteDays(ctx, p, 1.00);
-//					}
-//
-//				};
-//				ctx.putVariable(SALARY_DAYS, salaryDays);
-//			}
 			if (!containsVariable(SALARY_HOURS, period)) {
 				ITimedVariable<Double> salaryHours = new ITimedVariable<Double>() {
 					@Override
@@ -4504,6 +4490,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							.filter(hours -> hours != null && hours.doubleValue() > 0.00 )
 							.collect(Collectors.summingDouble(hours -> hours.doubleValue()));
 					
+					for ( ContextVariable ereFactorVar : ContextVariable.ERE_FACTORS ) {
+						Number ereFactor =  ctx.getVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);
+						if ( ereFactor == null  || ereFactor.doubleValue() == 0.00  ) 
+							continue;
+						workedHours *= 1.00 - ereFactor.doubleValue();
+					}
+					
 					if ( workedHours != 0 )
 						return workedHours;
 					
@@ -4596,6 +4589,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			for ( Map.Entry<Integer, ContextVariable> var : WEEK_DAYS_VARIABLES.entrySet())
 				ctx.putVariable(var.getValue(), new WeekDays(var.getKey()));
 			
+			ITimedVariable<Double> workedFactor = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					
+					double workedFactor = getCurrentBindings().get(PARTIAL_FACTOR,
+							obj -> ((Number) obj).doubleValue(), 1.00);
+					
+					for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS )
+						workedFactor *= (1.00 - getCurrentBindings().get(ereFactor,
+							obj -> ((Number) obj).doubleValue(), 0.00));
+					
+					return workedFactor;
+				}
+
+			};
+			ctx.putVariable(WORKED_FACTOR, workedFactor);
 		}
 
 	}
