@@ -444,8 +444,17 @@ public class CalendarDaysType implements Serializable {
 						added = true;
 						continue;
 					} else if (beforeOrEqual(newCalendarDayType.getEndDate(), calendarDayType.getStartDate())) {
-						newDayTypeList.add(newCalendarDayType);
-						newDayTypeList.add(calendarDayType);
+						if(newCalendarDayType.getEndDate().equals(calendarDayType.getStartDate())) {
+							Date newStartDate = DateUtils.copyDateOnly(calendarDayType.getStartDate());
+							DateUtils.addDays2Date(newStartDate, 1);
+							calendarDayType.setStartDate(newStartDate);
+							
+							newDayTypeList.add(newCalendarDayType);
+							newDayTypeList.add(calendarDayType);
+						} else {
+							newDayTypeList.add(newCalendarDayType);
+							newDayTypeList.add(calendarDayType);
+						}
 						added = true;
 						continue;
 					} else if (afterOrEqual(newCalendarDayType.getEndDate(), calendarDayType.getStartDate()))	{
@@ -515,17 +524,35 @@ public class CalendarDaysType implements Serializable {
 			if(!validDayType(dayTypeList.get(i).getDayType()))
 				continue;
 			
-			if(newCalendarDayType.getDayType() == dayTypeList.get(i).getDayType() && isNextDay(newCalendarDayType.getEndDate(), dayTypeList.get(i).getStartDate())) {
-				if(newCalendarDayType.getExpession() == dayTypeList.get(i).getExpession()) {
-					newCalendarDayType.setEndDate(dayTypeList.get(i).getEndDate());
+			if(newCalendarDayType.getDayType() == dayTypeList.get(i+1).getDayType() && isNextDay(newCalendarDayType.getEndDate(), dayTypeList.get(i+1).getStartDate())) {
+				if(isCoefficientDayType(newCalendarDayType.getDayType())) {
+					if(Double.compare(Double.parseDouble(newCalendarDayType.getExpession()), Double.parseDouble(dayTypeList.get(i+1).getExpession())) == 0) {
+						newCalendarDayType.setEndDate(dayTypeList.get(i+1).getEndDate());
+						continue;
+					} else {
+						newDayTypeList.add(new CalendarDayType(newCalendarDayType.getStartDate(), newCalendarDayType.getEndDate(), newCalendarDayType.getDayType(), newCalendarDayType.getExpession()));
+						
+						startDate = dayTypeList.get(i+1).getStartDate();
+						endDate = dayTypeList.get(i+1).getEndDate();
+						dayType = dayTypeList.get(i+1).getDayType();
+						expression = dayTypeList.get(i+1).getExpession();
+						
+						newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
+						continue;
+					}
+				} else if(isDaysBetweenExpression(newCalendarDayType.getDayType())) {
+					newCalendarDayType.setEndDate(dayTypeList.get(i+1).getEndDate());
 					continue;
+				} else if(newCalendarDayType.getExpession() == dayTypeList.get(i+1).getExpession()) {
+					newCalendarDayType.setEndDate(dayTypeList.get(i+1).getEndDate());
+					continue;	
 				} else {
 					newDayTypeList.add(new CalendarDayType(newCalendarDayType.getStartDate(), newCalendarDayType.getEndDate(), newCalendarDayType.getDayType(), newCalendarDayType.getExpession()));
 					
-					startDate = dayTypeList.get(i).getStartDate();
-					endDate = dayTypeList.get(i).getEndDate();
-					dayType = dayTypeList.get(i).getDayType();
-					expression = dayTypeList.get(i).getExpession();
+					startDate = dayTypeList.get(i+1).getStartDate();
+					endDate = dayTypeList.get(i+1).getEndDate();
+					dayType = dayTypeList.get(i+1).getDayType();
+					expression = dayTypeList.get(i+1).getExpession();
 					
 					newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 				}
@@ -533,10 +560,10 @@ public class CalendarDaysType implements Serializable {
 				if(validDayType(newCalendarDayType.getDayType()))
 					newDayTypeList.add(new CalendarDayType(newCalendarDayType.getStartDate(), newCalendarDayType.getEndDate(), newCalendarDayType.getDayType(), newCalendarDayType.getExpession()));
 				
-				startDate = dayTypeList.get(i).getStartDate();
-				endDate = dayTypeList.get(i).getEndDate();
-				dayType = dayTypeList.get(i).getDayType();
-				expression = dayTypeList.get(i).getExpession();
+				startDate = dayTypeList.get(i+1).getStartDate();
+				endDate = dayTypeList.get(i+1).getEndDate();
+				dayType = dayTypeList.get(i+1).getDayType();
+				expression = dayTypeList.get(i+1).getExpession();
 				
 				newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 			}
@@ -566,7 +593,7 @@ public class CalendarDaysType implements Serializable {
 		return getStrechUpdateList(newDayTypeList);
 		
 	}
-	
+
 	private  ArrayList<CalendarDayType> getStrechUpdateList(ArrayList<CalendarDayType> newCalendarDayTypeList) {
 		// Creamos la nueva lista
 		ArrayList<CalendarDayType> strechCalendarDayTypeList = new ArrayList<CalendarDayType>();
@@ -667,7 +694,17 @@ public class CalendarDaysType implements Serializable {
 		return validDayTypes.contains(dayType);
 	}
 
-	
+	private boolean isCoefficientDayType(DayType dayType) {
+		ArrayList<DayType> validDayTypes = new ArrayList<DayType>();
+		validDayTypes.add(DayType.EREDAY);
+		validDayTypes.add(DayType.EREFZADAY);
+		validDayTypes.add(DayType.EREFZAEXONDAY);
+		validDayTypes.add(DayType.STRIKEDAY);
+		validDayTypes.add(DayType.DROPDAY);
+		validDayTypes.add(DayType.PARTIALITY);
+		
+		return validDayTypes.contains(dayType);
+	}
 
 	private boolean isDaysBetweenExpression(DayType dayType) {
 		ArrayList<DayType> validDayTypes = new ArrayList<DayType>();
@@ -758,76 +795,205 @@ public class CalendarDaysType implements Serializable {
 
 //	public static void main(String[] args) {
 //		CalendarDaysType calendarDaysType = new CalendarDaysType();
-//		
-//		// 01-09-2020
-//		// 15-09-2020
-//		Date startDate = new Date(120, 3, 16);
-//		Date endDate =  new Date(120, 3, 30);
-//		DayType dayType = DayType.EREFZAEXONDAY;
-//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
-//		calendarDaysType.addDayType(calendarDayType);
-//		
-//		System.out.println(toString(calendarDayType));
-//		
-//		// 10-09-2020
-//		// 25-09-2020
-//		startDate = new Date(120, 3, 16);
-//		endDate = new Date(120, 3, 30);
-//		dayType = DayType.EREFZADAY;
-//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
-//		calendarDaysType.addDayType(calendarDayType);
-//		
-//		System.out.println(toString(calendarDayType));
-//		
+		
+		// ------------------------- Partiality two period not same expression
+		
 //		// 01-03-2020
-//		// 12-03-2020
-//		startDate = new Date(120, 2, 1);
-//		endDate = new Date(120, 2, 12);
-//		dayType = DayType.DROPDAY;
-//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		// 15-03-2020
+//		Date startDate = new Date(120, 2, 1);
+//		Date endDate =  new Date(120, 2, 15);
+//		DayType dayType = DayType.INACTIVITY;
+//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "Empleo y sueldo");
 //		calendarDaysType.addDayType(calendarDayType);
 //		
 //		System.out.println(toString(calendarDayType));
 //		
 //		// 10-03-2020
-//		// 17-03-2020
+//		// 31-03-2020
 //		startDate = new Date(120, 2, 10);
-//		endDate = new Date(120, 2, 17);
-//		dayType = DayType.STRIKEDAY;
-//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		endDate = new Date(120, 2, 31);
+//		dayType = DayType.INACTIVITY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "Empleo y sueldo");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+		
+		// ------------------------- Partiality two period not same expression
+		
+//		// 01-03-2020
+//		// 15-03-2020
+//		Date startDate = new Date(120, 2, 1);
+//		Date endDate =  new Date(120, 2, 15);
+//		DayType dayType = DayType.INACTIVITY;
+//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "Suspension");
 //		calendarDaysType.addDayType(calendarDayType);
 //		
 //		System.out.println(toString(calendarDayType));
 //		
-//		// 28-03-2020
-//		// 04-04-2020
-//		startDate = new Date(120, 2, 28);
-//		endDate = new Date(120, 3, 4);
-//		dayType = DayType.EREDAY;
-//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		// 10-03-2020
+//		// 31-03-2020
+//		startDate = new Date(120, 2, 10);
+//		endDate = new Date(120, 2, 31);
+//		dayType = DayType.INACTIVITY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "Empleo y sueldo");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+		
+		// ------------------------- Override complete period
+		
+//		// 10-03-2020
+//		// 31-03-2020
+//		Date startDate = new Date(120, 2, 10);
+//		Date endDate =  new Date(120, 2, 31);
+//		DayType dayType = DayType.HOLIDAY;
+//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
 //		calendarDaysType.addDayType(calendarDayType);
 //		
 //		System.out.println(toString(calendarDayType));
 //		
-//		// 25-02-2020
-//		// 03-03-2020
-//		startDate = new Date(120, 1, 25);
-//		endDate = new Date(120, 2, 3);
+//		// 10-03-2020
+//		// 31-03-2020
+//		startDate = new Date(120, 2, 10);
+//		endDate = new Date(120, 2, 31);
+//		dayType = DayType.NOWORKINGDAY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+		
+		// ------------------------- Override partial period
+		
+//		// 01-03-2020
+//		// 31-03-2020
+//		Date startDate = new Date(120, 2, 1);
+//		Date endDate =  new Date(120, 2, 31);
+//		DayType dayType = DayType.HOLIDAY;
+//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+//		
+//		// 20-02-2020
+//		// 10-03-2020
+//		startDate = new Date(120, 1, 20);
+//		endDate = new Date(120, 2, 10);
 //		dayType = DayType.NOWORKINGDAY;
 //		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
 //		calendarDaysType.addDayType(calendarDayType);
 //		
 //		System.out.println(toString(calendarDayType));
 //		
-//		// 25-02-2020
-//		// 02-04-2020
-//		startDate = new Date(120, 1, 25);
-//		endDate = new Date(120, 3, 4);
-//		dayType = DayType.NOTYPEDAY;
+//		// 20-03-2020
+//		// 10-04-2020
+//		startDate = new Date(120, 2, 20);
+//		endDate = new Date(120, 3, 10);
+//		dayType = DayType.DROPDAY;
 //		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
 //		calendarDaysType.addDayType(calendarDayType);
 //		
 //		System.out.println(toString(calendarDayType));
+		
+		// ------------------------- Between period
+		
+//		// 01-03-2020
+//		// 31-03-2020
+//		Date startDate = new Date(120, 2, 1);
+//		Date endDate =  new Date(120, 2, 31);
+//		DayType dayType = DayType.HOLIDAY;
+//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+//		
+//		// 10-03-2020
+//		// 20-03-2020
+//		startDate = new Date(120, 2, 10);
+//		endDate = new Date(120, 2, 20);
+//		dayType = DayType.NOWORKINGDAY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+		
+		// ------------------------- Same startDate and endDate
+		
+//		// 14-03-2020
+//		// 31-03-2020
+//		Date startDate = new Date(120, 2, 14);
+//		Date endDate =  new Date(120, 2, 31);
+//		DayType dayType = DayType.HOLIDAY;
+//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+//		
+//		// 01-03-2020
+//		// 14-03-2020
+//		startDate = new Date(120, 2, 1);
+//		endDate = new Date(120, 2, 14);
+//		dayType = DayType.EREFZAEXONDAY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "1.0");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+//		
+//		// 31-03-2020
+//		// 10-04-2020
+//		startDate = new Date(120, 2, 31);
+//		endDate = new Date(120, 3, 10);
+//		dayType = DayType.DROPDAY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "1.0");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+		
+		// ------------------------- Same dayType, same value
+		
+//		// 14-03-2020
+//		// 31-03-2020
+//		Date startDate = new Date(120, 2, 14);
+//		Date endDate =  new Date(120, 2, 31);
+//		DayType dayType = DayType.EREFZAEXONDAY;
+//		CalendarDayType calendarDayType = new CalendarDayType(startDate, endDate, dayType, "1.0");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+//		
+//		// 01-04-2020
+//		// 20-04-2020
+//		startDate = new Date(120, 3, 1);
+//		endDate = new Date(120, 3, 20);
+//		dayType = DayType.EREFZAEXONDAY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "1.0");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+//		
+//		// 01-04-2020
+//		// 30-04-2020
+//		startDate = new Date(120, 3, 1);
+//		endDate = new Date(120, 3, 30);
+//		dayType = DayType.EREFZAEXONDAY;
+//		calendarDayType = new CalendarDayType(startDate, endDate, dayType, "1.0");
+//		calendarDaysType.addDayType(calendarDayType);
+//		
+//		System.out.println(toString(calendarDayType));
+		
+		
+		// ------------------------------------------------------------------------
+		//								GET FIXED LIST
+		// ------------------------------------------------------------------------
+		
+//		ArrayList<CalendarDayType> fixedList = getFixUpdateList();
+//		
+//		String result = "------ FIXED LIST ------ \n";
+//		for(CalendarDayType calenDayType : fixedList) {
+//			result += "Start : " + parseDate(calenDayType.getStartDate());
+//			result += " End : " + parseDate(calenDayType.getEndDate());
+//			result += " DayType : " + calenDayType.getDayType() + "\n";
+//		}
+//		System.out.println(result + "\n");
 //
 //	}
 }
