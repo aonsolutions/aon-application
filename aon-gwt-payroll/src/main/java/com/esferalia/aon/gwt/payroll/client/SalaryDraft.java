@@ -280,6 +280,8 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_NOMINA",
 			"DIAS_NATURALES_MES",
 			"DIAS_COTIZADOS",
+			
+			"COEFICIENTE_TRABAJADO",
 
 			"CONTEXT", 
 			"SELF", 
