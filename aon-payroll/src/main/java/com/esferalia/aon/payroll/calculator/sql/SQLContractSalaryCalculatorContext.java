@@ -3589,6 +3589,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return br / count;
 	}
 
+	protected boolean isFullTime() {
+		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString());
+		if (tc2 == null) {
+			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
+		}
+		return ("14".indexOf(tc2.charAt(0)) != -1);
+	}
+
+
 	private double getAdvanceNoticeDays() {
 
 		Date advanceNoticeDate = null;
@@ -3663,14 +3672,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
 		}
 		return ("123".indexOf(tc2.charAt(0)) != -1);
-	}
-
-	private boolean isFullTime() {
-		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString());
-		if (tc2 == null) {
-			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
-		}
-		return ("14".indexOf(tc2.charAt(0)) != -1);
 	}
 
 	private boolean isFullTime(Period p) {

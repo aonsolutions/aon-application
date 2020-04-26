@@ -562,7 +562,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	}
 	
 
-	protected SalaryDraft getDraft() {
+	public SalaryDraft getDraft() {
 		return draft;
 	}
 

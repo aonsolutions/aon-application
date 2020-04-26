@@ -43,16 +43,21 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
+import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementContextFactory;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractNotEnjoyedCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.CCCContextKey;
@@ -64,8 +69,12 @@ import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
@@ -77,6 +86,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -279,12 +289,12 @@ public class EmployeesServiceHelper {
 		
 	}
 
-	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
-			final Connection conn, final SalaryDraft draft,
-			IContractSalaryCalculatorContext.IListener listener)
-					throws ExpressionException, SQLException {
-		return getSalaryCalculatorContextImpl(conn, draft, listener);
-	}
+//	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
+//			final Connection conn, final SalaryDraft draft,
+//			IContractSalaryCalculatorContext.IListener listener)
+//					throws ExpressionException, SQLException {
+//		return getSalaryCalculatorContextImpl(conn, draft, listener);
+//	}
 
 	public static List<Bonus> getAvailableBonuses(Connection conn,
 			int employeeId, Integer... domains)
@@ -603,12 +613,22 @@ public class EmployeesServiceHelper {
 				if ( !salary.isPresent() )
 					return super.br(date);
 				
+				// DELAYs
+				
 				Date contractStart = super.getDate(CONTRACT, ContractColumns.START_DATE);
 				if ( contractStart.before(getFirstDayOfMonth(date)))
 					date = AonDateUtils.add(date, Calendar.MONTH, -1);
 				
-				return super.calculateBr(date);
+				if ( isFullTime() )
+					return super.calculateBr(date);
 				
+				double br = (Double) super.calculateBr(date);
+				int i = 1;
+				for ( ; i <= 2 && contractStart.before(getFirstDayOfMonth(date)); i++) {
+					date = AonDateUtils.add(date, Calendar.MONTH, -1);
+					br += (Double) super.calculateBr(date);
+				}
+				 return br / i;
 			}
 			
 			@Override
@@ -988,6 +1008,167 @@ public class EmployeesServiceHelper {
 		
 		return script.replaceAll("\"/\\*user\\*/(.*)/\\*\\*/\"", "$1");
 		
+	}
+
+	static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getDelayCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+	
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+	
+		SQLContractSalaryCalculatorContext ctx = new SQLContractDelayCalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), criteria) {
+			
+			@Override
+			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
+				return new RoundSalaryBuilder<T>(salaryBuilder, d -> Math.round(d*1000.00)/1000.00) {
+					@Override
+					public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
+							Map<String, ITimedVariable<?>> context) {
+						tax = f.apply(tax);
+						quote = f.apply(quote);
+						super.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+					}
+				};
+			}
+	
+		};
+	
+		ctx.setListener(listener);
+		ctx.next();
+	
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx) {
+			@Override
+			protected Collection<IContractPayment> getDraftPayments() {
+				return Collections.emptyList();
+			}
+		};
+		draftCtx.setListener(listener);
+		return draftCtx;
+	}
+
+	static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getNotEnjoyedCalculatorContextImpl(
+			final Connection conn, final SalaryDraft draft,
+			IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+	
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(EmployeesServiceImpl.tableCol(CONTRACT, ContractColumns.ID),
+				draft.getEmployee().getId());
+	
+		SQLContractSalaryCalculatorContext ctx = new SQLContractNotEnjoyedCalculatorContext(
+				conn, draft.getStartDate(), draft.getEndDate(),
+				draft.getIssueDate(), criteria);
+	
+		ctx.setListener(listener);
+		ctx.next();
+	
+		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
+				draft, ctx);
+		draftCtx.setListener(listener);
+		return draftCtx;
+	}
+
+	public static SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> getSalaryCalculatorContext(
+			final Connection conn, final SalaryDraft draft,
+			final IContractSalaryCalculatorContext.IListener listener)
+			throws ExpressionException, SQLException {
+	
+		SalaryType salaryType = draft.getType() != null ? SalaryType.values()[draft.getType().ordinal()] : SalaryType.SALARY;
+		return salaryType
+				.accept(new SalaryTypeVisitor<SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>>() {
+					@Override
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitSalary(
+							SalaryType salaryType) {
+						try {
+							return getSalaryCalculatorContextImpl(conn, draft,
+											listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+	
+					@Override
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitDelay(
+							SalaryType salaryType) {
+						try {
+							return getDelayCalculatorContextImpl(conn, draft,
+									listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+	
+					@Override
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitSettle(
+							SalaryType salaryType) {
+						try {
+							return getSettleCalculatorContextImpl(conn, draft,
+									listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+	
+					@Override
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitExtra(
+							SalaryType salaryType) {
+						try {
+							return getExtraCalculatorContextImpl(conn, draft,
+											listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+	
+					@Override
+					public SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> visitNotEnjoyedVacations(
+							SalaryType salaryType) {
+						try {
+							return getNotEnjoyedCalculatorContextImpl(conn,
+									draft, listener);
+						} catch (SQLException e) {
+							throw new IllegalArgumentException(e);
+						} catch (ExpressionException e) {
+							throw new ExpressionExceptionWrapper(e);
+						}
+					}
+				});
+	}
+
+	static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
+			Connection conn, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
+	
+		calculator.setSalaryBuilder(salaryBuilder);
+		calculator.setListener(draftBuilder);
+	
+		ISQLContractSalaryCalculatorContext ctx;
+		try {
+			ctx = getSalaryCalculatorContext(conn, draft, draftBuilder);
+			draftBuilder.setAgreementPayments(ctx.getAgreementPayments());
+			draftBuilder.setDefined(getDefinedMap(ctx));
+			calculator.calculate(ctx);
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SalaryException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		} 
 	}
 
 	

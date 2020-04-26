@@ -17,6 +17,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -44,6 +45,7 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -2355,6 +2357,159 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testEREBRFebruaryI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		 
+		
+		ContractRecord contract = newContract(aonContext,
+			add(getFirstDayOfYear(getToday()), Calendar.YEAR, -1 ), 
+			new HashMap<String, String>() {
+				{
+					put("DIAS_MES", "30.00");
+					put("TC2", "\"200\"");
+					put("GRUPO_COTIZACION", "\"10\"");
+					put("HORAS_LUNES", "4");
+					put("HORAS_MARTES", "4");
+					put("HORAS_MIERCOLES", "4");
+					put("HORAS_JUEVES", "4");
+					put("HORAS_VIERNES", "4");
+				}
+			},
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+			, new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGC * 0.05",
+//						"TRACE('BASE_CGC = %f\r\n', BASE_CGC * 0.10); BASE_CGC * 0.00",
+//						"TRACE('BASE_CGP = %f\r\n', BASE_CGP * 0.05); BASE_CGC * 0.00",
+						}
+			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+		
+
+		Date december = add(getFirstDayOfYear(getToday()), MONTH, -1 );
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, december, getLastDayOfMonth(december), getLastDayOfMonth(december), contract);
+		
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(
+				jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		
+
+		Date january = add(getFirstDayOfYear(getToday()), MONTH, 0 );
+		
+		addData(aonContext, contract, january, null, ContextVariable.MONDAY_HOURS, "6.00");
+		addData(aonContext, contract, january, null, ContextVariable.TUESDAY_HOURS, "6.00");
+		addData(aonContext, contract, january, null, ContextVariable.WEDNESDAY_HOURS, "6.00");
+		addData(aonContext, contract, january, null, ContextVariable.THURSDAY_HOURS, "6.00");
+		addData(aonContext, contract, january, null, ContextVariable.FRIDAY_HOURS, "6.00");		
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, january, getLastDayOfMonth(january), getLastDayOfMonth(january), contract);
+		
+		jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(
+				jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		Date february = add(getFirstDayOfYear(getToday()), MONTH, 1 );
+		ctx = getContractSalaryCalculatorContext(
+				connection, february, getLastDayOfMonth(february), getLastDayOfMonth(february), contract);
+		
+		jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(
+				jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+				
+		
+				
+		Date march = add(february, MONTH ,1);
+		ctx = getContractSalaryCalculatorContext(
+				connection, february, getLastDayOfMonth(march), getLastDayOfMonth(march), contract);
+		
+		jooqSalaryBuilder = 
+		new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>(
+				jooqSalaryBuilder).calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		Date startEre = add( march ,DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, startEre, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.5");
+					}
+				});
+		
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		
+
+		Date startDate = getFirstDayOfMonth(march);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ctx = getContractSalaryCalculatorContext(
+		connection, startDate, endDate, endDate, contract);
+
+		ISalary salary = calculate(ctx);
+
+//		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+//				.getSalaryPayments()) {
+//			System.out.println(payment.getName() + " = " + payment.getAmount()
+//					+ " (" + payment.getQuote() + ")");
+//		}
+
+		Assert.assertEquals(
+				1750.00 * 1.10 * 10/30 * 0.75 
+				+ 1750.00 * 1.10 * 20/30 * 0.75/2
+				, 
+				salary.getTotalPayment(),
+				DELTA);
+
+		double br = ( 1750.00 * 1.10 * 0.50
+				+1750.00 * 1.10 * 0.75 
+				+ 1750.00 * 1.10 * 0.75) 
+				/ 90.00; 
+		Assert.assertEquals(
+				1750.00 * 1.10 * 20/30 * 0.75
+				+ br * 10, 
+				salary.getCommonBase(),
+				DELTA);
+		
+		Assert.assertEquals(
+				salary.getCommonBase() 
+				, salary.getProfessionalBase(),
+				DELTA);
+		
+//		for (com.esferalia.aon.payroll.SalaryDeduction deduction : salary
+//				.getSalaryDeductions()) {
+//			System.out.println(deduction.getName() + " = " + deduction.getAmount()
+//					);
+//		}
+
+		Assert.assertEquals(
+				salary.getTotalPayment() * 0.15 
+				, salary.getSocialSecurityContributions(),
+				DELTA);
+		
+	}
+	
+	protected ISalary calculate (ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
+		return new SmartContractSalaryCalculator<Salary>(
+		new SalaryBuilder(){
+		}).calculate(ctx);
+		
+	}
 
 	private void addSystemSalaryHours(AONContext aonContext) {
 		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
