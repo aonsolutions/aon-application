@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.code.aon.common.util.CommonUtil.getDaysBetweenDates;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ABS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
@@ -147,6 +148,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.jooq.tables.ContractData;
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
@@ -4403,6 +4406,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				
 				ctx.putVariable(daysVar, ereDays);
 				ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
+				
+				Date ereStartDate = getStartDate(ereFactorVar, period);
 
 				ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
 					@Override
@@ -4413,7 +4418,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					@Override
 					public Double getValue(Period p) {
 						try {
-							return (Double) br(p.getStart());
+							return  (Double) br(ereStartDate);
 						} catch (ExpressionException | SalaryException | SQLException e) {
 							throw new ExpressionExceptionWrapper(
 									new UndefinedContextVariablesException(REGULATORY_BASE));
@@ -5158,6 +5163,34 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		.orElseThrow( IllegalStateException::new )
 		.getAmount()
 		;
+	}
+	
+	private Date getStartDate (ContextVariable var, Period p) {
+		List<ContractDataRecord> datas =
+		new AONContext(connection)
+		.getDslContext()
+		.select()
+		.from(CONTRACT_DATA)
+		.where(CONTRACT_DATA.CONTRACT.eq(getId()))
+		.and(CONTRACT_DATA.NAME.eq(var.getName()))
+		.and(CONTRACT_DATA.START_DATE.le(toSqlDate(p.getEnd())))
+		.orderBy(CONTRACT_DATA.START_DATE.desc())
+		.fetchInto(CONTRACT_DATA);
+		
+		if ( datas.isEmpty()) 
+			return p.getStart(); // ???
+		
+		Date startDate = datas.get(0).getStartDate();
+		
+		for (int i = 1 ; i < datas.size() ; i++) {
+			Date endDate = datas.get(i).getEndDate();
+			if ( endDate.before(add(startDate, DAY_OF_MONTH,-1)))
+				break;
+			startDate = datas.get(i).getStartDate();
+		}
+		
+		
+		return startDate;
 	}
 	
 	// ------------------------------------------------------------------------
