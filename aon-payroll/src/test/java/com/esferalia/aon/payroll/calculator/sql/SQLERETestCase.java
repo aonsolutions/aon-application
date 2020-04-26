@@ -2385,7 +2385,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 			, new String[] {
 						"BASE_CGC * 0.10", 
 						"BASE_CGC * 0.05",
-//						"TRACE('BASE_CGC = %f\r\n', BASE_CGC * 0.10); BASE_CGC * 0.00",
+						"TRACE('BASE_REG = %f\r\n', BASE_REGULADORA); 0.00",
 //						"TRACE('BASE_CGP = %f\r\n', BASE_CGP * 0.05); BASE_CGC * 0.00",
 						}
 			, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
@@ -2434,7 +2434,7 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				
 		Date march = add(february, MONTH ,1);
 		ctx = getContractSalaryCalculatorContext(
-				connection, february, getLastDayOfMonth(march), getLastDayOfMonth(march), contract);
+				connection, march, getLastDayOfMonth(march), getLastDayOfMonth(march), contract);
 		
 		jooqSalaryBuilder = 
 		new JooqSalaryBuilder<Salary>(connection);
