@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.DefaultAgreementUpdate2;
 import net.aonsolutions.db.up2date.payroll.FixERESalaries;
 import net.aonsolutions.db.up2date.payroll.FixERESalariesII;
+import net.aonsolutions.db.up2date.payroll.GarantizadoFix;
 import net.aonsolutions.db.up2date.payroll.GarantizadoUpdate;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Fix;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateFactor;
@@ -117,7 +118,8 @@ public class Up2Date {
     		//DefaultAgreementUpdate2.DEFAULTAGREEMENTUPDATE2,
     		FixERESalaries.FIXERESALARIES,
     		FixERESalariesII.FIXERESALARIESII,
-    		SalaryHoursUpdateFactor.SALARYHOURSUPDATEFACTOR
+    		SalaryHoursUpdateFactor.SALARYHOURSUPDATEFACTOR,
+    		GarantizadoFix.GARANTIZADOFIX
     };
 
 
