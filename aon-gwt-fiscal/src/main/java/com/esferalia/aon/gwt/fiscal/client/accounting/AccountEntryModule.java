@@ -1177,7 +1177,7 @@ public class AccountEntryModule extends MainEntryPoint {
 			if (wrp.getAccountEntry() != null 
 					&& wrp.getAccountEntry().getDetails() != null 
 					&& !wrp.getAccountEntry().getDetails().isEmpty() 
-					&& wrp.getAccountEntry().getDetails().get(0).getAccount() != null) {
+					&& AonStringUtils.isNotBlank(wrp.getAccountEntry().getDetails().get(0).getAccountCode()) ) {
 				ensureBalanceTab();
 				balancePanel.preview( wrp );
 			}
@@ -1190,7 +1190,7 @@ public class AccountEntryModule extends MainEntryPoint {
 					&& wrapperArray[0].getAccountEntry() != null 
 					&& wrapperArray[0].getAccountEntry().getDetails() != null 
 					&& !wrapperArray[0].getAccountEntry().getDetails().isEmpty() 
-					&& wrapperArray[0].getAccountEntry().getDetails().get(0).getAccount() != null) {
+					&& AonStringUtils.isNotBlank(wrapperArray[0].getAccountEntry().getDetails().get(0).getAccountCode()) ) {
 				ensureBalanceTab();
 				balancePanel.preview( wrapperArray );
 			}
