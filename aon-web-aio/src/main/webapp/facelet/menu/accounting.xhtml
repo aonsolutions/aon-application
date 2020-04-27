@@ -158,11 +158,6 @@
 											value="#{bundle.accounting_cost_center_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="accounting_balance-accounting"
-											action="balance_list-accounting"
-											value="#{bundle.accounting_balance_menu2}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="accPeriod-accounting"
 											action="accPeriod-accounting"
 											actionListener="#{accPeriod.onSearch}"
@@ -439,11 +434,11 @@
 												<aon:commandLink id="accountEntry"
 													action="accountEntry_search"
 													actionListener="#{accountEntry.onEditSearch}"
-													value="#{bundle.accounting_entry_module} [Antiguo]" />
+													value="#{bundle.accounting_entry_module} [Antiguo - HASTA 01/07/2020]" />
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>
-
+<!-- 
 									<aon:panelGrid id="group_accounting_statements2"
 										styleClass="aon-width-all" columnClasses="aon-padding"
 										headerClass="aon-icon-product aon-direct-access-panel">
@@ -488,7 +483,7 @@
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>
-
+ -->
 									<aon:panelGrid id="group_pred_entries_loan"
 										styleClass="aon-width-all" columnClasses="aon-padding"
 										headerClass="aon-icon-moneybag aon-direct-access-panel">
@@ -557,6 +552,11 @@
 										</aon:div>
 									</aon:panelGrid>
 
+								</aon:if>
+
+							</aon:panelGroup>
+							<aon:panelGroup>
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:panelGrid id="group_balance" styleClass="aon-width-all"
 										columnClasses="aon-padding"
 										headerClass="aon-icon-balance aon-direct-access-panel">
@@ -605,14 +605,14 @@
 													actionListener="#{balanceSheet.onCustomBalance}"
 													value="#{bundle.accounting_balance_menu_custom}" />
 											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="accounting_balance-accounting"
+													action="balance_list-accounting"
+													value="#{bundle.accounting_balance_menu2}" />
+											</aon:div>
 										</aon:div>
 									</aon:panelGrid>
-								</aon:if>
-
-							</aon:panelGroup>
-
-							<aon:panelGroup>
-								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+<!-- 
 									<aon:panelGrid id="group_accounting_utilities2"
 										styleClass="aon-width-all" columnClasses="aon-padding"
 										headerClass="aon-icon-utilities aon-direct-access-panel">
@@ -683,7 +683,8 @@
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>
-								</aon:if>
+ -->							
+ 								</aon:if>
 							</aon:panelGroup>
 						</h:panelGrid>
 					</aon:div>
