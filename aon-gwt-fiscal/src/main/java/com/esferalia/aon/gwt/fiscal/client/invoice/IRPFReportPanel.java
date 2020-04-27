@@ -24,7 +24,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class IRPFReportPanel extends ScrollPanel{
 	
-	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "IRPFReportStream");
+	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/IRPFReportStream");
 	private static final String HEADER = AonStringUtils.rightPad("TIPO",5)
 			+ AonStringUtils.rightPad("TIPO RET.",15)
 			+ AonStringUtils.rightPad("EPIGR.",8)
@@ -162,6 +162,7 @@ public class IRPFReportPanel extends ScrollPanel{
 		StringBuffer requestData = new StringBuffer();
 		requestData.append("&domainName=" + domainName  );
 		requestData.append("&domainId=" + domain );
+		requestData.append("&user=" + user );
 		requestData.append("&irpfParams=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 

@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
-import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
@@ -27,7 +26,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.IRPFFormatter;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@WebServlet(name = "IRPF Report Stream", urlPatterns = { "/aon_gwt_fiscal/IRPFReportStream" })
+@WebServlet(name = "IRPF Report Stream", urlPatterns = { "/aon_gwt_fiscal/roms/IRPFReportStream" })
 public class IRPFReportStreamServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -2697508555670615321L;
@@ -41,6 +40,7 @@ public class IRPFReportStreamServlet extends HttpServlet {
 		try {
 			String irpfParams = req.getParameter("irpfParams");
 			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
 			IRPFParams params = new IRPFParams();
 			JSONParser parser = new JSONParser();
@@ -101,8 +101,6 @@ public class IRPFReportStreamServlet extends HttpServlet {
 				params.setGroupByNif(groupByNif.intValue());
 			}
 
-			String user = AonServletUtils.getLoggedUser();
-			
 			// Comparador - Ordenar resultado por selección del usuario
 			Comparator<IrpfBreakdown> comp = null;
 			switch (params.getOrderBy()) {
