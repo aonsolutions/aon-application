@@ -111,7 +111,7 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 						
 						tab.setWidget(row,col, new Label(period));
 						tab.getCellFormatter().setStyleName(row, col, AON.AON_CSS.aonReportTableHeader());
-						columns.put(period, new Integer(col));	
+						columns.put(period, Integer.valueOf(col));	
 						col++;
 					}
 					row++;

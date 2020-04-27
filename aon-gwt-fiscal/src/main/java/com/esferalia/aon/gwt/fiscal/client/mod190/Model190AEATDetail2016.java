@@ -1,9 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod190;
 
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190AEAT2016DetailPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Base.IModel190Detail;
 import com.esferalia.aon.gwt.fiscal.client.mod190.Model190Base.Model190BaseCallback;
-import com.esferalia.aon.gwt.fiscal.client.mod190.Model190DetailTable;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;

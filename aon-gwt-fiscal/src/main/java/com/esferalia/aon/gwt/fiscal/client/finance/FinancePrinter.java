@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.finance;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.FocusPanel;

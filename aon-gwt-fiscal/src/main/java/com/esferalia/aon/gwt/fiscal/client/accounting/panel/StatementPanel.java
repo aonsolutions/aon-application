@@ -305,9 +305,9 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 									} else {
 										tab.getRowFormatter().removeStyleName(currentRow, AON.AON_CSS.aonBackgroundHighlightedGreen());
 										tab.getRowFormatter().removeStyleName(currentRow, AON.AON_CSS.aonBackgroundHighlightedOrange());
-										tempList.remove(new Integer(currentRow));
+										tempList.remove(Integer.valueOf(currentRow));
 										if (docMap.containsKey(document)) {
-											docMap.get(document).remove(new Integer(currentRow));
+											docMap.get(document).remove(Integer.valueOf(currentRow));
 										}
 									}
 									decorateTable(result, tab, tempList, docMap);

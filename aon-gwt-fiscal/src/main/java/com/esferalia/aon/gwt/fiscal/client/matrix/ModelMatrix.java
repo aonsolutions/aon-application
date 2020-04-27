@@ -244,16 +244,11 @@ public class ModelMatrix extends MainEntryPoint {
 	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 
 	private NeoMatrix neo;
-	private AonData aonData;
 	
 	private NeoMatrix getNeo() {
 		return neo;
 	}
 	
-	private AonData getAonData() {
-		return aonData;
-	}
-
 	@Override
 	public void onModuleLoad() {
 		impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {

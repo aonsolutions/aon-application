@@ -66,7 +66,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperIconButtonElement;
-import com.vaadin.polymer.paper.widget.PaperItem;
 import com.vaadin.polymer.vaadin.VaadinUploadElement;
 
 import net.aonsolutions.polymer.aon.AonComboBoxElement;

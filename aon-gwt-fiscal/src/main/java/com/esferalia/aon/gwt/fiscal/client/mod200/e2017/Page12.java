@@ -49,8 +49,6 @@ public class Page12 extends PageAbs {
 		table.setCellSpacing(0);
 		table.getColumnFormatter().setWidth(1, "200px");
 		
-		int row = 0;
-		
 		paintTable(table , Mod2002017Constants.LIQUIDATION_V_KEYS_1, 2, "retention");
 		paintTable(table1, Mod2002017Constants.LIQUIDATION_V_KEYS_2, 2, "diputation");
 		paintTable(table2, Mod2002017Constants.LIQUIDATION_V_KEYS_3, 2, null);

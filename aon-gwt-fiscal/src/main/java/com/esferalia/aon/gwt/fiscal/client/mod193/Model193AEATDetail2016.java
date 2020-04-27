@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client.mod193;
 
-import com.esferalia.aon.gwt.fiscal.client.mod193.Model193AEAT2016DetailPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193Base.IModel193Detail;
 import com.esferalia.aon.gwt.fiscal.client.mod193.Model193Base.Model193BaseCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193Detail;
