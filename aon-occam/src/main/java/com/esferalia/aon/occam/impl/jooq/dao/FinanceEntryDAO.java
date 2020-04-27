@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FinanceOrder;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FullFinanceFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO.FullFinanceTrackingFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
@@ -36,8 +37,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FinanceEntryDAO {
 
-	public static Stream<Finance> accountFetch(final AONContext ctx, FinanceFilter filter, int offset, int numberOfRows) {
-		return FinanceDAO.fetch(ctx, filter, offset, numberOfRows)
+	public static Stream<Finance> accountFetch(final AONContext ctx, FinanceFilter filter, int offset, int numberOfRows, FinanceOrder orderBy) {
+		return FinanceDAO.fetch(ctx, filter, offset, numberOfRows,orderBy)
 			.peek(finance -> fillCustomerAcccount(ctx,finance))
 			.peek(finance -> fillSupplierAcccount(ctx,finance))
 			.filter(finance -> 

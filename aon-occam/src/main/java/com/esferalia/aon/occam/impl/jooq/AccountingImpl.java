@@ -46,6 +46,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
@@ -105,17 +106,17 @@ public class AccountingImpl implements IAccounting {
 	}
 	@Override
 	public AccountPeriod fetchPeriod(AONContext ctx, Date date) {
-		return AccountPeriodDAO.fetchOne(ctx, date);
+		return AccountPeriodDAO.getPeriod(ctx, date);
 	}
 
 	@Override
 	public AccountPeriod fetchPeriod(AONContext ctx, Integer id) {
-		return AccountPeriodDAO.fetchOne(ctx, id);
+		return AccountPeriodDAO.getPeriod(ctx, id);
 	}
 
 	@Override
 	public AccountPeriod fetchPeriodByYear(AONContext ctx, int year) {
-		return AccountPeriodDAO.fetchOneByYear(ctx, year);
+		return AccountPeriodDAO.getPeriodByYear(ctx, year);
 	}
 
 	@Override
@@ -330,7 +331,7 @@ public class AccountingImpl implements IAccounting {
 	public Stream<Finance> getAccountFinances(AONContext ctx, FinanceParams params, int offset, int limit) {
 		return FinanceEntryDAO.accountFetch(ctx, 
 					p -> FinanceUtils.getPendingFilter(p, params) 
-					,offset,limit)
+					,offset,limit, FinanceDAO.FinanceOrder.safeEnum( params.getOrder() ))
 				;
 	}
 	@Override

@@ -70,6 +70,9 @@ public class FinanceUtils {
 						SecurityLevel.CONFIDENTIAL.value()));
 			}
 		}
+		if (params.getPayMethod() != null) {
+			prop = prop.and(p.getPayMethodProperty().eq(params.getPayMethod()));
+		}
 		return prop;
 	}
 

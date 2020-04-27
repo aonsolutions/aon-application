@@ -440,15 +440,18 @@ public class AccountStatementDAO {
 						.setEnd(params.getToDate())
 						.setName(ap.getName());
 				map.put(inter,params);
+				System.out.println( inter.getName() + " -->  from " + inter.getStart() + "    to    " + inter.getEnd());
 			} else if (map.size() > 0 && params.getPreviousPeriods() >= map.size() ) {
 				AccountingReportParams cloned = params.clone();
 				cloned.setPeriod(ap.getId());
 				cloned.setFromDate( AonDateUtils.add(params.getFromDate(), Calendar.YEAR, (map.size() * (-1)) ));
 				cloned.setToDate( AonDateUtils.add(params.getToDate(), Calendar.YEAR,  (map.size() * (-1)) ));
+				
 				DateInterval inter = new DateInterval()
 						.setStart(cloned.getFromDate())
 						.setEnd(cloned.getToDate())
 						.setName(ap.getName());
+				System.out.println( inter.getName() + " -->  from " + inter.getStart() + "    to    " + inter.getEnd());				
 				map.put(inter,cloned);
 			}
 		}
@@ -595,9 +598,12 @@ public class AccountStatementDAO {
 					AccountOperatingStatement itm = report.get(account.getCode(), inter);
 					AccountOperatingStatement pre = report.get(account.getCode(), previous);
 					if (itm != null && pre != null) {
-						double p = (pre!=null)?AonMathUtils.absRounded( pre.getDebitBalance() - pre.getUnpaidBalance()):0.0;
-						double i = AonMathUtils.absRounded( itm.getDebitBalance() - itm.getUnpaidBalance());
-						itm.setIncreasePercent(AonMathUtils.round( p==0?100.0:(((i-p)*100)/p) ));
+//						double p = (pre!=null)?AonMathUtils.absRounded( pre.getDebitBalance() - pre.getUnpaidBalance()):0.0;
+//						double i = AonMathUtils.absRounded( itm.getDebitBalance() - itm.getUnpaidBalance());
+						double p = (pre!=null)?( pre.getDebitBalance() - pre.getUnpaidBalance()):0.0;
+						double i = ( itm.getDebitBalance() - itm.getUnpaidBalance());
+						double r = AonMathUtils.round( p==0?100.0:(((p-i)*100)/p) );
+						itm.setIncreasePercent(r);
 					}
 				}
 			}

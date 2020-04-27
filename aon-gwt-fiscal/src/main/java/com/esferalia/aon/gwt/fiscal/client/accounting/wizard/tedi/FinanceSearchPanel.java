@@ -11,11 +11,14 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -54,7 +57,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private String currentUser;
 	private User user;
 	
-	final private int limit = 40;
+	final private int limit = 100;
 	
 	final private MutableInt offset = new MutableInt(0);
 	final private MutableInt moreData = new MutableInt(0);
@@ -80,6 +83,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 	private CheckBox nearbyNumbers;
 	private TextBox concept;
 	private TextBox referenceCode;
+	private ListBox payMethod;
+	private ListBox order;
 	
 	private IFinancePanelCallback callback;
 	
@@ -90,7 +95,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		boolean isSelected( Finance finance);
 	}
 	
-	public FinanceSearchPanel(String domainName,int domainId, String currentUser, IFinancePanelCallback callback, int tabIndex) {
+	public FinanceSearchPanel(String domainName,int domainId, String currentUser,AonConfiguration config,IFinancePanelCallback callback) {
 		super(Unit.PX);
 		this.domainName = domainName;
 		this.domainId = domainId;
@@ -104,8 +109,208 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
 		northPanel = new SimpleLayoutPanel();
-		fillNorthPanel(tabIndex);
-		addNorth(northPanel, 125);
+
+		amount = new DoubleBox();
+		amount.setVisibleLength(6);
+		amount.setValue(null,false);
+		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> arg0) {
+				search();
+			}
+		});
+		
+		nearbyNumbers = new CheckBox(AON.MSG.nearbyNumbers());
+		nearbyNumbers.setStyleName(AON.AON_CSS.aonPadding2Left());
+		nearbyNumbers.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				search();
+			}
+		});
+
+		concept = new TextBox();
+		concept.setStyleName(AON.AON_CSS.aonInputText());
+		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				search();
+			}
+		});
+
+		fromDate = new DateBoxEx();
+		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> arg0) {
+				search();
+			}
+		});
+		
+		toDate = new DateBoxEx();
+		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> arg0) {
+				search();
+			}
+		});
+		
+		confidential = new CheckBox( AON.MSG.confidential());
+		confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
+		confidential.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent arg0) {
+				search();
+			}
+		});
+		
+		referenceCode = new TextBox();
+		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
+		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> arg0) {
+				search();
+			}
+		});
+
+		registryBox = new AccountingRegistryBox(this.domainName,this.domainId,this.currentUser, null, false);
+		registryBox.setRequired(false);
+		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<AccountingRegistry> arg0) {
+				search();
+			}
+		});
+
+		payment = new ListBox();
+		payment.addItem(" --- "," --- ");
+		payment.addItem("Pago" ,"Pago");
+		payment.addItem("Cobro", "Cobro");
+		payment.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				search();
+			}
+		});
+		
+		
+		payMethod = new ListBox();
+		payMethod.setWidth("120px");
+		payMethod.addItem(" ---- ", "") ;
+		if (config != null && config.getPayMethods() != null) {
+			for (PayMethod pm : config.getPayMethods() ) {
+				payMethod.addItem( pm.getName(), AonNumberUtils.toString(pm.getId()));
+			}
+		}
+		payMethod.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				search();
+			}
+		});
+
+		order = new ListBox();
+		order.setWidth("150px");
+		order.addItem("Fecha vencimiento");
+		order.addItem("Nombre titular");
+		order.addItem("Importe");
+		order.addItem("Forma de pago");
+		order.addItem("Fecha creaci\u00F3n");
+		order.addItem("Fecha creaci\u00F3n, descendente");
+		order.addItem("Fecha modificaci\u00F3n, descendente");
+		order.setSelectedIndex(0);
+		order.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				search();
+			}
+		});
+		
+		
+		FlowPanel flowNorthPanel = new FlowPanel();
+		flowNorthPanel.setStyleName(AON.AON_CSS.aonBorderBottom());
+		Label label = new Label(AON.MSG.financeSelection());
+		label.setStyleName(AON.AON_CSS.aonWidthAll());
+		label.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		label.addStyleName(AON.AON_CSS.aonBorderBottom());
+		label.addStyleName(AON.AON_CSS.aonBold());
+		label.addStyleName(AON.AON_CSS.aonTextCenter());
+		flowNorthPanel.add(label);
+
+		tab = new FlexTable();
+		tab.setStyleName(AON.AON_CSS.aonPadding2());
+		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		
+		tab.getColumnFormatter().setWidth(0, "60px");
+		tab.getColumnFormatter().setWidth(1, "180px");
+		tab.getColumnFormatter().setWidth(2, "85px");
+		tab.getColumnFormatter().setWidth(3, "auto");
+		
+		tab.setWidget(0, 0, new Label(AON.MSG.amount()));
+		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonBold());
+		amountPanel = new FlowPanel();
+		amountPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		amountPanel.add(amount);
+		amountPanel.add(nearbyNumbers);
+		tab.setWidget(0, 1, amountPanel);
+
+
+		tab.setWidget(0, 2, new Label(AON.MSG.concept()));
+		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonBold());
+		tab.setWidget(0, 3, concept);
+		
+		tab.setWidget(1, 0, new Label(AON.MSG.date()));
+		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
+		
+		datePanel = new FlowPanel();
+		datePanel.setStyleName(AON.AON_CSS.aonNowrap());
+		datePanel.add(fromDate);
+		InlineLabel to = new InlineLabel(AON.MSG.to());
+		to.setStyleName(AON.AON_CSS.aonItalic());
+		to.addStyleName(AON.AON_CSS.aonMarginRight());
+		to.addStyleName(AON.AON_CSS.aonMarginLeft());
+		datePanel.add(to);
+		datePanel.add(toDate);
+		tab.setWidget(1, 1, datePanel);
+
+		tab.setWidget(1, 2, new Label(AON.MSG.invoiceNumberAbbr()));
+		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
+		tab.setWidget(1, 3, referenceCode);
+
+		tab.setWidget(2, 0, new Label(AON.MSG.titular()));
+		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonBold());
+		tab.setWidget(2, 1, registryBox);
+		
+		paymentPanel = new FlowPanel();
+		paymentPanel.add(payment);
+		tab.setWidget(2, 2, new Label(AON.MSG.type()));
+		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonBold());
+		tab.setWidget(2, 3, paymentPanel);
+
+		tab.setWidget(3, 0, new Label(AON.MSG.payMethodAbbr()));
+		tab.getCellFormatter().setStyleName(3,0, AON.AON_CSS.aonBold());
+		tab.setWidget(3, 1, payMethod);
+
+		tab.setWidget(3, 2, new Label(AON.MSG.orderBy()));
+		tab.getCellFormatter().setStyleName(3,2, AON.AON_CSS.aonBold());
+		tab.setWidget(3, 3, order);
+
+		flowNorthPanel.add(tab);
+		northPanel.setWidget(flowNorthPanel);
+		
+		
+		
+		addNorth(northPanel, 135);
 		
 		centerLayoutPanel = new SimpleLayoutPanel();
 		centerPanel = new ScrollPanel();
@@ -161,173 +366,6 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		moreData.setValue(0);
 	}
 	
-
-	private void fillNorthPanel(int tabIndex) {
-		amount = new DoubleBox();
-		amount.setVisibleLength(6);
-		amount.setValue(null,false);
-		amount.setTabIndex(++tabIndex);
-		amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Double> arg0) {
-				search();
-			}
-		});
-		
-		nearbyNumbers = new CheckBox(AON.MSG.nearbyNumbers());
-		nearbyNumbers.setStyleName(AON.AON_CSS.aonPadding2Left());
-		nearbyNumbers.setTabIndex(++tabIndex);
-		nearbyNumbers.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent arg0) {
-				search();
-			}
-		});
-
-		concept = new TextBox();
-		concept.setTabIndex(++tabIndex);
-		concept.setStyleName(AON.AON_CSS.aonInputText());
-		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> arg0) {
-				search();
-			}
-		});
-
-		fromDate = new DateBoxEx();
-		fromDate.setTabIndex(++tabIndex);
-		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> arg0) {
-				search();
-			}
-		});
-		
-		toDate = new DateBoxEx();
-		toDate.setTabIndex(++tabIndex);
-		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> arg0) {
-				search();
-			}
-		});
-		
-		confidential = new CheckBox( AON.MSG.confidential());
-		confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
-		confidential.setTabIndex(++tabIndex);
-		confidential.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent arg0) {
-				search();
-			}
-		});
-		
-		referenceCode = new TextBox();
-		referenceCode.setTabIndex(++tabIndex);
-		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
-		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> arg0) {
-				search();
-			}
-		});
-
-		registryBox = new AccountingRegistryBox(this.domainName,this.domainId,this.currentUser, null, false);
-		registryBox.setRequired(false);
-		
-		registryBox.setTabIndex(++tabIndex);
-		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
-			
-			@Override
-			public void onSelection(SelectionEvent<AccountingRegistry> arg0) {
-				search();
-			}
-		});
-
-		payment = new ListBox();
-		payment.addItem(" --- "," --- ");
-		payment.addItem("Pago" ,"Pago");
-		payment.addItem("Cobro", "Cobro");
-		payment.setTabIndex(++tabIndex);
-		payment.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				search();
-			}
-		});
-		
-		FlowPanel flowNorthPanel = new FlowPanel();
-		Label label = new Label(AON.MSG.financeSelection());
-		label.setStyleName(AON.AON_CSS.aonWidthAll());
-		label.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		label.addStyleName(AON.AON_CSS.aonBorderBottom());
-		label.addStyleName(AON.AON_CSS.aonBold());
-		label.addStyleName(AON.AON_CSS.aonTextCenter());
-		flowNorthPanel.add(label);
-
-		tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonBorderBottom());
-		tab.addStyleName(AON.AON_CSS.aonPadding());
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
-		
-		tab.getColumnFormatter().setWidth(0, "60px");
-		tab.getColumnFormatter().setWidth(1, "180px");
-		tab.getColumnFormatter().setWidth(2, "85px");
-		tab.getColumnFormatter().setWidth(3, "auto");
-		
-		tab.setWidget(0, 0, new Label(AON.MSG.amount()));
-		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonBold());
-		amountPanel = new FlowPanel();
-		amountPanel.setStyleName(AON.AON_CSS.aonNowrap());
-		amountPanel.add(amount);
-		amountPanel.add(nearbyNumbers);
-		tab.setWidget(0, 1, amountPanel);
-
-
-		tab.setWidget(0, 2, new Label(AON.MSG.concept()));
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonBold());
-		tab.setWidget(0, 3, concept);
-		
-		tab.setWidget(1, 0, new Label(AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
-		
-		datePanel = new FlowPanel();
-		datePanel.setStyleName(AON.AON_CSS.aonNowrap());
-		datePanel.add(fromDate);
-		InlineLabel to = new InlineLabel(AON.MSG.to());
-		to.setStyleName(AON.AON_CSS.aonItalic());
-		to.addStyleName(AON.AON_CSS.aonMarginRight());
-		to.addStyleName(AON.AON_CSS.aonMarginLeft());
-		datePanel.add(to);
-		datePanel.add(toDate);
-		tab.setWidget(1, 1, datePanel);
-
-		tab.setWidget(1, 2, new Label(AON.MSG.invoiceNumberAbbr()));
-		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
-		tab.setWidget(1, 3, referenceCode);
-
-		tab.setWidget(2, 0, new Label(AON.MSG.titular()));
-		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonBold());
-		tab.setWidget(2, 1, registryBox);
-		
-		paymentPanel = new FlowPanel();
-		paymentPanel.add(payment);
-		tab.setWidget(2, 2, new Label(AON.MSG.type()));
-		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonBold());
-		tab.setWidget(2, 3, paymentPanel);
-
-		flowNorthPanel.add(tab);
-		northPanel.setWidget(flowNorthPanel);
-	}
-
 	@Override
 	public HandlerRegistration addSelectionHandler(SelectionHandler<Finance> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
@@ -376,6 +414,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			.setPayment((payment.getSelectedIndex() == 0)?null:(payment.getSelectedIndex() == 1))
 			.setConfidential(confidential.getValue())
 			.setHasConfidentialityRole(user != null && user.hasConfidentialityRole())
+			.setPayMethod( AonNumberUtils.toInteger( payMethod.getSelectedValue()) )
+			.setOrder(order.getSelectedIndex())
 			;
 		
 		fiscalService.getAccountFinances(domainName,domainId, params, ofs, limit
@@ -387,9 +427,11 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 							for (final Finance finance : result) {
 								finance.setSelected(callback.isSelected(finance));
 								final FocusPanel financePanel = FinancePrinter.print(finance);
+								financePanel.getElement().getStyle().setPaddingTop(3, Unit.PX);
+								financePanel.setStyleName(AON.AON_CSS.aonClickableBlock());
 								financePanel.addStyleName(finance.isSelected()
-										?AON.AON_CSS.aonIconChecked()
-										:AON.AON_CSS.aonIconCheck());
+										?AON.AON_CSS.aonIconCheckYes()
+										:AON.AON_CSS.aonIconCheckNo());
 								financePanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
 								container.add(financePanel);
 								financePanel.addClickHandler(new ClickHandler() {
@@ -397,11 +439,11 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 									public void onClick(ClickEvent event) {
 										finance.setSelected(!finance.isSelected());
 										if (finance.isSelected()) {
-											financePanel.removeStyleName(AON.AON_CSS.aonIconCheck());
-											financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
+											financePanel.removeStyleName(AON.AON_CSS.aonIconCheckNo());
+											financePanel.addStyleName(AON.AON_CSS.aonIconCheckYes());
 										} else {
-											financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
-											financePanel.removeStyleName(AON.AON_CSS.aonIconChecked());
+											financePanel.addStyleName(AON.AON_CSS.aonIconCheckNo());
+											financePanel.removeStyleName(AON.AON_CSS.aonIconCheckYes());
 										}
 										SelectionEvent.<Finance>fire( FinanceSearchPanel.this, finance);
 									}
@@ -438,6 +480,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		registryBox.setValue( (AccountingRegistry) null, false);
 		amount.setValue(null);
 		concept.setValue(null);
+		payMethod.setSelectedIndex(0);
+		order.setSelectedIndex(0);
 		search();
 	}
 	

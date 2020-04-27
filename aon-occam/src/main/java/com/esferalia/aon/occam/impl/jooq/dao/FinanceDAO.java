@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.SortField;
 
 import com.esferalia.aon.jooq.tables.records.FinanceRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
 import com.esferalia.aon.watson.AonError;
@@ -77,8 +79,35 @@ public class FinanceDAO {
 		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(FINANCE.CONCEPT);}
 		@Override public Property<Byte> getPaymentProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.PAYMENT);}
 		@Override public Property<String> getInvoiceReferenceCode() {return new FilterDAO.PropertyDAO<String>(INVOICE.REFERENCE_CODE);}
+		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.PAY_METHOD);}
 	}
 	
+	// ---------------------------------------------------------- ORDER
+	public static enum FinanceOrder {
+		 DUE_DATE ( FINANCE.DUE_DATE.asc(),FINANCE.ID.asc())
+		,REGISTRY_NAME( REGISTRY.NAME.asc() )
+		,AMOUNT( FINANCE.AMOUNT.asc() )
+		,PAYMETHOD( PAY_METHOD.NAME.asc() )
+		,CREATION_DATE ( FINANCE.ID.asc() )
+		,CREATION_DATE_DESC ( FINANCE.ID.desc())
+		,ORDER_MODIFICATION_DATE_DESC ( FINANCE.MODIFICATION_DATE.desc(),FINANCE.CREATION_DATE.desc())
+		;
+		private SortField<?>[] fields;
+		
+		private FinanceOrder( SortField<?> ...fields) {
+			this.fields = fields;
+		}
+		public SortField<?>[] getFields() {
+			return fields;
+		}
+		
+		public static FinanceOrder safeEnum(int order) {
+			if (order < 0 || order > AccountEntryOrder.values().length) {
+				return DUE_DATE;
+			}
+			return FinanceOrder.values()[order];
+		}
+	}
 	// -------------------------------------------------------------
 	// --------------------- FINANCE --- LECTURA -------------------
 	// -------------------------------------------------------------
@@ -87,9 +116,13 @@ public class FinanceDAO {
 				   	.and(p.getIdProperty().eq(id)), 0, 1)
 		.findFirst().orElse(null);
 	}
-	
 	public static Stream<Finance> getFinanceStream(AONContext ctx,FinanceFilter filter) {
+		return getFinanceStream(ctx,filter, FinanceOrder.CREATION_DATE);
+	}
+	
+	public static Stream<Finance> getFinanceStream(AONContext ctx,FinanceFilter filter, FinanceOrder orderBy) {
 		return fetch(ctx, filter)
+				.orderBy(orderBy.getFields())
 				.fetch()
 				.stream()
 				.map(new FullFinanceFiller());
@@ -124,17 +157,22 @@ public class FinanceDAO {
 			.select(PAY_METHOD.fields())
 			.select(SCOPE.fields())
 			.select(INVOICE.fields())
-				.from(FINANCE)
-				.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
-				.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
-				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-				.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
-				.where(FINANCE_PROPERTIES.getConditions(filter))
-				.and(FINANCE.DOMAIN.eq(ctx.getDomainId()));
+			.from(FINANCE)
+			.join(REGISTRY).on(FINANCE.REGISTRY.equal(REGISTRY.ID))
+			.join(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+			.leftOuterJoin(INVOICE).on(FINANCE.INVOICE.equal(INVOICE.ID))
+			.where(FINANCE_PROPERTIES.getConditions(filter))
+			.and(FINANCE.DOMAIN.eq(ctx.getDomainId()));
+	}
+	
+	public static Stream<Finance> fetch(AONContext ctx, FinanceFilter filter, int offset, int numberOfRows) {
+		return fetch(ctx, filter, offset, numberOfRows, FinanceOrder.CREATION_DATE_DESC );	
 	}
 			
-	public static Stream<Finance> fetch(AONContext ctx, FinanceFilter filter, int offset, int numberOfRows) {
+	public static Stream<Finance> fetch(AONContext ctx, FinanceFilter filter, int offset, int numberOfRows, FinanceOrder orderBy) {
 		return fetch(ctx, filter)
+				.orderBy(orderBy.getFields())
 				.limit(offset,numberOfRows)
 				.fetch()
 				.stream()

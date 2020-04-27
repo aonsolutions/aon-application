@@ -512,6 +512,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("NO")
 	String no();
 
+	@DefaultMessage("Ordenar por")
+	String orderBy();
+
 	// ---------------------------------------------------------Common Messages
 	@DefaultMessage("Declaraci\u00F3n")
 	String declaration();
@@ -687,6 +690,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Forma de pago")
 	String payMethod();
+	
+	@DefaultMessage("F. pago")
+	String payMethodAbbr();
 
 	@DefaultMessage("Fecha de Vto.")
 	String dueDate();

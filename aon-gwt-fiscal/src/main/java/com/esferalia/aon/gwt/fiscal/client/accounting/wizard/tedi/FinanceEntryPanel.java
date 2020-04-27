@@ -30,6 +30,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -77,6 +78,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 			  getCallback().getCurrentDomainName()
 			, getCallback().getCurrentDomainId()
 			, getCallback().getCurrentUser()
+			, getCallback().getConfiguration()
 			, new IFinancePanelCallback() {
 
 				@Override
@@ -87,8 +89,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				}
 				
 			}
-			
-			,SEARCH_PANEL_TAB_OFFSET);
+			);
 		financeSearchPanel.setUser( getCallback().getConfiguration().getUser() );
 		financeSearchPanel.setStyleName(AON.AON_CSS.aonInvoicePanelEast());
 		financeSearchPanel.addSelectionHandler( new SelectionHandler<Finance>() {
@@ -118,8 +119,8 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 				financeSearchPanel.uncheck(event.getSelectedItem());		
 			}
 		});
-		financeSearchPanel.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);		
-		rootPanel.addEast(financeSearchPanel, 600);
+		financeSearchPanel.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
+		rootPanel.addEast(financeSearchPanel, (Window.getClientWidth() / 2));
 		
 		SimpleLayoutPanel centerPanel = new SimpleLayoutPanel();
 		centerPanel.setStyleName(AON.AON_CSS.aonInvoicePanel());
@@ -128,8 +129,9 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		resultPanel = new DockLayoutPanel(Unit.PX);
 		
 		SimpleLayoutPanel northPanel = new SimpleLayoutPanel();
+		northPanel.setStyleName(AON.AON_CSS.aonBorderBottom());
 		fillNorthPanel(northPanel,tabindex);
-		resultPanel.addNorth(northPanel, 125);
+		resultPanel.addNorth(northPanel, 135);
 		
 		
 		ScrollPanel resultScrollPanel = new ScrollPanel();
@@ -150,14 +152,16 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		container.clear();
 		for (final FinanceTracking ft : financeEntry.getTrackings().values()) {
 			final FocusPanel financePanel = FinancePrinter.print(ft.getFinance());
+			financePanel.getElement().getStyle().setPaddingTop(3, Unit.PX);
+			financePanel.setStyleName(AON.AON_CSS.aonClickableBlock());
 			financePanel.addStyleName(AON.AON_CSS.aonPaddingLeftImportant());
 			boolean updatable = isUpdatable() && ft.isLastTracking();
 			if (updatable) {
 				if (ft.isDeleted()) {
 					financePanel.addStyleName(AON.AON_CSS.aonTextLineThrough());
-					financePanel.addStyleName(AON.AON_CSS.aonIconCheck());
+					financePanel.addStyleName(AON.AON_CSS.aonIconCheckNo());
 				} else {
-					financePanel.addStyleName(AON.AON_CSS.aonIconChecked());
+					financePanel.addStyleName(AON.AON_CSS.aonIconCheckYes());
 				}
 				financePanel.addClickHandler(new ClickHandler() {
 					@Override
@@ -209,8 +213,7 @@ public class FinanceEntryPanel extends WizardContentBase<FinanceEntry> implement
 		flowNorthPanel.add(label);
 		
 		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonBorderBottom());
-		tab.addStyleName(AON.AON_CSS.aonPadding());
+		tab.setStyleName(AON.AON_CSS.aonPadding2());
 		tab.addStyleName(AON.AON_CSS.aonWidthAll());
 		
 		tab.getColumnFormatter().setWidth(0, "100px");

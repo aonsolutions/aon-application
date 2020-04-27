@@ -312,8 +312,8 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
 				.setDomain(domain)
 				.setUserOperator(operator)
-				.setBetaEnabled((beta!=null && new Boolean(beta.getValue())))
-				.setAlphaEnabled((alpha!=null && new Boolean(alpha.getValue())))
+				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
+				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
 				.setCompany(company);
 				
 	}

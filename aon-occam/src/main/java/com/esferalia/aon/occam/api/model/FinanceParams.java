@@ -20,6 +20,8 @@ public class FinanceParams implements Serializable{
 	private double factor = 5;
 	private String concept;
 	private String referenceCode;
+	private Integer payMethod;
+	private int order;
 	
 	public int getDomain() {
 		return domain;
@@ -91,6 +93,7 @@ public class FinanceParams implements Serializable{
 		this.referenceCode = referenceCode;
 		return this;
 	}
+	
 	public boolean isConfidential() {
 		return confidential;
 	}
@@ -105,4 +108,20 @@ public class FinanceParams implements Serializable{
 		this.hasConfidentialityRole = hasConfidentialityRole;
 		return this;
 	}
+	
+	public Integer getPayMethod() {
+		return payMethod;
+	}
+	public FinanceParams setPayMethod(Integer payMethod) {
+		this.payMethod = payMethod;
+		return this;
+	}
+	public int getOrder() {
+		return order;
+	}
+	public FinanceParams setOrder(int order) {
+		this.order = order;
+		return this;
+	}
+	
 }
