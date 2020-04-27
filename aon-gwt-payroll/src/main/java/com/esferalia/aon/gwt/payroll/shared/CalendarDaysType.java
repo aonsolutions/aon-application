@@ -520,39 +520,39 @@ public class CalendarDaysType implements Serializable {
 		
 		CalendarDayType newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 		
-		for(int i=0; i<getDayTypeList().size()-1; i++) {
+		for(int i=1; i<getDayTypeList().size()-1; i++) {
 			if(!validDayType(dayTypeList.get(i).getDayType()))
 				continue;
 			
-			if(newCalendarDayType.getDayType() == dayTypeList.get(i+1).getDayType() && isNextDay(newCalendarDayType.getEndDate(), dayTypeList.get(i+1).getStartDate())) {
+			if(newCalendarDayType.getDayType() == dayTypeList.get(i).getDayType() && isNextDay(newCalendarDayType.getEndDate(), dayTypeList.get(i).getStartDate())) {
 				if(isCoefficientDayType(newCalendarDayType.getDayType())) {
-					if(Double.compare(Double.parseDouble(newCalendarDayType.getExpession()), Double.parseDouble(dayTypeList.get(i+1).getExpession())) == 0) {
-						newCalendarDayType.setEndDate(dayTypeList.get(i+1).getEndDate());
+					if(Double.compare(Double.parseDouble(newCalendarDayType.getExpession()), Double.parseDouble(dayTypeList.get(i).getExpession())) == 0) {
+						newCalendarDayType.setEndDate(dayTypeList.get(i).getEndDate());
 						continue;
 					} else {
 						newDayTypeList.add(new CalendarDayType(newCalendarDayType.getStartDate(), newCalendarDayType.getEndDate(), newCalendarDayType.getDayType(), newCalendarDayType.getExpession()));
 						
-						startDate = dayTypeList.get(i+1).getStartDate();
-						endDate = dayTypeList.get(i+1).getEndDate();
-						dayType = dayTypeList.get(i+1).getDayType();
-						expression = dayTypeList.get(i+1).getExpession();
+						startDate = dayTypeList.get(i).getStartDate();
+						endDate = dayTypeList.get(i).getEndDate();
+						dayType = dayTypeList.get(i).getDayType();
+						expression = dayTypeList.get(i).getExpession();
 						
 						newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 						continue;
 					}
 				} else if(isDaysBetweenExpression(newCalendarDayType.getDayType())) {
-					newCalendarDayType.setEndDate(dayTypeList.get(i+1).getEndDate());
+					newCalendarDayType.setEndDate(dayTypeList.get(i).getEndDate());
 					continue;
 				} else if(newCalendarDayType.getExpession() == dayTypeList.get(i+1).getExpession()) {
-					newCalendarDayType.setEndDate(dayTypeList.get(i+1).getEndDate());
+					newCalendarDayType.setEndDate(dayTypeList.get(i).getEndDate());
 					continue;	
 				} else {
 					newDayTypeList.add(new CalendarDayType(newCalendarDayType.getStartDate(), newCalendarDayType.getEndDate(), newCalendarDayType.getDayType(), newCalendarDayType.getExpession()));
 					
-					startDate = dayTypeList.get(i+1).getStartDate();
-					endDate = dayTypeList.get(i+1).getEndDate();
-					dayType = dayTypeList.get(i+1).getDayType();
-					expression = dayTypeList.get(i+1).getExpession();
+					startDate = dayTypeList.get(i).getStartDate();
+					endDate = dayTypeList.get(i).getEndDate();
+					dayType = dayTypeList.get(i).getDayType();
+					expression = dayTypeList.get(i).getExpession();
 					
 					newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 				}
@@ -560,10 +560,10 @@ public class CalendarDaysType implements Serializable {
 				if(validDayType(newCalendarDayType.getDayType()))
 					newDayTypeList.add(new CalendarDayType(newCalendarDayType.getStartDate(), newCalendarDayType.getEndDate(), newCalendarDayType.getDayType(), newCalendarDayType.getExpession()));
 				
-				startDate = dayTypeList.get(i+1).getStartDate();
-				endDate = dayTypeList.get(i+1).getEndDate();
-				dayType = dayTypeList.get(i+1).getDayType();
-				expression = dayTypeList.get(i+1).getExpession();
+				startDate = dayTypeList.get(i).getStartDate();
+				endDate = dayTypeList.get(i).getEndDate();
+				dayType = dayTypeList.get(i).getDayType();
+				expression = dayTypeList.get(i).getExpession();
 				
 				newCalendarDayType = new CalendarDayType(startDate, endDate, dayType, expression);
 			}

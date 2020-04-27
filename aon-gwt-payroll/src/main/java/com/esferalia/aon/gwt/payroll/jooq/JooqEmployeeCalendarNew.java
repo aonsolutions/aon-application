@@ -96,6 +96,7 @@ public class JooqEmployeeCalendarNew {
 		varNames.add("COEFICIENTE_AUSENCIA");
 		varNames.add("COEFICIENTE_PARCIALIDAD");
 		varNames.add("CAUSA_INACTIVIDAD");
+		varNames.add("DIAS_INACTIVIDAD");
 		
 		// PEONADAS
 		varNames.add("PEONADAS");
@@ -797,6 +798,7 @@ public class JooqEmployeeCalendarNew {
 					,"COEFICIENTE_ERE_FZA"
 					,"COEFICIENTE_ERE_FZA_EXONERADO"
 					,"COEFICIENTE_AUSENCIA"
+					,"DIAS_INACTIVIDAD"
 					,"CAUSA_INACTIVIDAD"
 					,"LABORABLE"
 			)).execute();
@@ -804,6 +806,19 @@ public class JooqEmployeeCalendarNew {
 		ArrayList<CalendarDayType> dayTypeFixList = calendarDaysType.getFixUpdateList();
 		
 		for(CalendarDayType calendarDayType : dayTypeFixList) {
+			if(calendarDayType.getDayType() == DayType.INACTIVITY) {
+				Integer dayBetween = DateUtils.getDaysBetween(calendarDayType.getStartDate(), calendarDayType.getEndDate()) + 1;
+				
+				dslContext.insertInto(CONTRACT_DATA)
+					.set(CONTRACT_DATA.DOMAIN, domain)
+					.set(CONTRACT_DATA.CONTRACT, contract)
+					.set(CONTRACT_DATA.NAME, "DIAS_INACTIVIDAD")
+					.set(CONTRACT_DATA.EXPRESSION, dayBetween.toString())
+					.set(CONTRACT_DATA.START_DATE, parseDateUtilToSql(calendarDayType.getStartDate()))
+					.set(CONTRACT_DATA.END_DATE, parseDateUtilToSql(calendarDayType.getEndDate()))
+					.execute();
+			}
+			
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.CONTRACT, contract)
