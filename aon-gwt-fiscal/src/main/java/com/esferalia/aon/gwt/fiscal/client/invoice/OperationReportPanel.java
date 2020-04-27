@@ -26,7 +26,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class OperationReportPanel extends ScrollPanel{
 		
-	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "OperationReportStream");
+	private static final String REPORT_URL = URL.encode(GWT.getModuleBaseURL() + "roms/OperationReportStream");
 	private static final String HEADER_IVA = AonStringUtils.rightPad("ID", 5)
 			+ AonStringUtils.rightPad("FECHA", 15)
 			+ AonStringUtils.rightPad("FECHA IVA", 15)
@@ -263,6 +263,7 @@ public class OperationReportPanel extends ScrollPanel{
 		StringBuffer requestData = new StringBuffer();
 		requestData.append("&domainName=" + domainName );
 		requestData.append("&domainId=" + domain );
+		requestData.append("&user=" + user );
 		requestData.append("&irpfParams=" + JsonParams.convert( params ));
 		xhr.send(requestData.toString());
 	}

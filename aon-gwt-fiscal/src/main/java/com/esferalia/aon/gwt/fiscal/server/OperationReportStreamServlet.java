@@ -18,7 +18,7 @@ import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-@WebServlet(name = "Operation Report Stream", urlPatterns = { "/aon_gwt_fiscal/OperationReportStream" })
+@WebServlet(name = "Operation Report Stream", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportStream" })
 public class OperationReportStreamServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -2697508555670615321L;
@@ -30,9 +30,11 @@ public class OperationReportStreamServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			String irpfParams = req.getParameter("irpfParams");
-			String domainName = req.getParameter("domainName");
-			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			String irpfParams = req.getParameter(IRequestParamsNames.IRPF_PARAMS);
+			String domainName = req.getParameter(IRequestParamsNames.DOMAIN_NAME);;
+			int domainId = Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID));
+			String user = req.getParameter(IRequestParamsNames.USER);
+			
 			OperationParams params = new OperationParams();
 			JSONParser parser = new JSONParser();
 			JSONObject jsonParams =  (JSONObject) parser.parse(irpfParams);
@@ -59,8 +61,6 @@ public class OperationReportStreamServlet extends HttpServlet {
 				params.setIrpf(irpf==1?true:false);
 			}
 
-			String user = req.getParameter(IRequestParamsNames.USER);
-			
 			resp.setContentType(MimeType.HTML.getName());
 			OperationFormatter.formatOperation(resp.getWriter()
 				,FISCAL.getOperationBreakdown(domainName, user, domainId, params));

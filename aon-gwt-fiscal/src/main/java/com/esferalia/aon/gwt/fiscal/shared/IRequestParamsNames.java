@@ -99,4 +99,5 @@ public interface IRequestParamsNames {
 	String LEDGER_UNPAID_BALANCE = "ledgerUnpaidBalance";
 
 	String FILE_DATA = "fileData";
+	String IRPF_PARAMS = "irpfParams";
 }
