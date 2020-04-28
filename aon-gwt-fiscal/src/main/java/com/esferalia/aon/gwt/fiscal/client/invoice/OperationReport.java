@@ -33,7 +33,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -55,7 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class OperationReport extends MainEntryPoint {
 
-	private static final String OPERATION_EXCEL_REPORT_PRINT = URL.encode(GWT.getModuleBaseURL() + "roms/OperationReportExcelPrint");
+	private static final String OPERATION_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/OperationReportExcelPrint";
 	
 	private static CommonServiceAsync commonService;
 	private String currentDomainName;
