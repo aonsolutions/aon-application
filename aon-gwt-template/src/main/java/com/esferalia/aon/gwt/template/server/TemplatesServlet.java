@@ -2661,18 +2661,18 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 	
 	@Override
-	public Error insertRegistries(Domain domain, User user) {
-		return RegistryImport.insertRegistries(domain, user, rvs);			
+	public Error insertRegistries(Domain domain, User user, Integer index) {
+		return RegistryImport.insertRegistries(domain, user, index, rvs);			
 	}
 	
 	@Override
-	public Error insertDiary(Domain domain, User user) {
-		return DiaryImport.insertDiary(domain, user, dvs);
+	public Error insertDiary(Domain domain, User user, Integer index) {
+		return DiaryImport.insertDiary(domain, user, index, dvs);
 	}
 
 	@Override
-	public Error insertPGC(Domain domain, User user) {
-		return PGCImport.insertPGC(domain, user, accounts);			
+	public Error insertPGC(Domain domain, User user, Integer index) {
+		return PGCImport.insertPGC(domain, user, index, accounts);			
 	}
 
 	

@@ -57,272 +57,21 @@ public class ImportContent extends Composite {
 	}
 	
 	private void init() {
-		typeList.addItem("Facturas","invoice");
-		typeList.addItem("Clientes, Proveedores y Acreedores","registry");
-		typeList.addItem("Plan General Contable","pgc");
-		typeList.addItem("Libro Diario","diary");
+		typeList.addItem("Facturas", ImportType.INVOICE.name());
+		typeList.addItem("Clientes, Proveedores y Acreedores", ImportType.REGISTRY.name());
+		typeList.addItem("Plan General Contable",ImportType.PGC.name());
+		typeList.addItem("Libro Diario", ImportType.DIARY.name());
 		typeList.setSelectedIndex(0);
 	}
 	
 	@UiHandler("importButton")
 	void importAction(ClickEvent event) {
-		String value = typeList.getSelectedValue();
-		if("registry".equals(value)) {
-			importRegistry();
-		} else if("invoice".equals(value)) {
-			importInvoices();
-		} else if("diary".equals(value)) {
-			importDiary();
-		} else if("pgc".equals(value)) {
-			importPGC();
-		}
+		ImportType type = ImportType.valueOf(typeList.getSelectedValue());
+		importation(type);
 	}	
-
-	private void importRegistry() {
-		Dialog d = new Dialog("Importar Registry","Importar",true,"Cancelar",true,"importOnly");
-		d.setUrl(GWT.getModuleBaseURL());
-		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
-			
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				item.excelRowNumber(new AsyncCallback<Integer>() {
-					@Override
-					public void onSuccess(Integer result) {
-						hide();
-						Double doubleValue = result.doubleValue();
-						pbd = new ProgressBarDialog(doubleValue , 0.46) {
-							
-						};
-						pbd.addStyleName("gwt-PopupPanel-template");
-						pbd.setGlassEnabled(true);
-						pbd.show();
-						
-						item.executeExcel(getDomain(), getUser(), null, ImportType.REGISTRY, null,
-								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
-							
-							@Override
-							public void onSuccess(Integer result) {
-								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
-									
-									@Override
-									public void onSuccess(Error result) {
-							
-										pbd.completed();
-										pbd.hide();
-										Dialog d2 = new Dialog("Importar Registry","Aceptar",true,"Cancelar",false,"importResponse");
-										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
-
-											@Override
-											protected void onAccept() {
-												hide();			
-											}
-
-											@Override
-											protected void onCancel() {
-												hide();
-											}
-										};
-										popup2.addStyleName("gwt-PopupPanel-template");
-										popup2.setGlassEnabled(true);
-										popup2.show();
-									}
-										
-									@Override
-									public void onFailure(Throwable caught) {
-										//TODO 
-										pbd.completed();
-										pbd.hide();
-									}
-								};
-								item.insertRegistries(getDomain(), getUser(), callback);
-							}
-						
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
-				
-			}
-		};
-		popup.addStyleName("gwt-PopupPanel-template");
-		popup.setGlassEnabled(true);
-		popup.center();
-	}
 	
-	private void importPGC() {
-		Dialog d = new Dialog("Importar Plan General Contable","Importar",true,"Cancelar",true,"importOnly");
-		d.setUrl(GWT.getModuleBaseURL());
-		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
-			
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				item.excelRowNumber(new AsyncCallback<Integer>() {
-					@Override
-					public void onSuccess(Integer result) {
-						hide();
-						Double doubleValue = result.doubleValue();
-						pbd = new ProgressBarDialog(doubleValue , 0.46) {
-							
-						};
-						pbd.addStyleName("gwt-PopupPanel-template");
-						pbd.setGlassEnabled(true);
-						pbd.show();
-						
-						item.executeExcel(getDomain(), getUser(), null, ImportType.PGC, null,
-								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
-							
-							@Override
-							public void onSuccess(Integer result) {
-								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
-									
-									@Override
-									public void onSuccess(Error result) {
-							
-										pbd.completed();
-										pbd.hide();
-										Dialog d2 = new Dialog("Importar Plan General Contable","Aceptar",true,"Cancelar",false,"importResponse");
-										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
-
-											@Override
-											protected void onAccept() {
-												hide();			
-											}
-
-											@Override
-											protected void onCancel() {
-												hide();
-											}
-										};
-										popup2.addStyleName("gwt-PopupPanel-template");
-										popup2.setGlassEnabled(true);
-										popup2.show();
-									}
-										
-									@Override
-									public void onFailure(Throwable caught) {
-										//TODO 
-										pbd.completed();
-										pbd.hide();
-									}
-								};
-								item.insertPGC(getDomain(), getUser(), callback);
-							}
-						
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
-				
-			}
-		};
-		popup.addStyleName("gwt-PopupPanel-template");
-		popup.setGlassEnabled(true);
-		popup.center();
-	}
-	
-	private void importDiary() {
-		Dialog d = new Dialog("Importar Diario","Importar",true,"Cancelar",true,"importOnly");
-		d.setUrl(GWT.getModuleBaseURL());
-		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
-			
-			@Override
-			protected void onCancel() {
-				hide();
-			}
-			
-			@Override
-			protected void onAccept() {
-				item.excelRowNumber(new AsyncCallback<Integer>() {
-					@Override
-					public void onSuccess(Integer result) {
-						hide();
-						Double doubleValue = result.doubleValue();
-						pbd = new ProgressBarDialog(doubleValue , 0.46) {
-							
-						};
-						pbd.addStyleName("gwt-PopupPanel-template");
-						pbd.setGlassEnabled(true);
-						pbd.show();
-						
-						item.executeExcel(getDomain(), getUser(), null, ImportType.DIARY, null,
-								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
-							
-							@Override
-							public void onSuccess(Integer result) {
-								AsyncCallback<Error> callback = new AsyncCallback<Error>() {
-									
-									@Override
-									public void onSuccess(Error result) {
-							
-										pbd.completed();
-										pbd.hide();
-										Dialog d2 = new Dialog("Importar Diario","Aceptar",true,"Cancelar",false,"importResponse");
-										d2.setError(result);
-										TemplatesDialog popup2 = new TemplatesDialog(getAonData(), d2){
-
-											@Override
-											protected void onAccept() {
-												hide();			
-											}
-
-											@Override
-											protected void onCancel() {
-												hide();
-											}
-										};
-										popup2.addStyleName("gwt-PopupPanel-template");
-										popup2.setGlassEnabled(true);
-										popup2.show();
-									}
-										
-									@Override
-									public void onFailure(Throwable caught) {
-										//TODO 
-										pbd.completed();
-										pbd.hide();
-									}
-								};
-								item.insertDiary(getDomain(), getUser(), callback);
-							}
-						
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {}
-				});
-				
-			}
-		};
-		popup.addStyleName("gwt-PopupPanel-template");
-		popup.setGlassEnabled(true);
-		popup.center();
-	}
-	
-	private void importInvoices(){		
-		Dialog d = new Dialog("Importar Invoice","Importar",true,"Cancelar",true,"importOnly");
+	private void importation(ImportType type){		
+		Dialog d = new Dialog("Importar " + type.getName(),"Importar",true,"Cancelar",true,"importOnly");
 		d.setUrl(GWT.getModuleBaseURL());
 		TemplatesDialog popup = new TemplatesDialog(aonData, d) {
 			
@@ -343,18 +92,18 @@ public class ImportContent extends Composite {
 						pbd.setGlassEnabled(true);
 						pbd.show();
 						
-						item.executeExcel(getDomain(), getUser(), null, ImportType.INVOICE, null,
+						item.executeExcel(getDomain(), getUser(), null, type, null,
 								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							
 							@Override
 							public void onSuccess(Integer result) {
 								pbd.completed();
 								pbd.hide();
-								pbd = new ProgressBarDialog("Importando Facturas...") {};
+								pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
 								pbd.addStyleName("gwt-PopupPanel-template");
 								pbd.setGlassEnabled(true);
 								pbd.show();
-								insertInvoice(0, lines);
+								insert(type, 0, lines);
 							}
 						
 							@Override
@@ -373,8 +122,8 @@ public class ImportContent extends Composite {
 		popup.center();
 	}
 
-	private void insertInvoice(Integer index, Integer lines) {
-		item.insertInvoices(getDomain(), getUser(), index, new AsyncCallback<Error>() {
+	private void insert(ImportType type, Integer index, Integer lines) {
+		AsyncCallback<Error> callback = new AsyncCallback<Error>() {
 			@Override
 			public void onSuccess(Error result) {
 				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
@@ -383,14 +132,14 @@ public class ImportContent extends Composite {
 				}
 				pbd.updateProgress(progress.intValue());
 				if(result.getLine() < lines - 1) {
-					insertInvoice(result.getLine() + 1, lines);
+					insert(type, result.getLine() + 1, lines);
 				} else {
 					pbd.completed();
 					pbd.hide();
 					Error error = new Error();
 					error.setError(verror.size() == 0);
 					error.setTextError(verror);
-					Dialog dialog = new Dialog("Importar Facturas","Aceptar",true,"Cancelar",false,"importResponse");
+					Dialog dialog = new Dialog("Importar " + type.getName(),"Aceptar",true,"Cancelar",false,"importResponse");
 					dialog.setError(error);
 					TemplatesDialog popup2 = new TemplatesDialog(getAonData(), dialog){
 
@@ -409,11 +158,22 @@ public class ImportContent extends Composite {
 					popup2.show();
 				}
 			}
-			
+				
 			@Override public void onFailure(Throwable caught) {
 				pbd.completed();
 				pbd.hide();
 			}
-		});
+		};
+		
+		if (ImportType.INVOICE.equals(type)) {
+			item.insertInvoices(getDomain(), getUser(), index, callback);
+		} else if(ImportType.DIARY.equals(type)) {
+			item.insertDiary(getDomain(), getUser(), index, callback);
+		} else if(ImportType.PGC.equals(type)) {
+			item.insertPGC(getDomain(), getUser(), index, callback);
+		} else if(ImportType.REGISTRY.equals(type)) {
+			item.insertRegistries(getDomain(), getUser(), index, callback);
+		}
 	}
+	
 }

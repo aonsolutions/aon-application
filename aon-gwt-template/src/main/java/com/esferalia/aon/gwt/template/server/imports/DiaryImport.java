@@ -71,6 +71,7 @@ public class DiaryImport {
 	
 	HashMap<Integer, AccountEntryImportClass> diary;
 	Integer asiento;
+	Integer asientoIndex;
 	Integer apunte;
 	Boolean invoice;
 	Integer indexTitle;
@@ -137,9 +138,11 @@ public class DiaryImport {
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
-			Object obj = Utils.getObjectValue(row.getCell(0)).toString();
+			Object obj = Utils.getObjectValue(row.getCell(0));
 			if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.DIARY_TITLES, obj.toString()))) {
 				indexTitle = indexTitle + 1;
+			} else if(titleList.isEmpty()) {
+				indexTitle = row.getRowNum();
 			}
 			invoice = false;
 			if(asiento != null && diary.get(asiento).getLine() == null) {
@@ -147,20 +150,43 @@ public class DiaryImport {
 			}
 			cellStream.forEach(cell -> {
 				if(row.getRowNum() == indexTitle) {
-					titleList.add(cell.getStringCellValue());
+					String title = cell.getStringCellValue();
+					titleList.add(title);
+					if(IConstants.ASIENTO.equalsIgnoreCase(title)
+							|| IConstants.N_DIARIO.equalsIgnoreCase(title)
+							|| IConstants.N_ASIENTO.equalsIgnoreCase(title)) {
+						asientoIndex = cell.getColumnIndex();
+					}
 				} else if(row.getRowNum() > indexTitle){
+					checkAsiento(domain, row.getCell(asientoIndex), aonCtx);
 					String title = titleList.get(cell.getColumnIndex());
 					check(domain, login, title, cell, aonCtx);			
 				}
 			});
 		});
 	}
+	
+	private void checkAsiento(Domain domain, Cell cell, AonConfiguration aonCtx) {
+		Object o = Utils.getObjectValue(cell);
+		Double d = Double.parseDouble(o.toString());
+		asiento = d.intValue();
+		if(!diary.containsKey(asiento)) {
+			apunte = 0;
+			EnterpriseActivity ea = aonCtx.getMainActivity();	
+			AccountEntryImportClass aeic = new AccountEntryImportClass();
+			aeic.getEntry()
+				.setDomain(domain.getId())
+				.setActivity(ea==null ? null : ea.getId());
+			diary.put(asiento, aeic);
+		}
+	}
 
  	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
  		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
 		if(IConstants.ASIENTO.equalsIgnoreCase(title)
-				|| IConstants.N_DIARIO.equalsIgnoreCase(title)) {
+				|| IConstants.N_DIARIO.equalsIgnoreCase(title)
+				|| IConstants.N_ASIENTO.equalsIgnoreCase(title)) {
 			Double d = Double.parseDouble(o.toString());
 			asiento = d.intValue();
 			if(!diary.containsKey(asiento)) {
@@ -183,7 +209,8 @@ public class DiaryImport {
 			return;
 		}
 
-		if(IConstants.APUNTE.equalsIgnoreCase(title)) {
+		if(IConstants.APUNTE.equalsIgnoreCase(title)
+				|| IConstants.N_APUNTE.equalsIgnoreCase(title)) {
 			Double d = Double.parseDouble(o.toString());
 			apunte = d.intValue();
 			if(!apunte.equals(diary.get(asiento).getEntry().getDetails().size())) {
@@ -318,37 +345,42 @@ public class DiaryImport {
 		}
 	}
 
-	public static Error insertDiary(Domain domain, User user,LinkedList<AccountEntryImportClass> dvs) {
+	public static Error insertDiary(Domain domain, User user, Integer index, LinkedList<AccountEntryImportClass> dvs) {
 		Error error = new Error().setError(true);
-		LinkedList<String> verror = new LinkedList<String>();
-		for (AccountEntryImportClass ae : dvs) {
-			try {
-				for(Integer i = 0; i < ae.getEntry().getDetails().size(); i++) {
-					Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(),
-						user.getLogin(), ae.getEntry().getDetails().get(i).getAccountCode());
-					if(acc == null) {
-						acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
-							.setCode(ae.getEntry().getDetails().get(i).getAccountCode())
-							.setDescription(ae.getEntry().getDetails().get(i).getAccountDescription())
-							.setAlias("")
-							.setDomain(domain.getId())
-							.setActive(true));
-					}
-					ae.getEntry().getDetails().get(i).setAccount(acc.getId());
-					if(i > 0) {
-						ae.getEntry().getDetails().get(i-1).setBalancingAccount(acc.getId());
-					}
-				}
-				if(ae.getEntry().getEntryType() == null) {
-					ae.getEntry().setEntryType(AccountEntryType.MANUAL);
-				}
+		
+		if(index >= dvs.size()) {
+			error.setLine(index);
+			return error;
+		}
 
-				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ae.getEntry());
-			} catch (Exception e) {
-				error.setError(false);
-				verror.add("Línea " + ae.getLine() + ": " + e.getMessage());			}
+		AccountEntryImportClass ae = dvs.get(index);
+		try {
+			for(Integer i = 0; i < ae.getEntry().getDetails().size(); i++) {
+				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(),
+				user.getLogin(), ae.getEntry().getDetails().get(i).getAccountCode());
+				if(acc == null) {
+					acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), new Account()
+						.setCode(ae.getEntry().getDetails().get(i).getAccountCode())
+						.setDescription(ae.getEntry().getDetails().get(i).getAccountDescription())
+						.setAlias("")
+						.setDomain(domain.getId())
+						.setActive(true));
+				}
+				ae.getEntry().getDetails().get(i).setAccount(acc.getId());
+				if(i > 0) {
+					ae.getEntry().getDetails().get(i-1).setBalancingAccount(acc.getId());
+				}
+			}
+			if(ae.getEntry().getEntryType() == null) {
+				ae.getEntry().setEntryType(AccountEntryType.MANUAL);
+			}
+
+			ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), ae.getEntry());
+		} catch (Exception e) {
+			error.setError(false);
+			error.setTextError("Línea " + ae.getLine() + ": " + e.getMessage());
  		}
-		error.setTextError(verror);
+		error.setLine(index);
 		return error;
 	}
 	

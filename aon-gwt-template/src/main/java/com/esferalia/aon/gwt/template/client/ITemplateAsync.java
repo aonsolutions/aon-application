@@ -52,11 +52,11 @@ public interface ITemplateAsync {
 	
 	void insertInvoices(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
 	
-	void insertRegistries(Domain domain, User user, AsyncCallback<Error> callback);
+	void insertRegistries(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
 	
-	void insertDiary(Domain domain, User user, AsyncCallback<Error> callback);
+	void insertDiary(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
 	
-	void insertPGC(Domain domain, User user, AsyncCallback<Error> callback);
+	void insertPGC(Domain domain, User user, Integer index, AsyncCallback<Error> callback);
 
 	void insertCustomerIban(Domain domain, User user, AsyncCallback<Error> callback);
 

@@ -57,11 +57,11 @@ public interface ITemplate extends RemoteService{
 	
 	public Error insertInvoices(Domain domain, User user, Integer index);
 
-	public Error insertRegistries(Domain domain, User user);
+	public Error insertRegistries(Domain domain, User user, Integer index);
 	
-	public Error insertDiary(Domain domain, User user);
+	public Error insertDiary(Domain domain, User user, Integer index);
 	
-	public Error insertPGC(Domain domain, User user);
+	public Error insertPGC(Domain domain, User user, Integer index);
 	
 	public Error insertCustomerIban(Domain domain, User user);
 

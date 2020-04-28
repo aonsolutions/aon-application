@@ -157,6 +157,8 @@ public class RegistryImport {
 				Object obj = Utils.getObjectValue(row.getCell(0)).toString();
 				if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.REGISTRY_TITLES, obj.toString()))) {
 					indexTitle = indexTitle + 1;
+				} else if(titleList.isEmpty()) {
+					indexTitle = row.getRowNum();
 				}
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == indexTitle) {
@@ -326,98 +328,102 @@ public class RegistryImport {
 		}
 	}
 
-	public static Error insertRegistries(Domain domain, User user,LinkedList<RegistryImportClass> rvs) {
+	public static Error insertRegistries(Domain domain, User user, Integer index, LinkedList<RegistryImportClass> rvs) {
 		Error error = new Error().setError(true);
-		LinkedList<String> verror = new LinkedList<String>();
-		for (RegistryImportClass r : rvs) {
-			try {
-				LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f ->
-					f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).collect(Collectors.toCollection(LinkedList::new));
-				Registry reg = new Registry();
-				if(regList.stream().filter(f -> f.getDomain().equals(domain.getId())).count() > 0) {
-					reg = regList.stream().filter(f -> f.getDomain().equals(domain.getId())).findFirst().get();
-				} else if(domain.getParentId() != null
-						&& regList.stream().filter(f -> f.getDomain().equals(domain.getParentId())).count() > 0) {
-					reg = regList.stream().filter(f -> f.getDomain().equals(domain.getParentId())).findFirst().get();
-				} else if(regList.stream().filter(f -> f.getDomain().equals(0)).count() > 0) {
-					reg = regList.stream().filter(f -> f.getDomain().equals(0)).findFirst().get();
-				} else {
-					r.getRegistry()
-						.setDomain(domain.getId())
-						.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
-					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry());
-					r.getRegistry().getAddress()
-						.setType((byte) 0)
-						.setDomain(domain.getId())
-						.setRegistry(reg.getId());
-					AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getAddress());
-				}
-				if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {
-					String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix());
-					r.getAccount().setCode(code);
-				}
-
-				Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());
-				if(acc == null) {
-					Account account = r.getAccount()
-						.setDomain(domain.getId())
-						.setActive(true);
-					acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
-				}
-
-				Integer registryId = reg.getId();
-				Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
-				f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
-						.findFirst().orElse(new Scope());
-
-				if(r.isCustomer()) {
-					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f->
-						f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq( registryId )));
-					if(customer == null || customer.getId() == null) {
-						Customer c = new Customer()
-								.setAccount(acc.getId())
-								.setDomain(domain.getId())
-								.setRegistry(reg)
-								.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
-								.setStatus(RegistryStatus.ACTIVE);
-						AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
-					}
-				}
-
-				if(!Utils.isAyudaT(domain.getName()) && r.isSupplier()) {
-					Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f->
-						f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
-					if(!supplier.isPresent()) {
-						Supplier sup = new Supplier()
-								.setAccount(acc.getId())
-								.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
-								.setStatus(RegistryStatus.ACTIVE);
-						sup.setId(registryId);
-						sup.setDomain(domain.getId());
-						AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
-					}
-				}
-
-				if(!Utils.isAyudaT(domain.getName()) && r.isCreditor()) {
-					Optional<Creditor> creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f->
-						f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
-					if(!creditor.isPresent()) {
-						Creditor cre = new Creditor()
-								.setAccount(acc)
-								.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
-								.setStatus(RegistryStatus.ACTIVE);
-						cre.setId(registryId);
-						cre.setRegistry(reg);
-						cre.setDomain(domain.getId());
-						AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), cre);
-					}
-				}
-			} catch (Exception e) {
-				error.setError(false);
-				verror.add("Línea " + r.getLine() + ": " + e.getMessage());
-			}
+		
+		if(index >= rvs.size()) {
+			error.setLine(index);
+			return error;
 		}
-		error.setTextError(verror);
+		RegistryImportClass r = rvs.get(index);
+		try {
+			LinkedList<Registry> regList = AON.getRegistryStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+				f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getRegistry().getDocument()))).collect(Collectors.toCollection(LinkedList::new));
+			Registry reg = new Registry();
+			if(regList.stream().filter(f -> f.getDomain().equals(domain.getId())).count() > 0) {
+				reg = regList.stream().filter(f -> f.getDomain().equals(domain.getId())).findFirst().get();
+			} else if(domain.getParentId() != null
+					&& regList.stream().filter(f -> f.getDomain().equals(domain.getParentId())).count() > 0) {
+				reg = regList.stream().filter(f -> f.getDomain().equals(domain.getParentId())).findFirst().get();
+			} else if(regList.stream().filter(f -> f.getDomain().equals(0)).count() > 0) {
+				reg = regList.stream().filter(f -> f.getDomain().equals(0)).findFirst().get();
+			} else {
+				r.getRegistry()
+					.setDomain(domain.getId())
+					.setDocumentType(getDocumentType(r.getRegistry().getDocument()));
+				reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry());
+				r.getRegistry().getAddress()
+					.setType((byte) 0)
+					.setDomain(domain.getId())
+					.setRegistry(reg.getId());
+				AON.insertRAddress(domain.getName(), domain.getId(), user.getLogin(), r.getRegistry().getAddress());
+			}
+			if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {
+				String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix());
+				r.getAccount().setCode(code);
+			}
+
+			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());
+			if(acc == null) {
+				Account account = r.getAccount()
+					.setDomain(domain.getId())
+					.setActive(true);
+				acc = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), account);
+			}
+
+			Integer registryId = reg.getId();
+			Scope s = AON.getScopeStream(domain.getName(), domain.getId(), user.getLogin(), f ->
+			f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId())))
+					.findFirst().orElse(new Scope());
+
+			if(r.isCustomer()) {
+				Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f->
+					f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().eq( registryId )));
+				if(customer == null || customer.getId() == null) {
+					Customer c = new Customer()
+							.setAccount(acc.getId())
+							.setDomain(domain.getId())
+							.setRegistry(reg)
+							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+							.setStatus(RegistryStatus.ACTIVE);
+					AON.insertCustomer(domain.getName(), domain.getId(), user.getLogin(), c);
+				}
+			}
+
+			if(!Utils.isAyudaT(domain.getName()) && r.isSupplier()) {
+				Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f->
+					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
+				if(!supplier.isPresent()) {
+					Supplier sup = new Supplier()
+							.setAccount(acc.getId())
+							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+							.setStatus(RegistryStatus.ACTIVE);
+					sup.setId(registryId);
+					sup.setDomain(domain.getId());
+					AON.insertSupplier(domain.getName(), domain.getId(), user.getLogin(), sup);
+				}
+			}
+
+			if(!Utils.isAyudaT(domain.getName()) && r.isCreditor()) {
+				Optional<Creditor> creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f->
+					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
+				if(!creditor.isPresent()) {
+					Creditor cre = new Creditor()
+							.setAccount(acc)
+							.setScope(domain.getScope() != null ? domain.getScope() : s.getId())
+							.setStatus(RegistryStatus.ACTIVE);
+					cre.setId(registryId);
+					cre.setRegistry(reg);
+					cre.setDomain(domain.getId());
+					AON.insertCreditor(domain.getName(), domain.getId(), user.getLogin(), cre);
+				}
+			}
+		} catch (Exception e) {
+			error.setError(false);
+			error.setTextError("Línea " + r.getLine() + ": " + e.getMessage());
+		}
+	
+		error.setLine(index);
 		return error;
 	}
 

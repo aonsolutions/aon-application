@@ -39,6 +39,8 @@ public interface IConstants {
 	String FECHA = "FECHA";
 	String HABER = "HABER";
 	String IBAN = "IBAN";
+	String N_ASIENTO = "Nº ASIENTO";
+	String N_APUNTE = "Nº APUNTE";
 	String N_DIARIO = "Nº DIARIO";
 	String NOMBRE = "NOMBRE";
 	String PAÍS = "PAÍS";

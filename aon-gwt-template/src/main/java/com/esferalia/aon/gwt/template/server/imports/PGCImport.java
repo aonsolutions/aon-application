@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import com.esferalia.aon.gwt.template.shared.Error;
@@ -93,8 +94,8 @@ public class PGCImport {
 					list.add(account);
 				}
 			});
-
-			return list;
+			return list.stream().sorted((a1, a2) -> a1.getAccount().getCode().compareTo(a2.getAccount().getCode()))
+					.collect(Collectors.toCollection(LinkedList::new));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -184,23 +185,25 @@ public class PGCImport {
 		}
 	}
 
-	public static Error insertPGC(Domain domain, User user,LinkedList<AccountImportClass> accountList) {
+	public static Error insertPGC(Domain domain, User user, Integer index, LinkedList<AccountImportClass> accountList) {
 		Error error = new Error().setError(true);
-		LinkedList<String> verror = new LinkedList<String>();
-		accountList.stream().sorted((a1, a2) -> a1.getAccount().getCode().compareTo(a2.getAccount().getCode()))
-		.forEach(acc -> {
-			try {
-				Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), acc.getAccount().getCode());
-				if(account == null || account.getId() == null) {
-					checkLowLevelAccount(domain, user, acc.getAccount());
-					ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), acc.getAccount());
-				}
-			} catch (Exception e) {
-				error.setError(false);
-				verror.add("Línea " + acc.getLine() + ": " + e.getMessage());
+		if(index >= accountList.size()) {
+			error.setLine(index);
+			return error;
+		}
+		AccountImportClass acc = accountList.get(index);
+		try {
+			Account account = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), acc.getAccount().getCode());
+			if(account == null || account.getId() == null) {
+				checkLowLevelAccount(domain, user, acc.getAccount());
+				ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), acc.getAccount());
 			}
-		});
-		error.setTextError(verror);
+		} catch (Exception e) {
+			error.setError(false);
+			error.setTextError("Línea " + acc.getLine() + ": " + e.getMessage());
+		}
+	
+		error.setLine(index);
 		return error;
 	}
 	
