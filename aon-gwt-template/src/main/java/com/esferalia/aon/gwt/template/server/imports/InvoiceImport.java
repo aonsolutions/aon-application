@@ -489,7 +489,9 @@ public class InvoiceImport {
 					expAccount = ACCOUNTING.save(domain.getName(), domain.getId(), user.getLogin(), expAccount);
 				}
 				
+				
 				InvoiceVAT vat = new InvoiceVAT()
+					.setPrepayment("5600".equals(ivs.get(i).getAccount().substring(0, 4)) || "5660".equals(ivs.get(i).getAccount().substring(0, 4)))
 					.setVatDeductionType(VatDeductionType.WITH_RIGHT)
 					.setBase(ivs.get(j).getBase() != null 
 							? ivs.get(j).getBase() : 0.0)
@@ -800,9 +802,9 @@ public class InvoiceImport {
 	}
 	
 	private static InvoiceType getInvoiceType(String account) {
-		if("7".equals(account.substring(0, 1))) {
+		if("7".equals(account.substring(0, 1)) || "5600".equals(account.substring(0, 4))) {
 			return InvoiceType.SALES;
-		} else if("60".equals(account.substring(0, 2))) {
+		} else if("60".equals(account.substring(0, 2)) || "5660".equals(account.substring(0, 4))) {
 			return InvoiceType.PURCHASE;
 		}
 		return InvoiceType.EXPENSES;
