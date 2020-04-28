@@ -1086,7 +1086,7 @@ public class AgreementDraftObject {
 			{
 				// HORAS
 				add("HORAS_CONVENIO");
-				add("A\u00D1OS_ANTIGUEDAD");
+				add("INICIO_ANTIGUEDAD");
 			}
 		};
 	}

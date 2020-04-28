@@ -1,7 +1,5 @@
 package com.esferalia.aon.payroll.enumeration;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,9 +15,12 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum ContextVariable implements IResourceable {
 
-	START("INICIO", VariableType.DATE), END("FIN", VariableType.DATE), SALARY_START("INICIO_NOMINA", VariableType.DATE),
-	SALARY_END("FIN_NOMINA", VariableType.DATE), CONTRACT_START("INICIO_CONTRATO", VariableType.DATE),
-	CONTRACT_END("FIN_CONTRATO", VariableType.DATE), SENIORITY_START("INICIO_ANTIGUEDAD", VariableType.DATE),
+	START("INICIO", VariableType.DATE), END("FIN", VariableType.DATE), 
+	SALARY_START("INICIO_NOMINA", VariableType.DATE),
+	SALARY_END("FIN_NOMINA", VariableType.DATE), 
+	CONTRACT_START("INICIO_CONTRATO", VariableType.DATE),
+	CONTRACT_END("FIN_CONTRATO", VariableType.DATE), 
+	SENIORITY_START("INICIO_ANTIGUEDAD", VariableType.DATE, false),
 	DIRECT_PAY_START("INICIO_PAGO_DIRECTO", VariableType.DATE, false),
 
 	// Datos de la persona
@@ -185,20 +186,45 @@ public enum ContextVariable implements IResourceable {
 	BONUS_START("INICIO_BONIFICACION", VariableType.DATE, false),
 
 	// Excel
-	OR("O", VariableType.BOOLEAN), AND("Y", VariableType.BOOLEAN), IF("SI", VariableType.BOOLEAN),
-	NOT("NO", VariableType.BOOLEAN), FALSE("FALSO", VariableType.BOOLEAN), TRUE("VERDADERO", VariableType.BOOLEAN),
-	ABS("ABS", VariableType.DOUBLE), POW("POTENCIA", VariableType.DOUBLE), SQRT("RAIZ", VariableType.DOUBLE),
-	INTEGER("ENTERO", VariableType.INTEGER), QUOTIENT("COCIENTE", VariableType.INTEGER),
-	DAYS("DIAS", VariableType.INTEGER), DATE("FECHA", VariableType.DATE), MONTH("MES", VariableType.INTEGER),
-	YEAR("AÑO", VariableType.INTEGER), DAY("DIA", VariableType.INTEGER), ROUND("ROUND", VariableType.DOUBLE),
+	OR("O", VariableType.BOOLEAN), 
+	AND("Y", VariableType.BOOLEAN), 
+	IF("SI", VariableType.BOOLEAN),
+	NOT("NO", VariableType.BOOLEAN), 
+	FALSE("FALSO", VariableType.BOOLEAN), 
+	TRUE("VERDADERO", VariableType.BOOLEAN),
+	ABS("ABS", VariableType.DOUBLE), 
+	POW("POTENCIA", VariableType.DOUBLE), 
+	SQRT("RAIZ", VariableType.DOUBLE),
+	INTEGER("ENTERO", VariableType.INTEGER), 
+	QUOTIENT("COCIENTE", VariableType.INTEGER),
+	DAYS("DIAS", VariableType.INTEGER), 
+	DATE("FECHA", VariableType.DATE), 
+	MONTH("MES", VariableType.INTEGER),
+	YEAR("AÑO", VariableType.INTEGER), 
+	DAY("DIA", VariableType.INTEGER), 
+	ROUND("ROUND", VariableType.DOUBLE),
 	FLOOR("FLOOR", VariableType.INTEGER),
+	
+
+	
 
 	// AON's
-	MIN("MIN", VariableType.UNKNOWN), MAX("MAX", VariableType.UNKNOWN), ONE("ANUAL", VariableType.UNKNOWN),
-	TWO("BIENIO", VariableType.UNKNOWN), THREE("TRIENIO", VariableType.UNKNOWN, true),
-	FOUR("CUATRIENIO", VariableType.UNKNOWN, true), FIVE("QUINQUENIO", VariableType.UNKNOWN, true),
-	SIX("SEXENIO", VariableType.UNKNOWN, true), SEVEN("SEPTENIO", VariableType.UNKNOWN, true),
-	UNDEFINED("UNDEFINED", VariableType.UNKNOWN), TRACE("TRACE", VariableType.UNKNOWN),
+	MIN("MIN", VariableType.UNKNOWN), 
+	MAX("MAX", VariableType.UNKNOWN), 
+	ONE("ANUAL", VariableType.UNKNOWN),
+	TWO("BIENIO", VariableType.UNKNOWN), 
+	THREE("TRIENIO", VariableType.UNKNOWN, true),
+	FOUR("CUATRIENIO", VariableType.UNKNOWN, true), 
+	FIVE("QUINQUENIO", VariableType.UNKNOWN, true),
+	SIX("SEXENIO", VariableType.UNKNOWN, true), 
+	SEVEN("SEPTENIO", VariableType.UNKNOWN, true),
+	UNDEFINED("UNDEFINED", VariableType.UNKNOWN), 
+	TRACE("TRACE", VariableType.UNKNOWN),
+	MONTH_START("INICIO_MES", VariableType.DATE),
+	YEAR_START("INICIO_AÑO", VariableType.DATE),
+	MONTH_END("FIN_MES", VariableType.DATE),
+	YEAR_END("FIN_AÑO", VariableType.DATE),
+	TODAY("TODAY", VariableType.DATE),
 
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE), EXCESS("EXCESO", VariableType.DOUBLE),
 	EVERYTHING("TODO", VariableType.DOUBLE),

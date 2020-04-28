@@ -3297,7 +3297,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			}
 
 			// Add Filter Allways Variables
-			eraseAgreements.add("INICIO_ANTIGUEDAD");
+			//eraseAgreements.add("INICIO_ANTIGUEDAD");
 			eraseAgreements.add("DIAS_MES");
 			eraseAgreements.add("INICIO_CONTRATO");
 			eraseAgreements.add("SALARIO_BASE");

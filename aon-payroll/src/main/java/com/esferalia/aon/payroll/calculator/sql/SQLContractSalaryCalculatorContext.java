@@ -78,6 +78,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TODAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
@@ -129,6 +130,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -148,7 +150,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
-import com.esferalia.aon.jooq.tables.ContractData;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -182,7 +183,6 @@ import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.OnlyPaymentContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SalaryExpressionException;
-import com.esferalia.aon.payroll.calculator.SimpleSystemCost;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.TaxCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
@@ -791,9 +791,26 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					}
 					exprCtx.addLazyExpression(exp, guarenteeStart, guarenteeEnd);
 
-					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
-							new TimedObject<Double>(0.00, guarenteeStart, guarenteeEnd));
+//					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
+//							new TimedObject<Double>(0.00, guarenteeStart, guarenteeEnd));
 					
+					exprCtx.putVariable(ContextVariable.REGULATORY_BASE,
+					new ITimedVariable() {
+						@Override
+						public Object getValue(Period period) {
+							try {
+								return SQLNoItContractSalaryCalculatorContext.this.br(leaveStart);
+							} catch (ExpressionException | SalaryException | SQLException e) {
+								return 0.00;
+							}
+						}
+						
+						@Override
+						public Period getPeriod() {
+							return new Period(guarenteeStart, guarenteeEnd);
+						}
+					});
+
 					exprCtx.setVariable(ContextVariable.LEAVE_DAYS, 0, guarenteeStart, guarenteeEnd);
 
 					type.accept(new LeaveTypeVisitor<Void>() {
@@ -2557,16 +2574,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			List<ITimedResult<Double>> guarenteeResults = e.getGuarentees(guaranteePeriod);
 			
-			if ( guarenteeResults.size() == 1 
-					&& AonUtils.equals(guarentee, guarenteeResults.get(0).getValue()))
-				return onConstantGuarantee(guarenteeResults.get(0).getValue(), totalPayment);
-			
 			double guarenteed = 0.00;
 			long guarenteeDays = 0;
 			for ( ITimedResult<Double> r : guarenteeResults ) {
-				guarenteed += r.getValue();
+				guarenteed += fixGuarantee(r);
 				guarenteeDays += days(r.getPeriod());
 			}
+						
+			if ( guarenteeResults.size() == 1 
+					&& AonUtils.equals(guarentee, guarenteed /*guarenteeResults.get(0).getValue()*/))
+				return onConstantGuarantee(guarenteed, totalPayment);
 			
 			long allDays = days(contractStartDate, contractEndDate);
 
@@ -2589,6 +2606,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 	
 
+	protected double fixGuarantee( ITimedResult<Double> result) {
+		Period period = result.getPeriod();
+		double guarenteed = result.getValue();
+		
+		double br = getDoubleVariable(ContextVariable.REGULATORY_BASE.getName(),period.getStart(), period.getEnd() );
+		double quoteDays = getVariables(ContextVariable.QUOTE_DAYS.getName(), period.getStart(), period.getEnd(), Collectors.summingDouble( v -> (Double) v.getValue(v.getPeriod()) ));
+		
+		if ( guarenteed <=  br )
+			guarenteed *= quoteDays;
+		
+		double prestIt = 
+				getVariables(ContextVariable.PREST_IT,period.getStart(), period.getEnd(), Collectors.summingDouble( v -> (Double) v.getValue(v.getPeriod()) ));
+		
+		double max = br * period.daysStream().count();
+		
+		if ( (guarenteed < prestIt ) 
+			&& (guarenteed + prestIt) <= max)
+			guarenteed += prestIt;
+		
+		return guarenteed;
+	}
 
 	protected Object onAllGuarantee(Double guarenteed, Double totalPayment) throws UndefinedContextVariablesException {
 		if ( totalPayment == null )
@@ -2611,17 +2649,15 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			Date end = period.getEnd();
 			double value = guarenteeResult.getValue();
 			
-//			double br = getDoubleVariable(REGULATORY_BASE.getName(), start, end);
-//			double days = days(period);
-//			double all = br * days;
-//			double coefficient = value / all;
+			value = fixGuarantee(guarenteeResult);
+			
+			double max = getDayDoubleVariable( ContextVariable.CGC_BASE.getName() , start, end );			
+			if ( max > 0.00 ) {
+				value = Math.min(max, value);
+			}
 			
 			double prestIt = getDayDoubleVariable(PREST_IT, start,end);
-			
-			double max = getDayDoubleVariable( ContextVariable.CGC_BASE.getName() , start, end );
-			if ( max > 0.00 )
-				value = Math.min(max, value);
-			
+
 			guarantee += value - prestIt;
 		}
 
@@ -3390,6 +3426,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private int getSeniorityYears(Period period) {
 		Date start = getSeniorityDate();
+		try {
+			start = getCurrentBindings().get(SENIORITY_START, v -> (Date) v, start );
+			
+		} catch (Throwable t ) {
+			t.printStackTrace();
+			
+		}
 		Date end = period.getStart();
 		return getYears(start, end);
 	}
@@ -3732,6 +3775,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return value != null ? value : 0.00;
 	}
 
+
+	private <R,A> R getVariables(String name, Date start, Date end, Collector<? super ITimedVariable<?>, A, R> collector) {
+		return 
+		this.contractExpressionContext
+		.getVariables(name, start, end)
+		.stream().collect(collector)
+		;
+		
+	}
+
 	private double getDoubleVariable(String name, Date start, Date end) {
 		Double value = this.contractExpressionContext.getVariable(name, start, end, Double.class);
 		return value != null ? value : 0.00;
@@ -3885,12 +3938,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		this.implicitExpressionContext.setVariable(SETTLE, salaryType == SalaryType.SETTLE, startDate, getEnd());
 		this.implicitExpressionContext.setVariable(DELAY, salaryType == SalaryType.DELAY, startDate, getEnd());
 		this.implicitExpressionContext.setVariable(EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate, getEnd());
-
+		
+		this.implicitExpressionContext.setVariable(TODAY,
+				DateUtils.truncate(new Date(), DAY_OF_MONTH), startDate, getEnd());
 		this.implicitExpressionContext.setVariable(CONTRACT_START,
 				getContractStartate(), startDate, getEnd());
-		this.implicitExpressionContext.setVariable(SENIORITY_START,
-				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE), startDate, getEnd());
-
+		
 		this.implicitExpressionContext.setVariable(CONTRACT_END, salaryType == SalaryType.SETTLE ? contractEndDate
 				: getContractEndDate(), startDate, getEnd());
 
@@ -4028,6 +4081,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		 * });
 		 */
 
+		this.implicitExpressionContext.setVariable(SENIORITY_START,
+				getDate(SQLConstants.CONTRACT, ContractColumns.SENIORITY_DATE), startDate, getEnd());
+		
+		agreementCtx.getVariables(SENIORITY_START.getName(), startDate, getEnd()).forEach(v -> {
+			try {
+				implicitExpressionContext.addExpression(((IExpressionVariable) v).getExpression(), startDate, getEnd());
+			} catch (Exception e) {	
+			}
+		});
+		
 		this.contractExpressionContext = newContractExpressionContext(this.implicitExpressionContext, this);
 
 		this.contractExpressionContext.setVariable(CONTEXT, contractExpressionContext, startDate, getEnd());

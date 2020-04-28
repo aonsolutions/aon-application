@@ -52,6 +52,7 @@ import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
 
@@ -359,6 +360,138 @@ public class SQLFunctionsTestCase extends
 		
 
 		Assert.assertEquals(100, (int)days.get(0).getValue());
+
+	}
+
+	@Test
+	public void testMonthStartFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		Date today = getToday();
+		
+		List<ITimedResult<java.util.Date>>  firstDayOfMonth = 
+				ctx.getExpressionContext().eval(
+						String.format("INICIO_MES(FECHA(%d,%d,%d))", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								10
+						)
+						, startDate
+						, endDate, java.util.Date.class);
+		
+
+		Assert.assertEquals(1, firstDayOfMonth.size());
+		Assert.assertEquals(getFirstDayOfMonth(today), firstDayOfMonth.get(0).getValue());
+
+
+	}
+
+	@Test
+	public void testMonthEndFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		
+		List<ITimedResult<java.util.Date>>  lastDayOfMonth = 
+				ctx.getExpressionContext().eval("FIN_MES(TODAY)" 
+						, startDate
+						, endDate, java.util.Date.class);
+		
+
+		Assert.assertEquals(1, lastDayOfMonth.size());
+		Assert.assertEquals(getLastDayOfMonth(getToday()), lastDayOfMonth.get(0).getValue());
+
+
+	}
+
+	@Test
+	public void testYearEndFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		
+		List<ITimedResult<java.util.Date>>  lastDayOfYear = 
+				ctx.getExpressionContext().eval("FIN_AÑO(TODAY)" 
+						, startDate
+						, endDate, java.util.Date.class);
+		
+
+		Assert.assertEquals(1, lastDayOfYear.size());
+		Assert.assertEquals(AonDateUtils.getLastDayOfYear(getToday()), lastDayOfYear.get(0).getValue());
+
+
+	}
+
+	@Test
+	public void testYearStartFunction() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(aonContext, getToday(), Collections.emptyMap()));
+		//@formatter:on
+		
+		Date today = getToday();
+		
+		List<ITimedResult<java.util.Date>>  firstDayOfYear = 
+				ctx.getExpressionContext().eval(
+						String.format("INICIO_AÑO(FECHA(%d,%d,%d))", 
+								get(today, Calendar.YEAR),
+								get(today, Calendar.MONTH)+1,
+								10
+						)
+						, startDate
+						, endDate, java.util.Date.class);
+		
+
+		Assert.assertEquals(1, firstDayOfYear.size());
+		Assert.assertEquals(AonDateUtils.getFirstDayOfYear(today), firstDayOfYear.get(0).getValue());
+
 
 	}
 

@@ -618,4 +618,200 @@ public class SQLSeniorityTestCase extends
 		
 		
 	}
+	
+	@Test
+	public void testSeniorityVI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		// @formatter:off
+
+		Date startContract = add(getToday(), Calendar.YEAR, -3);
+		
+		AgreementRecord agreement = newAgreement(aonContext);
+		
+		AgreementLevelCategoryRecord category = newAgreementCategory(aonContext, agreement);
+		
+		addExtras(aonContext, agreement, startContract, 
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, }
+				
+		);
+		
+		addData(aonContext, agreement, startContract, new HashMap<String, String>(){
+			{
+				put("INICIO_ANTIGUEDAD" , "INICIO_MES(INICIO_ANTIGUEDAD)");
+			}
+		});
+
+
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				Collections.emptyMap(),
+				new String[] {
+				"ANTIGÜEDAD(P_1 * 5 / 100, 3)" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				category);
+		//@formatter:on
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
+		Assert.assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration() );
+		
+		
+		
+		startDate = getFirstDayOfMonth(getToday());
+		endDate = getLastDayOfMonth(startDate);
+		Date issueDate = add(getFirstDayOfMonth(endDate), Calendar.DAY_OF_MONTH, 14 );
+		
+		int year = get(issueDate,YEAR);
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
+		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		int month = get(getToday(), Calendar.MONTH);
+		Assert.assertEquals( 1500.00 * 1.05 / 12.00 * ( 12 - month ) + 1500.00 * 1.00 / 12.00 * month, salary.getTotalPayment() );
+
+
+//		startDate = add(add(getFirstDayOfMonth(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
+//		endDate = getLastDayOfMonth(add(getFirstDayOfMonth(getToday()),Calendar.MONTH,5)); // 30/06
+//		issueDate = add(startDate, Calendar.YEAR, 1 );
+//		year = get(issueDate,YEAR);
+//		extra = getExtra(aonContext, agreement.getId(), "01/07");
+//		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
+//		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+//		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
+	}
+	
+	@Test
+	public void testSeniorityVII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		
+		// @formatter:off
+
+		Date startContract = add(getToday(), Calendar.YEAR, -3);
+		
+		AgreementRecord agreement = newAgreement(aonContext);
+		
+		AgreementLevelCategoryRecord category = newAgreementCategory(aonContext, agreement);
+		
+		addExtras(aonContext, agreement, startContract, 
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, }
+				
+		);
+		
+		addData(aonContext, agreement, startContract, new HashMap<String, String>(){
+			{
+				put("INICIO_ANTIGUEDAD" , "INICIO_AÑO(INICIO_ANTIGUEDAD)");
+			}
+		});
+
+
+		ContractRecord contract = newContract(
+				aonContext,
+				startContract,
+				Collections.emptyMap(),
+				new String[] {
+				"ANTIGÜEDAD(P_1 * 5 / 100, 3)" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, 
+				category);
+		//@formatter:on
+		
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		//@formatter:on
+		
+		Salary salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
+		Assert.assertEquals( ( 1500.00 * 1.05 / 12 ) * 2, salary.getExtraPayProration() );
+		
+		
+		
+		startDate = getFirstDayOfMonth(getToday());
+		endDate = getLastDayOfMonth(startDate);
+		Date issueDate = add(getFirstDayOfMonth(endDate), Calendar.DAY_OF_MONTH, 14 );
+		
+		int year = get(issueDate,YEAR);
+		AgreementExtraRecord extra = getExtra(aonContext, agreement.getId(), "15/12");
+		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
+		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		int month = get(getToday(), Calendar.MONTH);
+		Assert.assertEquals( 1500.00 * 1.05 , salary.getTotalPayment() );
+
+
+//		startDate = add(add(getFirstDayOfMonth(getToday()), Calendar.YEAR, -1), Calendar.MONTH,6); // 01/07 -1
+//		endDate = getLastDayOfMonth(add(getFirstDayOfMonth(getToday()),Calendar.MONTH,5)); // 30/06
+//		issueDate = add(startDate, Calendar.YEAR, 1 );
+//		year = get(issueDate,YEAR);
+//		extra = getExtra(aonContext, agreement.getId(), "01/07");
+//		ctx = getExtraSalaryCalculatorContext(connection, contract, extra, year, issueDate);
+//		salary = new ContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+//		Assert.assertEquals( 1500.00 * 1.05, salary.getTotalPayment() );
+	}
 }

@@ -9,6 +9,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class AonFunctions {
 	
@@ -36,6 +37,26 @@ public class AonFunctions {
 	@Variable(ContextVariable.ON_ACCOUNT_AGREEMENT)
 	public static final Object onAccountAgreement(Object obj) {
 		return obj;
+	}
+
+	@Variable(ContextVariable.MONTH_START)
+	public static final Date monthStart(Date date) {
+		return AonDateUtils.getFirstDayOfMonth(date);
+	}
+
+	@Variable(ContextVariable.YEAR_START)
+	public static final Date yearStart(Date date) {
+		return AonDateUtils.getFirstDayOfYear(date);
+	}
+
+	@Variable(ContextVariable.MONTH_END)
+	public static final Date monthEnd(Date date) {
+		return AonDateUtils.getLastDayOfMonth(date);
+	}
+
+	@Variable(ContextVariable.YEAR_END)
+	public static final Date yearEnd(Date date) {
+		return AonDateUtils.getLastDayOfYear(date);
 	}
 
 	// ------------------------------------------------------------------------

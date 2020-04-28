@@ -3838,6 +3838,637 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		
 	}
+	
+	@Test
+	public void testGtzdoBRI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA*0.15)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		//Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH,1);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		double br = 1000.00 / 30.00;
+		double prestIt = br * 0.75 * 31.00;
+		//@formatter:off
+		Assert.assertEquals(
+				prestIt + (br * 0.15 * 30), 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+	
+	@Test
+	public void testGtzdoBRII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = getFirstDayOfMonth(getToday());
+		//Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+
+		Date startDate = startIt;
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00, 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testGtzdoBRIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 10);
+		//Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 100);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				null, 
+				null);
+		
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00, 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testGtzdoBRIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 10);
+		Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 17);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00, 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+
+	@Test
+	public void testGtzdoBRV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA,4)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 10);
+		Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 17);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00 -1000.00/30*3, 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}
+	@Test
+	public void testGtzdoBRVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA*0.50,1,3)" ,
+						"GTZDO(BASE_REGULADORA,4)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 10);
+		Date endIt = AonDateUtils.add(getToday(), Calendar.DATE, 17);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00 -(1000.00/30*3)/2, 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}	
+
+	@Test
+	public void testGtzdoBRVII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 5);
+		Date endIt = AonDateUtils.add(startIt, Calendar.DATE, 5);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+		startIt = add(endIt, Calendar.DAY_OF_MONTH, 5);
+		endIt = AonDateUtils.add(startIt, Calendar.DATE, 10);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00 , 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}	
+	@Test
+	public void testGtzdoBRVIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 5);
+		Date endIt = AonDateUtils.add(startIt, Calendar.DATE, 5);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+		startIt = add(endIt, Calendar.DAY_OF_MONTH, 5);
+		endIt = AonDateUtils.add(startIt, Calendar.DATE, 10);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.OCCUPATIONAL_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00 , 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}	
+
+	@Test
+	public void testGtzdoBRIX() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		cleanSystemPayments(aonContext);
+		// @formatter:off
+		
+
+		ContractRecord contract = newContract(aonContext,  
+				AonDateUtils.getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+				{
+					put("DIAS_MES", "30"); // Monthly quote
+				}
+				}
+				, new String[] { 
+						"GTZDO(BASE_REGULADORA*0.10)" ,
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						}
+				, new String[] {
+				}, 
+				null);
+		//@formatter:on
+		
+		addPrestIts(aonContext, contract);
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(
+				CONTRACT.getName() + "." + CONTRACT.ID.getName(),
+				contract.getId());
+		
+		Date startIt = add(getFirstDayOfMonth(getToday()), Calendar.DAY_OF_MONTH, 5);
+		Date endIt = AonDateUtils.add(startIt, Calendar.DATE, 4);
+		
+		addIT(aonContext, 
+				contract, 
+				LeaveType.COMMON_DISEASE, 
+				startIt,
+				endIt, 
+				null);
+		
+//		startIt = add(endIt, Calendar.DAY_OF_MONTH, 5);
+//		endIt = AonDateUtils.add(startIt, Calendar.DATE, 10);
+//		
+//		addIT(aonContext, 
+//				contract, 
+//				LeaveType.OCCUPATIONAL_DISEASE, 
+//				startIt,
+//				endIt, 
+//				null);
+
+		Date startDate = getFirstDayOfMonth(startIt);
+		Date endDate = getLastDayOfMonth(startDate);
+		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, criteria);
+		ctx.next();
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		for ( SalaryPayment p: salary.getSalaryPayments())
+			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
+		
+		//@formatter:off
+		Assert.assertEquals(
+				1000.00/30*25 + 1000.00/30*3.00*0.10 + 1000.00/30*2*0.70, 
+				salary.getTotalPayment() 
+				
+				, DELTA);
+		//@formatter:on
+		
+		
+	}	
 	// ----------------------------------------------------------------------------------
 
 
