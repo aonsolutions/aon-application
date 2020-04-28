@@ -20,6 +20,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -290,13 +291,18 @@ public class ExpressionContext {
 		public <T> List<ITimedResult<T>> eval(ExpressionContext context, Class<T> toType) throws ExpressionException {
 			
 			
+			
 			List<ITimedResult<T>> results = context.eval(expression, start, end, toType);
 
-			for (ITimedResult<T> result : results)
-				context.putVariable(expression.getName(), new ExpressionResult<T>(result, expression));
+			context.removeVariable(expression.getName(), start, end);
 
+			for (ITimedResult<T> result : results) {
+				context.putVariable(expression.getName(), new ExpressionResult<T>(result, expression));
+			}
+			
 			return results;
 		}
+		
 	}
 
 	public static class DeferredExpressionVariable<T> extends ExpressionVariable<T> implements ITimedResult<T> {
