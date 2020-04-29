@@ -872,6 +872,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		if ( Period.sub(strikes ,worked ).size() == 0  )
 			return results;
 		
+		List<Period> periods = results.stream().map(r->r.getPeriod()).collect(Collectors.toList());
+		
+		if ( Period.sub(periods ,worked ).size() == 0  )
+			return results;
 		
 		return  shareExtraITResults(results.get(0), strikes);
 	}
