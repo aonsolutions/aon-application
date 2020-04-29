@@ -297,42 +297,42 @@ public class InvoiceImport {
 		}
 		if("BASE".equalsIgnoreCase(title)
 				|| "BASE IMPONIBLE".equalsIgnoreCase(title)) {
-			inv.setBase(AonMathUtils.round(Double.parseDouble(o.toString())));
+			inv.setBase(Utils.parseDouble(o));
 			return;
 		}
 		if("%Impuesto".equalsIgnoreCase(title)
 				|| "%IVA".equalsIgnoreCase(title)) {
-			inv.setPercentage(Double.parseDouble(o.toString()));
+			inv.setPercentage(Utils.parseDouble(o));
 			return;
 		}
 		if("CUOTA Impuesto".equalsIgnoreCase(title)
 				|| "CUOTA IVA".equalsIgnoreCase(title)) {
-			inv.setQuota(AonMathUtils.round(Double.parseDouble(o.toString())));
+			inv.setQuota(Utils.parseDouble(o));
 			return;
 		}
 		if("%RE".equalsIgnoreCase(title)) {
-			inv.setRePercentage(Double.parseDouble(o.toString()));
+			inv.setRePercentage(Utils.parseDouble(o));
 			return;
 		}
 		
 		if("CUOTA RE".equalsIgnoreCase(title)) {
-			inv.setReQuota(AonMathUtils.round(Double.parseDouble(o.toString())));
+			inv.setReQuota(Utils.parseDouble(o));
 			return;
 		}
 		
 		if("%RETENCIÓN".equalsIgnoreCase(title)) {
-			inv.setRetentionPercentage(Double.parseDouble(o.toString()));
+			inv.setRetentionPercentage(Utils.parseDouble(o));
 			return;
 		}
 		
 		if("CUOTA RETENCIÓN".equalsIgnoreCase(title)) {
-			inv.setRetentionQuota(AonMathUtils.round(Double.parseDouble(o.toString())));
+			inv.setRetentionQuota(Utils.parseDouble(o));
 			return;
 		}
 		
 		if("TOTAL FACTURA".equalsIgnoreCase(title)
 				|| "TOTAL".equalsIgnoreCase(title)) {
-			inv.setTotal(AonMathUtils.round(Double.parseDouble(o.toString())));
+			inv.setTotal(Utils.parseDouble(o));
 			return;
 		}
 		

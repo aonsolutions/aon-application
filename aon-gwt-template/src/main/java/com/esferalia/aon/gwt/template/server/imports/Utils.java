@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.template.server.imports;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
+import com.esferalia.aon.watson.util.AonMathUtils;
+
 public class Utils {
 
 	public static Object getObjectValue(Cell cell){
@@ -49,5 +51,13 @@ public class Utils {
 	
 	public static Boolean isAyudaT(String domainName) {
 		return domainName.contains("ayudat");
+	}
+	
+	public static Double parseDouble(Object object) {
+		return parseDouble(object.toString());
+	}
+	
+	public static Double parseDouble(String value) {
+		return AonMathUtils.round(Double.parseDouble(value.replace(",", ".")));
 	}
 }

@@ -168,7 +168,7 @@ public class DiaryImport {
 	
 	private void checkAsiento(Domain domain, Cell cell, AonConfiguration aonCtx) {
 		Object o = Utils.getObjectValue(cell);
-		Double d = Double.parseDouble(o.toString());
+		Double d = Utils.parseDouble(o);
 		asiento = d.intValue();
 		if(!diary.containsKey(asiento)) {
 			apunte = 0;
@@ -211,7 +211,7 @@ public class DiaryImport {
 
 		if(IConstants.APUNTE.equalsIgnoreCase(title)
 				|| IConstants.N_APUNTE.equalsIgnoreCase(title)) {
-			Double d = Double.parseDouble(o.toString());
+			Double d = Utils.parseDouble(o);
 			apunte = d.intValue();
 			if(!apunte.equals(diary.get(asiento).getEntry().getDetails().size())) {
 				diary.get(asiento).getEntry().addDetail(new AccountEntryDetail()
@@ -322,7 +322,7 @@ public class DiaryImport {
 		if(IConstants.DEBE.equalsIgnoreCase(title)) {
 			if(CellType.FORMULA == cell.getCellTypeEnum())
 				return;
-			Double debit = Double.parseDouble(o.toString());
+			Double debit = Utils.parseDouble(o);
 			if(debit != null && debit < 0) {
 				diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(debit);
 			} else diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(debit);
@@ -332,7 +332,7 @@ public class DiaryImport {
 		if(IConstants.HABER.equalsIgnoreCase(title)) {
 			if(CellType.FORMULA == cell.getCellTypeEnum())
 				return;
-			Double credit = Double.parseDouble(o.toString());
+			Double credit = Utils.parseDouble(o);
 			if(credit != null && credit < 0) {
 				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(credit);
 			} else diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(credit);
