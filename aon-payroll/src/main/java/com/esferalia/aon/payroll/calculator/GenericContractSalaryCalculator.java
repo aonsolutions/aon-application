@@ -1127,6 +1127,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return results;
 	}
 
+	protected List<ITimedResult<Double>> fixImprovementResults(IContractPayment contractPayment, List<ITimedResult<Double>> results, List<Period> offs , Date start, Date end, ExpressionContext expressionContext) 
+	throws UnsupportedOperationException, UndefinedVariablesException
+	{
+
+		return results;
+	}
+
 	protected List<ITimedResult<Double>> fixConstantAgreementGuaranteed(IContractPayment contractPayment, ITimedResult<Double> results, List<Period> its , Date start, Date end, ExpressionContext expressionContext) 
 	throws UnsupportedOperationException, UndefinedVariablesException
 	{
@@ -1140,7 +1147,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		if (results.size() == 1 
 			&& ( contractPayment.getType() == PaymentType.CRA_0002 
 			|| contractPayment.getType() == PaymentType.CRA_0003 ))
-			return  shareExtraITResults(results.get(0), its);
+			return  shareResults(results.get(0), its);
 		
 		if (results.size() == 1 && results.get(0).getContext().isEmpty() ) {
 			//;
@@ -1220,7 +1227,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
-			} else if (Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
+			} else if ( !AonStringUtils.equals(ContextVariable.IMPROVEMENT, name)
+					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
 					.map(r -> r.getPeriod()).iterator(), strikePeriods.iterator())) {
 				try {
 					results = fixStrikeResults(contractPayment, results, strikePeriods, start, end, expressionContext);
@@ -1231,8 +1239,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					|| AonStringUtils.equals(ContextVariable.GUARENTEED, name))
 					&& !Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
 							.map(r -> r.getPeriod()).iterator(), leavePeriods.iterator())) {
-				// MEJORAS... at NO I.T
+				// GARANTIZADO... at NO I.T
 				results = fixGuaranteedResults(contractPayment, results, leavePeriods, start, end, expressionContext);
+			} else  if ((contractPaymentType == PaymentType.CRA_0056
+					|| AonStringUtils.equals(ContextVariable.IMPROVEMENT, name))) {
+				// MEJORAS... at NO 
+				try {
+					results = fixImprovementResults(contractPayment, results, strikePeriods, start, end, expressionContext);
+				} catch (NullPointerException e) {
+				}
 			} else if ( results.size() == 1 && 
 					results.get(0).getValue() != null && 
 					results.get(0).getValue() > 0.00 && 
@@ -1775,7 +1790,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		return calendar.getTime();
 	}
 
-	static List<ITimedResult<Double>> shareExtraITResults(ITimedResult<Double> result, List<Period> its) {
+	static List<ITimedResult<Double>> shareResults(ITimedResult<Double> result, List<Period> its) {
 		List<ITimedResult<Double>> fixed = new ArrayList<ITimedResult<Double>>();
 
 		List<Period> noIts = Period.sub(result.getPeriod(), its);
@@ -1811,6 +1826,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		return fixed;
 	}
+	
+	
 	
 	private static String getSyntaxExpressionErrorMessage(IExpression expression) {
 		String str = expression.getExpression();

@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.payroll.FixERESalaries;
 import net.aonsolutions.db.up2date.payroll.FixERESalariesII;
 import net.aonsolutions.db.up2date.payroll.GarantizadoFix;
 import net.aonsolutions.db.up2date.payroll.GarantizadoUpdate;
+import net.aonsolutions.db.up2date.payroll.MejoraInsert;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Fix;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateFactor;
 import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Fix;
@@ -53,7 +54,7 @@ public class Up2Date {
     		//FUNDUPV_UPDATE_II
     		//CRA2018UPDATE
     		//ONACCOUNTAGREEMENTUPDATE
-    		//DIRECTPAYINSERT
+    		//MEJORAINSERT
     		//HOLIDAYS2018INSERT
     		//CRA0057UPDATE,
     		//CRA0058UPDATE
@@ -121,7 +122,8 @@ public class Up2Date {
     		//FixERESalariesII.FIXERESALARIESII,
     		//SalaryHoursUpdateFactor.SALARYHOURSUPDATEFACTOR,
     		//GarantizadoFix.GARANTIZADOFIX
-    		EresUpdateII.ERESUPDATE
+    		//EresUpdateII.ERESUPDATE,
+    		MejoraInsert.MEJORAINSERT
     };
 
 

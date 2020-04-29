@@ -102,7 +102,7 @@ public class ContractSalaryCalculator4Dummies<T extends ISalary> extends Contrac
 				|| contractPayment.getType() == PaymentType.CRA_0003 
 				|| results.get(0).getContext().containsKey(ContextVariable.GROSS)
 				|| results.get(0).getContext().containsKey(ContextVariable.LIQUID)))
-				return  shareExtraITResults(results.get(0), its);
+				return  shareResults(results.get(0), its);
 		
 		else if (results.size() == 1 && results.get(0).getContext().isEmpty() ) {
 			return  fixConstantResult(contractPayment, results.get(0), start, end, expressionContext);

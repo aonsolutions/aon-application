@@ -3636,7 +3636,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	protected boolean isFullTime() {
-		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString());
+		String tc2 = getCurrentBindings().get(TC2, obj -> obj.toString(), "100");
 		if (tc2 == null) {
 			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(TC2.getName()));
 		}

@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TEMP_PAYMENT;
 import static com.esferalia.aon.salary.enumeration.PaymentType.CRA_0001;
@@ -37,6 +38,7 @@ import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.AonException;
+import com.code.aon.google.apis.calendar.shareEvents;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.DelegateContractPayment;
@@ -161,6 +163,25 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 	}
 	
+	private static class IMPROVEMENTContractPayment extends DelegateContractPayment{
+		
+		private IMPROVEMENTContractPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+		}
+		
+		@Override
+		public PaymentType getType() {
+			return PaymentType.CRA_0000;
+		}
+		
+		@Override
+		public String getQuoteExpression() {
+			return "0.00";
+		
+		}
+		
+	}
+
 	private static class DoubleReturnException extends RuntimeException{
 		private double number;
 		
@@ -333,6 +354,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			if ( AonStringUtils.equals(GUARENTEED, payment.getName())) {
 				return delegate.quote(new GUARENTEEDContractPayment(payment), start, end, amount);
 			}
+			
+			if ( AonStringUtils.equals(IMPROVEMENT, payment.getName())) {
+				return delegate.quote(new IMPROVEMENTContractPayment(payment), start, end, amount);
+			}
 
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENSIONES Y SIST. ALTERNATIVOS 					
 				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
@@ -461,7 +486,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				|| contractPayment.getType() == PaymentType.CRA_0003 
 				|| results.get(0).getContext().containsKey(ContextVariable.GROSS)
 				|| results.get(0).getContext().containsKey(ContextVariable.LIQUID)))
-				return  shareExtraITResults(results.get(0), its);
+				return  shareResults(results.get(0), its);
 		
 		try {
 			Date startIt = getStartIT(expressionContext);
@@ -737,6 +762,30 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	@Override
+	protected List<ITimedResult<Double>> fixImprovementResults(IContractPayment contractPayment,
+			List<ITimedResult<Double>> results, List<Period> offs, Date start, Date end,
+			ExpressionContext expressionContext) throws    UnsupportedOperationException, UndefinedVariablesException {
+		
+		if ( results.size() == 1 
+			&& results.get(0).getContext().isEmpty()) {
+			ITimedResult<Double> result = results.get(0);
+			Period period = result.getPeriod();
+			results = shareResults(result, Period.sub(Collections.singletonList(period), offs));
+		} // share results between off periods.
+		
+		List<Period> periods = results.stream().map(r->r.getPeriod()).collect(Collectors.toList());
+		if ( Period.sub(periods, offs).isEmpty() ) {
+			List<ITimedResult<Double>> fixed = new ArrayList<ITimedResult<Double>>();
+			for (ITimedResult<Double> result : results)
+				fixed.add(fixImprovementResult(result, expressionContext));
+ 			return fixed;
+		} // all results inside offs 
+		
+		
+		return super.fixImprovementResults(contractPayment, results, offs, start, end, expressionContext);
+	}
+	
+	@Override
 	protected List<ITimedResult<Double>> fixConstantAgreementGuaranteed(IContractPayment contractPayment,
 			ITimedResult<Double> result, List<Period> its, Date start, Date end,
 			ExpressionContext expressionContext) throws UnsupportedOperationException, UndefinedVariablesException {
@@ -877,7 +926,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		if ( Period.sub(periods ,worked ).size() == 0  )
 			return results;
 		
-		return  shareExtraITResults(results.get(0), strikes);
+		return  shareResults(results.get(0), strikes);
 	}
 	
 	@Override
@@ -906,6 +955,29 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	}
 	
 	// ------------------------------------------------------------------------
+	
+	
+	private ITimedResult<Double> fixImprovementResult(ITimedResult<Double> result, ExpressionContext expressionContext) throws UndefinedContextVariablesException {
+		Period period = result.getPeriod();
+		Double value = result.getValue();
+		long days = period.daysStream().count();
+		Double br = expressionContext.getVariable(ContextVariable.REGULATORY_BASE, period.getStart(), period.getEnd(), Double.class);
+		if ( value <= br  ) 
+			value *= days;
+		
+
+		Double max = br * 30.00 * 0.70;
+		Double prest = br * days * 0.70;
+		if ( value > max) {
+			Double totalPayment = expressionContext.getVariable(ContextVariable.TOTAL_PAYMENT, period.getStart(), period.getEnd(), Double.class);
+			if ( totalPayment == null )
+				throw new UndefinedContextVariablesException(ContextVariable.TOTAL_PAYMENT);
+			value -= prest + totalPayment;
+		}
+		
+		return new TimedResult<Double>(value, period, result.getContext());
+		
+	}
 	
 	private List<ITimedResult<Double>> getPaymentBR(Date date, IContractPayment payment) {
 		int contractId = ctx.getId();
