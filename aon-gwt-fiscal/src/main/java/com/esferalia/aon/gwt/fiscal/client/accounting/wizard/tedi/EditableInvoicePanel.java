@@ -963,7 +963,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 
 		// *************************************************************************
-		// ***************** PANEL ( Número Factura, total factura, concepto) ******
+		// ***************** PANEL ( Número Factura, total factura ) ******
 		// *************************************************************************
 		FlowPanel headerPanel4 = new  FlowPanel();
 		invoiceDataTable.setWidget(3, 0, headerPanel4);
@@ -1110,30 +1110,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		headerPanel4.add(fastSave);
 		
-		FlowPanel manualConceptPanel = new FlowPanel();
-		manualConceptPanel.setStyleName(AON.AON_CSS.aonTextLeft());
-		manualConceptPanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
-		manualConceptPanel.getElement().getStyle().setProperty("flex-grow", "1");
-		
-		InlineLabel label1 = new InlineLabel(AON.MSG.conceptComplement());
-		label1.setStyleName(AON.AON_CSS.aonInnerLabel());
-		manualConceptPanel.add(label1);
-
-		manualConcept.setStyleName(AON.AON_CSS.aonInputText());
-		manualConcept.setTabIndex(-1);
-		manualConcept.setVisibleLength(20);
-		manualConcept.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				invoiceCallback.getInvoice().setManualConcept(manualConcept.getValue());
-				invoiceCallback.paintEntry();
-				invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
-				invoiceCallback.getModule().refreshIdLabel();
-			}
-		});
-		manualConceptPanel.add(manualConcept);
-		headerPanel4.add(manualConceptPanel);
-		
 		invoicePanel.add(invoiceDataTable);
 		// *************************************************************************
 		// ** PANEL ( Bases Imponibles) ********************************************
@@ -1232,6 +1208,67 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		financesTable.setWidget(0, 1, financePanel);
 		invoicePanel.add(financesTable);
 
+		
+		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+		invoicePanel.setVisible(true);
+		
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				if (invoiceCallback.getInvoice().isSales()) {
+					series.setFocus(true);
+				} else {
+					referenceCode.setFocus(true);
+				}
+		}});
+
+		// *************************************************************************
+		// ***************** PANEL ( OTROS DATOS, concepto ... ) *******************
+		// *************************************************************************
+		
+		FlexTable othersTable = new FlexTable();
+		othersTable.getColumnFormatter().setWidth(0, "40px");
+		othersTable.getColumnFormatter().setWidth(1, "auto");
+		
+		othersTable.setStyleName(AON.AON_CSS.aonAccountTable());
+		othersTable.addStyleName(AON.AON_CSS.aonWidthAll());
+		othersTable.addStyleName(AON.AON_CSS.aonSimpleBorder());
+		othersTable.addStyleName(AON.AON_CSS.aonMarginTop5());
+		othersTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
+		
+		Label othersDescription = new Label("");
+		othersDescription.setStyleName(AON.AON_CSS.aonTextVertical());
+		othersDescription.addStyleName(AON.AON_CSS.aonBold());
+		othersTable.setWidget(0, 0, othersDescription);
+		othersTable.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonSimpleBorder());
+		othersTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
+		FlowPanel conceptPanel1 = new  FlowPanel();
+		conceptPanel1.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
+		
+		FlowPanel manualConceptPanel = new FlowPanel();
+		manualConceptPanel.setStyleName(AON.AON_CSS.aonTextLeft());
+		manualConceptPanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		manualConceptPanel.getElement().getStyle().setProperty("flex-grow", "1");
+		
+		InlineLabel label1 = new InlineLabel(AON.MSG.conceptComplement());
+		label1.setStyleName(AON.AON_CSS.aonInnerLabel());
+		manualConceptPanel.add(label1);
+
+		manualConcept.setStyleName(AON.AON_CSS.aonInputText());
+		manualConcept.setTabIndex(-1);
+		manualConcept.setVisibleLength(20);
+		manualConcept.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				invoiceCallback.getInvoice().setManualConcept(manualConcept.getValue());
+				invoiceCallback.paintEntry();
+				invoiceCallback.getInvoice().getAccountEntry().setDirty(true);
+				invoiceCallback.getModule().refreshIdLabel();
+			}
+		});
+		manualConceptPanel.add(manualConcept);
+		conceptPanel1.add(manualConceptPanel);
+		othersTable.setWidget(0, 1, conceptPanel1);
+		invoicePanel.add(othersTable);
 		
 		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
 		invoicePanel.setVisible(true);
