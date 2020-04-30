@@ -2,8 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -18,15 +16,12 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -145,10 +140,19 @@ public class EventsDraft extends ResizeComposite {
 	
 	private void initializeBlockedVariables() {
 		this.blockedVariables = new ArrayList<>();
+		this.blockedVariables.add("DIAS_TRABAJADOS");
 		this.blockedVariables.add("DIAS_VACACIONES");
-		this.blockedVariables.add("DIAS_HUELGA");
+		this.blockedVariables.add("DIAS_INACTIVIDAD");
 		this.blockedVariables.add("DIAS_AUSENCIA");
+		this.blockedVariables.add("DIAS_HUELGA");
 		this.blockedVariables.add("DIAS_ERE");
+		this.blockedVariables.add("DIAS_ERE_FZA");
+		this.blockedVariables.add("DIAS_ERE_FZA_EXON");
+		this.blockedVariables.add("HORAS_COMPLEMENTARIAS");
+		this.blockedVariables.add("HORAS_EXTRAS");
+		
+		this.blockedVariables.add("SALARIO_ANUAL");
+		this.blockedVariables.add("PAGAS");
 	}
 
 	// -------------------------------------
@@ -338,18 +342,18 @@ public class EventsDraft extends ResizeComposite {
 
 	private ArrayList<String> createMonthList() {
 		ArrayList<String> monthList = new ArrayList<>();
-		monthList.add("ENERO");
-		monthList.add("FEBRERO");
-		monthList.add("MARZO");
-		monthList.add("ABRIL");
-		monthList.add("MAYO");
-		monthList.add("JUNIO");
-		monthList.add("JULIO");
-		monthList.add("AGOSTO");
-		monthList.add("SEPTIEMBRE");
-		monthList.add("OCTUBRE");
-		monthList.add("NOVIEMBRE");
-		monthList.add("DICIEMBRE");
+		monthList.add("ENE");
+		monthList.add("FEB");
+		monthList.add("MAR");
+		monthList.add("ABR");
+		monthList.add("MAY");
+		monthList.add("JUN");
+		monthList.add("JUL");
+		monthList.add("AGO");
+		monthList.add("SEP");
+		monthList.add("OCT");
+		monthList.add("NOV");
+		monthList.add("DIC");
 		
 		return monthList;
 	}
@@ -413,13 +417,14 @@ public class EventsDraft extends ResizeComposite {
 			eventsTable.setText(row+1, 0, employeeList.get(row-1).getCompleteEmployeeName());
 			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
-			for(int column=0; column<columns; column++){
+			for(int column=0; column<columns; column++){				
 				//Rellenamos el resto de columnas con la informacion de cada empleado
 				Date findingDate = new Date(this.actualYear, this.actualMonth, 1);
 				DateUtils.resetTime(findingDate);
 				Integer employeeId = this.draftObject.getEventEmployeeId(employeeList.get(row-1).getCompleteEmployeeName());
 				
 				EmployeeEventsVariable variable = this.draftObject.getEmployeeVariableByDate(employeeId, findingDate, variableList.get(column));
+				
 				EventTableCell eventCell = new EventTableCell(row+1, column+1);
 				eventCell.addValueChangeHandler(new ValueChangeHandler<String>() {
 					
@@ -533,6 +538,7 @@ public class EventsDraft extends ResizeComposite {
 			eventsTable.getCellFormatter().addStyleName(row+1, 0, style.headerCell());
 			
 			for(int column=0; column<columns; column++){
+				
 				//Rellenamos el resto de columnas con la informacion de cada empleado
 				Date findingDate = new Date(this.actualYear, column, 1);
 				DateUtils.resetTime(findingDate);

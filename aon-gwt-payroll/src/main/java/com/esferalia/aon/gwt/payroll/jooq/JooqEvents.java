@@ -91,6 +91,34 @@ public class JooqEvents {
 				if(null != contractRecords && !contractRecords.isEmpty())
 					contractId = contractRecords.get(0).get(CONTRACT.ID);
 				
+				if(null != contractId) {
+					// ----------------------------------- FULL TIME JOURNEY
+					
+					String journeyTypeEmployee = "";
+					
+					Result<Record> journeyTypeRecords = dslContext.select()
+							  .from(CONTRACT_DATA)
+							  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+							  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+							  .orderBy(CONTRACT_DATA.START_DATE.desc()) // If there is more than one contract
+							  .fetch();
+					
+					if(!journeyTypeRecords.isEmpty())
+						journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+					else {
+						journeyTypeRecords = dslContext.select()
+								  .from(CONTRACT_DATA)
+								  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+								  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+								  .orderBy(CONTRACT_DATA.START_DATE.desc())
+								  .fetch();
+						
+						journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+					}
+					
+					employee.setIsFullTime(isFullTimeJourney(journeyTypeEmployee));
+				}
+				
 				Record registryRecord = dslContext.select()
 						.from(REGISTRY)
 						.where(REGISTRY.ID.eq(p.get(PERSON.REGISTRY)))
@@ -542,6 +570,10 @@ public class JooqEvents {
 			}
 	}
 
-	
+	// Get employee calendar info from database
+	private static Boolean isFullTimeJourney(String journeyType) {
+		return ('1' == journeyType.charAt(1) || '4' == journeyType.charAt(1)|| "true" == journeyType) ? true : false;
+	}
+
 	
 }

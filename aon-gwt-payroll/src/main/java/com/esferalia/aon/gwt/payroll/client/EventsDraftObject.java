@@ -33,17 +33,19 @@ public class EventsDraftObject {
 		private String surName;
 		private String fullName;
 		private Integer employeeId;
+		private boolean fullJourney;
 		
 		public EventEmployee() {
 			super();
 		}
 		
-		public EventEmployee(String name, String surName, Integer employeeId) {
+		public EventEmployee(String name, String surName, Integer employeeId, boolean fullTime) {
 			super();
 			this.name = name;
 			this.surName = surName;
 			this.employeeId = employeeId;
 			this.fullName = this.surName + ", " + this.name;
+			this.fullJourney = fullTime;
 		}
 		
 		public String getCompleteEmployeeName(){
@@ -59,6 +61,10 @@ public class EventsDraftObject {
 				return true;
 			
 			return false;
+		}
+		
+		public boolean isFullTime() {
+			return this.fullJourney;
 		}
 		
 	}
@@ -187,6 +193,8 @@ public class EventsDraftObject {
 	public UndoManager<Undoable> undoManager;
 	
 	private DomainEmployeesServiceAsync employeesServiceAsync;
+	
+	private Boolean fullJourney;
 
 	public EventsDraftObject(Integer workplaceId, Integer agreeementId,
 			DomainEmployeesServiceAsync employeesServiceAsync,
@@ -208,6 +216,8 @@ public class EventsDraftObject {
 		this.employeeContractVariablesDB = new ArrayList<String>();	
 		
 		this.undoManager = new UndoManager<>();
+		
+		this.fullJourney = false;
 	}
 
 	
@@ -237,7 +247,8 @@ public class EventsDraftObject {
 					EventEmployee employee = new EventEmployee(
 							employeeDB.getName(), 
 							employeeDB.getSurName(), 
-							employeeDB.getEmployeeId()
+							employeeDB.getEmployeeId(),
+							employeeDB.getIsFullTime()
 					);
 					mapEventsObject.put(employeeDB.getEmployeeId(), new HashMap<String, ArrayList<EmployeeEventsVariable>>());
 					draftMapEventsObject.put(employeeDB.getEmployeeId(), new HashMap<String, ArrayList<EmployeeEventsVariable>>());
@@ -269,22 +280,37 @@ public class EventsDraftObject {
 				contWorkplaceEmployeesId++;
 				employeeContractVariables.clear();
 				
-				createAllVariables("HORAS_EXTRAS");
-				createAllVariables("HORAS_COMPLEMENTARIAS");
+				createAllVariables("DIAS_TRABAJADOS");
+				createAllVariables("DIAS_VACACIONES");
+				createAllVariables("DIAS_INACTIVIDAD");
+				createAllVariables("DIAS_AUSENCIA");
+				createAllVariables("DIAS_HUELGA");
+				createAllVariables("DIAS_ERE");
+				createAllVariables("DIAS_ERE_FZA");
+				createAllVariables("DIAS_ERE_FZA_EXON");
+				createAllVariables("IMPORTE_HORA_EXTRA");
 				createAllVariables("HORAS_FORMACION_PRESENCIAL");
 				createAllVariables("HORAS_FORMACION_DISTANCIA");
 				createAllVariables("HORAS_TUTORIA");
 				createAllVariables("BONIFICACION_TUTORIA");
+				createAllVariables("BONIFICACION_FORMACION_CONTINUA");
+				createAllVariables("KMS");
 				
-				//Lista con las variables a descargar de la base de datos
-				employeeContractVariablesDB.add("HORAS_EXTRAS");
-				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
+				employeeContractVariablesDB.add("DIAS_TRABAJADOS");
+				employeeContractVariablesDB.add("DIAS_VACACIONES");
+				employeeContractVariablesDB.add("DIAS_INACTIVIDAD");
+				employeeContractVariablesDB.add("DIAS_AUSENCIA");
+				employeeContractVariablesDB.add("DIAS_HUELGA");
+				employeeContractVariablesDB.add("DIAS_ERE");
+				employeeContractVariablesDB.add("DIAS_ERE_FZA");
+				employeeContractVariablesDB.add("DIAS_ERE_FZA_EXON");
+				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
 				employeeContractVariablesDB.add("HORAS_FORMACION_PRESENCIAL");
 				employeeContractVariablesDB.add("HORAS_FORMACION_DISTANCIA");
 				employeeContractVariablesDB.add("HORAS_TUTORIA");
 				employeeContractVariablesDB.add("BONIFICACION_TUTORIA");
-//				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
-//				employeeContractVariablesDB.add("VENTAS");
+				employeeContractVariablesDB.add("BONIFICACION_FORMACION_CONTINUA");
+				employeeContractVariablesDB.add("KMS");
 				
 				for(Entry<String, String> entry : result.entrySet()){
 					createAllVariables(entry.getKey());
@@ -671,6 +697,14 @@ public class EventsDraftObject {
 			updateMap.get(employeeId).get(varName).add(var);
 		}
 		
+	}
+	
+	public boolean isFullJourney(Integer employeeId) {
+		for(EventEmployee employee : getWorkplaceEmployees()) {
+			if(employeeId == employee.getEmployeeId())
+				return employee.isFullTime();
+		}
+		return false;
 	}
 
 //	public void save(String event, final SaveCallback callback) {
