@@ -16,6 +16,7 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
@@ -52,9 +53,6 @@ public class JooqEmployeeEvents {
 		EmployeeEventsData employeeInfoVariablesEvents = new EmployeeEventsData();
 		Map<String,ArrayList<Quartet<Date, Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<Date, Date, String, String>>>(); 
 		
-		
-		// --------------------------------------------- AÑADIR VARIABLES ---------------------------------------------------------
-		
 		for(String name: employeeContractVariables){
 			ArrayList<Quartet<Date, Date, String, String>> varibaleList = new ArrayList<Quartet<Date, Date, String, String>>();
 			
@@ -64,28 +62,43 @@ public class JooqEmployeeEvents {
 			
 			if(!contractRecord.isEmpty()) {
 				Integer contractId = contractRecord.get(0).get(CONTRACT.ID);
-				
-				Result<Record> variableEmployeeInfo = dslContext
-						  .select()
-						  .from(CONTRACT_DATA)
-						  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
-						  .and(CONTRACT_DATA.NAME.eq(name))
-						  .fetch();
-				
-				for(Record r: variableEmployeeInfo){
-					Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
-					
-					quarterVariableEmployeeInfo.setStartDate(r.get(CONTRACT_DATA.START_DATE))
-					.setEndDate(r.get(CONTRACT_DATA.END_DATE))
-					.setName(r.get(CONTRACT_DATA.NAME))
-					.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
-					
-					varibaleList.add(quarterVariableEmployeeInfo);
-				}
-			}
 			
-			employeeVariablesEvents.put(name, varibaleList);
-		}		
+				String variableName = getCoefficientVariable(name);
+				
+				if(!contractRecord.isEmpty()) {
+					Result<Record> variableEmployeeInfo = dslContext
+							  .select()
+							  .from(CONTRACT_DATA)
+							  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+							  .and(CONTRACT_DATA.NAME.eq(variableName))
+							  .fetch();
+					
+					for(Record r: variableEmployeeInfo){
+						Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
+						
+						Date startDate = r.get(CONTRACT_DATA.START_DATE);
+						Date endDate = r.get(CONTRACT_DATA.END_DATE);
+						String expression = r.get(CONTRACT_DATA.EXPRESSION);
+						
+						if(isCoefficientVariable(name)) {
+							Integer daysBetween = DateUtils.getDaysBetween(startDate, endDate);
+							daysBetween++;
+							
+							expression = daysBetween.toString();
+						}
+						
+						quarterVariableEmployeeInfo.setStartDate(startDate)
+						.setEndDate(endDate)
+						.setName(name)
+						.setExpression(expression);
+						
+						varibaleList.add(quarterVariableEmployeeInfo);
+					}
+				}
+				
+				employeeVariablesEvents.put(name, varibaleList);
+			}
+		}			
 
 		// ------------------------------------------------- SOLUCION ---------------------------------------------------------		
 		
@@ -101,6 +114,31 @@ public class JooqEmployeeEvents {
 		EmployeeEventsData employeeInfoVariablesEvents = new EmployeeEventsData();
 		Map<String,ArrayList<Quartet<Date, Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<Date, Date, String, String>>>(); 
 		
+		// ----------------------------------- FULL TIME JOURNEY
+		
+		String journeyTypeEmployee = "";
+		
+		Result<Record> journeyTypeRecords = dslContext.select()
+				  .from(CONTRACT_DATA)
+				  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				  .and(CONTRACT_DATA.NAME.equal("TIEMPO_COMPLETO"))
+				  .orderBy(CONTRACT_DATA.START_DATE.desc()) // If there is more than one contract
+				  .fetch();
+		
+		if(!journeyTypeRecords.isEmpty())
+			journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+		else {
+			journeyTypeRecords = dslContext.select()
+					  .from(CONTRACT_DATA)
+					  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					  .and(CONTRACT_DATA.NAME.like(ContextVariable.TC2.getName()))
+					  .orderBy(CONTRACT_DATA.START_DATE.desc())
+					  .fetch();
+			
+			journeyTypeEmployee = journeyTypeRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+		}
+		
+		employeeInfoVariablesEvents.setFullTimeJourney(isFullTimeJourney(journeyTypeEmployee));
 		
 		// --------------------------------------------- AÑADIR VARIABLES ---------------------------------------------------------
 		
@@ -111,21 +149,34 @@ public class JooqEmployeeEvents {
 					.where(CONTRACT.ID.eq(contractId))
 					.fetch();
 			
+			String variableName = getCoefficientVariable(name);
+			
 			if(!contractRecord.isEmpty()) {
 				Result<Record> variableEmployeeInfo = dslContext
 						  .select()
 						  .from(CONTRACT_DATA)
 						  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
-						  .and(CONTRACT_DATA.NAME.eq(name))
+						  .and(CONTRACT_DATA.NAME.eq(variableName))
 						  .fetch();
 				
 				for(Record r: variableEmployeeInfo){
 					Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
 					
-					quarterVariableEmployeeInfo.setStartDate(r.get(CONTRACT_DATA.START_DATE))
-					.setEndDate(r.get(CONTRACT_DATA.END_DATE))
-					.setName(r.get(CONTRACT_DATA.NAME))
-					.setExpression(r.get(CONTRACT_DATA.EXPRESSION));
+					Date startDate = r.get(CONTRACT_DATA.START_DATE);
+					Date endDate = r.get(CONTRACT_DATA.END_DATE);
+					String expression = r.get(CONTRACT_DATA.EXPRESSION);
+					
+					if(isCoefficientVariable(name)) {
+						Integer daysBetween = DateUtils.getDaysBetween(startDate, endDate);
+						daysBetween++;
+						
+						expression = daysBetween.toString();
+					}
+					
+					quarterVariableEmployeeInfo.setStartDate(startDate)
+					.setEndDate(endDate)
+					.setName(name)
+					.setExpression(expression);
 					
 					varibaleList.add(quarterVariableEmployeeInfo);
 				}
@@ -141,6 +192,36 @@ public class JooqEmployeeEvents {
 		return employeeInfoVariablesEvents;
 	}
 	
+	private static String getCoefficientVariable(String name) {
+		switch (name) {
+		case "DIAS_AUSENCIA":
+			return "COEFICIENTE_AUSENCIA";
+		case "DIAS_HUELGA":
+			return "COEFICIENTE_HUELGA";
+		case "DIAS_ERE":
+			return "COEFICIENTE_ERE";
+		case "DIAS_ERE_FZA":
+			return "COEFICIENTE_ERE_FZA";
+		case "DIAS_ERE_FZA_EXON":
+			return "COEFICIENTE_ERE_FZA_EXONERADO";
+		default:
+			return name;
+		}
+	}
+	
+	private static boolean isCoefficientVariable(String name) {
+		ArrayList<String> coefficientList = new ArrayList<String>();
+		coefficientList.add("DIAS_AUSENCIA");
+		coefficientList.add("DIAS_HUELGA");
+		coefficientList.add("DIAS_ERE");
+		coefficientList.add("DIAS_ERE_FZA");
+		coefficientList.add("DIAS_ERE_FZA_EXON");
+		
+		return coefficientList.contains(name);
+	}
+	
+	
+
 	private static void setEmployeeEventsInformation(DSLContext dslContext, Integer contract,
 			EmployeeEventsUpdate updateInfo) {
 		
@@ -152,39 +233,28 @@ public class JooqEmployeeEvents {
 		dslContext.delete(CONTRACT_DATA)
 		   .where(CONTRACT_DATA.CONTRACT.eq(contract))
 		   .and(CONTRACT_DATA.NAME.in(
-//				   ContextVariable.WORKED_DAYS.getName()
-//				  ,ContextVariable.ERE_DAYS.getName()
-//				  ,ContextVariable.STRIKE_DAYS.getName()
-//				  ,ContextVariable.LEAVE_DAYS.getName()
-//				  ,ContextVariable.WORKED_HOURS.getName()
-//				  ,ContextVariable.REAL_DAYS.getName()
-//				  ,ContextVariable.HOLIDAYS.getName()
-				  ContextVariable.EXTRA_HOURS.getName())
-//				.or(CONTRACT_DATA.NAME.eq("DIAS_EFECTIVOS"))
-				.or(CONTRACT_DATA.NAME.eq("HORAS_COMPLEMENTARIAS"))
-				.or(CONTRACT_DATA.NAME.eq("DIAS_PECNORTA"))
-				.or(CONTRACT_DATA.NAME.eq("DIAS_MANUTENCION"))
-				.or(CONTRACT_DATA.NAME.eq("DIAS_PECNORTA_EXTRANJERO"))
-				.or(CONTRACT_DATA.NAME.eq("DIAS_MANUTENCION_EXTRANJERO"))
-				.or(CONTRACT_DATA.NAME.eq("KMS"))
-				.or(CONTRACT_DATA.NAME.eq("IMPORTE_HORA_EXTRA"))
-				.or(CONTRACT_DATA.NAME.eq("VENTAS"))
-				.or(CONTRACT_DATA.NAME.eq("HORAS_EXTRAS_FZA"))
-				.or(CONTRACT_DATA.NAME.eq("HORAS_FORMACION_PRESENCIAL"))
-				.or(CONTRACT_DATA.NAME.eq("HORAS_FORMACION_DISTANCIA"))
-				.or(CONTRACT_DATA.NAME.eq("HORAS_TUTORIA"))
-				.or(CONTRACT_DATA.NAME.eq("BONIFICACION_TUTORIA"))
-				)
-		   .execute();
+				"IMPORTE_HORA_EXTRA",
+				"HORAS_FORMACION_PRESENCIAL",
+				"HORAS_FORMACION_DISTANCIA",
+				"HORAS_TUTORIA",
+				"BONIFICACION_TUTORIA",
+				"BONIFICACION_FORMACION_CONTINUA",
+				"KMS"
+			)).execute();
 		
 		List<Quartet<Date, Date, String, String>> updateList = updateInfo.getVariableEventsList();
 		ArrayList<String> varNotToUpdate = new ArrayList<>();
-		varNotToUpdate.add("DIAS_ERE");
-		varNotToUpdate.add("DIAS_HUELGA");
-		varNotToUpdate.add("DIAS_VACACIONES");
-		varNotToUpdate.add("PAGAS");
+		
 		varNotToUpdate.add("DIAS_TRABAJADOS");
-		varNotToUpdate.add("SALARIO_ANUAL");
+		varNotToUpdate.add("DIAS_VACACIONES");
+		varNotToUpdate.add("DIAS_INACTIVIDAD");
+		varNotToUpdate.add("DIAS_AUSENCIA");
+		varNotToUpdate.add("DIAS_HUELGA");
+		varNotToUpdate.add("DIAS_ERE");
+		varNotToUpdate.add("DIAS_ERE_FZA");
+		varNotToUpdate.add("DIAS_ERE_FZA_EXON");
+		varNotToUpdate.add("HORAS_COMPLEMENTARIAS");
+		varNotToUpdate.add("HORAS_EXTRAS");
 		
 		for (Quartet<Date, Date, String, String> quartet : updateList){
 			
@@ -197,6 +267,11 @@ public class JooqEmployeeEvents {
 							.execute();
 		}
 		
+	}
+	
+	// Get employee calendar info from database
+	private static Boolean isFullTimeJourney(String journeyType) {
+		return ('1' == journeyType.charAt(1) || '4' == journeyType.charAt(1)|| "true" == journeyType) ? true : false;
 	}
 
 	

@@ -11,6 +11,7 @@ public class EmployeeInfo implements Serializable{
 	private Integer domain;
 	private Integer contractId;
 	private Boolean isContractActive;
+	private Boolean isFullTime;
 	
 	private Integer employeeId; //Registry Id
 	
@@ -413,6 +414,14 @@ public class EmployeeInfo implements Serializable{
 	
 	public ArrayList<Rbank> getRbanks() {
 		return rbanks;
+	}
+
+	public Boolean getIsFullTime() {
+		return isFullTime;
+	}
+
+	public void setIsFullTime(Boolean isFullTime) {
+		this.isFullTime = isFullTime;
 	}
 
 	public String toString(){

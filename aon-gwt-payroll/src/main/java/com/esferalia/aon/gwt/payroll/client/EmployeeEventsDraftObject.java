@@ -135,6 +135,7 @@ public class EmployeeEventsDraftObject {
 	private DomainEmployeesServiceAsync employeesService;
 	public UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObject employeeCalendar;
+	private Boolean fullJourney;
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
 	private ArrayList<String> employeeContractVariables;
@@ -153,6 +154,8 @@ public class EmployeeEventsDraftObject {
 		this.employeeContractVariablesDB = new ArrayList<String>();
 		
 		this.undoManager = new UndoManager<>();
+		
+		this.fullJourney = false;
 	}
 
 
@@ -194,6 +197,10 @@ public class EmployeeEventsDraftObject {
 
 	public void setDraftMapEventsVar(Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar) {
 		this.draftMapEventsVar = draftMapEventsVar;
+	}
+	
+	public boolean isFullJourney() {
+		return this.fullJourney;
 	}
 
 	
@@ -347,10 +354,14 @@ public class EmployeeEventsDraftObject {
 				
 				employeeContractVariables.clear();
 				
+				employeeContractVariables.add("DIAS_TRABAJADOS");
 				employeeContractVariables.add("DIAS_VACACIONES");
+				employeeContractVariables.add("DIAS_INACTIVIDAD");
 				employeeContractVariables.add("DIAS_AUSENCIA");
 				employeeContractVariables.add("DIAS_HUELGA");
 				employeeContractVariables.add("DIAS_ERE");
+				employeeContractVariables.add("DIAS_ERE_FZA");
+				employeeContractVariables.add("DIAS_ERE_FZA_EXON");
 				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
 				employeeContractVariables.add("HORAS_EXTRAS");
 				employeeContractVariables.add("IMPORTE_HORA_EXTRA");
@@ -358,12 +369,17 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariables.add("HORAS_FORMACION_DISTANCIA");
 				employeeContractVariables.add("HORAS_TUTORIA");
 				employeeContractVariables.add("BONIFICACION_TUTORIA");
+				employeeContractVariables.add("BONIFICACION_FORMACION_CONTINUA");
 				employeeContractVariables.add("KMS");
 				
+				employeeContractVariablesDB.add("DIAS_TRABAJADOS");
 				employeeContractVariablesDB.add("DIAS_VACACIONES");
+				employeeContractVariablesDB.add("DIAS_INACTIVIDAD");
 				employeeContractVariablesDB.add("DIAS_AUSENCIA");
 				employeeContractVariablesDB.add("DIAS_HUELGA");
 				employeeContractVariablesDB.add("DIAS_ERE");
+				employeeContractVariablesDB.add("DIAS_ERE_FZA");
+				employeeContractVariablesDB.add("DIAS_ERE_FZA_EXON");
 				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
 				employeeContractVariablesDB.add("HORAS_EXTRAS");
 				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
@@ -371,48 +387,49 @@ public class EmployeeEventsDraftObject {
 				employeeContractVariablesDB.add("HORAS_FORMACION_DISTANCIA");
 				employeeContractVariablesDB.add("HORAS_TUTORIA");
 				employeeContractVariablesDB.add("BONIFICACION_TUTORIA");
+				employeeContractVariablesDB.add("BONIFICACION_FORMACION_CONTINUA");
 				employeeContractVariablesDB.add("KMS");
 
-				for (String varName : context.getVariables()){
-					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
-					
-					if(context.getList(varName).isEmpty()){
-						mapEventsVar.put(varName, varList);
-						employeeContractVariables.add(varName);
-						continue;
-					}
-					
-					try {
-						for (VariableDescriptor var : context.getList(varName)){
-							Date startDate = var.getStartDate();
-							Date endDate = var.getEndDate();
-							try {
-								Double value = Double.valueOf(var.getValue());
-								if(startDate.getMonth() == endDate.getMonth()){
-									EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
-									varList.add(eVar);
-								}else{
-									for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
-										Date auxStartDate = new Date(startDate.getYear(), i, 1);
-										Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
-										EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
-										varList.add(eVar);
-									}
-								}
-							}catch (Exception e) {
-								throw new Exception();
-							}
-						}
-						
-						sortListByStartDate(varList);
-						
-						mapEventsVar.put(varName, varList);
-						
-						employeeContractVariables.add(varName);
-					}catch (Exception e) {
-						continue;
-					}
-				}
+//				for (String varName : context.getVariables()){
+//					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
+//					
+//					if(context.getList(varName).isEmpty()){
+//						mapEventsVar.put(varName, varList);
+//						employeeContractVariables.add(varName);
+//						continue;
+//					}
+//					
+//					try {
+//						for (VariableDescriptor var : context.getList(varName)){
+//							Date startDate = var.getStartDate();
+//							Date endDate = var.getEndDate();
+//							try {
+//								Double value = Double.valueOf(var.getValue());
+//								if(startDate.getMonth() == endDate.getMonth()){
+//									EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
+//									varList.add(eVar);
+//								}else{
+//									for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
+//										Date auxStartDate = new Date(startDate.getYear(), i, 1);
+//										Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
+//										EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
+//										varList.add(eVar);
+//									}
+//								}
+//							}catch (Exception e) {
+//								throw new Exception();
+//							}
+//						}
+//						
+//						sortListByStartDate(varList);
+//						
+//						mapEventsVar.put(varName, varList);
+//						
+//						employeeContractVariables.add(varName);
+//					}catch (Exception e) {
+//						continue;
+//					}
+//				}
 				
 				initializeDBCalendar(
 						s -> { success.accept(context);}, 
@@ -439,6 +456,8 @@ public class EmployeeEventsDraftObject {
 
 			@Override
 			public void onSuccess(EmployeeEventsData result) {
+				
+				fullJourney = result.isFullTimeJourney();
 				
 				for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : result.getContractEventsList().entrySet()){
 					

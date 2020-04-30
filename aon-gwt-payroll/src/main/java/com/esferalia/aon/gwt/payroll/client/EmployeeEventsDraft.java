@@ -246,8 +246,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		blankLabel.addStyleName(style.firstHeadStyleHide());
 		eventsGrid.setWidget(0, 0, blankLabel);
 		
-		String months[] = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE",
-						   "NOVIEMBRE", "DICIEMBRE"};
+		String months[] = {"ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT",
+						   "NOV", "DIC"};
 		
 		for(int i=0; i<months.length; i++){
 			eventsGrid.setText(0, i+1, months[i]);
@@ -258,14 +258,18 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	private void initializeBlockVariablesList() {
 		this.blockVariableList = new ArrayList<String>();
+		
 		this.blockVariableList.add("DIAS_TRABAJADOS");
-		this.blockVariableList.add("DIAS_EFECTIVOS");
-		this.blockVariableList.add("DIAS_ERE");
-		this.blockVariableList.add("DIAS_HUELGA");
-		this.blockVariableList.add("DIAS_AUSENCIA");
-		this.blockVariableList.add("HORAS_TRABAJADAS");
-		this.blockVariableList.add("HORAS_COMPLEMENTARIAS");
 		this.blockVariableList.add("DIAS_VACACIONES");
+		this.blockVariableList.add("DIAS_INACTIVIDAD");
+		this.blockVariableList.add("DIAS_AUSENCIA");
+		this.blockVariableList.add("DIAS_HUELGA");
+		this.blockVariableList.add("DIAS_ERE");
+		this.blockVariableList.add("DIAS_ERE_FZA");
+		this.blockVariableList.add("DIAS_ERE_FZA_EXON");
+		this.blockVariableList.add("HORAS_COMPLEMENTARIAS");
+		this.blockVariableList.add("HORAS_EXTRAS");
+		
 		this.blockVariableList.add("SALARIO_ANUAL");
 		this.blockVariableList.add("PAGAS");
 	}
@@ -435,6 +439,12 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		//Crear nuevas filas con las variables dadas
 		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+			if(employeeEventsDraft.isFullJourney() && var == "HORAS_COMPLEMENTARIAS")
+				continue;
+			
+			if(!employeeEventsDraft.isFullJourney() && var == "HORAS_EXTRAS")
+				continue;
+			
 			createVariableRow(var, list);
 		}
 		
