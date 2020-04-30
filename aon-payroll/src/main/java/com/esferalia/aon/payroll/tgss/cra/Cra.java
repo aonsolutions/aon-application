@@ -255,6 +255,8 @@ public class Cra {
 					for (int i=0; i<salaryPaymentRecords.size(); i++) {
 						// FIx CRA_000
 						PaymentType craType = null;
+						if(salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE) == 0 && salaryPaymentRecords.get(i).get(SALARY_PAYMENT.PAYMENT_CONCEPT) == "MEJORA")
+							continue;
 						if(salaryPaymentRecords.get(i).get(SALARY_PAYMENT.TYPE) == 0)
 							craType = PaymentType.values()[1];
 						else
