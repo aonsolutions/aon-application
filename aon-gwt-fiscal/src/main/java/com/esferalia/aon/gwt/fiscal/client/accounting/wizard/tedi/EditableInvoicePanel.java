@@ -537,6 +537,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		else if (invoiceType == InvoiceType.UNDEDUCTIBLE) l = "Ticket/Gasto no Ded.";
 		else if (invoiceType == InvoiceType.UNDEDUCTIBLE) l = "Ticket/Gasto no Ded.";
 		else l = "Nueva factura"; 
+		l = l + (ai.isInvestment()?". (Inv)":"");
+		l = l + (ai.isVatAccrualPayment()?". (Crit.Caja)":"");
 		return l;
 	}
 
@@ -586,6 +588,16 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		taxDate = new DateBoxEx();
 		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
 		IntegerBox number = new IntegerBox();
+		
+		CheckLabel service = new CheckLabel(AON.MSG.service());
+		CheckLabel investment = new CheckLabel(AON.MSG.investAsset());
+		CheckLabel surcharge = new CheckLabel(AON.MSG.surcharge());
+		CheckLabel prepayment = new CheckLabel(AON.MSG.hasPrepayments());
+		CheckLabel vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr());
+		CheckLabel withholding = new CheckLabel(AON.MSG.withholding());
+		CheckLabel withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr());
+		CheckLabel rectifier = new CheckLabel(AON.MSG.rectifiedInvoice());
+		
 		TextBox manualConcept = new TextBox();
 		
 		invoiceCallback.getModule().getEntryDateBox().addValueChangeHandler(new ValueChangeHandler<Date>() {
@@ -765,7 +777,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		headerPanel2.add(taxDateLabel);
 		
 		FlowPanel taxDateContainer = new FlowPanel();
-		taxDateContainer.setStyleName(AON.AON_CSS.aonWidth150());
+		taxDateContainer.setStyleName(AON.AON_CSS.aonWidth100());
 		
 		taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
@@ -780,10 +792,34 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		headerPanel2.add(taxDateContainer);
 		
 		// ---------------------------
+		// --------- TRANSACTIONSERVICE ---------
+		// ---------------------------
+		InlineLabel transactionLabel = new InlineLabel(AON.MSG.transaction());
+		transactionLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		transactionLabel.addStyleName(AON.AON_CSS.aonWidth80());
+		transactionLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+		headerPanel2.add(transactionLabel);
+		
+		FlowPanel transactionContainer = new FlowPanel();
+		transactionContainer.setStyleName(AON.AON_CSS.aonWidth150());
+
+		transactionBox.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				invoiceCallback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				headerDataChanged(invoiceCallback);
+			}
+		});
+		transactionContainer.add(transactionBox);
+		transactionBox.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+		headerPanel2.add(transactionContainer);
+
+		// ---------------------------
 		// --------- SERVICE ---------
 		// ---------------------------
-		CheckLabel service = new CheckLabel(AON.MSG.service());
-		service.setWidthStyle( AON.AON_CSS.aonWidth100Important());
+		service.setWidthStyle( AON.AON_CSS.aonWidth80Important());
 		service.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		if (invoiceCallback.getInvoice().isExpenses()) {
 			service.paint(true);
@@ -800,47 +836,31 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			});
 		}
 		headerPanel2.add(service);
-		
-		// ---------------------------------------
-		// --------- BIENES DE INVERSION ---------
-		// ---------------------------------------
-		CheckLabel investment = new CheckLabel(AON.MSG.investAsset());
-		investment.setWidthStyle( AON.AON_CSS.aonWidth150Important());
-		investment.paint(invoiceCallback.getInvoice().isInvestment());
-		investment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		investment.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setInvestment( !invoiceCallback.getInvoice().isInvestment() );
-				investment.paint(invoiceCallback.getInvoice().isInvestment());
-			}
-		});
-		headerPanel2.add(investment);
 
-		// -------------------------------------------
-		// --------- RECARGO DE EQUIVALENCIA ---------
-		// -------------------------------------------
-		CheckLabel surcharge = new CheckLabel(AON.MSG.surcharge());
-		surcharge.setWidthStyle( AON.AON_CSS.aonWidth150Important());
-		surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
-		surcharge.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		surcharge.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setSurcharge(!invoiceCallback.getInvoice().getInvoice().isSurcharge());
-				surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
-				headerDataChanged(invoiceCallback);
-			}
-		});
-		headerPanel2.add(surcharge);
+		// -------------------------------------
+		// --------- Fra. Rectificativa --------
+		// -------------------------------------
+		if (invoiceCallback.getInvoice().getInvoice().getRectificationInvoice() == null){
+			rectifier.setWidthStyle( AON.AON_CSS.aonWidth100Important());
+			rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
+			rectifier.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+			rectifier.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
+					invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+					rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
+					headerDataChanged(invoiceCallback);
+				}
+			});
+			headerPanel2.add(rectifier);
+		}
+
 		
 		// -------------------------------------
 		// --------- CONTIENE SUPLIDOS ---------
 		// -------------------------------------
-		CheckLabel prepayment = new CheckLabel(AON.MSG.hasPrepayments());
 		prepayment.setWidthStyle( AON.AON_CSS.aonWidth150Important());
 		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
 		prepayment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
@@ -856,55 +876,43 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		headerPanel2.add(prepayment);
 
 		// *************************************************************************
-		// ***************** PANEL ( Transaccion, set de checks 1) *****************
+		// ***************** PANEL ( set de checks 1) *****************
 		// *************************************************************************
 		FlowPanel headerPanel3 = new  FlowPanel();
 		invoiceDataTable.setWidget(2, 0, headerPanel3);
 		headerPanel3.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
-		InlineLabel transactionLabel = new InlineLabel(AON.MSG.transaction());
-		transactionLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		transactionLabel.addStyleName(AON.AON_CSS.aonWidth80());
-		transactionLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		headerPanel3.add(transactionLabel);
+		headerPanel3.addStyleName(AON.AON_CSS.aonPaddingTopHalf());
 		
-		FlowPanel transactionContainer = new FlowPanel();
-		transactionContainer.setStyleName(AON.AON_CSS.aonWidth150());
+		// ----------------------------------
+		// --------- EMPTY LABEL ------------
+		// ----------------------------------
+		InlineLabel emptyLabel1 = new InlineLabel();
+		emptyLabel1.setStyleName(AON.AON_CSS.aonInnerLabel());
+		emptyLabel1.addStyleName(AON.AON_CSS.aonWidth20());
+		emptyLabel1.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+		headerPanel3.add(emptyLabel1);
 
-		transactionBox.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
-				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
-				headerDataChanged(invoiceCallback);
-			}
-		});
-		transactionContainer.add(transactionBox);
-		transactionBox.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		headerPanel3.add(transactionContainer);
-
-		// --------------------------------------------
-		// --------- Regimne criterio de caja ---------
-		// --------------------------------------------
-		CheckLabel vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr());
-		vatAccrualPayment.setWidthStyle(AON.AON_CSS.aonWidth100Important());
-		vatAccrualPayment.paint(invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
-		vatAccrualPayment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		vatAccrualPayment.addClickHandler( new ClickHandler() {
+		// ---------------------------------------
+		// --------- BIENES DE INVERSION ---------
+		// ---------------------------------------
+		investment.setWidthStyle( AON.AON_CSS.aonWidth120Important());
+		investment.paint(invoiceCallback.getInvoice().isInvestment());
+		investment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+		investment.addClickHandler( new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setVatAccrualPayment(!invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
-				vatAccrualPayment.paint(invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
+				invoiceCallback.getInvoice().getInvoice().setInvestment( !invoiceCallback.getInvoice().isInvestment() );
+				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+				investment.paint(invoiceCallback.getInvoice().isInvestment());
 			}
 		});
-		headerPanel3.add(vatAccrualPayment);
-		
+		headerPanel3.add(investment);
+
 		// -------------------------------------
 		// --------- Aplicar retencion ---------
 		// -------------------------------------
-		CheckLabel withholding = new CheckLabel(AON.MSG.withholding());
-		withholding.setWidthStyle(AON.AON_CSS.aonWidth150Important());
+		withholding.setWidthStyle(AON.AON_CSS.aonWidth100Important());
 		withholding.paint(invoiceCallback.getInvoice().getInvoice().isWithholding());
 		withholding.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		withholding.addClickHandler( new ClickHandler() {
@@ -922,11 +930,28 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 		headerPanel3.add(withholding);
+
+		// -------------------------------------------
+		// --------- RECARGO DE EQUIVALENCIA ---------
+		// -------------------------------------------
+		surcharge.setWidthStyle( AON.AON_CSS.aonWidth120Important());
+		surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
+		surcharge.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+		surcharge.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				invoiceCallback.getInvoice().getInvoice().setSurcharge(!invoiceCallback.getInvoice().getInvoice().isSurcharge());
+				surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
+				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				headerDataChanged(invoiceCallback);
+			}
+		});
+		headerPanel3.add(surcharge);
 		
 		// -------------------------------------------
 		// --------- Reg. agric, gan y pesca ---------
 		// -------------------------------------------
-		CheckLabel withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr());
 		withholdingFarmer.setWidthStyle(AON.AON_CSS.aonWidth150Important());
 		withholdingFarmer.paint(invoiceCallback.getInvoice().getInvoice().isWithholdingFarmer());
 		withholdingFarmer.setVisible(!invoiceCallback.getInvoice().isUndeductible());
@@ -941,26 +966,23 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 		headerPanel3.add(withholdingFarmer);
-		
-		// -------------------------------------
-		// --------- Fra. Rectificativa --------
-		// -------------------------------------
-		if (invoiceCallback.getInvoice().getInvoice().getRectificationInvoice() == null){
-			CheckLabel rectifier = new CheckLabel(AON.MSG.rectifiedInvoice());
-			rectifier.setWidthStyle( AON.AON_CSS.aonWidth150Important());
-			rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
-			rectifier.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-			rectifier.addClickHandler( new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
-					rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
-					headerDataChanged(invoiceCallback);
-				}
-			});
-			headerPanel3.add(rectifier);
-		}
+
+		// --------------------------------------------
+		// --------- Regimne criterio de caja ---------
+		// --------------------------------------------
+		vatAccrualPayment.setWidthStyle(AON.AON_CSS.aonWidth100Important());
+		vatAccrualPayment.paint(invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
+		vatAccrualPayment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+		vatAccrualPayment.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				invoiceCallback.getInvoice().getInvoice().setVatAccrualPayment(!invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
+				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+				vatAccrualPayment.paint(invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
+			}
+		});
+		headerPanel3.add(vatAccrualPayment);
 
 		// *************************************************************************
 		// ***************** PANEL ( Número Factura, total factura ) ******
@@ -968,12 +990,29 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		FlowPanel headerPanel4 = new  FlowPanel();
 		invoiceDataTable.setWidget(3, 0, headerPanel4);
 		headerPanel4.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
+		headerPanel4.addStyleName(AON.AON_CSS.aonPaddingTop());
 		
+		// ----------------------------------
+		// --------- EMPTY LABEL ------------
+		// ----------------------------------
+		InlineLabel emptyLabel2 = new InlineLabel();
+		emptyLabel2.setStyleName(AON.AON_CSS.aonInnerLabel());
+		emptyLabel2.addStyleName(AON.AON_CSS.aonWidth80());
+		emptyLabel2.setVisible(!invoiceCallback.getInvoice().isUndeductible());
+		headerPanel4.add(emptyLabel2);
+
+		// ----------------------------------
+		// --------- NUMERO FACTURA ---------
+		// ----------------------------------
 		InlineLabel invoiceNumberLabel = new InlineLabel(AON.MSG.invoiceNumber());
 		invoiceNumberLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		invoiceNumberLabel.addStyleName(AON.AON_CSS.aonWidth80());
+		invoiceNumberLabel.addStyleName(AON.AON_CSS.aonBold());
 		headerPanel4.add(invoiceNumberLabel);
 		
+			// -------------------------
+			// --------- SERIE ---------
+			// -------------------------
 		FlowPanel numberPanel = new FlowPanel();
 		series.addChangeHandler(new ChangeHandler() {
 			
@@ -1006,6 +1045,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		numberPanel.add(series);
 		
+			// -------------------------
+			// --------- NUMBER---------
+			// -------------------------
 		number.setStyleName(AON.AON_CSS.aonMarginLeft5());
 		number.addStyleName(AON.AON_CSS.aonInputText());
 		number.addValueChangeHandler(new ValueChangeHandler<Integer>() {
@@ -1022,6 +1064,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		number.setMaxLength(8);
 		numberPanel.add(number);
 		
+			// ----------------------------------
+			// --------- REFERENCE CODE ---------
+			// ----------------------------------
 		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
 		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -1039,9 +1084,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 		headerPanel4.add(numberPanel);
 		
+		// ----------------------------------
+		// --------- INVOICE TOTAL ----------
+		// ----------------------------------
 		InlineLabel label0 = new InlineLabel(AON.MSG.invoiceTotal());
 		label0.setStyleName(AON.AON_CSS.aonInnerLabel());
 		label0.addStyleName(AON.AON_CSS.aonMarginLeft());
+		label0.addStyleName(AON.AON_CSS.aonBold());
 		headerPanel4.add(label0);
 
 		invoiceTotal.addKeyUpHandler( new KeyUpHandler() {
@@ -1091,6 +1140,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceTotal.setVisibleLength(12);
 		headerPanel4.add(invoiceTotal);
 		
+		// -------------------------------------
+		// --------- FAST SAVE BUTTON ----------
+		// -------------------------------------
 		fastSave = new Button(AON.MSG.saveAction());
 		fastSave.setStyleName(AON.AON_CSS.aonIconSave());
 		fastSave.addStyleName(AON.AON_CSS.aonIconCommandButton());

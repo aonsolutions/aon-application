@@ -17,7 +17,7 @@ public class InvoiceCalculator {
 				}
 				if (ai.isWithholding() && vat.isWithholding()) {
 					if (ai.isWithholdingFarmer()) {
-						wb = wb + vat.getBase() + vat.getQuota();
+						wb = wb + vat.getBase() + vat.getQuota() + (ai.isSurcharge()?vat.getSurchargeQuota():0.0);
 					} else {
 						wb = wb + vat.getBase();
 					}

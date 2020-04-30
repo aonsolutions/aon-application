@@ -2,13 +2,21 @@ package com.esferalia.aon.occam.api.model.type;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
+
 public enum InvoiceTransactionType implements Serializable {
 
-	NATIONAL ("Nacional"),
-	INTRACOMMUNITY("Intracomunitaria"),
-	EXTRACOMMUNITY("Extracomunitaria"),
-	CAN_CEU_MEL("Canarias, Ceuta y Melilla"),
-	OTHER_ISP("I.S.P.");
+	NATIONAL ("Nacional")
+		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitNational();} },
+	INTRACOMMUNITY("Intracomunitaria")
+		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitIntracommunity();} },
+	EXTRACOMMUNITY("Extracomunitaria")
+		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitExtracommunity();} },
+	CAN_CEU_MEL("Canarias, Ceuta y Melilla")
+		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitCanCeuMel();} },
+	OTHER_ISP("I.S.P.")
+		{ @Override public void visit(IInvoiceTransactionTypeVisitor visitor) { visitor.visitOtherISP();} },
+	;
 	
 	private String description;
 	
@@ -32,6 +40,9 @@ public enum InvoiceTransactionType implements Serializable {
 		if (i == null) return null;
 		if (i < 0 || i >= InvoiceTransactionType.values().length) return null;
 		return InvoiceTransactionType.values()[i];
+	}
+
+	public void visit(IInvoiceTransactionTypeVisitor visitor) {
 	}
 
 }

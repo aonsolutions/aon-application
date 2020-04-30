@@ -119,7 +119,6 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		container.clear();
 		tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonWidthAll());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
 		container.add(tab);
 		paintHeader();
 		paintRows();
@@ -135,6 +134,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		tab.setWidget(row, col, label);
 		decorateHeader(row, col, "1%");
 		++col;
+		
 		label = new Label(AON.MSG.taxableBaseAbr());
 		label.setStyleName(AON.AON_CSS.aonInnerLabel());
 		tab.setWidget(row, col, label);
@@ -222,6 +222,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontMedium());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextUnderline());
 	}
 
 	private void paintButtons() {
@@ -749,7 +750,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 		private void enableInvestAsset(int row ) {
 			final boolean otherLineWithInvestAssests = callback.isInvestAssetsAvailable() && isOtherLineWithInvestAssests(row);
 			
-			investAssetLabel.setVisible(!isUndeductible() && otherLineWithInvestAssests);
+			investAssetLabel.setVisible(!isUndeductible() && callback.isInvestAssetsAvailable());
 			dedPercentLabel.setVisible(!isUndeductible() && otherLineWithInvestAssests);
 			dedQuotaLabel.setVisible(!isUndeductible() && otherLineWithInvestAssests);
 			adjAccountLabel.setVisible(!isUndeductible() && otherLineWithInvestAssests);

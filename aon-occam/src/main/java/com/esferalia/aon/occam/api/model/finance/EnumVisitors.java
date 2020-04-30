@@ -2,6 +2,14 @@ package com.esferalia.aon.occam.api.model.finance;
 
 public class EnumVisitors {
 
+	public static interface IInvoiceTransactionTypeVisitor {
+		void visitNational();
+		void visitIntracommunity();
+		void visitExtracommunity();
+		void visitCanCeuMel();
+		void visitOtherISP();
+	}
+
 	public static interface IFinanceStatusVisitor {
 		void visitPending();
 		void visitBatched();

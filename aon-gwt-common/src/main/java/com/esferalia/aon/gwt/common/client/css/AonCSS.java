@@ -144,7 +144,10 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-width-80")
 	String aonWidth80();
-
+	
+	@ClassName("aon-width-80-important")
+	String aonWidth80Important();
+	
 	@ClassName("aon-width-90")
 	String aonWidth90();
 
@@ -162,6 +165,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-width-120")
 	String aonWidth120();
+
+	@ClassName("aon-width-120-important")
+	String aonWidth120Important();
 
 	@ClassName("aon-width-130")
 	String aonWidth130();
@@ -507,6 +513,9 @@ public interface AonCSS extends CssResource {
 
 	@ClassName("aon-simple-border")
 	String aonSimpleBorder();
+
+	@ClassName("aon-simple-border-gray")
+	String aonSimpleBorderGray();
 
 	@ClassName("aon-background-disabled")
 	String aonBackgroundDisabled();
@@ -1186,6 +1195,9 @@ public interface AonCSS extends CssResource {
 	
 	@ClassName("aon-padding-top")
 	String aonPaddingTop();
+	
+	@ClassName("aon-padding-top-half")
+	String aonPaddingTopHalf();
 
 	@ClassName("aon-padding2-top")
 	String aonPadding2Top();

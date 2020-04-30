@@ -340,6 +340,7 @@ public class InvoiceFinancePanel extends ScrollPanel implements HasValueChangeHa
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonFontMedium());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonNowrap());
 		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonBold());
+		tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonTextUnderline());
 	}
 
 	private void paintRows(IInvoicePanelCallback callback) {
