@@ -10,7 +10,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SATURDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRIKE_FACTOR;
@@ -73,24 +72,18 @@ import static java.util.Calendar.YEAR;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.Assert;
-
-import org.apache.velocity.runtime.parser.node.GetExecutor;
 import org.junit.Test;
 
-import com.code.aon.company.WorkPlace;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
-import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
@@ -104,6 +97,8 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+
+import junit.framework.Assert;
 
 /**
  * @author rtrepiana
@@ -185,7 +180,7 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		addData(aonContext, contract, getToday(), getToday(),
 				new HashMap<String, String>() {
 					{
-						put(STRIKE_FACTOR.getName(), format("%f", 1.00));
+						put(STRIKE_FACTOR.getName(), "1.0");
 					}
 				});
 
@@ -202,8 +197,8 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		SQLContractSalaryCalculatorContext ctx = new SQLContractSalaryCalculatorContext(
 				connection, start, end, end, criteria);
 		ctx.next();
-		assertEquals(ctx, (double) ((get(end, DAY_OF_MONTH)
-				- contractStartDayOfMonth + 1 - 1)), 
+		assertEquals(ctx, 
+				(double) ((get(end, DAY_OF_MONTH) - contractStartDayOfMonth + 1 - 1)), 
 				contractStart.compareTo(end) < 0 ? add(contractStart, DAY_OF_MONTH,1): contractStart, 
 				end, 
 				null);
