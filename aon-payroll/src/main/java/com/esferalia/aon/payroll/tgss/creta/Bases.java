@@ -7,20 +7,22 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENT
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_C737;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H03;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H04;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.SLD_H06;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDay;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
@@ -50,6 +52,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.DoubleSupplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBContext;
@@ -78,7 +81,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
-import com.esferalia.aon.occam.impl.jooq.dao.OperationDAO;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
@@ -785,6 +787,11 @@ public class Bases {
 				put("300", "Percepciones íntegras Régimen Especial de Artistas");
 
 				put("702", "Base de FOGASA");
+				
+				put("03", "Número de horas de formación teórica presencial");
+				put("04", "Número de horas de formación teórica a distancia");
+				put("04", "Número de horas de tutoría");
+				put("737", "Bonificación tutoría");
 
 			}
 		};
@@ -1554,6 +1561,7 @@ public class Bases {
 
 	}
 	
+
 	private static class NonNegativeCCretaData extends CCretaData {
 
 		public NonNegativeCCretaData(String variable) {
@@ -1578,6 +1586,78 @@ public class Bases {
 			for (BasesCallback cb : cbs)
 				cb.negativeDato(variable, value, datoSolicitado, tramo, salary);
 		}
+	}
+	
+	private static class DistributeHCretaData extends HCretaData {
+		
+		public DistributeHCretaData(String variable) {
+			super(variable);
+		}
+		
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta)
+				throws NoSuchVariableException, UnMatchedVariableException {
+			return DistributeCCretaData.get(variable, salary,new Period(toDate(desde), toDate(hasta)));
+		}
+	}
+
+	private static class DistributeCCretaData extends CCretaData {
+
+
+		public DistributeCCretaData(String variable) {
+			super(variable);
+		}
+
+		// CCretaData ---------------------------------------------------------
+
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta)
+				throws NoSuchVariableException,
+				UnMatchedVariableException {
+			return get(variable, salary,
+					new Period(toDate(desde), toDate(hasta)));
+		}
+
+		// --------------------------------------------------------------------
+
+		protected static Double get(String variable,
+				Salary salary, Period p) throws NoSuchVariableException,
+						UnMatchedVariableException {
+			List<ContextData> datas = salary.getContextData()
+					.getOrDefault(variable, Collections.emptyList());
+						
+			double ret = datas.stream()
+			.collect(Collectors.summingDouble(DistributeCCretaData::eval));
+
+			if (ret == 0.00)
+				throw new NoSuchVariableException(variable);
+			
+			long workedDays = 
+			salary.getContextData()
+			.getOrDefault(WORKED_DAYS.getName(), Collections.emptyList())
+			.stream().collect(Collectors.summingLong(DistributeCCretaData::days))
+			;
+			if ( workedDays == 0 )
+				workedDays = 
+				salary.getContextData()
+				.getOrDefault(CGC_BASE.getName(), Collections.emptyList())
+				.stream().collect(Collectors.summingLong(DistributeCCretaData::days))
+				;
+			
+			long days = p.daysStream().count();
+			
+
+			return ret / workedDays * days;
+		}
+		
+		private static long days(ContextData d) {
+			return new Period(d.getStartDate(),d.getEndDate()).daysStream().count();
+		}
+
+		private static Double eval(ContextData d) {
+			return ExpressionContext.eval(d.getExpression(), Double.class);
+		}
+
 	}
 	
 
@@ -1859,6 +1939,11 @@ public class Bases {
 			put("702", new NonNegativeCCretaData(CGP_BASE_ENTERPRISE.getName()));
 		
 			put("300", new NonNegativeCCretaData(TOTAL_PAYMENT.getName()));
+			
+			put("737", new DistributeCCretaData(SLD_C737.getName()));
+			put("06", new DistributeHCretaData(SLD_H06.getName()));
+			put("03", new DistributeHCretaData(SLD_H03.getName()));
+			put("04", new DistributeHCretaData(SLD_H04.getName()));
 		}
 	};
 
@@ -2073,8 +2158,11 @@ public class Bases {
 				data.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
 				
 			}
-			
-			trabajadorBuilder.addTramo(tramoBuilder.create());
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo basesTramo = tramoBuilder.create();
+			if ( basesTramo.getDatosTramo().getDato().isEmpty())
+				;
+			else 
+				trabajadorBuilder.addTramo(basesTramo);
 		}
 		
 
@@ -2984,4 +3072,7 @@ public class Bases {
 			throw new InvalidTrabajador();
 		
 	}
+	
+	
+
 }

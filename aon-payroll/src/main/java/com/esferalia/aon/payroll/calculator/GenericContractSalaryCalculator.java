@@ -1596,6 +1596,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				QUOTE_DAYS.getName(), 
 				CGC_BASE.getName(), 
 				CGP_BASE.getName(),
+				WORKED_DAYS.getName(), 
 				CGC_BASE_ENTERPRISE.getName(), 
 				CGP_BASE_ENTERPRISE.getName(),
 				DIRECT_BASE.getName(), 
@@ -1615,6 +1616,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				SATURDAY_HOURS.getName(),
 				SUNDAY_HOURS.getName(),
 				
+				ContextVariable.SLD_C737.getName(),
+				ContextVariable.SLD_H06.getName(),
+				ContextVariable.SLD_H03.getName(),
+				ContextVariable.SLD_H04.getName(),
+
 				PREST_IT
 				});
 		fillData(ctx, ERE_BASES);

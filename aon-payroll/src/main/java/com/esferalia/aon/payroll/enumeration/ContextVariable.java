@@ -251,7 +251,14 @@ public enum ContextVariable implements IResourceable {
 
 	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN),
 
-	CCC_TYPE("CCC_TYPE", VariableType.INTEGER)	
+	CCC_TYPE("CCC_TYPE", VariableType.INTEGER),
+	
+	SLD_C737("BONIFICACION_TUTORIA", VariableType.DOUBLE, false),
+	SLD_H06("HORAS_TUTORIA", VariableType.INTEGER, false),
+	SLD_H03("HORAS_FORMACION_PRESENCIAL", VariableType.INTEGER, false),
+	SLD_H04("HORAS_FORMACION_DISTANCIA", VariableType.INTEGER, false),
+	
+	
 	;
 
 	public static final String ALL = "_P";

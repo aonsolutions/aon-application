@@ -15,17 +15,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AON;
@@ -51,6 +47,8 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
+
+import junit.framework.Assert;
 
 /**
  * @author rtrepiana
@@ -424,6 +422,98 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 								}) {
 							Assert.assertEquals(true, salary.getContextData()
 									.containsKey(var));
+							System.out.printf("%s = %s\r\n", var,
+									salary.getContextData().get(var)
+											.get(0).getExpression());
+						}
+						
+						throw new SuccessException();
+					});
+		} catch (SuccessException e) {
+			return;
+		}
+
+		Assert.fail();
+	}
+
+	@Test
+	public void testSalaryDataVI()
+			throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+					"1500.00 * DIAS_TRABAJADOS / DIAS_MES"						
+				},
+				new String[] {
+					"BASE_CGC * PORCENTAJE_20",	
+					"BASE_CGC * PORCENTAJE_05",	
+				}
+		);
+		
+		cleanSystemData(aonContext);
+		addSystemData(aonContext,
+				getFirstDayOfYear(getToday()), null,
+				Collections.emptyMap());
+		
+		
+
+		addData(aonContext, contract, 
+				getFirstDayOfYear(getToday()), 
+				null,
+				new HashMap<String, String>() {
+					{
+						put("TC2", "'100'");
+						put("GRUPO_COTIZACION", "\"01\"");
+						put("HORAS_TUTORIA","13");
+						put("BONIFICACION_TUTORIA", "666.66");
+						put("HORAS_FORMACION_PRESENCIAL","6");
+						put("HORAS_FORMACION_DISTANCIA","9");
+
+					}
+				});
+
+		
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		ContractSalaryCalculator<ISalary> calculator = new ContractSalaryCalculator<ISalary>();
+
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+		start = add(start, Calendar.MONTH,1);
+		end = getLastDayOfMonth(start);
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+
+		try {
+			AON.getSalaries(aonContext,
+					props -> props.getContractProperty().eq(contract.getId()))
+					.forEach(salary -> {
+						for (String var : new String[] {
+								"HORAS_TUTORIA",
+								"BONIFICACION_TUTORIA",
+								"HORAS_FORMACION_PRESENCIAL",
+								"HORAS_FORMACION_DISTANCIA"
+								}) {
+							Assert.assertEquals(true, salary.getContextData()
+									.containsKey(var));
+							
 							System.out.printf("%s = %s\r\n", var,
 									salary.getContextData().get(var)
 											.get(0).getExpression());
@@ -989,6 +1079,50 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testNOData()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("DIAS_MES",
+				"[ \"01\":30, \"02\":30, \"03\":30, \"04\":30, \"05\":30, \"06\":30, \"07\":30, \"08\": DIAS_NATURALES_MES, \"09\": DIAS_NATURALES_MES, \"10\": DIAS_NATURALES_MES, \"11\": DIAS_NATURALES_MES][GRUPO_COTIZACION]");
+				put("GRUPO_COTIZACION","\"07\"");
+			}
+		});
+
+		ContractRecord contract = newContract(aonContext,
+				new String[] { 
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				},
+				new String[] { 
+						"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+						"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				});
+		
+		// Embargo with fatal syntax error
+		addEmbargo(aonContext, contract, "100.00(" );
+
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		ISalary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(1500.00, salary.getTotalPayment());
+		
+		
+
+	}	
+	
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {

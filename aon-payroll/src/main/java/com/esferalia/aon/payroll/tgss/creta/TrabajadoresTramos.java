@@ -412,6 +412,22 @@ public class TrabajadoresTramos {
 							public void visitExpedienteRegulacionEmpleoParcial() {
 							}
 
+							@Override
+							public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+								incapacidadTemporalPagoDelegado = true;
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialFormacion() {
+							}
+
+							@Override
+							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+							}
 						};
 						
 						SalaryFilter filter = new SalaryFilter();
@@ -496,6 +512,7 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setCodigo("601");
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+																
 							}
 							
 							@Override
@@ -734,6 +751,68 @@ public class TrabajadoresTramos {
 								dataSolicitadoBuilder.setObligatorio(true);
 								tramoBuilder.addDato(dataSolicitadoBuilder.create());
 							}
+
+							@Override
+							public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+								// 3.2.1 Tramos en situación de IT pago delegado contingencias comunes 
+								// Compensación IT contingencias comunes 
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("563");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								
+							}
+
+							@Override
+							public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+								//3.1.5 Tramos en situación de ERE Parcial
+								visitMaternidadPaternidadTiempoParcialFormacion();
+								// Coeficiente a tiempo parcial en situación de Expediente de Regulación de Empleo 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("05");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+
+							@Override
+							public void visitMaternidadPaternidadTiempoParcialFormacion() {
+								// 3.1.4 Tramo en situación de Maternidad/Paternidad a Tiempo Parcial 
+								// N horas formación teórica presencial 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("03");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas formación teórica a distancia 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("04");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// N horas tutoría 
+								dataSolicitadoBuilder.setTipo("H");
+								dataSolicitadoBuilder.setCodigo("06");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Bonificación tutoría
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("737");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+								// Base de Horas Extras Fuerza Mayor
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("501");
+								dataSolicitadoBuilder.setObligatorio(false);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());
+							}
+
+							@Override
+							public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+								//3.1.3 Tramo en situación de IT pago delegado AT y EP
+								// Compensación por AT EP 
+								dataSolicitadoBuilder.setTipo("C");
+								dataSolicitadoBuilder.setCodigo("663");
+								dataSolicitadoBuilder.setObligatorio(true);
+								tramoBuilder.addDato(dataSolicitadoBuilder.create());								
+							}
 							
 							
 							
@@ -902,6 +981,26 @@ public class TrabajadoresTramos {
 				public void visitExpedienteRegulacionEmpleoParcial() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+				}
 			};
 
 			SalaryVisitor it15PrimerosDias = new SalaryVisitor(){
@@ -981,6 +1080,26 @@ public class TrabajadoresTramos {
 				public void visitExpedienteRegulacionEmpleoParcial() {
 					visitOthers();
 				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					visitOthers();					
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+					visitOthers();					
+				}
 			};
 			
 			SalaryVisitor itDelegate = new SalaryVisitor(){
@@ -1059,6 +1178,26 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitExpedienteRegulacionEmpleoParcial() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
 					visitOthers();
 				}
 			};
@@ -1141,6 +1280,26 @@ public class TrabajadoresTramos {
 				public void visitExpedienteRegulacionEmpleoParcial() {
 					visitOthers();
 				}
+
+				@Override
+				public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitMaternidadPaternidadTiempoParcialFormacion() {
+					visitOthers();
+				}
+
+				@Override
+				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+					visitOthers();
+				}
 			};
 
 			private Period period ;
@@ -1219,6 +1378,26 @@ public class TrabajadoresTramos {
 			@Override
 			public void visitExpedienteRegulacionEmpleoParcial() {
 				state.visitExpedienteRegulacionEmpleoParcial();
+			}
+
+			@Override
+			public void visitIncapacidadTemporalPagoDelegadoFormacion() {
+				state.visitIncapacidadTemporalPagoDelegadoFormacion();
+			}
+
+			@Override
+			public void visitExpedienteRegulacionEmpleoParcialFormacion() {
+				state.visitExpedienteRegulacionEmpleoParcialFormacion();
+			}
+
+			@Override
+			public void visitMaternidadPaternidadTiempoParcialFormacion() {
+				state.visitMaternidadPaternidadTiempoParcialFormacion();
+			}
+
+			@Override
+			public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
+				state.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
 			}
 
 		};
@@ -1300,9 +1479,18 @@ public class TrabajadoresTramos {
 		void visitMaternidadPaternidadTiempoParcial();
 		void visitExpedienteRegulacionEmpleoTotal();
 		void visitExpedienteRegulacionEmpleoParcial();
+		void visitIncapacidadTemporalPagoDelegadoFormacion();
+		void visitExpedienteRegulacionEmpleoParcialFormacion();
+		void visitMaternidadPaternidadTiempoParcialFormacion();
+		void visitIncapacidadTemporalATEPPagoDelegadoFormacion();
 		
 	}
 	
+	@FunctionalInterface
+	private static interface Visit {
+		void visit();
+	}
+
 	private static void visit(Salary salary, Date startDate, Date endDate, SalaryVisitor visitor) {
 		String tc2 = getContextData(TC2.getName(),salary, startDate, endDate, "-");
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
@@ -1359,8 +1547,30 @@ public class TrabajadoresTramos {
 		
 		boolean formacionNormal = "421".equals(tc2) ;
 		
+		
 		if ( formacionNormal )
-			visitor.visitFormacionNormal();
+			if ( iT15primerosDias )
+				;
+			else if ( iTPagoDelegado )
+				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
+			else if ( fullMaternity  )
+				;
+			else if ( fullPaternity  )
+				;
+			else if ( partialMaternity )
+				visitor.visitMaternidadPaternidadTiempoParcialFormacion();
+			else if ( partialPaternity )
+				visitor.visitMaternidadPaternidadTiempoParcialFormacion();
+			else if ( atEPPagoDelegado )
+				visitor.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
+			else if ( iTPagoDirecto )
+				;
+			else if ( ereTotal )
+				;
+			else if ( ereParcial )
+				visitor.visitExpedienteRegulacionEmpleoParcialFormacion();
+			else
+				visitor.visitFormacionNormal();
 		else if ( iT15primerosDias )
 			visitor.visitIncapacidadTemporal15PrimerosDias();
 		else if ( iTPagoDelegado )
@@ -1387,13 +1597,45 @@ public class TrabajadoresTramos {
 			visitor.visitTiempoCompletoNormal();
 		else 
 			visitor.visitTiempoParcialNormal();
-			
-		//String quoteGroup = getContextData(QUOTE_GROUP.getName(),salary, startDate, endDate);
+		
+		Visit grupoCotizacion ;
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( Integer.parseInt(quoteGroup ) >= 8 )
-			visitor.visitGrupoCotizacionDiario();
+			grupoCotizacion = visitor::visitGrupoCotizacionDiario;
 		else
-			visitor.visitGrupoCotizacionMensual();
+			grupoCotizacion = visitor::visitGrupoCotizacionMensual;
+		
+		
+		if ( formacionNormal )
+			;		
+		else if ( iT15primerosDias )
+			grupoCotizacion.visit();		
+		else if ( iTPagoDelegado )
+			grupoCotizacion.visit();		
+		else if ( fullMaternity  )
+			grupoCotizacion.visit();		
+		else if ( fullPaternity  )
+			grupoCotizacion.visit();		
+		else if ( partialMaternity )
+			;		
+		else if ( partialPaternity )
+			;
+		else if ( atEPPagoDelegado )
+			grupoCotizacion.visit();		
+		else if ( iTPagoDirecto )
+			grupoCotizacion.visit();		
+		else if ( ereTotal )
+			grupoCotizacion.visit();		
+		else if ( ereParcial )
+			;		
+		else if ( regimenArtistas )
+			;		
+		else if (tiempoCompleto)
+			grupoCotizacion.visit();		
+		else 
+			grupoCotizacion.visit();		
+		
+		
 	}
 
 	private static interface TypeVisitor<T> {
