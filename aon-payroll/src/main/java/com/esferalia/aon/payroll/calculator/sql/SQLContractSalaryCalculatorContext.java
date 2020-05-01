@@ -126,6 +126,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
@@ -3406,7 +3407,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return (availableDays == monthDays ? ctxMonthDays : availableDays) * factor;
 	}
 
-	private double getEreDays(ExpressionContext ctx, Period p, double factor) {
+	private double getEreDays(ExpressionContext ctx, Period p, double factor, List<Pair<ContextVariable,ITimedVariable<Object>>> others ) {
 		double availableDays = getAvailableDays(p.getStart(), p.getEnd());
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
 		double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
@@ -3419,9 +3420,37 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if ( ctxMonthDays == naturalMonthDays )
 			return availableDays * factor;
 		
+		Period adjust = p;
+		try {
+			adjust = getPeriod4Adjust(others);
+		} catch ( NoSuchElementException e) {
+			
+		}
+		
+		if ( p.compareTo(adjust) != 0 )
+			return availableDays * factor;
+				
 		return (availableDays + (30 - naturalMonthDays)) * factor;
 		//return (availableDays) + (30 - naturalMonthDays);
 	}
+	
+	
+	private Period getPeriod4Adjust(List<Pair<ContextVariable,ITimedVariable<Object>>> others) {
+		return 
+		others.stream().map(pair -> pair.snd)
+		.filter(v -> ((Number)v.getValue(v.getPeriod())).doubleValue() == 1.00)
+		.reduce((v1,v2) -> v2)
+		.map(v -> v.getPeriod())
+		.orElseGet(() ->  
+		others.stream().map(pair -> pair.snd)
+		.filter(v -> ((Number)v.getValue(v.getPeriod())).doubleValue() < 1.00)
+		.reduce((v1,v2) -> v2)
+		.map(v -> v.getPeriod())
+		.orElseThrow()
+		);
+	}
+	
+	
 
 	private double getQuoteDays(ExpressionContext ctx, Period p, double factor) {
 		Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
@@ -4429,81 +4458,85 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		List<Period> leaves = getLeavesPeriods();
 		intersects = Period.sub(intersects, leaves);
 		
-		Collection<ContextVariable> ereFactorsVars = getEreFactorsVars();
+		List<Pair<ContextVariable,ITimedVariable<Object>>> ereFactorsPairs = 
+		Arrays.stream(ContextVariable.ERE_FACTORS)
+		.flatMap(c -> ctx.getVariables(c).stream().map(v -> new Pair<ContextVariable,ITimedVariable<Object>>(c, v)))
+		.sorted( (p1,p2) -> p1.snd.getPeriod().compareTo(p2.snd.getPeriod()) )
+		.filter( p -> p.snd.getValue(p.snd.getPeriod()) instanceof Number )
+		.collect(Collectors.toList())
+		;
 		
-		for ( ContextVariable ereFactorVar : ereFactorsVars ) {
-						
-			// ERE
-			for (ITimedVariable<Object> ereFactor : ctx.getVariables(ereFactorVar)) {
-				Period period = ereFactor.getPeriod();
-				Object value = ereFactor.getValue(period);
-				if (!(value instanceof Number))
-					continue;
+		// ERE
+		for (Pair<ContextVariable,ITimedVariable<Object>> ereFactorPair : ereFactorsPairs) {
+			ContextVariable ereFactorVar = ereFactorPair.fst;
+			ITimedVariable<Object> ereFactor = ereFactorPair.snd;
+					
+			Period period = ereFactor.getPeriod();
+			Object value = ereFactor.getValue(period);			
 
-				double factor = ((Number) value).doubleValue();
-				if (((Number) value).doubleValue() >= 1.00)
-					intersects = Period.sub(intersects, Collections.singletonList(period));
-				else
-					intersects = SQLNoItContractSalaryCalculatorContext.split(intersects,
-							Collections.singletonList(period));
+			double factor = ((Number) value).doubleValue();
+			if (((Number) value).doubleValue() >= 1.00)
+				intersects = Period.sub(intersects, Collections.singletonList(period));
+			else
+				intersects = SQLNoItContractSalaryCalculatorContext.split(intersects,
+						Collections.singletonList(period));
+			
+			ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
 
-				ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
+				@Override
+				public Double getValue(Period p) {
+					return getEreDays(ctx, p, factor, ereFactorsPairs);
+				}
+
+			};
+			
+			ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return getEreDays(ctx, p, 1.00, ereFactorsPairs);
+				}
+
+			};
+
+			String daysVar = ereFactorVar.getName()
+			.replaceAll(ERE_FACTOR.getName(), ERE_DAYS.getName());
+			
+			ctx.putVariable(daysVar, ereDays);
+			ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
+			
+			Date ereStartDate = getStartDate(ereFactorVar, period);
+
+			ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					try {
+						return  (Double) br(ereStartDate);
+					} catch (ExpressionException | SalaryException | SQLException e) {
+						throw new ExpressionExceptionWrapper(
+								new UndefinedContextVariablesException(REGULATORY_BASE));
 					}
+				}
 
-					@Override
-					public Double getValue(Period p) {
-						return getEreDays(ctx, p, factor);
-					}
+			};
+			ITimedVariable<?> userBr = getExpressionContext().getVariable(REGULATORY_BASE, period.getStart(),
+					period.getEnd());
 
-				};
-				
-				ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						return getEreDays(ctx, p, 1.00);
-					}
-
-				};
-
-				String daysVar = ereFactorVar.getName()
-				.replaceAll(ERE_FACTOR.getName(), ERE_DAYS.getName());
-				
-				ctx.putVariable(daysVar, ereDays);
-				ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
-				
-				Date ereStartDate = getStartDate(ereFactorVar, period);
-
-				ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
-					@Override
-					public Period getPeriod() {
-						return period;
-					}
-
-					@Override
-					public Double getValue(Period p) {
-						try {
-							return  (Double) br(ereStartDate);
-						} catch (ExpressionException | SalaryException | SQLException e) {
-							throw new ExpressionExceptionWrapper(
-									new UndefinedContextVariablesException(REGULATORY_BASE));
-						}
-					}
-
-				};
-				ITimedVariable<?> userBr = getExpressionContext().getVariable(REGULATORY_BASE, period.getStart(),
-						period.getEnd());
-
-				if (userBr == null)
-					ctx.putVariable(REGULATORY_BASE, ereBase);
-			}
+			if (userBr == null)
+				ctx.putVariable(REGULATORY_BASE, ereBase);
 		}
 
 
