@@ -2608,24 +2608,33 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	protected double fixGuarantee( ITimedResult<Double> result) {
 		Period period = result.getPeriod();
-		double guarenteed = result.getValue();
+		double quoteGuarenteed = result.getValue();
+		double paidGuarenteed = result.getValue();
 		
 		double br = getDoubleVariable(ContextVariable.REGULATORY_BASE.getName(),period.getStart(), period.getEnd() );
 		double quoteDays = getVariables(ContextVariable.QUOTE_DAYS.getName(), period.getStart(), period.getEnd(), Collectors.summingDouble( v -> (Double) v.getValue(v.getPeriod()) ));
 		
-		if ( guarenteed <=  br )
-			guarenteed *= quoteDays;
+		
+		if ( quoteGuarenteed <=  br ) {
+			quoteGuarenteed *= quoteDays;
+			paidGuarenteed *= period.daysStream().count();
+		}
 		
 		double prestIt = 
 				getVariables(ContextVariable.PREST_IT,period.getStart(), period.getEnd(), Collectors.summingDouble( v -> (Double) v.getValue(v.getPeriod()) ));
 		
 		double max = br * period.daysStream().count();
 		
-		if ( (guarenteed < prestIt ) 
-			&& (guarenteed + prestIt) <= max)
-			guarenteed += prestIt;
+		if ( (quoteGuarenteed < prestIt ) 
+			&& (quoteGuarenteed + prestIt) <= max) {
+			quoteGuarenteed += prestIt;
+			paidGuarenteed += prestIt;
+			return paidGuarenteed < max ? paidGuarenteed : quoteGuarenteed;
+		} else {
+			return quoteGuarenteed;
+		}
 		
-		return guarenteed;
+		
 	}
 
 	protected Object onAllGuarantee(Double guarenteed, Double totalPayment) throws UndefinedContextVariablesException {

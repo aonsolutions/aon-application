@@ -13,6 +13,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 import static java.util.Calendar.DATE;
+import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -3896,7 +3897,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
 		
 		double br = 1000.00 / 30.00;
-		double prestIt = br * 0.75 * 31.00;
+		double prestIt = br * 0.75 * AonDateUtils.getMax(endDate, DAY_OF_MONTH);
 		//@formatter:off
 		Assert.assertEquals(
 				prestIt + (br * 0.15 * 30), 
@@ -4461,7 +4462,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		//@formatter:off
 		Assert.assertEquals(
-				1000.00/30*25 + 1000.00/30*3.00*0.10 + 1000.00/30*2*0.70, 
+				1000.00/30*26 + 1000.00/30*3.00*0.10 + 1000.00/30*2.00*0.70, 
 				salary.getTotalPayment() 
 				
 				, DELTA);
