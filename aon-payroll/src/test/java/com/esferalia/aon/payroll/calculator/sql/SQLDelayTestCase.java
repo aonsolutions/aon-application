@@ -897,6 +897,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		calculator.calculate(ctx);
 		jooqSalaryBuilder.execute();
 		
+		AON.getSalaryData(aonContext, p -> p.getContractProperty().eq(contract.getId()))
+		.flatMap(s ->s.getContextData().entrySet().stream()).forEach( e -> { 
+			System.out.println(e.getKey() + " = " + e.getValue().stream().map( v -> v.getExpression() ).collect(Collectors.joining(","))); 
+			})
+		;
+		
 		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
 		
 		Criteria criteria = new Criteria();
@@ -908,10 +914,20 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				criteria);
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
-		SalaryBuilder delayBuilder = new SalaryBuilder();
+		SalaryBuilder delayBuilder = new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println("*" + payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+				+ " (" + payment.getExpression() + ")" + startDate + ".." + endDate);
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		};
 		
 		delayCalculator.setSalaryBuilder(delayBuilder);
 		Salary delay = delayCalculator.calculate(delayCtx);
+
 		
 		int monthDays = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
 		double adjust = + ((monthDays-30) * 10.00/30.00 );

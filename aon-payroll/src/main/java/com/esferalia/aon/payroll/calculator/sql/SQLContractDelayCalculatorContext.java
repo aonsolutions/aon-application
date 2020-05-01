@@ -731,6 +731,7 @@ public class SQLContractDelayCalculatorContext extends
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.START_DATE + "  = ? " 
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.END_DATE + " = ? "
 				+ " AND " + SALARY_DATA + "." + SalaryDataColumns.NAME + "  IN ('" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() +"')" 
+				+ " GROUP BY 1"
 				;
 
 		protected static final class DelayContractPayment extends ContractPayment {
