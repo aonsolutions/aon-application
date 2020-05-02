@@ -3101,12 +3101,10 @@ input:disabled+label {
 	}
 
 	@sprite .aon-icon-enable {
-		width: auto;
 		gwt-image: "aon_icon_enable";
 	}
 
 	@sprite .aon-icon-disable {
-		width: auto;
 		gwt-image: "aon_icon_disable";
 	}
 

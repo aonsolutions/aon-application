@@ -1329,6 +1329,24 @@ public class SalaryDraft extends ResizeComposite
 			});
 		}
 
+		public void setEnableButton(HasClickHandlers deleteButton) {
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onExpressionChange(item, "REMOVE()");
+				}
+			});
+		}
+		
+		public void setDisableButton(HasClickHandlers deleteButton) {
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onRecover(item, "CONVENIO()");
+				}
+			});
+		}
+
 		public void setIssueDateListBox(final ListBox listBox) {
 			listBox.addChangeHandler( new ChangeHandler() {
 				
@@ -3888,11 +3906,17 @@ public class SalaryDraft extends ResizeComposite
 
 		Scope itemScope = item.getScope();
 		if (itemScope.compareTo(Scope.AGREEMENT) > 0 && item.isDefinedAt(Scope.AGREEMENT)) {
-			Button agreementButton = getAgreementButton();
+			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
-			handler.setAgreementButton(agreementButton);
-			//enable(agreementButton, isEditable);
+			handler.setDisableButton(agreementButton);
+			agreementButton.ensureDebugId("agreement-button-" + row );
+			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");
+		} else if (itemScope.compareTo(Scope.AGREEMENT) == 0) {
+			Button agreementButton = getEnableButton();
+			agreementButton.setTabIndex(Short.MAX_VALUE);
+			buttonsPanel.add(agreementButton);
+			handler.setEnableButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
 		}
 
@@ -4615,6 +4639,22 @@ public class SalaryDraft extends ResizeComposite
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		deleteButton.addClickHandler(new VariableRemoveHandler(variable));
 		return deleteButton;
+	}
+
+	private Button getEnableButton() {
+		Button agreementButton = new Button();
+		agreementButton.setStyleName(AON.AON_ICON_ENABLE);
+		agreementButton.setStyleName(AON.AON_NO_MARGIN, true);
+		agreementButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		return agreementButton;
+	}
+
+	private Button getDisableButton() {
+		Button agreementButton = new Button();
+		agreementButton.setStyleName(AON.AON_ICON_DISABLE);
+		agreementButton.setStyleName(AON.AON_NO_MARGIN, true);
+		agreementButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		return agreementButton;
 	}
 
 	private StyleToggleButton getPaymentButton(final HasPayment hasPayment, final String iconStyleName,
@@ -5632,7 +5672,8 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private boolean isFromAgreemen(Payment payment) {
-		return salaryDraftObject.hasAgreementCounterPart(payment);
+		return salaryDraftObject.hasAgreementCounterPart(payment) || 
+				payment.isDefinedAt(Scope.AGREEMENT);
 	}
 	
 	private List<Payment> filterPayments(List<Payment> payments, Scope scope) {

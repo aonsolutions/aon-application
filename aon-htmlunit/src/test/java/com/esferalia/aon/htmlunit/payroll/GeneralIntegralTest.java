@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -144,7 +145,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Value("totalPaymentsLabel", totalPayment * 26.00 / 40.00);
 		
 	}
-
+	@Ignore("Obsolet")
 	@Test
 	public void TestDraftRedefinePayments() throws Exception {
 		if (!isDisplayed("draft_completo,_convenio"))
@@ -194,7 +195,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		
 	}
-
+	@Ignore("Obsolet")
 	@Test
 	public void TestDraftExtrasRedefine() throws Exception {
 		if (!isDisplayed("draft_completo,_convenio"))

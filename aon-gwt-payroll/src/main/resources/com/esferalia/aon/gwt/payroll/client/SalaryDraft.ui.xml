@@ -179,12 +179,19 @@
     		background-color: transparent;
 		}
 
+		.aon-Disabled .gwt-TextBox,
+		.aon-Disabled.gwt-SuggestBox,
+		.aon-ReadOnly .gwt-ListBox
+		{
+    		color: grey !important;
+		}
+
 		.aon-ReadOnly .gwt-ListBox {
     		pointer-events: none;
     		color: inherit !important;
     		background-color: transparent;
 		}
-		
+
 		.gwt-TextBox[readonly]:focus,
 		.aon-ReadOnly .gwt-TextBox:focus
 		{
@@ -238,6 +245,7 @@
 		@external gwt-ListBox;
 		@external gwt-TextBox;
 		@external aon-ReadOnly;
+		@external aon-Disabled;
 		@external gwt-SuggestBox;
 		@external aon-icon-reset;
 		@external aon-icon-delete;
