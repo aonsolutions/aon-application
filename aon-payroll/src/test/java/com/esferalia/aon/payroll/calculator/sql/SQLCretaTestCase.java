@@ -236,6 +236,34 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaBecariosNormal()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C990, "10", CCCType.FELLOWS);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		
+		try {
+			List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
+			getBases(connection, contract, startDate, endDate, ccc);
+			org.junit.Assert.fail("Bases must be empty");
+		} catch ( EmptyBasesException e ) {
+			return;
+		}
+		
+	}
+
+	@Test
 	public void testCretaFormacionNormalTutoria()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
@@ -403,6 +431,36 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaBecariosEREParcialI()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C990, "10", CCCType.FELLOWS);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H04, "44");
+		addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H03, "33");
+		addData(aonContext, contract, startDate, endDate, ContextVariable.ERE_FACTOR, "0.60");
+
+		try {
+			List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
+			getBases(connection, contract, startDate, endDate, ccc);
+			org.junit.Assert.fail("Bases must be empty");
+		} catch ( EmptyBasesException e ) {
+			// Nothing to comunicate .
+			return;
+		}
+
+	}
+
+
+	@Test
 	public void testCretaFormacionMaternidadTotalI()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
@@ -442,6 +500,52 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
 		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C421, "10");
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startDate, endDate, 100.00);
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
+		getBases(connection, contract, startDate, endDate, ccc);
+		
+		org.junit.Assert.assertEquals(2, bases.size());
+		
+		List<Dato> datos = bases.get(0).getDatosTramo().getDato();
+		
+		org.junit.Assert.assertEquals(1, datos.size());
+
+		double c563 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("563")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals(Math.ceil(100.00*0.75*5*100), c563, DELTA);
+		
+		datos = bases.get(1).getDatosTramo().getDato();
+		
+		org.junit.Assert.assertEquals(1, datos.size()); 
+		
+		c563 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("563")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		int days = AonDateUtils.getMax(endDate, DAY_OF_MONTH) - 21 +1; 
+		org.junit.Assert.assertEquals(Math.ceil(100.00*0.75*(days)*100), c563, DELTA);
+		
+	}
+
+	@Test
+	public void testCretaBecariosITI()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C990, "10", CCCType.FELLOWS);
 
 		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
 		Date endDate = getLastDayOfMonth(startDate);

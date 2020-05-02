@@ -1496,7 +1496,7 @@ public class TrabajadoresTramos {
 		boolean fullTime = getContextData(FULL_TIME.getName(), salary, startDate, endDate,  true);
 		int cccType = getContextData(CCC_TYPE.getName() ,salary, startDate, endDate, 0);
 		
-		boolean regimenArtistas = CCCType.ARTIST.ordinal() == cccType;
+		boolean artistas = CCCType.ARTIST.ordinal() == cccType;
 		
 		boolean iT15primerosDias = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_1_3.getName(), salary, startDate, endDate)
@@ -1545,10 +1545,19 @@ public class TrabajadoresTramos {
 		boolean tiempoCompleto = fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
 		
 		
-		boolean formacionNormal = "421".equals(tc2) ;
+		boolean formacion = "421".equals(tc2) ;
+		
+		boolean becarios = CCCType.FELLOWS.ordinal() == cccType;;
 		
 		
-		if ( formacionNormal )
+		if ( becarios )
+			if ( iTPagoDelegado )
+				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
+			else if ( atEPPagoDelegado )
+				visitor.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
+			else
+				;
+		else if ( formacion )
 			if ( iT15primerosDias )
 				;
 			else if ( iTPagoDelegado )
@@ -1591,7 +1600,7 @@ public class TrabajadoresTramos {
 			visitor.visitExpedienteRegulacionEmpleoTotal();
 		else if ( ereParcial )
 			visitor.visitExpedienteRegulacionEmpleoParcial();
-		else if ( regimenArtistas )
+		else if ( artistas )
 			visitor.visitRegimenArtistasNormal();
 		else if (tiempoCompleto)
 			visitor.visitTiempoCompletoNormal();
@@ -1606,7 +1615,7 @@ public class TrabajadoresTramos {
 			grupoCotizacion = visitor::visitGrupoCotizacionMensual;
 		
 		
-		if ( formacionNormal )
+		if ( formacion )
 			;		
 		else if ( iT15primerosDias )
 			grupoCotizacion.visit();		
@@ -1628,7 +1637,7 @@ public class TrabajadoresTramos {
 			grupoCotizacion.visit();		
 		else if ( ereParcial )
 			;		
-		else if ( regimenArtistas )
+		else if ( artistas )
 			;		
 		else if (tiempoCompleto)
 			grupoCotizacion.visit();		
