@@ -176,7 +176,7 @@ public class MainAgreementTest {
 		}
 
 	}
-
+	@Ignore("Sergio :-)")
 	@Test
 	public void TestStarsWarsAgreement() throws Exception {
 
