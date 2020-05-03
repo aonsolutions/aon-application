@@ -11,6 +11,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>, Serializable {
 
+	Integer id;
 	String name;
 	Date startDate;
 	Date endDate;
@@ -20,6 +21,14 @@ public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>
 	Integer domain;
 
 	boolean[] defined;
+	
+	public Integer getId() {
+		return id;
+	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -84,6 +93,10 @@ public abstract class Variable implements HasStartAndEndDate, HasDomain<Integer>
 
 	public void setDefined(boolean defined[]) {
 		this.defined = defined;
+	}
+	
+	public boolean[] getDefined() {
+		return defined;
 	}
 
 	public abstract Object getValue();

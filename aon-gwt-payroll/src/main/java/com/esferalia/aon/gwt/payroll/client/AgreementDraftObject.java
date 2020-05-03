@@ -34,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -831,16 +832,41 @@ public class AgreementDraftObject {
 	}
 	
 	private void cleanDeleteDate(Date startDate, Date endDate) {
+		Date newEndDate = null;
+		
 		for ( String name: getVariables() ) {
 			for ( Level level: getLevels() ) {
 				Variable var = getVariable(level, name);
 				if ( var == null || !var.getStartDate().equals(startDate) )
 					continue;
+//				Window.alert("DELETE");
 				var.setExpression(""); // DELETE
+//				newEndDate = DateUtils.copyDateOnly(var.getEndDate());
 				addDraftVariable(level, var);
 			}
 		}
+		
+		Date findingEndDate = DateUtils.copyDateOnly(startDate);
+		DateUtils.deleteDays2Date(findingEndDate, 1);
+		
+		modifyPreviusEndDate(findingEndDate, newEndDate);
 	}
+	private void modifyPreviusEndDate(Date findingEndDate, Date newEndDate) {
+//		Window.alert("New end date : " + newEndDate + ", findingEndDate : " + findingEndDate);
+		
+		for ( String name: getVariables() ) {
+			for ( Level level: getLevels() ) {
+				Variable var = getVariable(level, name);
+				if(var == null || !findingEndDate.equals(var.getEndDate()))
+					continue;
+				
+//				Window.alert("Update End Date");
+				var.setEndDate(newEndDate);
+				addDraftVariable(level, var);	
+			}
+		}
+	}
+
 	private void strechDate(Date startDate, Date prevDate) {
 		for ( String name: getVariables() ) {
 			for ( Level level: getLevels() ) {

@@ -350,6 +350,7 @@ public class SQLAgreementDraft {
 
 			while (rs.next()) {
 				Variable var = new StringVariable();
+				var.setId(rs.getInt(AgreementDataColumns.ID));
 				var.setScope(Scope.AGREEMENT);
 				var.setStartDate(sqlStartDate);
 				var.setEndDate(sqlEndDate);
@@ -390,9 +391,10 @@ public class SQLAgreementDraft {
 					stmt.setInt(4+i, domains[i]);
 
 			rs = stmt.executeQuery();
-
+			
 			while (rs.next()) {
 				Variable var = new StringVariable();
+				var.setId(rs.getInt("agreement_level_data.id"));
 				var.setScope(Scope.AGREEMENT);
 				var.setStartDate(sqlStartDate);
 				var.setEndDate(sqlEndDate);
@@ -547,8 +549,10 @@ public class SQLAgreementDraft {
 					+ " GROUP BY 1");
 			// @formatter:on
 			stmt.setInt(1, agreementId);
-			for (int i = 0; i < domainIds.length; i++)
-				stmt.setInt(2 + i, domainIds[i]);
+			for (int i = 0; i < domainIds.length; i++) {
+				if(null != domainIds[i]) //TODO: Needed? Save nullPointerException...
+					stmt.setInt(2 + i, domainIds[i]);
+			}
 			rs = stmt.executeQuery();
 			while (rs.next())
 				months.add(rs.getDate(AgreementDataColumns.START_DATE));
@@ -1023,11 +1027,13 @@ public class SQLAgreementDraft {
 			stmt.setString(4, variable.getExpression());
 			stmt.setDate(5,
 					new java.sql.Date(variable.getStartDate().getTime()));
-			Date endDate = variable.getEndDate();
-			if (endDate != null)
-				stmt.setDate(6, new java.sql.Date(endDate.getTime()));
-			else
-				stmt.setNull(6, Types.DATE);
+//			Date endDate = variable.getEndDate();
+//			if (endDate != null)
+//				stmt.setDate(6, new java.sql.Date(endDate.getTime()));
+//			else
+//				stmt.setNull(6, Types.DATE);
+			
+			stmt.setNull(6, Types.DATE);
 			stmt.executeUpdate();
 
 			rs = stmt.getGeneratedKeys();
@@ -1046,37 +1052,64 @@ public class SQLAgreementDraft {
 	private static void updateData(Connection conn, Integer domainId,
 			Integer agreementId, Variable variable) throws SQLException {
 
-		List<DBVariable> dbVariables = getDBData(conn, agreementId, variable);
+		
+//		} else {
+//			if (StringUtils.isNotBlank(variable.getExpression())) {
+//				updateLevelData(conn, variable.getId(), variable.getStartDate());
+//			} else {
+//				removeLevelData(conn, variable.getId());
+//			}
+//		}
+		
+		List<DBVariable> dbVariables =  getDBData(conn, agreementId, variable);
 
-		Period period = new Period(variable.getStartDate(),
-				variable.getEndDate());
+//		Period period = new Period(variable.getStartDate(),
+//				variable.getEndDate());
 
 		for (DBVariable dbVariable : dbVariables) {
-			Period dbPeriod = new Period(dbVariable.getStartDate(),
-					dbVariable.getEndDate());
-			List<Period> subs = dbPeriod.sub(period);
-
-			if (subs.size() == 0) {
-				// New data overrides completely previous data. .
-				removeData(conn, dbVariable.getId());
+//			Period dbPeriod = new Period(dbVariable.getStartDate(),
+//					dbVariable.getEndDate());
+//			
+//			List<Period> subs = dbPeriod.sub(period);
+//
+//			if (subs.size() == 0) {
+//				// New data overrides completely previous data. .
+//				removeLevelData(conn, dbVariable.getId());
+//				continue;
+//			}
+			if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
+				removeData(conn, variable.getId());
+				continue;
+			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
+				updateData(conn, variable.getId(), variable.getStartDate());
+				continue;
+			} else if(dbVariable.getStartDate().equals(variable.getStartDate())) {
+				updateData(conn, variable.getId(), variable.getStartDate());
 				continue;
 			}
 
-			Period first = subs.get(0);
-			if (first.equals(dbPeriod)) {
-				// New data doesn't override previous data. }
-			}
+//			Period first = subs.get(0);
+//			if (first.equals(dbPeriod)) {
+//				// New data doesn't override previous data. }
+//			}
 
 			// Update previous payment with new limits.
-			updateData(conn, dbVariable.getId(), first);
+//			updateLevelData(conn, dbVariable.getId(), period);
 
-			if (subs.size() > 1)
-				copyData(conn, dbVariable.getId(), subs.get(1));
+//			if (subs.size() > 1)
+//				copyLevelData(conn, dbVariable.getId(), subs.get(1));
 
 		}
+		
 		// Inserts if not empty (""), not null and not whitespace only
-		if (StringUtils.isNotBlank(variable.getExpression())) {
-			insertData(conn, domainId, agreementId, variable);
+//		if (StringUtils.isNotBlank((variable.getExpression()))) {
+//			insertData(conn, domainId, agreementId, variable);
+//		}
+		
+		if(null == variable.getId()) {
+			if (StringUtils.isNotBlank(variable.getExpression())) {
+				insertData(conn, domainId, agreementId, variable);
+			}
 		}
 
 	}
@@ -1084,43 +1117,65 @@ public class SQLAgreementDraft {
 	private static void updateLevelData(Connection conn, Integer domainId,
 			Integer levelId, Variable variable) throws SQLException {
 
+//		} else {
+//			if (StringUtils.isNotBlank(variable.getExpression())) {
+//				updateLevelData(conn, variable.getId(), variable.getStartDate());
+//			} else {
+//				removeLevelData(conn, variable.getId());
+//			}
+//		}
+		
 		List<DBVariable> dbVariables = getDBLevelData(conn, levelId, variable);
 
-		Period period = new Period(variable.getStartDate(),
-				variable.getEndDate());
+//		Period period = new Period(variable.getStartDate(),
+//				variable.getEndDate());
 
 		for (DBVariable dbVariable : dbVariables) {
-			Period dbPeriod = new Period(dbVariable.getStartDate(),
-					dbVariable.getEndDate());
-			List<Period> subs = dbPeriod.sub(period);
-
-			if (subs.size() == 0) {
-				// New data overrides completely previous data. .
-				removeLevelData(conn, dbVariable.getId());
-				continue;
-			}
+//			Period dbPeriod = new Period(dbVariable.getStartDate(),
+//					dbVariable.getEndDate());
+//			
+//			List<Period> subs = dbPeriod.sub(period);
+//
+//			if (subs.size() == 0) {
+//				// New data overrides completely previous data. .
+//				removeLevelData(conn, dbVariable.getId());
+//				continue;
+//			}
 			
-			if(StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
+			if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
 				removeLevelData(conn, dbVariable.getId());
+				continue;
+			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
+				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
+				continue;
+			} else if(dbVariable.getStartDate().equals(variable.getStartDate())) {
+				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
 				continue;
 			}
 
-			Period first = subs.get(0);
-			if (first.equals(dbPeriod)) {
-				// New data doesn't override previous data. }
-			}
+//			Period first = subs.get(0);
+//			if (first.equals(dbPeriod)) {
+//				// New data doesn't override previous data. }
+//			}
 
 			// Update previous payment with new limits.
-			updateLevelData(conn, dbVariable.getId(), first);
+//			updateLevelData(conn, dbVariable.getId(), period);
 
-			if (subs.size() > 1)
-				copyLevelData(conn, dbVariable.getId(), subs.get(1));
+//			if (subs.size() > 1)
+//				copyLevelData(conn, dbVariable.getId(), subs.get(1));
 
 		}
+		
+		if(null == variable.getId()) {
+			if (StringUtils.isNotBlank(variable.getExpression())) {
+				insertLevelData(conn, domainId, levelId, variable);
+			}
+		}
+		
 		// Inserts if not empty (""), not null and not whitespace only
-		if (StringUtils.isNotBlank((variable.getExpression()))) {
-			insertLevelData(conn, domainId, levelId, variable);
-		}
+//		if (StringUtils.isNotBlank((variable.getExpression()))) {
+//			insertLevelData(conn, domainId, levelId, variable);
+//		}
 
 	}
 
@@ -1317,14 +1372,14 @@ public class SQLAgreementDraft {
 			List<DBVariable> variables = new ArrayList<DBVariable>();
 			while (rs.next()) {
 				DBVariable dbVar = new DBVariable();
-				dbVar.setId(rs.getInt(AgreementLevelDataColumns.ID));
-				dbVar.setName(rs.getString(AgreementLevelDataColumns.NAME));
+				dbVar.setId(rs.getInt("agreement_data.id"));
+				dbVar.setName(rs.getString(AgreementDataColumns.NAME));
 				dbVar.setExpression(
-						rs.getString(AgreementLevelDataColumns.EXPRESSION));
+						rs.getString(AgreementDataColumns.EXPRESSION));
 				dbVar.setStartDate(
-						rs.getDate(AgreementLevelDataColumns.START_DATE));
+						rs.getDate(AgreementDataColumns.START_DATE));
 				dbVar.setEndDate(
-						rs.getDate(AgreementLevelDataColumns.END_DATE));
+						rs.getDate(AgreementDataColumns.END_DATE));
 				variables.add(dbVar);
 			}
 			return variables;
@@ -1377,7 +1432,7 @@ public class SQLAgreementDraft {
 			List<DBVariable> variables = new ArrayList<DBVariable>();
 			while (rs.next()) {
 				DBVariable dbVar = new DBVariable();
-				dbVar.setId(rs.getInt(AgreementLevelDataColumns.ID));
+				dbVar.setId(rs.getInt("agreement_level_data.id"));
 				dbVar.setName(rs.getString(AgreementLevelDataColumns.NAME));
 				dbVar.setExpression(
 						rs.getString(AgreementLevelDataColumns.EXPRESSION));
@@ -1637,7 +1692,7 @@ public class SQLAgreementDraft {
 
 			stmt.setInt(1, dataId);
 
-			stmt.executeUpdate();
+			stmt.execute();
 
 		} finally {
 			if (stmt != null)
@@ -1782,6 +1837,38 @@ public class SQLAgreementDraft {
 		}
 
 	}
+	
+	private static void updateData(Connection conn, Integer dataId,
+			Date startDate) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_DATA + " SET "
+					+ AgreementDataColumns.START_DATE + " = ? " + ", "
+					+ AgreementDataColumns.END_DATE + " = ? " + " WHERE "
+					+ AgreementDataColumns.ID + "= ? ");
+			// @formatter:on
+
+			stmt.setDate(1, new java.sql.Date(startDate.getTime()));
+//			Date endDate = period.getEnd();
+//			if (endDate != null)
+//				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+//			else
+//				stmt.setNull(2, Types.DATE);
+			
+			stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
 
 	private static void updateLevelData(Connection conn, Integer dataId,
 			Period period) throws SQLException {
@@ -1796,11 +1883,40 @@ public class SQLAgreementDraft {
 			// @formatter:on
 
 			stmt.setDate(1, new java.sql.Date(period.getStart().getTime()));
-			Date endDate = period.getEnd();
-			if (endDate != null)
-				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
-			else
-				stmt.setNull(2, Types.DATE);
+//			Date endDate = period.getEnd();
+//			if (endDate != null)
+//				stmt.setDate(2, new java.sql.Date(endDate.getTime()));
+//			else
+//				stmt.setNull(2, Types.DATE);
+			
+			stmt.setNull(2, Types.DATE);
+
+			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+	
+	private static void updateLevelData(Connection conn, Integer dataId,
+			Date startDate) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " SET "
+					+ AgreementLevelDataColumns.START_DATE + " = ? " + ", "
+					+ AgreementLevelDataColumns.END_DATE + " = ? " + " WHERE "
+					+ AgreementLevelDataColumns.ID + "= ? ");
+			// @formatter:on
+
+			stmt.setDate(1, new java.sql.Date(startDate.getTime()));
+			
+			stmt.setNull(2, Types.DATE);
 
 			stmt.setInt(3, dataId);
 

@@ -105,6 +105,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasValue;
@@ -127,6 +128,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.ValueBoxBase;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 import com.google.gwt.user.datepicker.client.DatePicker;
@@ -236,6 +238,14 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		String issueTextBox();
 		
 		String p2();
+		
+		String innerPopUpButton();
+		
+		String backgroundCenter();
+		
+		String bgWhite();
+		
+		String popUpLine();
 
 	}
 
@@ -1203,6 +1213,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 	}
 	
+	// -------------------------------------------------------------------------
+	// 						INIT CATEGORY PANEL
+	// -------------------------------------------------------------------------
+	
 	private Button initCategoryPanel(boolean readOnly) {
 		categoryButtonPanel.clear();
 		HorizontalPanel hPanel = new HorizontalPanel();
@@ -1238,178 +1252,96 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return button;
 	}
 	
-	private void putAllSalaryToggleButtonsUp(boolean readOnly) {
-		for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
-			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
-			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-			if(!readOnly){
-				Button deleteButton = (Button) hPanel.getWidget(1);
-				deleteButton.removeStyleName(style.deleteButtonDown());
-				deleteButton.addStyleName(style.deleteButtonUp());
-			}
-			toggleButton.setDown(false);
-			hPanel.removeStyleName(style.selectButtonSalaryToggleButton());
-		}
-	}
-
-	private void initSalarytabs(Date draftStratDate, boolean readOnly) {
-		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+	// -------------------------------------------------------------------------
+	// 						INIT SALARY TAB PANEL
+	// -------------------------------------------------------------------------
 		
+	private void initSalarytabs(Date draftStratDate, boolean readOnly) {
+		// Get gates whit changes for tabs
+		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+
+		// Clear panels
 		salaryToggleButtonsPanel.clear();
 		moreToggleButtonsPanel.clear();
+		
+		// Show salaryToggleButtos panel
 		salaryToggleButtonsPanel.removeStyleName(style.hide());
-		int startTab = 0;
+		
+		// Init positions for tabs
+		int tabPos = 0;
 		
 		if (datesList.length != 0){
 			for(int i=0; i<datesList.length; i++){
 				
-				Date startDate = datesList[i];
-//				Date endDate =  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
+				Date date = datesList[i];
 				
 				//Find startTab -> agreementDraftObjecto.startDate == date on actual tab
-				if ((startDate.equals(draftStratDate) || (startDate.getMonth() == draftStratDate.getMonth() && startDate.getYear() == draftStratDate.getYear()))){
-					startTab = i;
-					startTab = startTab*2;
+				if ((date.equals(draftStratDate) || (date.getMonth() == draftStratDate.getMonth() && date.getYear() == draftStratDate.getYear()))){
+					tabPos = i;
+					tabPos = tabPos*2;
 				}
 				
-				HorizontalPanel hPanel = new HorizontalPanel();
-				hPanel.ensureDebugId("panel_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(startDate));
-
-				ToggleButton button = new ToggleButton(startDate.getDate()+"/"+(startDate.getMonth()+1)+"/"+(startDate.getYear()+1900));
-				button.ensureDebugId("toggleButton_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(startDate));
-				button.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						if(button.isDown()){
-							putAllToggleButtonsUp();
-							button.setDown(true);
-							int selectedButton = 0;
-							
-							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
-//								if(i%2 !=0){
-//									continue;
-//								}
-								
-								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
-								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-								
-								if(button.equals(toggleButton)){
-									break;
-								}
-								
-								selectedButton++;
-							}
-							
-						
-							Date clickedDate = datesList[selectedButton];
-							Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
-							
-//							Window.alert("clickedDate : " + clickedDate + ", clickedDateEndDate : " + clickedDateEndDate);
-							
-							isOnCategoryTab = false;
-							
-							agreementDraftObject.setStartDate(clickedDate);
-							agreementDraftObject.setEndDate(clickedDateEndDate);
-							calculate();
-						
-						}else{
-							return;
-						}
-					}
-
-					private void putAllToggleButtonsUp() {
-						for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
-							HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
-							ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-							toggleButton.setDown(false);
-						}	
-					}
-				});
+				// Buttons panel
+				HorizontalPanel toggleButtonsPanel = new HorizontalPanel();
+				toggleButtonsPanel.ensureDebugId("panel_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date));
 				
-				hPanel.add(button);
+				// Create more option button to set visible or not
+				final Button moreOptionsBtn = new Button();
+				moreOptionsBtn.setStyleName("aon-icon-view");
+				moreOptionsBtn.addStyleName(style.backgroundCenter());
+				
+				// Create dateButton and add to panel
+				ToggleButton dateButton = createDateButtonTab(date, datesList, moreOptionsBtn, readOnly);
+				toggleButtonsPanel.add(dateButton);
 				
 				if(!readOnly){
-					Button deleteButton = new Button("x");
-					deleteButton.ensureDebugId("deleteButton_" +DateTimeFormat.getFormat("dd_MM_yyyy").format(startDate) );
-					deleteButton.addClickHandler(new ClickHandler() {
+					// isLastOne and get previus date
+					Boolean isLastOne = (i == datesList.length-1) ? true : false;
+					Date previusDate = (datesList.length == 0 || datesList.length == 1) ? null : datesList[datesList.length - 2];
+					
+					moreOptionsBtn.addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {
-							int selectedButton = 0;
+							PopupPanel moreOptionsPopUp = new PopupPanel(true);
+							VerticalPanel vPanel = new VerticalPanel();
 							
-							for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
-//								if(i%2 !=0){
-//									continue;
-//								}
-								HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
-								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-								if(button.equals(toggleButton)){
-									break;
-								}
-								selectedButton++;
+							// Eliminar tramo
+							Button deleteButton = createDeleteButton(date, moreOptionsPopUp, dateButton, datesList);
+							
+							// Line separator
+							HTMLPanel lineSeparator = new HTMLPanel("");
+							lineSeparator.setStyleName(style.popUpLine());
+							
+							// Modify period
+							Button changeDateBtn = createModifyPeriodButton(date, previusDate, datesList, dateButton, moreOptionsPopUp);
+							
+							// Add buttos to panel
+							if(isLastOne) {
+								vPanel.add(changeDateBtn);
+								vPanel.add(lineSeparator);
 							}
 							
-							Date deleteDate = datesList[selectedButton];
-//							Window.alert("Delete Date : " + deleteDate);
-							agreementDraftObject.addDeleteDatesChanges(deleteDate);
-							agreementDraftObject.cleanDeleteDate(deleteDate);
-							agreementDraftObject.getDatesWithChanges().remove(deleteDate);
+							// Add deleteButton
+							vPanel.add(deleteButton);
 							
-							Date newSelectTabDate = null;
+							moreOptionsPopUp.setWidget(vPanel);
 							
-							if(agreementDraftObject.getDatesWithChanges().size() == 0) { //Nos quedamos sin pestañas
-								calculate();
-							}else {
-								if(selectedButton == 0) 
-									newSelectTabDate = datesList[selectedButton+1];
-								else
-									newSelectTabDate = datesList[selectedButton-1];
-								
-								//TODO: No se para que esto...
-								if(newSelectTabDate == null)
-									newSelectTabDate = TODAY;
-								
-								//Indice del boton seleccionado que coincide con la posicion en DatesList
-								int finalSelectedButton = selectedButton;
-								
-								Date finalNewSelectTabDate = newSelectTabDate;
-								Date finalNewSelectTabEndDate = getClickedTabEndDate(finalNewSelectTabDate);
-								
-//								Window.alert("finalNewSelectTabDate : " + finalNewSelectTabDate + ", finalNewSelectTabEndDate : " + finalNewSelectTabEndDate);
-								
-								agreementDraftObject.setStartDate(finalNewSelectTabDate);
-								agreementDraftObject.setEndDate(finalNewSelectTabEndDate);
-								//calculate();
+							// Set position to show
+							moreOptionsPopUp.showRelativeTo(moreOptionsBtn);
 							
-								Date newSelectedDate  = DateUtils.copyDateOnly(newSelectTabDate);
-								
-								calculate( new CalculateCallback() {
+						}
 	
-									@Override
-									public void onCalculateSucces(AgreementDraftObject object) {
-										if ( finalSelectedButton > 0 )
-											agreementDraftObject.strechDate(newSelectedDate);
-									}
-									
-									@Override
-									public void onCalculateFailure(Throwable throwable) {
-									}
-	
-								});
-							}
-							
-						}	
 					});
-					
-					deleteButton.addStyleName(style.deleteButtonUp());
-					hPanel.add(deleteButton);
+				
+					moreOptionsBtn.addStyleName(style.deleteButtonUp());
+					toggleButtonsPanel.add(moreOptionsBtn);
 				}
 				
-				hPanel.addStyleName(style.panelButtons());
-				salaryToggleButtonsPanel.add(hPanel);
+				toggleButtonsPanel.addStyleName(style.panelButtons());
+				salaryToggleButtonsPanel.add(toggleButtonsPanel);
+				
 				HTML html = new HTML("&nbsp");
 				salaryToggleButtonsPanel.add(html);
-				
 			}
 		}
 		
@@ -1419,40 +1351,87 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			moreToggleButtonsPanel.add(moreButton);
 		}
 		
+		// Initialize toggleButtonsPanel
+		inicializeToggleButtons(datesList, readOnly, tabPos);
 		
-		if (datesList.length != 0){
-			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(startTab);
-			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-			toggleButton.setDown(true);
-			if(!readOnly){
-				Button deleteButton = (Button) hPanel.getWidget(1);
-				deleteButton.addStyleName(style.deleteButtonDown());
-			}
-			hPanel.addStyleName(style.selectButtonSalaryToggleButton());
-		}else {
-			
-		}
 	}
 	
-	private Date getClickedTabEndDate(Date clickedDate) {
-		if(agreementDraftObject.getDatesWithChanges().size() == 1) {
-			//TODO: deberia ser asi!!
-			//return null;
-			return DateUtils.getLastDayOfMonth(clickedDate);
-		}else {
-			Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+	// -------------------------------------------------------------------------
+	// 					INIT SALARY TAB PANEL (BUTTONS)
+	// -------------------------------------------------------------------------
+	
+	private ToggleButton createDateButtonTab(Date date, Date[] datesList, Button moreOptionsBtn, boolean readOnly) {
+		ToggleButton button = new ToggleButton(DateTimeFormat.getFormat("dd/MM/yyyy").format(date));
+		button.ensureDebugId("toggleButton_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date));
+		
+		button.addClickHandler(new ClickHandler() {
 			
-			for(int i=0; i<datesList.length; i++){
-				if(clickedDate.equals(datesList[i])) {
-					//TODO: deberia ser asi!!
-					//return  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : null;
-					return  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : DateUtils.getLastDayOfMonth(datesList[i]);
+			@Override
+			public void onClick(ClickEvent event) {
+				if(button.isDown()){
+					// Put all buttons up
+					putAllToggleButtonsUp(readOnly);
+					
+					// Set toggleButton down
+					button.setDown(true);
+					
+					moreOptionsBtn.addStyleName(style.bgWhite());
+					
+					Integer selectedButtonPos = getSelectedButtonPos(button);
+					
+					Date clickedDate = datesList[selectedButtonPos];
+					Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
+					
+					isOnCategoryTab = false;
+					
+					// Calculate
+					agreementDraftObject.setStartDate(clickedDate);
+					agreementDraftObject.setEndDate(clickedDateEndDate);
+					calculate();
+				
 				}
 			}
-		}
-		return null;
-	}
 
+		});
+		
+		return button;
+	}
+	
+	private Button createModifyPeriodButton(Date date, Date previusDate, Date[] datesList, ToggleButton dateButton, PopupPanel moreOptionsPopUp) {
+		
+		Button button = new Button("Modificar fecha");
+		button.addStyleName(style.deleteButtonUp());
+		button.addStyleName(style.innerPopUpButton());
+		
+		button.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				PopupPanel popupDate = modifyPeriodDate(date, previusDate, dateButton, datesList);
+				popupDate.showRelativeTo(moreOptionsPopUp);
+			}
+		});
+		
+		return button;
+	}
+	
+	private Button createDeleteButton(Date date, PopupPanel moreOptionsPopUp, ToggleButton dateButton, Date[] datesList) {
+		Button button = new Button("Eliminar tramo");
+		button.ensureDebugId("deleteButton_" + DateTimeFormat.getFormat("dd_MM_yyyy").format(date) );
+		
+		button.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				moreOptionsPopUp.hide();
+				deletePeriod(dateButton, datesList);
+			}	
+		});
+		
+		button.addStyleName(style.deleteButtonUp());
+		button.addStyleName(style.innerPopUpButton());
+		
+		return button;
+	}
+	
 	private Button addMoreButton() {
 		Button moreButton = new Button("+");
 		moreButton.addClickHandler(new ClickHandler() {
@@ -1461,43 +1440,48 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				PopupPanel popup = new PopupPanel(true); // auto-hide
 				DatePicker picker = new DatePicker();
 				picker.setValue(TODAY);
+				picker.setYearAndMonthDropdownVisible(true);
+				
 				picker.addValueChangeHandler(new ValueChangeHandler<Date>() {
 					@Override
 					public void onValueChange(ValueChangeEvent<Date> event) {
 						popup.hide();
+						
 						Date newDate = event.getValue();
-						agreementDraftObject.getDatesWithChanges().add(newDate);
+						
+						Date previusDate =  null;
+						
+						if(agreementDraftObject.getDatesWithChanges().size() > 0)
+							previusDate = agreementDraftObject.getDatesWithChanges().last();
+						
 						agreementDraftObject.addNewDatesWithChanges(newDate);
 						
-						//addStrech(newDate);
 						Date endDate = getNextDateWithChanges(newDate);
 						
-//						Window.alert("New Start Date : " + newDate + ", New End Date : " + endDate);
-						
+						if(null != previusDate) {
+							for(String varName : agreementDraftObject.getVariables()) {
+								for(Level level : agreementDraftObject.getLevels()) {
+									Variable variable = agreementDraftObject.getVariable(level, varName);
+									if(variable != null && variable.getStartDate().equals(previusDate)) {
+										// Copy Variable and set Dates
+										Variable newVariable = copyVariable(variable);
+										newVariable.setStartDate(newDate);
+										
+										agreementDraftObject.addDraftVariable(level, newVariable);
+									}
+								}
+							}
+						}
+
 						agreementDraftObject.setStartDate(newDate);
 						agreementDraftObject.setEndDate(endDate);
 						calculate();
 					}
 
-					private Date getNextDateWithChanges(Date newDate) {
-						Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
-						Date endDate = null;
-						
-						for(int i=0; i<datesList.length; i++){
-							if(datesList[i].before(newDate) || datesList[i].equals(newDate))
-								continue;
-							
-							endDate = DateUtils.copyDateOnly(datesList[i]);
-							return DateUtils.addDays2Date(endDate, -1);
-						}
-						//TODO: si lo hago con null no funciona
-						return DateUtils.getLastDayOfMonth(newDate) ;
-					}
+					
 
-					private void addStrech(Date newDate) {
-						agreementDraftObject.strechNewDate(newDate);
-					}
 				});
+				
 				popup.setWidget(picker);
 				popup.setStyleName(style.datePickerPanel());
 				popup.showRelativeTo(moreButton);
@@ -1506,12 +1490,223 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				picker.ensureDebugId("moreDatePicker");
 			}
 		});
-		moreButton.addStyleName(style.moreButton());
 		
+		moreButton.addStyleName(style.moreButton());
 		moreButton.ensureDebugId("moreButton");
 		
-		
 		return moreButton;
+	}
+	
+	// -------------------------------------------------------------------------
+	// 					INIT SALARY TAB PANEL (METHODS)
+	// -------------------------------------------------------------------------
+	
+	private void inicializeToggleButtons(Date[] datesList, boolean readOnly, int tabPos) {
+		if (datesList.length != 0){
+			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(tabPos);
+			
+			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+			toggleButton.setDown(true);
+			
+			if(!readOnly) {
+				Button moreOptionsBtn = (Button) hPanel.getWidget(1);
+				moreOptionsBtn.addStyleName(style.bgWhite());
+			}
+			
+			hPanel.addStyleName(style.selectButtonSalaryToggleButton());
+		}
+	}
+	
+	private void putAllSalaryToggleButtonsUp(boolean readOnly) {
+		for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+			
+			if(!readOnly){
+				Button moreOptionsButton = (Button) hPanel.getWidget(1);
+				moreOptionsButton.removeStyleName(style.deleteButtonDown());
+				moreOptionsButton.addStyleName(style.deleteButtonUp());
+			}
+			
+			toggleButton.setDown(false);
+			hPanel.removeStyleName(style.selectButtonSalaryToggleButton());
+		}
+	}
+	
+	private void putAllToggleButtonsUp(boolean readOnly) {
+		for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+			toggleButton.setDown(false);
+			
+			if(!readOnly) {
+				Button moreOptionsBtn = (Button) hPanel.getWidget(1);
+				moreOptionsBtn.removeStyleName(style.bgWhite());
+			}
+		}	
+	}
+	
+	private Integer getSelectedButtonPos(ToggleButton button) {
+		Integer selectedButton = 0;
+		
+		for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+			
+			if(button.equals(toggleButton)){
+				break;
+			}
+			
+			selectedButton++;
+		}
+		
+		return selectedButton;
+	}
+	
+	private Date getClickedTabEndDate(Date clickedDate) {
+		if(agreementDraftObject.getDatesWithChanges().size() == 1) {
+			return DateUtils.getLastDayOfMonth(clickedDate);
+		}else {
+			Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+			
+			for(int i=0; i<datesList.length; i++){
+				if(clickedDate.equals(datesList[i])) {
+					return  (i < datesList.length -1) ? DateUtils.getPrevDay(datesList[i+1]) : DateUtils.getLastDayOfMonth(datesList[i]);
+				}
+			}
+		}
+		return DateUtils.getLastDayOfMonth(clickedDate);
+	}
+	
+	// -------------------------------------------------------------------------
+	// 					INIT SALARY TAB PANEL (BUTTON METHODS)
+	// -------------------------------------------------------------------------
+
+	private void deletePeriod(ToggleButton button, Date[] datesList) {
+		int selectedButton = 0;
+		
+		for(int i=0; i<salaryToggleButtonsPanel.getWidgetCount(); i+=2){
+			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(i);
+			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+			if(button.equals(toggleButton)){
+				break;
+			}
+			selectedButton++;
+		}
+		
+		Date deleteDate = datesList[selectedButton];
+		
+		agreementDraftObject.addDeleteDatesChanges(deleteDate);
+		agreementDraftObject.cleanDeleteDate(deleteDate);
+		
+		Date newSelectTabDate = null;
+		
+		if(agreementDraftObject.getDatesWithChanges().size() == 0) { //Nos quedamos sin pestañas
+			calculate();
+		}else {
+			if(selectedButton == 0) 
+				newSelectTabDate = datesList[selectedButton+1];
+			else
+				newSelectTabDate = datesList[selectedButton-1];
+			
+			//TODO: No se para que esto...
+			if(newSelectTabDate == null)
+				newSelectTabDate = TODAY;
+			
+			Date finalNewSelectTabDate = newSelectTabDate;
+			Date finalNewSelectTabEndDate = getClickedTabEndDate(finalNewSelectTabDate);
+
+			agreementDraftObject.setStartDate(finalNewSelectTabDate);
+			agreementDraftObject.setEndDate(finalNewSelectTabEndDate);
+			calculate();
+		}
+		
+	}
+	
+	private PopupPanel modifyPeriodDate(Date oldStartDate, Date previusDate, ToggleButton button, Date[] datesList) {
+		PopupPanel popup = new PopupPanel(true); // auto-hide
+		DatePicker picker = new DatePicker();
+		picker.setYearAndMonthDropdownVisible(true);
+		picker.setValue(oldStartDate);
+		
+		picker.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				popup.hide();
+				Date newDate = event.getValue();
+				
+				// Si elige una fecha anterior al periodo anterior
+				if(null != previusDate && (newDate.before(previusDate) || newDate.equals(previusDate)))
+					return;
+				
+				Date deleteDate = datesList[datesList.length - 1];
+				
+				agreementDraftObject.addNewDatesWithChanges(newDate);
+				
+				Date endDate = getNextDateWithChanges(newDate);
+				
+				for(String varName : agreementDraftObject.getVariables()) {
+					for(Level level : agreementDraftObject.getLevels()) {
+						Variable variable = agreementDraftObject.getVariable(level, varName);
+						if(variable == null || !variable.getStartDate().equals(oldStartDate))
+							continue;
+						
+						// Update actual variable to delete
+						variable.setStartDate(newDate);
+						
+						agreementDraftObject.addDraftVariable(level, variable);
+						
+					}
+				}
+				
+				agreementDraftObject.addDeleteDatesChanges(deleteDate);
+				
+				agreementDraftObject.setStartDate(newDate);
+				agreementDraftObject.setEndDate(endDate);
+				calculate();
+			}
+
+		});
+		
+		popup.setWidget(picker);
+		popup.setStyleName(style.datePickerPanel());
+
+		popup.ensureDebugId("morePopupPanel");
+		picker.ensureDebugId("moreDatePicker");
+		
+		return popup;
+	}
+	
+	
+	private Date getNextDateWithChanges(Date newDate) {
+		Date[] datesList = agreementDraftObject.getDatesWithChanges().toArray(new Date[]{});
+		Date endDate = null;
+		
+		for(int i=0; i<datesList.length; i++){
+			if(datesList[i].before(newDate) || datesList[i].equals(newDate))
+				continue;
+			
+			endDate = DateUtils.copyDateOnly(datesList[i]);
+			return DateUtils.addDays2Date(endDate, -1);
+		}
+		
+		return DateUtils.getLastDayOfYear(newDate) ;
+	}
+	
+	private Variable copyVariable(Variable variable) {
+		Variable newVariable = new StringVariable();
+		
+		newVariable.setId(null);
+		newVariable.setName(variable.getName());
+		newVariable.setStartDate(variable.getStartDate());
+		newVariable.setEndDate(null /*variable.getEndDate()*/);
+		newVariable.setImplicit(variable.isImpicit());
+		newVariable.setScope(variable.getScope());
+		newVariable.setExpression(variable.getExpression());
+		newVariable.setDomain(variable.getDomain());
+		newVariable.setDefined(variable.getDefined());
+		
+		return newVariable;
 	}
 	
 	@Override
@@ -1549,6 +1744,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
+		
+//		Window.alert("Draft StartDate : " + agreementDraftObject.getStartDate() + " Draft EndDate : " + agreementDraftObject.getEndDate());
 
 		categoryButton = initCategoryPanel(/*object.isSystem() &&*/ !object.isMine());
 		initSalarytabs(agreementDraftObject.getStartDate(), /*object.isSystem() &&*/ !object.isMine());
