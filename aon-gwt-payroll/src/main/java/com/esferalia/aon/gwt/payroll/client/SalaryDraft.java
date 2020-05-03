@@ -3905,14 +3905,17 @@ public class SalaryDraft extends ResizeComposite
 		buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
 		Scope itemScope = item.getScope();
-		if (itemScope.compareTo(Scope.AGREEMENT) > 0 && item.isDefinedAt(Scope.AGREEMENT)) {
+		if (itemScope.compareTo(Scope.AGREEMENT) > 0 
+			&& item.isDefinedAt(Scope.AGREEMENT)
+			&& isRemove(item) ) {
 			Button agreementButton = getDisableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);
 			handler.setDisableButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
 			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");
-		} else if (itemScope.compareTo(Scope.AGREEMENT) == 0) {
+		} else if (item.isDefinedAt(Scope.AGREEMENT) ||
+			itemScope.compareTo(Scope.AGREEMENT) == 0) {
 			Button agreementButton = getEnableButton();
 			agreementButton.setTabIndex(Short.MAX_VALUE);
 			buttonsPanel.add(agreementButton);

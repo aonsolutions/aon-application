@@ -1086,7 +1086,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		}
 		
 		twins.forEach(p -> {
-			p.setMonth(payment.getMonth());
+			//p.setMonth(payment.getMonth());
 			p.setSalaryType(payment.getSalaryType());
 		});
 		

@@ -632,6 +632,7 @@ public class SalaryDraftBuilder
 	@Override
 	public void onRemove(IContractPayment payment) {
 		Payment draftPayment = newPayment(payment);
+		draftPayment.setDescription(payment.getDescription());
 		salaryDraft.addPayment(draftPayment);
 	}
 
