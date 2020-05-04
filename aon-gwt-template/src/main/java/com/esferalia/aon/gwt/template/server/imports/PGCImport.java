@@ -163,12 +163,8 @@ public class PGCImport {
  	private void check(Domain domain , String login, String title, Cell cell) {
  		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;	
-		if("CODIGO".equalsIgnoreCase(title)
-				|| "CÓDIGO".equalsIgnoreCase(title)) {
-			String acc = o.toString();
-			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
-				acc = NumberToTextConverter.toText(cell.getNumericCellValue());
-			}
+		if("CODIGO".equalsIgnoreCase(title) || "CÓDIGO".equalsIgnoreCase(title)) {
+			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
 			account.getAccount().setCode(Utils.calculateAccount(acc));
 			return;
 		}

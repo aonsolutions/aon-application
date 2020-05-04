@@ -272,8 +272,7 @@ public class DiaryImport {
 		if(IConstants.SUBCUENTA.equalsIgnoreCase(title)
 				|| IConstants.CUENTA.equalsIgnoreCase(title)) {
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
-			String subaccount = acc.substring(0,4) + acc.substring(7);
-			diary.get(asiento).getEntry().getDetails().get(apunte-1).setAccountCode(subaccount);
+			diary.get(asiento).getEntry().getDetails().get(apunte-1).setAccountCode(Utils.calculateAccount(acc));
 			return ;
 		}
 		if(IConstants.TITULO_DE_SUBCUENTA.equalsIgnoreCase(title) || IConstants.TÍTULO_DE_SUBCUENTA.equalsIgnoreCase(title)
@@ -286,8 +285,7 @@ public class DiaryImport {
 		if(IConstants.CONTRAPARTIDA.equalsIgnoreCase(title)
 				|| IConstants.CONTRAP.equalsIgnoreCase(title)) {
 			String acc = CellType.NUMERIC == cell.getCellTypeEnum() ? NumberToTextConverter.toText(cell.getNumericCellValue()) : o.toString();
-			String contrapartida = acc.substring(0,4) + acc.substring(7);
-			diary.get(asiento).getEntry().getDetails().get(apunte-1).setBalancingAccountCode(contrapartida);
+			diary.get(asiento).getEntry().getDetails().get(apunte-1).setBalancingAccountCode(Utils.calculateAccount(acc));
 			return;
 		}
 		
