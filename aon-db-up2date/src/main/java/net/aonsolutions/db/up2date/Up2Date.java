@@ -26,6 +26,7 @@ import net.aonsolutions.db.up2date.payroll.FixERESalariesII;
 import net.aonsolutions.db.up2date.payroll.GarantizadoFix;
 import net.aonsolutions.db.up2date.payroll.GarantizadoUpdate;
 import net.aonsolutions.db.up2date.payroll.MejoraInsert;
+import net.aonsolutions.db.up2date.payroll.MejoraUpdate;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Fix;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateFactor;
 import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Fix;
@@ -123,7 +124,8 @@ public class Up2Date {
     		//SalaryHoursUpdateFactor.SALARYHOURSUPDATEFACTOR,
     		//GarantizadoFix.GARANTIZADOFIX
     		//EresUpdateII.ERESUPDATE,
-    		MejoraInsert.MEJORAINSERT
+    		//MejoraInsert.MEJORAINSERT,
+    		MejoraUpdate.MEJORAUPDATE
     };
 
 
