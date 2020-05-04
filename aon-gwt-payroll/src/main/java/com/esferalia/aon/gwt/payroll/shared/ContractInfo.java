@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class ContractInfo implements Serializable{
 	
@@ -27,6 +26,8 @@ public class ContractInfo implements Serializable{
 	//Contract Data Table
 	private Integer contracttypeId;
 	private String contractType;
+	private Integer contractTRLId;
+	private String contractTRL;
 	private Integer quotegroupId;
 	private String quoteGroup;
 	private Integer ocupationId;
@@ -65,6 +66,7 @@ public class ContractInfo implements Serializable{
 		this.cccType = null;
 		this.contracttypeId = null;
 		this.contractType = null;
+		this.contractTRL = null;
 		this.quotegroupId = null;
 		this.quoteGroup = null;
 		this.ocupationId = null;
@@ -133,9 +135,25 @@ public class ContractInfo implements Serializable{
 	public Integer getContractModel() {
 		return contractModel;
 	}
+	
+	public void setContractTRLId(Integer contractTRLId) {
+		this.contractTRLId = contractTRLId;
+	}
+	
+	public Integer getContractTRLId() {
+		return contractTRLId;
+	}
 
 	public void setContractModel(Integer ordinal) {
 		this.contractModel = ordinal;
+	}
+	
+	public String getContractTRL() {
+		return contractTRL;
+	}
+	
+	public void setContractTRL(String trlCode) {
+		this.contractTRL = trlCode;
 	}
 
 	public Date getStartDate() {
@@ -350,6 +368,8 @@ public class ContractInfo implements Serializable{
 		result += " **** Contract Info Table **** \n";
 		result += "Contract Model Id : " + contractmodelId + "\n";
 		result += "Contract Model : " + contractModel + "\n";
+		result += "Contract TRL Id : " + contractTRLId + "\n";
+		result += "Contract TRL : " + contractTRL + "\n";
 		result += "Reta Id : " + retaId + "\n";
 		result += "Old Start Date : " + oldStartDate + "\n";
 		result += "Old End Date : " + oldEndDate + "\n";

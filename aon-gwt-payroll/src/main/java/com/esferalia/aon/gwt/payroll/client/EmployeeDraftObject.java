@@ -288,6 +288,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.contractData.getContractModel();
 	}
 	
+	public String getTRL() {
+		return this.contractData.getContractTRL();
+	}
+	
 	public Date getContractStartDate() {
 		return this.contractData.getStartDate();
 	}
@@ -536,6 +540,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				contractModelId );
 		
 		contractData.setContractModel(contractModelId);	
+	}
+	
+	public void setContractTRL(String trlCode) {
+		add(contractData::setContractTRL, 
+				contractData.getContractTRL(), 
+				trlCode );
+		
+		contractData.setContractTRL(trlCode);	
 	}
 	
 	public void setContractStartDate(Date start_date) {

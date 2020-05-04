@@ -431,6 +431,10 @@ public class EmployeeDialogObject {
 		contractData.setContractModel(ordinal);//ModelOption.values()[ordinal].toString());	
 	}
 	
+	public void setContractTRL(String trlCode) {
+		contractData.setContractTRL(trlCode);
+	}
+	
 	public void setContractStartDate(Date start_date) {
 		contractData.setStartDate(start_date);		
 	}

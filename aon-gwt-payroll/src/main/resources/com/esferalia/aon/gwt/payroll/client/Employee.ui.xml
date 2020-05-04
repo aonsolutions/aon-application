@@ -264,6 +264,14 @@
 						</tr>
 						<tr>
 							<td style="background-color: #eaeaea; width: 200px;">
+								<g:Label styleName="{style.firstColumnTextStyle}">TRL</g:Label>
+							</td>
+							<td colspan="6">
+								<g:SuggestBox ui:field="trl" debugId="trl" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 200px;">
 								<g:Label styleName="{style.firstColumnTextStyle}">Periodo contratación</g:Label>
 							</td>
 							<td>

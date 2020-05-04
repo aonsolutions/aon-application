@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -23,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
+import com.esferalia.aon.gwt.payroll.shared.TRL;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -30,6 +32,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -262,6 +266,13 @@ public class EmployeeDraft extends Composite {
 //				employeeDraftObject.setContractModel(contractModelEnum); // GET String of enum in JooqEmployee.java
 //			}
 //			saving();
+		}
+		
+
+
+		@Override
+		public void onEmployeeTRLChange() {
+			// TODO: TextBase change handler
 		}
 
 		@Override
@@ -687,6 +698,22 @@ public class EmployeeDraft extends Composite {
 		//Set save status
 		saveStatus.setTitle("Cada cambio que hagas se guarda autom\u00E1ticamente");	
 		onSaved = this::onSavedNoop;
+		
+		employee.trl.getTextBox().addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				String selectedTrl = employee.trl.getValue();
+				if(StringUtils.isEmpty(selectedTrl))
+					employeeDraftObject.setContractTRL(null);
+				else {
+					String trlCode = selectedTrl.split(" -")[0];
+					employeeDraftObject.setContractTRL(trlCode);
+				}
+				
+				saving();
+			}
+		});
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -983,6 +1010,17 @@ public class EmployeeDraft extends Composite {
 		initIbans();
 		initHandlers();
 		
+		//Initialize TRL SuggestBox
+		Collection<String> trlEntries = TRL.getAllEntriesCollection();
+		List<String> contractTRLSuggest = new ArrayList<String>();
+		trlEntries.forEach(e -> {
+			contractTRLSuggest.add(e+"");
+		});
+		
+		MultiWordSuggestOracle orclTRL = (MultiWordSuggestOracle) this.employee.trl.getSuggestOracle();
+		orclTRL.addAll(contractTRLSuggest);
+		this.employee.trl.setAutoSelectEnabled(true);
+		
 		if (employeeDraftObject.getContractSSRegimen() == 3) {
 			afiButton.getElement().getStyle().setDisplay(Display.NONE);
 			this.employee.showElementsFreelancerTable();
@@ -1096,6 +1134,8 @@ public class EmployeeDraft extends Composite {
 		
 		setSelectedValueLB(employee.workplace, employeeDraftObject.getWorkplaceId().toString());
 		
+		this.employee.trl.setValue(TRL.getEntryByCode(employeeDraftObject.getTRL()));
+		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
@@ -1172,6 +1212,8 @@ public class EmployeeDraft extends Composite {
 		
 		if(null != employeeDraftObject.getContractModel())
 			setSelectedValueLB(employee.modality, employeeDraftObject.getContractModel().toString());
+		
+		this.employee.trl.setValue(TRL.getEntryByCode(employeeDraftObject.getTRL()));
 		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());

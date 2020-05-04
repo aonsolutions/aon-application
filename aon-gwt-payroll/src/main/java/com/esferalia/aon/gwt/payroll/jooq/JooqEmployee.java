@@ -393,6 +393,16 @@ public class JooqEmployee {
 			
 		}
 		
+		if(null != contractData.getContractTRL())
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "TRL")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getContractTRL()))
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		
 		dslContext.insertInto(CONTRACT_INFO)
 			.set(CONTRACT_INFO.DOMAIN, domain)
 			.set(CONTRACT_INFO.CONTRACT, contractId)
@@ -681,6 +691,8 @@ public class JooqEmployee {
 		contractData.setOcupation(null);
 		contractData.setJourneytypeId(null);
 		contractData.setJourneyType(null);
+		contractData.setContractTRL(null);
+		contractData.setContractTRLId(null);
 		
 		//CONTRACT DATA TABLE
 		Date currentDate = new Date(new java.util.Date().getTime());
@@ -744,6 +756,9 @@ public class JooqEmployee {
 			}else if(r.get(CONTRACT_DATA.NAME).equals("TIEMPO_COMPLETO")) {
 				contractData.setJourneytypeId(r.get(CONTRACT_DATA.ID));
 				contractData.setJourneyType(r.get(CONTRACT_DATA.EXPRESSION).equalsIgnoreCase("TRUE") ? (byte) 0 : (byte) 1);
+			}else if(r.get(CONTRACT_DATA.NAME).equals("TRL")) {
+				contractData.setContractTRLId(r.get(CONTRACT_DATA.ID));
+				contractData.setContractTRL(parseContractTable(r.get(CONTRACT_DATA.EXPRESSION)));
 			}
 		}
 		
@@ -1572,6 +1587,94 @@ public class JooqEmployee {
 			}
 		}
 		
+		if(null == contractData.getContractTRLId()){
+			if(null != contractData.getContractTRL()){
+				ContractDataRecord trlRecord = null;
+				if(contractData.hasPayroll()){
+					Date newEndDate = endDate; //Fecha fin contrato
+					java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
+					DateUtils.addDays2Date(auxDate, 1);
+					Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo ocupacion
+					
+					trlRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getContractTRLId(), domain, "TRL", contractData.getContractId(), "\""+ contractData.getContractTRL()+"\"", 
+								auxStartDate, newEndDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+				}else{
+					trlRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getContractTRLId(), domain, "TRL", contractData.getContractId(), "\""+ contractData.getContractTRL()+"\"", 
+								startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+				}
+				contractData.setContractTRLId(trlRecord.getId());
+			}
+		}else{
+			if(null == contractData.getContractTRL()){
+				if(contractData.hasPayroll()){
+					java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
+					auxDate.setDate(auxDate.getDate()+1);
+					Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
+					
+					Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getOcupationId())).fetchOne();
+					if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
+						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).execute();
+						contractData.setContractTRLId(null);
+						contractData.setContractTRL(null);
+					}else{
+						Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui ocupacion
+						dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, auxEndDate).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).execute();
+						contractData.setContractTRLId(null);
+						contractData.setContractTRL(null);
+					}
+				}else{
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).execute();
+					contractData.setContractTRLId(null);
+					contractData.setContractTRL(null);
+				}	
+			}else{
+				if(contractData.hasPayroll()){
+					Date newEndDate = endDate; //Fecha fin contrato
+					Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui grupo cotizacion
+					java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
+					auxDate.setDate(auxDate.getDate()+1);
+//					DateUtils.addDays(auxDate, 1);
+					Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
+					
+					Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).fetchOne();
+					if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
+						dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getContractTRL()+"\"")
+						.where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId()))
+						.execute();
+					}else{
+						dslContext.update(CONTRACT_DATA)
+							.set(CONTRACT_DATA.END_DATE, auxEndDate)
+							.where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId()))
+							.execute();
+						
+						ContractDataRecord trlRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+							.values(null, domain, "TRL", contractData.getContractId(), "\""+ contractData.getContractTRL()+"\"", 
+									auxStartDate, newEndDate)
+							.returning(CONTRACT_DATA.ID)
+							.fetchOne();
+						
+						contractData.setContractTRLId(trlRecord.getId());
+					}
+				}else
+					dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getContractTRL()+"\"")
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId()))
+						.execute();
+			}
+		}
+		
 		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
 		if(contractJourneyDuration.isEmpty()) {
 			//ACTUALIZAR DURACION JORNADA
@@ -1757,6 +1860,13 @@ public class JooqEmployee {
 			return null;
 		
 		return "\""+ exp +"\"";
+	}
+	
+	public static String parseContractTable(String exp) {
+		if(null == exp)
+			return null;
+		
+		return exp.split("\"")[1];
 	}
 	
 	public static String getPaymentTypeName(byte type) {

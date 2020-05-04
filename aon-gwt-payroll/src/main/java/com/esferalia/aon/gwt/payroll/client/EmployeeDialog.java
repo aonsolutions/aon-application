@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -22,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.gwt.payroll.shared.TRL;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -30,6 +32,8 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -262,6 +266,10 @@ public class EmployeeDialog extends CustomDialog {
 				Integer contractModel = Integer.parseInt(this.modality.getSelectedValue());
 				employeeDialogObject.setContractModel(contractModel); // GET String of enum in JooqEmployee.java
 			}
+		}
+		
+		public void onEmployeeTRLChange() {
+			// TODO: textBase Change
 		}
 		
 		@Override
@@ -555,6 +563,20 @@ public class EmployeeDialog extends CustomDialog {
 				reformatAccount(employee.account);
 			}
 		});
+		
+		employee.trl.getTextBox().addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				String selectedTrl = employee.trl.getValue();
+				if(StringUtils.isEmpty(selectedTrl))
+					employeeDialogObject.setContractTRL(null);
+				else {
+					String trlCode = selectedTrl.split(" -")[0];
+					employeeDialogObject.setContractTRL(trlCode);
+				}
+			}
+		});
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -700,6 +722,17 @@ public class EmployeeDialog extends CustomDialog {
 		MultiWordSuggestOracle orclSurNames = (MultiWordSuggestOracle) this.employee.first_surname.getSuggestOracle();
 		orclSurNames.addAll(employeesSurNamesSuggest);
 		this.employee.first_surname.setAutoSelectEnabled(false);
+		
+		//Initialize TRL SuggestBox
+		Collection<String> trlEntries = TRL.getAllEntriesCollection();
+		List<String> contractTRLSuggest = new ArrayList<String>();
+		trlEntries.forEach(e -> {
+			contractTRLSuggest.add(e+"");
+		});
+		
+		MultiWordSuggestOracle orclTRL = (MultiWordSuggestOracle) this.employee.trl.getSuggestOracle();
+		orclTRL.addAll(contractTRLSuggest);
+		this.employee.trl.setAutoSelectEnabled(true);
 	}
 	
 	private void initActivitiesCCC() {
