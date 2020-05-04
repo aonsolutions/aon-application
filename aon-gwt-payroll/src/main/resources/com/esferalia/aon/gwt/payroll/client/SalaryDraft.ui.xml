@@ -180,10 +180,20 @@
 		}
 
 		.aon-Disabled .gwt-TextBox,
-		.aon-Disabled.gwt-SuggestBox,
-		.aon-ReadOnly .gwt-ListBox
+		.aon-Disabled .gwt-SuggestBox,
+		.aon-Disabled .gwt-ListBox
 		{
     		color: grey !important;
+		}
+
+		.aon-Disabled .aon-icon-reset,
+		.aon-Disabled .aon-icon-delete,
+		.aon-Disabled .aon-icon-rowSelector,
+		.aon-Disabled .aon-icon-rowSelector-Parent,
+		.aon-Disabled .aon-icon-rowSelector-Changed
+		{
+			display:none;
+			visibility:hidden;
 		}
 
 		.aon-ReadOnly .gwt-ListBox {
