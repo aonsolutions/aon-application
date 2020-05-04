@@ -235,8 +235,8 @@ public class EnterpriseDraft extends Composite {
 		this.enterpriseDraftObject.initializeEnterprise(
 				s -> {
 					initializeUndoRedo();
-					initilizeView();
 					initializeScheduler();
+					initilizeView();
 				},
 				f -> {}
 		);
@@ -298,6 +298,7 @@ public class EnterpriseDraft extends Composite {
 			});
 			
 			// If only one calendar, selected it and fire event
+			// rtrepiana. Yes but saveTimer has not been initialize yet
 			if(scopeListBox.getItemCount() != 0 && scopeListBox.getItemCount() == 1){
 				scopeListBox.setSelectedIndex(0);
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), scopeListBox);

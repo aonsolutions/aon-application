@@ -419,22 +419,25 @@ public class JooqEnterprise {
 		if(null != enterpriseInfo.getEnterpriseAgreementId() && -1 != enterpriseInfo.getEnterpriseAgreementId()) {
 			String agreementDescription = dslContext.select().from(AGREEMENT)
 					.where(AGREEMENT.ID.eq(enterpriseInfo.getEnterpriseAgreementId()))
-					.fetchOne()
-					.get(AGREEMENT.DESCRIPTION);
-					
-			dslContext.insertInto(ENTERPRISE_DATA, ENTERPRISE_DATA.ID, ENTERPRISE_DATA.DOMAIN, ENTERPRISE_DATA.ENTERPRISE, ENTERPRISE_DATA.NAME,
-					ENTERPRISE_DATA.EXPRESSION, ENTERPRISE_DATA.START_DATE, ENTERPRISE_DATA.END_DATE)
-				.values(enterpriseInfo.getEnterpriseAgreementId(), enterpriseInfo.getDomainId(),  enterpriseInfo.getEnterpriseId(), "agreement", 
-						agreementDescription, null, null)
-				.onDuplicateKeyUpdate()
-				.set(ENTERPRISE_DATA.EXPRESSION, agreementDescription)
-				.execute();
-		}else {
-			if(null != enterpriseInfo.getEnterpriseAgreementId())
-				dslContext.delete(ENTERPRISE_DATA)
-					.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getEnterpriseAgreementId()))
+					.fetchOptional(AGREEMENT.DESCRIPTION)
+					.orElse(null)
+					;
+			if ( agreementDescription != null )	{	 
+				dslContext.insertInto(ENTERPRISE_DATA, ENTERPRISE_DATA.ID, ENTERPRISE_DATA.DOMAIN, ENTERPRISE_DATA.ENTERPRISE, ENTERPRISE_DATA.NAME,
+						ENTERPRISE_DATA.EXPRESSION, ENTERPRISE_DATA.START_DATE, ENTERPRISE_DATA.END_DATE)
+					.values(enterpriseInfo.getEnterpriseAgreementId(), enterpriseInfo.getDomainId(),  enterpriseInfo.getEnterpriseId(), "agreement", 
+							agreementDescription, null, null)
+					.onDuplicateKeyUpdate()
+					.set(ENTERPRISE_DATA.EXPRESSION, agreementDescription)
 					.execute();
+				return enterpriseInfo;
+			} 
 		}
+		
+		if(null != enterpriseInfo.getEnterpriseAgreementId())
+			dslContext.delete(ENTERPRISE_DATA)
+				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getEnterpriseAgreementId()))
+				.execute();
 		
 		return enterpriseInfo;
 	}
