@@ -140,6 +140,20 @@ public class JooqEmployeeEvents {
 		
 		employeeInfoVariablesEvents.setFullTimeJourney(isFullTimeJourney(journeyTypeEmployee));
 		
+		// ----------------------------------- TC2
+		
+		Result<Record> contractType = dslContext.select()
+				  .from(CONTRACT_DATA)
+				  .where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				  .and(CONTRACT_DATA.NAME.equal("TC2"))
+				  .orderBy(CONTRACT_DATA.START_DATE.desc()) // If there is more than one contract
+				  .fetch();
+		
+		if(contractType.isNotEmpty()) {
+			String tc2 = contractType.get(0).get(CONTRACT_DATA.EXPRESSION);
+			employeeInfoVariablesEvents.setTC2(tc2);
+		}
+		
 		// --------------------------------------------- AÑADIR VARIABLES ---------------------------------------------------------
 		
 		for(String name: employeeContractVariables){

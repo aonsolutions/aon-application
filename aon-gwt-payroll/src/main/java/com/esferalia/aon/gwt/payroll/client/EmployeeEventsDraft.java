@@ -26,6 +26,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -439,10 +440,21 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		
 		//Crear nuevas filas con las variables dadas
 		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+			
+			// Filter variables by fullJourney
 			if(employeeEventsDraft.isFullJourney() && var == "HORAS_COMPLEMENTARIAS")
 				continue;
 			
 			if(!employeeEventsDraft.isFullJourney() && var == "HORAS_EXTRAS")
+				continue;
+			
+			//Filter variable by tc2
+			if(employeeEventsDraft.getTC2().equals("\"421\"") && var == "BONIFICACION_FORMACION_CONTINUA")
+				continue;
+			
+			if(!employeeEventsDraft.getTC2().equals("\"421\"") && 
+					(var == "HORAS_FORMACION_PRESENCIAL" || var == "HORAS_FORMACION_DISTANCIA" ||
+					 var == "HORAS_TUTORIA" || var == "BONIFICACION_TUTORIA"))
 				continue;
 			
 			createVariableRow(var, list);

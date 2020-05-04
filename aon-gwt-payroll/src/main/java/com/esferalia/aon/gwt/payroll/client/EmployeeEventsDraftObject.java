@@ -136,6 +136,7 @@ public class EmployeeEventsDraftObject {
 	public UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObject employeeCalendar;
 	private Boolean fullJourney;
+	private String tc2;
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
 	private ArrayList<String> employeeContractVariables;
@@ -156,6 +157,8 @@ public class EmployeeEventsDraftObject {
 		this.undoManager = new UndoManager<>();
 		
 		this.fullJourney = false;
+		
+		this.tc2 = "";
 	}
 
 
@@ -201,6 +204,10 @@ public class EmployeeEventsDraftObject {
 	
 	public boolean isFullJourney() {
 		return this.fullJourney;
+	}
+	
+	public String getTC2() {
+		return this.tc2;
 	}
 
 	
@@ -458,6 +465,7 @@ public class EmployeeEventsDraftObject {
 			public void onSuccess(EmployeeEventsData result) {
 				
 				fullJourney = result.isFullTimeJourney();
+				tc2 = result.getTC2();
 				
 				for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : result.getContractEventsList().entrySet()){
 					

@@ -12,16 +12,18 @@ public class EmployeeEventsData implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Map<String,ArrayList<Quartet<Date, Date, String, String>>> contractEventsList;
 	private boolean fullTimeJourney;
+	private String tc2;
 	
 	public EmployeeEventsData() {
 		super();
 	}
 
 	public EmployeeEventsData(Map<String,ArrayList<Quartet<Date, Date, String, String>>> contractEventsList,
-			boolean fullTimeJourney) {
+			boolean fullTimeJourney, String tc2) {
 		super();
 		this.contractEventsList = contractEventsList;
 		this.fullTimeJourney = fullTimeJourney;
+		this.tc2 = tc2;
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -42,6 +44,14 @@ public class EmployeeEventsData implements Serializable {
 	public EmployeeEventsData setFullTimeJourney(boolean fullTimeJourney) {
 		this.fullTimeJourney = fullTimeJourney;
 		return this;
+	}
+	
+	public String getTC2() {
+		return this.tc2;
+	}
+	
+	public void setTC2(String tc2) {
+		this.tc2 = tc2;
 	}
 	
 }
