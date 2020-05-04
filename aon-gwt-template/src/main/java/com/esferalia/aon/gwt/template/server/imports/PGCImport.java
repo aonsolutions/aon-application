@@ -31,7 +31,8 @@ public class PGCImport {
 		private Integer line;
 		
 		public AccountImportClass() {
-			this.account = new Account();
+			this.account = new Account()
+					.setActive(true);
 		}
 
 		public Account getAccount() {
