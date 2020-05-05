@@ -728,8 +728,7 @@ public class JooqEmployee {
 			}else
 				contractDataTable = dslContext.select().from(CONTRACT_DATA)
 						.where(CONTRACT_DATA.CONTRACT.eq(contract))
-						.and(CONTRACT_DATA.START_DATE.le(currentDate))
-						.and(CONTRACT_DATA.END_DATE.ge(currentDate).or(CONTRACT_DATA.END_DATE.isNull()))
+						.orderBy(CONTRACT_DATA.START_DATE.asc())
 						.fetch();
 			
 			if(contractDataTable.isEmpty())
@@ -1253,207 +1252,89 @@ public class JooqEmployee {
 				.where(CONTRACT.ID.eq(contractData.getContractId()))
 				.execute();
 			
-			if(null == contractData.getContracttypeId()){
-				if(null != contractData.getContractType()){
-					String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
-					ContractDataRecord tc2Record = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\"" + contractType + "\"", 
-								startDate, endDate)
-						.returning(CONTRACT_DATA.ID)
-						.fetchOne();
-					
-					contractData.setContractId(tc2Record.getId());
-				}
-			}else{
-				if(null == contractData.getContractType()){
-					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContracttypeId())).execute();
-					contractData.setContractId(null);
-					contractData.setContractType(null);
-				}else{
-					String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
-					dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractType +"\"")
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.where(CONTRACT_DATA.ID.eq(contractData.getContracttypeId()))
-						.execute();
-				}
-			}
-			
-			if(null == contractData.getQuotegroupId()){
-				if(null != contractData.getQuoteGroup()){
-					ContractDataRecord contizacionRecord = null;
-					if(contractData.hasPayroll()){
-						Date newEndDate = endDate; //Fecha fin contrato
-						java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-						DateUtils.addDays2Date(auxDate, 1);
-						Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
-						
-						contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+			if(!contractData.hasPayroll()) {
+				if(null == contractData.getContracttypeId()){
+					if(null != contractData.getContractType()){
+						String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
+						ContractDataRecord tc2Record = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(null, domain, "GRUPO_COTIZACION", contractData.getContractId(), "\""+ contractData.getQuoteGroup()+"\"", 
-									auxStartDate, newEndDate)
+							.values(contractData.getContracttypeId(), domain, "TC2", contractData.getContractId(), "\"" + contractType + "\"", 
+									startDate, endDate)
 							.returning(CONTRACT_DATA.ID)
 							.fetchOne();
+						
+						contractData.setContractId(tc2Record.getId());
+					}
+				}else{
+					if(null == contractData.getContractType()){
+						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContracttypeId())).execute();
+						contractData.setContractId(null);
+						contractData.setContractType(null);
 					}else{
+						String contractType = StringUtils.leftPad(contractData.getContractType(), 3, "0");
+						dslContext.update(CONTRACT_DATA)
+							.set(CONTRACT_DATA.EXPRESSION, "\""+ contractType +"\"")
+							.set(CONTRACT_DATA.START_DATE, startDate)
+							.set(CONTRACT_DATA.END_DATE, endDate)
+							.where(CONTRACT_DATA.ID.eq(contractData.getContracttypeId()))
+							.execute();
+					}
+				}
+					
+				if(null == contractData.getQuotegroupId()){
+					if(null != contractData.getQuoteGroup()){
+						ContractDataRecord contizacionRecord = null;
+						
 						contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 							.values(contractData.getQuotegroupId(), domain, "GRUPO_COTIZACION", contractData.getContractId(), "\""+ contractData.getQuoteGroup()+"\"", 
 									startDate, endDate)
 							.returning(CONTRACT_DATA.ID)
 							.fetchOne();
-					}
-					contractData.setQuotegroupId(contizacionRecord.getId());
-				}
-			}else{
-				if(null == contractData.getQuoteGroup()){
-					if(contractData.hasPayroll()){
-						java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-						auxDate.setDate(auxDate.getDate()+1);
-						Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
 						
-						Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId())).fetchOne();
-						if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
-							dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId())).execute();
-							contractData.setQuotegroupId(null);
-							contractData.setQuoteGroup(null);
-						}else{
-							Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui ocupacion
-							dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, auxEndDate).where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId())).execute();
-							contractData.setQuotegroupId(null);
-							contractData.setQuoteGroup(null);
-						}
-					}else{
+						contractData.setQuotegroupId(contizacionRecord.getId());
+					}
+				}else{
+					if(null == contractData.getQuoteGroup()){
 						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId())).execute();
 						contractData.setQuotegroupId(null);
 						contractData.setQuoteGroup(null);
-					}
-				}else{
-					if(contractData.hasPayroll()){
-						Date newEndDate = endDate; //Fecha fin contrato
-						Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui grupo cotizacion
-						java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-						auxDate.setDate(auxDate.getDate()+1);
-//						DateUtils.addDays(auxDate, 1);
-						Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
-						
-						Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId())).fetchOne();
-						if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
-							dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getQuoteGroup()+"\"")
-							.where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId()))
-							.execute();
-						}else{
-							dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.END_DATE, auxEndDate)
-							.where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId()))
-							.execute();
-						
-							ContractDataRecord contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-								.values(null, domain, "GRUPO_COTIZACION", contractData.getContractId(), "\""+ contractData.getQuoteGroup()+"\"", 
-										auxStartDate, newEndDate)
-								.returning(CONTRACT_DATA.ID)
-								.fetchOne();
-							
-							contractData.setQuotegroupId(contizacionRecord.getId());
-						}
-					}else
-						dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getQuoteGroup()+"\"")
-							.set(CONTRACT_DATA.START_DATE, startDate)
-							.set(CONTRACT_DATA.END_DATE, endDate)
-							.where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId()))
-							.execute();
-				}
-			}
-			
-			if(null == contractData.getOcupationId()){
-				if(null != contractData.getOcupation()){
-					ContractDataRecord ocupacionRecord = null;
-					if(contractData.hasPayroll()){
-						Date newEndDate = endDate; //Fecha fin contrato
-						java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-						DateUtils.addDays2Date(auxDate, 1);
-						Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo ocupacion
-						
-						ocupacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(contractData.getOcupationId(), domain, "OCUPACION", contractData.getContractId(), "\""+ contractData.getOcupation()+"\"", 
-									auxStartDate, newEndDate)
-							.returning(CONTRACT_DATA.ID)
-							.fetchOne();
 					}else{
+						dslContext.update(CONTRACT_DATA)
+						.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getQuoteGroup()+"\"")
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId()))
+						.execute();
+					}
+				}
+				
+				if(null == contractData.getOcupationId()){
+					if(null != contractData.getOcupation()){
+						ContractDataRecord ocupacionRecord = null;
+						
 						ocupacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
 								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
 							.values(contractData.getOcupationId(), domain, "OCUPACION", contractData.getContractId(), "\""+ contractData.getOcupation()+"\"", 
 									startDate, endDate)
 							.returning(CONTRACT_DATA.ID)
 							.fetchOne();
-					}
-					contractData.setOcupationId(ocupacionRecord.getId());
-				}
-			}else{
-				if(null == contractData.getOcupation()){
-					if(contractData.hasPayroll()){
-						java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-						auxDate.setDate(auxDate.getDate()+1);
-						Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
 						
-						Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getOcupationId())).fetchOne();
-						if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
-							dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getOcupationId())).execute();
-							contractData.setOcupationId(null);
-							contractData.setOcupation(null);
-						}else{
-							Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui ocupacion
-							dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, auxEndDate).where(CONTRACT_DATA.ID.eq(contractData.getOcupationId())).execute();
-							contractData.setOcupationId(null);
-							contractData.setOcupation(null);
-						}
-					}else{
+						contractData.setOcupationId(ocupacionRecord.getId());
+					}
+				}else{
+					if(null == contractData.getOcupation()){
 						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getOcupationId())).execute();
 						contractData.setOcupationId(null);
 						contractData.setOcupation(null);
-					}	
-				}else{
-					if(contractData.hasPayroll()){
-						Date newEndDate = endDate; //Fecha fin contrato
-						Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui grupo cotizacion
-						java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-						auxDate.setDate(auxDate.getDate()+1);
-//						DateUtils.addDays(auxDate, 1);
-						Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
-						
-						Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getOcupationId())).fetchOne();
-						if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
-							dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getOcupation()+"\"")
-							.where(CONTRACT_DATA.ID.eq(contractData.getOcupationId()))
-							.execute();
-						}else{
-							dslContext.update(CONTRACT_DATA)
-								.set(CONTRACT_DATA.END_DATE, auxEndDate)
-								.where(CONTRACT_DATA.ID.eq(contractData.getOcupationId()))
-								.execute();
-							
-							ContractDataRecord contizacionRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-								.values(null, domain, "OCUPACION", contractData.getContractId(), "\""+ contractData.getOcupation()+"\"", 
-										auxStartDate, newEndDate)
-								.returning(CONTRACT_DATA.ID)
-								.fetchOne();
-							
-							contractData.setQuotegroupId(contizacionRecord.getId());
-						}
-					}else
+					}else{
 						dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getOcupation()+"\"")
-							.set(CONTRACT_DATA.START_DATE, startDate)
-							.set(CONTRACT_DATA.END_DATE, endDate)
-							.where(CONTRACT_DATA.ID.eq(contractData.getOcupationId()))
-							.execute();
+						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getOcupation()+"\"")
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.set(CONTRACT_DATA.END_DATE, endDate)
+						.where(CONTRACT_DATA.ID.eq(contractData.getOcupationId()))
+						.execute();
+					}
 				}
 			}
 			
@@ -1587,91 +1468,48 @@ public class JooqEmployee {
 			}
 		}
 		
+		// GET TRL start and end date
+		Result<Record> tc2Records = dslContext.select().from(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+			.and(CONTRACT_DATA.NAME.eq("TC2"))
+			.orderBy(CONTRACT_DATA.START_DATE.desc())
+			.fetch();
+		
+		Date trlStartDate = new Date(startDate.getTime());
+		Date trlEndDate =  null;
+		if(null != endDate)
+			trlEndDate =  new Date(endDate.getTime());
+		
+		if(tc2Records.isNotEmpty()) {
+			trlStartDate = tc2Records.get(0).get(CONTRACT_DATA.START_DATE);
+			trlEndDate = tc2Records.get(0).get(CONTRACT_DATA.END_DATE);
+		}
+		
 		if(null == contractData.getContractTRLId()){
 			if(null != contractData.getContractTRL()){
 				ContractDataRecord trlRecord = null;
-				if(contractData.hasPayroll()){
-					Date newEndDate = endDate; //Fecha fin contrato
-					java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-					DateUtils.addDays2Date(auxDate, 1);
-					Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo ocupacion
-					
-					trlRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(contractData.getContractTRLId(), domain, "TRL", contractData.getContractId(), "\""+ contractData.getContractTRL()+"\"", 
-								auxStartDate, newEndDate)
-						.returning(CONTRACT_DATA.ID)
-						.fetchOne();
-				}else{
-					trlRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-						.values(contractData.getContractTRLId(), domain, "TRL", contractData.getContractId(), "\""+ contractData.getContractTRL()+"\"", 
-								startDate, endDate)
-						.returning(CONTRACT_DATA.ID)
-						.fetchOne();
-				}
+				
+				trlRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+						CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+					.values(contractData.getContractTRLId(), domain, "TRL", contractData.getContractId(), "\""+ contractData.getContractTRL()+"\"", 
+							trlStartDate, trlEndDate)
+					.returning(CONTRACT_DATA.ID)
+					.fetchOne();
+				
 				contractData.setContractTRLId(trlRecord.getId());
 			}
 		}else{
 			if(null == contractData.getContractTRL()){
-				if(contractData.hasPayroll()){
-					java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-					auxDate.setDate(auxDate.getDate()+1);
-					Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
-					
-					Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getOcupationId())).fetchOne();
-					if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
-						dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).execute();
-						contractData.setContractTRLId(null);
-						contractData.setContractTRL(null);
-					}else{
-						Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui ocupacion
-						dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, auxEndDate).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).execute();
-						contractData.setContractTRLId(null);
-						contractData.setContractTRL(null);
-					}
-				}else{
-					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).execute();
-					contractData.setContractTRLId(null);
-					contractData.setContractTRL(null);
-				}	
+				dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).execute();
+				contractData.setContractTRLId(null);
+				contractData.setContractTRL(null);
 			}else{
-				if(contractData.hasPayroll()){
-					Date newEndDate = endDate; //Fecha fin contrato
-					Date auxEndDate = new Date(contractData.getPayrollDate().getTime()); //Fecha fin antigui grupo cotizacion
-					java.util.Date auxDate = DateUtils.copyDateOnly(contractData.getPayrollDate());
-					auxDate.setDate(auxDate.getDate()+1);
-//					DateUtils.addDays(auxDate, 1);
-					Date auxStartDate = new Date(auxDate.getTime()); //Fecha inicio nuevo tramo grupo cotizacion
-					
-					Record auxRecord = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId())).fetchOne();
-					if(auxStartDate.equals(auxRecord.get(CONTRACT_DATA.START_DATE))){
-						dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, "\""+contractData.getContractTRL()+"\"")
-						.where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId()))
-						.execute();
-					}else{
-						dslContext.update(CONTRACT_DATA)
-							.set(CONTRACT_DATA.END_DATE, auxEndDate)
-							.where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId()))
-							.execute();
-						
-						ContractDataRecord trlRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(null, domain, "TRL", contractData.getContractId(), "\""+ contractData.getContractTRL()+"\"", 
-									auxStartDate, newEndDate)
-							.returning(CONTRACT_DATA.ID)
-							.fetchOne();
-						
-						contractData.setContractTRLId(trlRecord.getId());
-					}
-				}else
-					dslContext.update(CONTRACT_DATA)
-						.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getContractTRL()+"\"")
-						.set(CONTRACT_DATA.START_DATE, startDate)
-						.set(CONTRACT_DATA.END_DATE, endDate)
-						.where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId()))
-						.execute();
+				dslContext.update(CONTRACT_DATA)
+				.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getContractTRL()+"\"")
+				.set(CONTRACT_DATA.START_DATE, trlStartDate)
+				.set(CONTRACT_DATA.END_DATE, trlEndDate)
+				.where(CONTRACT_DATA.ID.eq(contractData.getContractTRLId()))
+				.execute();
 			}
 		}
 		

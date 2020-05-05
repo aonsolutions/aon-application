@@ -32,10 +32,11 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
@@ -45,6 +46,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeDialog extends CustomDialog {
@@ -564,12 +566,12 @@ public class EmployeeDialog extends CustomDialog {
 			}
 		});
 		
-		employee.trl.getTextBox().addBlurHandler(new BlurHandler() {
+		employee.trl.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			
 			@Override
-			public void onBlur(BlurEvent event) {
+			public void onSelection(SelectionEvent<SuggestOracle.Suggestion> event) {
 				String selectedTrl = employee.trl.getValue();
-				if(StringUtils.isEmpty(selectedTrl))
+				if(StringUtils.isEmpty(selectedTrl) || selectedTrl.equals(" - "))
 					employeeDialogObject.setContractTRL(null);
 				else {
 					String trlCode = selectedTrl.split(" -")[0];
@@ -577,6 +579,14 @@ public class EmployeeDialog extends CustomDialog {
 				}
 			}
 		});
+		
+		employee.trl.getValueBox().addKeyDownHandler( (event) -> {
+			if ( KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode() )
+				employee.trl.hideSuggestionList();
+			else if ( event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode()) 
+				employee.trl.showSuggestionList();
+		});
+		
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -732,6 +742,7 @@ public class EmployeeDialog extends CustomDialog {
 		
 		MultiWordSuggestOracle orclTRL = (MultiWordSuggestOracle) this.employee.trl.getSuggestOracle();
 		orclTRL.addAll(contractTRLSuggest);
+		orclTRL.setDefaultSuggestionsFromText(trlEntries);
 		this.employee.trl.setAutoSelectEnabled(true);
 	}
 	

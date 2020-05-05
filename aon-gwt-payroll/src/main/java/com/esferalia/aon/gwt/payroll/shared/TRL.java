@@ -12,9 +12,11 @@ public class TRL {
 	private static final Map<String, String> trlTable;
 	static {
 		Map<String, String> trlTableMap = new HashMap<String, String>();
-		 
+		
+		trlTableMap.put("", "");
 		trlTableMap.put("000", "Tipo relaci" + String.valueOf("\u00F3") + "n com" + String.valueOf("\u00FA") + "n");
-		trlTableMap.put("064", "Contrato a tiempo parcial reducido 087 Contrato de aprendizaje");
+		trlTableMap.put("064", "Contrato a tiempo parcial");
+		trlTableMap.put("087", "Contrato de aprendizaje");
 		trlTableMap.put("300", "Asistencia Sanitaria Concertada");
 		trlTableMap.put("301", "Asistencia Sanitaria Concertada menos farmacia");
 		trlTableMap.put("302", "Asistencia Sanitaria Medicina General, Pediatr" + String.valueOf("\u00ED") + "a, Puericultura, Servicio de Urgencia Ambulatoria");
