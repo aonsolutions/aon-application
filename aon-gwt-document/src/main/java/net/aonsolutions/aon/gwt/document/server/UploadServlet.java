@@ -144,7 +144,7 @@ public class UploadServlet extends HttpServlet{
                     	Drive drive = AonDrive.getInstace().serviceInitialize(d);
                     	User user = AON.getUser(domain.getName(), domain.getId(), login);
                     	AonDrive.getInstace().sync(drive, user, attach, false);
-//                    	SendNotification.sendGmail(domain, user, attach, true);
+                    	SendNotification.sendGmail(domain, user, attach, true);
                     }
                 }
             }
