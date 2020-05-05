@@ -100,13 +100,13 @@ public class ContractJourneyDuration implements Serializable {
 					if(!visitedDays.contains(journey.getName()) && journey.getExpression() != "0") {
 						visitedDays.add(journey.getName());
 						hours += Double.parseDouble(((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()));
-						if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
-						if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
-						if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
-						if("HORAS_JUEVES" == journey.getName()) result += ", J : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
-						if("HORAS_VIERNES" == journey.getName()) result += ", V : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
-						if("HORAS_SABADO" == journey.getName()) result += ", S : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()) + " ";
-						if("HORAS_DOMINGO" == journey.getName()) result += ", D : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression());
+						if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
+						if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
+						if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
+						if("HORAS_JUEVES" == journey.getName()) result += ", J : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
+						if("HORAS_VIERNES" == journey.getName()) result += ", V : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
+						if("HORAS_SABADO" == journey.getName()) result += ", S : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
+						if("HORAS_DOMINGO" == journey.getName()) result += ", D : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression());
 						
 					}
 				}
