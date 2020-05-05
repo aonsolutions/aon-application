@@ -449,9 +449,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				continue;
 			
 			//Filter variable by tc2
-			if(employeeEventsDraft.getTC2().equals("\"421\"") && var == "BONIFICACION_FORMACION_CONTINUA")
-				continue;
-			
 			if(!employeeEventsDraft.getTC2().equals("\"421\"") && 
 					(var == "HORAS_FORMACION_PRESENCIAL" || var == "HORAS_FORMACION_DISTANCIA" ||
 					 var == "HORAS_TUTORIA" || var == "BONIFICACION_TUTORIA"))
