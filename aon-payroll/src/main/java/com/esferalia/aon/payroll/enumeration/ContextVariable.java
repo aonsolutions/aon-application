@@ -257,7 +257,8 @@ public enum ContextVariable implements IResourceable {
 	SLD_H06("HORAS_TUTORIA", VariableType.INTEGER, false),
 	SLD_H03("HORAS_FORMACION_PRESENCIAL", VariableType.INTEGER, false),
 	SLD_H04("HORAS_FORMACION_DISTANCIA", VariableType.INTEGER, false),
-	
+	SLD_C763("BONIFICACION_FORMACION_CONTINUA", VariableType.DOUBLE, false),
+
 	
 	;
 

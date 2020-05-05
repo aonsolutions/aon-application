@@ -1985,7 +1985,7 @@ public class Bases {
 					.setMesControl(liquidacion.getFechaControl().getMes())
 					.setAnhoControl(liquidacion.getFechaControl().getAnho());
 
-		datosLiquidacion(liquidacion, liquidacionBuilder, cbs);
+		datosLiquidacion(ctx, liquidacion, liquidacionBuilder, cbs);
 
 		for (LiquidacionMes<?> liquidacionMes : liquidacion
 				.getLiquidacionMes()) {
@@ -2017,29 +2017,77 @@ public class Bases {
 					liquidacionMes.getMesLiquidativo(), 
 					trabajadores, 
 					cbs);
-
-			liquidacionBuilder
-					.addLiquidacionMes(liquidacionMesBuilder.create());
+			
+			net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes l = 
+					liquidacionMesBuilder.create();
+			if ( isNotEmpty(l) )
+				liquidacionBuilder.addLiquidacionMes(l);
 
 		}
 
 		return liquidacionBuilder.create();
 	}
+	
+	private static boolean isNotEmpty(net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionMes l){
+		return ( l.getDatosMes() != null && l.getDatosMes().getDato().size() > 0 ) 
+			|| ( l.getTrabajadores() != null && l.getTrabajadores().getTrabajador().size() > 0 );
+	}
+	
 
-	private static void datosLiquidacion(Liquidacion<?, ?, ?, ?, ?> liquidacion,
+	private static void datosLiquidacion(AONContext ctx, Liquidacion<?, ?, ?, ?, ?> liquidacion,
 			LiquidacionBuilder liquidacionBuilder, BasesCallback... cbs) {
 
 		DatosLiquidacion<DatoSolicitado> datosLiquidacion = liquidacion
 				.getDatosLiquidacion();
 		if (datosLiquidacion == null)
 			return;
+		
+		String tipo = liquidacion.getTipo();
+		CtaCot ctaCot = liquidacion.getCcc();
+		String ccc = String.format("%s%s", ctaCot.getProvincia(),
+				ctaCot.getNumero());
+		Periodo desde = liquidacion.getPeriodoDesde();
+		Periodo hasta = liquidacion.getPeriodoHasta();
+		Calendar calendar = Utils.toCalendar(desde);
+		calendar.set(Calendar.DAY_OF_MONTH,
+				calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+		Date startDate = calendar.getTime();
+		calendar = Utils.toCalendar(hasta);
+		calendar.set(Calendar.DAY_OF_MONTH,
+				calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date endDate = calendar.getTime();
+		
+		Map<String,Double> codigoValorMap = new HashMap<String, Double>();
+		// @formatter:off
+		AON.getSalaryData(
+		ctx,
+		props -> props.getCCCProperty().eq(ccc)
+				.and(props.getEndDateProperty().ge(startDate))
+				.and(props.getStartDateProperty().le(endDate))
+				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
+		)
+		.forEach( salary -> {
+			Double c763 = salary.getContextData(ContextVariable.SLD_C763.getName(), Collectors.summingDouble(s -> Double.parseDouble(s)));
+			if ( c763 != null && c763 > 0.00 )
+				codigoValorMap.put("763", codigoValorMap.getOrDefault("763", 0.00) + c763);
+		} );
+		// @formatter:on
 
 		for (DatoSolicitado dato : datosLiquidacion.getDato()) {
-			try {
-				for (BasesCallback cb : cbs)
-					cb.unknownDato(liquidacion, dato, liquidacionBuilder);
-			} catch (Cancel e) {
-			}
+			if ( codigoValorMap.containsKey(dato.getCodigo()))
+				liquidacionBuilder.addDato(
+				new DatoBuilder()
+				.setTipo(dato.getTipoDato())
+				.setCodigo(dato.getCodigo())
+				.setImporteEuros(codigoValorMap.get("763"))
+				.create()
+				);
+			else 
+				try {
+					for (BasesCallback cb : cbs)
+						cb.unknownDato(liquidacion, dato, liquidacionBuilder);
+				} catch (Cancel e) {
+				}
 		}
 
 	}
@@ -2986,7 +3034,10 @@ public class Bases {
 						.stream().map(l -> l.getTrabajadores()).allMatch(
 								t -> t == null || t.getTrabajador().isEmpty());
 
-				if (noTrabajadores)
+				boolean noDatos = liquidacion.getDatosLiquidacion() == null ||  
+						liquidacion.getDatosLiquidacion().getDato().isEmpty();
+
+				if (noTrabajadores && noDatos)
 					for (BasesCallback cb : cbs)
 						cb.noDiffs(liquidacion);
 				else

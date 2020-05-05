@@ -52,6 +52,7 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
@@ -198,8 +199,9 @@ public class TrabajadoresTramos {
 			.addLiquidacion();
 		}
 		
+		datosSolicitados(trabajadoresTramosBuilder);
+
 		AONContext aonContext = new AONContext(conn);
-		
 		
 		Date fromDate = getFirstDayOf(desdeMes, desdeAnho);
 		Date toDate = getLastDayOf(hastaMes, hastaAnho);
@@ -210,9 +212,8 @@ public class TrabajadoresTramos {
 				String ccc_prov_num_dc = ccc.substring(4); // PROVINCIA (2) + Nº (7) + DÍGITOS CONTROL (2)
 				liquidacionMes(aonContext, trabajadoresTramosBuilder, anho, mes, ccc_prov_num_dc, tipo);
 			}
-		}
+		}		
 		
-
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = trabajadoresTramosBuilder
 				.create();
 
@@ -220,6 +221,14 @@ public class TrabajadoresTramos {
 	}
 	
 	// ------------------------------------------------------------------------
+	
+	private static void datosSolicitados(TrabajadoresTramosBuilder trabajadoresTramosBuilder) {
+		DatoSolicitadoBuilder datoSolicitadoBuilder = new DatoSolicitadoBuilder();
+		datoSolicitadoBuilder.setTipo("C");
+		datoSolicitadoBuilder.setCodigo("763");
+		datoSolicitadoBuilder.setObligatorio(false);
+		trabajadoresTramosBuilder.addDatoSolicitado(datoSolicitadoBuilder.create());
+	}
 	
 	private static void liquidacionMes(AONContext aonContext, 
 			TrabajadoresTramosBuilder trabajadoresTramosBuilder,
