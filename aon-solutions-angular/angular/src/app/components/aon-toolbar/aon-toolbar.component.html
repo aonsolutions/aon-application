@@ -1,0 +1,65 @@
+<mat-toolbar class="tedi-toolbar">
+  <span>
+    <img *ngIf="!isMobile()" class="aon-logo" style="cursor: pointer;" (click)="invoice()" [src]="logo"  width="240px" />
+    <img *ngIf="isMobile() && !mobileSearching" style="cursor: pointer;" (click)="invoice()" [src]="logoMobile"  height="60px" />
+  </span>
+
+  <span *ngIf="!isMobile()" class="search-panel">
+    <app-search-box> </app-search-box>
+  </span>
+
+  <span *ngIf="isMobile() && mobileSearching">
+    <button mat-icon-button (click)="closeSearch()"><mat-icon>arrow_back</mat-icon></button>
+  </span>
+
+  <span *ngIf="isMobile() && mobileSearching">
+    <app-mobile-search-box> </app-mobile-search-box>
+  </span>
+
+  <span *ngIf="isMobile() && !mobileSearching" class="tedi-right140">
+    <button mat-icon-button (click)="search()">
+      <mat-icon>search</mat-icon>
+    </button>
+  </span>
+
+
+  <span *ngIf="!mobileSearching" class="tedi-right260">
+      <span class="tedi-company-name"> {{getCompanyName()}} </span>
+  </span>
+
+  <span *ngIf="!mobileSearching" class="tedi-right220">
+    <button mat-icon-button (click)="invoice()" title="Facturas">
+      <mat-icon>receipt</mat-icon>
+    </button>
+  </span>
+
+  <span *ngIf="!mobileSearching" class="tedi-right180">
+    <button mat-icon-button (click)="documental()" title="Documental">
+      <mat-icon>cloud</mat-icon>
+    </button>
+  </span>
+
+  <span *ngIf="!mobileSearching" class="tedi-right140">
+    <button mat-icon-button (click)="callcenter()" title="Call Center">
+      <mat-icon>headset_mic</mat-icon>
+    </button>
+  </span>
+
+  <span *ngIf="!mobileSearching" class="tedi-right100">
+    <button mat-icon-button (click)="company()" title="Selección de Empresa">
+      <mat-icon>business</mat-icon>
+    </button>
+  </span>
+
+  <span *ngIf="!mobileSearching" class="tedi-right60">
+    <button mat-icon-button disabled="true"  (click)="apps()" title="Aplicaciones">
+      <mat-icon>apps</mat-icon>
+    </button>
+  </span>
+
+  <span *ngIf="!mobileSearching" class="tedi-right20" >
+    <button mat-icon-button (click)="openDialog()" [title]="getUserEmail()">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </span>
+</mat-toolbar>

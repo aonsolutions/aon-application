@@ -1,0 +1,49 @@
+.tedi-sidenav {
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
+  width: 250px;
+  background: #fff;
+  border-right: 1px solid #ddd;
+}
+
+.tedi-sidenav-content {
+  background: #fff;
+}
+
+.tedi-user-name{
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.full-width {
+  width: 100%;
+}
+.tedi-toolbar {
+  background-color: #fff;
+  border-bottom: #ddd 1px solid;
+  font-size: 11px;
+  height: 40px;
+}
+
+.tedi-list {
+  padding-top: 0px !important;
+}
+
+.tedi-list-item {
+  height: 50px !important;
+}
+
+.tedi-item {
+  padding-top: 5px;
+  padding-left: 15px;
+}
+
+.tedi-card {
+  margin:5px;
+}
+
+.tedi-right20 {
+  position: absolute;
+  right:20px;
+}

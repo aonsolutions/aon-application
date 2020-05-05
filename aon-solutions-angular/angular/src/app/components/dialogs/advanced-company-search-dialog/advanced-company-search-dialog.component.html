@@ -1,0 +1,12 @@
+<div class="container">
+  <div>
+      <mat-list>
+        <mat-list-item>
+          <mat-checkbox #parentCheck color="primary" (change)="updateParent(parentCheck.checked)" [checked]="f.parent">Empresa Padre</mat-checkbox>
+        </mat-list-item>
+      </mat-list>
+    <div >
+      <button mat-raised-button (click)="search()">Buscar</button>
+    </div>
+  </div>
+</div>

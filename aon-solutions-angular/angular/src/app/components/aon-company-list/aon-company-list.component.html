@@ -1,0 +1,15 @@
+<div class="search-results"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="onScroll()"
+    [scrollWindow]="false"  style="height:calc(100vh - 105px);">
+  <mat-nav-list>
+    <mat-list-item  *ngFor="let company of companies" (click)="onSelect(company)">
+      <mat-icon  mat-list-icon>business</mat-icon>
+      <div mat-line> {{company.name}} </div>
+      <div mat-line class="aon-sublist-text"> {{company.document}} </div>
+      <mat-divider></mat-divider>
+    </mat-list-item>
+  </mat-nav-list>
+</div>

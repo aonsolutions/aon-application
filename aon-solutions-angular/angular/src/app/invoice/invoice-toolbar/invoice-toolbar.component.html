@@ -1,0 +1,50 @@
+<mat-toolbar class="tedi-toolbar">
+  <span>
+    <button mat-icon-button (click)="openSidenav()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </span>
+  <span class="tedi-company-name"> FACTURAS </span>
+
+  <span class="tedi-right20">
+    <span *ngIf="!service.isMobile && sheet && !invoiceService.isNew">
+      <button [disabled]="!isPrev()" title="Anterior" mat-icon-button (click)="prev()">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+
+      <button [disabled]="!isNext()" title="Siguiente" mat-icon-button (click)="next()">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </span>
+
+    <span *ngIf="!isMobile() && !hasInvoice() && sheet">
+      <!-- <button title="Aceptar Factura" *ngIf="isPending()" mat-icon-button (click)="invoiceStatus('verified')">
+        <mat-icon>check</mat-icon>
+      </button> -->
+
+      <button title="Adjuntar Fichero" mat-icon-button (click)="fileInput.click()">
+        <mat-icon>attach_file</mat-icon>
+        <input #fileInput style="display:none;" type="file" name="file" id="file"(change)="preview()" />
+      </button>
+    </span>
+
+    <span *ngIf="!isMobile() && sheet && hasInvoice()">
+      <button *ngIf="hasFile()" [title]="isFileExpanded() ? 'Ocultar Factura': 'Ver Factura'" mat-icon-button (click)="toggleFile()">
+        <mat-icon>{{isFileExpanded() ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <!-- <button title="Aceptar Factura" *ngIf="isPending()" mat-icon-button (click)="invoiceStatus('verified')">
+        <mat-icon>check</mat-icon>
+      </button> -->
+    </span>
+
+    <span *ngIf="showMoreOptions()">
+      <button title="Más Opciones" mat-icon-button (click)="showOptions()">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </span>
+    <button *ngIf="!isMobile()" title="Nueva Factura" mat-icon-button (click)="invoiceNew()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </span>
+</mat-toolbar>
+<mat-progress-bar *ngIf="service.loading" mode="indeterminate"></mat-progress-bar>

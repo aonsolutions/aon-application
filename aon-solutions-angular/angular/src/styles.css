@@ -1,0 +1,47 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+html{
+  margin: 0px;
+  height:100%;
+}
+body {
+  margin: 0px;
+  height: 100%;
+  font-family: Roboto, sans-serif;
+}
+
+mat-card {
+  max-width: 80%;
+  margin: 2em auto;
+  text-align: center;
+}
+
+mat-toolbar-row {
+  justify-content: space-between;
+}
+
+.done {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+}
+
+
+.tedi-user-dialog-panel .mat-dialog-container {
+     padding: 0px !important;
+     overflow: auto;
+ }
+
+.tedi-user-dialog-menu-panel .mat-dialog-container {
+  min-height:calc(100vh - 100px);
+  background-color: #fff;
+  padding: 0px !important;
+  overflow: auto;
+}
+.mat-drawer-container{
+  background-color: #fff;
+  color: rgba(0,0,0,.87);
+}

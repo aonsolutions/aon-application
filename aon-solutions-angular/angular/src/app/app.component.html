@@ -1,0 +1,18 @@
+<!--The content below is only a placeholder and can be replaced. directiveNoDropZone -->
+<div tediNoDropZone>
+
+  <div *ngIf='!isUserLoggedIn()'>
+    <aon-login></aon-login>
+  </div>
+  <div *ngIf='isUserLoggedIn()'>
+    <div>
+      <aon-toolbar></aon-toolbar>
+    </div>
+    <div id='angularPanel'>
+      <router-outlet></router-outlet>
+    </div>
+    <div style="display:none;" id='rootPanel'>
+      <aon-company-list></aon-company-list>
+    </div>
+  </div>
+</div>

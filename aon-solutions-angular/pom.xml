@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.code.aon</groupId>
+    <artifactId>aon.parent</artifactId>
+    <version>9.23-SNAPSHOT</version>
+  </parent>
+  <groupId>es.translogia</groupId>
+  <artifactId>aon-solutions-angular</artifactId>
+  <packaging>war</packaging>
+  <name>AON SOLUTIONS ANGULAR</name>
+  <description>AON SOLUTIONS ANGULAR</description>
+  <properties>
+    <maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
+  </properties>
+  <build>
+    <finalName>aon-solutions-angular</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>parse-version</id>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+            <configuration />
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+            <manifestEntries>
+              <dbVersion>${dbVersion}</dbVersion>
+              <buildNumber>${env.BUILD_NUMBER}</buildNumber>
+              <buildDate>${maven.build.timestamp}</buildDate>
+              <buildRevision>${buildNumber}</buildRevision>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>execution1</id>
+            <phase>package</phase>
+            <configuration />
+            <!--goals>
+              <goal>manifest</goal>
+            </goals-->
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+     <groupId>com.github.eirslett</groupId>
+     <artifactId>frontend-maven-plugin</artifactId>
+     <version>1.8.0</version>
+     <configuration>
+       <workingDirectory>angular</workingDirectory>
+       <installDirectory>temp</installDirectory>
+     </configuration>
+     <executions>
+       <!-- It will install nodejs and npm -->
+       <execution>
+         <id>install node and npm</id>
+         <goals>
+           <goal>install-node-and-npm</goal>
+         </goals>
+         <configuration>
+           <nodeVersion>v13.12.0</nodeVersion>
+           </configuration>
+       </execution>
+
+       <!-- It will execute command "npm install" inside "/angular" directory -->
+       <execution>
+         <id>npm install</id>
+         <goals>
+           <goal>npm</goal>
+         </goals>
+         <configuration>
+           <arguments>install</arguments>
+         </configuration>
+       </execution>
+
+       <!-- It will execute command "npm build" inside "/angular" directory to clean and create "/dist" directory-->
+       <execution>
+         <id>npm build</id>
+         <goals>
+           <goal>npm</goal>
+         </goals>
+         <configuration>
+           <arguments>run build</arguments>
+         </configuration>
+       </execution>
+     </executions>
+   </plugin>
+
+   <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-resources-plugin</artifactId>
+      <version>2.4.2</version>
+      <executions>
+        <execution>
+          <id>default-copy-resources</id>
+          <phase>process-resources</phase>
+          <goals>
+            <goal>copy-resources</goal>
+          </goals>
+          <configuration>
+            <overwrite>true</overwrite>
+            <outputDirectory>${project.basedir}/src/main/webapp</outputDirectory>
+            <resources>
+              <resource>
+                <directory>${project.basedir}/angular/dist/tedi-center</directory>
+              </resource>
+            </resources>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+    
+    </plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.gwt.aio</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.api</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+	   	<groupId>com.auth0</groupId>
+	    <artifactId>java-jwt</artifactId>
+	    <version>3.9.0</version>
+	</dependency>
+
+  </dependencies>
+</project>

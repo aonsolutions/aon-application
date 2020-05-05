@@ -1,0 +1,90 @@
+
+	.aon-right20 {
+		position: absolute;
+		right:20px;
+	}
+
+	.aon-right160 {
+		position: absolute;
+		right:160px;
+	}
+
+	.aon-menu-icon {
+		position: relative;
+		top: 7px;
+	}
+
+	.aon-toolbar-padding{
+		padding-top: 10px;
+		padding-left: 10px;
+	}
+
+	.aon-avatar {
+		float: left;
+		margin-right: 16px;
+		height: 40px;
+		width: 40px;
+		box-sizing: border-box;
+		border-radius: 50%;
+		font-size: 40px;
+	}
+
+	.aon-li {
+	    border: 1px solid #ddd;
+	}
+
+	.aon-toolbar {
+		height:40px;
+		padding-left:16px;
+		border-top: 0px none;
+		border-bottom: 1px solid rgb(221, 221, 221);
+	}
+
+	.aon-table {
+		width: 100%;
+		border: 0px;
+	}
+
+	.aon-table-th {
+		text-align: center !important;
+	}
+
+	.sidenav {
+		height: 100%;
+		width: 0px;
+		position: fixed;
+		z-index: 1;
+		top: 105px;
+		left: 0;
+		background-color: #fff;
+		border-right: 1px solid #ddd;
+		overflow-x: hidden;
+	}
+
+	.aon-content {
+		display: block;
+		transition: 0.5s;
+	}
+
+	.aon-scroll {
+		overflow: scroll !important;
+	}
+
+	.aon-clip {
+		clip: rect(0px, 250px, 112px, 0px) !important;
+		opacity: 1;
+		z-index: 1;
+		width: 100%;
+	}
+
+	.aon-opacity {
+		opacity: 1 !important;
+		width: 100%;
+	}
+
+	.aon-menu-item-span {
+		position: absolute;
+		margin-left: 10px;
+		margin-top: 2px;
+		font-size: 16px;
+	}

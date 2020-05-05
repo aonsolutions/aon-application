@@ -1,0 +1,58 @@
+.aon-logo{
+  margin: 10px;
+  cursor: pointer;
+  margin-top: 20px !important;
+}
+
+.tedi-toolbar{
+  background-color: #fff;
+  padding:0px;
+}
+
+.tedi-right20 {
+  position: absolute;
+  right:20px;
+}
+
+.tedi-right60 {
+  position: absolute;
+  right:60px;
+}
+
+.tedi-right100 {
+  position: absolute;
+  right:100px;
+}
+
+.tedi-right140 {
+  position: absolute;
+  right:140px;
+}
+
+.tedi-right180 {
+  position: absolute;
+  right:180px;
+}
+
+.tedi-right220 {
+  position: absolute;
+  right:220px;
+}
+
+.tedi-right260 {
+  position: absolute;
+  right:260px;
+}
+
+.tedi-company-name{
+  font-size: 14px;
+}
+
+.tedi-user-dialog-backdrop {
+  background: rgba(0,0,0,1);
+}
+
+.search-panel {
+  margin-left: 20px;
+  width: 640px;
+}

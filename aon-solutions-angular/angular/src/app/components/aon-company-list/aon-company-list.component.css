@@ -1,0 +1,19 @@
+.search-results {
+  height: 20rem;
+  overflow: auto;
+}
+
+.tedi-badge-icon {
+  right: 40px;
+  position: absolute;
+}
+
+.aon-sublist-text {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 18px;
+  color: rgba(0,0,0,.54);
+  display: block;
+  padding: 0;
+}

@@ -1,0 +1,6 @@
+/target/
+/angular/node_modules
+/temp/
+.settings
+.classpath
+.project

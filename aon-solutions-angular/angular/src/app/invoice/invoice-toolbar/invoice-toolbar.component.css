@@ -1,0 +1,35 @@
+.tedi-toolbar {
+  background-color: #fff;
+  border-bottom: #ddd 1px solid;
+  font-size: 11px;
+  height: 40px;
+}
+
+.tedi-right20 {
+  position: absolute;
+  right:20px;
+}
+
+.tedi-right60 {
+  position: absolute;
+  right:60px;
+}
+
+.tedi-right100 {
+  position: absolute;
+  right:100px;
+}
+
+.tedi-user-dialog-backdrop {
+  background: rgba(0,0,0,1);
+}
+
+.tedi-user-dialog-panel {
+  padding: 0px !important;
+}
+
+.tedi-company-name{
+  font-weight: bold;
+  font-size: 14px;
+  padding-top: 5px;
+}

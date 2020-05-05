@@ -1,0 +1,13 @@
+.tedi-search-box {
+    height: 45px;
+    border: none;
+    -webkit-appearance: none;
+    width: 70%;
+}
+
+.tedi-search-noborder {
+  outline: 0px;
+}
+.pdng-lft {
+  padding-left: 40px;
+}

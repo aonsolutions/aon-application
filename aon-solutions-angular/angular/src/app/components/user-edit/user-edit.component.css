@@ -1,0 +1,12 @@
+
+.example-full-width {
+  width: 100%;
+}
+
+.tedi-icon {
+  cursor:pointer;
+}
+
+.tedi-form-field{
+  line-height: 1.150 !important;
+}

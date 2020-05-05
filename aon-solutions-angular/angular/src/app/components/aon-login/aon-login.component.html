@@ -1,0 +1,31 @@
+
+<div class="form-center">
+  <form class="example-form form-mobile-div">
+    <div style="margin-bottom:15px;">
+      <img class="logo" [src]="logo"/>
+    </div>
+    <mat-progress-bar style="margin-bottom:5px;" *ngIf="service.loading" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="isError" class="tedi-error-panel">
+      <span>{{errorMsg}}</span>
+    </div>
+
+    <mat-form-field class="example-full-width">
+      <input #email matInput placeholder="Email" [formControl]="emailFormControl"
+           [errorStateMatcher]="matcher">
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <input #password matInput placeholder="Enter your password" [type]="hide ? 'password' : 'text'">
+      <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility' : 'visibility_off'}}</mat-icon>
+    </mat-form-field>
+
+    <div style="position:relative;padding-bottom:5px; margin-bottom: 5px;">
+      <button mat-button type="submit" (click)="forgotPassword()">¿Has olvidado tu contraseña?</button>
+    </div>
+
+    <div style="position:relative;">
+      <button mat-raised-button class="sign-in" type="submit" (click)="login(email.value, password.value)">Iniciar Sesión</button>
+    </div>
+  </form>
+
+</div>

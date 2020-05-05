@@ -1,0 +1,18 @@
+<div class="container">
+  <h3 class="title">
+    {{title}}
+  </h3>
+  <div>
+    <mat-form-field class="tedi-width-all" >
+      <input #filter matInput placeholder="Búsqueda" (keyup)="search(filter.value)">
+    </mat-form-field>
+    <mat-selection-list >
+      <mat-list-option #b class="mat-primary" color="primary" *ngFor="let user of users" (click)="onSelect(user, b.selected)" [selected]="hasUser(user)">
+      {{user.email}}
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+  <div *ngIf="hasUsers()">
+    No hay empresas disponibles.
+  </div>
+</div>
