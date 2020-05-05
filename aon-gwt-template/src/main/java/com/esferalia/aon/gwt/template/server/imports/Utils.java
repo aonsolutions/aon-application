@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Utils {
 
@@ -56,8 +57,13 @@ public class Utils {
 	public static Double parseDouble(Object object) {
 		return parseDouble(object.toString());
 	}
-	
+
 	public static Double parseDouble(String value) {
-		return AonMathUtils.round(Double.parseDouble(value.replace(",", ".")));
+		try {
+			if (!AonStringUtils.isBlank(value)) {
+				return AonMathUtils.round(Double.parseDouble(value.replace(",", ".")));
+			}
+		} catch (Exception e) {}
+		return null;
 	}
 }

@@ -154,7 +154,7 @@ public class RegistryImport {
 				reg = new RegistryImportClass();
 				reg.setLine(row.getRowNum() + 1);
 
-				Object obj = Utils.getObjectValue(row.getCell(0)).toString();
+				Object obj = Utils.getObjectValue(row.getCell(0));
 				if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.REGISTRY_TITLES, obj.toString()))) {
 					indexTitle = indexTitle + 1;
 				} else if(titleList.isEmpty()) {
@@ -164,7 +164,7 @@ public class RegistryImport {
 					if(row.getRowNum() == indexTitle) {
 						Object title = Utils.getObjectValue(cell);
 						titleList.add(title != null ? title.toString() :  "");
-					} else if(row.getRowNum() > indexTitle) {
+					} else if(row.getRowNum() > indexTitle && cell.getColumnIndex() < titleList.size()) {
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell, aonCtx);
 					}
@@ -291,7 +291,7 @@ public class RegistryImport {
 				|| IConstants.CÓDIGO_POSTAL.equalsIgnoreCase(title)) {
 			String zip = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
-				zip = Integer.toString(AonNumberUtils.toDouble(zip).intValue());
+				zip = Integer.toString(Utils.parseDouble(zip).intValue());
 			}
 			reg.getRegistry().getAddress().setZip(zip.length() < 5 ? "0" + zip : zip);
 			return;
@@ -308,7 +308,7 @@ public class RegistryImport {
 				pr = Provinces.getProvinceById(reg.getRegistry().getAddress().getZip().substring(0,2));
  			}
 			for(GeoZone gz : aonCtx.getGeozones()) {
-				if(gz.getCode().equals(pr.getId())) {
+				if(pr != null && pr.getId() != null && gz.getCode().equals(pr.getId())) {
 					reg.getRegistry().getAddress().setGeozone(gz.getId());
 					reg.getRegistry().getAddress().setGeozoneCode(gz.getCode());
 					reg.getRegistry().getAddress().setGeozoneName(gz.getName());

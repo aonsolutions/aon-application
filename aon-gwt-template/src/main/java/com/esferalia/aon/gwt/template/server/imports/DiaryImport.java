@@ -157,7 +157,7 @@ public class DiaryImport {
 							|| IConstants.N_ASIENTO.equalsIgnoreCase(title)) {
 						asientoIndex = cell.getColumnIndex();
 					}
-				} else if(row.getRowNum() > indexTitle){
+				} else if(row.getRowNum() > indexTitle && cell.getColumnIndex() < titleList.size()){
 					checkAsiento(domain, row.getCell(asientoIndex), aonCtx);
 					String title = titleList.get(cell.getColumnIndex());
 					check(domain, login, title, cell, aonCtx);			

@@ -61,7 +61,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InvoiceImport {
 
@@ -98,7 +98,7 @@ public class InvoiceImport {
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
 						titleList.add(cell.getStringCellValue());
-					} else {
+					} else if(cell.getColumnIndex() < titleList.size()){
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell);			
 					}
@@ -203,7 +203,7 @@ public class InvoiceImport {
 		if("SERIE".equalsIgnoreCase(title)) {
 			String serie = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
-				serie = Integer.toString(AonNumberUtils.toDouble(o.toString()).intValue());
+				serie = Integer.toString(Utils.parseDouble(o.toString()).intValue());
 			} 
 			inv.setSerie(serie);
 			return;
@@ -211,7 +211,8 @@ public class InvoiceImport {
 		
 		if("NUMERO".equalsIgnoreCase(title)
 				|| "NÚMERO".equalsIgnoreCase(title)) {
-			inv.setNumber(AonNumberUtils.toDouble(o.toString()).intValue());
+			Double d = Utils.parseDouble(o.toString());
+			inv.setNumber(d != null ? d.intValue() : null);
 			return;
 		}
 		
@@ -266,7 +267,7 @@ public class InvoiceImport {
 				|| "CÓDIGO POSTAL".equalsIgnoreCase(title)) {
 			String zip = o.toString();
 			if(CellType.NUMERIC == cell.getCellTypeEnum()) {
-				zip = Integer.toString(AonNumberUtils.toDouble(zip).intValue());
+				zip = Integer.toString(Utils.parseDouble(zip).intValue());
 			}
 			inv.setZip(zip.length() < 5 ? "0" + zip : zip);
 			return;
@@ -388,6 +389,10 @@ public class InvoiceImport {
 				throw new Exception("La cuenta contable es un dato obligatorio.");
 			}
 			
+			if(ivs.get(i).getRef() == null && ivs.get(i).getNumber() == null) {
+				throw new Exception("La Referencia o Serie/Número son incorrectas.");
+			}
+			
 			AccountingInvoice ai = new AccountingInvoice();
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
@@ -407,7 +412,11 @@ public class InvoiceImport {
 			if(ivs.get(i).getNumber() != null) {
 				invoice.setNumber(ivs.get(i).getNumber());	
 			}
-			invoice.setReferenceCode(ivs.get(i).getRef());
+			
+			invoice.setReferenceCode(ivs.get(i).getRef() != null ? ivs.get(i).getRef() 
+					: (invoice.getSeries() != null ? invoice.getSeries() + "/" : "") 
+					+ AonStringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0"));
+			
 			invoice.setWithholding(ivs.get(i).getRetentionQuota() != null 
 				&& ivs.get(i).getRetentionQuota() != 0);
 			invoice.setRemarks(ivs.get(i).getConcept());
@@ -529,7 +538,7 @@ public class InvoiceImport {
 				j++;
 			}
 			Integer cci = i;
-			i = j-1;
+			i = !i.equals(j) ? j-1 : i;
 			for(Integer k = cci; k < j; k++) {
 				checkCuotas(domain, ivs.get(k));
 			}
