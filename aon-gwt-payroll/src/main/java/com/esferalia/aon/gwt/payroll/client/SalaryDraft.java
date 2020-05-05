@@ -1333,7 +1333,7 @@ public class SalaryDraft extends ResizeComposite
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					onExpressionChange(item, "REMOVE()");
+					onRemove(item, "REMOVE()");
 				}
 			});
 		}
@@ -1365,8 +1365,10 @@ public class SalaryDraft extends ResizeComposite
 
 		abstract void onCollapse(ClickEvent event);
 
-		abstract void onRecover(I item, String expression);
+		abstract void onRemove(I item, String expression);
 
+		abstract void onRecover(I item, String expression);
+		
 		abstract void onIssueDateChange(I item, Short month);
 
 		abstract void onExpressionChange(I item, String expression);
@@ -1411,7 +1413,7 @@ public class SalaryDraft extends ResizeComposite
 			paymentDialog.setType(item.getType());
 			paymentDialog.setReceiptType(item.getSalaryType());
 			// TODO : description template ?
-			paymentDialog.setDescription(item.getDescription());
+			paymentDialog.setDescription(item.getDescriptionTemplate());
 			paymentDialog.setPaymentExpression(item.getExpression()); //
 			paymentDialog.setIrpfExpression(item.getIrpfExpression());
 			paymentDialog.setQuoteExpression(item.getQuoteExpression());
@@ -1466,11 +1468,17 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		@Override
+		void onRemove(Payment payment, String expression) {
+			payment.setScope(Scope.SALARY);
+			payment.setExpression(expression);
+			salaryDraftObject.remove(payment, SalaryDraft.this);
+		}
+
+		@Override
 		void onRecover(Payment payment, String expression) {
 			payment.setScope(Scope.SALARY);
 			payment.setExpression(expression);
-			salaryDraftObject.recoverDraftPayment(payment);
-			SalaryDraft.this.calculate(getNextPaymentFocusCallback());
+			salaryDraftObject.recover(payment, SalaryDraft.this);
 		}
 		
 		// --------------------------------------------------------------------
@@ -1637,9 +1645,13 @@ public class SalaryDraft extends ResizeComposite
 		}
 
 		@Override
-		void onRecover(Deduction item, String expression) {
+		void onRemove(Deduction item, String expression) {
 		}
 
+		@Override
+		void onRecover(Deduction item, String expression) {
+		}
+		
 		private int getRowIndex(ClickEvent event) {
 			return paymentsTable.getCellForEvent(event).getRowIndex();
 		}
@@ -1721,6 +1733,10 @@ public class SalaryDraft extends ResizeComposite
 		
 		@Override
 		void onIssueDateChange(Bonus item, Short month) {
+		}
+
+		@Override
+		void onRemove(Bonus item, String expression) {
 		}
 
 		@Override
@@ -5017,8 +5033,11 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private String getIconRowStyle(Item item) {
-
-		switch (item.getScope()) {
+		Scope scope = 
+		item.isDefinedAt(Scope.AGREEMENT)? 
+		Scope.AGREEMENT : item.getScope();
+		
+		switch (scope) {
 		case SALARY:
 			return AON.AON_ICON_ROW_SELECTOR_CHANGED;
 		case AGREEMENT:

@@ -307,6 +307,61 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 			throws IllegalArgumentException {
 		employeesServiceAsync.getExtras(Collections.singletonList(getEmployee()), callback);
 	}
+	
+	public void remove(Payment payment, final CalculateCallback callback)  {
+		List<Payment> payments = new LinkedList<Payment>();
+		payments.addAll(getTopPayments(payment));
+		save(payments, callback);
+		
+	}
+	
+	public void recover(Payment payment, final CalculateCallback callback) {
+		List<Payment> payments = new LinkedList<Payment>();
+		payments.addAll(getBottomPayments(payment));
+		payments.forEach(p -> p.setExpression(payment.getExpression()) );
+		save(payments, callback);
+	}
+
+	public void save(Collection<Payment> payments, final CalculateCallback callback) {
+		
+		SalaryDraft cleanSalaryDraft = new SalaryDraft();
+		cleanSalaryDraft.setEmployee(salaryDraft.getEmployee());
+		payments.forEach( p -> cleanSalaryDraft.addDraftPayment(p));
+		
+		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), cleanSalaryDraft);
+		setIsolatedDraftPeriod(cleanSalaryDraft);
+		
+		employeesServiceAsync.saveSalaryDraft(cleanSalaryDraft,
+				new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+
+						employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+								new AsyncCallback<SalaryDraft>() {
+
+							@Override
+							public void onSuccess(SalaryDraft result) {
+								SalaryDraftObject.this.salaryDraft = result;
+								callback.onCalculateSucces(
+										SalaryDraftObject.this);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								callback.onCalculateFailure(caught);
+							}
+						});
+
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onCalculateFailure(caught);
+					}
+				});
+
+	}
 
 	public void save(final CalculateCallback callback) {
 //		removeCalendarDraft();
