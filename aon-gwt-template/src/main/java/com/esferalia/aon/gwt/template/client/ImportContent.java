@@ -82,39 +82,28 @@ public class ImportContent extends Composite {
 			
 			@Override
 			protected void onAccept() {
-				item.excelRowNumber(new AsyncCallback<Integer>() {
+				hide();
+				pbd = new ProgressBarDialog("Procesando Excel...") {};
+				pbd.addStyleName("gwt-PopupPanel-template");
+				pbd.setGlassEnabled(true);
+				pbd.show();
+						
+				item.executeExcel(getDomain(), getUser(), null, type, null, null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
+							
 					@Override
-					public void onSuccess(Integer lines) {
-						hide();
-
-						pbd = new ProgressBarDialog(lines.doubleValue(), 0.46, "Procesando Excel...") {};
+					public void onSuccess(Integer result) {
+						pbd.completed();
+						pbd.hide();
+						pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
 						pbd.addStyleName("gwt-PopupPanel-template");
 						pbd.setGlassEnabled(true);
 						pbd.show();
-						
-						item.executeExcel(getDomain(), getUser(), null, type, null,
-								null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
-							
-							@Override
-							public void onSuccess(Integer result) {
-								pbd.completed();
-								pbd.hide();
-								pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-								pbd.addStyleName("gwt-PopupPanel-template");
-								pbd.setGlassEnabled(true);
-								pbd.show();
-								insert(type, 0, lines);
-							}
-						
-							@Override
-							public void onFailure(Throwable caught) {}
-						});
+						insert(type, 0, result);
 					}
-					
+						
 					@Override
 					public void onFailure(Throwable caught) {}
-				});
-				
+				});	
 			}
 		};
 		popup.addStyleName("gwt-PopupPanel-template");
@@ -145,11 +134,13 @@ public class ImportContent extends Composite {
 
 						@Override
 						protected void onAccept() {
+							verror = new LinkedList<>();
 							hide();			
 						}
 
 						@Override
 						protected void onCancel() {
+							verror = new LinkedList<>();
 							hide();
 						}
 					};

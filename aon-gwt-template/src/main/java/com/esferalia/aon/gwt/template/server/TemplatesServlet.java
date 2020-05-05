@@ -270,15 +270,19 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			}
 			else if(ImportType.INVOICE.equals(importType)) {
 				ivs = InvoiceImport.getInstance().importation(domain, user.getLogin(), data);
+				rowCount = ivs.size();
 			}
 			else if(ImportType.REGISTRY.equals(importType)) {
 				rvs = RegistryImport.getInstance().importation(domain, user.getLogin(), data);
+				rowCount = rvs.size();
 			}
 			else if(ImportType.DIARY.equals(importType)) {
 				dvs = DiaryImport.getInstance().importation(domain, user.getLogin(), data);
+				rowCount = dvs.size();
 			}
 			else if(ImportType.PGC.equals(importType)) {
 				accounts = PGCImport.getInstance().importation(domain, user.getLogin(), data);
+				rowCount = accounts.size();
 			}
 
 			workbook.close();
