@@ -10,6 +10,7 @@ public interface InvoiceProperties {
 	Property<Integer> getIdProperty();
 	Property<Integer> getDomainProperty();
 	Property<String> getSeriesProperty();
+	Property<Byte> getStatusProperty();
 	Property<Integer> getNumberProperty();	
 	Property<Integer> getRegistryProperty();
 	Property<Byte> getTypeProperty();

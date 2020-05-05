@@ -32,13 +32,13 @@ import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
 import net.aonsolutions.core.pool.ConnectionInfo;
 
-public class AONContext {
+public class AONContext implements AutoCloseable{
 
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
 	private static Settings SETTINGS = null;
 	
-	private static Settings getDefaultSettings() {
+	private static Settings getDefaultSettings(){
 		if (SETTINGS == null) {
 			SETTINGS = new Settings();
 			SETTINGS.setRenderSchema(false);

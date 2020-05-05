@@ -33,9 +33,12 @@ public class InvoiceDetail implements Serializable {
 	private Integer sourceId;
 	private double taxableBase;
 	private double taxes;
+	private double surcharge;
 	private boolean prepayment;
 	
 	private Integer account;
+	private String accountCode;
+	private String accountDescription;
 	
 	private LinkedList<InvoiceTax> invoiceTaxes;
 	
@@ -186,6 +189,13 @@ public class InvoiceDetail implements Serializable {
 		this.taxes = taxes;
 		return this;
 	}
+	public double getSurcharge() {
+		return surcharge;
+	}
+	public InvoiceDetail setSurcharge(double surcharge) {
+		this.surcharge = surcharge;
+		return this;
+	}
 	public boolean isPrepayment() {
 		return prepayment;
 	}
@@ -216,8 +226,25 @@ public class InvoiceDetail implements Serializable {
 		this.account = account;
 		return this;
 	}
+	
+	public String getAccountCode() {
+		return accountCode;
+	}
+	public InvoiceDetail setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+		return this;
+	}
+	
+	public String getAccountDescription() {
+		return accountDescription;
+	}
+	public InvoiceDetail setAccountDescription(String accountDescription) {
+		this.accountDescription = accountDescription;
+		return this;
+	}
 
 	public boolean isDeleted() {
 		return (getId() != null && getId() < 0);
 	}
+	
 }

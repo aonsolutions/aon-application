@@ -201,6 +201,10 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 		if (getDefaultStatus() != null) {
 			InvoiceStatus status = InvoiceStatus.valueOf(getDefaultStatus()); 
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), status);	
+		} else {
+			Expression exp1  = ExpressionUtilities.getEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
+			Expression exp2  = ExpressionUtilities.getEqualExpression(getFieldName(IEntityAlias.INVOICE_STATUS), InvoiceStatus.SCORED);
+			criteria.addExpression( ExpressionUtilities.getOrExpression(exp1, exp2));
 		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IEntityAlias.INVOICE_REGISTRY_ID), getRegistry().getId());

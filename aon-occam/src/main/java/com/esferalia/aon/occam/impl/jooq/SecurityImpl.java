@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -20,6 +21,11 @@ import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 
 public class SecurityImpl implements ISecurity {
 
+	@Override
+	public User getUser(AONContext ctx, UserFilter filter) {
+		return SecurityDAO.getUser(ctx, filter);
+	}
+	
 	@Override
 	public User getUser(AONContext ctx, String login) {
 		return SecurityDAO.getUser(ctx, login);

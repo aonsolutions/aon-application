@@ -64,7 +64,7 @@
 		}
 	}
 
-	function triggerModuleStart(){
+	function triggerModuleStart(module){
 		try{
 			module.onInjectionDone(module);
 	        if ( !window.document.createEventObject ) {

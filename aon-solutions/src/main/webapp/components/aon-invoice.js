@@ -129,7 +129,7 @@ import '../services/transaction.js';
 			<div class="aon-card-invoice-50">
 				<div class="demo-card-wide mdl-card mdl-shadow--2dp aon-card-content">
 					<div class="mdl-card__title">
-						<h2 class="mdl-card__title-text">  DETALLE IMPUESTOS </h2>
+						<h2 class="mdl-card__title-text">  Detalle Impuestos</h2>
 					</div>
 
 					<form>
@@ -159,7 +159,7 @@ import '../services/transaction.js';
 			<div class="aon-card-invoice-100">
 				<div class="demo-card-wide mdl-card mdl-shadow--2dp aon-card-content-100">
 					<div class="mdl-card__title">
-						<h2 class="mdl-card__title-text"> CONCEPTOS FACTURA </h2>
+						<h2 class="mdl-card__title-text"> Conceptos Factura </h2>
 					</div>
 					<div id="concepto"></div>
 					<div>
@@ -177,7 +177,7 @@ import '../services/transaction.js';
 			<div class="aon-card-invoice-100">
 				<div class="demo-card-wide mdl-card mdl-shadow--2dp aon-card-content-100">
 					<div class="mdl-card__title">
-						<h2 class="mdl-card__title-text"> VENCIMIENTOS </h2>
+						<h2 class="mdl-card__title-text"> Vencimientos </h2>
 					</div>
 					<div id="vencimiento"></div>
 					<div>

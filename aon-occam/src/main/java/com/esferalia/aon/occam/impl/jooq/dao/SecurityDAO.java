@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
@@ -56,12 +57,13 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
-	
+	private static final UserPropertiesDAO USER_PROPERTIES = new UserPropertiesDAO();
 	private static final ScopePropertiesDAO SCOPE_PROPERTIES = new ScopePropertiesDAO();
 	private static final SignaturePropertiesDAO SIGNATURE_PROPERTIES = new SignaturePropertiesDAO();
 	protected static class SignaturePropertiesDAO implements SignatureProperties {
@@ -164,6 +166,10 @@ public class SecurityDAO {
 				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		
+	}
+	public static User getUser(AONContext ctx, UserFilter filter) {
+		return USER_PROPERTIES.build(ctx.getDslContext().select().from(USER), filter)
+				.fetch().stream().map(new UserFiller()).findFirst().orElse(new User());
 	}
 	
 	public static User getUser(AONContext ctx, String login) {

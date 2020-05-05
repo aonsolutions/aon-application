@@ -163,12 +163,12 @@ public class PropertiesDAO {
 	public static final InvoicePropertiesDAO INVOICE_PROPERTIES = new InvoicePropertiesDAO();
 	public static class InvoicePropertiesDAO implements InvoiceProperties {
 		
-		protected Select<Record> build(SelectJoinStep<Record> select, InvoiceFilter filter) {
+		public Select<Record> build(SelectJoinStep<Record> select, InvoiceFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
 		}
 		
-		protected Condition[] getConditions(InvoiceFilter filter) {
+		public Condition[] getConditions(InvoiceFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null)
 				return new Condition[0];
@@ -204,6 +204,8 @@ public class PropertiesDAO {
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.CREATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.MODIFICATION_USER);}
+
+		@Override public Property<Byte> getStatusProperty() {return new FilterDAO.PropertyDAO<>(INVOICE.STATUS);}
 	}
 	
 	public static class ApplicationParameterPropertiesDAO implements ApplicationParameterProperties {

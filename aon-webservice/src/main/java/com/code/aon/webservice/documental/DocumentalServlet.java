@@ -51,36 +51,33 @@ public class DocumentalServlet extends HttpServlet{
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 
-		String md5 = Utils.getMd5(userName+domain.getName());
-		if(accessToken.equals(md5)){
-			switch (pathInfo[3]) {
-			case "file":
-				object = getAttachJSON(domain, userName, Integer.parseInt(pathInfo[4]));
-				break;
-			case "files":
-				object = getAttachJSON(domain, userName, req.getParameterMap());
-				break;
-			case "certificates":
-				object = getCertificateAttachJSON(domain, userName);
-				break;
-			case "quality":
-				object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
-				break;
-			case "category":
-				object = getCategoryJSON(domain, userName);
-				break;
-			case "tag":
-				object = getTagJSON(domain, userName);
-				break;
-			case "scope":
-				object = getScopeJSON(domain, userName);
-				break;
-			default:
-				break;
-			}				
+		switch (pathInfo[pathInfo.length - 1]) {
+		case "file":
+			object = getAttachJSON(domain, userName, Integer.parseInt(pathInfo[4]));
+			break;
+		case "files":
+			object = getAttachJSON(domain, userName, req.getParameterMap());
+			break;
+		case "certificates":
+			object = getCertificateAttachJSON(domain, userName);
+			break;
+		case "quality":
+			object = getQualityImagesJSON(domain, userName, req.getParameter(MSG.ID));
+			break;
+		case "category":
+			object = getCategoryJSON(domain, userName);
+			break;
+		case "tag":
+			object = getTagJSON(domain, userName);
+			break;
+		case "scope":
+			object = getScopeJSON(domain, userName);
+			break;
+		default:
+			break;
+		}				
 			
-			Utils.giveBack(req, resp, object, meta);
-		}
+		Utils.giveBack(req, resp, object, meta);
 	}
 	
 	@Override

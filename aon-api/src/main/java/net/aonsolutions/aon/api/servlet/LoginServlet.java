@@ -1,4 +1,4 @@
-package com.code.aon.webservice.login;
+package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
@@ -20,13 +20,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.code.aon.jaas.auth.util.Util;
-import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.security.User;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login/*"})
+@WebServlet(name = "LoginServlet", urlPatterns = {"/ms/api/login/*"})
 public class LoginServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(LoginServlet.class.getName());

@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 
 public interface ISecurity {
+	public User getUser(AONContext ctx, UserFilter filter);
 	public User getUser(AONContext ctx, String login);
 	public LinkedList<User> getUsersByEmail(AONContext ctx, String email);
 	public LinkedList<User> getUsersByScope(AONContext ctx, Integer scope);

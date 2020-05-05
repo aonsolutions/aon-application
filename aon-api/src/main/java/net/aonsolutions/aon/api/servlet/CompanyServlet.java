@@ -1,4 +1,4 @@
-package com.code.aon.webservice.common;
+package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Company;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/company/*"})
+@WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
 public class CompanyServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(CompanyServlet.class.getName());
@@ -41,7 +41,8 @@ public class CompanyServlet extends HttpServlet{
 				.put("id", company.getDomain())
 				.put("domain", company.getDomainName())
 				.put("name", company.getName())
-				.put("document", company.getDocument());
+				.put("document", company.getDocument())
+				.put("active", company.isActive());
 	}
 	
 }

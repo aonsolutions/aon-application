@@ -6,16 +6,16 @@
     <artifactId>aon.parent</artifactId>
     <version>9.23-SNAPSHOT</version>
   </parent>
-  <groupId>es.translogia</groupId>
-  <artifactId>tedi-center</artifactId>
+  <groupId>net.aonsolutions</groupId>
+  <artifactId>aon-solutions</artifactId>
   <packaging>war</packaging>
-  <name>TEDI CENTER</name>
-  <description>TEDI CENTER</description>
+  <name>AON SOLUTIONS</name>
+  <description>AON SOLUTIONS</description>
   <properties>
     <maven.build.timestamp.format>dd/MM/yyyy HH:mm:ss</maven.build.timestamp.format>
   </properties>
   <build>
-    <finalName>tedi-center</finalName>
+    <finalName>aon-solutions</finalName>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -67,6 +67,13 @@
       <artifactId>aon.gwt.aio</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
+    </dependency>
+	
+	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.api</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
 	
     <dependency>

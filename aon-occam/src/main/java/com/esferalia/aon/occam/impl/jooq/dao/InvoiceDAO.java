@@ -1072,6 +1072,10 @@ public class InvoiceDAO {
 		}
 	}
 	
+	public static Invoice update(AONContext ctx, Invoice invoice) {
+		return update(ctx,ConfigurationDAO.getConfiguration(ctx, invoice.getIssueDate()),invoice); 
+	}
+	
 	public static Invoice update(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		ctx.checkWrite();
 		InvoiceValidation.validateInvoice(ctx, config, invoice);
@@ -1402,6 +1406,29 @@ public class InvoiceDAO {
 					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
 				}
 			}
+			
+			@Override public void visitApi(InvoiceDetail detail) {
+				if (detail.getAccount() == null) 
+					throw new AonCoreException(AonError.ACCOUNT_ENTRY_NO_EXP_ACCOUNT.getMessage());
+				ctx.getDslContext().insertInto(INVOICE_DETAIL_ACCOUNT)
+					.set(INVOICE_DETAIL_ACCOUNT.DOMAIN, detail.getDomain())
+					.set(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL, detail.getId())
+					.set(INVOICE_DETAIL_ACCOUNT.ACCOUNT, detail.getAccount())
+					.execute();
+				if (detail.getInvoice().getType() != InvoiceType.UNDEDUCTIBLE && !detail.isPrepayment()) {
+					ctx.log().info("\tINSERT INVOICE_DETAIL_ACCOUNT");
+					for (InvoiceTax tax : detail.getInvoiceTaxes() ) {
+						ctx.getDslContext().insertInto(INVOICE_TAX_ACCOUNT)
+						.set(INVOICE_TAX_ACCOUNT.DOMAIN,detail.getDomain())
+						.set(INVOICE_TAX_ACCOUNT.INVOICE_TAX, tax.getId())
+						.set(INVOICE_TAX_ACCOUNT.ACCOUNT, tax.getAccount()!=null?tax.getAccount():detail.getAccount())
+						.execute();
+						ctx.log().info("\t\tINSERT INVOICE_TAX_ACCOUNT");
+					}
+				} else {
+					ctx.log().info("\t\tSKIPPING INVOICE TAX ACCOUNT CREATION ("+ (detail.isPrepayment()?"PREPAYMENT":"UNDEDUCTIBLE INVOICE") + ")");
+				}
+			}
 		});
 	}
 	
@@ -1440,6 +1467,29 @@ public class InvoiceDAO {
 						ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
 					});
 			}
+			
+			@Override public void visitApi(InvoiceDetail detail) {
+				int count = ctx.getDslContext()
+					.delete(INVOICE_DETAIL_ACCOUNT)
+					.where(INVOICE_DETAIL_ACCOUNT.INVOICE_DETAIL.eq(detail.getId()))
+					.execute();
+				ctx.log().info("DELETE INVOICE_DETAIL_ACCOUNT ("+count+" filas.)");
+				
+				ctx.getDslContext().select(INVOICE_TAX.ID)
+					.from(INVOICE_TAX)
+					.where(INVOICE_TAX.INVOICE_DETAIL.eq(detail.getId()))
+					.fetch()
+					.stream()
+					.mapToInt(rec -> rec.getValue(INVOICE_TAX.ID))
+					.forEach(id -> {
+						int x = ctx.getDslContext()
+								.delete(INVOICE_TAX_ACCOUNT)
+								.where(INVOICE_TAX_ACCOUNT.INVOICE_TAX.eq(id))
+								.execute();
+						ctx.log().info("DELETE INVOICE_TAX_ACCOUNT ("+x+" filas.)");
+					});
+			}
+			
 		});
 		
 	}

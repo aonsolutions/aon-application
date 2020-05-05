@@ -17,7 +17,14 @@ public enum InvoiceStatus implements IResourceable {
     PENDING,
 
     /** SCORED. */
-    SCORED;
+    SCORED,
+    
+    /** REFUSED. */
+    REFUSED,
+    
+    /** TRASH. */
+    TRASH;
+	
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_invoicestatus_";

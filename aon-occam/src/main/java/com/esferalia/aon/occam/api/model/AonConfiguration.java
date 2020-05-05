@@ -56,6 +56,8 @@ public class AonConfiguration implements Serializable {
 	private Account salaryDedAdvPayment;
 	private Account salaryDedSeize;
 	
+	private Account defaultPrepayment;
+	
 	private boolean tediActive;
 	private boolean tediUser;
 	private boolean tediSnapshotUser;
@@ -347,6 +349,15 @@ public class AonConfiguration implements Serializable {
 
 	public AonConfiguration setDefaultSalary(Account defaultSalary) {
 		this.defaultSalary = defaultSalary;
+		return this;
+	}
+	
+	public Account getDefaultPrepayment() {
+		return defaultPrepayment;
+	}
+	
+	public AonConfiguration setDefaultPrepayment(Account defaultPrepayment) {
+		this.defaultPrepayment = defaultPrepayment;
 		return this;
 	}
 
