@@ -303,7 +303,10 @@ public class InvoiceImport {
 		}
 		if("%Impuesto".equalsIgnoreCase(title)
 				|| "%IVA".equalsIgnoreCase(title)) {
-			inv.setPercentage(Utils.parseDouble(o));
+			Double percent = Utils.parseDouble(o);
+			if(percent > 0 && percent < 1)
+				percent = percent * 100;
+			inv.setPercentage(percent);
 			return;
 		}
 		if("CUOTA Impuesto".equalsIgnoreCase(title)
@@ -312,7 +315,10 @@ public class InvoiceImport {
 			return;
 		}
 		if("%RE".equalsIgnoreCase(title)) {
-			inv.setRePercentage(Utils.parseDouble(o));
+			Double percent = Utils.parseDouble(o);
+			if(percent > 0 && percent < 1)
+				percent = percent * 100;
+			inv.setRePercentage(percent);
 			return;
 		}
 		
@@ -322,7 +328,10 @@ public class InvoiceImport {
 		}
 		
 		if("%RETENCIÓN".equalsIgnoreCase(title)) {
-			inv.setRetentionPercentage(Utils.parseDouble(o));
+			Double percent = Utils.parseDouble(o);
+			if(percent > 0 && percent < 1)
+				percent = percent * 100;
+			inv.setRetentionPercentage(percent);
 			return;
 		}
 		
