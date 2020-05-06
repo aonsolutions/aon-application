@@ -118,9 +118,6 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	ListBox modality;
-	
-	@UiField
-	SuggestBox trl;
 
 	@UiField
 	DateBoxEx start_date;
@@ -315,11 +312,6 @@ public abstract class Employee extends ResizeComposite {
 	void onContractModelChangeValue(ChangeEvent event) {
 		onContractModalityChange();
 	}
-	
-	@UiHandler("trl")
-	void onTRLChangeValue(SelectionEvent<Suggestion> event) {
-		onEmployeeTRLChange();
-	}
 
 	@UiHandler("start_date")
 	void onStartDateChangeValue(ValueChangeEvent<Date> event) {
@@ -470,7 +462,6 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractWorkplaceChange();
 	public abstract void onContractTypeChange();
 	public abstract void onContractModalityChange();
-	public abstract void onEmployeeTRLChange();
 	public abstract void onContractStartDateChange();
 	public abstract void onContractEndDateChange();
 	public abstract void onContractSeniorityDateChange();
@@ -628,11 +619,11 @@ public abstract class Employee extends ResizeComposite {
 		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
 		
 		this.contractDataTable.getRows().getItem(7).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
+		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
 	}
 
 	public void showElementsFreelancerTable() {
@@ -642,10 +633,10 @@ public abstract class Employee extends ResizeComposite {
 		this.contractFreelancerNode.getStyle().clearDisplay();
 		
 		this.contractDataTable.getRows().getItem(7).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 	}
 	
 	public void hideElementsFreelancerTable() {
@@ -655,18 +646,18 @@ public abstract class Employee extends ResizeComposite {
 		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
 		
 		this.contractDataTable.getRows().getItem(7).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(11).getStyle().clearDisplay();
 		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showElementsPartialTimeContract() {
-		this.contractDataTable.getRows().getItem(15).getStyle().clearDisplay();	
+		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();	
 	}
 	
 	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(15).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 	}
 
 }

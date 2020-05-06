@@ -1,7 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -24,7 +23,6 @@ import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
-import com.esferalia.aon.gwt.payroll.shared.TRL;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -34,9 +32,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
@@ -50,7 +45,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmployeeDraft extends Composite {
@@ -268,13 +262,6 @@ public class EmployeeDraft extends Composite {
 //				employeeDraftObject.setContractModel(contractModelEnum); // GET String of enum in JooqEmployee.java
 //			}
 //			saving();
-		}
-		
-
-
-		@Override
-		public void onEmployeeTRLChange() {
-			// TODO: TextBase change handler
 		}
 
 		@Override
@@ -701,41 +688,6 @@ public class EmployeeDraft extends Composite {
 		saveStatus.setTitle("Cada cambio que hagas se guarda autom\u00E1ticamente");	
 		onSaved = this::onSavedNoop;
 		
-		employee.trl.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-
-			@Override
-			public void onSelection(SelectionEvent<SuggestOracle.Suggestion> event) {
-				String selectedTrl = employee.trl.getValue();
-				if(StringUtils.isEmpty(selectedTrl) || selectedTrl.equals(" - "))
-					employeeDraftObject.setContractTRL(null);
-				else {
-					String trlCode = selectedTrl.split(" -")[0];
-					employeeDraftObject.setContractTRL(trlCode);
-				}
-				
-				saving();	
-			}
-		});
-		
-		employee.trl.getTextBox().addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				String selectedTrl = employee.trl.getValue();
-				if(StringUtils.isEmpty(selectedTrl) || selectedTrl.equals(" - ")) {
-					employeeDraftObject.setContractTRL(null);
-					saving();
-				}
-			}
-		});
-		
-		employee.trl.getValueBox().addKeyDownHandler( (event) -> {
-			if ( KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode() )
-				employee.trl.hideSuggestionList();
-			else if ( event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode()) 
-				employee.trl.showSuggestionList();
-		});
-		
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -1032,18 +984,6 @@ public class EmployeeDraft extends Composite {
 		initIbans();
 		initHandlers();
 		
-		//Initialize TRL SuggestBox
-		Collection<String> trlEntries = TRL.getAllEntriesCollection();
-		List<String> contractTRLSuggest = new ArrayList<String>();
-		trlEntries.forEach(e -> {
-			contractTRLSuggest.add(e+"");
-		});
-		
-		MultiWordSuggestOracle orclTRL = (MultiWordSuggestOracle) this.employee.trl.getSuggestOracle();
-		orclTRL.addAll(contractTRLSuggest);
-		orclTRL.setDefaultSuggestionsFromText(trlEntries);
-		this.employee.trl.setAutoSelectEnabled(true);
-		
 		if (employeeDraftObject.getContractSSRegimen() == 3) {
 			afiButton.getElement().getStyle().setDisplay(Display.NONE);
 			this.employee.showElementsFreelancerTable();
@@ -1157,8 +1097,6 @@ public class EmployeeDraft extends Composite {
 		
 		setSelectedValueLB(employee.workplace, employeeDraftObject.getWorkplaceId().toString());
 		
-		this.employee.trl.setValue(TRL.getEntryByCode(employeeDraftObject.getTRL()));
-		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
@@ -1235,8 +1173,6 @@ public class EmployeeDraft extends Composite {
 		
 		if(null != employeeDraftObject.getContractModel())
 			setSelectedValueLB(employee.modality, employeeDraftObject.getContractModel().toString());
-		
-		this.employee.trl.setValue(TRL.getEntryByCode(employeeDraftObject.getTRL()));
 		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
 		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
