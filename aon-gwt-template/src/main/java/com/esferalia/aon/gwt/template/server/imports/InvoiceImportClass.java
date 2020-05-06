@@ -37,6 +37,7 @@ public class InvoiceImportClass {
 	Integer line;
 	Date financeDate;
 	String financeAccount;
+	Boolean investment;
 	
 	public InvoiceImportClass() {
 		// TODO Auto-generated constructor stub
@@ -309,6 +310,15 @@ public class InvoiceImportClass {
 
 	public InvoiceImportClass setFinanceAccount(String financeAccount) {
 		this.financeAccount = financeAccount;
+		return this;
+	}
+	
+	public Boolean isInvestment() {
+		return investment;
+	}
+
+	public InvoiceImportClass setInvestment(Boolean investment) {
+		this.investment = investment;
 		return this;
 	}
 

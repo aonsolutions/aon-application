@@ -54,6 +54,9 @@ public interface IConstants {
 	String TIPO = "TIPO";
 	String TITULO_DE_SUBCUENTA = "TITULO DE SUBCUENTA";
 	String TÍTULO_DE_SUBCUENTA = "TÍTULO DE SUBCUENTA";
+	
+	String TRUE = "TRUE";
+	String SI = "SI";
 
 
 

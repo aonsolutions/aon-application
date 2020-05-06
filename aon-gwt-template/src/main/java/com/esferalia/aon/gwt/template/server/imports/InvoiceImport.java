@@ -377,6 +377,13 @@ public class InvoiceImport {
 			inv.setFinanceAccount(Utils.calculateAccount(acc));
 			return;
 		}
+		
+		if("INVERSION".equalsIgnoreCase(title)
+				|| "INVERSIÓN".equalsIgnoreCase(title)) {
+			String val = o.toString();
+			inv.setInvestment(IConstants.TRUE.equalsIgnoreCase(val) || IConstants.SI.equalsIgnoreCase(val));
+			return;
+		}
 	}
 
 	public static Error insertInvoices(Domain domain, User user, Integer i, LinkedList<InvoiceImportClass> ivs) {
@@ -409,6 +416,7 @@ public class InvoiceImport {
 			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
 			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
 			invoice.setTransaction(getTransaction(ivs.get(i)));
+			invoice.setInvestment(ivs.get(i).isInvestment());
 			invoice.setDomain(domain.getId());
 			invoice.setIssueDate(ivs.get(i).getDate());
 			invoice.setTaxDate(ivs.get(i).getDate());
@@ -527,7 +535,6 @@ public class InvoiceImport {
 							? ivs.get(j).getQuota() : 0.0)
 					.setWithholding(ivs.get(j).getRetentionQuota() != null
 							&& ivs.get(j).getRetentionQuota() != 0)
-						
 					.setExpAccountId(expAccount.getId())
 					.setExpAccountCode(expAccount.getCode())
 					.setExpAccountDescription(expAccount.getDescription())
