@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -9,10 +11,16 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities.Peculiarity;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.TRL;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,6 +32,9 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,10 +60,16 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 	}
 	
 	@UiField
+	TableElement peculiaritiesTable;
+	
+	@UiField
 	ListBox peculiarities;
 	
 	@UiField
 	DateBoxEx start_date_peculiarity;
+	
+	@UiField
+	SuggestBox trl;
 	
 	@UiField
 	HorizontalPanel tabsPanel;
@@ -152,7 +169,6 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 	
 	
 	//BEGIN OF CLASS
-	
 	private ArrayList<Date> dateList;
 	private Peculiarities peculiaritiesMap;
 	private Integer contractId;
@@ -165,6 +181,18 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 		
 		this.contractId = contractId;
 		this.contractStartDate = contractStartDate;
+		
+		//Initialize TRL SuggestBox
+		Collection<String> trlEntries = TRL.getAllEntriesCollection();
+		List<String> contractTRLSuggest = new ArrayList<String>();
+		trlEntries.forEach(e -> {
+			contractTRLSuggest.add(e+"");
+		});
+		
+		MultiWordSuggestOracle orclTRL = (MultiWordSuggestOracle) this.trl.getSuggestOracle();
+		orclTRL.addAll(contractTRLSuggest);
+		orclTRL.setDefaultSuggestionsFromText(trlEntries);
+		this.trl.setAutoSelectEnabled(true);
 		
 		acceptButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -179,6 +207,27 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 			public void onClick(ClickEvent event) {
 				hide();
 			}
+		});
+		
+		trl.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<SuggestOracle.Suggestion> event) {
+//				String selectedTrl = employee.trl.getValue();
+//				if(StringUtils.isEmpty(selectedTrl) || selectedTrl.equals(" - "))
+//					employeeDialogObject.setContractTRL(null);
+//				else {
+//					String trlCode = selectedTrl.split(" -")[0];
+//					employeeDialogObject.setContractTRL(trlCode);
+//				}
+			}
+		});
+		
+		trl.getValueBox().addKeyDownHandler( (event) -> {
+//			if ( KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode() )
+//				employee.trl.hideSuggestionList();
+//			else if ( event.isControlKeyDown() && KeyCodes.KEY_SPACE == event.getNativeEvent().getKeyCode()) 
+//				employee.trl.showSuggestionList();
 		});
 		
 		impl.getEmployeePeculiarities(contractId, new AsyncCallback<Peculiarities>() {
@@ -197,9 +246,18 @@ public class EmployeePeculiaritiesDialog extends CustomDialog {
 				if(dateList.isEmpty())
 					peculiarities.setEnabled(false);
 				
+				if(peculiaritiesMap.getTrl() == null || com.esferalia.aon.gwt.common.shared.StringUtils.isEmpty(peculiaritiesMap.getTrl())) {
+					peculiaritiesTable.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+				} else {
+					peculiaritiesTable.getRows().getItem(1).getStyle().clearDisplay();
+					trl.setValue(TRL.getEntryByCode(peculiaritiesMap.getTrl()));
+					trl.setEnabled(false);
+				}
+				
 				initView();
 			}
 		});
+		
 	}
 	
 	@UiHandler("peculiarities")

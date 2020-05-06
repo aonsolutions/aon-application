@@ -54,6 +54,22 @@ public class JooqEmployeePeculiarities {
 		//Peculiarities
 		Peculiarities peculiarities = new Peculiarities();
 		
+		// Get TRL
+		Date findDate = new Date(new java.util.Date().getTime());
+		
+		Result<Record> trlRecords = dslContext.select().from(CONTRACT_DATA)
+			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.START_DATE.le(findDate))
+			.and(CONTRACT_DATA.END_DATE.ge(findDate).or(CONTRACT_DATA.END_DATE.isNull()))
+			.and(CONTRACT_DATA.NAME.eq("TRL"))
+			.orderBy(CONTRACT_DATA.START_DATE.desc())
+			.fetch();
+		
+		if(trlRecords.isNotEmpty()) {
+			String trlValue = parseExpression(trlRecords.get(0).get(CONTRACT_DATA.EXPRESSION));
+			peculiarities.setTrl(trlValue);
+		}
+		
 		//Find peculiarities DB
 		Result<Record1<Date>> peculiaritiesDatesRecords = dslContext.selectDistinct(CONTRACT_DATA.START_DATE).from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.NAME.in(peculiaritiesNames))
@@ -100,6 +116,12 @@ public class JooqEmployeePeculiarities {
 		return peculiarities;
 	}
 	
+	private static String parseExpression(String expr) {
+		if(expr.contains("\""))
+			return expr.split("\"")[1];
+		return expr;
+	}
+
 	private static String setPeculiaritiesDB(String domainName, Integer contractId, Peculiarities peculiarities, DSLContext dslContext) {
 		
 		//Peculiarities Names

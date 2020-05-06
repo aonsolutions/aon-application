@@ -79,12 +79,22 @@ public class Peculiarities implements Serializable {
 	
 	//BEGIN PECULIARITIES CLASS
 	private Map<Date, ArrayList<Peculiarity>> peculiarties;
+	private String trl;
 	
 	public Peculiarities() {
 		super();
 		this.peculiarties = new TreeMap<Date, ArrayList<Peculiarity>>();
+		this.trl = null;
 	}
 	
+	public String getTrl() {
+		return trl;
+	}
+	
+	public void setTrl(String trl) {
+		this.trl = trl;
+	}
+
 	public Map<Date, ArrayList<Peculiarity>> getPeculiarities() {
 		return this.peculiarties;
 	}

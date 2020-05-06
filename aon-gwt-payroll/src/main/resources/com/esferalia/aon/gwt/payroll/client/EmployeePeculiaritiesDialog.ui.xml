@@ -164,11 +164,24 @@
 			padding: 10px;
 		}
 		
+		.w-600{
+			width: 600px;
+		}
+		
+		.trlPanel{
+			margin-bottom: 15px;
+			margin-left: 10px;
+			width: 100%;
+			display: flex;
+			align-items: center;
+			column-gap: 10px;	
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 
-	    <table>
+	    <table ui:field="peculiaritiesTable">
 	        <tbody>
 	            <tr>
 	            	<td>
@@ -183,6 +196,14 @@
 		                	<g:Label styleName="{style.bold} {style.paddingStyle}">Fecha inicio peculiaridad:</g:Label>
 		                	<a:DateBoxEx ui:field="start_date_peculiarity" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBox}'></a:DateBoxEx>
 		                </g:HorizontalPanel>  
+	                </td>
+	            </tr>
+	            <tr>
+	            	<td colspan="2">
+	            		<g:HTMLPanel styleName="{style.trlPanel}">
+	            			<g:Label styleName="{style.bold} {style.paddingStyle}">Tipo relación laboral (TRL):</g:Label>
+	            			<g:SuggestBox ui:field="trl" styleName="{style.peculiarities} {style.w-600}"></g:SuggestBox>
+	                	</g:HTMLPanel>  
 	                </td>
 	            </tr>
 	            <tr>
