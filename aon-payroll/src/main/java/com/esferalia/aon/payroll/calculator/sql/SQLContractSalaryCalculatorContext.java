@@ -331,7 +331,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			+ " AND ( end_date IS NULL" + " OR end_date >= ? )";
 
 	private static final String EMBARGO_SQL = "SELECT *"
-			+ ", ( SELECT sum(amount) FROM salary_embargo WHERE contract_embargo=contract_embargo.id  ) AS "
+			+ ", ( SELECT sum(amount) FROM salary_embargo INNER JOIN salary on ( salary_embargo.salary = salary.id ) WHERE contract_embargo=contract_embargo.id AND end_date <= ? ) AS "
 			+ EMBARGO_PAID + " FROM contract_embargo" + " WHERE contract = ? " + " AND start_date <= ? "
 			+ " AND ( end_date IS NULL" + " OR end_date >= ? )" + " ORDER BY start_date"; // ORDER
 																							// BY
@@ -1540,7 +1540,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		String category = getString(SQLConstants.CONTRACT, ContractColumns.CATEGORY_DESCRIPTION);
 //		if (AonStringUtils.isNotBlank(category))
 		return category;
-
+		
 //		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.DESCRIPTION);
 	}
 
@@ -1672,7 +1672,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			this.sqlContractEmbargo.close();
 			int id = getId();
-			embargoStmt.setInt(1, id);
+			embargoStmt.setInt(2, id);
 			ResultSet rs = embargoStmt.executeQuery();
 			this.sqlContractEmbargo.setResultSet(rs);
 			return this.sqlContractEmbargo;
@@ -2284,8 +2284,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	private void initEmbargoStmt() throws SQLException {
 		this.embargoStmt = this.connection.prepareStatement(EMBARGO_SQL);
-		this.embargoStmt.setDate(2, toSqlDate(this.getEnd()));
-		this.embargoStmt.setDate(3, toSqlDate(this.startDate));
+		this.embargoStmt.setDate(1, toSqlDate(this.startDate));
+		this.embargoStmt.setDate(3, toSqlDate(this.getEnd()));
+		this.embargoStmt.setDate(4, toSqlDate(this.startDate));
 	}
 
 	private void initCeventStmt() throws SQLException {

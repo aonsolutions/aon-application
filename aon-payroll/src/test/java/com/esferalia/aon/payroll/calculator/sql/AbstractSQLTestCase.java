@@ -1293,9 +1293,23 @@ public abstract class AbstractSQLTestCase {
 
 	public static ContractEmbargoRecord addEmbargo(AONContext aonContext, ContractRecord contract, String expression) {
 		return aonContext.getDslContext().insertInto(CONTRACT_EMBARGO)
-				.set(CONTRACT_EMBARGO.DOMAIN, contract.getDomain()).set(CONTRACT_EMBARGO.CONTRACT, contract.getId())
+				.set(CONTRACT_EMBARGO.DOMAIN, contract.getDomain())
+				.set(CONTRACT_EMBARGO.CONTRACT, contract.getId())
 				.set(CONTRACT_EMBARGO.START_DATE, contract.getStartDate())
-				.set(CONTRACT_EMBARGO.END_DATE, contract.getEndDate()).set(CONTRACT_EMBARGO.EXPRESSION, expression)
+				.set(CONTRACT_EMBARGO.END_DATE, contract.getEndDate())
+				.set(CONTRACT_EMBARGO.EXPRESSION, expression)
+				.returning().fetchOne();
+
+	}
+
+	public static ContractEmbargoRecord addEmbargo(AONContext aonContext, ContractRecord contract, String description, String expression) {
+		return aonContext.getDslContext().insertInto(CONTRACT_EMBARGO)
+				.set(CONTRACT_EMBARGO.DOMAIN, contract.getDomain())
+				.set(CONTRACT_EMBARGO.CONTRACT, contract.getId())
+				.set(CONTRACT_EMBARGO.START_DATE, contract.getStartDate())
+				.set(CONTRACT_EMBARGO.END_DATE, contract.getEndDate())
+				.set(CONTRACT_EMBARGO.DESCRIPTION, description)
+				.set(CONTRACT_EMBARGO.EXPRESSION, expression)
 				.returning().fetchOne();
 
 	}

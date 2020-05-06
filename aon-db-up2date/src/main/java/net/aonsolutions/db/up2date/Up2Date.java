@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.DefaultAgreementUpdate2;
+import net.aonsolutions.db.up2date.payroll.EmbargarFix;
 import net.aonsolutions.db.up2date.payroll.EresUpdateII;
 import net.aonsolutions.db.up2date.payroll.FixERESalaries;
 import net.aonsolutions.db.up2date.payroll.FixERESalariesII;
@@ -125,7 +126,8 @@ public class Up2Date {
     		//GarantizadoFix.GARANTIZADOFIX
     		//EresUpdateII.ERESUPDATE,
     		//MejoraInsert.MEJORAINSERT,
-    		MejoraUpdate.MEJORAUPDATE
+    		//MejoraUpdate.MEJORAUPDATE
+    		EmbargarFix.EMBARGARFIX
     };
 
 

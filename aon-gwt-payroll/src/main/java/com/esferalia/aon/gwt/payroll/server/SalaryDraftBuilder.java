@@ -497,7 +497,7 @@ public class SalaryDraftBuilder
 		embargo.setAmount(amount);
 		embargo.setDescription(description);
 		embargo.setType(Deduction.Type.EMBARGO);
-		embargo.setDescriptionTemplate(embargo.getDescription());
+		embargo.setDescription(embargo.getDescription());
 
 		salaryDraft.addEmbargo(embargo);
 	}
@@ -1095,7 +1095,7 @@ public class SalaryDraftBuilder
 				CompositePayment composite = new CompositePayment();
 				
 				composite.setConceptId(payment.getConceptId());
-				composite.setDescription(payment.getDescription());
+				//composite.setDescription(payment.getDescription());
 				composite.setExpression(payment.getExpression());
 				composite.setIrpfExpression(payment.getIrpfExpression());
 				composite.setQuoteExpression(payment.getQuoteExpression());

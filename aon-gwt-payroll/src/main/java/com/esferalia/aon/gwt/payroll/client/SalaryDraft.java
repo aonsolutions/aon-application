@@ -1902,16 +1902,18 @@ public class SalaryDraft extends ResizeComposite
 				deduction.setType(item.getType());
 				deduction.setName(item.getName());
 				deduction.setConceptId(item.getId());
+				deduction.setDescriptionTemplate(item.getDescription());
 				
 			} else {
 				deduction.setType(Deduction.Type.OTHER);
+				deduction.setDescriptionTemplate(descriptionBox.getValue());
 			}
 			deduction.setScope(Scope.SALARY);
 			//deduction.setDescription(descriptionBox.getValue());
 			deduction.setSalaryType(salaryDraftObject.getType());
 			deduction.setStartDate(salaryDraftObject.getEndDate());
 			deduction.setStartDate(salaryDraftObject.getStartDate());
-			deduction.setDescriptionTemplate(descriptionBox.getValue());
+			
 
 			if (deduction.getType() == Deduction.Type.EMBARGO)
 				salaryDraftObject.addDraftEmbargo(deduction);
