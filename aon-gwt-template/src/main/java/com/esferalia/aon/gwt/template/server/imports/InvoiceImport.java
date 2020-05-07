@@ -416,7 +416,7 @@ public class InvoiceImport {
 			invoice.setScope(new Scope().setId(getScopeId(domain, user)));
 			invoice.setService(InvoiceOpType.PIS.equals(ivs.get(i).getType())|| InvoiceOpType.AIS.equals(ivs.get(i).getType()));
 			invoice.setTransaction(getTransaction(ivs.get(i)));
-			invoice.setInvestment(ivs.get(i).isInvestment());
+			invoice.setInvestment(ivs.get(i).isInvestment() != null && ivs.get(i).isInvestment());
 			invoice.setDomain(domain.getId());
 			invoice.setIssueDate(ivs.get(i).getDate());
 			invoice.setTaxDate(ivs.get(i).getDate());
@@ -634,14 +634,16 @@ public class InvoiceImport {
 		if(iic.getBase() != null && iic.getPercentage() != null && iic.getQuota() != null) {
 			Double cuota = AonMathUtils.round(iic.getBase()*iic.getPercentage() / 100);
 			Double iicQuota = AonMathUtils.round(iic.getQuota());
-			if(!iicQuota.equals(cuota)) {
+			Double dif = iicQuota - cuota;
+			if(!iicQuota.equals(cuota) && (dif < -0.01 || dif > 0.01)) {
 				throw new Exception("% IVA y Cuota IVA no coinciden.");
 			}
 		}
 
 		if(iic.getBase() != null && iic.getRetentionPercentage() != null && iic.getRetentionQuota() != null) {
 			Double retentionQuota = iic.getBase()*iic.getRetentionPercentage() / 100;
-			if(!iic.getRetentionQuota().equals(AonMathUtils.round(retentionQuota))) {
+			Double dif = iic.getRetentionQuota() - retentionQuota;
+			if(!iic.getRetentionQuota().equals(AonMathUtils.round(retentionQuota)) && (dif < -0.01 || dif > 0.01)) {
 				throw new Exception("% Retención y Cuota Retención no coinciden.");
 			}
 		}
