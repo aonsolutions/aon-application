@@ -194,7 +194,7 @@
 									</aon:commandLink>
 								</aon:div>						
 							</aon:if>
-							<aon:if test="#{aonRole.config and actionDenied.moduleEnabled['infoweb']}">
+<!-- 							<aon:if test="#{aonRole.config and actionDenied.moduleEnabled['infoweb']}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="publishParameters" 
 										reRender="configPanelBar,configContent"
@@ -202,7 +202,7 @@
 										actionListener="#{publishParameter.onInit}"
 										value="#{bundle.infoweb_publish_group}" />
 								</aon:div>
-							</aon:if>										
+							</aon:if>	 -->									
 							<aon:if test="#{aonRole.sysAdmin}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="marketplaceParameters" 
