@@ -158,16 +158,20 @@ public class DiaryImport {
 						asientoIndex = cell.getColumnIndex();
 					}
 				} else if(row.getRowNum() > indexTitle && cell.getColumnIndex() < titleList.size()){
-					checkAsiento(domain, row.getCell(asientoIndex), aonCtx);
-					String title = titleList.get(cell.getColumnIndex());
-					check(domain, login, title, cell, aonCtx);			
+					if(checkAsiento(domain, row.getCell(asientoIndex), aonCtx)) {
+						String title = titleList.get(cell.getColumnIndex());
+						check(domain, login, title, cell, aonCtx);			
+					}
 				}
 			});
 		});
 	}
 	
-	private void checkAsiento(Domain domain, Cell cell, AonConfiguration aonCtx) {
+	private Boolean checkAsiento(Domain domain, Cell cell, AonConfiguration aonCtx) {
 		Object o = Utils.getObjectValue(cell);
+		if(o == null) {
+			return false;
+		}
 		Double d = Utils.parseDouble(o);
 		asiento = d.intValue();
 		if(!diary.containsKey(asiento)) {
@@ -179,6 +183,7 @@ public class DiaryImport {
 				.setActivity(ea==null ? null : ea.getId());
 			diary.put(asiento, aeic);
 		}
+		return true;
 	}
 
  	private void check(Domain domain , String login, String title, Cell cell, AonConfiguration aonCtx) {
