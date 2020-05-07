@@ -1880,6 +1880,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiHandler("closePreviewButton")
 	void onClickClosePreviewButton(ClickEvent event) {
 		showDraft();
+		calculate();
 	}
 
 	@UiHandler({ "zoomListBox", "typeListBox", "levelListBox", })
