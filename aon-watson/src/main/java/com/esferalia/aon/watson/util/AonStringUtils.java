@@ -18,12 +18,16 @@ package com.esferalia.aon.watson.util;
  */
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.watson.server.AonObjectUtils;
+import com.sun.tools.javac.util.StringUtils;
 
 /**
  * <p>
@@ -7389,6 +7393,55 @@ public class AonStringUtils {
             return nullIsLess ? 1 : - 1;
         }
         return str1.compareToIgnoreCase(str2);
+    }
+    
+    
+    public static Set<String> longestCommonSubstrings(String s, String t) {
+        int[][] table = new int[s.length()][t.length()];
+        int longest = 0;
+        Set<String> result = new HashSet<String>();
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j < t.length(); j++) {
+                if (s.charAt(i) != t.charAt(j)) {
+                    continue;
+                }
+
+                table[i][j] = (i == 0 || j == 0) ? 1 : 1 + table[i - 1][j - 1];
+                if (table[i][j] > longest) {
+                    longest = table[i][j];
+                    result.clear();
+                }
+                if (table[i][j] == longest) {
+                    result.add(s.substring(i - longest + 1, i + 1));
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String longestCommonSubstring(String s, String t) {
+        int[][] table = new int[s.length()][t.length()];
+        int longest = 0;
+        List<String> result = new ArrayList<String>();
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int j = 0; j < t.length(); j++) {
+                if (s.charAt(i) != t.charAt(j)) {
+                    continue;
+                }
+
+                table[i][j] = (i == 0 || j == 0) ? 1 : 1 + table[i - 1][j - 1];
+                if (table[i][j] > longest) {
+                    longest = table[i][j];
+                    result.clear();
+                }
+                if (table[i][j] == longest) {
+                    result.add(s.substring(i - longest + 1, i + 1));
+                }
+            }
+        }
+        return result.stream().collect(Collectors.joining());
     }
 
     // ------------------------------------------------------------------------

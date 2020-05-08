@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CompositePayment extends Payment {
 
@@ -145,8 +146,14 @@ public class CompositePayment extends Payment {
 	public String getDescription() {
 		if ( description != UNSET_STRING )
 			return description;
+		return 
+		childs.stream()
+		.map(p-> p.getDescription())
+		.filter(AonStringUtils::isNotBlank)
+		.reduce(AonStringUtils::longestCommonSubstring)
+		.orElseGet(() -> childs.isEmpty() ? null : childs.peek().description )
+		;
 		
-		return childs.isEmpty() ? null : childs.peek().description;
 	}
 	
 	@Override
