@@ -423,6 +423,11 @@ public class DBSalary  implements ISalary, ISalaryProxy {
 	}
 	
 	@Override
+	public <T extends IDeduction> Collection<T> getEmbargoS() throws SalaryException {
+		throw new NoSuchMethodError();
+	}
+	
+	@Override
 	public Collection<IDeduction> getCostS() throws SalaryException {
 		return costs;
 	}

@@ -450,6 +450,33 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 	
 	@Transient
 	@Override
+	public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
+		try {
+			Collection<SalaryEmbargo> embargos;
+			String sessionName = HibernateUtil
+					.getSessionFactoryName(Salary.class.getName());
+			Session session = HibernateUtil.getSession(sessionName);
+			if (session.contains(this) || this.getId() == null) {
+				embargos = this.getSalaryEmbargos();
+			} else {
+				IManagerBean bean = BeanManager
+						.getManagerBean(SalaryEmbargo.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(
+						bean
+						.getFieldName(IEntityAlias.SALARY_EMBARGO_SALARY_ID),
+						this.getId());
+				List<?> list = bean.getList(c);
+				embargos = (Collection<SalaryEmbargo>) list;
+			}
+			return embargos;
+		} catch (ManagerBeanException e) {
+			throw new SalaryException(e.getMessage(), e);
+		}
+	}
+
+	@Transient
+	@Override
 	public Payments getPayments() throws SalaryException {
 		if (payments == null) {
 			PaymentsFactoryManager manager = PaymentsFactoryManager

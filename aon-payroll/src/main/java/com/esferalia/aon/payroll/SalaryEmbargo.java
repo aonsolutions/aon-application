@@ -7,11 +7,12 @@ import javax.persistence.Transient;
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.SalaryEmbargoDB;
 import com.esferalia.aon.salary.ISalaryItem;
+import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
 @Entity
 @Table(name="salary_embargo")
-public class SalaryEmbargo extends SalaryEmbargoDB implements ISalaryItem<DeductionType> {
+public class SalaryEmbargo extends SalaryEmbargoDB implements IDeduction {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 

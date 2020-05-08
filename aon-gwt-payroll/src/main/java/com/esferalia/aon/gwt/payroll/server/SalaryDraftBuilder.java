@@ -238,6 +238,30 @@ public class SalaryDraftBuilder
 			salaryDraft.addCost(cost);
 		}
 		
+		// match up draft embargos & db embargos*
+		List<IDeduction> dbEmbargos;
+		dbEmbargos = new ArrayList<IDeduction>(dbSalary.getEmbargoS());
+		for (Deduction embargo : salaryDraft.getEmbargos()) {
+			List<IDeduction> dbCounterParts = getDbEmbargoCounterParts(
+					dbEmbargos, embargo);
+			if (dbCounterParts.size() == 0)
+				continue;
+			double amount = 0.00;
+			for ( IDeduction dbEmbargo: dbCounterParts )
+				amount += dbEmbargo.getAmount();
+			embargo.setDbAmount(amount);
+			dbEmbargos.removeAll(dbCounterParts);
+		}
+
+		for (IDeduction dbEmbargo : dbEmbargos) {
+			Deduction embargo = new Deduction();
+			embargo.setName(dbEmbargo.getName());
+			embargo.setDbAmount(dbEmbargo.getAmount());
+			embargo.setExpression(dbEmbargo.getExpression());
+			embargo.setDescription(dbEmbargo.getDescription());
+			salaryDraft.addDeduction(embargo);
+		}		
+		
 	}
 
 	public void setDbSalaryData(List<Variable> data) throws SalaryException {
@@ -1292,6 +1316,17 @@ public class SalaryDraftBuilder
 					typeMatchDbItems.add(dbDeduction);
 
 		return typeMatchDbItems;
+
+	}
+
+	private static <T extends ISalaryItem<DeductionType>> List<T> getDbEmbargoCounterParts(
+			Collection<T> dbEmbargos, Item<?> embargo) {
+		List<T> descriptionMatchDbItems = new LinkedList<T>();
+		for (T dbEmbargo : dbEmbargos)
+			if (AonStringUtils.equalsIgnoreCase(dbEmbargo.getDescription(), embargo.getDescription()))
+				descriptionMatchDbItems.add(dbEmbargo);
+
+		return descriptionMatchDbItems;
 
 	}
 

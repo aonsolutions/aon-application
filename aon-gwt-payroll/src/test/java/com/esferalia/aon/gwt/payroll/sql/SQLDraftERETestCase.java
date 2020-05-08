@@ -206,6 +206,11 @@ public class SQLDraftERETestCase extends SQLERETestCase {
 		}
 		
 		@Override
+		public <T extends IDeduction> Collection<T> getEmbargoS() throws SalaryException {
+			throw new NoSuchMethodError();
+		}
+		
+		@Override
 		public Double getTotalIrpf() {
 			throw new NoSuchMethodError();
 		}

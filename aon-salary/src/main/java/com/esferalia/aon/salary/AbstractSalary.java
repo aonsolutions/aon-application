@@ -184,6 +184,12 @@ public abstract class AbstractSalary implements ISalary {
 	}
 
 	@Override
+	public <T extends IDeduction> Collection<T> getEmbargoS() throws SalaryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public Double getTotalIrpf() {
 		// TODO Auto-generated method stub
 		return null;

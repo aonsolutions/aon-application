@@ -705,6 +705,10 @@ public class PayrollServletUtils extends AonServletUtils {
 				public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
 					return getSalaryDeductions();
 				}
+				
+				public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
+					return getSalaryEmbargos();
+				}
 			};
 			salary.setId(salaryRecord.getId());
 			salary.setDomain(salaryRecord.getDomain());
