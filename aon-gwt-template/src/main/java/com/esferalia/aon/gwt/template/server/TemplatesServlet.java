@@ -51,6 +51,7 @@ import com.esferalia.aon.gwt.template.server.imports.InvoiceImportClass;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport;
 import com.esferalia.aon.gwt.template.server.imports.RegistryImport;
 import com.esferalia.aon.gwt.template.server.imports.DiaryImport.AccountEntryImportClass;
+import com.esferalia.aon.gwt.template.server.imports.ImportFixer;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport.AccountImportClass;
 import com.esferalia.aon.gwt.template.server.imports.RegistryImport.RegistryImportClass;
 import com.esferalia.aon.gwt.template.server.marketplace.XMLUtils;
@@ -2677,6 +2678,13 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	@Override
 	public Error insertPGC(Domain domain, User user, Integer index) {
 		return PGCImport.insertPGC(domain, user, index, accounts);			
+	}
+
+	@Override
+	public void importFix(Domain domain, User user) {
+		ImportFixer.fixCustomer(domain, user.getLogin());
+		ImportFixer.fixSupplier(domain, user.getLogin());
+		ImportFixer.fixCreditor(domain, user.getLogin());
 	}
 
 	

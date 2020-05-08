@@ -101,4 +101,6 @@ public interface ITemplateAsync {
 	void generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative,
 			Boolean detail, Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif,
 			AsyncCallback<String> callback);
+	
+	void importFix(Domain domain, User user, AsyncCallback<Void> callback);
 }

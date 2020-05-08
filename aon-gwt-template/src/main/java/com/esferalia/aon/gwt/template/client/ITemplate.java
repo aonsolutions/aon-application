@@ -101,4 +101,7 @@ public interface ITemplate extends RemoteService{
 	public LinkedList<String> getTypeList(Domain domain, User user);
 	
 	public void print(String text);
+
+	public void importFix(Domain domain, User user);
+
 }

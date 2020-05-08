@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 
 public class ImportPage extends AonTemplate2{
@@ -69,6 +70,17 @@ public class ImportPage extends AonTemplate2{
 				info();
 			}
 		});
+		
+		Boolean showFixButton = getDomain().getName().contains("auditors") && getDomain().getId().equals(26541);
+		Button fixButton = toolbar.addButton("Regenerar Clientes/Proveedores/Acreedores", "aon-icon-segment");
+		fixButton.setVisible(showFixButton);
+		fixButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				importFix();
+			}
+		});
 		setToolbar(toolbar);
 	}
 	
@@ -90,6 +102,21 @@ public class ImportPage extends AonTemplate2{
 	
 	private void content() {
 		setContent(new ImportContent(getAonData()));
+	}
+	
+	private void importFix() {
+		item.importFix(getDomain(), getUser(), new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				Window.alert("El proceso de correcci\u00f3n ha terminado.");
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
 	}
 	
 		
