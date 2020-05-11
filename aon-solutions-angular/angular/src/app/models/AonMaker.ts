@@ -1,14 +1,14 @@
 import { TaxType, Invoice, InvoiceTransaction, InvoiceStatus, Registry, Address,
-  InvoiceTax, PayMethod, Finance, InvoiceDetail, PrinterConfiguration, TediPlan,
-  TediPlanEnum, TediPlanPeriod, Company, User, Permission, PermissionTagType } from './AonModel';
+  InvoiceTax, PayMethod, Finance, InvoiceDetail, PrinterConfiguration,
+  Company, User, Permission, PermissionTagType} from './AonModel';
 import { TediUtils } from '../utils/tedi-utils';
 
 export class AonMaker {
 
   static createInvoice(invoice ?: Invoice): Invoice {
     return {
-      domain: invoice ? invoice.domain : '',
       id: invoice ? invoice.id : undefined,
+      domain: invoice ? invoice.domain : '',
       series: invoice && invoice.series ? invoice.series : '',
       number: invoice && invoice.number ? invoice.number : 0,
       reference: invoice && invoice.reference ? invoice.reference : '',
@@ -29,13 +29,13 @@ export class AonMaker {
       file: invoice ? invoice.file : undefined,
       comments: invoice && invoice.comments ? invoice.comments : [],
       create_user: invoice && invoice.create_user ? invoice.create_user : '',
-      create_date: invoice && invoice.create_date ? invoice.create_date : new Date(),
-      email: invoice ? invoice.email : undefined,
+      create_date: invoice && invoice.create_date ? invoice.create_date : new Date()
     };
   }
 
   static createInvoiceTax(tax?:InvoiceTax) : InvoiceTax {
     return {
+      id: tax && tax.id ? tax.id : undefined,
       tax: tax && tax.tax ? tax.tax : TaxType.VAT,
       base: tax && tax.base ? tax.base : 0,
       percentage: tax && tax.percentage ? tax.percentage : 0,
@@ -47,13 +47,17 @@ export class AonMaker {
 
   static createInvoiceDetail(detail?:InvoiceDetail) : InvoiceDetail {
     let d : InvoiceDetail = {
+      id: detail && detail.id ? detail.id : undefined,
       description: detail && detail.description ? detail.description : '',
       quantity: detail && detail.quantity ? detail.quantity : 0,
       price: detail && detail.price ? detail.price : 0,
       discount: detail && detail.discount ? detail.discount : 0,
       amount: detail && detail.amount ? detail.amount : 0,
       vat: detail && detail.vat ? detail.vat : 0,
-      surcharge: detail && detail.surcharge ? detail.surcharge : 0
+      surcharge: detail && detail.surcharge ? detail.surcharge : 0,
+      account: detail && detail.account ? detail.account : undefined,
+      withholding: detail && detail.withholding ? detail.withholding : false,
+      prepayment: detail && detail.prepayment ? detail.prepayment : false
     };
     d.amount = detail && detail.amount ? detail.amount : (
       (d.quantity * d.price) * ((100 - d.discount) / 100)
@@ -72,7 +76,9 @@ export class AonMaker {
 
   static createRegistry(registry ?: Registry): Registry {
     return {
+      id: registry && registry.id ? registry.id : undefined,
       document: registry && registry.document ? registry.document : '',
+      document_country: registry && registry.document_country ? registry.document_country : '',
       name: registry && registry.name ? registry.name : '',
       address: registry && registry.address ? AonMaker.createAddress(registry.address) : AonMaker.createAddress()
     };
@@ -80,6 +86,7 @@ export class AonMaker {
 
   static createAddress(address ?: Address) : Address {
     return {
+      id: address && address.id ? address.id : undefined,
       country: address && address.country ? address.country : 'ES',
       address: address && address.address ? address.address : '',
       postal_code: address && address.postal_code ? address.postal_code : '',
@@ -101,13 +108,6 @@ export class AonMaker {
     };
   }
 
-  static createTediPlan(tediPlan?: TediPlan) : TediPlan {
-    return {
-      plan: tediPlan && tediPlan.plan ? tediPlan.plan : TediPlanEnum.PLANPYME,
-      period: tediPlan && tediPlan.period ? tediPlan.period: TediPlanPeriod.MENSUAL
-    };
-  }
-
   static createCompany(company?: Company) : Company {
     return {
       id: company && company.id ? company.id : undefined,
@@ -120,11 +120,9 @@ export class AonMaker {
       users: company && company.users ? company.users : [],
       iban: company && company.iban ? company.iban : '',
       bic: company && company.bic ? company.bic : '',
-      plan: company && company.plan ? company.plan : AonMaker.createTediPlan(),
       printer_configuration: company && company.printer_configuration
         ? AonMaker.createPrinterConfiguration(company.printer_configuration)
-        : AonMaker.createPrinterConfiguration(),
-      aon: company && company.aon ? company.aon : undefined
+        : AonMaker.createPrinterConfiguration()
     };
   }
 

@@ -189,6 +189,9 @@ public class Documental implements EntryPoint {
 
 			@Override protected void onMenuButtonClick() {
 				if(dockLayoutPanel.getWidgetSize(configurationPanel) == 0){
+					if(getAonData().isAonSolutions()) {
+						configurationPanel.getElement().getStyle().setBackgroundColor("#FFF");	
+					}
 					configurationPanel.add(new ConfigurationPanel(me));
 					dockLayoutPanel.setWidgetSize(configurationPanel, 350);
 				}
@@ -409,7 +412,11 @@ public class Documental implements EntryPoint {
 	}
 	
 	private void createSearchPanel(){
-		searchContent.add(new FilterPanel(me));
+		if(getAonData().isAonSolutions()) {
+			contentDockLayoutPanel.setWidgetSize(searchContent, 0);
+		} else {
+			searchContent.add(new FilterPanel(me));
+		}
 	}
 	
 	public void createAttachListPanel() {

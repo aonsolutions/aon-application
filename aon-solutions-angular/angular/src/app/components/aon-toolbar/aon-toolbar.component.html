@@ -1,7 +1,7 @@
 <mat-toolbar class="tedi-toolbar">
   <span>
-    <img *ngIf="!isMobile()" class="aon-logo" style="cursor: pointer;" (click)="invoice()" [src]="logo"  width="240px" />
-    <img *ngIf="isMobile() && !mobileSearching" style="cursor: pointer;" (click)="invoice()" [src]="logoMobile"  height="60px" />
+    <img *ngIf="!isMobile()" class="aon-logo" style="cursor: pointer;" (click)="home()" [src]="logo"  width="240px" />
+    <img *ngIf="isMobile() && !mobileSearching" style="cursor: pointer;margin-top: 10px;margin-left: 10px;" (click)="home()" [src]="logoMobile"  height="30px" />
   </span>
 
   <span *ngIf="!isMobile()" class="search-panel">
@@ -23,26 +23,8 @@
   </span>
 
 
-  <span *ngIf="!mobileSearching" class="tedi-right260">
-      <span class="tedi-company-name"> {{getCompanyName()}} </span>
-  </span>
-
-  <span *ngIf="!mobileSearching" class="tedi-right220">
-    <button mat-icon-button (click)="invoice()" title="Facturas">
-      <mat-icon>receipt</mat-icon>
-    </button>
-  </span>
-
-  <span *ngIf="!mobileSearching" class="tedi-right180">
-    <button mat-icon-button (click)="documental()" title="Documental">
-      <mat-icon>cloud</mat-icon>
-    </button>
-  </span>
-
   <span *ngIf="!mobileSearching" class="tedi-right140">
-    <button mat-icon-button (click)="callcenter()" title="Call Center">
-      <mat-icon>headset_mic</mat-icon>
-    </button>
+      <span class="tedi-company-name"> {{getCompanyName()}} </span>
   </span>
 
   <span *ngIf="!mobileSearching" class="tedi-right100">
@@ -52,7 +34,7 @@
   </span>
 
   <span *ngIf="!mobileSearching" class="tedi-right60">
-    <button mat-icon-button disabled="true"  (click)="apps()" title="Aplicaciones">
+    <button mat-icon-button [disabled]="isCompanySelected()"  (click)="apps()" title="Aplicaciones">
       <mat-icon>apps</mat-icon>
     </button>
   </span>

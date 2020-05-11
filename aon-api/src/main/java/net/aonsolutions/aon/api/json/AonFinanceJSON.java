@@ -12,7 +12,10 @@ import net.aonsolutions.aon.api.json.FunctionalInterfaces.IAonFinanceFromJSON;
 import net.aonsolutions.aon.api.json.FunctionalInterfaces.IAonFinanceToJSON;
 
 public enum AonFinanceJSON {
-
+	ID(
+		(finance, json) -> finance.setId(json.optInt(IConstants.ID)),
+		(finance, json) -> json.put(IConstants.ID, finance.getId())
+	),
 	DUE_DATE(
 		(finance, json) -> finance.setDueDate(AonDateUtils.dateTimeParse(json.optString(IConstants.DUE_DATE))),
 		(finance, json) -> json.put(IConstants.DUE_DATE, AonDateUtils.dateTimeFormat(finance.getDueDate()))

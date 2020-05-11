@@ -28,12 +28,7 @@
                	height: 2000px;
             }
     	</style>
-		<p:PaperTabs ui:field="tabs">
-			<paper-tab>Documentos</paper-tab>
-       	   <!-- 
-       	   	<paper-tab>Mi Drive</paper-tab>
-	   	   	 -->
-    	</p:PaperTabs>
+		
     	<g:HTMLPanel ui:field="tabContent"/>
 	</g:HTMLPanel>	
 </ui:UiBinder>

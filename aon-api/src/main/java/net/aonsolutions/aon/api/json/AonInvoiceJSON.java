@@ -85,7 +85,7 @@ public enum AonInvoiceJSON {
 			InvoiceType  invoiceType = json.optEnum(InvoiceType.class, IConstants.TYPE);
 			if(!InvoiceType.SALES.equals(invoiceType)) {
 				Registry registry = new Registry()
-					.setId(invoice.getId())
+					.setId(invoice.getRegistry())
 					.setDocument(invoice.getRegistryDocument())
 					.setName(invoice.getRegistryName())
 					.setDocumentCountry(invoice.getRegistryDocumentCountry())

@@ -23,12 +23,6 @@ export enum InvoiceStatus {
   TRASH = "TRASH"
 }
 
-export enum InvoiceHistoryAction {
-  create = 'create',
-  status = 'status',
-  update = 'update',
-}
-
 export enum InvoiceTransaction {
   NATIONAL = 'NATIONAL',
   INTRACOMMUNITY = 'INTRACOMMUNITY',
@@ -78,18 +72,13 @@ export enum InvoiceCategory {
 }
 
 export interface InvoiceTax {
+  id?: number;
   tax: TaxType;
   base: number;
   percentage: number;
   quota: number;
   surcharge?: number;
   surcharge_quota?: number;
-}
-
-export interface InvoiceHistory {
-  action: InvoiceHistoryAction;
-  date: Date;
-  user: string;
 }
 
 export interface InvoiceDetail {
@@ -104,6 +93,7 @@ export interface InvoiceDetail {
   prepayment?: boolean;
   withholding?:boolean;
   retention?:number;
+  account?:Account;
 }
 
 export interface Finance {
@@ -118,12 +108,6 @@ export interface Account {
   id?: number;
   code?: string;
   description?: string;
-}
-
-export interface InvoiceTemplate extends Invoice {
-  _address: string;
-  _nif: string;
-  _name: string;
 }
 
 export interface Invoice {
@@ -147,7 +131,6 @@ export interface Invoice {
   verified?: boolean;
   oldStatus?: InvoiceStatus;
   source?: string;
-  email?: TediEmailInfo;
   comments?: Comment[];
   create_user?: string;
   create_date?: Date;
@@ -203,12 +186,6 @@ export interface Permission {
   writer: boolean;
 }
 
-export interface AonConfig {
-  domain: string;
-  user: string;
-  password: string;
-}
-
 export interface User {
   email: string;
   active?: boolean;
@@ -219,7 +196,6 @@ export interface User {
   password?: string;
   actual_company?: string;
   users?: string[];
-  aon?: AonConfig;
   permissions?: Permission[];
   root?: boolean;
   admin?: boolean;
@@ -242,112 +218,9 @@ export interface Company {
   name: string;
   active: boolean;
   alias?: string;
-  plan?: TediPlan;
   iban?: string;
   bic?: string;
   address?: Address;
   printer_configuration?: PrinterConfiguration;
   users?: string[];
-  aon?: AonConfig;
-  contract?: Evicertia;
-}
-
-export interface TediPlan {
-  plan: TediPlanEnum;
-  period: TediPlanPeriod;
-  promo?: string;
-}
-
-export enum TediPlanEnum {
-  PLAN101 = '+101',
-  PLAN10 = '10',
-  PLAN25 = '25',
-  PLAN50 = '50',
-  PLANPYME = 'PyME',
-  PLAN100 = '100',
-}
-
-export enum TediPlanPeriod {
-  ANUAL = 'A',
-  MENSUAL = 'M',
-}
-
-export interface Evicertia {
-  uniqueId: string;
-}
-
-export interface TediSendInvoicesInfo {
-  company: Company;
-  to: string;
-  invoices: Invoice[];
-}
-
-export interface TediFile {
-  content: string | Buffer;
-  contentType: string;
-  contentEncoding?: string;
-}
-
-export interface TediEmailInfo {
-  id: string | undefined;
-  from: string[];
-  fileName: string;
-}
-export interface TediImportInvoicesInfo extends TediFile {
-  company?: string;
-  source?: string;
-  uuid?: string;
-  name?: string;
-  invoice?: Invoice;
-  type?: InvoiceType;
-  email?: TediEmailInfo;
-  companies?: Company[];
-  status?: InvoiceStatus;
-}
-
-export interface GServiceAccount {
-  auth_provider_x509_cert_url: string;
-  auth_uri: string;
-  client_email: string;
-  client_id: string;
-  client_x509_cert_url: string;
-  private_key: string;
-  private_key_id: string;
-  project_id: string;
-  subject: string;
-  token_uri: string;
-  type: string;
-}
-
-export interface Oauth2Token {
-  access_token: string;
-  expiry_date: number;
-  refresh_token: string;
-  scope: string;
-  token_type: string;
-}
-
-export interface AutoMLInvoiceTables {
-  amounts: AutoMLInvoiceAmount[];
-}
-
-export interface InsightInvoice {
-  dates: Date[];
-  amounts: number[];
-  references: string[];
-  taxTypes: TaxType[];
-}
-
-export interface AutoMLInvoiceAmount {
-  id: number;
-  x: number;
-  y: number;
-  max: number;
-  count: number;
-  height: number;
-  amount: number;
-  target_IVA_score?: number;
-  target_BASE_score?: number;
-  target_TOTAL_score?: number;
-  target_undefined_score?: number;
 }

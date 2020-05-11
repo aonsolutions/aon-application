@@ -8,6 +8,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface IAio extends RemoteService{
 	
 	public AonData getAonData(String domainName, Integer domainId, String login);
-	public AonData getAonData(String token, String domainId);
+	public AonData getAonDataToken(String domainName, String domainId, String token);
 
 }

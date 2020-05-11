@@ -131,7 +131,7 @@ export class SharedService {
     }
 
     getCompanyName():string {
-      return this.company ? this.company.name : localStorage.getItem('tedi_session_company_name');
+      return this.company ? this.company.name : '';
     }
     // TODO updateCompany: Company ** FIX COMPANY MODEL!
     updateCompany(cp: any, token?: string) : Observable<Company> {

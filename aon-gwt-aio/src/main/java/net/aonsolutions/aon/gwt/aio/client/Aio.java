@@ -75,7 +75,7 @@ public class Aio implements EntryPoint {
 		
 		String entryPoint = getParameter(GWT.getModuleName(), Constants.ENTRY_POINT_PARAM);		
 		if(getToken() != null) {
-			impl.getAonData(getDomainName(), getDomainId(), new AsyncCallback<AonData>() {
+			impl.getAonDataToken(getDomainName(), getDomainId(), getToken(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {
 					selection(entryPoint, result);

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { UserDialogComponent } from '../dialogs/user-dialog/user-dialog.component';
+import { ExtensionDialogComponent } from '../dialogs/extension-dialog/extension-dialog.component';
 import { MatDialog } from '@angular/material';
 import { SharedService } from '../../services/shared.service';
 import { RootLoader, GwtLoader} from '../../utils/loader';
@@ -14,7 +15,7 @@ import { environment } from '../../../environments/environment';
 })
 export class AonToolbarComponent implements OnInit {
   logo = environment.logo;
-  logoMobile = '../../../assets/toolbar.png';
+  logoMobile = environment.logoMobile;
   mobileSearching: boolean = false;
 
   constructor(private router: Router, private location: Location, public dialog: MatDialog, private service: SharedService) {
@@ -65,7 +66,17 @@ export class AonToolbarComponent implements OnInit {
   }
 
   apps(): void {
-
+    const dialogRef = this.dialog.open(ExtensionDialogComponent, {
+      width: '350px',
+      backdropClass: 'tedi-user-dialog-backdrop',
+      panelClass: 'tedi-user-dialog-panel',
+      position: {
+        top: '50px',
+        right: '50px'
+      },
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe();
   }
 
   getUserEmail(): string {
@@ -74,6 +85,10 @@ export class AonToolbarComponent implements OnInit {
 
   isMobile(): boolean {
     return this.service.isMobile;
+  }
+
+  isCompanySelected(): boolean {
+      return this.service.company == undefined;
   }
 
   closeSearch() : void {

@@ -14,6 +14,7 @@ public class AonData implements IsSerializable{
 	Company company;
 	Boolean betaEnabled;
 	Boolean alphaEnabled;
+	Boolean aonSolutions;
 	
 	public User getUser() {
 		return user;
@@ -62,6 +63,15 @@ public class AonData implements IsSerializable{
 	}
 	public AonData setCompany(Company company) {
 		this.company = company;
+		return this;
+	}
+	
+	public Boolean isAonSolutions() {
+		return aonSolutions;
+	}
+	
+	public AonData setAonSolutions(Boolean aonSolutions) {
+		this.aonSolutions = aonSolutions;
 		return this;
 	}
 }

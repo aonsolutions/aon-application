@@ -41,6 +41,7 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   }
 
   onSelect(company: Company): void {
+    this.service.company = company;
     localStorage.setItem('aon_domain_id', `${company.id}`);
     localStorage.setItem('aon_domain_name', company.domain);
     this.aonService.company = company;

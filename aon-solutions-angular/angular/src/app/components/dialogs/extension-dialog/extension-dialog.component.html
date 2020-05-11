@@ -1,7 +1,14 @@
 <div>
-  <ul>
-    <li>
-      <img src="assets/aon.png" style="width:75px;cursor:pointer;" title="AON SOLUTIONS" (click)='aon()'>
-    </li>
+  <ul style="padding-left:20px; padding-right:20px;">
+      <li style="width:100px;" *ngFor="let app of apps">
+        <a style="width:100px;cursor: pointer;margin:8px 2px;text-align: center;" (click)='appSelection(app.app)'>
+          <div>
+            <img [src]="app.logo" style="width:80px;" [title]="app.title">
+            <div>
+              <span style="font-size: 14px; color: rgba(0,0,0,.87);font-family: Roboto,sans-serif;"> {{app.title}} </span>
+            </div>
+          </div>
+        </a>
+      </li>
   </ul>
 </div>

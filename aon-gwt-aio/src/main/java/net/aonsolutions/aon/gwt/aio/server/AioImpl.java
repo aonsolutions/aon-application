@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
 
@@ -18,14 +19,15 @@ public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 
 	private static final long serialVersionUID = 1L;
 
-	public AonData getAonData(String domainName, String domainId){
+	public AonData getAonDataToken(String domainName, String domainId, String token){
 		Domain domain = AON.getDomain(domainName, Integer.parseInt(domainId), "");
-		User user = new User().setLogin("");
+		User user = AON_SOLUTIONS.getUser(domain, token);
 //		Integer operator = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), 
 //				f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user.getId()))).getId();
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
-				.setDomain(domain);
+				.setDomain(domain)
+				.setAonSolutions(true);
 	}
 	
 	public AonData getAonData(String domainName, Integer domainId, String login){
