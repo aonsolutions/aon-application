@@ -151,7 +151,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 					,PCII2(2,LEAF,"2","Fondos especiales calificados como pasivo","sab({5211,5212,5213})",null)
 					,PCII3(2,LEAF,"3","Acreedores por fondos capitalizados a largo plazo","sab({5214})",null)
 		 		,PCIII(1,LEAF,"III","Pasivos vinculados con activos no corr. mantenidos para la venta","sab({585,586,587,588,589})",null)
-		 		,PCIV(1,LEAF,"IV","Provisiones a corto plazo","sab({499,529})-sdb({5298})",null)
+		 		,PCIV(1,LEAF,"IV","Provisiones a corto plazo","sab({499,529})-sab({5298})",null)
 		 		,PCV(1,HEADER1,"V","Deudas a corto plazo",null,"PCV1+PCV2+PCV3+PCV4+PCV5")
 				 	,PCV1(2,LEAF,"1","Obligaciones y otros valores negociables","sab({500,501,505,506})",null)
 					,PCV2(2,LEAF,"2","Deudas con entidades de cr\u00E9dito","sab({5105,520,527})",null)
