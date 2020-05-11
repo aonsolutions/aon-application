@@ -138,6 +138,20 @@
       <scope>runtime</scope>
     </dependency>
 
+  	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.gwt.aio</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+ 	<dependency>
+      <groupId>net.aonsolutions</groupId>
+      <artifactId>aon.webservice</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
 	<dependency>
       <groupId>net.aonsolutions</groupId>
       <artifactId>aon.api</artifactId>
