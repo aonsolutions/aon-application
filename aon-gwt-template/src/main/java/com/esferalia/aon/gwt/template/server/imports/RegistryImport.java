@@ -163,7 +163,7 @@ public class RegistryImport {
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == indexTitle) {
 						Object title = Utils.getObjectValue(cell);
-						titleList.add(title != null ? title.toString() :  "");
+						titleList.add(title != null ? title.toString().trim() :  "");
 					} else if(row.getRowNum() > indexTitle && cell.getColumnIndex() < titleList.size()) {
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell, aonCtx);
@@ -218,7 +218,7 @@ public class RegistryImport {
 				}
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == indexTitle) {
-						String title = Utils.getObjectValue(cell).toString();
+						String title = Utils.getObjectValue(cell).toString().trim();
 						titleList.add(title);
 					} else if(row.getRowNum() > indexTitle){
 						String title = titleList.get(cell.getColumnIndex());

@@ -151,7 +151,7 @@ public class DiaryImport {
 			cellStream.forEach(cell -> {
 				if(row.getRowNum() == indexTitle) {
 					String title = cell.getStringCellValue();
-					titleList.add(title);
+					titleList.add(title.trim());
 					if(IConstants.ASIENTO.equalsIgnoreCase(title)
 							|| IConstants.N_DIARIO.equalsIgnoreCase(title)
 							|| IConstants.N_ASIENTO.equalsIgnoreCase(title)) {
