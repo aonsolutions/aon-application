@@ -127,7 +127,7 @@ public class Up2Date {
     		//EresUpdateII.ERESUPDATE,
     		//MejoraInsert.MEJORAINSERT,
     		//MejoraUpdate.MEJORAUPDATE
-    		EmbargarFix.EMBARGARFIX
+    		//EmbargarFix.EMBARGARFIX
     };
 
 
