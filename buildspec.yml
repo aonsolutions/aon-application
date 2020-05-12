@@ -74,10 +74,6 @@ phases:
       - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:latest
       - docker tag aonsolutions/aon-application:latest $REPOSITORY_URI/aon-application:latest
       - docker tag aonsolutions/aon-micro-services:latest $REPOSITORY_URI/aon-micro-services:latest
-      - |
-        [ "${COMMIT_MESSAGE#HOTFIX}" != "${COMMIT_MESSAGE}" ] \
-        && docker tag aonsolutions/aon-micro-services:latest $REPOSITORY_URI/aon-micro-services:hotfix \
-        || echo $COMMIT_MESSAGE
       # - command
   post_build:
     commands:
@@ -90,6 +86,11 @@ phases:
       - docker push $REPOSITORY_URI/aon-db-up2date:latest
       - docker push $REPOSITORY_URI/aon-application:latest
       - docker push $REPOSITORY_URI/aon-micro-services:latest
+      - |
+        [ "${COMMIT_MESSAGE#HOTFIX}" != "${COMMIT_MESSAGE}" ] \
+        && docker tag aonsolutions/aon-micro-services:latest $REPOSITORY_URI/aon-micro-services:hotfix \
+        && docker push $REPOSITORY_URI/aon-micro-services:hotfix \
+        || echo $COMMIT_MESSAGE
       - |
         printf '[
         {"name":"SNAPSH0T","imageUri":"%s/aon-application:latest"}
