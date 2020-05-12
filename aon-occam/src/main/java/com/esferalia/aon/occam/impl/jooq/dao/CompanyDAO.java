@@ -217,7 +217,8 @@ public class CompanyDAO {
 	public static Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter){
 		return COMPANY_PROPERTIES.build(ctx.getDslContext().select()
 				.from(COMPANY).join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-				.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN)), filter)
+				.join(DOMAIN).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID)), filter)
 			.fetch().stream().map(new CompanyFiller());
 	}
 	

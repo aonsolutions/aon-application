@@ -6,9 +6,14 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
-import com.esferalia.aon.gwt.api.client.sii.JsSiiConfiguration;
+import com.esferalia.aon.gwt.api.client.common.JsCompany;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.ActionCell.Delegate;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -17,6 +22,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelectionHandler;
@@ -26,6 +32,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -53,22 +60,20 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 		Style dataGridStyle();
 	}
 	
-	@UiField(provided = true) CustomDataGrid<JsObject> dataGrid; 
+	@UiField(provided = true) CustomDataGrid<JsCompany> dataGrid; 
 	
 	
 	ScopePrincipal parent;
 	Integer cont = 0;
-	
-	Boolean isFechaIVA;
-	
+		
 	private API getAPI() {
 		return parent.getAPI();
 	}
 
-	public ScopeGrid(ScopePrincipal parent, LinkedList<JsObject> list) {
+	public ScopeGrid(ScopePrincipal parent, LinkedList<JsCompany> list) {
 		this.parent = parent;		
-		dataGrid = new CustomDataGrid<JsObject>(Integer.MAX_VALUE, resources,
-				JsObject.PROVIDES_KEY);
+		dataGrid = new CustomDataGrid<JsCompany>(Integer.MAX_VALUE, resources,
+				JsCompany.PROVIDES_KEY);
 		ScrollPanel scrollPanel = dataGrid.getScrollPanel();
 		scrollPanel.addScrollHandler(new ScrollHandler() {
 			
@@ -82,10 +87,10 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 					LinkedList<String> list = new LinkedList<>();
 					list.add(page +"");
 					parent.getFilterMap().put("page", list);
-					parent.getAPI().getCommon().getScopes(parent.getFilterMap(), new AsyncCallback<JSON<JsObject>>() {
+					parent.getAPI().getCommon().getCompanies(parent.getFilterMap(), new AsyncCallback<JSON<JsCompany>>() {
 						
 						@Override
-						public void onSuccess(JSON<JsObject> result) {
+						public void onSuccess(JSON<JsCompany> result) {
 							dataProvider.getList().addAll(result.getData().toLinkedList());
 							dataGrid.redraw();
 						}
@@ -106,28 +111,19 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 			}
 		}, MouseOverEvent.getType());
 	
-		getAPI().getSii().getSiiConfiguration(new AsyncCallback<JSON<JsSiiConfiguration>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsSiiConfiguration> result) {
-				isFechaIVA = "Fecha IVA".equals(result.getData().get(0).getOperationDate());
-				load(list);
-			}
-			
-			@Override public void onFailure(Throwable caught) {}
-		});
+		load(list);
 		
 		initWidget(binder.createAndBindUi(this));
 	}	
 	
-	LinkedList<JsObject> selFiles = new LinkedList<>();
-	private void load(LinkedList<JsObject> list) {
-		DefaultKeyboardSelectionHandler<JsObject> selHandler = new DefaultKeyboardSelectionHandler<JsObject>(dataGrid){
+	LinkedList<JsCompany> selFiles = new LinkedList<>();
+	private void load(LinkedList<JsCompany> list) {
+		DefaultKeyboardSelectionHandler<JsCompany> selHandler = new DefaultKeyboardSelectionHandler<JsCompany>(dataGrid){
 			@Override
-			public void onCellPreview(CellPreviewEvent<JsObject> event) {
+			public void onCellPreview(CellPreviewEvent<JsCompany> event) {
 				 if(BrowserEvents.CLICK.equals(event.getNativeEvent().getType())){
-					 JsObject object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
-					 parent.scopeSelection(object);
+					 JsCompany object = dataProvider.getList().get(dataGrid.getKeyboardSelectedRow());
+					 parent.companySelection(object);
 					
 				 }
 			}
@@ -138,14 +134,14 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setAutoHeaderRefreshDisabled(true);
 		dataGrid.setEmptyTableWidget(new Label("NO HAY DATOS DISPONIBLES"));
 		addDataDisplay(dataGrid, list);
-		ListHandler<JsObject> sortHandler = getSortHandler();
+		ListHandler<JsCompany> sortHandler = getSortHandler();
 		dataGrid.addColumnSortHandler(sortHandler);
-	//	final SingleSelectionModel<JsObject> selectionModel = new SingleSelectionModel<JsObject>(
-	//			JsObject.PROVIDES_KEY);
-		final MultiSelectionModel<JsObject> selectionModel = new MultiSelectionModel<JsObject>(JsObject.PROVIDES_KEY);
+	//	final SingleSelectionModel<JsCompany> selectionModel = new SingleSelectionModel<JsCompany>(
+	//			JsCompany.PROVIDES_KEY);
+		final MultiSelectionModel<JsCompany> selectionModel = new MultiSelectionModel<JsCompany>(JsCompany.PROVIDES_KEY);
 		
 		dataGrid.setSelectionModel(selectionModel,
-				DefaultSelectionEventManager.<JsObject> createCheckboxManager());
+				DefaultSelectionEventManager.<JsCompany> createCheckboxManager());
 	//	dataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
 		
@@ -153,21 +149,21 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 	
 	//------------------------------ DataGrid Utils
 	
-	private ListDataProvider<JsObject> dataProvider = new ListDataProvider<JsObject>();
+	private ListDataProvider<JsCompany> dataProvider = new ListDataProvider<JsCompany>();
 
-	public void addDataDisplay(HasData<JsObject> display, LinkedList<JsObject> list) {
-		dataProvider = new ListDataProvider<JsObject>(list);
+	public void addDataDisplay(HasData<JsCompany> display, LinkedList<JsCompany> list) {
+		dataProvider = new ListDataProvider<JsCompany>(list);
 		dataProvider.addDataDisplay(display);
 	}
 		
-	private ListHandler<JsObject> getSortHandler() {
-		return new ListHandler<JsObject>(dataProvider.getList()){
+	private ListHandler<JsCompany> getSortHandler() {
+		return new ListHandler<JsCompany>(dataProvider.getList()){
 			@Override
 			public void onColumnSort(ColumnSortEvent event) {
 				super.setList(dataProvider.getList());
 				super.onColumnSort(event);
-				List<JsObject> aux  = super.getList();
-				List<JsObject> aux2 = new LinkedList<JsObject>();
+				List<JsCompany> aux  = super.getList();
+				List<JsCompany> aux2 = new LinkedList<JsCompany>();
 				for(Integer i = 0 ; i< aux.size()-1;i++){
 					aux2.set(i, aux.get(aux.size()-1-i ));
 				} 				
@@ -176,30 +172,171 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 		};
 	}
 	
-	private void initTableColumns(final MultiSelectionModel<JsObject> selectionModel, ListHandler<JsObject> sortHandler) {
-		
+	private class ActionHasCell implements HasCell<JsCompany, JsCompany> {
+	    private ActionCell<JsCompany> cell;
+	    String s;
+	    
+	    public ActionHasCell(String text, Delegate<JsCompany> delegate) {
+	    	s = text;
+	        cell = new ActionCell<JsCompany>(text, delegate){
+	        	String text = s;
+	        	@Override
+	        	public void render(com.google.gwt.cell.client.Cell.Context context,
+	        			JsCompany value, SafeHtmlBuilder sb) {
+	        		
+//	        		if(value.getScope().getId() != null && text.equals("edit")){
+//        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-edit\" tabindex=\"-1\">");
+//						sb.appendHtmlConstant("</button>");
+//	        		}
+	        		
+	        		if(value.getScope().getId() == null && text.equals("new")){
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-reset\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");		
+	        		}
+	        		
+	        	}
+	        };
+	        
+	    }
 
-		/** code Column **/
-		Column<JsObject, String> descriptionColumn = new Column<JsObject, String>(new TextCell()) {
+	    @Override
+	    public Cell<JsCompany> getCell() {
+	        return cell;
+	    }
+
+	    @Override
+	    public FieldUpdater<JsCompany, JsCompany> getFieldUpdater() {
+	        return null;
+	    }
+
+	    @Override
+	    public JsCompany getValue(JsCompany object) {
+	        return object;
+	    }
+	}
+	
+	private void initTableColumns(final MultiSelectionModel<JsCompany> selectionModel, ListHandler<JsCompany> sortHandler) {
+	
+		List<HasCell<JsCompany, ?>> cells = new LinkedList<HasCell<JsCompany, ?>>();
+	    
+		cells.add(new ActionHasCell("edit", new Delegate<JsCompany>() {
+
+	        @Override
+	        public void execute(JsCompany object) {
+	           // EDIT CODE
+	        	edit(object);
+	        }
+	    }));
+		
+	    cells.add(new ActionHasCell("new", new Delegate<JsCompany>() {
+
+	        @Override
+	        public void execute(JsCompany object) {
+	        	nuevo(object);
+	        }
+	    }));
+	    
+		
+		CompositeCell<JsCompany> cell = new CompositeCell<JsCompany>(cells);
+			
+		/** Name Column **/
+		Column<JsCompany, String> nameColumn = new Column<JsCompany, String>(new TextCell()) {
 
 			@Override
-			public String getValue(JsObject object) {
+			public String getValue(JsCompany object) {
 				return object.getName();
 			}
 		
 		};
-		descriptionColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		descriptionColumn.setSortable(true); 
-		sortHandler.setComparator(descriptionColumn,new Comparator<JsObject>() {
+		nameColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		nameColumn.setSortable(true); 
+		sortHandler.setComparator(nameColumn, new Comparator<JsCompany>() {
 			
 			@Override
-			public int compare(JsObject o1, JsObject o2) {
+			public int compare(JsCompany o1, JsCompany o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
-		dataGrid.getColumnSortList().push(descriptionColumn);
-		dataGrid.addColumn(descriptionColumn, "Descripcion");
-		dataGrid.setColumnWidth(descriptionColumn, 15, Unit.PCT);
+		dataGrid.getColumnSortList().push(nameColumn);
+		dataGrid.addColumn(nameColumn, "Razon Social");
+		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
 
+		/** Document Column **/
+		Column<JsCompany, String> documentColumn = new Column<JsCompany, String>(new TextCell()) {
+
+			@Override
+			public String getValue(JsCompany object) {
+				return object.getDocument();
+			}
+		
+		};
+		documentColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		documentColumn.setSortable(true); 
+		sortHandler.setComparator(documentColumn,new Comparator<JsCompany>() {
+			
+			@Override
+			public int compare(JsCompany o1, JsCompany o2) {
+				return o1.getDocument().compareTo(o2.getDocument());
+			}
+		});
+		dataGrid.getColumnSortList().push(documentColumn);
+		dataGrid.addColumn(documentColumn, "NIF");
+		dataGrid.setColumnWidth(documentColumn, 15, Unit.PCT);
+		
+		/** Scope Column **/
+		Column<JsCompany, String> scopeColumn = new Column<JsCompany, String>(new TextCell()) {
+
+			@Override
+			public String getValue(JsCompany object) {
+				return object.getScope().getName();
+			}
+		
+		};
+		scopeColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
+		scopeColumn.setSortable(true); 
+		sortHandler.setComparator(scopeColumn,new Comparator<JsCompany>() {
+			
+			@Override
+			public int compare(JsCompany o1, JsCompany o2) {
+				return o1.getScope().getName().compareTo(o2.getScope().getName());
+			}
+		});
+		dataGrid.getColumnSortList().push(scopeColumn);
+		dataGrid.addColumn(scopeColumn, "Ambito");
+		dataGrid.setColumnWidth(scopeColumn, 15, Unit.PCT);
+		
+
+		/** Action Column **/
+		Column<JsCompany,JsCompany> actionColumn = 	new Column<JsCompany, JsCompany>(cell){
+
+			
+			@Override
+			public JsCompany getValue(JsCompany object) {
+				return object;
+			}
+		};
+		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+		dataGrid.addColumn(actionColumn, "");
+		dataGrid.setColumnWidth(actionColumn, 5, Unit.PCT);
+
+	}
+	
+	private void edit(JsCompany object) {
+
+	}
+	
+	private void nuevo(JsCompany object) {	
+		getAPI().getCommon().generateCompanyScope(object.getId(), new AsyncCallback<JSON<JsCompany>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsCompany> result) {
+				parent.gridContent();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
 	}
 }

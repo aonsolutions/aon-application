@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import com.code.aon.webservice.common.MSG;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.CommercialTracking;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Elaboration;
@@ -582,6 +583,15 @@ public class ToJSON {
 			.put(MSG.NAME, user.getName())
 			.put(MSG.DOMAIN, user.getDomain())
 			.put(MSG.LOGIN, user.getLogin());		
+	}
+	
+	public static JSONObject companyToJSON(Company company) {
+		return new JSONObject()
+			.put(MSG.ID, company.getId())
+			.put(MSG.NAME, company.getName())
+			.put(MSG.DOCUMENT, company.getDocument())
+			.put(MSG.DOMAIN, company.getDomain())
+			.put(MSG.SCOPE, objectToJSON(company.getScope().getId(), company.getScope().getDescription()));		
 	}
 	
 	public static String getPeriod(BillingPeriod period){

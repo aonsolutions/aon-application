@@ -38,7 +38,7 @@
 								</g:tab>
 
 								
-								<g:tab>
+								<!-- <g:tab>
 									<g:customHeader >
 										<g:HTMLPanel>
 											<i:IronIcon icon="work" style="width:16px !important; height:16px !important;" />
@@ -46,7 +46,7 @@
 										</g:HTMLPanel>
 									</g:customHeader>
 									<g:ScrollPanel ui:field="companiesPanel" styleName="{aonResources.css.aonTextCenter}" />
-								</g:tab>							
+								</g:tab>	 -->						
 							</g:TabLayoutPanel>
 						</aon:MinimizePanel>
 					</g:south>

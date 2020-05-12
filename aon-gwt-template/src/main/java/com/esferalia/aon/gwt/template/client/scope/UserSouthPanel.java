@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.common.JsCompany;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
@@ -31,10 +31,10 @@ public class UserSouthPanel extends SouthPanel {
 
 	ScopePrincipal parent;
 	
-    public UserSouthPanel(ScopePrincipal parent, AonJsArray<JsUser> items, JsObject o) {   
+    public UserSouthPanel(ScopePrincipal parent, AonJsArray<JsUser> items, JsCompany o) {   
     	super();
     	this.parent = parent;
-    	title.setText("\u00c1mbito: " + o.getName());
+    	title.setText("Empresa: " + o.getName() +" - \u00c1mbito: " + o.getScope().getName());
     	title.getElement().getStyle().setFontWeight(FontWeight.BOLD);
         vertical.setWidth("100%");
         if(items.length() > 0){
@@ -46,7 +46,7 @@ public class UserSouthPanel extends SouthPanel {
     	vertical.add(nuevoItem(o));
     }
    
-    public PaperItem buildPaperItem(JsUser js, JsObject o){
+    public PaperItem buildPaperItem(JsUser js, JsCompany o){
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("account-box");
@@ -64,7 +64,7 @@ public class UserSouthPanel extends SouthPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AonDialog d= new AonDialog("Desvincular \u00c1mbito", new Label("Est\u00e1s seguro de Desvincular " + js.getLogin() +" de " + o.getName())) {
+				AonDialog d= new AonDialog("Desvincular \u00c1mbito", new Label("Est\u00e1s seguro de Desvincular " + js.getLogin() +" de " + o.getScope().getName())) {
 					
 					@Override
 					protected void onCancel() {
@@ -74,7 +74,7 @@ public class UserSouthPanel extends SouthPanel {
 					@Override
 					protected void onAccept() {
 						JSONObject json = new JSONObject();
-						json.put("scope", new JSONString(o.getId()+ ""));
+						json.put("scope", new JSONString(o.getScope().getId()+ ""));
 						json.put("user", new JSONString(js.getId()+ ""));
 						String requestData = JsonUtils.stringify(json.getJavaScriptObject());
 
@@ -82,7 +82,7 @@ public class UserSouthPanel extends SouthPanel {
 							
 							@Override
 							public void onSuccess(JavaScriptObject result) {
-								parent.scopeSelection(o);
+								parent.companySelection(o);
 								hide();						
 							}
 							
@@ -103,7 +103,7 @@ public class UserSouthPanel extends SouthPanel {
     
     LinkedList<JsUser> users = new LinkedList<JsUser>();
     
-    public PaperIconButton nuevoItem(JsObject o) {
+    public PaperIconButton nuevoItem(JsCompany o) {
     	PaperIconButton newIcon = new PaperIconButton();
     	newIcon.setIcon("add");
     	newIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
@@ -142,14 +142,14 @@ public class UserSouthPanel extends SouthPanel {
 									ar.set(i, new JSONString(users.get(i).getId() + ""));
 								}
 								JSONObject json = new JSONObject();
-								json.put("scope", new JSONString(o.getId()+ ""));
+								json.put("scope", new JSONString(o.getScope().getId()+ ""));
 								json.put("users", ar);
 								String requestData = JsonUtils.stringify(json.getJavaScriptObject());
 								parent.getAPI().getCommon().updateUserScope(requestData, new AsyncCallback<JavaScriptObject>() {
 									
 									@Override
 									public void onSuccess(JavaScriptObject result) {
-										parent.scopeSelection(o);
+										parent.companySelection(o);
 										hide();						
 									}
 									
@@ -177,7 +177,7 @@ public class UserSouthPanel extends SouthPanel {
     	return newIcon;
     }
     
-	public PaperItem buildPaperItem2(JsUser js, JsObject o) {
+	public PaperItem buildPaperItem2(JsUser js, JsCompany o) {
 		PaperItem pi = new PaperItem();
 		IronIcon ironIcon = new IronIcon();
 		ironIcon.setIcon("account-box");

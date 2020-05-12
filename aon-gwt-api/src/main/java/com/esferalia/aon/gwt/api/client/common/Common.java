@@ -27,6 +27,17 @@ public class Common extends Methods{
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 
+	public void getCompanies(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCompany>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		String url = getUrl() + "ms/company/" + getDomainName() + "/" + getUserName() + filter;
+		get(url, callback);
+	}
+	
+	public void generateCompanyScope(Integer id, AsyncCallback<JSON<JsCompany>> callback){
+		String url = getUrl() + "ms/company/" + getDomainName() + "/" + getUserName() + "/generateScope/" + id;
+		post(url, "", callback);
+	}
+	
 	public void getScopes(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		String url = getUrl() + "ms/scope/" + getDomainName() + "/" + getUserName() + filter;

@@ -45,6 +45,7 @@ public class MSG {
 	public static final String DETAIL = "detail";
 	public static final String DETAIL_COMPOSITION = "detail_composition";
 	public static final String DISCOUNT_EXPR = "discount_expr";
+	public static final String DOCUMENT = "document";
 	public static final String DOMAIN = "domain";
 	public static final String DRIVER_DOCUMENT = "driver_document";
 	public static final String DRIVER_NAME = "driver_name";

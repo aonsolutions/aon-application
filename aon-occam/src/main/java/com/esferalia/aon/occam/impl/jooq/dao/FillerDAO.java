@@ -42,6 +42,7 @@ import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.util.function.Function;
 
@@ -628,6 +629,10 @@ public class FillerDAO {
 			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
 			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
 			company.setType(r.getValue(REGISTRY.TYPE));	
+			company.setScope(new Scope()
+					.setId(r.getValue(SCOPE.ID))
+					.setDomain(r.getValue(SCOPE.DOMAIN))
+					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
 			return company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)

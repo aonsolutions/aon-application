@@ -74,7 +74,7 @@ public class CompanySouthPanel extends SouthPanel {
 							
 							@Override
 							public void onSuccess(JavaScriptObject result) {
-								parent.scopeSelection(o);
+								//parent.scopeSelection(o);
 								hide();						
 							}
 							

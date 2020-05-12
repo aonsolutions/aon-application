@@ -843,12 +843,12 @@ public interface Properties {
 	
 	public interface CompanyProperties extends RegistryProperties{
 		Property<Integer> getDomainProperty();
+		Property<Integer> getDomainParentProperty();
 		Property<Byte> getActiveProperty();
 		Property<Byte> getSurchargeProperty();
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getVatAccrualPaymentProperty();
-		Property<Byte> getEInvoiceProperty();
-		
+		Property<Byte> getEInvoiceProperty();	
 	}
 	
 	public interface PersonProperties extends RegistryProperties{

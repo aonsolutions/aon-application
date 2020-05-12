@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.common.JsCompany;
 import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.common.client.css.AonGwtIssuesResources;
@@ -22,6 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -42,7 +43,7 @@ public class ScopePrincipal extends Composite{
 	@UiField MinimizePanel footPanel;
 	@UiField TabLayoutPanel tabLayout; 
 	@UiField ScrollPanel usersPanel;
-	@UiField ScrollPanel companiesPanel;
+//	@UiField ScrollPanel companiesPanel;
 
 	private ScopeMain parent;
 	private ScopePrincipal me;
@@ -102,10 +103,10 @@ public class ScopePrincipal extends Composite{
 		list = new LinkedList<>();
 		list.add("40");
 		getFilterMap().put("per_page", list);
-		getAPI().getCommon().getScopes(getFilterMap(), new AsyncCallback<JSON<JsObject>>() {
+		getAPI().getCommon().getCompanies(getFilterMap(), new AsyncCallback<JSON<JsCompany>>() {
 			
 			@Override
-			public void onSuccess(JSON<JsObject> result) {
+			public void onSuccess(JSON<JsCompany> result) {
 				content.setWidget(new ScopeGrid(me, result.getData().toLinkedList()));
 			}
 			
@@ -136,33 +137,36 @@ public class ScopePrincipal extends Composite{
 		splitLayoutPanel.animate(500);
 	}	
 	
-	public void scopeSelection(JsObject o) {
+	public void companySelection(JsCompany o) {
 		openFootPanel();
-		getAPI().getCommon().getScopeUsers(o.getId(), new AsyncCallback<JSON<JsUser>>() {
+		if(o.getScope().getId() != null) {
+			getAPI().getCommon().getScopeUsers(o.getScope().getId(), new AsyncCallback<JSON<JsUser>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsUser> result) {
-				usersPanel.setWidget(new UserSouthPanel(me, result.getData(), o));
-			}
+				@Override
+				public void onSuccess(JSON<JsUser> result) {
+					usersPanel.setWidget(new UserSouthPanel(me, result.getData(), o));
+				}
 			
-			@Override
-			public void onFailure(Throwable caught) {
-
-			}
-		});
-		
-		getAPI().getCommon().getScopeCompanies(o.getId(), new AsyncCallback<JSON<JsObject>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsObject> result) {
-				companiesPanel.setWidget(new CompanySouthPanel(me, result.getData(), o));
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-
-			}
-		});
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
+		} else {
+			usersPanel.setWidget(new Label("No tiene ambito asignado."));
+		}
+//		getAPI().getCommon().getScopeCompanies(o.getId(), new AsyncCallback<JSON<JsObject>>() {
+//			
+//			@Override
+//			public void onSuccess(JSON<JsObject> result) {
+//				companiesPanel.setWidget(new CompanySouthPanel(me, result.getData(), o));
+//			}
+//			
+//			@Override
+//			public void onFailure(Throwable caught) {
+//
+//			}
+//		});
 
 	}
 }
