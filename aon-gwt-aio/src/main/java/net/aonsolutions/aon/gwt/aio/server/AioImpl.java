@@ -38,7 +38,8 @@ public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
 				.setDomain(domain)
-				.setUserOperator(operator);
+				.setUserOperator(operator)
+				.setAonSolutions(false);
 	}
 	
 	public String getMd5(String str){
