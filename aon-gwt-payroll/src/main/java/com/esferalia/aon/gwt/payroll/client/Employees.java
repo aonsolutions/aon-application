@@ -1374,17 +1374,14 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	private void loadEmployess(TreeItem workplaceItem, List<Employee> employees, int limit) {
-
-		int added = 0;
-
+		
 		for (Employee employee : employees) {
 			if (employee.getId() < 0)
 				continue;
 			loadEmployee(workplaceItem, workplaceItem.getChildCount(), employee);
-			added++;
 		}
 
-		if (added == limit) {
+		if (employees.size() >= limit) {
 			int last = workplaceItem.getChildCount() - 1;
 			TreeItem employeeCentinel = workplaceItem.getChild(last - (EMPLOYEE_SCROLL_GAP));
 			employeeCentinels.add(employeeCentinel);
