@@ -428,25 +428,21 @@ public class AON {
 	}
 	
 	public static void insertUserScope(String domainName, Integer domainId, String login, UserScope userScope) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getSecurity().insertUserScope(ctx, userScope);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
 	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			getSecurity().deleteUserScope(ctx, userId, scope);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		} 
+	}
+	
+	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer scope) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getSecurity().deleteUserScope(ctx, scope);
+		} 
 	}
 	
 	public static Scope getScope(String domainName, Integer domainId, String login, Integer scopeId) {
@@ -481,6 +477,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().insertScope(ctx, scope);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static Integer deleteScope(String domainName, Integer domainId, String login, Integer scopeId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().deleteScope(ctx, scopeId);
 		} finally {
 			if (ctx != null)
 				ctx.close();

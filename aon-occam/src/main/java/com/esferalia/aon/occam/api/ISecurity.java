@@ -26,10 +26,12 @@ public interface ISecurity {
 	public String getUserPassword(AONContext ctx, Integer userId);
 	public UserScope getUserScope(AONContext ctx, Integer userId, Integer scope);
 	public void deleteUserScope(AONContext ctx, Integer userId, Integer scope);
+	public void deleteUserScope(AONContext ctx, Integer scope);
 	public Integer[] getUserScopes(AONContext ctx, Integer userId);
 	public Stream<Scope> getScopeStream(AONContext ctx, ScopeFilter filter);
 	public Stream<Scope> getUserScopeStream(AONContext ctx, Integer userId, ScopeFilter filter);
 	public Scope insertScope(AONContext ctx, Scope scope);
+	public Integer deleteScope(AONContext ctx, Integer scopeId);
 	
 	public void insertUserScope(AONContext ctx, UserScope userScope);
 	

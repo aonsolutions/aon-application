@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -53,6 +52,36 @@ public class CompanyServlet extends HttpServlet{
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("Company Servlet - DELETE METHOD");
+		
+
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		if(pathInfo.length > 3){				
+			JSONObject object = new JSONObject();
+			if("deleteScope".equals(pathInfo[3])){
+				Integer id = Integer.parseInt(pathInfo[4]);
+				Company cp = AON.getCompany(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
+				Domain d = AON.getDomain(domainName, cp.getDomain(), userName);
+				final Scope scope = AON.getScope(domain.getName(), domain.getId(), userName, d.getScope());
+				d.setScope(null);
+				AON.updateDomainScope(d.getName(), cp.getDomain(), userName, d);
+
+				Domain dom = AON.getDomain(domain.getName(), domain.getId(), userName, f -> f.getScopeProperty().eq(scope.getId()));
+				if(dom == null || dom.getId() == null) {
+					AON.deleteUserScope(domain.getName(), domain.getId(), userName, scope.getId());					
+					AON.deleteScope(domain.getName(), domain.getId(), userName, scope.getId());
+				}
+			} 
+			
+			resp.setContentType("application/json;charset=UTF-8");
+			Utils.addCorsHeader(resp);
+			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+			os.println(object.toString());
+			os.flush();
+			os.close();
+		}
 	}
 	
 	@Override
@@ -98,6 +127,7 @@ public class CompanyServlet extends HttpServlet{
 			os.close();
 		}
 	}
+	
 
 	
     private JSONArray getCompanyList(Domain domain, String login, Map<String,String[]> map){

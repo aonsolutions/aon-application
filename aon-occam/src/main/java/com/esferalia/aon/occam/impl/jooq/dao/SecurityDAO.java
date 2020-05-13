@@ -385,6 +385,11 @@ public class SecurityDAO {
 			.findFirst().orElse(new Scope());
 	}
 	
+	public static Integer deleteScope(AONContext ctx, Integer scopeId){
+		ctx.getDslContext().delete(SCOPE).where(SCOPE.ID.eq(scopeId)).execute();
+		return scopeId;
+	}
+	
 	public static void insertUserScope(AONContext ctx, UserScope userScope){
 		ctx.getDslContext().insertInto(USER_SCOPE, USER_SCOPE.DOMAIN, USER_SCOPE.SCOPE, USER_SCOPE.USER_ID)
 			.values(userScope.getDomain(), userScope.getScope(), userScope.getUserId()).execute();
@@ -395,6 +400,13 @@ public class SecurityDAO {
 			.delete(USER_SCOPE)
 			.where(USER_SCOPE.USER_ID.eq(userId))
 			.and(USER_SCOPE.SCOPE.eq(scope))
+			.execute();
+	}
+	
+	public static void deleteUserScope(AONContext ctx, Integer scope){
+		ctx.getDslContext()
+			.delete(USER_SCOPE)
+			.where(USER_SCOPE.SCOPE.eq(scope))
 			.execute();
 	}
 	

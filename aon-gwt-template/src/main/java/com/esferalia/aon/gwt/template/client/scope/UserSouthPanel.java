@@ -161,6 +161,7 @@ public class UserSouthPanel extends SouthPanel {
 							}
 						};
 						d.getElement().getStyle().setWidth(255, Unit.PX);
+						d.getElement().getStyle().setHeight(300, Unit.PX);	
 						d.center();	
 					}
 					

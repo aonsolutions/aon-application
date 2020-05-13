@@ -38,6 +38,11 @@ public class Common extends Methods{
 		post(url, "", callback);
 	}
 	
+	public void deleteCompanyScope(Integer id, AsyncCallback<JSON<JsCompany>> callback){
+		String url = getUrl() + "ms/company/" + getDomainName() + "/" + getUserName() + "/deleteScope/" + id;
+		delete(url, "", callback);
+	}
+	
 	public void getScopes(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsObject>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		String url = getUrl() + "ms/scope/" + getDomainName() + "/" + getUserName() + filter;

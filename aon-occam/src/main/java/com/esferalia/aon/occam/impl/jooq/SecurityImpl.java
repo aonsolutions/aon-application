@@ -83,6 +83,11 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	public Integer deleteScope(AONContext ctx, Integer scopeId) {
+		return SecurityDAO.deleteScope(ctx, scopeId);
+	}
+	
+	@Override
 	public void insertUserScope(AONContext ctx, UserScope userScope) {
 		SecurityDAO.insertUserScope(ctx, userScope);
 	}
@@ -91,6 +96,11 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void deleteUserScope(AONContext ctx, Integer userId, Integer scope) {
 		SecurityDAO.deleteUserScope(ctx, userId, scope);
+	}
+	
+	@Override
+	public void deleteUserScope(AONContext ctx, Integer scope) {
+		SecurityDAO.deleteUserScope(ctx, scope);
 	}
 
 	// ------------------ SIGNATURE

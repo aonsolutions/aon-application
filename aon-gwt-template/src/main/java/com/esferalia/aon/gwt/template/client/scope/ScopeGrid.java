@@ -32,7 +32,6 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DataGrid.Style;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -189,6 +188,11 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 //						sb.appendHtmlConstant("</button>");
 //	        		}
 	        		
+	        		if(value.getScope().getId() != null && text.equals("delete")){
+        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");
+	        		}
+	        		
 	        		if(value.getScope().getId() == null && text.equals("new")){
 	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-reset\" tabindex=\"-1\">");
 						sb.appendHtmlConstant("</button>");		
@@ -218,13 +222,22 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 	private void initTableColumns(final MultiSelectionModel<JsCompany> selectionModel, ListHandler<JsCompany> sortHandler) {
 	
 		List<HasCell<JsCompany, ?>> cells = new LinkedList<HasCell<JsCompany, ?>>();
-	    
+		
 		cells.add(new ActionHasCell("edit", new Delegate<JsCompany>() {
 
 	        @Override
 	        public void execute(JsCompany object) {
 	           // EDIT CODE
 	        	edit(object);
+	        }
+	    }));
+		
+		cells.add(new ActionHasCell("delete", new Delegate<JsCompany>() {
+
+	        @Override
+	        public void execute(JsCompany object) {
+	           // EDIT CODE
+	        	delete(object);
 	        }
 	    }));
 		
@@ -323,6 +336,21 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 	
 	private void edit(JsCompany object) {
 
+	}
+	
+	private void delete(JsCompany object) {
+		getAPI().getCommon().deleteCompanyScope(object.getId(), new AsyncCallback<JSON<JsCompany>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsCompany> result) {
+				parent.gridContent();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				parent.gridContent();
+			}
+		});
 	}
 	
 	private void nuevo(JsCompany object) {	
