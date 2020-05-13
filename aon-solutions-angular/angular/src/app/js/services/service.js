@@ -65,7 +65,7 @@ function getCompanies() {
     if(companies) {
 		resolve(companies);
     } else {
-      request('GET', '/ms/company', localStorage.getItem('session_id'), undefined, function (result, error) {
+      request('GET', '/ms/api/company', localStorage.getItem('session_id'), undefined, function (result, error) {
         if(error) {
           reject(error);
         } else {

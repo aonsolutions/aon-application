@@ -67,7 +67,7 @@ export class AonToolbarComponent implements OnInit {
 
   apps(): void {
     const dialogRef = this.dialog.open(ExtensionDialogComponent, {
-      width: '350px',
+      width: '300px',
       backdropClass: 'tedi-user-dialog-backdrop',
       panelClass: 'tedi-user-dialog-panel',
       position: {

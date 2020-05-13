@@ -227,8 +227,8 @@ public class CompanyDAO {
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 			.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
-			.where(DOMAIN.ID.in(ctx.getDomains())
-				.or(DOMAIN.PARENT.in(ctx.getDomains())))
+			.where(DOMAIN.PARENT.isNotNull().and(DOMAIN.ID.in(ctx.getDomains())
+				.or(DOMAIN.PARENT.in(ctx.getDomains()))))
 			.fetch().stream().map(new CompanyFiller());
 	}
 

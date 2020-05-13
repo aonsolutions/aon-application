@@ -22,11 +22,6 @@
     </button>
   </span>
 
-
-  <span *ngIf="!mobileSearching" class="tedi-right140">
-      <span class="tedi-company-name"> {{getCompanyName()}} </span>
-  </span>
-
   <span *ngIf="!mobileSearching" class="tedi-right100">
     <button mat-icon-button (click)="company()" title="Selección de Empresa">
       <mat-icon>business</mat-icon>
@@ -34,7 +29,7 @@
   </span>
 
   <span *ngIf="!mobileSearching" class="tedi-right60">
-    <button mat-icon-button [disabled]="isCompanySelected()"  (click)="apps()" title="Aplicaciones">
+    <button mat-icon-button  (click)="apps()" title="Aplicaciones">
       <mat-icon>apps</mat-icon>
     </button>
   </span>
@@ -45,3 +40,9 @@
     </button>
   </span>
 </mat-toolbar>
+
+<div>
+    <span class="tedi-company-name">
+      Empresas > {{getCompanyName()}}
+    </span>
+<div>
