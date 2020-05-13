@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -470,6 +471,14 @@ public class DomainEmployeesServiceAsync {
 
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
+	}
+
+	public void setEmployeeEvents(Integer idEmployee, EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
+		employeesServiceAsync.setEmployeeEvents(getCurrentDomainName(), idEmployee, employeeEventsData, callback);
+	}
+
+	public void setEventsDraft(ArrayList<EventEmployee> eventEmployees, AsyncCallback<ArrayList<EventEmployee>> callback) {
+		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
 	}
 
 }

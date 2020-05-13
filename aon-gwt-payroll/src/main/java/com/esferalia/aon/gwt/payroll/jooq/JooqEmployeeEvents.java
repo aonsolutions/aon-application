@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -32,12 +33,16 @@ public class JooqEmployeeEvents {
 	
 	public static EmployeeEventsData getEmployeeEventsByContract(Connection conn, Integer contractId,
 			ArrayList<String> employeeContractVariables) {
-		return getEmployeeEventsByContractInformation(DSL.using(conn, getDefaultSettings()), contractId, employeeContractVariables);
-		
+		return getEmployeeEventsByContractInformation(DSL.using(conn, getDefaultSettings()), contractId, employeeContractVariables);	
 	}
 
 	public static void setEmployeeEvents(Connection conn, Integer contract, EmployeeEventsUpdate updateInfo){
 		setEmployeeEventsInformation(DSL.using(conn, getDefaultSettings()), contract, updateInfo);
+	}
+	
+	public static EmployeeEventsData setEmployeeEvents(Connection connection, Integer idEmployee,
+			EmployeeEventsData employeeEventsData) {
+		return setEmployeeEventsInformation(DSL.using(connection, getDefaultSettings()), idEmployee, employeeEventsData);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -51,10 +56,10 @@ public class JooqEmployeeEvents {
 	private static EmployeeEventsData getEmployeeEventsInformation(DSLContext dslContext, Integer person_ID, ArrayList<String> employeeContractVariables) {
 		
 		EmployeeEventsData employeeInfoVariablesEvents = new EmployeeEventsData();
-		Map<String,ArrayList<Quartet<Date, Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<Date, Date, String, String>>>(); 
+		Map<String,ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>>(); 
 		
 		for(String name: employeeContractVariables){
-			ArrayList<Quartet<Date, Date, String, String>> varibaleList = new ArrayList<Quartet<Date, Date, String, String>>();
+			ArrayList<Quartet<java.util.Date, java.util.Date, String, String>> varibaleList = new ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>();
 			
 			Result<Record> contractRecord = dslContext.select().from(CONTRACT)
 					.where(CONTRACT.PERSON.eq(person_ID))
@@ -74,7 +79,7 @@ public class JooqEmployeeEvents {
 							  .fetch();
 					
 					for(Record r: variableEmployeeInfo){
-						Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
+						Quartet<java.util.Date, java.util.Date, String, String> quarterVariableEmployeeInfo = new Quartet<java.util.Date, java.util.Date, String, String>();
 						
 						Date startDate = r.get(CONTRACT_DATA.START_DATE);
 						Date endDate = r.get(CONTRACT_DATA.END_DATE);
@@ -87,10 +92,11 @@ public class JooqEmployeeEvents {
 							expression = daysBetween.toString();
 						}
 						
-						quarterVariableEmployeeInfo.setStartDate(startDate)
-						.setEndDate(endDate)
-						.setName(name)
-						.setExpression(expression);
+						quarterVariableEmployeeInfo
+							.setStartDate(parseDateToJava(startDate))
+							.setEndDate(parseDateToJava(endDate))
+							.setName(name)
+							.setExpression(expression);
 						
 						varibaleList.add(quarterVariableEmployeeInfo);
 					}
@@ -108,11 +114,34 @@ public class JooqEmployeeEvents {
 	
 	}
 	
+	private static java.util.Date parseDateToJava(Date date) {
+		if(null == date)
+			return null;
+		
+		java.util.Date javaDate = new java.util.Date(date.getTime());
+		DateUtils.resetTime(javaDate);
+		
+		return javaDate;
+	}
+
 	private static EmployeeEventsData getEmployeeEventsByContractInformation(DSLContext dslContext, Integer contractId,
 			ArrayList<String> employeeContractVariables) {
 		
 		EmployeeEventsData employeeInfoVariablesEvents = new EmployeeEventsData();
-		Map<String,ArrayList<Quartet<Date, Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<Date, Date, String, String>>>(); 
+		Map<String,ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> employeeVariablesEvents = new HashMap<String,ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>>(); 
+		
+		// ----------------------------------- CONTRACT PERIOD
+		
+		Record contractRecordInfo = dslContext.select().from(CONTRACT)
+				.where(CONTRACT.ID.eq(contractId))
+				.fetchOne();
+		
+		Date contractStartDate = contractRecordInfo.get(CONTRACT.START_DATE);
+		Date contractEndDate = contractRecordInfo.get(CONTRACT.END_DATE);
+		
+		employeeInfoVariablesEvents.setContractStartDate(parseDateToJava(contractStartDate));
+		employeeInfoVariablesEvents.setContractEndDate(parseDateToJava(contractEndDate));
+		
 		
 		// ----------------------------------- FULL TIME JOURNEY
 		
@@ -157,7 +186,7 @@ public class JooqEmployeeEvents {
 		// --------------------------------------------- AÑADIR VARIABLES ---------------------------------------------------------
 		
 		for(String name: employeeContractVariables){
-			ArrayList<Quartet<Date, Date, String, String>> varibaleList = new ArrayList<Quartet<Date, Date, String, String>>();
+			ArrayList<Quartet<java.util.Date, java.util.Date, String, String>> varibaleList = new ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>();
 			
 			Result<Record> contractRecord = dslContext.select().from(CONTRACT)
 					.where(CONTRACT.ID.eq(contractId))
@@ -174,7 +203,7 @@ public class JooqEmployeeEvents {
 						  .fetch();
 				
 				for(Record r: variableEmployeeInfo){
-					Quartet<Date, Date, String, String> quarterVariableEmployeeInfo = new Quartet<Date, Date, String, String>();
+					Quartet<java.util.Date, java.util.Date, String, String> quarterVariableEmployeeInfo = new Quartet<java.util.Date, java.util.Date, String, String>();
 					
 					Date startDate = r.get(CONTRACT_DATA.START_DATE);
 					Date endDate = r.get(CONTRACT_DATA.END_DATE);
@@ -187,8 +216,9 @@ public class JooqEmployeeEvents {
 						expression = daysBetween.toString();
 					}
 					
-					quarterVariableEmployeeInfo.setStartDate(startDate)
-					.setEndDate(endDate)
+					quarterVariableEmployeeInfo
+					.setStartDate(parseDateToJava(startDate))
+					.setEndDate(parseDateToJava(endDate))
 					.setName(name)
 					.setExpression(expression);
 					
@@ -288,6 +318,38 @@ public class JooqEmployeeEvents {
 		return ('1' == journeyType.charAt(1) || '4' == journeyType.charAt(1)|| "true" == journeyType) ? true : false;
 	}
 
+	private static EmployeeEventsData setEmployeeEventsInformation(DSLContext dslContext, Integer idEmployee, EmployeeEventsData employeeEventsData) {
+		Integer domain = dslContext.select(CONTRACT.DOMAIN)
+				.from(CONTRACT)
+				.where(CONTRACT.ID.eq(idEmployee))
+				.fetchOne().value1();
+		
+		ArrayList<String> varsToUpdate = employeeEventsData.getVarsToUpdate();
+		
+		dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(idEmployee)).and(CONTRACT_DATA.NAME.in(varsToUpdate)).execute();
+		
+		for(Entry<String, ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> entry : employeeEventsData.getContractEventsList().entrySet()){
+			if(varsToUpdate.contains(entry.getKey())) {
+				for(Quartet<java.util.Date, java.util.Date, String, String> quartet : entry.getValue()) {
+					if(null != quartet.getExpression())
+						dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
+								CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, quartet.getName(), idEmployee, quartet.getExpression(), 
+										parseToSQLDate(quartet.getStartDate()), parseToSQLDate(quartet.getEndDate()))
+								.execute();
+				}
+			}
+		}
+		return null;
+	}
+
+	private static Date parseToSQLDate(java.util.Date date) {
+		if(null == date)
+			return null;
+		
+		DateUtils.resetTime(date);
+		return new Date(date.getTime());
+	}
 	
 
 }

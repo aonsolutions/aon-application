@@ -369,7 +369,7 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		setIsolatedDraftPeriod(salaryDraft);
 
 //		addCalendarVariablesDraft();
-		addEventsVariablesDraft();
+//		addEventsVariablesDraft();
 		removeSalaryPart(salaryDraft);
 //		employeeCalendarDraftObject.clearDraftHours();
 		
@@ -418,10 +418,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 
 		setDraftType(salaryDraft);
 //		removeCalendarDraft();
-		removeEventsDraft();
+//		removeEventsDraft();
 		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
 //		addCalendarVariablesDraft();
-		addEventsVariablesDraft();
+//		addEventsVariablesDraft();
 //		employeeCalendarDraftObjectData.getSalaryDraftChanged(salaryDraft);
 		
 		removeSalaryPart(salaryDraft);
@@ -474,9 +474,9 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 //		
 //	}
 	
-	public void addEventsVariablesDraft(){
-		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
-	}
+//	public void addEventsVariablesDraft(){
+//		addEventsDraft(employeeEventsDraftObject.getVariablesList(getDraftStartDate(), getDraftEndDate()));
+//	}
 	
 
 	public void emitSalary(final CalculateCallback callback) {
@@ -1265,15 +1265,15 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 //		}
 //	}
 	
-	private void removeEventsDraft() {
-		List<Variable> draftContext = salaryDraft.getDraftContext();
-		for ( int i = draftContext.size()-1; i >= 0; i--) {
-			Variable var = draftContext.get(i);
-			if (employeeEventsDraftObject.isMine(var)){
-				draftContext.remove(i);
-			}
-		}
-	}
+//	private void removeEventsDraft() {
+//		List<Variable> draftContext = salaryDraft.getDraftContext();
+//		for ( int i = draftContext.size()-1; i >= 0; i--) {
+//			Variable var = draftContext.get(i);
+//			if (employeeEventsDraftObject.isMine(var)){
+//				draftContext.remove(i);
+//			}
+//		}
+//	}
 	
 	private static void setDraftPeriod(Date draftStartDate, Date draftEndDate,
 			SalaryDraft draft) {

@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -23,8 +24,10 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.client.Quartet;
 import com.esferalia.aon.gwt.payroll.client.Quintet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -43,6 +46,10 @@ public class JooqEvents {
 	
 	public static WorkplaceEmployees getWorkplaceEmployeesEvents(Connection conn, Integer workplaceId) {
 		return getWorkplaceEmployeesEventsInformation(DSL.using(conn, getDefaultSettings()), workplaceId);
+	}
+	
+	public static ArrayList<EventEmployee> setEventsDraft(Connection connection, ArrayList<EventEmployee> eventEmployees) {
+		return setEventsDraftDB(DSL.using(connection, getDefaultSettings()), eventEmployees);
 	}
 
 	protected static Settings getDefaultSettings() {
@@ -573,6 +580,44 @@ public class JooqEvents {
 	// Get employee calendar info from database
 	private static Boolean isFullTimeJourney(String journeyType) {
 		return ('1' == journeyType.charAt(1) || '4' == journeyType.charAt(1)|| "true" == journeyType) ? true : false;
+	}
+
+	private static ArrayList<EventEmployee> setEventsDraftDB(DSLContext dslContext, ArrayList<EventEmployee> eventEmployees) {
+		for(EventEmployee eventEmployee : eventEmployees) {
+			Integer contractId = eventEmployee.getContractId();
+			
+			Integer domain = dslContext.select(CONTRACT.DOMAIN)
+					.from(CONTRACT)
+					.where(CONTRACT.ID.eq(contractId))
+					.fetchOne().value1();
+			
+			ArrayList<String> varsToUpdate = eventEmployee.getEmployeeEventsData().getVarsToUpdate();
+			
+			dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.in(varsToUpdate)).execute();
+			
+			for(Entry<String, ArrayList<Quartet<java.util.Date, java.util.Date, String, String>>> entry : eventEmployee.getEmployeeEventsData().getContractEventsList().entrySet()){
+				if(varsToUpdate.contains(entry.getKey())) {
+					for(Quartet<java.util.Date, java.util.Date, String, String> quartet : entry.getValue()) {
+						if(null != quartet.getExpression())
+							dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT,
+									CONTRACT_DATA.EXPRESSION, CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+									.values(domain, quartet.getName(), contractId, quartet.getExpression(), 
+											parseToSQLDate(quartet.getStartDate()), parseToSQLDate(quartet.getEndDate()))
+									.execute();
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	private static Date parseToSQLDate(java.util.Date date) {
+		if(null == date)
+			return null;
+		
+		DateUtils.resetTime(date);
+		return new Date(date.getTime());
 	}
 
 	

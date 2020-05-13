@@ -119,9 +119,14 @@ public class ContextDescriptor implements Serializable {
 		for (String key : contextDescriptor.getVariables()){
 			if(this.variableDescriptors.containsKey(key))
 				this.variableDescriptors.put(key, contextDescriptor.getList(key));
-		}
-		
-		
+		}	
+	}
+	
+	public void mixAll(ContextDescriptor contextDescriptor) {
+		for (String key : contextDescriptor.getVariables()){
+			if(!this.variableDescriptors.containsKey(key))
+				this.variableDescriptors.put(key, contextDescriptor.getList(key));
+		}	
 	}
 
 	public void add(String key) {

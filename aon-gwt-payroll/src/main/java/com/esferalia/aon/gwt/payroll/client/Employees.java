@@ -1462,8 +1462,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			final TreeItem employeeEventsItem = addImageItem(employeeItem, "Incidencias", images.data());
 			//final TreeItem employeeEventsItem = new TreeItem();
-			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId(),
-					employee.getStartDate(), employee.getEndDate(), employeesService);
+			EmployeeEventsDraftObject employeeEventsDraftObject = new EmployeeEventsDraftObject(employee.getId(), employeesService);
 			
 			employeeEventsItem.setUserObject(employeeEventsDraftObject);
 			

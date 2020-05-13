@@ -121,6 +121,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -161,12 +162,15 @@ import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryCostsFactory;
+import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryDeductionsFactory;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.SalaryPaymentsFactory;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
@@ -216,7 +220,9 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.DeferredException;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemovedExpressionVariable;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
@@ -1052,43 +1058,135 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			System.out.println("ENTRANDO PARA BUSCAR VARIABLES, Domain : " + domain + ", Employee Id : " + employeeId 
 					+ ", StartDate : " + startDate + ", endDate : " + endDate );
 			
+			// Get info
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainID = AonServletUtils.getDomainID(domain);
 			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			Integer agreementId = SQLEvents.getAgreementId(connection, employeeId);
+			
+			// ContextResult returned
+			ContextDescriptor contextResult = new ContextDescriptor();
 
+			// Criteria
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.ID, employeeId);
 
+			// Context
 			SQLContractSalaryCalculatorContext context = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria);
 			context.next();
-
+			
+			// Salary Calculator
+			SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> smartContractSalaryCalculator = new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>(new SalaryBuilder());
+			
+			smartContractSalaryCalculator.setListener(new GenericContractSalaryCalculator.IListener() {
+				
+				@Override
+				public void onUndefinedData(IContractDeduction deduction, String variableName, String message) {}
+				
+				@Override
+				public void onUndefinedData(IContractDeduction deduction, RemovedExpressionVariable<?> var) {}
+				
+				@Override
+				public void onUndefinedData(IContractPayment payment, String variableName, String message) {
+					if(payment.getScope() != ExpressionScope.SYSTEM )
+						if(!variableName.contains("DIAS_"))
+							contextResult.add(variableName);
+				}
+				
+				@Override
+				public void onUndefinedData(IContractPayment payment, RemovedExpressionVariable<?> var) {}
+				
+				@Override
+				public void onRemove(IContractPayment payment) {}
+				
+				@Override
+				public void onRemove(IContractDeduction payment) {}
+				
+				@Override
+				public void onRemove(IContractBonus bonus) {}
+				
+				@Override
+				public void onInvalidData(IContractBonus bonus, String variableName, String message) {}
+				
+				@Override
+				public void onInvalidData(IContractDeduction deduction, String variableName, String message) {}
+				
+				@Override
+				public void onInvalidData(IContractPayment payment, String variableName, String message) {}
+				
+				@Override
+				public void onInvalidData(String variableName, String message) {}
+				
+				@Override
+				public void onCompileError(IContractBonus bonus, String message) {}
+				
+				@Override
+				public void onCompileError(IContractDeduction deduction, String message) {}
+				
+				@Override
+				public void onCompileError(IContractPayment payment, String message) {}
+				
+				@Override
+				public void onCompileError(String variableName, String message) {}
+				
+				@Override
+				public void onCheckError(IContractBonus bonus, String message) {}
+				
+				@Override
+				public void onCheckError(IContractDeduction deduction, String message) {}
+				
+				@Override
+				public void onCheckError(IContractPayment payment, String message) {}
+				
+				@Override
+				public void onCheckError(String message) {}
+				
+			} );
+			
+			// Salary
+			try {
+				com.esferalia.aon.payroll.Salary salary = smartContractSalaryCalculator.calculate(context);
+//				// TODO: salary.getSalaryDatas() filter...
+//				for(SalaryData salaryData : salary.getSalaryDatas())
+//					System.out.println(salaryData.getName());
+			} catch (SalaryException e) {
+				e.printStackTrace();
+			}
+			
+			// ContextDrescriptor 
 			ContextDescriptor contextDescriptor = getContext(connection, context, startDate,  endDate);
 
 			ContextDescriptor contextDescriptorPayments = getEmployeePayments(connection, employeeId, agreementId,
 					startDate, endDate, domainID, parentDomainID);
-
-			contextDescriptorPayments.mix(contextDescriptor);
-			ContextDescriptor contextResult = new ContextDescriptor();
+			
+			contextDescriptorPayments.mixAll(contextDescriptor);
 
 			for (String key : contextDescriptorPayments.getVariables()){
 				if(!contextDescriptorPayments.getList(key).isEmpty()){
-					contextResult.add(key, contextDescriptorPayments.getList(key));
+					for(VariableDescriptor variable : contextDescriptorPayments.getList(key)){
+						if (Number.class != variable.getType())
+							continue;
+						if (null == variable.getScope())
+							continue;
+						if (Scope.AGREEMENT == variable.getScope())
+							continue;
+						if (Scope.APPLICATION == variable.getScope())
+							continue;
+						if (Scope.SYSTEM == variable.getScope())
+							continue;
+						if (Scope.CONTRACT == variable.getScope())
+							continue;
+						
+						contextResult.add(key, variable);
+					}
+				}else {
+					contextResult.add(key);
 					continue;
-				}
-
-				for(VariableDescriptor variable : contextDescriptorPayments.getList(key)){
-					if (Number.class != variable.getType())
-						continue;
-					if (Scope.AGREEMENT == variable.getScope())
-						continue;
-
-					contextResult.add(key, variable);
 				}
 			}
 
-			System.out.println("Context Variables Size : " +contextResult.getVariables().size());
+			System.out.println("Context Variables Size : " + contextResult.getVariables().size());
 			
 			for(String key : contextResult.getVariables()){
 				if(contextResult.getList(key).isEmpty()){
@@ -1096,7 +1194,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 					continue;
 				}
 				for(VariableDescriptor var : contextResult.getList(key))
-					System.out.println("RESULT :"+key+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+					System.out.println("RESULT :"+key+", Scope : "+var.getScope()+", value :"+var.getValue()+", type :"+var.getType()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
 			}
 
 			return contextResult;
@@ -3099,76 +3197,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			Date endDate, Integer domainId, Integer parentDomainId) throws SQLException {
 		Connection connection = null;
 		try {
+			
+			AgreementDraft agreementDraft = new AgreementDraft();
+			agreementDraft.setId(agreementId);
+			agreementDraft.setDomain(domainId);
+			agreementDraft.setStartDate(startDate);
+			agreementDraft.setEndDate(endDate);
+			
 			connection = AonServletUtils.getConnection(domain);
-
-			Set<Payment> payments = SQLEvents.getPayments(connection,
-					workplaceId, startDate, endDate);
-
-			if (agreementId != null) {
-				// payments.addAll(SQLAgreementDraft.getPayments(connection,
-				// agreementId, startDate, endDate));
-				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection,
-						agreementId, startDate, endDate));
-			}
-
+			
+			EmployeesServiceHelper.calculate(
+					connection,
+					agreementDraft,
+					AonServletUtils.getDomainID(domain),
+					agreementDraft.getDomain());
+			
 			Map<String, String> variables = new HashMap<String, String>();
-
-			for (Payment payment : payments) {
-
-				if (StringUtils.equals(REMOVE, payment.getExpression()))
-					continue;
-				try {
-					Set<String> paymentVars = ExpressionContext
-							.getVariableSet(payment.getExpression());
-	
-					for (String var : paymentVars) {
-						if (var.endsWith("_ACTUAL"))
-							continue; // This is awfull ... very awful
-						variables.put(var, String.format("%s",
-								payment.getDescription(), payment.getExpression()));
-					}
-				} catch (Exception e ) {
-					//TODO : Error
-				}
-
-				variables.remove(payment.getName());
+			
+			for(String variable : agreementDraft.getVariables()) {
+				if(!variable.contains("DIAS_"))
+					variables.put(variable, variable);
 			}
 			
-			// Filter ContextVariable
-			for (ContextVariable ctxVar : ContextVariable.values())
-				variables.remove(ctxVar.getName());
-
-			// Clean system variables.
-			Set<String> systemVars = getSystemVariables(connection, startDate,
-					endDate);
-			for (String var : systemVars)
-				variables.remove(var);
-			
-			System.out.println("------------------------------- VARIABLES --------------------------");
-			for(String var : variables.keySet())
-				System.out.println(var);
-				
-			Set<Level> levels = SQLAgreementDraft.getLevels(connection,
-					agreementId, domainId, parentDomainId);
-
-			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
-					connection, agreementId, startDate, endDate,domainId, parentDomainId);
-
-			//¿Que variables se filtran aqui?
-			System.out.println();
-			System.out.println("------------------------------- VARIABLES --------------------------");
-			Set<String> names = variables.keySet();
-			for (Level level : levels) {
-				Iterator<String> namesIt = names.iterator();
-				while (namesIt.hasNext()) {
-					String name = namesIt.next();
-					if (salaryTable.get(level.getId(), name) != null) {
-						System.out.println(name);
-						namesIt.remove();
-					}
-				}
+			for(Variable variable : agreementDraft.getSalaryTable().getAllVariables()) {
+				variables.remove(variable.getName());
 			}
-
+			
 			return variables;
 
 		} finally {
@@ -3180,71 +3234,84 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	private static Map<String, String> getWorkplaceEventsVariables(String domain,
 			Integer workplaceId, Integer agreementId, Date startDate,
 			Date endDate, Integer domainId, Integer parentDomainId) throws SQLException {
+		
 		Connection connection = null;
+		
 		try {
 			connection = AonServletUtils.getConnection(domain);
-
-			Set<Payment> payments = SQLEvents.getPayments(connection,
-					workplaceId, startDate, endDate);
-
-			if (agreementId != null) {
-				// payments.addAll(SQLAgreementDraft.getPayments(connection,
-				// agreementId, startDate, endDate));
-				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection,
-						agreementId, startDate, endDate));
-			}
-
-			Map<String, String> variables = new HashMap<String, String>();
-
-			for (Payment payment : payments) {
-
-				if (StringUtils.equals(REMOVE, payment.getExpression()))
-					continue;
-				try {
-					Set<String> paymentVars = ExpressionContext
-							.getVariableSet(payment.getExpression());
-	
-					for (String var : paymentVars) {
-						if (var.endsWith("_ACTUAL"))
-							continue; // This is awfull ... very awful
-						variables.put(var, String.format("%s",
-								payment.getDescription(), payment.getExpression()));
-					}
-				}catch ( Exception e ) {
-					//TODO: Error
-				}
-
-				variables.remove(payment.getName());
-			}
 			
-			// Filter ContextVariable
-			for (ContextVariable ctxVar : ContextVariable.values())
-				variables.remove(ctxVar.getName());
-
-			// Clean system variables.
-			Set<String> systemVars = getSystemVariables(connection, startDate,
-					endDate);
-			for (String var : systemVars) {
-				System.out.println(var);
-				variables.remove(var);
-			}
-
-			Set<Level> levels = SQLAgreementDraft.getLevels(connection,
-					agreementId, domainId, parentDomainId);
-
+			Map<String, String> variables = new HashMap<String, String>();
+			
 			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
 					connection, agreementId, startDate, endDate,domainId, parentDomainId);
-
-			//¿Que variables se filtran aqui?
-			Set<String> names = variables.keySet();
-			for (Level level : levels) {
-				Iterator<String> namesIt = names.iterator();
-				while (namesIt.hasNext()) {
-					String name = namesIt.next();
-					if (salaryTable.get(level.getId(), name) != null)
-						namesIt.remove();
-				}
+			
+			for(Variable variable : salaryTable.getAllVariables()) {
+				System.out.println(variable.getName() + ", Scope : " + variable.getScope() + ", Start : " + variable.getStartDate() + ", End : " + variable.getEndDate());
+				
+				variables.put(variable.getName(), null == variable.getValue() ? variable.getExpression() : variable.getValue().toString());
 			}
+
+//			Set<Payment> payments = SQLEvents.getPayments(connection,
+//					workplaceId, startDate, endDate);
+//
+//			if (agreementId != null) {
+//				// payments.addAll(SQLAgreementDraft.getPayments(connection,
+//				// agreementId, startDate, endDate));
+//				payments.addAll(SQLAgreementDraft.getPaymentsAux(connection,
+//						agreementId, startDate, endDate));
+//			}
+//
+//			for (Payment payment : payments) {
+//
+//				if (StringUtils.equals(REMOVE, payment.getExpression()))
+//					continue;
+//				try {
+//					Set<String> paymentVars = ExpressionContext
+//							.getVariableSet(payment.getExpression());
+//	
+//					for (String var : paymentVars) {
+//						if (var.endsWith("_ACTUAL"))
+//							continue; // This is awfull ... very awful
+//						variables.put(var, String.format("%s",
+//								payment.getDescription(), payment.getExpression()));
+//					}
+//				}catch ( Exception e ) {
+//					//TODO: Error
+//				}
+//
+//				variables.remove(payment.getName());
+//			}
+//			
+//			// Filter ContextVariable
+//			for (ContextVariable ctxVar : ContextVariable.values())
+//				variables.remove(ctxVar.getName());
+//
+//			// Clean system variables.
+//			Set<String> systemVars = getSystemVariables(connection, startDate,
+//					endDate);
+//			for (String var : systemVars) {
+//				System.out.println(var);
+//				variables.remove(var);
+//			}
+//			
+//			SQLAgreementDraft.get
+//
+//			Set<Level> levels = SQLAgreementDraft.getLevels(connection,
+//					agreementId, domainId, parentDomainId);
+//
+//			SalaryTable salaryTable = SQLAgreementDraft.getSalaryTable(
+//					connection, agreementId, startDate, endDate,domainId, parentDomainId);
+//
+//			//¿Que variables se filtran aqui?
+//			Set<String> names = variables.keySet();
+//			for (Level level : levels) {
+//				Iterator<String> namesIt = names.iterator();
+//				while (namesIt.hasNext()) {
+//					String name = namesIt.next();
+//					if (salaryTable.get(level.getId(), name) != null)
+//						namesIt.remove();
+//				}
+//			}
 
 			return variables;
 
@@ -4988,6 +5055,25 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public String resetEmployeeCalendarInfo(String domainName, Integer contractId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEmployeeCalendarNew.resetEmployeeCalendar(connection, contractId);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public EmployeeEventsData setEmployeeEvents(String domainName, Integer idEmployee,
+			EmployeeEventsData employeeEventsData) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEmployeeEvents.setEmployeeEvents(connection, idEmployee, employeeEventsData);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public ArrayList<EventEmployee> setEventsDraft(String domainName, ArrayList<EventEmployee> eventEmployees) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqEvents.setEventsDraft(connection, eventEmployees);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
