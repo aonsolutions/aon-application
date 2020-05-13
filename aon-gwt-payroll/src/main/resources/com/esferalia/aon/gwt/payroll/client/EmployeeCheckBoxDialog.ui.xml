@@ -13,71 +13,61 @@
 		.form {
 			padding: 10px;
 		}
-
-		.label {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			white-space: nowrap;
-			background-color: #F2F2F2;
+		
+		.datesPanel{
+			display: flex;
+			flex-direction: column;
+			padding: 5px;
+			border: 1px solid #e1e1e1;
+			margin-bottom: 10px;
 		}
-
-		.labeltop {
-			margin-top:10x;
-			font-weight: bold;
-			padding: 1px 0.5em;
-			vertical-align: top;
-			white-space: nowrap;
-			background-color: #F2F2F2;
+		
+		.rowPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: 3px 0;
 		}
-
-		.field {
-			padding: 1px 0.5em;
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
 		}
-
-		.buttons {
-			padding-top: 20px;
-			text-align: right;
+		
+		.labelStyle{
+			width: 60px;
+			display: flex;
+			align-items: center;
 		}
-
-		.info {
+		
+		.dateBox{
+			width: 120px !important;
+			text-align: center;
 		}
-
-		.warn {
-		}
-
-		.error {
-		}
-
-		.messages {
-			padding-left: 0.5em;
-			padding-bottom: 10px;
-		}
-
-		.form textarea {
-			resize: none;
-		}
-
+		
 		.paddingLabelStyle{
 			padding-left: 10px;
    			padding-top: 2px;
 		}
 
 	</ui:style>
-
+	
 	<g:HTMLPanel styleName="{style.form}">
 
-		<div class="{style.messages}">
-			<g:Label styleName="{style.info}" ui:field="filterLabel">Variables a mostrar:</g:Label>
-		</div>
-
-		<g:FlexTable width="100%" ui:field="checkBoxTable"/>
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
 		
-		<div class="{style.buttons}">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton">Aceptar</g:Button>
-		</div>
-
+			<g:HTMLPanel styleName="{style.datesPanel}">
+			
+				<g:FlexTable width="100%" ui:field="checkBoxTable"/>
+			
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.buttonsPanel}">
+				<g:Button ui:field="cancelButton">Cancelar</g:Button>
+			    <g:Button ui:field="acceptButton">OK</g:Button>
+			</g:HTMLPanel>
+				
+		</g:HTMLPanel>
+		
 	</g:HTMLPanel>
 
 </ui:UiBinder>

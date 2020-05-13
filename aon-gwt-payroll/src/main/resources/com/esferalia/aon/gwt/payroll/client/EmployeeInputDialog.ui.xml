@@ -1,83 +1,118 @@
 <ui:UiBinder 
     xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:es3='urn:import:com.google.gwt.user.client.ui'
-	xmlns:datepicker='urn:import:com.google.gwt.user.datepicker.client'>
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
 
 	<ui:Style>
 
 		.form {
 			padding: 10px;
 		}
-
-		.label {
-			margin-top:10x;
+		
+		.datesPanel{
+			display: flex;
+			flex-direction: column;
+			padding: 5px;
+			border: 1px solid #e1e1e1;
+			margin-bottom: 10px;
+		}
+		
+		.rowPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: 3px 0;
+			column-gap: 10px;
+		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+		}
+		
+		.labelStyle{
+			display: flex;
+			align-items: center;
+		}
+		
+		.dateBox{
+			width: 200px !important;
+			text-align: center;
+			border: solid #808080 1px;
+		}
+		
+		.w200{
+			width: 200px;
+		}
+		
+		.errorPanel{
 			font-weight: bold;
-			padding: 1px 0.5em;
-			white-space: nowrap;
-			background-color: #F2F2F2;
+			color: red;
+			padding: 0 5px;
+			margin-bottom: 10px;
 		}
-
-		.labeltop {
-			margin-top:10x;
+		
+		.percentLabel{
+			display: flex;
+			align-items: center;
+			margin-right: 5px;
+		}
+		
+		.percentTBx{
+			width: auto;
+			text-align: center;
+		}
+		
+		.percent{
+			text-align: center;
 			font-weight: bold;
-			padding: 1px 0.5em;
-			vertical-align: top;
-			white-space: nowrap;
-			background-color: #F2F2F2;
-		}
-
-		.field {
-			padding: 1px 0.5em;
-		}
-
-		.buttons {
-			padding-top: 10px;
-			text-align: right;
-		}
-
-		.info {
-		}
-
-		.warn {
-		}
-
-		.error {
-		}
-
-		.messages {
-			padding-left: 0.5em;
-			padding-bottom: 10px;
-		}
-
-		.form textarea {
-			resize: none;
+			display: flex;
+			align-items: center;
+			margin-left: 5px;
 		}
 
 	</ui:Style>
-
+	
 	<g:HTMLPanel styleName="{style.form}">
-
-		<div class="{style.messages}">
-			<g:Label styleName="{style.info}" ui:field="filterLabel">Añadir nuevo valor:</g:Label>
-		</div>
-
-		<g:Grid width="100%">
-			<g:row>
-				<g:customCell styleName="{style.label}">
-					<g:Label ui:field="nameLabel" />
-				</g:customCell>
-				<g:customCell styleName="{style.field}">
-					<g:TextBox width="100%" ui:field="valueTextBox" />
-				</g:customCell>
-			</g:row>
-		</g:Grid>
-
-		<div class="{style.buttons}">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton">Aceptar</g:Button>
-		</div>
-
+	
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+		
+			<g:HTMLPanel styleName="{style.datesPanel}">
+			
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label>Fecha de inicio:</g:Label>
+					<a:DateBoxEx ui:field="startDate" styleName="{style.dateBox}"></a:DateBoxEx>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label>Fecha de fin:</g:Label>
+					<a:DateBoxEx ui:field="endDate" styleName="{style.dateBox}"></a:DateBoxEx>
+				</g:HTMLPanel>
+				
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.datesPanel}">
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.labelStyle}">Variable:</g:Label>
+					<g:ListBox ui:field="variablesList"></g:ListBox>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.rowPanel}">
+					<g:Label styleName="{style.percentLabel}" ui:field="varLabel"></g:Label>
+					<g:TextBox ui:field="valueTextBox" styleName="{style.percentTBx}"></g:TextBox>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">
+				<g:Label>El valor introducido no tiene formato de número.</g:Label>
+				<g:Label>Decimales separados por '.'</g:Label>
+			</g:HTMLPanel>
+	
+			<g:HTMLPanel styleName="{style.buttonsPanel}">
+				<g:Button ui:field="cancelButton">Cancelar</g:Button>
+			    <g:Button ui:field="acceptButton">OK</g:Button>
+			</g:HTMLPanel>
+		
+		</g:HTMLPanel>
+			
 	</g:HTMLPanel>
 
 </ui:UiBinder>

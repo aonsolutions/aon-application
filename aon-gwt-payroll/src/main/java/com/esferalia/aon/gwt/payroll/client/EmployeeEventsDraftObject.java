@@ -1,170 +1,65 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.Undoable;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
-import com.esferalia.aon.gwt.payroll.shared.StringVariable;
-import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeEventsDraftObject {
 	
-	public interface EVENTimedVariable<V> {
-		
-		public Date getStartDate();
-		public Date getEndDate();
-		public V getValue();
-
-	}
+	// --------------------------------------------- VARIABLES
 	
-	public class EmployeeEventsVariable implements EVENTimedVariable<Double>{
-
-		private Date startDate;
-		private Date endDate;
-		private Double value;
-		
-		public EmployeeEventsVariable(Date startDate, Date endDate, Double value) {
-			this.startDate = startDate;
-			this.endDate = endDate;
-			this.value = value;
-		}
-		
-		public EmployeeEventsVariable() {
-			this.startDate = null;
-			this.endDate = null;
-			this.value = null;
-		}
-
-		@Override
-		public Date getStartDate() {
-			return this.startDate;
-		}
-
-		@Override
-		public Date getEndDate() {
-			return this.endDate;
-		}
-
-		@Override
-		public Double getValue() {
-			return this.value;
-		}
-		
-	}
-	
-	// --------------------------------------------- INTERFACE REDO/UNDO -----------------------------------------------
-	
-	private class CompositeUndoable<T extends Undoable > implements Undoable {
-
-		private Collection<T> undos;
-
-		public CompositeUndoable(Collection<T> undos) {
-			this.undos = undos;
-		}
-
-		@Override
-		public void redo() {
-			for (T undo : undos)
-				undo.redo();
-		}
-
-		@Override
-		public void undo() {
-			for (T undo : undos){
-				undo.undo();
-			}
-		}
-
-	}
-		
-	class SetVariableEdit implements Undoable {
-
-		private EmployeeEventsVariable oldEmployeeEventsVariable;
-		private EmployeeEventsVariable newEmployeeEventsVariable;
-		private String variable;
-		
-		public SetVariableEdit(EmployeeEventsVariable oldEmployeeEventsVariable, EmployeeEventsVariable newEmployeeEventsVariable, 
-							String variable) {
-			this.oldEmployeeEventsVariable = oldEmployeeEventsVariable;
-			this.newEmployeeEventsVariable = newEmployeeEventsVariable;
-			this.variable = variable;
-		}
-		
-		@Override
-		public void undo() {
-			draftMapEventsVar.get(this.variable).remove(newEmployeeEventsVariable);
-			if (oldEmployeeEventsVariable != null){
-				draftMapEventsVar.get(this.variable).add(oldEmployeeEventsVariable);
-			}
-		}
-		
-		@Override
-		public void redo() {
-			if (oldEmployeeEventsVariable != null)
-				draftMapEventsVar.get(this.variable).remove(this.oldEmployeeEventsVariable);
-			
-			draftMapEventsVar.get(this.variable).add(this.newEmployeeEventsVariable);
-		}
-		
-	}
-		
-	
-	/**
-	 * DECLARACION DE VARIABLES Y CONSTRUCTOR
-	 */
-	
+	private EmployeeEventsData employeeEventsData;
 	private Map<String, ArrayList<EmployeeEventsVariable>> mapEventsVar;
-	private Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar;
+	
 	private Integer idEmployee;
-	private Date startContractDate;
-	private Date endContractDate;
+	
 	private DomainEmployeesServiceAsync employeesService;
-	public UndoManager<Undoable> undoManager;
 	private EmployeeCalendarDraftObject employeeCalendar;
-	private Boolean fullJourney;
-	private String tc2;
 	
 	//LISTA CON LAS VARIABLES QUE TIENE CADA EMPLEADO
 	private ArrayList<String> employeeContractVariables;
-	private ArrayList<String> employeeContractVariablesDB;
 	
-	public EmployeeEventsDraftObject(Integer idEmployee, Date startContractDate, Date endContractDate, DomainEmployeesServiceAsync employeesService) {
-		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
-		this.draftMapEventsVar = new HashMap<String, ArrayList<EmployeeEventsDraftObject.EmployeeEventsVariable>>();
+	private ArrayList<String> calendarVariables;
+	
+	public EmployeeEventsDraftObject(Integer idEmployee, DomainEmployeesServiceAsync employeesService) {
+		this.mapEventsVar = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
 		
 		this.idEmployee = idEmployee;
-		this.startContractDate = startContractDate;
-		this.endContractDate = endContractDate;
 		this.employeesService = employeesService;
 		
 		this.employeeContractVariables = new ArrayList<String>();
-		this.employeeContractVariablesDB = new ArrayList<String>();
 		
-		this.undoManager = new UndoManager<>();
+		this.calendarVariables = new ArrayList<String>();
 		
-		this.fullJourney = false;
-		
-		this.tc2 = "";
 	}
 
+	private void initCalendarVariables() {
+		calendarVariables.add("DIAS_TRABAJADOS");
+		calendarVariables.add("DIAS_VACACIONES");
+		calendarVariables.add("DIAS_INACTIVIDAD");
+		calendarVariables.add("DIAS_AUSENCIA");
+		calendarVariables.add("DIAS_HUELGA");
+		calendarVariables.add("DIAS_ERE");
+		calendarVariables.add("DIAS_ERE_FZA");
+		calendarVariables.add("DIAS_ERE_FZA_EXON");
+		calendarVariables.add("HORAS_COMPLEMENTARIAS");
+		calendarVariables.add("HORAS_EXTRAS");
+	}
+	
+	public ArrayList<String> getCalendarVariables() {
+		return this.calendarVariables;
+	}
 
-	/**
-	 * GETTERS / SETTERS
-	 */
+	// --------------------------------------------- GETTERS / SETTERS
 	
 	public Integer getIdEmployee() {
 		return idEmployee;
@@ -179,7 +74,48 @@ public class EmployeeEventsDraftObject {
 	}
 	
 	public ArrayList<String> getEmployeeContractVariables() {
-		return this.employeeContractVariables;
+		// Filter variables list
+		ArrayList<String> filterVariablesList = new ArrayList<String>();
+		
+		// Contract Type
+		if(employeeEventsData.getTC2() != "\"421\"") {
+			filterVariablesList.add("HORAS_FORMACION_PRESENCIAL");
+			filterVariablesList.add("HORAS_FORMACION_DISTANCIA");
+			filterVariablesList.add("HORAS_TUTORIA");
+			filterVariablesList.add("BONIFICACION_TUTORIA");
+		}
+		
+		// Fulltime Journey
+		if(isFullJourney())
+			filterVariablesList.add("HORAS_COMPLEMENTARIAS");
+		else
+			filterVariablesList.add("HORAS_EXTRAS");
+		
+		// Result List
+		ArrayList<String> result = new ArrayList<String>();
+		
+		for(String var : this.employeeContractVariables) {
+			if(filterVariablesList.contains(var))
+				continue;
+			result.add(var);
+		}
+		
+		return result;
+	}
+	
+	public Boolean isCalendarVariable(String var) {
+		calendarVariables.add("DIAS_TRABAJADOS");
+		calendarVariables.add("DIAS_VACACIONES");
+		calendarVariables.add("DIAS_INACTIVIDAD");
+		calendarVariables.add("DIAS_AUSENCIA");
+		calendarVariables.add("DIAS_HUELGA");
+		calendarVariables.add("DIAS_ERE");
+		calendarVariables.add("DIAS_ERE_FZA");
+		calendarVariables.add("DIAS_ERE_FZA_EXON");
+		calendarVariables.add("HORAS_COMPLEMENTARIAS");
+		calendarVariables.add("HORAS_EXTRAS");
+		
+		return calendarVariables.contains(var);
 	}
 	
 	public boolean isContractVariable(String var){
@@ -194,161 +130,23 @@ public class EmployeeEventsDraftObject {
 		this.mapEventsVar = mapEventsVar;
 	}
 
-	public Map<String, ArrayList<EmployeeEventsVariable>> getDraftMapEventsVar() {
-		return draftMapEventsVar;
-	}
-
-	public void setDraftMapEventsVar(Map<String, ArrayList<EmployeeEventsVariable>> draftMapEventsVar) {
-		this.draftMapEventsVar = draftMapEventsVar;
-	}
-	
 	public boolean isFullJourney() {
-		return this.fullJourney;
+		return this.employeeEventsData.isFullTimeJourney();
 	}
 	
 	public String getTC2() {
-		return this.tc2;
-	}
-
-	
-	/**
-	 * METODO GETTERS Y SETTERS AUXILIARES
-	 * @return 
-	 */
-	
-	public ArrayList<EmployeeEventsVariable> getListEmployeeEventsVaribales (String varName){
-		if (null != draftMapEventsVar.get(varName))
-			return draftMapEventsVar.get(varName);
-		else
-			return mapEventsVar.getOrDefault(varName, null);
+		return this.employeeEventsData.getTC2();
 	}
 	
-	@SuppressWarnings("deprecation")
-	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month, Integer year){
-		if (null != draftMapEventsVar.get(varName))
-			for (EmployeeEventsVariable e : draftMapEventsVar.get(varName)){
-				if(year != e.getStartDate().getYear())
-					continue;
-				if (month == e.getStartDate().getMonth())
-					return e;
-			}
-		
-		if (null != mapEventsVar.get(varName))
-			for (EmployeeEventsVariable e : mapEventsVar.get(varName)){
-				if(year != e.getStartDate().getYear())
-					continue;
-				if (month == e.getStartDate().getMonth())
-					return e;
-			}
-		
-		return null;
+	public Date getContractStartDate() {
+		return this.employeeEventsData.getContractStartDate();
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void setValueByMonth(String variableName, Integer month, Double newValue, Integer year) {
-		EmployeeEventsVariable oldVar = null;
-		
-		for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
-			if(month == e.getStartDate().getMonth())
-				oldVar = e;
-		}
-		
-		EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue, year);
-		draftMapEventsVar.get(variableName).remove(oldVar);
-		draftMapEventsVar.get(variableName).add(newVar);
-		
-		this.undoManager.add(new SetVariableEdit(oldVar, newVar, variableName));
+	public Date getContractEndDate() {
+		return this.employeeEventsData.getContractEndDate();
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void setValueByMonths(String variableName, ArrayList<Integer> months, Double newValue, Integer year) {
-		List<Undoable> undos = new ArrayList<Undoable>();
-		for (Integer month : months){
-			EmployeeEventsVariable oldVar = null;
-			if (null != draftMapEventsVar.get(variableName)){
-				for (EmployeeEventsVariable e : draftMapEventsVar.get(variableName)){
-					if (year != e.getStartDate().getYear())
-						continue;
-					if(month == e.getStartDate().getMonth())
-						oldVar = e;
-				}
-			}else{
-				draftMapEventsVar.put(variableName, new ArrayList<EmployeeEventsVariable>());
-			}
-			
-			EmployeeEventsVariable newVar = createEmployeeEventsVariable(month, newValue, year);
-			if(null != oldVar)
-				draftMapEventsVar.get(variableName).remove(oldVar);
-			draftMapEventsVar.get(variableName).add(newVar);
-			
-			undos.add(new SetVariableEdit(oldVar, newVar, variableName));
-		}
-		this.undoManager.add(new CompositeUndoable<Undoable>(undos));
-		
-	}
-	
-	@SuppressWarnings("deprecation")
-	private EmployeeEventsVariable createEmployeeEventsVariable(Integer month, Double newValue, Integer year) {
-		Date startDate = new Date(year, month, DateUtils.getFirstDayOfMonth(new Date(year, month, month)).getDate());
-		Date endDate = new Date(year, month, DateUtils.getLastDayOfMonth(new Date(year, month, month)).getDate());
-		
-		return new EmployeeEventsVariable(startDate, endDate, newValue);
-	}
-	
-	public boolean hasChanged(String variableName, EmployeeEventsVariable varMonth) {
-		if (null == draftMapEventsVar.get(variableName))
-			return false;
-		
-		return draftMapEventsVar.get(variableName).contains(varMonth);
-	}
-
-	/**
-	 * METODOS SYNC BORRADOR
-	 */
-	
-	public static class EventVariable extends StringVariable{
-		private static final long serialVersionUID = 1L;
-	}
-	
-	public boolean isMine(com.esferalia.aon.gwt.payroll.shared.Variable v ){
-		return v instanceof EventVariable ;
-	}
-	
-	public ArrayList<StringVariable> getVariablesList(Date draftStartDate, Date draftEndDate) {
-		ArrayList<StringVariable> variablesList = new ArrayList<StringVariable>();
-		
-		EventVariable var = null;
-		
-		for (String name : draftMapEventsVar.keySet()){
-			if (null != draftMapEventsVar.get(name)){
-				for (EmployeeEventsVariable e : draftMapEventsVar.get(name)){
-					
-					if(e.getStartDate().before(draftStartDate))
-						continue;
-					if(e.getEndDate().after(draftEndDate))
-						continue;
-					
-					var = new EventVariable();
-					var.setImplicit(false);
-					var.setScope(Scope.SALARY); // DRAFT
-					var.setName(name);
-					var.setStartDate(e.getStartDate());
-					var.setEndDate(e.getEndDate());
-					var.setExpression(Double.toString(e.getValue()));
-					
-					variablesList.add(var);
-					
-					//Window.alert("EVENT VARIABLE = Name :"+var.getName()+", StartDate :"+ var.getStartDate()+", Exp :"+var.getExpression());
-				}
-			}
-		}
-		
-		return variablesList;
-	}
-	
-	/**
-	 * METODOS SYNC DATABASE
-	 */
+	// --------------------------------------------- SYNC DATABASE
 	
 	@SuppressWarnings("deprecation")
 	public void initializeDBEventsVariables(int year, Consumer<ContextDescriptor> success, Consumer<Throwable> failure) {
@@ -359,84 +157,27 @@ public class EmployeeEventsDraftObject {
 			@Override
 			public void onSuccess(ContextDescriptor context) {
 				
+				calendarVariables.clear();
+				initCalendarVariables();
+				
+				ArrayList<String> allStaticVariables = new ArrayList<String>();
+				
+				allStaticVariables.addAll(calendarVariables);
+				allStaticVariables.add("IMPORTE_HORA_EXTRA");
+				allStaticVariables.add("HORAS_FORMACION_PRESENCIAL");
+				allStaticVariables.add("HORAS_FORMACION_DISTANCIA");
+				allStaticVariables.add("HORAS_TUTORIA");
+				allStaticVariables.add("BONIFICACION_TUTORIA");
+				allStaticVariables.add("BONIFICACION_FORMACION_CONTINUA");
+				
 				employeeContractVariables.clear();
+				employeeContractVariables.addAll(allStaticVariables);
 				
-				employeeContractVariables.add("DIAS_TRABAJADOS");
-				employeeContractVariables.add("DIAS_VACACIONES");
-				employeeContractVariables.add("DIAS_INACTIVIDAD");
-				employeeContractVariables.add("DIAS_AUSENCIA");
-				employeeContractVariables.add("DIAS_HUELGA");
-				employeeContractVariables.add("DIAS_ERE");
-				employeeContractVariables.add("DIAS_ERE_FZA");
-				employeeContractVariables.add("DIAS_ERE_FZA_EXON");
-				employeeContractVariables.add("HORAS_COMPLEMENTARIAS");
-				employeeContractVariables.add("HORAS_EXTRAS");
-				employeeContractVariables.add("IMPORTE_HORA_EXTRA");
-				employeeContractVariables.add("HORAS_FORMACION_PRESENCIAL");
-				employeeContractVariables.add("HORAS_FORMACION_DISTANCIA");
-				employeeContractVariables.add("HORAS_TUTORIA");
-				employeeContractVariables.add("BONIFICACION_TUTORIA");
-				employeeContractVariables.add("BONIFICACION_FORMACION_CONTINUA");
-				employeeContractVariables.add("KMS");
+				Set<String> contextVariables = filterContextVariables(context.getVariables(), allStaticVariables);
 				
-				employeeContractVariablesDB.add("DIAS_TRABAJADOS");
-				employeeContractVariablesDB.add("DIAS_VACACIONES");
-				employeeContractVariablesDB.add("DIAS_INACTIVIDAD");
-				employeeContractVariablesDB.add("DIAS_AUSENCIA");
-				employeeContractVariablesDB.add("DIAS_HUELGA");
-				employeeContractVariablesDB.add("DIAS_ERE");
-				employeeContractVariablesDB.add("DIAS_ERE_FZA");
-				employeeContractVariablesDB.add("DIAS_ERE_FZA_EXON");
-				employeeContractVariablesDB.add("HORAS_COMPLEMENTARIAS");
-				employeeContractVariablesDB.add("HORAS_EXTRAS");
-				employeeContractVariablesDB.add("IMPORTE_HORA_EXTRA");
-				employeeContractVariablesDB.add("HORAS_FORMACION_PRESENCIAL");
-				employeeContractVariablesDB.add("HORAS_FORMACION_DISTANCIA");
-				employeeContractVariablesDB.add("HORAS_TUTORIA");
-				employeeContractVariablesDB.add("BONIFICACION_TUTORIA");
-				employeeContractVariablesDB.add("BONIFICACION_FORMACION_CONTINUA");
-				employeeContractVariablesDB.add("KMS");
-
-//				for (String varName : context.getVariables()){
-//					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
-//					
-//					if(context.getList(varName).isEmpty()){
-//						mapEventsVar.put(varName, varList);
-//						employeeContractVariables.add(varName);
-//						continue;
-//					}
-//					
-//					try {
-//						for (VariableDescriptor var : context.getList(varName)){
-//							Date startDate = var.getStartDate();
-//							Date endDate = var.getEndDate();
-//							try {
-//								Double value = Double.valueOf(var.getValue());
-//								if(startDate.getMonth() == endDate.getMonth()){
-//									EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
-//									varList.add(eVar);
-//								}else{
-//									for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
-//										Date auxStartDate = new Date(startDate.getYear(), i, 1);
-//										Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
-//										EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
-//										varList.add(eVar);
-//									}
-//								}
-//							}catch (Exception e) {
-//								throw new Exception();
-//							}
-//						}
-//						
-//						sortListByStartDate(varList);
-//						
-//						mapEventsVar.put(varName, varList);
-//						
-//						employeeContractVariables.add(varName);
-//					}catch (Exception e) {
-//						continue;
-//					}
-//				}
+				for(String varName : contextVariables) {
+					employeeContractVariables.add(varName);
+				}
 				
 				initializeDBCalendar(
 						s -> { success.accept(context);}, 
@@ -444,7 +185,7 @@ public class EmployeeEventsDraftObject {
 				);
 				
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
@@ -454,257 +195,99 @@ public class EmployeeEventsDraftObject {
 	
 	public void initializeDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
 		
-		employeesService.getEmployeeEventsByContract(this.idEmployee, this.employeeContractVariablesDB, new AsyncCallback<EmployeeEventsData>(){
+		employeesService.getEmployeeEventsByContract(this.idEmployee, this.employeeContractVariables, new AsyncCallback<EmployeeEventsData>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
 			}
+
+			@Override
+			public void onSuccess(EmployeeEventsData resultEmployeeEventsData) {
+				employeeEventsData = resultEmployeeEventsData;
+				mapEventsVar = employeeEventsData.getEventDateVarList();
+				success.accept(resultEmployeeEventsData);
+			}
+		});
+	}
+	
+	// --------------------------------------------- UPDATE DATABASE
+	
+	public void updateDBCalendar(Consumer<EmployeeEventsData> success, Consumer<Throwable> failure) {
+		
+		employeesService.setEmployeeEvents(this.idEmployee, employeeEventsData, new AsyncCallback<EmployeeEventsData>() {
+
+			@Override
+			public void onFailure(Throwable caught) {}
 
 			@Override
 			public void onSuccess(EmployeeEventsData result) {
-				
-				fullJourney = result.isFullTimeJourney();
-				tc2 = result.getTC2();
-				
-				for (Entry<String, ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>> entry : result.getContractEventsList().entrySet()){
-					
-					String varName = entry.getKey();
-					ArrayList<EmployeeEventsVariable> varList = new ArrayList<EmployeeEventsVariable>();
-					
-					if(!entry.getValue().isEmpty()){
-						for(Quartet<java.sql.Date, java.sql.Date, String, String> quarter : entry.getValue()){
-							Date startDate = DateUtils.copyDateOnly(quarter.getStartDate());
-							Date endDate = null;
-							if(null != quarter.getEndDate())
-								endDate = DateUtils.copyDateOnly(quarter.getEndDate());
-							Double value = Double.parseDouble(quarter.getExpression());
-//							EmployeeEventsVariable var = new EmployeeEventsVariable(startDate, endDate, value);
-//							varList.add(var);
-							if(startDate.getMonth() == endDate.getMonth()){
-								EmployeeEventsVariable eVar = new EmployeeEventsVariable(startDate, endDate, value);
-								varList.add(eVar);
-							}else{
-								for(int i = startDate.getMonth(); i <= endDate.getMonth(); i++){
-									Date auxStartDate = new Date(startDate.getYear(), i, 1);
-									Date auxEndDate = new Date(startDate.getYear(), i+1, 0);
-									EmployeeEventsVariable eVar = new EmployeeEventsVariable(auxStartDate, auxEndDate, value);
-									varList.add(eVar);
-								}
-							}
-						}
-						sortListByStartDate(varList);
-					}	
-					mapEventsVar.put(varName, varList);
-				}
-				
-//				for(String name : mapEventsVar.keySet()){
-//					for(EmployeeEventsVariable var: mapEventsVar.get(name)){
-//						Window.alert("SIN MODIF : " +name+" = "+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
-//					}
-//				}
-				
-				modifyMapEventsVar();
-				
-				//IMPRIMIR VARIABLES
-//				for(String name : mapEventsVar.keySet()){
-//					for(EmployeeEventsVariable var: mapEventsVar.get(name)){
-//						Window.alert(name+" = "+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
-//					}
-//				}
-				
 				success.accept(result);
-			}
-
-			private void modifyMapEventsVar() {
-				for (String varName: mapEventsVar.keySet()){
-					ArrayList<EmployeeEventsVariable> eventVarList = mapEventsVar.get(varName);
-					if(varName.contains("DIAS")){
-						ArrayList<EmployeeEventsVariable> newEventVarList = groupDays(varName, eventVarList);
-						mapEventsVar.put(varName, newEventVarList);
-					}else{
-						ArrayList<EmployeeEventsVariable> newEventVarList = checkDuplicateMonths(eventVarList);
-						mapEventsVar.put(varName, newEventVarList);
-					}	
-				}
-			}
-
-			private ArrayList<EmployeeEventsVariable> checkDuplicateMonths(ArrayList<EmployeeEventsVariable> eventVarList) {
-				ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
-				int i = 0;
-				while(i < eventVarList.size()){
-					if(i+1 < eventVarList.size()){
-						if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
-							newEventsList.add(eventVarList.get(i+1));
-							i+=2;
-						}else{
-							newEventsList.add(eventVarList.get(i));
-							i++;
-						}
-					}else{
-						newEventsList.add(eventVarList.get(i));
-						i++;
-					}		
-				}
-				
-				return newEventsList;
-			}
-
-			private ArrayList<EmployeeEventsVariable> groupDays(String varName, ArrayList<EmployeeEventsVariable> eventVarList) {
-				Double days = 0.00;
-				ArrayList<EmployeeEventsVariable> newEventsList = new ArrayList<>();
-				int i = 0;
-				while(i < eventVarList.size()){
-					if(i+1 < eventVarList.size()){
-						if(eventVarList.get(i).getStartDate().getMonth() == eventVarList.get(i+1).getStartDate().getMonth()){
-							days += eventVarList.get(i).getValue();
-							i++;
-						}else{
-							EmployeeEventsVariable eVar;
-							if(days == 0)
-								 eVar = new EmployeeEventsVariable(
-									DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
-									DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
-									eventVarList.get(i).getValue());
-							else{
-								eVar = new EmployeeEventsVariable(
-										DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
-										DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
-										days + eventVarList.get(i).getValue());
-								days = 0.00;
-							}
-							newEventsList.add(eVar);
-							i++;
-						}
-					}else{
-						if(days != 0){
-							days += eventVarList.get(i).getValue();
-							EmployeeEventsVariable eVar = new EmployeeEventsVariable(
-									DateUtils.getFirstDayOfMonth(eventVarList.get(i).getStartDate()), 
-									DateUtils.getLastDayOfMonth(eventVarList.get(i).getStartDate()),
-									days);
-							days = 0.00;
-							newEventsList.add(eVar);
-							i++;
-						}else{
-							newEventsList.add(eventVarList.get(i));
-							i++;
-						}
-					}		
-				}
-				return newEventsList;
-			}
-		});
-	}
-	
-	public void updateDBCalendar(Consumer<EmployeeEventsUpdate> success, Consumer<Throwable> failure) {
-		
-		EmployeeEventsUpdate updateInfo = new EmployeeEventsUpdate();
-		updateInfo.setVariableEventsList(createVariablesList());
-		
-		employeesService.setEmployeeEvents(idEmployee, updateInfo, new AsyncCallback<EmployeeEventsUpdate>(){
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-				
-			}
-
-			@Override
-			public void onSuccess(EmployeeEventsUpdate result) {
-				draftMapEventsVar.clear();
-				success.accept(result);
-				
 			}
 			
 		});
 		
 	}
+	
+	// --------------------------------------------- SYNC DATABASE (AUX METHODS)
 
-	/**
-	 * METODOS AUX
-	 */
-	
-	private void sortListByStartDate(ArrayList<EmployeeEventsVariable> list){
-		Collections.sort(list, new Comparator<EmployeeEventsVariable>(){
-			public int compare(EmployeeEventsVariable variable1, EmployeeEventsVariable variable2){
-				if (null == variable1.getStartDate() || null == variable2.getStartDate())
-			        return 0;
-			     
-				return variable1.getStartDate().compareTo(variable2.getStartDate());
-			}
-		});
-	}
-	
-	private List<Quartet<java.sql.Date, java.sql.Date, String, String>> createVariablesList() {
-		List<Quartet<java.sql.Date, java.sql.Date, String, String>> updateList = new ArrayList<Quartet<java.sql.Date, java.sql.Date, String, String>>();
-		Map<String, ArrayList<EmployeeEventsVariable>> updateMap = createUpdateMap();
+	private Set<String> filterContextVariables(Set<String> contextVariables, ArrayList<String> allStaticVariables) {
+		Set<String> resultSet = new LinkedHashSet<String>();
 		
-		for(Entry<String, ArrayList<EmployeeEventsVariable>> entry : updateMap.entrySet()){
-			String varName = entry.getKey();
-			for(EmployeeEventsVariable eVar : updateMap.get(varName)){
-				//Window.alert("UPDATE -> "+varName + " = "+ eVar.getValue() +", StartDate :"+eVar.getStartDate()+", endDate :"+eVar.getEndDate());
-				Quartet<java.sql.Date, java.sql.Date, String, String> quarterInfo = new Quartet<java.sql.Date, java.sql.Date, String, String>();
-				java.sql.Date startDate = new java.sql.Date(eVar.getStartDate().getTime());
-				java.sql.Date endDate = new java.sql.Date(eVar.getEndDate().getTime());
-				String value = "";
-				if(null == eVar.getValue())
-					value = null;
-				else
-					value = Double.toString(eVar.getValue());
-				quarterInfo.setName(varName).setStartDate(startDate).setEndDate(endDate).setExpression(value);
-				updateList.add(quarterInfo);
-			}
-		}
+		// Filter set
+		Set<String> filterSet = new LinkedHashSet<String>();
+		filterSet.add("PAGA_EXTRA_HELP");
+		filterSet.add("TC2");
+		filterSet.add("SALARIO_VARIABLE_DIA");
+		filterSet.add("AÑOS_TRABAJADOS");
+		filterSet.add("GRUPO_COTIZACION");
 		
-		return updateList;
-	}
-	
-	//Metodo para crear el mapa que va a recoer toda la informacion que queremos subir a la base de datos
-	private Map<String, ArrayList<EmployeeEventsVariable>> createUpdateMap() {
-		Map<String, ArrayList<EmployeeEventsVariable>> updateMap = new HashMap<String, ArrayList<EmployeeEventsVariable>>();
+		filterSet.addAll(allStaticVariables);
 		
-		for(String key : mapEventsVar.keySet()){
-			ArrayList<EmployeeEventsVariable> resultList = checkResultList(key);
-			updateMap.put(key, resultList);
-		}
-		
-		for(String key : draftMapEventsVar.keySet()){
-			
-			if(null != updateMap.get(key))
-				for(EmployeeEventsVariable e : draftMapEventsVar.get(key)){
-					updateMap.get(key).add(e);
-				}
-			else
-				updateMap.put(key, draftMapEventsVar.get(key));
-		}
-		
-		return updateMap;
-	}
-
-	//Metodo para coger del mapa original solo aquellas entradas que no han sido modificadas
-	private ArrayList<EmployeeEventsVariable> checkResultList(String key) {
-		ArrayList<EmployeeEventsVariable> resultList = new ArrayList<>();
-		
-		for(EmployeeEventsVariable e : mapEventsVar.get(key)){
-			if(draftContainsDate(e.startDate, key)){
+		for(String var : contextVariables) {
+			if(contains(filterSet, var))
 				continue;
-			}else{
-				resultList.add(e);
-			}
+			
+			resultSet.add(var);
 		}
 		
-		return resultList;
+		return resultSet;
 	}
-
-	private boolean draftContainsDate(Date startDateMap, String key) {
-		if(null != draftMapEventsVar.get(key)){
-			for(EmployeeEventsVariable e : draftMapEventsVar.get(key)){
-				if(e.startDate.equals(startDateMap))
-					return true;
-			}
+	
+	private boolean contains(Set<String> filterSet, String var) {
+		for(String filterVar : filterSet) {
+			if(filterVar.equals(var) || filterVar == var || var.contains("OS_TRABAJADOS")) // AÑOS_TRABAJADOS
+				return true;
 		}
 		return false;
+	}
+
+	// --------------------------------------------- EVENT PAGE METHODS
+	
+	public ArrayList<EmployeeEventsVariable> getListEmployeeEventsVaribales (String varName){
+		return this.mapEventsVar.getOrDefault(varName, null);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public EmployeeEventsVariable getEmployeeEventsVariableByMonth (String varName, int month, Integer year){
+		ArrayList<EmployeeEventsVariable> varList = this.mapEventsVar.getOrDefault(varName, null);
+		
+		if(null != varList) {
+			for (EmployeeEventsVariable e : this.mapEventsVar.get(varName)){
+				if(year != e.getStartDate().getYear())
+					continue;
+				if (month == e.getStartDate().getMonth())
+					return e;
+			}
+		}
+		
+		return null;
+	}
+
+	public void setValueByMonth(String variableName, String value, Date startDate, Date endDate) {
+//		Window.alert("ADD DATA --> " + variableName + " = " + value + ", Start : " + startDate + " End : " + endDate);
+		employeeEventsData.addEventData(variableName, startDate, endDate, value);
+		mapEventsVar = employeeEventsData.getEventDateVarList();
 	}
 
 }

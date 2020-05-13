@@ -66,9 +66,6 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 	}
 	
 	@UiField
-	Label filterLabel;
-	
-	@UiField
 	FlexTable checkBoxTable;
 	
 	@UiField
@@ -77,8 +74,8 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 	@UiField
 	Button cancelButton;
 
-	public EmployeeCheckBoxDialog(int size) {
-		setCaption("Nuevo valor");
+	public EmployeeCheckBoxDialog() {
+		setCaption("VARIABLES A MOSTRAR");
 		
 		setWidget(binder.createAndBindUi(this));
 		
@@ -104,10 +101,6 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 
 	protected abstract void onAccept();
 
-	public void setHeaderLabel(String headerText) {
-		filterLabel.setText(headerText);
-	}
-
 	public Boolean getValueCheck(String var) {
 		for(int i=0; i < checkBoxTable.getRowCount(); i++ ){
 			CheckBoxLabelWidget widget = (CheckBoxLabelWidget) checkBoxTable.getWidget(i, 0);
@@ -115,10 +108,6 @@ public abstract class EmployeeCheckBoxDialog extends CustomDialog {
 				return widget.isChecked();
 		}
 		return false;
-	}
-
-	public void setVisibleFilterLabel(boolean bool) {
-		filterLabel.setVisible(bool);
 	}
 	
 	public void addNewCheckBox(String name, CheckBox checkBox){

@@ -1,16 +1,28 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -21,51 +33,108 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 	}
 
 	private static final Binder binder = GWT.create(Binder.class);
-
-	@UiField
-	Label filterLabel;
 	
 	@UiField
-	Label nameLabel;
+	ListBox variablesList;
+	
+	@UiField
+	Label varLabel;
 	
 	@UiField
 	TextBox valueTextBox;
 	
 	@UiField
-	Button acceptButton;
+	HTMLPanel errorMessage;
+	
+	@UiField
+	DateBoxEx startDate;
+	
+	@UiField
+	DateBoxEx endDate;
 	
 	@UiField
 	Button cancelButton;
-
-	public EmployeeInputDialog() {
-		setCaption("Nuevo valor");
+	
+	@UiField
+	Button acceptButton;
+	
+	private Date contractStartDate;
+	private Date contractEndDate;
+	private Double value = null;
+	
+	public EmployeeInputDialog(String caption, Date contractStartDate, Date contractEndDate, ArrayList<String> variables, Date selectedDate) {
+		setCaption(caption);
 		
 		setWidget(binder.createAndBindUi(this));
 		
-		valueTextBox.addKeyDownHandler(new KeyDownHandler() {
+		//Init ListBox
+		for(String variable : variables) {
+			variablesList.addItem(variable, variable);
+		}
+		
+		setSelectedValueLB(variablesList, caption);
+		
+		errorMessage.getElement().getStyle().setDisplay(Display.NONE);
+		
+		varLabel.setText(this.variablesList.getSelectedValue() + " : ");
+		
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
+		
+		if(null == selectedDate) {
+			this.startDate.setValue(this.contractStartDate);
+			this.endDate.setValue(this.contractEndDate);
+		} else {
+			Date startDate = DateUtils.getFirstDayOfMonth(selectedDate);
+			Date endDate = DateUtils.getLastDayOfMonth(selectedDate);
 			
+			DateUtils.resetTime(startDate);
+			DateUtils.resetTime(endDate);
+			
+			this.startDate.setValue(startDate);
+			this.endDate.setValue(endDate);
+		}
+		
+		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
-			public void onKeyDown(KeyDownEvent key) {
-				if(key.getNativeKeyCode() == KeyCodes.KEY_ENTER){
-					hide();
-					onAccept();	
-				}
+			public void onClick(ClickEvent event) {
+				hide();
 			}
 		});
 		
 		acceptButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				if(null != startDate.getValue())
+					onAccept();
 				hide();
-				onAccept();
 			}
-		});		
+		});
 		
-		cancelButton.addClickHandler(new ClickHandler() {
+		valueTextBox.addBlurHandler(new BlurHandler() {
 			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-				
+			public void onBlur(BlurEvent event) {
+				try {
+					if(null != valueTextBox.getValue() && !StringUtils.isEmpty(valueTextBox.getValue()))
+						value = Double.parseDouble(valueTextBox.getValue());
+					else
+						value = null;
+					errorMessage.getElement().getStyle().setDisplay(Display.NONE);
+					acceptButton.setEnabled(true);
+				} catch (NumberFormatException e) {
+					errorMessage.getElement().getStyle().clearDisplay();
+					acceptButton.setEnabled(false);
+					valueTextBox.setValue("");
+				}
+			}
+		});
+		
+		variablesList.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				String variable = variablesList.getSelectedValue();
+				varLabel.setText(variable + " : ");
 			}
 		});
 		
@@ -73,31 +142,76 @@ public abstract class EmployeeInputDialog extends CustomDialog {
 		this.acceptButton.ensureDebugId("input_accept");
 		this.valueTextBox.ensureDebugId("value_box");
 	}
+	
+	// -------------------------------------------------------------------------------
+	// ------------------------------ ABSTRACT METHODS -------------------------------
+	// -------------------------------------------------------------------------------
 
 	protected abstract void onAccept();
+	
+	// -------------------------------------------------------------------------------
+	// --------------------------------- UI HANDLERS ---------------------------------
+	// -------------------------------------------------------------------------------
 
-	public void setHeaderLabel(String headerText) {
-		filterLabel.setText(headerText);
+	@UiHandler("startDate")
+	public void onStartDateDBChange(ValueChangeEvent<Date> event) {
+		Date date = event.getValue();
+		if(null != date) {
+			if(date.before(contractStartDate))
+				startDate.setValue(contractStartDate);
+			else {
+				Date firstDayOfMoth = DateUtils.getFirstDayOfMonth(date);
+				DateUtils.resetTime(firstDayOfMoth);
+				startDate.setValue(firstDayOfMoth);
+			}
+		}
 	}
-
-	public void setNameLabel(String label) {
-		nameLabel.setText(label);
+	
+	@UiHandler("endDate")
+	public void onEndDateDBChange(ValueChangeEvent<Date> event) {
+		Date date = event.getValue();
+		if(null != date) {
+			if(null != contractEndDate) {
+				if(date.after(contractEndDate))
+					endDate.setValue(contractEndDate);
+			} else {
+				Date lastDayOfMoth = DateUtils.getLastDayOfMonth(date);
+				DateUtils.resetTime(lastDayOfMoth);
+				endDate.setValue(lastDayOfMoth);
+			}
+		}
 	}
-
-	public void setValue(String value) {
-		valueTextBox.setText(value);
-	}
-
+	
+	// -------------------------------------------------------------------------------
+	// --------------------------------- AUX METHODS ---------------------------------
+	// -------------------------------------------------------------------------------
+	
 	public String getValue() {
-		return valueTextBox.getValue();
+		return null == this.value ? null : this.value.toString();
 	}
-
-	public void setVisibleFilterLabel(boolean bool) {
-		filterLabel.setVisible(bool);
+	
+	public Date getStartDate() {
+		return this.startDate.getValue();
 	}
-
-	public void setFocusOnValueTextBox(boolean focus) {
-		valueTextBox.setFocus(focus);
+	
+	public Date getEndDate() {
+		return this.endDate.getValue();
+	}
+	
+	public String getVariableName() {
+		return this.variablesList.getSelectedValue();
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
 	}
 
 }

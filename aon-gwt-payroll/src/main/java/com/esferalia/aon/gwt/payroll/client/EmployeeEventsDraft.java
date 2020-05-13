@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
-import com.esferalia.aon.gwt.payroll.client.EmployeeEventsDraftObject.EmployeeEventsVariable;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData.EmployeeEventsVariable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -26,7 +27,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -43,8 +43,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 
 	private static EmployeeEventsDraftUiBinder uiBinder = GWT.create(EmployeeEventsDraftUiBinder.class);
 
-	interface EmployeeEventsDraftUiBinder extends UiBinder<Widget, EmployeeEventsDraft> {
-	}
+	interface EmployeeEventsDraftUiBinder extends UiBinder<Widget, EmployeeEventsDraft> {}
 	
 	@UiField
 	MyStyle style;
@@ -103,38 +102,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		public void removeBlockVariableStyle() {
 			this.removeStyleName(style.setBlockVariableStyle());
 		}
-
-		public void setOnChangeStyle() {
-			this.setStyleName(style.onChange());	
-		}
-
-		public void removeOnChangeStyle() {
-			this.removeStyleName(style.onChange());	
-		}
-			
+		
 	}
-	
-	
-	@UiField
-	MenuItem addNewValueMenuItem;
-	
-	@UiField
-	MenuItem viewMenuItem;
 	
 	@UiField
 	MenuItem showVariablesMenuItem;
 	
 	@UiField
-	MenuItem showYearMenuItem;
+	MenuItem undoAllMenuItem;
 	
 	@UiField
 	Button undoAllButton;
-	
-	@UiField
-	Button undoButton;
-	
-	@UiField
-	Button redoButton;
 	
 	@UiField
 	Button newValueButton;
@@ -154,11 +132,17 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 	@UiField
 	FlexTable eventsGrid;
 	
-	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
+	// ---------------------------- VARIABLES
+	
 	private EmployeeEventsDraftObject employeeEventsDraft;
-	private ArrayList<String> blockVariableList;
+	
+	private OrderedMultiSelectionModel<Integer> selectedPositions = new OrderedMultiSelectionModel<Integer>();
+	
 	private HashMap<String,CheckBox> showVariablesMap = new HashMap<String,CheckBox>();
 	private HashMap<String,Integer> variablesRow = new HashMap<String,Integer>();
+	
+	private int year = new Date().getYear();
+	// ---------------------------- CONSTRUCTOR
 	
 	public EmployeeEventsDraft() {
 		//Inicializamos la vista del gestor de incidencias
@@ -167,68 +151,21 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//Inicializamos la cabecera de la tabla
 		initializeTable();
 		
-		//Inicializamos lista de variables que no son modificables desde el gestor de incidencias
-		initializeBlockVariablesList();
-		
 		//Reescribir la accion del boton derecho del ratón dentro de la tabla
 		eventsGrid.addDomHandler(this, ContextMenuEvent.getType());
-		
-		//Poner check al tipo de visualizacion
-		showYearMenuItem.setStyleName("aon-MenuItemCheckYes", true);
-		
-		//Boton para añadir un nuevo valor
-		addNewValueMenuItem.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				openNewValueDialog();
-			}
-		});
 		
 		//Boton para analizar que variables se quieren mostrar
 		showVariablesMenuItem.setScheduledCommand(new Command() {
 			@Override
 			public void execute() {
-				EmployeeCheckBoxDialog checkBoxDialog = new EmployeeCheckBoxDialog(employeeEventsDraft.getEmployeeContractVariables().size()){
-					@SuppressWarnings("deprecation")
-					@Override
-					protected void onAccept() {
-						ArrayList<String> variablesLocalStore = new ArrayList<String>();
-						
-						for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-							 CheckBox check = showVariablesMap.get(var);
-							 Integer row = calculateRowByVariableName(var);
-							 UIObject.ensureDebugId(eventsGrid.getRowFormatter().getElement(row), "row_"+row);
-							 
-							 if(check.isChecked())
-								 eventsGrid.getRowFormatter().removeStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
-							 else{
-								 eventsGrid.getRowFormatter().addStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
-								 variablesLocalStore.add(var);
-							 }
-						}
-						
-						setVariablesLocalStorage(variablesLocalStore);	
-					}
-				};
-				createShowVariablesDialog(checkBoxDialog);
-				checkBoxDialog.show();
-				checkBoxDialog.center();
+				createEmployeeCheckBoxDialog();	
 			}
-
-			private void createShowVariablesDialog(EmployeeCheckBoxDialog checkBoxDialog) {
-				ArrayList<String> list = getVariablesLocalStorage();
-				
-				for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-					CheckBox checkBox = new CheckBox();
-					
-					if(list.contains(var))
-						checkBox.setChecked(false);
-					else
-						checkBox.setChecked(true);
-					
-					showVariablesMap.put(var, checkBox);
-					checkBoxDialog.addNewCheckBox(var, checkBox);
-				}
+		});
+		
+		undoAllMenuItem.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				initUndoAllDialog();
 			}
 		});
 		
@@ -239,57 +176,25 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		//TODO: para probar el boton de guardar del calendario -> saveButton.setVisible(true);
 		saveButton.setVisible(true);
 		
+		saveButton.setEnabled(false);
+		undoAllButton.setEnabled(false);
+		
 	}
 
-	
-	private void initializeTable() {
-		Label blankLabel = new Label();
-		blankLabel.addStyleName(style.firstHeadStyleHide());
-		eventsGrid.setWidget(0, 0, blankLabel);
-		
-		String months[] = {"ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT",
-						   "NOV", "DIC"};
-		
-		for(int i=0; i<months.length; i++){
-			eventsGrid.setText(0, i+1, months[i]);
-			eventsGrid.getCellFormatter().addStyleName(0, i+1, style.cabeceraStyle());
-		}	
-	}
-
-
-	private void initializeBlockVariablesList() {
-		this.blockVariableList = new ArrayList<String>();
-		
-		this.blockVariableList.add("DIAS_TRABAJADOS");
-		this.blockVariableList.add("DIAS_VACACIONES");
-		this.blockVariableList.add("DIAS_INACTIVIDAD");
-		this.blockVariableList.add("DIAS_AUSENCIA");
-		this.blockVariableList.add("DIAS_HUELGA");
-		this.blockVariableList.add("DIAS_ERE");
-		this.blockVariableList.add("DIAS_ERE_FZA");
-		this.blockVariableList.add("DIAS_ERE_FZA_EXON");
-		this.blockVariableList.add("HORAS_COMPLEMENTARIAS");
-		this.blockVariableList.add("HORAS_EXTRAS");
-		
-		this.blockVariableList.add("SALARIO_ANUAL");
-		this.blockVariableList.add("PAGAS");
-	}
-
-	/**
-	 * UIHANDLERS
-	 */
+	// ---------------------------- UI HANDLERS
 	
 	@UiHandler("newValueButton")
 	public void onNewValueClick(ClickEvent event) {
-		openNewValueDialog();
+		openNewValueDialog(null);
 	}
 	
 	@UiHandler("saveButton")
 	void onSaveButtonClick(ClickEvent event) {
 		employeeEventsDraft.updateDBCalendar(r -> 
 		{
-			setEmployeeEventsDraftObject(employeeEventsDraft);
-			employeeEventsDraft.undoManager.discardAll();
+			changeYear(0);
+			saveButton.setEnabled(false);
+			undoAllButton.setEnabled(false);
 		}, t -> {});
 	}
 
@@ -315,9 +220,6 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			return;
 		}
 		
-		newValueButton.setEnabled(true);
-		addNewValueMenuItem.setEnabled(true);
-		
 		if (col != 0){
 			if(event.isControlKeyDown()){ //Cambiar por CTRL
 				Integer previusPos = -1;
@@ -338,46 +240,18 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			//Borrar selecciones anteriores
 			eraseSelectedPositions();
 			
-			//Aplicar estilo seleccionado a una fila entera
-			for (int j = 1; j < eventsGrid.getCellCount(row); j++){
-				//Guardar en SelectionModel
-				int selectPos = (row * eventsGrid.getCellCount(row)) + j;
-				selectedPositions.setSelected(selectPos, true);
-				
-				//Aplicar estilo seleccion a posicion
-				eventsGrid.getWidget(row, j).setStyleName(style.isSelectedCell());
-			
-			}
+			String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
+			openNewValueDialog(variableName);
 		}
 		
-	}
-
-	@UiHandler("undoButton")
-	void onUndoButtonClick(ClickEvent event) {
-		this.employeeEventsDraft.undoManager.undo();
-		refreshWindow();
-	}
-
-	@UiHandler("redoButton")
-	void onRedoButtonClick(ClickEvent event) {
-		this.employeeEventsDraft.undoManager.redo();
-		refreshWindow();
 	}
 	
 	@UiHandler("undoAllButton")
 	void onUndoAllButtonClick(ClickEvent event) {
-		while (this.employeeEventsDraft.undoManager.canUndo())
-			this.employeeEventsDraft.undoManager.undo();
-		refreshWindow();
-	}
-	
-	private void refreshWindow() {
-		changeYear(0);
+		initUndoAllDialog();
 	}
 
-	/**
-	 * METEDOS AUXILIARES
-	 */
+	// ---------------------------- SET EMPLOYEE EVENTS DRAFT
 	
 	public void setEmployeeEventsDraftObject(EmployeeEventsDraftObject employeeEventsDraft) {
 		
@@ -386,24 +260,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		this.employeeEventsDraft = employeeEventsDraft;
 		yearLabel.setText(""+ (new Date().getYear() + 1900));
 		
-		//Window.alert("Employee ID :"+this.employeeEventsDraft.getIdEmployee());
-		
-		this.employeeEventsDraft.undoManager.addListener(new UndoManager.Listener() {
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void onChange(UndoManager undoManager) {
-				undoAllButton.setEnabled(undoManager.canUndo());
-				undoButton.setEnabled(undoManager.canUndo());
-				redoButton.setEnabled(undoManager.canRedo());
-				saveButton.setEnabled(undoManager.canUndo());
-			}
-		});
-		
 		//Nombre variables para TEST
 		newValueButton.ensureDebugId("new_value_complemento_i");
-		undoButton.ensureDebugId("undo_complemento_i");
-		redoButton.ensureDebugId("redo_complemento_i");
-		viewMenuItem.ensureDebugId("view_menu_item");
 		showVariablesMenuItem.ensureDebugId("show_variables_menu_item");
 		
 		//Descargar Variables actualizadas
@@ -412,13 +270,27 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				actualYear,
 				r -> { fillCellsEvents(); },
 				t -> {});
-	
-	
 	}
+	
+	// ---------------------------- AUX METHODS (PAINT TABLE)
 	
 	private void clearEventsGrid() {
 		for (int i = eventsGrid.getRowCount() - 1; i > 0; i--)
 			eventsGrid.removeRow(i);
+	}
+
+	private void initializeTable() {
+		Label blankLabel = new Label();
+		blankLabel.addStyleName(style.firstHeadStyleHide());
+		eventsGrid.setWidget(0, 0, blankLabel);
+		
+		String months[] = {"ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT",
+						   "NOV", "DIC"};
+		
+		for(int i=0; i<months.length; i++){
+			eventsGrid.setText(0, i+1, months[i]);
+			eventsGrid.getCellFormatter().addStyleName(0, i+1, style.cabeceraStyle());
+		}	
 	}
 	
 	private void fillCellsEvents() {
@@ -435,25 +307,10 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				for(int i = 0; i < arrayList.length; i++)
 					list.add(arrayList[i]);
 			}
-			
 		}
 		
 		//Crear nuevas filas con las variables dadas
 		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
-			
-			// Filter variables by fullJourney
-			if(employeeEventsDraft.isFullJourney() && var == "HORAS_COMPLEMENTARIAS")
-				continue;
-			
-			if(!employeeEventsDraft.isFullJourney() && var == "HORAS_EXTRAS")
-				continue;
-			
-			//Filter variable by tc2
-			if(!employeeEventsDraft.getTC2().equals("\"421\"") && 
-					(var == "HORAS_FORMACION_PRESENCIAL" || var == "HORAS_FORMACION_DISTANCIA" ||
-					 var == "HORAS_TUTORIA" || var == "BONIFICACION_TUTORIA"))
-				continue;
-			
 			createVariableRow(var, list);
 		}
 		
@@ -473,15 +330,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		Label headLabel = new Label(var);
 		headLabel.addStyleName(style.firstHeadStyle());
 		
-		/**
-		 * CREAR IDs PARA TEST
-		 */
-		
 		headLabel.ensureDebugId(var.toLowerCase());
 		
 		headPanel.add(headLabel);
 		
-		if (this.blockVariableList.contains(var)){
+		if (employeeEventsDraft.isCalendarVariable(var)){
 			Button calendarButton = new Button();
 			calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
 			calendarButton.addStyleName(style.calendarPosition());
@@ -552,7 +405,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				}
 			});
 			
-			if (this.blockVariableList.contains(var)){
+			if (employeeEventsDraft.isCalendarVariable(var)){
 				eventCell.setBlockVariableStyle();
 				eventCell.setEnabled(false);
 			}else{
@@ -582,18 +435,11 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 				continue;
 			}
 			
-			if (this.employeeEventsDraft.hasChanged(var, varMonth))
-				eventCell.setOnChangeStyle();
-			else
-				eventCell.removeOnChangeStyle();
-			
 			eventCell.setTextBoxValue(varMonth.getValue().toString());
 			eventsGrid.setWidget(newRow, col, eventCell);
 			if (newRow % 2 != 1)
 				eventsGrid.getWidget(newRow, col).addStyleName(style.bgcWhite());
 			actualMonth++;
-			
-//			Window.alert("Text Box Value :"+eventCell.getTextBox().getText());
 		}
 		
 		if(list.contains(var))
@@ -602,6 +448,8 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			eventsGrid.getRowFormatter().removeStyleName(newRow, style.ocultarFila());
 		
 	}
+    
+ // ---------------------------- AUX METHODS
     
     private Integer calculateRowByVariableName(String var) {
     	return variablesRow.get(var);
@@ -613,62 +461,137 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			return false;
 		
 		String variableName = element.getInnerText();
-		return this.blockVariableList.contains(variableName);
+		return employeeEventsDraft.isCalendarVariable(variableName);
 	}
-	
-	private void openNewValueDialog(){
-		int row = calculateRow(selectedPositions.getSelectedList().get(0));
-		String variableName = eventsGrid.getWidget(row, 0).getElement().getInnerText();
-		
-		EmployeeInputDialog inputDialog = new EmployeeInputDialog(){
+
+	private void initUndoAllDialog() {
+		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF")+"RESTAURAR INCIDENCIAS con los valores de la " + String.valueOf("\u00FA") + "ltima versi" + String.valueOf("\u00F3") + "n guardada?") {
 			@Override
 			protected void onAccept() {
-				// TODO Auto-generated method stub	
-				String value = this.getValue();
-				setNewValue(Double.parseDouble(value));
+				clearEventsGrid();
+				Integer actualYear = new Date().getYear();
+				employeeEventsDraft.initializeDBEventsVariables(
+						actualYear,
+						r -> { 
+							fillCellsEvents();
+							saveButton.setEnabled(true);
+							undoAllButton.setEnabled(true);
+						},
+						t -> {});
 			}
 		};
-		inputDialog.setNameLabel(variableName+" : ");	
+		
+		dialog.center();
+		dialog.show();	
+	}
+	
+	private void openNewValueDialog(String variableName){
+		if(null == variableName)
+			variableName = "Nuevo valor";
+		
+		ArrayList<String> filterVariables = getVariablesWithOutContract();
+		
+		EmployeeInputDialog inputDialog = new EmployeeInputDialog(
+				variableName, 
+				employeeEventsDraft.getContractStartDate(),
+				employeeEventsDraft.getContractEndDate(),
+				filterVariables,
+				null){
+			@Override
+			protected void onAccept() {
+				Date startDate = getStartDate();
+				Date endDate = getEndDate();
+				String value = getValue();
+				String variable = getVariableName();
+				
+//				Window.alert("startDate : " + startDate + " endDate : " + endDate + " -> " + variable + " = " + value);
+				
+				addEventVar(variable, value, startDate, endDate);
+			}
+		};
+		
 		inputDialog.show();
 		inputDialog.center();
-		inputDialog.setFocusOnValueTextBox(true);
 	}
 	
-	protected void setNewValue(Double value) {
-		addValueSelectedPositions(value);
-		eraseSelectedPositions();
-		changeYear(0);	
+	private void addEventVar(String variable, String value, Date startDate, Date endDate) {
+		employeeEventsDraft.setValueByMonth(variable, value, startDate, endDate);
+		changeYear(0);
+		saveButton.setEnabled(true);
+		undoAllButton.setEnabled(true);
 	}
 	
-	private void addValueSelectedPositions(Double newValue) {
-		ArrayList<Integer> months = new ArrayList<Integer>();
+	private ArrayList<String> getVariablesWithOutContract() {
+		ArrayList<String> result = new ArrayList<String>();
+		
+		ArrayList<String> allEmployeeVariables = employeeEventsDraft.getEmployeeContractVariables();
+		ArrayList<String> calendarVariables = employeeEventsDraft.getCalendarVariables();
+		
+		for(String var : allEmployeeVariables) {
+			if(calendarVariables.contains(var))
+				continue;
+			result.add(var);
+		}
+		
+		return result;
+	}
+	
+	private void addValueSelectedPositions(Double valueD) {
 		int variableRow = calculateRow(selectedPositions.getSelectedList().get(0));
-		String variableName = eventsGrid.getWidget(variableRow, 0).getElement().getInnerText();
+		String variable = eventsGrid.getWidget(variableRow, 0).getElement().getInnerText();
+		
 		Integer actualYear = Integer.parseInt(yearLabel.getText()) - 1900;
 		
-		for (Integer position : selectedPositions.getSelectedList()){
-			int col = calculateCol(position);
-			Integer month = calculateMonthByColumn(col);
-			
-			months.add(month);
-		}
-
-		this.employeeEventsDraft.setValueByMonths(variableName, months, newValue, actualYear);
+		int colStart = calculateCol(selectedPositions.getSelectedList().get(0));
+		Integer monthStart = calculateMonthByColumn(colStart);
 		
+		int colEnd = calculateCol(selectedPositions.getSelectedList().get(selectedPositions.getSelectedList().size() - 1));
+		Integer monthEnd = calculateMonthByColumn(colEnd);
+		
+		Date startDate = new Date(actualYear, monthStart, 1);
+		DateUtils.resetTime(startDate);
+		
+		Date endDateAux = new Date(actualYear, monthEnd, 1);
+		Date endDate = DateUtils.getLastDayOfMonth(endDateAux);
+		DateUtils.resetTime(endDate);
+		
+		String value = null;
+		if(null != valueD)
+			value = valueD.toString();
+		
+		addEventVar(variable, value, startDate, endDate);
 	}
 	
 	private Integer calculateMonthByColumn(int col) {
 		return col-1;
 	}
 
-	private void changeYear(int change) {
-		int actualYear = Integer.parseInt(yearLabel.getText());
-		int newYear = actualYear + change;
-		yearLabel.setText(Integer.toString(newYear));
-		clearEventsGrid();
-		fillCellsEvents();
-		newValueButton.setEnabled(false);
-		addNewValueMenuItem.setEnabled(false);
+	private void changeYear(int changeYear) {
+		this.year += changeYear;
+		
+		Date endOfNewYear = new Date(this.year, 11, 31);
+		
+		if(isOutOfContractView(endOfNewYear)) {
+			this.year -= changeYear;
+		} else {
+			this.yearLabel.setText((year + 1900)+"");
+			
+			int actualYear = new Date().getYear();
+			
+			if(actualYear - year == 1) {
+				lastYearButton.setEnabled(false);
+				nextYearButton.setEnabled(true);
+			}else if (actualYear - year == -1) {
+				lastYearButton.setEnabled(true);
+				nextYearButton.setEnabled(false);
+			} else {
+				lastYearButton.setEnabled(true);
+				nextYearButton.setEnabled(true);
+			}
+			
+			clearEventsGrid();
+			fillCellsEvents();
+		}
 	}
 	
 	private void selectPosition(int row, int col) {
@@ -705,6 +628,15 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		return position / eventsGrid.getCellCount(0);
 	}
 	
+	private boolean isOutOfContractView(Date date) {
+		Date newEndDate = this.employeeEventsDraft.getContractEndDate();
+		if(null == newEndDate) {
+			Integer nextYear = new Date().getYear() + 1;
+			newEndDate = new Date(nextYear, 11, 31);
+		}
+		return (date.before(this.employeeEventsDraft.getContractStartDate()) && date.getYear() !=  this.employeeEventsDraft.getContractStartDate().getYear()) || 
+				(date.after(newEndDate) && date.getYear() != newEndDate.getYear());
+	}
 	/**
 	 * METODO PARA GESTIONAR BOTON DERECHO RATON
 	 */
@@ -719,7 +651,7 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			menu.addItem("A"+String.valueOf("\u00f1")+"adir nuevo valor", new Command() {
 				@Override
 				public void execute() {
-					openNewValueDialog();
+					openNewValueDialog(null);
 				}
 			});
 			
@@ -727,10 +659,55 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 		    menu.show();
 		}
 	}
+
+	// ---------------------------- SHOW / HIDE VARIABLES
 	
-	/**
-	 * GETTER Y SETTER LOCAL STORAGE 
-	 */
+	private void createEmployeeCheckBoxDialog() {
+		EmployeeCheckBoxDialog checkBoxDialog = new EmployeeCheckBoxDialog(){
+			@Override
+			protected void onAccept() {
+				ArrayList<String> variablesLocalStore = new ArrayList<String>();
+				
+				for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+					 
+					CheckBox check = showVariablesMap.get(var);
+					 Integer row = calculateRowByVariableName(var);
+					 UIObject.ensureDebugId(eventsGrid.getRowFormatter().getElement(row), "row_"+row);
+					 
+					 if(check.isChecked())
+						 eventsGrid.getRowFormatter().removeStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
+					 else{
+						 eventsGrid.getRowFormatter().addStyleName(row, EmployeeEventsDraft.this.style.ocultarFila());
+						 variablesLocalStore.add(var);
+					 }
+				}
+				
+				setVariablesLocalStorage(variablesLocalStore);	
+			}
+		};
+		
+		createShowVariablesDialog(checkBoxDialog);
+		checkBoxDialog.show();
+		checkBoxDialog.center();
+	}
+
+	private void createShowVariablesDialog(EmployeeCheckBoxDialog checkBoxDialog) {
+		ArrayList<String> list = getVariablesLocalStorage();
+		
+		for(String var : employeeEventsDraft.getEmployeeContractVariables()){
+			CheckBox checkBox = new CheckBox();
+			
+			if(list.contains(var))
+				checkBox.setChecked(false);
+			else
+				checkBox.setChecked(true);
+			
+			showVariablesMap.put(var, checkBox);
+			checkBoxDialog.addNewCheckBox(var, checkBox);
+		}
+	}
+	
+	// ---------------------------- LOCAL STORAGE
 	
 	protected ArrayList<String> getVariablesLocalStorage() {
 		ArrayList<String> list = new ArrayList<String>();
@@ -763,7 +740,5 @@ public class EmployeeEventsDraft extends Composite implements ContextMenuHandler
 			storage.setItem("NO_MOSTRAR", noShowVar);
 		}
 	}
-
-
-
+	
 }
