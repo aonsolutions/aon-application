@@ -25,8 +25,9 @@ public class BOEPyGPYMESScript extends BalanceScript {
 		 ,CEA008(1,LEAF  , "8." ,"Amortización del inmovilizado.","sap({68})",null)
 		 ,CEA009(1,LEAF  , "9." ,"Imputación de subvenciones de inmovilizado no financiero y otras.","sap({746})",null)
 		 ,CEA010(1,LEAF  ,"10." ,"Excesos de provisiones.","sap({7951,7952,7955,7956})",null)
-		 ,CEA011(1,LEAF  ,"11." ,"Deterioro y resultado por enajenaciones del inmovilizado.","sap({670,671,672,690,691,692,770,771,772,778,790,791,792})-sdp({678})",null)
-		 ,CEA   (0,TOTAL0,"A)"  ,"RESULTADO DE EXPLOTACIÓN (1+2+3+4+5+6+7+8+9+10+11)",null,"CEA001+CEA002+CEA003+CEA004+CEA005+CEA006+CEA007+CEA008+CEA009+CEA010+CEA011")
+		 ,CEA011(1,LEAF  ,"11." ,"Deterioro y resultado por enajenaciones del inmovilizado.","sap({670,671,672,690,691,692,770,771,772,790,791,792})",null)
+		 ,CEA012(1,LEAF  ,"12." ,"Otros Resultados.","sap({778})-sdp({678})",null)
+		 ,CEA   (0,TOTAL0,"A)"  ,"RESULTADO DE EXPLOTACIÓN (1+2+3+4+5+6+7+8+9+10+11)",null,"CEA001+CEA002+CEA003+CEA004+CEA005+CEA006+CEA007+CEA008+CEA009+CEA010+CEA011+CEA012")
 		 
 		 ,CEB012(1,LEAF  ,"12." ,"Ingresos financieros.","sap({760,761,762,767,769})",null)
 		 ,CEB013(1,LEAF  ,"13." ,"Gastos financieros.","sap({660,661,662,664,665,669})",null)
