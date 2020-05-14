@@ -634,7 +634,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				
 				mergeEditor.setText(result.getSalaryBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix  + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
 				
