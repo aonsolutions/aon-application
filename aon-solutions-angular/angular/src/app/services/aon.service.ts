@@ -43,6 +43,18 @@ export class AonService {
     }
   }
 
+  getManifest() : Observable<any> {
+    return Observable.create((observer: Observer<Invoice>) => {
+      Request.request('GET', '/ms/api/manifest', undefined, undefined)
+      .subscribe(result => {
+        observer.next(result);
+        observer.complete();
+      }, error => {
+        observer.error(error);
+      });
+    });
+  }
+
   // Invoice
   getInvoice(id: number) : Observable<Invoice> {
     return Observable.create((observer: Observer<Invoice>) => {

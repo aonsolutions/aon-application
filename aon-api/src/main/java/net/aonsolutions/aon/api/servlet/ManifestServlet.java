@@ -1,0 +1,58 @@
+package net.aonsolutions.aon.api.servlet;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "ManifestServlet", urlPatterns = {"/ms/api/manifest/*"})
+public class ManifestServlet extends HttpServlet{
+		
+	private static final Logger LOGGER  = Logger.getLogger(ManifestServlet.class.getName());
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+		LOGGER.info("AON API INVOICE SERVLET - GET METHOD");
+		try {
+			InputStream in = this.getServletContext().getResourceAsStream("META-INF/MANIFEST.MF");
+			
+			Manifest m = new Manifest(in);
+			Attributes attrs = m.getMainAttributes();
+
+			String buildDate = StringUtils.trimToNull( attrs.getValue("buildDate") );
+
+		
+			System.out.println(buildDate);
+		
+			JSONObject json = new JSONObject();
+			json.put("build_date", buildDate);
+			Utils.addCorsHeader(resp);
+			Utils.giveBack(req, resp, json, new JSONObject());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		LOGGER.info("AON API INVOICE SERVLET - POST METHOD");
+	}
+	
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		LOGGER.info("AON API INVOICE SERVLET - DELETE METHOD");
+	}
+	
+
+}

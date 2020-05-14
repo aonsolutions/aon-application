@@ -22,6 +22,7 @@ export class AonLoginComponent implements OnInit {
   matcher = new MyErrorStateMatcher();
   isError = false;
   errorMsg = ' ';
+  buildDate: string;
 
   @ViewChild('email', {static: false}) public email: any;
   @ViewChild('password', {static: false}) public password: any;
@@ -33,7 +34,11 @@ export class AonLoginComponent implements OnInit {
   constructor(public service: SharedService, public aonService : AonService,
       public dialog: MatDialog) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.aonService.getManifest().subscribe(r => {
+      this.buildDate = r.build_date;
+    });
+  }
 
   public login(email: string, password: string): void {
     this.service.loading = true;
@@ -70,6 +75,7 @@ export class AonLoginComponent implements OnInit {
       }
     );
   }
+
   public forgotPassword(): void {
 
   }
