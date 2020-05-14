@@ -30,7 +30,7 @@ public class FinancePrinter {
 		} else {
 			buf.appendEscaped("????????? ");
 		}
-		buf.appendEscaped(AonStringUtils.rightPad(AonStringUtils.abbreviate(finance.getRegistryName(),19),20));
+		buf.appendEscaped(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(finance.getRegistryName()),19),20));
 		buf.appendEscaped(AonStringUtils.SPACE);
 		String concept = finance.getConcept(); 
 		if (finance.getInvoice() != null) {

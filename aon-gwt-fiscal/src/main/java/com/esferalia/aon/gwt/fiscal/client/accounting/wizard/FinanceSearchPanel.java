@@ -222,6 +222,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		order = new ListBox();
 		order.setWidth("150px");
 		order.addItem("Fecha vencimiento");
+		order.addItem("Fecha vencimiento, descendente");
 		order.addItem("Nombre titular");
 		order.addItem("Importe");
 		order.addItem("Forma de pago");

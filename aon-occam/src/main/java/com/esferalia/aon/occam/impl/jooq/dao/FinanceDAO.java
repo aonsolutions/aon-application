@@ -42,7 +42,6 @@ import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO.AccountEntryOrder;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
 import com.esferalia.aon.watson.AonError;
@@ -85,11 +84,12 @@ public class FinanceDAO {
 	// ---------------------------------------------------------- ORDER
 	public static enum FinanceOrder {
 		 DUE_DATE ( FINANCE.DUE_DATE.asc(),FINANCE.ID.asc())
+		,DUE_DATE_DESC ( FINANCE.DUE_DATE.desc(),FINANCE.ID.asc())
 		,REGISTRY_NAME( REGISTRY.NAME.asc() )
 		,AMOUNT( FINANCE.AMOUNT.asc() )
 		,PAYMETHOD( PAY_METHOD.NAME.asc() )
-		,CREATION_DATE ( FINANCE.ID.asc() )
-		,CREATION_DATE_DESC ( FINANCE.ID.desc())
+		,CREATION_DATE ( FINANCE.CREATION_DATE.asc(),FINANCE.ID.asc())
+		,CREATION_DATE_DESC ( FINANCE.CREATION_DATE.desc(),FINANCE.ID.desc())
 		,ORDER_MODIFICATION_DATE_DESC ( FINANCE.MODIFICATION_DATE.desc(),FINANCE.CREATION_DATE.desc())
 		;
 		private SortField<?>[] fields;
@@ -102,7 +102,7 @@ public class FinanceDAO {
 		}
 		
 		public static FinanceOrder safeEnum(int order) {
-			if (order < 0 || order > AccountEntryOrder.values().length) {
+			if (order < 0 || order > FinanceOrder.values().length) {
 				return DUE_DATE;
 			}
 			return FinanceOrder.values()[order];
