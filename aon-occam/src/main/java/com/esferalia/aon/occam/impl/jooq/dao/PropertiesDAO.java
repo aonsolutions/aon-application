@@ -996,6 +996,9 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.E_INVOICE);}
  		@Override public Property<Integer> getDomainParentProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.PARENT);}
+
+		@Override public Property<Integer> getScopeIdProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.ID);}
+		@Override public Property<String> getScopeDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DESCRIPTION);}
 	}
 	
 	protected static class DataResponsePropertiesDAO implements DataResponseProperties{

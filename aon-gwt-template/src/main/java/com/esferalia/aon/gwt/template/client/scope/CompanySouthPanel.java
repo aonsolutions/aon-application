@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -48,7 +49,9 @@ public class CompanySouthPanel extends SouthPanel {
     	pi.setStyle("min-height:24px;font-size:12px;padding:0px;");
     	
     	IronIcon removeIcon = new IronIcon();
+    	removeIcon.setTitle("Borrar");
     	removeIcon.setIcon("remove");
+    	removeIcon.getElement().getStyle().setCursor(Cursor.POINTER);
     	removeIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	removeIcon.getElement().getStyle().setPosition(Position.ABSOLUTE);
     	removeIcon.getElement().getStyle().setRight(28, Unit.PX);
@@ -97,6 +100,7 @@ public class CompanySouthPanel extends SouthPanel {
     public PaperIconButton nuevoItem(JsObject o) {
     	PaperIconButton newIcon = new PaperIconButton();
     	newIcon.setIcon("add");
+    	newIcon.setTitle("A\u00f1adir");
     	newIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	newIcon.getElement().getStyle().setPosition(Position.ABSOLUTE);
     	newIcon.getElement().getStyle().setRight(20, Unit.PX);

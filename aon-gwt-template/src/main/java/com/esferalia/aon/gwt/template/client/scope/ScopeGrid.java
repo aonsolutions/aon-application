@@ -271,7 +271,7 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 			}
 		});
 		dataGrid.getColumnSortList().push(nameColumn);
-		dataGrid.addColumn(nameColumn, "Razon Social");
+		dataGrid.addColumn(nameColumn, "Raz\u00f3n Social");
 		dataGrid.setColumnWidth(nameColumn, 15, Unit.PCT);
 
 		/** Document Column **/
@@ -315,7 +315,7 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 			}
 		});
 		dataGrid.getColumnSortList().push(scopeColumn);
-		dataGrid.addColumn(scopeColumn, "Ambito");
+		dataGrid.addColumn(scopeColumn, "\u00c1mbito");
 		dataGrid.setColumnWidth(scopeColumn, 15, Unit.PCT);
 		
 

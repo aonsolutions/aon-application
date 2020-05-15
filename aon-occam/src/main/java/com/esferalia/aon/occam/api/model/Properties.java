@@ -848,7 +848,9 @@ public interface Properties {
 		Property<Byte> getSurchargeProperty();
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getVatAccrualPaymentProperty();
-		Property<Byte> getEInvoiceProperty();	
+		Property<Byte> getEInvoiceProperty();
+		Property<Integer> getScopeIdProperty();
+		Property<String> getScopeDescriptionProperty();	
 	}
 	
 	public interface PersonProperties extends RegistryProperties{

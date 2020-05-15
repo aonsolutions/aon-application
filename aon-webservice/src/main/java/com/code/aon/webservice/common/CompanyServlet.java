@@ -145,7 +145,8 @@ public class CompanyServlet extends HttpServlet{
 
 		if(filterMap.containsKey("description")){
     		String description = filterMap.get("description")[0];
-    		filter = filter.and(f.getNameProperty().like("%"+ description + "%").or(f.getDocumentProperty().like("%" + description + "%")));
+    		filter = filter.and(f.getNameProperty().like("%"+ description + "%").or(f.getDocumentProperty().like("%" + description + "%"))
+    				.or(f.getScopeDescriptionProperty().like("%" + description + "%")));
 		}
 		
 		if(filterMap.containsKey("per_page")){

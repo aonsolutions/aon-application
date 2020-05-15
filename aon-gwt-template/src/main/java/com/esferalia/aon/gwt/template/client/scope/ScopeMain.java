@@ -75,8 +75,7 @@ public class ScopeMain extends AonTemplate2{
 	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("\u00c1mbitos") {};
-	
+		Toolbar toolbar = new Toolbar("Gesti\u00f3n de Seguridad") {};
 		setToolbar(toolbar);
 	}
 	
