@@ -1,0 +1,14 @@
+.git
+*/pom.xml
+*/Dockerfile
+*/temp*
+*/angular*
+*/src/test*
+*/src/main/java*
+*/src/main/resources*
+*/target/*
+!*/target/*.war
+!pool/target/*SNAPSHOT.jar
+!aon-jaas/target/*SNAPSHOT.jar
+!aon-common-resources/target/*SNAPSHOT-templates.jar
+
