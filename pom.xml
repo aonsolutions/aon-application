@@ -195,9 +195,13 @@
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
 		
+		<!-- API -->
+		<module>aon-api</module>
+		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>
 		<module>aon-micro-services</module>
+		<module>aon-solutions-angular</module>
 
 
 		<module>aon-tedi</module>
