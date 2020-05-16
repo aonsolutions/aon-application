@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='aon_gwt_payroll' >
+	
+	<inherits name='net.aonsolutions.gwt.pdfjs.PdfJs'/>
+	<inherits name='com.esferalia.aon.js.payroll.Payroll'/>
+
+	<!-- 
+	CodeMirror 
+	-->
+	<inherits name='com.esferalia.aon.gwt.codemirror.CodeMirror'/>
+	<!-- 
+	Chart Tools 
+	-->
+	<inherits name='com.google.gwt.visualization.Visualization'/>
+	<inherits name='com.esferalia.aon.gwt.visualization.Visualization'/>
+		
+	<source path='client' />
+	<source path='shared' />
+
+</module>

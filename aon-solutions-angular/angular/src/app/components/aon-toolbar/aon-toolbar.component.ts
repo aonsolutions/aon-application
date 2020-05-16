@@ -30,6 +30,10 @@ export class AonToolbarComponent implements OnInit {
     return this.service.getCompanyName();
   }
 
+  payroll(): void {
+    GwtLoader.startModule('aon_gwt_aio', 'employees');
+  }
+
   callcenter() :void {
     GwtLoader.startModule('aon_gwt_aio', 'issues');
   }

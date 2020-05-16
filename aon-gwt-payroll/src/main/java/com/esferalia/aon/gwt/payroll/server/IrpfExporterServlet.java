@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.annotation.WebServlet;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
@@ -28,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfRegularization;
 import com.esferalia.aon.gwt.payroll.shared.Irpf.IrpfResult;
 
 @SuppressWarnings("serial")
+@WebServlet(name = "IrpfExporterServlet", urlPatterns = { "/aon_gwt_payroll/irpf/*"})
 public class IrpfExporterServlet extends HttpServlet {
 
 	private static Map<String, OutputFormat> OUTPUT_FORMATS = new HashMap<String, OutputFormat>() {

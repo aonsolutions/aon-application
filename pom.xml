@@ -181,6 +181,9 @@
 		<module>aon-gwt-commercial</module>
 		<module>aon-gwt-communication</module>
 
+		<!-- API -->
+		<module>aon-api</module>
+
 		<!-- GENERATED -->
 		<module>aon-pms-api</module>
 		<module>aon-sepe-api</module>
@@ -195,8 +198,6 @@
 		<module>aon-facturae</module>
 		<module>aon-stat</module>
 		
-		<!-- API -->
-		<module>aon-api</module>
 		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>

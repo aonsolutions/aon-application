@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -41,6 +43,7 @@ import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
+@WebServlet(name = "SalaryExporterServlet", urlPatterns = { "/aon_gwt_payroll/salary/*"})
 public class SalaryExporterServlet extends HttpServlet {
 	
 	

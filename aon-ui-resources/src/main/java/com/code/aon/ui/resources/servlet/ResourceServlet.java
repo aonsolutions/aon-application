@@ -6,6 +6,7 @@ import java.io.InputStream;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,7 +26,7 @@ import com.code.aon.faces.component.util.DownloadUtil;
  * @author Consulting & Development. Aimar Tellitu - 22-abril-2007
  * @since 1.0
  */
-
+@WebServlet(name = "ResourceServlet", urlPatterns = { "/aonResource/*"})
 public class ResourceServlet extends HttpServlet {
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;

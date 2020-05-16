@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.commit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
@@ -56,6 +57,8 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
+
+import javax.servlet.annotation.WebServlet;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
@@ -244,6 +247,13 @@ import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
  * The server side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
+@WebServlet(name = "EmployeesGWTServlet", 
+urlPatterns = { 
+		"/aon_gwt_aio/employees", 
+		"/aon_gwt_aio/agreement",
+		"/aon_gwt_payroll/employees", 
+		"/aon_gwt_payroll/agreement" 
+		})
 public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		EmployeesService, StatisticsService, CalendarService, EmployeeEventsService {
 

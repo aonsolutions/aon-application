@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
 import org.json.JSONArray;
@@ -51,6 +53,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+@WebServlet(name = "ShareServlet", urlPatterns = { "/aon_gwt_payroll/share" })
 public class ShareServlet extends HttpServlet implements ShareService {
 
 	private static Locale ES = new Locale("es");

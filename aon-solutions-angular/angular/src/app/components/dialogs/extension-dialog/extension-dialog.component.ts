@@ -91,7 +91,7 @@ export class ExtensionDialogComponent {
     } else if('fiscal' === app) {
 
     } else if('payroll' === app) {
-
+		GwtLoader.startModule('aon_gwt_aio', 'employees');
     } else if('ocr' === app) {
 
     } else if('selfconta' === app) {

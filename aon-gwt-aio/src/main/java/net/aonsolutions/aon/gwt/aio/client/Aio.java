@@ -8,9 +8,12 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
+import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
 import com.esferalia.aon.gwt.stat.client.MainEntryPoint;
 import com.esferalia.aon.gwt.template.client.Templates;
 import com.esferalia.aon.gwt.template.client.scope.ScopeMain;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -98,6 +101,7 @@ public class Aio implements EntryPoint {
 	}
 	
 	private void selection(String entryPoint, AonData aonData) {
+		export2JS(aonData);
 		switch (entryPoint) {
 		case Modules.ISSUES:
 			GWT.runAsync(Issues.class, new RunAsyncCallback() {
@@ -287,8 +291,49 @@ public class Aio implements EntryPoint {
 				}
 			});		
 			break;
+		case Modules.EMPLOYEES:
+			GWT.runAsync(EmployeeTree.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					
+					EmployeeTree employeeTree = new EmployeeTree();
+					employeeTree.onModuleLoad();
+				}
+			});		
+			break;
+			
 		default:
 			break;
 		}
 	}
+
+
+	
+	private static void export2JS(AonData aonData) {
+		export2JS(aonData.getUser());
+		export2JS(aonData.getDomain());
+	}
+//  getCurrentUser = function(){
+//  return '#{domainSwitcher.currentUser}';
+//  }
+	private static native void export2JS(User user) /*-{
+		$wnd.getCurrentUser = $entry(function() {
+			return user.@com.esferalia.aon.occam.api.model.security.User::getLogin()();
+		});
+	}-*/;
+//  getCurrentDomainNameURL = function(){
+//  return '#{domainSwitcher.currentDomainNameURL}';
+//  }
+	private static native void export2JS(Domain domain) /*-{
+		$wnd.getCurrentDomainNameURL = $entry(function() {
+			return domain.@com.esferalia.aon.occam.api.model.Domain::getName()();
+		});
+	}-*/;
+
 }

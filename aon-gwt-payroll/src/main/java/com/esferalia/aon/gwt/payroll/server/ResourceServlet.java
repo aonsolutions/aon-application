@@ -11,10 +11,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.annotation.WebServlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@WebServlet(
+		name = "ResourceGWTServlet", 
+		urlPatterns = { 
+				"/aon_gwt_aio/*", 
+				"/aon_gwt_payroll/*", 
+				"/aon_gwt_fiscal/*" 
+		})
 public class ResourceServlet extends HttpServlet {
 
 	// One year in milliseconds. (Actually, just short of on year, since

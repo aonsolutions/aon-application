@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.faces.event.AbortProcessingException;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
@@ -88,7 +87,7 @@ public class AgrarianAFIServlet extends HttpServlet {
 			response.flushBuffer();
 		
 		}catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

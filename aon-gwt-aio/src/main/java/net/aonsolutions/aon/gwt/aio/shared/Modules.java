@@ -16,4 +16,5 @@ public interface Modules {
 	public static final String COMMISSION = "commission_calculate";
 	public static final String DEPOSIT = "deposit";
 	public static final String SCOPE = "scope";
+	public static final String EMPLOYEES = "employees";
 }

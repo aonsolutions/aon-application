@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
@@ -93,6 +95,12 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
  * The server side implementation of the RPC service.
  */
 @SuppressWarnings("serial")
+@WebServlet(
+		name = "EnterprisesGWTServlet", 
+		urlPatterns = { 
+				"/aon_gwt_aio/enterprises",
+				"/aon_gwt_payroll/enterprises"
+		})
 public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		EnterprisesService {
 

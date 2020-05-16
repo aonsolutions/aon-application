@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.event.AbortProcessingException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +31,13 @@ import com.esferalia.aon.gwt.payroll.shared.ActivitySummaryObject;
 import net.aonsolutions.core.pool.AonConnectionException;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "ActivitySummaryExporter", urlPatterns = { "/aon_gwt_payroll/download_activitySummary/*" })
+@WebServlet(
+name = "ActivitySummaryExporter", 
+urlPatterns = { 
+		"/aon_gwt_aio/download_activitySummary/*" ,
+		"/aon_gwt_payroll/download_activitySummary/*" 
+}
+)
 public class ActivitySummaryExporterServlet extends HttpServlet {
 
 	private final static Logger LOGGER = LoggerFactory
@@ -99,13 +104,13 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 
 			response.flushBuffer();
 		} catch (SQLException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (ReportException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (IOException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		} catch (AonConnectionException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+			throw new IllegalArgumentException(e.getMessage(), e);
 		}
 	}
 

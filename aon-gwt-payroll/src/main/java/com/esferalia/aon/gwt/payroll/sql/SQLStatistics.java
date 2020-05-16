@@ -32,7 +32,7 @@ public class SQLStatistics {
 
 		try {
 
-			Locale locale = AonUtil.getCurrentLocale();
+			Locale locale = Locale.getDefault(); //AonUtil.getCurrentLocale();
 
 			for (int i = 0; i < 12; i++) {
 				// pStatistics.setMonthName(i,
@@ -258,7 +258,7 @@ public class SQLStatistics {
 
 		try {
 
-			Locale locale = AonUtil.getCurrentLocale();
+			Locale locale = Locale.getDefault(); //AonUtil.getCurrentLocale();
 
 			for (int i = 0; i < 12; i++) {
 				// pStatistics.setMonthName(i,

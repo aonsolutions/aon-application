@@ -36,6 +36,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.servlet.annotation.WebServlet;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.dao.CriteriaUtilities;
@@ -71,6 +73,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
+@WebServlet(name = "CalculateServlet", urlPatterns = { "/aon_gwt_payroll/calculate" })
 public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_PATTERN);
