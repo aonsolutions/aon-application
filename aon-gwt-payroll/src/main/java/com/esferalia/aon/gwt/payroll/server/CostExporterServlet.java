@@ -8,7 +8,13 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "CostExporterServlet", urlPatterns = { "/aon_gwt_payroll/cost/*" })
+@WebServlet(
+		name = "CostExporterServlet", 
+		urlPatterns = { 
+				"/aon_gwt_aio/cost/*" ,
+				"/aon_gwt_payroll/cost/*" 
+		}
+)
 public class CostExporterServlet extends SalaryExporterServlet {
 	
 	

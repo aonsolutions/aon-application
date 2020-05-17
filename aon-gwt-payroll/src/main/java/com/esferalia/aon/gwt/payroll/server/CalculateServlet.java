@@ -73,7 +73,13 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
-@WebServlet(name = "CalculateServlet", urlPatterns = { "/aon_gwt_payroll/calculate" })
+@WebServlet(
+		name = "CalculateServlet", 
+		urlPatterns = { 
+				"/aon_gwt_aio/calculate", 
+				"/aon_gwt_payroll/calculate" 
+		}
+)
 public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_PATTERN);

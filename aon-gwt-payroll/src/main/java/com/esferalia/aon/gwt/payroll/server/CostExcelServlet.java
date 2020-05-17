@@ -36,7 +36,13 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Cost-Excel", urlPatterns = { "/aon_gwt_payroll/cost_excel/*" })
+@WebServlet(
+		name = "Cost-Excel", 
+		urlPatterns = { 
+				"/aon_gwt_aio/cost_excel/*" ,
+				"/aon_gwt_payroll/cost_excel/*" 
+		}
+)
 public class CostExcelServlet extends HttpServlet {
 	
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");

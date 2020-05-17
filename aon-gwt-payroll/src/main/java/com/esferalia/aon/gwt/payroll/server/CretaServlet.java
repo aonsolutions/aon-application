@@ -94,7 +94,13 @@ import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
 
 @MultipartConfig
 @SuppressWarnings("serial")
-@WebServlet(name = "SLD-Solicitud", urlPatterns = { "/aon_gwt_payroll/sdl/*" })
+@WebServlet(
+		name = "SLD-Solicitud", 
+		urlPatterns = { 
+				"/aon_gwt_aio/sdl/*" ,
+				"/aon_gwt_payroll/sdl/*" 
+		}
+)
 public class CretaServlet extends HttpServlet
 		implements CretaService.File.Visitor<HttpServletRequest, HttpServletResponse, Exception> {
 

@@ -89,7 +89,7 @@ public class StatelessReportManager extends ReportManager {
 			return out;
 		} catch (Throwable t) {
 			t.printStackTrace();
-			AonUtil.addFatalMessage("Report Error:" + t.getMessage());
+			//AonUtil.addFatalMessage("Report Error:" + t.getMessage());
 			if (t instanceof ReportException) {
 				throw (ReportException) t;
 			}

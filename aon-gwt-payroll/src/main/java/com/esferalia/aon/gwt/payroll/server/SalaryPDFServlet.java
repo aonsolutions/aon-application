@@ -30,7 +30,11 @@ import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.google.api.client.util.Base64;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Salary-PDF", urlPatterns = { "/aon_gwt_payroll/salary_exporter/*" })
+@WebServlet(name = "Salary-PDF", 
+	urlPatterns = { 
+			"/aon_gwt_aio/salary_exporter/*",
+			"/aon_gwt_payroll/salary_exporter/*" 
+	})
 public class SalaryPDFServlet extends HttpServlet {
 	
 	private static Map<String, OutputFormat> OUTPUT_FORMATS = 

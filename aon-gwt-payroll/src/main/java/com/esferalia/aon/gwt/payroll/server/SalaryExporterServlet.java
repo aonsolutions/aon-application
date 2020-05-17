@@ -43,7 +43,13 @@ import com.esferalia.aon.ui.payroll.utils.ReportUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "SalaryExporterServlet", urlPatterns = { "/aon_gwt_payroll/salary/*"})
+@WebServlet(
+		name = "SalaryExporterServlet", 
+		urlPatterns = { 
+				"/aon_gwt_aio/salary/*",
+				"/aon_gwt_payroll/salary/*"
+		}
+)
 public class SalaryExporterServlet extends HttpServlet {
 	
 	
