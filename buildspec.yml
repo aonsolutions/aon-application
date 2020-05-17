@@ -114,6 +114,7 @@ artifacts:
   files:
     - snapshotimgdef.json
     - snapshotservicesimgdef.json
+    - snapshotsolutionsimgdef.json
     # - location
   #name: $(date +%Y-%m-%d)
   #discard-paths: yes
