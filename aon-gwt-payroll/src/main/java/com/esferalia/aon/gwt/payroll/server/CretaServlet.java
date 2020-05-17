@@ -150,7 +150,7 @@ public class CretaServlet extends HttpServlet
 	
 			List<String> defaultsList = new ArrayList<String>();
 			//defaultsList.addAll(Arrays.asList("51=M", "737=0", "54=1"));
-			defaultsList.addAll(Arrays.asList("51=M", "54=1", "737=0"));
+			defaultsList.addAll(Arrays.asList("51=M", "54=1" ));
 	
 			String paramDefaults[] = req.getParameterValues(CretaService.Parameter.DEFAULTS.name());
 			if (paramDefaults != null && paramDefaults.length > 0)
