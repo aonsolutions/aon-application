@@ -71,9 +71,11 @@ phases:
       - docker build --no-cache -t aonsolutions/aon-application:latest .
       # - docker build --no-cache -t aonsolutions/aon-db-up2date:latest ./aon-db-up2date
       - docker build --no-cache -t aonsolutions/aon-micro-services:latest -f ./aon-micro-services/Dockerfile .
+      - docker build --no-cache -t aonsolutions/aon-solutions:latest -f ./aon-solutions-angular/Dockerfile .
       - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:latest
       - docker tag aonsolutions/aon-application:latest $REPOSITORY_URI/aon-application:latest
       - docker tag aonsolutions/aon-micro-services:latest $REPOSITORY_URI/aon-micro-services:latest
+      - docker tag aonsolutions/aon-solutions:latest $REPOSITORY_URI/aon-solutions:latest
       # - command
   post_build:
     commands:
@@ -101,6 +103,11 @@ phases:
         {"name":"SNAPSH0T-SERVICES","imageUri":"%s/aon-micro-services:latest"}
         ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotservicesimgdef.json
       - cat snapshotservicesimgdef.json
+      - |
+        printf '[
+        {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:latest"}
+        ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotsolutionsimgdef.json
+      - cat snapshotsolutionsimgdef.json
       # - command
       # - command
 artifacts:
