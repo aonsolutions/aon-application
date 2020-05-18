@@ -303,6 +303,8 @@ public class ContractListController extends BasicController implements BatchList
 			ArrayList<String> names = new ArrayList<String>();
 			names.add(ContextVariable.ERE_FACTOR.getName());
 			names.add("COEFICIENTE_ERE_FZA_EXONERADO");
+			names.add("COEF_ERE_FZA_EXON_PARCIAL");
+			names.add("FIN_ERE_FZA_EXONERADO");
 			
 			Criteria criteria = new Criteria();
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
