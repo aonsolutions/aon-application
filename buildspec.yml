@@ -86,6 +86,7 @@ phases:
       # - docker push $REPOSITORY_URI/aon-application:test
       # - docker push $REPOSITORY_URI/aon-micro-services:test
       - docker push $REPOSITORY_URI/aon-db-up2date:latest
+      - docker push $REPOSITORY_URI/aon-solutions:latest
       - docker push $REPOSITORY_URI/aon-application:latest
       - docker push $REPOSITORY_URI/aon-micro-services:latest
       - |
