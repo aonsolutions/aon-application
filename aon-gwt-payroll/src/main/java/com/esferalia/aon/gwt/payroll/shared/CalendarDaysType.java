@@ -29,6 +29,9 @@ public class CalendarDaysType implements Serializable {
 		T visitEreDay(DayType dayType);
 		T visitEreFzaDay(DayType dayType);
 		T visitEreFzaExonDay(DayType dayType);
+		// ERE FZA EXON PARTIAL, ERE FZA EXON END
+		T visitEreFzaExonPartialDay(DayType dayType);
+		T visitEreFzaExonEndDay(DayType dayType);
 		// IT
 		T visitITDay(DayType dayType);
 		// Peonadas
@@ -100,6 +103,19 @@ public class CalendarDaysType implements Serializable {
 			@Override
 			public <T> T visit(DayTypeVisitor<T> visitor) {
 				return visitor.visitEreFzaExonDay(this);
+			}
+		},
+		// ERE FZA EXON PARTIAL, ERE FZA EXON END
+		EREFZAEXONPARTIALDAY {
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitEreFzaExonPartialDay(this);
+			}
+		},
+		EREFZAEXONENDDAY {
+			@Override
+			public <T> T visit(DayTypeVisitor<T> visitor) {
+				return visitor.visitEreFzaExonEndDay(this);
 			}
 		},
 		// IT
@@ -696,6 +712,8 @@ public class CalendarDaysType implements Serializable {
 		validDayTypes.add(DayType.EREDAY);
 		validDayTypes.add(DayType.EREFZADAY);
 		validDayTypes.add(DayType.EREFZAEXONDAY);
+		validDayTypes.add(DayType.EREFZAEXONPARTIALDAY);
+		validDayTypes.add(DayType.EREFZAEXONENDDAY);
 		validDayTypes.add(DayType.INACTIVITY);
 		validDayTypes.add(DayType.STRIKEDAY);
 		validDayTypes.add(DayType.DROPDAY);
@@ -710,6 +728,7 @@ public class CalendarDaysType implements Serializable {
 		validDayTypes.add(DayType.EREDAY);
 		validDayTypes.add(DayType.EREFZADAY);
 		validDayTypes.add(DayType.EREFZAEXONDAY);
+		validDayTypes.add(DayType.EREFZAEXONPARTIALDAY);
 		validDayTypes.add(DayType.STRIKEDAY);
 		validDayTypes.add(DayType.DROPDAY);
 		validDayTypes.add(DayType.PARTIALITY);

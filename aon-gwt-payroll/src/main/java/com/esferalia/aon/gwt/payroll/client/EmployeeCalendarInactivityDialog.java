@@ -19,6 +19,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -41,6 +42,12 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	
 	@UiField
 	HTMLPanel percentPanel;
+	
+	@UiField
+	HTMLPanel endERTEPanel;
+	
+	@UiField
+	CheckBox endERTECB;
 	
 	@UiField
 	HTMLPanel errorMessage;
@@ -69,6 +76,10 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		
 		errorMessage.getElement().getStyle().setDisplay(Display.NONE);
 		percentPanel.getElement().getStyle().setDisplay(Display.NONE);
+		endERTEPanel.getElement().getStyle().setDisplay(Display.NONE);
+		
+		// Set default value
+		endERTECB.setValue(false);
 		
 		typeInactivity.clear();
 		typeInactivity.addItem("Excedencia");
@@ -78,6 +89,7 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		typeInactivity.addItem("ERE");
 		typeInactivity.addItem("ERE Fuerza mayor");
 		typeInactivity.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+		typeInactivity.addItem("ERE Fuerza mayor Parcial (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
 		
 		if(!selectedDates.isEmpty()) {
 			selectedDates.sort(null);
@@ -157,6 +169,11 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 					acceptButton.setEnabled(false);
 				}
 				
+				if(selectedIdx == 6 || selectedIdx == 7) {
+					endERTEPanel.getElement().getStyle().clearDisplay();
+				} else
+					endERTEPanel.getElement().getStyle().setDisplay(Display.NONE);
+				
 			}
 		});
 	}
@@ -219,6 +236,10 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 	
 	public String getTypeInactivity() {
 		return typeInactivity.getSelectedItemText();
+	}
+	
+	public Boolean isEndERTE() {
+		return endERTECB.getValue();
 	}
 
 }

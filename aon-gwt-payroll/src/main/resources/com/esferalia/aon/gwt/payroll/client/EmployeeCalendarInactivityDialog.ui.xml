@@ -99,6 +99,10 @@
 					<g:TextBox ui:field="percentBox" styleName="{style.percentTBx}"></g:TextBox>
 					<g:Label styleName="{style.percent}" >%</g:Label>
 				</g:HTMLPanel>
+				
+				<g:HTMLPanel ui:field="endERTEPanel" styleName="{style.rowPanel}">
+					<g:CheckBox ui:field="endERTECB">La fecha fin de este tramo sera el fin de los ERTEs totales o parciales</g:CheckBox>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 	
 			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.errorPanel}">

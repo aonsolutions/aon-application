@@ -129,6 +129,20 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					return null;
 				}
 				
+				@Override
+				public Void visitEreFzaExonPartialDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
+					calendarGrid.getWidget(row, col).addStyleName(style.ereFzaExonStyle());	
+					return null;
+				}
+				
+				@Override
+				public Void visitEreFzaExonEndDay(DayType dayType) {
+					calendarGrid.getWidget(row, col).addStyleName(style.dayTypeButton());
+					calendarGrid.getWidget(row, col).addStyleName(style.ereFzaExonStyle());	
+					return null;
+				}
+				
 				// IT
 				@Override
 				public Void visitITDay(DayType dayType) {
@@ -1061,6 +1075,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					addDayType(startDate, endDate, dayType, inactivityCause);
 				} else {
 					String coefficient = Double.toString(getPercentValue());
+					Boolean isEndERTE = isEndERTE();
 					switch (selectedTypeIdx) {
 						case 4:
 							addDayType(startDate, endDate, DayType.EREDAY, coefficient);
@@ -1069,7 +1084,26 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 							addDayType(startDate, endDate, DayType.EREFZADAY, coefficient);
 							break;
 						case 6:
+							if(isEndERTE) {
+								if(null != endDate) {
+									Date newDate = DateUtils.copyDateOnly(endDate);
+									DateUtils.addDays2Date(newDate, 1);
+									employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
+								}
+							}
+							
 							addDayType(startDate, endDate, DayType.EREFZAEXONDAY, coefficient);
+							break;
+						case 7:
+							if(isEndERTE) {
+								if(null != endDate) {
+									Date newDate = DateUtils.copyDateOnly(endDate);
+									DateUtils.addDays2Date(newDate, 1);
+									employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
+								}
+							}
+								
+							addDayType(startDate, endDate, DayType.EREFZAEXONPARTIALDAY, coefficient);
 							break;
 						default:
 							break;
@@ -1103,15 +1137,15 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					case 1:
 						addDayType(startDate, endDate, DayType.DROPDAY, coefficient);
 						break;
-					case 2:
-						addDayType(startDate, endDate, DayType.EREDAY, coefficient);
-						break;
-					case 3:
-						addDayType(startDate, endDate, DayType.EREFZADAY, coefficient);
-						break;
-					case 4:
-						addDayType(startDate, endDate, DayType.EREFZAEXONDAY, coefficient);
-						break;
+//					case 2:
+//						addDayType(startDate, endDate, DayType.EREDAY, coefficient);
+//						break;
+//					case 3:
+//						addDayType(startDate, endDate, DayType.EREFZADAY, coefficient);
+//						break;
+//					case 4:
+//						addDayType(startDate, endDate, DayType.EREFZAEXONDAY, coefficient);
+//						break;
 					default:
 						break;
 				}	
@@ -1352,6 +1386,16 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		// Si es un dia de ere fuerza mayor exoneracion de cuotas le ponemos el coeficiente
 		if(dayType == DayType.EREFZAEXONDAY) {
 			labelDay.setTitle("ERE FZA Exon, coeficiente : " + this.employeeCalendarDraftObject.getExpressionByDate(currentDay));
+		}
+		
+		// Si es un dia de ere fuerza mayor exoneracion de cuotas le ponemos el coeficiente
+		if(dayType == DayType.EREFZAEXONPARTIALDAY) {
+			labelDay.setTitle("ERE FZA Exon Parcial, coeficiente : " + this.employeeCalendarDraftObject.getExpressionByDate(currentDay));
+		}
+		
+		// Si es un dia de ere fuerza mayor exoneracion de cuotas le ponemos el coeficiente
+		if(dayType == DayType.EREFZAEXONENDDAY) {
+			labelDay.setTitle("ERE FZA Exon FIN");
 		}
 		
 		// Si es un dia festivo le anniadimos la descripcion del festivo

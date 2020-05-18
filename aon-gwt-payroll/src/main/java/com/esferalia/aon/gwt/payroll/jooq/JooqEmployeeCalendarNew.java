@@ -93,6 +93,8 @@ public class JooqEmployeeCalendarNew {
 		varNames.add(ContextVariable.STRIKE_FACTOR.getName());
 		varNames.add("COEFICIENTE_ERE_FZA");
 		varNames.add("COEFICIENTE_ERE_FZA_EXONERADO");
+		varNames.add("COEF_ERE_FZA_EXON_PARCIAL");
+		varNames.add("FIN_ERE_FZA_EXONERADO");
 		varNames.add("COEFICIENTE_AUSENCIA");
 		varNames.add("COEFICIENTE_PARCIALIDAD");
 		varNames.add("CAUSA_INACTIVIDAD");
@@ -510,6 +512,8 @@ public class JooqEmployeeCalendarNew {
 						,ContextVariable.STRIKE_FACTOR.getName()
 						,"COEFICIENTE_ERE_FZA"
 						,"COEFICIENTE_ERE_FZA_EXONERADO"
+						,"COEF_ERE_FZA_EXON_PARCIAL"
+						,"FIN_ERE_FZA_EXONERADO"
 						,"COEFICIENTE_AUSENCIA"
 						,"CAUSA_INACTIVIDAD"))
 				.fetch();
@@ -797,6 +801,8 @@ public class JooqEmployeeCalendarNew {
 					,ContextVariable.STRIKE_FACTOR.getName()
 					,"COEFICIENTE_ERE_FZA"
 					,"COEFICIENTE_ERE_FZA_EXONERADO"
+					,"COEF_ERE_FZA_EXON_PARCIAL"
+					,"FIN_ERE_FZA_EXONERADO"
 					,"COEFICIENTE_AUSENCIA"
 					,"DIAS_INACTIVIDAD"
 					,"CAUSA_INACTIVIDAD"
@@ -877,6 +883,8 @@ public class JooqEmployeeCalendarNew {
 			put(DayType.PARTIALITY, "COEFICIENTE_PARCIALIDAD");
 			put(DayType.EREFZADAY, "COEFICIENTE_ERE_FZA");
 			put(DayType.EREFZAEXONDAY, "COEFICIENTE_ERE_FZA_EXONERADO");
+			put(DayType.EREFZAEXONPARTIALDAY,"COEF_ERE_FZA_EXON_PARCIAL");
+			put(DayType.EREFZAEXONENDDAY,"FIN_ERE_FZA_EXONERADO");
 			put(DayType.FREEDAY, "DIAS_FESTIVOS");
 			put(DayType.WORKINGDAY, "LABORABLE");
 		}
@@ -898,6 +906,8 @@ public class JooqEmployeeCalendarNew {
 			put("COEFICIENTE_PARCIALIDAD", DayType.PARTIALITY);
 			put("COEFICIENTE_ERE_FZA", DayType.EREFZADAY);
 			put("COEFICIENTE_ERE_FZA_EXONERADO", DayType.EREFZAEXONDAY);
+			put("COEF_ERE_FZA_EXON_PARCIAL", DayType.EREFZAEXONPARTIALDAY);
+			put("FIN_ERE_FZA_EXONERADO", DayType.EREFZAEXONENDDAY);
 			put("DIAS_FESTIVOS", DayType.FREEDAY);
 			put("LABORABLE", DayType.WORKINGDAY);
 		}
@@ -925,27 +935,6 @@ public class JooqEmployeeCalendarNew {
 		}
 		
 		return values;
-	}
-	
-	private static String parseCoefficientName(String type) {
-		switch (type) {
-			case "COEFICIENTE_ERE":
-				return "DIAS_ERE";
-			case "COEFICIENTE_ERE_FZA":
-				return "DIAS_ERE_FZA";
-			case "COEFICIENTE_ERE_FZA_EXONERADO":
-				return "DIAS_ERE_FZA_EXONERADO";
-			case "COEFICIENTE_HUELGA":
-				return "DIAS_HUELGA";
-			case "COEFICIENTE_AUSENCIA":
-				return "DIAS_AUSENCIA";
-			case "COEFICIENTE_PARCIALIDAD":
-				return "DIAS_PARCIALIDAD";
-			case "CAUSA_INACTIVIDAD":
-				return "DIAS_INACTIVIDAD";
-			default:
-				return "CUIDADO";
-		}
 	}
 	
 	private static java.util.Date parseDateSqlToUtil(Date date) {
