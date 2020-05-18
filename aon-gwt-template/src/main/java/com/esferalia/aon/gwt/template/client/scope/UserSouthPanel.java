@@ -16,6 +16,8 @@ import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -27,8 +29,6 @@ import com.vaadin.polymer.iron.widget.IronIcon;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 import com.vaadin.polymer.paper.widget.PaperInput;
 import com.vaadin.polymer.paper.widget.PaperItem;
-import com.vaadin.polymer.paper.widget.event.ChangeEvent;
-import com.vaadin.polymer.paper.widget.event.ChangeEventHandler;
 
 
 public class UserSouthPanel extends SouthPanel {
@@ -129,25 +129,26 @@ public class UserSouthPanel extends SouthPanel {
 						
 						ScrollPanel sp = new ScrollPanel();
 						sp.setWidth("100%");
+						sp.setHeight("200px");
 						VerticalPanel vp = new VerticalPanel();
 						vp.setWidth("100%");
 
 						PaperInput pi = new PaperInput();
 						pi.setPlaceholder("Filtro");
-						pi.addChangeHandler(new ChangeEventHandler() {
+						pi.addDomHandler(new KeyUpHandler() {
 							
 							@Override
-							public void onChange(ChangeEvent event) {
+							public void onKeyUp(KeyUpEvent event) {
 								for (Integer i = 1; i < vp.getWidgetCount(); i++) {
 									PaperItem pitem = (PaperItem) vp.getWidget(i);
 									Label label = (Label) pitem.getWidget(1);
 									pitem.setVisible(label.getText().contains(pi.getValue()));
 								}
 							}
-						});
+						}, KeyUpEvent.getType());
 						vp.add(pi);
 						result.getData().stream().forEach(r-> {
-							if(!contains(r)) vp.add(buildPaperItem2(r, o));	
+							if(!contains(r)) vp.add(buildPaperItem2(r, o));
 						});
 						sp.add(vp);
 						AonDialog d= new AonDialog("Vincular \u00c1mbito", sp) {
