@@ -95,6 +95,11 @@ phases:
         && docker push $REPOSITORY_URI/aon-micro-services:hotfix \
         || echo $COMMIT_MESSAGE
       - |
+        [ "${COMMIT_MESSAGE#RELEASE}" != "${COMMIT_MESSAGE}" ] \
+        && docker tag aonsolutions/aon-micro-services:latest $REPOSITORY_URI/aon-micro-services:release \
+        && docker push $REPOSITORY_URI/aon-micro-services:release \
+        || echo $COMMIT_MESSAGE
+      - |
         printf '[
         {"name":"SNAPSH0T","imageUri":"%s/aon-application:latest"}
         ]' $REPOSITORY_URI $REPOSITORY_URI > snapshotimgdef.json
