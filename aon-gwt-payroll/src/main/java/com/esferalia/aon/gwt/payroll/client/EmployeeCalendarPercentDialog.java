@@ -67,9 +67,9 @@ public abstract class EmployeeCalendarPercentDialog extends CustomDialog {
 		typeDrop.clear();
 		typeDrop.addItem("Huelga");
 		typeDrop.addItem("Ausencia Injustificada");
-		typeDrop.addItem("ERE");
-		typeDrop.addItem("ERE Fuerza mayor");
-		typeDrop.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+//		typeDrop.addItem("ERE");
+//		typeDrop.addItem("ERE Fuerza mayor");
+//		typeDrop.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
 		
 		if(!selectedDates.isEmpty()) {
 			selectedDates.sort(null);
