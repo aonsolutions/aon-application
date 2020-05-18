@@ -535,32 +535,6 @@ public class AccountStatementDAO {
 				start = AonDateUtils.addMonths(start, 1);
 				start = AonDateUtils.getMonthFirstDay(start);
 			}
-			
-/*			
-			int toMonth = AonDateUtils.getMonth(end);
-			if (month > toMonth) {
-				toMonth += 11;
-			}
-			for (;month <= toMonth; month++) {
-				System.out.println( month);
-				if (month > 11) {
-					month = 0;
-					year = year + 1;
-				}
-				Date firstDay = AonDateUtils.getDate(year, month, 1);
-				Date lastDay = AonDateUtils.getMonthLastDay(firstDay);
-				DateInterval inter = new DateInterval()
-						.setStart(firstDay)
-						.setEnd(lastDay)
-						.setName(((month+1)<10?"0":"") + (month+1) +  "/" + year);
-				report.put(inter,new  AccountOperatingStatement()
-						.setAccount( new AccountOperatingAccount()
-								.setType( AccountOperatingStatementType.RESULT )
-								.setCode(AccountOperatingStatementType.RESULT.toString())
-								.setDescription(AccountOperatingStatementType.RESULT.getDescription()))
-							.setMonth( inter.getName() ));
-			}
-*/
 		}
 		if (report.showRatios()) {
 			calculateRatios(report);
@@ -597,13 +571,26 @@ public class AccountStatementDAO {
 				for (AccountOperatingAccount account : report.getAccounts() ) {
 					AccountOperatingStatement itm = report.get(account.getCode(), inter);
 					AccountOperatingStatement pre = report.get(account.getCode(), previous);
-					if (itm != null && pre != null) {
-//						double p = (pre!=null)?AonMathUtils.absRounded( pre.getDebitBalance() - pre.getUnpaidBalance()):0.0;
-//						double i = AonMathUtils.absRounded( itm.getDebitBalance() - itm.getUnpaidBalance());
-						double p = (pre!=null)?( pre.getDebitBalance() - pre.getUnpaidBalance()):0.0;
-						double i = ( itm.getDebitBalance() - itm.getUnpaidBalance());
-						double r = AonMathUtils.round( p==0?100.0:(((p-i)*100)/p) );
-						itm.setIncreasePercent(r);
+					double p = 0.0;
+					double i = 0.0;
+					if (itm != null) {
+						i = itm.getAccount().getType().isCreditNature() 
+							?(itm.getUnpaidBalance()-itm.getDebitBalance())
+							:(itm.getDebitBalance()-itm.getUnpaidBalance());
+						if (pre != null) {
+							p = pre.getAccount().getType().isCreditNature() 
+								?(pre.getUnpaidBalance()-pre.getDebitBalance())
+								:(pre.getDebitBalance()-pre.getUnpaidBalance());
+						}
+						if (AonNumberUtils.equals(i, p)) {
+							itm.setIncreasePercent(0);	
+						} else if (AonMathUtils.isZero(i)) {
+							itm.setIncreasePercent(-100);
+						} else if (AonMathUtils.isZero(p)) {
+							itm.setIncreasePercent(100);
+						} else {
+							itm.setIncreasePercent( AonMathUtils.round( ((i/p)*100) - 100) );
+						}
 					}
 				}
 			}

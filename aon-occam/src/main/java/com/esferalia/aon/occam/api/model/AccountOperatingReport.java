@@ -363,6 +363,10 @@ public class AccountOperatingReport implements Serializable {
 		public boolean isCalculated() {
 			return calculated;
 		}
+		public boolean isCreditNature() {
+			return this == SALES || this == SALES_TOTAL
+				|| this == OTHER_INCOMES || this == OTHER_INCOMES_TOTAL;
+		}
 		public AccountOperatingStatementType modifies() {
 			return null;
 		}
@@ -580,5 +584,6 @@ public class AccountOperatingReport implements Serializable {
 	public boolean isEmpty() {
 		return getAccounts().size() == 0;
 	}
+	
 	
 }
