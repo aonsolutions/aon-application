@@ -15,6 +15,7 @@ public class Company extends Registry implements Serializable {
 	
     private Integer domain;
     private String domainName;
+    private boolean domainActive;
     private boolean active;
 	private boolean surcharge;
 	private boolean withholding;
@@ -119,5 +120,14 @@ public class Company extends Registry implements Serializable {
 
 	public void setScope(Scope scope) {
 		this.scope = scope;
+	}
+
+	public boolean isDomainActive() {
+		return domainActive;
+	}
+
+	public Company setDomainActive(boolean domainActive) {
+		this.domainActive = domainActive;
+		return this;
 	}
 }

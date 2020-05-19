@@ -635,6 +635,7 @@ public class FillerDAO {
 					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
 			return company
 				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
+				.setDomainActive(r.getValue(DOMAIN.ACTIVE) == 1)
 				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
 				.setDomain(r.getValue(COMPANY.DOMAIN))
 				.setDocument(r.getValue(REGISTRY.DOCUMENT))

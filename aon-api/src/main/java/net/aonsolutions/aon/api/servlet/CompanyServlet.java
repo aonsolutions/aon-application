@@ -44,7 +44,7 @@ public class CompanyServlet extends HttpServlet{
 				.put("domain", company.getDomainName())
 				.put("name", company.getName())
 				.put("document", company.getDocument())
-				.put("active", company.isActive());
+				.put("active", company.isDomainActive());
 	}
 	
 }

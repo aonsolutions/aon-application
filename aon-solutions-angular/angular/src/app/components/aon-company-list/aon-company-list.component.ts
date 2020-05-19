@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Company } from '../../models/AonModel';
+import { Company, CompanyFilter } from '../../models/models';
 import { CompanyService, SharedService, AonService } from '../../services/services';
 import { RootLoader } from '../../utils/loader';
 
@@ -12,7 +12,7 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
 
   constructor(public aonService: AonService, public service : SharedService, public companyService: CompanyService) {
-    this.companyService.filterObservable.subscribe( value => {
+    this.companyService.filterObservable.subscribe( (value: CompanyFilter) => {
       if(this.aonService.companies === undefined || this.aonService.companies.length === 0){
         this.service.loading = true;
         this.aonService.getCompanies().subscribe(
@@ -30,7 +30,7 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   companyFilter(f: Company) : boolean {
     const q = this.companyService.filter;
     let value = true;
-    if(q.value) {
+    if(q && q.value) {
       const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
       const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
       value = document || name;
