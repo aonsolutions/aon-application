@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -142,6 +143,8 @@ public class SSBonusDraft extends CustomDialog {
 	private List<SSBonusData> ssBonuses;
 	private List<SSBonusData> bonusConcepts;
 	
+	private static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat("dd/MM/yyyy");
+
 	
 // ---------------------------------------------------------------- CONSTRUCTOR ----------------------------------------------------------
 	
@@ -536,8 +539,8 @@ public class SSBonusDraft extends CustomDialog {
 			else
 				system.setStyleName("aon-icon-rowSelector aon-editDataTable-button");
 			listBonusesTable.setWidget(row, 1, system);
-			listBonusesTable.setWidget(row, 2, new Label((null == bonus.getStartDate()) ? "" : parseDate(bonus.getStartDate())));
-			listBonusesTable.setWidget(row, 3, new Label((null == bonus.getEndDate()) ? "" : parseDate(bonus.getEndDate())));
+			listBonusesTable.setWidget(row, 2, new Label((null == bonus.getStartDate()) ? "" : DATE_FORMAT.format(bonus.getStartDate())));
+			listBonusesTable.setWidget(row, 3, new Label((null == bonus.getEndDate()) ? "" : DATE_FORMAT.format(bonus.getEndDate())));
 			listBonusesTable.setWidget(row, 4, new Label(bonus.getDescription().toString()));
 			listBonusesTable.setWidget(row, 5, new Label((null == bonus.getType()) ? "" : bonus.getType().toString()));
 			TextBox formula = new TextBox();
@@ -591,32 +594,6 @@ public class SSBonusDraft extends CustomDialog {
 		cleanSelected();
 	}
 	
-	@SuppressWarnings("deprecation")
-	private String parseDate(Date date) {
-		String dateStr = "";
-		
-		String year = (date.getYear()+1900)+"-";
-		
-		Integer month = date.getMonth()+1;
-		String monthStr = "";
-		if(month < 10)
-			monthStr = "0"+month+"-";
-		else
-			monthStr = month+"-";
-		
-		Integer day = date.getDate();
-		String dayStr = "";
-		if(day < 10)
-			dayStr = "0"+day;
-		else
-			dayStr = day+"";
-		
-		dateStr = year+monthStr+dayStr;
-		
-		return dateStr;
-	}
-
-
 	private boolean enableEditable(Integer id){
 		SSBonusData bonus = getBonus(id);
 //		Window.alert("Id : " + id + ", Bonus : " + bonus.isSystem());

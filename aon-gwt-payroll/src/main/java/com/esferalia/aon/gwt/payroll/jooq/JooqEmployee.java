@@ -537,10 +537,11 @@ public class JooqEmployee {
 			Record payMethodTable = dslContext.select().from(PAY_METHOD)
 					.where(PAY_METHOD.ID.eq(rPayMethodRecord.get(RPAYMETHOD.PAY_METHOD)))
 					.fetchOne();
-			
-			employeeData.setPaymethodId(payMethodTable.get(PAY_METHOD.ID));
-			employeeData.setPayMethodType(payMethodTable.get(PAY_METHOD.NAME));
-			employeeData.setPayMethodTypeB(payMethodTable.get(PAY_METHOD.TYPE));
+			if(null != payMethodTable) {
+				employeeData.setPaymethodId(payMethodTable.get(PAY_METHOD.ID));
+				employeeData.setPayMethodType(payMethodTable.get(PAY_METHOD.NAME));
+				employeeData.setPayMethodTypeB(payMethodTable.get(PAY_METHOD.TYPE));
+			}
 			
 			Integer rbank = rPayMethodRecord.get(RPAYMETHOD.RBANK);
 			
