@@ -167,6 +167,9 @@ public abstract class Employee extends ResizeComposite {
 	ListBox gender;
 	
 	@UiField
+	ListBox civilStatus;
+	
+	@UiField
 	ListBox street_type;
 
 	@UiField
@@ -375,6 +378,11 @@ public abstract class Employee extends ResizeComposite {
 		onEmployeeGenderChange();
 	}
 	
+	@UiHandler("civilStatus")
+	void onCivilStatusChangeValue(ChangeEvent event) {
+		onEmployeeCivilStatusChange();
+	}
+	
 	@UiHandler("street_type")
 	void onStreetTypeChangeValue(ChangeEvent event) {
 		onEmployeeStreetTypeChange();
@@ -477,6 +485,7 @@ public abstract class Employee extends ResizeComposite {
 	
 	public abstract void onEmployeeBirthDateChange();
 	public abstract void onEmployeeGenderChange();
+	public abstract void onEmployeeCivilStatusChange();
 	public abstract void onEmployeeStreetTypeChange();
 	public abstract void onEmployeeAddressChange();
 	public abstract void onEmployeeAddressNumChange();
@@ -530,6 +539,7 @@ public abstract class Employee extends ResizeComposite {
 		
 		this.birth_date.setValue(null);
 		this.gender.clear();
+		this.civilStatus.clear();
 		this.street_type.clear();
 		this.address.setValue("");
 		this.addressNum.setValue("");
@@ -592,6 +602,14 @@ public abstract class Employee extends ResizeComposite {
 		this.gender.addItem("Hombre", "0");
 		this.gender.addItem("Mujer", "1");
 		this.gender.addItem("Desconocido", "2");
+		
+		//CIVIL STATUS
+		this.civilStatus.addItem("SOLTERO", "0");
+		this.civilStatus.addItem("CASADO", "1");
+		this.civilStatus.addItem("DIVORCIADO", "2");
+		this.civilStatus.addItem("SEPARADO", "3");
+		this.civilStatus.addItem("VIUDO", "4");
+		this.civilStatus.addItem("DESCONOCIDO", "5");
 		
 		//TIPO DE VIA
 		for(int i=0; i<StreetType.values().length; i++){

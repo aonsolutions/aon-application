@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -82,6 +83,8 @@ public class EmployeeDialog extends CustomDialog {
 		public void onEmployeeDocumentChange() {
 			String document = this.document.getValue();
 			if(!StringUtils.isBlank(document)) {
+				document = document.trim();
+				this.document.setValue(document);
 				
 				String document_type = checkDocumentType(document);
 				this.document_type.setText(document_type);
@@ -127,6 +130,9 @@ public class EmployeeDialog extends CustomDialog {
 			String ssNum = this.security_social_num.getValue();
 			
 			if(!StringUtils.isBlank(ssNum)) {
+				ssNum = ssNum.trim();
+				this.security_social_num.setValue(ssNum);
+				
 				employeeDialogObject.setEmployeeSocialSecurityNum(ssNum);
 				if(employeeDialogObject.checkSSNumValidation(ssNum))
 					addSuccessStyle(this.ssNumberStatus);
@@ -159,8 +165,11 @@ public class EmployeeDialog extends CustomDialog {
 		@Override
 		public void onEmployeeNameChange() {
 			String name = this.name.getValue();
-			if(!StringUtils.isBlank(name)) 
+			if(!StringUtils.isBlank(name)) {
+				name = name.trim();
+				this.name.setValue(name);
 				employeeDialogObject.setEmployeeName(name);	
+			}
 		}
 
 		@Override
@@ -187,15 +196,21 @@ public class EmployeeDialog extends CustomDialog {
 		@Override
 		public void onEmployeeFirstSurnameChange() {
 			String surname = this.first_surname.getValue();
-			if(!StringUtils.isBlank(surname)) 
+			if(!StringUtils.isBlank(surname)) {
+				surname = surname.trim();
+				this.first_surname.setValue(surname);
 				employeeDialogObject.setEmployeeFirstSurname(surname);
+			}
 		}
 
 		@Override
 		public void onEmployeeSecondSurnameChange() {
 			String secondSurname = this.second_surname.getValue();
-			if(!StringUtils.isBlank(secondSurname)) 
+			if(!StringUtils.isBlank(secondSurname)) {
+				secondSurname = secondSurname.trim();
+				this.second_surname.setValue(secondSurname);
 				employeeDialogObject.setEmployeeSecondSurname(secondSurname);
+			}
 		}
 
 		@Override
@@ -266,12 +281,26 @@ public class EmployeeDialog extends CustomDialog {
 		
 		@Override
 		public void onContractStartDateChange() {
-			employeeDialogObject.setContractStartDate(this.start_date.getValue());
+			if(null != this.start_date.getValue()) {
+				DefaultFormat format = new DefaultFormat();
+				Date date = format.parse(this.start_date, this.start_date.getTextBox().getValue(), false);
+				this.start_date.setValue(date);
+				employeeDialogObject.setContractStartDate(date);
+				
+				this.seniority_date.setValue(date, true);
+			} else
+				employeeDialogObject.setContractStartDate(this.start_date.getValue());
 		}
 
 		@Override
 		public void onContractEndDateChange() {
-			employeeDialogObject.setContractEndDate(this.end_date.getValue());
+			if(null != this.end_date.getValue()) {
+				DefaultFormat format = new DefaultFormat();
+				Date date = format.parse(this.end_date, this.end_date.getTextBox().getValue(), false);
+				this.end_date.setValue(date);
+				employeeDialogObject.setContractEndDate(date);
+			} else
+				employeeDialogObject.setContractEndDate(this.end_date.getValue());
 		}
 
 		@Override
@@ -289,6 +318,10 @@ public class EmployeeDialog extends CustomDialog {
 					this.seniority_dateStatus.getElement().getStyle().setDisplay(Display.NONE);
 				else
 					addWarningDateStyle(this.seniority_dateStatus);
+				
+				DefaultFormat format = new DefaultFormat();
+				Date date = format.parse(this.seniority_date, this.seniority_date.getTextBox().getValue(), false);
+				this.seniority_date.setValue(date);
 			} else
 				this.seniority_dateStatus.getElement().getStyle().setDisplay(Display.NONE);
 			
@@ -408,6 +441,10 @@ public class EmployeeDialog extends CustomDialog {
 				Date actualDay = new Date();
 				Integer age = getYears(actualDay, birthDate);
 				this.age.setText("( " + (age) + " a" + String.valueOf("\u00F1") + "os )");
+				
+				DefaultFormat format = new DefaultFormat();
+				Date date = format.parse(this.birth_date, this.birth_date.getTextBox().getValue(), false);
+				this.birth_date.setValue(date);
 			} else
 				this.age.setText("");
 			
@@ -419,6 +456,12 @@ public class EmployeeDialog extends CustomDialog {
 		public void onEmployeeGenderChange() {
 			byte gender = Byte.valueOf(this.gender.getSelectedValue()).byteValue();
 			employeeDialogObject.setEmployeeGender(gender);
+		}
+		
+		@Override
+		public void onEmployeeCivilStatusChange() {
+			byte civilStatus = Byte.valueOf(this.civilStatus.getSelectedValue()).byteValue();
+			employeeDialogObject.setEmployeeCivilStatus(civilStatus);	
 		}
 		
 		@Override
@@ -614,8 +657,17 @@ public class EmployeeDialog extends CustomDialog {
 		//Check Activity if SSRegime not RETA
 		if( 0 == this.employee.activityCCC.getSelectedIndex())
 			return false;
-		else
-			return true;
+		
+		if(StringUtils.isBlank(this.employee.addressZip.getValue()))
+			return false;
+		
+		if(this.employee.addressMunicipality.getSelectedIndex() == 0)
+			return false;
+		
+		if(this.employee.addressProvince.getSelectedIndex() == 0)
+			return false;
+		
+		return true;
 	}
 	
 	private boolean checkDates() {
@@ -756,6 +808,10 @@ public class EmployeeDialog extends CustomDialog {
 		//GENDER
 		this.employee.gender.setSelectedIndex(0);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.gender);
+		
+		//CIVIL STATUS
+		this.employee.civilStatus.setSelectedIndex(5);
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.civilStatus);
 		
 		//STREET_TYPE
 		this.employee.street_type.setSelectedIndex(14); //Calle
@@ -1099,7 +1155,7 @@ public class EmployeeDialog extends CustomDialog {
 		} else {
 			employee.nationalityLabelCell.getStyle().setDisplay(Display.NONE);
 			employee.nationalityCell.getStyle().setDisplay(Display.NONE);
-			employee.nationality.setValue("ESPA\u00D1A");
+			employee.nationality.setValue("ESPA" + String.valueOf("\u00D1") + "A");
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.nationality);
 		}
 	}

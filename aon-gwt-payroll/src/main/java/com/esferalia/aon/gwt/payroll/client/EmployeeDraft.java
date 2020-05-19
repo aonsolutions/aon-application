@@ -508,6 +508,14 @@ public class EmployeeDraft extends Composite {
 		}
 
 		@Override
+		public void onEmployeeCivilStatusChange() {
+			byte civilStatus = Byte.valueOf(this.civilStatus.getSelectedValue()).byteValue();
+			employeeDraftObject.setEmployeeCivilStatus(civilStatus);
+			
+			saving();
+		}
+
+		@Override
 		public void onEmployeeStreetTypeChange() {
 			String streetType = String.valueOf(this.street_type.getSelectedValue());
 			employeeDraftObject.setEmployeeStreetType(streetType);
@@ -1098,7 +1106,10 @@ public class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.workplace, employeeDraftObject.getWorkplaceId().toString());
 		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
-		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
+		Date seniorityDate = employeeDraftObject.getContractSeniorityDate();
+		if(null == seniorityDate)
+			seniorityDate = employeeDraftObject.getContractStartDate();
+		this.employee.seniority_date.setValue(seniorityDate);
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.seniority_date);
 		
@@ -1175,7 +1186,10 @@ public class EmployeeDraft extends Composite {
 			setSelectedValueLB(employee.modality, employeeDraftObject.getContractModel().toString());
 		
 		this.employee.start_date.setValue(employeeDraftObject.getContractStartDate());
-		this.employee.seniority_date.setValue(employeeDraftObject.getContractSeniorityDate());
+		Date seniorityDate = employeeDraftObject.getContractSeniorityDate();
+		if(null == seniorityDate)
+			seniorityDate = employeeDraftObject.getContractStartDate();
+		this.employee.seniority_date.setValue(seniorityDate);
 		this.employee.end_date.setValue(employeeDraftObject.getContractEndDate());
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.seniority_date);
 		
@@ -1220,6 +1234,8 @@ public class EmployeeDraft extends Composite {
 			this.employee.age.setText("");
 		
 		this.employee.gender.setSelectedIndex(employeeDraftObject.getEmployeeGender());
+		
+		setSelectedValueLB(employee.civilStatus, employeeDraftObject.getEmployeeCivilStatus().toString());
 		
 		setSelectedValueLB(employee.street_type, employeeDraftObject.getEmployeeAddressStreetType());
 		

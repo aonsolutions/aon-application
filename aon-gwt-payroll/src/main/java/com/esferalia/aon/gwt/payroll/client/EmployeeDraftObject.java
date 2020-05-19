@@ -338,6 +338,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return (int) this.employeeData.getGender();
 	}
 	
+	public Integer getEmployeeCivilStatus() {
+		return (int) this.employeeData.getCivilStatus();
+	}
+	
 	public String getEmployeeAddressStreetType(){
 		return this.employeeData.getStreetType();
 	}
@@ -631,6 +635,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				gender );
 		
 		employeeData.setGender(gender);
+	}
+	
+	public void setEmployeeCivilStatus(byte civilStatus) {
+		add(employeeData::setCivilStatus, 
+				employeeData.getCivilStatus(), 
+				civilStatus );
+		
+		employeeData.setCivilStatus(civilStatus);
 	}
 
 	public void setEmployeeStreetType(String shortCode) {

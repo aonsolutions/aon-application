@@ -18,6 +18,7 @@ public class EmployeeInfo implements Serializable{
 	//Person Table
 	private Date birthdate;
 	private Byte gender;
+	private Byte civilStatus;
 	private String ssNumber;
 	private String name;
 	private String surName;
@@ -73,6 +74,7 @@ public class EmployeeInfo implements Serializable{
 		this.employeeId = null;
 		this.birthdate = null;
 		this.gender = null;
+		this.civilStatus = null;
 		this.ssNumber = null;
 		this.name = null;
 		this.surName = null;
@@ -204,6 +206,14 @@ public class EmployeeInfo implements Serializable{
 
 	public void setGender(Byte gender) {
 		this.gender = gender;
+	}
+	
+	public Byte getCivilStatus() {
+		return (null == civilStatus ? (byte)0 : civilStatus) ;
+	}
+	
+	public void setCivilStatus(Byte civilStatus) {
+		this.civilStatus = civilStatus;
 	}
 
 	public String getStreetType() {

@@ -481,6 +481,10 @@ public class EmployeeDialogObject {
 		employeeData.setGender(gender);
 	}
 	
+	public void setEmployeeCivilStatus(byte civilStatus) {
+		employeeData.setCivilStatus(civilStatus);
+	}
+	
 	public void setEmployeeStreetType(String shortCode) {
 		employeeData.setStreetType(shortCode);
 	}

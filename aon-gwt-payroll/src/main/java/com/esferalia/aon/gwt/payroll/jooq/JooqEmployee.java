@@ -44,6 +44,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.BankEntities;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -126,8 +127,8 @@ public class JooqEmployee {
 				.set(REGISTRY.DOMAIN, domain)
 				.set(REGISTRY.DOCUMENT, employeeData.getDocument())
 				.set(REGISTRY.DOCUMENT_TYPE, null == employeeData.getDocumentType() ? (byte) 0 : employeeData.getDocumentType())
-				.set(REGISTRY.DOCUMENT_COUNTRY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
-				.set(REGISTRY.NATIONALITY, null == employeeData.getNationality() ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.DOCUMENT_COUNTRY, StringUtils.isBlank(employeeData.getNationality()) ? "ES" : employeeData.getNationalityCode())
+				.set(REGISTRY.NATIONALITY, StringUtils.isBlank(employeeData.getNationality())  ? "ES" : employeeData.getNationalityCode())
 				.set(REGISTRY.NAME, employeeData.getFullName())
 				.returning(REGISTRY.ID)
 				.fetchOne();
@@ -141,6 +142,7 @@ public class JooqEmployee {
 				.set(PERSON.GENDER, employeeData.getGender())
 				.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
 				.set(PERSON.NAME, employeeData.getName())
+				.set(PERSON.MARITAL_STATUS, employeeData.getCivilStatus())
 				.set(PERSON.FIRST_SURNAME, employeeData.getSurName())
 				.set(PERSON.SECOND_SURNAME, employeeData.getSecondSurName())
 				.execute();
@@ -182,9 +184,9 @@ public class JooqEmployee {
 					.set(RADDRESS.DOMAIN, domain)
 					.set(RADDRESS.REGISTRY, registryId)
 					.set(RADDRESS.STREET_TYPE, employeeData.getStreetType())
-					.set(RADDRESS.ADDRESS, employeeData.getAddress())
+					.set(RADDRESS.ADDRESS, StringUtils.isBlank(employeeData.getAddress()) ? "-" : employeeData.getAddress())
 					.set(RADDRESS.ADDRESS2, employeeData.getAddressInfo())
-					.set(RADDRESS.NUMBER, employeeData.getAddresNum())
+					.set(RADDRESS.NUMBER, StringUtils.isBlank(employeeData.getAddresNum()) ? "-" : employeeData.getAddresNum())
 					.set(RADDRESS.ZIP, employeeData.getAddressZip())
 					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(employeeData.getAddressCity()))
 					.set(RADDRESS.MUNICIPALITY_CODE, StringUtils.leftPad(employeeData.getAddressCity(), 5, '0'))
@@ -260,13 +262,18 @@ public class JooqEmployee {
 				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
 				Integer rbankTableId = null;
 				String account = employeeData.getAccount();
+				String alias = "CUENTA";
+				if(null != account && account.length() > 8) {
+					String codeBank = account.substring(4, 8);
+					alias = BankEntities.getBankEntity(codeBank);
+				}
 				if(!StringUtils.isBlank(account)){
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
 							.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
 							.set(RBANK.BIC, employeeData.getBic())
-							.set(RBANK.ALIAS, "CUENTA")
+							.set(RBANK.ALIAS, alias)
 							.set(RBANK.ACTIVE, (byte) 1)
 							.returning(RBANK.ID)
 							.fetchOne();
@@ -452,6 +459,7 @@ public class JooqEmployee {
 		employeeData.setDomain(personTable.get(PERSON.DOMAIN));
 		employeeData.setBirthdate(personTable.get(PERSON.BIRTH_DATE));
 		employeeData.setGender(personTable.get(PERSON.GENDER));
+		employeeData.setCivilStatus(personTable.get(PERSON.MARITAL_STATUS));
 		employeeData.setSsNumber(personTable.get(PERSON.SOCIAL_SECURITY_NUM));
 		employeeData.setName(personTable.get(PERSON.NAME));
 		employeeData.setSurName(personTable.get(PERSON.FIRST_SURNAME));
@@ -854,6 +862,7 @@ public class JooqEmployee {
 			.set(PERSON.SOCIAL_SECURITY_NUM, employeeData.getSsNumber())
 			.set(PERSON.NAME, employeeData.getName())
 			.set(PERSON.FIRST_SURNAME, employeeData.getSurName())
+			.set(PERSON.MARITAL_STATUS, employeeData.getCivilStatus())
 			.set(PERSON.SECOND_SURNAME, employeeData.getSecondSurName())
 			.where(PERSON.REGISTRY.eq(employeeData.getEmployeeId()))
 			.execute();
@@ -1068,12 +1077,17 @@ public class JooqEmployee {
 				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
 				Integer rbankTableId = null;
 				if(employeeData.getAccount() != null && employeeData.getAccount() != ""){
+					String alias = "CUENTA";
+					if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
+						String codeBank = employeeData.getAccount().substring(4, 8);
+						alias = BankEntities.getBankEntity(codeBank);
+					}
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
 							.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
 							.set(RBANK.BIC, employeeData.getBic())
-							.set(RBANK.ALIAS, "CUENTA")
+							.set(RBANK.ALIAS,alias)
 							.set(RBANK.ACTIVE, (byte) 1)
 							.returning(RBANK.ID)
 							.fetchOne();
@@ -1103,12 +1117,17 @@ public class JooqEmployee {
 			if("TRANSFERENCIA".equals(payMethod) || "GIRO".equals(payMethod)){
 				Integer rbankTableId = employeeData.getRbankId();
 				if(null == employeeData.getRbankId()  /*&& (employeeData.getAccount() != null && employeeData.getAccount() != "")*/){
+					String alias = "CUENTA";
+					if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
+						String codeBank = employeeData.getAccount().substring(4, 8);
+						alias = BankEntities.getBankEntity(codeBank);
+					}
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
 							.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
 							.set(RBANK.BIC, employeeData.getBic())
-							.set(RBANK.ALIAS, "CUENTA")
+							.set(RBANK.ALIAS, alias)
 							.set(RBANK.ACTIVE, (byte) 1)
 							.returning(RBANK.ID)
 							.fetchOne();
@@ -1123,19 +1142,30 @@ public class JooqEmployee {
 						if(!findRBankRecord.isEmpty()) {
 							rbankTableId = findRBankRecord.get(0).get(RBANK.ID); 
 							if(findRBankRecord.get(0).get(RBANK.ID) == rbankTableId) {
+								String alias = "CUENTA";
+								if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
+									String codeBank = employeeData.getAccount().substring(4, 8);
+									alias = BankEntities.getBankEntity(codeBank);
+								}
 								dslContext.update(RBANK)
 								.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
 								.set(RBANK.BIC, employeeData.getBic())
+								.set(RBANK.ALIAS, alias)
 								.where(RBANK.ID.eq(rbankTableId))
 								.execute();
 							}
 						}else {
+							String alias = "CUENTA";
+							if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
+								String codeBank = employeeData.getAccount().substring(4, 8);
+								alias = BankEntities.getBankEntity(codeBank);
+							}
 							RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 									.set(RBANK.DOMAIN, domain)
 									.set(RBANK.REGISTRY, registryId)
 									.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
 									.set(RBANK.BIC, employeeData.getBic())
-									.set(RBANK.ALIAS, "CUENTA")
+									.set(RBANK.ALIAS, alias)
 									.set(RBANK.ACTIVE, (byte) 1)
 									.returning(RBANK.ID)
 									.fetchOne();
