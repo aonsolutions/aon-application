@@ -51,6 +51,10 @@
   font-weight: bold;
 }
 
+.tedi-company-background{
+  color: gray;
+}
+
 .tedi-user-dialog-backdrop {
   background: rgba(0,0,0,1);
 }

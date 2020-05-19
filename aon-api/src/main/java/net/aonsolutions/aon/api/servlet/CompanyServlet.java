@@ -25,7 +25,9 @@ public class CompanyServlet extends HttpServlet{
 		LOGGER.info("AON COMPANY SERVLET - GET METHOD");
 		String token = req.getHeader("session_id");
 		JSONArray jsArray = new JSONArray();
-		AON_SOLUTIONS.getCompanyStream(token).forEach(
+		AON_SOLUTIONS.getCompanyStream(token)
+		//.filter(f -> f.isActive())
+		.sorted((o1, o2) -> o1.getName().compareTo(o2.getName())).forEach(
 			domain -> jsArray.put(company2json(domain)));
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, jsArray, new JSONObject());	

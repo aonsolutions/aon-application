@@ -17,3 +17,15 @@
   display: block;
   padding: 0;
 }
+
+.aon-nav-list {
+  padding-top: 0px !important;
+}
+
+.aon-list-item-0 {
+  background-color: #f1f1f1;
+}
+
+.aon-list-item-1 {
+  background-color: #fff;
+}

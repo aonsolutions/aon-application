@@ -26,8 +26,12 @@ export class AonToolbarComponent implements OnInit {
 
   }
 
+  getDescription() : string {
+    return this.isParent() ? 'Entorno General': 'Empresas';
+  }
+
   getCompanyName() : string {
-    return this.service.getCompanyName();
+    return this.isParent() ? 'Listado de Empresas' : this.service.getCompanyName();
   }
 
   payroll(): void {
@@ -44,6 +48,7 @@ export class AonToolbarComponent implements OnInit {
 
   company(): void {
     RootLoader.angularPanel(this.router, this.location, 'companyList');
+    this.service.company = undefined;
   }
 
   openDialog(): void {
@@ -101,5 +106,9 @@ export class AonToolbarComponent implements OnInit {
 
   search(): void {
     this.mobileSearching = true;
+  }
+
+  isParent(): boolean {
+    return this.service.company == undefined;
   }
 }

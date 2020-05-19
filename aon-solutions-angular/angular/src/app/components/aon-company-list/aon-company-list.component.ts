@@ -12,7 +12,19 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
 
   constructor(public aonService: AonService, public service : SharedService, public companyService: CompanyService) {
-
+    this.companyService.filterObservable.subscribe( value => {
+      if(this.aonService.companies === undefined || this.aonService.companies.length === 0){
+        this.service.loading = true;
+        this.aonService.getCompanies().subscribe(
+          (r: Company[]) => {
+            this.companies = r.filter(f => this.companyFilter(f));
+            this.service.loading = false;
+          }
+        );
+      } else {
+        this.companies = this.aonService.companies.filter(f => this.companyFilter(f));
+      }
+    });
   }
 
   companyFilter(f: Company) : boolean {
@@ -23,14 +35,13 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
       const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
       value = document || name;
     }
-    return value;
+    return f.active && value;
   }
 
   ngOnInit() {
     this.aonService.getCompanies().subscribe(
       (r: Company[]) => {
-
-        this.companies = r;
+        this.companies = r.filter(f => this.companyFilter(f));
       },
       (error: any) => alert(error)
     );
@@ -45,7 +56,7 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
     localStorage.setItem('aon_domain_id', `${company.id}`);
     localStorage.setItem('aon_domain_name', company.domain);
     this.aonService.company = company;
-    RootLoader.rootPanel('<aon-desktop></aon-desktop>');
+    RootLoader.rootPanel('<aon-desktop></aon-desktop>', '#f1f1f1');
   }
 
   public onScroll() {
