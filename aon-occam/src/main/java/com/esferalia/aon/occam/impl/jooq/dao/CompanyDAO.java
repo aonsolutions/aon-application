@@ -199,6 +199,7 @@ public class CompanyDAO {
 				.from(DOMAIN)
 				.join(COMPANY).on(DOMAIN.ID.eq(COMPANY.DOMAIN))
 				.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 				.where(DOMAIN.PARENT.eq(ctx.getDomainId())).and(DOMAIN.SCOPE.in(userScopes).or(DOMAIN.SCOPE.isNull()))
 				.fetch().stream().map(new CompanyFiller());
 	}
@@ -210,6 +211,7 @@ public class CompanyDAO {
 						.and(DOMAIN.SCOPE.in(userScopes).or(DOMAIN.SCOPE.isNull()))
 						.and(DOMAIN.ID.eq(ctx.getDomainId()).or(DOMAIN.PARENT.eq(ctx.getDomainId()))))
 				.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 			, filter)
 			.fetch().stream().map(new CompanyFiller());
 	}
@@ -227,6 +229,7 @@ public class CompanyDAO {
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 			.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+			.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 			.where(DOMAIN.PARENT.isNotNull().and(DOMAIN.ID.in(ctx.getDomains())
 				.or(DOMAIN.PARENT.in(ctx.getDomains()))))
 			.fetch().stream().map(new CompanyFiller());
