@@ -225,8 +225,10 @@ public class JooqEvents {
 							.where(PAY_METHOD.ID.eq(rpaymethodRecords.get(0).get(RPAYMETHOD.PAY_METHOD)))
 							.fetchOne();
 					
-					paymethodId = paymethodRecord.get(PAY_METHOD.ID);
-					payMethod = paymethodRecord.get(PAY_METHOD.NAME);
+					if(null != paymethodRecord) {
+						paymethodId = paymethodRecord.get(PAY_METHOD.ID);
+						payMethod = paymethodRecord.get(PAY_METHOD.NAME);
+					}
 					
 					if(null != rpaymethodRecords.get(0).get(RPAYMETHOD.RBANK)) {
 						Record rbankRecord = dslContext.select()

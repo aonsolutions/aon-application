@@ -1084,115 +1084,116 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			// Context
 			SQLContractSalaryCalculatorContext context = new SQLContractSalaryCalculatorContext(connection, startDate, endDate, endDate, criteria);
-			context.next();
+			if(context.next()) {
 			
-			// Salary Calculator
-			SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> smartContractSalaryCalculator = new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>(new SalaryBuilder());
-			
-			smartContractSalaryCalculator.setListener(new GenericContractSalaryCalculator.IListener() {
+				// Salary Calculator
+				SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary> smartContractSalaryCalculator = new SmartContractSalaryCalculator<com.esferalia.aon.payroll.Salary>(new SalaryBuilder());
 				
-				@Override
-				public void onUndefinedData(IContractDeduction deduction, String variableName, String message) {}
+				smartContractSalaryCalculator.setListener(new GenericContractSalaryCalculator.IListener() {
+					
+					@Override
+					public void onUndefinedData(IContractDeduction deduction, String variableName, String message) {}
+					
+					@Override
+					public void onUndefinedData(IContractDeduction deduction, RemovedExpressionVariable<?> var) {}
+					
+					@Override
+					public void onUndefinedData(IContractPayment payment, String variableName, String message) {
+						if(payment.getScope() != ExpressionScope.SYSTEM )
+							if(!variableName.contains("DIAS_"))
+								contextResult.add(variableName);
+					}
+					
+					@Override
+					public void onUndefinedData(IContractPayment payment, RemovedExpressionVariable<?> var) {}
+					
+					@Override
+					public void onRemove(IContractPayment payment) {}
+					
+					@Override
+					public void onRemove(IContractDeduction payment) {}
+					
+					@Override
+					public void onRemove(IContractBonus bonus) {}
+					
+					@Override
+					public void onInvalidData(IContractBonus bonus, String variableName, String message) {}
+					
+					@Override
+					public void onInvalidData(IContractDeduction deduction, String variableName, String message) {}
+					
+					@Override
+					public void onInvalidData(IContractPayment payment, String variableName, String message) {}
+					
+					@Override
+					public void onInvalidData(String variableName, String message) {}
+					
+					@Override
+					public void onCompileError(IContractBonus bonus, String message) {}
+					
+					@Override
+					public void onCompileError(IContractDeduction deduction, String message) {}
+					
+					@Override
+					public void onCompileError(IContractPayment payment, String message) {}
+					
+					@Override
+					public void onCompileError(String variableName, String message) {}
+					
+					@Override
+					public void onCheckError(IContractBonus bonus, String message) {}
+					
+					@Override
+					public void onCheckError(IContractDeduction deduction, String message) {}
+					
+					@Override
+					public void onCheckError(IContractPayment payment, String message) {}
+					
+					@Override
+					public void onCheckError(String message) {}
+					
+				} );
 				
-				@Override
-				public void onUndefinedData(IContractDeduction deduction, RemovedExpressionVariable<?> var) {}
-				
-				@Override
-				public void onUndefinedData(IContractPayment payment, String variableName, String message) {
-					if(payment.getScope() != ExpressionScope.SYSTEM )
-						if(!variableName.contains("DIAS_"))
-							contextResult.add(variableName);
+				// Salary
+				try {
+					com.esferalia.aon.payroll.Salary salary = smartContractSalaryCalculator.calculate(context);
+	//				// TODO: salary.getSalaryDatas() filter...
+	//				for(SalaryData salaryData : salary.getSalaryDatas())
+	//					System.out.println(salaryData.getName());
+				} catch (SalaryException e) {
+					e.printStackTrace();
 				}
 				
-				@Override
-				public void onUndefinedData(IContractPayment payment, RemovedExpressionVariable<?> var) {}
+				// ContextDrescriptor 
+				ContextDescriptor contextDescriptor = getContext(connection, context, startDate,  endDate);
+	
+				ContextDescriptor contextDescriptorPayments = getEmployeePayments(connection, employeeId, agreementId,
+						startDate, endDate, domainID, parentDomainID);
 				
-				@Override
-				public void onRemove(IContractPayment payment) {}
-				
-				@Override
-				public void onRemove(IContractDeduction payment) {}
-				
-				@Override
-				public void onRemove(IContractBonus bonus) {}
-				
-				@Override
-				public void onInvalidData(IContractBonus bonus, String variableName, String message) {}
-				
-				@Override
-				public void onInvalidData(IContractDeduction deduction, String variableName, String message) {}
-				
-				@Override
-				public void onInvalidData(IContractPayment payment, String variableName, String message) {}
-				
-				@Override
-				public void onInvalidData(String variableName, String message) {}
-				
-				@Override
-				public void onCompileError(IContractBonus bonus, String message) {}
-				
-				@Override
-				public void onCompileError(IContractDeduction deduction, String message) {}
-				
-				@Override
-				public void onCompileError(IContractPayment payment, String message) {}
-				
-				@Override
-				public void onCompileError(String variableName, String message) {}
-				
-				@Override
-				public void onCheckError(IContractBonus bonus, String message) {}
-				
-				@Override
-				public void onCheckError(IContractDeduction deduction, String message) {}
-				
-				@Override
-				public void onCheckError(IContractPayment payment, String message) {}
-				
-				@Override
-				public void onCheckError(String message) {}
-				
-			} );
-			
-			// Salary
-			try {
-				com.esferalia.aon.payroll.Salary salary = smartContractSalaryCalculator.calculate(context);
-//				// TODO: salary.getSalaryDatas() filter...
-//				for(SalaryData salaryData : salary.getSalaryDatas())
-//					System.out.println(salaryData.getName());
-			} catch (SalaryException e) {
-				e.printStackTrace();
-			}
-			
-			// ContextDrescriptor 
-			ContextDescriptor contextDescriptor = getContext(connection, context, startDate,  endDate);
-
-			ContextDescriptor contextDescriptorPayments = getEmployeePayments(connection, employeeId, agreementId,
-					startDate, endDate, domainID, parentDomainID);
-			
-			contextDescriptorPayments.mixAll(contextDescriptor);
-
-			for (String key : contextDescriptorPayments.getVariables()){
-				if(!contextDescriptorPayments.getList(key).isEmpty()){
-					for(VariableDescriptor variable : contextDescriptorPayments.getList(key)){
-						if (Number.class != variable.getType())
-							continue;
-						if (null == variable.getScope())
-							continue;
-						if (Scope.AGREEMENT == variable.getScope())
-							continue;
-						if (Scope.APPLICATION == variable.getScope())
-							continue;
-						if (Scope.SYSTEM == variable.getScope())
-							continue;
-						if (Scope.CONTRACT == variable.getScope())
-							continue;
-						
-						contextResult.add(key, variable);
+				contextDescriptorPayments.mixAll(contextDescriptor);
+	
+				for (String key : contextDescriptorPayments.getVariables()){
+					if(!contextDescriptorPayments.getList(key).isEmpty()){
+						for(VariableDescriptor variable : contextDescriptorPayments.getList(key)){
+							if (Number.class != variable.getType())
+								continue;
+							if (null == variable.getScope())
+								continue;
+							if (Scope.AGREEMENT == variable.getScope())
+								continue;
+							if (Scope.APPLICATION == variable.getScope())
+								continue;
+							if (Scope.SYSTEM == variable.getScope())
+								continue;
+							if (Scope.CONTRACT == variable.getScope())
+								continue;
+							
+							contextResult.add(key, variable);
+						}
+					}else {
+						contextResult.add(key);
+						continue;
 					}
-				}else {
-					contextResult.add(key);
-					continue;
 				}
 			}
 
@@ -3739,13 +3740,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 							variableDescriptor.setEndDate(var.getPeriod().getEnd());
 
 							if ( var instanceof IExpressionVariable<?>) {
-								IExpression expression = ((IExpressionVariable<?>) var).getExpression();
-								variableDescriptor.setExpression(expression.getExpression());
-								variableDescriptor.setScope((expression
-										.getScope() != null )? Scope
-										.values()[expression
-										.getScope()
-										.ordinal()]: null );
+								try {
+									IExpression expression = ((IExpressionVariable<?>) var).getExpression();
+									variableDescriptor.setExpression(expression.getExpression());
+								
+									variableDescriptor.setScope((expression
+											.getScope() != null )? Scope
+											.values()[expression
+											.getScope()
+											.ordinal()]: null );
+								}catch (Exception e) {
+									System.out.println("Var name failed : " + varName);
+								}
+								
 							}
 							contextDescriptor.add(varName, variableDescriptor);
 						}

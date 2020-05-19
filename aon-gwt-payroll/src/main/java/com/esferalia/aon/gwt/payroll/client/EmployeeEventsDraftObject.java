@@ -241,6 +241,8 @@ public class EmployeeEventsDraftObject {
 		filterSet.add("SALARIO_VARIABLE_DIA");
 		filterSet.add("AÑOS_TRABAJADOS");
 		filterSet.add("GRUPO_COTIZACION");
+		filterSet.add("ANTIGUEDAD_HELP");
+		filterSet.add("GET_VARIABLE");
 		
 		filterSet.addAll(allStaticVariables);
 		
