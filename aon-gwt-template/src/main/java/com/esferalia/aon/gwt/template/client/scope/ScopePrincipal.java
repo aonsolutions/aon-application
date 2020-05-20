@@ -22,6 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -42,6 +43,7 @@ public class ScopePrincipal extends Composite{
 	
 	@UiField MinimizePanel footPanel;
 	@UiField TabLayoutPanel tabLayout; 
+	@UiField InlineLabel tabTitle;
 	@UiField ScrollPanel usersPanel;
 //	@UiField ScrollPanel companiesPanel;
 
@@ -72,13 +74,17 @@ public class ScopePrincipal extends Composite{
 	Integer page = 1;
 	Integer perPage = 40;
 	Boolean scroll = true;
-	public ScopePrincipal(ScopeMain parent) {
+	public ScopePrincipal(ScopeMain parent, Boolean isCompany) {
 		initWidget(binder.createAndBindUi(this));
 		this.parent = parent;
 		this.me = this;
-		filterContent();
-		gridContent();
-
+		filterContent(isCompany);
+		gridContent(isCompany);
+		if(!isCompany) {
+			tabTitle.setText("Empresas");
+		} else {
+			tabTitle.setText("Usuarios");
+		}
 		tabLayout.addSelectionHandler(new SelectionHandler<Integer>() {
 			
 			@Override
@@ -91,30 +97,44 @@ public class ScopePrincipal extends Composite{
 		});
 	}
 	
-	public void filterContent(){			
-		northContent.setWidget(new FilterPanel(this));
+	public void filterContent(Boolean isCompany){			
+		northContent.setWidget(new FilterPanel(this, isCompany));
 	}
 	
-	public void gridContent(){
-		
+	public void gridContent(Boolean isCompany){
 		LinkedList<String> list = new LinkedList<>();
 		list.add("1");
 		getFilterMap().put("page", list);
 		list = new LinkedList<>();
 		list.add("40");
 		getFilterMap().put("per_page", list);
-		getAPI().getCommon().getCompanies(getFilterMap(), new AsyncCallback<JSON<JsCompany>>() {
+		if(isCompany) {
+			getAPI().getCommon().getCompanies(getFilterMap(), new AsyncCallback<JSON<JsCompany>>() {
 			
-			@Override
-			public void onSuccess(JSON<JsCompany> result) {
-				content.setWidget(new ScopeGrid(me, result.getData().toLinkedList()));
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-
-			}
-		});
+				@Override
+				public void onSuccess(JSON<JsCompany> result) {
+					content.setWidget(new ScopeGrid(me, result.getData().toLinkedList()));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
+		} else {
+			getAPI().getCommon().getUsers(getFilterMap(), new AsyncCallback<JSON<JsUser>>() {
+				
+				@Override
+				public void onSuccess(JSON<JsUser> result) {
+					content.setWidget(new UserGrid(me, result.getData().toLinkedList()));
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					
+				}
+			});
+		}
 	}
 	
 	@UiHandler("footPanel")
@@ -137,6 +157,26 @@ public class ScopePrincipal extends Composite{
 		splitLayoutPanel.animate(500);
 	}	
 	
+	public void userSelection(JsUser o) {
+		openFootPanel();
+		HashMap<String, LinkedList<String>> fm = new HashMap<String, LinkedList<String>>();
+		LinkedList<String> list =new LinkedList<>();
+		list.add(o.getId() +"");
+		fm.put("user", list);
+		getAPI().getCommon().getCompanies(fm, new AsyncCallback<JSON<JsCompany>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsCompany> result) {
+				usersPanel.setWidget(new CompanySouthPanel(me, result.getData(), o));
+			}
+		
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+	}
+
 	public void companySelection(JsCompany o) {
 		openFootPanel();
 		if(o.getScope().getId() != null) {
@@ -155,18 +195,5 @@ public class ScopePrincipal extends Composite{
 		} else {
 			usersPanel.setWidget(new Label("No tiene ambito asignado."));
 		}
-//		getAPI().getCommon().getScopeCompanies(o.getId(), new AsyncCallback<JSON<JsObject>>() {
-//			
-//			@Override
-//			public void onSuccess(JSON<JsObject> result) {
-//				companiesPanel.setWidget(new CompanySouthPanel(me, result.getData(), o));
-//			}
-//			
-//			@Override
-//			public void onFailure(Throwable caught) {
-//
-//			}
-//		});
-
 	}
 }

@@ -2,11 +2,19 @@ package com.esferalia.aon.gwt.api.client.incidence;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.view.client.ProvidesKey;
 
 public class JsUser extends JavaScriptObject {
 
 	protected JsUser() {}
 
+	public static final ProvidesKey<JsUser> PROVIDES_KEY = new ProvidesKey<JsUser>() {
+		@Override
+		public Object getKey(JsUser p) {
+			return p == null ? null : p.getId();
+		}
+	};
+	
 	public final native Integer getId() /*-{
 		return this.id;
 	}-*/;

@@ -9,6 +9,9 @@ import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.paper.PaperButtonElement;
@@ -70,12 +73,34 @@ public class ScopeMain extends AonTemplate2{
 	private void startApplication() {
 		toolbar();
 		westContent();
-		content();
+		content(true);
 	}
 	
 	private void toolbar() {
 		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
 		Toolbar toolbar = new Toolbar("Gesti\u00f3n de Seguridad") {};
+		
+		toolbar.addButton("Usuarios", "aon-icon-user", true).addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				toolbar.getButtonPanel().getWidget(0).setVisible(false);
+				toolbar.getButtonPanel().getWidget(1).setVisible(true);
+				content(false);
+			}
+		});
+		
+		Button companyButton = toolbar.addButton("Empresas", "aon-icon-company", false);
+		companyButton.setWidth("auto");
+		companyButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				toolbar.getButtonPanel().getWidget(0).setVisible(true);
+				toolbar.getButtonPanel().getWidget(1).setVisible(false);
+				content(true);
+			}
+		});
 		setToolbar(toolbar);
 	}
 	
@@ -84,8 +109,8 @@ public class ScopeMain extends AonTemplate2{
 
 	}
 
-	private void content() {
-		setContent(new ScopePrincipal(this));
+	private void content(Boolean isCompany) {
+		setContent(new ScopePrincipal(this, isCompany));
 	}
 
 }

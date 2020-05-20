@@ -35,7 +35,7 @@ public class FilterPanel extends Composite {
 		this.parent = parent;
 	}
 
-	public FilterPanel(ScopePrincipal parent) {
+	public FilterPanel(ScopePrincipal parent, Boolean isCompany) {
     	this.parent = parent;
     	initWidget(binder.createAndBindUi(this));       
 
@@ -53,7 +53,7 @@ public class FilterPanel extends Composite {
 				LinkedList<String> list = new LinkedList<>();
 				list.add(tb.getValue());
 				parent.getFilterMap().put("description", list);
-				parent.gridContent();
+				parent.gridContent(isCompany);
 			}
 		});
 		panel.add(tb);

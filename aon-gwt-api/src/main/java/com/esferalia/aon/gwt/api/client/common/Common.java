@@ -27,6 +27,12 @@ public class Common extends Methods{
 		this.scheme = url.contains("https") ? "https" : "http";
 	}
 
+	public void getUsers(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsUser>> callback){
+		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
+		String url = getUrl() + "ms/user/" + getDomainName() + "/" + getUserName() + filter;
+		get(url, callback);
+	}
+	
 	public void getCompanies(HashMap<String, LinkedList<String>> filterMap, AsyncCallback<JSON<JsCompany>> callback){
 		String filter = filterMap.size() > 0 ? "?" + getFilter(filterMap) : "";
 		String url = getUrl() + "ms/company/" + getDomainName() + "/" + getUserName() + filter;
@@ -40,6 +46,16 @@ public class Common extends Methods{
 	
 	public void deleteCompanyScope(Integer id, AsyncCallback<JSON<JsCompany>> callback){
 		String url = getUrl() + "ms/company/" + getDomainName() + "/" + getUserName() + "/deleteScope/" + id;
+		delete(url, "", callback);
+	}
+	
+	public void copyUserScope(Integer user, Integer userId, AsyncCallback<JSON<JsUser>> callback){
+		String url = getUrl() + "ms/user/" + getDomainName() + "/" + getUserName() + "/copyUserScope/" + user + "/" + userId;
+		post(url, "", callback);
+	}
+	
+	public void deleteUserScope(Integer user, Integer userId, AsyncCallback<JSON<JsUser>> callback) {
+		String url = getUrl() + "ms/user/" + getDomainName() + "/" + getUserName() + "/deleteScope/" + user + "/" + userId;
 		delete(url, "", callback);
 	}
 	

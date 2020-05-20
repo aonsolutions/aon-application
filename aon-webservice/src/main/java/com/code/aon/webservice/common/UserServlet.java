@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
-import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
@@ -46,12 +46,16 @@ public class UserServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("User Servlet - GET METHOD");
-		String token = req.getHeader("session_id");
-		Integer domainId = Integer.parseInt(req.getHeader("domain_id"));
-		String domainName = req.getHeader("domain_name");
-		
-		Domain domain = AON.getDomain(domainName, domainId, "");
-		
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+		Integer domainId = Integer.parseInt(req.getParameter(MSG.DOMAIN));
+//		String token = req.getHeader("session_id");
+//		Integer domainId = Integer.parseInt(req.getHeader("domain_id"));
+//		String domainName = req.getHeader("domain_name");
+
+		Domain domain = AON.getDomain(domainName, domainId, userName);
+				
 		JSONArray arr = new JSONArray();
 		AON.getUsers(domain.getId(), domain.getName(), "").stream().forEach(u -> {
 			arr.put(ToJSON.userToJSON(u));
@@ -102,6 +106,41 @@ public class UserServlet extends HttpServlet{
 				} else {
 					object = insertDataResponse2(domain, userName, json);
 				}
+			} else if("copyUserScope".equals(pathInfo[3])){
+				if(pathInfo.length > 5){
+					Integer userId = Integer.parseInt(pathInfo[4]);
+					Integer copyUserId = Integer.parseInt(pathInfo[5]);
+					copyUserScope(domain, userName, userId, copyUserId);
+				} 
+			}
+			
+			resp.setContentType("application/json;charset=UTF-8");
+			Utils.addCorsHeader(resp);
+			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
+			os.println(object.toString());
+			os.flush();
+			os.close();
+		}
+	}
+	
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		LOGGER.info("User Servlet - DELETE METHOD");
+	
+		String[] pathInfo = req.getPathInfo().split("/");
+		String domainName = pathInfo[1]; 
+		String userName = pathInfo[2];
+		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
+		if(pathInfo.length > 3){				
+			JSONObject object = new JSONObject();
+			
+			if("deleteScope".equals(pathInfo[3])){
+				if(pathInfo.length > 5){
+					Integer userId = Integer.parseInt(pathInfo[4]);
+					Integer copyUserId = Integer.parseInt(pathInfo[5]);
+					deleteUserScopes(domain, userName, userId, copyUserId);
+				} 
 			}
 			
 			resp.setContentType("application/json;charset=UTF-8");
@@ -386,4 +425,25 @@ public class UserServlet extends HttpServlet{
 		}
 		return new JSONObject();
 	}
+	
+	private void copyUserScope(Domain domain, String login, Integer userId, Integer copyUserId) {
+		Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), login, copyUserId);
+		for (Integer scope : scopes) {
+			UserScope us = AON.getUserScope(domain.getName(), domain.getId(), login, userId, scope);
+			if(us == null || us.getId() == null) {
+				AON.insertUserScope(domain.getName(), domain.getId(), login, new UserScope()
+					.setDomain(domain.getId())
+					.setScope(scope)
+					.setUserId(userId));
+			}
+		}
+	}
+	
+	private void deleteUserScopes(Domain domain, String login, Integer userId, Integer copyUserId) {
+		Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), login, copyUserId);
+		for (Integer scope : scopes) {
+			AON.deleteUserScope(domain.getName(), domain.getId(), login, userId, scope);
+		}
+	}
+
 }

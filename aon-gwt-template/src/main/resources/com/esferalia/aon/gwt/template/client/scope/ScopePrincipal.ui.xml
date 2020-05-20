@@ -29,8 +29,8 @@
 								<g:tab >
 									<g:customHeader >
 										<g:HTMLPanel>
-											<i:IronIcon icon="account-box" style="width:16px !important; height:16px !important;" />
-											<g:InlineLabel text="Usuarios" />
+											<!-- <i:IronIcon icon="account-box" style="width:16px !important; height:16px !important;" /> -->
+											<g:InlineLabel ui:field="tabTitle" text="Usuarios" />
 										</g:HTMLPanel>
 									</g:customHeader>
 									<g:ScrollPanel ui:field="usersPanel"

@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.template.client.scope;
 
 import com.esferalia.aon.gwt.api.client.AonJsArray;
+import com.esferalia.aon.gwt.api.client.common.JsCompany;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.api.client.incidence.JsUser;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -25,10 +27,10 @@ public class CompanySouthPanel extends SouthPanel {
 
 	ScopePrincipal parent;
 	
-    public CompanySouthPanel(ScopePrincipal parent, AonJsArray<JsObject> items, JsObject o) {   
+    public CompanySouthPanel(ScopePrincipal parent, AonJsArray<JsCompany> items, JsUser o) {   
     	super();
     	this.parent = parent;
-    	title.setText("\u00c1mbito: " + o.getName());
+    	title.setText("Usuario: " + o.getLogin());
     	title.getElement().getStyle().setFontWeight(FontWeight.BOLD);
         vertical.setWidth("100%");
         if(items.length() > 0){
@@ -39,7 +41,7 @@ public class CompanySouthPanel extends SouthPanel {
        // vertical.add(nuevoItem(o));    
     }
    
-    public PaperItem buildPaperItem(JsObject js, JsObject o){
+    public PaperItem buildPaperItem(JsCompany js, JsUser o){
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("work");
@@ -60,7 +62,7 @@ public class CompanySouthPanel extends SouthPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				AonDialog d= new AonDialog("Desvincular \u00c1mbito", new Label("Est\u00e1s seguro de Desvincular " + js.getName() +" de " + o.getName())) {
+				AonDialog d= new AonDialog("Desvincular \u00c1mbito", new Label("Est\u00e1s seguro de Desvincular " + js.getName() +" de " + o.getLogin())) {
 					
 					@Override
 					protected void onCancel() {
@@ -93,7 +95,7 @@ public class CompanySouthPanel extends SouthPanel {
 				d.center();
 			}
 		});
-    	pi.add(removeIcon);
+    	//pi.add(removeIcon);
     	return pi;
     }
     

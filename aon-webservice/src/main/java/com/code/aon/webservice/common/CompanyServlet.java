@@ -1,6 +1,8 @@
 package com.code.aon.webservice.common;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -149,6 +151,12 @@ public class CompanyServlet extends HttpServlet{
     				.or(f.getScopeDescriptionProperty().like("%" + description + "%")));
 		}
 		
+		if(filterMap.containsKey("user")) {
+			Integer userId = Integer.parseInt(filterMap.get("user")[0]);
+			Integer[] array = AON.getUserScopes(domain.getName(), domain.getId(), "", userId);
+			filter = filter.and(f.getScopeIdProperty().in(array));
+		}
+
 		if(filterMap.containsKey("per_page")){
 			String per_page = filterMap.get("per_page")[0];
 			Integer perPage = Integer.parseInt(per_page);

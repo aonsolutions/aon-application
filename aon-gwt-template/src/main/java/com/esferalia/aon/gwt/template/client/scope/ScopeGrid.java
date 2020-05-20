@@ -343,12 +343,12 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public void onSuccess(JSON<JsCompany> result) {
-				parent.gridContent();
+				parent.gridContent(true);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				parent.gridContent();
+				parent.gridContent(true);
 			}
 		});
 	}
@@ -358,7 +358,7 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 			
 			@Override
 			public void onSuccess(JSON<JsCompany> result) {
-				parent.gridContent();
+				parent.gridContent(true);
 			}
 			
 			@Override
