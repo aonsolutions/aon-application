@@ -29,6 +29,7 @@ import net.aonsolutions.db.up2date.payroll.GarantizadoUpdate;
 import net.aonsolutions.db.up2date.payroll.MejoraInsert;
 import net.aonsolutions.db.up2date.payroll.MejoraUpdate;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Fix;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw182020Insert;
 import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateFactor;
 import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Fix;
 
@@ -128,6 +129,7 @@ public class Up2Date {
     		//MejoraInsert.MEJORAINSERT,
     		//MejoraUpdate.MEJORAUPDATE
     		//EmbargarFix.EMBARGARFIX
+    		RealDecreeLaw182020Insert.REALDECREELAW182020INSERT
     };
 
 
