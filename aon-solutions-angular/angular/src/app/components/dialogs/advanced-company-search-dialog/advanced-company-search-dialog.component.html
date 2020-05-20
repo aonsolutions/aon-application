@@ -2,7 +2,8 @@
   <div>
       <mat-list>
         <mat-list-item>
-          <mat-checkbox #parentCheck color="primary" (change)="updateParent(parentCheck.checked)" [checked]="f.parent">Empresa Padre</mat-checkbox>
+          <mat-checkbox #companyFilterActive color="primary" style="margin-right:10px;" (change)="updateActive(companyFilterActive.checked)" [checked]="f.active">Activas</mat-checkbox>
+          <mat-checkbox #companyFilterShare color="primary" (change)="updateShared(companyFilterShare.checked)" [checked]="f.shared">Compartidas</mat-checkbox>
         </mat-list-item>
       </mat-list>
     <div >

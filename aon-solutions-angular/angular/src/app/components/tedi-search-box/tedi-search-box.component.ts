@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CompanyService } from '../../services/services';
 import { MatDialog } from '@angular/material';
+import { AdvancedCompanySearchDialogComponent } from '../dialogs/advanced-company-search-dialog/advanced-company-search-dialog.component';
+
 
 @Component({
   selector: 'app-search-box',
@@ -32,7 +34,18 @@ export class TediSearchBoxComponent {
 
 
   advanced(): void {
-
+    const dialogRef = this.dialog.open(AdvancedCompanySearchDialogComponent, {
+      width: '640px',
+      backdropClass: 'tedi-user-dialog-backdrop',
+      panelClass: 'tedi-user-dialog-panel',
+      position: {
+        top: '50px',
+        left: '280px'
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.hasValue = result;
+    });
   }
 
 }

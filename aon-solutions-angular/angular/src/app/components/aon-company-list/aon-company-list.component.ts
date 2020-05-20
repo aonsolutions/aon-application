@@ -28,6 +28,12 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   }
 
   companyFilter(f: Company) : boolean {
+    if(!this.companyService.filter) {
+      this.companyService.filter = {
+        active: true,
+        shared: true
+      };
+    }
     const q = this.companyService.filter;
     let value = true;
     if(q && q.value) {
@@ -35,7 +41,16 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
       const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
       value = document || name;
     }
-    return f.active && value;
+
+    if(q && q.active) {
+      value = f.active && value;
+    }
+
+    if(q && q.shared) {
+      // TODO
+    }
+
+    return value;
   }
 
   ngOnInit() {

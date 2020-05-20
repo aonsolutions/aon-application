@@ -6,6 +6,8 @@ export interface CompanyFilter {
   user?: string;
   filter?: string;
   parent?: boolean;
+  active?: boolean;
+  shared?: boolean;
 }
 
 export interface UserFilter {
