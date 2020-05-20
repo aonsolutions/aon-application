@@ -4,9 +4,12 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,6 +17,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -23,11 +27,15 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -94,7 +102,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -187,7 +195,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -279,7 +287,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -375,7 +383,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = getFirstDayOfMonth(getToday());
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -427,6 +435,1036 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				DELTA);
 	}
 	
+	@Test
+	public void testVariableREINCORPRADO_EREI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 23);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+
+	
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableREINCORPRADO_EREII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, ereBack.size());
+
+		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+	}
+	
+	@Test
+	public void testVariableREINCORPRADO_EREIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, ereBack.size());
+
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		
+	}
+	
+	@Test
+	public void testVariableREINCORPRADO_EREIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 10);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, ereBack.size());
+
+		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		
+	}
+
+	@Test
+	public void testVariableREINCORPRADO_EREV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		addData(aonContext
+				, contract
+				, backDate
+				, null
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, ereBack.size());
+
+		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		
+	}
+
+	@Test
+	public void testVariableREINCORPRADO_EREVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		addData(aonContext
+				, contract
+				, backDate
+				, null
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.9");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, ereBack.size());
+
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableREINCORPRADO_EREVII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		addData(aonContext
+				, contract
+				, backDate
+				, endDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.9");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, ereBack.size());
+
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableERE_TOTALI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date ereDay = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH, 10);
+
+		addData(aonContext, contract, ereDay, ereDay,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableERE_TOTALII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableERE_TOTALIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		new Period(startDate, endDate).daysStream().forEach(c -> {
+		Date day = new java.sql.Date(c.getTimeInMillis());
+		addData(aonContext, contract, day , day,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableERE_TOTALIV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		new Period(startDate, endDate).daysStream()
+		.filter(c -> c.get(Calendar.DAY_OF_MONTH) != 13 ).forEach(c -> {
+		Date day = new java.sql.Date(c.getTimeInMillis());
+		addData(aonContext, contract, day , day,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableERE_TOTALV() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		new Period(startDate, endDate).daysStream()
+		.filter(c -> c.get(Calendar.DAY_OF_MONTH) != 13 ).forEach(c -> {
+		Date day = new java.sql.Date(c.getTimeInMillis());
+		addData(aonContext, contract, day , day,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		Date _13DayOfMonth = add(startDate, Calendar.DAY_OF_MONTH, 12);
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", add(_13DayOfMonth, Calendar.DAY_OF_MONTH,1), endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableERE_TOTALVI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		new Period(startDate, endDate).daysStream()
+		.forEach(c -> {
+		Date day = new java.sql.Date(c.getTimeInMillis());
+		addData(aonContext, contract, day , day,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), c.get(Calendar.DAY_OF_MONTH) != 13 ? "1.00" : "0.97");
+					}
+				});
+		});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		Date _13DayOfMonth = add(startDate, Calendar.DAY_OF_MONTH, 12);
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", add(_13DayOfMonth, Calendar.DAY_OF_MONTH,1), endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableERE_TOTALVII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		
+		ContractRecord contractII =
+		newContract(aonContext, 
+				SSRegimeType.GENERAL, //ssRegimeType, 
+				CCCType.PRINCIPAL, 
+				contract.getStartDate(), 
+				null, 
+				Collections.emptyMap(), 
+				new String [] {}, 
+				new String [] {}, 
+				null, //category, 
+				contract.getDomain(), //domainId, 
+				contract.getPerson(), //personId, 
+				contract.getWorkplace(), //workplaceId, 
+				contract.getEnterpriseCcc(), //enterpriseCccId, 
+				contract.getEnterpriseActivity() //enterpriseActivityId
+				);
+		
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		
+		
+		addData(aonContext, contractII, startDate, add(startDate, Calendar.DAY_OF_MONTH, 11),
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+
+		addData(aonContext, contractII, add(startDate, Calendar.DAY_OF_MONTH, 12), endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		ContractRecord contracts [] = new  ContractRecord [33];
+		
+		for ( int i = 0; i < 33; i ++ ) {
+			contracts[i]=
+					newContract(aonContext, 
+							SSRegimeType.GENERAL, //ssRegimeType, 
+							CCCType.PRINCIPAL, 
+							contract.getStartDate(), 
+							null, 
+							Collections.emptyMap(), 
+							new String [] {}, 
+							new String [] {}, 
+							null, //category, 
+							contract.getDomain(), //domainId, 
+							contract.getPerson(), //personId, 
+							contract.getWorkplace(), //workplaceId, 
+							contract.getEnterpriseCcc(), //enterpriseCccId, 
+							contract.getEnterpriseActivity() //enterpriseActivityId
+							);
+			addData(aonContext, contracts[i], startDate, endDate,
+					new HashMap<String, String>() {
+						{
+							put(getFactorVariable().getName(), "1.00");
+						}
+					});			
+		}
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		
+		addData(aonContext, contracts[22], startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.30");
+					}
+				});			
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, fullEre.size());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+	}
+
+	@Test
+	public void testNewBonusI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		cleanSystemData(aonContext);
+		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), null,
+				new HashMap<String, String>() {
+					{
+						put("PORCENTAJE_CGC_E", "23.60");
+					}
+				});
+
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY,
+				"BASE_CGC_E * PORCENTAJE_CGC_E/100");
+		
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+					{
+					}
+				},
+				new String[] { "( P_1 + P_2 )* 0.10 ",
+							"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+							"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+				, new String[] {
+							"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+							"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"}
+				, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, 
+				contract, ere, 
+				String.format("isdef %1$s ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * %1$s * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0) : HIDE()" , getFactorVariable().getName() ), 
+				String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		
+		addSystemData(aonContext
+		, startDate
+		, add(startDate, Calendar.DAY_OF_MONTH, 12)
+		, new HashMap<String, String>(){{
+			put("PORCENTAJE_EXONERADO", "100.00");
+		}});
+		
+		addSystemData(aonContext
+		, add(startDate, Calendar.DAY_OF_MONTH, 13)
+		,endDate
+		, new HashMap<String, String>(){{
+			put("PORCENTAJE_EXONERADO", "ERE_TOTAL ? 100.00 : 60.00");
+		}});
+
+//		addBonus(aonContext, 
+//		contract, addBonusConcept(aonContext, BonusType.ERE, ""),
+//		String.format("_FRACC(CONTEXT,'CUOTA_EMPRESARIAL')* %s *(isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO/100:1)", getFactorVariable().getName())
+//		);
+		addData(aonContext, contract, startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println("_P " + payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getQuote() + ")");
+		}
+		
+		double costs = 0.00;
+		for (com.esferalia.aon.payroll.SalaryCost cost : salary
+				.getSalaryCosts()) {
+			System.out.println("_C " +cost.getName() + " = " + cost.getAmount()
+					);
+			costs += cost.getAmount();
+		}
+		
+		double bonuses = 0.00;
+		for (com.esferalia.aon.payroll.SalaryBonus bonus : salary
+				.getSalaryBonus()) {
+			System.out.println("_B " + bonus.getName() + " = " + bonus.getAmount()
+					);
+			bonuses += bonus.getAmount();
+		}
+		
+		org.junit.Assert.assertEquals(costs, bonuses, DELTA);
+		
+		ContractRecord contractII =
+		newContract(aonContext, 
+				SSRegimeType.GENERAL, //ssRegimeType, 
+				CCCType.PRINCIPAL, 
+				contract.getStartDate(), 
+				null, 
+				Collections.emptyMap(), 
+				new String[] { "( P_1 + P_2 )* 0.10 ",
+				"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES", },
+			 	new String[] {
+				"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+				"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"},
+				null, //category, 
+				contract.getDomain(), //domainId, 
+				contract.getPerson(), //personId, 
+				contract.getWorkplace(), //workplaceId, 
+				contract.getEnterpriseCcc(), //enterpriseCccId, 
+				contract.getEnterpriseActivity() //enterpriseActivityId
+				);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+		
+		bonuses = 0.00;
+		for (com.esferalia.aon.payroll.SalaryBonus bonus : salary
+				.getSalaryBonus()) {
+			System.out.println(bonus.getName() + " = " + bonus.getAmount()
+					);
+			bonuses += bonus.getAmount();
+		}
+		
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		double expected = costs / monthDays * 13 + costs / monthDays * ( monthDays - 13 ) * 0.60;
+		org.junit.Assert.assertEquals(expected, bonuses, DELTA);
+		
+		addData(aonContext, contractII, startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.6");
+					}
+				});
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+		
+		bonuses = 0.00;
+		for (com.esferalia.aon.payroll.SalaryBonus bonus : salary
+				.getSalaryBonus()) {
+			System.out.println(bonus.getName() + " = " + bonus.getAmount()
+					);
+			bonuses += bonus.getAmount();
+		}
+		
+		org.junit.Assert.assertEquals(expected, bonuses, DELTA);
+
+		addData(aonContext, contractII, startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.0");
+					}
+				});
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+		
+		bonuses = 0.00;
+		for (com.esferalia.aon.payroll.SalaryBonus bonus : salary
+				.getSalaryBonus()) {
+			System.out.println(bonus.getName() + " = " + bonus.getAmount()
+					);
+			bonuses += bonus.getAmount();
+		}
+		
+		org.junit.Assert.assertEquals(costs, bonuses, DELTA);
+	}
+	
+	@Test
+	public void testBackBonusI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		cleanSystemData(aonContext);
+		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), null,
+				new HashMap<String, String>() {
+					{
+						put("PORCENTAJE_CGC_E", "23.60");
+					}
+				});
+
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY,
+				"BASE_CGC_E * PORCENTAJE_CGC_E/100");
+		
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+					{
+					}
+				},
+				new String[] { "( P_1 + P_2 )* 0.10 ",
+							"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+							"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+				, new String[] {
+							"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+							"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"}
+				, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, 
+				contract, ere, 
+				String.format("isdef %1$s ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO I','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * %1$s * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0) : HIDE()" , getFactorVariable().getName() ), 
+				String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		
+		addPayment(
+				aonContext 
+				, contract
+				, ere
+				, String.format("REINCORPORADO_ERE ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO II','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * DIAS_TRABAJADOS/DIAS_COTIZADOS * (isdef PORCENTAJE_REINCORPORACION ? PORCENTAJE_REINCORPORACION : 75.0)/100.0');HIDE()) : HIDE()" , getFactorVariable().getName() ), 
+				"");
+
+		addSystemData(aonContext
+		, startDate
+		, add(startDate, Calendar.DAY_OF_MONTH, 11)
+		, new HashMap<String, String>(){{
+			put("PORCENTAJE_EXONERADO", "100.00");
+		}});
+		
+		addSystemData(aonContext
+		, add(startDate, Calendar.DAY_OF_MONTH, 12)
+		,endDate
+		, new HashMap<String, String>(){{
+			put("PORCENTAJE_EXONERADO", "ERE_TOTAL ? 100.00 : 60.00");
+		}});
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext, contract, startDate, endEREDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println("_P " + payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getQuote() + ")");
+		}
+		
+		double costs = 0.00;
+		for (com.esferalia.aon.payroll.SalaryCost cost : salary
+				.getSalaryCosts()) {
+			System.out.println("_C " +cost.getName() + " = " + cost.getAmount()
+					);
+			costs += cost.getAmount();
+		}
+		
+		double bonuses = 0.00;
+		for (com.esferalia.aon.payroll.SalaryBonus bonus : salary
+				.getSalaryBonus()) {
+			System.out.println("_B " + bonus.getName() + " = " + bonus.getAmount()
+					);
+			bonuses += bonus.getAmount();
+		}
+		
+		int monthDays = get(endDate, DAY_OF_MONTH);
+		double off = costs / monthDays * 12 + costs / monthDays * (monthDays -12 ) * 0.75 ;
+		org.junit.Assert.assertEquals(off, bonuses, DELTA);
+		
+		
+		addData(aonContext, contract, backDate, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.5");
+					}
+				});
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println("_P " + payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getQuote() + ")");
+		}
+		
+		costs = 0.00;
+		for (com.esferalia.aon.payroll.SalaryCost cost : salary
+				.getSalaryCosts()) {
+			System.out.println("_C " +cost.getName() + " = " + cost.getAmount()
+					);
+			costs += cost.getAmount();
+		}
+		
+		bonuses = 0.00;
+		for (com.esferalia.aon.payroll.SalaryBonus bonus : salary
+				.getSalaryBonus()) {
+			System.out.println("_B " + bonus.getName() + " = " + bonus.getAmount() + ", " + bonus.getDescription()
+					);
+			bonuses += bonus.getAmount();
+		}
+		
+		
+		off = costs / monthDays * 12
+			+(costs / monthDays * (monthDays -12 ) * 0.60) * 0.5 
+			+(costs / monthDays * (monthDays -12 ) * 0.75) * 0.5 ;
+		org.junit.Assert.assertEquals(off, bonuses, DELTA);
+		
+	}
+
 	private void addCosts(AONContext aonContext) {
 		addCCCCost(
 				aonContext, 

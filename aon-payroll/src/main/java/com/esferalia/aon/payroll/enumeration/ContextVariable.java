@@ -149,6 +149,8 @@ public enum ContextVariable implements IResourceable {
 	ERE_FACTOR("COEFICIENTE_ERE", VariableType.INTEGER, false),
 	ERE_FACTOR_FORCE("COEFICIENTE_ERE_FZA", VariableType.INTEGER, false),
 	ERE_FACTOR_FORCE_OFF("COEFICIENTE_ERE_FZA_EXONERADO", VariableType.INTEGER, false),
+	FULL_ERE("ERE_TOTAL", VariableType.BOOLEAN, false ),
+	ERE_BACK("REINCORPORADO_ERE", VariableType.BOOLEAN, false ),
 	STRIKE_FACTOR("COEFICIENTE_HUELGA", VariableType.INTEGER, false),
 	PATERNITY_FACTOR("COEFICIENTE_PATERNIDAD", VariableType.DOUBLE, false),
 	MATERNITY_FACTOR("COEFICIENTE_MATERNIDAD", VariableType.DOUBLE, false),
@@ -167,8 +169,11 @@ public enum ContextVariable implements IResourceable {
 	ENTRY_BY_COMPANY_ACCOUNT("INGRESO_AC_EMPRESA", VariableType.BOOLEAN, false),
 
 	// Embargos
-	EMBARGO_LEFT("PENDIENTE", VariableType.DOUBLE, false), EMBARGO_PAID("EMBARGADO", VariableType.DOUBLE, false),
-	EMBARGO_LIMIT("EMBARGABLE", VariableType.DOUBLE, false), EMBARGO_MAX("MAX_EMBARGABLE", VariableType.DOUBLE, false),
+	EMBARGO_LEFT("PENDIENTE", VariableType.DOUBLE, false), 
+	EMBARGO_PAID("EMBARGADO", VariableType.DOUBLE, false),
+	EMBARGO_LIMIT("EMBARGABLE", VariableType.DOUBLE, false), 
+	EMBARGO_MAX("MAX_EMBARGABLE", VariableType.DOUBLE, false),
+
 
 	// Salary Type
 	SALARY("NOMINA", VariableType.BOOLEAN), DELAY("ATRASOS", VariableType.BOOLEAN),
@@ -360,6 +365,12 @@ public enum ContextVariable implements IResourceable {
 	Arrays.stream(ContextVariable.values())
 	.filter(v->v.getName().startsWith(ERE_FACTOR.getName()))
 	.toArray(ContextVariable[]::new);
+
+	public static String [] ERE_FACTORS_NAMES  =
+	Arrays.stream(ContextVariable.values())
+	.map( v -> v.getName())
+	.filter(s -> s.startsWith(ERE_FACTOR.getName()))
+	.toArray(String[]::new);
 
 	private final String name;
 	private VariableType type;

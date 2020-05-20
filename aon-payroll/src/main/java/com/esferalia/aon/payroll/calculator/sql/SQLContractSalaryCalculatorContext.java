@@ -1,7 +1,11 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.code.aon.common.util.CommonUtil.getDaysBetweenDates;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ABS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
@@ -20,6 +24,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BACK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EVERYTHING;
@@ -27,6 +32,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXTRA_PAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FEMALE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_ERE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GENDER;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GROSS;
@@ -140,17 +146,25 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
+import org.jooq.Condition;
+import org.jooq.conf.ParamType;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.jooq.Keys;
+import com.esferalia.aon.jooq.tables.Contract;
+import com.esferalia.aon.jooq.tables.Enterprise;
+import com.esferalia.aon.jooq.tables.PayrollWorkplace;
+import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -4076,6 +4090,33 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						return getWorkedYears(period.getStart(), period.getEnd());
 					}
 				});
+
+		this.implicitExpressionContext.putVariable(FULL_ERE,
+				new ActiveTimedExpressionVariable<Boolean>(FULL_ERE.name(), ExpressionScope.CONTRACT) {
+					@Override
+					public Period getPeriod() {
+						return new Period(startDate, endDate);
+					}
+
+					@Override
+					public Boolean getValue(Period period) {
+						return isFullERE(period);
+					}
+				});
+
+		this.implicitExpressionContext.putVariable(ERE_BACK,
+				new ActiveTimedExpressionVariable<Boolean>(ERE_BACK.name(), ExpressionScope.CONTRACT) {
+					@Override
+					public Period getPeriod() {
+						return new Period(startDate, endDate);
+					}
+
+					@Override
+					public Boolean getValue(Period period) {
+						return isEREBack(period);
+					}
+				});
+
 		this.implicitExpressionContext.putVariable("DIAS_PREAVISO",
 				new LazyTimedExpressionVariable<Double>("DIAS_PREAVISO", ExpressionScope.CONTRACT) {
 					@Override
@@ -5297,6 +5338,118 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		
 		return startDate;
+	}
+	
+	private Boolean isFullERE (Period p) {
+		// only active employees, of course
+		Condition activeEmployees = 
+		CONTRACT.SS_REGIME.ne((byte)SSRegimeType.SELF_EMPLOYED.ordinal())
+		.and(CONTRACT.START_DATE.le(toSqlDate(p.getEnd())))
+		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(toSqlDate(p.getStart()))))
+		;
+		
+		Condition activeEreFactors = 
+		CONTRACT_DATA.NAME.eq(ContextVariable.ERE_FACTOR_FORCE_OFF.getName())
+		.and(CONTRACT_DATA.START_DATE.le(toSqlDate(p.getEnd())))
+		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(toSqlDate(p.getStart()))))
+		;
+		
+		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap =
+		new AONContext(connection)
+		.getDslContext()
+		.select()
+		.from(WORKPLACE)
+		.innerJoin(CONTRACT).on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE).and(activeEmployees))
+		.leftJoin(CONTRACT_DATA).on(CONTRACT.ID.eq(CONTRACT_DATA.CONTRACT).and(activeEreFactors))
+		.where(WORKPLACE.ENTERPRISE.eq(getInt(SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY)))
+		.fetchGroups(CONTRACT.ID, r ->r.into(CONTRACT_DATA))
+		;
+		
+		Date start = p.getStart();
+		for (Map.Entry<Integer, List<ContractDataRecord>> entry : contractEreFactorsMap.entrySet()) {
+			List<ContractDataRecord> ereFactors = entry.getValue();
+			if ( ereFactors == null || ereFactors.isEmpty() )
+				return false; // this employee isn't at ERE.
+			
+			start  = p.getStart();
+			for ( ContractDataRecord ereFactor : ereFactors ) {
+				if ( ereFactor.getId() == null ) 
+					return false;
+				
+				if ( ereFactor.getStartDate().after(start))
+					return false; 
+				
+				try {
+					double factor = Double.parseDouble(ereFactor.getExpression());
+					if ( factor < 1.00 )
+						return false;
+				} catch ( NullPointerException | NumberFormatException e) {
+					return false;
+				}
+				
+				Date endDate = ereFactor.getEndDate() == null ? 
+				p.getEnd() : ereFactor.getEndDate();
+				
+				start = DateUtils.addDays(endDate,1);
+			}
+		}
+		
+		return start.after(p.getEnd());
+		
+		
+	}
+	
+	private Boolean isEREBack (Period p) {
+		Calendar c = Calendar.getInstance();
+		c.set(2020, Calendar.MAY, 12, 0, 0, 0);
+		return isEREBack(c.getTime(), p);
+	}
+	
+	private Boolean isEREBack (Date date, Period p) {
+		
+		if ( Period.compare(p.getEnd(), date) <= 0 )
+			return false;
+		
+		List<ITimedVariable<?>> ereFactorVars = getVariables(ContextVariable.ERE_FACTOR_FORCE_OFF.getName(), p.getStart(), p.getEnd(), Collectors.toList());
+		if ( ereFactorVars.size() > 0  ) {
+			Collections.sort(ereFactorVars, (v1,v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
+			ITimedVariable<?> lastEreFactorVar = ereFactorVars.get(ereFactorVars.size()-1);
+			if ( Period.compare(lastEreFactorVar.getPeriod().getEnd(), p.getEnd() ) >= 0 ) {
+				try {
+					double ereFactor = ((Number)lastEreFactorVar.getValue(lastEreFactorVar.getPeriod())).doubleValue();
+					if ( ereFactor == 1.00 ) 
+						return false;
+				} catch ( Exception e ) {
+					
+				}
+			}
+		}
+		
+		List<String> ereExpressions =
+		new AONContext(connection)
+		.getDslContext()
+		.select()
+		.from(CONTRACT_DATA)
+		.where(CONTRACT_DATA.CONTRACT.eq(getId()))
+		.and(CONTRACT_DATA.NAME.eq(ContextVariable.ERE_FACTOR_FORCE_OFF.getName()))
+		.and(CONTRACT_DATA.START_DATE.le(toSqlDate(date)))
+		.and(CONTRACT_DATA.END_DATE.ge(toSqlDate(date)))
+		.fetch(CONTRACT_DATA.EXPRESSION)
+		;
+		
+		if ( ereExpressions.isEmpty() ) 
+			return false;
+		
+		for (String expression : ereExpressions) {
+			try {
+				if ( Double.parseDouble(expression) == 1.00 ) 
+					continue;
+			} catch (NullPointerException | NumberFormatException e) {
+			}
+			return false;
+		}
+		
+		return true;
 	}
 	
 	// ------------------------------------------------------------------------

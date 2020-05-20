@@ -42,6 +42,7 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.RemoveException;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -52,7 +53,7 @@ public class ContextFunctions {
 	private static final String _GROSS = "_BRUTO";
 	private static final String _SECTION = "_SECTION";
 	private static final String _PRORATION = "_PRORATION";
-	private static final String _FRACTIONATE = "_FRACTIONATE";
+	private static final String _FRACTIONATE = "_FRACC";
 	private static final String MONTHS_IMPL = "MESESIMPL";
 
 	public static class UselessGuaranteeException extends CheckException {
@@ -527,6 +528,15 @@ public class ContextFunctions {
 		};
 	}
 
+	public static Double fractionate(String variable ) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.FRACTIONATE),
+						String.format("%s\\(%s,", _FRACTIONATE, ContextVariable.CONTEXT));
+			}
+		};
+	}
 
 	public static Double fractionate(ExpressionContext context, Double amount) {
 		double totalWorkedDays = 0.00;
@@ -542,6 +552,26 @@ public class ContextFunctions {
 			throw new ExpressionExceptionWrapper(new UndefinedContextVariablesException(ContextVariable.WORKED_DAYS));
 
 		return amount * currentWorkedDays / totalWorkedDays;
+	}
+
+	public static Double fractionate(ExpressionContext context, String name) {
+		ITimedVariable<Number> variable = ExpressionContext.getCurrentBindings().get(name, Number.class);
+		if ( variable == null )
+			throw new ExpressionExceptionWrapper( new UndefinedVariablesException(name));
+		Number value = variable.getValue(variable.getPeriod());
+		if ( value == null )
+			throw new ExpressionExceptionWrapper( new UndefinedVariablesException(name));
+		
+		Period period  = ExpressionContext.getCurrentBindings().getPeriod();
+		
+		for ( ITimedVariable<?> var : context.getVariables(name) ) {
+			if ( var.getPeriod().intersects(period )) {
+				long varDays = var.getPeriod().daysStream().count();
+				long valueDays = period.daysStream().count();
+				return value.doubleValue() / varDays * valueDays;
+			}
+		}
+		return value.doubleValue();
 	}
 
 	public static Calendar parseExtraDate(String str, Date date) {
@@ -850,9 +880,10 @@ public class ContextFunctions {
 			MethodStub _FractionateStub = new MethodStub(_fractionate);
 			context.setVariable(_FRACTIONATE, _FractionateStub, startDate, endDate);
 			Method fractionate = ContextFunctions.class.getMethod("fractionate", Double.class);
-			MethodStub fractionateStub = new MethodStub(fractionate);
+			MethodStub fractionateStub = new  MethodStub(fractionate);
 			for ( Period p: context.getPeriods(ContextVariable.WORKED_DAYS))
 				context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, p.getStart(), p.getEnd());
+//			context.setVariable(ContextVariable.FRACTIONATE, fractionateStub, startDate, endDate);
 			
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
