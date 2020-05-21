@@ -89,7 +89,7 @@ public abstract class EmployeeCalendarInactivityDialog extends CustomDialog {
 		typeInactivity.addItem("ERE");
 		typeInactivity.addItem("ERE Fuerza mayor");
 		typeInactivity.addItem("ERE Fuerza mayor (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
-		typeInactivity.addItem("ERE Fuerza mayor Parcial (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
+//		typeInactivity.addItem("ERE Fuerza mayor Parcial (Exoneraci" + String.valueOf("\u00F3") + "n de cuotas)");
 		
 		if(!selectedDates.isEmpty()) {
 			selectedDates.sort(null);

@@ -1094,17 +1094,17 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 							
 							addDayType(startDate, endDate, DayType.EREFZAEXONDAY, coefficient);
 							break;
-						case 7:
-							if(isEndERTE) {
-								if(null != endDate) {
-									Date newDate = DateUtils.copyDateOnly(endDate);
-									DateUtils.addDays2Date(newDate, 1);
-									employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
-								}
-							}
-								
-							addDayType(startDate, endDate, DayType.EREFZAEXONPARTIALDAY, coefficient);
-							break;
+//						case 7:
+//							if(isEndERTE) {
+//								if(null != endDate) {
+//									Date newDate = DateUtils.copyDateOnly(endDate);
+//									DateUtils.addDays2Date(newDate, 1);
+//									employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
+//								}
+//							}
+//								
+//							addDayType(startDate, endDate, DayType.EREFZAEXONPARTIALDAY, coefficient);
+//							break;
 						default:
 							break;
 					}
