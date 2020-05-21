@@ -1008,7 +1008,6 @@ public class SQLAgreementDraft {
 		ResultSet rs = null;
 		PreparedStatement stmt = null;
 		try {
-
 			// @formatter:off
 			stmt = conn.prepareStatement("INSERT INTO "
 					+ SQLConstants.AGREEMENT_LEVEL_DATA + " ( "
@@ -1146,7 +1145,12 @@ public class SQLAgreementDraft {
 				removeLevelData(conn, dbVariable.getId());
 				continue;
 			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
+				// Update date Level Data
 				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
+				continue;
+			}else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
+				// Update new value for level data
+				updateLevelData(conn, dbVariable.getId(), variable.getStartDate(), variable);
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate())) {
 				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
@@ -1919,6 +1923,36 @@ public class SQLAgreementDraft {
 			stmt.setNull(2, Types.DATE);
 
 			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+	
+	private static void updateLevelData(Connection conn, Integer dataId,
+			Date startDate, Variable variable) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_LEVEL_DATA + " SET "
+					+ AgreementLevelDataColumns.START_DATE + " = ? " + ", "
+					+ AgreementLevelDataColumns.END_DATE + " = ? " + ", " 
+					+ AgreementLevelDataColumns.EXPRESSION + "= ? " + " WHERE "
+					+ AgreementLevelDataColumns.ID + "= ? ");
+			// @formatter:on
+
+			stmt.setDate(1, new java.sql.Date(startDate.getTime()));
+			
+			stmt.setNull(2, Types.DATE);
+			
+			stmt.setString(3, variable.getExpression());
+
+			stmt.setInt(4, dataId);
 
 			stmt.executeUpdate();
 
