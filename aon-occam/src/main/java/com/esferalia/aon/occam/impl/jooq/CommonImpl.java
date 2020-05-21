@@ -137,6 +137,11 @@ public class CommonImpl implements ICommon {
 			WorkplaceDAO.getWorkplaceList(ctx, filter));
 	}
 	
+	@Override
+	public void updateWorkplace(AONContext ctx, Workplace workplace) {
+		ctx.getDslContext().transaction(
+			configuration -> WorkplaceDAO.updateWorkplace(ctx, workplace));
+	}
 	// ------------------ PRODUCT
 	@Override
 	public List<String> getProductTags(AONContext ctx) {

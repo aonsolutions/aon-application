@@ -991,6 +991,12 @@ public class AON {
 		}
 	}	
 
+	public static void updateWorkplace(String domainName, Integer domainId, String login, Workplace workplace) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getCommon().updateWorkplace(ctx, workplace);
+		} 
+	}
+	
 	// --------------------- SIGNATURE
 
 	public static Signature getSignature(String domainName, Integer domainId,

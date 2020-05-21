@@ -69,6 +69,7 @@ public interface ICommon {
 	
 	public Workplace getWorkplace(AONContext ctx, WorkplaceFilter filter);
 	public LinkedList<Workplace> getWorkplaceList(AONContext ctx, WorkplaceFilter filter);
+	public void updateWorkplace(AONContext ctx, Workplace workplace);
 	
 	// --------------------------------------------
 	// PRODUCT

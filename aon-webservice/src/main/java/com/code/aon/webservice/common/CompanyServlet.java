@@ -1,8 +1,6 @@
 package com.code.aon.webservice.common;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -101,9 +99,9 @@ public class CompanyServlet extends HttpServlet{
 				Integer id = Integer.parseInt(pathInfo[4]);
 				Company cp = AON.getCompany(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
 				Domain d = AON.getDomain(domainName, cp.getDomain(), userName);
-				Scope scope = AON.getScopeStream(domain.getName(), domain.getId(), userName, 
-						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDescriptionProperty().eq(cp.getDocument()))).findFirst().orElse(null);
 				if(cp.getDocument() != null) {
+					Scope scope = AON.getScopeStream(domain.getName(), domain.getId(), userName, 
+						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDescriptionProperty().eq(cp.getDocument()))).findFirst().orElse(null);
 					if(scope == null) {
 						scope = AON.insertScope(domain.getName(), domain.getId(), userName, new Scope()
 								.setDomain(domain.getId())
@@ -118,6 +116,8 @@ public class CompanyServlet extends HttpServlet{
 					}
 					d.setScope(scope.getId());
 					AON.updateDomainScope(d.getName(), cp.getDomain(), userName, d);
+					AON.getWorkplaceList(d.getName(), d.getId(), userName, f -> f.getDomainProperty().eq(d.getId()))
+						.stream().forEach(wp -> AON.updateWorkplace(d.getName(), d.getId(), userName, wp.setScope(d.getScope())));
 				}
 			} 
 			

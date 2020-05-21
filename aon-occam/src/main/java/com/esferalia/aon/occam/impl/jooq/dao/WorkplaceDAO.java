@@ -52,6 +52,18 @@ public class WorkplaceDAO {
 				.collect(Collectors.toCollection(LinkedList::new));	
 	}
 	
+	public static void updateWorkplace(AONContext ctx, Workplace workplace) {
+		ctx.getDslContext().update(WORKPLACE)
+		.set(WORKPLACE.ENTERPRISE, workplace.getEnterprise())
+		.set(WORKPLACE.DESCRIPTION, workplace.getDescription())
+		.set(WORKPLACE.ADDRESS, workplace.getAddress())
+		.set(WORKPLACE.CUSTOMER, workplace.getCustomer())
+		.set(WORKPLACE.SCOPE, workplace.getScope())
+		.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicagreement())
+		.set(WORKPLACE.ACTIVE, workplace.getActive())
+		.execute();
+	};
+	
 	private static class FullWorkplaceFiller implements Function<WorkplaceRecord, Workplace> {
 		
 		@Override
