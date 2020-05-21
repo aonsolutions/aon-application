@@ -989,10 +989,12 @@ public class RegistryDAO {
 	}
 	
 	public static Registry insertRegistry(AONContext ctx, Registry registry){
-		return ctx.getDslContext().insertInto(REGISTRY, REGISTRY.ALIAS, REGISTRY.DOCUMENT, REGISTRY.DOMAIN,
-				REGISTRY.NAME, REGISTRY.NATIONALITY, REGISTRY.TYPE)
-			.values(registry.getAlias(), registry.getDocument(), registry.getDomain(),
-				registry.getName(), "ES", registry.getType()).returning()
+		String nationality = registry.getNationality() != null ? registry.getNationality().getIso2() : "ES";
+		String documentCountry = registry.getDocumentCountry() != null ? registry.getDocumentCountry().getIso2() : "ES";
+		return ctx.getDslContext().insertInto(REGISTRY, REGISTRY.DOMAIN, REGISTRY.ALIAS, REGISTRY.DOCUMENT, 
+				REGISTRY.DOCUMENT_COUNTRY, REGISTRY.NAME, REGISTRY.NATIONALITY,	REGISTRY.TYPE)
+			.values(registry.getDomain(), registry.getAlias(), registry.getDocument(), 
+				documentCountry, registry.getName(), nationality, registry.getType()).returning()
 			.fetch().stream().map(new RegistryFiller()).findFirst().orElse(new Registry());
 	}
 	

@@ -392,7 +392,7 @@ public class InvoiceImport {
 			error.setLine(i);
 			return error;
 		}
-		
+
 		AonConfiguration aonCtx = AON.getConfiguration(domain.getName(), domain.getId(), user.getLogin());
 	
 		PayMethod pm = aonCtx.getPayMethods() != null && !aonCtx.getPayMethods().isEmpty() ? aonCtx.getPayMethods().get(0) : new PayMethod(); 
@@ -479,7 +479,7 @@ public class InvoiceImport {
 			String nif = ivs.get(i).getNif();
 			String name = ivs.get(i).getName();
 			
-			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address);			
+			AccountingRegistry ar = getRegistry(domain, user, invoice.getType(), nif, name, invoice.getTransaction(), address, ivs.get(i).getCountry());			
 			invoice.setRegistry(ar.getId());
 			ai.setRegistry(ar);
 			ai.setInvoice(invoice);
@@ -689,13 +689,13 @@ public class InvoiceImport {
 		return null;
 	}
 	
-	private static AccountingRegistry getRegistry(Domain domain, User user, InvoiceType type, String nif, String name, InvoiceTransactionType transaction, RAddress address) {
+	private static AccountingRegistry getRegistry(Domain domain, User user, InvoiceType type, String nif, String name, InvoiceTransactionType transaction, RAddress address, Country country) {
 		// TODO Auto-generated method stub
 		if(InvoiceType.SALES.equals(type)) {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif)));
-			
+
 			if(customer == null || customer.getId() == null) {
 				Registry reg = getDomainRegistry(domain, user.getLogin(), nif);
 				if(reg == null || !reg.getDomain().equals(domain.getId())) {
@@ -703,7 +703,9 @@ public class InvoiceImport {
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain.getId())
 						.setDocument(nif)
-						.setName(name));
+						.setDocumentCountry(country)
+						.setName(name)
+						.setNationality(country));
 				}	
 				customer = new Customer()
 					.setDomain(domain.getId())
@@ -736,7 +738,9 @@ public class InvoiceImport {
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain.getId())
 						.setDocument(nif)
-						.setName(name));
+						.setDocumentCountry(country)
+						.setName(name)
+						.setNationality(country));
 				}			
 				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
@@ -773,7 +777,9 @@ public class InvoiceImport {
 					reg = AON.insertRegistry(domain.getName(), domain.getId(), user.getLogin(), reg
 						.setDomain(domain.getId())
 						.setDocument(nif)
-						.setName(name));
+						.setDocumentCountry(country)
+						.setName(name)
+						.setNationality(country));
 				}			
 				Account acc = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), user.getLogin(), f -> 
 					f.getDomainProperty().eq(domain.getId())
