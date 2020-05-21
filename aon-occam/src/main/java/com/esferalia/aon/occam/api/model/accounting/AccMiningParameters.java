@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model.accounting;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+
 
 public class AccMiningParameters implements Serializable {
 	
@@ -15,6 +17,7 @@ public class AccMiningParameters implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	private int accountLevel = 4;
+	private SecurityLevel securityLevel;
 	
 	public int getDomain() {
 		return domain;
@@ -70,5 +73,10 @@ public class AccMiningParameters implements Serializable {
 	public void setAccountLevel(int accountLevel) {
 		this.accountLevel = accountLevel;
 	}
-	
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+	}
 }

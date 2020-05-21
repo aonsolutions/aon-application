@@ -143,6 +143,7 @@ public class AccountBalanceDAO {
 		mParams.setDomain(ctx.getDomainId());
 		mParams.setStartDate(params.getFromDate());
 		mParams.setEndDate(params.getToDate());
+		mParams.setSecurityLevel(params.getSecurityLevel());
 		if (params.isConsolidation()) {
 			Integer[] domains = new Integer[params.getDomains().size()];
 			for (int i = 0; i < params.getDomains().size();i++) {

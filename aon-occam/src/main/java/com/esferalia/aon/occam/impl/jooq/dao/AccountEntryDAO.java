@@ -487,6 +487,9 @@ public class AccountEntryDAO {
 			.where(domainCondition)
 			.and(ACCOUNT_ENTRY.ENTRY_DATE.between(start,end))
 			.and(ACCOUNT_ENTRY.ENTRY_TYPE.ne(AccountEntryType.CLOSING.getValue()) )
+			.and( params.getSecurityLevel()!=null
+				? ACCOUNT_ENTRY.SECURITY_LEVEL.eq(params.getSecurityLevel().value())
+				: DSL.trueCondition() )
 			.and(pygCondition)
 			.groupBy(ACCOUNT_ENTRY.ENTRY_TYPE, accountField)
 			.fetch()
