@@ -273,8 +273,8 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	@Override
-	public void addBonus(Double amount, String description, IBonus bonus,
-			Map<String, ITimedVariable<?>> context) {
+	public void addBonus(Double amount, String description, Date startDate,
+			Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
 		// TODO Auto-generated method stub
 
 	}

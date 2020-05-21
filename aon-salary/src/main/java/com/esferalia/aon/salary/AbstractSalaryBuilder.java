@@ -200,8 +200,8 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 	}
 
 	@Override
-	public void addBonus(Double amount, String description, IBonus bonus,
-			Map<String, ITimedVariable<?>> context) {
+	public void addBonus(Double amount, String description, Date startDate,
+			Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
 	}
 	
 	

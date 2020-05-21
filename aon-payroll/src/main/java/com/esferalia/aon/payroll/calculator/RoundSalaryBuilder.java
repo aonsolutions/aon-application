@@ -279,8 +279,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.addCost(amount, description, startDate, endDate, cost, context);
 	}
 
-	public void addBonus(Double amount, String description, IBonus bonus, Map<String, ITimedVariable<?>> context) {
-		salaryBuilder.addBonus(amount, description, bonus, context);
+	public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
+		salaryBuilder.addBonus(amount, description, startDate, endDate, bonus, context);
 	}
 
 	public void addPayment(Double amount, Double quote, Double tax, String description, Date start, Date end,

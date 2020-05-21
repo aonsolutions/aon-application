@@ -247,8 +247,8 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	}
 	
 	@Override
-	public void addBonus(Double amount, String description, IBonus bonus,
-			Map<String, ITimedVariable<?>> context) {
+	public void addBonus(Double amount, String description, Date startDate,
+			Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
 		AbstractSQL.SalaryBonus salaryBonus = 
 				new AbstractSQL.SalaryBonus();
 			

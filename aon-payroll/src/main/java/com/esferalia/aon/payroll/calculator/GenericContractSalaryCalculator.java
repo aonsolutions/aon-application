@@ -1016,7 +1016,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					} catch (Exception e) {
 						onCheckError(contractBonus, DESCRIPTION_UNKNOWN_ERROR);
 					}
-					salaryBuilder.addBonus(value, description, contractBonus, amount.getContext());
+					salaryBuilder.addBonus(value, description, period.getStart(), period.getEnd(), contractBonus, amount.getContext());
 				}
 				if (amount.getValue() != null)
 					bonus += amount.getValue();

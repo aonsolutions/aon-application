@@ -45,12 +45,16 @@ public class RealDecreeLaw182020Insert implements Update {
 		// Establish context
 		dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
 		
-		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+		calendar.set(Calendar.YEAR, 2010);
+		Date _2010StartDate = new Date(calendar.getTimeInMillis());
+		
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 		calendar.set(Calendar.YEAR, 2020);		
@@ -153,28 +157,46 @@ public class RealDecreeLaw182020Insert implements Update {
 			.fetchOptional(PAYMENT_CONCEPT.ID)
 			.ifPresent(ereFzaConceptId -> {
 				dslContext
-				.update(SYSTEM_PAYMENT)
+				.delete(SYSTEM_PAYMENT)
+				.where(SYSTEM_PAYMENT.PAYMENT_CONCEPT.eq(ereFzaConceptId))
+				.execute()
+				;
+
+
+				dslContext
+				.insertInto(SYSTEM_PAYMENT)
+				.set(SYSTEM_PAYMENT.DOMAIN, 0)
+				.set(SYSTEM_PAYMENT.TYPE, (byte)1)
+				.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0)
+				.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
+				.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, ereFzaConceptId)
+				.set(SYSTEM_PAYMENT.DESCRIPTION, "@{DIAS_ERE_FZA_EXONERADO} DÍAS DE EXPDTE. REG. DE EMPLEO POR FZA. MAYOR EXONERADO")
+				.set(SYSTEM_PAYMENT.QUOTE_EXPRESSION, "DIAS_ERE_FZA_EXONERADO * BASE_REGULADORA")
 				.set(SYSTEM_PAYMENT.EXPRESSION, 
 				"isdef COEFICIENTE_ERE_FZA_EXONERADO ? "
 				+ "(SELF.addBonus('EXPDTE. REG. DE EMPLEO POR FZA. EXONERADO','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * COEFICIENTE_ERE_FZA_EXONERADO * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0)"
 				+ ": HIDE()")
-				.where(SYSTEM_PAYMENT.PAYMENT_CONCEPT.eq(ereFzaConceptId))
 				.execute(); 
 
 				dslContext
 				.insertInto(SYSTEM_PAYMENT)
 				.set(SYSTEM_PAYMENT.DOMAIN, 0)
 				.set(SYSTEM_PAYMENT.TYPE, (byte)1)
-				.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 1)
+				.set(SYSTEM_PAYMENT.SALARY_TYPE, (byte) 0)
 				.set(SYSTEM_PAYMENT.START_DATE, _May13Date)
+//				.set(SYSTEM_PAYMENT.START_DATE, _2010StartDate)
 				.set(SYSTEM_PAYMENT.END_DATE, _June30Date)
+				.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT,ereFzaConceptId)
 				.set(SYSTEM_PAYMENT.DESCRIPTION, "")
-				.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, ereFzaConceptId)
 				.set(SYSTEM_PAYMENT.EXPRESSION, 
-				"REINCORPORADO_ERE ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. EXONERADO','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * DIAS_TRABAJADOS/DIAS_COTIZADOS * (isdef PORCENTAJE_REINCORPORACION ? PORCENTAJE_REINCORPORACION : 85.0)/100.0');HIDE()) : HIDE()")
+				"REINCORPORADO_ERE ? "
+				+ "(SELF.addBonus('REINCORPORACIÓN EXPDTE. REG. DE EMPL. FZA.','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * DIAS_TRABAJADOS/DIAS_COTIZADOS * (isdef PORCENTAJE_REINCORPORACION ? PORCENTAJE_REINCORPORACION : 85.0)/100.0');HIDE()) "
+				+ ": HIDE()")
 				.execute(); 
 			});
 			;
+			
+
 
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 

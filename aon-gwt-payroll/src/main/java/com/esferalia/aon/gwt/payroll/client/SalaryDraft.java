@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -239,6 +240,7 @@ public class SalaryDraft extends ResizeComposite
 	private static final String PORCENTAJE_FOGASA = "PORCENTAJE_FOGASA";
 	private static final String PORCENTAJE_SHORT = "PORCENTAJE_CORTA_DURACION";
 	private static final String PORCENTAJE_OFF = "PORCENTAJE_EXONERADO";
+	private static final String PORCENTAJE_BACK = "PORCENTAJE_REINCORPORACION";
 
 	// @formatter:off
 	private static String[] SKIP_VARIABLES = { 
@@ -3716,7 +3718,7 @@ public class SalaryDraft extends ResizeComposite
 
 	private int dumpSystemBonus(int row, Bonus bonus ) {
 		
-		String description = bonus.getDescription();
+		String description = formatItemDescription(bonus, salaryDraftObject);
 
 		if (bonus.getAmount() != null) {
 			Double percent = getPercent(bonus, salaryDraftObject);
@@ -3773,15 +3775,19 @@ public class SalaryDraft extends ResizeComposite
 			expandButton.setStyleName(AON.AON_ICON_EXPAND);
 			expandButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 		}
-
-		dumpItem(payment, row, iconStyleName, handler, false, labelWidget, expandButton, isEditable);
+		
+		
 
 		if (payment instanceof CompositePayment) {
+			dumpItem(payment, row, iconStyleName, handler, false, labelWidget, expandButton, isEditable);
 			for (Payment child : ((CompositePayment) payment).getChilds()) {
 				child.setDescription(formatChildDescription(child, salaryDraftObject));
 				dumpChildPayment(child, ++row, iconStyleName );
 				paymentsTable.getRowFormatter().getElement(row).getStyle().setDisplay(Display.NONE);
 			}
+		} else {
+			String description = formatItemDescription(payment, salaryDraftObject);			
+			dumpItem(payment, row, description, iconStyleName, handler, false, labelWidget, expandButton, isEditable);
 		}
 		
 		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
@@ -3832,6 +3838,11 @@ public class SalaryDraft extends ResizeComposite
 
 	private <I extends Item> void dumpItem(I item, int row, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
 			boolean isDeduction, Widget labelWidget, Button expandButton, boolean isEditable) {
+		dumpItem(item, row, item.getDescription(), iconStyleName, handler, isDeduction, labelWidget, expandButton, isEditable);
+	}
+
+	private <I extends Item> void dumpItem(I item, int row, String description, String iconStyleName, ItemChangeHandler<TextBox, I> handler,
+			boolean isDeduction, Widget labelWidget, Button expandButton, boolean isEditable) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
@@ -3864,7 +3875,7 @@ public class SalaryDraft extends ResizeComposite
 
 		TextBox descriptionBox = new TextBox();
 		enable(descriptionBox, isEditable);
-		String description = item.getDescription();
+//		String description = item.getDescription();
 		descriptionBox.setText(description != null ? description : item.getDescriptionTemplate());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
@@ -5066,6 +5077,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private Variable getPercentVariable(Bonus.Type type) {
+		
 
 		switch (type) {
 		case ERE:
@@ -5092,7 +5104,7 @@ public class SalaryDraft extends ResizeComposite
 	private Widget newPercentWidget(Bonus bonus, Double percent) {
 		switch (bonus.getType()) {
 		case ERE:
-			return newPercentBox(PORCENTAJE_OFF, bonus, percent);
+			return newPercentBox(getPercentName(bonus), bonus, percent);
 		default:
 			return newPercentLabel(bonus, percent, getPercentVariable(bonus.getType()));
 		}
@@ -5889,14 +5901,28 @@ public class SalaryDraft extends ResizeComposite
 		return null;
 	}	
 	
+	private static String getPercentName(Bonus bonus) {
+		String expression = bonus.getExpression();
+		
+		if ( AonStringUtils.contains(expression, PORCENTAJE_OFF))
+			return PORCENTAJE_OFF;
+		else if ( AonStringUtils.contains(expression, PORCENTAJE_BACK))
+			return PORCENTAJE_BACK;
+		return null;
+
+	}
+
 	private static Double getPercent(Bonus bonus, SalaryDraftObject draftObject) {
 		
 		try {
 			
-			return 
+			String name = getPercentName(bonus);
 			
+			return 
 			draftObject.getContext().stream()
-			.filter( v -> v.getName().equals(PORCENTAJE_OFF))
+			.filter( v -> v.getName().equals(name))
+			.filter( v -> v.getStartDate().compareTo(bonus.getEndDate()) <= 0)
+			.filter( v -> v.getEndDate().compareTo(bonus.getStartDate()) >= 0)
 			.map(v -> Double.parseDouble(v.getValue().toString()))
 			.findFirst()
 			.orElse(100.00)
@@ -5908,6 +5934,26 @@ public class SalaryDraft extends ResizeComposite
 		
 	}
 	
+	private static Optional<Variable> getPercentVariable(Bonus bonus, SalaryDraftObject draftObject) {
+		
+		try {
+			
+			String name = getPercentName(bonus);
+			
+			return 
+			draftObject.getContext().stream()
+			.filter( v -> v.getName().equals(name))
+			.filter( v -> v.getStartDate().compareTo(bonus.getEndDate()) <= 0)
+			.filter( v -> v.getEndDate().compareTo(bonus.getStartDate()) >= 0)
+			.findFirst()
+			;
+
+		} catch ( Exception e ) {
+			return Optional.empty();
+		}
+		
+	}
+
 	private static double getContextSumValue(String name, SalaryDraftObject draftObject) {
 		
 		return 
@@ -6165,6 +6211,58 @@ public class SalaryDraft extends ResizeComposite
 		return DateTimeFormat.getFormat("dd 'de' MMMM").format(childStart) + " - "
 				+ DateTimeFormat.getFormat("dd 'de' MMMM" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
 						.format(childEnd);
+
+	}
+
+	private static String formatItemDescription(Item<?> item, SalaryDraftObject salaryDraftObject) {
+
+		Date itemStart = item.getStartDate();
+		Date itemEnd = item.getEndDate();
+		
+		Date draftStart = salaryDraftObject.getStartDate();
+		Date draftEnd = salaryDraftObject.getEndDate();
+		
+		StringBuffer description = new StringBuffer(); 
+		description.append(AonStringUtils.isNotBlank(item.getDescription()) ? item.getDescription() : item.getDescriptionTemplate());
+		
+		if ( itemStart == null  || itemEnd == null )
+			return description.toString();
+
+		if ( itemStart.equals(draftStart)
+				&&  itemEnd.equals(draftEnd) )
+			return description.toString();
+		
+		
+		
+		if (itemStart.equals(itemEnd))
+			return 
+					description
+					.append(" ")
+					.append(
+					DateTimeFormat
+					.getFormat("dd" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
+					.format(itemStart)
+					).toString();
+
+		if (itemStart.getMonth() == itemEnd.getMonth())
+			return 
+					description
+					.append(" ")
+					.append(
+					DateTimeFormat.getFormat("dd").format(itemStart) + " - "
+					+ DateTimeFormat
+							.getFormat("dd" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
+							.format(itemEnd)
+					).toString();
+
+		return 
+				description
+				.append(" ")
+				.append(
+				DateTimeFormat.getFormat("dd/MM").format(itemStart) + " - "
+				+ DateTimeFormat.getFormat("dd/MM" + (draftStart.getYear() == draftEnd.getYear() ? "" : " yyyy"))
+						.format(itemEnd)
+					).toString();
 
 	}
 

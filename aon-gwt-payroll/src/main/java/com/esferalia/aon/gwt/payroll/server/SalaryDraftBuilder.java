@@ -492,8 +492,8 @@ public class SalaryDraftBuilder
 	}
 
 	@Override
-	public void addBonus(Double amount, String description, IBonus bonus,
-			Map<String, ITimedVariable<?>> context) {
+	public void addBonus(Double amount, String description, Date startDate,
+			Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
 		addContext(context);
 
 		IContractBonus contractBonus = (IContractBonus) bonus;
@@ -502,6 +502,8 @@ public class SalaryDraftBuilder
 		myBonus.setAmount(amount);
 		myBonus.setDescription(description);
 		myBonus.setDescriptionTemplate(myBonus.getDescription());
+		myBonus.setStartDate(startDate);
+		myBonus.setEndDate(endDate);
 
 
 		salaryDraft.addBonus(myBonus);

@@ -271,10 +271,10 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 	}
 
 	@Override
-	public void addBonus(Double amount, String description, IBonus bonus,
-			Map<String, ITimedVariable<?>> context) {
+	public void addBonus(Double amount, String description, Date startDate,
+			Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
 		for (ISalaryBuilder<E> builder : builders)
-			builder.addBonus(amount, description, bonus, context);
+			builder.addBonus(amount, description, startDate, endDate, bonus, context);
 	}
 
 	@Override

@@ -2055,7 +2055,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			@Override
 			public Integer getId() {
-				return Integer.MAX_VALUE;
+				return (int)(Math.random()*Integer.MAX_VALUE);
 			}
 			
 			@Override

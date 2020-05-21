@@ -353,7 +353,7 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	@Override
-	public void addBonus(Double amount, String description, IBonus bonus, Map<String, ITimedVariable<?>> context) {
+	public void addBonus(Double amount, String description, Date startDate, Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
 		InsertSetStep<SalaryBonusRecord> insertBonus = insertMoreBonus == null ? dslContext.insertInto(SALARY_BONUS)
 				: insertMoreBonus.newRecord();
 
