@@ -457,6 +457,11 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return isSnapshotVersion() || isBetaUser();
 	}
 	
+	public boolean isAccountingConsolidationEnabled() {
+		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.ACC_CONSOLIDATION);
+		return  (appParam!=null && Boolean.valueOf(appParam.getValue()));
+	}
+	
 	public boolean isAlphaEnabled() {
 		ApplicationParameter appParam = AppParamUtil.getParameter(AppParam.AON_ALPHA_ENABLED);
 		return (appParam!=null && new Boolean(appParam.getValue()));
@@ -474,12 +479,12 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 	
 	public boolean isUdapa() {
 	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParameter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
-		return ud != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("udapa");
+	    return  ud != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("udapa");
 	}
 	
 	public boolean isPaturpat() {
 	    com.esferalia.aon.occam.api.model.ApplicationParameter ud = AON.getApplicationParameter(getDomainNameURL(), getDomainId(), "", com.esferalia.aon.occam.api.model.type.AppParam.AON_ADHOC_EXTENSION);
-		return ud != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("paturpat");
+	    return  ud  != null && ud.getValue() != null && ud.getValue().equalsIgnoreCase("paturpat");
 	}
 
 	public static DomainType getDomainType(Integer domainId) {

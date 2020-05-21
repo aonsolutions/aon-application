@@ -342,7 +342,7 @@
 											value="Utilidades y chequeos contables" />
 									</aon:div>
 									<aon:if
-										test="#{domainSwitcher.udapa || domainSwitcher.paturpat}">
+										test="#{domainSwitcher.udapa || domainSwitcher.paturpat || domainSwitcher.accountingConsolidationEnabled}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="accPeriod-parent"
 												action="accPeriod-parent"
@@ -354,7 +354,7 @@
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat}">
+						<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat || domainSwitcher.accountingConsolidationEnabled}">
 							<aon:panelGrid id="group_accounting_reports_parent"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-account-reports aon-direct-access-panel">
