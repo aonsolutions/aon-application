@@ -4,13 +4,19 @@ import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DET
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountHelper.ACCOUNT_HELPER;
 
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
@@ -18,11 +24,40 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 
 public class ImportFixer {
 
+	public static void fixAccounts(Domain domain, String login) {
+		Stream<Account> accounts = ACCOUNTING.getAccounts(domain.getName(), domain.getId(), login, f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(
+				f.getCodeProperty().like("400%")
+				.or(f.getCodeProperty().like("410%"))
+				.or(f.getCodeProperty().like("430%"))
+			));
+		
+		accounts.forEach(acc -> {
+			if(acc.getCode().length() > 5) {	
+				Customer c = AON.getCustomer(domain.getName(), domain.getId(), login, f -> f.getAccountProperty().eq(acc.getId()));
+				Optional<Supplier> s = AON.getSupplier(domain.getName(), domain.getId(), login, f -> f.getAccountProperty().eq(acc.getId()));
+				Optional<Creditor> a = AON.getCreditor(domain.getName(), domain.getId(), login, f -> f.getAccountProperty().eq(acc.getId()));
+				Integer size = getAccountEntryDetail(domain, login, acc.getId());
+				if((c == null || c.getId() == null) && !s.isPresent() && !a.isPresent() && size == 0) {
+					System.out.println(acc.getCode());
+					deleteAccount(domain, login, acc.getId());
+				}
+			}
+
+		});
+	}
+	
 	public static void fixCustomer(Domain domain, String login) {
 		LinkedList<Customer> customers = AON.getCustomerList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
 		LinkedList<String> names = customers.stream().map(r -> r.getName()).distinct().collect(Collectors.toCollection(LinkedList::new));
 		names.forEach(name -> {
-			LinkedList<Customer> list = customers.stream().filter(f -> f.getName().equals(name)).collect(Collectors.toCollection(LinkedList::new));
+			LinkedList<Customer> list =  new LinkedList<>();
+			try {
+				list = customers.stream().filter(f -> name.equals(f.getName())).collect(Collectors.toCollection(LinkedList::new));
+			} catch (Exception e) {
+				System.out.println(name);
+			}
 			if(list.size() > 1) {
 				OptionalInt accountMinId = list.stream().filter(f -> f.getAccount() != null).mapToInt(r -> r.getAccount()).min();
 				if(accountMinId.isPresent()) {
@@ -50,7 +85,12 @@ public class ImportFixer {
 		LinkedList<Supplier> suppliers = AON.getSupplierList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
 		LinkedList<String> names = suppliers.stream().map(r -> r.getName()).distinct().collect(Collectors.toCollection(LinkedList::new));
 		names.forEach(name -> {
-			LinkedList<Supplier> list = suppliers.stream().filter(f -> f.getName().equals(name)).collect(Collectors.toCollection(LinkedList::new));
+			LinkedList<Supplier> list =  new LinkedList<>();
+			try {
+				list = suppliers.stream().filter(f -> name.equals(f.getName())).collect(Collectors.toCollection(LinkedList::new));
+			} catch (Exception e) {
+				System.out.println(name);
+			}
 			if(list.size() > 1) {
 				OptionalInt accountMinId = list.stream().filter(f -> f.getAccount() != null).mapToInt(r -> r.getAccount()).min();
 				if(accountMinId.isPresent()) {
@@ -81,7 +121,12 @@ public class ImportFixer {
 		LinkedList<Creditor> creditors = AON.getCreditorList(domain.getName(), domain.getId(), login, f -> f.getDomainProperty().eq(domain.getId()));
 		LinkedList<String> names = creditors.stream().map(r -> r.getRegistry().getName()).distinct().collect(Collectors.toCollection(LinkedList::new));
 		names.forEach(name -> {
-			LinkedList<Creditor> list = creditors.stream().filter(f -> f.getRegistry().getName().equals(name)).collect(Collectors.toCollection(LinkedList::new));
+			LinkedList<Creditor> list =  new LinkedList<>();
+			try {
+				list = creditors.stream().filter(f -> f.getRegistry() != null && name.equals(f.getRegistry().getName())).collect(Collectors.toCollection(LinkedList::new));
+			} catch (Exception e) {
+				System.out.println(name);
+			}
 			if(list.size() > 1) {
 				OptionalInt accountMinId = list.stream().filter(f -> f.getAccount() != null && f.getAccount().getId() != null).mapToInt(r -> r.getAccount().getId()).min();
 				if(accountMinId.isPresent()) {
@@ -181,5 +226,31 @@ public class ImportFixer {
 				.execute();
 		}
 		//creditors.stream().forEach(id -> AON.deleteRegistry(domain.getName(), domain.getId(), login, id));
+	}
+	
+	private static Integer getAccountEntryDetail(Domain domain, String login, Integer account) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){		
+			return ctx.getDslContext()
+				.select()
+				.from(ACCOUNT_ENTRY_DETAIL)
+				.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(account))
+				.fetch().size();
+		}
+	}
+	
+	private static void deleteAccount(Domain domain, String login, Integer account) {
+		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
+			ctx.getDslContext()
+				.delete(ACCOUNT_HELPER)
+				.where(
+					ACCOUNT_HELPER.ACCOUNT.eq(account)
+					.or(ACCOUNT_HELPER.BALANCING_ACCOUNT.eq(account)))
+				.execute();
+
+			ctx.getDslContext()
+				.delete(ACCOUNT)
+				.where(ACCOUNT.ID.eq(account))
+				.execute();
+		}
 	}
 }

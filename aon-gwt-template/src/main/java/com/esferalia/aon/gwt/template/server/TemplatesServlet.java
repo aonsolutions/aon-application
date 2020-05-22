@@ -2685,6 +2685,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		ImportFixer.fixCustomer(domain, user.getLogin());
 		ImportFixer.fixSupplier(domain, user.getLogin());
 		ImportFixer.fixCreditor(domain, user.getLogin());
+		ImportFixer.fixAccounts(domain, user.getLogin());
 	}
 
 	

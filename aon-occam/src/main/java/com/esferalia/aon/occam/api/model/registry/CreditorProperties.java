@@ -11,5 +11,6 @@ public interface CreditorProperties {
 	Property<String> getAliasProperty();
 	Property<Byte> getActiveProperty();
 	Property<Byte> getSecurityLevelProperty();
+	Property<Integer> getAccountProperty();
 	
 }

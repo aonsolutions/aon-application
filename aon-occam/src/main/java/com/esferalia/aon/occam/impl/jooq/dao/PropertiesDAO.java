@@ -339,6 +339,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<String>(REGISTRY.ALIAS);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<Byte>(CREDITOR.STATUS);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<Byte>(REGISTRY.SECURITY_LEVEL);}
+		@Override public Property<Integer> getAccountProperty() { return new FilterDAO.PropertyDAO<Integer>(CREDITOR.ACCOUNT);}
 	}
 	
 	public static class SupplierPropertiesDAO implements SupplierProperties {
