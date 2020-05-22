@@ -52,7 +52,7 @@
 	<aon:outputLabel for="#{controller.pojoShortName}_category" value="#{bundle.aon_category}" />
 	<aon:selectOneMenu id="#{controller.pojoShortName}_category"
 		value="#{productTo.category}"
-		disabled="#{fieldDisabled or (!controller.nevv and itemCount > 1)}"
+		disabled="#{fieldDisabled}"
 		reRender="#{categoryChangeReRender}" ajaxSingle="false">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{productCollections.categories}" />
