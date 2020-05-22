@@ -39,7 +39,7 @@ public class FilterPanel extends Composite {
     	this.parent = parent;
     	initWidget(binder.createAndBindUi(this));       
 
-		InlineLabel lb = new InlineLabel("Descripci\u00f3n");
+		InlineLabel lb = new InlineLabel("Filtro");
 		lb.setStyleName(AON.AON_CSS.aonInnerLabel());
 		lb.setWidth("20px");
 		panel.add(lb);

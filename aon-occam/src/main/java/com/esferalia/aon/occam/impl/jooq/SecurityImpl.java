@@ -12,15 +12,25 @@ import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 
 public class SecurityImpl implements ISecurity {
 
+	
+	@Override
+	public Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getUserStream(ctx, filter));
+	}
+	
 	@Override
 	public User getUser(AONContext ctx, UserFilter filter) {
 		return SecurityDAO.getUser(ctx, filter);
@@ -91,16 +101,10 @@ public class SecurityImpl implements ISecurity {
 	public void insertUserScope(AONContext ctx, UserScope userScope) {
 		SecurityDAO.insertUserScope(ctx, userScope);
 	}
-
 	
 	@Override
-	public void deleteUserScope(AONContext ctx, Integer userId, Integer scope) {
-		SecurityDAO.deleteUserScope(ctx, userId, scope);
-	}
-	
-	@Override
-	public void deleteUserScope(AONContext ctx, Integer scope) {
-		SecurityDAO.deleteUserScope(ctx, scope);
+	public void deleteUserScope(AONContext ctx, UserScopeFilter filter) {
+		SecurityDAO.deleteUserScope(ctx, filter);
 	}
 
 	// ------------------ SIGNATURE
@@ -155,5 +159,11 @@ public class SecurityImpl implements ISecurity {
 	public String getContactEmail(AONContext ctx, Integer contactDataId) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getContactEmail(ctx, contactDataId));
+	}
+
+	@Override
+	public Stream<UserWorkgroup> getUserWorkgroupStream(AONContext ctx, UserWorkgroupFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getUserWorkgroupStream(ctx, filter));
 	}
 }

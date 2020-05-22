@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +47,8 @@ import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
@@ -54,16 +57,21 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserWorkgroupPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
 	private static final UserPropertiesDAO USER_PROPERTIES = new UserPropertiesDAO();
+	private static final UserScopePropertiesDAO USER_SCOPE_PROPERTIES = new UserScopePropertiesDAO();
+	private static final UserWorkgroupPropertiesDAO USER_WORKGROUP_PROPERTIES = new UserWorkgroupPropertiesDAO();
 	private static final ScopePropertiesDAO SCOPE_PROPERTIES = new ScopePropertiesDAO();
 	private static final SignaturePropertiesDAO SIGNATURE_PROPERTIES = new SignaturePropertiesDAO();
 	protected static class SignaturePropertiesDAO implements SignatureProperties {
@@ -167,6 +175,12 @@ public class SecurityDAO {
 		}
 		
 	}
+	
+	public static Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
+		return USER_PROPERTIES.build(ctx.getDslContext().select().from(USER), filter)
+				.fetch().stream().map(new UserFiller());
+	}
+	
 	public static User getUser(AONContext ctx, UserFilter filter) {
 		return USER_PROPERTIES.build(ctx.getDslContext().select().from(USER), filter)
 				.fetch().stream().map(new UserFiller()).findFirst().orElse(new User());
@@ -378,6 +392,12 @@ public class SecurityDAO {
 				.fetch().stream().map(new ScopeFiller());
 	}
 	
+	public static Stream<UserWorkgroup> getUserWorkgroupStream(AONContext ctx, UserWorkgroupFilter filter){
+		return ctx.getDslContext().select().from(USER_WORKGROUP)
+				.where(USER_WORKGROUP_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new UserWorkgroupFiller());
+	}
+	
 	public static Scope insertScope(AONContext ctx, Scope scope){
 		return ctx.getDslContext().insertInto(SCOPE, SCOPE.DOMAIN, SCOPE.DESCRIPTION)
 			.values(scope.getDomain(), scope.getDescription())
@@ -395,18 +415,10 @@ public class SecurityDAO {
 			.values(userScope.getDomain(), userScope.getScope(), userScope.getUserId()).execute();
 	}
 	
-	public static void deleteUserScope(AONContext ctx, Integer userId, Integer scope){
+	public static void deleteUserScope(AONContext ctx, UserScopeFilter filter){
 		ctx.getDslContext()
 			.delete(USER_SCOPE)
-			.where(USER_SCOPE.USER_ID.eq(userId))
-			.and(USER_SCOPE.SCOPE.eq(scope))
-			.execute();
-	}
-	
-	public static void deleteUserScope(AONContext ctx, Integer scope){
-		ctx.getDslContext()
-			.delete(USER_SCOPE)
-			.where(USER_SCOPE.SCOPE.eq(scope))
+			.where(USER_SCOPE_PROPERTIES.getConditions(filter))
 			.execute();
 	}
 	
@@ -417,6 +429,17 @@ public class SecurityDAO {
 				.setId(r.getValue(SCOPE.ID))
 				.setDomain(r.getValue(SCOPE.DOMAIN))
 				.setDescription(r.getValue(SCOPE.DESCRIPTION));
+		}
+	}
+	
+	private static class UserWorkgroupFiller implements Function<Record, UserWorkgroup> {
+		@Override
+		public UserWorkgroup apply(Record r) {
+			return new UserWorkgroup()
+				.setId(r.getValue(USER_WORKGROUP.ID))
+				.setDomain(r.getValue(USER_WORKGROUP.DOMAIN))
+				.setUserId(r.getValue(USER_WORKGROUP.USER_ID))
+				.setWorkgroup(r.getValue(USER_WORKGROUP.WORKGROUP));
 		}
 	}
 

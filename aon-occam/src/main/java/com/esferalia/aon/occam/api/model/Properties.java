@@ -277,6 +277,21 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<String> getDescriptionProperty();
 	}
+	
+	public interface UserScopeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getUserIdProperty();
+		Property<Integer> getScopeProperty();
+	}
+	
+
+	public interface UserWorkgroupProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getUserIdProperty();
+		Property<Integer> getWorkgroupProperty();
+	}
 
 	public interface MailAccountProperties{
 		Property<Integer> getIdProperty();

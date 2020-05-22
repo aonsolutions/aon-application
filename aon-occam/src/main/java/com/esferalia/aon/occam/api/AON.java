@@ -103,6 +103,9 @@ import com.esferalia.aon.occam.api.model.Filter.TaskHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskHolderWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaskTagFilter;
 import com.esferalia.aon.occam.api.model.Filter.TaxFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -187,6 +190,7 @@ import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
+import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.stat.StatData;
 import com.esferalia.aon.occam.api.model.stat.StatParams;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
@@ -434,14 +438,16 @@ public class AON {
 	}
 
 	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer userId, Integer scope) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			getSecurity().deleteUserScope(ctx, userId, scope);
-		} 
+		deleteUserScope(domainName, domainId, login, f -> f.getScopeProperty().eq(scope).and(f.getUserIdProperty().eq(userId)));
 	}
 	
 	public static void deleteUserScope(String domainName, Integer domainId, String login, Integer scope) {
+		deleteUserScope(domainName, domainId, login, f -> f.getScopeProperty().eq(scope));
+	}
+	
+	public static void deleteUserScope(String domainName, Integer domainId, String login, UserScopeFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			getSecurity().deleteUserScope(ctx, scope);
+			getSecurity().deleteUserScope(ctx, filter);
 		} 
 	}
 	
@@ -2250,6 +2256,12 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+
+	public static Stream<User> getUserStream(Integer domainId, String domainName, String userName, UserFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
+			return getSecurity().getUserStream(ctx, filter);
+		} 
 	}
 	
 	public static List<User> getUsers(Integer domainId, String domainName, String userName) {
@@ -5317,6 +5329,14 @@ public class AON {
 	public static LinkedList<Workgroup> getTaskHolderWorkgroupList(String domainName, Integer domainId, String login, TaskHolderWorkgroupFilter filter){
 		return getTaskHolderWorkgroupStream(domainName, domainId, login, filter)
 				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	// ------------------- USER WORKGROUP
+	
+	public static Stream<UserWorkgroup> getUserWorkgroupStream(String domainName, Integer domainId, String login, UserWorkgroupFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getSecurity().getUserWorkgroupStream(ctx, filter);
+		}
+
 	}
 	
 	// ------------------- WORKGROUP

@@ -50,6 +50,8 @@ import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -106,6 +108,8 @@ import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Properties.AgreementLevelCategoryProperties;
 import com.esferalia.aon.occam.api.model.Properties.ApplicationParameterProperties;
 import com.esferalia.aon.occam.api.model.Properties.CarrierPackingProperties;
@@ -150,6 +154,8 @@ import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.registry.CreditorFilter;
@@ -1492,6 +1498,47 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(USER.ENTERPRISE);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(USER.REGISTRY);}
 
+	}
+	
+	
+	protected static class UserScopePropertiesDAO implements UserScopeProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, UserScopeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(UserScopeFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.DOMAIN);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.USER_ID);}
+		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.SCOPE);}
+	}
+	
+	protected static class UserWorkgroupPropertiesDAO implements UserWorkgroupProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, UserWorkgroupFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(UserWorkgroupFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.DOMAIN);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.USER_ID);}
+		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.WORKGROUP);}
 	}
 	
 }

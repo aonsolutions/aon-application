@@ -69,11 +69,15 @@ public class ScopeServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		if(pathInfo.length > 3){				
 			JSONObject object = new JSONObject();
-			if("user".equals(pathInfo[3])){
+			if("group".equals(pathInfo[3])){
+				deleteGroupScopes(domain, userName, json);	
+			}else if("user".equals(pathInfo[3])){
 				deleteUserScope(domain, userName, json);	
+			} else if("users".equals(pathInfo[3])) {
+				deleteUserScopes(domain, userName, json);
 			} else if("company".equals(pathInfo[3])){
 				deleteCompanyScope(domain, userName, json);
-			}
+			} 
 			
 			resp.setContentType("application/json;charset=UTF-8");
 			Utils.addCorsHeader(resp);
@@ -94,7 +98,9 @@ public class ScopeServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		if(pathInfo.length > 3){				
 			JSONObject object = new JSONObject();
-			if("user".equals(pathInfo[3])){
+			if("group".equals(pathInfo[3])){
+				addScopeToGroups(domain, userName, json);	
+			} else if("user".equals(pathInfo[3])){
 				userScope(domain, userName, json);	
 			} else if("company".equals(pathInfo[3])){
 			//	companyScope(domain, userName, json);
@@ -124,9 +130,48 @@ public class ScopeServlet extends HttpServlet{
 		}
 	}
 	
+	private void addScopeToGroups(Domain domain, String login, JSONObject json) {
+		Integer scope = json.getInt("scope");
+		Integer[] groups = new Integer[json.getJSONArray("groups").length()];
+		for(Integer i = 0 ; i < json.getJSONArray("groups").length(); i++) {
+			groups[i] = json.getJSONArray("groups").getInt(i);
+		}
+		Integer[] users = AON.getUserWorkgroupStream(domain.getName(), domain.getId(), login, f -> f.getWorkgroupProperty().in(groups)).map(r -> r.getUserId()).toArray(Integer[]::new);
+		
+		for(Integer i = 0 ; i < users.length; i++) {
+			UserScope us = AON.getUserScope(domain.getName(), domain.getId(), login, users[i], scope);
+			if(us == null) {
+				us = new UserScope()
+						.setDomain(domain.getId())
+						.setScope(scope)
+						.setUserId(users[i]);
+				AON.insertUserScope(domain.getName(), domain.getId(), login, us);
+			}
+		}
+	}
+	
 	private void deleteUserScope(Domain domain, String login, JSONObject json) {
 		AON.deleteUserScope(domain.getName(), domain.getId(),login,
 				json.getInt("user"), json.getInt("scope"));
+	}
+	
+	private void deleteUserScopes(Domain domain, String login, JSONObject json) {
+		Integer scope = json.getInt("scope");
+		Integer[] users = new Integer[json.getJSONArray("users").length()];
+		for(Integer i = 0 ; i < json.getJSONArray("users").length(); i++) {
+			users[i] = json.getJSONArray("users").getInt(i);
+		}
+		AON.deleteUserScope(domain.getName(), domain.getId(), login, f -> f.getScopeProperty().eq(scope).and(f.getUserIdProperty().in(users)));
+	}
+	
+	private void deleteGroupScopes(Domain domain, String login, JSONObject json) {
+		Integer scope = json.getInt("scope");
+		Integer[] groups = new Integer[json.getJSONArray("groups").length()];
+		for(Integer i = 0 ; i < json.getJSONArray("groups").length(); i++) {
+			groups[i] = json.getJSONArray("groups").getInt(i);
+		}
+		Integer[] users = AON.getUserWorkgroupStream(domain.getName(), domain.getId(), login, f -> f.getWorkgroupProperty().in(groups)).map(r -> r.getUserId()).toArray(Integer[]::new);
+		AON.deleteUserScope(domain.getName(), domain.getId(), login, f -> f.getScopeProperty().eq(scope).and(f.getUserIdProperty().in(users)));
 	}
 	
 	private void deleteCompanyScope(Domain domain, String login, JSONObject json) {

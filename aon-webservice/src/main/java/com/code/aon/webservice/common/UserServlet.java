@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
@@ -57,7 +58,9 @@ public class UserServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, domainId, userName);
 				
 		JSONArray arr = new JSONArray();
-		AON.getUsers(domain.getId(), domain.getName(), "").stream().forEach(u -> {
+		String fltr = "";
+	
+		AON.getUserStream(domain.getId(), domain.getName(), "", f -> userFilter(domain, req.getParameterMap(), f)).forEach(u -> {
 			arr.put(ToJSON.userToJSON(u));
 		});
 		
@@ -110,7 +113,7 @@ public class UserServlet extends HttpServlet{
 				if(pathInfo.length > 5){
 					Integer userId = Integer.parseInt(pathInfo[4]);
 					Integer copyUserId = Integer.parseInt(pathInfo[5]);
-					copyUserScope(domain, userName, userId, copyUserId);
+					object = copyUserScope(domain, userName, userId, copyUserId);
 				} 
 			}
 			
@@ -150,6 +153,27 @@ public class UserServlet extends HttpServlet{
 			os.flush();
 			os.close();
 		}
+	}
+	
+	public static Filter userFilter(Domain domain, Map<String, String[]> filterMap, UserProperties f) {
+		Filter filter = f.getDomainProperty().eq(domain.getId());
+
+		if(filterMap.containsKey("description")){
+    		String description = filterMap.get("description")[0];
+    		filter = filter.and(f.getNameProperty().like("%"+ description + "%").or(f.getLoginProperty().like("%" + description + "%")));
+		}
+		
+		if(filterMap.containsKey("per_page")){
+			String per_page = filterMap.get("per_page")[0];
+			Integer perPage = Integer.parseInt(per_page);
+			filter.perPage(perPage);
+		}
+		if(filterMap.containsKey("page")){
+			String page_str = filterMap.get("page")[0];
+			Integer page = Integer.parseInt(page_str);
+			filter.page(page);
+		}
+		return filter;
 	}
 	
 	private JSONArray getDataResponseList2(Domain domain, String login, Map<String,String[]> map) {
@@ -426,7 +450,7 @@ public class UserServlet extends HttpServlet{
 		return new JSONObject();
 	}
 	
-	private void copyUserScope(Domain domain, String login, Integer userId, Integer copyUserId) {
+	private JSONObject copyUserScope(Domain domain, String login, Integer userId, Integer copyUserId) {
 		Integer[] scopes = AON.getUserScopes(domain.getName(), domain.getId(), login, copyUserId);
 		for (Integer scope : scopes) {
 			UserScope us = AON.getUserScope(domain.getName(), domain.getId(), login, userId, scope);
@@ -437,6 +461,7 @@ public class UserServlet extends HttpServlet{
 					.setUserId(userId));
 			}
 		}
+		return new JSONObject();
 	}
 	
 	private void deleteUserScopes(Domain domain, String login, Integer userId, Integer copyUserId) {

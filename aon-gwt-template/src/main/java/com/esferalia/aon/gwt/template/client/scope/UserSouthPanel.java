@@ -38,25 +38,87 @@ public class UserSouthPanel extends SouthPanel {
     public UserSouthPanel(ScopePrincipal parent, AonJsArray<JsUser> items, JsCompany o) {   
     	super();
     	this.parent = parent;
+    	hpanel.setHeight("40px");
+     	hpanel.setWidth("100%");
     	title.setText("Empresa: " + o.getName() +" - \u00c1mbito: " + o.getScope().getName());
     	title.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+    	title.getElement().getStyle().setPosition(Position.ABSOLUTE);
+    	title.getElement().getStyle().setTop(15, Unit.PX);
+    	
+    	PaperIconButton removeGroups = new PaperIconButton();
+    	removeGroups.getElement().getStyle().setPosition(Position.ABSOLUTE);
+    	removeGroups.getElement().getStyle().setColor("#931A00");
+    	removeGroups.getElement().getStyle().setRight(150, Unit.PX);
+    	removeGroups.setTitle("Desvincular Grupos");
+    	removeGroups.setIcon("social:group");
+    	removeGroups.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				removeGroups(o);
+			}
+		});
+        hpanel.add(removeGroups);
+        
+        PaperIconButton addGroups = new PaperIconButton();
+        addGroups.getElement().getStyle().setPosition(Position.ABSOLUTE);
+        addGroups.getElement().getStyle().setRight(110, Unit.PX);
+        addGroups.setIcon("social:group-add");
+        addGroups.setTitle("Vincular Grupos");
+        addGroups.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addGroups(o);
+			}
+		});
+        hpanel.add(addGroups);
+    	
+        PaperIconButton removeUsers = new PaperIconButton();
+        removeUsers.setIcon("social:person");
+        removeUsers.getElement().getStyle().setPosition(Position.ABSOLUTE);
+        removeUsers.getElement().getStyle().setColor("#931A00");
+        removeUsers.getElement().getStyle().setRight(70, Unit.PX);
+        removeUsers.setTitle("Desvincular Usuarios");
+        removeUsers.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				removeUsers(o);
+			}
+		});
+        hpanel.add(removeUsers);
+    	
+        PaperIconButton addUsers = new PaperIconButton();
+        addUsers.setIcon("social:person-add");
+        addUsers.getElement().getStyle().setPosition(Position.ABSOLUTE);
+        addUsers.getElement().getStyle().setRight(30, Unit.PX);
+        addUsers.setTitle("Vincular Usuarios");
+        addUsers.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addUsers(o);
+			}
+		});
+        hpanel.add(addUsers);
+        
         vertical.setWidth("100%");
         if(items.length() > 0){
         	items.stream().forEach(js -> {
-            	users.add(js);
+        		users.add(js);
         		vertical.add(buildPaperItem(js, o));
         	});
         }
-    	vertical.add(nuevoItem(o));
     }
    
-    public PaperItem buildPaperItem(JsUser js, JsCompany o){
+    public PaperItem buildPaperItem(JsUser user, JsCompany o){
     	PaperItem pi = new PaperItem();
     	IronIcon ironIcon = new IronIcon();
     	ironIcon.setIcon("account-box");
     	ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
     	pi.add(ironIcon);
-    	pi.add(new Label(js.getLogin()));
+    	pi.add(new Label((user.getName() != null ? user.getName() + " - " : "") + user.getLogin()));
     	pi.setStyle("min-height:24px;font-size:12px;padding:0px;");
 
     	IronIcon removeIcon = new IronIcon();
@@ -70,7 +132,7 @@ public class UserSouthPanel extends SouthPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AonDialog d= new AonDialog("Desvincular \u00c1mbito", new Label("Est\u00e1s seguro de Desvincular " + js.getLogin() +" de " + o.getScope().getName())) {
+				AonDialog d= new AonDialog("Desvincular \u00c1mbito", new Label("Est\u00e1s seguro de Desvincular " + user.getLogin() +" de " + o.getScope().getName())) {
 					
 					@Override
 					protected void onCancel() {
@@ -81,7 +143,7 @@ public class UserSouthPanel extends SouthPanel {
 					protected void onAccept() {
 						JSONObject json = new JSONObject();
 						json.put("scope", new JSONString(o.getScope().getId()+ ""));
-						json.put("user", new JSONString(js.getId()+ ""));
+						json.put("user", new JSONString(user.getId()+ ""));
 						String requestData = JsonUtils.stringify(json.getJavaScriptObject());
 
 						parent.getAPI().getCommon().removeUserScope(requestData, new AsyncCallback<JavaScriptObject>() {
@@ -108,101 +170,316 @@ public class UserSouthPanel extends SouthPanel {
     }
     
     LinkedList<JsUser> users = new LinkedList<JsUser>();
+    LinkedList<JsUser> removedUsers = new LinkedList<JsUser>();
     
-    public PaperIconButton nuevoItem(JsCompany o) {
-    	PaperIconButton newIcon = new PaperIconButton();
-    	newIcon.setIcon("add");
-    	newIcon.setTitle("A\u00f1adir Usuario");
-    	newIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
-    	newIcon.getElement().getStyle().setPosition(Position.ABSOLUTE);
-    	newIcon.getElement().getStyle().setRight(20, Unit.PX);
-    	newIcon.addClickHandler(new ClickHandler() {
+    LinkedList<JsUser> groups = new LinkedList<JsUser>();
+    LinkedList<JsUser> removedGroups = new LinkedList<JsUser>();
+    
+    
+    private void addGroups(JsCompany o) {
+    	parent.getAPI().getIncidence().getWorkgroups(new AsyncCallback<JSON<JsUser>>() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
+			public void onSuccess(JSON<JsUser> result) {
 				
-				
-				parent.getAPI().getIncidence().getApplicationUsers(new AsyncCallback<JSON<JsUser>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsUser> result) {
-						
-						ScrollPanel sp = new ScrollPanel();
-						sp.setWidth("100%");
-						sp.setHeight("200px");
-						VerticalPanel vp = new VerticalPanel();
-						vp.setWidth("100%");
+				ScrollPanel sp = new ScrollPanel();
+				sp.setWidth("100%");
+				sp.setHeight("200px");
+				VerticalPanel vp = new VerticalPanel();
+				vp.setWidth("100%");
 
-						PaperInput pi = new PaperInput();
-						pi.setPlaceholder("Filtro");
-						pi.addDomHandler(new KeyUpHandler() {
-							
-							@Override
-							public void onKeyUp(KeyUpEvent event) {
-								for (Integer i = 1; i < vp.getWidgetCount(); i++) {
-									PaperItem pitem = (PaperItem) vp.getWidget(i);
-									Label label = (Label) pitem.getWidget(1);
-									pitem.setVisible(label.getText().contains(pi.getValue()));
-								}
-							}
-						}, KeyUpEvent.getType());
-						vp.add(pi);
-						result.getData().stream().forEach(r-> {
-							if(!contains(r)) vp.add(buildPaperItem2(r, o));
-						});
-						sp.add(vp);
-						AonDialog d= new AonDialog("Vincular \u00c1mbito", sp) {
-							
-							@Override
-							protected void onCancel() {
-								hide();
-							}
-							
-							@Override
-							protected void onAccept() {
-								JSONArray ar = new JSONArray();
-								for(Integer i = 0; i < users.size(); i++) {
-									ar.set(i, new JSONString(users.get(i).getId() + ""));
-								}
-								JSONObject json = new JSONObject();
-								json.put("scope", new JSONString(o.getScope().getId()+ ""));
-								json.put("users", ar);
-								String requestData = JsonUtils.stringify(json.getJavaScriptObject());
-								parent.getAPI().getCommon().updateUserScope(requestData, new AsyncCallback<JavaScriptObject>() {
-									
-									@Override
-									public void onSuccess(JavaScriptObject result) {
-										parent.companySelection(o);
-										hide();						
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										hide();						
-									}
-								});
-							}
-						};
-						d.getElement().getStyle().setWidth(255, Unit.PX);
-						d.getElement().getStyle().setHeight(300, Unit.PX);	
-						d.center();	
+				PaperInput pi = new PaperInput();
+				pi.setPlaceholder("Filtro");
+				pi.addDomHandler(new KeyUpHandler() {
+					
+					@Override
+					public void onKeyUp(KeyUpEvent event) {
+						for (Integer i = 1; i < vp.getWidgetCount(); i++) {
+							PaperItem pitem = (PaperItem) vp.getWidget(i);
+							Label label = (Label) pitem.getWidget(1);
+							pitem.setVisible(label.getText().contains(pi.getValue()));
+						}
+					}
+				}, KeyUpEvent.getType());
+				vp.add(pi);
+				result.getData().stream().forEach(r-> {
+					if(!r.getDescription().equalsIgnoreCase("Sin Asignar"))
+						vp.add(buildGroupPaperItem(r, o, true));
+				});
+				sp.add(vp);
+				AonDialog d= new AonDialog("Vincular Grupos", sp) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
-						
-					}
-				});
+					protected void onAccept() {
+						JSONArray ar = new JSONArray();
+						for(Integer i = 0; i < groups.size(); i++) {
+							ar.set(i, new JSONString(groups.get(i).getId() + ""));
+						}
+						groups = new LinkedList<>();
+						JSONObject json = new JSONObject();
+						json.put("scope", new JSONString(o.getScope().getId()+ ""));
+						json.put("groups", ar);
+						String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+						parent.getAPI().getCommon().addGroupScope(requestData, new AsyncCallback<JavaScriptObject>() {
+							
+							@Override
+							public void onSuccess(JavaScriptObject result) {
+								parent.companySelection(o);
+								hide();						
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								hide();						
+							}
+						});
+					}	
+				};
+				d.getElement().getStyle().setWidth(255, Unit.PX);
+				d.getElement().getStyle().setHeight(300, Unit.PX);	
+				d.center();	
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
 				
-				
-						
 			}
 		});
-    	return newIcon;
-    }
+	}
     
-	public PaperItem buildPaperItem2(JsUser js, JsCompany o) {
+    private void removeGroups(JsCompany o) {
+    	parent.getAPI().getIncidence().getWorkgroups(new AsyncCallback<JSON<JsUser>>() {
+    		
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				
+				ScrollPanel sp = new ScrollPanel();
+				sp.setWidth("100%");
+				sp.setHeight("200px");
+				VerticalPanel vp = new VerticalPanel();
+				vp.setWidth("100%");
+
+				PaperInput pi = new PaperInput();
+				pi.setPlaceholder("Filtro");
+				pi.addDomHandler(new KeyUpHandler() {
+					
+					@Override
+					public void onKeyUp(KeyUpEvent event) {
+						for (Integer i = 1; i < vp.getWidgetCount(); i++) {
+							PaperItem pitem = (PaperItem) vp.getWidget(i);
+							Label label = (Label) pitem.getWidget(1);
+							pitem.setVisible(label.getText().contains(pi.getValue()));
+						}
+					}
+				}, KeyUpEvent.getType());
+				vp.add(pi);
+				result.getData().stream().forEach(r-> {
+					if(!r.getDescription().equalsIgnoreCase("Sin Asignar"))
+						vp.add(buildGroupPaperItem(r, o, false));
+				});
+				sp.add(vp);
+				AonDialog d= new AonDialog("Desvincular Usuarios", sp) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						JSONArray ar = new JSONArray();
+						for(Integer i = 0; i < removedUsers.size(); i++) {
+							ar.set(i, new JSONString(removedUsers.get(i).getId() + ""));
+						}
+						removedUsers = new LinkedList<>();
+						JSONObject json = new JSONObject();
+						json.put("scope", new JSONString(o.getScope().getId()+ ""));
+						json.put("groups", ar);
+						String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+						parent.getAPI().getCommon().removeGroupScopes(requestData, new AsyncCallback<JavaScriptObject>() {
+							
+							@Override
+							public void onSuccess(JavaScriptObject result) {
+								parent.companySelection(o);
+								hide();						
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								hide();						
+							}
+						});
+					}	
+				};
+				d.getElement().getStyle().setWidth(255, Unit.PX);
+				d.getElement().getStyle().setHeight(300, Unit.PX);	
+				d.center();	
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+	}
+    
+    private void addUsers(JsCompany o) {
+    	parent.getAPI().getIncidence().getApplicationUsers(new AsyncCallback<JSON<JsUser>>() {
+			
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				
+				ScrollPanel sp = new ScrollPanel();
+				sp.setWidth("100%");
+				sp.setHeight("200px");
+				VerticalPanel vp = new VerticalPanel();
+				vp.setWidth("100%");
+
+				PaperInput pi = new PaperInput();
+				pi.setPlaceholder("Filtro");
+				pi.addDomHandler(new KeyUpHandler() {
+					
+					@Override
+					public void onKeyUp(KeyUpEvent event) {
+						for (Integer i = 1; i < vp.getWidgetCount(); i++) {
+							PaperItem pitem = (PaperItem) vp.getWidget(i);
+							Label label = (Label) pitem.getWidget(1);
+							pitem.setVisible(label.getText().contains(pi.getValue()));
+						}
+					}
+				}, KeyUpEvent.getType());
+				vp.add(pi);
+				result.getData().stream().forEach(r-> {
+					if(!contains(r)) vp.add(buildUserPaperItem(r, o, true));
+				});
+				sp.add(vp);
+				AonDialog d= new AonDialog("Vincular Usuarios", sp) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						JSONArray ar = new JSONArray();
+						for(Integer i = 0; i < users.size(); i++) {
+							ar.set(i, new JSONString(users.get(i).getId() + ""));
+						}
+						JSONObject json = new JSONObject();
+						json.put("scope", new JSONString(o.getScope().getId()+ ""));
+						json.put("users", ar);
+						String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+						parent.getAPI().getCommon().updateUserScope(requestData, new AsyncCallback<JavaScriptObject>() {
+							
+							@Override
+							public void onSuccess(JavaScriptObject result) {
+								parent.companySelection(o);
+								hide();						
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								hide();						
+							}
+						});
+					}	
+				};
+				d.getElement().getStyle().setWidth(255, Unit.PX);
+				d.getElement().getStyle().setHeight(300, Unit.PX);	
+				d.center();	
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+	}
+    
+    private void removeUsers(JsCompany o) {
+    	parent.getAPI().getIncidence().getApplicationUsers(new AsyncCallback<JSON<JsUser>>() {
+    		
+			@Override
+			public void onSuccess(JSON<JsUser> result) {
+				
+				ScrollPanel sp = new ScrollPanel();
+				sp.setWidth("100%");
+				sp.setHeight("200px");
+				VerticalPanel vp = new VerticalPanel();
+				vp.setWidth("100%");
+
+				PaperInput pi = new PaperInput();
+				pi.setPlaceholder("Filtro");
+				pi.addDomHandler(new KeyUpHandler() {
+					
+					@Override
+					public void onKeyUp(KeyUpEvent event) {
+						for (Integer i = 1; i < vp.getWidgetCount(); i++) {
+							PaperItem pitem = (PaperItem) vp.getWidget(i);
+							Label label = (Label) pitem.getWidget(1);
+							pitem.setVisible(label.getText().contains(pi.getValue()));
+						}
+					}
+				}, KeyUpEvent.getType());
+				vp.add(pi);
+				result.getData().stream().forEach(r-> {
+					if(contains(r)) vp.add(buildUserPaperItem(r, o, false));
+				});
+				sp.add(vp);
+				AonDialog d= new AonDialog("Desvincular Usuarios", sp) {
+					
+					@Override
+					protected void onCancel() {
+						hide();
+					}
+					
+					@Override
+					protected void onAccept() {
+						JSONArray ar = new JSONArray();
+						for(Integer i = 0; i < removedUsers.size(); i++) {
+							ar.set(i, new JSONString(removedUsers.get(i).getId() + ""));
+						}
+						removedUsers = new LinkedList<>();
+						JSONObject json = new JSONObject();
+						json.put("scope", new JSONString(o.getScope().getId()+ ""));
+						json.put("users", ar);
+						String requestData = JsonUtils.stringify(json.getJavaScriptObject());
+						parent.getAPI().getCommon().removeUserScopes(requestData, new AsyncCallback<JavaScriptObject>() {
+							
+							@Override
+							public void onSuccess(JavaScriptObject result) {
+								parent.companySelection(o);
+								hide();						
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								hide();						
+							}
+						});
+					}	
+				};
+				d.getElement().getStyle().setWidth(255, Unit.PX);
+				d.getElement().getStyle().setHeight(300, Unit.PX);	
+				d.center();	
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				
+			}
+		});
+	}
+    
+	public PaperItem buildUserPaperItem(JsUser js, JsCompany o, Boolean add) {
 		PaperItem pi = new PaperItem();
+		pi.getElement().getStyle().setCursor(Cursor.POINTER);
 		IronIcon ironIcon = new IronIcon();
 		ironIcon.setIcon("account-box");
 		ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
@@ -214,11 +491,13 @@ public class UserSouthPanel extends SouthPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (users.contains(js)) {
-					users.remove(js);
+				if ((add && users.contains(js)) || (!add && removedUsers.contains(js))) {
+					if(add) users.remove(js);
+					else removedUsers.remove(js);
 					pi.remove(2);
 				} else {
-					users.add(js);
+					if(add) users.add(js);
+					else removedUsers.add(js);
 					IronIcon ii = new IronIcon();
 					ii.setIcon("check");
 					ii.addStyleName(AON.AON_CSS.aonMinWidth24());
@@ -229,6 +508,39 @@ public class UserSouthPanel extends SouthPanel {
 			}
 		});
 
+		return pi;
+	}
+	
+	public PaperItem buildGroupPaperItem(JsUser js, JsCompany o, Boolean add) {
+		PaperItem pi = new PaperItem();
+		pi.getElement().getStyle().setCursor(Cursor.POINTER);
+		IronIcon ironIcon = new IronIcon();
+		ironIcon.setIcon("group-work");
+		ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
+		pi.add(ironIcon);
+		pi.add(new Label(js.getDescription()));
+		pi.setStyle("min-height:24px;font-size:12px;padding:0px;");
+
+		pi.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if ((add && groups.contains(js)) || (!add && removedGroups.contains(js))) {
+					if(add) groups.remove(js);
+					else removedGroups.remove(js);
+					pi.remove(2);
+				} else {
+					if(add) groups.add(js);
+					else removedGroups.add(js);
+					IronIcon ii = new IronIcon();
+					ii.setIcon("check");
+					ii.addStyleName(AON.AON_CSS.aonMinWidth24());
+					ii.getElement().getStyle().setPosition(Position.ABSOLUTE);
+					ii.getElement().getStyle().setRight(15, Unit.PX);
+					pi.add(ii);
+				}
+			}
+		});
 		return pi;
 	}
     

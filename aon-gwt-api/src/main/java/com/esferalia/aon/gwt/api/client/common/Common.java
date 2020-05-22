@@ -75,8 +75,20 @@ public class Common extends Methods{
 		get(url, callback);
 	}
 	
+	public void addGroupScope(String requestData, AsyncCallback<JavaScriptObject> callback){
+		post(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/group", requestData, callback);
+	}
+	
+	public void removeGroupScopes(String requestData, AsyncCallback<JavaScriptObject> callback){
+		delete(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/group", requestData, callback);
+	}
+	
 	public void updateUserScope(String requestData, AsyncCallback<JavaScriptObject> callback){
 		post(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/user", requestData, callback);
+	}
+	
+	public void removeUserScopes(String requestData, AsyncCallback<JavaScriptObject> callback){
+		delete(getUrl()+ "ms/scope/"+getDomainName()+"/"+getUserName()+"/users", requestData, callback);
 	}
 	
 	public void removeUserScope(String requestData, AsyncCallback<JavaScriptObject> callback){

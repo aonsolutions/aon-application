@@ -53,6 +53,8 @@ public class ScopeMain extends AonTemplate2{
 	public void onModuleLoad() {
 		Polymer.importHref(Arrays.asList(
 			IronIconsElement.SRC,
+			"iron-icons/social-icons.html",
+			"aon-icons/aon-communication-icons.html",
 			PaperButtonElement.SRC,
 			PaperRadioButtonElement.SRC,
 			PaperItemElement.SRC,

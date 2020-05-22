@@ -276,11 +276,15 @@ public class Incidence extends Methods{
 	}
 	
 	public void getWorkgroups(AsyncCallback<JSON<JsUser>> callback){
-		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/workgroups",callback);
+		String orgName = getOrganizationName() != null ? getOrganizationName() : getUserName();
+		String repName = getRepositoryName() != null ? getRepositoryName(): getDomainName();
+		get(url + "ms/orgs/" + orgName + "/" + repName + "/workgroups",callback);
 	}	
 	
 	public void getWorkgroups(String filter, AsyncCallback<JSON<JsUser>> callback){
-		get(url + "ms/orgs/"+getOrganizationName()+"/"+getRepositoryName()+"/workgroups?filter=" + filter, callback);
+		String orgName = getOrganizationName() != null ? getOrganizationName() : getUserName();
+		String repName = getRepositoryName() != null ? getRepositoryName(): getDomainName();
+		get(url + "ms/orgs/" + orgName + "/" + repName + "/workgroups?filter=" + filter, callback);
 	}	
 	
 	public void addUser2Issue(Integer id, Integer number, AsyncCallback<JsUser> callback){

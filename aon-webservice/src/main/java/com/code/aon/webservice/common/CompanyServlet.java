@@ -153,7 +153,10 @@ public class CompanyServlet extends HttpServlet{
 		
 		if(filterMap.containsKey("user")) {
 			Integer userId = Integer.parseInt(filterMap.get("user")[0]);
-			Integer[] array = AON.getUserScopes(domain.getName(), domain.getId(), "", userId);
+			Integer[] array = { -1 };
+			try {
+				array = AON.getUserScopes(domain.getName(), domain.getId(), "", userId);
+			} catch (Exception e) {}
 			filter = filter.and(f.getScopeIdProperty().in(array));
 		}
 

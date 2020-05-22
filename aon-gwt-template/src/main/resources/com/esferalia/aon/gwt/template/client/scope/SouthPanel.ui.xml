@@ -7,11 +7,15 @@
 
 <ui:style>
 
-
+	.aon-border-bottom {
+		border-bottom:1px solid #bbb;
+	}
 </ui:style>
 <g:HTMLPanel > 
+	<g:HorizontalPanel ui:field="hpanel"  styleName="{style.aon-border-bottom}">
+		<g:Label ui:field="title"> </g:Label>
+	</g:HorizontalPanel>
 	
-	<g:Label ui:field="title"> </g:Label>
 	<g:VerticalPanel ui:field="vertical">
         
 	</g:VerticalPanel>

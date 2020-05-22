@@ -237,7 +237,7 @@ public class UserGrid extends ResizeComposite implements RequiresResize {
 
 	        @Override
 	        public void execute(JsUser object) {
-	        	action(object, false);
+	        	//action(object, false);
 	        }
 	    }));
 		
@@ -245,7 +245,7 @@ public class UserGrid extends ResizeComposite implements RequiresResize {
 
 	        @Override
 	        public void execute(JsUser object) {
-	        	action(object, true);
+	        	//action(object, true);
 	        }
 	    }));
 	    
@@ -275,109 +275,20 @@ public class UserGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.setColumnWidth(nameColumn, 25, Unit.PCT);
 		
 		/** Action Column **/
-		Column<JsUser,JsUser> actionColumn = 	new Column<JsUser, JsUser>(cell){
-
-			
-			@Override
-			public JsUser getValue(JsUser object) {
-				return object;
-			}
-		};
-		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-		dataGrid.addColumn(actionColumn, "");
-		dataGrid.setColumnWidth(actionColumn, 5, Unit.PCT);
+//		Column<JsUser,JsUser> actionColumn = 	new Column<JsUser, JsUser>(cell){
+//
+//			
+//			@Override
+//			public JsUser getValue(JsUser object) {
+//				return object;
+//			}
+//		};
+//		actionColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+//		dataGrid.addColumn(actionColumn, "");
+//		dataGrid.setColumnWidth(actionColumn, 5, Unit.PCT);
 	}
 	
-	Integer user;
-	private void action(JsUser object, Boolean isCopy) {	
-		parent.getAPI().getIncidence().getApplicationUsers(new AsyncCallback<JSON<JsUser>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsUser> result) {
-				
-				ScrollPanel sp = new ScrollPanel();
-				sp.setWidth("100%");
-				sp.setHeight("200px");
-				VerticalPanel vp = new VerticalPanel();
-				vp.setWidth("100%");
+	
 
-				PaperInput pi = new PaperInput();
-				pi.setPlaceholder("Filtro");
-				pi.addDomHandler(new KeyUpHandler() {
-					
-					@Override
-					public void onKeyUp(KeyUpEvent event) {
-						for (Integer i = 1; i < vp.getWidgetCount(); i++) {
-							PaperItem pitem = (PaperItem) vp.getWidget(i);
-							Label label = (Label) pitem.getWidget(1);
-							pitem.setVisible(label.getText().contains(pi.getValue()));
-						}
-					}
-				}, KeyUpEvent.getType());
-				vp.add(pi);
-				result.getData().stream().forEach(r-> {
-					PaperItem pi2 = new PaperItem();
-					IronIcon ironIcon = new IronIcon();
-					ironIcon.setIcon("account-box");
-					ironIcon.addStyleName(AON.AON_CSS.aonMinWidth24());
-					pi2.add(ironIcon);
-					pi2.add(new Label(r.getLogin()));
-					pi2.setStyle("min-height:24px;font-size:12px;padding:0px;");
-
-					pi2.addClickHandler(new ClickHandler() {
-
-						@Override
-						public void onClick(ClickEvent event) {
-							for(Integer k = 1; k < vp.getWidgetCount(); k++ ) {
-								PaperItem pi3 = (PaperItem) vp.getWidget(k);
-								if(pi3.getWidgetCount() > 2) pi3.remove(2);
-							}
-							user = r.getId();
-							IronIcon ii = new IronIcon();
-							ii.setIcon("check");
-							ii.addStyleName(AON.AON_CSS.aonMinWidth24());
-							ii.getElement().getStyle().setPosition(Position.ABSOLUTE);
-							ii.getElement().getStyle().setRight(15, Unit.PX);
-							pi2.add(ii);
-						}
-					});
-					vp.add(pi2);
-				});
-				sp.add(vp);
-				AonDialog d= new AonDialog(isCopy ? "Copiar \u00c1mbitos de" : "Desvincular \u00c1mbitos de" , sp) {
-					
-					@Override
-					protected void onCancel() {
-						hide();
-					}
-					
-					@Override
-					protected void onAccept() {
-						hide();
-						if(isCopy) {
-							getAPI().getCommon().copyUserScope(object.getId(), user,  new AsyncCallback<JSON<JsUser>>() {
-								@Override public void onSuccess(JSON<JsUser> result) {}
-								@Override public void onFailure(Throwable caught) {}
-							});
-						} else {
-							getAPI().getCommon().deleteUserScope(object.getId(), user,  new AsyncCallback<JSON<JsUser>>() {
-								@Override public void onSuccess(JSON<JsUser> result) {}
-								@Override public void onFailure(Throwable caught) {}
-							});
-						}
-						
-					}
-				};
-				d.getElement().getStyle().setWidth(255, Unit.PX);
-				d.getElement().getStyle().setHeight(300, Unit.PX);	
-				d.center();	
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
-		});
-	}
 	
 }

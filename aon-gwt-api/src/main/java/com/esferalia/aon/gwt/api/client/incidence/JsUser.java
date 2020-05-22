@@ -14,6 +14,10 @@ public class JsUser extends JavaScriptObject {
 			return p == null ? null : p.getId();
 		}
 	};
+
+	public final native String getName() /*-{
+		return this.name;
+	}-*/;
 	
 	public final native Integer getId() /*-{
 		return this.id;
