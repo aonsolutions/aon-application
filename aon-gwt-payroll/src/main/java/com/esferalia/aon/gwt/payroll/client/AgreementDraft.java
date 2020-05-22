@@ -1387,6 +1387,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					// Calculate
 					agreementDraftObject.setStartDate(clickedDate);
 					agreementDraftObject.setEndDate(clickedDateEndDate);
+					agreementDraftObject.clearSalaryDraftTable();
 					calculate();
 				
 				}
@@ -1603,6 +1604,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		if(agreementDraftObject.getDatesWithChanges().size() == 0) { //Nos quedamos sin pestañas
 			calculate();
+			agreementDraftObject.clearSalaryDraftTable();
 		}else {
 			if(selectedButton == 0) 
 				newSelectTabDate = datesList[selectedButton+1];
@@ -1618,6 +1620,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 			agreementDraftObject.setStartDate(finalNewSelectTabDate);
 			agreementDraftObject.setEndDate(finalNewSelectTabEndDate);
+			agreementDraftObject.clearSalaryDraftTable();
 			calculate();
 		}
 		
@@ -1744,6 +1747,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	@Override
 	public void onCalculateSucces(AgreementDraftObject object) {
+
+//		this.agreementDraftObject = object;
 		
 //		Window.alert("Draft StartDate : " + agreementDraftObject.getStartDate() + " Draft EndDate : " + agreementDraftObject.getEndDate());
 
@@ -2536,10 +2541,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		if (var.isImpicit())
 			expressionTextBox.getElement().getStyle().setColor("gray");
 		expressionTextBox.getElement().getStyle().setWidth(96, Unit.PCT);
-
+		
 		Object value = var.getValue();
 		String expression = value == null ? var.getExpression() : value.toString();
-
+		
 		expressionTextBox.setText(expression);
 
 		salaryTable.setWidget(row, col, expressionTextBox);
@@ -2579,7 +2584,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		Variable variable = new StringVariable();
 		variable.setName(name);
 		VariableEditor variableEditor = new VariableEditor(level, variable);
-
+		
 		variableEditor.setExpressionTextBox(expressionTextBox);
 
 		expressionTextBox.ensureDebugId("textBox_" + name + "_" + level.getDescription());

@@ -588,6 +588,9 @@ public class AgreementDraftObject {
 		
 		AgreementServiceAsync agreementServiceAsync = agreementsServiceAsync;
 
+		//Prueba
+		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), agreementDraft);
+		
 		agreementServiceAsync.calculateAgreementDraft(
 				draftDomainName,
 				agreementDraft,
@@ -1115,6 +1118,11 @@ public class AgreementDraftObject {
 				add("INICIO_ANTIGUEDAD");
 			}
 		};
+	}
+
+	public void clearSalaryDraftTable() {
+		// TODO Auto-generated method stub
+		agreementDraft.getDraftSalaryTable().clear();
 	}
 	
 

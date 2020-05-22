@@ -231,7 +231,9 @@ public class EmployeesServiceHelper {
 		SalaryTable dbSalaryTable = SQLAgreementDraft.getSalaryTable(connection,
 				draft.getId(), draft.getStartDate(), draft.getEndDate(), domainId, parentDomainId);
 		SalaryTable allSalaryTable = new SalaryTable(dbSalaryTable);
-		allSalaryTable.putAll(draft.getDraftSalaryTable());
+		
+		if(draft.getDraftSalaryTable().size() != 0)
+			allSalaryTable.putAll(draft.getDraftSalaryTable());
 		
 		for ( Variable var: allSalaryTable.getAllVariables() ) {
 			String expression = 
