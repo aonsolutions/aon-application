@@ -3,8 +3,6 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.code.aon.common.util.CommonUtil.getDaysBetweenDates;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
-import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ABS;
@@ -135,6 +133,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
@@ -147,24 +146,17 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.jooq.Condition;
-import org.jooq.conf.ParamType;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
-import com.esferalia.aon.jooq.Keys;
-import com.esferalia.aon.jooq.tables.Contract;
-import com.esferalia.aon.jooq.tables.Enterprise;
-import com.esferalia.aon.jooq.tables.PayrollWorkplace;
-import com.esferalia.aon.jooq.tables.Workplace;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -4091,31 +4083,31 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					}
 				});
 
-		this.implicitExpressionContext.putVariable(FULL_ERE,
-				new ActiveTimedExpressionVariable<Boolean>(FULL_ERE.name(), ExpressionScope.CONTRACT) {
-					@Override
-					public Period getPeriod() {
-						return new Period(startDate, endDate);
-					}
+//		this.implicitExpressionContext.putVariable(FULL_ERE,
+//				new ActiveTimedExpressionVariable<Boolean>(FULL_ERE.name(), ExpressionScope.CONTRACT) {
+//					@Override
+//					public Period getPeriod() {
+//						return new Period(startDate, endDate);
+//					}
+//
+//					@Override
+//					public Boolean getValue(Period period) {
+//						return isFullERE(period);
+//					}
+//				});
 
-					@Override
-					public Boolean getValue(Period period) {
-						return isFullERE(period);
-					}
-				});
-
-		this.implicitExpressionContext.putVariable(ERE_BACK,
-				new ActiveTimedExpressionVariable<Boolean>(ERE_BACK.name(), ExpressionScope.CONTRACT) {
-					@Override
-					public Period getPeriod() {
-						return new Period(startDate, endDate);
-					}
-
-					@Override
-					public Boolean getValue(Period period) {
-						return isEREBack(period);
-					}
-				});
+//		this.implicitExpressionContext.putVariable(ERE_BACK,
+//				new ActiveTimedExpressionVariable<Boolean>(ERE_BACK.name(), ExpressionScope.CONTRACT) {
+//					@Override
+//					public Period getPeriod() {
+//						return new Period(startDate, endDate);
+//					}
+//
+//					@Override
+//					public Boolean getValue(Period period) {
+//						return isEREBack(period);
+//					}
+//				});
 
 		this.implicitExpressionContext.putVariable("DIAS_PREAVISO",
 				new LazyTimedExpressionVariable<Double>("DIAS_PREAVISO", ExpressionScope.CONTRACT) {
@@ -4502,7 +4494,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		List<Pair<ContextVariable,ITimedVariable<Object>>> ereFactorsPairs = 
 		Arrays.stream(ContextVariable.ERE_FACTORS)
-		.flatMap(c -> ctx.getVariables(c).stream().map(v -> new Pair<ContextVariable,ITimedVariable<Object>>(c, v)))
+		.flatMap(c -> join(ctx.getVariables(c)).stream().map(v -> new Pair<ContextVariable,ITimedVariable<Object>>(c, v)))
 		.sorted( (p1,p2) -> p1.snd.getPeriod().compareTo(p2.snd.getPeriod()) )
 		.filter( p -> p.snd.getValue(p.snd.getPeriod()) instanceof Number )
 		.collect(Collectors.toList())
@@ -4554,7 +4546,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			ctx.putVariable(daysVar, ereDays);
 			ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
-			
+
 			Date ereStartDate = getStartDate(ereFactorVar, period);
 
 			ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
@@ -4579,8 +4571,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			if (userBr == null)
 				ctx.putVariable(REGULATORY_BASE, ereBase);
+			
+//			ITimedVariable<Boolean> ereBack = new ITimedVariable<Boolean>() {
+//				@Override
+//				public Period getPeriod() {
+//					return period;
+//				}
+//
+//				@Override
+//				public Boolean getValue(Period p) {
+//					return isEREBack(period);
+//				}
+//
+//			};
+//			
+//			ctx.putVariable(ERE_BACK, ereBack );
+			getEREBack(period).forEach(v -> ctx.putVariable(ERE_BACK, v ));
+			
+			getFullERE(period).forEach(v -> ctx.putVariable(FULL_ERE, v ));
+			;
 		}
-
+		
 
 		intersects = splitWorkedDays(intersects);
 
@@ -4694,8 +4705,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(QUOTE_DAYS, quoteDays);
 			} else {
 			}
-			
-			
+						
 			ITimedVariable<Double> actualDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
@@ -4763,6 +4773,27 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			};
 			ctx.putVariable(WORKED_FACTOR, workedFactor);
+
+//			ITimedVariable<Boolean> ereBack = new ITimedVariable<Boolean>() {
+//				@Override
+//				public Period getPeriod() {
+//					return period;
+//				}
+//
+//				@Override
+//				public Boolean getValue(Period p) {
+//					return isEREBack(period);
+//				}
+//
+//			};
+			ITimedVariable<?> userEreBack = getExpressionContext().getVariable(ERE_BACK, period.getStart(),
+					period.getEnd());
+
+			if (userEreBack == null) {
+				getEREBack(period).forEach(v -> ctx.putVariable(ERE_BACK, v ));
+			} else {
+			}
+
 		}
 
 	}
@@ -5340,7 +5371,57 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return startDate;
 	}
 	
-	private Boolean isFullERE (Period p) {
+	private List<ITimedVariable<Boolean>> getFullERE (Period p) {
+		
+		Calendar ereStart = Calendar.getInstance();
+		ereStart.set(2020, Calendar.MARCH, 23, 0, 0, 0);
+
+		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap = 
+		getContractEreFactorsMap(new Period(Period.min(ereStart.getTime(), p.getStart()), p.getEnd()));
+		
+		Date enterpiseBackDate = null;
+		for (Map.Entry<Integer, List<ContractDataRecord>> entry : contractEreFactorsMap.entrySet()) {
+			List<ContractDataRecord> ereFactors = entry.getValue();
+			ereFactors = ereFactors.stream().filter(c -> c.getId() != null ).collect(Collectors.toList());
+			if ( ereFactors == null || ereFactors.isEmpty() )
+				continue; 
+			
+			Collections.sort(ereFactors, (c1,c2) -> c1.getStartDate().compareTo(c2.getStartDate()));
+			
+			int i = 0; 
+			double factor = Double.parseDouble(ereFactors.get(i).getExpression());
+			Date employeeBackDate = ereFactors.get(i).getEndDate();
+			for ( i= 1 ; i < ereFactors.size(); i++ ) {
+				try {
+					double newFactor = Double.parseDouble(ereFactors.get(i).getExpression());
+					if ( factor !=  newFactor )
+						break;
+					Date newStartDate = add(ereFactors.get(i).getStartDate(), DAY_OF_MONTH,-1);
+					if ( Period.compare(employeeBackDate, newStartDate) < 0) 
+						break;
+					employeeBackDate = ereFactors.get(i).getEndDate();
+				} catch ( NullPointerException | NumberFormatException e) {
+				}
+				
+			}
+			
+			enterpiseBackDate = Period.min(enterpiseBackDate, employeeBackDate);
+		}
+		if ( Period.compare( enterpiseBackDate, p.getStart() ) < 0 )
+			return Collections.singletonList(new TimedObject<Boolean>(false, p));
+		
+		if ( Period.compare( enterpiseBackDate, p.getEnd() ) >= 0 )
+			return Collections.singletonList(new TimedObject<Boolean>(true, p));
+		
+		List<ITimedVariable<Boolean>>  fullEres = new ArrayList<ITimedVariable<Boolean>>(2);
+		fullEres.add(new TimedObject<Boolean>(true, new Period ( p.getStart(), enterpiseBackDate)));
+		fullEres.add(new TimedObject<Boolean>(false , new Period (add(enterpiseBackDate, DAY_OF_MONTH,1), p.getEnd())));
+		
+		
+		return fullEres;
+	}	
+	
+	private Map<Integer, List<ContractDataRecord>> getContractEreFactorsMap(Period p) {
 		// only active employees, of course
 		Condition activeEmployees = 
 		CONTRACT.SS_REGIME.ne((byte)SSRegimeType.SELF_EMPLOYED.ordinal())
@@ -5354,7 +5435,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		.and(CONTRACT_DATA.END_DATE.isNull().or(CONTRACT_DATA.END_DATE.ge(toSqlDate(p.getStart()))))
 		;
 		
-		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap =
+		return
 		new AONContext(connection)
 		.getDslContext()
 		.select()
@@ -5364,6 +5445,16 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		.where(WORKPLACE.ENTERPRISE.eq(getInt(SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY)))
 		.fetchGroups(CONTRACT.ID, r ->r.into(CONTRACT_DATA))
 		;
+		
+	}
+	
+	private Boolean isFullERE (Period p) {
+
+		Calendar c = Calendar.getInstance();
+		c.set(2020, Calendar.MARCH, 23, 0, 0, 0);
+
+		Map<Integer, List<ContractDataRecord>> contractEreFactorsMap = 
+		getContractEreFactorsMap(new Period(c.getTime(),p.getEnd()));
 		
 		Date start = p.getStart();
 		for (Map.Entry<Integer, List<ContractDataRecord>> entry : contractEreFactorsMap.entrySet()) {
@@ -5405,26 +5496,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		return isEREBack(c.getTime(), p);
 	}
 	
+	private List<ITimedVariable<Boolean>> getEREBack (Period p) {
+		return isEREBack(p) ?  Collections.singletonList( new TimedObject<Boolean>(true,p)) : Collections.emptyList();
+	}
+
 	private Boolean isEREBack (Date date, Period p) {
 		
 		if ( Period.compare(p.getEnd(), date) <= 0 )
 			return false;
 		
+		double currentEreFactor = 0.00;
 		List<ITimedVariable<?>> ereFactorVars = getVariables(ContextVariable.ERE_FACTOR_FORCE_OFF.getName(), p.getStart(), p.getEnd(), Collectors.toList());
 		if ( ereFactorVars.size() > 0  ) {
 			Collections.sort(ereFactorVars, (v1,v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
 			ITimedVariable<?> lastEreFactorVar = ereFactorVars.get(ereFactorVars.size()-1);
 			if ( Period.compare(lastEreFactorVar.getPeriod().getEnd(), p.getEnd() ) >= 0 ) {
 				try {
-					double ereFactor = ((Number)lastEreFactorVar.getValue(lastEreFactorVar.getPeriod())).doubleValue();
-					if ( ereFactor == 1.00 ) 
-						return false;
+					currentEreFactor = ((Number)lastEreFactorVar.getValue(lastEreFactorVar.getPeriod())).doubleValue();
 				} catch ( Exception e ) {
 					
 				}
 			}
 		}
 		
+		double startEreFactor = 0.00;
 		List<String> ereExpressions =
 		new AONContext(connection)
 		.getDslContext()
@@ -5442,14 +5537,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		for (String expression : ereExpressions) {
 			try {
-				if ( Double.parseDouble(expression) == 1.00 ) 
-					continue;
+				startEreFactor = Double.parseDouble(expression);
 			} catch (NullPointerException | NumberFormatException e) {
 			}
-			return false;
 		}
 		
-		return true;
+		
+		return currentEreFactor < startEreFactor;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -5752,6 +5846,37 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Arrays.stream(ContextVariable.values())
 		.filter( v -> v.getName().startsWith(ERE_FACTOR.getName()))
 		.collect(Collectors.toList());
+	}
+	
+	private static <T extends Object> List<ITimedVariable<T>> join(List<ITimedVariable<T>> list) {
+		if ( list.isEmpty()  ) 
+			return list;
+		
+		list.sort( (v1, v2) -> v1.getPeriod().compareTo(v2.getPeriod()));
+		Stack<ITimedVariable<T>> joined = new Stack<ITimedVariable<T>>();
+		joined.push( list.get(0) );
+		
+		for ( int i = 1; i < list.size() ; i++) {
+			ITimedVariable<T> v1 = joined.peek();
+			ITimedVariable<T> v2 = list.get(i);
+			T value1 = v1.getValue(v1.getPeriod());
+			T value2 = v2.getValue(v2.getPeriod());
+			Date enDate1 = v1.getPeriod().getEnd();
+			Date startDate1 = AonDateUtils.add(enDate1, DAY_OF_MONTH,1);
+			Date startDate2 = v2.getPeriod().getStart();
+			if (AonUtils.notEquals(value1, value2)) {
+				joined.push(v2);
+			} else if ( startDate2.after(startDate1) ) {
+				joined.push(v2);
+			} else {
+				startDate1 = v1.getPeriod().getStart();
+				Date endDate2 = v2.getPeriod().getEnd();
+				joined.pop();
+				joined.push(new TimedObject<T>(value1, new Period( startDate1, endDate2 )));
+			}
+		}
+		
+		return joined.stream().collect(Collectors.toList());
 	}
 	
 

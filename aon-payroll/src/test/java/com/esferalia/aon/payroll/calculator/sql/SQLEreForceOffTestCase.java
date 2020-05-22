@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -36,9 +37,9 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
-import junit.framework.Assert;
 
 public class SQLEreForceOffTestCase extends SQLERETestCase {
 	@Override
@@ -468,6 +469,8 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
 		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 
 	
@@ -477,6 +480,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, ereBack.size());
+		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
 		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 	}
 
@@ -495,21 +501,25 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-
+		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-
-		Assert.assertEquals(1, ereBack.size());
-
-		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
 
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ereBack = ctx.getExpressionContext().eval(
+		try {
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
 	}
 	
 	@Test
@@ -548,7 +558,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, ereBack.size());
-
+		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
 		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 		startDate = add(startDate, MONTH, 1);
@@ -557,6 +567,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, ereBack.size());
+		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
 		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 	}
@@ -593,20 +606,25 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
+		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-
-		Assert.assertEquals(1, ereBack.size());
-
-		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ereBack = ctx.getExpressionContext().eval(
+		try {
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
 		
 	}
 
@@ -651,20 +669,25 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
+		try {
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-
-		Assert.assertEquals(1, ereBack.size());
-
-		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
 		
 		startDate = add(startDate, MONTH, 1);
 		endDate = getLastDayOfMonth(startDate);
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
-		ereBack = ctx.getExpressionContext().eval(
+		try {
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
-		Assert.assertEquals(Boolean.FALSE, ereBack.get(0).getValue());
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
 		
 	}
 
@@ -713,7 +736,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, ereBack.size());
-
+		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
 		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 		
 		startDate = add(startDate, MONTH, 1);
@@ -722,6 +745,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				connection, startDate, endDate, endDate, contract);
 		ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, ereBack.size());
+		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
 		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
 	}
 
@@ -768,10 +794,182 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 
 		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
 				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, ereBack.size());
+		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+
+	}
+
+	@Test
+	public void testVariableREINCORPRADO_EREVIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.5");
+					}
+				});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, ereBack.size());
-
+		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
 		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, ereBack.size());
+		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableREINCORPRADO_EREIX() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.75");
+					}
+				});
+
+		addData(aonContext
+				, contract
+				, backDate
+				, null
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.50");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, ereBack.size());
+		Assert.assertEquals(backDate, ereBack.get(0).getPeriod().getStart());
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+		
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, ereBack.size());
+		Assert.assertEquals(startDate, ereBack.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, ereBack.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, ereBack.get(0).getValue());
+	}
+
+	@Test
+	public void testVariableREINCORPRADO_EREX() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+		
+		
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
+		
+		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+
+		addData(aonContext
+				, contract
+				, startDate
+				, endEREDate
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.50");
+					}
+				});
+
+		addData(aonContext
+				, contract
+				, backDate
+				, null
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.50");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		try {
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
+		startDate = add(startDate, MONTH, 1);
+		endDate = getLastDayOfMonth(startDate);
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		try {
+		List<ITimedResult<Boolean>> ereBack = ctx.getExpressionContext().eval(
+				"REINCORPORADO_ERE", startDate, endDate, Boolean.class);
+		Assert.fail();
+		} catch ( UndefinedVariablesException e ) {
+			
+		}
 	}
 
 	@Test
@@ -802,8 +1000,9 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
-
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		Assert.assertEquals(ereDay, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(ereDay, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 	}
 
 	@Test
@@ -833,8 +1032,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
-
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
 		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+
 	}
 
 	@Test
@@ -867,7 +1068,8 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
-
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
 		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 	}
 
@@ -900,10 +1102,17 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
+		
+		Date backDate = add(startDate, DAY_OF_MONTH, 11);
+		Assert.assertEquals(2, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
-		Assert.assertEquals(1, fullEre.size());
-
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		backDate = add(startDate, DAY_OF_MONTH, 13);
+		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 	}
 
 	@Test
@@ -933,20 +1142,28 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		
-		Date _13DayOfMonth = add(startDate, Calendar.DAY_OF_MONTH, 12);
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
+		Date backDate = add(startDate, DAY_OF_MONTH, 11);
+		Assert.assertEquals(2, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
-		Assert.assertEquals(1, fullEre.size());
+		backDate = add(startDate, DAY_OF_MONTH, 13);
+		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
 
+		Date _13DayOfMonth = add(startDate, Calendar.DAY_OF_MONTH, 12);
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", add(_13DayOfMonth, Calendar.DAY_OF_MONTH,1), endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
-
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
 	}
 
 	@Test
@@ -980,16 +1197,31 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
+		Date backDate = add(startDate, DAY_OF_MONTH, 11);
+		Assert.assertEquals(3, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		backDate = add(startDate, DAY_OF_MONTH, 12);
+		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getStart());
+		Assert.assertEquals(backDate, fullEre.get(1).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
+		
+		backDate = add(startDate, DAY_OF_MONTH, 13);
+		Assert.assertEquals(backDate, fullEre.get(2).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(2).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(2).getValue());
+
 
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", add(_13DayOfMonth, Calendar.DAY_OF_MONTH,1), endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-
-		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		backDate = add(startDate, DAY_OF_MONTH, 13);
+		Assert.assertEquals(backDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		
 	}
 
 	@Test
@@ -1019,7 +1251,8 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
-
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
 		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		
 		ContractRecord contractII =
@@ -1039,13 +1272,16 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				contract.getEnterpriseActivity() //enterpriseActivityId
 				);
 		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
-
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
-		
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());		
 		
 		addData(aonContext, contractII, startDate, add(startDate, Calendar.DAY_OF_MONTH, 11),
 				new HashMap<String, String>() {
@@ -1054,12 +1290,15 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 					}
 				});
 		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
-		Assert.assertEquals(1, fullEre.size());
-
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		Assert.assertEquals(2, fullEre.size());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
 
 		addData(aonContext, contractII, add(startDate, Calendar.DAY_OF_MONTH, 12), endDate,
 				new HashMap<String, String>() {
@@ -1068,12 +1307,16 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 					}
 				});
 		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
-
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
 		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		
 		ContractRecord contracts [] = new  ContractRecord [33];
 		
 		for ( int i = 0; i < 33; i ++ ) {
@@ -1104,6 +1347,191 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 
 		Assert.assertEquals(1, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		
+		addData(aonContext, contracts[22], startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.30");
+					}
+				});			
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+		Assert.assertEquals(1, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+
+		ContractRecord contractIII =
+		newContract(aonContext, 
+				SSRegimeType.GENERAL, //ssRegimeType, 
+				CCCType.PRINCIPAL, 
+				contract.getStartDate(), 
+				null, 
+				Collections.emptyMap(), 
+				new String [] {}, 
+				new String [] {}, 
+				null, //category, 
+				contract.getDomain(), //domainId, 
+				contract.getPerson(), //personId, 
+				contract.getWorkplace(), //workplaceId, 
+				contract.getEnterpriseCcc(), //enterpriseCccId, 
+				contract.getEnterpriseActivity() //enterpriseActivityId
+				);
+		addData(aonContext
+				, contractIII
+				, startDate
+				, add(startDate, DAY_OF_MONTH, 10)
+				, new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "0.30");
+					}
+				});			
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(2, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals( add(startDate, DAY_OF_MONTH, 10), fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		Assert.assertEquals(add(startDate, DAY_OF_MONTH, 11), fullEre.get(1).getPeriod().getStart());
+		Assert.assertEquals( endDate, fullEre.get(1).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());		
+	}
+
+	@Test
+	public void testVariableERE_TOTALVIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addData(aonContext, contract, startDate, endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		List<ITimedResult<Boolean>> fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		
+		ContractRecord contractII =
+		newContract(aonContext, 
+				SSRegimeType.GENERAL, //ssRegimeType, 
+				CCCType.PRINCIPAL, 
+				contract.getStartDate(), 
+				null, 
+				Collections.emptyMap(), 
+				new String [] {}, 
+				new String [] {}, 
+				null, //category, 
+				contract.getDomain(), //domainId, 
+				contract.getPerson(), //personId, 
+				contract.getWorkplace(), //workplaceId, 
+				contract.getEnterpriseCcc(), //enterpriseCccId, 
+				contract.getEnterpriseActivity() //enterpriseActivityId
+				);
+		
+		 ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+		 
+		 fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(endDate, fullEre.get(0).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());	
+		
+		addData(aonContext, contractII, startDate, add(startDate, Calendar.DAY_OF_MONTH, 11),
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		
+		 ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+		 
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(2, fullEre.size());
+		Assert.assertEquals(startDate, fullEre.get(0).getPeriod().getStart());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+
+		Assert.assertEquals(endDate, fullEre.get(1).getPeriod().getEnd());
+		Assert.assertEquals(Boolean.FALSE, fullEre.get(1).getValue());
+
+		addData(aonContext, contractII, add(startDate, Calendar.DAY_OF_MONTH, 12), endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.00");
+					}
+				});
+		
+		 ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+		 
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
+
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
+		ContractRecord contracts [] = new  ContractRecord [33];
+		
+		for ( int i = 0; i < 33; i ++ ) {
+			contracts[i]=
+					newContract(aonContext, 
+							SSRegimeType.GENERAL, //ssRegimeType, 
+							CCCType.PRINCIPAL, 
+							contract.getStartDate(), 
+							null, 
+							Collections.emptyMap(), 
+							new String [] {}, 
+							new String [] {}, 
+							null, //category, 
+							contract.getDomain(), //domainId, 
+							contract.getPerson(), //personId, 
+							contract.getWorkplace(), //workplaceId, 
+							contract.getEnterpriseCcc(), //enterpriseCccId, 
+							contract.getEnterpriseActivity() //enterpriseActivityId
+							);
+			addData(aonContext, contracts[i], startDate, endDate,
+					new HashMap<String, String>() {
+						{
+							put(getFactorVariable().getName(), "0.50");
+						}
+					});			
+		}
+		fullEre = ctx.getExpressionContext().eval(
+				"ERE_TOTAL", startDate, endDate, Boolean.class);
+
+		Assert.assertEquals(1, fullEre.size());
 
 		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 		
@@ -1116,7 +1544,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		fullEre = ctx.getExpressionContext().eval(
 				"ERE_TOTAL", startDate, endDate, Boolean.class);
 		Assert.assertEquals(1, fullEre.size());
-		Assert.assertEquals(Boolean.FALSE, fullEre.get(0).getValue());
+		Assert.assertEquals(Boolean.TRUE, fullEre.get(0).getValue());
 	}
 
 	@Test
@@ -1241,6 +1669,13 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				contract.getEnterpriseActivity() //enterpriseActivityId
 				);
 		
+		addData(aonContext, contractII, startDate, add(startDate, DAY_OF_MONTH, 10),
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+		
 		ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 		
@@ -1282,7 +1717,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 			bonuses += bonus.getAmount();
 		}
 		
-		org.junit.Assert.assertEquals(expected, bonuses, DELTA);
+		org.junit.Assert.assertEquals(costs, bonuses, DELTA);
 
 		addData(aonContext, contractII, startDate, endDate,
 				new HashMap<String, String>() {
