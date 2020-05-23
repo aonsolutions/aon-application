@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 
 import java.util.ArrayList;
@@ -3878,7 +3879,9 @@ public class SalaryDraft extends ResizeComposite
 //		String description = item.getDescription();
 		descriptionBox.setText(description != null ? description : item.getDescriptionTemplate());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
+		descriptionBox.getElement().setAttribute("size", Integer.toString(DESCRIPTION_SIZE));
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
+		
 		handler.setDescriptionWidget(descriptionBox);
 		descriptionBox.ensureDebugId("description-box-" + row );
 		if(
@@ -3914,6 +3917,7 @@ public class SalaryDraft extends ResizeComposite
 
 		HorizontalPanel amountsPanel = new HorizontalPanel();
 		amountsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
+		amountsPanel.getElement().getStyle().setWidth(100, Unit.PCT);
 		amountsPanel.add(amountBox);
 		amountsPanel.add(dbAmountLabel);
 		amountsPanel.setCellWidth(dbAmountLabel, "50%");
@@ -3925,6 +3929,7 @@ public class SalaryDraft extends ResizeComposite
 		addDbWidget(dbWidget);
 
 		paymentsTable.setWidget(row, isDeduction ? 4 : 3, amountsPanel);
+		paymentsTable.getCellFormatter().addStyleName(row, isDeduction ? 4 : 3, AON.AON_TEXT_RIGHT);
 
 		paymentsTable.setHTML(row, isDeduction ? 3 : 4, "&nbsp;");
 

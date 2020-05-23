@@ -15,4 +15,7 @@ public interface Constants {
 	static final int DESCRIPTION_MAX_LENGTH = 64;
 	static final int EXPRESSION_MAX_LENGTH = 1024;
 	
+	static final int DESCRIPTION_SIZE = 74;
+	
+	
 }
