@@ -19,19 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.DefaultAgreementUpdate2;
-import net.aonsolutions.db.up2date.payroll.EmbargarFix;
-import net.aonsolutions.db.up2date.payroll.EresUpdateII;
-import net.aonsolutions.db.up2date.payroll.FixERESalaries;
-import net.aonsolutions.db.up2date.payroll.FixERESalariesII;
-import net.aonsolutions.db.up2date.payroll.GarantizadoFix;
-import net.aonsolutions.db.up2date.payroll.GarantizadoUpdate;
-import net.aonsolutions.db.up2date.payroll.MejoraInsert;
-import net.aonsolutions.db.up2date.payroll.MejoraUpdate;
-import net.aonsolutions.db.up2date.tgss.FellowsPercentages2019Fix;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw182020Insert;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateFactor;
-import net.aonsolutions.db.up2date.tgss.TrainningPercentages2019Fix;
+import net.aonsolutions.db.up2date.management.InvoiceDUACreation;
 
 public class Up2Date {
 
@@ -129,7 +117,8 @@ public class Up2Date {
     		//MejoraInsert.MEJORAINSERT,
     		//MejoraUpdate.MEJORAUPDATE
     		//EmbargarFix.EMBARGARFIX
-    		RealDecreeLaw182020Insert.REALDECREELAW182020INSERT
+    		//RealDecreeLaw182020Insert.REALDECREELAW182020INSERT
+    		InvoiceDUACreation.INVOICEDUACREATION
     };
 
 
