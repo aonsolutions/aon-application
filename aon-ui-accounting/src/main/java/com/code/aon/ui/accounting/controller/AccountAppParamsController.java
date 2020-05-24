@@ -72,6 +72,8 @@ public class AccountAppParamsController implements Serializable {
 		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_SEIZE_ACC.getValue(), null );
 		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_IN_KIND_ACC.getValue(), null );
 		DEFAULT_PARAMETERS.put(AppParam.ACC_SALARY_DED_OTHER_ACC.getValue(), null );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEF_DUA_VAT_ACC.getValue(), "472000000" );
+		DEFAULT_PARAMETERS.put(AppParam.ACC_DEF_DUA_DUTY_ACC.getValue(), null );
 		
 		DEFAULT_PARAMETERS.put(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC.getValue(), null );
 
@@ -95,6 +97,9 @@ public class AccountAppParamsController implements Serializable {
 	private Account accSalaryDedOtherAccount;
 	
 	private Account accVatNegativeAdjustAccount;
+	
+	private Account accDefDuaVatAccount;
+	private Account accDefDuaDutyAccount;
 
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
@@ -176,7 +181,8 @@ public class AccountAppParamsController implements Serializable {
 		initializeAccSalaryDedInKindAccount();
 		initializeAccSalaryDedOtherAccount();
 		initializeAccVatNegativeAdjustAccount();
-		
+		initializeAccDefDuaVatAccount();
+		initializeAccDefDuaDutyAccount();
 	}
 	
 	public ApplicationParameter getParameter(AppParam param) throws ManagerBeanException {
@@ -467,5 +473,37 @@ public class AccountAppParamsController implements Serializable {
 			Account accVatNegativeAdjustAccount) {
 		this.accVatNegativeAdjustAccount = accVatNegativeAdjustAccount;
 		putAccount(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC,accVatNegativeAdjustAccount);
+	}
+
+	private void initializeAccDefDuaVatAccount() {
+		try {
+			setAccDefDuaVatAccount( initializeAccount(AppParam.ACC_DEF_DUA_VAT_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefDuaVatAccount( new Account() );	
+		}
+	}
+	public Account getAccDefDuaVatAccount() {
+		return accDefDuaVatAccount;
+	}
+	public void setAccDefDuaVatAccount(Account accDefDuaVatAccount) {
+		this.accDefDuaVatAccount = accDefDuaVatAccount;
+		putAccount(AppParam.ACC_DEF_DUA_VAT_ACC,accDefDuaVatAccount);
+	}
+	
+	private void initializeAccDefDuaDutyAccount() {
+		try {
+			setAccDefDuaDutyAccount( initializeAccount(AppParam.ACC_DEF_DUA_DUTY_ACC));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Cuenta por defecto no válida.");
+			setAccDefDuaDutyAccount( new Account() );	
+		}
+	}
+	public Account getAccDefDuaDutyAccount() {
+		return accDefDuaDutyAccount;
+	}
+	public void setAccDefDuaDutyAccount(Account accDefDuaDutyAccount) {
+		this.accDefDuaDutyAccount = accDefDuaDutyAccount;
+		putAccount(AppParam.ACC_DEF_DUA_DUTY_ACC,accDefDuaDutyAccount);
 	}
 }

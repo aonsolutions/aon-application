@@ -86,6 +86,20 @@
 					<ui:param name="lookupTo" value="#{accAppParams.accVatNegativeAdjustAccount}" />
 				</ui:include>
 
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_dua_vat}"/>
+					<ui:param name="lookupSuffix" value="ACC_DEF_DUA_VAT_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefDuaVatAccount}" />
+				</ui:include>
+				
+ 				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+ 					<ui:param name="skipLabel" value="#{false}"/>
+ 					<ui:param name="lookupLabel" value="#{bundle.accounting_def_dua_duty}"/>
+					<ui:param name="lookupSuffix" value="ACC_DEF_DUA_DUTY_ACC" />
+					<ui:param name="lookupTo" value="#{accAppParams.accDefDuaDutyAccount}" />
+				</ui:include>
+
 				<aon:outputLabel for="ACC_default_paid_retention_account"
 					value="#{bundle.accounting_def_paid_ret_acc}" />
 				<aon:selectOneMenu id="ACC_default_paid_retention_account"
