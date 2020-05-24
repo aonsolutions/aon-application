@@ -12,7 +12,10 @@ public interface InvoiceProperties {
 	Property<String> getSeriesProperty();
 	Property<Byte> getStatusProperty();
 	Property<Integer> getNumberProperty();	
+	Property<String> getReferenceCodeProperty();
 	Property<Integer> getRegistryProperty();
+	Property<String> getRegistryDocumentProperty();
+	Property<String> getRegistryNameProperty();
 	Property<Byte> getTypeProperty();
 	Property<Date> getStartIssueDateProperty();
 	Property<Date> getEndIssueDateProperty();

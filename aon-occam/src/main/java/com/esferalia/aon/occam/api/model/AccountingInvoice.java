@@ -32,6 +32,14 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private LinkedList<AccountEntry> accountEntries;
 	private boolean prepayments;
 	
+	private boolean duaLinked;
+	// Si la factura es nacional y está vinculada a un DUA, 
+	// informacion del DUA y de la factura extraconumitaria
+	private AccountingDUAInvoice duaInvoice;
+	// Si la factura es extracomunitaria y está vinculada a un 
+	// DUA, id de la factura nacional.
+	private Integer duaNationalInvoice;
+	
 	private boolean authFinanceCalculation;
 	private Integer payAccountId;
 	private String payAccountCode;
@@ -161,6 +169,12 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public boolean isIntracommunity() {
 		return invoice != null && invoice.isIntracommunity();
 	}
+	public boolean isExtracommunity() {
+		return invoice != null && invoice.isExtracommunity();
+	}
+	public boolean isCanCeuMel() {
+		return invoice != null && invoice.isCanCeuMel();
+	}
 	public boolean isIsp() {
 		return invoice != null && invoice.isIsp();
 	}
@@ -248,6 +262,29 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	public AccountingInvoice setPrepayments(boolean prepayments) {
 		this.prepayments = prepayments;
+		return this;
+	}
+	public boolean isDuaLinked() {
+		return duaLinked;
+	}
+	public AccountingInvoice setDuaLinked(boolean duaLinked) {
+		this.duaLinked = duaLinked;
+		return this;
+	}
+	
+	public AccountingDUAInvoice getDuaInvoice() {
+		return duaInvoice;
+	}
+	public AccountingInvoice setDuaInvoice(AccountingDUAInvoice duaInvoice) {
+		this.duaInvoice = duaInvoice;
+		return this;
+	}
+
+	public Integer getDuaNationalInvoice() {
+		return duaNationalInvoice;
+	}
+	public AccountingInvoice setDuaNationalInvoice(Integer duaNationalInvoice) {
+		this.duaNationalInvoice = duaNationalInvoice;
 		return this;
 	}
 	public boolean isAuthFinanceCalculation() {

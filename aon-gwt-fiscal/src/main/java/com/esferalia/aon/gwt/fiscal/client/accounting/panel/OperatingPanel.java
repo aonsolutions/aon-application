@@ -255,8 +255,12 @@ public class OperatingPanel extends ScrollPanel implements HasSelectionHandlers<
 									col++;
 								}
 								if (report.showIncreasePercent() && col != 4) {
-									double percent = (aos != null)?aos.getIncreasePercent() : 0.0;
-									String percentText = AonMathUtils.isNotZero(percent)?AON.FMT.format(percent) + AonStringUtils.PERCENT:AonStringUtils.SPACE;
+									double percent = (aos != null)?aos.getIncreasePercent() : -100.0;
+									String percentText = 
+//											AonMathUtils.isNotZero(percent)?
+											AON.FMT.format(percent) + AonStringUtils.PERCENT
+//											:AonStringUtils.SPACE
+											;
 									tab.setWidget(row, col, new Label(percentText));
 									if (report.getParams().showIncreasePercent()) tab.getCellFormatter().setStyleName(row, col, backgroundStyle);
 									if (title) tab.getCellFormatter().addStyleName(row, col, AON.AON_CSS.aonReportTableBold());

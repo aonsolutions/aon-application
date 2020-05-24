@@ -17,7 +17,8 @@ public interface CommonMessages extends Messages {
 	// Ü --> \u00DC ü --> \u00fc ... diéresis
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
-	// ¿ --> \u00BF
+	// ¿ --> \u00BF 
+	// EUR-> \u20AC
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -3646,6 +3647,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Existen vencimientos pagados/remesados/saldados.")
 	String hasPaidFinances();
+	
+	@DefaultMessage("Factura vinculada a un documento DUA.")
+	String DUALinked();
 
 	@DefaultMessage("Factura creada desde \"gesti\u00F3n\"")
 	String managmentInvoice();
@@ -3777,5 +3781,29 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Bancos definidos")
 	String banks();
 
+	@DefaultMessage("N\u00BA DUA")
+	String duaNumber();
+	
+	@DefaultMessage("Transitario")
+	String freightForwarder();
+
+	@DefaultMessage("Aranceles")
+	String duties();
+
+	@DefaultMessage("Precio del art\u00EDculo")
+	String productPrice();
+	
+	@DefaultMessage("Ajuste")
+	String adjust();
+	
+	@DefaultMessage("Valor estad\u00EDstico")
+	String statisticalValue();
+
+	@DefaultMessage("I.V.A.")
+	String vat();
+	
+	@DefaultMessage("R.E.")
+	String re();
+	
 }
 

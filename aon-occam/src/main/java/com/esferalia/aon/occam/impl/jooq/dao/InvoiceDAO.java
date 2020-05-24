@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceAttach.INVOICE_ATTACH;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
@@ -380,8 +381,35 @@ public class InvoiceDAO {
 	}
 	
 	
-	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx,InvoiceFilter filter) {
-		return getFullInvoices(ctx, filter)
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx,InvoiceFilter filter, int offset , int numberOfRows) {
+		ctx.checkRead();
+		Field<Integer> orderedType = getOrderedType();
+		return ctx.getDslContext()
+			.select(
+				 INVOICE.ID
+				,INVOICE.DOMAIN
+				,orderedType
+				,INVOICE.ACTIVITY
+				,INVOICE.TYPE
+				,INVOICE.TRANSACTION
+				,INVOICE.SERIES
+				,INVOICE.NUMBER
+				,INVOICE.REFERENCE_CODE
+				,INVOICE.ISSUE_DATE
+				,INVOICE.TAX_DATE
+				,INVOICE.REGISTRY
+				,INVOICE.RDOCUMENT
+				,INVOICE.RDOCUMENT_TYPE
+				,INVOICE.RDOCUMENT_COUNTRY
+				,INVOICE.RNAME
+				,INVOICE.SECURITY_LEVEL
+			)
+			.from(INVOICE)
+			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
+			.where(INVOICE_PROPERTIES.getConditions(filter))
+			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE.desc(),INVOICE.REFERENCE_CODE)
+			.limit(offset,numberOfRows)
+			.fetch()
 			.stream()
 			.map(new MinimalInvoiceFiller());
 	}
@@ -479,7 +507,6 @@ public class InvoiceDAO {
 					.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
 					.setRegistryName(record.getValue(INVOICE.RNAME))
 					.setActivity(record.getValue(INVOICE.ACTIVITY))
-					.setScope(new Scope().setId(record.getValue(SCOPE.ID)).setDescription(record.getValue(SCOPE.DESCRIPTION)))
 				;
 		}
 		
@@ -1234,6 +1261,52 @@ public class InvoiceDAO {
 		
 		deleteDetails(ctx, config, inv);
 		
+		if ( inv.isDUAAllowed() ) {
+			Integer importInvoice = ctx.getDslContext()
+				.select(INVOICE_DUA.INVOICE_IMPORT)
+				.from(INVOICE_DUA)
+				.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
+				.and(INVOICE_DUA.DOMAIN.eq(inv.getDomain()))
+				.fetch()
+				.stream()
+				.map( rec -> rec.getValue(INVOICE_DUA.INVOICE_IMPORT))				
+				.findFirst()
+				.orElse(null);
+			if (importInvoice != null) {
+				ctx.log().info("\tDUA LINKED");
+				ctx.getDslContext()
+					.select(INVOICE_DETAIL.TAXABLE_BASE, INVOICE_TAX.ID,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.SURCHARGE)
+					.from(INVOICE_DETAIL)
+					.innerJoin(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.eq(INVOICE_DETAIL.ID))
+					.where(INVOICE_DETAIL.INVOICE.eq(importInvoice))
+					.and(INVOICE_DETAIL.DOMAIN.eq(inv.getDomain()))
+					.fetch()
+					.stream()
+					.forEach(rec -> {
+						int taxId = rec.getValue(INVOICE_TAX.ID);
+						double base = rec.getValue(INVOICE_DETAIL.TAXABLE_BASE);
+						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
+						double surcharge = rec.getValue(INVOICE_TAX.SURCHARGE);
+						double quota = AonMathUtils.round( base * percent / 100 );
+						double surchargeQuota = AonMathUtils.round( base * surcharge / 100 );
+						int count = ctx.getDslContext().update(INVOICE_TAX)
+								.set(INVOICE_TAX.BASE, base )
+								.set(INVOICE_TAX.QUOTA, quota )
+								.set(INVOICE_TAX.SURCHARGE_QUOTA, surchargeQuota)
+								.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
+								.set(INVOICE_TAX.QUOTA, quota)
+								.where(INVOICE_TAX.ID.equal( taxId ))
+								.execute();
+						ctx.log().info("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): " + id + " ("+count+" filas)");	
+					});
+				int count = ctx.getDslContext()
+						.delete(INVOICE_DUA)
+						.where(INVOICE_DUA.INVOICE_NATIONAL.equal(id))
+						.execute();
+				ctx.log().info("\tDELETE INVOICE_DUA: " + id + " ("+count+" filas)");
+			}
+		}
+
 		int count = ctx.getDslContext()
 			.delete(INVOICE_ATTACH)
 			.where(INVOICE_ATTACH.INVOICE.equal(id))

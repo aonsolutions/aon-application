@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
 
 import java.util.Date;
 import java.util.function.BiConsumer;
@@ -214,6 +215,21 @@ public class InvoiceValidation {
 			throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
 	};
 
+	/**
+	 * Las facturas rectificadas no se pueden borrar.
+	 */
+	public static BiConsumer<Invoice,AonConfigurationContext> DUA_LINKED_INVOICE = (inv,ctx) -> {
+		if (inv.isDUALinkAllowed()) {
+			if (ctx.getContext().getDslContext().fetchExists( 
+					ctx.getContext().getDslContext().selectOne()
+						.from(INVOICE_DUA)
+						.where(INVOICE_DUA.DOMAIN.eq(inv.getDomain()))
+						.and(INVOICE_DUA.INVOICE_IMPORT.eq(inv.getId() )))) {
+				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_RECTIFIED.getMessage());
+			}
+		}
+	};
+
 	public static void validateInvoice(AONContext ctx,AonConfiguration config,Invoice inv) throws AonCoreException {
 		EMPTY_DOMAIN
 			.andThen(EMPTY_DATE)
@@ -241,6 +257,7 @@ public class InvoiceValidation {
 	public static void validateInvoiceDeletion(AONContext ctx, AonConfiguration config, Invoice inv) {
 		if (config == null) config = ConfigurationDAO.getConfiguration(ctx, inv.getIssueDate());
 		RECTIFIED_INVOICE
+		.andThen(DUA_LINKED_INVOICE)
 		.andThen(OPERATIONS_DEADLINE)
 		.accept(inv, new AonConfigurationContext(ctx,config));
 	}

@@ -460,6 +460,18 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(String domainName, int domain, String user,
+			String query) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().getPendingImportAccountingInvoices(ctx, query);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccountingInvoice save(String domainName, int domain, String user, AccountingInvoice invoice) {
 		AONContext ctx = null;
 		try {

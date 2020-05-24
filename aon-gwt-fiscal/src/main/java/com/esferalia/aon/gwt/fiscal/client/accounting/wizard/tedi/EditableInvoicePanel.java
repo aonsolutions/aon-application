@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
+import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
@@ -32,6 +33,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceTransactionTypeVisitor;
 import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
@@ -98,6 +100,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 	protected static final String INNER_BACKGROUND_COLOR = "WhiteSmoke";
 	protected static final String LABEL_BACKGROUND_COLOR = "Silver";
+	protected static final String DUA_BACKGROUND_COLOR = "HoneyDew";
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static FiscalServiceAsync FISCAL_SERVICE;
@@ -112,7 +115,18 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private DoubleBox invoiceTotal;
 	private Button fastSave;
 	private DateBoxEx taxDate;
+	private CheckLabel service;
+	private CheckLabel rectifier;
+	private CheckLabel prepayment;
+	private CheckLabel investment;
+	private CheckLabel withholding;
+	private CheckLabel surcharge;
+	private CheckLabel vatAccrualPayment;
+	private CheckLabel withholdingFarmer;
+	private CheckLabel duaLinked;
 	private InvoiceVATPanel vatPanel;
+	private FlowPanel duaPanelContainer;
+	private InvoiceDUAPanel duaPanel;
 	private InvoiceWithholdingPanel withholdingPanel;
 	private InvoiceFinancePanel financePanel;
 	
@@ -285,6 +299,87 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		
 		FlowPanel labelsPanel = new FlowPanel(); 
+		if (invoiceCallback.getInvoice().getInvoice() != null 
+			&& invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed() 
+			&& invoiceCallback.getInvoice().getDuaNationalInvoice() != null ) {
+			InlineLabel duaLabel = new InlineLabel("[Fra. DUA]");
+			duaLabel.setStyleName(AON.AON_CSS.aonIconGoto());
+			duaLabel.addStyleName(AON.AON_CSS.aonBold());
+			duaLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			duaLabel.addStyleName(AON.AON_CSS.aonNowrap());
+			duaLabel.addStyleName(AON.AON_CSS.aonMarginRight());
+			duaLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
+			duaLabel.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					FISCAL_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
+							,invoiceCallback.getCurrentDomainId()
+							,invoiceCallback.getInvoice().getDuaNationalInvoice()
+							,new AsyncCallback<AccountingInvoice>() {
+						
+						@Override
+						public void onSuccess(AccountingInvoice result) {
+							if (result != null) {
+								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+							} else {
+								invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());	
+							}
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							invoiceCallback.getModule().onError(caught.getMessage());
+						}
+					});								
+				}
+			});
+			labelsPanel.add(duaLabel);
+			
+		}
+		
+		if (invoiceCallback.getInvoice().getInvoice() != null
+			&& invoiceCallback.getInvoice().isDuaLinked() 
+			&& invoiceCallback.getInvoice().getDuaInvoice() != null 
+			&& invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice() != null
+			&& invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice() != null
+				) {
+			InlineLabel duaLabel = new InlineLabel("[Fra. Extr.]");
+			duaLabel.setStyleName(AON.AON_CSS.aonIconGoto());
+			duaLabel.addStyleName(AON.AON_CSS.aonBold());
+			duaLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			duaLabel.addStyleName(AON.AON_CSS.aonNowrap());
+			duaLabel.addStyleName(AON.AON_CSS.aonMarginRight());
+			duaLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
+			duaLabel.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					FISCAL_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
+							,invoiceCallback.getCurrentDomainId()
+							,invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice().getId()
+							,new AsyncCallback<AccountingInvoice>() {
+						
+						@Override
+						public void onSuccess(AccountingInvoice result) {
+							if (result != null) {
+								SelectionEvent.<AccountingInvoice>fire( EditableInvoicePanel.this, result);
+							} else {
+								invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());	
+							}
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							invoiceCallback.getModule().onError(caught.getMessage());
+						}
+					});								
+				}
+			});
+			labelsPanel.add(duaLabel);
+			
+		}
+		
 		invoiceTypeLabel = new InlineLabel();
 		labelsPanel.add(invoiceTypeLabel);
 		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
@@ -507,7 +602,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 	}
 
-	protected void headerDataChanged(InvoicePanelCallback invoiceCallback) {
+	protected void headerDataChanged(IInvoicePanelCallback invoiceCallback) {
 		vatPanel.headerInfoChanged();
 		withholdingPanel.setVisible(invoiceCallback.getInvoice().isWithholding());
 		withholdingPanel.setValue(invoiceCallback.getInvoice().getWithholdingData());
@@ -588,15 +683,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		taxDate = new DateBoxEx();
 		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
 		IntegerBox number = new IntegerBox();
-		
-		CheckLabel service = new CheckLabel(AON.MSG.service());
-		CheckLabel investment = new CheckLabel(AON.MSG.investAsset());
-		CheckLabel surcharge = new CheckLabel(AON.MSG.surcharge());
-		CheckLabel prepayment = new CheckLabel(AON.MSG.hasPrepayments());
-		CheckLabel vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr());
-		CheckLabel withholding = new CheckLabel(AON.MSG.withholding());
-		CheckLabel withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr());
-		CheckLabel rectifier = new CheckLabel(AON.MSG.rectifiedInvoice());
+		service = new CheckLabel(AON.MSG.service());
+		rectifier = new CheckLabel(AON.MSG.rectifiedInvoice());
+		prepayment = new CheckLabel(AON.MSG.hasPrepayments());
+		investment = new CheckLabel(AON.MSG.investAsset());
+		withholding = new CheckLabel(AON.MSG.withholding());
+		surcharge = new CheckLabel(AON.MSG.surcharge());
+		vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr());
+		withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr());
+		duaLinked = new CheckLabel("DUA");
 		
 		TextBox manualConcept = new TextBox();
 		
@@ -791,9 +886,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		taxDateContainer.add(taxDate);
 		headerPanel2.add(taxDateContainer);
 		
-		// ---------------------------
-		// --------- TRANSACTIONSERVICE ---------
-		// ---------------------------
+		// -------------------------------
+		// --------- TRANSACTION ---------
+		// -------------------------------
 		InlineLabel transactionLabel = new InlineLabel(AON.MSG.transaction());
 		transactionLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
 		transactionLabel.addStyleName(AON.AON_CSS.aonWidth80());
@@ -809,6 +904,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onChange(ChangeEvent event) {
 				invoiceCallback.getInvoice().getInvoice().setTransaction(transactionBox.getValue());
 				InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+				enableChecks(invoiceCallback);
 				headerDataChanged(invoiceCallback);
 			}
 		});
@@ -820,7 +916,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- SERVICE ---------
 		// ---------------------------
 		service.setWidthStyle( AON.AON_CSS.aonWidth80Important());
-		service.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		if (invoiceCallback.getInvoice().isExpenses()) {
 			service.paint(true);
 		} else {
@@ -840,37 +935,36 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------
 		// --------- Fra. Rectificativa --------
 		// -------------------------------------
-		if (invoiceCallback.getInvoice().getInvoice().getRectificationInvoice() == null){
-			rectifier.setWidthStyle( AON.AON_CSS.aonWidth100Important());
-			rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
-			rectifier.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-			rectifier.addClickHandler( new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
-					invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
-					rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
-					headerDataChanged(invoiceCallback);
-				}
-			});
-			headerPanel2.add(rectifier);
-		}
+		rectifier.setWidthStyle( AON.AON_CSS.aonWidth100Important());
+		rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
+		rectifier.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				invoiceCallback.getInvoice().getInvoice().setNormalRectifier(!invoiceCallback.getInvoice().getInvoice().isRectifier());
+				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+				rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
+				headerDataChanged(invoiceCallback);
+			}
+		});
+		headerPanel2.add(rectifier);
 
-		
 		// -------------------------------------
 		// --------- CONTIENE SUPLIDOS ---------
 		// -------------------------------------
 		prepayment.setWidthStyle( AON.AON_CSS.aonWidth150Important());
 		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
-		prepayment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		prepayment.addClickHandler( new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				invoiceCallback.getInvoice().setPrepayments(!invoiceCallback.getInvoice().hasPrepayments());
-				prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
-				headerDataChanged(invoiceCallback);
+				if ( !invoiceCallback.getInvoice().isDuaLinked() ) {
+					invoiceCallback.getInvoice().setPrepayments(!invoiceCallback.getInvoice().hasPrepayments());
+					prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
+					headerDataChanged(invoiceCallback);
+				} else {
+					MessageDialog.error("No se puede modificar si la factura est\u00E1 vinculada a un DUA");
+				}
 			}
 		});
 		headerPanel2.add(prepayment);
@@ -892,29 +986,11 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		emptyLabel1.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel3.add(emptyLabel1);
 
-		// ---------------------------------------
-		// --------- BIENES DE INVERSION ---------
-		// ---------------------------------------
-		investment.setWidthStyle( AON.AON_CSS.aonWidth120Important());
-		investment.paint(invoiceCallback.getInvoice().isInvestment());
-		investment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
-		investment.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				invoiceCallback.getInvoice().getInvoice().setInvestment( !invoiceCallback.getInvoice().isInvestment() );
-				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
-				investment.paint(invoiceCallback.getInvoice().isInvestment());
-			}
-		});
-		headerPanel3.add(investment);
-
 		// -------------------------------------
 		// --------- Aplicar retencion ---------
 		// -------------------------------------
 		withholding.setWidthStyle(AON.AON_CSS.aonWidth100Important());
 		withholding.paint(invoiceCallback.getInvoice().getInvoice().isWithholding());
-		withholding.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		withholding.addClickHandler( new ClickHandler() {
 			
 			@Override
@@ -936,7 +1012,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------------
 		surcharge.setWidthStyle( AON.AON_CSS.aonWidth120Important());
 		surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
-		surcharge.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		surcharge.addClickHandler( new ClickHandler() {
 			
 			@Override
@@ -954,7 +1029,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------------
 		withholdingFarmer.setWidthStyle(AON.AON_CSS.aonWidth150Important());
 		withholdingFarmer.paint(invoiceCallback.getInvoice().getInvoice().isWithholdingFarmer());
-		withholdingFarmer.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		withholdingFarmer.addClickHandler( new ClickHandler() {
 			
 			@Override
@@ -972,7 +1046,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------------------------------------------
 		vatAccrualPayment.setWidthStyle(AON.AON_CSS.aonWidth100Important());
 		vatAccrualPayment.paint(invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
-		vatAccrualPayment.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		vatAccrualPayment.addClickHandler( new ClickHandler() {
 			
 			@Override
@@ -984,6 +1057,37 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		headerPanel3.add(vatAccrualPayment);
 
+		// ------------------------
+		// --------- DUA ----------
+		// ------------------------
+		duaLinked.setWidthStyle(AON.AON_CSS.aonWidth100Important());
+		duaLinked.paint(invoiceCallback.getInvoice().isDuaLinked() && invoiceCallback.getInvoice().getInvoice().isDUAAllowed());
+		duaLinked.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				invoiceCallback.getInvoice().setDuaLinked(!invoiceCallback.getInvoice().isDuaLinked());
+				duaLinked.paint(invoiceCallback.getInvoice().isDuaLinked());
+				enableChecks(invoiceCallback);
+				if (invoiceCallback.getInvoice().isDuaLinked()) {
+					duaPanel = new InvoiceDUAPanel( invoiceCallback );
+					duaPanelContainer.add(duaPanel);
+					duaPanel.addSelectionHandler( new SelectionHandler<IInvoicePanelCallback>() {
+
+						@Override
+						public void onSelection(SelectionEvent<IInvoicePanelCallback> event) {
+							duaInvoiceChanged( event.getSelectedItem() );
+						}
+					});
+					duaPanel.initialize( invoiceCallback, null );
+					duaInvoiceChanged( invoiceCallback);
+				} else {
+					duaPanelContainer.clear();
+				}
+			}
+		});
+		headerPanel3.add(duaLinked);
+
 		// *************************************************************************
 		// ***************** PANEL ( Número Factura, total factura ) ******
 		// *************************************************************************
@@ -992,12 +1096,28 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		headerPanel4.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
 		headerPanel4.addStyleName(AON.AON_CSS.aonPaddingTop());
 		
+		// ---------------------------------------
+		// --------- BIENES DE INVERSION ---------
+		// ---------------------------------------
+		investment.setWidthStyle( AON.AON_CSS.aonWidth120Important());
+		investment.paint(invoiceCallback.getInvoice().isInvestment());
+		investment.addClickHandler( new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				invoiceCallback.getInvoice().getInvoice().setInvestment( !invoiceCallback.getInvoice().isInvestment() );
+				invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+				investment.paint(invoiceCallback.getInvoice().isInvestment());
+			}
+		});
+		headerPanel4.add(investment);
+		
 		// ----------------------------------
 		// --------- EMPTY LABEL ------------
 		// ----------------------------------
 		InlineLabel emptyLabel2 = new InlineLabel();
 		emptyLabel2.setStyleName(AON.AON_CSS.aonInnerLabel());
-		emptyLabel2.addStyleName(AON.AON_CSS.aonWidth80());
+		emptyLabel2.addStyleName(AON.AON_CSS.aonWidth30());
 		emptyLabel2.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel4.add(emptyLabel2);
 
@@ -1212,6 +1332,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// *************************************************************************
 		// ** PANEL ( IRPF) ********************************************************
 		// *************************************************************************
+		duaPanelContainer = new FlowPanel();
+		invoicePanel.add( duaPanelContainer );
+		
+		// *************************************************************************
+		// ** PANEL ( IRPF) ********************************************************
+		// *************************************************************************
 		
 		withholdingPanel = new InvoiceWithholdingPanel( invoiceCallback );
 		withholdingPanel.setVisible(invoiceCallback.getInvoice().isWithholding());
@@ -1323,6 +1449,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoicePanel.add(othersTable);
 		
 		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
+		enableChecks(invoiceCallback);
 		invoicePanel.setVisible(true);
 		
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
@@ -1334,7 +1461,104 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				}
 		}});
 
+		if (invoiceCallback.getInvoice().isDuaLinked()) {
+			duaPanel = new InvoiceDUAPanel( invoiceCallback );
+			duaPanelContainer.add(duaPanel);
+			duaPanel.addSelectionHandler( new SelectionHandler<IInvoicePanelCallback>() {
+
+				@Override
+				public void onSelection(SelectionEvent<IInvoicePanelCallback> event) {
+					duaInvoiceChanged( event.getSelectedItem() );
+				}
+			});
+			// duaPanel.initialize( invoiceCallback, null );
+			// duaInvoiceChanged( invoiceCallback);
+		} else {
+			duaPanelContainer.clear();
+		}
+
 		return invoicePanel;
+	}
+
+	protected void duaInvoiceChanged(IInvoicePanelCallback invoiceCallback) {
+		InvoiceCalculator.calculateDUAInfo( invoiceCallback.getInvoice() );
+		InvoiceCalculator.calculateViaDUA(invoiceCallback.getInvoice());
+		duaPanel.populate(invoiceCallback);
+		invoiceCallback.getInvoice().setPrepayments(invoiceCallback.getInvoice().getDuaInvoice() != null);
+		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
+		vatPanel.paint();
+		InvoiceCalculator.calculate(invoiceCallback.getInvoice());
+		headerDataChanged(invoiceCallback);
+	}
+
+	private void enableChecks(InvoicePanelCallback invoiceCallback) {
+		if (invoiceCallback.getInvoice().isUndeductible()) {
+			rectifier.setVisible(false);
+			service.setVisible(false);
+			prepayment.setVisible(false);
+			investment.setVisible(false);
+			withholding.setVisible(false);
+			surcharge.setVisible(false);
+			withholdingFarmer.setVisible(false);
+			vatAccrualPayment.setVisible(false);
+			duaLinked.setVisible(false);
+			// duaPanel.setVisible(false);
+		} else {
+			invoiceCallback.getInvoice().getTransaction().visit(new IInvoiceTransactionTypeVisitor() {
+				
+				@Override
+				public void visitNational() {
+					visitCommon();
+					investment.setVisible(true);
+					withholding.setVisible(true);
+					surcharge.setVisible(true);
+					withholdingFarmer.setVisible(true);
+					vatAccrualPayment.setVisible(true);
+					duaLinked.setVisible(invoiceCallback.getInvoice().isExpenses());
+					// duaPanel.setVisible(invoiceCallback.getInvoice().isDuaLinked());
+				}
+				
+				@Override
+				public void visitOtherISP() {
+					visitNational();
+				}
+				
+				
+				@Override
+				public void visitIntracommunity() {
+					visitCommon();
+					investment.setVisible(true);
+					withholding.setVisible(false);
+					surcharge.setVisible(true);
+					withholdingFarmer.setVisible(false);
+					vatAccrualPayment.setVisible(false);
+					duaLinked.setVisible(false);
+					// duaPanel.setVisible(false);
+				}
+				
+				@Override
+				public void visitExtracommunity() {
+					visitCommon();
+					withholding.setVisible(false);
+					surcharge.setVisible(true);
+					withholdingFarmer.setVisible(false);
+					vatAccrualPayment.setVisible(false);
+					duaLinked.setVisible(false);
+					// duaPanel.setVisible(false);
+				}
+				
+				@Override
+				public void visitCanCeuMel() {
+					visitExtracommunity();
+				}
+				
+				private void visitCommon() {
+					service.setVisible(true);
+					rectifier.setVisible(invoiceCallback.getInvoice().getInvoice().getRectificationInvoice() == null);
+					prepayment.setVisible(true);
+				}
+			});
+		}
 	}
 
 	@Override

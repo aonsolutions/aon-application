@@ -125,6 +125,9 @@ public class AccountingRegistryBox extends ResizeComposite implements HasValue<S
 	public AccountingRegistryBox(final String domainName, final int domain,final String user) {
 		this(domainName,domain,user,null,true);
 	}
+	public AccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config) {
+		this(domainName,domain,user,config,true);
+	}
 	
 	public AccountingRegistryBox(final String domainName, final int domain, final String user,final AonConfiguration config, boolean showDescription) {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);

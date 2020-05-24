@@ -535,6 +535,16 @@ public class Invoice implements Serializable, HasAudit {
 	public boolean isExtracommunity() {
 		return getTransaction() == InvoiceTransactionType.EXTRACOMMUNITY;
 	}
+	public boolean isDUAAllowed() {
+		return isNational() 
+			&& !isUndeductible() 
+			&& (isPurchase() || isExpenses());
+	}
+	public boolean isDUALinkAllowed() {
+		return !isUndeductible() 
+			&& (isPurchase() || isExpenses()) 
+			&& (isExtracommunity() || isCanCeuMel()) ;
+	}
 	public boolean isCanCeuMel() {
 		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
 	}

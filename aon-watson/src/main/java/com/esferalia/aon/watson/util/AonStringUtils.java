@@ -164,6 +164,7 @@ public class AonStringUtils {
 	public static final String EIGHT = "8";
 	public static final String NINE = "9";
 	public static final String CR_LF = "\r\n";
+	public static final String EURO = "\u20AC";
 	
 	/**
      * Eight-bit Unicode Transformation Format.

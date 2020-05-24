@@ -288,7 +288,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 	}
 
 	private void addRow(InvoiceVAT vat, boolean focus) {
-		if (suggestedAccounts != null && !suggestedAccounts.isEmpty() && suggestedAccounts.size() > rows.size()) {
+		if (vat.getExpAccountId() == null && suggestedAccounts != null && !suggestedAccounts.isEmpty() && suggestedAccounts.size() > rows.size()) {
 			Account a = suggestedAccounts.get(rows.size());
 			vat.setExpAccountId(a.getId());
 			vat.setExpAccountCode(a.getCode());

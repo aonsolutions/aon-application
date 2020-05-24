@@ -42,7 +42,8 @@ public class AonConfiguration implements Serializable {
 	private Account defaultPaidRetAccount;
 	private Account defaultCashAccount;
 	private Account vatNegativeAdjustAccount;
-	
+	private Account defaultDUAVatAccount;
+	private Account defaultDUADutyAccount;
 	private Account defaultSalary;
 	private Account defaultSalaryInKind;
 	private Account defaultAllowance;
@@ -55,9 +56,7 @@ public class AonConfiguration implements Serializable {
 	private Account salaryOtherDeductions;
 	private Account salaryDedAdvPayment;
 	private Account salaryDedSeize;
-	
 	private Account defaultPrepayment;
-	
 	private boolean tediActive;
 	private boolean tediUser;
 	private boolean tediSnapshotUser;
@@ -325,7 +324,23 @@ public class AonConfiguration implements Serializable {
 		this.vatNegativeAdjustAccount = vatNegativeAdjustAccount;
 		return this;
 	}
-
+	
+	public Account getDefaultDUAVatAccount() {
+		return defaultDUAVatAccount;
+	}
+	public AonConfiguration setDefaultDUAVatAccount(Account defaultDUAVatAccount) {
+		this.defaultDUAVatAccount = defaultDUAVatAccount;
+		return this;
+	}
+	
+	public Account getDefaultDUADutyAccount() {
+		return defaultDUADutyAccount;
+	}
+	public AonConfiguration setDefaultDUADutyAccount(Account defaultDUADutyAccount) {
+		this.defaultDUADutyAccount = defaultDUADutyAccount;
+		return this;
+	}
+	
 	public Date getOperationsDeadline() {
 		return operationsDeadline;
 	}

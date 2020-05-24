@@ -165,6 +165,13 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 				new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
 	
+	@Override
+	public void getPendingImportAccountingInvoices(String domainName, int domain, String user, String query,
+			AsyncCallback<LinkedList<AccountingInvoice>> callback) {
+		AON.start();
+		fsa.getPendingImportAccountingInvoices(domainName, domain, user, query,
+				new AsyncCallbackWrapper<LinkedList<AccountingInvoice>>(callback));
+	}
 
 	@Override
 	public void save(String domainName, int domain, AccountingInvoice invoice,

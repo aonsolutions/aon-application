@@ -69,6 +69,7 @@ public interface IAccounting {
 	public void delete(AONContext ctx,Integer id);
 	public AccountingInvoice getAccountingInvoice(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice getAccountingInvoiceFromInvoice(AONContext ctx, Integer invoiceId);
+	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query);
 	public AccountingInvoice save(AONContext ctx, AccountingInvoice invoice);
 	public IAccountEntryWrapper getAccountEntryWrapper(AONContext ctx, Integer accountEntry);
 	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, Integer activity, Date issueDate);

@@ -200,7 +200,11 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			throws AonCoreException {
 		return ACCOUNTING.getAccountingInvoiceFromInvoice(domainName, domain, this.getUserLogin(), invoiceId);
 	}
-
+	@Override
+	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(String domainName, int domain, String user, String query)
+			throws AonCoreException {
+		return ACCOUNTING.getPendingImportAccountingInvoices(domainName, domain, user, query);
+	}
 	@Override
 	public AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain,
 			Integer registryId) {

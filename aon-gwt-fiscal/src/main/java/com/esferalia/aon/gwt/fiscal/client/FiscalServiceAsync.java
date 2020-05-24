@@ -70,6 +70,8 @@ public interface FiscalServiceAsync {
 			AsyncCallback<AccountingInvoice> callback);
 	void getAccountingInvoiceFromInvoice(String domainName, int domain, Integer invoiceId,
 			AsyncCallback<AccountingInvoice> callback);
+	void getPendingImportAccountingInvoices(String domainName, int domain, String user, String query, 
+			AsyncCallback<LinkedList<AccountingInvoice>> asyncCallback);
 	void save(String currentDomainName, int currentDomain, AccountingInvoice invoice,
 			AsyncCallback<AccountingInvoice> callback);
 	void getRegistryLastAccountingInvoice(String currentDomainName, int currentDomain, Integer registryId,

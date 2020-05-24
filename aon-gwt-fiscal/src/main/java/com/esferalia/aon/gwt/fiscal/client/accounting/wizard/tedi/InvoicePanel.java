@@ -224,11 +224,18 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		return sourceAccount;
 	}
 	
+	private boolean isDUALinked() {
+		return (getWrapper().getInvoice() != null 
+			&& getWrapper().getInvoice().isDUALinkAllowed() 
+			&& getWrapper().getDuaNationalInvoice() != null);
+	}
+
 	@Override
 	public boolean isUpdatable() {
 		return (super.isUpdatable()
 				&& getAccountEntry().isInvoice()
 				&& isAccountSource()
+				&& !isDUALinked()
 				&& hasPendingFinances()
 				);
 	}
@@ -243,6 +250,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	@Override
 	public String getNoUpdatableCause() {
+		if (isDUALinked()) {
+			return AON.MSG.DUALinked();
+		}
 		if (!hasPendingFinances()) {
 			return AON.MSG.hasPaidFinances();
 		}

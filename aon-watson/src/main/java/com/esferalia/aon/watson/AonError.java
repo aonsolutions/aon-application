@@ -130,6 +130,13 @@ public enum AonError implements Serializable{
 	,INVOICE_INVALID_RECTIFICATION_DATA("Los datos necesarios para rectificar la factura, no son correctos.")
 	,INVOICE_INVALID_RECTIFICATION_TYPE("No se permite rectificar una factura con el tipo {0}.")
 	,INVOICE_CANT_DELETE_RECTIFIED("No es posible borrar la factura porque est\u00E1 rectificada. Borre primero la factura rectificativa.")
+	,INVOICE_CANT_DELETE_DUA_LINKED("No es posible borrar la factura porque est\u00E1 vinculada a un documento DUA.")
+	// --------------------------------------------- DUA
+	,INVOICE_DUA_NATIONAL_INVOICE_EMPTY("No se ha indicado una factura nacional tipo DUA")
+	,INVOICE_DUA_IMPORT_INVOICE_EMPTY("No se ha indicado una factura de importaci\u00F3n")
+	,INVOICE_DUA_INFO_EMPTY("No se ha indicado la informaci\u00F3n necesaria en un factura DUA")
+	,INVOICE_DUA_DUTY_ACCOUNT_EMPTY("No se ha indicado una cuenta contable para los aranceles")
+	,INVOICE_DUA_VAT_ACCOUNT_EMPTY("No se ha indicado una cuenta contable para el IVA")
 	// --------------------------------------------- FINANCE
 	,FINANCE_NOT_FOUND("Vencimiento no encontrado.")	
 	,FINANCE_CAN_NOT_BE_SETTLED("El vencimiento no se puede saldar, no est\u00E1 pendiente ni devuelto.")

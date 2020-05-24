@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountBalanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
@@ -48,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SalaryFormatter;
@@ -55,6 +57,7 @@ import com.esferalia.aon.occam.server.accounting.AccountEntryUtils;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingImpl implements IAccounting {
 
@@ -244,6 +247,31 @@ public class AccountingImpl implements IAccounting {
 		 );		
 	}
 
+	@Override
+	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(AONContext ctx, String query) {
+		final String q = (!AonStringUtils.contains(query, AonStringUtils.PERCENT))
+			 	?((AonStringUtils.isNumeric(query)? AonStringUtils.EMPTY:AonStringUtils.PERCENT) 
+			 			+ query 
+			 			+ AonStringUtils.PERCENT)
+				:(query);
+		
+		return InvoiceDAO.getInvoiceHeaders(ctx, p ->
+				p.getDomainProperty().eq(ctx.getDomainId())
+				 .and(p.getRegistryDocumentProperty().like(q)
+				  .or(p.getRegistryNameProperty().like(q))
+				  .or(p.getReferenceCodeProperty().like(q))
+				  )
+				 .and(p.getTransactionProperty().eq(InvoiceTransactionType.EXTRACOMMUNITY.value())
+				  .or(p.getTransactionProperty().eq(InvoiceTransactionType.CAN_CEU_MEL.value()))
+				  )
+			,0,50)
+			.filter( inv -> AccountingInvoiceDAO.isPresentInInvoiceDUA(ctx, inv.getId()) )
+			.map( inv -> AccountingInvoiceDAO.getAccountingInvoiceFromInvoice(ctx, inv.getId()) )
+			.filter( ai -> ai != null )
+			.filter( ai -> ai.getDuaInvoice() == null )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	@Override
 	public AccountingInvoice rectifyInvoice(AONContext ctx, Integer invoiceId, InvoiceRectificationData data) {
 		return ctx.getDslContext().transactionResult(
