@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.AgreementDraft.isDisabled;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
@@ -1342,6 +1343,24 @@ public class SalaryDraft extends ResizeComposite
 		}
 		
 		public void setDisableButton(HasClickHandlers deleteButton) {
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onRecover(item, "CONVENIO()");
+				}
+			});
+		}
+
+		public void setDisableAgreementButton(HasClickHandlers deleteButton) {
+			deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onRecover(item, AgreementDraft.enable(item.getExpression()));
+				}
+			});
+		}
+
+		public void setEnableAgreementButton(HasClickHandlers deleteButton) {
 			deleteButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -3948,6 +3967,24 @@ public class SalaryDraft extends ResizeComposite
 			handler.setDisableButton(agreementButton);
 			agreementButton.ensureDebugId("agreement-button-" + row );
 			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");
+		}
+		else if (itemScope.compareTo(Scope.AGREEMENT) == 0 
+				&& isDisabled(item) ) {
+			Button agreementButton = getDisableButton();
+			agreementButton.setTabIndex(Short.MAX_VALUE);
+			buttonsPanel.add(agreementButton);
+			handler.setDisableAgreementButton(agreementButton);
+			agreementButton.ensureDebugId("agreement-button-" + row );
+			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");
+		} 
+		else if (item.isDefinedAt(Scope.AGREEMENT) &&
+			itemScope.compareTo(Scope.AGREEMENT) > 0) {
+			Button agreementButton = getEnableButton();
+			agreementButton.setTabIndex(Short.MAX_VALUE);
+			buttonsPanel.add(agreementButton);
+			handler.setEnableAgreementButton(agreementButton);
+			agreementButton.ensureDebugId("agreement-button-" + row );
+
 		} else if (item.isDefinedAt(Scope.AGREEMENT) ||
 			itemScope.compareTo(Scope.AGREEMENT) == 0) {
 			Button agreementButton = getEnableButton();

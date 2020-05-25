@@ -299,10 +299,18 @@
 			background-color: inherit;
 		}
 		
-		 
+		.aon-Disabled .gwt-TextBox,
+		.aon-Disabled .gwt-SuggestBox,
+		.aon-Disabled .gwt-ListBox
+		{
+    		color: grey !important;
+		}
+
 		 @external gwt-TextBox;
 		 @external gwt-ListBox;
+		 @external aon-Disabled;
 		 @external gwt-SuggestBox;
+		 
 		 
 		.issueLabel{
 			font-weight: bold;

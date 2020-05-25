@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.Constants.DEFAULT_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
+import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.MAX_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.MIN_ZOOM;
@@ -49,6 +50,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -106,6 +108,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasValue;
@@ -731,6 +734,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		Payment payment;
 		Button deleteButton;
 		TextBox expressionBox;
+		Button enableDisableButton;
 		ValueBoxBase<String> descriptionBox;
 		TypeListBox<Payment.Type> typeListBox;
 
@@ -754,6 +758,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		void setReadOnly(boolean readOnly) {
 			if ( this.deleteButton != null )
 				this.deleteButton.setEnabled(!readOnly);
+			if ( this.enableDisableButton != null )
+				this.enableDisableButton.setEnabled(!readOnly);
 			if ( this.expressionBox != null )
 				this.expressionBox.setReadOnly(readOnly);
 			if ( this.descriptionBox != null )
@@ -824,6 +830,19 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				}
 			});
 		}
+
+		void setEnableDisableButton(Button button) {
+			this.enableDisableButton = button;
+			this.enableDisableButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					enable(payment, isDisabled(payment));
+					AgreementDraft.this.agreementDraftObject.addDraftPayment(payment);
+					AgreementDraft.this.calculate();
+				}
+			});
+		}
+
 
 		void setPaymentTypeListBox(TypeListBox<Payment.Type> listBox) {
 			this.typeListBox = listBox;
@@ -2803,6 +2822,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
 		descriptionBox.setText(payment.getDescription());
 		descriptionBox.getElement().getStyle().setWidth(98, Unit.PCT);
+		//descriptionBox.getElement().setAttribute("size", Integer.toString(DESCRIPTION_SIZE));
 		
 		// If CRA_004 or CRA_005 set issue_date and ListBox
 		if(payment.getType() == Payment.Type.CRA_0004 || payment.getType() == Payment.Type.CRA_0005) {
@@ -2817,30 +2837,46 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
 		paymentsTable.setWidget(row, 2, expressionBox);
+		paymentsTable.getCellFormatter().addStyleName(row, 3, AON.AON_TEXT_RIGHT);
 		contentAssistManager.addValueBox(expressionBox);
 		
 		boolean notReadOnly = !SpecialExpresion.isReadOnly(payment.getExpression());
 		enable(expressionBox, notReadOnly);
 		show(expressionBox, notReadOnly || !isZero(payment));
 
+		HorizontalPanel buttonsPanel = new HorizontalPanel();
+		buttonsPanel.setStyleName(AON.GWT_HORIZONTAL_PANEL);
+		buttonsPanel.getElement().getStyle().setWidth(100, Unit.PCT);
+		buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		paymentsTable.setWidget(row, 3, deleteButton);
+		buttonsPanel.add(deleteButton);
+		
+		Button enableDisableButton  = getEnableDisableButton(payment);
+		buttonsPanel.add(enableDisableButton);
+	
+		paymentsTable.setWidget(row, 3, buttonsPanel);
+//		paymentsTable.setWidget(row, 3, deleteButton);
 		paymentsTable.getCellFormatter().addStyleName(row, 4, AON.AON_TEXT_RIGHT);
 		formatPaymentRow(row);
-
+		
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
 		paymentEditor.setEditButton(editButton);
 		paymentEditor.setDeleteButton(deleteButton);
 		paymentEditor.setExpressionTextBox(expressionBox);
 		paymentEditor.setDescriptionTextBox(descriptionBox);
 		paymentEditor.setPaymentTypeListBox(paymentTypeListBox);
+		paymentEditor.setEnableDisableButton(enableDisableButton);
 
 		if (isDraftPayment(payment)) {
 			paymentsTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
 			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		}
+		if ( isDisabled( payment )) {
+			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");			
+		} 
 
 		if (isError(payment))
 			addStyle(paymentsTable, row, style.textError());
@@ -4197,8 +4233,48 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		throw new IndexOutOfBoundsException();
 	}
 	
+	// ------------------------------------------------------------------------
+
+	protected static <T extends Item<?>> boolean isDisabled(T item) {
+		return AonStringUtils.endsWithAny(item.getExpression(), ";REMOVE();");
+	}
+
+	protected static <T extends Item<?>> void enable(T item) {
+		String expression = item.getExpression();
+		expression= AonStringUtils.removeEnd(expression, ";REMOVE();");
+		item.setExpression(expression);
+	}
+
+	protected static <T extends Item<?>> void  disable(T item) {
+		String expression = item.getExpression();
+		expression= AonStringUtils.appendIfMissing(expression, ";REMOVE();");
+		item.setExpression(expression);
+	}
+
+	protected static <T extends Item<?>> void enable(T item, boolean enable) {
+		if ( enable )
+			enable(item);
+		else
+			disable(item);
+	}
+	
+	protected static <T extends Item<?>> String enable(String expression ) {
+		return AonStringUtils.removeEnd(expression, ";REMOVE();");
+	}
+
+	protected static <T extends Item<?>> String disable(String expression ) {
+		return AonStringUtils.appendIfMissing(expression, ";REMOVE();");
+	}
 	
 	// ------------------------------------------------------------------------
+	
+	private static <T extends Item<?>>  Button getEnableDisableButton(T item) {
+		Button agreementButton = new Button();
+		agreementButton.setStyleName(isDisabled(item) ? AON.AON_ICON_DISABLE : AON.AON_ICON_ENABLE );
+		agreementButton.setStyleName(AON.AON_NO_MARGIN, true);
+		agreementButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+		return agreementButton;
+	}
 
 	private static <T extends Item<?>> boolean isRemove(T item) {
 		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
@@ -4262,6 +4338,5 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	private static <T extends Item<?>> boolean isZero(T item) {
 		return SpecialExpresion.isZero(item.getExpression());
 	}
-	
 	
 }
