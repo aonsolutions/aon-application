@@ -61,6 +61,7 @@ public class WorkplaceDAO {
 		.set(WORKPLACE.SCOPE, workplace.getScope())
 		.set(WORKPLACE.ECONOMICAGREEMENT, workplace.getEconomicagreement())
 		.set(WORKPLACE.ACTIVE, workplace.getActive())
+		.where(WORKPLACE.ID.eq(workplace.getId()))
 		.execute();
 	};
 	
