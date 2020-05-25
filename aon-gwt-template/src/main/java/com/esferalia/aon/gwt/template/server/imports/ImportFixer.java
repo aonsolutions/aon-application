@@ -233,7 +233,8 @@ public class ImportFixer {
 			return ctx.getDslContext()
 				.select()
 				.from(ACCOUNT_ENTRY_DETAIL)
-				.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(account))
+				.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(account)
+					.or(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT.eq(account)))
 				.fetch().size();
 		}
 	}
