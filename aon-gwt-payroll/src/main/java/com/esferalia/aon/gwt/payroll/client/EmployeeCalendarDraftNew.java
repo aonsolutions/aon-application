@@ -1087,7 +1087,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 							if(isEndERTE) {
 								if(null != endDate) {
 									Date newDate = DateUtils.copyDateOnly(endDate);
-									DateUtils.addDays2Date(newDate, 1);
+//									DateUtils.addDays2Date(newDate, 1);
 									employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
 								}
 							}
