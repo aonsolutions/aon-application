@@ -2615,10 +2615,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	
 
 	protected double fixGuarantee( ITimedResult<Double> result) {
+		
+		if ( getSalaryType() == SalaryType.EXTRA)
+			return result.getValue();
+
 		Period period = result.getPeriod();
 		double quoteGuarenteed = result.getValue();
 		double paidGuarenteed = result.getValue();
-		
+
 		double br = getDoubleVariable(ContextVariable.REGULATORY_BASE.getName(),period.getStart(), period.getEnd() );
 		double quoteDays = getVariables(ContextVariable.QUOTE_DAYS.getName(), period.getStart(), period.getEnd(), Collectors.summingDouble( v -> (Double) v.getValue(v.getPeriod()) ));
 		
