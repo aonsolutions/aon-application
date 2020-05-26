@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.Constants.DEFAULT_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
-import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_SIZE;
 import static com.esferalia.aon.gwt.payroll.client.Constants.EXPRESSION_MAX_LENGTH;
 import static com.esferalia.aon.gwt.payroll.client.Constants.MAX_ZOOM;
 import static com.esferalia.aon.gwt.payroll.client.Constants.MIN_ZOOM;
@@ -108,9 +107,9 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -1442,7 +1441,18 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			@Override
 			public void onClick(ClickEvent event) {
 				moreOptionsPopUp.hide();
-				deletePeriod(dateButton, datesList);
+				AcceptCancelDialog confirmDialog = new AcceptCancelDialog("AVISO",
+						String.valueOf("\u00BF")+"Eliminar tramo permanentemente? Se borraran todos los valores de este tramo.") {
+					
+					@Override
+					protected void onAccept() {
+						deletePeriod(dateButton, datesList);
+					}
+				};
+				
+				confirmDialog.center();
+				confirmDialog.show();
+				
 			}	
 		});
 		
@@ -1639,8 +1649,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 			agreementDraftObject.setStartDate(finalNewSelectTabDate);
 			agreementDraftObject.setEndDate(finalNewSelectTabEndDate);
-			agreementDraftObject.clearSalaryDraftTable();
-			calculate();
+			
+			// TODO: no he conseguido hacerlo con Calculate
+			agreementDraftObject.save(this);
+			
 		}
 		
 	}
