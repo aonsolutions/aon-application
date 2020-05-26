@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -48,7 +48,7 @@ public class VatReportPanel extends ScrollPanel{
 			+ AonStringUtils.repeat(" ", 2)
 			;
 
-	public VatReportPanel(String domainName, String user, int domain, VatParams params, String title , String subtitle) {
+	public VatReportPanel(String domainName, String user, int domain, AccountingReportParams params, String title , String subtitle) {
 		setStyleName(AON.AON_CSS.aonScrollArea());
 		FlowPanel html = new FlowPanel( PreElement.TAG );
 		html.setStyleName(AON.AON_CSS.aonFixedFont());

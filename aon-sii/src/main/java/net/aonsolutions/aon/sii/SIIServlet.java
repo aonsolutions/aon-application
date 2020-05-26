@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -31,7 +32,6 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.google.api.services.drive.Drive;
@@ -76,7 +76,7 @@ public class SIIServlet extends HttpServlet{
 			Domain domain = AON.getDomain(domainName, 1, login, f->f.getNameProperty().eq(domainName));		
 			Company company = AON.getCompany(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId()));
 			
-			VatParams params = new VatParams();
+			AccountingReportParams params = new AccountingReportParams();
 			params.setDomain(domain.getId());
 			params.setInvoices(ids);
 			LOGGER.info("GET SII VAT CONTEXT");

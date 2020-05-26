@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
@@ -36,7 +37,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -2565,7 +2565,7 @@ public class FISCAL {
 	}
 	// --------------------------------------------------------------------
 
-	public static Stream<VatSummaryContext> getVatSummaryContext(String domainName, int domainId, String user, VatParams params) {
+	public static Stream<VatSummaryContext> getVatSummaryContext(String domainName, int domainId, String user, AccountingReportParams params) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -2575,7 +2575,7 @@ public class FISCAL {
 				ctx.close();
 		}
 	}
-	public static Stream<VatContext> getVatContext(String domainName, int domainId, String user, VatParams params) {
+	public static Stream<VatContext> getVatContext(String domainName, int domainId, String user, AccountingReportParams params) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -2586,7 +2586,7 @@ public class FISCAL {
 		}
 	}
 	
-	public static Stream<VatContext> getSiiVatContext(String domainName, int domainId, String user, VatParams params, String sii) {
+	public static Stream<VatContext> getSiiVatContext(String domainName, int domainId, String user, AccountingReportParams params, String sii) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);

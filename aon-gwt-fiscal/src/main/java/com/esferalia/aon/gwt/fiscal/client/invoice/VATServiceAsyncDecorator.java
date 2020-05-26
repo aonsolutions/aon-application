@@ -4,9 +4,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -26,21 +26,21 @@ public class VATServiceAsyncDecorator implements VATServiceAsync {
 	}
 
 	@Override
-	public void getVatContext(String domainName, String user, int domain, VatParams params,
+	public void getVatContext(String domainName, String user, int domain, AccountingReportParams params,
 			AsyncCallback<LinkedList<VatContext>> callback) {
 		AON.start();
 		fsa.getVatContext(domainName, user, domain, params, new AsyncCallbackWrapper<LinkedList<VatContext>>(callback));
 	}
 	
 	@Override
-	public void getVatContextReport(String domainName, String user, int domain, VatParams params,
+	public void getVatContextReport(String domainName, String user, int domain, AccountingReportParams params,
 			AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getVatContextReport(domainName, user, domain, params, new AsyncCallbackWrapper<String>(callback));
 		
 	}
 	@Override
-	public void getVatSummaryContext(String domainName, String user, int domain, VatParams params,
+	public void getVatSummaryContext(String domainName, String user, int domain, AccountingReportParams params,
 			AsyncCallback<LinkedList<VatSummaryContext>> callback) {
 		fsa.getVatSummaryContext(domainName, user, domain, params, new AsyncCallbackWrapper<LinkedList<VatSummaryContext>>(callback));
 	}

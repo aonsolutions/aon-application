@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -37,7 +38,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -64,8 +64,8 @@ public interface IFiscal {
 	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params);
 	
 	// 			        VAT
-	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, VatParams params);
-	public Stream<VatContext> getVatContext(AONContext ctx, VatParams params);
+	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, AccountingReportParams params);
+	public Stream<VatContext> getVatContext(AONContext ctx, AccountingReportParams params);
 	
 	// 			        FISCAL PANEL
 	public LinkedList<IFiscalModel> getFiscalPanel(AONContext ctx,int domain,FiscalMatrixParams params,int user);
@@ -361,7 +361,7 @@ public interface IFiscal {
 	public String getMod349Info(AONContext ctx, Mod349 mod349, Mod349Detail detail, FiscalModelKeyInfo infoKey);
 
 	// 						SII
-	Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params, String sii);
+	Stream<VatContext> getSiiVatContext(AONContext ctx, AccountingReportParams params, String sii);
 	
 	//		  MOD347
 	public LinkedList<Mod347> getMod347s(AONContext ctx,int domain);

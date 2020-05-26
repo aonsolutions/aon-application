@@ -14,7 +14,7 @@ import org.jooq.tools.json.JSONParser;
 
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
@@ -37,7 +37,7 @@ public class VatReportStreamServlet extends HttpServlet {
 			String domainName = req.getParameter("domainName");
 			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			VatParams params = new VatParams();
+			AccountingReportParams params = new AccountingReportParams();
 			JSONParser parser = new JSONParser();
 			JSONObject jsonParams =  (JSONObject) parser.parse(vatParams);
 			Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
@@ -62,7 +62,7 @@ public class VatReportStreamServlet extends HttpServlet {
 			if (percent != null) {
 				params.setPercent(percent.doubleValue());	
 			}
-			Long type = (Long) jsonParams.get(IRequestParamsNames.TYPE);
+			Long type = (Long) jsonParams.get(IRequestParamsNames.VAT_SUMMARY_TYPE);
 			if (type != null) {
 				int t = type.intValue();
 				params.setVatSummaryType( VatSummaryType.safeValueOf(t));

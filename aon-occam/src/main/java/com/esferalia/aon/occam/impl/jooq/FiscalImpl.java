@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFiscal;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -39,7 +40,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2013.Mod2002013;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2014.Mod2002014;
@@ -1333,20 +1333,20 @@ public class FiscalImpl implements IFiscal {
 	
 	// ---------------------------------------------------- [VAT]
 	@Override
-	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, VatParams params) {
+	public Stream<VatSummaryContext> getVatSummaryContext(AONContext ctx, AccountingReportParams params) {
 		return VATDAO.getVatSummary(ctx, params.getFromDate()
 				,params.getToDate(),p -> FinanceUtils.getVATFilter(p, params))
 				.stream();
 	}
 	
 	@Override
-	public Stream<VatContext> getVatContext(AONContext ctx, VatParams params) {
+	public Stream<VatContext> getVatContext(AONContext ctx, AccountingReportParams params) {
 		return VATDAO.getVatBreakdown(ctx, params.getFromDate()
 				,params.getToDate(),p -> FinanceUtils.getVATFilter(p, params));
 	}
 	
 	@Override
-	public Stream<VatContext> getSiiVatContext(AONContext ctx, VatParams params, String sii) {
+	public Stream<VatContext> getSiiVatContext(AONContext ctx, AccountingReportParams params, String sii) {
 		return VATDAO.getSiiVatContext(ctx, p -> FinanceUtils.getVATFilter(p, params), sii);
 	}
 	

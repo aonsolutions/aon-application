@@ -1,12 +1,12 @@
 package com.esferalia.aon.occam.server.finance;
 
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceProperties;
 import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 import com.esferalia.aon.occam.api.model.finance.Properties.VATProperties;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -76,7 +76,7 @@ public class FinanceUtils {
 		return prop;
 	}
 
-	public static Filter getVATFilter(VATProperties p, VatParams params) {
+	public static Filter getVATFilter(VATProperties p, AccountingReportParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
 		if(params.getInvoices() != null){
 			prop = prop.and(p.getInvoiceIdProperty().in(params.getInvoices()));
@@ -128,7 +128,6 @@ public class FinanceUtils {
 		if (params.getVatSummaryType() != null) {
 			if (params.getVatSummaryType() == VatSummaryType.NATIONAL) {
 				prop = prop.and(p.getInvoiceTransactionProperty().eq( InvoiceTransactionType.NATIONAL.value()));
-//				prop = prop.and(p.getSurchargeProperty().eq( AonEnumUtils.getByte(false)));
 				prop = prop.and(p.getFarmerRegimeProperty().eq( AonEnumUtils.getByte(false)));
 			} else if (params.getVatSummaryType() == VatSummaryType.SURCHARGE){	
 				prop = prop.and(p.getInvoiceTransactionProperty().eq( InvoiceTransactionType.NATIONAL.value()));

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 
 public class AccountingReportParams implements IAccountParams, Cloneable {
@@ -54,6 +56,19 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	// Consolidation
 	private LinkedList<Domain> domains;
 	private boolean consolidation;
+
+	// VAT params
+	private Integer registry;
+	private Boolean output;
+	private VatSummaryType vatSummaryType;
+	private Double percent;
+	private RectificationType rectified;
+	private Boolean surcharge;
+	private Boolean farmerRegime;
+	private Boolean accrualRegime;
+	private Boolean investment;
+	private Boolean service;
+	private Integer[] invoices;
 	
 	// Report Metadata
 	private String title;
@@ -363,6 +378,83 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		return this;
 	}
 	// ***********************************************
+	public Integer[] getInvoices() {
+		return invoices;
+	}
+	public void setInvoices(Integer[] invoices) {
+		this.invoices = invoices;
+	}
+	public Integer getRegistry() {
+		return registry;
+	}
+	public AccountingReportParams setRegistry(Integer registry) {
+		this.registry = registry;
+		return this;
+	}
+	public Boolean getOutput() {
+		return output;
+	}
+	public AccountingReportParams setOutput(Boolean output) {
+		this.output = output;
+		return this;
+	}
+	public VatSummaryType getVatSummaryType() {
+		return vatSummaryType;
+	}
+	public AccountingReportParams setVatSummaryType(VatSummaryType vatSummaryType) {
+		this.vatSummaryType = vatSummaryType;
+		return this;
+	}
+	public Double getPercent() {
+		return percent;
+	}
+	public AccountingReportParams setPercent(Double percent) {
+		this.percent = percent;
+		return this;
+	}
+	public RectificationType getRectificationType() {
+		return rectified;
+	}
+	public AccountingReportParams setRectificationType(RectificationType rectified) {
+		this.rectified = rectified;
+		return this;
+	}
+	public Boolean getSurcharge() {
+		return surcharge;
+	}
+	public AccountingReportParams setSurcharge(Boolean surcharge) {
+		this.surcharge = surcharge;
+		return this;
+	}
+	public Boolean getFarmerRegime() {
+		return farmerRegime;
+	}
+	public AccountingReportParams setFarmerRegime(Boolean farmerRegime) {
+		this.farmerRegime = farmerRegime;
+		return this;
+	}
+	public Boolean getAccrualRegime() {
+		return accrualRegime;
+	}
+	public AccountingReportParams setAccrualRegime(Boolean accrualRegime) {
+		this.accrualRegime = accrualRegime;
+		return this;
+	}
+	public Boolean getInvestment() {
+		return investment;
+	}
+	public AccountingReportParams setInvestment(Boolean investment) {
+		this.investment = investment;
+		return this;
+	}
+	public Boolean getService() {
+		return service;
+	}
+	public AccountingReportParams setService(Boolean service) {
+		this.service = service;
+		return this;
+	}
+	// *************************************************************
 	public String getTitle() {
 		return title;
 	}

@@ -4,10 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -47,7 +47,7 @@ public class FiscalUtils {
 		return !( date.before(start) || date.after(end));
 	}
 	
-	public static String toString(VatParams params) {
+	public static String toString(AccountingReportParams params) {
 		StringBuffer buf = new StringBuffer();
 		if (params.getFromDate() != null) {
 			buf.append(" (Desde:");

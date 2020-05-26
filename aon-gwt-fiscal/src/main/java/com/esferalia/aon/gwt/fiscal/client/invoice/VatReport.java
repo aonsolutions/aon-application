@@ -15,9 +15,9 @@ import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
-import com.esferalia.aon.occam.api.model.fiscal.VatParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -597,8 +597,8 @@ public class VatReport extends MainEntryPoint {
 		}
 	}
 	
-	private VatParams getWidgetParams() {
-		VatParams params = new VatParams()
+	private AccountingReportParams getWidgetParams() {
+		AccountingReportParams params = new AccountingReportParams()
 			.setDomain(getCurrentDomain())
 			.setRegistry(registry.getId())
 			.setFromDate(fromDate.getValue())
@@ -642,7 +642,7 @@ public class VatReport extends MainEntryPoint {
 		return params;
 	}
 
-	private void refreshAndSeeResults(VatParams params) {
+	private void refreshAndSeeResults(AccountingReportParams params) {
 		if (tabLayout.getSelectedIndex() == 0) {
 			tabLayout.setAnimationDuration(300);
 			tabLayout.selectTab(1,false);
@@ -650,12 +650,12 @@ public class VatReport extends MainEntryPoint {
 		refreshResults(params);
 	}
 	
-	private void refreshResults(VatParams params) {
+	private void refreshResults(AccountingReportParams params) {
 		resultsContent.clear();
 		resultsContent.setWidget(new VatReportPanel(getCurrentDomainName(), getCurrentUser(), getCurrentDomain(), params, null, null));
 	}
 
-	private void refreshSummary(VatParams params) {
+	private void refreshSummary(AccountingReportParams params) {
 		summaryContent.clear();
 		ScrollPanel scroll = new ScrollPanel();			
 		summaryContent.setWidget(scroll);
@@ -930,7 +930,7 @@ public class VatReport extends MainEntryPoint {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						VatParams params = getWidgetParams();
+						AccountingReportParams params = getWidgetParams();
 						params.setOutput(true);
 						refreshAndSeeResults(params);
 					}
@@ -949,7 +949,7 @@ public class VatReport extends MainEntryPoint {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						VatParams params = getWidgetParams();
+						AccountingReportParams params = getWidgetParams();
 						params.setOutput(false);
 						refreshAndSeeResults(params);
 					}

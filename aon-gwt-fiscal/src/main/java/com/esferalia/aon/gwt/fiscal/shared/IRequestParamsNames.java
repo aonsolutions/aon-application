@@ -21,6 +21,7 @@ public interface IRequestParamsNames {
 	String REGISTRY_ID = "registryId";
 	String PRODUCT_ID = "productId";
 	String TYPE = "type";
+	String VAT_SUMMARY_TYPE = "vatSummaryType";
 	String EXPENSES = "expenses";
 	String IRPF = "irpf";
 	String OUTPUT = "output";
