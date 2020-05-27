@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.impl.jooq.dao.VATFormatter;
-import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "Vat Report Stream", urlPatterns = { "/aon_gwt_fiscal/roms/VatReportStream" })
@@ -100,7 +99,7 @@ public class VatReportStreamServlet extends HttpServlet {
 			VATFormatter.formatInvoices(resp.getWriter()
 					,FISCAL.getVatContext(domainName, domainId, user, params)
 					,"LISTADO IVA"
-					, FiscalUtils.toString(params));
+					, VatReportUtils.toString(params));
 			
 			resp.flushBuffer();
 			

@@ -7,6 +7,7 @@ public interface IRequestParamsNames {
 	String USER = "user";
 	String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
 	String ACCOUNT_REPORT_PARAMS = "accountReportParams";
+	String VAT_PARAMS = "vatParams";
 
 	String OFFSET = "offset";
 	String LIMIT = "limit";

@@ -14,10 +14,14 @@ import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog;
+import com.esferalia.aon.gwt.fiscal.client.accounting.PrintReportDialog.IPrintReportDialogCallback;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
+import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
@@ -42,6 +46,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -61,6 +66,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class VatReport extends MainEntryPoint {
 
 	private static final String VAT_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/VatReportExcelPrint";
+	private static final String VAT_PDF_REPORT_PRINT = "/aon_gwt_fiscal/roms/VatReportPDFPrint";
 	
 	private static VATServiceAsync SERVICE;
 	
@@ -219,6 +225,55 @@ public class VatReport extends MainEntryPoint {
 		});
 		buttonContainer.add(clean);
 		
+		final Button pdf = new Button();
+		pdf.setText(AON.MSG.print());
+		pdf.setTitle(AON.MSG.export());
+		pdf.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		pdf.addStyleName(AON.AON_CSS.aonIconPdf());
+		
+		pdf.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				AccountingReportParams params = VatReport.this.getWidgetParams();
+				ReportMetadata metadata = new ReportMetadata().setTitle("Listado de IVA");
+				PrintReportDialog dialog = new PrintReportDialog(metadata
+						, new IPrintReportDialogCallback() {
+							
+							@Override
+							public void onError(String msg) {
+								Window.alert(msg);
+							}
+							
+							@Override
+							public void onCancel() {}
+							
+							@Override
+							public void onAccept(ReportMetadata metadata) {
+								params.setTitle(metadata.getTitle());
+								params.setSubject(metadata.getSubject());
+								params.setShowCover(metadata.isShowCover());
+								params.setPageOffset(metadata.getPageOffset());
+								params.setPageOffsetText(metadata.getPageOffsetText());
+								params.setHideFilter(metadata.isHideFilter());
+								params.setHeaderText(metadata.getHeaderText());
+								params.setHideDateTimeOnFooter(metadata.isHideDateTimeOnFooter());
+								params.setFooterText(metadata.getFooterText());
+
+								diskForm.setAction(GWT.getHostPageBaseURL() + VAT_PDF_REPORT_PRINT);
+								vatParamsHidden.setValue(JsonParams.convert(params));
+								domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+								domainNameHidden.setValue(getCurrentDomainName());
+								userHidden.setValue(getCurrentUser());
+								diskForm.submit();
+							}
+						});
+				dialog.center();
+				dialog.show();
+			}
+		});
+		buttonContainer.add(pdf);
+
 		final Button excel = new Button();
 		excel.setText(AON.MSG.export());
 		excel.setTitle(AON.MSG.export());
@@ -237,13 +292,13 @@ public class VatReport extends MainEntryPoint {
 		diskForm.setMethod(FormPanel.METHOD_POST);
 		FlowPanel formFlowPanel = new FlowPanel();
 		diskForm.add(formFlowPanel);
-		vatParamsHidden = new Hidden("vatParams");
+		vatParamsHidden = new Hidden(IRequestParamsNames.VAT_PARAMS);
 		formFlowPanel.add(vatParamsHidden);
-		domainIdHidden = new Hidden("domainId");
+		domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
 		formFlowPanel.add(domainIdHidden);
-		domainNameHidden = new Hidden("domainName");
+		domainNameHidden = new Hidden(IRequestParamsNames.DOMAIN_NAME);
 		formFlowPanel.add(domainNameHidden);
-		userHidden = new Hidden("user");
+		userHidden = new Hidden(IRequestParamsNames.USER);
 		formFlowPanel.add(userHidden);
 		buttonContainer.add(diskForm);
 		

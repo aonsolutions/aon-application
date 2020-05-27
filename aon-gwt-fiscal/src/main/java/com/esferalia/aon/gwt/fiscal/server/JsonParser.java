@@ -13,7 +13,9 @@ import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -336,6 +338,57 @@ public class JsonParser {
 		Double lub = (Double) jsonParams.get(IRequestParamsNames.LEDGER_UNPAID_BALANCE);
 		if (lub!= null) {
 			params.setLedgerUnpaidBalance(lub.doubleValue());
+		}
+		
+		// ******************* REGISTRY ******************* 
+		Long registry = (Long) jsonParams.get(IRequestParamsNames.REGISTRY);
+		if (registry != null) {
+			params.setRegistry(registry.intValue());	
+		}
+		// ******************* PERCENT ******************* 
+		Double percent = (Double) jsonParams.get(IRequestParamsNames.PERCENT);
+		if (percent != null) {
+			params.setPercent(percent);	
+		}
+		// ******************* VAT_SUMMARY_TYPE ******************* 
+		Long type = (Long) jsonParams.get(IRequestParamsNames.VAT_SUMMARY_TYPE);
+		if (type != null) {
+			params.setVatSummaryType( VatSummaryType.safeValueOf(type.intValue()));
+		}
+		// ******************* OUTPUT ******************* 
+		Long output = (Long) jsonParams.get(IRequestParamsNames.OUTPUT);
+		if (output != null) {
+			params.setOutput(output==1);
+		}
+		// ******************* SURCHARGE ******************* 
+		Long surcharge = (Long) jsonParams.get(IRequestParamsNames.SURCHARGE);
+		if (surcharge != null) {
+			params.setSurcharge(surcharge==1);
+		}
+		// ******************* FARMER_REGIME ******************* 
+		Long farmerRegime = (Long) jsonParams.get(IRequestParamsNames.FARMER_REGIME);
+		if (farmerRegime != null) {
+			params.setFarmerRegime(farmerRegime==1);
+		}
+		// ******************* ACCRUAL_REGIME ******************* 
+		Long accrualRegime = (Long) jsonParams.get(IRequestParamsNames.ACCRUAL_REGIME);
+		if (accrualRegime != null) {
+			params.setAccrualRegime(accrualRegime==1);
+		}
+		// ******************* INVESTMENT ******************* 
+		Long investment = (Long) jsonParams.get(IRequestParamsNames.INVESTMENT);
+		if (investment != null) {
+			params.setInvestment(investment==1);
+		}
+		// ******************* SERVICE ******************* 
+		Long service = (Long) jsonParams.get(IRequestParamsNames.SERVICE);
+		if (service != null) {
+			params.setService(service==1);
+		}
+		// ******************* RECTIFICATION ******************* 
+		Long rectification = (Long) jsonParams.get(IRequestParamsNames.RECTIFICATION);
+		if (rectification != null) {
+			params.setRectificationType(RectificationType.safeValueOf( rectification.intValue() ));
 		}
 
 		return params;
