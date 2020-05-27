@@ -145,7 +145,7 @@ public class ContractLeaveLoader {
 		if ( directPayStart == null )
 			ctx.setVariable(ContextVariable.DIRECT_PAY_START, directPayStart = AonDateUtils.addDays(start, 365) , start, null);
 		
-		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, directPayStart) : 365;
+		long delegatePayDays = directPayStart != null ? getDaysBetweenDates(start, Period.max(directPayStart, start)) : 365;
 
 		DaysRange professionalRanges[] = new DaysRange[2];
 		professionalRanges[0] = new DaysRange(1, delegatePayDays) {
