@@ -319,7 +319,10 @@ public class SalaryDraft extends ResizeComposite
 			"PORCENTAJE_FP_E",
 			"PORCENTAJE_DESMPL",
 			"PORCENTAJE_DESMPL_E",
-			"PORCENTAJE_EXONERADO"
+			"PORCENTAJE_EXONERADO",
+			
+			"REINCORPORADO_ERE" //???
+			
 	};
 
 	// @formatter:off
@@ -331,7 +334,9 @@ public class SalaryDraft extends ResizeComposite
 		"COEFICIENTE_ERE",	
 		"COEFICIENTE_ERE_FZA",	
 		"COEFICIENTE_ERE_FZA_EXONERADO",	
-		"COEFICIENTE_HUELGA",	
+		"COEFICIENTE_HUELGA",
+		"REINCORPORADO_ERE"
+
 	};
 
 	// @formatter:on
