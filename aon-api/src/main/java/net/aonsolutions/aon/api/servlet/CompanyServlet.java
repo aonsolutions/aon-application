@@ -11,8 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
@@ -39,12 +43,15 @@ public class CompanyServlet extends HttpServlet{
 	}
 	
 	private JSONObject company2json(Company company) {
+		ApplicationParameter param= AON.getApplicationParameter(company.getDomainName(), company.getDomain(), "", AppParam.FS_DEFAULT_ADMINISTRATION);
+		Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
 		return new JSONObject()
 				.put("id", company.getDomain())
 				.put("domain", company.getDomainName())
 				.put("name", company.getName())
 				.put("document", company.getDocument())
-				.put("active", company.isDomainActive());
+				.put("active", company.isDomainActive())
+				.put("administration", administration.name());
 	}
 	
 }

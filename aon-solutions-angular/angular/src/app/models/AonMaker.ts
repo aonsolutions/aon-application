@@ -1,6 +1,6 @@
 import { TaxType, Invoice, InvoiceTransaction, InvoiceStatus, Registry, Address,
   InvoiceTax, PayMethod, Finance, InvoiceDetail, PrinterConfiguration,
-  Company, User, Permission, PermissionTagType} from './AonModel';
+  Company, User, Permission, PermissionTagType, Administration} from './AonModel';
 import { TediUtils } from '../utils/tedi-utils';
 
 export class AonMaker {
@@ -116,6 +116,7 @@ export class AonMaker {
       active: company && company.active ? company.active: true,
       alias: company && company.alias ? company.alias : '',
       name: company && company.name ? company.name : '',
+      administration: company && company.administration ? company.administration : Administration.COMMON_TERRITORY,
       address: company && company.address ? company.address : AonMaker.createAddress(),
       users: company && company.users ? company.users : [],
       iban: company && company.iban ? company.iban : '',

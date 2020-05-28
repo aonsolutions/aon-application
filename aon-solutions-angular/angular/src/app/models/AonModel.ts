@@ -9,6 +9,15 @@
 -------------------------------------------------------------------
 */
 
+export enum Administration {
+  ALAVA = 'ALAVA',
+  BIZKAIA = 'BIZKAIA',
+  GIPUZKOA = 'GIPUZKOA',
+  NAVARRA = 'NAVARRA',
+  COMMON_TERRITORY = '',
+  UNKNOWN = 'UNKNOWN'
+}
+
 export enum InvoiceType {
   PURCHASE = 'PURCHASE',
   SALES = 'SALES',
@@ -217,6 +226,7 @@ export interface Company {
   document: string;
   name: string;
   active: boolean;
+  administration: Administration;
   alias?: string;
   iban?: string;
   bic?: string;

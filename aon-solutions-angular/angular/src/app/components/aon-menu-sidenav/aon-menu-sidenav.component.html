@@ -14,18 +14,25 @@
 </div>
 
 <div *ngIf="!isPrincipalMenu()" class="aon-menu-sidenav-app-content">
-  <mat-toolbar>
-    <img [src]="app.logo" style="width:20px;padding-right:10px;" [title]="app.title">
+  <mat-toolbar [ngClass]="getAppToolbarClass()">
     <span>{{app.title}}</span>
+
+    <span class="tedi-right40" >
+      <button mat-icon-button >
+        <mat-icon>launch</mat-icon>
+      </button>
+    </span>
+
     <span class="tedi-right0" >
       <button mat-icon-button (click)="backMenu()">
         <mat-icon>close</mat-icon>
       </button>
     </span>
   </mat-toolbar>
+
   <mat-list>
-    <mat-list-item *ngFor="let option of app.options">
-      <a style="cursor: pointer;" (click)='optionSelection(option.code)'>
+    <mat-list-item style="height:30px;" *ngFor="let option of app.options" [title]="option.title">
+      <a class="aon-menu-link" (click)='optionSelection(option)'>
         <span style="font-size: 12px; color: rgba(0,0,0,.87);font-family: Roboto,sans-serif;"> {{option.title}} </span>
       </a>
     </mat-list-item>

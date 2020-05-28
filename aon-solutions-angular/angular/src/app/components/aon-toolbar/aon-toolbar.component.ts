@@ -72,7 +72,11 @@ export class AonToolbarComponent implements OnInit {
   }
 
   home(): void {
-
+    if(this.isParent()){
+      RootLoader.angularPanel(this.router, this.location, 'companyList');
+    } else {
+      RootLoader.rootPanel('<aon-desktop></aon-desktop>', '#f1f1f1');
+    }
   }
 
   apps(): void {

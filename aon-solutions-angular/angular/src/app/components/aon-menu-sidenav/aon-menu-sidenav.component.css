@@ -6,7 +6,46 @@
   width: 250px;
 }
 
+.tedi-right40 {
+  position: absolute;
+  right:40px;
+}
+
 .tedi-right0 {
   position: absolute;
   right:0px;
+}
+
+.aon-fiscal-toolbar-aeat {
+  background-color: #3a85c3;
+  color: white;
+}
+
+.aon-fiscal-toolbar-araba {
+  background-color: #a30c51;
+  color: white;
+}
+
+.aon-fiscal-toolbar-gipuzkoa {
+  background-color: #a1c031;
+  color: white;
+}
+
+.aon-fiscal-toolbar-bizkaia {
+  background-color: #d70004;
+  color: white;
+}
+
+.aon-fiscal-toolbar-navarra {
+  background-color: #da002a;
+  color: white;
+}
+
+.aon-menu-link {
+  cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: black;
+  width: 230px;
 }
