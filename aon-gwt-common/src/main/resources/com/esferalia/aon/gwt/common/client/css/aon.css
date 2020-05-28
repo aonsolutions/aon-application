@@ -3327,3 +3327,77 @@ input:disabled+label {
 	background-color: #0071bc; 	
 	color: white;
 }
+
+/*************************/
+/******  EDITTABLE  ******/
+/*************************/
+.aon-editDataTable{	
+	width:100%;		
+	font-family:arial,verdana, "sans serif";
+	border:#ccc 1px solid;
+	border-collapse:collapse;
+	}
+.aon-editDataTable td{
+	padding-top:1px;
+	padding-bottom:1px;
+	padding-left:0.5em;
+	padding-right:0.5em;
+	border:#ccc 1px solid;
+	}
+.aon-editDataTable-header{
+	padding: 5px 1em; 
+	font-weight:bold;
+ 	font-size:0.9em;
+ 	text-transform:uppercase;
+/* 	background:#dadada url(images/aon-content/aon-dataTable-header.png) scroll left top repeat-x;*/
+  	gwt-image: "aonDataTableHeader";
+	background-color: #dadada;
+	background-repeat: repeat-x;
+	background-position: left top;
+	background-attachment: scroll;
+ 	border:#808080 1px solid;
+ 	border-bottom:#fff 1px solid !important;
+	}
+.aon-editDataTable-footer{
+	padding: 2px 0.5em;
+	background-color:#d7d7d6;
+	vertical-align: top;
+	border:#808080 1px solid;
+	
+	}
+.aon-editDataTable-row-odd{
+	background-color:#fff;
+	}
+.aon-editDataTable-row-even{
+	background-color:#f8f9f9;
+	}
+.aon-editDataTable-iconColumn{
+	padding:0;
+	width:14px;
+	}
+.aon-editDataTable-textColumn{
+	/*width:auto;*/
+	text-align:left;
+	}
+.aon-editDataTable-numberColumn{
+	text-align:right;
+	}
+.aon-editDataTable-buttonsColumn{
+	width:80px;
+	white-space:nowrap;
+	padding:1px 5px;
+	}
+.aon-editDataTable-buttonsColumn button{
+	
+	}
+.aon-editDataTable-button{
+	min-height: 16px;
+	border:0;
+	cursor:pointer;
+	padding-left: 15px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-right: 0px;
+	background-color:transparent;
+	margin-right: 5px;
+}

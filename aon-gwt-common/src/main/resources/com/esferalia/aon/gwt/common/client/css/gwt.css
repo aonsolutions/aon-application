@@ -25,6 +25,11 @@ select {
 	color: #4B4B4B;
 	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
 }
+
+.gwt-Selector #rootPanel {
+	background-color: white;
+}
+
 .gwt-Selector .gwt-DialogBox {
 	background-color: white;
 	border: 1px solid #666;

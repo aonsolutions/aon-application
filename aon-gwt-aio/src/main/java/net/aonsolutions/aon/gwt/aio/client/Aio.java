@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
@@ -17,6 +18,8 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.BodyElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -102,6 +105,7 @@ public class Aio implements EntryPoint {
 	
 	private void selection(String entryPoint, AonData aonData) {
 		export2JS(aonData);
+		ensureGwtSelector();
 		switch (entryPoint) {
 		case Modules.ISSUES:
 			GWT.runAsync(Issues.class, new RunAsyncCallback() {
@@ -335,5 +339,14 @@ public class Aio implements EntryPoint {
 			return domain.@com.esferalia.aon.occam.api.model.Domain::getName()();
 		});
 	}-*/;
+
+	private static void ensureGwtSelector() {
+		BodyElement body = Document.get().getBody();
+		String className = body.getClassName();
+		if (StringUtils.isBlank(className)
+				|| (className.indexOf("gwt-Selector") == -1))
+			body.addClassName("gwt-Selector");
+
+	}
 
 }
