@@ -1082,7 +1082,7 @@ public class SQLAgreementDraft {
 			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
 				updateData(conn, variable.getId(), variable.getStartDate());
 				continue;
-			} else if(dbVariable.getStartDate().equals(variable.getStartDate())) {
+			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && null != variable.getId()) {
 				updateData(conn, variable.getId(), variable.getStartDate());
 				continue;
 			}
@@ -1151,6 +1151,9 @@ public class SQLAgreementDraft {
 			}else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
 				// Update new value for level data
 				updateLevelData(conn, dbVariable.getId(), variable.getStartDate(), variable);
+				continue;
+			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && StringUtils.isBlank(variable.getExpression())) {
+				removeLevelData(conn, dbVariable.getId());
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate())) {
 				updateLevelData(conn, dbVariable.getId(), variable.getStartDate());
