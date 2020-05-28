@@ -12,6 +12,9 @@ public interface IRequestParamsNames {
 	String OFFSET = "offset";
 	String LIMIT = "limit";
 	
+	String DOMAINS = "domains";
+	String CONSOLIDATION = "consolidation";
+	
 	String DOMAIN = "domain";
 	String REGISTRY = "registry";
 	String ACTIVITY = "activity";

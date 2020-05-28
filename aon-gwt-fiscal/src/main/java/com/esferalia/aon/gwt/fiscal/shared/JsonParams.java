@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.shared;
 
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -72,6 +73,17 @@ public class JsonParams extends JSONObject {
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();
 		json.put(IRequestParamsNames.DOMAIN,new JSONNumber( params.getDomain()));
+		if (params.getDomains() != null && params.getDomains().size() > 0) {
+			JSONArray domains = new JSONArray();
+			int i = 0;
+			for (Domain d : params.getDomains()) {
+				domains.set(i, new JSONNumber( d.getId() ));  
+				i++;
+			}
+			json.put(IRequestParamsNames.DOMAINS,domains);
+		}
+		json.put(IRequestParamsNames.CONSOLIDATION	 ,new JSONNumber(params.isConsolidation()?1:0));
+		
 		json.put(IRequestParamsNames.PERIOD,params.getPeriod() 		== null? JSON_NULL : new JSONNumber( params.getPeriod()));
 		if (params.getAccount() != null) {
 			json.put(IRequestParamsNames.ACCOUNT,params.getAccount().getId() == null? JSON_NULL : new JSONNumber( params.getAccount().getId()));

@@ -3,7 +3,9 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 
+import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 import org.jooq.tools.json.ParseException;
@@ -12,6 +14,7 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -389,6 +392,22 @@ public class JsonParser {
 		Long rectification = (Long) jsonParams.get(IRequestParamsNames.RECTIFICATION);
 		if (rectification != null) {
 			params.setRectificationType(RectificationType.safeValueOf( rectification.intValue() ));
+		}
+
+		// ******************* DOMAINS ******************* 
+		JSONArray domains = (JSONArray) jsonParams.get(IRequestParamsNames.DOMAINS);
+		if (domains != null && domains.size() > 0) {
+			LinkedList<Domain> list = new LinkedList<Domain>();
+			for ( int i = 0; i < domains.size(); i++) {
+				Object v = domains.get(i);
+				list.add( new Domain().setId(  ((Long) v).intValue() ));
+			}
+			params.setDomains(list);
+		}
+		// ******************* SERVICE ******************* 
+		Long consolidation = (Long) jsonParams.get(IRequestParamsNames.CONSOLIDATION);
+		if (consolidation != null) {
+			params.setConsolidation(consolidation==1);
 		}
 
 		return params;
