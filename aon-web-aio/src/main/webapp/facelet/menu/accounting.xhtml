@@ -509,6 +509,34 @@
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>
+									<aon:panelGrid id="group_acc_reports"
+										styleClass="aon-width-all" columnClasses="aon-padding"
+										headerClass="aon-icon-balance aon-direct-access-panel">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.menu_reports_annual}" />
+										</f:facet>
+										<aon:div styleClass="aon-direct-access-list">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="report_template"
+													action="reportAttach_form"
+													actionListener="#{reportAttach.onSearch}"
+													value="#{bundle.accounting_reports_module}" />
+											</aon:div>
+<!-- 											
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="report_launcher"
+													action="reports_launcher"
+													actionListener="#{reportsLauncher.onReset}"
+													value="#{bundle.accounting_reports_launcher_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="invoice_series_breakdown"
+													action="gwt_invoiceSeriesBreakdown"
+													value="Desglose de series de facturas" />
+											</aon:div>
+ -->
+										</aon:div>
+									</aon:panelGrid>
 								</aon:if>
 							</aon:panelGroup>
 
@@ -551,8 +579,54 @@
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>
-
 								</aon:if>
+									<aon:panelGrid id="group_accounting_utilities2"
+										styleClass="aon-width-all" columnClasses="aon-padding"
+										headerClass="aon-icon-utilities aon-direct-access-panel">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.aon_utilities}" />
+										</f:facet>
+										<aon:div styleClass="aon-direct-access-list">
+<!-- 
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="accountCheck" action="check_form"
+													actionListener="#{accountCheck.onInitialize}"
+													value="#{bundle.accounting_check_balance_module}" />
+											</aon:div>
+ -->							
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="accountingFinanceChecker"
+													action="accountingFinanceChecker_search"
+													actionListener="#{accountingFinanceChecker.onStart}"
+													value="#{bundle.accounting_finance_checker_module}" />
+											</aon:div>
+<!-- 
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="regenerateAccount"
+													action="regenerateAccount"
+													value="#{bundle.accounting_regenerate_account_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="customerAccountChecker"
+													action="customerAccountChecker_search"
+													actionListener="#{customerAccountChecker.onEditSearch}"
+													value="#{bundle.customer_account_checker_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="supplierAccountChecker"
+													action="supplierAccountChecker_search"
+													actionListener="#{supplierAccountChecker.onEditSearch}"
+													value="#{bundle.supplier_account_checker_module}" />
+											</aon:div>
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="creditorAccountChecker"
+													action="creditorAccountChecker_search"
+													actionListener="#{creditorAccountChecker.onEditSearch}"
+													value="#{bundle.finance_creditor_account_checker_module}" />
+											</aon:div>
+ -->							
+										</aon:div>
+									</aon:panelGrid>
 
 							</aon:panelGroup>
 							<aon:panelGroup>
@@ -612,78 +686,6 @@
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>
-<!-- 
-									<aon:panelGrid id="group_accounting_utilities2"
-										styleClass="aon-width-all" columnClasses="aon-padding"
-										headerClass="aon-icon-utilities aon-direct-access-panel">
-										<f:facet name="header">
-											<aon:outputText value="#{bundle.aon_utilities}" />
-										</f:facet>
-										<aon:div styleClass="aon-direct-access-list">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="accountCheck" action="check_form"
-													actionListener="#{accountCheck.onInitialize}"
-													value="#{bundle.accounting_check_balance_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="accountingFinanceChecker"
-													action="accountingFinanceChecker_search"
-													actionListener="#{accountingFinanceChecker.onStart}"
-													value="#{bundle.accounting_finance_checker_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="regenerateAccount"
-													action="regenerateAccount"
-													value="#{bundle.accounting_regenerate_account_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="customerAccountChecker"
-													action="customerAccountChecker_search"
-													actionListener="#{customerAccountChecker.onEditSearch}"
-													value="#{bundle.customer_account_checker_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="supplierAccountChecker"
-													action="supplierAccountChecker_search"
-													actionListener="#{supplierAccountChecker.onEditSearch}"
-													value="#{bundle.supplier_account_checker_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="creditorAccountChecker"
-													action="creditorAccountChecker_search"
-													actionListener="#{creditorAccountChecker.onEditSearch}"
-													value="#{bundle.finance_creditor_account_checker_module}" />
-											</aon:div>
-
-										</aon:div>
-									</aon:panelGrid>
-									<aon:panelGrid id="group_acc_reports"
-										styleClass="aon-width-all" columnClasses="aon-padding"
-										headerClass="aon-icon-balance aon-direct-access-panel">
-										<f:facet name="header">
-											<aon:outputText value="#{bundle.menu_reports_annual}" />
-										</f:facet>
-										<aon:div styleClass="aon-direct-access-list">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="report_template"
-													action="reportAttach_form"
-													actionListener="#{reportAttach.onSearch}"
-													value="#{bundle.accounting_reports_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="report_launcher"
-													action="reports_launcher"
-													actionListener="#{reportsLauncher.onReset}"
-													value="#{bundle.accounting_reports_launcher_module}" />
-											</aon:div>
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="invoice_series_breakdown"
-													action="gwt_invoiceSeriesBreakdown"
-													value="Desglose de series de facturas" />
-											</aon:div>
-										</aon:div>
-									</aon:panelGrid>
- -->							
  								</aon:if>
 							</aon:panelGroup>
 						</h:panelGrid>
