@@ -9,7 +9,8 @@ export class RootLoader {
   }
 
   static angularPanel(router: Router, location: Location, route: string, color?: string) : Promise<boolean> {
-    document.body.style.background = color ? color : 'white';
+    let contentPanel = document.getElementById("contentPanel");
+    contentPanel.style.background = color ? color : 'white';
     this.displayAngularPanel();
     let prom: Promise<boolean> = router.navigateByUrl(route, {skipLocationChange: true});
     location.replaceState('');
@@ -17,7 +18,8 @@ export class RootLoader {
   }
 
   static rootPanel(html: string, color?: string) : void {
-    document.body.style.background = color ? color : 'white';
+    let contentPanel = document.getElementById("contentPanel");
+    contentPanel.style.background = color ? color : 'white';
     this.displayRootPanel();
     let rootPanel = document.getElementById("rootPanel");
     rootPanel.innerHTML = html;

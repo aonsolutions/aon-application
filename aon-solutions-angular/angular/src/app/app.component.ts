@@ -40,4 +40,12 @@ export class AppComponent implements OnInit {
   isUserLoggedIn(): boolean {
     return this.service.isUserLoggedIn;
   }
+
+  isMenuSidenavExpanded(): boolean {
+    return !this.isParent() && this.service.showMenu;
+  }
+
+  isParent(): boolean {
+    return this.service.company == undefined;
+  }
 }

@@ -46,4 +46,9 @@
     <span class="tedi-company-background"> {{getDescription()}} > </span>
     <span>{{getCompanyName()}}<span>
   </span>
+  <span id="showMenuButton" *ngIf="!isParent()" class="aon-show-menu-button" style="padding-right: 20px;">
+    <button mat-icon-button (click)="showMenu()">
+      <mat-icon>{{showMenuIcon}}</mat-icon>
+    </button>
+  </span>
 <div>

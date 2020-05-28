@@ -1,18 +1,27 @@
 <!--The content below is only a placeholder and can be replaced. directiveNoDropZone -->
-<div tediNoDropZone>
+<div style="height:100%;" tediNoDropZone>
 
   <div *ngIf='!isUserLoggedIn()'>
     <aon-login></aon-login>
   </div>
-  <div *ngIf='isUserLoggedIn()'>
+  <div style="height:100%;" *ngIf='isUserLoggedIn()'>
     <div>
       <aon-toolbar></aon-toolbar>
     </div>
-    <div id='angularPanel'>
-      <router-outlet></router-outlet>
-    </div>
-    <div style="display:none;" id='rootPanel'>
-      <aon-company-list></aon-company-list>
+    <div style="height:calc(100vh - 90px);">
+      <mat-sidenav-container style="height:calc(100vh - 90px);" autosize >
+        <mat-sidenav position="end" class="aon-menu-sidenav" [opened]="isMenuSidenavExpanded()" #sidenav mode="side">
+          <aon-menu-sidenav></aon-menu-sidenav>
+        </mat-sidenav>
+        <mat-sidenav-content id="contentPanel">
+          <div id='angularPanel'>
+            <router-outlet></router-outlet>
+          </div>
+          <div style="display:none;" id='rootPanel'>
+            <aon-company-list></aon-company-list>
+          </div>
+        </mat-sidenav-content>
+      </mat-sidenav-container>
     </div>
   </div>
 </div>

@@ -10,6 +10,7 @@ import { environment } from '../../environments/environment';
 export class SharedService {
     private readonly API_URL = environment.apiUrl;
 
+    public showMenu: boolean = true;
     public isMobile: boolean;
     public isUserLoggedIn: boolean;
     public isRegister: Subject<boolean> = new Subject<boolean>();
