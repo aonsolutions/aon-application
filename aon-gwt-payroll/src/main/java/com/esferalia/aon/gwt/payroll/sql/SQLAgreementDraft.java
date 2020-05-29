@@ -1076,11 +1076,16 @@ public class SQLAgreementDraft {
 //				removeLevelData(conn, dbVariable.getId());
 //				continue;
 //			}
-			if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
+			if(!dbVariable.getStartDate().equals(variable.getStartDate())) {
+				continue;
+			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
 				removeData(conn, variable.getId());
 				continue;
 			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
 				updateData(conn, variable.getId(), variable.getStartDate());
+				continue;
+			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())) {
+				updateData(conn, variable);
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && null != variable.getId()) {
 				updateData(conn, variable.getId(), variable.getStartDate());
@@ -1867,6 +1872,35 @@ public class SQLAgreementDraft {
 			stmt.setNull(2, Types.DATE);
 
 			stmt.setInt(3, dataId);
+
+			stmt.executeUpdate();
+
+		} finally {
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
+	
+	private static void updateData(Connection conn, Variable var) throws SQLException {
+		PreparedStatement stmt = null;
+		try {
+			// @formatter:off
+			stmt = conn.prepareStatement("UPDATE "
+					+ SQLConstants.AGREEMENT_DATA + " SET "
+					+ AgreementDataColumns.START_DATE + " = ? " + ", "
+					+ AgreementDataColumns.END_DATE + " = ? " + ", "
+					+ AgreementDataColumns.EXPRESSION + " = ? "+ " WHERE "
+					+ AgreementDataColumns.ID + "= ? ");
+			// @formatter:on
+
+			stmt.setDate(1, new java.sql.Date(var.getStartDate().getTime()));
+			
+			stmt.setNull(2, Types.DATE);
+			
+			stmt.setString(3, var.getExpression());
+
+			stmt.setInt(4, var.getId());
 
 			stmt.executeUpdate();
 

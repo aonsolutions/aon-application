@@ -1497,7 +1497,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 										Variable newVariable = copyVariable(variable);
 										newVariable.setStartDate(newDate);
 										
-										agreementDraftObject.addDraftVariable(level, newVariable);
+										if(!newVariable.isImpicit())
+											agreementDraftObject.addDraftVariable(level, newVariable);
 									}
 								}
 							}
