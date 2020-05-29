@@ -32,6 +32,7 @@ public abstract class AonDialog extends PopupPanel  {
 		setGlassEnabled(true);
 		setAutoHideEnabled(true);
 		setStyleName(AON.AON_CSS.aonDialogBoxShadow());
+		getElement().getStyle().setZIndex(69);
 		getElement().getStyle().setBackgroundColor("#FFF");
 	}
 	
