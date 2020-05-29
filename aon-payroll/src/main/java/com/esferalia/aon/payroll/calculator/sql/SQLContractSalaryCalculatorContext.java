@@ -125,6 +125,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -1285,7 +1286,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private Map<Double, Double> liquids;
 	private Map<Double, Double> payments;
 	
-	private List<IContractBonus> contextBonus; 
+	private Set<IContractBonus> contextBonus; 
 
 	/*
 	 * public SQLContractSalaryCalculatorContext(Connection connection, Date
@@ -1393,7 +1394,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 		this.liquids = new HashMap<Double, Double>();
 		this.payments = new HashMap<Double, Double>();
-		this.contextBonus = new ArrayList<IContractBonus>();
+		this.contextBonus = new HashSet<IContractBonus>();
 
 	}
 
@@ -2059,6 +2060,34 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public String getDescription() {
 				return description;
 			}
+			
+			@Override
+			public boolean equals(Object obj) {
+				if ( this == obj )
+					return true;
+				
+				if (!( obj instanceof IContractBonus ))
+					return false;
+				
+				IContractBonus bonus = (IContractBonus) obj;
+				return ( AonUtils.equals(this.getStartDate(), bonus.getStartDate())
+						&& AonUtils.equals(this.getEndDate(), bonus.getEndDate())
+						&& AonUtils.equals( this.getExpression(), bonus.getExpression())
+						&& AonUtils.equals( this.getDescription(), bonus.getDescription()) )
+						;
+					
+			}
+			
+			@Override
+			public int hashCode() {
+			    int hash = 7;
+			    hash = 31 * hash + (startDate == null ? 0 : startDate.hashCode());
+			    hash = 31 * hash + (endDate == null ? 0 : endDate.hashCode());
+			    hash = 31 * hash + (expression == null ? 0 : expression.hashCode());
+			    hash = 31 * hash + (description == null ? 0 : description.hashCode());
+			    return hash;
+			}
+
 		};
 		
 		contextBonus.add(bonus);

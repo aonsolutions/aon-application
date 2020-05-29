@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,9 +34,11 @@ import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.bonus.IBonus;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -1744,6 +1747,124 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		org.junit.Assert.assertEquals(costs, bonuses, DELTA);
 	}
 	
+	@Test
+	public void testNewBonusII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemCosts(aonContext);
+		cleanSystemData(aonContext);
+		addSSRegimeData(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), null,
+				new HashMap<String, String>() {
+					{
+						put("PORCENTAJE_CGC_E", "23.60");
+					}
+				});
+
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL,
+				getFirstDayOfYear(getToday()), "CGC_E",
+				DeductionType.COMMON_CONTINGENCY,
+				"BASE_CGC_E * PORCENTAJE_CGC_E/100");
+		
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfYear(getToday()), new HashMap<String, String>() {
+					{
+					}
+				},
+				new String[] { "( P_1 + P_2 )* 0.10 ",
+							"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+							"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+				, new String[] {
+							"TRACE('BASE_CGC = %f\r\n', BASE_CGC); BASE_CGC * 0.10", 
+							"TRACE('BASE_CGP = %f\r\n', BASE_CGP); BASE_CGP * 0.05"}
+				, newAgreement(aonContext, new Extra[]{}, Collections.emptyMap()));
+
+		
+
+		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, 
+				contract, ere, 
+				String.format("isdef %1$s ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * %1$s * (isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO : 100.0)/100.0');0.0) : HIDE()" , getFactorVariable().getName() ), 
+				String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		
+		addSystemData(aonContext
+		, startDate
+		, add(startDate, Calendar.DAY_OF_MONTH, 12)
+		, new HashMap<String, String>(){{
+			put("PORCENTAJE_EXONERADO", "100.00");
+		}});
+		
+		addSystemData(aonContext
+		, add(startDate, Calendar.DAY_OF_MONTH, 13)
+		,endDate
+		, new HashMap<String, String>(){{
+			put("PORCENTAJE_EXONERADO", "ERE_TOTAL ? 100.00 : 60.00");
+		}});
+
+//		addBonus(aonContext, 
+//		contract, addBonusConcept(aonContext, BonusType.ERE, ""),
+//		String.format("_FRACC(CONTEXT,'CUOTA_EMPRESARIAL')* %s *(isdef PORCENTAJE_EXONERADO ? PORCENTAJE_EXONERADO/100:1)", getFactorVariable().getName())
+//		);
+		addData(aonContext, contract, startDate, add(startDate, Calendar.DAY_OF_MONTH, 15),
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.0");
+					}
+				});
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH, 16), endDate,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1.0");
+					}
+				});
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		
+		double bonuses [] = {0.00};
+		Salary salary = new SmartContractSalaryCalculator<Salary>(
+				new SalaryBuilder(){
+					@Override
+					public void addBonus(Double amount, String description, java.util.Date startDate,
+							java.util.Date endDate, IBonus bonus, Map<String, ITimedVariable<?>> context) {
+						// TODO Auto-generated method stub
+						System.out.println("_B " + bonus.getName() + " = " + amount
+								+ ", " + startDate + ".." + endDate );
+						bonuses[0] += amount;
+						super.addBonus(amount, description, startDate, endDate, bonus, context);
+					}
+				}).calculate(ctx);
+
+		for (com.esferalia.aon.payroll.SalaryPayment payment : salary
+				.getSalaryPayments()) {
+			System.out.println("_P " + payment.getName() + " = " + payment.getAmount()
+					+ " (" + payment.getQuote() + ")");
+		}
+		
+		double costs = 0.00;
+		for (com.esferalia.aon.payroll.SalaryCost cost : salary
+				.getSalaryCosts()) {
+			System.out.println("_C " +cost.getName() + " = " + cost.getAmount()
+					);
+			costs += cost.getAmount();
+		}
+		
+//		for (com.esferalia.aon.payroll.SalaryBonus bonus : salary
+//				.getSalaryBonus()) {
+//			System.out.println("_B " + bonus.getName() + " = " + bonus.getAmount()
+//					);
+//			bonuses += bonus.getAmount();
+//		}
+		
+		org.junit.Assert.assertEquals(costs, bonuses[0], DELTA);
+		
+	}
+
 	@Test
 	public void testBackBonusI() throws ExpressionException, SQLException,
 			SalaryException {
