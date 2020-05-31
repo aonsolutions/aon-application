@@ -112,8 +112,13 @@ public class MainEntryPoint implements EntryPoint {
 		} 
 		else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
-			MainCRA mainCRA = new MainCRA();
-			mainCRA.onModuleLoad();
+			
+			MainCRAObjectNew mainCRAObject = new MainCRAObjectNew();
+			MainCRANew mainCRA = new MainCRANew();
+			mainCRA.onModuleLoad(mainCRAObject);
+			
+//			MainCRA mainCRA = new MainCRA();
+//			mainCRA.onModuleLoad();
 		} 
 		else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
