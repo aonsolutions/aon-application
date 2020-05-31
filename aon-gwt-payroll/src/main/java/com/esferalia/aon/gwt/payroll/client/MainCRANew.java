@@ -1,0 +1,1085 @@
+package com.esferalia.aon.gwt.payroll.client;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map.Entry;
+
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CRA;
+import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.DataGrid;
+import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.DefaultSelectionEventManager;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+
+public class MainCRANew extends MainEntryPoint {
+
+	interface Binder extends UiBinder<Widget, MainCRANew> {}
+	
+	private static final Binder binder = GWT.create(Binder.class);
+	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String suggestBox();
+	}
+	
+	@UiField
+	Button exportButton;
+	
+	@UiField
+	Button listButton;
+	
+	@UiField
+	Button newCRAButton;
+	
+	@UiField
+	ListBox month;
+	
+	@UiField
+	ListBox year;
+	
+	@UiField
+	ListBox geozoneList;
+
+	@UiField
+	DisclosurePanel collapsePanel;
+	
+	@UiField
+	SuggestBox enterpriseSB;
+	
+	@UiField
+	ListBox typeList;
+	
+	@UiField
+	HTMLPanel mainTablePanel;
+	
+	@UiField
+	HTMLPanel mainContainer;
+	
+	@UiField
+	HTMLPanel crasContainer;
+	
+	@UiField(provided = true)
+	DataGrid<CCCInfo> cccDataGrid;
+	
+	@UiField
+	HTMLPanel crasPanel;
+	
+	@UiField(provided = true)
+	DataGrid<CRA> crasDataGrid;
+	
+	private List<CCCInfo> cccs = Collections.emptyList();
+	private List<CRA> cras = Collections.emptyList();
+	
+	public MainCRANew() {
+		provideCCCDataGrid();
+		provideCRAsDataGrid();
+		
+		// Add style to table header
+	    addStyleToHeader();
+		
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+		AON.ensureInjected();
+	
+		Widget ui = binder.createAndBindUi(this);
+		RootLayoutPanel.get("rootPanel").add(ui);
+		
+		initCollapseAndDeckPanel();
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 									PROVIDE SALARY DATA GRID
+	// --------------------------------------------------------------------------------------------
+
+	private void provideCCCDataGrid() {
+		cccs  = Collections.emptyList();
+		
+		// Resource Style CellTable
+		cccDataGrid = new CustomDataGrid<CCCInfo>(Integer.MAX_VALUE, CCCInfo.KEY_PROVIDER);
+		cccDataGrid.setWidth("100%");
+		
+		//Do not refresh the headers every time the dataGrid is updated.
+		cccDataGrid.setAutoHeaderRefreshDisabled(true);
+		
+		// Set the message to display when the table is empty.
+		cccDataGrid.setEmptyTableWidget(new Label("No existen cuentas de cotizacion".toUpperCase()));
+		
+		// Add a selection model so we can select cells.
+	    this.selectionCCCInfoModel = new MultiSelectionModel<CCCInfo>(CCCInfo.KEY_PROVIDER);
+	    cccDataGrid.setSelectionModel(this.selectionCCCInfoModel, DefaultSelectionEventManager.<CCCInfo> createCheckboxManager());
+		
+	    // Initialize the columns.
+	    addCCCInfoColumns(this.selectionCCCInfoModel);
+	    
+	    new ListDataProvider<CCCInfo>(Collections.emptyList()).addDataDisplay(cccDataGrid);
+
+	}
+	
+	private void addCCCInfoColumns(MultiSelectionModel<CCCInfo> selectionCCCInfoModel) {
+		selectionCCCInfoModel.addSelectionChangeHandler(new Handler() {
+	        
+	        @Override
+	        public void onSelectionChange(SelectionChangeEvent event) {
+	            if(selectionCCCInfoModel.getSelectedSet().size() > 0) {
+	            	exportButton.setEnabled(true);
+	            }else {
+	            	exportButton.setEnabled(false);
+	            }
+	            
+	        }
+	    });
+	    
+	    Column<CCCInfo, Boolean> checkColumn = new Column<CCCInfo, Boolean>(
+	        new CheckboxCell(true, false)) {
+	      @Override
+	      public Boolean getValue(CCCInfo object) {
+	        // Get the value from the selection model.
+	        return selectionCCCInfoModel.isSelected(object);
+	      }
+	    };
+    
+	    CheckboxCell selectAllHeaderCB = new CheckboxCell(true,true); //the checkbox is true true for dependsOnSelection and handlesSelection for it to work
+	    Header<Boolean> selectAllHeader = new Header<Boolean>(selectAllHeaderCB)
+	    {
+	      @Override
+	      public Boolean getValue()
+	      {
+	        //return true only when all items are selected
+	    	boolean value = false;
+	    	
+	    	if(null != mainCRAObjectNew && null != mainCRAObjectNew.getEnterpriseCCCs())
+	    		value = selectionCCCInfoModel.getSelectedSet().size() == mainCRAObjectNew.getEnterpriseCCCs().size();
+	        
+	    	return value; 
+	      }
+	    };
+	    
+	    selectAllHeader.setUpdater(new ValueUpdater<Boolean>(){
+	      @Override
+	      public void update(Boolean value)
+	      {
+	        // Select/deselect all persons
+	    	if(null != mainCRAObjectNew && null != mainCRAObjectNew.getEnterpriseCCCs())
+		        for (CCCInfo cccInfo : mainCRAObjectNew.getEnterpriseCCCs())
+		          selectionCCCInfoModel.setSelected(cccInfo, value);
+	        
+	      }
+	    });
+	    
+	    // Add Selection Column to table
+	    cccDataGrid.addColumn(checkColumn,selectAllHeader);
+	    cccDataGrid.setColumnWidth(checkColumn, 5, Unit.PCT);
+	    checkColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		//----------------------------------------------------------------------
+	    //							CREATE COLUMNS
+	    //----------------------------------------------------------------------
+		
+		TextColumn<CCCInfo> enterpriseNameColumn = new TextColumn<CCCInfo>() {
+	      @Override
+	      public String getValue(CCCInfo cccInfo) {
+	        return cccInfo.getEnterpriseDesciption();
+	      }
+	    };
+
+	    enterpriseNameColumn.setSortable(true);
+	    cccDataGrid.setColumnWidth(enterpriseNameColumn, 25, Unit.PCT);
+	    
+	    TextColumn<CCCInfo> activityNameColumn = new TextColumn<CCCInfo>() {
+	      @Override
+	      public String getValue(CCCInfo cccInfo) {
+	        return cccInfo.getActivityDescription();
+	      }
+	    };
+
+	    activityNameColumn.setSortable(true);
+	    cccDataGrid.setColumnWidth(activityNameColumn, 20, Unit.PCT);
+	    
+	    TextColumn<CCCInfo> geozoneColumn = new TextColumn<CCCInfo>() {
+	      @Override
+	      public String getValue(CCCInfo cccInfo) {
+	        return ProvinceContract.getName(cccInfo.getGeozone());
+	      }
+	    };
+
+	    geozoneColumn.setSortable(true);
+	    cccDataGrid.setColumnWidth(geozoneColumn, 10, Unit.PCT);
+	    
+	    TextColumn<CCCInfo> typeColumn = new TextColumn<CCCInfo>() {
+	      @Override
+	      public String getValue(CCCInfo cccInfo) {
+	    	  return parseCCCType(cccInfo.getTypeStr());
+	      }
+
+	    };
+
+	    typeColumn.setSortable(true);
+	    cccDataGrid.setColumnWidth(typeColumn, 10, Unit.PCT);
+	    
+	    TextColumn<CCCInfo> cccColumn = new TextColumn<CCCInfo>() {
+	      @Override
+	      public String getValue(CCCInfo cccInfo) {
+	    	  return cccInfo.getCcc();
+	      }
+	    };
+
+	    cccColumn.setSortable(true);
+	    cccDataGrid.setColumnWidth(cccColumn, 15, Unit.PCT);
+		
+	    // Add the columns.
+	    cccDataGrid.addColumn(enterpriseNameColumn, "Empresa");
+	    cccDataGrid.addColumn(activityNameColumn, "Actividad");
+	    
+	    cccDataGrid.addColumn(geozoneColumn, "Provincia");
+	    
+	    cccDataGrid.addColumn(typeColumn, "Tipo CCC");
+	    cccDataGrid.addColumn(cccColumn, "CCC");
+	      
+	}
+
+	// --------------------------------------------------------------------------------------------
+	// 									PROVIDE CRA DATA GRID
+	// --------------------------------------------------------------------------------------------
+
+	private void provideCRAsDataGrid() {
+		cras  = Collections.emptyList();
+		
+		// Resource Style CellTable
+		crasDataGrid = new CustomDataGrid<CRA>(Integer.MAX_VALUE, CRA.KEY_PROVIDER);
+		crasDataGrid.setWidth("100%");
+		
+		//Do not refresh the headers every time the dataGrid is updated.
+		crasDataGrid.setAutoHeaderRefreshDisabled(true);
+		
+		// Set the message to display when the table is empty.
+		crasDataGrid.setEmptyTableWidget(new Label("No existen CRAs".toUpperCase()));
+		
+		// Add a selection model so we can select cells.
+	    this.selectionCraModel = new MultiSelectionModel<CRA>(CRA.KEY_PROVIDER);
+	    crasDataGrid.setSelectionModel(this.selectionCraModel, DefaultSelectionEventManager.<CRA> createCheckboxManager());
+		
+	    // Initialize the columns.
+	    addCraColumns(this.selectionCraModel);
+	    
+	    new ListDataProvider<CRA>(Collections.emptyList()).addDataDisplay(crasDataGrid);
+	    
+	}
+	
+	private void addCraColumns(MultiSelectionModel<CRA> selectionCraModel) {
+		
+		//----------------------------------------------------------------------
+	    //							CREATE COLUMNS
+	    //----------------------------------------------------------------------
+		
+		TextColumn<CRA> creationColumn = new TextColumn<CRA>() {
+	      @Override
+	      public String getValue(CRA cra) {
+	    	  if(null == cra.getDate())
+	    		  return "";
+	    	  return formatFullDateHour.format(cra.getDate());
+	      }
+	    };
+
+	    creationColumn.setSortable(true);
+	    crasDataGrid.setColumnWidth(creationColumn, 15, Unit.PCT);
+	    
+	    TextColumn<CRA> periodColumn = new TextColumn<CRA>() {
+		      @Override
+		      public String getValue(CRA cra) {
+		    	  if(null == cra.getCreationDate())
+		    		  return "";
+		    	  return formatFullDate.format(cra.getCreationDate());
+		      }
+		    };
+
+		    periodColumn.setSortable(true);
+		    crasDataGrid.setColumnWidth(periodColumn, 15, Unit.PCT);
+	    
+	    TextColumn<CRA> activityNameColumn = new TextColumn<CRA>() {
+	      @Override
+	      public String getValue(CRA cra) {
+	        return cra.getActivityName();
+	      }
+	    };
+
+	    activityNameColumn.setSortable(true);
+	    crasDataGrid.setColumnWidth(activityNameColumn, 20, Unit.PCT);
+	    
+	    TextColumn<CRA> rectificativeColumn = new TextColumn<CRA>() {
+	      @Override
+	      public String getValue(CRA cra) {
+	        return parseCRAType(cra.getType());
+	      }
+	    };
+
+	    rectificativeColumn.setSortable(true);
+	    crasDataGrid.setColumnWidth(rectificativeColumn, 10, Unit.PCT);
+	    
+	    TextColumn<CRA> geozoneColumn = new TextColumn<CRA>() {
+	      @Override
+	      public String getValue(CRA cra) {
+	    	  return cra.getCccProvince();
+	      }
+	    };
+
+	    geozoneColumn.setSortable(true);
+	    crasDataGrid.setColumnWidth(geozoneColumn, 10, Unit.PCT);
+	    
+	    TextColumn<CRA> typeColumn = new TextColumn<CRA>() {
+	      @Override
+	      public String getValue(CRA cra) {
+	    	  return parseCCCType(cra.getCccType());
+	      }
+
+	    };
+
+	    typeColumn.setSortable(true);
+	    crasDataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
+	    
+	    TextColumn<CRA> cccColumn = new TextColumn<CRA>() {
+	      @Override
+	      public String getValue(CRA cra) {
+	    	  return cra.getCcc();
+	      }
+	    };
+
+	    cccColumn.setSortable(true);
+	    crasDataGrid.setColumnWidth(cccColumn, 10, Unit.PCT);
+	    
+	    ActionCell<CRA> downloadActionCell = new ActionCell<CRA>("", new ActionCell.Delegate<CRA>() {
+
+			@Override
+			public void execute(CRA cra) {
+				String fileDownloadURL = GWT.getModuleBaseURL()+ "/download_cra/"
+			            + "?craBatchId=" + cra.getCode();
+				
+				Window.open(fileDownloadURL, "_blank", null);
+			}
+			
+		});
+	    
+	    Column<CRA, CRA> downloadColumn = new Column<CRA, CRA>(downloadActionCell) {
+
+			@Override
+			public CRA getValue(CRA object) {
+				return object;
+			}
+			
+			@Override
+			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
+				if(null != object) {
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-mail-save\" style=\"border: none !important; height: 20px;\"></button>");
+				}
+			}
+		};
+		
+		downloadColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		crasDataGrid.setColumnWidth(downloadColumn, 5, Unit.PCT);
+	    
+	    ActionCell<CRA> deleteActionCell = new ActionCell<CRA>("", new ActionCell.Delegate<CRA>() {
+
+			@Override
+			public void execute(CRA cra) {
+				mainCRAObjectNew.deteleCRA(cra.getCode(), 
+						s -> {
+							initCRATable();
+						}, 
+						f -> {});
+			}
+			
+		});
+	    
+	    Column<CRA, CRA> deleteColumn = new Column<CRA, CRA>(deleteActionCell) {
+
+			@Override
+			public CRA getValue(CRA object) {
+				return object;
+			}
+			
+			@Override
+			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
+				if(null != object) {
+					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-delete\" style=\"border: none !important; height: 20px;\"></button>");
+				}
+			}
+		};
+		
+		deleteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		crasDataGrid.setColumnWidth(deleteColumn, 5, Unit.PCT);
+		
+	    // Add the columns.
+		crasDataGrid.addColumn(creationColumn, "F. Creacion");
+	    crasDataGrid.addColumn(periodColumn, "P. Liquidacion");
+	    crasDataGrid.addColumn(activityNameColumn, "Actividad");
+	    
+	    crasDataGrid.addColumn(rectificativeColumn, "Tipo CRA");
+	    
+	    crasDataGrid.addColumn(geozoneColumn, "Provincia");
+	    
+	    crasDataGrid.addColumn(typeColumn, "Tipo CCC");
+	    crasDataGrid.addColumn(cccColumn, "CCC");
+	    
+	    crasDataGrid.addColumn(downloadColumn, "");
+	    crasDataGrid.addColumn(deleteColumn, "");
+	      
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 									HEADER STYLES
+	// --------------------------------------------------------------------------------------------
+	
+	public void addStyleToHeader() {
+		cccDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		cccDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		cccDataGrid.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		cccDataGrid.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		cccDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		cccDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		
+		crasDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(8).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+	}
+	
+	private void initCollapseAndDeckPanel() {
+		collapsePanel.setOpen(false);
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 										VARIABLES
+	// --------------------------------------------------------------------------------------------
+		
+	private MainCRAObjectNew mainCRAObjectNew;
+	private MultiSelectionModel<CCCInfo> selectionCCCInfoModel;
+	private MultiSelectionModel<CRA> selectionCraModel;
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat formatFullDateHour = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
+	
+	// --------------------------------------------------------------------------------------------
+	// 										ON MODULE LOAD
+	// --------------------------------------------------------------------------------------------
+	
+	public void onModuleLoad(MainCRAObjectNew mainCRAObjectNew) {
+		this.mainCRAObjectNew = mainCRAObjectNew;
+		showCCCs();
+		this.mainCRAObjectNew.getEnterpriseCCCs(
+				s -> {
+					clearSelectionModel();
+					initListBox();
+					initCCCsTable();
+					initCRATable();
+					
+					Integer year = new Date().getYear() + 1900;
+					Integer month = new Date().getMonth();
+					month--;
+					
+					setSelectedValueLB(this.year, year+"");
+					setSelectedValueLB(this.month, (-1 == month ? 12 : month)+"");
+					
+					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
+					
+					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+					crasPanel.getElement().getStyle().setHeight(500, Unit.PX);
+				}, 
+				f -> {}
+		);
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 										INIT CCCs TABLE
+	// --------------------------------------------------------------------------------------------
+
+	private void initCCCsTable() {		
+		//Reset Selection Model 
+		//selectionCCCInfoModel.clear();
+				
+		//Show buttons
+		this.exportButton.setVisible(true);
+		
+		// Create a data provider.
+	    ListDataProvider<CCCInfo> dataProvider = new ListDataProvider<CCCInfo>();
+
+	    // Connect the table to the data provider.
+	    dataProvider.addDataDisplay(cccDataGrid);
+	    
+	    // Add the data to the data provider, which automatically pushes it to the
+	    // widget.
+	    List<CCCInfo> cccList = dataProvider.getList();
+	    cccList.clear();
+	    
+	    this.cccs = this.mainCRAObjectNew.getEnterpriseCCCs();
+	    
+	    for (CCCInfo cccInfo : this.cccs) {
+	    	cccList.add(cccInfo);
+	    } 
+	    
+	    addSortColums(cccList);
+	    
+		// Set page size
+	    cccDataGrid.setPageSize(cccs.size());
+	    
+	    // Add style to table header
+	    addStyleToHeader();
+	}
+	
+	private void addSortColums(List<CCCInfo> cccInfoList) {
+		ListHandler<CCCInfo> columnSortHandler = new ListHandler<CCCInfo>(cccInfoList);
+	    columnSortHandler.setComparator(cccDataGrid.getColumn(1), new Comparator<CCCInfo>() {
+	          public int compare(CCCInfo o1, CCCInfo o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getEnterpriseDesciption().compareTo(o2.getEnterpriseDesciption()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    columnSortHandler.setComparator(cccDataGrid.getColumn(2), new Comparator<CCCInfo>() {
+	          public int compare(CCCInfo o1, CCCInfo o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getActivityDescription().compareTo(o2.getActivityDescription()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    columnSortHandler.setComparator(cccDataGrid.getColumn(3), new Comparator<CCCInfo>() {
+	          public int compare(CCCInfo o1, CCCInfo o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getGeozone().compareTo(o2.getGeozone()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    
+	    columnSortHandler.setComparator(cccDataGrid.getColumn(4), new Comparator<CCCInfo>() {
+	          public int compare(CCCInfo o1, CCCInfo o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getTypeStr().compareTo(o2.getTypeStr()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    columnSortHandler.setComparator(cccDataGrid.getColumn(5), new Comparator<CCCInfo>() {
+	          public int compare(CCCInfo o1, CCCInfo o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getCcc().compareTo(o2.getCcc()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    
+	    cccDataGrid.addColumnSortHandler(columnSortHandler);
+
+	    // We know that the data is sorted alphabetically by default.
+	    cccDataGrid.getColumn(2).setDefaultSortAscending(false);
+	    cccDataGrid.getColumnSortList().push(cccDataGrid.getColumn(2));   
+	}
+		
+	// --------------------------------------------------------------------------------------------
+	// 										INIT CRA TABLE
+	// --------------------------------------------------------------------------------------------
+
+	private void initCRATable() {		
+		//Reset Selection Model 
+		//selectionCraModel.clear();
+				
+		// Create a data provider.
+	    ListDataProvider<CRA> dataProvider = new ListDataProvider<CRA>();
+
+	    // Connect the table to the data provider.
+	    dataProvider.addDataDisplay(crasDataGrid);
+	    
+	    // Add the data to the data provider, which automatically pushes it to the
+	    // widget.
+	    List<CRA> crasList = dataProvider.getList();
+	    crasList.clear();
+	    
+	    this.cras = this.mainCRAObjectNew.getAllCRAs();
+	    
+	    for (CRA cra : this.cras) {
+	    	crasList.add(cra);
+	    }
+	    
+	    addSortCRAColums(crasList);
+	    
+		// Set page size
+	    crasDataGrid.setPageSize(cras.size());
+	    
+	    // Add style to table header
+	    addStyleToHeader();
+	}
+	
+	private void addSortCRAColums(List<CRA> crasList) {
+		ListHandler<CRA> columnSortHandler = new ListHandler<CRA>(crasList);
+	    columnSortHandler.setComparator(crasDataGrid.getColumn(0), new Comparator<CRA>() {
+	          public int compare(CRA o1, CRA o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getDate().compareTo(o2.getDate()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    columnSortHandler.setComparator(crasDataGrid.getColumn(1), new Comparator<CRA>() {
+	          public int compare(CRA o1, CRA o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getCreationDate().compareTo(o2.getCreationDate()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    columnSortHandler.setComparator(crasDataGrid.getColumn(2), new Comparator<CRA>() {
+	          public int compare(CRA o1, CRA o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getActivityName().compareTo(o2.getActivityName()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    columnSortHandler.setComparator(crasDataGrid.getColumn(3), new Comparator<CRA>() {
+	          public int compare(CRA o1, CRA o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getCccProvince().compareTo(o2.getCccProvince()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    
+	    columnSortHandler.setComparator(crasDataGrid.getColumn(4), new Comparator<CRA>() {
+	          public int compare(CRA o1, CRA o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getCccType().compareTo(o2.getCccType()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    columnSortHandler.setComparator(crasDataGrid.getColumn(5), new Comparator<CRA>() {
+	          public int compare(CRA o1, CRA o2) {
+	            if (o1 == o2) {
+	              return 0;
+	            }
+
+	            if (o1 != null) {
+	              return (o2 != null) ? o1.getCcc().compareTo(o2.getCcc()) : 1;
+	            }
+	            return -1;
+	          }
+	        });
+	    
+	    
+	    crasDataGrid.addColumnSortHandler(columnSortHandler);
+
+	    // We know that the data is sorted alphabetically by default.
+	    crasDataGrid.getColumn(0).setDefaultSortAscending(false);
+	    crasDataGrid.getColumnSortList().push(crasDataGrid.getColumn(0));   
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 										UI HANDLERS
+	// --------------------------------------------------------------------------------------------
+	
+	@UiHandler("listButton")
+	public void onListButton(ClickEvent event) {
+		mainCRAObjectNew.getCRAs(
+				s -> {
+					showCRAS();
+					exportButton.setVisible(false);
+					listButton.setVisible(false);
+					newCRAButton.setVisible(true);
+					initCRATable();
+				}, 
+				f -> {}
+		);
+	}
+	
+	@UiHandler("newCRAButton")
+	public void onNewCRAButton(ClickEvent event) {
+		clearSelectionModel();
+		showCCCs();
+		enterpriseSB.setText("");
+		this.mainCRAObjectNew.resetEnterpriseCCCList();
+		exportButton.setVisible(true);
+		listButton.setVisible(true);
+		newCRAButton.setVisible(false);
+		initCCCsTable();
+	}
+	
+	@UiHandler("exportButton")
+	public void onExportButton(ClickEvent event) {
+		if(selectionCCCInfoModel.getSelectedSet().size() > 0) {
+			ArrayList<String> cccList = new ArrayList<String>();
+			ArrayList<Integer> cccIdList = new ArrayList<Integer>();
+			
+			for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
+				cccList.add(cccInfo.getCcc());
+				cccIdList.add(cccInfo.getCccId());
+			}
+			
+			ArrayList<CCCInfo>  cccsSelected = new ArrayList<CCCInfo>();
+			cccsSelected.addAll(selectionCCCInfoModel.getSelectedSet());
+			Integer cccId = cccsSelected.get(0).getCccId();
+			
+			Integer yearInt = Integer.parseInt(year.getSelectedValue()) - 1900;
+			Integer monthInt = month.getSelectedIndex();
+			Date findingDate = new Date(yearInt, monthInt, 1);
+			
+			
+			if(checkRectificavo()) {
+				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
+						s -> {
+							if(StringUtils.isBlank(s)) {
+								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccId, "N",
+										v -> {
+											showCRAS();
+											initCRATable();
+										}, 
+										f -> {});
+							}else {
+								AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", s) {
+									
+									@Override
+									protected void onAccept() {
+										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccId, "N",
+												v -> {
+													showCRAS();
+													initCRATable();
+												}, 
+												f -> {});
+									}
+								};
+								dialog.center();
+								dialog.show();
+							}
+						}, f ->{});
+			} else {
+				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
+					
+					@Override
+					protected void onAccept() {
+						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccId, "R",
+								v -> {
+									WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
+											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
+									warning.center();
+									warning.show();
+									
+									showCRAS();
+									initCRATable();
+								}, 
+								f -> {});
+					}
+				};
+				
+				dialog.center();
+				dialog.show();
+			}
+		}
+	}
+	
+	@UiHandler("typeList")
+	public void onTypeListChange(ChangeEvent event) {
+		if(0 == typeList.getSelectedIndex()) {
+			this.enterpriseSB.setValue("");
+			this.mainCRAObjectNew.resetEnterpriseCCCList();
+			initCCCsTable();
+		} else {
+			String type = typeList.getSelectedValue();
+			mainCRAObjectNew.filterEnterpriseCCCListByType(type);
+			initCCCsTable();
+		}
+	}
+	
+	@UiHandler("geozoneList")
+	public void onGeozoneListChange(ChangeEvent event) {
+		if(0 == geozoneList.getSelectedIndex()) {
+			this.enterpriseSB.setValue("");
+			this.mainCRAObjectNew.resetEnterpriseCCCList();
+			initCCCsTable();
+		} else {
+			String geozoneCode = geozoneList.getSelectedValue();
+			mainCRAObjectNew.filterEnterpriseCCCListByGeozone(geozoneCode);
+			initCCCsTable();
+		}
+	}
+	
+	@UiHandler("collapsePanel")
+	public void onOpenPanel(OpenEvent<DisclosurePanel> event) {
+		mainTablePanel.getElement().getStyle().setHeight(575, Unit.PX);
+		cccDataGrid.redraw();
+	}
+	
+	@UiHandler("collapsePanel")
+	public void onClosePanel(CloseEvent<DisclosurePanel> event) {
+		mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
+		cccDataGrid.redraw();
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 										AUX METHODS
+	// --------------------------------------------------------------------------------------------
+	
+	private void initListBox() {
+		//Month
+		month.clear();
+		month.addItem("Enero", "0");
+		month.addItem("Febrero", "1");
+		month.addItem("Marzo", "2");
+		month.addItem("Abril", "3");
+		month.addItem("Mayo", "4");
+		month.addItem("Junio", "5");
+		month.addItem("Julio", "6");
+		month.addItem("Agosto", "7");
+		month.addItem("Septiembre", "8");
+		month.addItem("Octubre", "9");
+		month.addItem("Noviembre", "10");
+		month.addItem("Diciembre", "11");
+		
+		
+		// Year
+		Integer actualYear = new Date().getYear() + 1900;
+		year.clear();
+		year.addItem((actualYear-2)+"", (actualYear-2)+"");
+		year.addItem((actualYear-1)+"", (actualYear-1)+"");
+		year.addItem((actualYear)+"", (actualYear)+"");
+		
+		// Type List
+		typeList.clear();
+		typeList.addItem("-", "-1");
+		typeList.addItem("Principal", "0111");
+		typeList.addItem("Formacion y aprendizaje", "0111");
+		typeList.addItem("Aprendizaje", "0111");
+		typeList.addItem("Representantes de comercio", "0111");
+		typeList.addItem("Asimilados R.General", "0111");
+		typeList.addItem("Becarios", "0111");
+		typeList.addItem("Emploead@s de hogar", "0138");
+		typeList.addItem("Trabajadores cuenta ajena agrarios", "0163");
+		typeList.addItem("Artistas", "0112");
+		typeList.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
+		typeList.addStyleName("aon-selectOneMenu");
+		
+		// Enteprise List
+		List<String> enterprises = new ArrayList<>(mainCRAObjectNew.getEnterprisesMap().values());
+		List<String> enterprisesSuggest = new ArrayList<String>();
+		for(String enterprise : enterprises)
+			enterprisesSuggest.add(enterprise+"");
+		
+		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) enterpriseSB.getSuggestOracle();
+		orclEnterprise.addAll(enterprisesSuggest);
+		enterpriseSB.setAutoSelectEnabled(false);
+		
+		enterpriseSB.addKeyUpHandler(e-> {
+			String value = enterpriseSB.getValue();
+			if(StringUtils.isBlank(value) || value.length() < 3) {
+				mainCRAObjectNew.resetEnterpriseCCCList();
+			} else {
+				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+			}
+			initCCCsTable();
+		});
+		
+		enterpriseSB.addSelectionHandler(e -> {
+			String value = enterpriseSB.getValue();
+			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+			initCCCsTable();
+		});
+		
+		//Geozone
+		geozoneList.clear();
+		geozoneList.addItem("-", "-1");
+		for(Entry<String, String> province : ProvinceContract.getProvinces().entrySet()) {
+			geozoneList.addItem(province.getValue(), province.getKey());
+		}
+		
+	}
+
+	private String parseCCCType(String typeStr) {
+		switch (typeStr) {
+			case "0111":
+				return "Principal";
+			case "0138":
+				return "Emploead@s de hogar";
+			case "0163":
+				return "Trabajadores cuenta ajena agrarios";
+			case "0112":
+				return "Artistas";
+			default:
+				return "Principal";
+		}
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	private void showCCCs() {
+		mainContainer.getElement().getStyle().clearDisplay();
+		crasContainer.getElement().getStyle().setDisplay(Display.NONE);
+		
+		exportButton.setEnabled(false);
+		exportButton.setVisible(true);
+		listButton.setVisible(true);
+		newCRAButton.setVisible(false);
+	}
+	
+	private void showCRAS() {
+		crasContainer.getElement().getStyle().clearDisplay();
+		mainContainer.getElement().getStyle().setDisplay(Display.NONE);
+		
+		exportButton.setEnabled(false);
+		exportButton.setVisible(false);
+		listButton.setVisible(false);
+		newCRAButton.setVisible(true);
+	}
+	
+	private String parseCRAType(String type) {
+		switch (type) {
+		case "N":
+			return "-";
+		case "R":
+			return "RECTIFICATIVO";
+		default:
+			return "-";
+		}
+	}
+	
+	public void clearSelectionModel() {
+		this.selectionCCCInfoModel.clear();
+		this.selectionCraModel.clear();
+	}
+	
+	private boolean checkRectificavo() {
+		Integer yearInt = Integer.parseInt(year.getSelectedValue()) - 1900;
+		Integer monthInt = month.getSelectedIndex();
+		Date findingDate = new Date(yearInt, monthInt, 1);
+		
+		ArrayList<String> cccList = new ArrayList<String>();
+		for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
+			cccList.add(cccInfo.getCcc());
+		}
+		
+		for(CRA cra : mainCRAObjectNew.getAllCRAs()) {
+			if(null == cra.getCreationDate())
+				continue;
+			
+			Date creationDate = DateUtils.copyDateOnly(cra.getCreationDate());
+			DateUtils.resetTime(creationDate);
+			
+			Date findDate = DateUtils.copyDateOnly(findingDate);
+			DateUtils.resetTime(findDate);
+			
+			if(cccList.contains(cra.getCcc().substring(4)) && creationDate.equals(findDate)) {
+				return false;
+			}
+			
+		}
+		return true;
+	}
+
+}

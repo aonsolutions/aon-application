@@ -1,0 +1,208 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
+
+	<ui:with field='res'
+		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainCRANew.MyStyle">
+		/*UI Style*/
+		
+		.suggestBox{
+			width: 100%;
+			margin: 3px;
+			margin-left: 11px;
+		}
+		
+		/*XML Style*/
+	    
+	    .tableStylePanel{
+			/*margin: auto;*/
+			height: 100%;
+		    width: 100%;
+		}
+		
+		.widthAll{
+			width: 100%
+		}
+		
+		.pl20{
+			padding-left: 20px;
+		}
+		
+		.ml12{
+			margin-left: 12px;
+		}
+
+		.ml8{
+			margin-left: 8px;
+		}
+		
+		.hide{
+			display: none;
+		}
+		
+		/*New Styles*/
+		.pt9{
+			padding-top: 9px;
+		}
+		
+		.pt4{
+			padding-top: 4px;
+		}
+		
+		.ml9{
+			margin-left: 9px;
+		}
+		
+		.mt10{
+			margin-top: 10px;
+		}
+		
+		.p5{
+			padding: 5px;
+		}
+		
+		.styleBorder{
+			border-style: solid;
+			border-width: 1px; 
+			margin: 15px 2px 15px 0px;
+			width: 99%;
+		}
+		
+		.headerStyle{
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+		
+		.paddingTable{
+			padding: 0px 0px 0px 10px;
+		}
+		
+		.mr10{
+			margin-right: 10px;	
+		}
+		
+		.ml20{
+			margin-left: 20px;	
+		}
+		
+		.w300{
+			width: 300px;
+		}
+		
+		.mb0{
+			margin-bottom: 0 !important;
+		}
+	</ui:style>
+
+	<g:DockLayoutPanel unit="PX">
+		<!-- INIT HEADER MENU -->
+		<g:north size="25">
+			<g:FlowPanel styleName="aon-finding-title-toolbar">
+				<g:HorizontalPanel >
+					<g:HTMLPanel styleName="aon-finding-title">
+						<g:HTMLPanel styleName="aon-finding-title-internal" >
+							<g:Label styleName="aon-outputText">CRA - Conceptos Retributivos Abonados</g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="aon-finding-subtitle">
+						<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
+							<g:Label styleName="aon-outputText" text=" "/> 
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HorizontalPanel styleName="aon-finding-toolbar">
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+							<g:Button ui:field='exportButton' styleName='aon-finding-toolbar-item aon-icon-accept {style.pl20}' text=" GENERAR CRA"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+							<g:Button ui:field='listButton' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTAR CRA"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+							<g:Button ui:field='newCRAButton' styleName='aon-finding-toolbar-item aon-icon-reset {style.pl20}' text=" NUEVO"/>
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+				</g:HorizontalPanel>
+			</g:FlowPanel>
+		</g:north>
+		<!-- END HEADER MENU -->
+		<g:center>
+			<g:HTMLPanel>
+				<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll}">
+					<g:ScrollPanel height="100%" styleName="{style.p5}">
+						<g:VerticalPanel styleName="{style.tableStylePanel}">
+						
+							<g:HTMLPanel styleName="aon-panelGrid-search">
+								<g:HTMLPanel styleName="aon-panelGrid-search-info">
+									<g:Label styleName="aon-panelGrid-search-info-internal">PERIODO DE LIQUIDACION</g:Label>
+								</g:HTMLPanel>
+								<g:HorizontalPanel styleName="{style.ml20}">
+									<g:ListBox ui:field="month" styleName="{style.mr10}"></g:ListBox>
+									<g:ListBox ui:field="year"></g:ListBox>
+								</g:HorizontalPanel>
+							</g:HTMLPanel>
+							
+							<g:HTMLPanel styleName="aon-panelGrid-search">
+								<g:HTMLPanel styleName="aon-panelGrid-search-info">
+									<g:Label styleName="aon-panelGrid-search-info-internal">FILTRAR BUSQUEDA</g:Label>
+								</g:HTMLPanel>
+								<g:DisclosurePanel ui:field="collapsePanel" styleName="{style.widthAll}">
+									<g:header>FILTRAR BUSQUEDA</g:header>
+									<g:HTMLPanel>
+										<table class="aon-panelGrid">
+											<tr>
+												<td class="aon-panelGrid-odd">
+													<g:Label styleName="aon-outputLabel {style.pt9}">Empresa</g:Label>
+												</td>
+												<td class="aon-panelGrid-even">
+													<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w300}" ui:field="enterpriseSB"></g:SuggestBox>
+												</td>
+											</tr>
+											<tr>
+												<td class="aon-panelGrid-odd">
+													<g:Label styleName="aon-outputLabel  {style.pt4}">Tipo CCC</g:Label>
+												</td>
+												<td class="aon-panelGrid-even" colspan="2">
+													<g:ListBox styleName="aon-selectOneMenu {style.ml9}" ui:field="typeList"></g:ListBox>
+												</td>
+											</tr>
+											<tr>
+												<td class="aon-panelGrid-odd">
+													<g:Label styleName="aon-outputLabel  {style.pt4}">Provincia</g:Label>
+												</td>
+												<td class="aon-panelGrid-even" colspan="2">
+													<g:ListBox styleName="aon-selectOneMenu {style.ml9}" ui:field="geozoneList"></g:ListBox>
+												</td>
+											</tr>
+										</table>
+									</g:HTMLPanel>
+								</g:DisclosurePanel>
+							</g:HTMLPanel>
+						
+						 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
+						 		<c:DataGrid ui:field="cccDataGrid"></c:DataGrid>
+						 	</g:HTMLPanel>
+					 		
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="crasContainer" styleName="{style.widthAll}">
+					<g:ScrollPanel height="100%" styleName="{style.p5}">
+						<g:VerticalPanel styleName="{style.tableStylePanel}">
+							<g:HTMLPanel styleName="aon-panelGrid-search-info {style.mb0}">
+								<g:Label styleName="aon-panelGrid-search-info-internal">HISTORIAL CRA</g:Label>
+							</g:HTMLPanel>
+							<g:HTMLPanel ui:field="crasPanel" styleName="{style.mt10}">
+						 		<c:DataGrid ui:field="crasDataGrid"></c:DataGrid>
+						 	</g:HTMLPanel>
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder> 
+
