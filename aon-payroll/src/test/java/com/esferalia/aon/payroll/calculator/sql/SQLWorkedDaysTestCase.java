@@ -242,7 +242,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 				agreementHours += 8;
 		}
 		
-		if ( get(getToday(), DAY_OF_MONTH) > 1 )
+		if (workedHours == 0 )
+			;//testWorkedDays(contract, 4.0/40.00, null, workDays * ( workedHours / agreementHours ));
+		else if ( get(getToday(), DAY_OF_MONTH) > 1 )
 			testWorkedDays(contract, 4.0/40.00, null, workDays * ( workedHours / agreementHours ));
 		else // whole month so  
 			testWorkedDays(contract, 4.0/40.00, null, workDays * ( 4.00 / 40.00 ));
@@ -404,7 +406,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 		}
 		double workDays = getMax(getToday(), DAY_OF_MONTH) - get(getToday(), DAY_OF_MONTH) + 1;
 		
-		if ( get(getToday(), DAY_OF_MONTH) > 1)
+		if (workedHours == 0.00 )
+			;//testWorkedDays(contract, 4.0/40.00, null, workDays * ( workedHours / agreementHours ));
+		else if ( get(getToday(), DAY_OF_MONTH) > 1)
 			testWorkedDays(contract, 5.00/39.00, null, workDays * ( workedHours / agreementHours ) );
 		else // whole month
 			testWorkedDays(contract, 5.00/39.00, null, workDays * ( 5.00/39.00 ) );
@@ -1970,7 +1974,9 @@ public class SQLWorkedDaysTestCase extends AbstractSQLTestCase {
 //							.getStart(), DAY_OF_MONTH)
 //							/ monthDays : 1.00);
 		}
-		System.out.printf("%f == %f \r\n", values, value);
+
+		
+		System.out.printf("%f == %f \r\n", values, value );
 
 		Assert.assertEquals(start, workedDays.get(0).getPeriod().getStart());
 		Assert.assertEquals(end, workedDays.get(months - 1).getPeriod()

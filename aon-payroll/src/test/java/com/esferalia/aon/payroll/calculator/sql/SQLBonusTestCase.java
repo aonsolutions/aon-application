@@ -56,6 +56,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.BonusType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
@@ -93,7 +94,8 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 			new String[] { 
 					"1000.00 * DIAS_TRABAJADOS / DIAS_MES",
 					"500.00*DIAS_TRABAJADOS/DIAS_MES",
-					"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00"}, 
+					"TRACE('DIAS_TRABAJADOS=%f\r\n',DIAS_TRABAJADOS);0.00"
+			}, 
 			new String[] {
 					"TRACE('BASE_CGC = %f\r\n', BASE_CGC );BASE_CGC * 0.10", 
 					"BASE_CGP * 0.05",
@@ -157,7 +159,11 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 						getLastDayOfMonth(getToday()), contract));
 
 		int monthDays = getMax(getToday(), Calendar.DAY_OF_MONTH);
-		int workDays = monthDays - (get(getToday(), Calendar.DAY_OF_MONTH) - 1);
+		long workDays = new Period(getToday(), getLastDayOfMonth(getToday())).daysStream()
+				.filter(d -> d.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY )
+				.filter(d -> d.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY ).count();
+		workDays = workDays > 0 ? monthDays - (get(getToday(), Calendar.DAY_OF_MONTH) - 1) : workDays;
+		
 		Assert.assertEquals((1000.00 * workDays / monthDays * 23.60 / 100),
 				salary.getTotalEnterprise(), DELTA);
 
@@ -357,6 +363,7 @@ public class SQLBonusTestCase extends AbstractSQLTestCase {
 				contract);
 		salary = calculator.calculate(ctx);
 
+		workDays = monthDays - (get(getToday(), Calendar.DAY_OF_MONTH) - 1);
 		monthDays = getMax(getToday(), Calendar.DAY_OF_MONTH);
 		Assert.assertEquals((750.00 - 250.00) * workDays / monthDays * 23.60
 				/ 100, salary.getTotalEnterprise(), DELTA);
