@@ -19,9 +19,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.Properties.CompanyProperties;
-import com.esferalia.aon.occam.api.model.security.Scope;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.security.UserScope;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "CompanyServlet32", urlPatterns = {
@@ -60,21 +57,7 @@ public class CompanyServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
 		if(pathInfo.length > 3){				
 			JSONObject object = new JSONObject();
-			if("deleteScope".equals(pathInfo[3])){
-				Integer id = Integer.parseInt(pathInfo[4]);
-				Company cp = AON.getCompany(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
-				Domain d = AON.getDomain(domainName, cp.getDomain(), userName);
-				final Scope scope = AON.getScope(domain.getName(), domain.getId(), userName, d.getScope());
-				d.setScope(null);
-				AON.updateDomainScope(d.getName(), cp.getDomain(), userName, d);
-
-				Domain dom = AON.getDomain(domain.getName(), domain.getId(), userName, f -> f.getScopeProperty().eq(scope.getId()));
-				if(dom == null || dom.getId() == null) {
-					AON.deleteUserScope(domain.getName(), domain.getId(), userName, scope.getId());					
-					AON.deleteScope(domain.getName(), domain.getId(), userName, scope.getId());
-				}
-			} 
-			
+						
 			resp.setContentType("application/json;charset=UTF-8");
 			Utils.addCorsHeader(resp);
 			PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
@@ -92,33 +75,15 @@ public class CompanyServlet extends HttpServlet{
 		String domainName = pathInfo[1]; 
 		String userName = pathInfo[2];
 		Domain domain = AON.getDomain(domainName, 1, userName, f->f.getNameProperty().eq(domainName));
-		User user = AON.getUser(domain.getName(), domain.getId(), userName);
+		JSONObject json = Utils.getRequestJSON(req);
 		if(pathInfo.length > 3){				
 			JSONObject object = new JSONObject();
 			if("generateScope".equals(pathInfo[3])){
-				Integer id = Integer.parseInt(pathInfo[4]);
+				Integer id = json.getInt("company");
 				Company cp = AON.getCompany(domain.getName(), domain.getId(), userName, f -> f.getIdProperty().eq(id));
 				Domain d = AON.getDomain(domainName, cp.getDomain(), userName);
-				if(cp.getDocument() != null) {
-					Scope scope = AON.getScopeStream(domain.getName(), domain.getId(), userName, 
-						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDescriptionProperty().eq(cp.getDocument()))).findFirst().orElse(null);
-					if(scope == null) {
-						scope = AON.insertScope(domain.getName(), domain.getId(), userName, new Scope()
-								.setDomain(domain.getId())
-								.setDescription(cp.getDocument()));
-					}
-					UserScope us = AON.getUserScope(domain.getName(), domain.getId(), user.getLogin(), user.getId(), scope.getId());
-					if(us == null || us.getId() == null) {
-						AON.insertUserScope(domain.getName(),domain.getId(), user.getLogin(), new UserScope()
-								.setDomain(domain.getId())
-								.setScope(scope.getId())
-								.setUserId(user.getId()));
-					}
-					d.setScope(scope.getId());
-					AON.updateDomainScope(d.getName(), cp.getDomain(), userName, d);
-					AON.getWorkplaceList(d.getName(), d.getId(), userName, f -> f.getDomainProperty().eq(d.getId()))
-						.stream().forEach(wp -> AON.updateWorkplace(d.getName(), d.getId(), userName, wp.setScope(d.getScope())));
-				}
+				d.setScope(json.getInt("scope"));
+				AON.updateDomainScope(d.getName(), cp.getDomain(), userName, d);
 			} 
 			
 			resp.setContentType("application/json;charset=UTF-8");

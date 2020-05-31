@@ -1,12 +1,15 @@
 package com.esferalia.aon.gwt.template.client.scope;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.common.JsCompany;
+import com.esferalia.aon.gwt.api.client.incidence.JsObject;
+import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
@@ -38,12 +41,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
+
+import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class ScopeGrid extends ResizeComposite implements RequiresResize {
 	
@@ -183,20 +189,9 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 	        	public void render(com.google.gwt.cell.client.Cell.Context context,
 	        			JsCompany value, SafeHtmlBuilder sb) {
 	        		
-//	        		if(value.getScope().getId() != null && text.equals("edit")){
-//        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-edit\" tabindex=\"-1\">");
-//						sb.appendHtmlConstant("</button>");
-//	        		}
 	        		
-	        		if(value.getScope().getId() != null && text.equals("delete")){
-        				sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-delete\" tabindex=\"-1\">");
-						sb.appendHtmlConstant("</button>");
-	        		}
-	        		
-	        		if(value.getScope().getId() == null && text.equals("new")){
-	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-reset\" tabindex=\"-1\">");
-						sb.appendHtmlConstant("</button>");		
-	        		}
+	        		sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-icon-edit\" tabindex=\"-1\">");
+					sb.appendHtmlConstant("</button>");		
 	        		
 	        	}
 	        };
@@ -222,24 +217,6 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 	private void initTableColumns(final MultiSelectionModel<JsCompany> selectionModel, ListHandler<JsCompany> sortHandler) {
 	
 		List<HasCell<JsCompany, ?>> cells = new LinkedList<HasCell<JsCompany, ?>>();
-		
-		cells.add(new ActionHasCell("edit", new Delegate<JsCompany>() {
-
-	        @Override
-	        public void execute(JsCompany object) {
-	           // EDIT CODE
-	        	edit(object);
-	        }
-	    }));
-		
-		cells.add(new ActionHasCell("delete", new Delegate<JsCompany>() {
-
-	        @Override
-	        public void execute(JsCompany object) {
-	           // EDIT CODE
-	        	delete(object);
-	        }
-	    }));
 		
 	    cells.add(new ActionHasCell("new", new Delegate<JsCompany>() {
 
@@ -334,37 +311,66 @@ public class ScopeGrid extends ResizeComposite implements RequiresResize {
 
 	}
 	
-	private void edit(JsCompany object) {
-
-	}
-	
-	private void delete(JsCompany object) {
-		getAPI().getCommon().deleteCompanyScope(object.getId(), new AsyncCallback<JSON<JsCompany>>() {
-			
-			@Override
-			public void onSuccess(JSON<JsCompany> result) {
-				parent.gridContent(true);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				parent.gridContent(true);
-			}
-		});
-	}
-	
 	private void nuevo(JsCompany object) {	
-		getAPI().getCommon().generateCompanyScope(object.getId(), new AsyncCallback<JSON<JsCompany>>() {
+		AonComboBox scopeBox = new AonComboBox();
+		scopeBox.setWidth("100%");
+		scopeBox.setLabel("\u00c1mbito");
+		scopeBox.setItemLabelPath("name");
+		scopeBox.setItemValuePath("name");
+		getAPI().getCommon().getScopes( new HashMap<String, LinkedList<String>>() ,new AsyncCallback<JSON<JsObject>>() {
 			
 			@Override
-			public void onSuccess(JSON<JsCompany> result) {
-				parent.gridContent(true);
+			public void onSuccess(JSON<JsObject> result) {
+				scopeBox.setItems(result.getData());
+				if(object.getScope() != null) {
+					LinkedList<JsObject> list = result.getData().toLinkedList();
+					for(Integer i = 0; i < list.size(); i++) {
+						JsObject scope = list.get(i);
+						if(scope.getId() == object.getScope().getId()) {
+							scopeBox.setValue(scope.getName());
+						}
+					}
+				}
+
 			}
 			
-			@Override
-			public void onFailure(Throwable caught) {
-				
-			}
+			@Override public void onFailure(Throwable caught) {}
 		});
+		
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+		vp.add(scopeBox);
+		AonDialog dialog = new AonDialog("Asignar \u00c1mbito", vp) {
+			
+			@Override protected void onCancel() {
+				hide();
+			}
+			
+			@Override
+			protected void onAccept() {
+				JsObject scope = (JsObject) scopeBox.getSelectedItem();
+				String requestData = "{\"company\":" + object.getId() + ","
+						+ "\"scope\":" + scope.getId() + "}";
+
+				getAPI().getCommon().generateCompanyScope(requestData, new AsyncCallback<JSON<JsCompany>>() {
+					
+					@Override
+					public void onSuccess(JSON<JsCompany> result) {
+						hide();
+						parent.gridContent(true);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						hide();
+					}
+				});
+
+			}
+		};
+		dialog.setAutoHideEnabled(true);
+		dialog.addAutoHidePartner(scopeBox.getElementById("overlay"));
+		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.center();
 	}
 }

@@ -39,9 +39,9 @@ public class Common extends Methods{
 		get(url, callback);
 	}
 	
-	public void generateCompanyScope(Integer id, AsyncCallback<JSON<JsCompany>> callback){
-		String url = getUrl() + "ms/company/" + getDomainName() + "/" + getUserName() + "/generateScope/" + id;
-		post(url, "", callback);
+	public void generateCompanyScope(String requestData, AsyncCallback<JSON<JsCompany>> callback){
+		String url = getUrl() + "ms/company/" + getDomainName() + "/" + getUserName() + "/generateScope/";
+		post(url, requestData, callback);
 	}
 	
 	public void deleteCompanyScope(Integer id, AsyncCallback<JSON<JsCompany>> callback){
