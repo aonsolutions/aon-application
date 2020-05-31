@@ -6,11 +6,15 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.jooq.DSLContext;
@@ -20,6 +24,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.jooq.tables.records.CraBatchRecord;
 
@@ -33,6 +38,47 @@ public class JooqCRA {
 			SETTINGS.setRenderSchema(false);
 		}
 		return SETTINGS;
+	}
+	
+	public static String checkCreateNewCRA(Connection conn, long findingDate, ArrayList<Integer> cccList) {
+		return checkCreateNewCRA(findingDate, cccList, DSL.using(conn, getDefaultSettings()));
+	}
+
+	private static String checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, DSLContext dslContext) {
+		Date startDate = new Date(findingDate);
+		DateUtils.resetTime(startDate);
+		
+		Date endDate = DateUtils.getLastDayOfMonth(startDate);
+		DateUtils.resetTime(endDate);
+		
+		java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
+		java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
+		
+		Result<Record> contractsActiveRecords = dslContext.select().from(CONTRACT)
+			.where(
+					CONTRACT.END_DATE.isNull()
+					.or(CONTRACT.END_DATE.ge(endDateSQL)))
+			.and(CONTRACT.ENTERPRISE_CCC.in(cccList))
+			.fetch();
+		
+		for(Record contractRecord : contractsActiveRecords) {
+			Integer contractId = contractRecord.get(CONTRACT.ID);
+			Result<Record> salariesRecords = dslContext.select().from(SALARY)
+				.where(SALARY.CONTRACT.eq(contractId))
+				.and(SALARY.START_DATE.ge(startDateSQL))
+				.and(SALARY.END_DATE.le(endDateSQL))
+				.fetch();
+			
+			if(salariesRecords.isEmpty()) {
+				Integer personId = contractRecord.get(CONTRACT.PERSON);
+				Record personRecord = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOne();
+				return personRecord.get(PERSON.NAME) + " " + personRecord.get(PERSON.FIRST_SURNAME) 
+				+ " no tiene n" + String.valueOf("\u00F3") + "mina emitida para este perido. " + String.valueOf("\u00BF") + "Desea continuar?";
+			}
+				 
+		}
+		
+		return "";
 	}
 
 	// ********************************************************************************************************************************************
@@ -59,6 +105,7 @@ public class JooqCRA {
 			
 			cra.setCode(craBatch.get(CRA_BATCH.ID));
 			cra.setStatus(craBatch.get(CRA_BATCH.STATUS));
+			cra.setDate(craBatch.get(CRA_BATCH.DATE));
 			cra.setCreationDate(craBatch.get(CRA_BATCH.OUTCOME_FILE_DATE));
 			cra.setType(craBatch.get(CRA_BATCH.COMMUNICATION_ID));
 			
@@ -198,7 +245,7 @@ public class JooqCRA {
 							dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
 								.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(Integer.parseInt(_cccId)))
 					)).and(CRA_BATCH.DOMAIN.eq(_domainId))
-					.and(CRA_BATCH.DATE.eq(new Timestamp(startDate.getTime())))
+					.and(CRA_BATCH.OUTCOME_FILE_DATE.eq(new Timestamp(startDate.getTime())))
 					.fetch();
 			
 			byte[] data = null;
@@ -238,9 +285,11 @@ public class JooqCRA {
 			System.out.println("RESULTADO FINAL");
 			System.out.println(newCRA);
 			
+			Date currentDate = new Date();
+			
 			CraBatchRecord rectificativeCRABatchRecord = dslContext.insertInto(CRA_BATCH)
 					.set(CRA_BATCH.DOMAIN, _domainId)
-					.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
+					.set(CRA_BATCH.DATE, new Timestamp(currentDate.getTime()))
 					.set(CRA_BATCH.STATUS, (byte)1)
 					.set(CRA_BATCH.COMMUNICATION_ID, craDocumentType)
 					.set(CRA_BATCH.INCOME_FILE, (byte[])null)
@@ -262,9 +311,11 @@ public class JooqCRA {
 			dslContext.delete(CRA_BATCH).where(CRA_BATCH.ID.in(oldCraBatchIds)).execute();
 		}
 		
+		Date currentDate = new Date();
+		
 		CraBatchRecord craBatchRecord = dslContext.insertInto(CRA_BATCH)
 			.set(CRA_BATCH.DOMAIN, _domainId)
-			.set(CRA_BATCH.DATE, new Timestamp(startDate.getTime()))
+			.set(CRA_BATCH.DATE, new Timestamp(currentDate.getTime()))
 			.set(CRA_BATCH.STATUS, (byte)1)
 			.set(CRA_BATCH.COMMUNICATION_ID, "N")
 			.set(CRA_BATCH.INCOME_FILE, (byte[])null)
@@ -297,5 +348,7 @@ public class JooqCRA {
 		}
 		return resultStr;
 	}
+
+	
 	
 }

@@ -2,16 +2,32 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
+import com.google.gwt.view.client.ProvidesKey;
+
 public class CCCInfo implements Serializable{
 	
 	private String ccc;
 	private String cccRegimeCode;
 	private String cccAccount;
 	private Byte type;
+	private String typeStr;
 	private String geozone;
 	private Integer activityId;
+	private String activityDescription;
 	private Integer cccId;
 	private Boolean useByContracts;
+	private String enterpriseDesciption;
+	private Integer enterpriseId;
+	
+	/**
+     * The key provider that provides the unique ID of a contact.
+     */
+    public static final ProvidesKey<CCCInfo> KEY_PROVIDER = new ProvidesKey<CCCInfo>() {
+      @Override
+      public Object getKey(CCCInfo item) {
+        return item == null ? null : item.getCccId();
+      }
+    };
 	
 	public CCCInfo(){
 		super();
@@ -109,5 +125,39 @@ public class CCCInfo implements Serializable{
 	public void setUseByContracts(Boolean useByContracts) {
 		this.useByContracts = useByContracts;
 	}
+
+	public String getActivityDescription() {
+		return activityDescription;
+	}
+
+	public void setActivityDescription(String activityDescription) {
+		this.activityDescription = activityDescription;
+	}
+
+	public String getEnterpriseDesciption() {
+		return enterpriseDesciption;
+	}
+
+	public void setEnterpriseDesciption(String enterpriseDesciption) {
+		this.enterpriseDesciption = enterpriseDesciption;
+	}
+
+	public String getTypeStr() {
+		return typeStr;
+	}
+
+	public void setTypeStr(String typeStr) {
+		this.typeStr = typeStr;
+	}
+
+	public Integer getEnterpriseId() {
+		return enterpriseId;
+	}
+
+	public void setEnterpriseId(Integer enterpriseId) {
+		this.enterpriseId = enterpriseId;
+	}
+	
+	
 	
 }

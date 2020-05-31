@@ -147,5 +147,7 @@ public interface EnterprisesService extends RemoteService {
 
 	String sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco, String bodyHTML,
 			String completeURL);
+
+	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
 	
 }

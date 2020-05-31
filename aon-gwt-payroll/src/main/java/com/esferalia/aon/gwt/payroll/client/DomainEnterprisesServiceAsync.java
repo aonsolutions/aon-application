@@ -207,6 +207,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.createNewCRA(getCurrentDomainName(), findingDate, cccList, cccId, type, asyncCallback);
 	}
 	
+	public void checkCreateNewCRA(long findingDate, ArrayList<Integer> cccList, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.checkCreateNewCRA(getCurrentDomainName(), findingDate, cccList, asyncCallback);
+	}
+	
 	public void deleteCRA(Integer code, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.deleteCRA(getCurrentDomainName(), code, asyncCallback);
 	}
@@ -273,5 +277,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }

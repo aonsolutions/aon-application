@@ -1775,6 +1775,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public String createNewCRA(String domainName, long findingDate, List<String> cccList, Integer cccId, String craType) {
 		Connection connection = null;
+		
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
@@ -2050,6 +2051,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				}
 			}
 		}
+	}
+
+	@Override
+	public String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList) {
+		try(Connection connection = AonServletUtils.getConnection(currentDomainName)){
+			return JooqCRA.checkCreateNewCRA(connection, findingDate, cccList);
+		}catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} 
 	}
 	
 	

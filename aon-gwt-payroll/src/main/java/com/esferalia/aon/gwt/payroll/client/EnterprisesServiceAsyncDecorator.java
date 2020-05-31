@@ -345,6 +345,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.createNewCRA(domainName, findingDate, ccc, cccId, type, new AsyncCallbackWrapper<String>(callback));
 	}
+	
+	@Override
+	public void checkCreateNewCRA(String domainName, long findingDate, ArrayList<Integer> cccList, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.checkCreateNewCRA(domainName, findingDate, cccList, new AsyncCallbackWrapper<String>(callback));
+	}
 
 	@Override
 	public void deleteCRA(String domainName, Integer code,

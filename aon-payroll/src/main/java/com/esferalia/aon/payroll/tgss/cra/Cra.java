@@ -195,16 +195,21 @@ public class Cra {
 		
 			// GET Salaries from DB (employees)
 			Result<Record> salaryRecords = dslContext.select().from(SALARY)
-					.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
+					.where(SALARY.START_DATE.ge(startDateSQL))
+					.and(SALARY.END_DATE.le(endDateSQL))
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)0))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
 					.fetch();
 			
 			// EnterpriseCCCRecord
-			Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+			Result<Record> enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
 					.where(ENTERPRISE_CCC.CCC.eq(ccc))
-					.fetchOne();
+					.fetch();
+			 
+			if(enterpriseCCCRecord.size() > 1) {
+				System.out.println("Mas de 1");
+			}
 			
 			// Prepare ERRORS
 			JSONArray errors = new JSONArray();
@@ -223,7 +228,7 @@ public class Cra {
 				// Prepare DDE
 				JSONObject dde = new JSONObject();
 	
-				dde.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+				dde.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(0).get(ENTERPRISE_CCC.TYPE)));
 				dde.put("ccc", ccc);
 				dde.put("year", startDate.get(Calendar.YEAR));
 				dde.put("month", startDate.get(Calendar.MONTH)+1);
@@ -368,7 +373,7 @@ public class Cra {
 								// Prepare DDEA
 								JSONObject ddea = new JSONObject();
 								
-								ddea.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+								ddea.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(0).get(ENTERPRISE_CCC.TYPE)));
 								ddea.put("ccc", ccc);
 								
 								// Instance Calendar with actual iteration salary_data startDate
@@ -433,7 +438,7 @@ public class Cra {
 				// Prepare FINIQ
 				JSONObject finiq = new JSONObject();
 				
-				finiq.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+				finiq.put("cccRegime", parseSS_Regime(enterpriseCCCRecord.get(0).get(ENTERPRISE_CCC.TYPE)));
 				finiq.put("ccc", ccc);
 				finiq.put("year", startDate.get(Calendar.YEAR));
 				finiq.put("month", startDate.get(Calendar.MONTH)+1);

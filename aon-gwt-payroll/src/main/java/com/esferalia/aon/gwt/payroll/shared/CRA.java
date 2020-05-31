@@ -3,12 +3,15 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.google.gwt.view.client.ProvidesKey;
+
 @SuppressWarnings("serial")
 public class CRA implements Serializable{
 	
 	private Integer code; //ID UNIQUE
 	private Date creationDate;
 	private byte status;
+	private Date date;
 	
 	private String ccc;
 	private String cccType;
@@ -16,6 +19,16 @@ public class CRA implements Serializable{
 	private String activityName;
 	
 	private String type;
+	
+	/**
+     * The key provider that provides the unique ID of a contact.
+     */
+    public static final ProvidesKey<CRA> KEY_PROVIDER = new ProvidesKey<CRA>() {
+      @Override
+      public Object getKey(CRA item) {
+        return item == null ? null : item.getCode();
+      }
+    };
 	
 	public CRA() {
 		super();
@@ -84,7 +97,13 @@ public class CRA implements Serializable{
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
 }

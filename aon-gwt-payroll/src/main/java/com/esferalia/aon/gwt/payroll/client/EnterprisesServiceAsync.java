@@ -92,5 +92,7 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<String> asyncCallback);
 	void sendPayrollEmailToEmployees(String currentDomainName, String from, String cc, String cco, String bodyHTML,
 			String completeURL, AsyncCallback<String> asyncCallback);
+	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList,
+			AsyncCallback<String> asyncCallback);
 
 }
