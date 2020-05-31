@@ -64,22 +64,19 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       this.app = {
         app:'fiscal',
         title: 'Fiscal',
-        logo: 'assets/apps/fiscal.png',
         options: this.getFiscalOptions()
       }
     } else if('payroll' === app) {
-      GwtLoader.startModule('aon_gwt_aio', 'employees');
+      this.app = {
+        app:'payroll',
+        title: 'Laboral',
+        options: this.payrollMenu
+      }
     }
   }
 
   optionSelection(option: any) {
     GwtLoader.startModule(option.module, option.entryPoint);
-    if('303' === option) {
-      GwtLoader.startModule('aon_gwt_fiscal', 'Model303');
-    } else if('347' === option) {
-      GwtLoader.startModule('aon_gwt_fiscal', 'Model347');
-    }
-
   }
 
   isPrincipalMenu(): boolean {
@@ -91,16 +88,20 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   }
 
   getAppToolbarClass(): string {
-    let administration = this.service.company.administration;
-    if(Administration.ALAVA === administration){
-      return 'aon-fiscal-toolbar-araba';
-    } else if(Administration.GIPUZKOA === administration){
-      return 'aon-fiscal-toolbar-gipuzkoa';
-    } else if(Administration.BIZKAIA === administration){
-      return 'aon-fiscal-toolbar-bizkaia';
-    } else if(Administration.NAVARRA === administration){
-      return 'aon-fiscal-toolbar-navarra';
-    } else return 'aon-fiscal-toolbar-aeat';
+    if('fiscal' === this.app.app) {
+      let administration = this.service.company.administration;
+      if(Administration.ALAVA === administration){
+        return 'aon-fiscal-toolbar-araba';
+      } else if(Administration.GIPUZKOA === administration){
+        return 'aon-fiscal-toolbar-gipuzkoa';
+      } else if(Administration.BIZKAIA === administration){
+        return 'aon-fiscal-toolbar-bizkaia';
+      } else if(Administration.NAVARRA === administration){
+        return 'aon-fiscal-toolbar-navarra';
+      } else return 'aon-fiscal-toolbar-aeat';
+    } else if('payroll' === this.app.app) {
+      return 'aon-payroll-toolbar';
+    } else return '';
   }
 
   getFiscalOptions(): any[]{
@@ -115,6 +116,17 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       return this.navarraFiscalMenu;
     } else return this.aeatFiscalMenu;
   }
+
+  payrollMenu: any[] =
+    [{
+      title:'Integral de Nóminas.',
+      module: 'aon_gwt_aio',
+      entryPoint: 'employees'
+    },{
+      title: 'Convenios.',
+      module: 'aon_gwt_payroll',
+      entryPoint:'MainAgreement'
+    }];
 
   arabaFiscalMenu: any[] =
     [{

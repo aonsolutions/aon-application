@@ -44,6 +44,13 @@
   right:260px;
 }
 
+.aon-home {
+  position: absolute;
+  top: 50px;
+  left: 0px;
+  color: gray;
+}
+
 .tedi-company-name{
   margin-left: 20px;
   padding:5px;
@@ -52,6 +59,7 @@
 }
 
 .tedi-company-background{
+  padding-left: 10px;
   color: gray;
 }
 

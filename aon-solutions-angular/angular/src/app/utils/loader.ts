@@ -22,6 +22,7 @@ export class RootLoader {
     contentPanel.style.background = color ? color : 'white';
     this.displayRootPanel();
     let rootPanel = document.getElementById("rootPanel");
+    rootPanel.style.background = color ? color : 'white';
     rootPanel.innerHTML = html;
   }
 

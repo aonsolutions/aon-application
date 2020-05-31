@@ -1,6 +1,8 @@
 <mat-toolbar class="tedi-toolbar">
   <span>
-    <img *ngIf="!isMobile()" class="aon-logo" style="cursor: pointer;" (click)="home()" [src]="logo"  width="240px" />
+    <img *ngIf="!isMobile() && isParent()" class="aon-logo" style="cursor: pointer;" (click)="home()" [src]="logo"  width="240px" />
+    <img *ngIf="!isMobile() && !isParent()" class="aon-logo" style="cursor: pointer;" (click)="home()" [src]="logoCompany"  width="135px" />
+    <img *ngIf="!isMobile() && !isParent()" class="aon-logo" style="cursor: pointer;" (click)="home()" [src]="getCompanyParentLogo()" height="35px" />
     <img *ngIf="isMobile() && !mobileSearching" style="cursor: pointer;margin-top: 10px;margin-left: 10px;" (click)="home()" [src]="logoMobile"  height="30px" />
   </span>
 
@@ -21,7 +23,9 @@
       <mat-icon>search</mat-icon>
     </button>
   </span>
-
+  <span *ngIf="!isMobile() && !mobileSearching" class="tedi-right140">
+    <img *ngIf="!isMobile() && !isParent()" class="aon-logo" style="cursor: pointer;" (click)="home()" [src]="getCompanyLogo()" height="35px" />
+  </span>
   <span *ngIf="!mobileSearching" class="tedi-right100">
     <button mat-icon-button (click)="company()" title="Selección de Empresa">
       <mat-icon>business</mat-icon>
@@ -43,8 +47,13 @@
 
 <div style="border-bottom: 1px solid #ddd; height: 25px; background-color: white;">
   <span class="tedi-company-name">
+    <span class="aon-home" *ngIf="!isParent()">
+      <button mat-icon-button (click)="home()">
+        <mat-icon>home</mat-icon>
+      </button>
+    </span>
     <span class="tedi-company-background"> {{getDescription()}} > </span>
-    <span>{{getCompanyName()}}<span>
+    <span>{{getCompanyName()}}</span>
   </span>
   <span id="showMenuButton" *ngIf="!isParent()" class="aon-show-menu-button" style="padding-right: 20px;">
     <button mat-icon-button (click)="showMenu()">

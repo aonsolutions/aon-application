@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { UserDialogComponent } from '../dialogs/user-dialog/user-dialog.component';
 import { ExtensionDialogComponent } from '../dialogs/extension-dialog/extension-dialog.component';
 import { MatDialog } from '@angular/material';
-import { SharedService } from '../../services/shared.service';
+import { SharedService, AonService } from '../../services/services';
 import { RootLoader, GwtLoader} from '../../utils/loader';
 import { environment } from '../../../environments/environment';
 
@@ -15,6 +15,7 @@ import { environment } from '../../../environments/environment';
 })
 export class AonToolbarComponent implements OnInit {
   logo = environment.logo;
+  logoCompany = environment.logoCompany;
   logoMobile = environment.logoMobile;
   mobileSearching: boolean = false;
   showMenuIcon: string = "keyboard_arrow_right";
@@ -28,7 +29,7 @@ export class AonToolbarComponent implements OnInit {
   }
 
   getDescription() : string {
-    return this.isParent() ? 'Entorno General': 'Empresas';
+    return this.isParent() ? 'Entorno General': '';
   }
 
   getCompanyName() : string {
@@ -101,10 +102,6 @@ export class AonToolbarComponent implements OnInit {
     return this.service.isMobile;
   }
 
-  isCompanySelected(): boolean {
-      return this.service.company == undefined;
-  }
-
   closeSearch() : void {
     this.mobileSearching = false;
   }
@@ -131,5 +128,13 @@ export class AonToolbarComponent implements OnInit {
 
   getShowMenuStyle(): string {
     return 'keyboard_arrow_right' === this.showMenuIcon ? 'padding-right:0px' : 'padding-right:20px';
+  }
+
+  getCompanyParentLogo() : string{
+    return this.service.company ? this.service.company.parentLogo : '';
+  }
+
+  getCompanyLogo() : string{
+    return this.service.company ? this.service.company.logo : '';
   }
 }

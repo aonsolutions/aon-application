@@ -116,6 +116,8 @@ export class AonMaker {
       active: company && company.active ? company.active: true,
       alias: company && company.alias ? company.alias : '',
       name: company && company.name ? company.name : '',
+      logo: company && company.logo ? company.logo : '',
+      parentLogo: company && company.parentLogo ? company.parentLogo : '',
       administration: company && company.administration ? company.administration : Administration.COMMON_TERRITORY,
       address: company && company.address ? company.address : AonMaker.createAddress(),
       users: company && company.users ? company.users : [],

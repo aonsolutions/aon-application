@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   logo: '../../../assets/logo.png',
+  logoCompany: '../../../assets/logo-company.png',
   logoMobile: '../../../assets/logoMobile.png',
   apiUrl: 'https://europe-west1-tedi-snapshot.cloudfunctions.net',
   firebase: {

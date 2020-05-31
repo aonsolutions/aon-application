@@ -41,6 +41,11 @@
   color: white;
 }
 
+.aon-payroll-toolbar {
+  background-color: #90BD75;
+  color: white;
+}
+
 .aon-menu-link {
   cursor: pointer;
   white-space: nowrap;

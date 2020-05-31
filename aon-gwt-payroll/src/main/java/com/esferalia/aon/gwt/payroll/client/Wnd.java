@@ -9,7 +9,8 @@ public class Wnd {
 
 	public static native String getCurrentDomainNameURL()
 	/*-{
-		return $wnd.getCurrentDomainNameURL();
+		var token = $wnd.localStorage.getItem("aon_session_id");
+		return token ? $wnd.localStorage.getItem("aon_domain_name") : $wnd.getCurrentDomainNameURL();
 	}-*/;
 
 

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 
@@ -43,15 +44,22 @@ public class CompanyServlet extends HttpServlet{
 	}
 	
 	private JSONObject company2json(Company company) {
+		Domain domain = AON.getDomain(company.getDomainName(), company.getDomain(), "");
+		Domain parentDomain = AON.getDomain(domain.getName(), domain.getParentId(), "");
 		ApplicationParameter param= AON.getApplicationParameter(company.getDomainName(), company.getDomain(), "", AppParam.FS_DEFAULT_ADMINISTRATION);
 		Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
-		return new JSONObject()
+		JSONObject json = new JSONObject()
 				.put("id", company.getDomain())
 				.put("domain", company.getDomainName())
 				.put("name", company.getName())
 				.put("document", company.getDocument())
 				.put("active", company.isDomainActive())
-				.put("administration", administration.name());
+				.put("administration", administration.name())
+				.put("logo", "https://" + domain.getName() + "/aonDocuments/company.logo");
+		if(parentDomain != null) {
+			json.put("parentLogo", "https://" + parentDomain.getName() + "/aonDocuments/company.logo");
+		}
+		return json;
 	}
 	
 }
