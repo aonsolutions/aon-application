@@ -1624,7 +1624,9 @@ public class TrabajadoresTramos {
 			grupoCotizacion = visitor::visitGrupoCotizacionMensual;
 		
 		
-		if ( formacion )
+		if ( becarios )
+			;
+		else if ( formacion )
 			;		
 		else if ( iT15primerosDias )
 			grupoCotizacion.visit();		

@@ -2845,7 +2845,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
 					Map<String, ITimedVariable<?>> context) {
 				// TODO Auto-generated method stub
-				System.out.println(payment.getExpression() +" = " + amount );
+				System.out.println("*" + payment.getExpression() +" = " + amount );
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			};
 		}).calculate(ctx);
@@ -3898,9 +3898,10 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		
 		double br = 1000.00 / 30.00;
 		double prestIt = br * 0.75 * AonDateUtils.getMax(endDate, DAY_OF_MONTH);
+		int monthDays = get(endDate, DAY_OF_MONTH);
 		//@formatter:off
 		Assert.assertEquals(
-				prestIt + (br * 0.15 * 30), 
+				prestIt + (br * 0.15 * monthDays), 
 				salary.getTotalPayment() 
 				
 				, DELTA);
@@ -4459,10 +4460,10 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
 		for ( SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getExpression() + " = " + p.getAmount() + "," + p.getQuote());
-		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		//@formatter:off
 		Assert.assertEquals(
-				1000.00/30*26 + 1000.00/30*3.00*0.10 + 1000.00/30*2.00*0.70, 
+				1000.00/monthDays*(monthDays -5) + 1000.00/monthDays*3.00*0.10 + 1000.00/monthDays*2.00*0.70, 
 				salary.getTotalPayment() 
 				
 				, DELTA);

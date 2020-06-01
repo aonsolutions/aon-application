@@ -106,7 +106,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 2);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -199,7 +199,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 3);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -291,7 +291,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date startDate = getFirstDayOfMonth(getToday()) ;
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -387,7 +387,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		String.format("%s * BASE_REGULADORA", getDaysVariable()));
 		
 
-		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date startDate = getFirstDayOfMonth(getToday()) ;
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
@@ -993,7 +993,7 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 					}
 				});
 
-		Date startDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
+		Date startDate = getFirstDayOfMonth(ereDay);
 		Date endDate = getLastDayOfMonth(startDate);
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
