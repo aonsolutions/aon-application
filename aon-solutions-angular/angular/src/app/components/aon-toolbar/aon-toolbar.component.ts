@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { UserDialogComponent } from '../dialogs/user-dialog/user-dialog.component';
 import { ExtensionDialogComponent } from '../dialogs/extension-dialog/extension-dialog.component';
 import { MatDialog } from '@angular/material';
-import { SharedService, AonService } from '../../services/services';
+import { SharedService} from '../../services/services';
 import { RootLoader, GwtLoader} from '../../utils/loader';
 import { environment } from '../../../environments/environment';
 
@@ -18,6 +18,7 @@ export class AonToolbarComponent implements OnInit {
   logoCompany = environment.logoCompany;
   logoMobile = environment.logoMobile;
   mobileSearching: boolean = false;
+  searching: boolean = true;
   showMenuIcon: string = "keyboard_arrow_right";
 
   constructor(private router: Router, private location: Location, public dialog: MatDialog, private service: SharedService) {
@@ -33,7 +34,7 @@ export class AonToolbarComponent implements OnInit {
   }
 
   getCompanyName() : string {
-    return this.isParent() ? 'Listado de Empresas' : this.service.getCompanyName();
+    return this.isParent() ? '' : this.service.getCompanyName();
   }
 
   payroll(): void {
@@ -107,7 +108,7 @@ export class AonToolbarComponent implements OnInit {
   }
 
   search(): void {
-    this.mobileSearching = true;
+    this.searching = !this.searching;
   }
 
   isParent(): boolean {

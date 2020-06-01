@@ -126,6 +126,22 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       title: 'Convenios.',
       module: 'aon_gwt_payroll',
       entryPoint:'MainAgreement'
+    },{
+      title: 'Modelo 111 - Retenciones e ingresos a cuenta sobre rendimientos del trabajo y de actividades económicas, premios y determinadas ganancias patrimoniales e imputaciones de renta.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'Model111'
+    },{
+      title: 'Modelo 190 - Resumen anual de retenciones e ingresos a cuenta. Rendimientos del trabajo de determinadas actividades económicas, premios y determinadas imputaciones de renta.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'Model190'
+    },{
+      title: 'Configuración. Globales.',
+      module: 'aon_gwt_payroll',
+      entryPoint:'MainSystem'
+    },{
+      title: 'Papelera.',
+      module: 'aon_gwt_payroll',
+      entryPoint:'MainTrash'
     }];
 
   arabaFiscalMenu: any[] =

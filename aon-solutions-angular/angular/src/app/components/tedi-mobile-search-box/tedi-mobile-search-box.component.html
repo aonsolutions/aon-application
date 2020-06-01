@@ -1,10 +1,5 @@
-<div>
-
   <input #name role="search" title="Búsqueda" id="search-input"
     autocomplete="off" placeholder="Búsqueda" class="tedi-search-box tedi-search-noborder" (keyup)="search(name.value)">
 
-  <button *ngIf="hasValue" mat-icon-button (click)="name.value = ''; clear();"><mat-icon>close</mat-icon></button>
   <button *ngIf="hasValue" mat-icon-button (click)="advanced()" ><mat-icon>arrow_drop_down</mat-icon></button>
-  <button *ngIf="!hasValue" mat-icon-button style="margin-left:45px;" (click)="advanced()" ><mat-icon>arrow_drop_down</mat-icon></button>
-
-</div>
+  <button *ngIf="!hasValue" mat-icon-button (click)="advanced()" ><mat-icon>arrow_drop_down</mat-icon></button>
