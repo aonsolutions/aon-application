@@ -41,15 +41,9 @@ import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.config.util.AppParamUtil;
-import net.aonsolutions.core.dbutils.AonDomainDuplicate;
-import net.aonsolutions.core.dbutils.AonSQLException;
-import net.aonsolutions.core.dbutils.AonSQLFile;
-import net.aonsolutions.core.dbutils.AonSQLScript;
-import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.master.IConstants;
 import com.code.aon.master.VersionManager;
-import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -70,6 +64,14 @@ import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.WebmailException;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonDocumentUtil;
+
+import net.aonsolutions.core.dbutils.AonDomainDuplicate;
+import net.aonsolutions.core.dbutils.AonSQLException;
+import net.aonsolutions.core.dbutils.AonSQLFile;
+import net.aonsolutions.core.dbutils.AonSQLScript;
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class NewDomainController implements Serializable {
 
@@ -92,6 +94,7 @@ public class NewDomainController implements Serializable {
 	private boolean activeExpirationDate;
 	private Date expirationDate;
 	private Scope scope;
+	private boolean nameCheck;
 	
 	private IControllerListener templateDomainFilter;
 	
@@ -201,6 +204,14 @@ public class NewDomainController implements Serializable {
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
+	
+	public boolean isNameCheck() {
+		return nameCheck;
+	}
+
+	public void setNameCheck(boolean nameCheck) {
+		this.nameCheck = nameCheck;
+	}
 
 	public void onInit( ActionEvent event) {
 		try {
@@ -220,16 +231,18 @@ public class NewDomainController implements Serializable {
 		setLoadDefaultValuesEnabled(true);
 		setDomainManagement(false);
 		setEnableHeredity(parentDomain != null);
+		setNameCheck(true);
 		setScope(null);
 		setActiveExpirationDate(false);
 		setExpirationDate(null);
 		setType(DomainType.ENTERPRISE);
-		setAllowDuplicateDomain(new Boolean(AppParamUtil.getValue(AppParam.AON_ALLOW_DUPLICATE_DOMAIN)));
+		setAllowDuplicateDomain(Boolean.valueOf(AppParamUtil.getValue(AppParam.AON_ALLOW_DUPLICATE_DOMAIN)));
 		setParentDomain(parentDomain);
 		setTemplateDomain((Domain)BeanManager.getManagerBean(Domain.class).createNewTo());
 		if ( suffixDomain != null ) {
 			calculateDomainSuffix(suffixDomain);
 		}
+		
 	}	
 	
 	private void calculateDomainSuffix( Domain domain ) {
@@ -268,6 +281,14 @@ public class NewDomainController implements Serializable {
 		}			
 	}
 	
+	public static void validateNameCheck( String name ) {
+		if(!AonDocumentUtil.isValid(name)) {
+			String message = "El Nombre de dominio no es un NIF correcto.";
+			AonUtil.addErrorMessage(message);
+			throw new AbortProcessingException(message);
+		}
+	}
+	
 	public void onSave( ActionEvent event) {
 		String domainFinalName = getDomainName() + StringUtils.defaultString(getDomainSuffix()); 
 		try {
@@ -284,6 +305,10 @@ public class NewDomainController implements Serializable {
 		} catch ( ManagerBeanException e ) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage());			
+		}
+		
+		if(isNameCheck()) {
+			validateNameCheck(getDomainName());
 		}
 		
 		validateUserPassword(getPassword());

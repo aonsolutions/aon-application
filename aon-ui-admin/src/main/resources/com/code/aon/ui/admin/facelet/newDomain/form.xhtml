@@ -53,6 +53,12 @@
 						<aon:outputText value="#{adminNewDomain.domainSuffix}"
 							rendered="#{adminNewDomain.domainSuffix != null}" 
 							styleClass="aon-bold" style="margin-left: 5px;"/>
+							
+						<aon:selectBooleanCheckbox id="NewDomain_name_check" required="true" 
+								value="#{adminNewDomain.nameCheck}">									
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="NewDomain_name_check"
+							value="Activar validación de acceso como NIF" />
 					</aon:div>
  
 					<aon:div>
