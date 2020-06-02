@@ -144,6 +144,17 @@ public class AccountingUtilities extends MainEntryPoint{
 		sidebarMenu.add(checksDisclosurePanel);
 		
 		
+		WrongRecordedInvoices  wrongInvoices = new WrongRecordedInvoices(getDomainName(),getUser(),domain);
+		checksPanel.add(wrongInvoices.getSidebarWidget());
+		wrongInvoices.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+			@Override
+			public void onSelection(SelectionEvent<IOption> event) {
+				content.setWidget( wrongInvoices );
+				wrongInvoices.run();
+			}
+		});
+		sidebarMenu.add(checksDisclosurePanel);
+
 		if (!domain.isParent()) {
 			DomainIntegrityCheck domainIntegrity = new DomainIntegrityCheck(getDomainName(),getUser(),domain);
 			checksPanel.add(domainIntegrity.getSidebarWidget());

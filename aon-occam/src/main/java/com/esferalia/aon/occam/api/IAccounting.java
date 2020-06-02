@@ -108,6 +108,9 @@ public interface IAccounting {
 	public AccUtilitiesResult noLowLevelAccounts(AONContext ctx);
 	public AccUtilitiesResult emptyEntries(AONContext ctx);
 	public AccUtilitiesResult unbalancedEntries(AONContext ctx);
+	public AccUtilitiesResult wrongRecordedInvoices(AONContext ctx);
+	public AccUtilitiesResult removeWrongRecordedInvoice(AONContext ctx, Integer accountEntryId);
+	public AccUtilitiesResult removeWrongCheckedInvoice(AONContext ctx, Integer invoice);
 	public AccUtilitiesResult getAccountLinks(AONContext ctx, AccUtilitiesParams params);
 	public String changeAccountDescription(AONContext ctx, Integer accountId, String newDescription);
 	public Account createAndLinkAccount(AONContext ctx, AccountingRegistryType registryType, Integer registryId);

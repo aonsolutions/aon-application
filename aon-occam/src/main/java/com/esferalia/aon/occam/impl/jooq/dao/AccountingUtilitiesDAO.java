@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
 import static com.esferalia.aon.jooq.tables.AccountHelper.ACCOUNT_HELPER;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
@@ -23,6 +24,7 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.jooq.AggregateFunction;
 import org.jooq.Condition;
@@ -39,6 +42,7 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountLinkItem;
@@ -52,6 +56,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegene
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateJournalItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesWrongRecordedInvoicesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccountLinkerItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
@@ -84,10 +89,8 @@ public class AccountingUtilitiesDAO {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
-
-	private static final com.esferalia.aon.jooq.tables.Account DET_ACCOUNT = ACCOUNT.as("detAcc");;
-	private static final com.esferalia.aon.jooq.tables.Account BAL_ACCOUNT = ACCOUNT.as("balAcc");
-
+	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	
 	public static AccUtilitiesResult checkParentLinker(AONContext ctx, Account account) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		List<String> validations = AccountValidation.check(ctx, account);
@@ -1007,8 +1010,6 @@ public class AccountingUtilitiesDAO {
 						regenerable = regenerable || !AonNumberUtils.equals(invoiceSeries.getCount(),invoiceSeries.getToNumber());					
 					}
 				}
-				int count = rec.get(INVOICE_COUNT_FIELD);
-				int max = rec.get(INVOICE_MAX_NUMBER);
 				result.add( new  AccUtilitiesRegenerateInputVatItem()
 						.setDomain(ctx.getDomainId())
 						.setYear(rec.get(INVOICE_YEAR_FIELD)) 
@@ -1092,7 +1093,7 @@ public class AccountingUtilitiesDAO {
 						}
 					});
 			}
-			int modified = ctx.getDslContext()
+			ctx.getDslContext()
 					.update(INVOICE)
 					.set(INVOICE.SERIES, AonNumberUtils.toString(year))
 					.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
@@ -1100,7 +1101,7 @@ public class AccountingUtilitiesDAO {
 					.and(INVOICE.TYPE.in( InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()))
 					.and(INVOICE.SERIES.eq("WORK"))
 					.execute();
-			modified = ctx.getDslContext()
+			ctx.getDslContext()
 					.update(INVOICE)
 					.set(INVOICE.SERIES, "R"+AonNumberUtils.toString(year))
 					.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
@@ -1119,4 +1120,104 @@ public class AccountingUtilitiesDAO {
 		}
 		
 	}
+	
+	public static AccUtilitiesResult removeWrongCheckedInvoice(AONContext ctx, Integer invoice) {
+		int count = ctx.getDslContext()
+				.update(INVOICE)
+				.set(INVOICE.STATUS, (byte) 0)
+				.where(INVOICE.ID.equal(invoice))
+				.execute();
+		ctx.log().info("INVOICE UPDATE RECORDED = false ("+count+" filas. id = " + invoice +  ")");	
+		return null;
+	}
+
+	public static AccUtilitiesResult removeWrongRecordedInvoice(AONContext ctx, Integer accountEntryId) {
+		int count = ctx.getDslContext()
+				.delete(ACCOUNT_ENTRY_INVOICE)
+				.where(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY.equal(accountEntryId))
+				.execute();
+			ctx.log().info("DELETE ACCOUNT_ENTRY_INVOICE ("+count+" filas.)");	
+		count = ctx.getDslContext()
+				.delete(ACCOUNT_ENTRY_DETAIL)
+				.where(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY.equal(accountEntryId))
+				.execute();
+		ctx.log().info("DELETE ACCOUNT_ENTRY_DETAIL ("+count+" filas.)");	
+		count = ctx.getDslContext()
+				.delete(ACCOUNT_ENTRY)
+				.where(ACCOUNT_ENTRY.ID.equal(accountEntryId))
+				.execute();
+		ctx.log().info("DELETE ACCOUNT_ENTRY ("+count+" filas.)");	
+		return null;
+	}
+	
+	public static AccUtilitiesResult wrongRecordedInvoices(AONContext ctx) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
+		if (domain.isChild() || domain.isStandalone()) {
+			wrongRecordedInvoices(ctx,domain,result);
+		} else {
+			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx
+					, p -> p.getParentProperty().eq(domain.getId()));
+			for (Domain childDomain : domains) {
+				wrongRecordedInvoices(ctx,childDomain,result);	
+			}
+		}
+		return result;
+	}
+
+	private static void wrongRecordedInvoices(AONContext ctx, Domain domain, AccUtilitiesResult result) {
+		AggregateFunction<Integer> invoiceCount = DSL.count(INVOICE.ID);
+		AggregateFunction<Integer> accountEntryInvoiceCount = DSL.count(ACCOUNT_ENTRY_INVOICE.ID);
+		ctx.getDslContext().select(INVOICE.ID,INVOICE.ISSUE_DATE,invoiceCount,accountEntryInvoiceCount)
+			.from(INVOICE)
+			.leftOuterJoin(ACCOUNT_ENTRY_INVOICE).on( ACCOUNT_ENTRY_INVOICE.INVOICE.eq(INVOICE.ID))
+			.where(INVOICE.DOMAIN.equal(domain.getId()))
+			.and(INVOICE.STATUS.equal( (byte) 1 ))
+		.groupBy(INVOICE.ID)
+		.having(invoiceCount.notEqual(1).or(accountEntryInvoiceCount.eq(0)))
+		.fetch()
+		.stream()
+		.map(rec -> {
+			Integer invoiceID = rec.getValue(INVOICE.ID);
+			int invCount = rec.getValue(invoiceCount);
+			int accountEntryInvCount = rec.getValue(accountEntryInvoiceCount);
+			LinkedList<AccountEntry> entries = null;
+			if (accountEntryInvCount == 0 && invCount == 1) {
+				return new AccUtilitiesWrongRecordedInvoicesItem()
+						.setInvoice( InvoiceDAO.getFullInvoice(ctx, invoiceID ))
+						.setOnlyMarked(true)
+						.setDomain(domain.getId())
+						.setDomainName(domain.getDescription())
+						.setMessage("Factura marcada como contabilizada sin asientos vinculados."
+							+ " [" + invoiceID + ", " + DATE_FORMATTER.format( rec.getValue(INVOICE.ISSUE_DATE)) + "]"
+						);
+			} else if (invCount > 0) {
+				LinkedList<Integer> entrieIds = ctx.getDslContext().select(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY)
+						.from(ACCOUNT_ENTRY_INVOICE)
+						.where( ACCOUNT_ENTRY_INVOICE.INVOICE.eq(invoiceID))
+						.fetch()
+						.stream()
+						.map(r -> r.get(ACCOUNT_ENTRY_INVOICE.ACCOUNT_ENTRY))
+						.collect(Collectors.toCollection(LinkedList::new))
+						;
+				Integer[] ids = entrieIds.toArray(new Integer[entrieIds.size()]);
+				entries = AccountEntryDAO.fetch(ctx , p -> p.getIdProperty().in( ids ) , 0, Integer.MAX_VALUE)
+						.collect(Collectors.toCollection(LinkedList::new));
+			}
+			
+			return new AccUtilitiesWrongRecordedInvoicesItem()
+				.setInvoice( InvoiceDAO.getFullInvoice(ctx, invoiceID ))
+				.setEntries(entries)
+				.setDomain(domain.getId())
+				.setDomainName(domain.getDescription())
+				.setMessage("Factura contabilizada " 
+					+ (rec.getValue(invoiceCount) == 0
+						?" sin asientos vinculados."
+						: ("con " + invCount + " asientos vinculados."))
+					+ " [" + invoiceID + ", " + DATE_FORMATTER.format( rec.getValue(INVOICE.ISSUE_DATE)) + "]"
+				);
+		})
+		.forEach(item -> result.add(item) );
+	}
+	
 } 

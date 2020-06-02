@@ -427,6 +427,24 @@ public class AccountingImpl implements IAccounting {
 			 );		
 	}
 	@Override
+	public AccUtilitiesResult wrongRecordedInvoices(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.wrongRecordedInvoices(ctx)
+			 );		
+	}
+	@Override
+	public AccUtilitiesResult removeWrongRecordedInvoice(AONContext ctx, Integer accountEntryId) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.removeWrongRecordedInvoice(ctx,accountEntryId)
+			 );		
+	}
+	@Override
+	public AccUtilitiesResult removeWrongCheckedInvoice(AONContext ctx, Integer invoice) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.removeWrongCheckedInvoice(ctx,invoice)
+			 );		
+	}	
+	@Override
 	public AccUtilitiesResult getAccountLinks(AONContext ctx, AccUtilitiesParams params) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.getAccountLinks(ctx,params)

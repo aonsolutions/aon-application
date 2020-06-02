@@ -692,6 +692,41 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static AccUtilitiesResult wrongRecordedInvoices(String domainName, String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().wrongRecordedInvoices(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static AccUtilitiesResult removeWrongRecordedInvoice(String domainName, int domain, String user,
+			Integer accountEntryId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().removeWrongRecordedInvoice(ctx,accountEntryId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccUtilitiesResult removeWrongCheckedInvoice(String domainName, int domain, String user,
+			Integer invoice) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().removeWrongCheckedInvoice(ctx,invoice);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static AccUtilitiesResult getAccountLinks(String domainName, String user, Integer domain, AccUtilitiesParams params) {
 		AONContext ctx = null;
 		try {
@@ -806,5 +841,6 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
 		
 }

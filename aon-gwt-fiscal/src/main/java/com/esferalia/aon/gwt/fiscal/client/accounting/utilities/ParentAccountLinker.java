@@ -235,6 +235,7 @@ class ParentAccountLinker extends OptionBase {
 							@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {}
 							@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {}
 							@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
+							@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
 							
 							@Override 
 							public void visitParentAccountLinker(AccUtilitiesItemType type) {

@@ -1,16 +1,16 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.ModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryPrinter;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceViewer;
+import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesWrongRecordedInvoicesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.IAccUtilitiesItemTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -28,7 +29,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class UnbalancedEntryFinder extends OptionBase {
+class WrongRecordedInvoices extends OptionBase {
 
 	private static AccountingUtilitiesServiceAsync SERVICE;
 	
@@ -38,7 +39,7 @@ class UnbalancedEntryFinder extends OptionBase {
 	private String user;
 	private Domain domain;
 	
-	protected UnbalancedEntryFinder(String domainName, String user, Domain domain) {
+	protected WrongRecordedInvoices(String domainName, String user, Domain domain) {
 		super(domainName, user, domain);
 		this.domainName = domainName;
 		this.user = user;
@@ -57,7 +58,7 @@ class UnbalancedEntryFinder extends OptionBase {
 	
 	@Override
 	public String getOptionDescription() {
-		return AonStringUtils.BULLET + " Buscador de apuntes descuadrados";
+		return AonStringUtils.BULLET + " Chequeo de integridad de facturas contabilizadas";
 	}
 
 	public void run() {
@@ -69,7 +70,7 @@ class UnbalancedEntryFinder extends OptionBase {
 		popup.setAnimationEnabled(true);
 		popup.center();
 		
-		SERVICE.unbalancedEntries(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
+		SERVICE.wrongRecordedInvoices(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -119,7 +120,7 @@ class UnbalancedEntryFinder extends OptionBase {
 					disclosurePanel.addStyleName(AON.AON_CSS.aonFontMedium());
 					disclosurePanel.addStyleName(AON.AON_CSS.aonNowrap());
 				}
-				item.getType().visit( new UnbalancedVisitor(domainPanel,(AccUtilitiesUnbalancedEntryItem) item) );
+				item.getType().visit( new WrongRecordedInvoicesVisitor(domainPanel,(AccUtilitiesWrongRecordedInvoicesItem) item) );
 			}
 			if (disclosurePanel != null) {
 				String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
@@ -136,35 +137,17 @@ class UnbalancedEntryFinder extends OptionBase {
 		return log;
 	}
 
-	private void showEntry(int domain,Integer entryId) {
+	private void showInvoice(int domain,Invoice invoice) {
 		CustomPopup entryDialog = new CustomPopup();
 		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
 		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
 		entryDialog.setAnimationEnabled(true);
 		entryDialog.setGlassEnabled(true);
 		entryDialog.setModal(true);
-		entryDialog.setCaption(AON.MSG.accountEntries());
-		AccountEntryModule module = new AccountEntryModule();
-		module.onModuleLoad( new AccountEntryModuleOptions()
-			.setParentWidget( entryDialog)
-			.setDomainName( domainName )
-			.setUser( user )
-			.setDomain( domain)
-			.setAccountEntryId( entryId )
-			.setExternalCallback( new ModuleCallback() {
-			
-				@Override public void onRemove(IAccountEntryWrapper removed) {
-					entryDialog.hide();
-				}
-				@Override public void onFailure(Throwable caught) {}
-				@Override public void onExit() {
-					entryDialog.hide();
-				}
-				@Override public void onChange(IAccountEntryWrapper changed) {
-					entryDialog.hide();
-				}
-			})
-		);
+		entryDialog.setCaption(AON.MSG.invoice());
+		InvoiceViewer viewer = new InvoiceViewer(invoice);
+		viewer.addStyleName(AON.AON_CSS.aonMarginTop());
+		entryDialog.add(viewer);
 		entryDialog.center();
 		entryDialog.show();
 	}
@@ -208,23 +191,26 @@ class UnbalancedEntryFinder extends OptionBase {
 		return toolbarPanel;
 	}
 
-	private class UnbalancedVisitor implements IAccUtilitiesItemTypeVisitor {
+	private class WrongRecordedInvoicesVisitor implements IAccUtilitiesItemTypeVisitor {
 		private FlowPanel domainPanel;
-		private AccUtilitiesUnbalancedEntryItem item;
+		private AccUtilitiesWrongRecordedInvoicesItem item;
 		
-		public UnbalancedVisitor(FlowPanel domainPanel, AccUtilitiesUnbalancedEntryItem item) {
+		public WrongRecordedInvoicesVisitor(FlowPanel domainPanel, AccUtilitiesWrongRecordedInvoicesItem item) {
 			this.domainPanel = domainPanel;
 			this.item = item;
 		}
 		
 		@Override
-		public void visitUnbalancedEntry(AccUtilitiesItemType type) {
+		public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());
+			msgLabel.setStyleName(AON.AON_CSS.aonIconRowSelector());
+			msgLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+			msgLabel.addStyleName(AON.AON_CSS.aonBold());
 			itemPanel.add(msgLabel);
 			
-			InlineLabel clickLabel = new InlineLabel("Ver/Editar");
-			clickLabel.setTitle("Click para Ver/Editar");
+			InlineLabel clickLabel = new InlineLabel("[Ver Factura]");
+			clickLabel.setTitle("Click para Ver Factura");
 			clickLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
 			clickLabel.addStyleName(AON.AON_CSS.aonIconLoupe());
 			clickLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
@@ -233,12 +219,85 @@ class UnbalancedEntryFinder extends OptionBase {
 			clickLabel.addClickHandler( new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					showEntry(item.getDomain(),item.getEntryId());
+					showInvoice(item.getDomain(),item.getInvoice());
 				}
 			});
+			if (item.isOnlyMarked()) {
+				InlineLabel fixLabel = new InlineLabel("[Arreglar]");
+				fixLabel.setTitle("Click para arreglar el problema");
+				fixLabel.setStyleName(AON.AON_CSS.aonIconSettings());
+				fixLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
+				fixLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
+				fixLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+				itemPanel.add(fixLabel);
+				fixLabel.addClickHandler( new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						fixLabel.setVisible(false);
+						SERVICE.removeWrongCheckedInvoice(domainName, domain.getId(), user, item.getInvoice().getId(), new AsyncCallback<AccUtilitiesResult>(){
+							@Override
+							public void onFailure(Throwable caught) {
+								openFootPanelIfNeeded();
+								showErrorPanel(caught.getMessage());
+							}
+							
+							@Override
+							public void onSuccess(AccUtilitiesResult result) {
+								run();
+							}
+						});
+					}
+				});
+			}
+			if (item.getEntries() != null) {
+				for ( AccountEntry entry : item.getEntries() ) {
+					FlowPanel entryPanel = new FlowPanel();
+					entryPanel.addStyleName(AON.AON_CSS.aonMarginLeft());
+					entryPanel.addStyleName(AON.AON_CSS.aonMarginBottom());
+					entryPanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+					entryPanel.addStyleName(AON.AON_CSS.aonSimpleBorder());
+					FlowPanel buttonsPanel = new FlowPanel();
+					if (entry.getPeriodStatus().isActive()) {
+						Button deleteButton = new Button(AON.MSG.deleteAction());
+						deleteButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
+						deleteButton.addStyleName(AON.AON_CSS.aonIconDelete());
+						deleteButton.addStyleName(AON.AON_CSS.aonMarginTop());
+						deleteButton.addClickHandler(new ClickHandler() {
+							
+							@Override
+							public void onClick(ClickEvent event) {
+								deleteButton.setEnabled(false);
+								SERVICE.removeWrongRecordedInvoice(domainName, domain.getId(), user, entry.getId(), new AsyncCallback<AccUtilitiesResult>(){
+									@Override
+									public void onFailure(Throwable caught) {
+										openFootPanelIfNeeded();
+										showErrorPanel(caught.getMessage());
+									}
+									
+									@Override
+									public void onSuccess(AccUtilitiesResult result) {
+										run();
+									}
+								});
+							}
+						});
+						buttonsPanel.add(deleteButton);
+					} else {
+						Label warningLabel = new Label("Ejercicio cerrado. La correcci\u00F3n debe realizarse de forma manual.");
+						warningLabel.setStyleName(AON.AON_CSS.aonIconWarn());
+						warningLabel.addStyleName(AON.AON_CSS.aonColorRed());
+						warningLabel.addStyleName(AON.AON_CSS.aonMarginTop());
+						buttonsPanel.add(warningLabel);
+					}
+					entryPanel.add(buttonsPanel);
+					FocusPanel entryPrintedPanel = AccountEntryPrinter.print(entry);
+					entryPanel.add(entryPrintedPanel);
+					itemPanel.add(entryPanel);
+				}
+			}
 			domainPanel.add(itemPanel);
 		}
-		
+		@Override public void visitUnbalancedEntry(AccUtilitiesItemType type) {}
 		@Override public void visitParentAccountLinker(AccUtilitiesItemType type) {}
 		@Override public void visitOther(AccUtilitiesItemType type) {}
 		@Override public void visitInfoMessage(AccUtilitiesItemType type) {}
@@ -250,6 +309,6 @@ class UnbalancedEntryFinder extends OptionBase {
 		@Override public void visitCustomerAccount(AccUtilitiesItemType type) {}
 		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
-		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
+		
 	}
 }

@@ -92,7 +92,26 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		AON.start();
 		fsa.unbalancedEntries(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
-
+	
+	@Override
+	public void wrongRecordedInvoices(String domainName, String user, Domain domain,
+			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.wrongRecordedInvoices(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+	
+	@Override
+	public void removeWrongRecordedInvoice(String domainName,int domain, String user, Integer accountEntryId, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.removeWrongRecordedInvoice(domainName, domain, user, accountEntryId, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+	
+	@Override
+	public void removeWrongCheckedInvoice(String domainName, int domain, String user, Integer invoice, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.removeWrongCheckedInvoice(domainName, domain, user, invoice, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+	
 	@Override
 	public void getAccountLinks(String domainName, String user, Integer domain, AccUtilitiesParams params, AsyncCallback<AccUtilitiesResult> callback) {
 		AON.start();

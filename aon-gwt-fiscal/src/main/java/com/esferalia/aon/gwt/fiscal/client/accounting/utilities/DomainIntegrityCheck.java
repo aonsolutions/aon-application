@@ -192,6 +192,8 @@ class DomainIntegrityCheck extends OptionBase {
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
 		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
 		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {}
+		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
+		
 		@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {
 			InlineLabel fixLabel = new InlineLabel();
 			fixLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());

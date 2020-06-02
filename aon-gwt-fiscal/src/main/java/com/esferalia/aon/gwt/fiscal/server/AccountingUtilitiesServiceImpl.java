@@ -76,6 +76,20 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 	}
 
 	@Override
+	public AccUtilitiesResult wrongRecordedInvoices(String domainName, String user, Domain domain) {
+		return ACCOUNTING.wrongRecordedInvoices(domainName, user, domain);
+	}
+	@Override
+	public AccUtilitiesResult removeWrongRecordedInvoice(String domainName, int domain, String user, Integer accountEntryId) {
+		return ACCOUNTING.removeWrongRecordedInvoice(domainName, domain, user, accountEntryId);
+	}
+	
+	@Override
+	public AccUtilitiesResult removeWrongCheckedInvoice(String domainName, int domain, String user, Integer invoice)
+			throws AonCoreException {
+		return ACCOUNTING.removeWrongCheckedInvoice(domainName, domain, user, invoice);
+	}
+	@Override
 	public AccUtilitiesResult getAccountLinks(String domainName, String user, Integer domain, AccUtilitiesParams params) {
 		return ACCOUNTING.getAccountLinks(domainName, user, domain, params);
 	}
