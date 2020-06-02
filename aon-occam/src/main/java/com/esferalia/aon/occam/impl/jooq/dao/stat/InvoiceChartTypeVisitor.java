@@ -371,9 +371,6 @@ public class InvoiceChartTypeVisitor implements IInvoiceChartTypeVisitor {
 		// -----------------------
 		StatDAOInvoiceFilterItemVisitor visitor = new StatDAOInvoiceFilterItemVisitor();		
 		for (StatFilterItem item : params.getFilterItems() ) {
-			if (item.isSelected()) {
-				System.out.println("TRUE");
-			}
 			item.getType().visit(visitor,item);
 		}
 		c = visitor.appendCondition(c);
