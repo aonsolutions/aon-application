@@ -1364,7 +1364,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			if (AonStringUtils.isNotBlank(name)) 
 				for (Period unSetPeriod : Period.sub(new Period(start, end), expressionContext.getPeriods(name)))
-					for ( Period p: Period.sub(unSetPeriod, leavePeriods))
+					//for ( Period p: Period.sub(unSetPeriod, leavePeriods))
+					for ( Period p : Period.intersect(Collections.singleton(unSetPeriod), expressionContext.getPeriods(WORKED_DAYS.getName())) )						
 						addResult(expressionContext, name, p.getStart(), p.getEnd(), 0.00);
 			
 			
