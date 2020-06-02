@@ -371,6 +371,9 @@ public class InvoiceChartTypeVisitor implements IInvoiceChartTypeVisitor {
 		// -----------------------
 		StatDAOInvoiceFilterItemVisitor visitor = new StatDAOInvoiceFilterItemVisitor();		
 		for (StatFilterItem item : params.getFilterItems() ) {
+			if (item.isSelected()) {
+				System.out.println("TRUE");
+			}
 			item.getType().visit(visitor,item);
 		}
 		c = visitor.appendCondition(c);
@@ -491,6 +494,9 @@ public class InvoiceChartTypeVisitor implements IInvoiceChartTypeVisitor {
 			}
 			if (productCategoriesCondition != null) {
 				condition = condition.and(productCategoriesCondition);
+			}
+			if (productBrandsCondition != null) {
+				condition = condition.and(productBrandsCondition);
 			}
 			if (productTagCondition != null) {
 				condition = condition.and(productTagCondition);
