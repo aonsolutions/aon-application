@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryBankStatement.ACCOUNT_ENTRY_BANK_STATEMENT;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.BankStatement.BANK_STATEMENT;
 
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -230,8 +233,41 @@ public class AccountEntryValidation {
 		}
 	};
 
+	/**
+	 * La cuenta contable del apunte es un dato obligatorio.
+	 */
+	public static BiConsumer<AccountEntry,AONContext> CHECK_BANK_STATEMENT_BIND = (entry,ctx) -> {
+		Integer bankStatement = ctx.getDslContext().select(ACCOUNT_ENTRY_BANK_STATEMENT.BANK_STATEMENT)
+				.from(ACCOUNT_ENTRY_BANK_STATEMENT)
+				.where(ACCOUNT_ENTRY_BANK_STATEMENT.ACCOUNT_ENTRY.eq(entry.getId()))
+				.fetch()
+				.stream()
+				.map( rec -> rec.getValue(ACCOUNT_ENTRY_BANK_STATEMENT.BANK_STATEMENT))
+				.findFirst()
+				.orElse(null);
+		if (bankStatement != null) {
+			Integer lotNumber = ctx.getDslContext()
+				.select( BANK_STATEMENT.LOT_NUMBER )
+				.from(BANK_STATEMENT)
+				.where(BANK_STATEMENT.ID.eq(bankStatement))
+				.fetch()
+				.stream()
+				.map( rec -> rec.getValue(BANK_STATEMENT.LOT_NUMBER))
+				.findFirst()
+				.orElse(null);
+			String msg = AonError.ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE.getMessage() + " " + AonError.ACCOUNT_ENTRY_BANK_STATEMENT_BOUND.getMessage();
+			if (lotNumber != null) {
+				msg =  msg + " [Lote: " + lotNumber + "]";
+			}
+			throw new AonCoreException(msg);
+		}
+	};
+	
+	
 	public static void validateRemove(AONContext ctx, AccountEntry entry) {
+			
 		PERIOD_DELETION_ENABLED
+			.andThen( CHECK_BANK_STATEMENT_BIND) 
 			.accept(entry, ctx);
 		
 	}

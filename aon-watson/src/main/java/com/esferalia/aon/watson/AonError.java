@@ -74,6 +74,7 @@ public enum AonError implements Serializable{
 	,ACCOUNT_ENTRY_PERIOD_OPERATING("No se permite la introducci\u00F3n, modificaci\u00F3n o borrado de asientos en el ejercicio {0}, porque ya se ha realizado el asiento de explotaci\u00F3n.")
 	,ACCOUNT_ENTRY_PERIOD_CLOSING("No se permite la introducci\u00F3n, modificaci\u00F3n  o borrado de asientos en el ejercicio {0} porque ya se ha realizado el asiento de cierre.")
 	,ACCOUNT_ENTRY_AUTOMATIC_ENTRY_DELETE("No se permite el borrado de asientos autom\u00E1ticos.")
+	,ACCOUNT_ENTRY_BANK_STATEMENT_BOUND("Apunte vinculado a un extracto bancario")
 	,ACCOUNT_ENTRY_EMPTY_CONCEPT("El concepto del apunte es un dato obligatorio, no puede estar vac\u00EDo.")
 	,ACCOUNT_ENTRY_OVERFLOW_CONCEPT("El concepto del apunte no puede tener m\u00E1s de 32 caracteres.")
 	,ACCOUNT_ENTRY_EMPTY_ACCOUNT("La cuenta contable del apunte es un dato obligatorio, no puede estar vac\u00EDo. (LINEA={0,number},CONCEPTO={1},DEBE={2,number},HABER={3,number})")
