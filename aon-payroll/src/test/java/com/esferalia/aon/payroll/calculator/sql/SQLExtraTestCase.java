@@ -4195,6 +4195,116 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtrasAtSalaryWithoutAgreementI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPlusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(MONTH, Calendar.JUNE);
+		calendar.set(DAY_OF_MONTH, 1);
+		Date contractDate = new Date(calendar.getTimeInMillis());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, conceptSalarioBase, "1000.00 * DIAS_TRABAJADOS/DIAS_MES");
+		addPayment(aonContext, contract, conceptPlusSalarial, "100.00 * DIAS_TRABAJADOS/DIAS_MES");
+		
+		Date extraDate = contract.getStartDate();
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		extraDate = add(extraDate, MONTH, 1);
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		//addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		extraDate = add(extraDate, MONTH, 1);
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		extraDate = add(extraDate, MONTH, 1);
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		extraDate = add(extraDate, MONTH, 1);
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		extraDate = add(extraDate, MONTH, 1);
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		//addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		//addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), getLastDayOfMonth(extraDate), conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		extraDate = add(extraDate, MONTH, 1);
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		
+		// 
+		// MARCH
+		//
+		startDate = add(startDate, Calendar.MONTH, 2);
+		endDate = getLastDayOfMonth(startDate);
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1000.00 * 3 / 12.00, salary.getTotalPayment());
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+		
+		// 
+		// JULY
+		//
+		startDate = add(startDate, Calendar.MONTH, 4);
+		endDate = getLastDayOfMonth(startDate);
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00 * 7 / 12.00, salary.getTotalPayment(), 10.00);
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+
+		// 
+		// DECEMBER
+		//
+		startDate = add(startDate, Calendar.MONTH, 5);
+		endDate = getLastDayOfMonth(startDate);
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder())
+		.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract));
+		
+		for ( SalaryPayment payment : salary.getSalaryPayments() ) 
+			System.out.println(payment.getDescription() + " = " + payment.getAmount() +", " + payment.getQuote());
+		
+		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1100.00 + 1100.00, salary.getTotalPayment(),  10.00);
+		Assert.assertEquals(ContextVariable.CGC_BASE.getName(), 1100.00 + ( 1100.00/6.00 ) + 1000.00/12.00, salary.getCommonBase(), DELTA);
+	}
+
+	@Test
 	public void testExtraConstantsI() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
