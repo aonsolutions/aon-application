@@ -3,6 +3,11 @@
       <mat-list>
         <mat-list-item>
           <mat-checkbox #companyFilterActive color="primary" style="margin-right:10px;" (change)="updateActive(companyFilterActive.checked)" [checked]="f.active">Activas</mat-checkbox>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-checkbox #companyFilterInactive color="primary" style="margin-right:10px;" (change)="updateInactive(companyFilterInactive.checked)" [checked]="f.inactive">Inactivas</mat-checkbox>
+        </mat-list-item>
+        <mat-list-item>
           <mat-checkbox #companyFilterShare color="primary" (change)="updateShared(companyFilterShare.checked)" [checked]="f.shared">Compartidas</mat-checkbox>
         </mat-list-item>
       </mat-list>

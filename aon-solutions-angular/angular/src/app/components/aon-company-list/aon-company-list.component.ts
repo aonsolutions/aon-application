@@ -30,6 +30,7 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   companyFilter(f: Company) : boolean {
     if(!this.companyService.filter) {
       this.companyService.filter = {
+        inactive: false,
         active: true,
         shared: true
       };
@@ -42,8 +43,12 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
       value = document || name;
     }
 
-    if(q && q.active) {
+    if(q && q.active && !q.inactive) {
       value = f.active && value;
+    }
+
+    if(q && q.inactive && !q.active) {
+      value = !f.active && value;
     }
 
     if(q && q.shared) {

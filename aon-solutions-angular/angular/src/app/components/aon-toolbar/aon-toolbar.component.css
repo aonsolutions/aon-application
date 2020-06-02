@@ -69,7 +69,7 @@
   font-size: 12px;
 }
 
-.tedi-company-background{
+.aon-company-background{
   padding-left: 10px;
   color: gray;
 }
@@ -78,13 +78,8 @@
   border-bottom: 1px solid #ddd;
 }
 
-.tedi-user-dialog-backdrop {
+.aon-user-dialog-backdrop {
   background: rgba(0,0,0,1);
-}
-
-.search-panel {
-  margin-left: 20px;
-  width: 640px;
 }
 
 .aon-show-menu-button {

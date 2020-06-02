@@ -6,10 +6,6 @@
     <img *ngIf="isMobile() && !mobileSearching" style="cursor: pointer;margin-top: 10px;margin-left: 10px;" (click)="home()" [src]="logoMobile"  height="30px" />
   </span>
 
-  <!-- <span *ngIf="!isMobile() && isParent()" class="search-panel">
-    <app-search-box> </app-search-box>
-  </span> -->
-
   <span *ngIf="isMobile() && mobileSearching">
     <button mat-icon-button (click)="closeSearch()"><mat-icon>arrow_back</mat-icon></button>
   </span>

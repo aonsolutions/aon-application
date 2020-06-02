@@ -9,6 +9,7 @@ import { CompanyService } from '../../../services/services';
 export class AdvancedCompanySearchDialogComponent {
   f: any = {
     active: true,
+    inactive: false,
     shared: true
   };
   constructor(public dialogRef: MatDialogRef<AdvancedCompanySearchDialogComponent>,
@@ -16,6 +17,7 @@ export class AdvancedCompanySearchDialogComponent {
     if(this.companyService.filter){
       this.f = {
         active: this.companyService.filter.active != undefined ? this.companyService.filter.active : true,
+        inactive: this.companyService.filter.inactive != undefined ? this.companyService.filter.inactive : false,
         shared: this.companyService.filter.shared != undefined ? this.companyService.filter.shared : true
       };
     }
@@ -23,6 +25,10 @@ export class AdvancedCompanySearchDialogComponent {
 
   updateActive(value: boolean): void {
     this.f.active = value;
+  }
+
+  updateInactive(value: boolean): void {
+    this.f.inactive = value;
   }
 
   updateShared(value: boolean): void {
@@ -35,6 +41,7 @@ export class AdvancedCompanySearchDialogComponent {
     }
 
     this.companyService.filter.active = this.f.active;
+    this.companyService.filter.inactive = this.f.inactive;
     this.companyService.filter.shared = this.f.shared;
 
     this.companyService.setFilter(this.companyService.filter);

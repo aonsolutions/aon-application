@@ -7,6 +7,7 @@ export interface CompanyFilter {
   filter?: string;
   parent?: boolean;
   active?: boolean;
+  inactive?: boolean;
   shared?: boolean;
 }
 
