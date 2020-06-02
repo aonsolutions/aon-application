@@ -81,6 +81,10 @@ export class AonToolbarComponent implements OnInit {
     }
   }
 
+  help(): void {
+
+  }
+
   apps(): void {
     const dialogRef = this.dialog.open(ExtensionDialogComponent, {
       width: '300px',

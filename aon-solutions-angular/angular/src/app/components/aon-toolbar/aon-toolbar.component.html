@@ -1,4 +1,4 @@
-<mat-toolbar class="tedi-toolbar">
+<mat-toolbar class="aon-toolbar" >
   <span>
     <img *ngIf="!isMobile() && isParent()" class="aon-logo" (click)="home()" [src]="logo"  width="240px" />
     <img *ngIf="!isMobile() && !isParent()" class="aon-logo" (click)="home()" [src]="logoCompany"  width="135px" />
@@ -19,41 +19,49 @@
   </span>
 
 
-  <span *ngIf="!isMobile() && !mobileSearching" class="tedi-right140">
-    <img *ngIf="!isMobile() && !isParent()" class="aon-company-logo" (click)="home()" [src]="getCompanyLogo()" />
+  <span *ngIf="!isMobile() && !mobileSearching" class="aon-company-logo aon-toolbar-first-button aon-right140">
+    <img *ngIf="!isMobile() && !isParent()" height="40px" (click)="home()" [src]="getCompanyLogo()" />
   </span>
 
-  <span *ngIf="isParent()" [ngClass]="{'aon-border-bottom' : searching }" class="tedi-right100">
+  <span *ngIf="isParent()" [ngClass]="{'aon-border-bottom' : searching }" class="aon-toolbar-first-button aon-right100">
     <button mat-icon-button (click)="search()">
       <mat-icon>search</mat-icon>
     </button>
     <app-mobile-search-box *ngIf="searching"> </app-mobile-search-box>
   </span>
 
-  <span *ngIf="!isParent() && !mobileSearching" class="tedi-right100">
+  <span *ngIf="!isParent() && !mobileSearching" class="aon-toolbar-first-button aon-right100">
     <button mat-icon-button (click)="company()" title="Selección de Empresa">
       <mat-icon>business</mat-icon>
     </button>
   </span>
 
-  <span *ngIf="!mobileSearching" class="tedi-right60">
+  <span *ngIf="!mobileSearching" class="aon-toolbar-first-button aon-right60">
     <button mat-icon-button  (click)="apps()" title="Aplicaciones">
       <mat-icon>apps</mat-icon>
     </button>
   </span>
 
-  <span *ngIf="!mobileSearching" class="tedi-right20" >
+  <span *ngIf="!mobileSearching" class="aon-toolbar-first-button aon-right20" >
     <button mat-icon-button (click)="openDialog()" [title]="getUserEmail()">
       <mat-icon>account_circle</mat-icon>
     </button>
   </span>
-</mat-toolbar>
 
-<div style="border-bottom: 1px solid #ddd; height: 25px; background-color: white;">
-  <span class="tedi-company-name">
+  <span class="aon-company-name">
     <span>{{getCompanyName()}}</span>
   </span>
-  <span *ngIf="!isParent()" class="aon-second-button tedi-right100">
+  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right100">
+    <button mat-icon-button (click)="home()">
+      <mat-icon>home</mat-icon>
+    </button>
+  </span>
+  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right60">
+    <button mat-icon-button (click)="help()">
+      <mat-icon>help_outline</mat-icon>
+    </button>
+  </span>
+  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right100">
     <button mat-icon-button (click)="home()">
       <mat-icon>home</mat-icon>
     </button>
@@ -63,4 +71,4 @@
       <mat-icon>{{showMenuIcon}}</mat-icon>
     </button>
   </span>
-<div>
+</mat-toolbar>

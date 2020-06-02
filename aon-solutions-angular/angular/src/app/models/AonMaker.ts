@@ -119,6 +119,7 @@ export class AonMaker {
       logo: company && company.logo ? company.logo : '',
       parentLogo: company && company.parentLogo ? company.parentLogo : '',
       administration: company && company.administration ? company.administration : Administration.COMMON_TERRITORY,
+      parent: company && company.parent ? company.parent : false,
       address: company && company.address ? company.address : AonMaker.createAddress(),
       users: company && company.users ? company.users : [],
       iban: company && company.iban ? company.iban : '',

@@ -36,6 +36,10 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
     app:'payroll',
     title: 'Laboral',
     logo: 'assets/apps/laboral.png'
+  },{
+    app:'aon-classic',
+    title: 'AiO',
+    logo: 'assets/apps/aon-classic.png'
   }];
 
   constructor(public aonService: AonService, public service : SharedService,
@@ -72,6 +76,8 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
         title: 'Laboral',
         options: this.payrollMenu
       }
+    } else if('aon-classic' === app) {
+      open('https://' + localStorage.getItem('aon_domain_name'));
     }
   }
 

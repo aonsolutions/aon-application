@@ -55,7 +55,8 @@ public class CompanyServlet extends HttpServlet{
 				.put("document", company.getDocument())
 				.put("active", company.isDomainActive())
 				.put("administration", administration.name())
-				.put("logo", "https://" + domain.getName() + "/aonDocuments/company.logo");
+				.put("logo", "https://" + domain.getName() + "/aonDocuments/company.logo")
+				.put("parent", domain.getParentId() == null);
 		if(parentDomain != null) {
 			json.put("parentLogo", "https://" + parentDomain.getName() + "/aonDocuments/company.logo");
 		}

@@ -9,7 +9,7 @@
   <app-invoice-toolbar></app-invoice-toolbar>
 </div>
 <div>
-  <mat-sidenav-container [autosize]="!isMobile()"  style="min-height:calc(100vh - 105px);">
+  <mat-sidenav-container [autosize]="!isMobile()"  style="min-height:calc(100vh - 80px);">
     <mat-sidenav #sidenav mode="side" [opened]="true">
       <mat-tree [dataSource]="dataSource2" [treeControl]="treeControl">
         <mat-tree-node tedi-ripple  *matTreeNodeDef="let node; when: hasChild" class="tedi-tree-item" (click)="selection(node)">

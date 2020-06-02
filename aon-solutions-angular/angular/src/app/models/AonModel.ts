@@ -229,6 +229,7 @@ export interface Company {
   administration: Administration;
   logo?: string;
   parentLogo?: string;
+  parent: boolean;
   alias?: string;
   iban?: string;
   bic?: string;

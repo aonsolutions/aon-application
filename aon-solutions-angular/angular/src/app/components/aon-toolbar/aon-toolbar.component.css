@@ -1,62 +1,56 @@
 .aon-logo{
+  position: absolute;
   margin: 10px;
+  top: 14px;
   cursor: pointer;
-  margin-top: 40px !important;
 }
 
 .aon-parent-logo {
-  cursor: pointer;
+  position: absolute;
+  left: 140px;
+  top: 0;
   margin: 10px;
-  margin-top: 30px !important;
-  height: 65px;
+  height: 60px;
+  cursor: pointer;
 }
 
 .aon-company-logo {
-  cursor: pointer;
-  margin: 10px;
-  margin-top: 20px !important;
-  height: 35px;
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
-.tedi-toolbar{
+.aon-toolbar{
   background-color: #fff;
-  padding:0px;
+  padding:0px !important;
+  margin:0px !important;
+  border-bottom: 1px solid #ddd;
+  height: 80px;
 }
 
-.tedi-right20 {
-  position: absolute;
-
+.aon-right20 {
   right:20px;
 }
 
-.tedi-right60 {
-  position: absolute;
+.aon-right60 {
   right:60px;
 }
 
-.tedi-right100 {
-  position: absolute;
+.aon-right100 {
   right:100px;
 }
 
-.tedi-right140 {
-  position: absolute;
+.aon-right140 {
   right:140px;
 }
 
-.tedi-right180 {
-  position: absolute;
-  right:180px;
+.aon-toolbar-first-button {
+  position:absolute;
+  top: 0px;
 }
 
-.tedi-right220 {
-  position: absolute;
-  right:220px;
-}
-
-.tedi-right260 {
-  position: absolute;
-  right:260px;
+.aon-toolbar-second-button {
+    position:absolute;
+    top: 40px;
 }
 
 .aon-home {
@@ -66,10 +60,10 @@
   color: gray;
 }
 
-.tedi-company-name{
+.aon-company-name{
   position: absolute;
   right:140px;
-  top:60px;
+  top:45px;
   padding:5px;
   font-weight: 700;
   font-size: 12px;
@@ -92,14 +86,10 @@
   margin-left: 20px;
   width: 640px;
 }
-.aon-second-button {
-  position:absolute;
-  top:50px;
-}
 
 .aon-show-menu-button {
   position: absolute;
-  top: 50px;
+  top: 40px;
   background-color: #f1f1f1;
   -moz-border-radius: 100px 0 0 100px;
   -webkit-border-radius: 100px 0 0 100px;
