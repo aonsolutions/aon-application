@@ -55,7 +55,7 @@
 							styleClass="aon-bold" style="margin-left: 5px;"/>
 							
 						<aon:selectBooleanCheckbox id="NewDomain_name_check" required="true" 
-								value="#{adminNewDomain.nameCheck}">									
+								value="#{adminNewDomain.nameCheck}" style="margin-left: 30px;">									
 						</aon:selectBooleanCheckbox>
 						<aon:outputLabel for="NewDomain_name_check"
 							value="Activar validación de acceso como NIF" />
@@ -86,9 +86,6 @@
 						</aon:div>
 					</aon:div>
 					<aon:div id="expirationDateDiv">
-						<aon:outputLabel for="NewDomain_activeExpirationDate"
-							style="#{(!adminNewDomain.enableHeredity and !adminNewDomain.loadDefaultValuesEnabled)?'color: graytext;':''}"
-							value="#{bundle.aon_activate}" />
 						<aon:selectBooleanCheckbox id="NewDomain_activeExpirationDate"
 							disabled="#{!adminNewDomain.enableHeredity and !adminNewDomain.loadDefaultValuesEnabled}"
 							value="#{adminNewDomain.activeExpirationDate}">
@@ -96,6 +93,9 @@
 								process="expirationDateDiv"
 								reRender="expirationDateDiv" />																	
 						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="NewDomain_activeExpirationDate"
+							style="#{(!adminNewDomain.enableHeredity and !adminNewDomain.loadDefaultValuesEnabled)?'color: graytext;':''}"
+							value="#{bundle.aon_activate}" />
 						<aon:div styleClass="aon-margin-left" layout="inline">
 							<aon:selectInputDate id="NewDomain_expirationDate" 
 								value="#{adminNewDomain.expirationDate}" 
@@ -118,8 +118,6 @@
 					<aon:div id="valuesDiv">
 						<aon:if test="#{adminNewDomain.parentDomain != null}">
 							<aon:div styleClass="aon-margin-top">
-								<aon:outputLabel for="Domain_enableHeredity"
-									value="#{bundle.admin_domain_enableHeredity}" />
 								<aon:selectBooleanCheckbox
 									id="Domain_enableHeredity" required="true" 
 									value="#{adminNewDomain.enableHeredity}">
@@ -128,6 +126,8 @@
 										actionListener="#{adminNewDomain.onChangedEnableHeredity}"
 										reRender="valuesDiv,expirationDateDiv" />										
 								</aon:selectBooleanCheckbox>
+								<aon:outputLabel for="Domain_enableHeredity"
+									value="#{bundle.admin_domain_enableHeredity}" />
 								<aon:if test="#{adminNewDomain.loadDefaultValuesEnabled and !(empty company.domainScopes)}">
 									<aon:outputLabel for="Domain_scope" style="margin-left:2em;margin-right:0.5em;"
 										value="#{bundle.aon_scope}" />
