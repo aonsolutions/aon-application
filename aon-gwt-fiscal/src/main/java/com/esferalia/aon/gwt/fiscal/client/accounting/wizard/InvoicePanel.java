@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
@@ -361,6 +362,47 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			}
 		});
 		regTable.setWidget(row, 1, registryBox);
+		
+		Button helpButton = new Button();
+		helpButton.setStyleName(AON.AON_CSS.aonIconInfo());
+		helpButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		helpButton.setTabIndex(++tabindex);
+		helpButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				final CustomDialog dialog = new CustomDialog();
+				dialog.setCaption(AON.MSG.information());
+				FlowPanel tabContainer = new FlowPanel();
+				tabContainer.addStyleName(AON.AON_CSS.aonPadding());
+				FlexTable infoTab = new FlexTable();
+				infoTab.addStyleName(AON.AON_CSS.aonDataTable());
+				infoTab.setWidget(0, 0, new Label( "CAMPO" ));
+				infoTab.getFlexCellFormatter().addStyleName(0, 0,AON.AON_CSS.aonDataTableHeader());
+				infoTab.setWidget(0, 1, new Label( "TECLAS" ));
+				infoTab.getFlexCellFormatter().addStyleName(0, 1,AON.AON_CSS.aonDataTableHeader());
+				infoTab.setWidget(0, 2, new Label( "ACCI\u00D3N" ));
+				infoTab.getFlexCellFormatter().addStyleName(0, 2,AON.AON_CSS.aonDataTableHeader());
+
+				infoTab.setWidget(1, 0, new Label( "Titular"));
+				infoTab.setWidget(1, 1, new Label( "F9"));
+				infoTab.setWidget(1, 2, new Label( "Si est\u00E1 vacio, repite el \u00FAltimo titular introducido."));
+				infoTab.setWidget(2, 0, new Label( "Titular"));
+				infoTab.setWidget(2, 1, new Label( "Ctrl+F3"));
+				infoTab.setWidget(2, 2, new Label( "Posibilidad de crear o modificar el titular."));
+				infoTab.setWidget(3, 0, new Label( "Total"));
+				infoTab.setWidget(3, 1, new Label( "F9"));
+				infoTab.setWidget(3, 2, new Label( "Repite los valores de la \u00FAltima factura del titular."));
+				infoTab.setWidget(4, 0, new Label( "Cuenta"));
+				infoTab.setWidget(4, 1, new Label( "Ctrl+F3"));
+				infoTab.setWidget(4, 2, new Label( "Posibilidad de crear o modificar la cuenta."));
+				
+				tabContainer.add( infoTab );   
+				dialog.add( tabContainer );
+				dialog.center();
+				dialog.show();
+			}
+		});
+		regTable.setWidget(row, 2, helpButton);
 	}
 
 	private void createFlexTable() {

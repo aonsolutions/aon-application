@@ -237,6 +237,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		regTable.getColumnFormatter().setWidth(1, "auto");
 		regTable.getColumnFormatter().setWidth(2, "185px");
 		regTable.getColumnFormatter().setWidth(3, "250px");
+		regTable.getColumnFormatter().setWidth(4, "20px");
 		
 		regTable.setStyleName(AON.AON_CSS.aonWidthAll());
 		registryPanel.add(regTable);
@@ -512,6 +513,47 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			
 		}
 		regTable.setWidget(0, 3, labelsPanel);
+		
+		Button helpButton = new Button();
+		helpButton.setStyleName(AON.AON_CSS.aonIconInfo());
+		helpButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		helpButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				final CustomDialog dialog = new CustomDialog();
+				dialog.setCaption(AON.MSG.information());
+				FlowPanel tabContainer = new FlowPanel();
+				tabContainer.addStyleName(AON.AON_CSS.aonPadding());
+				FlexTable infoTab = new FlexTable();
+				infoTab.addStyleName(AON.AON_CSS.aonDataTable());
+				infoTab.setWidget(0, 0, new Label( "CAMPO" ));
+				infoTab.getFlexCellFormatter().addStyleName(0, 0,AON.AON_CSS.aonDataTableHeader());
+				infoTab.setWidget(0, 1, new Label( "TECLAS" ));
+				infoTab.getFlexCellFormatter().addStyleName(0, 1,AON.AON_CSS.aonDataTableHeader());
+				infoTab.setWidget(0, 2, new Label( "ACCI\u00D3N" ));
+				infoTab.getFlexCellFormatter().addStyleName(0, 2,AON.AON_CSS.aonDataTableHeader());
+
+				infoTab.setWidget(1, 0, new Label( "Titular"));
+				infoTab.setWidget(1, 1, new Label( "F9"));
+				infoTab.setWidget(1, 2, new Label( "Si est\u00E1 vacio, repite el \u00FAltimo titular introducido."));
+				infoTab.setWidget(2, 0, new Label( "Titular"));
+				infoTab.setWidget(2, 1, new Label( "Ctrl+F3"));
+				infoTab.setWidget(2, 2, new Label( "Posibilidad de crear o modificar el titular."));
+				infoTab.setWidget(3, 0, new Label( "Total"));
+				infoTab.setWidget(3, 1, new Label( "F9"));
+				infoTab.setWidget(3, 2, new Label( "Repite los valores de la \u00FAltima factura del titular."));
+				infoTab.setWidget(4, 0, new Label( "Cuenta"));
+				infoTab.setWidget(4, 1, new Label( "Ctrl+F3"));
+				infoTab.setWidget(4, 2, new Label( "Posibilidad de crear o modificar la cuenta."));
+				
+				tabContainer.add( infoTab );   
+				dialog.add( tabContainer );
+				dialog.center();
+				dialog.show();
+			}
+		});
+		regTable.setWidget(0, 4, helpButton);
+		
 		
 		FlowPanel invoiceRootPanel = new FlowPanel();
 		invoiceRootPanel.add(registryPanel);
