@@ -1053,7 +1053,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			extraCtx =
 			new SQLExtraSalaryCalculatorContext(
 					ctx.getConnection()
-					, extraPayment.getExtraId() 				//extra
+					, extraPayment.getExtraId() 				//extraQuote
 					, AonDateUtils.get(issueDate, YEAR)			//year
 					, issueDate									//chargeDate
 					, criteria);
@@ -1080,80 +1080,86 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
+
 	private static Optional<Double> calculateExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate) throws AonException {
 		SQLContractSalaryCalculatorContext extraCtx = null;
 		try {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), ctx.getId());
-			Date startDate = add(endDate, Calendar.YEAR, -1);
-			startDate = add(startDate, Calendar.DATE, 1);
-			extraCtx =
-			new SQLContractSalaryCalculatorContext(ctx.getConnection(), startDate, endDate, endDate, criteria);
-			extraCtx.next();
-			return Optional.of( 
+			Date extraStartDate = add(endDate, Calendar.YEAR, -1);
+			extraStartDate = add(extraStartDate, Calendar.DATE, 1);
+			
+			extraStartDate = Period.max(extraStartDate, ctx.getDate(CONTRACT.getName() , CONTRACT.START_DATE.getName() ));
+			
+			double extraQuotes = 0.00;
+			List<Period> defined = new ArrayList<Period>() ;
+			
+			Date startDate = AonDateUtils.getFirstDayOfMonth(extraStartDate);
+			for ( ; startDate.before(endDate ); startDate = add(startDate, Calendar.MONTH, 1)) {
+				Date lastDayOfMonth = Period.min(getLastDayOfMonth(startDate), endDate);
+				extraCtx =
+				new SQLContractSalaryCalculatorContext(ctx.getConnection(), startDate, lastDayOfMonth, lastDayOfMonth, criteria);
+				boolean next = extraCtx.next();
+//				if ( !next ) {
+//					continue;
+//				}
+				
+				Salary salary = 
 				new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
-				private double extra = 0.00;
-				private List<Period> defined = new ArrayList<Period>() ;
-				private List<Period> extraPeriods =new ArrayList<Period>();
-				@Override
-				public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
-						Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
-					if ( contractPayment.getId().equals(((IContractPayment)payment).getId()) ) {						
-						extra += quote;
-						addPeriodOf((IContractPayment)payment);
-						defined.add(new Period(startDate,endDate));
-					} else if (
-						contractPayment.getMonth() == ((IContractPayment)payment).getMonth() &&
-						AonStringUtils.equals(contractPayment.getName(), ((IContractPayment)payment).getName() )
-						
-					) {
-						extra += quote;
-						addPeriodOf((IContractPayment)payment);
-						defined.add(new Period(startDate,endDate));
+					private Double extraQuote = 0.00;
+					@Override
+					public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
+							Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+						if ( contractPayment.getId().equals(((IContractPayment)payment).getId()) ) {						
+							extraQuote += quote;
+						} else if (
+							contractPayment.getMonth() == ((IContractPayment)payment).getMonth() &&
+							AonStringUtils.equals(contractPayment.getName(), ((IContractPayment)payment).getName() )
+							
+						) {
+							extraQuote += quote;
+						}
+					}
+					@Override
+					public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
+							Map<String, ITimedVariable<?>> context) {
+						addPayment(0.00, quote, tax, null, startDate, endDate, payment, context);
+					}
+					
+					@Override
+					public Salary getSalary() {
+						salary = super.getSalary();
+						salary.setTotalPayment(extraQuote);
+						return salary;
+					}
+					
+					
+				}){
+					@Override
+					protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+						return TaxCalculator.getTaxCalculator(ctx);
 					}
 				}
-				@Override
-				public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
-						Map<String, ITimedVariable<?>> context) {
-					addPayment(0.00, quote, tax, null, startDate, endDate, payment, context);
-				}
+				.calculate(extraCtx)
+				;
 				
-				@Override
-				public void setStartDate(Date startDate) {
-					// TODO Auto-generated method stub
-					super.setStartDate(startDate);
-				}
+				if ( salary.getTotalPayment() == 0.00 )
+					continue;
 				
-				@Override
-				public Salary getSalary() {
-					salary = super.getSalary();
-					checkPeriods(salary);
-					salary.getStartDate();
-					salary.setTotalPayment(extra);
-					return salary;
-				}
-				
-				private void addPeriodOf(IContractPayment p ) {
-					extraPeriods.add(new Period(p.getStartDate(), p.getEndDate()));
-				}
-				
-				private void checkPeriods(Salary salary) {
-					Period salaryPeriod = new Period(salary.getStartDate(), salary.getEndDate());
-					List<Period> undefined = Period.sub(salaryPeriod, extraPeriods);
-					undefined.forEach(p -> { throw new UndefinedExtraException(extra, defined, undefined); }) ;
-				}
-			}){
-				@Override
-				protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
-					return TaxCalculator.getTaxCalculator(ctx);
-				}
-			}.calculate(extraCtx).getTotalPayment()
-		);
+				extraQuotes += salary.getTotalPayment();
+				defined.add(new Period(salary.getStartDate(), salary.getEndDate()));
+			}
 			
-		} catch ( UndefinedExtraException e ) {			
+			double extra = extraQuotes;
+			Period extraPeriod = new Period(extraStartDate, endDate);
+			List<Period> undefined = Period.sub(extraPeriod, defined);
+			undefined.forEach(p -> { throw new UndefinedExtraException(extra, defined, undefined); }) ;
+			
+			return Optional.of(extra);
+			
+		}catch ( UndefinedExtraException e ) {			
 			return e.get();
-		}
-		catch (Exception e) {
+		}catch (Exception e) {
 			throw new AonException(e);
 		} 
 		finally {
@@ -1165,7 +1171,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 		}
 	}
-
 
 	private static boolean extraEmited(Date issueDate, IContractPayment payment, ISQLContractSalaryCalculatorContext ctx) {
 		

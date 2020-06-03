@@ -4247,7 +4247,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		extraDate = add(extraDate, MONTH, 1);
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte) Month.MARCH.ordinal());
 		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
-		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "SALARIO_BASE + PLUS_SALARIAL", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		addPayment(aonContext, contract, getFirstDayOfMonth(extraDate), null, conceptPagaExtra, "PAGA EXTRAORDINARIA", "1100.00", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
 		
 
 		Date startDate = getFirstDayOfYear(getToday());
