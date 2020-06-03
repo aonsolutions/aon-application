@@ -7,7 +7,7 @@
   </span>
 
   <span *ngIf="isMobile() && mobileSearching">
-    <button mat-icon-button (click)="closeSearch()"><mat-icon>arrow_back</mat-icon></button>
+    <aon-icon-button icon="arrow_back" (click)="closeSearch()"></aon-icon-button>
   </span>
 
   <span *ngIf="isMobile() && mobileSearching">
@@ -20,51 +20,32 @@
   </span>
 
   <span *ngIf="isParent()" [ngClass]="{'aon-border-bottom' : searching }" class="aon-toolbar-first-button aon-right100">
-    <button mat-icon-button (click)="search()">
-      <mat-icon>search</mat-icon>
-    </button>
+    <aon-icon-button icon="search" (click)="search()"></aon-icon-button>
     <app-mobile-search-box *ngIf="searching"> </app-mobile-search-box>
   </span>
 
   <span *ngIf="!isParent() && !mobileSearching" class="aon-toolbar-first-button aon-right100">
-    <button mat-icon-button (click)="company()" title="Selección de Empresa">
-      <mat-icon>business</mat-icon>
-    </button>
+    <aon-icon-button icon="business" (click)="company()" title="Selección de Empresa"></aon-icon-button>
   </span>
 
   <span *ngIf="!mobileSearching" class="aon-toolbar-first-button aon-right60">
-    <button mat-icon-button  (click)="apps()" title="Aplicaciones">
-      <mat-icon>apps</mat-icon>
-    </button>
+    <aon-icon-button icon="apps" (click)="apps()" title="Aplicaciones"></aon-icon-button>
   </span>
 
   <span *ngIf="!mobileSearching" class="aon-toolbar-first-button aon-right20" >
-    <button mat-icon-button (click)="openDialog()" [title]="getUserEmail()">
-      <mat-icon>account_circle</mat-icon>
-    </button>
+    <aon-icon-button icon="account_circle" (click)="openDialog()" [title]="getUserEmail()"></aon-icon-button>
   </span>
 
   <span class="aon-company-name">
     <span>{{getCompanyName()}}</span>
   </span>
-  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right100">
-    <button mat-icon-button (click)="home()">
-      <mat-icon>home</mat-icon>
-    </button>
+  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right100" >
+    <aon-icon-button icon="home" outline="true" (click)="home()"></aon-icon-button>
   </span>
-  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right60">
-    <button mat-icon-button (click)="help()">
-      <mat-icon>help_outline</mat-icon>
-    </button>
-  </span>
-  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right100">
-    <button mat-icon-button (click)="home()">
-      <mat-icon>home</mat-icon>
-    </button>
+  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right60" >
+    <aon-icon-button icon="help_outline" (click)="help()"></aon-icon-button>
   </span>
   <span id="showMenuButton" *ngIf="!isParent()" class="aon-show-menu-button" style="padding-right: 20px;">
-    <button mat-icon-button (click)="showMenu()">
-      <mat-icon>{{showMenuIcon}}</mat-icon>
-    </button>
+    <aon-icon-button [icon]="showMenuIcon" (click)="showMenu()"></aon-icon-button>
   </span>
 </mat-toolbar>

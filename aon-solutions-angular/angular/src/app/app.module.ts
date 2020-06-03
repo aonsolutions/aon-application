@@ -37,6 +37,7 @@ import { AdvancedSearchDialogComponent } from './components/dialogs/advanced-sea
 import { AdvancedUserSearchDialogComponent } from './components/dialogs/advanced-user-search-dialog/advanced-user-search-dialog.component';
 import { AdvancedCompanySearchDialogComponent } from './components/dialogs/advanced-company-search-dialog/advanced-company-search-dialog.component';
 import { AonMenuSidenavComponent } from './components/aon-menu-sidenav/aon-menu-sidenav.component';
+import { AonIconButtonComponent } from './components/aon-icon-button/aon-icon-button.component';
 
 
 import { TediSearchBoxComponent } from './components/tedi-search-box/tedi-search-box.component';
@@ -51,6 +52,7 @@ import {NgxImageCompressService } from 'ngx-image-compress';
   declarations: [
     AppComponent,
     AonLoginComponent,
+    AonIconButtonComponent,
     AonMenuSidenavComponent,
     UserRegisterComponent,
     UserEditComponent,
