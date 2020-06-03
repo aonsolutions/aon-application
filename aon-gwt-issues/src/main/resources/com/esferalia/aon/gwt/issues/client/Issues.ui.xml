@@ -11,6 +11,9 @@
 
 <ui:with type="com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources"
 		field="issuesResources"></ui:with>
+		
+<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
 <ui:style>
 
 	@external .vaadin-combo-box-overlay;
@@ -26,7 +29,7 @@
 		max-height:300px !important;
 	}	
 </ui:style>
-<g:DockLayoutPanel ui:field="dockLayoutPanel">
+<g:DockLayoutPanel ui:field="dockLayoutPanel" addStyleNames="{aonResources.css.aonBackgroundWhite}">
 	<g:north size="40">
 		<g:HTMLPanel ui:field="toolbar"></g:HTMLPanel>
 	</g:north>

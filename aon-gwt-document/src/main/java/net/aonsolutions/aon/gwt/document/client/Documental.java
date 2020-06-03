@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsLabel;
 import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.css.AonGwtDocumentResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.AonData;
@@ -168,6 +169,7 @@ public class Documental implements EntryPoint {
 	
 	private void startApplication() {
 		GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css().ensureInjected();
+		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
 		root.add(ui);

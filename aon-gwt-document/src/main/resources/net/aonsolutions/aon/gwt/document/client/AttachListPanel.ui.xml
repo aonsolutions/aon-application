@@ -10,12 +10,9 @@
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'
 	xmlns:v='urn:import:com.vaadin.polymer.vaadin.widget'
 	>
-
-    <ui:style>
-   
-    </ui:style>
-
-<g:HTMLPanel addStyleNames="iron-list-doc"> 
+<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+		field="aonResources"></ui:with>
+<g:HTMLPanel addStyleNames="iron-list-doc {aonResources.css.aonBackgroundWhite}"> 
 
 	<style is="custom-style">
 			

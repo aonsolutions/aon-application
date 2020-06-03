@@ -10,12 +10,7 @@
 	xmlns:a="urn:import:com.esferalia.aon.gwt.issues.client"
 	>
 
-<ui:style>
-
-
-
-</ui:style>
-<g:HTMLPanel addStyleNames="iron-list-issue"> 
+<g:HTMLPanel addStyleNames="iron-list-issue "> 
 
 	<style is="custom-style">
 			

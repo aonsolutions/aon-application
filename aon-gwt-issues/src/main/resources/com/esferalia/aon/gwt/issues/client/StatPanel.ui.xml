@@ -14,9 +14,6 @@
 <ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
 		field="aonResources"></ui:with>
 
-<ui:style>
-	
-</ui:style>
 <g:SplitLayoutPanel ui:field="dockLayoutPanel">
 	<g:center>
 		<g:DockLayoutPanel ui:field="contentDockLayoutPanel">
