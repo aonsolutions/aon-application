@@ -6,8 +6,8 @@
     [scrollWindow]="false"  style="height:calc(100vh - 80px);">
   <mat-nav-list class="aon-nav-list">
     <mat-list-item  *ngFor="let company of companies; index as i"  [ngClass]="{'aon-list-item-0' : i % 2 === 0 }" (click)="onSelect(company)">
-      <mat-icon  *ngIf="company.active" mat-list-icon>business</mat-icon>
-      <mat-icon  *ngIf="!company.active" mat-list-icon>domain_disabled</mat-icon>
+      <mat-icon style="color:#5f6368;" *ngIf="company.active" mat-list-icon>business</mat-icon>
+      <mat-icon style="color:#5f6368;" *ngIf="!company.active" mat-list-icon>domain_disabled</mat-icon>
       <div mat-line> {{company.name}} </div>
       <div mat-line class="aon-sublist-text"> {{company.document}} </div>
       <mat-divider></mat-divider>

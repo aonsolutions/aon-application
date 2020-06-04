@@ -6,9 +6,11 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class AonIconButtonComponent implements OnInit {
   @Input() icon: string;
+  @Input() color: string = '#5f6368';
   @Input() outline: boolean;
+  @Input() noHover: boolean;
   hover: boolean = false;
-  
+
   constructor() {
 
   }

@@ -6,7 +6,7 @@ export class TediUtils {
   static showError(dialog: MatDialog, error: string) {
     const dialogRef = dialog.open(ErrorDialogComponent, {
       height: '200px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: JSON.stringify(error)
     });
 

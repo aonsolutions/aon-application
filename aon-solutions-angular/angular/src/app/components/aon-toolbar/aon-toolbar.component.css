@@ -24,6 +24,7 @@
   padding:0px !important;
   margin:0px !important;
   border-bottom: 1px solid #ddd;
+  color: #5f6368;
   height: 80px;
 }
 
@@ -80,6 +81,10 @@
 
 .aon-user-dialog-backdrop {
   background: rgba(0,0,0,1);
+}
+
+.aon-user-dialog-panel {
+  padding: 0px !important;
 }
 
 .aon-show-menu-button {

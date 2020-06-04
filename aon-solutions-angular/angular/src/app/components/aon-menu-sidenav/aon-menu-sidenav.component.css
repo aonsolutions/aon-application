@@ -46,6 +46,11 @@
   color: white;
 }
 
+.aon-accounting-toolbar {
+  background-color: #D8B03D;
+  color: white;
+}
+
 .aon-menu-link {
   cursor: pointer;
   white-space: nowrap;

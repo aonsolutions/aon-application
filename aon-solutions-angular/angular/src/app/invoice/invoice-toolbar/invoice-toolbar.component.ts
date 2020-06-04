@@ -79,7 +79,7 @@ export class InvoiceToolbarComponent {
     const dialogRef = this.dialog.open(InvoiceNewDialogComponent, {
       width: '250px',
       backdropClass: 'tedi-user-dialog-backdrop',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       position: {
         top: '50px',
         right: '20px'
@@ -110,7 +110,7 @@ export class InvoiceToolbarComponent {
     const dialogRef = this.dialog.open(InvoiceOptionsDialogComponent, {
       width: '250px',
       backdropClass: 'tedi-user-dialog-backdrop',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       position: {
         top: '50px',
         right: '50px'
@@ -239,7 +239,7 @@ export class InvoiceToolbarComponent {
     const dialogRef = this.dialog.open(CommentDialogComponent, {
       height: '230px',
       width: '300px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: {}
     });
 
@@ -262,7 +262,7 @@ export class InvoiceToolbarComponent {
     const dialogRef = this.dialog.open(CommentDialogComponent, {
       height: '230px',
       width: '300px',
-      panelClass: 'tedi-user-dialog-panel'
+      panelClass: 'aon-user-dialog-panel'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -283,7 +283,7 @@ export class InvoiceToolbarComponent {
   invoiceSend(): void {
     const dialogRef = this.dialog.open(SendDialogComponent, {
       height: '200px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: {}
     });
 
@@ -316,7 +316,7 @@ export class InvoiceToolbarComponent {
   invoiceMultipleSend(): void {
     const dialogRef = this.dialog.open(SendDialogComponent, {
       height: '200px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: {}
     });
 
@@ -354,7 +354,7 @@ export class InvoiceToolbarComponent {
   invoiceDelete(): void {
     const dialogRef = this.dialog.open(SureDialogComponent, {
       height: this.isMobile? '175px':'150px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: {}
     });
 
@@ -392,7 +392,7 @@ export class InvoiceToolbarComponent {
     } else {
       const dialogRef = this.dialog.open(SureDialogComponent, {
         height: '150px',
-        panelClass: 'tedi-user-dialog-panel',
+        panelClass: 'aon-user-dialog-panel',
         data: {}
       });
       dialogRef.afterClosed().subscribe(result => {

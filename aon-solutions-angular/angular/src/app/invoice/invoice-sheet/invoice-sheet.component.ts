@@ -249,7 +249,7 @@ export class InvoiceSheetComponent implements OnInit, OnDestroy {
     if (this.invoiceService.isNew || this.isPending()) {
       const dialogRef = this.dialog.open(TypeDialogComponent, {
         height: '200px',
-        panelClass: 'tedi-user-dialog-panel',
+        panelClass: 'aon-user-dialog-panel',
         data: this.invoiceService.invoice.type
       });
 
@@ -270,7 +270,7 @@ export class InvoiceSheetComponent implements OnInit, OnDestroy {
   editAddress(): void {
     const dialogRef = this.dialog.open(AddressDialogComponent, {
       height: '455px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: this.isEmitida() ? this.invoiceService.invoice.receiver.address : this.invoiceService.invoice.sender.address
     });
 
@@ -293,7 +293,7 @@ export class InvoiceSheetComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(InvoiceDetailDialogComponent, {
       height: '325px',
       width: '350px',
-      panelClass: 'tedi-user-dialog-panel'
+      panelClass: 'aon-user-dialog-panel'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -308,7 +308,7 @@ export class InvoiceSheetComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(InvoiceDetailDialogComponent, {
       height: '325px',
       width: '350px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: this.invoiceService.invoice.details[number]
     });
 
@@ -333,7 +333,7 @@ export class InvoiceSheetComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(InvoiceFinanceDialogComponent, {
       height: '450px',
       width: '350px',
-      panelClass: 'tedi-user-dialog-panel'
+      panelClass: 'aon-user-dialog-panel'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -348,7 +348,7 @@ export class InvoiceSheetComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(InvoiceFinanceDialogComponent, {
       height: '450px',
       width: '350px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: this.invoiceService.invoice.finances[number]
     });
 
@@ -942,7 +942,7 @@ export class InvoiceSheetComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(CommentDialogComponent, {
       height: '230px',
       width: '300px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: this.invoiceService.invoice.comments[number]
     });
 

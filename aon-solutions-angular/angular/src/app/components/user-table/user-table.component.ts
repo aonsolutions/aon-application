@@ -85,7 +85,7 @@ export class UserTableComponent implements OnInit, OnDestroy {
   showSure(email: string) {
     const dialogRef = this.dialog.open(SureDialogComponent, {
       height: '150px',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       data: {}
     });
 

@@ -223,7 +223,7 @@ export class InvoiceComponent implements OnInit, OnDestroy, AfterViewChecked {
     const dialogRef = this.dialog.open(InvoiceNewDialogComponent, {
       width: '250px',
       backdropClass: 'tedi-user-dialog-backdrop',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       position: {
         bottom: '20px',
         right: '20px'

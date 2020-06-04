@@ -33,7 +33,7 @@ export class TediMobileSearchBoxComponent {
     const dialogRef = this.dialog.open(AdvancedCompanySearchDialogComponent, {
       width: '260px',
       backdropClass: 'tedi-user-dialog-backdrop',
-      panelClass: 'tedi-user-dialog-panel',
+      panelClass: 'aon-user-dialog-panel',
       position: {
         top: '48px',
         right: '100px'

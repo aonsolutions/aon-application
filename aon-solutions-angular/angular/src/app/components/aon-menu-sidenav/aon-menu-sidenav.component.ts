@@ -11,6 +11,7 @@ import { Administration } from '../../models/models';
   styleUrls: ['./aon-menu-sidenav.component.css'],
 })
 export class AonMenuSidenavComponent implements OnInit, OnDestroy {
+  aonHover: number=-1;
   app: any;
   apps = [{
     app:'invoice',
@@ -40,6 +41,10 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
     app:'aon-classic',
     title: 'AiO',
     logo: 'assets/apps/aon-classic.png'
+  },{
+    app:'bidoq',
+    title: 'Bidoq',
+    logo: 'assets/apps/bidoq.png'
   }];
 
   constructor(public aonService: AonService, public service : SharedService,
@@ -63,7 +68,11 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
     } else if('helpdesk' === app) {
       GwtLoader.startModule('aon_gwt_aio', 'issues');
     } else if('accounting' === app) {
-
+      this.app = {
+        app:'accounting',
+        title: 'Contable',
+        options: this.accountingMenu
+      }
     } else if('fiscal' === app) {
       this.app = {
         app:'fiscal',
@@ -78,6 +87,8 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       }
     } else if('aon-classic' === app) {
       open('https://' + localStorage.getItem('aon_domain_name'));
+    } else if('bidoq' === app) {
+      open('https://mispapeles.es/');
     }
   }
 
@@ -107,6 +118,8 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       } else return 'aon-fiscal-toolbar-aeat';
     } else if('payroll' === this.app.app) {
       return 'aon-payroll-toolbar';
+    } else if('accounting' === this.app.app) {
+      return 'aon-accounting-toolbar';
     } else return '';
   }
 
@@ -122,6 +135,57 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       return this.navarraFiscalMenu;
     } else return this.aeatFiscalMenu;
   }
+
+  accountingMenu: any[] =
+    [{
+      title:'Mantenimiento de Apuntes.',
+      module: 'aon_gwt_fiscal',
+      entryPoint: 'AccountEntryModuleTEDI'
+    },{
+      title: 'Cartera de cobros y pagos.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'Finance'
+    },{
+      title: 'Extracto de cuenta.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'StatementReportModule'
+    },{
+      title: 'Cuenta de Explotación (P Y G).',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'AccountOperatingReport'
+    },{
+      title: 'Balance de Sumas y Saldos.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'AccountTrialBalanceReport'
+    },{
+      title: 'Listado Diario de Movimientos.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'JournalReportModule'
+    },{
+      title: 'Listado Mayor de Cuentas.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'LedgerReportModule'
+    },{
+      title: 'Balances de Cuentas.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'AccountBalanceReport'
+    },{
+      title: 'Panel de control de IVA.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'VATReport'
+    },{
+      title: 'Panel de control de IRPF.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'IRPFReport'
+    },{
+      title: 'Panel de Compras y Gastos / Ventas e Ingresos.',
+      module: 'aon_gwt_fiscal',
+      entryPoint:'OperationReport'
+    },{
+      title: 'Deposito de Cuentas (D2).',
+      module: 'aon_gwt_aio',
+      entryPoint:'deposit'
+    }];
 
   payrollMenu: any[] =
     [{
