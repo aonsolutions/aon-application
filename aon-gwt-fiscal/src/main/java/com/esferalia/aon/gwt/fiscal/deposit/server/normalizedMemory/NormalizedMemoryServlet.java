@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import javax.servlet.annotation.WebServlet;
 import javax.xml.bind.JAXBException;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
@@ -23,7 +24,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -41,7 +41,6 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.impl.jooq.dao.d2_deposit.D2Compute;
@@ -61,7 +60,7 @@ import com.esferalia.aon.occam.server.accounting.AccMiningMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-
+@WebServlet(name = "D2Deposit", urlPatterns = { "/aon_gwt_aio/ms/gwt_deposit" })
 public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements INormalizedMemory {
 
 	/**
@@ -84,16 +83,6 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 	}
 	
 	/***** NEW GWT DEPOSIT *****/
-		
-	public AonData getAonData(String domainName, Integer domainId, String login){
-		Domain domain = AON.getDomain(domainName, domainId, login);
-		User user = AON.getUser(domain.getName(), domain.getId(), login);
-		Integer operator = AON.getTaskHolder(domain.getName(), domainId, login, 
-				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
-		return new AonData().setUser(user)
-				.setDomain(domain)
-				.setUserOperator(operator);
-	}
 	
 	public Company getCompany(AonData aonData) {
 		return AON.getCompany(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getDomainProperty().eq(aonData.getDomain().getId()));
@@ -741,7 +730,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 			Esquema sch = Utils.readXml(b);
 			if(sch.getError() != null) {
 				// TODO
-			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, this.getUserLogin());
+			} else DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		} catch (JAXBException | IOException e) {
 			e.printStackTrace();
 		}
@@ -766,7 +755,7 @@ public class NormalizedMemoryServlet extends AonRemoteServiceServlet implements 
 		
 		byte[] b = Utils.CreateXml(ctx, ctxMem, mapFreeText, enterprise, name, type, aonData.getDomain().getName(), year);
 		
-		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, this.getUserLogin());
+		Integer id = DBConsults.insertDeposit(aonData.getDomain().getName(), b, aonData.getDomain().getId(), year, aonData.getUser().getLogin());
 		Attach attach = AON.getAttach(aonData.getDomain().getName(), aonData.getDomain().getId(), aonData.getUser().getLogin(), f -> f.getIdProperty().eq(id), AttachType.REGISTRY);
 		return getSchema(aonData, attach, year);
 	}

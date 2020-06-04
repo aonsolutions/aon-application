@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
+import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountConsolidatedBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
@@ -40,9 +41,11 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainEntryPoint implements EntryPoint {
 
+	final FiscalServiceAsync impl = GWT.create(FiscalService.class);
 	
 	private static final String ENTRY_POINT_PARAM = "entryPoint";
 	//
@@ -95,9 +98,38 @@ public class MainEntryPoint implements EntryPoint {
 	//
 	private static final String TEDI_CENTER_POINT = "TediCenter";
 	
+
+	private static AonData aonData;
+	
 	@Override
 	public void onModuleLoad() {
-		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);
+		String entryPoint = getParameter(GWT.getModuleName(), ENTRY_POINT_PARAM);	
+		if(getToken() != null) {
+			impl.getAonDataToken(getCurrentDomainName(), getCurrentDomain(), getToken(), new AsyncCallback<AonData>() {
+				
+				@Override public void onSuccess(AonData result) {
+					aonData = result;
+					selection(entryPoint);
+				}
+				
+				@Override public void onFailure(Throwable arg0) {}
+			});
+		} else {
+			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
+				
+				@Override public void onSuccess(AonData result) {
+					aonData = result;
+					selection(entryPoint);
+				}
+				
+				@Override public void onFailure(Throwable arg0) {}
+			});			
+		}
+
+		
+	}
+	
+	private void selection(String entryPoint) {
 		if ( entryPoint.equalsIgnoreCase(FS_MOD140_ENTRY_POINT)) {
 			GWT.runAsync(Model140.class, new RunAsyncCallback() {
 
@@ -638,7 +670,6 @@ public class MainEntryPoint implements EntryPoint {
 				
 			});
 		}
-
 	}
 	
 	public static native String getToken()
@@ -658,11 +689,10 @@ public class MainEntryPoint implements EntryPoint {
 		return token ? $wnd.localStorage.getItem("aon_domain_id") :  $wnd.getCurrentDomain();
 	}-*/;
 	
-	public static native String getCurrentUser()
-	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? "" : $wnd.getCurrentUser();
-	}-*/;
+	public static String getCurrentUser() {
+		return aonData.getUser().getLogin();
+	};
+
 
 	/**
 	 * Fetches a parameter passed to the module's nocache script.

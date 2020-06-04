@@ -395,15 +395,6 @@
 		<url-pattern>/oauth2callback/*</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>D2 Deposit</servlet-name>
-		<servlet-class>com.esferalia.aon.gwt.fiscal.deposit.server.normalizedMemory.NormalizedMemoryServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>D2 Deposit</servlet-name>
-		<url-pattern>/aon_gwt_aio/gwt_deposit</url-pattern>
-	</servlet-mapping>
-
 	<!-- JSF STANDARD CONFIGURATION -->
 	<context-param>
 		<description>State saving method: "client" or "server" (= default) See

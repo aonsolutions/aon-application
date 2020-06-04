@@ -13,39 +13,42 @@ import { Administration } from '../../models/models';
 export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   aonHover: number=-1;
   app: any;
-  apps = [{
-    app:'invoice',
-    title: 'Facturas',
-    logo: 'assets/apps/invoice.png'
-  },{
-    app: 'documental',
-    title: 'Documental',
-    logo: 'assets/apps/documental.png'
-  },{
-    app:'helpdesk',
-    title: 'Help Desk',
-    logo: 'assets/apps/helpdesk.png'
-  },{
-    app:'accounting',
-    title: 'Contable',
-    logo: 'assets/apps/conta.png'
-  },{
-    app:'fiscal',
-    title: 'Fiscal',
-    logo: 'assets/apps/fiscal.png'
-  },{
-    app:'payroll',
-    title: 'Laboral',
-    logo: 'assets/apps/laboral.png'
-  },{
-    app:'aon-classic',
-    title: 'AiO',
-    logo: 'assets/apps/aon-classic.png'
-  },{
-    app:'bidoq',
-    title: 'Bidoq',
-    logo: 'assets/apps/bidoq.png'
-  }];
+  apps = [
+    {
+      app:'alma',
+      title: 'Alma',
+      logo: 'assets/apps/alma.png'
+    },
+    {
+      app:'invoice',
+      title: 'Facturas',
+      logo: 'assets/apps/invoice.png'
+    },{
+      app: 'documental',
+      title: 'Documental',
+      logo: 'assets/apps/documental.png'
+    },{
+      app:'accounting',
+      title: 'Contabilidad',
+      logo: 'assets/apps/conta.png'
+    },{
+      app:'fiscal',
+      title: 'Fiscal',
+      logo: 'assets/apps/fiscal.png'
+    },{
+      app:'payroll',
+      title: 'Laboral',
+      logo: 'assets/apps/laboral.png'
+    },{
+      app:'aon-classic',
+      title: 'AiO',
+      logo: 'assets/apps/aon-classic.png'
+    },{
+      app:'bidoq',
+      title: 'Bidoq',
+      logo: 'assets/apps/bidoq.png'
+    }
+  ];
 
   constructor(public aonService: AonService, public service : SharedService,
     private router: Router, private location: Location) {
@@ -65,12 +68,12 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       RootLoader.angularPanel(this.router, this.location, 'invoice');
     } else if('documental' === app) {
       GwtLoader.startModule('aon_gwt_aio', 'documents');
-    } else if('helpdesk' === app) {
+    } else if('alma' === app) {
       GwtLoader.startModule('aon_gwt_aio', 'issues');
     } else if('accounting' === app) {
       this.app = {
         app:'accounting',
-        title: 'Contable',
+        title: 'Contabilidad',
         options: this.accountingMenu
       }
     } else if('fiscal' === app) {

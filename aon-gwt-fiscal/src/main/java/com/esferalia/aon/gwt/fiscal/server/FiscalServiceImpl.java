@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -320,6 +321,24 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
 				.setCompany(company);
 				
+	}
+	
+	public AonData getAonDataToken(String domainName, Integer domainId, String token){
+		Domain domain = AON.getDomain(domainName, domainId, "");
+		User user = AON_SOLUTIONS.getUser(domain, token);
+		Integer operator = AON.getTaskHolder(domain.getName(), domainId, user.getLogin(), 
+				f -> f.getDomainProperty().eq(domainId).and(f.getUserIdProperty().eq(user.getId()))).getId();
+		ApplicationParameter beta = AON.getApplicationParameter(domainName, domainId, user.getLogin(), AppParam.AON_BETA_ENABLED);
+		ApplicationParameter alpha = AON.getApplicationParameter(domainName, domainId, user.getLogin(), AppParam.AON_ALPHA_ENABLED);
+		Company company = AON.getCompany(domainName, domainId, user.getLogin(), f -> f.getDomainProperty().eq(domainId));
+		return new AonData().setUser(user)
+				.setMd5(getMd5(user.getLogin()+domain.getName()))
+				.setDomain(domain)
+				.setUserOperator(operator)
+				.setBetaEnabled((beta!=null && Boolean.valueOf(beta.getValue())))
+				.setAlphaEnabled((alpha!=null && Boolean.valueOf(alpha.getValue())))
+				.setCompany(company)
+				.setAonSolutions(true);
 	}
 	
 	public String getMd5(String str){

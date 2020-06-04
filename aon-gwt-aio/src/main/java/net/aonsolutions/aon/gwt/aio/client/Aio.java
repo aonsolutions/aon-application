@@ -6,7 +6,6 @@ import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.common.shared.Constants;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.fiscal.deposit.client.nuevo.DepositEntryPoint;
 import com.esferalia.aon.gwt.issues.client.Issues;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree;
@@ -15,6 +14,7 @@ import com.esferalia.aon.gwt.template.client.Templates;
 import com.esferalia.aon.gwt.template.client.scope.ScopeMain;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -148,7 +148,7 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					MainEntryPoint stat = new MainEntryPoint(aonData);
-					stat.onModuleLoad(getSubEntryPoint());
+					stat.onModuleLoad(getToken() != null ? "StatControlPanel" : getSubEntryPoint());
 				}
 			});		
 			break;
@@ -277,7 +277,7 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					new DepositEntryPoint(aonData).onModuleLoad(getSubEntryPoint());
+					new DepositEntryPoint(aonData).onModuleLoad(getToken() != null ? "deposit_new" : getSubEntryPoint());
 				}
 			});		
 			break;
@@ -343,7 +343,7 @@ public class Aio implements EntryPoint {
 	private static void ensureGwtSelector() {
 		BodyElement body = Document.get().getBody();
 		String className = body.getClassName();
-		if (StringUtils.isBlank(className)
+		if (AonStringUtils.isBlank(className)
 				|| (className.indexOf("gwt-Selector") == -1))
 			body.addClassName("gwt-Selector");
 

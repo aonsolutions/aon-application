@@ -22,11 +22,12 @@ public class AioImpl extends AonStatelessRemoteServiceServlet implements IAio{
 	public AonData getAonDataToken(String domainName, String domainId, String token){
 		Domain domain = AON.getDomain(domainName, Integer.parseInt(domainId), "");
 		User user = AON_SOLUTIONS.getUser(domain, token);
-//		Integer operator = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), 
-//				f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user.getId()))).getId();
+		Integer operator = AON.getTaskHolder(domain.getName(), domain.getId(), user.getLogin(), 
+				f -> f.getDomainProperty().eq(domain.getId()).and(f.getUserIdProperty().eq(user.getId()))).getId();
 		return new AonData().setUser(user)
 				.setMd5(getMd5(user.getLogin()+domain.getName()))
 				.setDomain(domain)
+				.setUserOperator(operator)
 				.setAonSolutions(true);
 	}
 	

@@ -11,9 +11,6 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface INormalizedMemoryAsync {
-
-	void getAonData(String domainName, Integer domainId, String login, AsyncCallback<AonData> callback);
-
 	void getSchema(AonData aonData, Company company, Integer year, Boolean textMode,
 			AsyncCallback<Map<String, String>> callback);
 	

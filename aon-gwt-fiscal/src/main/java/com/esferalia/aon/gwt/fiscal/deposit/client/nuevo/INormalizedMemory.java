@@ -11,12 +11,10 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("gwt_deposit")
+@RemoteServiceRelativePath("ms/gwt_deposit")
 public interface INormalizedMemory extends RemoteService{
 	
 	public Map<String, String> getSchema(AonData aonData, Company company, Integer year, Boolean textMode);
-	
-	public AonData getAonData(String domainName, Integer domainId, String login);
 		
 	public Map<String, String> reset(AonData aonData, Company company, Integer year);
 	

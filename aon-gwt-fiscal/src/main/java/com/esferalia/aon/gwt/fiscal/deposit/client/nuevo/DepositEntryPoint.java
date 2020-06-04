@@ -8,21 +8,6 @@ public class DepositEntryPoint implements EntryPoint {
 	
 	final INormalizedMemoryAsync inma = GWT.create(INormalizedMemory.class);
 	private AonData aonData;
-	
-	public static native String getCurrentDomainName()
-	/*-{
-		return $wnd.getCurrentDomainName();
-	}-*/;
-
-	public static native int getCurrentDomain()
-	/*-{
-		return $wnd.getCurrentDomain();
-	}-*/;
-	
-	public static native String getCurrentUser()
-	/*-{
-		return $wnd.getCurrentUser();
-	}-*/;
 		
 	public DepositEntryPoint(AonData aonData) {
 		this.aonData = aonData;
