@@ -29,9 +29,11 @@
   </mat-toolbar>
 
   <mat-list>
-    <mat-list-item style="height:30px;" *ngFor="let option of app.options" [title]="option.title">
-      <a class="aon-menu-link" (click)='optionSelection(option)'>
-        <span style="font-size: 12px; color: rgba(0,0,0,.87);font-family: Roboto,sans-serif;"> {{option.title}} </span>
+    <mat-list-item style="height:30px;" *ngFor="let option of app.options;index as i" [title]="option.title"
+        [ngStyle]="{backgroundColor: aonHover===i  ? '#f1f1f1' : 'transparent'}"
+        (mouseover)="aonHover=i" (mouseleave)="aonHover=-1">
+      <a class="aon-menu-link" (click)="optionSelection(option)">
+        <span style="font-size: 12px; color: rgba(0,0,0,.87);font-family: Roboto,sans-serif;" [ngClass]="{'aon-bold' : selectedOption === option}"> {{option.title}} </span>
       </a>
     </mat-list-item>
   </mat-list>

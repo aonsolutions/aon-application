@@ -12,6 +12,7 @@ import { Administration } from '../../models/models';
 })
 export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   aonHover: number=-1;
+  selectedOption: any;
   app: any;
   apps = [
     {
@@ -60,6 +61,7 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.selectedOption = undefined;
     this.app = undefined;
   }
 
@@ -96,6 +98,7 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   }
 
   optionSelection(option: any) {
+    this.selectedOption = option;
     GwtLoader.startModule(option.module, option.entryPoint);
   }
 
@@ -104,6 +107,7 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   }
 
   backMenu(): void {
+    this.selectedOption = undefined;
     this.app = undefined;
   }
 
@@ -144,10 +148,6 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       title:'Mantenimiento de Apuntes.',
       module: 'aon_gwt_fiscal',
       entryPoint: 'AccountEntryModuleTEDI'
-    },{
-      title: 'Cartera de cobros y pagos.',
-      module: 'aon_gwt_fiscal',
-      entryPoint:'Finance'
     },{
       title: 'Extracto de cuenta.',
       module: 'aon_gwt_fiscal',
