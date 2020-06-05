@@ -679,19 +679,18 @@ public class MainEntryPoint implements EntryPoint {
 	
 	public static native String getCurrentDomainName()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_name") : $wnd.getCurrentDomainName();
+		return $wnd.getCurrentDomainName();
 	}-*/;
 
 	public static native int getCurrentDomain()
 	/*-{
-		var token = $wnd.localStorage.getItem("aon_session_id");
-		return token ? $wnd.localStorage.getItem("aon_domain_id") :  $wnd.getCurrentDomain();
+		return $wnd.getCurrentDomain();
 	}-*/;
 	
-	public static String getCurrentUser() {
-		return aonData.getUser().getLogin();
-	};
+	public static native String getCurrentUser() 
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
 
 
 	/**
