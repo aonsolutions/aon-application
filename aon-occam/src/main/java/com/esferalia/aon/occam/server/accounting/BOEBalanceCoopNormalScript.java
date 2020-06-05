@@ -136,7 +136,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 				 	,PNCIV2(2,LEAF,"2","Deudas con entidades de cr\u00E9dito","sab({1605,170})",null)
 				 	,PNCIV3(2,LEAF,"3","Acreedores por arrendamiento financiero","sab({1625,174})",null)
 				 	,PNCIV4(2,LEAF,"4","Derivados","sab({176})",null)
-				 	,PNCIV5(2,LEAF,"5","Otros pasivos financieros","sab({1615,1635,171,172,173,175,180,185,189})-sdb({1710,1711,1712,1713,1715})",null)
+				 	,PNCIV5(2,LEAF,"5","Otros pasivos financieros","sab({1615,1635,171,172,173,175,180,185,189})-sab({1710,1711,1712,1713,1715})",null)
 				,PNCV(1,HEADER1,"V","Deudas a largo plazo con empresas del grupo, asociadas y socios",null,"PNCV1+PNCV2+PNCV3")
 			 		,PNCV1(2,LEAF,"1","Deudas con empresas del grupo","sab({1603,1613,1623,1633})",null)
 			 		,PNCV2(2,LEAF,"2","Deudas con empresas asociadas","sab({1604,1614,1624,1634})",null)
