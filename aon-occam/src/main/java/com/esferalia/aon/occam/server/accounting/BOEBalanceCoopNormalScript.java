@@ -157,7 +157,7 @@ public class BOEBalanceCoopNormalScript extends BalanceScript {
 					,PCV2(2,LEAF,"2","Deudas con entidades de cr\u00E9dito","sab({5105,520,527})",null)
 					,PCV3(2,LEAF,"3","Acreedores por arrendamiento financiero","sab({5125,524})",null)
 					,PCV4(2,LEAF,"4","Derivados","sab({5595,5598})",null)
-					,PCV5(2,LEAF,"5","Otros pasivos financieros","sab({194,509,5115,5135,5145,521,522,523,525,528,5525,5530,5532,555,5565,5566,560,561,569})+sabPositivo(551)-sdb({1034,1044,190,192,5210,5211,5212,5213})",null)
+					,PCV5(2,LEAF,"5","Otros pasivos financieros","sab({194,509,5115,5135,5145,521,522,523,525,528,5525,5530,5532,555,5565,5566,560,561,569})+sabPositivo(551)-sab({5210,5211,5212,5213,5214})-sdb({1034,1044,190,192})",null)
 				,PCVI(1,HEADER1,"VI","Deudas a corto plazo con empresas del grupo, asociadas y socios",null,"PCVI1+PCVI2+PCVI3")
 			 		,PCVI1(2,LEAF,"1","Deudas con empresas del grupo","sab({5103,5113,5123,5133,5143,5563})+sabPositivo({5523})",null)
 			 		,PCVI2(2,LEAF,"2","Deudas con empresas asociadas","sab({5104,5114,5124,5134,5144,5564})+sabPositivo({5524})",null)
