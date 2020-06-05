@@ -1,13 +1,19 @@
-@external .*;
-
 
 
 	.aon-panelGrid-search-issues{
-		height: 55px;margin: 10px;
+		height: 55px;
+		margin: 10px;
+		background-color:#eee;
+		margin-top:0.5em;
+		padding-bottom:1em;
+		border:#ddd 1px solid;
 	}
 	
 	.aon-panelGrid-search-info-issues{
 		margin-bottom:0px !important;
+		padding:4px 1em 4px 1em;
+		border-bottom:#ddd 1px solid;
+		font-size:1.1em;
 	}
 
 	.aon-configuration-panel-issues{
@@ -118,6 +124,6 @@
     	top: 2px;
     }
 	
-	
-	
-	
+	.aon-width30-percent{
+		width: 30%;
+	}

@@ -72,7 +72,6 @@ public class Documental implements EntryPoint {
 	@UiField HTMLPanel toolbar;
 	@UiField HTMLPanel configurationPanel;
 	@UiField DockLayoutPanel contentDockLayoutPanel;
-	@UiField HTMLPanel searchContent;
 	@UiField SimpleLayoutPanel content;
 	
 	final IDocumentalAsync idoc = GWT.create(IDocumental.class);
@@ -175,7 +174,6 @@ public class Documental implements EntryPoint {
 		root.add(ui);
 		initializeFilterMap();
 		createAonToolbar();
-		createSearchPanel();
 		createAttachListPanel();
 	}
 	
@@ -226,6 +224,14 @@ public class Documental implements EntryPoint {
 			}
 			@Override protected void onSendButtonClick() {
 				sendSelectedDocuments();
+			}
+			
+			@Override
+			protected void onSearchKeyup(String value) {
+				LinkedList<String> list = new LinkedList<>();
+				list.add(value);
+				getFilterMap().put("description", list);
+				createAttachListPanel();
 			}
 			
 		}
@@ -411,14 +417,6 @@ public class Documental implements EntryPoint {
 		labelPanel.add(label);
 		labelPanel.add(icon);
 		return labelPanel;
-	}
-	
-	private void createSearchPanel(){
-		if(getAonData().isAonSolutions()) {
-			contentDockLayoutPanel.setWidgetSize(searchContent, 0);
-		} else {
-			searchContent.add(new FilterPanel(me));
-		}
 	}
 	
 	public void createAttachListPanel() {

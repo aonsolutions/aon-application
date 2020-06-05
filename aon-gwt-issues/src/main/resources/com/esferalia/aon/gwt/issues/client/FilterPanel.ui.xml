@@ -26,8 +26,8 @@
 
 </ui:style>
 
-<g:HTMLPanel  styleName="aon-panelGrid-search {issuesResources.css.aonPanelGridSearchIssues}" >
-   	<div class="aon-panelGrid-search-info {issuesResources.css.aonPanelGridSearchInfoIssues}">							
+<g:HTMLPanel  styleName="{issuesResources.css.aonPanelGridSearchIssues}" >
+   	<div class="{issuesResources.css.aonPanelGridSearchInfoIssues}">							
 		<g:HorizontalPanel ui:field="filterHorizontal" styleName="aon-width-all">
 			<g:HTMLPanel>
 				<span class="aon-panelGrid-search-info-internal" style="position: relative;top: 2px;">Filtrar:</span>
@@ -45,11 +45,9 @@
 		</g:HorizontalPanel>					
 	</div>
     
-    <g:HorizontalPanel styleName="aon-width-all">
+    <g:HorizontalPanel ui:field="fHorizontal" styleName="aon-width-all">
         
         <g:HorizontalPanel>
-       		<g:TextBox ui:field="titleFilter" styleName="{issuesResources.css.aonSearchBoxIssues}"/>
-        
         	<p:PaperButton ui:field="openButton" styleName="{issuesResources.css.aonPaperButtonFilterIssues}" >
 				<i:IronIcon icon="error-outline" styleName="{issuesResources.css.aonIronIconFilterIssues}" />
 				<g:InlineLabel ui:field="openLabel" text="Abierta" styleName="{issuesResources.css.aonInlineLabelFilterIssues}" />

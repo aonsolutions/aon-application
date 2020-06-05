@@ -9,13 +9,8 @@
 	xmlns:p='urn:import:com.vaadin.polymer.paper.widget'
 	xmlns:i='urn:import:com.vaadin.polymer.iron.widget'>
 
-<ui:style>
-	
-	.button-right{
-		position:absolute;
-		right:0px;
-	}
-</ui:style>
+<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources"
+	field="aonResources"></ui:with>
 
 <g:HTMLPanel addStyleNames="paper-toolbar">
     <style is="custom-style">
@@ -29,8 +24,10 @@
        	<p:PaperIconButton ui:field="menuButton" title="menu" icon="menu"/>
        	<p:PaperButton ui:field="titleButton">
 		    <g:InlineLabel ui:field="titleLabel" text="Toolbar" styleName="title" />
-		</p:PaperButton>	
-	    <g:HorizontalPanel styleName="{style.button-right}">
+		</p:PaperButton>
+	    <g:HorizontalPanel styleName="{aonResources.css.aonButtonRight}">
+     		<p:PaperIconButton ui:field="searchButton" title="Búsqueda" visible="true" icon="search"/>
+     		<g:TextBox ui:field="searchTextBox" visible="false" styleName="{aonResources.css.aonSearchTextBox}"></g:TextBox>
       		<p:PaperIconButton ui:field="downloadButton" title="Descargar" visible="false" icon="file-download"/>
        		<p:PaperIconButton ui:field="sendButton" title="Enviar" visible="false" icon="mail"/>
    			<p:PaperIconButton ui:field="editButton" title="Editar" icon="create" />

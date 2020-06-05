@@ -35,9 +35,6 @@
 	</g:west>
 	<g:center>
 		<g:DockLayoutPanel ui:field="contentDockLayoutPanel">
-			<g:north size="85">
-				<g:HTMLPanel ui:field="searchContent"/>
-			</g:north>
 			<g:center>
 				<g:SimpleLayoutPanel ui:field="content"/>	
 			</g:center>

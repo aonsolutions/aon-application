@@ -282,6 +282,12 @@ public class Issues implements EntryPoint {
 			@Override protected void onEditButtonClick() {}
 			@Override protected void onDeleteButtonClick() {}
 			@Override protected void onSendButtonClick() {}
+			
+			@Override
+			protected void onSearchKeyup(String value) {
+				issueFilter.setTitle(value);
+				updateIssueList(issueFilter, false);				
+			}
 		}.setVisibleEditButton(false)
 		.setVisibleDeleteButton(false)
 		.setVisibleMoreOptionButton(false)

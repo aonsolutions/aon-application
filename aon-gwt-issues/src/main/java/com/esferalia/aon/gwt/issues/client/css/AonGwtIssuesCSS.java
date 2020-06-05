@@ -58,4 +58,7 @@ public interface AonGwtIssuesCSS extends CssResource{
 	
 	@ClassName("filter-label-issues")
 	String filterLabelIssues();
+	
+	@ClassName("aon-width30-percent")
+	String aonWidth30Percent();
 }

@@ -1376,4 +1376,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-action-button")
 	String aonActionButton();
 	
+	@ClassName("aon-search-text-box")
+	String aonSearchTextBox();	
+	
+	@ClassName("aon-button-right")
+	String aonButtonRight();	
 }

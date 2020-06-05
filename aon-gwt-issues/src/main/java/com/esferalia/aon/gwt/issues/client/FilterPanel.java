@@ -12,8 +12,6 @@ import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -21,10 +19,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.paper.widget.PaperButton;
 
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
@@ -72,8 +70,7 @@ public class FilterPanel extends Composite {
     @UiField PaperButton enterpriseButton;
     @UiField PaperButton orderButton;
     @UiField PaperButton dateButton;
-    @UiField TextBox titleFilter;
-    
+    @UiField HorizontalPanel fHorizontal;
     Incidence incidence;
     
     public FilterPanel(Issues issues, Incidence incidence) {
@@ -94,15 +91,7 @@ public class FilterPanel extends Composite {
     	enterpriseButton.setNoink(true);
     	orderButton.setNoink(true);
     	dateButton.setNoink(true);
-    	
-    	titleFilter.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				getIssues().issueFilter.setTitle(titleFilter.getText());
-				getIssues().updateIssueList(getIssues().issueFilter, false);
-			}
-		});
+    	fHorizontal.setCellHorizontalAlignment(fHorizontal.getWidget(1), HasHorizontalAlignment.ALIGN_RIGHT);
     }
     
 	@UiHandler("openButton")
@@ -584,8 +573,6 @@ public class FilterPanel extends Composite {
     	orderButton.setTitle("");orderLabel.setText("");
     	dateButton.setTitle("");dateLabel.setText("");
     	fastFilterLabel.setText("");
-    	
-    	titleFilter.setValue("");
     	
     	if(faq){
     		openButton.setVisible(false);

@@ -61,4 +61,7 @@ public interface AonGwtIssuesCSS extends CssResource{
 
 	@ClassName("aon-polymer-add-button")
 	String aonPolymerAddButton();
+	
+	@ClassName("aon-width30-percent")
+	String aonWidth30Percent();
 }

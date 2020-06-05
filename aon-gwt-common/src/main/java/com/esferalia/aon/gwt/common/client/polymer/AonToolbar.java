@@ -3,12 +3,14 @@ package com.esferalia.aon.gwt.common.client.polymer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.vaadin.polymer.paper.widget.PaperButton;
 import com.vaadin.polymer.paper.widget.PaperIconButton;
 
@@ -23,6 +25,8 @@ public abstract class AonToolbar extends Composite {
     @UiField PaperButton titleButton;
     @UiField Label  titleLabel;
 
+    @UiField PaperIconButton searchButton;
+    @UiField TextBox searchTextBox;
     @UiField PaperIconButton sendButton;
     @UiField PaperIconButton downloadButton;
     @UiField PaperIconButton fastFilterButton;
@@ -214,9 +218,33 @@ public abstract class AonToolbar extends Composite {
    		onSendButtonClick();
    	}
    
+   	
+// ----------- SEARCH BUTTON
+    
+   	protected abstract void onSearchKeyup(String value);
+
+   	public AonToolbar setVisibleSearchButton(Boolean isVisible){
+   		searchButton.setVisible(isVisible);
+       	return this;
+    }
+
+   	@UiHandler("searchButton")
+   	void searchButtonClick(ClickEvent event) {
+   		searchTextBox.setVisible(!searchTextBox.isVisible());
+   		if(searchTextBox.isVisible()) {
+   			searchTextBox.setFocus(true);
+   		}
+   	}
+   	
+   	@UiHandler("searchTextBox")
+   	void searchTextBoxKeyup(KeyUpEvent event) {
+   		onSearchKeyup(searchTextBox.getValue());
+   	}
+   
  // ----------- ALL BUTTONS
 
    	public AonToolbar setVisibleAllButton(Boolean isVisible){
+   		searchButton.setVisible(isVisible());
    		menuButton.setVisible(isVisible);
    		refreshButton.setVisible(isVisible);
    		addButton.setVisible(isVisible);
