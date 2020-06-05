@@ -115,15 +115,7 @@ public class MainEntryPoint implements EntryPoint {
 				@Override public void onFailure(Throwable arg0) {}
 			});
 		} else {
-			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
-				
-				@Override public void onSuccess(AonData result) {
-					aonData = result;
-					selection(entryPoint);
-				}
-				
-				@Override public void onFailure(Throwable arg0) {}
-			});			
+			selection(entryPoint);			
 		}
 
 		
@@ -671,7 +663,7 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		}
 	}
-	
+
 	public static native String getToken()
 	/*-{
 		return $wnd.localStorage.getItem("aon_session_id");
@@ -679,20 +671,25 @@ public class MainEntryPoint implements EntryPoint {
 	
 	public static native String getCurrentDomainName()
 	/*-{
-		return $wnd.getCurrentDomainName();
+		var token = $wnd.localStorage.getItem("aon_session_id");
+		return token ? $wnd.localStorage.getItem("aon_domain_name") : $wnd.getCurrentDomainName();
 	}-*/;
 
 	public static native int getCurrentDomain()
 	/*-{
-		return $wnd.getCurrentDomain();
+		var token = $wnd.localStorage.getItem("aon_session_id");
+		return token ? $wnd.localStorage.getItem("aon_domain_id") :  $wnd.getCurrentDomain();
 	}-*/;
 	
-	public static native String getCurrentUser() 
+	public static String getCurrentUser() {
+		return getToken() != null ? aonData.getUser().getLogin() : getCurrentUserJs();
+	};
+	
+	public static native String getCurrentUserJs()
 	/*-{
-		return $wnd.getCurrentUser();
+		var token = $wnd.localStorage.getItem("aon_session_id");
+		return token ? "" : $wnd.getCurrentUser();
 	}-*/;
-
-
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 
