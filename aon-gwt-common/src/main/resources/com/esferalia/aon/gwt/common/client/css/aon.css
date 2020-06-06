@@ -1149,6 +1149,11 @@ input[type="checkbox"]:focus + label {
 	width: auto;
 }
 
+@sprite .aon-icon-brighteye{
+	gwt-image: "aonIconBrighteye";
+	width: auto;
+}
+
 .aon-icon-button {
 	background: #eaeced;
 	background-image: -webkit-linear-gradient(top, #eaeced, #cfcfcf);

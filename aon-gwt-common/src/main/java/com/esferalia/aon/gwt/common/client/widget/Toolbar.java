@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -34,6 +35,7 @@ public class Toolbar extends Composite {
 	public Button addButton(String text, String icon){
 		Button button = new Button();
 		button.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		button.getElement().getStyle().setOutlineWidth(0, Unit.PX);
 		button.addStyleName(icon);
 		button.setText(text);
 		return addButton(button);

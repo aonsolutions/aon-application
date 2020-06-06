@@ -376,5 +376,9 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-letter-p-blue-icon.png")
 	ImageResource aonLetterPBlueIcon();
+	
+	@Source("images/aon-icon-brighteye.png")
+	ImageResource aonIconBrighteye();
+	
 }
 

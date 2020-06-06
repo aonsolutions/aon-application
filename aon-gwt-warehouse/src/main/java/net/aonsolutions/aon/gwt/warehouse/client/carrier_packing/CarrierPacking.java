@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.api.client.registry.JsRmedia;
 import com.esferalia.aon.gwt.api.client.warehouse.JsCarrierPacking;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.polymer.AonDialog;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
@@ -19,6 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -43,6 +45,9 @@ import net.aonsolutions.polymer.aon.AonComboBoxElement;
 import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class CarrierPacking extends AonTemplate2{
+	
+	final static AonResources AON_RESOURCES = GWT.create(AonResources.class);
+
 
 	final IWarehouseAsync impl = GWT.create(IWarehouse.class);
 	private API API;
@@ -94,6 +99,7 @@ public class CarrierPacking extends AonTemplate2{
 		toolbar.addButton(AON.MSG.deleteAction(), AON.AON_CSS.aonIconDelete(), false).addClickHandler(deleteClickHandler());
 		toolbar.addButton("Impresi\u00f3n", AON.AON_CSS.aonIconPdf(), false).addClickHandler(printClickHandler());
 		toolbar.addButton("Enviar", "aon-icon-mail", false).addClickHandler(emailClickHandler());
+		toolbar.addButton("token", AON_RESOURCES.css().aonIconBrighteye(), false).addClickHandler(brighteyeClickHandler());
 		
 		PaperIconButton ant = new PaperIconButton();
 		ant.setNoink(true);
@@ -145,9 +151,10 @@ public class CarrierPacking extends AonTemplate2{
 		toolbar.getButtonPanel().getWidget(0).setVisible(true);// setBackVisible(false);
 		toolbar.getButtonPanel().getWidget(2).setVisible(true);// setRemoveVisible(false);
 		toolbar.getButtonPanel().getWidget(3).setVisible(true);// setPrintVisible(false);
-		toolbar.getButtonPanel().getWidget(4).setVisible(true);// setEmailVisible(false);	
-		toolbar.getButtonPanel().getWidget(5).setVisible(true);// setAntVisible(false);
-		toolbar.getButtonPanel().getWidget(6).setVisible(true);// setNextVisible(false);
+		toolbar.getButtonPanel().getWidget(4).setVisible(true);// setEmailVisible(false);
+		toolbar.getButtonPanel().getWidget(5).setVisible(true);// setBrighteyeVisible(false);
+		toolbar.getButtonPanel().getWidget(6).setVisible(true);// setAntVisible(false);
+		toolbar.getButtonPanel().getWidget(7).setVisible(true);// setNextVisible(false);
 
 		setContent(new CarrierPackingDetail(this, js));
 	}
@@ -344,9 +351,10 @@ public class CarrierPacking extends AonTemplate2{
 				toolbar.getButtonPanel().getWidget(0).setVisible(false);// setBackVisible(false);
 				toolbar.getButtonPanel().getWidget(2).setVisible(false);// setRemoveVisible(false);
 				toolbar.getButtonPanel().getWidget(3).setVisible(false);// setPrintVisible(false);
-				toolbar.getButtonPanel().getWidget(4).setVisible(false);// setEmailVisible(false);	
-				toolbar.getButtonPanel().getWidget(5).setVisible(false);// setAntVisible(false);
-				toolbar.getButtonPanel().getWidget(6).setVisible(false);// setNextVisible(false);
+				toolbar.getButtonPanel().getWidget(4).setVisible(false);// setEmailVisible(false);
+				toolbar.getButtonPanel().getWidget(5).setVisible(false);// setBrighteyeVisible(false);
+				toolbar.getButtonPanel().getWidget(6).setVisible(false);// setAntVisible(false);
+				toolbar.getButtonPanel().getWidget(7).setVisible(false);// setNextVisible(false);
 				
 				content(filterMap);
 			}
@@ -380,6 +388,17 @@ public class CarrierPacking extends AonTemplate2{
 			public void onClick(ClickEvent event) {
 				CarrierPackingDetail w = (CarrierPackingDetail) getContent().getWidget();
 				API.getWarehouse().downloadPackingList(w.getJsCarrierPacking().getId());
+			}
+		};
+	}
+	
+	private ClickHandler brighteyeClickHandler() {
+		return new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				CarrierPackingDetail w = (CarrierPackingDetail) getContent().getWidget();
+				Window.open("https://udapa.aonsolutions.net/udapa/qr?cp=" + w.getJsCarrierPacking().getId(), "_blank", null);
 			}
 		};
 	}
