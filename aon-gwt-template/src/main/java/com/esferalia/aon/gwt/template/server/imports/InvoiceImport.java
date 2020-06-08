@@ -593,12 +593,12 @@ public class InvoiceImport {
 			ai.setPayAccountId(financeAccount.getId())
 			  .setPayAccountCode(financeAccount.getCode())
 			  .setPayAccountDescription(financeAccount.getDescription());
-				
+			
 			Finance f = new Finance()
 					.setAmount(ai.getInvoice().getTotal())
 					.setDueDate(ivs.get(i).getFinanceDate() != null ? ivs.get(i).getFinanceDate() : ai.getInvoice().getIssueDate())
-					.setPayMethod(pm.getId());
-
+					.setPayMethod(pm.getId())
+					.setPayment(InvoiceType.PURCHASE.equals(invoice.getType()));
 			
 			ai.getInvoice().setFinances(new LinkedList<Finance>());
 			if(financeAccount != null && financeAccount.getId() != null) {
