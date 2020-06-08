@@ -13,6 +13,7 @@ public interface IFinanceUtilitiesItem extends Serializable {
 		void visitErrorMessage(FinanceUtilitiesItemType type);
 		void visitInfoMessage(FinanceUtilitiesItemType type);
 		void visitMissingFinanceInvoice(FinanceUtilitiesItemType type);
+		void visitFinanceInvoiceIntegrityCheck(FinanceUtilitiesItemType type);
 	}
 
 	public static enum FinanceUtilitiesItemType {
@@ -35,6 +36,13 @@ public interface IFinanceUtilitiesItem extends Serializable {
 				visitor.visitMissingFinanceInvoice(this);		
 			}
 		}
+		,FINANCE_INVOICE_INTEGRITY_CHECK{
+			@Override
+			public void visit(IFinanceUtilitiesItemTypeVisitor visitor) {
+				visitor.visitFinanceInvoiceIntegrityCheck(this);		
+			}
+		}
+		
 		;
 		
 		public void visit(IFinanceUtilitiesItemTypeVisitor visitor) {

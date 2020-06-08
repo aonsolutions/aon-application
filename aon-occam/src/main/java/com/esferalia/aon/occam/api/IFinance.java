@@ -98,6 +98,9 @@ public interface IFinance {
 	// 	***********************************************
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params);
 	public Invoice missingFinanceInvoicesFix(AONContext ctx, Integer invoice);
+	public FinanceUtilitiesResult financeInvoiceIntegrity(AONContext ctx);
+	public Finance financeInvoiceIntegrityFix(AONContext ctx, Finance finance);
+	
 	public LinkedList<Finance> getFinancesForInvoice(AONContext ctx, Invoice invoice);
 	public Finance settleFinance(AONContext ctx, Integer finance);
 	public Finance undoFinance(AONContext ctx, Integer finance);

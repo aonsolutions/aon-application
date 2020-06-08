@@ -8,6 +8,7 @@ import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
@@ -39,5 +40,14 @@ public class FinanceUtilitiesServiceImpl extends AonRemoteServiceServlet impleme
 			Integer invoice) throws AonCoreException {
 		return AON.missingFinanceInvoicesFix(domainName, user, domain,invoice);
 	}
-
+	@Override
+	public FinanceUtilitiesResult financeInvoiceIntegrity(String domainName, String user, Domain domain)
+			throws AonCoreException {
+		return AON.financeInvoiceIntegrity(domainName, user, domain);
+	}
+	@Override
+	public Finance financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance)
+			throws AonCoreException {
+		return AON.financeInvoiceIntegrityFix(domainName, user, domain, finance);
+	}
 }

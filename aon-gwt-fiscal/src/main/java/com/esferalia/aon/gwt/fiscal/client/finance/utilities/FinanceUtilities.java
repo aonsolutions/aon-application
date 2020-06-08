@@ -111,7 +111,18 @@ public class FinanceUtilities extends MainEntryPoint{
 //				missingFinanceInvoices.run();
 			}
 		});
-				
+
+		
+		FinanceInvoiceIntegrityCheck financeInvoiceIntegrityCheck = new FinanceInvoiceIntegrityCheck(getDomainName(),getUser(),domain);
+		checksPanel.add(financeInvoiceIntegrityCheck.getSidebarWidget());
+		financeInvoiceIntegrityCheck.addSelectionHandler( new SelectionHandler<FinanceUtilities.IOption>() {
+			@Override
+			public void onSelection(SelectionEvent<IOption> event) {
+				content.setWidget( financeInvoiceIntegrityCheck );
+				financeInvoiceIntegrityCheck.run();
+			}
+		});
+		
 		sidebarMenu.add(checksDisclosurePanel);
 		
 		dockLayoutPanel.add( content );

@@ -263,6 +263,7 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 		@Override public void visitErrorMessage(FinanceUtilitiesItemType type) {}
 		@Override public void visitInfoMessage(FinanceUtilitiesItemType type) {}
 		@Override public void visitOther(FinanceUtilitiesItemType type) {}
+		@Override public void visitFinanceInvoiceIntegrityCheck(FinanceUtilitiesItemType type) {}
 		
 		@Override
 		public void visitMissingFinanceInvoice(FinanceUtilitiesItemType type) {

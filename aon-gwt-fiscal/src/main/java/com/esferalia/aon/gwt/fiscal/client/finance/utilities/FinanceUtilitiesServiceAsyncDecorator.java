@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
@@ -48,5 +49,17 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 		fsa.missingFinanceInvoicesFix(domainName, user, domain, invoice, new AsyncCallbackWrapper<Invoice>(callback));
 	}
 
+	// Chequeo de integridad de vencimientos en facturas 
+	@Override
+	public void financeInvoiceIntegrity(String domainName, String user, Domain domain,
+			AsyncCallback<FinanceUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.financeInvoiceIntegrity(domainName, user, domain, new AsyncCallbackWrapper<FinanceUtilitiesResult>(callback));
+	}
+	@Override
+	public void financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance,AsyncCallback<Finance> callback) throws AonCoreException {
+		AON.start();
+		fsa.financeInvoiceIntegrityFix(domainName, user, domain, finance, new AsyncCallbackWrapper<Finance>(callback));
+	}
 
 }

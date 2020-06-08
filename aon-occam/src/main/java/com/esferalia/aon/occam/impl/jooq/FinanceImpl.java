@@ -242,7 +242,18 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FinanceUtilitiesDAO.missingFinanceInvoicesFix( ctx , invoice));
 	}
+	@Override
+	public FinanceUtilitiesResult financeInvoiceIntegrity(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceUtilitiesDAO.financeInvoiceIntegrity( ctx ));
+	}
+	@Override
+	public Finance financeInvoiceIntegrityFix(AONContext ctx, Finance finance) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FinanceUtilitiesDAO.financeInvoiceIntegrityFix( ctx , finance));
+	}
 	
+ 	
 	@Override
 	public LinkedList<FinanceTracking> getFinanceTracking(AONContext ctx, Integer finance) {
 		return ctx.getDslContext().transactionResult(configuration

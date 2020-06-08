@@ -5804,7 +5804,29 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
+
+	public static FinanceUtilitiesResult financeInvoiceIntegrity(String domainName, String user, Domain domain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getFinance().financeInvoiceIntegrity(ctx);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static Finance financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().financeInvoiceIntegrityFix(ctx,finance);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+
 	public static LinkedList<FinanceTracking> getFinanceTracking(String domainName, int domainId, String user,
 			Integer finance) {
 		AONContext ctx = null;
