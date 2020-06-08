@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { UserDialogComponent } from '../dialogs/user-dialog/user-dialog.component';
+import { HelpDialogComponent } from '../dialogs/help-dialog/help-dialog.component';
 import { ExtensionDialogComponent } from '../dialogs/extension-dialog/extension-dialog.component';
 import { MatDialog } from '@angular/material';
 import { SharedService} from '../../services/services';
@@ -82,7 +83,18 @@ export class AonToolbarComponent implements OnInit {
   }
 
   help(): void {
+    const dialogRef = this.dialog.open(HelpDialogComponent, {
+      width: '250px',
+      backdropClass: 'aon-user-dialog-backdrop',
+      panelClass: 'aon-user-dialog-panel',
+      position: {
+        top: '50px',
+        right: '60px'
+      },
+      data: {}
+    });
 
+    dialogRef.afterClosed().subscribe();
   }
 
   apps(): void {

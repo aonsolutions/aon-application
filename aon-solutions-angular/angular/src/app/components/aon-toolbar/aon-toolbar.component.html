@@ -1,9 +1,8 @@
-<mat-toolbar class="aon-toolbar" >
+<mat-toolbar *ngIf="!isMobile()" class="aon-toolbar" >
   <span>
-    <img *ngIf="!isMobile() && isParent()" class="aon-logo" (click)="home()" [src]="logo"  width="240px" />
-    <img *ngIf="!isMobile() && !isParent()" class="aon-logo" (click)="home()" [src]="logoCompany"  width="135px" />
-    <img *ngIf="!isMobile() && !isParent()" class="aon-parent-logo" (click)="home()" [src]="getCompanyParentLogo()"/>
-    <img *ngIf="isMobile() && !mobileSearching" style="cursor: pointer;margin-top: 10px;margin-left: 10px;" (click)="home()" [src]="logoMobile"  height="30px" />
+    <img *ngIf="isParent()" class="aon-logo" (click)="home()" [src]="logo"  width="240px" />
+    <img *ngIf="!isParent()" class="aon-logo" (click)="home()" [src]="logoCompany"  width="135px" />
+    <img *ngIf="!isParent()" class="aon-parent-logo" (click)="home()" [src]="getCompanyParentLogo()"/>
   </span>
 
   <span *ngIf="isMobile() && mobileSearching">
@@ -28,8 +27,12 @@
     <aon-icon-button icon="business" (click)="company()" title="Selección de Empresa"></aon-icon-button>
   </span>
 
-  <span *ngIf="!mobileSearching" class="aon-toolbar-first-button aon-right60">
+  <span *ngIf="isParent() && !mobileSearching" class="aon-toolbar-first-button aon-right60">
     <aon-icon-button icon="apps" (click)="apps()" title="Aplicaciones"></aon-icon-button>
+  </span>
+
+  <span *ngIf="!isParent()" class="aon-toolbar-first-button aon-right60" >
+    <aon-icon-button icon="help_outline" (click)="help()"></aon-icon-button>
   </span>
 
   <span *ngIf="!mobileSearching" class="aon-toolbar-first-button aon-right20" >
@@ -42,10 +45,14 @@
   <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right100" >
     <aon-icon-button icon="home" outline="true" (click)="home()"></aon-icon-button>
   </span>
-  <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right60" >
-    <aon-icon-button icon="help_outline" (click)="help()"></aon-icon-button>
-  </span>
+
   <span id="showMenuButton" *ngIf="!isParent()" class="aon-show-menu-button" style="padding-right: 20px;">
     <aon-icon-button [icon]="showMenuIcon" (click)="showMenu()"></aon-icon-button>
+  </span>
+</mat-toolbar>
+
+<mat-toolbar *ngIf="isMobile()" class="aon-toolbar" >
+  <span>
+    <img *ngIf="!mobileSearching" style="cursor: pointer;margin-top: 10px;margin-left: 10px;" (click)="home()" [src]="logoMobile"  height="30px" />
   </span>
 </mat-toolbar>

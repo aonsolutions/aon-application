@@ -12,6 +12,7 @@ import { UserEditComponent } from './components/user-edit/user-edit.component';
 import { UserChangePasswordComponent } from './components/user-change-password/user-change-password.component';
 import { AonToolbarComponent } from './components/aon-toolbar/aon-toolbar.component';
 import { UserDialogComponent } from './components/dialogs/user-dialog/user-dialog.component';
+import { HelpDialogComponent } from './components/dialogs/help-dialog/help-dialog.component';
 import { UserTableComponent } from './components/user-table/user-table.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './material/material.module';
@@ -59,6 +60,7 @@ import {NgxImageCompressService } from 'ngx-image-compress';
     UserChangePasswordComponent,
     AonToolbarComponent,
     UserDialogComponent,
+    HelpDialogComponent,
     UserTableComponent,
     AonCompanyListComponent,
     MyAccountComponent,
@@ -98,6 +100,7 @@ import {NgxImageCompressService } from 'ngx-image-compress';
   ],
   entryComponents: [
     UserDialogComponent,
+    HelpDialogComponent,
     UserListDialogComponent,
     CompanyListDialogComponent,
     ErrorDialogComponent,

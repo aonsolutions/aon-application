@@ -16,11 +16,6 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   app: any;
   apps = [
     {
-      app:'alma',
-      title: 'Alma',
-      logo: 'assets/apps/alma.png'
-    },
-    {
       app:'invoice',
       title: 'Facturas',
       logo: 'assets/apps/invoice.png'
@@ -29,6 +24,11 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       title: 'Documental',
       logo: 'assets/apps/documental.png'
     },{
+      app:'helpdesk',
+      title: 'Help Desk',
+      logo: 'assets/apps/helpdesk.png'
+    },
+    {
       app:'accounting',
       title: 'Contabilidad',
       logo: 'assets/apps/conta.png'
@@ -70,7 +70,7 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       RootLoader.angularPanel(this.router, this.location, 'invoice');
     } else if('documental' === app) {
       GwtLoader.startModule('aon_gwt_aio', 'documents');
-    } else if('alma' === app) {
+    } else if('helpdesk' === app) {
       GwtLoader.startModule('aon_gwt_aio', 'issues');
     } else if('accounting' === app) {
       this.app = {
