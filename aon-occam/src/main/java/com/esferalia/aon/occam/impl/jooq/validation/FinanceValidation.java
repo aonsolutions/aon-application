@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
 import static com.esferalia.aon.jooq.tables.AccountEntryFbatch.ACCOUNT_ENTRY_FBATCH;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 
 import java.util.function.BiConsumer;
 
@@ -8,6 +9,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.watson.AonError;
@@ -68,12 +70,38 @@ public class FinanceValidation {
 			}
 		}
 	};
+	private static BiConsumer<Finance,AONContext> PAYMENT_CHECK = (finance,ctx) -> {
+		if (finance.getInvoice() != null && finance.getInvoice().getId() != null) {
+			InvoiceType invoiceType = finance.getInvoice().getType();
+			if (invoiceType == null) {
+				invoiceType = ctx.getDslContext()
+					.select(INVOICE.TYPE)
+					.from(INVOICE)
+					.where(INVOICE.ID.eq(finance.getInvoice().getId()))
+					.fetch()
+					.stream()
+					.map(rec -> InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)))
+					.findFirst()
+					.orElse(null);
+			}
+			if (invoiceType == null) {
+				throw new AonCoreException(AonError.INVOICE_EMPTY_TYPE.getMessage());
+			} else {
+				if ((finance.getInvoice().isSales() && finance.isPayment() )
+				||  (!finance.getInvoice().isSales() && !finance.isPayment() )) {
+					throw new AonCoreException(AonError.FINANCE_WRONG_PAYMENT.getMessage());		
+				}
+			}
+		}
+	};
 
 	public static void validateSave(AONContext ctx, Finance finance) throws AonCoreException {
+		
 			CHECK_EMPTY_DOMAIN
 			.andThen(CHECK_AMOUNT_ZERO)
 			.andThen(CHECK_EMPTY_SCOPE)
 			.andThen(CHECK_BANK_ACCOUNT)
+			.andThen(PAYMENT_CHECK)
 			.accept(finance, ctx);
 	}
 	

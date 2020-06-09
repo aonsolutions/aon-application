@@ -149,6 +149,7 @@ public enum AonError implements Serializable{
 	,FINANCE_WRONG_IBAN_LENGTH("Longitud de IBAN incorrecta.")
 	,FINANCE_WRONG_ACCOUNT_BANK("Cuenta Bancaria incorrecta.")
 	,FINANCE_WRONG_IBAN("IBAN incorrecto.")
+	,FINANCE_WRONG_PAYMENT("Si la factura es una venta, el tipo del vencimiento debe ser \"cobro\". En caso contario, \"pago\".")
 	,DELETE_STATUS_WRONG("No se permite el borrado de vencimientos que no est\u00E9n pendientes.")
 	,FINANCE_TRACKING_WITHOUT_FINANCE("En el tracking no existe informaci\u00F3n sobre el vencimiento al que pertenece.")
 	,FINANCE_TRACKING_LATER_TRACKINGS("No se puede borrar el movimiento, tiene movimientos posteriores.")
