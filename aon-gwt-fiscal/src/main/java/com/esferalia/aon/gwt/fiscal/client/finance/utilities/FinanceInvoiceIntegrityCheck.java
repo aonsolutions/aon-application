@@ -1,7 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.ModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.CustomPopup;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
@@ -14,6 +19,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -270,6 +276,58 @@ class FinanceInvoiceIntegrityCheck extends OptionBase {
 				}
 			});
 			domainPanel.add(fixLabel);
+			
+			if (item.getTracking() != null && item.getTracking().getAccountEntry() != null ) {
+				InlineLabel entryLabel = new InlineLabel("Apunte");
+				entryLabel.setTitle("Apunte");
+				entryLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
+				entryLabel.addStyleName(AON.AON_CSS.aonIconInvoice());
+				entryLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
+				entryLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+				entryLabel.addClickHandler( new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						showEntry( item.getDomain(), item.getTracking().getAccountEntry() );
+					}
+				});
+				domainPanel.add(entryLabel);
+			}
+			
 		}
+	}
+
+	private void showEntry(int domain,Integer entryId) {
+		CustomPopup entryDialog = new CustomPopup();
+		entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+		entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+		entryDialog.setAnimationEnabled(true);
+		entryDialog.setGlassEnabled(true);
+		entryDialog.setModal(true);
+		entryDialog.setCaption(AON.MSG.accountEntries());
+		AccountEntryModule module = new AccountEntryModule();
+		module.onModuleLoad( new AccountEntryModuleOptions()
+			.setParentWidget( entryDialog)
+			.setDomainName( domainName )
+			.setUser( user )
+			.setDomain( domain)
+			.setAccountEntryId( entryId )
+			.setExternalCallback( new ModuleCallback() {
+			
+				@Override public void onRemove(IAccountEntryWrapper removed) {
+					entryDialog.hide();
+					run();
+				}
+				@Override public void onFailure(Throwable caught) {}
+				@Override public void onExit() {
+					entryDialog.hide();
+				}
+				@Override public void onChange(IAccountEntryWrapper changed) {
+					entryDialog.hide();
+					run();
+				}
+			})
+		);
+		entryDialog.center();
+		entryDialog.show();
 	}
 }

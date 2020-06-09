@@ -60,7 +60,6 @@ public class FinanceUtilitiesDAO {
 			.from(INVOICE)
 			.leftOuterJoin(FINANCE).on(INVOICE.ID.eq(FINANCE.INVOICE))
 			.where( where )
-				
 			.orderBy(INVOICE.DOMAIN,INVOICE.SERIES,INVOICE.NUMBER,INVOICE.TYPE)
 			.fetch()
 			.stream()
@@ -160,22 +159,20 @@ public class FinanceUtilitiesDAO {
 			.innerJoin(INVOICE).on(INVOICE.ID.eq(FINANCE.INVOICE))
 			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
 			.where( FINANCE.DOMAIN.eq(ctx.getDomainId()) )
-			.and( 
-					(INVOICE.TYPE.eq( InvoiceType.SALES.value() ).and(FINANCE.PAYMENT.eq( TRUE )))					
-					.or(INVOICE.TYPE.ne( InvoiceType.SALES.value() ).and(FINANCE.PAYMENT.eq( FALSE )))
-					)
+			.and((INVOICE.TYPE.eq( InvoiceType.SALES.value() ).and(FINANCE.PAYMENT.eq( TRUE )))					
+			  .or(INVOICE.TYPE.ne( InvoiceType.SALES.value() ).and(FINANCE.PAYMENT.eq( FALSE ))))
 			.orderBy(FINANCE.DUE_DATE)
 			.fetch()
 			.stream()
 			.map(new FinanceFiller())
-			.forEach(finance -> 
-				result.add(new FinanceInvoiceIntegrityItem()
-					.setFinance( finance )
-					.setDomain(ctx.getDomainId())
-					.setDomainName(ctx.getDomainName())
-					.setMessage((finance.isPayment()?"COBRO marcado como PAGO":"PAGO marcado como COBRO"))
-					)
-		);
+			.map(finance -> new FinanceInvoiceIntegrityItem()
+				.setFinance( finance )
+				.setDomain(ctx.getDomainId())
+				.setDomainName(ctx.getDomainName())
+				.setMessage((finance.isPayment()?"COBRO marcado como PAGO":"PAGO marcado como COBRO")))
+			.peek(item -> item.setTracking( FinanceTrackingDAO.getLastTracking(ctx, item.getFinance().getId() ) ) )
+			.forEach(item -> result.add( item ) )
+		;
 		return result;
 	}
 

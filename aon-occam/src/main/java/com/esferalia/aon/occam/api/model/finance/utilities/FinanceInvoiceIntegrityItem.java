@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.finance.utilities;
 
 import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 
 public class FinanceInvoiceIntegrityItem implements IFinanceUtilitiesItem {
 	
@@ -10,6 +11,7 @@ public class FinanceInvoiceIntegrityItem implements IFinanceUtilitiesItem {
 	private String domainName;
 	
 	private Finance finance;
+	private FinanceTracking tracking;
 	private String message;
 	
 	@Override
@@ -49,4 +51,11 @@ public class FinanceInvoiceIntegrityItem implements IFinanceUtilitiesItem {
 		return this;
 	}
 	
+	public FinanceTracking getTracking() {
+		return tracking;
+	}
+	public FinanceInvoiceIntegrityItem setTracking(FinanceTracking tracking) {
+		this.tracking = tracking;
+		return this;
+	}
 }
