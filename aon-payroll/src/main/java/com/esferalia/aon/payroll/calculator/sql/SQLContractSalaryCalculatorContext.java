@@ -5528,7 +5528,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	
 	private Boolean isEREBack (Period p) {
 		Calendar c = Calendar.getInstance();
-		c.set(2020, Calendar.MAY, 12, 0, 0, 0);
+		c.set(2020, Calendar.APRIL, 30, 0, 0, 0);
 		return isEREBack(c.getTime(), p);
 	}
 	

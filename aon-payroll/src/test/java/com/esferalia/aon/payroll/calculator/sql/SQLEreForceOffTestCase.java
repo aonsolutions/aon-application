@@ -456,10 +456,12 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		endEREDate = add(endEREDate, DAY_OF_MONTH, 23);
 		
 		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
+		
+		Date startEre = add(startDate, DAY_OF_MONTH, -40 );
 
 		addData(aonContext
 				, contract
-				, startDate
+				, startEre
 				, endEREDate
 				, new HashMap<String, String>() {
 					{
@@ -543,9 +545,11 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		
 		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
 
+		Date startEre = add(startDate, DAY_OF_MONTH, -16 );
+		
 		addData(aonContext
 				, contract
-				, startDate
+				, startEre
 				, endEREDate
 				, new HashMap<String, String>() {
 					{
@@ -710,11 +714,13 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
 		
+		Date startEre = add(startDate, DAY_OF_MONTH, -5 );
+
 		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
 
 		addData(aonContext
 				, contract
-				, startDate
+				, startEre
 				, endEREDate
 				, new HashMap<String, String>() {
 					{
@@ -772,9 +778,11 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		
 		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
 
+		Date startEre = add(startDate, MONTH, -1 );
+		
 		addData(aonContext
 				, contract
-				, startDate
+				, startEre
 				, endEREDate
 				, new HashMap<String, String>() {
 					{
@@ -819,11 +827,13 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
 		
+		Date startEre = add(startDate, DAY_OF_MONTH, -22 );
+
 		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
 
 		addData(aonContext
 				, contract
-				, startDate
+				, startEre
 				, endEREDate
 				, new HashMap<String, String>() {
 					{
@@ -870,11 +880,13 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
 		
+		Date startEre = add(startDate, MONTH, -2 );
+
 		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
 
 		addData(aonContext
 				, contract
-				, startDate
+				, startEre
 				, endEREDate
 				, new HashMap<String, String>() {
 					{
@@ -1917,15 +1929,16 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 				, String.format("REINCORPORADO_ERE ? (SELF.addBonus('EXPDTE. REG. DE EMPL. FZA. MAYOR EXONERADO II','_FRACC(CONTEXT,\"CUOTA_EMPRESARIAL\") * DIAS_TRABAJADOS/DIAS_COTIZADOS * (isdef PORCENTAJE_REINCORPORACION ? PORCENTAJE_REINCORPORACION : 75.0)/100.0');HIDE()) : HIDE()" , getFactorVariable().getName() ), 
 				"");
 
-		addSystemData(aonContext
-		, startDate
-		, add(startDate, Calendar.DAY_OF_MONTH, 11)
-		, new HashMap<String, String>(){{
-			put("PORCENTAJE_EXONERADO", "100.00");
-		}});
+//		addSystemData(aonContext
+//		, startDate
+//		, add(startDate, Calendar.DAY_OF_MONTH, 11)
+//		, new HashMap<String, String>(){{
+//			put("PORCENTAJE_EXONERADO", "100.00");
+//		}});
 		
 		addSystemData(aonContext
-		, add(startDate, Calendar.DAY_OF_MONTH, 12)
+//		, add(startDate, Calendar.DAY_OF_MONTH, 12)
+		, startDate
 		,endDate
 		, new HashMap<String, String>(){{
 			put("PORCENTAJE_EXONERADO", "ERE_TOTAL ? 100.00 : 60.00");
@@ -1934,9 +1947,11 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		Date endEREDate = add(getFirstDayOfYear(getToday()), MONTH, 4);
 		endEREDate = add(endEREDate, DAY_OF_MONTH, 11);
 		
+		Date startEre = add(startDate, DAY_OF_MONTH, -11);
+		
 		Date backDate = add(endEREDate, DAY_OF_MONTH, 1);
 
-		addData(aonContext, contract, startDate, endEREDate,
+		addData(aonContext, contract, startEre, endEREDate,
 				new HashMap<String, String>() {
 					{
 						put(getFactorVariable().getName(), "1");
