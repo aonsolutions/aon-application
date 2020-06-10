@@ -1123,6 +1123,96 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 
 	}	
 	
+	
+	@Test
+	public void testBaseCgcMinAndBaseCgpMin()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		addSystemData(aonContext, getFirstDayOfYear(getToday()), null, new HashMap<String, String>(){
+			{
+				put("DIAS_MES",
+				"[ \"01\":30, "
+				+ "\"02\":30, "
+				+ "\"03\":30, "
+				+ "\"04\":30, "
+				+ "\"05\":30, "
+				+ "\"06\":30, "
+				+ "\"07\":30, "
+				+ "\"08\": DIAS_NATURALES_MES, "
+				+ "\"09\": DIAS_NATURALES_MES, "
+				+ "\"10\": DIAS_NATURALES_MES, "
+				+ "\"11\": DIAS_NATURALES_MES][GRUPO_COTIZACION]");
+				
+				put("BASE_CGP_MIN",
+						"TIEMPO_COMPLETO ? 756.6000 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA ");
+				put("BASE_CGP_MAX",
+						"3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+				put("BASE_CGC_MIN",
+						"[ \"01\":(TIEMPO_COMPLETO ? 1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.37 * HORAS_NOMINA), "
+						+ "\"02\":(TIEMPO_COMPLETO ? 876.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.28 * HORAS_NOMINA), "
+						+ "\"03\":(TIEMPO_COMPLETO ? 762.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.59 * HORAS_NOMINA), "
+						+ "\"04\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+						+ "\"05\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+						+ "\"06\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+						+ "\"07\":(TIEMPO_COMPLETO ? 756.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.56 * HORAS_NOMINA), "
+						+ "\"08\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA), "
+						+ "\"09\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA), "
+						+ "\"10\":(TIEMPO_COMPLETO ? 25.22* DIAS_NOMINA : 4.56 * HORAS_NOMINA), "
+						+ "\"11\":(TIEMPO_COMPLETO ? 25.22 * DIAS_NOMINA : 4.56 * HORAS_NOMINA) ] [GRUPO_COTIZACION]");
+				put("BASE_CGC_MAX",
+						"[ \"01\":(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)), "
+						+ "\"02\":(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)), "
+						+ "\"03\":(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)), "
+						+ "\"04\":(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)), "
+						+ "\"05\":(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)), "
+						+ "\"06\":(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)), "
+						+ "\"07\":(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)), "
+						+ "\"08\":(120.20 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)), "
+						+ "\"09\":(120.20 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)), "
+						+ "\"10\":(120.20 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)), "
+						+ "\"11\":(120.20 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)) ] [GRUPO_COTIZACION]");
+				
+			}
+		});
+
+		ContractRecord contract = newContract(
+				aonContext,
+				getFirstDayOfYear(getToday()),
+				new HashMap<String, String>(){
+					{
+						put("TC2", "\"100\"");
+						put("GRUPO_COTIZACION","\"01\"");
+					}
+				},
+				new String[] { 
+						"500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				},
+				new String[] { 
+				}, 
+				null);
+		
+		Date start = getFirstDayOfMonth(getToday());
+		Date end = getLastDayOfMonth(start);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		ISalary salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(500.00, salary.getTotalPayment());
+		Assert.assertEquals(1056.90, salary.getCommonBase());
+		Assert.assertEquals(756.600, salary.getProfessionalBase());
+		Assert.assertEquals(500.00, salary.getIrpfBase());
+		
+
+	}	
+
+	
 	private static void load(Map<String, ITimedVariable<?>> context,
 			Map<String, Object> data) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {

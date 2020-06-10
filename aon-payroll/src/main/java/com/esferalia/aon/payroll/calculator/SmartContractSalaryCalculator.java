@@ -384,7 +384,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 
 			if ( type == PaymentType.CRA_0033						// TODO: PLANES PENSIONES Y SIST. ALTERNATIVOS 					
 				|| type == PaymentType.CRA_0000 					// TODO: This must be the only one check 
-				|| isFixBaseCgcMin(payment) 
+				|| isFixBaseCgcMinPayment(payment) 
 				|| matchAny(ContextVariable.ERES, payment.getName()) 
 				|| ContextVariable.ERE_FORCE.getName().equals(payment.getName()) 
 				|| ContextVariable.PREST_IT.equals(payment.getName()) 
@@ -888,9 +888,9 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.setIrpfExpression("_P")
 			.setType(PaymentType.CRA_0001)
 			.setSalaryType(SalaryType.SALARY)
-	//		.setQuoteExpression(format((cgcBase - rawCgcbase) / activeQuoteDays ) + " * DIAS_COTIZADOS " )
-			.setQuoteExpression("/*fixBaseCgcMin*/MAX(_P,(BASE_CGC_MIN - BASE_CGC_BRUTA))" )
 			.setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
+			.setQuoteExpression("/*fixBaseCgcMin*/MAX(_P,(BASE_CGC_MIN - BASE_CGC_BRUTA))" )
+			.setIrpfExpression("/*fixBaseCgcMin*/BASE_CGP=BASE_CGP_MIN;_P" )
 			, 
 			start, 
 			end, 
@@ -1452,7 +1452,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 //		return Double.toString(Math.round(d * 10000000.00) / 10000000.00 );		
 	}
 	
-	private static boolean isFixBaseCgcMin(IContractPayment p) {
+	private static boolean isFixBaseCgcMinPayment(IContractPayment p) {
 		return AonStringUtils.startsWith(p.getQuoteExpression(), "/*fixBaseCgcMin*/");
 	}
 	
