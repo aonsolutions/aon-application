@@ -31,11 +31,9 @@ import org.jooq.InsertFinalStep;
 import org.jooq.InsertOnDuplicateSetMoreStep;
 import org.jooq.InsertOnDuplicateSetStep;
 import org.jooq.InsertSetMoreStep;
-import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SQLDialect;
 import org.jooq.SelectConditionStep;
-import org.jooq.SelectLimitPercentStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.exception.DataAccessException;
@@ -47,7 +45,7 @@ import com.esferalia.aon.in.payroll.utils.Utils;
 import com.esferalia.aon.jooq.tables.records.PayrollWorkplaceRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class JooqTSLABTRAHandler implements TSLABTRAHandler {
+public class JooqTSLABTRAHandlerII implements TSLABTRAHandler {
 	
 	private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 	private static final Pattern FULL_NAME_PATTERN = Pattern.compile("(?<firstsurname>[^\\s]+)\\s+(?<secondsurname>[^\\s,]+)[\\s,]+(?<name>.*)");
@@ -64,7 +62,7 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 	BiFunction<InsertSetMoreStep<?>, Function<InsertOnDuplicateSetStep<?>, InsertOnDuplicateSetMoreStep<?>>, InsertFinalStep<?> > onduplicateKey;
 	
 	
-	public JooqTSLABTRAHandler(Connection connection, java.util.Date fromdate, File file) {
+	public JooqTSLABTRAHandlerII(Connection connection, java.util.Date fromdate, File file) {
 		Settings settings;
 
 		settings = new Settings();
@@ -79,7 +77,7 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		this.aliasDomainMap = dslContext.select().from(REGISTRY)
 		.where(REGISTRY.ALIAS.like(JooqTSLABEMPHandler.getAlias("%",file)))
 		.fetchMap(REGISTRY.ALIAS, REGISTRY.DOMAIN);
-		onduplicateKey = JooqTSLABTRAHandler::onDuplicateKeyIgnore;
+		onduplicateKey = JooqTSLABTRAHandlerII::onDuplicateKeyIgnore;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -114,17 +112,17 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		try {
 			date  = new Date(SIMPLE_DATE_FORMAT.parse(tra.get("startdate")).getTime());
 		} catch (Throwable t) {
-			System.err.printf(
-			"-1,\"%s\",\"%s\",\"%s\",\"\",\"\",\"\",\"%s\",\"%s\",\"%s\",\"%s\",\"\"\r\n", 
-			alias,
-			document, 
-			fullname,
-			tc2,
-		    quoteGroup,
-			category,
-			AonStringUtils.defaultIfBlank(tra.get("startdate"), "")
-			);
-			return;
+//			System.err.printf(
+//			"0,\"%s\",\"%s\",\"%s\",\"\",\"\",\"\",\"%s\",\"%s\",\"%s\",\"%s\",\"\"\r\n", 
+//			alias,
+//			document, 
+//			fullname,
+//			tc2,
+//		    quoteGroup,
+//			category,
+//			AonStringUtils.defaultIfBlank(tra.get("startdate"), "")
+//			);
+//			return;
 		}
 		Date startdate= date;
 		
@@ -141,6 +139,8 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		}
 		Date enddate = date;
 
+		String ss = tra.get("ss");
+		
 		
 		Integer domainId = 
 		Optional.ofNullable(aliasDomainMap.get(alias)).orElseGet(() -> {
@@ -148,8 +148,9 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 			return 
 			dslContext
 			.select()
-			.from(REGISTRY)			
-			.where(REGISTRY.DOCUMENT.equalIgnoreCase( document ))
+			.from(REGISTRY)
+			.where(REGISTRY.DOMAIN.ne(0))
+			.and(REGISTRY.DOCUMENT.equalIgnoreCase( document ))
 			.fetchOptional(REGISTRY.DOMAIN)
 			.orElseThrow();
 		} catch (NoSuchElementException | DataAccessException e) {
@@ -157,13 +158,6 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		}
 		}
 		);
-//		dslContext
-//		.select()
-//		.from(REGISTRY)
-//		.where(REGISTRY.ALIAS.equalIgnoreCase(alias))
-//		.fetchOptional(REGISTRY.DOMAIN)
-//		.orElseGet(()-> null)
-		;
 		
 		
 		String names [] = new String[3];
@@ -186,19 +180,19 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 
 		
 		if ( domainId == null ) {
-			System.err.printf(
-			"-2,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%10$td/%10$tm/%10$ty\",\"\"\r\n", 
-			alias,
-			document, 
-			fullname,
-			AonStringUtils.defaultIfBlank(name,""),
-			AonStringUtils.defaultIfBlank(firstSurName,""),
-			AonStringUtils.defaultIfBlank(secondSurName,""),
-			AonStringUtils.defaultIfBlank(tc2, ""),
-			AonStringUtils.defaultIfBlank( quoteGroup, ""),
-			AonStringUtils.defaultIfBlank( category, ""),
-			startdate
-			);
+//			System.err.printf(
+//			"-1,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%10$td/%10$tm/%10$ty\",\"\"\r\n", 
+//			alias,
+//			document, 
+//			fullname,
+//			AonStringUtils.defaultIfBlank(name,""),
+//			AonStringUtils.defaultIfBlank(firstSurName,""),
+//			AonStringUtils.defaultIfBlank(secondSurName,""),
+//			AonStringUtils.defaultIfBlank(tc2, ""),
+//			AonStringUtils.defaultIfBlank( quoteGroup, ""),
+//			AonStringUtils.defaultIfBlank( category, ""),
+//			startdate
+//			);
 			return;
 		}
 				
@@ -211,75 +205,6 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		;
 		
 		
-		String nationality =  "ES";
-		Byte documentType = Utils.getType(document);
-		
-//		if ( documentType == Utils.DNI 
-//			||documentType == Utils.NIF
-//			||documentType == Utils.CIF)
-//			nationality = "ES";
-
-		inserts.add(
-		onduplicateKey.apply(
-		dslContext.insertInto(REGISTRY)
-		.set(REGISTRY.ID, registryId)
-		.set(REGISTRY.DOMAIN, domainId )
-		.set(REGISTRY.TYPE, (byte) 0 ) 
-		.set(REGISTRY.NAME, fullname)
-		.set(REGISTRY.DOCUMENT, document)
-		.set(REGISTRY.DOCUMENT_COUNTRY, "ES")
-		.set(REGISTRY.DOCUMENT_TYPE, documentType)
-		.set(REGISTRY.NATIONALITY, nationality)
-		.set(REGISTRY.ALIAS, alias),
-		insert -> insert
-		.set(REGISTRY.DOMAIN, domainId )
-		.set(REGISTRY.TYPE, (byte) 0 ) 
-		.set(REGISTRY.NAME, fullname)
-		.set(REGISTRY.DOCUMENT, document)
-		.set(REGISTRY.DOCUMENT_COUNTRY, "ES")
-		.set(REGISTRY.DOCUMENT_TYPE, documentType)
-		.set(REGISTRY.NATIONALITY, nationality)
-		))
-		;
-		
-		String ss = tra.get("ss");
-		date = null ;
-		try {
-			date  = new Date(SIMPLE_DATE_FORMAT.parse(tra.get("birthdate")).getTime());
-		} catch (Throwable t) {
-		}
-		Date birthdate = date;
-		
-		inserts.add(
-		onduplicateKey.apply(
-		dslContext.insertInto(PERSON)
-		.set(PERSON.REGISTRY, registryId)
-		.set(PERSON.DOMAIN, domainId )
-		.set(PERSON.BIRTH_DATE, birthdate )
-		.set(PERSON.SOCIAL_SECURITY_NUM, ss )
-		.set(PERSON.NAME, name )
-		.set(PERSON.FIRST_SURNAME, firstSurName )
-		.set(PERSON.SECOND_SURNAME, secondSurName ),
-		insert -> insert
-		.set(PERSON.DOMAIN, domainId )
-		.set(PERSON.BIRTH_DATE, birthdate )
-		.set(PERSON.SOCIAL_SECURITY_NUM, ss )
-		.set(PERSON.NAME, name )
-		.set(PERSON.FIRST_SURNAME, firstSurName )
-		.set(PERSON.SECOND_SURNAME, secondSurName )
-		))
-		;
-		
-		
-		
-//		PayrollWorkplaceRecord workplace = dslContext
-//		.select()
-//		.from(PAYROLL_WORKPLACE)
-//		.where(PAYROLL_WORKPLACE.DOMAIN.eq(domainId))
-//		.fetchOptionalInto(PAYROLL_WORKPLACE)
-//		.orElseGet(()-> null)
-//		;
-
 		date = null ;
 		try {
 			date  = new Date(SIMPLE_DATE_FORMAT.parse(tra.get("senioritydate")).getTime());
@@ -288,76 +213,70 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 		Date senioritydate = date;
 		
 
-		SelectConditionStep<Record1<Integer>> contractId = 
+		List<Integer> contractIds = 
 		dslContext
-		.select(CONTRACT.ID)
+		.select()
 		.from(CONTRACT)
 		.where(CONTRACT.DOMAIN.eq(domainId))
 		.and(CONTRACT.PERSON.eq( registryId))
-		.and(CONTRACT.START_DATE.eq( startdate ))
+		.and(CONTRACT.START_DATE.eq( startdate )
+		.or(CONTRACT.SENIORITY_DATE.eq(senioritydate))
+		)
+		.fetch(CONTRACT.ID)		
 		;
 		
+		if ( contractIds.isEmpty() && enddate == null ) {
+			
+			contractIds = 
+			dslContext
+			.select()
+			.from(CONTRACT)
+			.where(CONTRACT.DOMAIN.eq(domainId))
+			.and(CONTRACT.PERSON.eq( registryId))
+			.and(CONTRACT.START_DATE.ge( startdate ))
+			.fetch(CONTRACT.ID)		
+			;
+		}else if ( contractIds.isEmpty() && enddate != null ) {
+			
+			contractIds = 
+			dslContext
+			.select()
+			.from(CONTRACT)
+			.where(CONTRACT.DOMAIN.eq(domainId))
+			.and(CONTRACT.PERSON.eq( registryId))
+			.and(CONTRACT.START_DATE.le( enddate ))
+			.and(CONTRACT.END_DATE.ge(startdate))
+			.fetch(CONTRACT.ID)		
+			;
 
-//		SelectConditionStep<Record1<Integer>> contractId = 
-//		DSL
-//		.select(CONTRACT.ID)
-//		.from(CONTRACT)
-//		.where(CONTRACT.DOMAIN.eq(domainId))
-//		.and(CONTRACT.PERSON.eq( registryId))
-//		.and(CONTRACT.START_DATE.eq( startdate ))
-//		;
-
-		SelectConditionStep<Record1<Integer>> enterpriseActivityId = 
-		DSL
-		.select(ENTERPRISE_ACTIVITY.ID)
-		.from(ENTERPRISE_ACTIVITY)
-		.where(ENTERPRISE_ACTIVITY.DOMAIN.eq(domainId))
-		;
-
-		SelectConditionStep<Record1<Integer>> enterpriseCccId = 
-		DSL
-		.select(ENTERPRISE_CCC.ID)
-		.from(ENTERPRISE_CCC)
-		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
-		;
+		}
 		
-		SelectConditionStep<Record1<Integer>> workplaceId = 
-		DSL
-		.select(PAYROLL_WORKPLACE.WORKPLACE)
-		.from(PAYROLL_WORKPLACE)
-		.where(PAYROLL_WORKPLACE.DOMAIN.eq(domainId))
-		;
+		if ( contractIds.isEmpty() ) {
+			
 
-		inserts.add(
-		onduplicateKey.apply(
-		dslContext.insertInto(CONTRACT)
-		.set(CONTRACT.ID, contractId )
-		.set(CONTRACT.PERSON, registryId )
-		.set(CONTRACT.DOMAIN, domainId )
-		.set(CONTRACT.WORKPLACE, workplaceId )
-		.set(CONTRACT.START_DATE, startdate)
-		.set(CONTRACT.END_DATE, enddate)
-		.set(CONTRACT.SENIORITY_DATE, senioritydate)
-		.set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseActivityId)
-		.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccId)
-		.set(CONTRACT.CATEGORY_DESCRIPTION, category),
-		insert -> insert
-		.set(CONTRACT.PERSON, registryId )
-		.set(CONTRACT.DOMAIN, domainId )
-		.set(CONTRACT.WORKPLACE, workplaceId )
-		.set(CONTRACT.START_DATE, startdate)
-		.set(CONTRACT.END_DATE, enddate)
-		.set(CONTRACT.SENIORITY_DATE, senioritydate)
-		.set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseActivityId)
-		.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccId)
-		.set(CONTRACT.CATEGORY_DESCRIPTION, category)
-		))
-		;
+			(contractIds.isEmpty() ? System.err : System.out).printf(
+			"-2,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%10$td/%10$tm/%10$ty\",\"\"\r\n", 
+			alias,
+			document, 
+			fullname,
+			AonStringUtils.defaultIfBlank(name,""),
+			AonStringUtils.defaultIfBlank(firstSurName,""),
+			AonStringUtils.defaultIfBlank(secondSurName,""),
+			AonStringUtils.defaultIfBlank(tc2, ""),
+			AonStringUtils.defaultIfBlank( quoteGroup, ""),
+			AonStringUtils.defaultIfBlank( category, ""),
+			startdate
+			);
 
-		insertContractData("TC2", tc2, domainId, startdate, contractId, enddate);
-		insertContractData("CNO", cno, domainId, startdate, contractId, enddate);
-		insertContractData("GRUPO_COTIZACION", quoteGroup, domainId, startdate, contractId, enddate);
-		insertContractData("__EM01_000", em01000 , domainId, startdate, contractId, enddate);
+			return;
+			
+		}
+		
+		for (Integer contractId : contractIds) {
+			insertContractData("TC2", tc2, domainId, startdate, contractId, enddate);
+			insertContractData("CNO", cno, domainId, startdate, contractId, enddate);
+			insertContractData("GRUPO_COTIZACION", quoteGroup, domainId, startdate, contractId, enddate);
+		}
 		
 
 		System.out.printf(
@@ -390,7 +309,7 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 	
 	
 	private void insertContractData(String name, String value, Integer domainId, Date startdate,
-			SelectConditionStep<Record1<Integer>> contractId, Date enddate) {
+			Integer contractId, Date enddate) {
 		
 		if ( AonStringUtils.isBlank(value))
 			return;
@@ -435,11 +354,12 @@ public class JooqTSLABTRAHandler implements TSLABTRAHandler {
 	// ------------------------------------------------------------------------
 
 	public void toSQL(PrintStream os) {
-		insert(inserts, i -> os.println(i.getSQL(ParamType.INLINED)));
+		insert(inserts, i -> os.println(i.getSQL()));
 	}
 	
 	public void execute() {
 		dslContext.transaction((configuration) -> {
+			
 			insert(inserts, InsertFinalStep::execute);
 			
 //			throw new RollbackException();

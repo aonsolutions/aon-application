@@ -27,9 +27,12 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.in.payroll.altai.jooq.RollbackException;
+import com.esferalia.aon.in.payroll.pdf.SalaryPDFBuilder;
+import com.esferalia.aon.in.payroll.pdf.SalaryPDFException;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFParser;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSalaryBuilder;
+import com.esferalia.aon.in.payroll.pdf.jooq.check.CheckSalaryPDFBuilder;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilder;
 
@@ -99,6 +102,21 @@ public class PDF2Aon {
 		     .withDescription("PDFs directory.")
 		     .create();
 
+		@SuppressWarnings("static-access")
+		Option skipOption = OptionBuilder
+		     .hasArg()
+		     .withLongOpt("skip")
+		     .withArgName("cif")
+		     .withDescription("Skips this enterprises (cifs)")
+		     .create();
+
+		@SuppressWarnings("static-access")
+		Option includeOption = OptionBuilder
+		     .hasArg()
+		     .withLongOpt("include")
+		     .withArgName("cif")
+		     .withDescription("Only include this enterprises (cifs)")
+		     .create();
 
 		@SuppressWarnings("static-access")
 		Option dateOption = OptionBuilder
@@ -152,6 +170,8 @@ public class PDF2Aon {
 		options.addOption(checkOption);
 		options.addOption(domainOption);
 		options.addOption(preffixOption);
+		options.addOption(skipOption);
+		options.addOption(includeOption);
 
 		
 		CommandLine commandLine = null;
@@ -175,8 +195,10 @@ public class PDF2Aon {
 		String preffix = commandLine.getOptionValue(preffixOption.getLongOpt(), "altai");
 		String where = commandLine.getOptionValue(whereOption.getLongOpt(), "`domain`.`name` LIKE 'altai%'");
 		String pdfsPaths [] = Optional.ofNullable(commandLine.getOptionValues(pdfsOption.getLongOpt())).orElse(new String[] {});;
+		String skipCifs [] = Optional.ofNullable(commandLine.getOptionValues(skipOption.getLongOpt())).orElse(new String[] {});;
+		String includeCifs [] = Optional.ofNullable(commandLine.getOptionValues(includeOption.getLongOpt())).orElse(new String[] {});;
 		Date date = Optional.ofNullable(commandLine.getOptionValue(dateOption.getLongOpt())).map(s -> parse(s)).orElse(null);
-		boolean check = commandLine.hasOption(checkOption.getLongOpt());
+		Boolean check = commandLine.hasOption(checkOption.getLongOpt());
 
 		Properties properties = new Properties();
 		properties.setProperty("user", user);
@@ -197,10 +219,24 @@ public class PDF2Aon {
 			Class.forName("com.mysql.jdbc.Driver");
 			
 			
+			
 			try {
 				dslContext.transaction((c)->{
-					JooqPDFSalaryBuilder  salaryBuilder = 
-					new JooqPDFSalaryBuilder(dslContext, domain);
+					SalaryPDFBuilder<?>  salaryBuilder = 
+					check ? 
+					new CheckSalaryPDFBuilder() : 
+					new JooqPDFSalaryBuilder(dslContext, domain).setFilter((pdf) -> { 
+						
+						if (includeCifs.length >0 && !Arrays.asList(includeCifs).contains(pdf.getCif())) {
+							System.err.println("WARN: SKIPPED [" + pdf.getCif() + "]: " + pdf.getEnterpriseName());
+							throw new SalaryPDFException("WARN: SKIPPED [" + pdf.getCif() + "]: " + pdf.getEnterpriseName() ); 	
+						}
+						
+						if (Arrays.asList(skipCifs).contains(pdf.getCif())) {
+							System.err.println("WARN: SKIPPED [" + pdf.getCif() + "]: " + pdf.getEnterpriseName());
+							throw new SalaryPDFException("WARN: SKIPPED [" + pdf.getCif() + "]: " + pdf.getEnterpriseName() ); 
+						}
+					});
 					
 					for (String calculosPath : pdfsPaths) {
 						Arrays.stream(new File(calculosPath).listFiles(f-> f.isFile() ))
@@ -208,7 +244,7 @@ public class PDF2Aon {
 							try {
 								SalaryPDFParser.parse(f, salaryBuilder);
 							} catch (IOException | UnknownPDFException e) {
-								System.err.printf("Error: '%s' %s ", f.getPath(), e.getMessage());
+								System.err.printf("Error: '%s' %s \r\n", f.getPath(), e.getMessage());
 							}
 										
 						});

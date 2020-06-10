@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryCost.SALARY_COST;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
@@ -25,22 +26,21 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
-import org.apache.commons.math3.exception.MathRuntimeException;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.ParamType;
 import org.jooq.exception.DataAccessException;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.in.payroll.pdf.SalaryPDFBuilder;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFException;
 import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.utils.Utils;
+import com.esferalia.aon.jooq.tables.SalaryBonus;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
@@ -63,16 +63,18 @@ import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.CompositeSalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilder;
-import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import freemarker.template.utility.Execute;
-
-public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> {
+public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalaryBuilder<Salary>> implements SalaryPDFBuilder<Salary>  {
 	
 	
 	private static final Date ISSUE_DATE = new Date(System.currentTimeMillis());
+	
+	public static interface PDFFilter {
+		void accept(PDFContract contract) throws SalaryPDFException;
+	}
+	
 
 	private static final class PDFSalaryBuilder extends SalaryBuilder {
 		@Override
@@ -95,21 +97,37 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	
 	int deleteMark;
 	
+	PDFFilter filter;
+	private int deleted;
+	private int inserted;
+	
 
 	@SuppressWarnings("unchecked")
 	public JooqPDFSalaryBuilder(DSLContext dslContext, String parentDomainName) {
 		super(new LazySalaryBuilder<JooqSalaryBuilder<Salary>, Salary>(new JooqSalaryBuilder<Salary>(dslContext)), new PDFSalaryBuilder());
 		
 		
+		this.filter = (p) -> {};
 		this.enableHeredity = 1;
 		this.creationUser = "altai2aon";
 		this.domainNamePreffix = "altai";
 		this.parentDomainName = parentDomainName;
 		this.parentDomain = getParentDomain(parentDomainName);
 		this.deleteMark = (int) (Math.random() * Integer.MAX_VALUE );
-		
 	}
-
+	
+	public int getDeleted() {
+		return deleted;
+	}
+	
+	public int getInserted() {
+		return inserted;
+	}
+	
+	public JooqPDFSalaryBuilder setFilter(PDFFilter filter) {
+		this.filter = filter;
+		return this;
+	}
 
 	@Override
 	public void createNewSalary() {
@@ -118,6 +136,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	
 	@Override
 	public void setContract(Object contract) {
+		filter.accept((PDFContract)contract);
 		getSQLSalaryProxy((PDFContract)contract)
 		.ifPresentOrElse(
 		(s) -> {
@@ -141,12 +160,21 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 	
 	
 	public void execute() {
-		int deleted = delete();
-		System.out.printf("INFO: %d salaries deleted.\r\n", deleted);
-		int inserted = getJooqSalaryBuilder().execute();
-		System.out.printf("INFO: %d salaries inserted.\r\n", inserted);
+		deleted = delete();
+		info("%d nóminas eliminadas.", deleted);
+		inserted = getJooqSalaryBuilder().execute();
+		info("%d nóminas traspasadas.", inserted);
 	}
- 
+	
+	// ------------------------------------------------------------------------
+
+	
+	protected void info(String format, Object ...args) {
+		System.out.print("INFO: ");
+		System.out.printf(format,args);
+		System.out.println("");
+	}
+	
 	// ------------------------------------------------------------------------
 	
 
@@ -171,7 +199,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		.fetchOptional()
 		.map(r -> { 
 			
-			System.out.printf("INFO: [EMPLOYEE FOUND] %s\r\n", getMessage(contract));
+			info("%s", getMessage(contract));
 
 			int contractId = r.get(CONTRACT.ID);
 			int domainId = r.get(DOMAIN.ID);			
@@ -532,6 +560,7 @@ public class  JooqPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalar
 		
 		getDSLContext().delete(SALARY_DATA).where(SALARY_DATA.SALARY.in(condition)).execute();
 		getDSLContext().delete(SALARY_COST).where(SALARY_COST.SALARY.in(condition)).execute();
+		getDSLContext().delete(SALARY_BONUS).where(SALARY_BONUS.SALARY.in(condition)).execute();
 		getDSLContext().delete(SALARY_PAYMENT).where(SALARY_PAYMENT.SALARY.in(condition)).execute();
 		getDSLContext().delete(SALARY_EMBARGO).where(SALARY_EMBARGO.SALARY.in(condition)).execute();
 		getDSLContext().delete(SALARY_DEDUCTION).where(SALARY_DEDUCTION.SALARY.in(condition)).execute();

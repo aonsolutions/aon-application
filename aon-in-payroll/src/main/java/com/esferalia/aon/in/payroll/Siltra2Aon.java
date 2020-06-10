@@ -156,7 +156,7 @@ public class Siltra2Aon {
 			String user = commandLine.getOptionValue(userOption.getLongOpt());
 			String password = commandLine.getOptionValue(passwordOption.getLongOpt());
 			String database = commandLine.getOptionValue(databaseOption.getLongOpt());
-			String where = commandLine.getOptionValue(whereOption.getLongOpt(), "`domain`.`name` LIKE 'altai%'");
+			String where = commandLine.getOptionValue(whereOption.getLongOpt(), "1=1"); //"`domain`.`name` LIKE 'altai%'"
 			String craPaths [] = Optional.ofNullable(commandLine.getOptionValues(craOption.getLongOpt())).orElse(new String[] {});;
 			String basesPaths [] = Optional.ofNullable(commandLine.getOptionValues(basesOption.getLongOpt())).orElse(new String[] {});;
 			String calculosPaths [] = Optional.ofNullable(commandLine.getOptionValues(calculosOption.getLongOpt())).orElse(new String[] {});;

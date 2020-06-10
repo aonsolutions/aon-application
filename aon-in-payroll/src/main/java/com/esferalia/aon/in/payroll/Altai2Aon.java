@@ -29,6 +29,7 @@ import com.esferalia.aon.in.payroll.altai.TSLABEMPParser;
 import com.esferalia.aon.in.payroll.altai.TSLABTRABParser;
 import com.esferalia.aon.in.payroll.altai.jooq.JooqTSLABEMPHandler;
 import com.esferalia.aon.in.payroll.altai.jooq.JooqTSLABTRAHandler;
+import com.esferalia.aon.in.payroll.altai.jooq.JooqTSLABTRAHandlerII;
 
 public class Altai2Aon {
 	
@@ -121,7 +122,7 @@ public class Altai2Aon {
 		     .hasArg()
 		     .withLongOpt("from")
 		     .withArgName("date")
-		     .withDescription("Date from, default 01/01/2020")
+		     .withDescription("Date from, default 01/09/2020")
 		     .create("f");
 
 		@SuppressWarnings("static-access")
@@ -158,7 +159,7 @@ public class Altai2Aon {
 			String preffix = commandLine.getOptionValue(domainPreffix.getLongOpt(), "altai");
 			String emps [] = commandLine.getOptionValues(empOption.getLongOpt());
 			String tras [] = commandLine.getOptionValues(traOption.getLongOpt());
-			Date from = new SimpleDateFormat("dd/MM/yyyy").parse(commandLine.getOptionValue(fromOption.getLongOpt(), "01/01/2020"));
+			Date from = new SimpleDateFormat("dd/MM/yyyy").parse(commandLine.getOptionValue(fromOption.getLongOpt(), "01/09/2019"));
 	
 			Properties properties = new Properties();
 			properties.setProperty("user", user);

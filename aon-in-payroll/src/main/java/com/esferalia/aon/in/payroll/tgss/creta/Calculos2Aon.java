@@ -40,6 +40,7 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.esferalia.aon.in.payroll.altai.jooq.RollbackException;
 import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.payroll.Salary;
@@ -78,7 +79,7 @@ public class Calculos2Aon extends Abstract2Aon{
 	
 	public void fix(File file) throws IOException {
 		dslContext.transaction((configuration)->{			
-		this.sdlAgreementLevel = insertSDLAgreement(dslContext, 0);
+//		this.sdlAgreementLevel = insertSDLAgreement(dslContext, 0);
 		parse(file, this::fixTramo);
 		});
 	}
@@ -200,8 +201,8 @@ public class Calculos2Aon extends Abstract2Aon{
 					);
 
 			fixInformacionAfiliacion(tramo, fromDate, toDate,r);
-			fixDatoCalculados(tramo, fromDate, toDate, r);
-			fixAgreementLevel(r, sdlAgreementLevel);
+//			fixDatoCalculados(tramo, fromDate, toDate, r);
+//			fixAgreementLevel(r, sdlAgreementLevel);
 			
 			System.out.printf("\r\n");
 		});
@@ -266,31 +267,31 @@ public class Calculos2Aon extends Abstract2Aon{
 		fix(OCCUPATION, lowerCase(tgssOcupacion), period, r, datas)
 		.ifPresent(var -> expand.add(var));
 		
-		String aonCNAE = r.get(CNAE2009.CODE);
-		try {
-			String tgssCNAE = tramo.getInformacionAfiliacion().getCNAE();
-			if ( !AonUtils.equals(aonCNAE, tgssCNAE) ) {
-				System.out.printf(
-				",\"%s(%s)\"",
-				tgssCNAE,
-				aonCNAE
-				);
-								
-				SelectConditionStep<Record1<Integer>> cnae2009Id  = 
-				DSL.select(CNAE2009.ID).from(CNAE2009).where(CNAE2009.CODE.eq(tgssCNAE));
-				
-				dslContext
-				.update(ENTERPRISE_ACTIVITY)
-				.set(ENTERPRISE_ACTIVITY.CNAE2009,cnae2009Id )
-				.where(ENTERPRISE_ACTIVITY.ID.eq(r.get(ENTERPRISE_ACTIVITY.ID)))
-				.execute();
-			} else {
-				System.out.printf(
-				",\"%s\"",tgssCNAE);
-			}
-		}
-		catch ( Exception e ) {
-		}
+//		String aonCNAE = r.get(CNAE2009.CODE);
+//		try {
+//			String tgssCNAE = tramo.getInformacionAfiliacion().getCNAE();
+//			if ( !AonUtils.equals(aonCNAE, tgssCNAE) ) {
+//				System.out.printf(
+//				",\"%s(%s)\"",
+//				tgssCNAE,
+//				aonCNAE
+//				);
+//								
+//				SelectConditionStep<Record1<Integer>> cnae2009Id  = 
+//				DSL.select(CNAE2009.ID).from(CNAE2009).where(CNAE2009.CODE.eq(tgssCNAE));
+//				
+//				dslContext
+//				.update(ENTERPRISE_ACTIVITY)
+//				.set(ENTERPRISE_ACTIVITY.CNAE2009,cnae2009Id )
+//				.where(ENTERPRISE_ACTIVITY.ID.eq(r.get(ENTERPRISE_ACTIVITY.ID)))
+//				.execute();
+//			} else {
+//				System.out.printf(
+//				",\"%s\"",tgssCNAE);
+//			}
+//		}
+//		catch ( Exception e ) {
+//		}
 		
 		String tgssCoeficienteTiempoParcial = tramo.getInformacionAfiliacion().getCoeficienteTiempoParcial();
 		try {

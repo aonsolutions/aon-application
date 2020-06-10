@@ -51,7 +51,7 @@ public class JooqSalary2Contract {
 	
 	public static void pullUp(DSLContext dslContext, Condition where) {
 		pullUpData(dslContext, where);
-		//pullUpPayments(dslContext, where);
+		pullUpPayments(dslContext, where);
 	}
 	
 	private static void pullUpPayments(DSLContext dslContext, Condition where){

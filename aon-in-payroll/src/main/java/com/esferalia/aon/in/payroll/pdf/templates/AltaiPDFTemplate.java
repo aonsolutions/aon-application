@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -28,6 +29,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFException;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
@@ -290,14 +292,24 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 			salaryBuilder.setEnterpriseName(enterpriseName);
 			
 			matcher = 
-			find(reader, ADDRESSES);
-			String naf = string(matcher, "naf");
+			find(reader, ADDRESS_SS_NIF, ADDRESS_NIF);
+			StringBuffer address = new StringBuffer(string(matcher, "enterprise"));			
+			String nif = string(matcher, "nif");
+			salaryBuilder.setEmployeeDocument(nif);
+			String naf = null ;
+			try {
+				naf = string(matcher, "naf");
+			} catch ( IllegalArgumentException e) {
+				matcher = find(reader, ADDRESS_SS);
+				naf = string(matcher, "naf");
+				address.append(" ").append(string(matcher, "enterprise")); 
+			}
 			naf = AonStringUtils.remove(naf, '/');
 			naf = AonStringUtils.remove(naf, ' ');
 			salaryBuilder.setSocialSecurityNumber(naf);
-			salaryBuilder.setEnterpriseAddress(string(matcher, "enterprise"));
-			String nif = string(matcher, "nif");
-			salaryBuilder.setEmployeeDocument(nif);
+			salaryBuilder.setEnterpriseAddress(address.toString());
+
+			
 			
 			matcher = 
 			find(reader, CIF_CATEGORY);
@@ -798,6 +810,22 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 				
 	}
 	
+	private Matcher find( BufferedReader reader, Pattern ...patterns ) throws IOException, UnknownPDFException {
+		
+		String line  ; 
+		while ( ( line = reader.readLine() ) != null  ) {
+			for ( Pattern pattern : patterns ) {
+				Matcher matcher = pattern.matcher(line) ;
+				if ( matcher.matches() ) {
+					return matcher;
+				}
+			}
+		}
+		
+		throw new UnknownPDFException(String.format("Pattern: '%s' Not found" ,  Arrays.stream(patterns).map(p -> p.pattern()).collect(Collectors.joining(","))));
+				
+	}
+
 	private Matcher next( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
 		String line = reader.readLine() ; 
 		//System.out.println(line);
@@ -912,14 +940,25 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 	Pattern.compile("(?<enterprise>.{1,35})(?<employee>.+)"
 	, Pattern.CASE_INSENSITIVE);
 	
+	//Domicilio CL VICTOR BALAGUER, 10 N.I.F.: 044009461L Nº. Matrícula: Sec.: 
+	private static final Pattern ADDRESS_NIF = 
+	Pattern.compile("Domicilio\\s*(?<enterprise>.*)\\s*N.I.F.\\s*:\\s*(?<nif>.*)N..\\s*Matrícula\\s*:\\s*Sec.*"
+	, Pattern.CASE_INSENSITIVE);
+	
+	//RUBI 08191 Núm. afiliación Seg. Social: 08/10366613/95
+	private static final Pattern ADDRESS_SS = 
+	Pattern.compile("(?<enterprise>.*)Núm.\\s*afiliación\\s*Seg.\\s*Social\\s*:\\s*(?<naf>.*)"
+	, Pattern.CASE_INSENSITIVE);
+
 	//Domicilio: CL FUENTECISNEROS, 66 N. afil. Seg. Social: 39/10288240/87 N.I.F.: 72183505Y 
-	private static final Pattern ADDRESSES = 
+	private static final Pattern ADDRESS_SS_NIF = 
 	Pattern.compile("Domicilio\\s*:\\s*(?<enterprise>.*)N.\\s*afil.\\s*Seg.\\s*Social\\s*:\\s*(?<naf>.*)N.I.F.\\s*:\\s*(?<nif>.*)"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//C.I.F.: B55336762 Categ. o grupo prof.: CAMARERO       Sec.: 
+	//C.I.F.: 46545854H Categoría o grupo profesional:                
 	private static final Pattern CIF_CATEGORY = 
-	Pattern.compile("(?:N.\\s*afil.\\s*Seg.\\s*Social\\s*:\\s*(?<naf>.*))?C.I.F.\\s*:\\s*(?<cif>.*)Categ.\\s*o\\s*grupo prof.\\s*:\\s*(?<category>.*)Sec.\\s*:\\s*(?<sec>.*)"
+	Pattern.compile("(?:N.\\s*afil.\\s*Seg.\\s*Social\\s*:\\s*(?<naf>.*))?C.I.F.\\s*:\\s*(?<cif>.*)Categ[\\S]*\\s*o\\s*grupo prof[\\S]*\\s*:\\s*(?<category>.*)(?:Sec.\\s*:\\s*(?<sec>.*))?"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//Cód. Cta. de Cotización Seg. Soc.: 28/2397613/58 Grupo Cotización: 9 Fecha Antiguedad: 05/09/2019
@@ -1144,10 +1183,12 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 		check(NAMES, "EPB RECAMBIOS DE OCASION SL        BACA PEREZ, FERNANDO               ");
 		check(NAMES, "MARIA SANTOS RODRIGUEZ RODRIGUEZ   RODRIGUEZ RODRIGUEZ LUZ STELLA     ");
 		check(NAMES, "O2M-OBRAS, MANTENIMIENTOS Y MEJORAS LABRE REYES, JUAN ARTURO   ");
-		check(ADDRESSES, "Domicilio: CL FUENTECISNEROS, 66 N. afil. Seg. Social: 39/10288240/87 N.I.F.: 72183505Y");		
+		check(ADDRESS_SS_NIF, "Domicilio: CL FUENTECISNEROS, 66 N. afil. Seg. Social: 39/10288240/87 N.I.F.: 72183505Y");	
+		check(ADDRESS_NIF, "Domicilio CL VICTOR BALAGUER, 10 N.I.F.: 044009461L Nº. Matrícula: Sec.: ");
+		check(ADDRESS_SS, "RUBI 08191 Núm. afiliación Seg. Social: 08/10366613/95");
 		check(CIF_CATEGORY, "C.I.F.: B55336762 Categ. o grupo prof.: CAMARERO       Sec.: ");
 		check(CIF_CATEGORY, "N. afil. Seg. Social: 18/10092630/74 C.I.F.: B55336762 Categ. o grupo prof.: CAMARERO       Sec.: ");
-		
+		check(CIF_CATEGORY, "C.I.F.: 46545854H Categoría o grupo profesional:                ");
 		check(CCC_GROUP_SENIOR, "Cód. Cta. de Cotización Seg. Soc.: 28/2397613/58 Grupo Cotización: 9 Fecha Antiguedad: 05/09/2019");
 		check(EXTRA_DAYS, "Período de Liquidación Paga Navidad Total días: 30,00");
 		check(DATES_DAYS, "Período de Liquidación 20/Septiembre a 30/Septiembre de 2.019 Total días: 06,00");

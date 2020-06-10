@@ -67,21 +67,16 @@ public class SalaryPDFParser {
 				try {
 					return template.parse(text, salaryBuilder);
 				} catch ( SalaryPDFException e ) {
-					System.err.println(e.getMessage());
 					return template;
 				} catch ( Exception e ) {
-//					e.printStackTrace();
-					System.err.println(e.getMessage());
 				}
 			}
-			throw new UnknownPDFException();
+			throw new UnknownPDFException("Formato de nómina desconocido");
 		
 		} else {
 			try {
 				return pdfTemplate.parse(text, salaryBuilder);
 			} catch ( SalaryPDFException e ) {
-				//e.printStackTrace();
-				System.err.println(e.getMessage());
 				return pdfTemplate;
 			}
 		}

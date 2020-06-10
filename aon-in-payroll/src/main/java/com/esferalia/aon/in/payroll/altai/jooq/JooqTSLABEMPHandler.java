@@ -121,7 +121,7 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 	
 	DomainRecord parentDomainRecord;
 	
-	List<InsertOnDuplicateSetMoreStep<?>> inserts;
+	List<InsertFinalStep<?>> inserts;
 	
 	static final byte RADDRESS_MAIN = 0;
 	static final byte RADDRESS_DELEGATION = 1;
@@ -141,7 +141,7 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 		this.parentDomainName = parentDomainName;
 		this.domainNamePreffix = domainNamePreffix;
 		
-		inserts = new ArrayList<InsertOnDuplicateSetMoreStep<?>>();
+		inserts = new ArrayList<InsertFinalStep<?>>();
 
 		parentDomainRecord = dslContext.select().from(DOMAIN).where(DOMAIN.NAME.eq(parentDomainName)).fetchOneInto(DOMAIN);
 		
@@ -376,13 +376,16 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 		)
 		;
 
+		String ccc = emp01.get("ccc");
+		
 		SelectConditionStep<Record1<Integer>> enterpriseCCCId = 
 		DSL.select(ENTERPRISE_CCC.ID)
 		.from(ENTERPRISE_CCC)
 		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
+		.and(ENTERPRISE_CCC.CCC.eq(ccc))
 		.and(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(enterpriseActivityId))
 		;
-		String ccc = emp01.get("ccc");
+		
 		
 		SelectConditionStep<Record1<Integer>> cccGeozoneId = 
 		DSL
@@ -638,7 +641,7 @@ public class JooqTSLABEMPHandler implements TSLABEMPHandler {
 			   ;
 	}
 
-	protected static void insert(List<InsertOnDuplicateSetMoreStep<? extends Record>> inserts, Consumer<InsertFinalStep<? extends Record>> consumer) {
+	protected static void insert(List<InsertFinalStep<? extends Record>> inserts, Consumer<InsertFinalStep<? extends Record>> consumer) {
 		 inserts.stream().forEach(consumer);
 	}
 
