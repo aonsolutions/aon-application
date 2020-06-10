@@ -689,6 +689,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public Date getEmployeeSeniorityDate() {
 		return salaryDraft.getEmployeeSeniorityDate();
 	}
+	
+	@Override
+	public Long getEmployeeSeniorityDateTime() {
+		return salaryDraft.getEmployeeSeniorityDate().getTime();
+	}
 
 	public Double getIrpfBase() {
 		return salaryDraft.getIrpfBase();
@@ -800,6 +805,11 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	@Override
 	public String getEmployeeAgreementCategory() {
 		return salaryDraft.getEmployeeAgreementCategory();
+	}
+	
+	@Override
+	public String getEmployeeContractType() {
+		return salaryDraft.getEmployee().getContractType();
 	}
 
 	public List<Variable> getDbContext() {

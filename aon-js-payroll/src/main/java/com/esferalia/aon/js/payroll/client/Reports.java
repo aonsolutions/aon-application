@@ -53,7 +53,9 @@ public class Reports {
 		public String getEmployeeDocument();
 		public String getEmployeeQuoteGroup();
 		public Date getEmployeeSeniorityDate();
+		public Long getEmployeeSeniorityDateTime();
 		public String getEmployeeAgreementCategory();
+		public String getEmployeeContractType();
 		public Integer getEmployeeId();
 
 		public String getEnterpriseName();
@@ -86,6 +88,18 @@ public class Reports {
 		
 		default String getShortSeniorityDate() {
 			return DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(getEmployeeSeniorityDate());
+		}
+		
+		default String getMediumEndDate() {
+			return DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(getEndDate());
+		}
+
+		default String getMediumStartDate() {
+			return DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(getStartDate());
+		}
+		
+		default String getMediumSeniorityDate() {
+			return DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(getEmployeeSeniorityDate());
 		}
 		
 		// ------------------ Metodos para el pie de la impresion ---------------------
@@ -405,11 +419,12 @@ public class Reports {
 				category: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeAgreementCategory()(),
 				quote_group: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeQuoteGroup()(),
 				professional_group: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeAgreementCategory()(),
-				seniority_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getShortSeniorityDate()()
+				seniority_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSeniorityDateTime()(),
+				contract_type: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeContractType()()
 			},
 			settlement: {
-				start_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getShortStartDate()(),
-				end_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getShortEndDate()(),
+				start_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMediumStartDate()(),
+				end_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMediumEndDate()(),
 				total_days: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTimeUnits()()
 			},
 			accruals: [

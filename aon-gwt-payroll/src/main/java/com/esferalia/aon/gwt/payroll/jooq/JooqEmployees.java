@@ -291,7 +291,7 @@ public class JooqEmployees {
 			// @formatter:on
 
 			for (Record record : cursor) 
-				return newEmployee(record);
+				return newEmployee(record, context);
 
 			return null;
 
@@ -341,7 +341,7 @@ public class JooqEmployees {
 			List<Employee> employees = new LinkedList<Employee>();
 
 			for (Record record : cursor) {
-				employees.add(newEmployee(record));
+				employees.add(newEmployee(record, context));
 			}
 			
 			// Check if has Salaries
@@ -378,7 +378,7 @@ public class JooqEmployees {
 //				.leftOuterJoin(AGREEMENT_LEVEL_CATEGORY.join(AGREEMENT_LEVEL.join(AGREEMENT).on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))).on(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))).on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL_CATEGORY.AGREEMENT_LEVEL));
 	}
 
-	private static Employee newEmployee(Record record) {
+	private static Employee newEmployee(Record record, DSLContext dslContext) {
 		Employee employee = new Employee();
 
 		employee.setId(record.getValue(CONTRACT.ID));
@@ -413,6 +413,18 @@ public class JooqEmployees {
 			category.setAgreement(agreement);
 			employee.setCategory(category);
 		}
+		
+		Result<Record> contractDataRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(record.getValue(CONTRACT.ID)))
+				.and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.START_DATE.desc())
+				.fetch();
+		if(contractDataRecords.isEmpty())
+			employee.setContractType(null);
+		else {
+			String contractType = contractDataRecords.get(0).get(CONTRACT_DATA.EXPRESSION);
+			employee.setContractType(contractType.contains("\"") ? contractType.split("\"")[1] : contractType);
+		}
+		
 		return employee;
 	}
 

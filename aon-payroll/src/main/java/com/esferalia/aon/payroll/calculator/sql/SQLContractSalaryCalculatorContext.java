@@ -1528,7 +1528,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	@Override
 	public String getEnterpriseCity() {
-		return "-";
+		//TODO: hacer un JOIN en el MAIN_SQL con geozone
+//		String geozoneName = getString(SQLConstants.GEOZONE, SQLConstants.GeozoneColumns.NAME);
+		String geozone = getString(SQLConstants.RADDRESS, SQLConstants.RaddressColumns.GEOZONE);
+		return geozone;
 	}
 
 	@Override

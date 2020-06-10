@@ -170,6 +170,8 @@ public class Employee implements Serializable, HasId<Integer> {
 	private Category category;
 	
 	private Boolean hasSalaries;
+	
+	private String contractType;
 
 	public Integer getId() {
 		return id;
@@ -309,5 +311,14 @@ public class Employee implements Serializable, HasId<Integer> {
 		return (obj != null) && (obj instanceof Employee)
 				&& (id == ((Employee) obj).id);
 	}
+
+	public String getContractType() {
+		return contractType;
+	}
+
+	public void setContractType(String contractType) {
+		this.contractType = contractType;
+	}
+	
 
 }

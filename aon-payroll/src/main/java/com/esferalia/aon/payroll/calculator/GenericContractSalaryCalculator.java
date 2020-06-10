@@ -451,6 +451,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		salaryBuilder.setEnterpriseName(ctx.getEnterpriseName());
 		salaryBuilder.setEnterpriseAddress(ctx.getEnterpriseAddress());
 		salaryBuilder.setEnterpriseDocument(ctx.getEnterpriseDocument());
+		salaryBuilder.setEnterpriseCity(ctx.getEnterpriseCity());
 	}
 
 	protected void fillEmployeeData(IContractSalaryCalculatorContext ctx) {
