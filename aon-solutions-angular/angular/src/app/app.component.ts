@@ -48,4 +48,8 @@ export class AppComponent implements OnInit {
   isParent(): boolean {
     return this.service.company == undefined;
   }
+
+  isMobile(): boolean {
+    return this.service.isMobile;
+  }
 }

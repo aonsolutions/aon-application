@@ -1,11 +1,11 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {TediMobileSearchBoxComponent} from './tedi-mobile-search-box.component';
+import {AonSearchBoxComponent} from './aon-search-box.component';
 import { AppModule } from '../../app.module';
 import { APP_BASE_HREF } from '@angular/common';
 
-describe('TediMobileSearchBoxComponent', () => {
-  let component: TediMobileSearchBoxComponent;
-  let fixture: ComponentFixture<TediMobileSearchBoxComponent>;
+describe('AonSearchBoxComponent', () => {
+  let component: AonSearchBoxComponent;
+  let fixture: ComponentFixture<AonSearchBoxComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -18,7 +18,7 @@ describe('TediMobileSearchBoxComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TediMobileSearchBoxComponent);
+    fixture = TestBed.createComponent(AonSearchBoxComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

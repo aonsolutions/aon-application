@@ -19,7 +19,7 @@ export class AonToolbarComponent implements OnInit {
   logoCompany = environment.logoCompany;
   logoMobile = environment.logoMobile;
   mobileSearching: boolean = false;
-  searching: boolean = true;
+  searching: boolean = !this.isMobile();
   showMenuIcon: string = "keyboard_arrow_right";
 
   constructor(private router: Router, private location: Location, public dialog: MatDialog, private service: SharedService) {
@@ -132,14 +132,13 @@ export class AonToolbarComponent implements OnInit {
   }
 
   showMenu(): void {
+    this.service.showMenu = !this.service.showMenu;
     if('keyboard_arrow_right' === this.showMenuIcon){
       document.getElementById('showMenuButton').style.paddingRight = '0px';
       this.showMenuIcon = 'keyboard_arrow_left';
-      this.service.showMenu = false;
     } else {
       document.getElementById('showMenuButton').style.paddingRight = '20px';
       this.showMenuIcon = 'keyboard_arrow_right';
-      this.service.showMenu = true;
     }
   }
 

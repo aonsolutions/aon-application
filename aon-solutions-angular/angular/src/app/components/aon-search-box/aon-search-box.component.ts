@@ -1,17 +1,17 @@
 import { Component } from '@angular/core';
-import { CompanyService } from '../../services/services';
+import { CompanyService, SharedService } from '../../services/services';
 import { MatDialog } from '@angular/material';
 import { AdvancedCompanySearchDialogComponent } from '../dialogs/advanced-company-search-dialog/advanced-company-search-dialog.component';
 
 @Component({
-  selector: 'app-mobile-search-box',
-  templateUrl: './tedi-mobile-search-box.component.html',
-  styleUrls: ['./tedi-mobile-search-box.component.css']
+  selector: 'aon-search-box',
+  templateUrl: './aon-search-box.component.html',
+  styleUrls: ['./aon-search-box.component.css']
 })
-export class TediMobileSearchBoxComponent {
+export class AonSearchBoxComponent {
 
   hasValue = false;
-  constructor(private companyService: CompanyService, public dialog: MatDialog) {}
+  constructor(private service: SharedService, private companyService: CompanyService, public dialog: MatDialog) {}
 
   search(value: string): void {
     if (value.length > 0) {
@@ -35,8 +35,8 @@ export class TediMobileSearchBoxComponent {
       backdropClass: 'tedi-user-dialog-backdrop',
       panelClass: 'aon-user-dialog-panel',
       position: {
-        top: '48px',
-        right: '100px'
+        top: this.service.isMobile ? '64px': '48px',
+        right: this.service.isMobile ? '20px' : '100px'
       }
     });
     dialogRef.afterClosed().subscribe(result => {

@@ -42,7 +42,7 @@ import { AonIconButtonComponent } from './components/aon-icon-button/aon-icon-bu
 
 
 import { TediSearchBoxComponent } from './components/tedi-search-box/tedi-search-box.component';
-import { TediMobileSearchBoxComponent } from './components/tedi-mobile-search-box/tedi-mobile-search-box.component';
+import { AonSearchBoxComponent } from './components/aon-search-box/aon-search-box.component';
 import { ScrollDispatchModule } from '@angular/cdk/scrolling';
 import { TediNoDropZoneDirective } from './directives/no-drop-zone.directive';
 import { TediInitValueDirective } from './directives/tedi-init-value.directive';
@@ -66,7 +66,7 @@ import {NgxImageCompressService } from 'ngx-image-compress';
     MyAccountComponent,
     PrinterConfigurationComponent,
     TediSearchBoxComponent,
-    TediMobileSearchBoxComponent,
+    AonSearchBoxComponent,
     UserListDialogComponent,
     CompanyListDialogComponent,
     RememberPasswordDialogComponent,
