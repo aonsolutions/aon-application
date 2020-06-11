@@ -106,9 +106,30 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
     return this.app === undefined;
   }
 
+  isMobile(): boolean {
+    return this.service.isMobile;
+  }
+
+  isParent(): boolean {
+    return this.service.company == undefined;
+  }
+
   backMenu(): void {
     this.selectedOption = undefined;
     this.app = undefined;
+  }
+
+  closeSession(): void {
+    localStorage.clear();
+    this.service.isUserLoggedIn = false;
+    this.service.close();
+    this.router.navigate(['login']);
+  }
+
+  myAccount(): void {
+    this.service.getUser().subscribe(r => {
+      this.router.navigate(['myAccount']);
+    });
   }
 
   getAppToolbarClass(): string {

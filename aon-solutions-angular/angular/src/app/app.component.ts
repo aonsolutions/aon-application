@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
   }
 
   isMenuSidenavExpanded(): boolean {
-    return !this.isParent() && this.service.showMenu;
+    return (this.isMobile() || !this.isParent()) && this.service.showMenu;
   }
 
   isParent(): boolean {

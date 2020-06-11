@@ -10,7 +10,7 @@
     </div>
     <div style="height:calc(100vh - 80px);">
       <mat-sidenav-container style="z-index: 0;height:calc(100vh - 80px);" autosize >
-        <mat-sidenav [position]="isMobile() ? 'start' : 'end'" class="aon-menu-sidenav" [opened]="isMenuSidenavExpanded()" #sidenav [mode]="isMobile() ? 'over' : 'side'">
+        <mat-sidenav position="end" class="aon-menu-sidenav" [opened]="isMenuSidenavExpanded()" #sidenav [mode]="isMobile() ? 'over' : 'side'">
           <aon-menu-sidenav></aon-menu-sidenav>
         </mat-sidenav>
         <mat-sidenav-content id="contentPanel">

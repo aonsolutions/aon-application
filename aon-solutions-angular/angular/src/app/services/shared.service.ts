@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class SharedService {
     private readonly API_URL = environment.apiUrl;
 
-    public showMenu: boolean = true;
+    public showMenu: boolean = false;
     public isMobile: boolean;
     public isUserLoggedIn: boolean;
     public isRegister: Subject<boolean> = new Subject<boolean>();
@@ -30,6 +30,7 @@ export class SharedService {
 
     constructor(private deviceService: DeviceDetectorService) {
       this.isMobile = this.deviceService.isMobile();
+      this.showMenu = !this.isMobile;
     }
 
     close() {

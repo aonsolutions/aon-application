@@ -43,6 +43,7 @@
 }
 
 .aon-right60 {
+  position:absolute;
   right:60px;
 }
 
@@ -62,6 +63,12 @@
 .aon-toolbar-second-button {
     position:absolute;
     top: 40px;
+}
+
+.aon-toolbar-mobile-search {
+  margin-left: 20px;
+  margin-right: 20px;
+  border-bottom: 1px solid #ddd;
 }
 
 .aon-home {

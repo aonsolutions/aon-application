@@ -52,23 +52,22 @@
 </mat-toolbar>
 
 <mat-toolbar *ngIf="isMobile()" class="aon-toolbar" [ngStyle]="{height: isParent() ? '80px' : '100px' }" >
-  <span *ngIf="searching">
-    <aon-icon-button icon="arrow_back" (click)="search()"></aon-icon-button>
-  </span>
-  <span *ngIf="!searching">
-    <aon-icon-button icon="menu" (click)="showMenu()"></aon-icon-button>
-  </span>
   <span class="aon-toolbar-logo">
     <img *ngIf="!searching" style="cursor: pointer;margin-top: 10px;margin-left: 10px;" (click)="home()" [src]="logoMobile"  height="30px" />
   </span>
-  <span *ngIf="isParent()" class="aon-right20" [ngClass]="{'aon-border-bottom' : searching }">
-    <aon-icon-button  *ngIf="!searching" icon="search" (click)="search()"></aon-icon-button>
-    <aon-search-box  *ngIf="searching"> </aon-search-box>
+  <span *ngIf="isParent() && !searching" class="aon-right60">
+    <aon-icon-button icon="search" (click)="search()"></aon-icon-button>
   </span>
-  <span *ngIf="!isParent()" class="aon-right20">
+  <span *ngIf="!isParent()" class="aon-right60">
     <aon-icon-button icon="business" (click)="company()" title="Selección de Empresa"></aon-icon-button>
   </span>
-
+  <span *ngIf="!searching" class="aon-right20">
+    <aon-icon-button icon="more_vert" (click)="showMenu()"></aon-icon-button>
+  </span>
+  <span *ngIf="isParent() && searching" class="aon-toolbar-mobile-search" [ngClass]="{'aon-border-bottom' : searching }">
+    <aon-icon-button icon="search" (click)="search()"></aon-icon-button>
+    <aon-search-box *ngIf="searching"> </aon-search-box>
+  </span>
   <span class="aon-mobile-company-name">
     <span>{{getCompanyName()}}</span>
   </span>
