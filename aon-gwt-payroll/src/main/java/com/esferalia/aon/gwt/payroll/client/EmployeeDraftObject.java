@@ -773,7 +773,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	public List<Agreement> getActiveAgreements(){
 		List<Agreement> activeAgreements = new ArrayList<>();
 		for(Agreement a : this.agreements){
-			if(a.getId() > 0)
+			if(a.getId() >= 0)
 				activeAgreements.add(a);
 		}
 		return activeAgreements;

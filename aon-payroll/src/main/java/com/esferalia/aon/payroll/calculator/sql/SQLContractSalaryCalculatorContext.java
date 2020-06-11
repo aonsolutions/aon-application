@@ -1634,7 +1634,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			Collection<IContractPayment> contractAgreementPayments = getAgreementPayments();
 			
-			return new CompositePayments(this.sqlContractPayment, contractAgreementPayments, getDefaultAgreementPayments(), getCCCPayments(), getSSRegimePayments()) {
+			return new CompositePayments(this.sqlContractPayment, contractAgreementPayments, /*getDefaultAgreementPayments(),*/ getCCCPayments(), getSSRegimePayments()) {
 				@Override
 				public Iterator<IContractPayment> iterator() {
 					Iterator<IContractPayment> iterator = super.iterator();
