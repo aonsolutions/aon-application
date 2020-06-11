@@ -1209,6 +1209,38 @@ public class SQLContractSalaryCalculatorTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(756.600, salary.getProfessionalBase());
 		Assert.assertEquals(500.00, salary.getIrpfBase());
 		
+		
+		addPayment(aonContext, contract, "300.00");
+		
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(800.00, salary.getTotalPayment());
+		Assert.assertEquals(1056.90, salary.getCommonBase());
+		Assert.assertEquals(800.000, salary.getProfessionalBase());
+		Assert.assertEquals(800.00, salary.getIrpfBase());
+
+		addPayment(aonContext, contract, "256.00");
+		
+
+		ctx = getContractSalaryCalculatorContext(
+				connection, start, end, end, contract);
+
+		calculator = new SmartContractSalaryCalculator<Salary>();
+		calculator.setSalaryBuilder(new SalaryBuilder());
+
+		salary = calculator.calculate(ctx);
+
+		Assert.assertEquals(1056.00, salary.getTotalPayment());
+		Assert.assertEquals(1056.90, salary.getCommonBase());
+		Assert.assertEquals(1056.000, salary.getProfessionalBase());
+		Assert.assertEquals(1056.00, salary.getIrpfBase());
 
 	}	
 

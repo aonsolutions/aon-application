@@ -889,8 +889,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.setType(PaymentType.CRA_0001)
 			.setSalaryType(SalaryType.SALARY)
 			.setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
-			.setQuoteExpression("/*fixBaseCgcMin*/MAX(_P,(BASE_CGC_MIN - BASE_CGC_BRUTA))" )
-			.setIrpfExpression("/*fixBaseCgcMin*/BASE_CGP=BASE_CGP_MIN;_P" )
+			.setQuoteExpression("/*fixBaseCgcMin*/_B=BASE_CGP_BRUTA;MAX(_P,(BASE_CGC_MIN - BASE_CGC_BRUTA))" )
+			.setIrpfExpression("/*fixBaseCgcMin*/BASE_CGP=MAX(_B,BASE_CGP_MIN);_P" )
 			, 
 			start, 
 			end, 
