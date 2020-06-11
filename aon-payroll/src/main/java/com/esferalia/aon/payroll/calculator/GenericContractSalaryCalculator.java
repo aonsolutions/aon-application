@@ -620,6 +620,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			
 			Map<Period, Double> monthlyPayments = taxCalculator.getAmounts(PaymentType.CRA_0001);
+			if ( monthlyPayments.isEmpty() )  {
+				monthlyPayments = Collections.singletonMap(new Period(start,end), 0.00);
+			}
+			
 			for (Period p : Period.sub(List.copyOf(monthlyPayments.keySet()), leavePeriods ) ) {
 				expressionContext.setVariable(MONTHLY_PAYMENTS, monthlyPayments.get(p), p.getStart(), p.getEnd());
 			}
