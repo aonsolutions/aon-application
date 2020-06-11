@@ -512,8 +512,7 @@ public class JooqEmployeeCalendarNew {
 						,ContextVariable.STRIKE_FACTOR.getName()
 						,"COEFICIENTE_ERE_FZA"
 						,"COEFICIENTE_ERE_FZA_EXONERADO"
-						,"COEF_ERE_FZA_EXON_PARCIAL"
-						,"FIN_ERE_FZA_EXONERADO"
+						//,"FIN_ERE_FZA_EXONERADO"
 						,"COEFICIENTE_AUSENCIA"
 						,"CAUSA_INACTIVIDAD"))
 				.fetch();
@@ -801,7 +800,6 @@ public class JooqEmployeeCalendarNew {
 					,ContextVariable.STRIKE_FACTOR.getName()
 					,"COEFICIENTE_ERE_FZA"
 					,"COEFICIENTE_ERE_FZA_EXONERADO"
-					,"COEF_ERE_FZA_EXON_PARCIAL"
 					,"FIN_ERE_FZA_EXONERADO"
 					,"COEFICIENTE_AUSENCIA"
 					,"DIAS_INACTIVIDAD"
@@ -825,13 +823,24 @@ public class JooqEmployeeCalendarNew {
 					.execute();
 			}
 			
+			Date startDate = parseDateUtilToSql(calendarDayType.getStartDate());
+			Date endDate = parseDateUtilToSql(calendarDayType.getEndDate());
+			
+			if(calendarDayType.getDayType() == DayType.EREFZAEXONENDDAY) {
+				java.util.Date newStartDate = DateUtils.copyDateOnly(calendarDayType.getStartDate());
+				newStartDate = DateUtils.deleteDays2Date(newStartDate, 1);
+				
+				startDate = parseDateUtilToSql(newStartDate);
+				endDate = parseDateUtilToSql(newStartDate);
+			}
+			
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.CONTRACT, contract)
 				.set(CONTRACT_DATA.NAME, getNameByDayType(calendarDayType.getDayType()))
 				.set(CONTRACT_DATA.EXPRESSION, calendarDayType.getExpession())
-				.set(CONTRACT_DATA.START_DATE, parseDateUtilToSql(calendarDayType.getStartDate()))
-				.set(CONTRACT_DATA.END_DATE, parseDateUtilToSql(calendarDayType.getEndDate()))
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
 				.execute();
 		}
 		
@@ -883,7 +892,6 @@ public class JooqEmployeeCalendarNew {
 			put(DayType.PARTIALITY, "COEFICIENTE_PARCIALIDAD");
 			put(DayType.EREFZADAY, "COEFICIENTE_ERE_FZA");
 			put(DayType.EREFZAEXONDAY, "COEFICIENTE_ERE_FZA_EXONERADO");
-			put(DayType.EREFZAEXONPARTIALDAY,"COEF_ERE_FZA_EXON_PARCIAL");
 			put(DayType.EREFZAEXONENDDAY,"FIN_ERE_FZA_EXONERADO");
 			put(DayType.FREEDAY, "DIAS_FESTIVOS");
 			put(DayType.WORKINGDAY, "LABORABLE");

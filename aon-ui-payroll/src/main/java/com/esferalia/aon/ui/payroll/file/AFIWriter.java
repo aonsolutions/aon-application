@@ -390,7 +390,6 @@ public class AFIWriter implements Serializable {
 		fab.setFechaReal(Integer.parseInt(dateFormatter.format(detail.getRealDate())));
 		Double ereFactor = obtainEreFactor(detail.getContract(), detail.getRealDate());
 		Double ereFzaExonFactor = 0.0;
-		Double ereFzaExonPartialFactor = 0.0;
 		Double ereFzaExonEndFactor = 0.0;
 		if(isFirstDay) {			
 			if(ereFactor != 0.0) {
@@ -406,18 +405,13 @@ public class AFIWriter implements Serializable {
 					else
 						fab.setTipoInactividad(T41.T41_V.getCode());
 				} else {
-					ereFzaExonPartialFactor = obtainEreFzaExonPartialFactor(detail.getContract(), detail.getRealDate());
-					if(ereFzaExonPartialFactor != 0.0) {
-						if(ereFzaExonPartialFactor<1.0)
-							fab.setTipoInactividad(T41.T41_S.getCode());
-					} else {
-						ereFzaExonEndFactor = obtainEreFzaExonEndFactor(detail.getContract(), detail.getRealDate());
-						if(ereFzaExonEndFactor == 1.0)
-							fab.setTipoInactividad(T41.T41_R.getCode());
+					ereFzaExonEndFactor = obtainEreFzaExonEndFactor(detail.getContract(), detail.getRealDate());
+					if(ereFzaExonEndFactor == 1) {
+						fab.setTipoInactividad("");
 					}
 				}
 			}
-			if(ereFactor == 1.0 || ereFzaExonFactor == 1.0 || ereFzaExonPartialFactor == 1.0 || ereFzaExonEndFactor == 1.0 ) // Si el factor es 1 es total por que lo que no tiene coeficiente
+			if(ereFactor == 1.0 || ereFzaExonFactor == 1.0 || ereFzaExonEndFactor == 1.0 ) // Si el factor es 1 es total por que lo que no tiene coeficiente
 				fab.setCoeficienteActividadHuelgaParcialEre(000);
 			else 
 				fab.setCoeficienteActividadHuelgaParcialEre((int)(ereFactor*1000));
@@ -428,8 +422,6 @@ public class AFIWriter implements Serializable {
 				endDate = obtainEndDateEreFactor(detail.getContract(), detail.getRealDate());
 			else if(ereFzaExonFactor != 0.0)
 				endDate = obtainEndDateEreFzaFactor(detail.getContract(), detail.getRealDate());
-			else if(ereFzaExonPartialFactor != 0.0)
-				endDate = obtainEndDateEreFzaPartialFactor(detail.getContract(), detail.getRealDate());
 			else if(ereFzaExonEndFactor != 0.0)
 				endDate = obtainEndDateEreFzaEndFactor(detail.getContract(), detail.getRealDate());
 			

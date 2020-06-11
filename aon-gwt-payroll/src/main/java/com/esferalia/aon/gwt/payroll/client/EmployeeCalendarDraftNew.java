@@ -804,6 +804,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 						dayType = DayType.FREEDAY;
 					}
 					
+					// Si es un dia fin ERTE se le ponete notypeday
+					if(dayType == DayType.EREFZAEXONENDDAY) {
+						dayType = DayType.NOTYPEDAY;
+					}
+					
 					// Poner el titulo al label en funcion del tipo de dia
 					setTittleOfDayType(dayType, currentDay, labelDay);
 					
@@ -883,6 +888,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				// Si es un dia sin tipo y es un dia con parcialidad
 				if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isDefaultFreeDay(currentDay)) {
 					dayType = DayType.FREEDAY;
+				}
+				
+				// Si es un dia fin ERTE se le ponete notypeday
+				if(dayType == DayType.EREFZAEXONENDDAY) {
+					dayType = DayType.NOTYPEDAY;
 				}
 				
 				// Poner el titulo al label en funcion del tipo de dia
@@ -1087,6 +1097,7 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 							if(isEndERTE) {
 								if(null != endDate) {
 									Date newDate = DateUtils.copyDateOnly(endDate);
+									DateUtils.addDays2Date(newDate, 1);
 //									DateUtils.addDays2Date(newDate, 1);
 									employeeCalendarDraftObject.addDayType(newDate, newDate, DayType.EREFZAEXONENDDAY, "1");
 								}
