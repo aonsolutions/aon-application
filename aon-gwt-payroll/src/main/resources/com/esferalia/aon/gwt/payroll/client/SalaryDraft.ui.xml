@@ -360,9 +360,9 @@
 								</g:ListBox>
 
 								<g:ListBox debugId="salaryPreviewListBox" ui:field="salaryPreviewListBox" visible="false">
-									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
+									<g:item value="{JASPER}">CL&Aacute;SICO</g:item>
 									<!-- g:item value="{STANDARD}">EST&Aacute;NDAR I (&Beta;)</g:item -->
-									<g:item value="{STANDARD_NEW}">EST&Aacute;NDAR II (&Beta;)</g:item>
+									<g:item value="{STANDARD_NEW}">EST&Aacute;NDAR (&Beta;)</g:item>
 									<!-- g:item value="{STANDARD_COLS}">EST&Aacute;NDAR COLUMNADO (&Beta;)</g:item -->
 									<!-- g:item value="{RECIBE}">FACTURA (&Beta;)</g:item -->
 									<!-- g:item value="{RECIBE_CRA}">FACTURA CRA (&Beta;)</g:item -->

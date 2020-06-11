@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITDataPerson;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
@@ -771,7 +772,14 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	
 	@Override
 	public String getEnterpriseCity() {
-		return salaryDraft.getEnterpriseCity();
+		String address = getEnterpriseAddress();
+		try {
+			String zip = address.split("\\(")[1].split("\\)")[0];
+			String zipCode = zip.substring(0, 2);
+			return Province.getName(zipCode);
+		} catch (Exception e) {
+			return "";
+		}
 	}
 
 	@Override

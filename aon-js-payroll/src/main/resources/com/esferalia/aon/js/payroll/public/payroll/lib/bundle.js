@@ -169,24 +169,41 @@ var PDF = require('pdfkit');
 
 module.exports.newStandardPayroll = function(payroll, stream){
   //Initialize pdf object
-  var pdf = new(PDF);
+//  var pdf = new(PDF);
+//  pdf.pipe(stream);
+//
+//  //PDF Styles
+//  var pdfWidth = pdf.page.width
+//		 - pdf.page.margins.left
+//     - pdf.page.margins.right
+//	;
+//
+//  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
+//  pdf.page.margins = {t0p: 50, bottom: 0, left: 72, right: 72}; //Margenes del documento
+  
+  var pdf = new PDF({
+	  size: [595.28, 841.89],
+	  margins : { // by default, all are 72
+	         top: 5, 
+	         bottom: 5,
+	         left: 5,
+	         right: 5
+	  }
+  });
+  
   pdf.pipe(stream);
-
+  
   //PDF Styles
   var pdfWidth = pdf.page.width
 		 - pdf.page.margins.left
      - pdf.page.margins.right
-	;
-
-  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
-  pdf.page.margins = {t0p: 50, bottom: 0, left: 72, right: 72}; //Margenes del documento
 
   //Variables y constants
   var t0p = 0;
   var left = 0;
   var right = 0;
   
-  textFooterSize = 7;
+  textFooterSize = 7.5;
   textFooterFont = 'Helvetica';
   
   textSize = 8;
@@ -198,7 +215,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
   headingSize = 4;
   headingFont = 'Helvetica-Bold';
 
-  signature = 455;
+  signature = 585;
 
   var salary_perceptions_codes = [0001];
   var extra_hours_codes = [0002, 0003];
@@ -327,13 +344,13 @@ module.exports.newStandardPayroll = function(payroll, stream){
   var newHearderTittle = function(){
     //PDF drawing position using for lines, starting on the t0p of the page
     y = pdf.y;
-  	x = pdf.x-50;
-    originalX = pdf.x-50;
+  	x = pdf.x;
+    originalX = pdf.x;
     originalY = pdf.y;
     ox = pdf.x
   	t0p = 2;
   	left = 8;
-  	width = (pdfWidth-30) * 1/2;
+  	width = (pdfWidth-10) * 1/2;
     pdf.lineWidth(1);
 
     paddingTopTL = 14;  //Padding-t0p text / line
@@ -349,7 +366,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
     pdf
   	  .font(titleFont)
   		.fontSize(titleSize)
-  		.text('RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIO', x+155, 20)
+  		.text('RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIO', x+180, 10)
   		.moveDown(1);
   }
 
@@ -358,8 +375,8 @@ module.exports.newStandardPayroll = function(payroll, stream){
     oy = y;
 
     rightEnterpriseX = ox + width + 1;      //Position X for right line enterprise box
-    maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
-    sizVertivalLineEE = 15;             //Size vertical line for enterprise, employee box
+    maxRightWidth = x + pdfWidth;		 //Position X for right line employee, salary, footer box
+    sizVertivalLineEE = 12;             //Size vertical line for enterprise, employee box
 
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
@@ -374,17 +391,17 @@ module.exports.newStandardPayroll = function(payroll, stream){
       .text('Domicilio: ', x + paddingLeft1, y = pdf.y + paddingTop)
       .font(textFont)
       .text(formatInputData(payroll.enterprise.address, 'string'), x + paddingLeft4, y)
-      .text(formatInputData(payroll.enterprise.locality , 'string'), x + paddingLeft4, y = y + paddingTop)
+      .text(formatInputData(payroll.enterprise.city.toUpperCase() , 'string'), x + paddingLeft4, y = y + paddingTop + 10)
 
       .font(headingFont)
-      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop*4)
+      .text('CIF: ' , x + paddingLeft1 , y = pdf.y + paddingTop)
       .font(textFont)
       .text(formatInputData(payroll.enterprise.cif, 'string'), x + paddingLeft4, y)
 
       .font(headingFont)
       .text('CCC: ' , x + 160 + paddingLeft1, y)
       .font(textFont)
-      .text(formatInputData(payroll.enterprise.ccc, 'string'), x + 160 + paddingLeft3, y)
+      .text(formatInputData(payroll.enterprise.ccc, 'string'), x + 165 + paddingLeft3, y)
 
       .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE).stroke()                                     //Vertical left line
   	  .moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE).stroke()       //Vertical right line
@@ -405,36 +422,36 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
       .font(headingFont)
       .text('Trabajador: ' , leftEmployeeX, employeeY)
-      .text(formatInputData(payroll.employee.fullname, 'string'), leftEmployeeX + paddingLeft4, employeeY)
+      .text(formatInputData(payroll.employee.fullname, 'string'), leftEmployeeX + 50, employeeY)
 
       .text('NIF: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.nif, 'string'), leftEmployeeX + paddingLeft3, employeeY)
+      .text(formatInputData(payroll.employee.nif, 'string'), leftEmployeeX + 35, employeeY)
 
       .font(headingFont)
-      .text('Nº S.S.: ', leftEmployeeX + 160, employeeY)
+      .text('Grupo profesional: ', leftEmployeeX + 110, employeeY)
       .font(textFont)
-      .text(formatInputData(payroll.employee.ss, 'number'), leftEmployeeX + 160 + paddingLeft3, employeeY)
+      .text(formatInputData(payroll.employee.professional_group, 'number'), leftEmployeeX + 110 + 80, employeeY)
 
       .font(headingFont)
-      .text('Grupo profesional: ', leftEmployeeX, employeeY = employeeY + employeeTop)
+      .text('Nº S.S.: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.professional_group, 'string'), leftEmployeeX + paddingLeft5, employeeY)
+      .text(formatInputData(payroll.employee.ss, 'string'), leftEmployeeX + 35, employeeY)
       
       .font(headingFont)
-      .text('TC2: ', leftEmployeeX + 160, employeeY)
+      .text('Grupo cotización: ', leftEmployeeX + 110, employeeY)
       .font(textFont)
-      .text(formatInputData(payroll.employee.contract_type, 'string'), leftEmployeeX + 160 + paddingLeft3, employeeY)
+      .text(formatInputData(payroll.employee.quote_group, 'string'), leftEmployeeX + 110 + 80, employeeY)
 
       .font(headingFont)
-      .text('Grupo cotización: ', leftEmployeeX, employeeY = employeeY + employeeTop)
+      .text('TC2: ', leftEmployeeX, employeeY = employeeY + employeeTop)
       .font(textFont)
-      .text(formatInputData(payroll.employee.quote_group, 'string'), leftEmployeeX + paddingLeft5, employeeY)
+      .text(formatInputData(payroll.employee.contract_type, 'string'), leftEmployeeX + 35, employeeY)
 
       .font(headingFont)
-      .text('Fecha antigüedad: ', leftEmployeeX + 160, employeeY)
+      .text('Fecha antigüedad: ', leftEmployeeX + 110, employeeY)
       .font(textFont)
-      .text(parseDate(payroll.employee.seniority_date), leftEmployeeX + 160 + paddingLeft5, employeeY)
+      .text(parseDate(payroll.employee.seniority_date), leftEmployeeX + 110 + 80, employeeY)
 
       .moveTo(leftEmployeeX - left, oy).lineTo(leftEmployeeX - left, y + sizVertivalLineEE).stroke()              //Vertical left line
       .moveTo(maxRightWidth, oy).lineTo(maxRightWidth, y + sizVertivalLineEE).stroke()                            //Vertical right line
@@ -449,10 +466,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
     // -----------------------------------------------------------------------------------------------------------------
     start_date = formatDate(payroll.settlement.start_date);
     end_date = formatDate(payroll.settlement.end_date);
-    settlementWidth = x + pdfWidth + 100;
+    settlementWidth = x + pdfWidth;
     settlementTop = 4;
-    settlementX = ox - 50 + left;
-    settlementY = y + t0p + 15;
+    settlementX = ox + left;
+    settlementY = y + t0p + 13;
     settlementYHeight = settlementY + 15;
 
     pdf
@@ -477,16 +494,16 @@ module.exports.newStandardPayroll = function(payroll, stream){
     // -----------------------------------------------------------------------------------------------------------------
     // -------------------------------------------- FOOTER -------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
-    footer = 533;
-    accrualWidth = x + pdfWidth + 100;
+    footer = 660;
+    accrualWidth = x + pdfWidth;
     pdf
-      .moveTo(originalX, originalY+footer).lineTo(originalX+pdfWidth+100, originalY+footer).undash().stroke()     //Horizontal t0p line
+      .moveTo(originalX, originalY+footer).lineTo(originalX+pdfWidth, originalY+footer).undash().stroke()     //Horizontal t0p line
       .font(textFooterFont)
       .fontSize(textFooterSize)
       .text('DETERMINACIÓN DE LAS BASES DE COTIZACIÓN A LA SEGURIDAD SOCIAL Y CONCEPTOS DE RECAUDACIÓN CONJUNTAS Y DE ' +
-          'LA BASE SUJETA A RETENCIÓN ' , originalX + left , originalY + footer + t0p + 2)
+          'LA BASE SUJETA A ' , originalX + left , originalY + footer + t0p + 2)
       .font(textFooterFont)
-      .text('DEL IRPF Y APORTACIÓN DE LA EMPRESA' , originalX + left , originalY + footer + t0p + 12)
+      .text('RETENCIÓN DEL IRPF Y APORTACIÓN DE LA EMPRESA' , originalX + left , originalY + footer + t0p + 12)
       .font(textFooterFont)
       .text('1. Contingencias comunes' , originalX + left + 5 , originalY + footer + t0p + 23, {continued: true})
       .font(textFooterFont)
@@ -563,7 +580,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
       .moveTo(originalX + left + 410 , originalY + footer + t0p + 113).lineTo(originalX + left + 551 , originalY + footer + t0p + 113).stroke()
 
       .font(textFooterFont)
-      .text('3. Cotización adicional por horas extraordinarias' , originalX + left + 5 , originalY + footer + t0p + 120)
+      .text('3. Cotización adicional por horas extraordinarias' , originalX + left + 5 , originalY + footer + t0p + 116)
       .font(textFooterFont)
       .text('Fuerza mayor' , originalX + left + 160 , originalY + footer + t0p + 125)
       .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalX + left + 350 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalY + footer + t0p + 125)
@@ -610,7 +627,8 @@ module.exports.newStandardPayroll = function(payroll, stream){
     // -----------------------------------------------------------------------------------------------------------------
     paddingSignature = 15;
     paddingDate = 10;
-    centerTableHeight = 498;
+    centerTableHeight = 562;
+    signature = 550;
 
     pdf
       .fontSize(titleSize)
@@ -634,7 +652,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
     y = settlementY+17;
     accrualY = settlementY+10;
     accrualX = x + left;
-    accrualWidth = x + pdfWidth + 100;
+    accrualWidth = x + pdfWidth;
     originalXCenterTable = x;
     originalYCenterTable = y;
     paddingTopLine = 10;
