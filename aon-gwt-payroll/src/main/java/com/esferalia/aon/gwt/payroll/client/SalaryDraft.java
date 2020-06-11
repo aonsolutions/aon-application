@@ -4392,7 +4392,9 @@ public class SalaryDraft extends ResizeComposite
 			itemButton.setTabIndex(Short.MAX_VALUE);
 			valuePanel.add(itemButton);
 			// not show payments of variables at 'to' ...
-			itemButton.setValue(show && variable.getScope().compareTo(Scope.AGREEMENT) >= 0, true);
+			itemButton.setValue(
+			(variable.getScope().compareTo(Scope.CONTRACT) >= 0) 
+			|| (show && variable.getScope().compareTo(Scope.AGREEMENT) >= 0), true);
 			itemButton.ensureDebugId("item-button-" + debugName );
 		} else if (variable instanceof UndefinedDeductionVariable) {
 			String styles[] = eventStyles.get(Event.Type.WARNING);
