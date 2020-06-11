@@ -87,8 +87,8 @@ public class FinanceValidation {
 			if (invoiceType == null) {
 				throw new AonCoreException(AonError.INVOICE_EMPTY_TYPE.getMessage());
 			} else {
-				if ((finance.getInvoice().isSales() && finance.isPayment() )
-				||  (!finance.getInvoice().isSales() && !finance.isPayment() )) {
+				if ((invoiceType == InvoiceType.SALES && finance.isPayment() )
+				||  (invoiceType != InvoiceType.SALES && !finance.isPayment() )) {
 					throw new AonCoreException(AonError.FINANCE_WRONG_PAYMENT.getMessage());		
 				}
 			}
