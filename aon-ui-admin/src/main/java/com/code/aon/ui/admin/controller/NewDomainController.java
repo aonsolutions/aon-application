@@ -282,7 +282,7 @@ public class NewDomainController implements Serializable {
 	}
 	
 	public static void validateNameCheck( String name ) {
-		if(!AonDocumentUtil.isValid(name)) {
+		if(!AonDocumentUtil.isValid(name.toUpperCase())) {
 			String message = "El Nombre de dominio no es un NIF correcto.";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message);
