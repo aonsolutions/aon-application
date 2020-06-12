@@ -53,7 +53,9 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
 
   constructor(public aonService: AonService, public service : SharedService,
     private router: Router, private location: Location) {
-
+      this.service.showMenuObservable.subscribe(() => {
+        this.backMenu();
+      });
   }
 
   ngOnInit() {
@@ -61,16 +63,24 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.selectedOption = undefined;
-    this.app = undefined;
+    this.backMenu();
   }
 
   appSelection(app: string) {
     if('invoice' === app) {
+      if(this.isMobile()){
+        this.service.setShowMenu(false);
+      }
       RootLoader.angularPanel(this.router, this.location, 'invoice');
     } else if('documental' === app) {
+      if(this.isMobile()){
+        this.service.setShowMenu(false);
+      }
       GwtLoader.startModule('aon_gwt_aio', 'documents');
     } else if('helpdesk' === app) {
+      if(this.isMobile()){
+        this.service.setShowMenu(false);
+      }
       GwtLoader.startModule('aon_gwt_aio', 'issues');
     } else if('accounting' === app) {
       this.app = {
@@ -91,13 +101,23 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
         options: this.payrollMenu
       }
     } else if('aon-classic' === app) {
+      if(this.isMobile()){
+        this.service.setShowMenu(false);
+      }
       open('https://' + localStorage.getItem('aon_domain_name'));
     } else if('bidoq' === app) {
+      if(this.isMobile()){
+        this.service.setShowMenu(false);
+      }
       open('https://mispapeles.es/');
     }
   }
 
   optionSelection(option: any) {
+    this.backMenu();
+    if(this.isMobile()){
+      this.service.setShowMenu(false);
+    }
     this.selectedOption = option;
     GwtLoader.startModule(option.module, option.entryPoint);
   }
@@ -120,13 +140,19 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   }
 
   closeSession(): void {
+    if(this.isMobile()){
+      this.service.setShowMenu(false);
+    }
     localStorage.clear();
     this.service.isUserLoggedIn = false;
     this.service.close();
     this.router.navigate(['login']);
   }
 
-  myAccount(): void {
+  configuration(): void {
+    if(this.isMobile()){
+      this.service.setShowMenu(false);
+    }
     this.service.getUser().subscribe(r => {
       this.router.navigate(['myAccount']);
     });

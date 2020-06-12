@@ -51,6 +51,9 @@ export class AonToolbarComponent implements OnInit {
   }
 
   company(): void {
+    if(this.isMobile()){
+      this.service.setShowMenu(false);
+    }
     RootLoader.angularPanel(this.router, this.location, 'companyList');
     this.service.company = undefined;
   }
@@ -75,6 +78,9 @@ export class AonToolbarComponent implements OnInit {
   }
 
   home(): void {
+    if(this.isMobile()){
+      this.service.setShowMenu(false);
+    }
     if(this.isParent()){
       RootLoader.angularPanel(this.router, this.location, 'companyList');
     } else {
@@ -125,6 +131,9 @@ export class AonToolbarComponent implements OnInit {
 
   search(): void {
     this.searching = !this.searching;
+    if(this.isMobile()){
+      this.service.setShowMenu(false);
+    }
   }
 
   isParent(): boolean {
@@ -132,7 +141,7 @@ export class AonToolbarComponent implements OnInit {
   }
 
   showMenu(): void {
-    this.service.showMenu = !this.service.showMenu;
+    this.service.setShowMenu(!this.service.showMenu);
     if('keyboard_arrow_right' === this.showMenuIcon){
       document.getElementById('showMenuButton').style.paddingRight = '0px';
       this.showMenuIcon = 'keyboard_arrow_left';

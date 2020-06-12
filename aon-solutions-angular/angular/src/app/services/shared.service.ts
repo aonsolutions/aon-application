@@ -10,7 +10,6 @@ import { environment } from '../../environments/environment';
 export class SharedService {
     private readonly API_URL = environment.apiUrl;
 
-    public showMenu: boolean = false;
     public isMobile: boolean;
     public isUserLoggedIn: boolean;
     public isRegister: Subject<boolean> = new Subject<boolean>();
@@ -28,9 +27,19 @@ export class SharedService {
 
     public loading = false;
 
+    public showMenu: boolean = false;
+    showMenuObservable: Observable<any>;
+    showMenuObserver: Observer<any>;
+
     constructor(private deviceService: DeviceDetectorService) {
       this.isMobile = this.deviceService.isMobile();
       this.showMenu = !this.isMobile;
+      this.showMenuObservable = Observable.create((observer: Observer<any>) => this.showMenuObserver = observer);
+    }
+
+    setShowMenu(value: boolean) {
+      this.showMenu = value;
+      this.showMenuObserver.next(this.showMenu);
     }
 
     close() {
