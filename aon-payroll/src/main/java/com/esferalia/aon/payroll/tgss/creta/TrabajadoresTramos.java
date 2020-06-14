@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -52,7 +53,6 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.tgss.creta.jaxb.Utils;
-import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
@@ -308,12 +308,12 @@ public class TrabajadoresTramos {
 					
 					
 					for ( ContextData cgcData: salary.getContextData().getOrDefault(MATERNITY_BASE.getName(), Collections.emptyList()) )
-						insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+						cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
 
 					for ( ContextVariable var : ContextVariable.ERE_BASES )
 						for ( ContextData cgcData: salary.getContextData().getOrDefault(var.getName(), Collections.emptyList()) )
-							insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
+							cgcBasePeriods = insert(cgcBasePeriods, new Period(cgcData.getStartDate(), cgcData.getEndDate()));
 					
 					
 					List<Period> periods = merge(salary, cgcBasePeriods);//cgcBasePeriods;
@@ -908,10 +908,17 @@ public class TrabajadoresTramos {
 		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes);
 	}
 
-	private static void insert(List<Period> periods, Period period) {
-		int insertionPoint = Collections.binarySearch(periods, period);
+	private static List<Period> insert(List<Period> periods, Period period) {
+		List<Period> insert = new ArrayList<Period>();
+		for ( Period p : periods )
+			insert.addAll(p.sub(period))   ;
+		Collections.sort(insert);
+		
+		int insertionPoint = Collections.binarySearch(insert, period);
 		if ( insertionPoint < 0 ) 
-			periods.add((-(insertionPoint) - 1), period);
+			insert.add((-(insertionPoint) - 1), period);
+		
+		return insert;
 	}
 	
 	private static List<Period> merge(Salary salary, List<Period> periods) {

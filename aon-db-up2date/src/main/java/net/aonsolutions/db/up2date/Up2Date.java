@@ -19,8 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.management.InvoiceDUACreation;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw182020Update;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw182020UpdateII;
 
 public class Up2Date {
 
@@ -120,7 +119,9 @@ public class Up2Date {
     		//EmbargarFix.EMBARGARFIX
     		//RealDecreeLaw182020Insert.REALDECREELAW182020INSERT
     		//InvoiceDUACreation.INVOICEDUACREATION
-    		RealDecreeLaw182020Update.REALDECREELAW182020UPDATE
+    		//RealDecreeLaw182020Update.REALDECREELAW182020UPDATE
+    		//DefaultAgreementDeleteWarn.DEFAULTAGREEMENTDELETEWARN
+    		RealDecreeLaw182020UpdateII.REALDECREELAW182020UPDATEII
     };
 
 
