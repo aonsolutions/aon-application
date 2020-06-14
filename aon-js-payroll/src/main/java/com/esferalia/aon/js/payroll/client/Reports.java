@@ -14,7 +14,6 @@ import com.google.gwt.typedarrays.shared.ArrayBuffer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
-import com.google.gwt.xhr.client.XMLHttpRequest.ResponseType;
 
 public class Reports {
 	
@@ -104,10 +103,20 @@ public class Reports {
 		
 		// ------------------ Metodos para el pie de la impresion ---------------------
 		
+		default Boolean isCostType(Deduction cost, String typeName) {
+			return (null != cost.getTypeName() && (cost.getTypeName().equals(typeName) || cost.getTypeName() == typeName)) ? true : false;
+		}
+		
+		default Boolean isCostName(Deduction cost, String name) {
+			return (cost.getName().equals(name) || cost.getName() == name) ? true : false;
+		}
+		
 		default Double getCommonContAmount(){
 			for(int i = 0; i < getCosts().size(); i++){
 				Deduction cost = getCosts().get(i);
-				if(cost.getTypeName().equals("Contingencias Comunes"))
+//				Window.alert("Deduction \n Name : " + cost.getName() + "\n Description : " + cost.getDescription() +
+//						"\n Type : " + cost.getTypeName() + "\n Percent : " + cost.getPercent() + "\n Amount : " + cost.getAmount());
+				if(isCostType(cost, "Contingencias Comunes") || isCostName(cost, "CGC_E"))
 					if(cost.getAmount() != null)
 						return cost.getAmount();
 			}
@@ -126,9 +135,9 @@ public class Reports {
 			Double amount = 0.00;
 			for(int i = 0; i < getCosts().size(); i++){
 				Deduction cost = getCosts().get(i);
-				if(cost.getTypeName().equals("Contingencias Profesionales"))
+				if(isCostType(cost, "Contingencias Profesionales") || isCostName(cost, "IMS_E") || isCostName(cost, "IT_E"))
 					amount += cost.getAmount();
-				else if(cost.getTypeName().equals("Contingencias Profesionales"))
+				else if(isCostType(cost, "Contingencias Profesionales") || isCostName(cost, "IMS_E")  || isCostName(cost, "IT_E"))
 					amount += cost.getAmount();		
 			}
 			return amount;
@@ -145,7 +154,7 @@ public class Reports {
 		default Double getUnemploymentAmount(){
 			for(int i = 0; i < getCosts().size(); i++){
 				Deduction cost = getCosts().get(i);
-				if(cost.getTypeName().equals("Desempleo"))
+				if(isCostType(cost, "Desempleo") || isCostName(cost, "DESMPL_E"))
 					if(cost.getAmount() != null)
 						return cost.getAmount();
 			}
@@ -163,7 +172,7 @@ public class Reports {
 		default Double getProfesionalFormatAmount(){
 			for(int i = 0; i < getCosts().size(); i++){
 				Deduction cost = getCosts().get(i);
-				if(cost.getTypeName().equals("Formaci\u00f3n Profesional"))
+				if(isCostType(cost, "Formaci\u00f3n Profesional") || isCostName(cost, "FP_E"))
 					if(cost.getAmount() != null)
 						return cost.getAmount();
 			}
@@ -181,7 +190,7 @@ public class Reports {
 		default Double getFogasaAmount(){
 			for(int i = 0; i < getCosts().size(); i++){
 				Deduction cost = getCosts().get(i);
-				if(cost.getTypeName().equals("FOGASA"))
+				if(isCostType(cost, "FOGASA") || isCostName(cost, "FOGASA_E"))
 					if(cost.getAmount() != null)
 						return cost.getAmount();
 			}
@@ -199,7 +208,7 @@ public class Reports {
 		default Double getHExtraAmount(){
 			for(int i = 0; i < getCosts().size(); i++){
 				Deduction cost = getCosts().get(i);
-				if(cost.getTypeName().equals("Horas Extraordinarias Fuerza Mayor"))
+				if(null != cost.getTypeName() && cost.getTypeName().equals("Horas Extraordinarias Fuerza Mayor"))
 					if(cost.getAmount() != null)
 						return cost.getAmount();
 			}
@@ -217,7 +226,7 @@ public class Reports {
 		default Double getNonHExtraAmount(){
 			for(int i = 0; i < getCosts().size(); i++){
 				Deduction cost = getCosts().get(i);
-				if(cost.getTypeName().equals("Resto Horas Extraordinarias"))
+				if(null != cost.getTypeName() && cost.getTypeName().equals("Resto Horas Extraordinarias"))
 					if(cost.getAmount() != null)
 						return cost.getAmount();
 			}
@@ -251,6 +260,7 @@ public class Reports {
 		public String getDescription();
 		public String getTypeName();
 		public Double getPercent();
+		public String getName();
 	}
 	
 	
@@ -383,10 +393,12 @@ public class Reports {
 	}
 	
 	private static native void setEnterpriseLogo(JavaScriptObject json, String dataURI) /*-{
-		json.logo = dataURI;
-		json.signature_logo = dataURI;
-		json.logoEnterprise = dataURI;
-		json.logoEnterprise2 = dataURI;
+		// TODO: Change blank_image to dataURI 
+		var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
+		json.logo = blank_image;
+		json.signature_logo = blank_image;
+		json.logoEnterprise = blank_image;
+		json.logoEnterprise2 = blank_image;
 	}-*/;
 	
 	private static native JavaScriptObject payroll2JSON(Payroll payroll) /*-{
@@ -403,14 +415,14 @@ public class Reports {
 			place: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCity()(),
 			date: new Date(),
 			reason: 'FIN CONTRATO TEMPORAL',
-			enterprise: {
+			enterprise : {
 				cif: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseDocument()(),
 				name : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseName()(),
 				city : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCity()(),
 				address: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseAddress()(),
 				ccc: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCCC()()
 			},
-			employee: {
+			employee : {
 				ss: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSS()(),
 				nif: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeDocument()(),
 				fullname : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeName()(),
@@ -422,25 +434,22 @@ public class Reports {
 				seniority_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSeniorityDateTime()(),
 				contract_type: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeContractType()()
 			},
-			settlement: {
+			settlement : {
 				start_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMediumStartDate()(),
 				end_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMediumEndDate()(),
 				total_days: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTimeUnits()()
 			},
-			accruals: [
-			],
-			payments: [
-			],
-			deductions: [
-			],
-			total_contributions: 0,
-			footer_ss_quotation: {
+			accruals : [],
+			payments : [],
+			deductions : [],
+			total_contributions : 0,
+			footer_ss_quotation : {
 				common_contingency : {
 					monthly_remuneration : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getRemuneration()(),
-      				extraordinary_pay_packet : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getProrationBase()(),
-			    	base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgcBase()(),
-			      	type_percent : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContPercent()(),
-			      	company_input : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContAmount()()
+					extraordinary_pay_packet : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getProrationBase()(),
+					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgcBase()(),
+					type_percent : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContPercent()(),
+					company_input : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContAmount()()
 				},
 				professional_contingency : {
 					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgpBase()(),
@@ -459,24 +468,25 @@ public class Reports {
       				base_non_structural : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getNonHExtraBase()(),
       				company_input_non_structural : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getNonHExtraAmount()()
 				},
-				base_irpf: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getIrpfBase()(),
+				base_irpf : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getIrpfBase()(),
 				total_company : 0
 			},
 			logo : blank_image,
 			signature_logo : blank_image
-		};
+		}
 		
 		var payments = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getPayments()();
 		for ( i = 0; i <  payments.@java.util.List::size()(); i++ ) {
 			var payment = payments.@java.util.List::get(I)(i); 
 			var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
-			if ( amount )
+			if ( amount ){
 				json.payments.push( {
 					amount : amount,
 					description : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
-					code: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
-					cra: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCodeDescription()()
+					cra: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCodeDescription()(),
+					code: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()()
 				});
+			}
 		}
 		
 		var contributions = 0;
@@ -484,14 +494,21 @@ public class Reports {
 		for ( i = 0; i <  deductions.@java.util.List::size()(); i++ ) {
 			var deduction = deductions.@java.util.List::get(I)(i);
 			var amount =  deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getAmount()();
+			console.log('Amount : ' + amount);
+				console.log('description : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()());
+				console.log('percent : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()());
+				console.log('name : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getName()());
+				console.log('Type Name : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getTypeName()());
+					
+				
 			if ( amount ) {
 				json.deductions.push ({
 					amount : amount,
 					description : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
 					value : amount,
 					percent : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
-					name : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getTypeName()()
-					//name : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
+					name : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getName()(),
+					type_name : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getTypeName()()
 				});
 				contributions += amount;
 			}
@@ -513,7 +530,7 @@ public class Reports {
 		if ( paymentsOrdered.@java.util.List::isEmpty()() ) {
 			console.log(json);
 			return json;
-		} 
+		}
 
 		var paymentFirst = paymentsOrdered.@java.util.List::get(I)(0);
 		var accrual = {};

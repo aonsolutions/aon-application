@@ -361,12 +361,12 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 
 	@Override
 	public int getCode() {
-		return this.type.getCode();
+		return null == type ? 1 : this.type.getCode();
 	}
 
 	@Override
 	public String getCodeDescription() {
-		return this.type.getDescription2();
+		return null == type ? "01 RETRIBUCION NO INCLUIDA OTROS APARTADOS" : this.type.getDescription2();
 	}
 	
 

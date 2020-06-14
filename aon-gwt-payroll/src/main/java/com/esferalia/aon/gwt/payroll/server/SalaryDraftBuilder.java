@@ -537,6 +537,7 @@ public class SalaryDraftBuilder
 		IContractDeduction contractCost = (IContractDeduction) cost;
 		
 		Deduction draftCost = newDeduction(contractCost);
+		
 		draftCost.setAmount(amount);
 		draftCost.setEndDate(endDate);
 		draftCost.setStartDate(startDate);
@@ -567,6 +568,9 @@ public class SalaryDraftBuilder
 		draftPayment.setEndDate(endDate);
 
 		CompositePayment compositePayment = getPayment(draftPayment.getId());
+		
+		// TODO: por que falla el type??
+		draftPayment.setType(getPaymentType(payment.getType()));
 
 		if (compositePayment != null)
 			compositePayment.addChild(draftPayment);
