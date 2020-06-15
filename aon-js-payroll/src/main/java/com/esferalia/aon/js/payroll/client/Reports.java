@@ -72,6 +72,9 @@ public class Reports {
 		public Double getNonHExtraBase();
 		public Double getIrpfBase();
 		
+		public Double getMoneyIrpfBase();
+		public Double getInkindIrpfBase();
+		
 		public <P extends Payment> List<P> getPayments();
 		public <D extends Deduction> List<D> getDeductions();
 		public <D extends Deduction> List<D> getCosts();
@@ -494,7 +497,8 @@ public class Reports {
 		for ( i = 0; i <  deductions.@java.util.List::size()(); i++ ) {
 			var deduction = deductions.@java.util.List::get(I)(i);
 			var amount =  deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getAmount()();
-			console.log('Amount : ' + amount);
+				
+				console.log('Amount : ' + amount);
 				console.log('description : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()());
 				console.log('percent : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()());
 				console.log('name : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getName()());
@@ -502,6 +506,33 @@ public class Reports {
 					
 				
 			if ( amount ) {
+				if('IRPF' == deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getName()()){
+					especie = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getInkindIrpfBase()();
+					dinerario = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMoneyIrpfBase()();
+					console.log("IRPF ESPECIE = " + especie);
+					console.log("IRPF DINERARIO = " + dinerario);
+					if(dinerario && dinerario > 0){
+						json.deductions.push ({
+							amount : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMoneyIrpfBase()(),
+							description : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
+							value : amount,
+							percent : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
+							name : 'Dinerario',
+							type_name : 'Dinerario'
+						});
+					}
+					if(especie && especie > 0){
+						json.deductions.push ({
+								amount : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getInkindIrpfBase()(),
+								description : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
+								value : amount,
+								percent : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
+								name : 'Especie',
+								type_name : 'Especie'
+							});
+					}
+				}
+				
 				json.deductions.push ({
 					amount : amount,
 					description : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()(),
@@ -511,6 +542,7 @@ public class Reports {
 					type_name : deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getTypeName()()
 				});
 				contributions += amount;
+				
 			}
 		}
 		json.total_contributions = contributions;

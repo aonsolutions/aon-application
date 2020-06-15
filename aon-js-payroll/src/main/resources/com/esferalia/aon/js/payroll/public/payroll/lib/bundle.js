@@ -169,46 +169,46 @@ var PDF = require('pdfkit');
 
 module.exports.newStandardPayroll = function(payroll, stream){
   //Initialize pdf object
-	var pdf = new PDF({
-        size: [595.28, 841.89],
-        margins: { // by default, all are 72
-            top: 5,
-            bottom: 5,
-            left: 5,
-            right: 5
-        }
-    });
+	 var pdf = new PDF({
+	        size: [595.28, 841.89],
+	        margins: { // by default, all are 72
+	            top: 5,
+	            bottom: 5,
+	            left: 5,
+	            right: 5
+	        }
+	    });
 
-    pdf.pipe(stream);
+	    pdf.pipe(stream);
 
-    //PDF Styles
-    var pdfWidth = pdf.page.width -
-        pdf.page.margins.left -
-        pdf.page.margins.right
+	    //PDF Styles
+	    var pdfWidth = pdf.page.width -
+	        pdf.page.margins.left -
+	        pdf.page.margins.right;
 
-    //Variables y constants
-    var t0p = 0;
-    var left = 0;
-    var right = 0;
+	    //Variables y constants
+	    var t0p = 0;
+	    var left = 0;
+	    var right = 0;
 
-    textFooterSize = 7.5;
-    textFooterFont = 'Helvetica';
+	    textFooterSize = 7.5;
+	    textFooterFont = 'Helvetica';
 
-    textSize = 8;
-    textFont = 'Helvetica';
+	    textSize = 8;
+	    textFont = 'Helvetica';
 
-    titleSize = 8;
-    titleFont = 'Helvetica-Bold';
+	    titleTextSize = 8;
+	    titleTextFont = 'Helvetica-Bold';
 
-    headingSize = 4;
-    headingFont = 'Helvetica-Bold';
+	    headingSize = 4;
+	    headingFont = 'Helvetica-Bold';
 
-    signature = 585;
+	    signature = 585;
 
-    var salary_perceptions_codes = [0001];
-    var extra_hours_codes = [0002, 0003];
-    var extra_perks_codes = [0004, 0005];
-    var spices_salary_codes = [0013, 0014, 0015, 0016, 0017, 0018, 0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026];
+	    var salary_perceptions_codes = [0001];
+	    var extra_hours_codes = [0002, 0003];
+	    var extra_perks_codes = [0004, 0005];
+	    var spices_salary_codes = [0013, 0014, 0015, 0016, 0017, 0018, 0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026];
 
     //SET BLANKs IMAGES
     // var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
@@ -217,150 +217,154 @@ module.exports.newStandardPayroll = function(payroll, stream){
     // payroll.logoEnterprise = blank_image;
     // payroll.logoEnterprise2 = blank_image;
 
-    //Aux Methods
-    var checkAccrualName = function(accrualName) {
-        if (accrualName) {
-            type = accrualName.split(" ")[0];
-            if (type == "01")
-                return "01 RETRIBUCIONES SALARIALES";
+	  //Aux Methods
+	    String.prototype.splice = function(idx, rem, str) {
+	        return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+	    };
 
-            return accrualName;
-        }
-        return accrualName;
-    }
+	    var checkAccrualName = function(accrualName) {
+	        if (accrualName) {
+	            type = accrualName.split(" ")[0];
+	            if (type == "01")
+	                return "01 RETRIBUCIONES SALARIALES".splice(2, 0, ". ");
 
-    var formatFirstPartAddress = function(address) {
-        if (address.includes("("))
-            return address.split("(")[0];
-        return address;
-    }
+	            return accrualName.splice(2, 0, ". ");
+	        }
+	        return accrualName;
+	    }
 
-    var formatSecondPartAddress = function(address, province) {
-        if (address.includes("(")) {
-            zip = address.split("(")[1].split(")")[0];
-            city = address.split(")")[1];
+	    var formatFirstPartAddress = function(address) {
+	        if (address.includes("("))
+	            return address.split("(")[0];
+	        return address;
+	    }
 
-            return zip + " " + city + " " + province;
-        }
-        return province;
-    }
+	    var formatSecondPartAddress = function(address, province) {
+	        if (address.includes("(")) {
+	            zip = address.split("(")[1].split(")")[0];
+	            city = address.split(")")[1];
 
-    var formatInputData = function(data, parseData) {
-        if (data == null || data == undefined) {
-            if (parseData == 'string')
-                return '';
-            else if (parseData == 'number')
-                return '';
-        } else {
-            var typeData = typeof data;
-            //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
-            if (typeData == 'number' && data == 0) {
-                return '';
-            } else if (typeData == 'number' && isNaN(data)) {
-                return '';
-            }
-            return data;
-        }
-    }
+	            return zip + " " + city + " " + province;
+	        }
+	        return province;
+	    }
 
-    var parseExpression = function(expression) {
-        if (null != expression && undefined != expression && expression.includes("]"))
-            return expression.split("]")[1];
-        return expression;
-    }
+	    var formatInputData = function(data, parseData) {
+	        if (data == null || data == undefined) {
+	            if (parseData == 'string')
+	                return '';
+	            else if (parseData == 'number')
+	                return '';
+	        } else {
+	            var typeData = typeof data;
+	            //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
+	            if (typeData == 'number' && data == 0) {
+	                return '';
+	            } else if (typeData == 'number' && isNaN(data)) {
+	                return '';
+	            }
+	            return data;
+	        }
+	    }
 
-    var formatAmount = function(amount) {
-        const config = {
-            minimumFractionDigits: 2
-        }
+	    var parseExpression = function(expression) {
+	        if (null != expression && undefined != expression && expression.includes("]"))
+	            return expression.split("]")[1].trim();
+	        return expression.trim();
+	    }
 
-        return (amount && amount != '' && amount != null && amount != 0) ? new Intl.NumberFormat("de-DE", config).format(amount.toFixed(2)) : '';
-    }
+	    var formatAmount = function(amount) {
+	        const config = {
+	            minimumFractionDigits: 2
+	        }
 
-    var formatPercent = function(percent) {
-        if ('string' == typeof percent)
-            return percent;
-        else
-            return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2) + " %" : '';
-    }
+	        return (amount && amount != '' && amount != null && amount != 0) ? new Intl.NumberFormat("de-DE", config).format(amount.toFixed(2)) : '';
+	    }
 
-    var formatMoney = function(amount) {
-        const config = {
-            style: "currency",
-            currency: "EUR",
-            minimumFractionDigits: 2,
-            currencyDisplay: "symbol"
-        }
-        return (amount && amount != '' && amount != null && amount != 0) ? new Intl.NumberFormat("de-DE", config).format(amount.toFixed(2)) : '';
-    }
+	    var formatPercent = function(percent) {
+	        if ('string' == typeof percent)
+	            return percent;
+	        else
+	            return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2) + " %" : '';
+	    }
 
-    var numberOffset = function(number) {
-        if (number != '' && 'string' != typeof number) {
-            var formatNumber = formatAmount(number);
-            var split = formatNumber.split(',');
-            switch (split[0].length) {
-                case 1:
-                    return 0;
-                case 2:
-                    return -4;
-                case 3:
-                    return -8;
-                case 4:
-                    return -11;
-                case 5:
-                    return -15;
-                case 6:
-                    return -19;
-                default:
-                    return 0;
-            }
-        } else {
-            return 0;
-        }
-    }
+	    var formatMoney = function(amount) {
+	        const config = {
+	            style: "currency",
+	            currency: "EUR",
+	            minimumFractionDigits: 2,
+	            currencyDisplay: "symbol"
+	        }
+	        return (amount && amount != '' && amount != null && amount != 0) ? new Intl.NumberFormat("de-DE", config).format(amount.toFixed(2)) : '';
+	    }
 
-    var parseDate = function(date) {
-        return new Intl.DateTimeFormat('en-GB').format(date);
-    }
+	    var numberOffset = function(number) {
+	        if (number != '' && 'string' != typeof number) {
+	            var formatNumber = formatAmount(number);
+	            var split = formatNumber.split(',');
+	            switch (split[0].length) {
+	                case 1:
+	                    return 0;
+	                case 2:
+	                    return -4;
+	                case 3:
+	                    return -8;
+	                case 4:
+	                    return -11;
+	                case 5:
+	                    return -15;
+	                case 6:
+	                    return -19;
+	                default:
+	                    return 0;
+	            }
+	        } else {
+	            return 0;
+	        }
+	    }
 
-    var formatDate = function(date) {
-        var split = date.split('/');
-        return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
-    }
+	    var parseDate = function(date) {
+	        return new Intl.DateTimeFormat('en-GB').format(date);
+	    }
 
-    var getStrMonth = function(numberMonth) {
-        switch (numberMonth) {
-            case '1':
-                return 'enero';
-            case '2':
-                return 'febrero';
-            case '3':
-                return 'marzo';
-            case '4':
-                return 'abril';
-            case '5':
-                return 'mayo';
-            case '6':
-                return 'junio';
-            case '7':
-                return 'julio';
-            case '8':
-                return 'agosto';
-            case '9':
-                return 'septiembre';
-            case '10':
-                return 'octubre';
-            case '11':
-                return 'noviembre';
-            case '12':
-                return 'diciembre';
-            default:
-                return 'error';
-        }
-    }
+	    var formatDate = function(date) {
+	        var split = date.split('/');
+	        return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
+	    }
+
+	    var getStrMonth = function(numberMonth) {
+	        switch (numberMonth) {
+	            case '1':
+	                return 'enero';
+	            case '2':
+	                return 'febrero';
+	            case '3':
+	                return 'marzo';
+	            case '4':
+	                return 'abril';
+	            case '5':
+	                return 'mayo';
+	            case '6':
+	                return 'junio';
+	            case '7':
+	                return 'julio';
+	            case '8':
+	                return 'agosto';
+	            case '9':
+	                return 'septiembre';
+	            case '10':
+	                return 'octubre';
+	            case '11':
+	                return 'noviembre';
+	            case '12':
+	                return 'diciembre';
+	            default:
+	                return 'error';
+	        }
+	    }
 
 
-    //Main Methods
+  //Main Methods
     var newHearderTittle = function() {
         titleSize = 10;
         titleFont = 'Helvetica-Bold';
@@ -374,6 +378,8 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .fontSize(titleSize)
             .text('RECIBO INDIVIDUAL JUSTIFICATIVO DEL PAGO DE SALARIO', { align: 'center' })
             .moveDown(1);
+        
+        titleSize = 9;
     }
 
     var newEnterpriseBox = function() {
@@ -386,21 +392,25 @@ module.exports.newStandardPayroll = function(payroll, stream){
         firstColumn = 25;
         secondColumn = 180;
 
-        paddingLeft = 25;
+        paddingLeft = 20;
 
         // -----------------------------------------------------------------------------------------------------------------
         // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
         pdf
-            .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner + 10, enterpriseTop).stroke() //Horizontal t0p line
-            .font(headingFont)
+            .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner + 5, enterpriseTop).stroke() //Horizontal t0p line
+            .font(textFont)
+            .fontSize(textSize)
             .text('Empresa', topLeftCorner + 15, enterpriseTop - 3)
-            .moveTo(topLeftCorner + 55, enterpriseTop).lineTo(boxWidth, enterpriseTop).stroke()
+            .moveTo(topLeftCorner + 60, enterpriseTop).lineTo(boxWidth, enterpriseTop).stroke()
+            .font(titleFont)
+            .fontSize(titleTextSize)
             .text(formatInputData(payroll.enterprise.name, 'string'), firstColumn, enterpriseTop + 12)
 
         .font(textFont)
-            .text(formatFirstPartAddress(payroll.enterprise.address), firstColumn, enterpriseTop + 24)
-            .text(formatSecondPartAddress(payroll.enterprise.address, payroll.enterprise.city.toUpperCase()), firstColumn, enterpriseTop + 36)
+            .fontSize(textSize)
+            .text(formatFirstPartAddress(payroll.enterprise.address), firstColumn + paddingLeft, enterpriseTop + 24)
+            .text(formatSecondPartAddress(payroll.enterprise.address, payroll.enterprise.city.toUpperCase()), firstColumn + paddingLeft, enterpriseTop + 36)
 
         .font(headingFont)
             .text('CIF: ', firstColumn, enterpriseTop + 48)
@@ -410,7 +420,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
         .font(headingFont)
             .text('CCC: ', secondColumn, enterpriseTop + 48)
             .font(textFont)
-            .text(formatInputData(payroll.enterprise.ccc, 'string'), secondColumn + paddingLeft, enterpriseTop + 48)
+            .text(formatInputData(payroll.enterprise.ccc, 'string'), secondColumn + paddingLeft + 5, enterpriseTop + 48)
 
         .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner, enterpriseHeight).stroke() //Vertical left line
             .moveTo(boxWidth, enterpriseTop).lineTo(boxWidth, enterpriseHeight).stroke() //Vertical right line
@@ -425,9 +435,11 @@ module.exports.newStandardPayroll = function(payroll, stream){
         boxWidth = 290;
 
         firstColumn = 310;
-        secondColumn = 350;
-        thirdColumn = 430;
-        fourthColumn = 525;
+        secondColumn = 340;
+        thirdColumn = 410;
+        fourthColumn = 485;
+        fifthColumn = 530;
+        sixthColumn = 550;
 
         paddingLeft = 25;
 
@@ -436,20 +448,22 @@ module.exports.newStandardPayroll = function(payroll, stream){
         // -----------------------------------------------------------------------------------------------------------------
 
         pdf
-            .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner + 10, enterpriseTop).stroke() //Horizontal t0p line
-            .font(headingFont)
+            .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner + 5, enterpriseTop).stroke() //Horizontal t0p line
+            .font(textFont)
             .text('Trabajador', topLeftCorner + 15, enterpriseTop - 3)
-            .moveTo(topLeftCorner + 65, enterpriseTop).lineTo(topLeftCorner + boxWidth, enterpriseTop).stroke()
+            .moveTo(topLeftCorner + 70, enterpriseTop).lineTo(topLeftCorner + boxWidth, enterpriseTop).stroke()
+            .font(titleFont)
+            .fontSize(titleTextSize)
             .text(formatInputData(payroll.employee.fullname, 'string'), firstColumn, enterpriseTop + 12)
 
-        .text('NIF: ', firstColumn, enterpriseTop + 24)
+            .text('NIF: ', firstColumn, enterpriseTop + 24)
             .font(textFont)
             .text(formatInputData(payroll.employee.nif, 'string'), secondColumn, enterpriseTop + 24)
 
         .font(headingFont)
-            .text('Grupo profesional: ', thirdColumn, enterpriseTop + 24)
+            .text('Fecha antigüedad: ', thirdColumn, enterpriseTop + 24)
             .font(textFont)
-            .text(formatInputData(payroll.employee.professional_group, 'number'), fourthColumn, enterpriseTop + 24)
+            .text(parseDate(payroll.employee.seniority_date), fourthColumn, enterpriseTop + 24)
 
         .font(headingFont)
             .text('Nº S.S.: ', firstColumn, enterpriseTop + 36)
@@ -462,14 +476,14 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .text(formatInputData(payroll.employee.quote_group, 'string'), fourthColumn, enterpriseTop + 36)
 
         .font(headingFont)
-            .text('TC2: ', firstColumn, enterpriseTop + 48)
+            .text('TC2: ', fifthColumn, enterpriseTop + 36)
             .font(textFont)
-            .text(formatInputData(payroll.employee.contract_type, 'string'), secondColumn, enterpriseTop + 48)
+            .text(formatInputData(payroll.employee.contract_type, 'string'), sixthColumn, enterpriseTop + 36)
 
         .font(headingFont)
-            .text('Fecha antigüedad: ', thirdColumn, enterpriseTop + 48)
+            .text('Grupo profesional: ', firstColumn, enterpriseTop + 48)
             .font(textFont)
-            .text(parseDate(payroll.employee.seniority_date), fourthColumn, enterpriseTop + 48)
+            .text(formatInputData(payroll.employee.professional_group, 'number'), secondColumn + 45, enterpriseTop + 48)
 
         .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner, employeeHeight).stroke() //Vertical left line
             .moveTo(topLeftCorner + boxWidth, enterpriseTop).lineTo(topLeftCorner + boxWidth, employeeHeight).stroke() //Vertical right line
@@ -487,7 +501,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
         boxWidth = 585;
 
         firstColumn = 25;
-        secondColumn = 200;
+        secondColumn = 515;
 
         start_date = formatDate(payroll.settlement.start_date);
         end_date = formatDate(payroll.settlement.end_date);
@@ -495,20 +509,21 @@ module.exports.newStandardPayroll = function(payroll, stream){
         pdf
             .moveTo(topLeftCorner, settlementTop).lineTo(boxWidth, settlementTop).stroke() //Horizontal t0p line
             .font(headingFont)
-            .text('Periodo de liquidación: ', firstColumn, settlementTop + 4, { continued: true })
+            .text('Periodo de liquidación: ', firstColumn, settlementTop + 5)
             .font(textFont)
-            .text('del ' + start_date + ' al ' + end_date, { continued: true })
+            .text('del ' + start_date + ' al ' + end_date, firstColumn + 90, settlementTop + 5);
 
-        .font(headingFont)
-            .text('Total días: ', secondColumn, settlementTop + 4, { continued: true })
+        pdf
+            .font(headingFont)
+            .text('Total días: ', secondColumn, settlementTop + 5)
             .font(textFont)
-            .text(payroll.settlement.total_days)
+            .text(payroll.settlement.total_days, secondColumn + 45, settlementTop + 5)
 
         .moveTo(topLeftCorner, settlementTop).lineTo(topLeftCorner, settlementTop + settlementHeight).stroke() //Vertical left line
             .moveTo(boxWidth, settlementTop).lineTo(boxWidth, settlementTop + settlementHeight).stroke() //Vertical right line
             .moveTo(topLeftCorner, settlementTop + settlementHeight).lineTo(boxWidth, settlementTop + settlementHeight).stroke(); //Horizontal bottom line
-    }
 
+    }
     var newFooterBox = function() {
         // -----------------------------------------------------------------------------------------------------------------
         // -------------------------------------------- FOOTER -------------------------------------------------------------
@@ -550,13 +565,15 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), thirdColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), footer + 35)
             .lineWidth(0.1)
-            .moveTo(firstColumn + paddingLeft, footer + 43).lineTo(thirdColumn + 15, footer + 43).stroke()
+            .moveTo(firstColumn + paddingLeft, footer + 43).lineTo(thirdColumn - 30, footer + 43).dash(5, { space: 2 }).stroke()
+            .moveTo(thirdColumn - 30, footer + 43).lineTo(thirdColumn + 15, footer + 43).undash().stroke()
 
         .font(textFooterFont)
             .text('Importe prorrata de pagas extraordinarias', firstColumn + paddingLeft, footer + 47)
             .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), thirdColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), footer + 47)
-            .moveTo(firstColumn + paddingLeft, footer + 55).lineTo(thirdColumn + 15, footer + 55).stroke()
+            .moveTo(firstColumn + paddingLeft, footer + 55).lineTo(thirdColumn - 30, footer + 55).dash(5, { space: 2 }).stroke()
+            .moveTo(thirdColumn - 30, footer + 55).lineTo(thirdColumn + 15, footer + 55).undash().stroke()
 
         .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.common_contingency.base), fourthColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.base), footer + 41)
@@ -564,7 +581,8 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent), fifthColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent), footer + 41)
             .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input), sixthColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input), footer + 41)
-            .moveTo(thirdColumn + 50, footer + 49).lineTo(thirdColumn + 265, footer + 49).stroke()
+            .moveTo(thirdColumn + 70, footer + 49).lineTo(thirdColumn + 130, footer + 49).stroke()
+            .moveTo(fourthColumn + 50, footer + 49).lineTo(thirdColumn + 265, footer + 49).stroke()
 
         .font(textFooterFont)
             .text('2. Contingencias profesionales', firstColumn, footer + 75)
@@ -573,43 +591,43 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
         .font(textFooterFont)
             .text('AT Y EP', secondColumn, footer + 60)
-            .moveTo(secondColumn, footer + 68).lineTo(secondColumn + 135, footer + 68).stroke()
+            .moveTo(secondColumn, footer + 68).lineTo(secondColumn + 135, footer + 68).dash(5, { space: 2 }).stroke()
             .font(textFooterFont)
             .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at), fifthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at), footer + 60)
             .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), sixthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at), footer + 60)
-            .moveTo(fourthColumn + 50, footer + 68).lineTo(thirdColumn + 265, footer + 68).stroke()
+            .moveTo(fourthColumn + 50, footer + 68).lineTo(thirdColumn + 265, footer + 68).undash().stroke()
 
         .font(textFooterFont)
             .text('Desempleo', secondColumn, footer + 72)
-            .moveTo(secondColumn, footer + 80).lineTo(secondColumn + 135, footer + 80).stroke()
+            .moveTo(secondColumn, footer + 80).lineTo(secondColumn + 135, footer + 80).dash(5, { space: 2 }).stroke()
             .font(textFooterFont)
             .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), fifthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), footer + 72)
             .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), sixthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), footer + 72)
-            .moveTo(fourthColumn + 50, footer + 80).lineTo(thirdColumn + 265, footer + 80).stroke()
+            .moveTo(fourthColumn + 50, footer + 80).lineTo(thirdColumn + 265, footer + 80).undash().stroke()
 
         .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), fourthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.base), footer + 78)
-            .moveTo(thirdColumn + 50, footer + 86).lineTo(thirdColumn + 130, footer + 86).stroke()
+            .moveTo(thirdColumn + 70, footer + 86).lineTo(thirdColumn + 130, footer + 86).stroke()
 
         .font(textFooterFont)
             .text('Fromación profesional', secondColumn, footer + 84)
-            .moveTo(secondColumn, footer + 92).lineTo(secondColumn + 135, footer + 92).stroke()
+            .moveTo(secondColumn, footer + 92).lineTo(secondColumn + 135, footer + 92).dash(5, { space: 2 }).stroke()
             .font(textFooterFont)
             .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), fifthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), footer + 84)
             .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), sixthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), footer + 84)
-            .moveTo(fourthColumn + 50, footer + 92).lineTo(thirdColumn + 265, footer + 92).stroke()
+            .moveTo(fourthColumn + 50, footer + 92).lineTo(thirdColumn + 265, footer + 92).undash().stroke()
 
         .font(textFooterFont)
             .text('Fondo de Garantía Salarial', secondColumn, footer + 96)
-            .moveTo(secondColumn, footer + 104).lineTo(secondColumn + 135, footer + 104).stroke()
+            .moveTo(secondColumn, footer + 104).lineTo(secondColumn + 135, footer + 104).dash(5, { space: 2 }).stroke()
             .font(textFooterFont)
             .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), fifthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), footer + 96)
             .font(textFooterFont)
             .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), sixthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), footer + 96)
-            .moveTo(fourthColumn + 50, footer + 104).lineTo(thirdColumn + 265, footer + 104).stroke()
+            .moveTo(fourthColumn + 50, footer + 104).lineTo(thirdColumn + 265, footer + 104).undash().stroke()
 
         .font(textFooterFont)
             .text('3. Cotización adicional por horas extraordinarias', firstColumn, footer + 108)
@@ -617,14 +635,16 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .text('Fuerza mayor', secondColumn, footer + 118)
             .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), fifthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), footer + 118)
             .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), sixthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), footer + 118)
-            .moveTo(secondColumn, footer + 126).lineTo(thirdColumn + 130, footer + 126).stroke()
+            .moveTo(secondColumn, footer + 126).lineTo(thirdColumn + 70, footer + 126).dash(5, { space: 2 }).stroke()
+            .moveTo(thirdColumn + 70, footer + 126).lineTo(thirdColumn + 130, footer + 126).undash().stroke()
             .moveTo(fourthColumn + 50, footer + 126).lineTo(thirdColumn + 265, footer + 126).stroke()
 
         .font(textFooterFont)
             .text('No estructurales', secondColumn, footer + 130)
             .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), fifthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), footer + 130)
             .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), sixthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), footer + 130)
-            .moveTo(secondColumn, footer + 138).lineTo(thirdColumn + 130, footer + 138).stroke()
+            .moveTo(secondColumn, footer + 138).lineTo(thirdColumn + 70, footer + 138).dash(5, { space: 2 }).stroke()
+            .moveTo(thirdColumn + 70, footer + 138).lineTo(thirdColumn + 130, footer + 138).undash().stroke()
             .moveTo(fourthColumn + 50, footer + 138).lineTo(thirdColumn + 265, footer + 138).stroke();
 
         taxesS = getDeduction("Especie");
@@ -633,14 +653,16 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .font(textFooterFont)
                 .text('4. Base sujeta a retención del IRPF', firstColumn, footer + 142)
                 .text(formatAmount(payroll.footer_ss_quotation.base_irpf), fourthColumn + numberOffset(payroll.footer_ss_quotation.base_irpf), footer + 142)
-                .moveTo(firstColumn + paddingLeft, footer + 150).lineTo(thirdColumn + 130, footer + 150).stroke();
+                .moveTo(firstColumn + paddingLeft, footer + 150).lineTo(thirdColumn + 70, footer + 150).dash(5, { space: 2 }).stroke()
+                .moveTo(thirdColumn + 70, footer + 150).lineTo(thirdColumn + 130, footer + 150).undash().stroke();
         } else {
             taxesD = getDeduction("Dinerario");
             pdf
                 .font(textFooterFont)
                 .text('4. Base sujeta a retención del IRPF: ' + taxesS.value + '€  en especie + ' + taxesD.value + "€  en retribuciones dinerarias", firstColumn, footer + 142)
                 .text(formatAmount(payroll.footer_ss_quotation.base_irpf), fourthColumn + numberOffset(payroll.footer_ss_quotation.base_irpf), footer + 142)
-                .moveTo(firstColumn + paddingLeft, footer + 150).lineTo(thirdColumn + 130, footer + 150).stroke()
+                .moveTo(firstColumn + paddingLeft, footer + 150).lineTo(thirdColumn - 26, footer + 150).dash(5, { space: 2 }).stroke()
+                .moveTo(thirdColumn - 26, footer + 150).lineTo(thirdColumn + 130, footer + 150).undash().stroke()
                 .text('Total aportaciones', firstColumn + paddingLeft, footer + 154)
                 .text(formatAmount(payroll.footer_ss_quotation.total_company), sixthColumn + numberOffset(payroll.footer_ss_quotation.total_company), footer + 154)
                 .moveTo(firstColumn + paddingLeft, footer + 162).lineTo(thirdColumn + 265, footer + 162).stroke();
@@ -663,17 +685,31 @@ module.exports.newStandardPayroll = function(payroll, stream){
         accrualHeigt = 555;
         accrualTop = 115;
 
-        firstColumn = 160;
-        secondColumn = 340;
+        firstColumn = 50;
+        secondColumn = 230;
+        thirdColumn = 250;
+        fourthColumn = 400;
+        fifthColumn = 220;
+        sixthColumn = 450;
+        seventhColumn = 535;
 
         pdf
             .fontSize(titleSize)
-            .text('Firma y sello de la empresa', firstColumn, accrualTop + signatureTop)
-            .image(payroll.signature_logo, firstColumn + 10, accrualTop + signatureTop + 12, { scale: 0.06 })
+            .font(titleFont)
+            .text('LÍQUIDO TOTAL A PERCIBIR (A-B)', secondColumn, accrualTop + signatureTop)
+            .text(formatMoney(payroll.liquid_perceive), seventhColumn + numberOffset(payroll.liquid_perceive), accrualTop + signatureTop)
+            .moveTo(secondColumn, accrualTop + signatureTop + 10).lineTo(seventhColumn - 26, accrualTop + signatureTop + 10).dash(5, { space: 2 }).stroke()
+            .moveTo(seventhColumn - 26, accrualTop + signatureTop + 10).lineTo(seventhColumn + 35, accrualTop + signatureTop + 10).undash().stroke();
 
-        .text(end_date, secondColumn, accrualTop + signatureTop)
-            .fontSize(titleSize)
-            .text('RECIBÍ', secondColumn, accrualTop + signatureTop + 12)
+        pdf
+            .font(textFooterFont)
+            .fontSize(textFooterSize)
+            .text('Firma y sello de la empresa', firstColumn, accrualTop + signatureTop + 50)
+            .image(payroll.signature_logo, firstColumn + 10, accrualTop + signatureTop, { scale: 0.06 })
+
+        .text(`RECIBÍ (${end_date}) :`, thirdColumn, accrualTop + signatureTop + 24)
+            .fontSize(textFooterSize)
+            .text(formatInputData(payroll.employee.fullname, 'string'), fourthColumn, accrualTop + signatureTop + 50)
 
         .lineWidth(1)
             .moveTo(topLeftCorner, accrualTop).lineTo(topLeftCorner, accrualTop + accrualHeigt).stroke() //Vertical left line
@@ -692,16 +728,18 @@ module.exports.newStandardPayroll = function(payroll, stream){
         firstColumn = 25;
         secondColumn = 30;
         thirdColumn = 60;
-        fourthColumn = 90;
+        fourthColumn = 85;
         fifthColumn = 220;
-        sixthColumn = 480;
-        seventhColumn = 550;
+        sixthColumn = 450;
+        seventhColumn = 535;
 
         pdf
             .moveTo(topLeftCorner, accrualTop).lineTo(boxWidth, accrualTop).stroke()
             .font(headingFont)
+            .fontSize(titleSize)
             .text('I. DEVENGOS', firstColumn, accrualTop + 12)
-            .text('TOTALES', seventhColumn - 20, accrualTop + 12)
+            .text('TOTALES', seventhColumn - 10, accrualTop + 12)
+            .fontSize(textSize)
             .lineWidth(0.1);
 
         newLine = 12;
@@ -709,20 +747,25 @@ module.exports.newStandardPayroll = function(payroll, stream){
         accrualsNumb = 0;
 
         actualLine = accrualTop + paddinBottom;
+        totalAccrualLine = actualLine;
 
         for (i = 0; i < payroll.accruals.length; i++) {
             accrual = payroll.accruals[i];
             if (accrual.types.length > 0) {
+                totalAccrualLine += 12;
                 accrualsNumb += accrual.types.length + 4;
                 pdf
                     .font(titleFont)
                     .text(checkAccrualName(accrual.accrual_name), secondColumn, actualLine);
 
                 titlePos = actualLine;
+                actualLine += 5;
+                totalAccrualLine += 5;
 
                 craTotal = 0;
                 for (j = 0; j < accrual.types.length; j++) {
                     actualLine = actualLine + 12;
+                    totalAccrualLine += 12;
                     type = accrual.types[j];
                     craTotal += type.type_value;
                     pdf
@@ -733,13 +776,14 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
                 pdf
                     .text(formatMoney(craTotal), sixthColumn + numberOffset(craTotal), titlePos)
-                    .moveTo(secondColumn, titlePos + 10).lineTo(sixthColumn + 35, titlePos + 10).stroke();
+                    .moveTo(secondColumn, titlePos + 10).lineTo(sixthColumn - 25, titlePos + 10).dash(5, { space: 2 }).stroke()
+                    .moveTo(sixthColumn - 25, titlePos + 10).lineTo(sixthColumn + 25, titlePos + 10).undash().stroke();
 
                 actualLine = actualLine + 12;
             }
         }
 
-        totalAccrualLine = newLine * (accrualsNumb) + 115;
+        // totalAccrualLine = newLine * (accrualsNumb) + 115;
         console.error('totalAccrualLine : ' + totalAccrualLine);
 
 
@@ -747,8 +791,9 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .fontSize(titleSize)
             .font(titleFont)
             .text('A. TOTAL DEVENGADO', fifthColumn, totalAccrualLine)
-            .text(formatAmount(payroll.total_accrual), seventhColumn + numberOffset(payroll.total_accrual), totalAccrualLine)
-            .moveTo(fifthColumn, totalAccrualLine + 10).lineTo(seventhColumn + 25, totalAccrualLine + 10).stroke();
+            .text(formatMoney(payroll.total_accrual), seventhColumn + numberOffset(payroll.total_accrual), totalAccrualLine)
+            .moveTo(fifthColumn, totalAccrualLine + 10).lineTo(seventhColumn - 25, totalAccrualLine + 10).dash(5, { space: 2 }).stroke()
+            .moveTo(seventhColumn - 25, totalAccrualLine + 10).lineTo(seventhColumn + 35, totalAccrualLine + 10).undash().stroke();
     }
 
     var getDeduction = function(nameDeduction) {
@@ -775,10 +820,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
         firstColumn = 25;
         secondColumn = 30;
         thirdColumn = 60;
-        fourthColumn = 90;
-        fifthColumn = 130;
-        sixthColumn = 482;
-        seventhColumn = 550;
+        fourthColumn = 85;
+        fifthColumn = 117;
+        sixthColumn = 448;
+        seventhColumn = 535;
 
         totalColumn = 220;
 
@@ -794,35 +839,54 @@ module.exports.newStandardPayroll = function(payroll, stream){
         other_deductions = getDeduction("Otras deducciones");
         irpf = getDeduction("IRPF");
 
-        if (totalAccrualLine <= 384) {
+        console.log("Especie : " + taxesS);
+        console.log("Dinerario : " + taxesD);
+
+        existingTaxes = 0;
+
+        if (totalAccrualLine <= 420) {
             total_aportation = common_contingency.value + unemployment.value + professional_formation.value + extra_hours_e.value + extra_hours_ne.value;
             // ----------------------------------------- APORTACIONES ----------------------------------------------------
             pdf
                 .font(headingFont)
                 .text('II. DEDUCCIONES', firstColumn, deductionTop)
+                .fontSize(textSize)
                 .text('1. Aportaciones del trabajador a las cotizaciones de la SS y conceptos de recaudación', secondColumn, deductionTop + 12)
                 .font(textFont)
                 .text(formatMoney(total_aportation), sixthColumn + numberOffset(total_aportation), deductionTop + 12)
-                .moveTo(secondColumn, deductionTop + 22).lineTo(sixthColumn + 33, deductionTop + 22).stroke();
+                .moveTo(secondColumn, deductionTop + 22).lineTo(sixthColumn - 25, deductionTop + 22).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 22).lineTo(sixthColumn + 25, deductionTop + 22).undash().stroke();
+
+            deductionTop += 5;
 
             pdf
                 .font(textFont)
                 .text(formatMoney(common_contingency.value), thirdColumn + numberOffset(common_contingency.value), deductionTop + 24)
                 .text("  por un ", fourthColumn, deductionTop + 24)
                 .text(formatPercent(common_contingency.percent), fifthColumn + numberOffset(common_contingency.percent), deductionTop + 24)
-                .text("  de Contigencias comunes", fourthColumn + 70, deductionTop + 24)
+                .text("  de Contigencias comunes", fourthColumn + 60, deductionTop + 24)
                 .text(formatMoney(unemployment.value), thirdColumn + numberOffset(unemployment.value), deductionTop + 36)
                 .text("  por un ", fourthColumn, deductionTop + 36)
                 .text(formatPercent(unemployment.percent), fifthColumn + numberOffset(unemployment.percent), deductionTop + 36)
-                .text("  de Desempleo", fourthColumn + 70, deductionTop + 36)
+                .text("  de Desempleo", fourthColumn + 60, deductionTop + 36)
                 .text(formatMoney(professional_formation.value), thirdColumn + numberOffset(professional_formation.value), deductionTop + 48)
                 .text("  por un ", fourthColumn, deductionTop + 48)
                 .text(formatPercent(professional_formation.percent), fifthColumn + numberOffset(professional_formation.percent), deductionTop + 48)
-                .text("  de Fromación profesional", fourthColumn + 70, deductionTop + 48)
-                .text("  por Horas extraordinarias (Estruc.)", fourthColumn, deductionTop + 60)
-                .text(formatMoney(extra_hours_e.value), thirdColumn + numberOffset(extra_hours_e.value), deductionTop + 60)
-                .text("  por Horas extraordinarias (No Estruc.)", fourthColumn, deductionTop + 72)
-                .text(formatMoney(extra_hours_ne.value), thirdColumn + numberOffset(extra_hours_ne.value), deductionTop + 72);
+                .text("  de Fromación profesional", fourthColumn + 60, deductionTop + 48);
+            if (extra_hours_e.value && extra_hours_e.value > 0) {
+                pdf
+                    .text("  por Horas extraordinarias (Estruc.)", fourthColumn, deductionTop + 60)
+                    .text(formatMoney(extra_hours_e.value), thirdColumn + numberOffset(extra_hours_e.value), deductionTop + 60);
+            } else {
+                deductionTop -= 12;
+            }
+            if (extra_hours_ne.value && extra_hours_ne.value > 0) {
+                pdf
+                    .text("  por Horas extraordinarias (No Estruc.)", fourthColumn, deductionTop + 72)
+                    .text(formatMoney(extra_hours_ne.value), thirdColumn + numberOffset(extra_hours_ne.value), deductionTop + 72);
+            } else {
+                deductionTop -= 12;
+            }
 
             // ----------------------------------------- IMPUESTOS ----------------------------------------------------
             taxes = taxesD.value + taxesS.value;
@@ -830,17 +894,30 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .font(headingFont)
                 .text("2. Impuestos sobre la renta de personas físicas (I.R.P.F.)", secondColumn, deductionTop + 84)
                 .font(textFont)
-                .text(formatPercent(irpf.percent), sixthColumn - 130 + numberOffset(irpf.percent), deductionTop + 84)
+                //                .text(formatPercent(irpf.percent), sixthColumn - 130 + numberOffset(irpf.percent), deductionTop + 84)
                 .text(formatMoney(irpf.value), sixthColumn + numberOffset(irpf.value), deductionTop + 84)
-                .moveTo(secondColumn, deductionTop + 94).lineTo(sixthColumn + 33, deductionTop + 94).stroke();
-            if (taxesD.value || taxesS.value) {
+                .moveTo(secondColumn, deductionTop + 94).lineTo(sixthColumn - 25, deductionTop + 94).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 94).lineTo(sixthColumn + 25, deductionTop + 94).undash().stroke();
+
+            deductionTop += 5;
+
+            if (taxesD.value && taxesD.value > 0) {
                 pdf
-                    .text("  por Retribuciones dinerarias", fourthColumn, deductionTop + 96)
                     .text(formatMoney(taxesD.value), thirdColumn + numberOffset(taxesD.value), deductionTop + 96)
-                    .text(formatPercent(taxesD.percent), fifthColumn + numberOffset(professional_formation.percent), deductionTop + 96)
-                    .text("  por Retribuciones en especie", fourthColumn, deductionTop + 108)
+                    .text("  por un ", fourthColumn, deductionTop + 96)
+                    .text(formatPercent(taxesD.percent), fifthColumn + numberOffset(taxesD.percent), deductionTop + 96)
+                    .text("  de Retribuciones dinerarias", fourthColumn + 60, deductionTop + 96);
+            } else {
+                deductionTop -= 12;
+            }
+            if (taxesS.value && taxesS.value > 0) {
+                pdf
                     .text(formatMoney(taxesS.value), thirdColumn + numberOffset(taxesS.value), deductionTop + 108)
-                    .text(formatPercent(taxesD.percent), fifthColumn + numberOffset(professional_formation.percent), deductionTop + 108);
+                    .text("  por un ", fourthColumn, deductionTop + 108)
+                    .text(formatPercent(taxesS.percent), fifthColumn + numberOffset(taxesS.percent), deductionTop + 108)
+                    .text("  de Retribuciones en especie", fourthColumn + 60, deductionTop + 108);
+            } else {
+                deductionTop -= 12;
             }
 
             // ----------------------------------------- ANTICIPOS ----------------------------------------------------
@@ -850,7 +927,6 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 advancesTOTAL += type.value;
             }
 
-            existingTaxes = 0;
             if (!taxesD.value && !taxesS.value)
                 existingTaxes = -25;
 
@@ -859,7 +935,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .text("3. Anticipos", secondColumn, deductionTop + 120 + existingTaxes)
                 .font(textFont)
                 .text(formatAmount(advancesTOTAL), fifthColumn + numberOffset(advancesTOTAL), deductionTop + 120 + existingTaxes)
-                .moveTo(secondColumn, deductionTop + 130 + existingTaxes).lineTo(sixthColumn + 33, deductionTop + 130 + existingTaxes).stroke();
+                .moveTo(secondColumn, deductionTop + 130 + existingTaxes).lineTo(sixthColumn - 25, deductionTop + 130 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 130 + existingTaxes).lineTo(sixthColumn + 25, deductionTop + 130 + existingTaxes).undash().stroke();
+
+            deductionTop += 5;
 
             // ----------------------------------------- ESPECIES ----------------------------------------------------
             spicesTOTAL = 0;
@@ -873,8 +952,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .text("4. Valor de los productos recibidos en especie", secondColumn, deductionTop + 132 + existingTaxes)
                 .font(textFont)
                 .text(formatAmount(spicesTOTAL), fifthColumn + numberOffset(spicesTOTAL), deductionTop + 132 + existingTaxes)
-                .moveTo(secondColumn, deductionTop + 142 + existingTaxes).lineTo(sixthColumn + 33, deductionTop + 142 + existingTaxes).stroke();
+                .moveTo(secondColumn, deductionTop + 142 + existingTaxes).lineTo(sixthColumn - 25, deductionTop + 142 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 142 + existingTaxes).lineTo(sixthColumn + 25, deductionTop + 142 + existingTaxes).undash().stroke();
 
+            deductionTop += 5;
             // ------------------------------------- OTRAS DEDUCCIONES -----------------------------------------------
             pdf
                 .font(headingFont)
@@ -897,7 +978,8 @@ module.exports.newStandardPayroll = function(payroll, stream){
             pdf
                 .font(textFont)
                 .text(formatAmount(other_deductionsTOTAL), fifthColumn + numberOffset(other_deductionsTOTAL), deductionTop + 144 + existingTaxes)
-                .moveTo(secondColumn, deductionTop + 154 + existingTaxes).lineTo(sixthColumn + 33, deductionTop + 154 + existingTaxes).stroke();
+                .moveTo(secondColumn, deductionTop + 154 + existingTaxes).lineTo(sixthColumn - 25, deductionTop + 154 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 154 + existingTaxes).lineTo(sixthColumn + 25, deductionTop + 154 + existingTaxes).undash().stroke();
 
 
             // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
@@ -906,33 +988,25 @@ module.exports.newStandardPayroll = function(payroll, stream){
             pdf
                 .fontSize(titleSize)
                 .font(titleFont)
-                .text('B. TOTAL DEDUCIR', totalColumn, deductionTop + totalAccrualLine + existingTaxes)
-                .text(formatAmount(payroll.total_deductions), seventhColumn + numberOffset(payroll.total_deductions), deductionTop + totalAccrualLine + existingTaxes)
-                .moveTo(totalColumn, deductionTop + totalAccrualLine + 10 + existingTaxes).lineTo(seventhColumn + 25, deductionTop + totalAccrualLine + 10 + existingTaxes).stroke();
-
-            pdf
-                .text('LÍQUIDO TOTAL A PERCIBIR (A-B)', totalColumn + 20, deductionTop + totalAccrualLine + 14 + existingTaxes)
-                .text(formatAmount(payroll.liquid_perceive), seventhColumn + numberOffset(payroll.liquid_perceive), deductionTop + totalAccrualLine + 14 + existingTaxes)
-                .moveTo(totalColumn + 20, deductionTop + totalAccrualLine + 24 + existingTaxes).lineTo(seventhColumn + 25, deductionTop + totalAccrualLine + 24 + existingTaxes).stroke();
+                .text('B. TOTAL A DEDUCIR', totalColumn, deductionTop + totalAccrualLine + existingTaxes)
+                .text(formatMoney(payroll.total_deductions), seventhColumn + numberOffset(payroll.total_deductions), deductionTop + totalAccrualLine + existingTaxes)
+                .moveTo(totalColumn, deductionTop + totalAccrualLine + 10 + existingTaxes).lineTo(seventhColumn - 25, deductionTop + totalAccrualLine + 10 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(seventhColumn - 25, deductionTop + totalAccrualLine + 10 + existingTaxes).lineTo(seventhColumn + 35, deductionTop + totalAccrualLine + 10 + existingTaxes).undash().stroke();
 
         } else {
             // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
             pdf
                 .fontSize(titleSize)
                 .font(titleFont)
-                .text('B. TOTAL DEDUCIR (Página siguiente)', totalColumn, 14 + totalAccrualLine)
-                .text(formatAmount(payroll.total_deductions), seventhColumn + numberOffset(payroll.total_deductions), 14 + totalAccrualLine)
-                .moveTo(totalColumn, 14 + totalAccrualLine + 10).lineTo(seventhColumn + 25, 14 + totalAccrualLine + 10).stroke();
-
-            pdf
-                .text('LÍQUIDO TOTAL A PERCIBIR (A-B)', totalColumn + 20, 14 + totalAccrualLine + 14)
-                .text(formatAmount(payroll.liquid_perceive), seventhColumn + numberOffset(payroll.liquid_perceive), 14 + totalAccrualLine + 14)
-                .moveTo(totalColumn + 20, 14 + totalAccrualLine + 24).lineTo(seventhColumn + 25, 14 + totalAccrualLine + 24).stroke();
+                .text('B. TOTAL A DEDUCIR (Página siguiente)', totalColumn, deductionTop)
+                .text(formatMoney(payroll.total_deductions), seventhColumn + numberOffset(payroll.total_deductions), deductionTop)
+                .moveTo(totalColumn, deductionTop + 10).lineTo(seventhColumn - 25, deductionTop + 10).dash(5, { space: 2 }).stroke()
+                .moveTo(seventhColumn - 25, deductionTop + 10).lineTo(seventhColumn + 35, deductionTop + 10).undash().stroke();
         }
     }
 
     var newDeductionSecondPage = function() {
-        if (totalAccrualLine > 384) {
+        if (totalAccrualLine > 420) {
             //NEW PAGE
             pdf.addPage();
             //PDF Styles
@@ -947,10 +1021,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
             firstColumn = 25;
             secondColumn = 30;
             thirdColumn = 60;
-            fourthColumn = 90;
-            fifthColumn = 130;
-            sixthColumn = 490;
-            seventhColumn = 550;
+            fourthColumn = 85;
+            fifthColumn = 117;
+            sixthColumn = 448;
+            seventhColumn = 535;
 
             totalColumn = 220;
 
@@ -978,29 +1052,43 @@ module.exports.newStandardPayroll = function(payroll, stream){
             pdf
                 .font(headingFont)
                 .text('II. DEDUCCIONES', firstColumn, deductionTop)
+                .fontSize(textSize)
                 .text('1. Aportaciones del trabajador a las cotizaciones de la SS y conceptos de recaudación', secondColumn, deductionTop + 12)
                 .font(textFont)
                 .text(formatMoney(total_aportation), sixthColumn + numberOffset(total_aportation), deductionTop + 12)
-                .moveTo(secondColumn, deductionTop + 22).lineTo(sixthColumn + 30, deductionTop + 22).stroke();
+                .moveTo(secondColumn, deductionTop + 22).lineTo(sixthColumn - 25, deductionTop + 22).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 22).lineTo(sixthColumn + 25, deductionTop + 22).undash().stroke();
+
+            deductionTop += 5;
 
             pdf
                 .font(textFont)
                 .text(formatMoney(common_contingency.value), thirdColumn + numberOffset(common_contingency.value), deductionTop + 24)
                 .text("  por un ", fourthColumn, deductionTop + 24)
                 .text(formatPercent(common_contingency.percent), fifthColumn + numberOffset(common_contingency.percent), deductionTop + 24)
-                .text("  de Contigencias comunes", fourthColumn + 70, deductionTop + 24)
+                .text("  de Contigencias comunes", fourthColumn + 60, deductionTop + 24)
                 .text(formatMoney(unemployment.value), thirdColumn + numberOffset(unemployment.value), deductionTop + 36)
                 .text("  por un ", fourthColumn, deductionTop + 36)
                 .text(formatPercent(unemployment.percent), fifthColumn + numberOffset(unemployment.percent), deductionTop + 36)
-                .text("  de Desempleo", fourthColumn + 70, deductionTop + 36)
+                .text("  de Desempleo", fourthColumn + 60, deductionTop + 36)
                 .text(formatMoney(professional_formation.value), thirdColumn + numberOffset(professional_formation.value), deductionTop + 48)
                 .text("  por un ", fourthColumn, deductionTop + 48)
                 .text(formatPercent(professional_formation.percent), fifthColumn + numberOffset(professional_formation.percent), deductionTop + 48)
-                .text("  de Fromación profesional", fourthColumn + 70, deductionTop + 48)
-                .text("  por Horas extraordinarias (Estruc.)", fourthColumn, deductionTop + 60)
-                .text(formatMoney(extra_hours_e.value), thirdColumn + numberOffset(extra_hours_e.value), deductionTop + 60)
-                .text("  por Horas extraordinarias (No Estruc.)", fourthColumn, deductionTop + 72)
-                .text(formatMoney(extra_hours_ne.value), thirdColumn + numberOffset(extra_hours_ne.value), deductionTop + 72);
+                .text("  de Fromación profesional", fourthColumn + 60, deductionTop + 48);
+            if (extra_hours_e.value && extra_hours_e.value > 0) {
+                pdf
+                    .text("  por Horas extraordinarias (Estruc.)", fourthColumn, deductionTop + 60)
+                    .text(formatMoney(extra_hours_e.value), thirdColumn + numberOffset(extra_hours_e.value), deductionTop + 60);
+            } else {
+                deductionTop -= 12;
+            }
+            if (extra_hours_ne.value && extra_hours_ne.value > 0) {
+                pdf
+                    .text("  por Horas extraordinarias (No Estruc.)", fourthColumn, deductionTop + 72)
+                    .text(formatMoney(extra_hours_ne.value), thirdColumn + numberOffset(extra_hours_ne.value), deductionTop + 72);
+            } else {
+                deductionTop -= 12;
+            }
 
             // ----------------------------------------- IMPUESTOS ----------------------------------------------------
             taxes = taxesD.value + taxesS.value;
@@ -1008,17 +1096,30 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .font(headingFont)
                 .text("2. Impuestos sobre la renta de personas físicas (I.R.P.F.)", secondColumn, deductionTop + 84)
                 .font(textFont)
-                .text(formatPercent(irpf.percent), sixthColumn - 130 + numberOffset(irpf.percent), deductionTop + 84)
+                //                .text(formatPercent(irpf.percent), sixthColumn - 130 + numberOffset(irpf.percent), deductionTop + 84)
                 .text(formatMoney(irpf.value), sixthColumn + numberOffset(irpf.value), deductionTop + 84)
-                .moveTo(secondColumn, deductionTop + 94).lineTo(sixthColumn + 30, deductionTop + 94).stroke();
-            if (taxesD.value || taxesS.value) {
+                .moveTo(secondColumn, deductionTop + 94).lineTo(sixthColumn - 25, deductionTop + 94).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 94).lineTo(sixthColumn + 25, deductionTop + 94).undash().stroke();
+
+            deductionTop += 5;
+
+            if (taxesD.value && taxesD.value > 0) {
                 pdf
-                    .text("  por Retribuciones dinerarias", fourthColumn, deductionTop + 96)
                     .text(formatMoney(taxesD.value), thirdColumn + numberOffset(taxesD.value), deductionTop + 96)
-                    .text(formatPercent(taxesD.percent), fifthColumn + numberOffset(professional_formation.percent), deductionTop + 96)
-                    .text("  por Retribuciones en especie", fourthColumn, deductionTop + 108)
+                    .text("  por un ", fourthColumn, deductionTop + 96)
+                    .text(formatPercent(taxesD.percent), fifthColumn + numberOffset(taxesD.percent), deductionTop + 96)
+                    .text("  de Retribuciones dinerarias", fourthColumn + 60, deductionTop + 96);
+            } else {
+                deductionTop -= 12;
+            }
+            if (taxesS.value && taxesS.value > 0) {
+                pdf
                     .text(formatMoney(taxesS.value), thirdColumn + numberOffset(taxesS.value), deductionTop + 108)
-                    .text(formatPercent(taxesD.percent), fifthColumn + numberOffset(professional_formation.percent), deductionTop + 108);
+                    .text("  por un ", fourthColumn, deductionTop + 108)
+                    .text(formatPercent(taxesS.percent), fifthColumn + numberOffset(taxesS.percent), deductionTop + 108)
+                    .text("  de Retribuciones en especie", fourthColumn + 60, deductionTop + 108);
+            } else {
+                deductionTop -= 12;
             }
 
             // ----------------------------------------- ANTICIPOS ----------------------------------------------------
@@ -1028,7 +1129,6 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 advancesTOTAL += type.value;
             }
 
-            existingTaxes = 0;
             if (!taxesD.value && !taxesS.value)
                 existingTaxes = -25;
 
@@ -1037,7 +1137,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .text("3. Anticipos", secondColumn, deductionTop + 120 + existingTaxes)
                 .font(textFont)
                 .text(formatAmount(advancesTOTAL), fifthColumn + numberOffset(advancesTOTAL), deductionTop + 120 + existingTaxes)
-                .moveTo(secondColumn, deductionTop + 130 + existingTaxes).lineTo(sixthColumn + 30, deductionTop + 130 + existingTaxes).stroke();
+                .moveTo(secondColumn, deductionTop + 130 + existingTaxes).lineTo(sixthColumn - 25, deductionTop + 130 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 130 + existingTaxes).lineTo(sixthColumn + 25, deductionTop + 130 + existingTaxes).undash().stroke();
+
+            deductionTop += 5;
 
             // ----------------------------------------- ESPECIES ----------------------------------------------------
             spicesTOTAL = 0;
@@ -1051,8 +1154,10 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .text("4. Valor de los productos recibidos en especie", secondColumn, deductionTop + 132 + existingTaxes)
                 .font(textFont)
                 .text(formatAmount(spicesTOTAL), fifthColumn + numberOffset(spicesTOTAL), deductionTop + 132 + existingTaxes)
-                .moveTo(secondColumn, deductionTop + 142 + existingTaxes).lineTo(sixthColumn + 30, deductionTop + 142 + existingTaxes).stroke();
+                .moveTo(secondColumn, deductionTop + 142 + existingTaxes).lineTo(sixthColumn - 25, deductionTop + 142 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 142 + existingTaxes).lineTo(sixthColumn + 25, deductionTop + 142 + existingTaxes).undash().stroke();
 
+            deductionTop += 5;
             // ------------------------------------- OTRAS DEDUCCIONES -----------------------------------------------
             pdf
                 .font(headingFont)
@@ -1075,8 +1180,8 @@ module.exports.newStandardPayroll = function(payroll, stream){
             pdf
                 .font(textFont)
                 .text(formatAmount(other_deductionsTOTAL), fifthColumn + numberOffset(other_deductionsTOTAL), deductionTop + 144 + existingTaxes)
-                .moveTo(secondColumn, deductionTop + 154 + existingTaxes).lineTo(sixthColumn + 30, deductionTop + 154 + existingTaxes).stroke();
-
+                .moveTo(secondColumn, deductionTop + 154 + existingTaxes).lineTo(sixthColumn - 25, deductionTop + 154 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(sixthColumn - 25, deductionTop + 154 + existingTaxes).lineTo(sixthColumn + 25, deductionTop + 154 + existingTaxes).undash().stroke();
 
             // ----------------------------------------- TOTAL A DEDUCIR ------------------------------------------------
             totalAccrualLine = accrualTop + newLine * (deductionsNumb) + 50;
@@ -1085,20 +1190,17 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .fontSize(titleSize)
                 .font(titleFont)
                 .text('A. TOTAL DEVENGADO (página anterior)', totalColumn, deductionTop + totalAccrualLine + existingTaxes)
-                .text(formatAmount(payroll.total_accrual), seventhColumn + numberOffset(payroll.total_accrual), deductionTop + totalAccrualLine + existingTaxes)
-                .moveTo(totalColumn, deductionTop + totalAccrualLine + 10 + existingTaxes).lineTo(seventhColumn + 25, deductionTop + totalAccrualLine + 10 + existingTaxes).stroke();
+                .text(formatMoney(payroll.total_accrual), seventhColumn + numberOffset(payroll.total_accrual), deductionTop + totalAccrualLine + existingTaxes)
+                .moveTo(totalColumn, deductionTop + totalAccrualLine + 10 + existingTaxes).lineTo(seventhColumn - 25, deductionTop + totalAccrualLine + 10 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(seventhColumn - 25, deductionTop + totalAccrualLine + 10 + existingTaxes).lineTo(seventhColumn + 35, deductionTop + totalAccrualLine + 10 + existingTaxes).undash().stroke();
 
             pdf
                 .fontSize(titleSize)
                 .font(titleFont)
-                .text('B. TOTAL DEDUCIR', totalColumn, deductionTop + totalAccrualLine + 14 + existingTaxes)
-                .text(formatAmount(payroll.total_deductions), seventhColumn + numberOffset(payroll.total_deductions), deductionTop + totalAccrualLine + 14 + existingTaxes)
-                .moveTo(totalColumn, deductionTop + totalAccrualLine + 24 + existingTaxes).lineTo(seventhColumn + 25, deductionTop + totalAccrualLine + 24 + existingTaxes).stroke();
-
-            pdf
-                .text('LÍQUIDO TOTAL A PERCIBIR (A-B)', totalColumn + 20, deductionTop + totalAccrualLine + 28 + existingTaxes)
-                .text(formatAmount(payroll.liquid_perceive), seventhColumn + numberOffset(payroll.liquid_perceive), deductionTop + totalAccrualLine + 28 + existingTaxes)
-                .moveTo(totalColumn + 20, deductionTop + totalAccrualLine + 38 + existingTaxes).lineTo(seventhColumn + 25, deductionTop + totalAccrualLine + 38 + existingTaxes).stroke();
+                .text('B. TOTAL DEDUCIR', totalColumn, deductionTop + totalAccrualLine + 17 + existingTaxes)
+                .text(formatMoney(payroll.total_deductions), seventhColumn + numberOffset(payroll.total_deductions), deductionTop + totalAccrualLine + 17 + existingTaxes)
+                .moveTo(totalColumn, deductionTop + totalAccrualLine + 27 + existingTaxes).lineTo(seventhColumn - 25, deductionTop + totalAccrualLine + 27 + existingTaxes).dash(5, { space: 2 }).stroke()
+                .moveTo(seventhColumn - 25, deductionTop + totalAccrualLine + 27 + existingTaxes).lineTo(seventhColumn + 35, deductionTop + totalAccrualLine + 27 + existingTaxes).undash().stroke();
 
             newSignatureDate();
             newFooterBox();
