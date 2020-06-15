@@ -86,7 +86,7 @@ public class PGCImport {
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
 						titleList.add(cell.getStringCellValue().trim());
-					} else {
+					} else if(cell.getColumnIndex() < titleList.size()) {
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell);			
 					}

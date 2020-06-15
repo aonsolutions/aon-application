@@ -220,7 +220,7 @@ public class RegistryImport {
 					if(row.getRowNum() == indexTitle) {
 						String title = Utils.getObjectValue(cell).toString().trim();
 						titleList.add(title);
-					} else if(row.getRowNum() > indexTitle){
+					} else if(row.getRowNum() > indexTitle && cell.getColumnIndex() < titleList.size()){
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell, aonCtx);
 					}
