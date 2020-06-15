@@ -148,7 +148,7 @@ public class InvoiceImport {
 				cellStream.forEach(cell -> {
 					if(row.getRowNum() == 0) {
 						titleList.add(cell.getStringCellValue().trim());
-					} else if(cell.getColumnIndex() < titleList.size()){
+					} else {
 						String title = titleList.get(cell.getColumnIndex());
 						check(domain, login, title, cell);			
 					}
