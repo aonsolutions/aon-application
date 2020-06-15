@@ -14,16 +14,12 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 
 public interface ISecurity {
-	public Auth getAuth(AONContext ctx, String email);
-	public Auth insertAuth(AONContext ctx, Auth auth);
-	
 	public User getUser(AONContext ctx, UserFilter filter);
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter);
 	public User getUser(AONContext ctx, String login);

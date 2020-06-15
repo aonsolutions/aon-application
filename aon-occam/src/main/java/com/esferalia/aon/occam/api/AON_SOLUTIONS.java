@@ -8,7 +8,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonConnection;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
@@ -31,18 +30,6 @@ public class AON_SOLUTIONS {
 	
 	private static ISecurity getSecurity() {
 		return new SecurityImpl();
-	}
-	
-	public static Auth getAuth(String schema, String email) { 
-		try (AONContext ctx = AONContext.getAONContext(schema)){		
-			return getSecurity().getAuth(ctx, email);
-		}
-	}
-	
-	public static Auth insertAuth(String schema, Auth auth) { 
-		try (AONContext ctx = AONContext.getAONContext(schema)){		
-			return getSecurity().insertAuth(ctx, auth);
-		}
 	}
 	
 	public static User getUser(Domain domain, String token) {
