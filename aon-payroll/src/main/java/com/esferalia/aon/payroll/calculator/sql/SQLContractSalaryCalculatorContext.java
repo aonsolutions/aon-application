@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.code.aon.common.util.CommonUtil.getDaysBetweenDates;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ABS;
@@ -147,12 +148,14 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.solvers.PegasusSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.EnterpriseData;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
@@ -242,6 +245,7 @@ import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
+import com.esferalia.aon.salary.expression.Variables.NotFoundVariableError;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -2159,6 +2163,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 	protected Integer getAgreementDomain() {
 		Object domain = getObject(SQLConstants.AGREEMENT, AgreementColumns.DOMAIN);
+		return domain == null ? null : (Integer) domain;
+	}
+
+	protected Integer getEnterpriseId() {
+		Object domain = getObject(SQLConstants.ENTERPRISE, EnterpriseColumns.REGISTRY);
 		return domain == null ? null : (Integer) domain;
 	}
 
@@ -5416,6 +5425,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		getContractEreFactorsMap(new Period(Period.min(ereStart.getTime(), p.getStart()), p.getEnd()));
 		
 		Date enterpiseBackDate = null;
+		
+		
 		for (Map.Entry<Integer, List<ContractDataRecord>> entry : contractEreFactorsMap.entrySet()) {
 			List<ContractDataRecord> ereFactors = entry.getValue();
 			ereFactors = ereFactors.stream().filter(c -> c.getId() != null ).collect(Collectors.toList());
@@ -5443,6 +5454,13 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			enterpiseBackDate = Period.min(enterpiseBackDate, employeeBackDate);
 		}
+		
+		try {
+			enterpiseBackDate = getEnterpriseBackDate(p);
+		} catch ( NotFoundVariableError e ) {
+			; 
+		}
+		
 		if ( Period.compare( enterpiseBackDate, p.getStart() ) < 0 )
 			return Collections.singletonList(new TimedObject<Boolean>(false, p));
 		
@@ -5456,6 +5474,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		
 		return fullEres;
 	}	
+	
+	
+	private Date getEnterpriseBackDate (Period p) {
+		
+		java.sql.Date start = toSqlDate(p.getStart()); 
+		java.sql.Date end = toSqlDate(p.getEnd()); 
+		
+		try (AONContext aonContext = new AONContext(connection); 
+			DSLContext dslContext = aonContext.getDslContext() )
+		{
+			return 
+			dslContext
+			.select()
+			.from(ENTERPRISE_DATA)
+			.where(ENTERPRISE_DATA.ENTERPRISE.eq(getEnterpriseId() ))
+			.and(ENTERPRISE_DATA.NAME.eq(FULL_ERE.getName()))
+			.and(ENTERPRISE_DATA.START_DATE.le(end))
+			.and((ENTERPRISE_DATA.END_DATE.isNull().or(ENTERPRISE_DATA.END_DATE.ge(start))))
+			.fetchOptional(ENTERPRISE_DATA.START_DATE)
+			.orElseThrow(() -> new NotFoundVariableError(FULL_ERE.getName()))
+			;
+		}
+		
+	}
 	
 	private Map<Integer, List<ContractDataRecord>> getContractEreFactorsMap(Period p) {
 		// only active employees, of course
