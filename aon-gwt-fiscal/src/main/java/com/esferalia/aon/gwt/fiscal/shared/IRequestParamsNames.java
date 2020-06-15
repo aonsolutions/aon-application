@@ -5,6 +5,7 @@ public interface IRequestParamsNames {
 	String DOMAIN_ID = "domainId";
 	String DOMAIN_NAME = "domainName";
 	String USER = "user";
+	String ACCOUNT_PARAMS = "accountParams";
 	String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
 	String ACCOUNT_REPORT_PARAMS = "accountReportParams";
 	String VAT_PARAMS = "vatParams";
@@ -15,6 +16,7 @@ public interface IRequestParamsNames {
 	String DOMAINS = "domains";
 	String CONSOLIDATION = "consolidation";
 	
+	String ID = "id";
 	String DOMAIN = "domain";
 	String REGISTRY = "registry";
 	String ACTIVITY = "activity";
@@ -45,6 +47,8 @@ public interface IRequestParamsNames {
 	String ACCOUNT = "account";
 	String ACCOUNT_CODE = "accountCode";
 	String ACCOUNT_DESCRIPTION = "accountDescription";
+	String ACCOUNT_ALIAS = "accountAlias";
+	String ACCOUNT_ACTIVE = "accountActive";
 	String DEBIT = "debit";
 	String CREDIT = "credit";
 	String CONCEPT = "concept";
@@ -53,6 +57,7 @@ public interface IRequestParamsNames {
 	String COMMENTS = "comments";
 	String ORDER = "order";
 	String LEVEL = "level";
+	String COST_CENTER = "costCenter";
 	String COST_CENTERS = "costCenters";
 	String PREVIOUS_PERIODS = "previousPeriods";
 	String LOW_LEVEL_ACCOUNT_VISIBLE = "lowLevelAccountVisible";

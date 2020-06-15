@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.shared;
 
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
@@ -17,6 +18,24 @@ import com.google.gwt.json.client.JSONString;
 public class JsonParams extends JSONObject {
 	private static final DateTimeFormat FORMATTER = DateTimeFormat.getFormat("dd/MM/yyyy");
 	 
+	public static String convert(AccountParams params) {
+		JSONObject json = new JSONObject();
+		JSONNull JSON_NULL = JSONNull.getInstance();
+		json.put(IRequestParamsNames.DOMAIN_NAME	,new JSONString( params.getDomainName()));
+		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
+		json.put(IRequestParamsNames.USER   		,new JSONString( params.getUser()));
+		json.put(IRequestParamsNames.ID 			,params.getId() 				== null? JSON_NULL : new JSONNumber( params.getId()));
+		json.put(IRequestParamsNames.ACCOUNT_CODE	,params.getCode()	 			== null? JSON_NULL : new JSONString( params.getCode()));
+		json.put(IRequestParamsNames.ACCOUNT_DESCRIPTION,params.getDescription()	 			== null? JSON_NULL : new JSONString( params.getDescription()));
+		json.put(IRequestParamsNames.ACCOUNT_ALIAS,params.getAlias()	 			== null? JSON_NULL : new JSONString( params.getAlias()));
+		json.put(IRequestParamsNames.LEVEL  		,params.getLevel()  			== null? JSON_NULL : new JSONNumber( params.getLevel()));
+		json.put(IRequestParamsNames.ACCOUNT_ACTIVE ,params.getActive()				== null? JSON_NULL : new JSONNumber( params.getActive()?1:0));
+		json.put(IRequestParamsNames.COST_CENTER    ,params.getCostCenter()			== null? JSON_NULL : new JSONString( params.getCostCenter()));
+		json.put(IRequestParamsNames.OFFSET			,new JSONNumber( params.getOffset()));
+		json.put(IRequestParamsNames.LIMIT			,new JSONNumber( params.getLimit()));
+		return json.toString();
+	}
+
 	public static String convert(IRPFParams params) {
 		JSONObject json = new JSONObject();
 		JSONNull JSON_NULL = JSONNull.getInstance();

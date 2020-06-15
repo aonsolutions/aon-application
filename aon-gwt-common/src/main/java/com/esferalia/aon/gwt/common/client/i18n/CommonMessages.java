@@ -655,6 +655,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Alias / Nombre comercial")
 	String alias();
 	
+	@DefaultMessage("Alias")
+	String aliasAbbr();
+
 	@DefaultMessage("Nacionalidad")
 	String nationality();
 

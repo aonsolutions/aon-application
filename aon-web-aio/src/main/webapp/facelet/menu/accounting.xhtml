@@ -146,6 +146,16 @@
 									<aon:commandLink id="account" action="account_list"
 										value="#{bundle.account_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_account"
+										action="gwt_account-acc"
+										title="PLAN GENERAL CONTABLE">
+										<aon:outputText
+											styleClass="aon-fiscal-link-label aon-icon-beta-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="PLAN GENERAL CONTABLE" />
+									</aon:commandLink>
+								</aon:div>
 
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -443,7 +453,7 @@
 												<aon:commandLink id="accountEntry"
 													action="accountEntry_search"
 													actionListener="#{accountEntry.onEditSearch}"
-													value="#{bundle.accounting_entry_module} [Antiguo - HASTA 01/07/2020]" />
+													value="#{bundle.accounting_entry_module} [Antiguo - HASTA 01/08/2020]" />
 											</aon:div>
 										</aon:div>
 									</aon:panelGrid>

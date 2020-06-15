@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
+import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
@@ -88,6 +89,10 @@ public class AccountingImpl implements IAccounting {
 	public Account getAccount(AONContext ctx, String code) {
 		return AccountDAO.get(ctx, code);
 	}
+	@Override
+	public Stream<Account> getAccounts(AONContext ctx, AccountParams params) {
+		return AccountDAO.getAccounts(ctx, params);
+	}
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
 	}
@@ -95,6 +100,11 @@ public class AccountingImpl implements IAccounting {
 	public Account save(AONContext ctx, Account account) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountDAO.save(ctx, account));
+	}
+	@Override
+	public Account delete(AONContext ctx, Account account) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountDAO.delete(ctx, account));
 	}
 	@Override
 	public String getAccountNextCode(AONContext ctx, String prefix) {

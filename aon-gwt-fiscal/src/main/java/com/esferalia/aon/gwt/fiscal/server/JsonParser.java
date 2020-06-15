@@ -13,6 +13,7 @@ import org.jooq.tools.json.ParseException;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
+import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
@@ -25,6 +26,62 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class JsonParser {
 	private static final String ENCODING = "utf-8";
 	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+
+	public static AccountParams parseAccountParams(String accountParams) throws ParseException, java.text.ParseException {
+		AccountParams params = new AccountParams();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonParams =  (JSONObject) parser.parse(accountParams);
+		
+		String domainName = (String) jsonParams.get(IRequestParamsNames.DOMAIN_NAME);
+		params.setDomainName(domainName);
+		
+		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
+		params.setDomain(domain.intValue());
+		
+		String user = (String) jsonParams.get(IRequestParamsNames.USER);
+		params.setUser(user);
+		// *******************  ACCOUNT ******************* 
+		Long account = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT);
+		if (account != null) {
+			params.setId(account.intValue());	
+		}
+		// *******************  CODE ******************* 
+		String code = (String) jsonParams.get(IRequestParamsNames.ACCOUNT_CODE);
+		if (AonStringUtils.isNotBlank(code)) {
+			params.setCode(code);			
+		}
+		// *******************  DESCRIPTION ******************* 
+		String description = (String) jsonParams.get(IRequestParamsNames.ACCOUNT_DESCRIPTION);
+		if (AonStringUtils.isNotBlank(description)) {
+			params.setDescription(description);			
+		}
+		// *******************  ALIAS ******************* 
+		String alias = (String) jsonParams.get(IRequestParamsNames.ACCOUNT_ALIAS);
+		if (AonStringUtils.isNotBlank(alias)) {
+			params.setDescription(alias);			
+		}
+		// *******************  ACTIVE ******************* 
+		Long active = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT_ACTIVE);
+		if (active != null) {
+			params.setActive(active==1);
+		}
+		// ******************* LEVEL ******************* 
+		Long level = (Long) jsonParams.get(IRequestParamsNames.LEVEL);
+		if (level!= null) {
+			params.setLevel(level.byteValue());	
+		}
+		// ******************* PAGE OFFSET ******************* 
+		Long pageOffset = (Long) jsonParams.get(IRequestParamsNames.OFFSET);
+		if (pageOffset!= null) {
+			params.setOffset(pageOffset.intValue());	
+		}
+		// ******************* LIMIT ******************* 
+		Long limit = (Long) jsonParams.get(IRequestParamsNames.LIMIT);
+		if (limit!= null) {
+			params.setLimit(limit.intValue());	
+		}
+		return params;
+	}
 
 	public static AccountEntryParams parse(String accountEntryParams) throws ParseException, java.text.ParseException {
 		AccountEntryParams params = new AccountEntryParams();

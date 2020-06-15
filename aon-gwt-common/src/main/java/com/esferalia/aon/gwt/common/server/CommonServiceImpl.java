@@ -99,6 +99,10 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		return ACCOUNTING.save(domainName, domain,user, account);
 	}
 	@Override
+	public Account delete(String domainName, int domain,String user, Account account) throws AonCoreException {
+		return ACCOUNTING.delete(domainName, domain,user, account);
+	}
+	@Override
 	public String getAccountNextCode(String domainName, int domain,String user, String prefix) {
 		return ACCOUNTING.getAccountNextCode(domainName, domain,user, prefix);
 	}

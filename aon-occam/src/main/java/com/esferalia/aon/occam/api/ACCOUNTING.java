@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
+import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
@@ -112,6 +113,16 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccount(ctx, code);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	public static Stream<Account> getAccounts(AccountParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser());
+			return getAccounting().getAccounts(ctx, params);
 		} finally {
 			if (ctx != null)
 				ctx.close();
@@ -489,6 +500,17 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().save(ctx, account);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Account delete(String domainName, int domain, String user, Account account) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().delete(ctx, account);
 		} finally {
 			if (ctx != null)
 				ctx.close();

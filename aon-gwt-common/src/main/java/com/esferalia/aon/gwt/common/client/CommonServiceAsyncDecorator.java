@@ -113,6 +113,12 @@ public class CommonServiceAsyncDecorator implements CommonServiceAsync {
 				new AsyncCallbackWrapper<Account>(callback));
 	}
 	@Override
+	public void delete(String domainName, int domain, String user, Account account, AsyncCallback<Account> callback) {
+		AON.start();
+		serviceAsync.delete(domainName, domain, user, account,   
+				new AsyncCallbackWrapper<Account>(callback));
+	}
+	@Override
 	public void getAccountNextCode(String domainName, int domain, String user, String prefix,
 			AsyncCallback<String> callback) {
 		AON.start();

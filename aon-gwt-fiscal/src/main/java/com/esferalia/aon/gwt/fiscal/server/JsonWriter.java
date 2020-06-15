@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
 import com.esferalia.aon.occam.api.model.FlatAccountEntryDetail;
@@ -13,6 +14,24 @@ import com.esferalia.aon.watson.error.AonCoreException;
 
 public class JsonWriter {
 	
+	public static JSONObject writeToJSON(Account account) {
+		try {
+			JSONObject json = new JSONObject()
+				.put("id", account.getId())
+				.put("domain", account.getDomain())
+				.put("code", account.getCode())
+				.put("description", account.getDescription())
+				.put("alias", account.getAlias())
+				.put("level", account.getLevel())
+				.put("active", account.isActive())
+				.put("costCenter", account.getCostCenter())
+			;
+			return json;
+		} catch (JSONException e) {
+			throw new AonCoreException(e);
+		}
+	}
+
 	public static JSONObject writeToJSON(FlatAccountEntryDetail entry) {
 		try {
 			JSONObject json = new JSONObject()

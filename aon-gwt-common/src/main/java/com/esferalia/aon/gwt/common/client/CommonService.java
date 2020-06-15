@@ -38,6 +38,7 @@ public interface CommonService extends RemoteService {
 	Account getAccount(String domainName,int domain, String user,String code) throws AonCoreException;
 	LinkedList<Account> getAccounts(String domainName,int domain, String user,String query) throws AonCoreException;
 	Account save(String domainName, int domain, String user, Account account) throws AonCoreException;
+	Account delete(String domainName, int domain, String user, Account account) throws AonCoreException;
 	String getAccountNextCode(String domainName, int domain, String user, String prefix);
 	
 	// -------------------------------------------------------------- CREDITOR

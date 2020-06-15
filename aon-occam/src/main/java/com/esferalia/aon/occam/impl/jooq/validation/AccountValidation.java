@@ -1,11 +1,28 @@
 package com.esferalia.aon.occam.impl.jooq.validation;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
+import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
+import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Tax.TAX;
+import static com.esferalia.aon.jooq.tables.InvoiceDetailAccount.INVOICE_DETAIL_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceTaxAccount.INVOICE_TAX_ACCOUNT;
+import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
+import static com.esferalia.aon.jooq.tables.Loan.LOAN;
+import static com.esferalia.aon.jooq.tables.PmTypeDetail.PM_TYPE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
+
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import org.jooq.Field;
+import org.jooq.TableLike;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -113,5 +130,150 @@ public class AccountValidation {
 		return messages;
 		
 
+	}
+
+	/**
+	 * No se puede borrar una cuenta de diferente dominio.
+	 */
+	public static BiConsumer<Account,AONContext> FROM_PARENT_DOMAIN_CHECK = (account,ctx) -> {
+		if (account.getDomain() != ctx.getDomainId()) 
+			throw new AonCoreException(AonError.ACCOUNT_PARENT_ACCOUNT.getMessage());
+	};
+	/**
+	 * No se puede borrar una cuenta de diferente dominio.
+	 */
+	public static BiConsumer<Account,AONContext> HIGH_LEVEL_EXISTS = (account,ctx) -> {
+		int level = (byte) ((account.getCode().length() > 4)? 5: account.getCode().length());
+		if (level< 5) {
+			Account a = AccountDAO.get(ctx, 
+					ACCOUNT.CODE.like(account.getCode() + "%")
+					.and(ACCOUNT.ID.ne(account.getId()))
+					);
+			if (a != null)
+				throw new AonCoreException(AonError.ACCOUNT_HIGH_LEVEL_PRESENT.getMessage());
+		}
+	};
+
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_ACCOUNT_ENTRY_DETAIL_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,ACCOUNT_ENTRY_DETAIL,ACCOUNT_ENTRY_DETAIL.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_ACCOUNT_ENTRY_DETAIL_ACCOUNT.getMessage());
+	};
+
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_ACCOUNT_ENTRY_DETAIL_BAL_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,ACCOUNT_ENTRY_DETAIL,ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_ACCOUNT_ENTRY_DETAIL_BAL_ACCOUNT.getMessage());
+	};
+	// ----
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_AMORTIZATION_ACC_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,AMORTIZATION,AMORTIZATION.ACCUMULATED_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_AMORTIZATION_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_AMORTIZATION_ALL_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,AMORTIZATION,AMORTIZATION.ALLOCATION_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_AMORTIZATION_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_AMORTIZATION_FIX_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,AMORTIZATION,AMORTIZATION.FIXED_ASSET_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_AMORTIZATION_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_BANK_CONCEPT_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,BANK_CONCEPT,BANK_CONCEPT.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_BANK_CONCEPT_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_CREDITOR_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,CREDITOR,CREDITOR.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_CREDITOR_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_CUSTOMER_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,CUSTOMER,CUSTOMER.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_CUSTOMER_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_SUPPLIER_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,SUPPLIER,SUPPLIER.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_SUPPLIER_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_PRODUCT_PUR_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,PRODUCT,PRODUCT.PURCHASE_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_PRODUCT_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_PRODUCT_SAL_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,PRODUCT,PRODUCT.SALES_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_PRODUCT_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_TAX_PUR_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,TAX,TAX.PURCHASE_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_TAX_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_TAX_SAL_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,TAX,TAX.SALES_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_TAX_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_INV_DET_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,INVOICE_DETAIL_ACCOUNT,INVOICE_DETAIL_ACCOUNT.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_INVOICE_DETAIL_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_INV_DUA_DUTY_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,INVOICE_DUA,INVOICE_DUA.DUTY_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_INVOICE_DUA_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_INV_DUA_VAT_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,INVOICE_DUA,INVOICE_DUA.VAT_ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_INVOICE_DUA_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_INV_TAX_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,INVOICE_TAX_ACCOUNT,INVOICE_TAX_ACCOUNT.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_INVOICE_TAX_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_LOAN_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,LOAN,LOAN.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_LOAN_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_PM_TYPE_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,PM_TYPE_DETAIL,PM_TYPE_DETAIL.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_PM_TYPE_ACCOUNT.getMessage());
+	};
+	public static BiConsumer<Account,AONContext> CHECK_IF_PRESENT_RBANK_ACCOUNT = (account,ctx) -> {
+		if ( exists(ctx,account,RBANK,RBANK.ACCOUNT) )
+			throw new AonCoreException(AonError.ACCOUNT_PRESENT_IN_RBANK_ACCOUNT.getMessage());
+	};
+
+	/*
+	if ( exists(ctx,account,rbank                  , account             ))
+	*/
+	public static boolean exists(AONContext ctx,Account account,TableLike<?> table, Field<Integer> column ) {
+		return ctx.getDslContext().select( column )
+				.from(table)
+				.where(column.eq(account.getId()))
+				.stream()
+				.map( rec -> rec.getValue(column))
+				.findFirst()
+				.orElse(null) != null;
+		
+	}
+
+	public static void validateDeletion(AONContext ctx, Account account) {
+		FROM_PARENT_DOMAIN_CHECK
+			.andThen(HIGH_LEVEL_EXISTS)
+			.andThen(CHECK_IF_PRESENT_ACCOUNT_ENTRY_DETAIL_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_ACCOUNT_ENTRY_DETAIL_BAL_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_CREDITOR_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_CUSTOMER_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_SUPPLIER_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_PRODUCT_PUR_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_PRODUCT_SAL_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_AMORTIZATION_ACC_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_AMORTIZATION_ALL_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_AMORTIZATION_FIX_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_TAX_PUR_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_TAX_SAL_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_INV_DET_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_INV_TAX_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_PM_TYPE_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_BANK_CONCEPT_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_RBANK_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_LOAN_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_INV_DUA_DUTY_ACCOUNT)
+			.andThen(CHECK_IF_PRESENT_INV_DUA_VAT_ACCOUNT)
+			.accept(account, ctx);
 	}
 }

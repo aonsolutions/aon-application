@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountFilter;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
+import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
@@ -46,8 +47,10 @@ public interface IAccounting {
 	public Account getAccount(AONContext ctx,String code);
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter);
 	public Account save(AONContext ctx, Account account);
+	public Account delete(AONContext ctx, Account account);
 	public String getAccountNextCode(AONContext ctx, String prefix);
-
+	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
+	
 	// 			ACCOUNT PERIOD
 	public LinkedList<AccountPeriod> getDomainPeriods(AONContext ctx);
 	public AccountPeriod fetchPeriod(AONContext ctx,Date date);
@@ -119,6 +122,7 @@ public interface IAccounting {
 	public AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx);
 	public AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year);
 	public boolean isUndeductibleInvoice(AONContext ctx, Integer id);
+	
 	
 	
 }

@@ -244,6 +244,9 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/aon-icon-loupe.png")
 	ImageResource aonIconLoupe();
 	
+	@Source("images/aon-icon-shield.png")
+	ImageResource aonIconShield();
+
 	@Source("images/aon-icon-question.png")
 	ImageResource aonIconQuestion();
 	

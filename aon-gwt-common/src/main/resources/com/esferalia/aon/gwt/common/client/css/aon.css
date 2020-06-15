@@ -2055,6 +2055,12 @@ input:disabled+label {
 	width: auto;
 }
 
+@sprite .aon-icon-shield {
+	gwt-image: "aonIconShield";
+	width: auto;
+}
+
+
 @sprite .aon-icon-document-image {
 	gwt-image: "aonIconDocumentImage";
 	width: auto;
@@ -3025,6 +3031,10 @@ input:disabled+label {
 
 .aon-drop-button:hover {
 	color: #000000;
+}
+
+.aon-padding-bottom {
+	padding-bottom: 1em;
 }
 
 .aon-padding-top {

@@ -39,6 +39,7 @@ public interface CommonServiceAsync {
 	void getAccount(String domainName, int domain, String user, Integer id,AsyncCallback<Account> callback);
 	void getAccounts(String domainName, int domain, String user, String query,AsyncCallback<LinkedList<Account>> callback);
 	void save(String domainName, int domain, String user, Account account,AsyncCallback<Account> callback);
+	void delete(String domainName, int domain, String user, Account account,AsyncCallback<Account> callback);
 	void getAccountNextCode(String domainName, int domain, String user, String prefix, AsyncCallback<String> asyncCallback);
 
 	// -------------------------------------------------------------- CREDITOR

@@ -983,6 +983,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-loupe")
 	String aonIconLoupe();
 
+	@ClassName("aon-icon-shield")
+	String aonIconShield();
+
 	@ClassName("aon-icon-modules")
 	String aonIconModules();
 
@@ -1202,6 +1205,9 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-padding2-top")
 	String aonPadding2Top();
 	
+	@ClassName("aon-padding-bottom")
+	String aonPaddingBottom();
+
 	@ClassName("aon-padding2-bottom")
 	String aonPadding2Bottom();
 	

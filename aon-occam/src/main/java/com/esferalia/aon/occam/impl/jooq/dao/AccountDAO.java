@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AccountHelper.ACCOUNT_HELPER;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 
 import java.util.function.Function;
@@ -7,11 +8,14 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectSeekStep1;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.AccountRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountFilter;
+import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountProperties;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.impl.jooq.validation.AccountAutoComplete;
@@ -53,13 +57,16 @@ public class AccountDAO {
 			.setCostCenter(record.getValue(ACCOUNT.COST_CENTER));
 		}
 	}
-
-	private static Stream<AccountRecord> getAccountStream(AONContext ctx, AccountFilter filter) {
+	private static SelectSeekStep1<AccountRecord,String> getAccountSelect(AONContext ctx, AccountFilter filter) {
 		return ctx.getDslContext()
 				.selectFrom(ACCOUNT)
 				.where(ACCOUNT_PROPERTIES.getConditions(filter))
 				.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
-				.orderBy(ACCOUNT.CODE)
+				.orderBy(ACCOUNT.CODE);
+	}
+
+	private static Stream<AccountRecord> getAccountStream(AONContext ctx, AccountFilter filter) {
+		return getAccountSelect(ctx, filter) 
 				.fetch()
 				.stream();
 	}
@@ -68,6 +75,21 @@ public class AccountDAO {
 		return getAccountStream(ctx, filter)
 			.map(new FullAccountFiller());			
 	}
+	public static Stream<Account> getAccounts(AONContext ctx, AccountParams params) {
+		ctx.checkRead();
+		Condition condition = getFilter( params );
+		return ctx.getDslContext() 
+			.selectFrom(ACCOUNT)
+			.where(condition)
+			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.orderBy(ACCOUNT.CODE)
+			.offset(params.getOffset())
+			.limit(params.getLimit())
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller());
+	}
+
 	public static Account get(AONContext ctx, Integer accountId) {
 		Condition condition = ACCOUNT.ID.equal(accountId);
 		return get(ctx, condition);
@@ -155,6 +177,25 @@ public class AccountDAO {
 
 	public static Account delete(AONContext ctx, Account account) {
 		ctx.checkWrite();
+		AccountValidation.validateDeletion(ctx, account);
+		
+		// ****
+		// La tabla "account_helper" no se usa en la aplicación.
+		// Si algún dia se borra es te código es prescindible.
+		// Puede tener valores por el uso que se dio a la tabla en el pasado.
+			int deleted = ctx.getDslContext()
+				.delete(ACCOUNT_HELPER)
+				.where(ACCOUNT_HELPER.ACCOUNT.eq(account.getId()))
+				.execute();
+			ctx.log().info("DELETE " + deleted + " rows ACCOUNT_HELPER account id: " + account.getId() + " code: " + account.getCode());
+			deleted = ctx.getDslContext()
+				.delete(ACCOUNT_HELPER)
+				.where(ACCOUNT_HELPER.BALANCING_ACCOUNT.eq(account.getId()))
+				.execute();
+			ctx.log().info("DELETE " + deleted + " rows ACCOUNT_HELPER balancing_account id: " + account.getId() + " code: " + account.getCode());
+		// ****
+		// ****
+			
 		ctx.getDslContext()
 			.delete(ACCOUNT)
 			.where(ACCOUNT.ID.eq(account.getId()))
@@ -197,6 +238,58 @@ public class AccountDAO {
 		}
 		return prefix + string;
 	}
+	private static String toSQLLike( String value) {
+		value = AonStringUtils.trim(value);
+		if ( AonStringUtils.isBlank(value) ) return value;
+		if (AonStringUtils.startsWith(value, AonStringUtils.ASTERISK)  
+		 || AonStringUtils.endsWith(value, AonStringUtils.ASTERISK)) {
+			if (AonStringUtils.startsWith(value, AonStringUtils.ASTERISK) ) {
+				value = AonStringUtils.replaceOnce(value, AonStringUtils.ASTERISK, AonStringUtils.PERCENT);
+			}
+			if (AonStringUtils.endsWith(value, AonStringUtils.ASTERISK) ) {
+				value = AonStringUtils.substring(value, 0, value.length()-1) + AonStringUtils.PERCENT;
+			}
+		} else {
+			value = AonStringUtils.SQLlike(value);
+		}
+		return value;
+	}
+	
+	private static Condition getFilter(AccountParams params) {
+		if ( params == null) {
+			return DSL.trueCondition(); 
+		}
+		Condition c = null;
+		if ( params.getId() != null) {
+			c = ACCOUNT.ID.eq(params.getId());
+		}
+		if ( AonStringUtils.isNotBlank(params.getCode())) {
+			Condition a = ACCOUNT.CODE.like( toSQLLike(params.getCode()));	
+			c = c==null?a:c.and(a);
+		}
+		if ( AonStringUtils.isNotBlank(params.getDescription())) {
+			Condition a = ACCOUNT.DESCRIPTION.like( toSQLLike(params.getDescription()));	
+			c = c==null?a:c.and(a);
+		}
+		if ( AonStringUtils.isNotBlank(params.getAlias())) {
+			Condition a = ACCOUNT.ALIAS.like( toSQLLike(params.getAlias()));	
+			c = c==null?a:c.and(a);
+		}
+		if ( params.getLevel() != null ) {
+			Condition a = ACCOUNT.LEVEL.eq( params.getLevel() );	
+			c = c==null?a:c.and(a);
+		}
+		if ( params.getActive() != null ) {
+			Condition a = ACCOUNT.ACTIVE.eq( (byte) (params.getActive()?1:0));	
+			c = c==null?a:c.and(a);
+		}
+		if ( AonStringUtils.isNotBlank(params.getCostCenter())) {
+			Condition a = ACCOUNT.COST_CENTER.like( toSQLLike(params.getCostCenter()));	
+			c = c==null?a:c.and(a);
+		}
+		return c!=null?c:DSL.trueCondition();
+	}
+
 }
 
 
