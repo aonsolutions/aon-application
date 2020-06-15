@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
+import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
@@ -142,6 +143,10 @@ public class EmployeeDialogObject {
 				employeeContractData = result;
 				employeeData = result.getEmployeeInfo();
 				contractData = result.getContractInfo();
+				
+				// Set default contract start_date & end_date to null
+				contractData.setStartDate(null);
+				contractData.setEndDate(null);
 				
 				Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
 				contractData.setContractJourneyDuration(journies);
@@ -335,7 +340,10 @@ public class EmployeeDialogObject {
 	public Integer getWorkplaceAgreement(){
 		Integer agreementId = null;
 		if(null == employeeData.getEmployeeId()){
-			agreementId = this.workplace.getActivity().getId();
+			Activity activity = this.workplace.getActivity();
+			if(null == activity)
+				return -1;
+			agreementId = activity.getId();
 			contractData.setAgreementId(agreementId);
 		}else
 			agreementId = contractData.getAgreementId();

@@ -150,6 +150,8 @@ public class EmployeeDialog extends CustomDialog {
 				
 				if(null == existingEmployee.getEmployeeId()) {
 					String name = nameSurname.split(", ")[0];
+					name = name.trim();
+					this.name.setValue(name);
 					employeeDialogObject.setEmployeeName(name);
 				}else
 					employeeDialogObject.initializeEmployee(
@@ -792,10 +794,10 @@ public class EmployeeDialog extends CustomDialog {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.ssRegimeType);
 		
 		//ACTIVITY CCC
-		if(this.employee.activityCCC.getItemCount() == 2) {
-			this.employee.activityCCC.setSelectedIndex(1);
-			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.activityCCC);
-		}
+//		if(this.employee.activityCCC.getItemCount() == 2) {
+//			this.employee.activityCCC.setSelectedIndex(1);
+//			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.activityCCC);
+//		}
 		
 		//WORKPLACE
 		setSelectedValueLB(employee.workplace, this.employeeDialogObject.getWorkplaceId().toString());
