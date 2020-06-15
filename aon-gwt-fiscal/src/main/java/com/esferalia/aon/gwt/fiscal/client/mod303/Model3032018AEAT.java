@@ -551,7 +551,13 @@ public class Model3032018AEAT extends Model303Base {
 		
 		paintCheck(Mod303Key.CT_A04,table);	// Ha sido declarado en concurso de acreedores en el presente período de liquidación?
 		paintDate (Mod303Key.CT_A05,table);	// Fecha en que se dictó el auto de declaración de concurso
-		paintCheck(Mod303Key.CT_A06,table);	// Auto de declaración de concurso dictado en el períDodo
+		// Auto de declaración de concurso dictado en el períDodo
+		final ListBox a06 = new ListBox();
+		a06.setWidth("200px");
+		a06.addItem("NO", "0");
+		a06.addItem("(1) SI Preconcursal", "1");
+		a06.addItem("(2) SI Postconcursal", "2");
+		paintListBox(a06, Mod303Key.CT_A06, table);
 
 		if (getCallback().getMod303().isComplementary()) {
 			int row = table.getRowCount();

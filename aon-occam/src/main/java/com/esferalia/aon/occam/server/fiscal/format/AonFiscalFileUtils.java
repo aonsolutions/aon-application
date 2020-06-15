@@ -76,6 +76,16 @@ public class AonFiscalFileUtils {
 		}
 	}
 	
+	public static String convertDateES(String date) {
+		try {
+			String d = date == null ? EMPTY_BLANK_DATE
+					: DATE_FORMAT_ES.format(DATE_MAIN_FORMAT.parse(date));
+			return d;
+		} catch (ParseException e) {
+			return EMPTY_BLANK_DATE;
+		}
+	}
+
 	public static String convertDateZero(String date) {
 		try {
 			return date == null ? EMPTY_ZERO_DATE

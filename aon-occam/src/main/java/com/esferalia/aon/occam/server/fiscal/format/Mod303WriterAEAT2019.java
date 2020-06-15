@@ -43,8 +43,8 @@ public class Mod303WriterAEAT2019 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text((mod.getAmount(Mod303Key.CT_A02)+1),1))
 		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A03)==1?"1":"2")
 		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A04)==1?"1":"2")
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.convertDate(mod.getDescription(Mod303Key.CT_A05)))
-		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A06)==0?" ":"1")		// TODO Soporte POSTCONCURSAL
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.convertDateES(mod.getDescription(Mod303Key.CT_A05)))
+		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A06)==0?" ": AonFiscalFileUtils.text(mod.getAmount(Mod303Key.CT_A06),1) )
 		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A07)==1?"1":"2")
 		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A08)==1?"1":"2")
 		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_A09)==1?"1":"2")
