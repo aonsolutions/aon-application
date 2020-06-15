@@ -1382,18 +1382,6 @@ CREATE TABLE `action` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Acciones de una Applicacion';
 
 #
-# Structure for the `auth` table :
-#
-
-CREATE TABLE `auth` (
-  `id` BINARY(16) NOT NULL COMMENT 'Identificador unico',
-  `email` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Identificador del Usuario (Email)',
-  `password` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Contrasena del Usuario',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';
-
-
-#
 # Structure for the `user` table : 
 #
 
@@ -1414,7 +1402,6 @@ CREATE TABLE `user` (
   `linesPageLimit` int(4) DEFAULT NULL COMMENT 'Limite de filas en pantalla en lineas del Usuario',
   `initAction` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre la acic�n de inicio del Usuario',
   `lastAccess` datetime DEFAULT NULL COMMENT 'Fecha del ultimo acceso del Usuario',
-  `auth` binary(16) DEFAULT NULL COMMENT 'uuid auth.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_USER_DOMAIN_LOGIN` (`domain`,`login`),
   KEY `IDX_USER_ENTERPRISE` (`enterprise`),
