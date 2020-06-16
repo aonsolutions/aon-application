@@ -19,7 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw182020UpdateII;
+import net.aonsolutions.db.up2date.security.AuthCreation;
 
 public class Up2Date {
 
@@ -121,7 +121,8 @@ public class Up2Date {
     		//InvoiceDUACreation.INVOICEDUACREATION
     		//RealDecreeLaw182020Update.REALDECREELAW182020UPDATE
     		//DefaultAgreementDeleteWarn.DEFAULTAGREEMENTDELETEWARN
-    		RealDecreeLaw182020UpdateII.REALDECREELAW182020UPDATEII
+    		//RealDecreeLaw182020UpdateII.REALDECREELAW182020UPDATEII
+    		AuthCreation.AUTH_CREATION
     };
 
 
