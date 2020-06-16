@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.ApplicationRole.APPLICATION_ROLE;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
+import static com.esferalia.aon.jooq.tables.Auth.AUTH;
 import static com.esferalia.aon.jooq.tables.Contact.CONTACT;
 import static com.esferalia.aon.jooq.tables.ContactData.CONTACT_DATA;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -18,8 +19,8 @@ import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,9 +33,11 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Record2;
 import org.jooq.Record6;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.extension.DSLExtensions;
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
@@ -54,6 +57,7 @@ import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -86,6 +90,26 @@ public class SecurityDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(SIGNATURE.NAME);}
 		@Override public Property<String> getSignatureProperty() {return new FilterDAO.PropertyDAO<String>(SIGNATURE.SIGNATURE_);}
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.USER_ID);}
+	}
+
+	public static Auth getAuth(AONContext ctx, String email) {
+		return ctx.getDslContext()
+			.select(DSLExtensions.hex(AUTH.ID), AUTH.EMAIL)
+			.from(AUTH)
+			.where(AUTH.EMAIL.eq(email))
+			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
+	}
+	
+	public static Auth insertAuth(AONContext ctx, Auth auth) {
+		String uuid = ctx.getDslContext().fetch("select uuid();").stream().map(r -> r.getValue(0).toString()).findFirst().get().replace("-", "");
+		byte[] id = ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().get();
+		ctx.getDslContext().insertInto(AUTH)
+			.set(AUTH.ID, id)
+			.set(AUTH.EMAIL, auth.getEmail())
+			.set(AUTH.PASSWORD, auth.getPassword())
+			.execute();
+		
+		return getAuth(ctx, auth.getEmail());
 	}
 	
 	public static User getUser(AONContext ctx, Integer userId) {
@@ -123,7 +147,7 @@ public class SecurityDAO {
 	public static User getUser(AONContext ctx) {
 		return getUser(ctx,ctx.getUser());
 	}
-
+	
 	public static LinkedList<User> getUsersByEmail(AONContext ctx, String email){
 		return ctx.getDslContext().select()
 		.from(USER).join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
@@ -141,6 +165,7 @@ public class SecurityDAO {
 	
 	
 	public static LinkedList<Domain> getCompaniesByScope(AONContext ctx, Integer scope){
+		
 		return ctx.getDslContext().select()
 		.from(DOMAIN).join(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 		.where(DOMAIN.PARENT.eq(ctx.getDomainId()))
@@ -157,6 +182,17 @@ public class SecurityDAO {
 				.setId(record.getValue(DOMAIN.ID))
 				.setName(record.getValue(DOMAIN.NAME))
 				.setDescription(record.getValue(DOMAIN.DESCRIPTION));
+		}
+		
+	}
+	
+	public static class AuthFiller  implements Function<Record2<String, String>,Auth> {
+
+		@Override
+		public Auth apply(Record2<String, String> record) {
+			return new Auth()
+				.setUuid(record.value1())
+				.setEmail(record.value2());
 		}
 		
 	}
