@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.security.AuthCreation;
+import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateMonthDays;
 
 public class Up2Date {
 
@@ -122,7 +123,8 @@ public class Up2Date {
     		//RealDecreeLaw182020Update.REALDECREELAW182020UPDATE
     		//DefaultAgreementDeleteWarn.DEFAULTAGREEMENTDELETEWARN
     		//RealDecreeLaw182020UpdateII.REALDECREELAW182020UPDATEII
-    		AuthCreation.AUTH_CREATION
+    		//AuthCreation.AUTH_CREATION
+    		SalaryHoursUpdateMonthDays.SALARYHOURSUPDATEMONTHDAYS
     };
 
 
