@@ -299,10 +299,10 @@ public class EnterpriseDraft extends Composite {
 			
 			// If only one calendar, selected it and fire event
 			// rtrepiana. Yes but saveTimer has not been initialize yet
-			if(scopeListBox.getItemCount() != 0 && scopeListBox.getItemCount() == 1){
-				scopeListBox.setSelectedIndex(0);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), scopeListBox);
-			}
+//			if(scopeListBox.getItemCount() != 0 && scopeListBox.getItemCount() == 1){
+//				scopeListBox.setSelectedIndex(0);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), scopeListBox);
+//			}
 			
 			enterpriseScopeWidget = scopeListBox;
 		}
@@ -342,10 +342,10 @@ public class EnterpriseDraft extends Composite {
 			});
 			
 			// If only one calendar, selected it and fire event
-			if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
-				calendarListBox.setSelectedIndex(1);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
-			}
+//			if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
+//				calendarListBox.setSelectedIndex(1);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
+//			}
 			
 			enterpriseCalendarWidget = calendarListBox;
 		}

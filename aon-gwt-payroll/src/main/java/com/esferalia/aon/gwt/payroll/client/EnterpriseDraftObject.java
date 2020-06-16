@@ -256,15 +256,15 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 	
 	public Integer getPaySheetModelIndex() {
-		return (int)this.enterpriseInfo.getPaysheetModel();
+		return null == this.enterpriseInfo.getPaysheetModel() ? 0 :  (int)this.enterpriseInfo.getPaysheetModel();
 	}
 	
 	public Integer getCostsModelIndex() {
-		return (int)this.enterpriseInfo.getCostsModel();
+		return null == this.enterpriseInfo.getCostsModel() ? 0 :  (int)this.enterpriseInfo.getCostsModel();
 	}
 	
 	public Integer getPaysheetSendIndex() {
-		return (int)this.enterpriseInfo.getPaysheetSendType();
+		return null == this.enterpriseInfo.getPaysheetSendType() ? 0 :  (int)this.enterpriseInfo.getPaysheetSendType();
 	}
 	
 	public String getPaysheetSendEmail() {
