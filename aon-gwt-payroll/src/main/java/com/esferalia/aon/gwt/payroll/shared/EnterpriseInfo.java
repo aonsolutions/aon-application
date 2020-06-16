@@ -258,7 +258,7 @@ public class EnterpriseInfo implements Serializable {
 	}
 
 	public Byte getPaysheetModel() {
-		return paysheetModel;
+		return null == paysheetModel ? (byte)0 : (byte)1;
 	}
 
 	public void setPaysheetModel(Byte paysheetModel) {
@@ -274,7 +274,7 @@ public class EnterpriseInfo implements Serializable {
 	}
 
 	public Byte getPaysheetModelDraft() {
-		return paysheetModelDraft;
+		return null == paysheetModelDraft ? (byte)0 : (byte)1;
 	}
 
 	public void setPaysheetModelDraft(Byte paysheetModelDraft) {
@@ -290,7 +290,7 @@ public class EnterpriseInfo implements Serializable {
 	}
 
 	public Byte getCostsModel() {
-		return costsModel;
+		return null == costsModel ? (byte)0 : (byte)1;
 	}
 
 	public void setCostsModel(Byte costsModel) {
@@ -306,7 +306,7 @@ public class EnterpriseInfo implements Serializable {
 	}
 
 	public Byte getPaysheetSendType() {
-		return paysheetSendType;
+		return null == paysheetSendType ? (byte)0 : (byte)1;
 	}
 
 	public void setPaysheetSendType(Byte paysheetSendType) {

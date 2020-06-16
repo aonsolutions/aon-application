@@ -483,6 +483,9 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 	
 	public void setAgreement(Integer agreementId) {
+		if(-1 == agreementId)
+			agreementId = null;
+		
 		add(enterpriseInfo::setEnterpriseAgreementId, 
 			enterpriseInfo.getEnterpriseAgreementId(), 
 			agreementId);
@@ -491,6 +494,9 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 	
 	public void setCalendar(Integer calendarId) {
+		if(-1 == calendarId)
+			calendarId = null;
+		
 		add(enterpriseInfo::setCalendarId, 
 				enterpriseInfo.getCalendarId(), 
 				calendarId );

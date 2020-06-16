@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.gwt.user.client.Window;
-
 public class ProvinceContract {
 	
 	private static final Map<String, String> PROVINCES = new HashMap<String,String>(){
@@ -74,10 +72,11 @@ public class ProvinceContract {
 			return 0;
 		
 		Integer index = 1;
-		for(String provinceStr : PROVINCES.values()) {
+		for(String provinceStr : PROVINCES.keySet()) {
 //			Window.alert(provinceStr + " == " + province);
-			if(provinceStr.equalsIgnoreCase(province))
+			if(provinceStr.equalsIgnoreCase(province)) {
 				return index;
+			}
 			index++;
 		}
 			return 0;

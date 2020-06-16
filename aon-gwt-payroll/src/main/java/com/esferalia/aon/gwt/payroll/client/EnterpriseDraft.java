@@ -538,20 +538,25 @@ public class EnterpriseDraft extends Composite {
 	
 	private void checkStylesDocument() {
 		String document = enterpriseDraftObject.getDocument();
-		String document_type = checkDocumentType(document);
 		
-		enterprise.documentType.setText(document_type);
+		if(null != document) {
+			String document_type = checkDocumentType(document);
 		
-		if(enterpriseDraftObject.checkDocumentValidation(document_type, document)) {
+			enterprise.documentType.setText(document_type);
+			showNationality(document_type);
+		
+			if(enterpriseDraftObject.checkDocumentValidation(document_type, document)) {
+				enterprise.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				enterprise.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+			}else {
+				enterprise.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
+				enterprise.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				
+			}
+		}else {
 			enterprise.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 			enterprise.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-		}else {
-			enterprise.documentStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
-			enterprise.documentStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-			
 		}
-
-		showNationality(document_type);
 	}
 	
 	public String checkDocumentType(String document) {

@@ -129,7 +129,7 @@ public class JooqEnterprise {
 						.where(GEOZONE.ID.eq(geozoneId))
 						.fetchOne();
 				
-				addressProvince = geozoneRecord.get(GEOZONE.NAME);
+				addressProvince = geozoneRecord.get(GEOZONE.CODE);
 			}
 		}
 		
@@ -278,16 +278,16 @@ public class JooqEnterprise {
 		Integer geozoneId = null;
 		
 		if(geozone == null){
-			Result<Record1<String>> names = dslContext.select(GEOZONE.NAME)
+			Result<Record1<String>> codes = dslContext.select(GEOZONE.NAME)
 				.from(GEOZONE)
-				.where(GEOZONE.CODE.eq(enterpriseInfo.getAddressProvince()))
+				.where(GEOZONE.NAME.eq(enterpriseInfo.getAddressProvince()))
 				.fetch();
 			
-			if(!names.isEmpty()){
+			if(!codes.isEmpty()){
 				GeozoneRecord geozoneRecord  = dslContext.insertInto(GEOZONE)
 						.set(GEOZONE.DOMAIN, enterpriseInfo.getDomainId())
-						.set(GEOZONE.NAME, names.get(0).value1())
-						.set(GEOZONE.CODE, enterpriseInfo.getAddressProvince())
+						.set(GEOZONE.NAME, enterpriseInfo.getAddressProvince())
+						.set(GEOZONE.CODE, codes.get(0).value1())
 						.returning(GEOZONE.ID)
 						.fetchOne();
 					
