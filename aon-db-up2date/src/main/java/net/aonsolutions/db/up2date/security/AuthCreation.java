@@ -52,7 +52,7 @@ public class AuthCreation implements Update {
 			  + "`email` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Identificador del Usuario (Email)',"
 			  + "`password` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Contrasena del Usuario',"
 		  + "PRIMARY KEY (`id`),"
-		+ ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Vinculo Factura DUA';"
+		+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';"
 		;	
 		
 		dslContext.execute(SQL);
