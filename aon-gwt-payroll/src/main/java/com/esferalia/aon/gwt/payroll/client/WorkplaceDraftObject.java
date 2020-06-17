@@ -18,12 +18,12 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	// ------------------------------------------------------------------------
 	
 	private DomainEnterprisesServiceAsync enterprisesService;
+	private DomainEmployeesServiceAsync employeesService;
 	
 	private Enterprise enterprise;
 	private Workplace workplace;
 	
 	private Map<Integer, String> addresses;
-	private Map<Integer, String> calendars;
 	private List<Agreement> agreements;
 	private Map<Integer, String> activities;
 	
@@ -32,9 +32,10 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public WorkplaceDraftObject(Enterprise enterprise, Workplace workplace, DomainEnterprisesServiceAsync enterprisesService) {
+	public WorkplaceDraftObject(Enterprise enterprise, Workplace workplace, DomainEnterprisesServiceAsync enterprisesService, DomainEmployeesServiceAsync employeesService) {
 		
 		this.enterprisesService = enterprisesService;
+		this.employeesService = employeesService;
 
 		this.enterprise = enterprise;
 		this.workplace = workplace;
@@ -42,6 +43,11 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 		
 		this.undoManager = new UndoManager<Undoable>();
 		
+		
+	}
+	
+	public CalendarDraftObjectData getCalendarDraftObjectData() {
+		return new CalendarDraftObjectData(workplace.getId(), employeesService);
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
@@ -110,30 +116,10 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 			public void onSuccess(Map<Integer, String> result) {
 				addresses = result;
 				
-				getEnterpriseCalendars(
-					s -> {success.accept(result);},
-					f -> {}
-				);
-			}
-		});
-	}
-	
-	private void getEnterpriseCalendars(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getEnterpiseCalendars(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				calendars = result;
-
 				getEnterpriseActivities(
-					s -> {success.accept(result);},
-					f -> {}
-				);	
+						s -> {success.accept(result);},
+						f -> {}
+					);
 			}
 		});
 	}
@@ -186,10 +172,6 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 		return this.addresses;
 	}
 	
-	public Map<Integer, String> getWorkplaceCalendars(){
-		return this.calendars;
-	}
-	
 	public List<Agreement> getWorkplaceAgreements(){
 		return this.agreements;
 	}
@@ -217,21 +199,6 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 	public Integer getWorkplaceEconomicConcert(){
 		return (int) workplaceInfo.getEconomicConcert() + 1;
 	} 
-	
-	public Integer getWorkplaceCalendarIndex(){
-		Integer index = 0;
-		
-		if(!getWorkplaceCalendars().isEmpty() && null != workplaceInfo.getCalendarId()) {
-			for(Integer value : getWorkplaceCalendars().keySet()){
-				if(value.equals(workplaceInfo.getCalendarId())) {
-					index++;
-					break;
-				}
-				index++;
-			}
-		}
-		return index;
-	}
 	
 	public Integer getWorkplaceAgreementIndex(){
 		Integer index = 0;
@@ -283,13 +250,6 @@ public class WorkplaceDraftObject extends AbstractDraftObject {
 				workplaceInfo.getEconomicConcert(), 
 				(byte) economicCocncert);
 		workplaceInfo.setEconomicConcert((byte) economicCocncert);
-	}
-
-	public void setWorkplaceCalendar(Integer calendarId) {
-		add(workplaceInfo::setCalendarId, 
-				workplaceInfo.getCalendarId(), 
-				calendarId);
-		workplaceInfo.setCalendarId(calendarId);
 	}
 
 	public void setWorkplaceAgreement(Integer agreementId) {

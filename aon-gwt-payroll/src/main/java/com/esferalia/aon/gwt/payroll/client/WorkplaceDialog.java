@@ -138,9 +138,6 @@ public class WorkplaceDialog extends CustomDialog {
 		//DIRECCION
 		initializeAddressCell();
 		
-		//CALENDARIO
-		initializeCalendarCell();
-		
 		// CONVENIO
 		initializeAgreementCell();
 		
@@ -181,41 +178,6 @@ public class WorkplaceDialog extends CustomDialog {
 		}
 		
 		workplace.workplaceAddressPanel.add(workplaceAddressWidget);
-	}
-	
-	private void initializeCalendarCell() {
-		Widget workplaceCalendarWidget;
-		
-		if(workplaceDialogObject.getWorkplacesCalendars().values().size() == 0)
-			workplaceCalendarWidget = createEmptyListLabel();
-		else{
-			ListBox calendarListBox = new ListBox();
-			calendarListBox.addItem("-", "-1");
-			for(Entry<Integer, String> entry : workplaceDialogObject.getWorkplacesCalendars().entrySet())
-				calendarListBox.addItem(entry.getValue(), entry.getKey().toString());
-			
-			calendarListBox.setStyleName("aon-selectOneMenu");
-			calendarListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
-			
-			calendarListBox.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					Integer calendarId = Integer.valueOf(calendarListBox.getSelectedValue());
-					workplaceDialogObject.setWorkplaceCalendar(calendarId);
-				}
-			});
-			
-			// If only one calendar, selected it and fire event
-			if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
-				calendarListBox.setSelectedIndex(1);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
-			}
-			
-			workplaceCalendarWidget = calendarListBox;
-		}
-		
-		workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
 	}
 	
 	private void initializeAgreementCell() {

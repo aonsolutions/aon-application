@@ -9,21 +9,21 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -251,39 +251,32 @@ public class WorkplaceDraft extends Composite {
 	}
 	
 	private void initializeCalendarCell() {
-		Widget workplaceCalendarWidget;
+		HTMLPanel hPanel = new HTMLPanel("");
+		hPanel.getElement().getStyle().setDisplay(Display.FLEX);
+		Label calendarLabel;
 		
-		if(workplaceDraftObject.getWorkplaceCalendars().values().size() == 0)
-			workplaceCalendarWidget = createEmptyListLabel();
-		else{
-			ListBox calendarListBox = new ListBox();
-			calendarListBox.addItem("-", "-1");
-			for(Entry<Integer, String> entry : workplaceDraftObject.getWorkplaceCalendars().entrySet())
-				calendarListBox.addItem(entry.getValue(), entry.getKey().toString());
-			
-			calendarListBox.setStyleName("aon-selectOneMenu");
-			calendarListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
-			
-			calendarListBox.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					Integer calendarId = Integer.valueOf(calendarListBox.getSelectedValue());
-					workplaceDraftObject.setWorkplaceCalendar(calendarId);
-					saving();
-				}
-			});
-			
-			// If only one calendar, selected it and fire event
-			//if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
-			//	calendarListBox.setSelectedIndex(1);
-			//	DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
-			//}
-			
-			workplaceCalendarWidget = calendarListBox;
-		}
+		if(StringUtils.isBlank(workplaceDraftObject.getWorkplaceInfo().getCalendarDescription()))
+			calendarLabel = createEmptyListLabel();
+		else
+			calendarLabel = new Label(workplaceDraftObject.getWorkplaceInfo().getCalendarDescription());
 		
-		workplace.workplaceCalendarPanel.add(workplaceCalendarWidget);
+		calendarLabel.getElement().getStyle().setPadding(1.99, Unit.PX);
+		calendarLabel.getElement().getStyle().setMarginRight(5.00, Unit.PX);
+		hPanel.add(calendarLabel);
+		
+		Button calendarButton = new Button();
+		calendarButton.setStyleName("aon-editDataTable-button aon-icon-calendar");
+		calendarButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				EmployeeTree.showWorkplaceCalendar(workplaceDraftObject.getCalendarDraftObjectData());
+			}
+		});
+		
+		hPanel.add(calendarButton);
+		
+		workplace.workplaceCalendarPanel.add(hPanel);
 	}
 	
 	private void initializeAgreementCell() {
@@ -339,11 +332,6 @@ public class WorkplaceDraft extends Composite {
 		
 		workplace.workplaceEconomicConcert.setSelectedIndex(workplaceDraftObject.getWorkplaceEconomicConcert());
 		
-		if(!workplaceDraftObject.getWorkplaceCalendars().isEmpty()) {
-			ListBox wokplaceCalendarLB = (ListBox) workplace.workplaceCalendarPanel.getWidget(0);
-			wokplaceCalendarLB.setSelectedIndex(workplaceDraftObject.getWorkplaceCalendarIndex());
-		}
-		
 		if(!workplaceDraftObject.getWorkplaceAgreements().isEmpty()) {
 			workplace.workpalceAgreement.setSelectedIndex(workplaceDraftObject.getWorkplaceAgreementIndex());
 		}
@@ -373,7 +361,7 @@ public class WorkplaceDraft extends Composite {
 		label.setText("No hay entradas disponibles");
 		label.setStyleName("aon-inputText");
 		label.addStyleName(workplace.style.warningColor());
-		label.getElement().getStyle().setWidth(99.7, Unit.PCT);	
+//		label.getElement().getStyle().setWidth(99.7, Unit.PCT);	
 		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 		
 		return label;

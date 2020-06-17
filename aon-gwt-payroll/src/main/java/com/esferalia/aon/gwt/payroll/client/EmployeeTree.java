@@ -2135,8 +2135,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onWorkplaceSelected(Workplace workplace) {
 		
 		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
+		DomainEmployeesServiceAsync domainEmployeeServiceAsync = DomainEmployeesServiceAsync.newInstance();
 		
-		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace, domainEnterprisesServiceAsync);
+		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace, domainEnterprisesServiceAsync, domainEmployeeServiceAsync);
 		
 		employeeDetail.setWidget(getWorkplaceDraft());
 		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);
@@ -2905,6 +2906,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		EmployeeTree employeeTree = getEmployeeTree();
 		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraftNew());
 		employeeTree.getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(employeeCalendarDraftobject);
+	}
+	
+	protected static void showWorkplaceCalendar(CalendarDraftObjectData calendarDraftObjectData) {
+		EmployeeTree employeeTree = getEmployeeTree();
+		employeeTree.employeeDetail.setWidget(employeeTree.getCalendarDraft());
+		employeeTree.getCalendarDraft().setCalendarDraftObject(null, calendarDraftObjectData);
 	}
 	
 	protected static void showNewWorkplace() {

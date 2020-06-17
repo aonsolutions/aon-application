@@ -7,7 +7,6 @@ public class EnterpriseInfo implements Serializable {
 	
 	//Enterprise table
 	private Integer scopeId;
-	private Integer calendarId;
 	private Integer domainId;
 	
 	//Registry table
@@ -335,14 +334,6 @@ public class EnterpriseInfo implements Serializable {
 
 	public void setEnterpriseAgreementId(Integer enterpriseAgreementId) {
 		this.enterpriseAgreementId = enterpriseAgreementId;
-	}
-
-	public Integer getCalendarId() {
-		return calendarId;
-	}
-
-	public void setCalendarId(Integer calendarId) {
-		this.calendarId = calendarId;
 	}
 
 }

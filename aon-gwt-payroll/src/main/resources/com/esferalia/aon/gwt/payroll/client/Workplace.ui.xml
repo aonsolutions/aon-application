@@ -19,7 +19,7 @@
 		}
 
 		.warningColor{
-			color: #f90303;
+			color: #d77171;
     		font-weight: bold;
 		}
 

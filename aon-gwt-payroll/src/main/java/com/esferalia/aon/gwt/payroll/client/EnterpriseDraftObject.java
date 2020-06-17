@@ -22,7 +22,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	private Map<Integer, String> scopes;
 	private List<Agreement> agreements;
-	private Map<Integer, String> calendars;
 	
 	private EnterpriseInfo enterpriseInfo;
 		
@@ -65,10 +64,10 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 			public void onSuccess(List<Agreement> result) {
 				agreements = getActiveAgreements(result);
 				
-				getEnterpriseCalendars(
+				getEnterpriseScopes(
 						s -> {success.accept(result);},
-						f ->{}
-				);
+						f -> {}
+					);
 			}
 			
 			private List<Agreement> getActiveAgreements(List<Agreement> agreements) {
@@ -85,26 +84,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 				// TODO Auto-generated method stub	
 			}
 		});	
-	}
-	
-	private void getEnterpriseCalendars(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getEnterpiseCalendars(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				calendars = result;
-				
-				getEnterpriseScopes(
-					s -> {success.accept(result);},
-					f -> {}
-				);	
-			}
-		});
 	}
 	
 	private void getEnterpriseScopes(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
@@ -151,10 +130,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	public Map<Integer, String> getEnterprisecopes(){
 		return this.scopes;
-	}
-	
-	public Map<Integer, String> getEnterpriseCalendars(){
-		return this.calendars;
 	}
 	
 	public String getName() {
@@ -289,20 +264,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	public Integer getAgreement() {
 		return this.enterpriseInfo.getEnterpriseAgreementId();
-	}
-	
-	public Integer getCalendar() {
-		return this.enterpriseInfo.getCalendarId();
-	}
-	
-	public Integer getCalendarIndex(){
-		Integer index = 0;
-		for(Integer value : getEnterpriseCalendars().keySet()){
-			if(value.equals(getCalendar())) 
-				break;
-			index ++;
-		}
-		return index;
 	}
 	
 	// ----------------------------------------------  SETTERS  -------------------------------------------------
@@ -491,17 +452,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 			agreementId);
 		
 		enterpriseInfo.setEnterpriseAgreementId(agreementId);
-	}
-	
-	public void setCalendar(Integer calendarId) {
-		if(-1 == calendarId)
-			calendarId = null;
-		
-		add(enterpriseInfo::setCalendarId, 
-				enterpriseInfo.getCalendarId(), 
-				calendarId );
-		
-		enterpriseInfo.setCalendarId(calendarId);
 	}
 		
 	// ------------------------------------------------- AUX METHODS -------------------------------------------------

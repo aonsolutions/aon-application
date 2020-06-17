@@ -269,9 +269,7 @@ public class EnterpriseDraft extends Composite {
 		
 		// CONVENIO
 		initializeAgreementCell();
-		
-		//CALENDARIO
-		initializeCalendarCell();		
+			
 	}
 
 	private void initializeScopeCell() {
@@ -315,42 +313,6 @@ public class EnterpriseDraft extends Composite {
 		List<Agreement> agreements = enterpriseDraftObject.getEnterpriseAgreements();
 		for (Agreement agreement : agreements)
 			this.enterprise.enterpriseAgreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
-	}
-
-	private void initializeCalendarCell() {
-		Widget enterpriseCalendarWidget;
-		
-		if(enterpriseDraftObject.getEnterpriseCalendars().values().size() == 0)
-			enterpriseCalendarWidget = createEmptyListLabel();
-		else{
-			ListBox calendarListBox = new ListBox();
-			calendarListBox.addItem("-", "-1");
-			for(Entry<Integer, String> entry : enterpriseDraftObject.getEnterpriseCalendars().entrySet())
-				calendarListBox.addItem(entry.getValue(), entry.getKey().toString());
-			
-			calendarListBox.setStyleName("aon-selectOneMenu");
-			calendarListBox.getElement().getStyle().setWidth(100.00, Unit.PCT);
-			
-			calendarListBox.addChangeHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					Integer calendarId = Integer.valueOf(calendarListBox.getSelectedValue());
-					enterpriseDraftObject.setCalendar(calendarId);
-					saving();
-				}
-			});
-			
-			// If only one calendar, selected it and fire event
-//			if(calendarListBox.getItemCount() != 0 && calendarListBox.getItemCount() == 2){
-//				calendarListBox.setSelectedIndex(1);
-//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), calendarListBox);
-//			}
-			
-			enterpriseCalendarWidget = calendarListBox;
-		}
-		
-		enterprise.enterpriseCalendarPanel.add(enterpriseCalendarWidget);
 	}
 
 	private void initialiceHandlers() {
@@ -518,10 +480,6 @@ public class EnterpriseDraft extends Composite {
 			enterprise.enterpriseAgreement.setSelectedIndex(enterpriseDraftObject.getEnterpriseAgreementIndex());
 		}
 
-		if(!enterpriseDraftObject.getEnterpriseCalendars().isEmpty()) {
-			ListBox calendarListBox = (ListBox) enterprise.enterpriseCalendarPanel.getWidget(0);
-			calendarListBox.setSelectedIndex(enterpriseDraftObject.getCalendarIndex());
-		}
 	}
 	
 	// ------------------------------------------------- AUX METHODS --------------------------------------------------

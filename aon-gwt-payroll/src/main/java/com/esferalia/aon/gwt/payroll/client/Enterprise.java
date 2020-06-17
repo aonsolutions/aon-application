@@ -131,9 +131,6 @@ public abstract class Enterprise extends ResizeComposite {
 	
 	@UiField
 	ListBox enterpriseAgreement;
-	
-	@UiField
-	HorizontalPanel enterpriseCalendarPanel;
 
 	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
 
@@ -308,7 +305,6 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterprisePaysheetSendType.clear();
 		this.enterprisePaysheetSendEmail.setValue(null);
 		this.enterpriseAgreement.clear();
-		this.enterpriseCalendarPanel.clear();
 	}
 
 	private void initializeListBox() {

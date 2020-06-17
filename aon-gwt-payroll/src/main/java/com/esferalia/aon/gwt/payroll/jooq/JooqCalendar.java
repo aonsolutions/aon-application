@@ -306,8 +306,7 @@ public class JooqCalendar {
 
 							dslContext
 									.update(HOLIDAY)
-									.set(HOLIDAY.HOLIDAY_,
-											id.getValue(HOLIDAY.ID))
+									.set(HOLIDAY.HOLIDAY_, id == null ? null : id.getValue(HOLIDAY.ID))
 									.where(HOLIDAY.ID.eq(holidayResult
 											.getValue(CALENDAR.HOLIDAY)))
 									.execute();

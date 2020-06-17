@@ -17,7 +17,6 @@ public class WorkplaceDialogObject {
 	private Enterprise enterprise;
 	
 	private Map<Integer, String> addresses;
-	private Map<Integer, String> calendars;
 	private List<Agreement> agreements;
 	private Map<Integer, String> activities;
 	
@@ -76,30 +75,10 @@ public class WorkplaceDialogObject {
 			public void onSuccess(Map<Integer, String> result) {
 				addresses = result;
 				
-				getEnterpriseCalendars(
-					s -> {success.accept(result);},
-					f -> {}
-				);
-			}
-		});
-	}
-	
-	private void getEnterpriseCalendars(Consumer<Map<Integer, String>> success, Consumer<Throwable> failure) {
-		enterprisesService.getEnterpiseCalendars(this.enterprise.getId(), new AsyncCallback<Map<Integer,String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				calendars = result;
-
 				getEnterpriseActivities(
-					s -> {success.accept(result);},
-					f -> {}
-				);	
+						s -> {success.accept(result);},
+						f -> {}
+					);
 			}
 		});
 	}
@@ -143,10 +122,6 @@ public class WorkplaceDialogObject {
 		return this.addresses;
 	}
 	
-	public Map<Integer, String> getWorkplacesCalendars(){
-		return this.calendars;
-	}
-	
 	public List<Agreement> getWorkplacesAgreements(){
 		return this.agreements;
 	}
@@ -165,10 +140,6 @@ public class WorkplaceDialogObject {
 
 	public void setWorkplaceEconomicConcert(int economicCocncert) {
 		workplaceInfo.setEconomicConcert((byte) economicCocncert);
-	}
-
-	public void setWorkplaceCalendar(Integer calendarId) {
-		workplaceInfo.setCalendarId(calendarId);
 	}
 
 	public void setWorkplaceAgreement(Integer agreementId) {

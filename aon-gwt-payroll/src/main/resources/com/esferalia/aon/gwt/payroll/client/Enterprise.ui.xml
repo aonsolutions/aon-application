@@ -284,14 +284,6 @@
 										 <g:ListBox ui:field="enterpriseAgreement" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 									</td>
 								</tr>
-								<tr>
-									<td style="background-color: #eaeaea; width: 200px;">
-										<g:Label styleName='{style.firstColumnTextStyle}'>Calendario</g:Label>
-									</td>
-									<td colspan="5">
-										<g:HorizontalPanel ui:field="enterpriseCalendarPanel" styleName="{style.maxWidth}"></g:HorizontalPanel>
-									</td>
-								</tr>
 							</tbody>
 						</table>
 					</g:HTMLPanel>

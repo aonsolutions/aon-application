@@ -1,12 +1,12 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -102,15 +102,25 @@ public class JooqWorkplace {
 				.fetchOne();
 		
 		Integer payrollWorkplaceId = null;
-		Integer workplaceCalendar = null;
+		String workplaceCalendar = null;
+		Integer workplaceCalendarId = null;
 		Integer workplaceAgreement = null;
 		Integer workplaceActivity = null;
 		
 		if(null != payrollWorkplaceRecord) {
 			payrollWorkplaceId = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ID);
-			workplaceCalendar = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.CALENDAR);
+			workplaceCalendarId = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.CALENDAR);
 			workplaceAgreement = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.AGREEMENT);
 			workplaceActivity = payrollWorkplaceRecord.get(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY);
+			
+			if(null != workplaceCalendarId) {
+				Record calendarRecord = dslContext.select().from(CALENDAR).where(CALENDAR.ID.eq(workplaceCalendarId)).fetchOne();
+				Record parentHolidayRecord = dslContext.select().from(HOLIDAY).where(HOLIDAY.ID.eq(calendarRecord.get(CALENDAR.HOLIDAY))).fetchOne();
+				if(null != parentHolidayRecord.get(HOLIDAY.HOLIDAY_)) {
+					Record holidayRecord = dslContext.select().from(HOLIDAY).where(HOLIDAY.ID.eq(parentHolidayRecord.get(HOLIDAY.HOLIDAY_))).fetchOne();
+					workplaceCalendar = holidayRecord.get(HOLIDAY.DESCRIPTION);
+				}
+			}
 		}
 		
 		Record domainRecord = dslContext.select().from(DOMAIN)
@@ -118,26 +128,6 @@ public class JooqWorkplace {
 				.fetchOne();
 		
 		Integer parentDomain = domainRecord.get(DOMAIN.PARENT);
-		
-		Result<Record> caledarRecords = null;
-		if(null == parentDomain)
-			caledarRecords = dslContext.select().from(CALENDAR)
-					.where(CALENDAR.DOMAIN.eq(workplaceDomain))
-					.or(CALENDAR.DOMAIN.eq(0))
-					.fetch();
-		else
-			caledarRecords = dslContext.select().from(CALENDAR)
-				.where(CALENDAR.DOMAIN.eq(workplaceDomain))
-				.or(CALENDAR.DOMAIN.eq(parentDomain))
-				.or(CALENDAR.DOMAIN.eq(0))
-				.fetch();
-				
-		Map<Integer, String> calendars = new HashMap<Integer, String>();
-		
-		for(Record r : caledarRecords){
-			if(null != r.get(CALENDAR.DESCRIPTION))
-				calendars.put(r.get(CALENDAR.ID), r.get(CALENDAR.DESCRIPTION));
-		}
 		
 		Result<Record> enterpriseActivityRecords = dslContext.select().from(ENTERPRISE_ACTIVITY)
 				.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(workplaceEnterprise))
@@ -149,9 +139,9 @@ public class JooqWorkplace {
 			activities.put(r.get(ENTERPRISE_ACTIVITY.ID), r.get(ENTERPRISE_ACTIVITY.DESCRIPTION));
 		}
 		
-		Record agreementRecord = dslContext.select().from(AGREEMENT)
-				.where(AGREEMENT.ID.eq(workplaceAgreement))
-				.fetchOne();
+//		Record agreementRecord = dslContext.select().from(AGREEMENT)
+//				.where(AGREEMENT.ID.eq(workplaceAgreement))
+//				.fetchOne();
 		
 		//SET General Data
 		workplaceInfo.setDomain(workplaceDomain);
@@ -160,7 +150,7 @@ public class JooqWorkplace {
 		workplaceInfo.setEconomicConcert(workplaceEconomicConcert);
 		
 		//SET Payroll Data
-		workplaceInfo.setCalendarId(workplaceCalendar);
+		workplaceInfo.setCalendarDescription(workplaceCalendar);
 		workplaceInfo.setAgreementId(workplaceAgreement);
 		workplaceInfo.setActivityId(workplaceActivity);
 		
@@ -180,14 +170,14 @@ public class JooqWorkplace {
 				.set(PAYROLL_WORKPLACE.WORKPLACE, workplaceInfo.getWorkplaceId())
 				.set(PAYROLL_WORKPLACE.AGREEMENT, (null == workplaceInfo.getAgreementId() || workplaceInfo.getAgreementId() == -1) ? null : workplaceInfo.getAgreementId())
 				.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, (null == workplaceInfo.getActivityId() || workplaceInfo.getActivityId() == -1) ? null : workplaceInfo.getActivityId())
-				.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
+//				.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
 				.execute();
 				
 		else
 			dslContext.update(PAYROLL_WORKPLACE)
 				.set(PAYROLL_WORKPLACE.AGREEMENT, (null == workplaceInfo.getAgreementId() || workplaceInfo.getAgreementId() == -1) ? null : workplaceInfo.getAgreementId())
 				.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, (null == workplaceInfo.getActivityId() || workplaceInfo.getActivityId() == -1) ? null : workplaceInfo.getActivityId())
-				.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
+//				.set(PAYROLL_WORKPLACE.CALENDAR, (null == workplaceInfo.getCalendarId()) ? null : workplaceInfo.getCalendarId())
 				.where(PAYROLL_WORKPLACE.ID.eq(workplaceInfo.getPayrollWorkplaceId()))
 				.execute();
 		
@@ -299,7 +289,7 @@ public class JooqWorkplace {
 			.set(PAYROLL_WORKPLACE.WORKPLACE, workplaceId)
 			.set(PAYROLL_WORKPLACE.AGREEMENT, workplaceInfo.getAgreementId())
 			.set(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY, workplaceInfo.getActivityId())
-			.set(PAYROLL_WORKPLACE.CALENDAR, workplaceInfo.getCalendarId())
+//			.set(PAYROLL_WORKPLACE.CALENDAR, workplaceInfo.getCalendarId())
 			.execute();
 		
 		return workplaceInfo;

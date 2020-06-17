@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -9,12 +8,12 @@ import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
-import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,7 +83,6 @@ public class JooqEnterprise {
 		
 		Integer domainId = enterpriseRecord.get(ENTERPRISE.DOMAIN);
 		Integer scopeId = enterpriseRecord.get(ENTERPRISE.SCOPE);
-		Integer calendarId = enterpriseRecord.get(ENTERPRISE.CALENDAR);
 		
 		// --------- REGISTRY TABLE
 		
@@ -207,7 +205,6 @@ public class JooqEnterprise {
 		
 		enterpriseInfo.setDomainId(domainId);
 		enterpriseInfo.setScopeId(scopeId);
-		enterpriseInfo.setCalendarId(calendarId);
 		enterpriseInfo.setEnterpriseId(enterpriseId);
 		enterpriseInfo.setName(name);
 		enterpriseInfo.setAlias(alias);
@@ -251,7 +248,6 @@ public class JooqEnterprise {
 		
 		dslContext.update(ENTERPRISE)
 			.set(ENTERPRISE.SCOPE, enterpriseInfo.getScopeId())
-			.set(ENTERPRISE.CALENDAR, enterpriseInfo.getCalendarId())
 			.where(ENTERPRISE.REGISTRY.eq(enterpriseInfo.getEnterpriseId()))
 			.execute();
 		
@@ -415,29 +411,24 @@ public class JooqEnterprise {
 				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetEmail())
 				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
 				.execute();
+		
+		dslContext.delete(ENTERPRISE_DATA)
+			.where(ENTERPRISE_DATA.DOMAIN.eq(enterpriseInfo.getDomainId()))
+			.and(ENTERPRISE_DATA.ENTERPRISE.eq(enterpriseInfo.getEnterpriseId()))
+			.and(ENTERPRISE_DATA.NAME.eq("agreement"))
+			.execute();
 
 		if(null != enterpriseInfo.getEnterpriseAgreementId() && -1 != enterpriseInfo.getEnterpriseAgreementId()) {
-			String agreementDescription = dslContext.select().from(AGREEMENT)
-					.where(AGREEMENT.ID.eq(enterpriseInfo.getEnterpriseAgreementId()))
-					.fetchOptional(AGREEMENT.DESCRIPTION)
-					.orElse(null)
-					;
-			if ( agreementDescription != null )	{	 
-				dslContext.insertInto(ENTERPRISE_DATA, ENTERPRISE_DATA.ID, ENTERPRISE_DATA.DOMAIN, ENTERPRISE_DATA.ENTERPRISE, ENTERPRISE_DATA.NAME,
-						ENTERPRISE_DATA.EXPRESSION, ENTERPRISE_DATA.START_DATE, ENTERPRISE_DATA.END_DATE)
-					.values(enterpriseInfo.getEnterpriseAgreementId(), enterpriseInfo.getDomainId(),  enterpriseInfo.getEnterpriseId(), "agreement", 
-							agreementDescription, null, null)
-					.onDuplicateKeyUpdate()
-					.set(ENTERPRISE_DATA.EXPRESSION, agreementDescription)
-					.execute();
-				return enterpriseInfo;
-			} 
+			Date date = null;
+			dslContext.insertInto(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
+				.set(ENTERPRISE_DATA.ENTERPRISE, enterpriseInfo.getEnterpriseId())
+				.set(ENTERPRISE_DATA.NAME, "agreement")
+				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getEnterpriseAgreementId().toString())
+				.set(ENTERPRISE_DATA.START_DATE, date)
+				.set(ENTERPRISE_DATA.END_DATE, date)
+				.execute();	
 		}
-		
-		if(null != enterpriseInfo.getEnterpriseAgreementId())
-			dslContext.delete(ENTERPRISE_DATA)
-				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getEnterpriseAgreementId()))
-				.execute();
 		
 		return enterpriseInfo;
 	}

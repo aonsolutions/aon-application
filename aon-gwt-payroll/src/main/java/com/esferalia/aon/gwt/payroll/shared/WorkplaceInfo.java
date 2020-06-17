@@ -12,7 +12,7 @@ public class WorkplaceInfo implements Serializable {
 	private byte economicConcert;
 	
 	//Payroll Data
-	private Integer calendarId;
+	private String calendarDescription;
 	private Integer agreementId;
 	private Integer activityId;
 	
@@ -27,7 +27,7 @@ public class WorkplaceInfo implements Serializable {
 		this.description = workplaceInfo.getDescription();
 		this.addressId = workplaceInfo.getAddressId();
 		this.economicConcert = workplaceInfo.getEconomicConcert();
-		this.calendarId = workplaceInfo.getCalendarId();
+		this.calendarDescription = workplaceInfo.getCalendarDescription();
 		this.agreementId = workplaceInfo.getAgreementId();
 		this.activityId = workplaceInfo.getActivityId();
 		this.workplaceId = workplaceInfo.getWorkplaceId();
@@ -38,11 +38,6 @@ public class WorkplaceInfo implements Serializable {
 		if (this.description != workplaceInfo_old.getDescription()) return true;
 		if (!this.addressId.equals(workplaceInfo_old.getAddressId())) return true;
 		if (this.economicConcert != workplaceInfo_old.getEconomicConcert()) return true;
-		
-		if(null == this.calendarId || null == workplaceInfo_old.getCalendarId()) {
-			if (this.calendarId != workplaceInfo_old.getCalendarId()) return true;
-		}else
-			if (!this.calendarId.equals(workplaceInfo_old.getCalendarId())) return true;
 		
 		if(null == this.agreementId || null == workplaceInfo_old.getAgreementId()) {
 			if (this.agreementId != workplaceInfo_old.getAgreementId()) return true;
@@ -108,12 +103,12 @@ public class WorkplaceInfo implements Serializable {
 		this.economicConcert = economicConcert;
 	}
 	
-	public Integer getCalendarId() {
-		return calendarId;
+	public String getCalendarDescription() {
+		return calendarDescription;
 	}
 
-	public void setCalendarId(Integer calendarId) {
-		this.calendarId = calendarId;
+	public void setCalendarDescription(String calendarDescription) {
+		this.calendarDescription = calendarDescription;
 	}
 
 	public Integer getAgreementId() {
