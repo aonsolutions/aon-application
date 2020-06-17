@@ -1,0 +1,317 @@
+const chai = require('chai');
+const assert = chai.assert;
+
+const test = require('firebase-functions-test')(
+  {
+    // apiKey: "AIzaSyAHsPikxx02P2_Ad7J_sBXLBwFu-3AFZmg",
+    // authDomain: "tedi-snapshot.firebaseapp.com",
+    projectId: 'tedi-snapshot',
+    storageBucket: 'tedi-snapshot.appspot.com',
+    databaseURL: 'https://tedi-snapshot.firebaseio.com',
+    // messagingSenderId: "53233459808",
+    // appId: "1:53233459808:web:fe603e2348d00722"
+  },
+  './test/service-account-key.json',
+);
+
+const request = require('supertest');
+
+const oauth = require('../src/tedi-gmail/lib/oauth');
+const helpers = require('../src/tedi-gmail/lib/helpers');
+
+// If index.js calls admin.initializeApp at the top of the file,
+// we need to stub it out before requiring index.js. This is because the
+// functions will be executed as a part of the require process.
+// Here we stub admin.initializeApp to be a dummy function that doesn't do anything.
+// adminInitStub = sinon.stub(admin, 'initializeApp');
+
+describe('tEDI center ', () => {
+  let myFunctions;
+
+  before(() => {
+    myFunctions = require('../index');
+  });
+
+  after(() => {
+    // Do cleanup tasks.
+    test.cleanup();
+  });
+
+  describe('RESTful API', () => {
+    let sessionId;
+    let company = {
+      document: 'G89964175',
+      plan: 'pyme',
+      name: 'Unit testing of Cloud Functions',
+      alias: 'Firebase Test SDK for Cloud Functions',
+      address: {
+        country: 'ES',
+        portal_code: '1010',
+        city: 'VITORIA-GASTEIZ',
+        province: 'ARABA/ÁLAVA',
+        address: 'CALLE DUQUE DE WELLINGTON, 52 - BJ',
+      },
+      users: ['tedi.test@gmail.com'],
+      active: true,
+    };
+
+    describe('auth', () => {
+      it('should return a 403 Forbidden', done => {
+        myFunctions.auth(
+          { method: 'PUT' },
+          {
+            status: code => {
+              assert.equal(code, 403);
+              return {
+                send: res => {
+                  assert.equal(res, 'Forbidden!');
+                  done();
+                },
+              };
+            },
+          },
+        );
+      });
+      it('should return a JWT(JSON Web Token)', done => {
+        myFunctions.auth(
+          {
+            method: 'GET',
+            headers: {
+              origin: 'any.domain.com',
+            },
+            body: {
+              email: 'tedi.tests@gmail.com',
+              password: 'test',
+            },
+          },
+          {
+            status: code => {
+              assert.equal(code, 200);
+              return {
+                json: res => {
+                  assert.exists(res.user);
+                  assert.exists(res.user.name);
+                  assert.exists(res.session_id);
+                  assert.equal(res.user.name, 'Tests');
+                  sessionId = res.session_id;
+                  done();
+                },
+              };
+            },
+            getHeader: header => {},
+            setHeader: (header, value) => {},
+          },
+        );
+      });
+    });
+
+    // describe('user', () => {
+    // });
+    //
+    describe('company', () => {
+      it(`GET '/' should returns an array of all companies`, done => {
+        request(myFunctions.company)
+          .get('/')
+          .set('session_id', sessionId)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then(res => {
+            // res.body, res.headers, res.status
+            let companies = res.body;
+            assert.typeOf(companies, 'array', 'we have an array');
+
+            done();
+          })
+          .catch(err => {
+            // err.message, err.response
+            done(err.message);
+          });
+      });
+
+      it(`POST '/' should adds company ${company.document}`, done => {
+        request(myFunctions.company)
+          .post('/')
+          .send(company)
+          .set('session_id', sessionId)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then(res => {
+            assert.deepEqual(res.body, company);
+            done();
+          })
+          .catch(err => {
+            done(err.message);
+          });
+      });
+
+      it(`POST '/${company.document}' should update company ${company.document}`, done => {
+        company.iban = 'ES6621000418401234567891';
+        assert.equal(company.iban, 'ES6621000418401234567891');
+        request(myFunctions.company)
+          .post(`/${company.document}`)
+          .send(company)
+          .set('session_id', sessionId)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then(res => {
+            assert.deepEqual(res.body, company);
+            done();
+          })
+          .catch(err => {
+            done(err.message);
+          });
+      });
+
+      it(`GET '/${company.document}' should returns company ${company.document}`, done => {
+        request(myFunctions.company)
+          .get(`/${company.document}`)
+          .set('session_id', sessionId)
+          .set('Accept', 'application/json')
+          .expect('Content-Type', /json/)
+          .expect(200)
+          .then(res => {
+            assert.deepEqual(res.body, company);
+            done();
+          })
+          .catch(err => {
+            done(err.message);
+          });
+      });
+
+      it(`DELETE '/${company.document}' should delete company ${company.document}`, done => {
+        request(myFunctions.company)
+          .delete(`/${company.document}`)
+          .set('session_id', sessionId)
+          .expect(200)
+          .then(res => {
+            done();
+          })
+          .catch(err => {
+            done(err.message);
+          });
+      });
+    });
+    //
+    // describe('invoice', () => {
+    // });
+  });
+
+  //
+  // Testing background (non-HTTP) functions
+  //
+  describe('Mail Processing ( Gmail + GCF)', () => {
+    let gmail4signon;
+    let gmail2invoice;
+
+    before(() => {
+      gmail4signon = test.wrap(myFunctions.gmail4signon);
+      gmail2invoice = test.wrap(myFunctions.gmail2invoice);
+    });
+
+    describe('signon', () => {
+      it(`SignOn`, done => {
+        gmail4signon(test.pubsub.makeMessage({ emailAddress: 'tedi.tests@gmail.com' }))
+          .then(() => done())
+          .catch(err => done(err));
+      });
+    });
+
+    describe('invoice', () => {
+      it(`Factura Movistar Fijo I`, done => {
+        oauth
+          .fetchToken('tedi.tests@gmail.com')
+          .then(() => helpers.labelMessage('16ae0209f96e9176', ['INBOX']))
+          .then(() => gmail2invoice(test.pubsub.makeMessage({ emailAddress: 'tedi.tests@gmail.com' })))
+          .then(([[invoices, re]]) => {
+            assert.lengthOf(invoices, 1, 'One single invoice');
+            assert.propertyVal(invoices[0], 'total', '20.66');
+            return re;
+          })
+          .then(re => helpers.trashMessageById(re.id))
+          .then(() => done())
+          .catch(err => done(err));
+      });
+
+      it(`Facturas Iberdrola I, II`, done => {
+        oauth
+          .fetchToken('tedi.tests@gmail.com')
+          .then(() => helpers.labelMessage('16ae06f8d9f8a7db', ['INBOX']))
+          .then(() => gmail2invoice(test.pubsub.makeMessage({ emailAddress: 'tedi.tests@gmail.com' })))
+          .then(([[invoices, re]]) => {
+            assert.lengthOf(invoices, 2, 'Two invoices');
+            return re;
+          })
+          .then(re => helpers.trashMessageById(re.id))
+          .then(() => done())
+          .catch(err => done(err));
+      });
+
+      it(`Facturas Gas Natural I & Orange I, II & Movistar Fusion I, II & Factura Naturgy I, II`, done => {
+        oauth
+          .fetchToken('tedi.tests@gmail.com')
+          .then(() => helpers.labelMessage('16ae07980b535b70', ['INBOX']))
+          .then(() => gmail2invoice(test.pubsub.makeMessage({ emailAddress: 'tedi.tests@gmail.com' })))
+          .then(([[invoices, re]]) => {
+            assert.lengthOf(invoices, 7, 'Seven invoices');
+            return re;
+          })
+          .then(re => helpers.trashMessageById(re.id))
+          .then(() => done())
+          .catch(err => done(err));
+      });
+
+      it(`Sin Facturas`, done => {
+        oauth
+          .fetchToken('tedi.tests@gmail.com')
+          .then(() => helpers.labelMessage('16ae4cd33e04e536', ['INBOX']))
+          .then(() => gmail2invoice(test.pubsub.makeMessage({ emailAddress: 'tedi.tests@gmail.com' })))
+          .then(([[invoices, re]]) => {
+            assert.lengthOf(invoices, 0, 'No invoices');
+            return re;
+          })
+          .then(re => helpers.trashMessageById(re.id))
+          .then(() => done())
+          .catch(err => done(err));
+      });
+
+      it(`Facturas Movistar Fijo I & Iberdrola I, II`, done => {
+        oauth
+          .fetchToken('tedi.tests@gmail.com')
+          .then(() => helpers.labelMessage('16ae0209f96e9176', ['INBOX']))
+          .then(() => helpers.labelMessage('16ae06f8d9f8a7db', ['INBOX']))
+          .then(() => gmail2invoice(test.pubsub.makeMessage({ emailAddress: 'tedi.tests@gmail.com' })))
+          .then(([[invoices0, re0], [invoices1, re1]]) => {
+            // TODO: Some kind of assert
+            return [re0, re1];
+          })
+          .then(res => Promise.all(res.map(re => helpers.trashMessageById(re.id))))
+          .then(() => done())
+          .catch(err => done(err));
+      });
+
+      it(`Without messages at INBOX`, done => {
+        oauth
+          .fetchToken('tedi.tests@gmail.com')
+          .then(() => gmail2invoice(test.pubsub.makeMessage({ emailAddress: 'tedi.tests@gmail.com' })))
+          .then(() => done())
+          .catch(err => done(err));
+      });
+
+      // it(`Desconocida`, (done) => {
+      // 	oauth.fetchToken('tedi.tests@gmail.com')
+      // 	.then(() => helpers.labelMessage('16ae562f350d799e', ['INBOX']) )
+      // 	.then(() => gmail2invoice(test.pubsub.makeMessage({emailAddress: 'tedi.tests@gmail.com'})))
+      // 	.then(([[invoices, re]]) => {
+      // 		assert.lengthOf(invoices, 1, 'Only one invoice');
+      // 		return re;
+      // 	})
+      // 	.then(re => helpers.trashMessageById(re.id))
+      // 	.then(() => done())
+      // 	.catch(err => done(err));
+      // });
+    });
+  });
+});

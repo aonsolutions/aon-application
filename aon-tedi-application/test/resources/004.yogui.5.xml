@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:SuministroLRFacturasEmitidas xmlns="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroInformacion.xsd" xmlns:ns2="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/SuministroLR.xsd" xmlns:ns3="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/ssii/fact/ws/ConsultaLR.xsd">
+    <Cabecera>
+        <IDVersionSii>1.1</IDVersionSii>
+        <Titular>
+            <NombreRazon>COMARRUGA AVENTURA ,S.L</NombreRazon>
+            <NIF>B43475177</NIF>
+        </Titular>
+        <TipoComunicacion>A0</TipoComunicacion>
+    </Cabecera>
+    <ns2:RegistroLRFacturasEmitidas>
+        <PeriodoLiquidacion>
+            <Ejercicio>2019</Ejercicio>
+            <Periodo>07</Periodo>
+        </PeriodoLiquidacion>
+        <ns2:IDFactura>
+            <IDEmisorFactura>
+                <NIF>B43475177</NIF>
+            </IDEmisorFactura>
+            <NumSerieFacturaEmisor>FSE19/000108</NumSerieFacturaEmisor>
+            <FechaExpedicionFacturaEmisor>01-07-2019</FechaExpedicionFacturaEmisor>
+        </ns2:IDFactura>
+        <ns2:FacturaExpedida>
+            <TipoFactura>F2</TipoFactura>
+            <ClaveRegimenEspecialOTrascendencia>01</ClaveRegimenEspecialOTrascendencia>
+            <NumRegistroAcuerdoFacturacion></NumRegistroAcuerdoFacturacion>
+            <ImporteTotal>70.0</ImporteTotal>
+            <DescripcionOperacion>REAV VENTAS FS EXC. REAV HTL-Fra. Nº: FSE19/000108 del 01/07/2019</DescripcionOperacion>
+            <Macrodato>N</Macrodato>
+            <EmitidaPorTercerosODestinatario>N</EmitidaPorTercerosODestinatario>
+            <VariosDestinatarios>N</VariosDestinatarios>
+            <TipoDesglose>
+                <DesgloseFactura>
+                    <Sujeta>
+                        <Exenta>
+                            <DetalleExenta>
+<CausaExencion>E6</CausaExencion>
+<BaseImponible>70.0</BaseImponible>
+                            </DetalleExenta>
+                        </Exenta>
+                    </Sujeta>
+                    <NoSujeta>
+                        <ImportePorArticulos7_14_Otros>0.0</ImportePorArticulos7_14_Otros>
+                    </NoSujeta>
+                </DesgloseFactura>
+            </TipoDesglose>
+        </ns2:FacturaExpedida>
+    </ns2:RegistroLRFacturasEmitidas>
+</ns2:SuministroLRFacturasEmitidas>
