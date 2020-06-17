@@ -246,23 +246,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return this.enterpriseInfo.getPaysheetEmail();
 	}
 	
-	public Integer getEnterpriseAgreementIndex(){
-		Integer index = 0;
-		
-		if(!getEnterpriseAgreements().isEmpty() && null != enterpriseInfo.getEnterpriseAgreementId()) {
-			for(Agreement agreement : getEnterpriseAgreements()) {
-				if(agreement.getId().equals(enterpriseInfo.getEnterpriseAgreementId())) {
-					index++;
-					break;
-				}
-				index++;
-			}
-		}
-		
-		return index;
-	}
-	
-	public Integer getAgreement() {
+	public String getAgreement() {
 		return this.enterpriseInfo.getEnterpriseAgreementId();
 	}
 	
@@ -443,10 +427,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		enterpriseInfo.setPaysheetEmail(email);
 	}
 	
-	public void setAgreement(Integer agreementId) {
-		if(-1 == agreementId)
-			agreementId = null;
-		
+	public void setAgreement(String agreementId) {
 		add(enterpriseInfo::setEnterpriseAgreementId, 
 			enterpriseInfo.getEnterpriseAgreementId(), 
 			agreementId);

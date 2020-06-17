@@ -138,7 +138,7 @@ public class EnterpriseDraft extends Composite {
 				return;
 			}
 			
-			Integer agreementId = Integer.valueOf(this.enterpriseAgreement.getSelectedValue()); 
+			String agreementId = this.enterpriseAgreement.getSelectedValue(); 
 			enterpriseDraftObject.setAgreement(agreementId);
 			saving();
 		}
@@ -476,14 +476,24 @@ public class EnterpriseDraft extends Composite {
 		enterprise.enterprisePaysheetSendType.setSelectedIndex(enterpriseDraftObject.getPaysheetSendIndex());
 		checkPaysheetSendType();
 		
-		if(!enterpriseDraftObject.getEnterpriseAgreements().isEmpty()) {
-			enterprise.enterpriseAgreement.setSelectedIndex(enterpriseDraftObject.getEnterpriseAgreementIndex());
-		}
+		setSelectedValueLB(enterprise.enterpriseAgreement, enterpriseDraftObject.getAgreement());
 
 	}
 	
 	// ------------------------------------------------- AUX METHODS --------------------------------------------------
 
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
 	private void checkPaysheetSendType() {
 		if(enterpriseDraftObject.getPaysheetSendIndex() == 0) {
 			enterprise.enterprisePaysheetSendPanel.removeStyleName(enterprise.style.hide());

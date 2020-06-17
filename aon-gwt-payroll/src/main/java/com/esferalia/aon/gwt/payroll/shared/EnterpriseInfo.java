@@ -50,7 +50,7 @@ public class EnterpriseInfo implements Serializable {
 	private Byte paysheetSendType;
 	private Integer paysheetEmailId;
 	private String paysheetEmail;
-	private Integer enterpriseAgreementId;
+	private String enterpriseAgreementId;
 	
 	public EnterpriseInfo() {
 		super();
@@ -328,11 +328,11 @@ public class EnterpriseInfo implements Serializable {
 		this.paysheetEmail = paysheetEmail;
 	}
 
-	public Integer getEnterpriseAgreementId() {
+	public String getEnterpriseAgreementId() {
 		return enterpriseAgreementId;
 	}
 
-	public void setEnterpriseAgreementId(Integer enterpriseAgreementId) {
+	public void setEnterpriseAgreementId(String enterpriseAgreementId) {
 		this.enterpriseAgreementId = enterpriseAgreementId;
 	}
 

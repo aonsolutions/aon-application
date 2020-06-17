@@ -178,7 +178,7 @@ public class JooqEnterprise {
 		Byte paysheetSendType = null;
 		Integer paysheetEmailId = null;
 		String paysheetEmail = null;
-		Integer enterpriseAgreementId = null;
+		String enterpriseAgreementId = null;
 		
 		for(Record r : enterpriseDataRecords) {
 			if(r.get(ENTERPRISE_DATA.NAME).equals("PAY_REPORT_salary_PAY")) {
@@ -197,7 +197,7 @@ public class JooqEnterprise {
 				paysheetEmailId = r.get(ENTERPRISE_DATA.ID);
 				paysheetEmail = r.get(ENTERPRISE_DATA.EXPRESSION);
 			}else if(r.get(ENTERPRISE_DATA.NAME).equals("agreement")) {
-				enterpriseAgreementId = r.get(ENTERPRISE_DATA.ID);	
+				enterpriseAgreementId = r.get(ENTERPRISE_DATA.EXPRESSION);	
 			}			
 		}
 		
@@ -418,7 +418,7 @@ public class JooqEnterprise {
 			.and(ENTERPRISE_DATA.NAME.eq("agreement"))
 			.execute();
 
-		if(null != enterpriseInfo.getEnterpriseAgreementId() && -1 != enterpriseInfo.getEnterpriseAgreementId()) {
+		if(null != enterpriseInfo.getEnterpriseAgreementId() && "-1" != enterpriseInfo.getEnterpriseAgreementId()) {
 			Date date = null;
 			dslContext.insertInto(ENTERPRISE_DATA)
 				.set(ENTERPRISE_DATA.DOMAIN, enterpriseInfo.getDomainId())
