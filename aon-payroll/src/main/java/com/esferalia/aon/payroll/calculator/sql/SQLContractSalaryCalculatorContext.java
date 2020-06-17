@@ -4594,28 +4594,51 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			Date ereStartDate = getStartDate(ereFactorVar, period);
 
-			ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
-				@Override
-				public Period getPeriod() {
-					return period;
-				}
-
-				@Override
-				public Double getValue(Period p) {
-					try {
-						return  (Double) br(ereStartDate);
-					} catch (ExpressionException | SalaryException | SQLException e) {
-						throw new ExpressionExceptionWrapper(
-								new UndefinedContextVariablesException(REGULATORY_BASE));
+//			ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
+//				@Override
+//				public Period getPeriod() {
+//					return period;
+//				}
+//
+//				@Override
+//				public Double getValue(Period p) {
+//					try {
+//						return  (Double) br(ereStartDate);
+//					} catch (ExpressionException | SalaryException | SQLException e) {
+//						throw new ExpressionExceptionWrapper(
+//								new UndefinedContextVariablesException(REGULATORY_BASE));
+//					}
+//				}
+//
+//			};
+//			ITimedVariable<?> userBr = getExpressionContext().getVariable(REGULATORY_BASE, period.getStart(),
+//					period.getEnd());
+//			
+//			
+//			if (userBr == null)
+//				ctx.putVariable(REGULATORY_BASE, ereBase);
+			
+			for ( Period p : Period.sub(period, getPeriods(REGULATORY_BASE))) {
+				ITimedVariable<Double> ereBase = new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return p;
 					}
-				}
 
-			};
-			ITimedVariable<?> userBr = getExpressionContext().getVariable(REGULATORY_BASE, period.getStart(),
-					period.getEnd());
+					@Override
+					public Double getValue(Period p) {
+						try {
+							return  (Double) br(ereStartDate);
+						} catch (ExpressionException | SalaryException | SQLException e) {
+							throw new ExpressionExceptionWrapper(
+									new UndefinedContextVariablesException(REGULATORY_BASE));
+						}
+					}
 
-			if (userBr == null)
+				};
+				
 				ctx.putVariable(REGULATORY_BASE, ereBase);
+			}
 			
 //			ITimedVariable<Boolean> ereBack = new ITimedVariable<Boolean>() {
 //				@Override

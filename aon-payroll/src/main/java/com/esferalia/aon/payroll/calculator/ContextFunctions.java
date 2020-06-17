@@ -216,7 +216,6 @@ public class ContextFunctions {
 		} catch ( Throwable t) {
 			
 		}
-		
 		for ( String name : new String[ ]{
 				ContextVariable.PREST_IT,
 				ContextVariable.CGC_BASE.getName(),
@@ -257,6 +256,9 @@ public class ContextFunctions {
 							firstVariable.getPeriod().getStart(), 
 							firstVariable.getPeriod().getEnd() ) +1;
 					
+					if ( date.compareTo(varPeriod.getEnd()) == 0 )
+						continue;
+					
 					ITimedVariable<Object> lastVariable = new ITimedVariable<Object>() {
 						@Override
 						public Period getPeriod() {
@@ -275,6 +277,7 @@ public class ContextFunctions {
 					context.putVariable(name, lastVariable);
 				} // split;
 			}
+
 		}
 		
 	}
