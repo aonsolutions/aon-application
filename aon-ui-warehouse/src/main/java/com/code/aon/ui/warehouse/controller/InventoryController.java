@@ -442,7 +442,7 @@ public class InventoryController extends BasicController implements IAuditableCo
 						updateWT = updateWT != null ? updateWT.when(STOCK.ID.eq(stock.get().getId()), dMap.get(i))
 								: DSL.decode().when(STOCK.ID.eq(stock.get().getId()), dMap.get(i));
 					} else {
-						insert.values(domainId, i, dMap.get(i), wt.getTargetWarehouse().getId());
+						insert.values(domainId, i, dMap.get(i), wtId);
 					}
 				});
 				
