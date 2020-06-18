@@ -28,17 +28,14 @@ public class ManifestServlet extends HttpServlet{
 			
 			Manifest m = new Manifest(in);
 			Attributes attrs = m.getMainAttributes();
-			JSONObject json = new JSONObject();
-//			for (Object k : attrs.keySet()) {
-//				if(k != null) {
-//					String key = k.toString();
-//					String value = StringUtils.trimToNull(attrs.getValue(key));
-//					json.put(key, value);
-//				}
-//			}
-			String buildDate = StringUtils.trimToNull(attrs.getValue("buildDate"));
-			json.put("build_date", buildDate);
 
+			String buildDate = StringUtils.trimToNull( attrs.getValue("buildDate") );
+
+		
+			System.out.println(buildDate);
+		
+			JSONObject json = new JSONObject();
+			json.put("build_date", buildDate);
 			Utils.addCorsHeader(resp);
 			Utils.giveBack(req, resp, json, new JSONObject());
 		} catch (IOException e) {

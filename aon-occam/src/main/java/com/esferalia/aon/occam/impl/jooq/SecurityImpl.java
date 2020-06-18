@@ -32,12 +32,6 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
-	public byte[] unHexUuid(AONContext ctx, String uuid) {
-		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.unHexUuid(ctx, uuid));
-	}
-	
-	@Override
 	public Auth insertAuth(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.insertAuth(ctx, auth));
@@ -123,11 +117,6 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public void deleteUserScope(AONContext ctx, UserScopeFilter filter) {
 		SecurityDAO.deleteUserScope(ctx, filter);
-	}
-
-	@Override
-	public void assignAuthToUser(AONContext ctx, User user, byte[] auth) {
-		SecurityDAO.assignAuthToUser(ctx, user, auth);
 	}
 
 	// ------------------ SIGNATURE

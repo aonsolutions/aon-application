@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { Company, CompanyFilter } from '../../models/models';
 import { CompanyService, SharedService, AonService } from '../../services/services';
 import { RootLoader } from '../../utils/loader';
@@ -12,7 +11,7 @@ import { RootLoader } from '../../utils/loader';
 export class AonCompanyListComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
 
-  constructor(private router: Router, public aonService: AonService, public service : SharedService, public companyService: CompanyService) {
+  constructor(public aonService: AonService, public service : SharedService, public companyService: CompanyService) {
     this.companyService.filterObservable.subscribe( (value: CompanyFilter) => {
       if(this.aonService.companies === undefined || this.aonService.companies.length === 0){
         this.service.loading = true;
@@ -64,15 +63,8 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
       (r: Company[]) => {
         this.companies = r.filter(f => this.companyFilter(f));
       },
-      (error: any) => this.closeSession()
+      (error: any) => alert(error)
     );
-  }
-
-  closeSession(): void {
-    localStorage.clear();
-    this.service.isUserLoggedIn = false;
-    this.service.close();
-    this.router.navigate(['login']);
   }
 
   ngOnDestroy() {
