@@ -223,7 +223,9 @@ public class ContextFunctions {
 				ContextVariable.MATERNITY_BASE.getName(),
 				ContextVariable.ERE_BASE_FORCE_OFF.getName(),
 				ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(),
-				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName()
+				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),
+				ContextVariable.SALARY_HOURS.getName(),
+				ContextVariable.WORKED_HOURS.getName(),
 				})
 		{
 			for ( ITimedVariable<Object> var : context.getVariables(name) ) {

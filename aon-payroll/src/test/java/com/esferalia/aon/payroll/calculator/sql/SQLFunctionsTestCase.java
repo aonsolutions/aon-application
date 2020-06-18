@@ -17,6 +17,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SYSTEM;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -40,7 +41,9 @@ import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -1188,6 +1191,57 @@ public class SQLFunctionsTestCase extends
 		Assert.assertEquals(endDate, results.get(0).getPeriod().getEnd());
 		Assert.assertEquals(1000.00, results.get(0).getValue());
 
+	}
+
+	@Test
+	public void testSectionFunctionI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		Date firsDayOfYear = getFirstDayOfYear(getToday());
+		Date firsDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+		int month = get(firsDayOfMonth, Calendar.MONTH);
+		
+		Date endDate = add(firsDayOfMonth, DAY_OF_MONTH, 9);
+		ContractRecord contract = newContract(aonContext,
+				
+			new String[] { "( P_1 + P_2 )* 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES", }
+			, new String[] {
+						String.format("TRAMO(FECHA(2020,%s,10)); BASE_CGC * 0.10", month+1), 
+						}
+			);
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+						firsDayOfMonth, 
+						lastDayOfMonth, 
+						lastDayOfMonth, 
+						contract);
+		//@formatter:on
+		calculateAndSave(connection, ctx);
+		
+		AON.getSalaryData(aonContext, props -> props.getContractProperty().eq(contract.getId()))
+		.forEach( salary -> {
+			List<ContextData> salaryHours = salary.getContextData().get("HORAS_NOMINA");
+			org.junit.Assert.assertEquals(2, salaryHours.size());
+			salaryHours.sort((s1,s2) -> s1.getStartDate().compareTo(s2.getStartDate()));
+			salaryHours.forEach( h -> System.out.println("HORAS_NOMINA :" + h.getExpression() ) );
+			org.junit.Assert.assertEquals(salaryHours.get(0).getStartDate(), firsDayOfMonth);
+			org.junit.Assert.assertEquals(salaryHours.get(0).getEndDate(), add(firsDayOfMonth, DAY_OF_MONTH,9));
+			org.junit.Assert.assertEquals(salaryHours.get(1).getStartDate(), add(firsDayOfMonth, DAY_OF_MONTH,10));
+			org.junit.Assert.assertEquals(salaryHours.get(1).getEndDate(), lastDayOfMonth);
+		});
+		;
+		
+		
 	}
 	//------------------------------------------------------------------------
 	
