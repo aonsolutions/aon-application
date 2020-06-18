@@ -169,13 +169,13 @@ public class JooqEnterprise {
 				.fetch();
 		
 		Integer paysheetModelId = null;
-		Byte paysheetModel = null;
+		String paysheetModel = null;
 		Integer paysheetModelDraftId = null;
-		Byte paysheetModelDraft = null;
+		String paysheetModelDraft = null;
 		Integer costsModelId = null;
-		Byte costsModel = null;
+		String costsModel = null;
 		Integer paysheetSendTypeId = null;
-		Byte paysheetSendType = null;
+		String paysheetSendType = null;
 		Integer paysheetEmailId = null;
 		String paysheetEmail = null;
 		String enterpriseAgreementId = null;
@@ -183,16 +183,16 @@ public class JooqEnterprise {
 		for(Record r : enterpriseDataRecords) {
 			if(r.get(ENTERPRISE_DATA.NAME).equals("PAY_REPORT_salary_PAY")) {
 				paysheetModelId = r.get(ENTERPRISE_DATA.ID);
-				paysheetModel = getModelIndexPaysheet(r.get(ENTERPRISE_DATA.EXPRESSION));
+				paysheetModel = r.get(ENTERPRISE_DATA.EXPRESSION);
 			}else if(r.get(ENTERPRISE_DATA.NAME).equals("PAY_REPORT_salaryDraft_PAY")) {
 				paysheetModelDraftId = r.get(ENTERPRISE_DATA.ID);
-				paysheetModelDraft = getModelIndexPaysheetDraft(r.get(ENTERPRISE_DATA.EXPRESSION));
+				paysheetModelDraft = r.get(ENTERPRISE_DATA.EXPRESSION);
 			}else if(r.get(ENTERPRISE_DATA.NAME).equals("PAY_REPORT_enterpriseSalary_PAY")) {
 				costsModelId = r.get(ENTERPRISE_DATA.ID);
-				costsModel = getModelIndexCosts(r.get(ENTERPRISE_DATA.EXPRESSION));
+				costsModel = r.get(ENTERPRISE_DATA.EXPRESSION);
 			}else if(r.get(ENTERPRISE_DATA.NAME).equals("PAY_salarySendingMethod_PAY")) {
 				paysheetSendTypeId = r.get(ENTERPRISE_DATA.ID);
-				paysheetSendType = getIndexSendType(r.get(ENTERPRISE_DATA.EXPRESSION));
+				paysheetSendType = r.get(ENTERPRISE_DATA.EXPRESSION);
 			}else if(r.get(ENTERPRISE_DATA.NAME).equals("PAY_salarySending_email_PAY")) {
 				paysheetEmailId = r.get(ENTERPRISE_DATA.ID);
 				paysheetEmail = r.get(ENTERPRISE_DATA.EXPRESSION);
@@ -387,30 +387,35 @@ public class JooqEnterprise {
 		// --------- ENTERPRISE DATA TABLE
 		
 		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, getCostsModel(enterpriseInfo.getCostsModel()))
+			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getCostsModel())
 			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getCostsModelId()))
 			.execute();
 		
 		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, getPaysheetModel(enterpriseInfo.getPaysheetModel()))
+			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModel())
 			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetModelId()))
 			.execute();
 		
 		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, getPaysheetModelDraft(enterpriseInfo.getPaysheetModelDraft()))
+			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetModelDraft())
 			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetModeDraftlId()))
 			.execute();
 		
 		dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, getPaysheetSendType(enterpriseInfo.getPaysheetSendType()))
+			.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetSendType())
 			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetSendTypeId()))
 			.execute();
 		
-		if(0 == enterpriseInfo.getPaysheetSendType())
+		if("EMAIL" == enterpriseInfo.getPaysheetSendType() || enterpriseInfo.getPaysheetSendType().equals("EMAIL"))
 			dslContext.update(ENTERPRISE_DATA)
 				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetEmail())
 				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
 				.execute();
+		else
+			dslContext.update(ENTERPRISE_DATA)
+			.set(ENTERPRISE_DATA.EXPRESSION, (String) null)
+			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
+			.execute();
 		
 		dslContext.delete(ENTERPRISE_DATA)
 			.where(ENTERPRISE_DATA.DOMAIN.eq(enterpriseInfo.getDomainId()))
@@ -564,100 +569,6 @@ public class JooqEnterprise {
 		}
 		
 		return activities;
-	}
-	
-	// ------------------------------------ AUX METHODS ----------------------------------------
-
-	private static Byte getIndexSendType(String sendType) {
-		switch (sendType) {
-		case "EMAIL":
-			return (byte)0;
-		case "PAPER":
-			return (byte)1;
-		default:
-			return (byte)2;
-		}
-	}
-
-	private static Byte getModelIndexCosts(String costsModel) {
-		switch (costsModel) {
-		case "salaryExpense":
-			return (byte)0;
-		default:
-			return (byte)1;
-		}
-	}
-
-	private static Byte getModelIndexPaysheet(String paysheetModel) {
-		switch (paysheetModel) {
-		case "salary":
-			return (byte)0;
-		case "salary_dualColumn":
-			return (byte)1;
-		case "salary_invoiceSimple":
-			return (byte)2;
-		default:
-			return (byte)3;
-		}
-	}
-	
-	private static Byte getModelIndexPaysheetDraft(String paysheetModel) {
-		switch (paysheetModel) {
-		case "salaryDraft":
-			return (byte)0;
-		case "salaryDraft_dualColumn":
-			return (byte)1;
-		case "salaryDraft_invoiceSimple":
-			return (byte)2;
-		default:
-			return (byte)3;
-		}
-	}
-	
-	private static String getPaysheetSendType(Byte paysheetSendType) {
-		switch (paysheetSendType) {
-		case (byte)0 :
-			return "EMAIL";
-		case (byte)1:
-			return "PAPER";
-		default:
-			return "OTHERS";
-		}
-	}
-
-	private static String getPaysheetModelDraft(Byte paysheetModelDraft) {
-		switch (paysheetModelDraft) {
-		case (byte)0:
-			return "salaryDraft";
-		case (byte)1:
-			return "salaryDraft_dualColumn";
-		case (byte)2:
-			return "salaryDraft_invoiceSimple";
-		default:
-			return "salaryDraft_invoiceCraGroup";
-		}
-	}
-
-	private static String getPaysheetModel(Byte paysheetModel) {
-		switch (paysheetModel) {
-		case (byte)0:
-			return "salary";
-		case (byte)1:
-			return "salary_dualColumn";
-		case (byte)2:
-			return "salary_invoiceSimple";
-		default:
-			return "salary_invoiceCraGroup";
-		}
-	}
-
-	private static String getCostsModel(Byte costsModel) {
-		switch (costsModel) {
-		case (byte)0 :
-			return "salaryExpense";
-		default:
-			return "salaryExpenseExtended";
-		}
 	}
 	
 }

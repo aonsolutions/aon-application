@@ -230,16 +230,16 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return index;
 	}
 	
-	public Integer getPaySheetModelIndex() {
-		return null == this.enterpriseInfo.getPaysheetModel() ? 0 :  (int)this.enterpriseInfo.getPaysheetModel();
+	public String getPaySheetModel() {
+		return this.enterpriseInfo.getPaysheetModel();
 	}
 	
-	public Integer getCostsModelIndex() {
-		return null == this.enterpriseInfo.getCostsModel() ? 0 :  (int)this.enterpriseInfo.getCostsModel();
+	public String getCostsModel() {
+		return this.enterpriseInfo.getCostsModel();
 	}
 	
-	public Integer getPaysheetSendIndex() {
-		return null == this.enterpriseInfo.getPaysheetSendType() ? 0 :  (int)this.enterpriseInfo.getPaysheetSendType();
+	public String getPaysheetSend() {
+		return this.enterpriseInfo.getPaysheetSendType();
 	}
 	
 	public String getPaysheetSendEmail() {
@@ -395,7 +395,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		enterpriseInfo.setScopeId(scopeId);
 	}
 	
-	public void setPaySheetModel(byte paySheetModel) {
+	public void setPaySheetModel(String paySheetModel) {
 		add(enterpriseInfo::setPaysheetModel, 
 			enterpriseInfo.getPaysheetModel(), 
 			paySheetModel );
@@ -403,7 +403,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		enterpriseInfo.setPaysheetModel(paySheetModel);
 	}
 	
-	public void setCostModel(byte costModel) {
+	public void setCostModel(String costModel) {
 		add(enterpriseInfo::setCostsModel, 
 			enterpriseInfo.getCostsModel(), 
 			costModel );
@@ -411,7 +411,7 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		enterpriseInfo.setCostsModel(costModel);
 	}
 	
-	public void setPaySheetSendType(byte paySheetModelTypeSend) {
+	public void setPaySheetSendType(String paySheetModelTypeSend) {
 		add(enterpriseInfo::setPaysheetSendType, 
 			enterpriseInfo.getPaysheetSendType(), 
 			paySheetModelTypeSend );

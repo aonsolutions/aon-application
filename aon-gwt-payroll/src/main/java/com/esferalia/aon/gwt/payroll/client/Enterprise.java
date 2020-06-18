@@ -319,19 +319,19 @@ public abstract class Enterprise extends ResizeComposite {
 			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
 		
 		//PAYSHEET MODEL
-		this.enterprisePaysheetModel.addItem("Estandar", "0");
-		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)", "1");
-		this.enterprisePaysheetModel.addItem("Factura Simple", "2");
-		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "3");
+		this.enterprisePaysheetModel.addItem("Estandar", "salary");
+		this.enterprisePaysheetModel.addItem("Estandar (2 columnas)", "salary_dualColumn");
+		this.enterprisePaysheetModel.addItem("Factura Simple", "salary_invoiceSimple");
+		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
 		
 		//COST MODEL
-		this.enterpriseCostModel.addItem("Por defecto", "0");
-		this.enterpriseCostModel.addItem("Extendida", "1");
+		this.enterpriseCostModel.addItem("Por defecto", "salaryExpense");
+		this.enterpriseCostModel.addItem("Extendida", "salaryExpenseExtended");
 		
 		//SEND PAYSHEET
-		this.enterprisePaysheetSendType.addItem("Email", "0");
-		this.enterprisePaysheetSendType.addItem("Papel", "1");
-		this.enterprisePaysheetSendType.addItem("Otro", "2");
+		this.enterprisePaysheetSendType.addItem("Email", "EMAIL");
+		this.enterprisePaysheetSendType.addItem("Papel", "PAPER");
+		this.enterprisePaysheetSendType.addItem("Otro", "OTHERS");
 	}
 
 }

@@ -43,7 +43,7 @@ public class EnterpriseDraft extends Composite {
 				warningDialog.show();
 				
 				//Set last good value
-				enterprise.enterpriseName.setValue(enterpriseDraftObject.getName());
+				enterprise.enterpriseName.setValue(enterpriseDraftObject.getName().trim());
 			}
 		}
 
@@ -107,21 +107,21 @@ public class EnterpriseDraft extends Composite {
 
 		@Override
 		public void onEnterprisePaysheetModelChange() {
-			byte paysheetModel = Byte.valueOf(this.enterprisePaysheetModel.getSelectedValue()).byteValue();
+			String paysheetModel = this.enterprisePaysheetModel.getSelectedValue();
 			enterpriseDraftObject.setPaySheetModel(paysheetModel);
 			saving();
 		}
 
 		@Override
 		public void onEnterpriseCostModelChange() {
-			byte costModel = Byte.valueOf(this.enterpriseCostModel.getSelectedValue()).byteValue();
+			String costModel = this.enterpriseCostModel.getSelectedValue();
 			enterpriseDraftObject.setCostModel(costModel);
 			saving();
 		}
 
 		@Override
 		public void onEnterprisePaysheetSendTypeChange() {
-			byte paysheetSendType = Byte.valueOf(this.enterprisePaysheetSendType.getSelectedValue()).byteValue();
+			String paysheetSendType = this.enterprisePaysheetSendType.getSelectedValue();
 			enterpriseDraftObject.setPaySheetSendType(paysheetSendType);
 			checkPaysheetSendType();
 			saving();
@@ -471,9 +471,9 @@ public class EnterpriseDraft extends Composite {
 			scopeListBox.setSelectedIndex(enterpriseDraftObject.getScopeIndex());
 		}
 		
-		enterprise.enterprisePaysheetModel.setSelectedIndex(enterpriseDraftObject.getPaySheetModelIndex());
-		enterprise.enterpriseCostModel.setSelectedIndex(enterpriseDraftObject.getCostsModelIndex());
-		enterprise.enterprisePaysheetSendType.setSelectedIndex(enterpriseDraftObject.getPaysheetSendIndex());
+		setSelectedValueLB(enterprise.enterprisePaysheetModel, enterpriseDraftObject.getPaySheetModel());
+		setSelectedValueLB(enterprise.enterpriseCostModel, enterpriseDraftObject.getCostsModel());
+		setSelectedValueLB(enterprise.enterprisePaysheetSendType, enterpriseDraftObject.getPaysheetSend());
 		checkPaysheetSendType();
 		
 		setSelectedValueLB(enterprise.enterpriseAgreement, enterpriseDraftObject.getAgreement());
@@ -495,7 +495,7 @@ public class EnterpriseDraft extends Composite {
 	}
 	
 	private void checkPaysheetSendType() {
-		if(enterpriseDraftObject.getPaysheetSendIndex() == 0) {
+		if(enterpriseDraftObject.getPaysheetSend() == "EMAIL" || enterpriseDraftObject.getPaysheetSend().equals("EMAIL")) {
 			enterprise.enterprisePaysheetSendPanel.removeStyleName(enterprise.style.hide());
 			enterprise.enterprisePaysheetSendPanel.getElement().getStyle().setWidth(100.00, Unit.PCT);
 			enterprise.enterprisePaysheetSendEmail.setValue(enterpriseDraftObject.getPaysheetSendEmail());

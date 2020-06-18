@@ -41,13 +41,13 @@ public class EnterpriseInfo implements Serializable {
 	
 	//Enterprise date table
 	private Integer paysheetModelId;
-	private Byte paysheetModel;
+	private String paysheetModel;
 	private Integer paysheetModeDraftlId;
-	private Byte paysheetModelDraft;
+	private String paysheetModelDraft;
 	private Integer costsModelId;
-	private Byte costsModel;
+	private String costsModel;
 	private Integer paysheetSendTypeId;
-	private Byte paysheetSendType;
+	private String paysheetSendType;
 	private Integer paysheetEmailId;
 	private String paysheetEmail;
 	private String enterpriseAgreementId;
@@ -256,11 +256,11 @@ public class EnterpriseInfo implements Serializable {
 		this.paysheetModelId = paysheetModelId;
 	}
 
-	public Byte getPaysheetModel() {
-		return null == paysheetModel ? (byte)0 : (byte)1;
+	public String getPaysheetModel() {
+		return paysheetModel;
 	}
 
-	public void setPaysheetModel(Byte paysheetModel) {
+	public void setPaysheetModel(String paysheetModel) {
 		this.paysheetModel = paysheetModel;
 	}
 
@@ -272,11 +272,11 @@ public class EnterpriseInfo implements Serializable {
 		this.paysheetModeDraftlId = paysheetModeDraftlId;
 	}
 
-	public Byte getPaysheetModelDraft() {
-		return null == paysheetModelDraft ? (byte)0 : (byte)1;
+	public String getPaysheetModelDraft() {
+		return paysheetModelDraft;
 	}
 
-	public void setPaysheetModelDraft(Byte paysheetModelDraft) {
+	public void setPaysheetModelDraft(String paysheetModelDraft) {
 		this.paysheetModelDraft = paysheetModelDraft;
 	}
 
@@ -288,11 +288,11 @@ public class EnterpriseInfo implements Serializable {
 		this.costsModelId = costsModelId;
 	}
 
-	public Byte getCostsModel() {
-		return null == costsModel ? (byte)0 : (byte)1;
+	public String getCostsModel() {
+		return costsModel;
 	}
 
-	public void setCostsModel(Byte costsModel) {
+	public void setCostsModel(String costsModel) {
 		this.costsModel = costsModel;
 	}
 
@@ -304,11 +304,11 @@ public class EnterpriseInfo implements Serializable {
 		this.paysheetSendTypeId = paysheetSendTypeId;
 	}
 
-	public Byte getPaysheetSendType() {
-		return null == paysheetSendType ? (byte)0 : (byte)1;
+	public String getPaysheetSendType() {
+		return paysheetSendType;
 	}
 
-	public void setPaysheetSendType(Byte paysheetSendType) {
+	public void setPaysheetSendType(String paysheetSendType) {
 		this.paysheetSendType = paysheetSendType;
 	}
 
