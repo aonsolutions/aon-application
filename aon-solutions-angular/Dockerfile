@@ -28,6 +28,15 @@ ENV MCHANGE_COMMONS_URL=https://repo1.maven.org/maven2/com/mchange/mchange-commo
 ENV COMMONS_LOGGING_URL=https://repo1.maven.org/maven2/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar
 ENV COMMONS_COLLECTIONS_URL=https://repo1.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar
 
+ENV JAVA_JWT_URL=https://repo1.maven.org/maven2/com/auth0/java-jwt/3.9.0/mons-collections/java-jwt-3.9.0.jar
+ENV JACKSON_ANNOTATIONS_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.10.0.pr3/jackson-annotations-2.10.0.pr3.jar
+ENV JACKSON_CORE_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.10.0.pr3/jackson-core-2.10.0.pr3.jar
+ENV JACKSON_DATABIND_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.10.0.pr3/jackson-databind-2.10.0.pr3.jar
+ENV COMMONS_CODEC_URL=https://repo1.maven.org/maven2/commons-codec/commons-codec/1.9/commons-codec-1.9.jar
+ENV JSON_URL=https://repo1.maven.org/maven2/org/json/json/20180813/json-20180813.jar
+
+
+
 RUN set -x \
 	\
 	&& wget "$SLF4J_API_URL" \
@@ -37,9 +46,14 @@ RUN set -x \
 	&& wget "$COMMONS_LANG_URL" \
 	&& wget "$COMMONS_DBUTILS_URL" \
 	&& wget "$COMMONS_LOGGING_URL" \
-	&& wget "$MCHANGE_COMMONS_URL" \ 
-	&& wget "$COMMONS_COLLECTIONS_URL" 
-
+	&& wget "$MCHANGE_COMMONS_URL" \
+	&& wget "$COMMONS_COLLECTIONS_URL" \
+	&& wget "$JAVA_JWT_URL" \
+	&& wget "$JACKSON_ANNOTATIONS_URL" \
+	&& wget "$JACKSON_CORE_URL" \
+	&& wget "$JACKSON_DATABIND_URL" \
+	&& wget "$COMMONS_CODEC_URL" \
+	&& wget "$JSON_URL"
 
 ENV TOMCAT_BINDIR $CATALINA_HOME/bin
 ENV TOMCAT_CONFDIR $CATALINA_HOME/conf
@@ -48,7 +62,7 @@ ENV AON_SOLUTIONS_ANGULAR_COMMON /home/COMMON-RESOURCES
 
 
 WORKDIR $CATALINA_HOME/webapps
- 
+
 RUN set -x \
 	&& rm -rf docs \
 	&& rm -rf ROOT \
@@ -65,7 +79,7 @@ COPY aon-common-resources/target/aon-common-resources-${AON_VERSION}-templates.j
 
 RUN set -x \
 	&& unzip aon-common-resources-templates.jar -x META-INF/* \
-	&& rm aon-common-resources-templates.jar 
+	&& rm aon-common-resources-templates.jar
 
 
 RUN mkdir -p "$AON_SOLUTIONS_ANGULAR_HOME"
@@ -77,7 +91,7 @@ COPY aon-solutions-angular/target/aon-solutions-angular.war aon-solutions-angula
 RUN set -x \
 	\
 	&& unzip aon-solutions-angular.war \
-	&& rm aon-solutions-angular.war 
+	&& rm aon-solutions-angular.war
 
 
 RUN mkdir -p "$AON_SOLUTIONS_ANGULAR_CONF"
@@ -101,5 +115,3 @@ EXPOSE 8080
 ENV JAVA_OPTS="${JAVA_OPTS} -Duser.language=es -Duser.country=ES"
 
 CMD ["catalina.sh", "run"]
-	
-

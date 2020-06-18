@@ -45,7 +45,7 @@ public class CompanyServlet extends HttpServlet{
 	
 	private JSONObject company2json(Company company) {
 		Domain domain = AON.getDomain(company.getDomainName(), company.getDomain(), "");
-		Domain parentDomain = AON.getDomain(domain.getName(), domain.getParentId(), "");
+		Domain parentDomain = domain.getParentId() != null ? AON.getDomain(domain.getName(), domain.getParentId(), "") : null;
 		ApplicationParameter param= AON.getApplicationParameter(company.getDomainName(), company.getDomain(), "", AppParam.FS_DEFAULT_ADMINISTRATION);
 		Administration administration = param.getValue() != null ? Administration.values()[Integer.parseInt(param.getValue())] : Administration.COMMON_TERRITORY;
 		JSONObject json = new JSONObject()

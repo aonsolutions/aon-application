@@ -1501,6 +1501,7 @@ public class PropertiesDAO {
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(USER.ACTIVE);}
 		@Override public Property<Integer> getEnterpriseProperty() {return new FilterDAO.PropertyDAO<>(USER.ENTERPRISE);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(USER.REGISTRY);}
+		@Override public Property<byte[]> getAuthProperty() { return new FilterDAO.PropertyDAO<>(USER.AUTH);}
 
 	}
 	

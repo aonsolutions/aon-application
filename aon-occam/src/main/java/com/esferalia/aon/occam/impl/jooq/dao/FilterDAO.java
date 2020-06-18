@@ -413,7 +413,6 @@ public class FilterDAO implements Filter {
 		return this;
 	}
 	
-	
 	public Integer getPage(){
 		return page;
 	}

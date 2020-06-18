@@ -278,9 +278,9 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
-	public Stream<Company> getCompanyStream(AONContext ctx) {
+	public Stream<Company> getCompanyStream(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> CompanyDAO.getCompanyStream(ctx));
+				configuration -> CompanyDAO.getCompanyStream(ctx, auth));
 	}
 	
 	// ------------------------------------- RNOTE

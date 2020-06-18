@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.jooq.Condition;
@@ -18,11 +17,8 @@ import org.jooq.TransactionalRunnable;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonConnection;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDatabaseUtil;
@@ -85,51 +81,10 @@ public class AONContext implements AutoCloseable{
 		}
 	}
 	
-	public static AONContext getAONContext(AonConnection aonConnection) {
-		try {
-			return new AONContext(AonDataSource.getInstance().getDatabaseConnection(aonConnection.getSchema()), 
-					aonConnection.getDomains().toArray(new Integer[aonConnection.getDomains().size()]),
-					aonConnection.getUsers().toArray(new Integer[aonConnection.getUsers().size()]));
-		} catch (AonConnectionException e) {
-			throw new AonCoreException(e.getMessage(),e);
-		}
-	}
-
-	public static LinkedList<AonConnection> getAonConnections(String token) {
-		JSONArray json = SECURITY.decodeJWT(token);
-		LinkedList<AonConnection> list = new LinkedList<>();
-		json.forEach(r -> list.add(AonConnection.parse((JSONObject) r)));
-		return list;
-	}
-	
-	public static AonConnection getAonConnection(String token, String domainName) {
-		try {
-			ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
-			String schema = ci.getDomainDatabase(domainName);
-			return getAonConnections(token).stream().filter(ac -> ac.getSchema().equals(schema))
-					.findFirst().orElse(new AonConnection());
-		} catch (AonConnectionException e) {
-			throw new AonCoreException(e.getMessage(),e);
-		}
-	}
-	
 	public static AONContext getAONContext(String domainName, int domainId, String user) {
 		try {
 			return new AONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, domainId,user);
-		} catch (AonConnectionException e) {
-			throw new AonCoreException(e.getMessage(),e);
-		}
-	}
-	
-	public static AONContext getAONContext(Integer[] domains, Integer[] users) {
-		try {
-			ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
-			connectionInfo.getSchemas();
-			String domain = connectionInfo.getSchemaFirstDomain("pro-aonsolutions-net");
-			
-			return new AONContext(AonDataSource.getInstance().getConnection(domain)
-					, domains, users);
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
@@ -154,9 +109,6 @@ public class AONContext implements AutoCloseable{
 	private String domainName;
 	private int domainId;
 	private String user;
-	
-	private Integer[] domains;
-	private Integer[] users;
 
 	public AONContext(DSLContext dslContext) {
 		this.dslContext = dslContext;
@@ -166,13 +118,6 @@ public class AONContext implements AutoCloseable{
 	public AONContext(Connection connection) {
 		this(DSL.using(connection,getDefaultSettings()));
 		
-	}
-
-	private AONContext(Connection connection, Integer[] domains, Integer[] users) {
-		this.domains = domains;
-		this.users = users;
-		this.connection = connection;
-		this.dslContext = DSL.using(connection,getDefaultSettings());
 	}
 	
 	private AONContext(Connection connection, String domainName, int domainId, String user) {
@@ -189,12 +134,7 @@ public class AONContext implements AutoCloseable{
 	public int getDomainId() {
 		return domainId;
 	}
-	public Integer[] getDomains() {
-		return domains;
-	}
-	public Integer[] getUsers() {
-		return users;
-	}
+	
 	public DSLContext getDslContext() {
 		return dslContext;
 	}

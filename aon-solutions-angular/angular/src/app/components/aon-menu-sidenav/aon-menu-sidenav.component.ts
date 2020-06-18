@@ -104,7 +104,7 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
       if(this.isMobile()){
         this.service.setShowMenu(false);
       }
-      open('https://' + localStorage.getItem('aon_domain_name'));
+      open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
     } else if('bidoq' === app) {
       if(this.isMobile()){
         this.service.setShowMenu(false);
