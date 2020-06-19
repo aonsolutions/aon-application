@@ -71,7 +71,7 @@ public class ImportPage extends AonTemplate2{
 			}
 		});
 		
-		Boolean showFixButton = getDomain().getName().contains("auditors") && getDomain().getId().equals(26541);
+		Boolean showFixButton = getDomain().getName().contains("auditors") || getDomain().getName().contains("ayudat");
 		Button fixButton = toolbar.addButton("Regenerar Clientes/Proveedores/Acreedores", "aon-icon-segment");
 		fixButton.setVisible(showFixButton);
 		fixButton.addClickHandler(new ClickHandler() {
