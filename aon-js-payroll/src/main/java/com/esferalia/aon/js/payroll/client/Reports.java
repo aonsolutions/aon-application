@@ -72,9 +72,6 @@ public class Reports {
 		public Double getNonHExtraBase();
 		public Double getIrpfBase();
 		
-		public Double getMoneyIrpfBase();
-		public Double getInkindIrpfBase();
-		
 		public <P extends Payment> List<P> getPayments();
 		public <D extends Deduction> List<D> getDeductions();
 		public <D extends Deduction> List<D> getCosts();
@@ -128,8 +125,12 @@ public class Reports {
 		
 		default Double getCommonContPercent(){
 			Double commonContAmount = getCommonContAmount();
+			Double cgcBase = getCgcBase();
+			if(null == cgcBase)
+				return 0.00;
+			
 			if (commonContAmount != null){
-				return (commonContAmount / getCgcBase()) * 100;
+				return (commonContAmount / cgcBase) * 100;
 			}else
 				return null;
 		}
@@ -148,8 +149,13 @@ public class Reports {
 		
 		default Double getATyEPPercent(){
 			Double ATyEPAmount = getATyEPAmount();
+			Double cgcBase = getCgcBase();
+			if(null == cgcBase)
+				return 0.00;
+			
+			
 			if (ATyEPAmount != null){
-				return (ATyEPAmount / getCgcBase()) * 100;
+				return (ATyEPAmount / cgcBase) * 100;
 			}else
 				return null;
 		}
@@ -166,8 +172,12 @@ public class Reports {
 		
 		default Double getUnemploymentPercent(){
 			Double unemploymentAmount = getUnemploymentAmount();
+			Double cgpBase = getCgpBase();
+			if(null == cgpBase)
+				return 0.00;
+			
 			if (unemploymentAmount != null){
-				return (unemploymentAmount / getCgpBase()) * 100;
+				return (unemploymentAmount / cgpBase) * 100;
 			}else
 				return null;
 		}
@@ -184,8 +194,12 @@ public class Reports {
 		
 		default Double getProfesionalFormatPercent(){
 			Double profesionalFormat = getProfesionalFormatAmount();
+			Double cgpBase = getCgpBase();
+			if(null == cgpBase)
+				return 0.00;
+			
 			if (profesionalFormat != null){
-				return (profesionalFormat / getCgpBase()) * 100;
+				return (profesionalFormat / cgpBase) * 100;
 			}else
 				return null;
 		}
@@ -202,8 +216,12 @@ public class Reports {
 		
 		default Double getFogasaPercent(){
 			Double fogasaAmount = getFogasaAmount();
+			Double cgpBase = getCgpBase();
+			if(null == cgpBase)
+				return 0.00;
+			
 			if (fogasaAmount != null){
-				return (fogasaAmount / getCgpBase()) * 100;
+				return (fogasaAmount / cgpBase) * 100;
 			}else
 				return null;
 		}
@@ -247,6 +265,76 @@ public class Reports {
 		default String getEnterpriseLogoURL(){
 			String CRETA_URL = URL.encode(GWT.getModuleBaseURL() + "reports");
 			return CRETA_URL + "/Enterprise-Logo?contractid="+getEmployeeId();
+		}
+		
+		default Double getMoneyIrpfBase() {
+			Double moneyIrpf = 0.00;
+			for(Deduction deduction : getDeductions()) {
+				if(deduction.getName().equals("IRPF") || deduction.getName() == "IRPF") {
+					moneyIrpf = deduction.getAmount() - getInkindIrpfBase();
+				}
+			}
+			return moneyIrpf;
+		};
+		
+		default Double getInkindIrpfBase() {
+			Double inkindIrpf = 0.00;
+			for(Deduction deduction : getDeductions()) {
+				if(deduction.getName().equals("IRPF") || deduction.getName() == "IRPF") {
+					for(Payment payment : getPayments()) {
+						if(payment.getCode() == 13)
+							inkindIrpf += payment.getAmount();
+					}
+				}
+			}
+			return inkindIrpf;
+		};
+		
+		default Double getTotalAccruals() {
+			Double totalAccrual = 0.00;
+			Double totalPayment = getTotalPayment();
+			for(Deduction deduction : getDeductions()) {
+				if(deduction.getName().equals("IRPF") || deduction.getName() == "IRPF") {
+					for(Payment payment : getPayments()) {
+						if(payment.getCode() == 13)
+							totalAccrual += payment.getAmount();
+					}
+				}
+			}
+			
+			totalAccrual += totalPayment;
+			
+			return totalAccrual;
+		}
+		
+		default Double getTotalDeductions() {
+			Double totalDeductions = 0.00;
+			Double totalDeduction = getTotalDeduction();
+			for(Deduction deduction : getDeductions()) {
+				if(deduction.getName().equals("IRPF") || deduction.getName() == "IRPF") {
+					for(Payment payment : getPayments()) {
+						if(payment.getCode() == 13)
+							totalDeductions += payment.getAmount();
+					}
+				}
+			}
+			
+			totalDeductions += totalDeduction;
+			
+			return totalDeductions;
+		}
+		
+		default Double getTotalCompany() {
+			Double commonContAmount = null == getCommonContAmount() ? 0.00 : getCommonContAmount();
+			Double aTyEPAmount = null ==  getATyEPAmount() ? 0.00 : getATyEPAmount();
+			Double unemploymentAmount = null == getUnemploymentAmount() ? 0.00 : getUnemploymentAmount();
+			Double profesionalFormatAmount = null == getProfesionalFormatAmount() ? 0.00 : getProfesionalFormatAmount();
+			Double fogasaAmount = null == getFogasaAmount() ? 0.00 : getFogasaAmount();
+			Double hExtraAmount = null == getHExtraAmount() ? 0.00 : getHExtraAmount();
+			Double nonHExtraAmount = null == getNonHExtraAmount() ? 0.00 : getNonHExtraAmount();
+			
+			return commonContAmount + aTyEPAmount + unemploymentAmount + profesionalFormatAmount + 
+					fogasaAmount + hExtraAmount + nonHExtraAmount;
 		}
 
 	}
@@ -412,20 +500,27 @@ public class Reports {
 			net: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalLiquid()(),
 			payment: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalPayment()(),
 			deduction: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalDeduction()(),
-			total_accrual: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalPayment()(),
-			total_deductions: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalDeduction()(),
+			total_accrual: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalAccruals()(),
+			total_deductions: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalDeductions()(),
 			liquid_perceive: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalLiquid()(),
 			place: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCity()(),
 			date: new Date(),
-			reason: 'FIN CONTRATO TEMPORAL',
-			enterprise : {
+			reason: 'FIN CONTRATO TEMPORAL'
+		}
+		
+		console.log('Enterprise');
+		
+		json.enterprise = {
 				cif: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseDocument()(),
 				name : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseName()(),
 				city : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCity()(),
 				address: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseAddress()(),
 				ccc: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCCC()()
-			},
-			employee : {
+		}
+		
+		console.log('Employee');
+		
+		json.employee = {
 				ss: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSS()(),
 				nif: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeDocument()(),
 				fullname : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeName()(),
@@ -436,25 +531,48 @@ public class Reports {
 				professional_group: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeAgreementCategory()(),
 				seniority_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSeniorityDateTime()(),
 				contract_type: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeContractType()()
-			},
-			settlement : {
+		}
+		
+		console.log('Settlement');
+		
+		json.settlement = {
 				start_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMediumStartDate()(),
 				end_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMediumEndDate()(),
 				total_days: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTimeUnits()()
-			},
-			accruals : [],
-			payments : [],
-			deductions : [],
-			total_contributions : 0,
-			footer_ss_quotation : {
-				common_contingency : {
+		}
+		
+		json.accruals = [];
+		json.payments = [];
+		json.deductions = [];
+		json.total_contributions = 0;
+		
+		console.log('Footer');
+		
+		json.footer_ss_quotation = {}
+		
+		console.log('Footer common_contingency');
+		
+		json.footer_ss_quotation.common_contingency = {
 					monthly_remuneration : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getRemuneration()(),
 					extraordinary_pay_packet : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getProrationBase()(),
 					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgcBase()(),
 					type_percent : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContPercent()(),
 					company_input : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContAmount()()
-				},
-				professional_contingency : {
+				}
+				
+		console.log('Footer professional_contingency');
+		
+		console.log('Footer professional_contingency getCgpBase : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgpBase()());
+		console.log('Footer professional_contingency getATyEPPercent : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getATyEPPercent()());
+		console.log('Footer professional_contingency getATyEPAmount : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getATyEPAmount()());
+		console.log('Footer professional_contingency getUnemploymentPercent : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getUnemploymentPercent()());
+		console.log('Footer professional_contingency getUnemploymentAmount : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getUnemploymentAmount()());
+		console.log('Footer professional_contingency getProfesionalFormatPercent : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getProfesionalFormatPercent()());
+		console.log('Footer professional_contingency getProfesionalFormatAmount : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getProfesionalFormatAmount()());
+		console.log('Footer professional_contingency getFogasaPercent : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getFogasaPercent()());
+		console.log('Footer professional_contingency getFogasaAmount : ' + payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getFogasaAmount()());
+				
+		json.footer_ss_quotation.professional_contingency = {
 					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgpBase()(),
 		      		type_percent_at : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getATyEPPercent()(),
 		      		company_input_at : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getATyEPAmount()(),
@@ -464,19 +582,27 @@ public class Reports {
 		      		company_input_professional_formation : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getProfesionalFormatAmount()(),
 		      		type_percent_salary_warranty : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getFogasaPercent()(),
 		      		company_input_salary_warranty : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getFogasaAmount()()
-				},
-				aditional_quotation : {
+				}
+				
+		console.log('Footer aditional_quotation');
+				
+		json.footer_ss_quotation.aditional_quotation = {
 					base_overwhelming_force :  payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::gethExtraBase()(),
       				company_input_overwhelming_force : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getHExtraAmount()(),
       				base_non_structural : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getNonHExtraBase()(),
       				company_input_non_structural : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getNonHExtraAmount()()
-				},
-				base_irpf : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getIrpfBase()(),
-				total_company : 0
-			},
-			logo : blank_image,
-			signature_logo : blank_image
 		}
+		
+		console.log('Footer base_irpf');
+		
+		json.footer_ss_quotation.base_irpf = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getIrpfBase()();
+		json.footer_ss_quotation.total_company = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getTotalCompany()();
+			
+		
+		json.logo = blank_image;
+		json.signature_logo = blank_image;
+		
+		console.log('Payments');
 		
 		var payments = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getPayments()();
 		for ( i = 0; i <  payments.@java.util.List::size()(); i++ ) {
@@ -491,6 +617,8 @@ public class Reports {
 				});
 			}
 		}
+		
+		console.log('Deductions');
 		
 		var contributions = 0;
 		var deductions = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getDeductions()();
@@ -547,6 +675,8 @@ public class Reports {
 		}
 		json.total_contributions = contributions;
 		
+		console.log('Costs');
+		
 		var total_costs = 0;
 		var costs = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCosts()();
 		for ( i = 0; i <  costs.@java.util.List::size()(); i++ ) {
@@ -556,7 +686,7 @@ public class Reports {
 				total_costs += amount;
 			}
 		}
-		json.footer_ss_quotation.total_company = total_costs;
+//		json.footer_ss_quotation.total_company = total_costs;
 		
 		var paymentsOrdered = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getPaymentsOrderByCode()();
 		if ( paymentsOrdered.@java.util.List::isEmpty()() ) {

@@ -1397,16 +1397,4 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		return employeeEventsDraftObject;
 	}
 
-	@Override
-	public Double getInkindIrpfBase() {
-		return salaryDraft.getInkindIrpfBase();
-	}
-	
-	@Override
-	public Double getMoneyIrpfBase() {
-		return salaryDraft.getMoneyIrpfBase();
-	}
-	
-	
-
 }
