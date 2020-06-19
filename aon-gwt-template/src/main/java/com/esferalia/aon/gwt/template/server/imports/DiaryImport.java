@@ -327,7 +327,7 @@ public class DiaryImport {
 				return;
 			Double debit = Utils.parseDouble(o);
 			if(debit != null && debit < 0) {
-				diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(debit);
+				diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(-debit);
 			} else if(debit != null) diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(debit);
 			return;
 		}
@@ -337,7 +337,7 @@ public class DiaryImport {
 				return;
 			Double credit = Utils.parseDouble(o);
 			if(credit != null && credit < 0) {
-				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(credit);
+				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(-credit);
 			} else if(credit != null) diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(credit);
 			return;
 		}
