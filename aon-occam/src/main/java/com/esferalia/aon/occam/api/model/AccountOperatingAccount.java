@@ -6,7 +6,7 @@ import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperating
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class AccountOperatingAccount implements Serializable, Comparable<AccountOperatingAccount> {
+public class AccountOperatingAccount implements Serializable, Comparable<AccountOperatingAccount>, Cloneable {
 
 	private static final long serialVersionUID = -3524946313690250917L;
 	
@@ -15,6 +15,15 @@ public class AccountOperatingAccount implements Serializable, Comparable<Account
 	private String code;
 	private String description;
 	
+	public AccountOperatingAccount clone() {
+		return new AccountOperatingAccount()
+				.setType(getType())
+				.setId( getId() )
+				.setCode(getCode())
+				.setDescription(getDescription())
+				;
+	}
+
 	public AccountOperatingStatementType getType() {
 		return type;
 	}

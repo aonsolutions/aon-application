@@ -15,10 +15,10 @@ public class ValidationSaveEmptyInvoiceTypeTest extends AbstractOccamTest {
 
 	@Test(expected=AonCoreException.class)
 	public void testValidationSaveEmptyInvoiceType() {
-//		AonConfiguration config = AON.getConfiguration(ctx,null);
-//		Invoice invoice = InvoiceFaker.get(ctx, config);
-//		invoice.setType(null);
-//		AON.insertInvoice(DOMAIN_NAME, DOMAIN_ID, USER, invoice); 
+		AonConfiguration config = AON.getConfiguration(ctx,null);
+		Invoice invoice = InvoiceFaker.get(ctx, config);
+		invoice.setType(null);
+		AON.insertInvoice(DOMAIN_NAME, DOMAIN_ID, USER, invoice); 
 	}
 	
 }

@@ -16,8 +16,8 @@ public class AbstractOccamTest {
 
 	protected static AONContext ctx;
 	protected static String DOMAIN_NAME = "occamTest.aonsolutions.test";
-	protected static int DOMAIN_ID = 3049;
-	protected static String USER = "montse";
+	protected static int DOMAIN_ID = 18539;
+	protected static String USER = "admin";
 	
 	@BeforeClass
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
@@ -33,14 +33,20 @@ public class AbstractOccamTest {
 	}
 
 	private static void shutUp() {
-		PrintStream devnull = new PrintStream(new OutputStream() {
-			@Override
-			public void write(int b) throws IOException {
-				// TODO Auto-generated method stub
-			}
-		});
-		System.setOut(devnull);
-		System.setErr(devnull);
+		if (mustShutUp()) {
+			PrintStream devnull = new PrintStream(new OutputStream() {
+				@Override
+				public void write(int b) throws IOException {
+					// TODO Auto-generated method stub
+				}
+			});
+			System.setOut(devnull);
+			System.setErr(devnull);
+		}
+	}
+	
+	protected static boolean mustShutUp() {
+		return false;
 	}
 
 }

@@ -88,7 +88,7 @@ public class AccountValidation {
 			String parentCode = AonStringUtils.substring(account.getCode(),0, parentLevel);
 			Account a = AccountDAO.get(ctx, ACCOUNT.CODE.equal(parentCode));
 			if (a == null)
-				throw new AonCoreException(AonError.ACCOUNT_LOW_LEVEL_NOT_PRESENT.getMessage());
+				throw new AonCoreException(AonError.ACCOUNT_LOW_LEVEL_NOT_PRESENT.format(account.getCode()));
 		}
 	};
 	

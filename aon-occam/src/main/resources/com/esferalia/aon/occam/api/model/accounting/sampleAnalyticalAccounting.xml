@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<analytical>
+	<configuration name="2019">
+		<costCenter name="CC1" percent="50" default="true">
+			<accounts>
+				<account code="620" percent="40.25" />
+				<account code="621" percent="40.25" />
+				<account code="622" percent="40.25" />
+				<account code="623" percent="40.25" />
+				<account code="624" percent="40.25" />
+				<account code="625" percent="40.25" />
+				<account code="626" percent="40.25" />
+				<account code="627" percent="40.25" />
+				<account code="628" percent="40.25" />
+				<account code="629" percent="40.25" />
+			</accounts>
+			<entries>
+			<entry id="234629">
+				<accounts>
+					<account code="622" percent="50" />
+					<account code="623" percent="50" />
+					<account code="624" percent="50" />
+					<account code="625" percent="50" />
+				</accounts>
+			</entry>
+			</entries>
+		</costCenter>
+		<costCenter name="CC2" percent="30" default="false">
+			<accounts>
+				<account code="620" percent="27.84" />
+				<account code="621" percent="27.84" />
+				<account code="622" percent="27.84" />
+				<account code="623" percent="27.84" />
+				<account code="624" percent="27.84" />
+				<account code="625" percent="27.84" />
+				<account code="626" percent="27.84" />
+				<account code="627" percent="27.84" />
+				<account code="628" percent="27.84" />
+				<account code="629" percent="27.84" />
+			</accounts>
+			<entries>
+				<entry id="234629">
+					<accounts>
+						<account code="622" percent="20" />
+						<account code="623" percent="20" />
+						<account code="624" percent="20" />
+						<account code="625" percent="20" />
+					</accounts>
+				</entry>
+			</entries>
+		</costCenter>
+		<costCenter name="CC3" percent="20" default="false">
+			<accounts>
+				<account code="620" percent="31.91" />
+				<account code="621" percent="31.91" />
+				<account code="622" percent="31.91" />
+				<account code="623" percent="31.91" />
+				<account code="624" percent="31.91" />
+				<account code="625" percent="31.91" />
+				<account code="626" percent="31.91" />
+				<account code="627" percent="31.91" />
+				<account code="628" percent="31.91" />
+				<account code="629" percent="31.91" />
+			</accounts>
+			<entries>
+				<entry id="234629">
+					<accounts>
+						<account code="622" percent="30" />
+						<account code="623" percent="30" />
+						<account code="624" percent="30" />
+						<account code="625" percent="30" />
+					</accounts>
+				</entry>
+			</entries>
+		</costCenter>
+	</configuration>
+</analytical>

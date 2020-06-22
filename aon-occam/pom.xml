@@ -43,6 +43,7 @@
 					<username>aonsolutions</username>
 					<password>40ns0lut10ns</password>
 					<settingsKey>sensibleKey</settingsKey>
+					<encoding>UTF-8</encoding>
 					<skip>${maven.test.skip}</skip>
 				</configuration>
 
@@ -58,9 +59,9 @@
 							<autocommit>true</autocommit>
 							<srcFiles>
 								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/create.database.sql</srcFile>
-								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/standalone-basic-data.sql</srcFile>
-								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/standalone-data.sql</srcFile>
+								<srcFile>src/test/resuorces/com/esferalia/aon/occam/test/sql/standalone-domain.sql</srcFile>
 							</srcFiles>
+							<encoding>UTF-8</encoding>
 						</configuration>
 					</execution>
 
@@ -191,8 +192,22 @@
 			<version>2.2.5-2</version>
 			<scope>compile</scope>
 		</dependency>
-	
-
+		<!--
+			USED TO GENERATE CLASSES FROM XSD 
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-xjc</artifactId>
+			<version>2.2.5-2</version>
+			<scope>compile</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
+            <version>1.2.1</version>
+            <scope>runtime</scope>
+        </dependency>
+         -->
+             
 		<!--
 			*****************
 			TEST DEPENDENCIES  
@@ -234,5 +249,11 @@
 			<version>3.17</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
+            <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
 	</dependencies>
 </project>

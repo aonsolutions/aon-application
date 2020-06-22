@@ -381,8 +381,9 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	public Integer[] getInvoices() {
 		return invoices;
 	}
-	public void setInvoices(Integer[] invoices) {
+	public AccountingReportParams setInvoices(Integer[] invoices) {
 		this.invoices = invoices;
+		return this;
 	}
 	public Integer getRegistry() {
 		return registry;
@@ -559,8 +560,23 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 			.setSelectedPeriod(getSelectedPeriod())
 			.setSelectedActivity(getSelectedActivity())
 			.setSelectedAccount(getSelectedAccount())
+			.setBreakdownEnabled(isBreakdownEnabled())
 			.setDomains(getDomains())
 			.setConsolidation(isConsolidation())
+			.setLedgerAccount(getLedgerAccount())
+			.setLedgerDebitBalance(getLedgerDebitBalance())
+			.setLedgerUnpaidBalance(getLedgerUnpaidBalance())
+			.setRegistry(getRegistry())
+			.setOutput(getOutput())
+			.setVatSummaryType(getVatSummaryType())
+			.setPercent(getPercent())
+			.setRectificationType(getRectificationType())
+			.setSurcharge(getSurcharge())
+			.setFarmerRegime(getFarmerRegime())
+			.setAccrualRegime(getAccrualRegime())
+			.setInvestment(getInvestment())
+			.setService(getService())
+			.setInvoices(getInvoices())
 			.setTitle(getTitle())
 			.setSubject(getSubject())
 			.setShowCover(isShowCover())
@@ -571,8 +587,5 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 			.setHideDateTimeOnFooter(isHideDateTimeOnFooter())
 			.setFooterText(getFooterText())
 		;
-		
-		
-		
 	}
 }
