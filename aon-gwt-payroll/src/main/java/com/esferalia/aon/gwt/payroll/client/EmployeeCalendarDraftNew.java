@@ -702,6 +702,9 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			hideElement(hourButton.getElement());
 			hideElement(defintionMenuItemSeparator.getElement());
 			extraHoursButton.setText("H. Extras");
+			nonWorkingMenuItem.getElement().getStyle().clearDisplay();
+			hourMenuItem.getElement().getStyle().setDisplay(Display.NONE);
+			
 		} else {
 			this.showHours = true;
 			showHoursRows();
@@ -710,6 +713,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			showElement(hourButton.getElement());
 			showElement(defintionMenuItemSeparator.getElement());
 			extraHoursButton.setText("H. Complementarias");
+			nonWorkingMenuItem.getElement().getStyle().setDisplay(Display.NONE);
+			hourMenuItem.getElement().getStyle().clearDisplay();
 		}
 		
 		// Set agrarian contract

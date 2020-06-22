@@ -51,6 +51,11 @@
 			text-align: center;
 			width: 50px;
 		}
+		
+		.infoPanel{
+			color: blue;
+			padding: 0px 5px 8px 5px;
+		}
 
 	</ui:style>
 
@@ -107,6 +112,11 @@
 					<g:Label styleName="{style.labelStyle}">Domingo:</g:Label>
 					<g:TextBox ui:field="sundayHoursOpt" styleName="{style.borderBx}"/>
 				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel  ui:field="errorMessage" styleName="{style.infoPanel}">
+				<g:Label>Días en blanco equivale a No Laborable.</g:Label>
+				<g:Label>Días con 0 equivale a Laborable pero no trabaja.</g:Label>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.buttonsPanel}">
