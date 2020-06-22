@@ -341,7 +341,6 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 		.fetch()
 		.stream()
 		.forEach(rec -> {
-			InvoiceType type = InvoiceType.safeValueOf(rec.getValue(TYPE_FIELD));
 			double d = rec.getValue(SUM_FIELD).doubleValue();
 			if (d >= 0) {
 				table.put( AonStringUtils.defaultIfBlank(rec.getValue(workplace), UNKNOWN)
@@ -786,6 +785,9 @@ public class DirectSalesChartTypeVisitor implements IDirectSalesChartTypeVisitor
 			}
 			if (productTagCondition != null) {
 				condition = condition.and(productTagCondition);
+			}
+			if (productBrandsCondition != null) {
+				condition = condition.and(productBrandsCondition);
 			}
 			if (workplaceCondition != null) {
 				condition = condition.and(workplaceCondition);
