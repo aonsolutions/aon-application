@@ -150,6 +150,7 @@
     </plugins>
   </build>
   <dependencies>
+  
   	<dependency>
       <groupId>net.aonsolutions</groupId>
       <artifactId>aon.gwt.aio</artifactId>
