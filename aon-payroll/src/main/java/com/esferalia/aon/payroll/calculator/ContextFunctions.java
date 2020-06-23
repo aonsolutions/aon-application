@@ -232,7 +232,23 @@ public class ContextFunctions {
 				if ( var.getPeriod().contains(date)) {
 					
 					Period varPeriod = var.getPeriod();
-					Double varValue = ((Number)var.getValue(varPeriod)).doubleValue();
+					Double varDoubleValue = 0.00;
+					try {	
+						varDoubleValue = ((Number)var.getValue(varPeriod)).doubleValue();
+					} catch ( Throwable t) {
+						try {
+							for (ITimedVariable<Number> data :context.eval(name, varPeriod.getStart(), varPeriod.getEnd(), Number.class)){
+								if ( data.getPeriod().contains(date))
+									varDoubleValue += data.getValue(data.getPeriod()).doubleValue();
+							}
+						} catch (Throwable t1) {
+							continue;
+						}
+						if ( varDoubleValue == 0.00)
+							continue;
+					}
+					
+					Double varValue = varDoubleValue;
 					
 					//TODO: Checks that 'varPeriod' is whole month.
 					boolean wholeMonth = isWholeMonth(varPeriod);
