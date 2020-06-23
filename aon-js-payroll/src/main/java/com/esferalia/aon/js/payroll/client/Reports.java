@@ -690,7 +690,7 @@ public class Reports {
 		
 		var paymentsOrdered = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getPaymentsOrderByCode()();
 		if ( paymentsOrdered.@java.util.List::isEmpty()() ) {
-			console.log(json);
+			console.log('paymentsOrdered : ' + json);
 			return json;
 		}
 
@@ -706,31 +706,17 @@ public class Reports {
        			type_value : paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
 			});
 		}
-		for ( i = 1; i <  paymentsOrdered.@java.util.List::size()(); i++ ) {
-			var payment = paymentsOrdered.@java.util.List::get(I)(i);
-			var paymentPrevius = paymentsOrdered.@java.util.List::get(I)(i-1); 
-			var paymentCode = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()();
-			var paymentCodePrevius = paymentPrevius.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()();
-			
-			if(paymentCode == paymentCodePrevius){
-				var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
-				if( amount ){
-					accrual.types.push({
-						type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
-	           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
-	           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
-					});
-				}
-				if(paymentsOrdered.@java.util.List::size()() == i+1){
-					json.accruals.push(accrual);
-				}
-			}else{
-				json.accruals.push(accrual);
-				accrual = {};
-				accrual.accrual_name = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCodeDescription()();
-				accrual.types = [];
+		
+		if(paymentsOrdered.@java.util.List::size()() == 1){
+			json.accruals.push(accrual);
+		} else {
+			for ( i = 1; i <  paymentsOrdered.@java.util.List::size()(); i++ ) {
+				var payment = paymentsOrdered.@java.util.List::get(I)(i);
+				var paymentPrevius = paymentsOrdered.@java.util.List::get(I)(i-1); 
+				var paymentCode = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()();
+				var paymentCodePrevius = paymentPrevius.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()();
 				
-				if(paymentsOrdered.@java.util.List::size()() == i+1){
+				if(paymentCode == paymentCodePrevius){
 					var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
 					if( amount ){
 						accrual.types.push({
@@ -738,16 +724,35 @@ public class Reports {
 		           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
 		           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
 						});
+					}
+					if(paymentsOrdered.@java.util.List::size()() == i+1){
 						json.accruals.push(accrual);
 					}
 				}else{
-					var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
-					if( amount ){
-						accrual.types.push({
-							type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
-		           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
-		           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
-						});
+					json.accruals.push(accrual);
+					accrual = {};
+					accrual.accrual_name = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCodeDescription()();
+					accrual.types = [];
+					
+					if(paymentsOrdered.@java.util.List::size()() == i+1){
+						var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
+						if( amount ){
+							accrual.types.push({
+								type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
+			           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
+			           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
+							});
+							json.accruals.push(accrual);
+						}
+					}else{
+						var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
+						if( amount ){
+							accrual.types.push({
+								type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
+			           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
+			           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
+							});
+						}
 					}
 				}
 			}

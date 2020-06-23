@@ -2810,503 +2810,709 @@ module.exports.standardTwoColumnsPayroll = function(payroll, stream){
 }
 
 module.exports.salaryRecibeCRA = function(payroll, stream){
-  //Initialize pdf object
-  var pdf = new(PDF);
-  pdf.pipe(stream);
-
-  //PDF Styles
-  var pdfWidth = pdf.page.width
-		 - pdf.page.margins.left
-     - pdf.page.margins.right
-	;
-
-  pdf.page.width = pdf.page.width + 60; //Ancho para que no haya salto de linea
-  pdf.page.margins = {t0p: 70, bottom: 10, left: 72, right: 72}; //Margenes del documento
-
-  //Variables y constants
-	textSize = 6;
-	textFont = 'Helvetica';
-
-	titleSize = 8;
-	titleFont = 'Helvetica-Bold';
-
-	headingSize = 10;
-	headingFont = 'Helvetica-Bold';
-
-  paddingTop = 4;     //Padding-t0p line / text, text / text
-  paddingLeft1 = 8;   //Padding-left first text
-  paddingLeft2 = 16;  //Padding-left second text
-  paddingLeft3 = 24;  //Padding-left forth text
-  width = (pdfWidth-30) * 1/2;
-
-
-  //Aux Methods
-  var formatInputData = function (data, parseData){
-    if(data == null || data == undefined){
-      if(parseData == 'string')
-        return '';
-      else if(parseData == 'number')
-        return '';
-    }else{
-      var typeData = typeof data;
-      //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
-      if(typeData == 'number' && data == 0){
-        return '';
-      }
-      return data;
-    }
-  }
-  
-  var formatPercent = function(percent) {
-	  if('string' == typeof percent)
-	  	return percent;
-	  else
-	  	return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2)+" %" : '';
-  }
-
-  var formatAmount = function(amount) {
-	  return (amount  && amount != '' && amount != null && amount != 0 && 'string' != typeof amount) ? amount.toFixed(2) : '';
-  }
-
-  var numberOffset = function(number) {
-    if(number != '' && 'string' != typeof number){
-      var formatNumber = formatAmount(number);
-      var split = formatNumber.split('.');
-      switch (split[0].length) {
-        case 1:
-            return 27;
-        case 2:
-            return 22;
-        case 3:
-            return 18;
-        case 4:
-            return 13;
-        case 5:
-            return 9;
-        case 6:
-            return 5;
-        default:
-            return 0;
-      }
-    }else{
-      return 0;
-    }
-  }
-
-  var formatDate = function(date) {
-	var split = date.split('/');
-    return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
-	}
-
-  var getStrMonth = function (numberMonth) {
-    switch (numberMonth) {
-      case '1':
-          return 'enero';
-      case '2':
-          return 'febrero';
-      case '3':
-          return 'marzo';
-      case '4':
-          return 'abril';
-      case '5':
-          return 'mayo';
-      case '6':
-          return 'junio';
-      case '7':
-          return 'julio';
-      case '8':
-          return 'agosto';
-      case '9':
-          return 'septiembre';
-      case '10':
-          return 'octubre';
-      case '11':
-          return 'noviembre';
-      case '12':
-          return 'diciembre';
-      default:
-          return 'error';
-    }
-  }
-
-
-  //Main Methods
-  var newHearderTittle = function(){
-    //PDF drawing position using for lines, starting on the t0p of the page
-    y = pdf.y;
-  	x = pdf.x-50;
-    originalX = pdf.x-50;
-    originalY = pdf.y;
-  	pdf.lineWidth(0.1);
-
-    if(payroll.logo != undefined){
-      pdf
-        .image(payroll.logo, x+95, 20, {scale: 0.06})
-        .font(titleFont)
-    		.fontSize(headingSize)
-        .text('RECIBO DE SALARIO', x+370, 20)
-        .moveDown(1);
-    }else{
-      //Start drawing PDF
-      pdf
-    	  .font(titleFont)
-    		.fontSize(headingSize)
-    		.text('RECIBO DE SALARIO', x+80, 35)
-    		.moveDown(1);
-    }
-
-  }
-
-  var newEnterpriseBox = function(){
-    if(payroll.logo == undefined)
-      y = pdf.y;
-    else
-      y = pdf.y + 15;
-
-    oy = y;
-    centerBoxText = 90;
-    rightEnterpriseX = 72 + width;      //Position X for right line enterprise box
-    sizVertivalLineEE = 10;             //Size vertical line for enterprise, employee box
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    pdf
-      .moveTo(x, y).lineTo(rightEnterpriseX, y).stroke()      //Horizontal t0p line
-
-      .font(textFont)
-      .fontSize(textSize)
-      .text('EMPRESA', x + paddingLeft1, y = y + paddingTop)
-      .font(headingFont)
-      .fontSize(titleSize)
-      .text(formatInputData(payroll.enterprise.name, 'string'), x + centerBoxText, y = y + paddingTop)
-      .moveTo(x, y = y + paddingTop + 10).lineTo(rightEnterpriseX, y).stroke()
-
-      .font(textFont)
-      .fontSize(textSize)
-      .text('DOMICILIO', x + paddingLeft1, y = y + paddingTop)
-      .fontSize(titleSize)
-      .text(formatInputData(payroll.enterprise.address, 'string') + ", " + formatInputData(payroll.enterprise.locality, 'string'), x + paddingLeft3, y = y + paddingTop + 8)
-      .moveTo(x, y = y + paddingTop + 15).lineTo(rightEnterpriseX, y).stroke()
-
-      .font(textFont)
-      .fontSize(textSize)
-      .text('CIF', x + paddingLeft1, y = y + paddingTop).font(textFont)
-      .text('CCC', x + paddingLeft1 + 130, y).font(textFont)
-      .fontSize(titleSize)
-      .text(formatInputData(payroll.enterprise.cif, 'string'), x + paddingLeft3 + 10, y = y + paddingTop + 8)
-      .text(formatInputData(payroll.enterprise.ccc, 'number'), x + paddingLeft3 + 145, y)
-
-      .moveTo(x, oy).lineTo(x, y + sizVertivalLineEE + 2).stroke()                                     //Vertical left line
-      .moveTo(x + 130, y - paddingTop*2 - 8).lineTo(x + 130, y + sizVertivalLineEE + 2).stroke()       //Vertical center line
-  		.moveTo(rightEnterpriseX, oy).lineTo(rightEnterpriseX, y + sizVertivalLineEE + 2).stroke()       //Vertical right line
-      .moveTo(x, y + sizVertivalLineEE + 2).lineTo(rightEnterpriseX, y + sizVertivalLineEE + 2).stroke();  //Horizontal bottom line
-
-  }
-
-  var newEmployeeBox = function(){
-    // -----------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- EMPLOYEE -----------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    left = 8;
-    leftEmployeeX = 72 + width + left + 5 ;   //Position X for left line employee box
-    employeeY = 44;                           //Start y for employee box
-    centerBoxText = 80;
-    maxRightWidth = x + pdfWidth + 100; //Position X for right line employee, salary, footer box
-
-    pdf
-      .moveTo(leftEmployeeX - left, 35).lineTo(maxRightWidth, 35).stroke()   //Horizontal t0p line
-
-      .font(textFont)
-      .fontSize(textSize)
-      .text('TRABAJADOR/A', leftEmployeeX, y = employeeY)
-      .font(headingFont)
-      .fontSize(titleSize)
-      .text(formatInputData(payroll.employee.fullname, 'string'), leftEmployeeX + centerBoxText, y = y + paddingTop)
-      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
-
-      .font(textFont)
-      .fontSize(textSize)
-      .text('NIF', leftEmployeeX, y = y + paddingTop).font(textFont)
-      .text('Nº S.S.',leftEmployeeX + 150, y).font(textFont)
-      .fontSize(titleSize)
-      .text(formatInputData(payroll.employee.nif, 'string'), leftEmployeeX + paddingLeft3 + 10, y = y + paddingTop + 3)
-      .text(formatInputData(payroll.employee.ss, 'number'), leftEmployeeX + paddingLeft3 + 155, y)
-      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
-      .moveTo(leftEmployeeX + 130, y - paddingTop*2 - 15).lineTo(leftEmployeeX + 130, y).stroke()       //Vertical center line
-
-      .font(textFont)
-      .fontSize(textSize)
-      .text('G. COTIZ.', leftEmployeeX, y = y + paddingTop).font(textFont)
-      .text('GRUPO PROFESIONAL',leftEmployeeX + 50, y).font(textFont)
-      .text('ANTIGÜEDAD',leftEmployeeX + 220, y).font(textFont)
-      .fontSize(titleSize)
-      .text(formatInputData(payroll.employee.quote_group, 'string'), leftEmployeeX + paddingLeft2, y = y + paddingTop + 5)
-      .text(formatInputData(payroll.employee.professional_group, 'string'), leftEmployeeX + paddingLeft3 + 90, y)
-      .text(formatInputData(payroll.employee.seniority_date, 'string'), leftEmployeeX + paddingLeft3 + 210, y)
-      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
-      .moveTo(leftEmployeeX + 40, y - paddingTop*2 - 17).lineTo(leftEmployeeX + 40, y).stroke()
-      .moveTo(leftEmployeeX + 210, y - paddingTop*2 - 17).lineTo(leftEmployeeX + 210, y).stroke()
-
-      .moveTo(leftEmployeeX - left, 35).lineTo(leftEmployeeX - left, y).stroke()              //Vertical left line
-      .moveTo(maxRightWidth, 35).lineTo(maxRightWidth, y).stroke()                            //Vertical right line
-      .moveDown(1);
-  }
-
-  var newSettlementBox = function(){
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------- SETTLEMENT --------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    leftEmployeeX = 72 + width + left + 5 ;   //Position X for left line employee box
-    settlementY = 8;                           //Start y for employee box
-    centerBoxText = 80;
-    settlementWidth = x + pdfWidth + 100;
-
-    pdf
-      .moveTo(leftEmployeeX - left, y = y + settlementY).lineTo(maxRightWidth, y).stroke()   //Horizontal t0p line
-      .font(textFont)
-      .fontSize(textSize)
-      .text('PERIODO DE LIQUIDACIÓN', leftEmployeeX, y = y + paddingTop).font(textFont)
-      .text('TOTAL DÍAS',leftEmployeeX + 210, y).font(textFont)
-      .fontSize(titleSize)
-      .text(formatInputData(payroll.settlement.start_date, 'string') +'  -  '+ formatInputData(payroll.settlement.end_date, 'string'), leftEmployeeX + paddingLeft3 + 10, y = y + paddingTop + 8)
-      .text(formatInputData(payroll.settlement.total_days, 'number'), leftEmployeeX + paddingLeft3 + 220, y)
-      .moveTo(leftEmployeeX - left, y = y + paddingTop + 8).lineTo(maxRightWidth, y).stroke()
-      .moveTo(leftEmployeeX + 190, y - paddingTop*2 - 20).lineTo(leftEmployeeX + 190, y).stroke()       //Vertical center line
-
-      .moveTo(leftEmployeeX - left, y - paddingTop*2 - 20).lineTo(leftEmployeeX - left, y).stroke()         //Vertical right line
-      .moveTo(settlementWidth, y - paddingTop*2 - 20).lineTo(settlementWidth, y).stroke()         //Vertical right line
-      .moveDown(1);
-  }
-
-  var newFooterBox = function(){
-    // -----------------------------------------------------------------------------------------------------------------
-    // -------------------------------------------- FOOTER -------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    accrualWidth = x + pdfWidth + 100;
-    t0p = 2;
-    originalX = 22;
-    originalY = 72;
-    footer = 450;
-    pdf
-      .font(textFont)
-      .text('BASES' , originalX + 50 , y = originalY + footer + t0p + 12)
-      .text('AP. EMPRESA' , originalX + 120 , y)
-      .text('DESGLOSE' , originalX + 230 , y)
-      .text('TOTALES' , originalX + 455 , y)
-
-      .text('1. Cont. Comunes' , originalX + 15, y = originalY + footer + t0p + 25)
-      .text('Remuneración Total' , originalX + 210, y)
-      .text('Devengos' , originalX + 400, y)
-      .text('Deducciones' , originalX + 480, y)
-      .moveTo(originalX + 10 , y - 3).lineTo(originalX + 305 , y - 3).stroke()
-      .moveTo(originalX + 390 , y - 3).lineTo(originalX + 555 , y - 3).stroke()
-
-      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.common_contingency.base) , y = y + 10)
-      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), originalX + 223 + numberOffset(payroll.footer_ss_quotation.common_contingency.monthly_remuneration) , y)
-      .text(formatAmount(payroll.total_accrual), originalX + 425 + numberOffset(payroll.total_accrual) , y)
-      .text(formatAmount(payroll.total_deductions), originalX + 510 + numberOffset(payroll.total_deductions) , y)
-
-      .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent), originalX + 95 + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent) , y = y + 8)
-      .text("|", originalX + 150, y)
-      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.company_input), originalX + 135 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input) , y)
-
-      .moveTo(originalX + 200 , y = y + 3).lineTo(originalX + 305 , y).stroke()
-      .moveTo(originalX + 390 , y).lineTo(originalX + 555 , y).stroke()
-
-      .text('Prorrata Pagas Extr.' , originalX + 210, y = y + 3)
-      .text('Líquido a percibir' , originalX + 480, y)
-      .text(formatAmount(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), originalX + 223 + numberOffset(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet) , y = y + 10)
-      .text(formatAmount(payroll.liquid_perceive), originalX + 510 + numberOffset(payroll.liquid_perceive) , y)
-
-      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
-      .moveTo(originalX + 472 , y).lineTo(originalX + 555 , y).stroke()
-
-      .text('2. Cont. Profesionales' , originalX + 15, y = y + 3)
-
-      .text('AT/EP' , originalX + 110, y)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.base), originalX + 35 + numberOffset(payroll.footer_ss_quotation.professional_contingency.base) , y = y + 10)
-      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at) , y)
-      .text("|", originalX + 150, y)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_at), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at) , y)
-      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
-
-      .text('Desempleo' , originalX + 110, y = y + 3)
-      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) , y = y + 10)
-      .text("|", originalX + 150, y)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment) , y)
-      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
-
-      .text('Formación profesional' , originalX + 110, y = y + 3)
-      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) , y = y + 10)
-      .text("|", originalX + 150, y)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation) , y)
-      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 200 , y).stroke()
-
-      .text('FOGASA' , originalX + 110, y = y + 3)
-      .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), originalX + 95 + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) , y = y + 10)
-      .text("|", originalX + 150, y)
-      .text(formatAmount(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), originalX + 135 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty) , y)
-
-      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
-      .text('3. Horas Extras' , originalX + 15, y = y + 3)
-      .text('No Estructurales' , originalX + 110, y)
-      .text('Base HE (NE)' , originalX + 210, y)
-      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), originalX + 95 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force) , y = y + 10)
-      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), originalX + 223 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force) , y)
-
-      .moveTo(originalX + 105 , y = y + 10).lineTo(originalX + 305 , y).stroke()
-      .text('Estruc./Fuerza Mayor' , originalX + 110, y = y + 3)
-      .text('Base HE (E/FM)' , originalX + 210, y)
-      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), originalX + 95 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural) , y = y + 10)
-      .text(formatAmount(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), originalX + 223 + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_non_structural) , y)
-
-      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 305 , y).stroke()
-      .text('4. IRPF' , originalX + 15, y = y + 3)
-      .text(formatAmount(payroll.footer_ss_quotation.base_irpf), originalX + 35 + numberOffset(payroll.footer_ss_quotation.base_irpf) , y = y + 10)
-      .moveTo(originalX + 10 , y = y + 10).lineTo(originalX + 105 , y).stroke()
-
-      .moveTo(originalX + 10 , originalY + footer + t0p + 22).lineTo(originalX + 10 , y).stroke()
-      .moveTo(originalX + 105 , originalY + footer + t0p + 22).lineTo(originalX + 105 , y).stroke()
-      .moveTo(originalX + 200 , originalY + footer + t0p + 22).lineTo(originalX + 200 , y - 23).stroke()
-      .moveTo(originalX + 305 , originalY + footer + t0p + 22).lineTo(originalX + 305 , y - 161).stroke()
-      .moveTo(originalX + 305 , y - 69).lineTo(originalX + 305 , y - 23).stroke()
-      .moveTo(originalX + 390 , originalY + footer + t0p + 22).lineTo(originalX + 390 , y - 184).stroke()
-      .moveTo(originalX + 472 , originalY + footer + t0p + 22).lineTo(originalX + 472 , y - 161).stroke()
-      .moveTo(originalX + 555 , originalY + footer + t0p + 22).lineTo(originalX + 555 , y - 161).stroke()
-
-      .moveTo(originalX, originalY+footer+240).lineTo(accrualWidth, originalY+footer+240).stroke();        //Horizontal bottom line
-  }
-
-  var newSignatureDate = function(){
-    // -----------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    end_date = formatDate(payroll.settlement.end_date);
-    paddingSignature = 15;
-    paddingDate = 10;
-    signatureX = 340;
-    signatureY = 610;
-    signatureDateX = 450;
-    signatureDateY = 680;
-
-    pdf
-      .fontSize(titleSize)
-      .text('SELLO Y FIRMA DE LA EMPRESA' , signatureX , signatureY);
-
-    if(payroll.signature_logo != undefined){
-      pdf
-        .image(payroll.signature_logo, signatureX, signatureY + paddingSignature, {scale: 0.06});
-    }
-
-    pdf
-      .text(end_date,  signatureDateX , signatureDateY)
-      .fontSize(titleSize)
-      .text('RECIBÍ' , signatureDateX , signatureDateY + paddingDate);
-
-  }
-
-  var newAccrual = function(){
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------- ACCRUAL -----------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    originalX = 22;
-    originalY = 72;
-    y = settlementY+50;
-    accrualWidth = x + pdfWidth + 100;
-
-    //LINEAS DEL RECTANGULO DEVENGOS Y DEDUCCIONES
-    pdf
-      .moveTo(x, y = y + 95).lineTo(accrualWidth, y).stroke()
-      .moveTo(x, y).lineTo(x, originalY + 690).stroke()
-      .moveTo(accrualWidth, y).lineTo(accrualWidth, originalY + 690).stroke()
-
-      .moveTo(x + 10, y = y + 10).lineTo(x + 558, y).stroke()
-      .moveTo(x + 10, y).lineTo(x + 10, y + 360).stroke()
-      .moveTo(x + 558, y).lineTo(x + 558, y + 360).stroke()
-      .moveTo(x + 10, y + 360).lineTo(x + 558, y + 360).stroke();
-
-    pdf
-      .font(textFont)
-      .text('CUANTÍA' , originalX + 40 , y = 167)
-      .text('CONCEPTO' , originalX + 220 , y)
-      .text('DEVENGOS' , originalX + 410 , y)
-      .text('DEDUCCIONES' , originalX + 485 , y)
-      .moveTo(x + 10, y + 10).lineTo(x + 558, y + 10).stroke()
-      .moveTo(x + 110, y - 5).lineTo(x + 110, y + 355).stroke()
-      .moveTo(x + 390, y - 5).lineTo(x + 390, y + 355).stroke()
-      .moveTo(x + 472, y - 5).lineTo(x + 472, y + 355).stroke();
-
-    y = y + 20;
-    firstColumn = 70;
-    secondColumn = 140;
-    thirdColumn = 440;
-    quarterColumn = 520;
-
-    for(i = 0; i < payroll.accruals.length; i++){
-      accrual = payroll.accruals[i];
-      if(accrual.types.length > 0){
-	      pdf
-	        .font(titleFont)
-	        .text(accrual.accrual_name , secondColumn , y);
-	      y = y + 10;
-	      for(j = 0; j < accrual.types.length; j++){
-	        type = accrual.types[j];
-	        pdf
-	          .font(textFont)
-	          .text(type.type_expression , secondColumn + 8 , y)
-	          .text(formatAmount(type.type_value) , thirdColumn + numberOffset(type.type_value) , y);
-	        y = y + 10;
-	      }
-      }
-    }
-  }
-
-  var newDeduction = function(){
-    // -----------------------------------------------------------------------------------------------------------------
-    // --------------------------------------------- DEDUCTION ---------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    y = y + 20;
-    firstColumn = 70;
-    secondColumn = 140;
-    quarterColumn = 520;
-
-    for(i = 0; i < payroll.deductions.length; i++){
-      deduction = payroll.deductions[i];
-      var total = deduction.value;
-      if(deduction.value != 0){
-        if(deduction.types){
-          var total = 0;
-          for(j = 0; j < deduction.types.length; j++){
-            total += deduction.types[j].value;
-          }
+	var pdf = new PDF({
+        size: [595.28, 841.89],
+        margins: { // by default, all are 72
+            top: 5,
+            bottom: 5,
+            left: 5,
+            right: 5
         }
-        pdf
-          .font(textFont);
-        if(deduction.percent){
-          pdf
-            .text(formatPercent(deduction.percent), firstColumn + numberOffset(deduction.percent), y);
+    });
+
+    pdf.pipe(stream);
+
+    //PDF Styles
+    var pdfWidth = pdf.page.width -
+        pdf.page.margins.left -
+        pdf.page.margins.right;
+
+    //Fonts
+    textFooterSize = 7.9;
+    textFooterFont = 'Helvetica';
+
+    textSize = 8;
+    textFont = 'Helvetica';
+
+    titleTextSize = 8;
+    titleTextFont = 'Helvetica-Bold';
+
+    headingSize = 4;
+    headingFont = 'Helvetica-Bold';
+
+    titleSize = 10;
+    titleFont = 'Helvetica-Bold';
+
+    signature = 585;
+
+    var salary_perceptions_codes = [0001];
+    var extra_hours_codes = [0002, 0003];
+    var extra_perks_codes = [0004, 0005];
+    var spices_salary_codes = [0013, 0014, 0015, 0016, 0017, 0018, 0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026];
+
+    //Aux Methods
+    String.prototype.splice = function(idx, rem, str) {
+        return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+    };
+
+    var checkAccrualName = function(accrualName) {
+        if (accrualName) {
+            type = accrualName.split(" ")[0];
+            if (type == "01")
+                return "01 RETRIBUCIONES SALARIALES".splice(2, 0, ". ");
+
+            return accrualName.splice(2, 0, ". ");
         }
-        pdf
-          .text(deduction.name , secondColumn + 8 , y)
-          .text(formatAmount(total) , quarterColumn + numberOffset(total) , y);
-        y = y + 10;
-      }
+        return accrualName;
     }
-  }
 
-  //Main
-  newHearderTittle();
-  newEnterpriseBox();
-  newEmployeeBox();
-  newSettlementBox();
-  newAccrual();
-  newDeduction();
-  newSignatureDate();
-  newFooterBox();
+    var formatFirstPartAddress = function(address) {
+        if (address.includes("("))
+            return address.split("(")[0];
+        return address;
+    }
 
-  //End PDF
-  pdf.end();
+    var formatSecondPartAddress = function(address, province) {
+        if (address.includes("(")) {
+            zip = address.split("(")[1].split(")")[0];
+            city = address.split(")")[1];
+
+            return zip + " " + city + " " + province;
+        }
+        return province;
+    }
+
+    var formatInputData = function(data, parseData) {
+        if (data == null || data == undefined) {
+            if (parseData == 'string')
+                return '';
+            else if (parseData == 'number')
+                return '';
+        } else {
+            var typeData = typeof data;
+            //POSIBLE IMPLEMENTACION PARA ALGO MAS INTELIGENTE
+            if (typeData == 'number' && data == 0) {
+                return '';
+            } else if (typeData == 'number' && isNaN(data)) {
+                return '';
+            }
+            return data;
+        }
+    }
+
+    var parseExpression = function(expression) {
+        if (null != expression && undefined != expression && expression.includes("]"))
+            return expression.split("]")[1].trim();
+        return expression.trim();
+    }
+
+    var formatAmount = function(amount) {
+        const config = {
+            minimumFractionDigits: 2
+        }
+
+        return (amount && amount != '' && amount != null && amount != 0) ? new Intl.NumberFormat("de-DE", config).format(amount.toFixed(2)) : '';
+    }
+
+    var formatPercent = function(percent) {
+        if ('string' == typeof percent) {
+            if (percent.includes(" %")) {
+                percentInt = parseFloat(percent.split(" %")[0].trim());
+                return (percentInt && percentInt != '' && percentInt != null && percentInt != 0) ? percentInt.toFixed(2) + " %" : '';
+            }
+            return percent;
+        } else
+            return (percent && percent != '' && percent != null && percent != 0) ? percent.toFixed(2) + " %" : '';
+    }
+
+    var formatMoney = function(amount) {
+        const config = {
+            style: "currency",
+            currency: "EUR",
+            minimumFractionDigits: 2,
+            currencyDisplay: "symbol"
+        }
+        return (amount && amount != '' && amount != null && amount != 0) ? new Intl.NumberFormat("de-DE", config).format(amount.toFixed(2)) : '';
+    }
+
+    var numberOffset = function(number) {
+        if (number != '' && 'string' != typeof number) {
+            var formatNumber = formatAmount(number);
+            var split = formatNumber.split(',');
+            switch (split[0].length) {
+                case 1:
+                    return 1;
+                case 2:
+                    return -4;
+                case 3:
+                    return -8;
+                case 4:
+                    return -11;
+                case 5:
+                    return -15;
+                case 6:
+                    return -19;
+                default:
+                    return 0;
+            }
+        } else {
+            var formatNumber = formatPercent(number);
+            var split = formatNumber.split('.');
+            switch (split[0].length) {
+                case 1:
+                    return 0;
+                case 2:
+                    return -4;
+                case 3:
+                    return -8;
+                case 4:
+                    return -11;
+                case 5:
+                    return -15;
+                case 6:
+                    return -19;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    var parseDeductionName = function(deductionName) {
+        switch (deductionName) {
+            case "CGC":
+                return "Contingencias Comunes";
+            case "DESMPL":
+                return "Desempleo";
+            case "FP":
+                return "Formación Profesional";
+            case "Especie":
+                return "Retribuciones en especie";
+            case "Dinerario":
+                return "Retribuciones dinerarias";
+            case "IRPF":
+                return "IRPF";
+            default:
+                return "No se ha podido parsear el nombre";
+        }
+    }
+
+    var parseDate = function(date) {
+        return new Intl.DateTimeFormat('en-GB').format(date);
+    }
+
+    var formatDate = function(date) {
+        var split = date.split('/');
+        return split[0] + ' de ' + getStrMonth(split[1]) + ' de ' + split[2];
+    }
+
+    var getStrMonth = function(numberMonth) {
+        switch (numberMonth) {
+            case '1':
+                return 'enero';
+            case '2':
+                return 'febrero';
+            case '3':
+                return 'marzo';
+            case '4':
+                return 'abril';
+            case '5':
+                return 'mayo';
+            case '6':
+                return 'junio';
+            case '7':
+                return 'julio';
+            case '8':
+                return 'agosto';
+            case '9':
+                return 'septiembre';
+            case '10':
+                return 'octubre';
+            case '11':
+                return 'noviembre';
+            case '12':
+                return 'diciembre';
+            default:
+                return 'error';
+        }
+    }
+
+
+    var addMiddleBar = function(value) {
+        if (null == value || value == 0)
+            return "";
+        else
+            return "  |";
+    }
+
+
+    //Main Methods
+    var newHearderTittle = function() {
+        //PDF settings
+        pdf.lineWidth(1);
+
+        firstColumn = 100;
+        secondColumn = 400;
+
+        if (payroll.logo != undefined) {
+            pdf
+                .image(payroll.logo, firstColumn, 10, { scale: 0.05 });
+        }
+
+        pdf
+            .font(titleFont)
+            .fontSize(titleSize)
+            .text('RECIBO DE SALARIO', secondColumn, 12);
+
+    }
+
+    var newEnterpriseBox = function() {
+        enterpriseTop = 65;
+        enterpriseHeight = enterpriseTop + 84;
+        topLeftCorner = 10;
+        boxWidth = 290;
+
+        firstColumn = 25;
+        secondColumn = 40;
+        thirdColumn = 160;
+        fourthColumn = 175;
+
+        textSize = 8;
+        textFont = 'Helvetica';
+
+        headingSize = 6;
+        headingFont = 'Helvetica-Bold';
+
+        // -----------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------- ENTERPRISE ---------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+        pdf
+            .moveTo(topLeftCorner, enterpriseTop).lineTo(boxWidth, enterpriseTop).stroke() //Horizontal t0p line
+
+        .font(textFont)
+            .fontSize(headingSize)
+            .text('EMPRESA', firstColumn, enterpriseTop + 6)
+            .font(headingFont)
+            .fontSize(textSize)
+            .text(formatInputData(payroll.enterprise.name, 'string'), secondColumn, enterpriseTop + 16)
+            .moveTo(topLeftCorner, enterpriseTop + 28).lineTo(boxWidth, enterpriseTop + 28).stroke()
+
+        .font(textFont)
+            .fontSize(headingSize)
+            .text('DOMICILIO', firstColumn, enterpriseTop + 34)
+            .font(textFont)
+            .fontSize(textSize)
+            .text(formatInputData(payroll.enterprise.address, 'string') + ", " + formatInputData(payroll.enterprise.city.toUpperCase(), 'string'), secondColumn, enterpriseTop + 44)
+            .moveTo(topLeftCorner, enterpriseTop + 56).lineTo(boxWidth, enterpriseTop + 56).stroke()
+
+        .font(textFont)
+            .fontSize(headingSize)
+            .text('CIF', firstColumn, enterpriseTop + 62)
+            .text('CCC', thirdColumn, enterpriseTop + 62)
+            .font(textFont)
+            .fontSize(textSize)
+            .text(formatInputData(payroll.enterprise.cif, 'string'), secondColumn, enterpriseTop + 72)
+            .text(formatInputData(payroll.enterprise.ccc, 'number'), fourthColumn, enterpriseTop + 72)
+            .moveTo(thirdColumn - 15, enterpriseTop + 56).lineTo(thirdColumn - 15, enterpriseTop + 84).stroke() //Vertical right line
+
+        .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner, enterpriseHeight).stroke() //Vertical left line
+            .moveTo(boxWidth, enterpriseTop).lineTo(boxWidth, enterpriseHeight).stroke() //Vertical right line
+            .moveTo(topLeftCorner, enterpriseHeight).lineTo(boxWidth, enterpriseHeight).stroke(); //Horizontal bottom line
+
+    }
+
+    var newEmployeeBox = function() {
+        employeeTop = 30;
+        employeeHeight = enterpriseTop + 50;
+        topLeftCorner = 295;
+        boxWidth = 290;
+
+        firstColumn = topLeftCorner + 15;
+        secondColumn = topLeftCorner + 30;
+        thirdColumn = topLeftCorner + 90;
+        fourthColumn = topLeftCorner + 105;
+        fifthColumn = topLeftCorner + 180;
+        sixthColumn = topLeftCorner + 195;
+
+        textSize = 8;
+        textFont = 'Helvetica';
+
+        headingSize = 6;
+        headingFont = 'Helvetica-Bold';
+
+        // -----------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------- EMPLOYEE -----------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+        pdf
+            .moveTo(topLeftCorner, employeeTop).lineTo(topLeftCorner + boxWidth, employeeTop).stroke() //Horizontal t0p line
+
+        .font(textFont)
+            .fontSize(headingSize)
+            .text('TRABAJADOR/A', firstColumn, employeeTop + 6)
+            .font(headingFont)
+            .fontSize(textSize)
+            .text(formatInputData(payroll.employee.fullname, 'string'), secondColumn, employeeTop + 16)
+            .moveTo(topLeftCorner, employeeTop + 28).lineTo(topLeftCorner + boxWidth, employeeTop + 28).stroke()
+
+        .font(textFont)
+            .fontSize(headingSize)
+            .text('NIF', firstColumn, employeeTop + 34)
+            .text('ANTIGÜEDAD', thirdColumn, employeeTop + 34)
+            .text('Nº S.S.', fifthColumn, employeeTop + 34)
+            .font(textFont)
+            .fontSize(textSize)
+            .text(formatInputData(payroll.employee.nif, 'string'), secondColumn, employeeTop + 44)
+            .text(formatInputData(payroll.employee.ss, 'number'), sixthColumn, employeeTop + 44)
+            .text(parseDate(payroll.employee.seniority_date), fourthColumn, employeeTop + 44)
+
+        .moveTo(thirdColumn - 15, employeeTop + 28).lineTo(thirdColumn - 15, employeeTop + 56).stroke() //Vertical center line
+            .moveTo(fifthColumn - 15, employeeTop + 28).lineTo(fifthColumn - 15, employeeTop + 56).stroke() //Vertical center line
+            .moveTo(topLeftCorner, employeeTop + 56).lineTo(topLeftCorner + boxWidth, employeeTop + 56).stroke()
+
+        .font(textFont)
+            .fontSize(headingSize)
+            .text('G. COTIZ.', firstColumn, employeeTop + 62)
+            .text('TC2', thirdColumn - 20, employeeTop + 62)
+            .text('CETOGRÍA', fifthColumn - 50, employeeTop + 62)
+            .font(textFont)
+            .fontSize(textSize)
+            .text(formatInputData(payroll.employee.quote_group, 'string'), secondColumn, employeeTop + 72)
+            .text(formatInputData(payroll.employee.contract_type, 'string'), fourthColumn - 20, employeeTop + 72)
+            .text(formatInputData(payroll.employee.professional_group, 'string'), sixthColumn - 50, employeeTop + 72)
+
+        .moveTo(thirdColumn - 25, employeeTop + 56).lineTo(thirdColumn - 25, employeeTop + 84).stroke() //Vertical center line
+            .moveTo(fifthColumn - 60, employeeTop + 56).lineTo(fifthColumn - 60, employeeTop + 84).stroke() //Vertical center line
+            .moveTo(topLeftCorner, employeeTop + 84).lineTo(topLeftCorner + boxWidth, employeeTop + 84).stroke()
+            .moveTo(topLeftCorner, employeeTop).lineTo(topLeftCorner, employeeHeight).stroke()
+            .moveTo(topLeftCorner + boxWidth, employeeTop).lineTo(topLeftCorner + boxWidth, employeeHeight).stroke();
+    }
+
+    var newSettlementBox = function() {
+        settlementTop = 119;
+        settlementHeight = 30;
+        topLeftCorner = 295;
+        boxWidth = 290;
+
+        firstColumn = topLeftCorner + 15;
+        secondColumn = topLeftCorner + 30;
+        thirdColumn = topLeftCorner + 210;
+        fourthColumn = topLeftCorner + 225;
+
+        textSize = 8;
+        textFont = 'Helvetica';
+
+        headingSize = 6;
+        headingFont = 'Helvetica-Bold';
+
+        // -----------------------------------------------------------------------------------------------------------------
+        // --------------------------------------------- SETTLEMENT --------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+
+        pdf
+            .moveTo(topLeftCorner, settlementTop).lineTo(topLeftCorner + boxWidth, settlementTop).stroke() //Horizontal t0p line
+            .font(textFont)
+            .fontSize(headingSize)
+            .text('PERIODO DE LIQUIDACIÓN', firstColumn, settlementTop + 6).font(textFont)
+            .text('TOTAL DÍAS', thirdColumn, settlementTop + 6).font(textFont)
+            .font(textFont)
+            .fontSize(textSize)
+            .text(formatInputData(payroll.settlement.start_date, 'string') + '  -  ' + formatInputData(payroll.settlement.end_date, 'string'), secondColumn, settlementTop + 16)
+            .text(formatInputData(payroll.settlement.total_days, 'number'), fourthColumn, settlementTop + 16)
+
+        .moveTo(thirdColumn - 15, settlementTop).lineTo(thirdColumn - 15, settlementTop + settlementHeight).stroke() //Vertical center line
+
+        .moveTo(topLeftCorner, settlementTop).lineTo(topLeftCorner, settlementTop + settlementHeight).stroke() //Vertical right line
+            .moveTo(topLeftCorner + boxWidth, settlementTop).lineTo(topLeftCorner + boxWidth, settlementTop + settlementHeight).stroke() //Vertical right line
+            .moveTo(topLeftCorner, settlementTop + settlementHeight).lineTo(topLeftCorner + boxWidth, settlementTop + settlementHeight).stroke();
+    }
+
+    var newCentralBox = function() {
+        centralBoxTop = 155;
+        centralBoxHeight = 670;
+        topLeftCorner = 10;
+        boxWidth = 575;
+
+        // -----------------------------------------------------------------------------------------------------------------
+        // --------------------------------------------- CENTRAL BOX -------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+
+        pdf
+            .moveTo(topLeftCorner, centralBoxTop).lineTo(topLeftCorner + boxWidth, centralBoxTop).stroke() //Horizontal t0p line
+            .moveTo(topLeftCorner, centralBoxTop).lineTo(topLeftCorner, centralBoxTop + centralBoxHeight).stroke()
+            .moveTo(topLeftCorner + boxWidth, centralBoxTop).lineTo(topLeftCorner + boxWidth, centralBoxTop + centralBoxHeight).stroke()
+            .moveTo(topLeftCorner, centralBoxTop + centralBoxHeight).lineTo(topLeftCorner + boxWidth, centralBoxTop + centralBoxHeight).stroke();
+
+    }
+
+    newCentralInnerBox = function() {
+        centralBoxTop = 165;
+        centralBoxHeight = 380;
+        topLeftCorner = 22;
+        boxWidth = 550;
+
+        firstColumn = 45;
+        secondColumn = 210;
+        thirdColumn = 400;
+        fourthColumn = 490;
+
+        // -----------------------------------------------------------------------------------------------------------------
+        // --------------------------------------------- CENTRAL BOX -------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+
+        pdf
+            .moveTo(topLeftCorner, centralBoxTop).lineTo(topLeftCorner + boxWidth, centralBoxTop).stroke() //Horizontal t0p line
+            .moveTo(topLeftCorner, centralBoxTop).lineTo(topLeftCorner, centralBoxTop + centralBoxHeight).stroke()
+            .moveTo(topLeftCorner + boxWidth, centralBoxTop).lineTo(topLeftCorner + boxWidth, centralBoxTop + centralBoxHeight).stroke()
+            .moveTo(topLeftCorner, centralBoxTop + centralBoxHeight).lineTo(topLeftCorner + boxWidth, centralBoxTop + centralBoxHeight).stroke()
+            .text('CUANTÍA', firstColumn, centralBoxTop + 4)
+            .text('CONCEPTO', secondColumn, centralBoxTop + 4)
+            .text('DEVENGO', thirdColumn, centralBoxTop + 4)
+            .text('DEDUCCIONES', fourthColumn, centralBoxTop + 4)
+            .moveTo(topLeftCorner, centralBoxTop + 15).lineTo(topLeftCorner + boxWidth, centralBoxTop + 15).stroke() //Horizontal t0p line;
+
+        .moveTo(firstColumn + 60, centralBoxTop).lineTo(firstColumn + 60, centralBoxTop + centralBoxHeight).stroke()
+            .moveTo(thirdColumn - 30, centralBoxTop).lineTo(thirdColumn - 30, centralBoxTop + centralBoxHeight).stroke()
+            .moveTo(thirdColumn + 70, centralBoxTop).lineTo(thirdColumn + 70, centralBoxTop + centralBoxHeight).stroke();
+
+
+
+    }
+
+    var newFooterBox = function() {
+        padding = 13;
+        footerTop = 550;
+        footerHeight = 200;
+        topLeftCorner = 10 + padding;
+        boxWidth = 548;
+
+        titleFirstColumn = topLeftCorner + 40;
+        titleSecondColumn = topLeftCorner + 125;
+        titleThirdColumn = topLeftCorner + 240;
+        titleFourthColumn = topLeftCorner + 430;
+
+        firstColumn = topLeftCorner + 15;
+        secondColumn = topLeftCorner + 40;
+        thirdColumn = topLeftCorner + 110;
+        fourthColumn = topLeftCorner + 120;
+        fifthColumn = topLeftCorner + 225;
+        sixthColumn = topLeftCorner + 250;
+        seventColumn = topLeftCorner + 360;
+        eigthColumn = topLeftCorner + 385;
+        ninColumn = topLeftCorner + 462;
+        tenthColumn = topLeftCorner + 487;
+
+        textSize = 8;
+        textFont = 'Helvetica';
+
+        headingSize = 6;
+        headingFont = 'Helvetica-Bold';
+
+        // -----------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------- FOOTER -------------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+        pdf
+            .font(textFont)
+            .fontSize(textSize)
+            .text('BASES', titleFirstColumn, footerTop)
+            .text('AP. EMPRESA', titleSecondColumn, footerTop)
+            .text('DESGLOSE', titleThirdColumn, footerTop)
+            .text('TOTALES', titleFourthColumn, footerTop);
+
+        pdf
+            .text('1. Cont. Comunes', firstColumn, footerTop + 16)
+            .text('Remuneración Total', fifthColumn, footerTop + 16)
+            .text('Devengos', seventColumn, footerTop + 16)
+            .text('Deducciones', ninColumn, footerTop + 16)
+            .moveTo(topLeftCorner, footerTop + 10).lineTo(topLeftCorner + 320, footerTop + 10).stroke()
+            .moveTo(seventColumn - 15, footerTop + 10).lineTo(topLeftCorner + boxWidth, footerTop + 10).stroke();
+
+        pdf
+            .text(formatMoney(payroll.footer_ss_quotation.common_contingency.base), secondColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.base), footerTop + 26)
+            .text(formatMoney(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), sixthColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.monthly_remuneration), footerTop + 26)
+            .text(formatMoney(payroll.total_accrual), eigthColumn + numberOffset(payroll.total_accrual), footerTop + 26)
+            .text(formatMoney(payroll.total_deductions), tenthColumn + numberOffset(payroll.total_deductions), footerTop + 26)
+            .text(formatPercent(payroll.footer_ss_quotation.common_contingency.type_percent) + addMiddleBar(payroll.footer_ss_quotation.common_contingency.type_percent), fourthColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.type_percent), footerTop + 34)
+            .text(formatMoney(payroll.footer_ss_quotation.common_contingency.company_input), fourthColumn + 45 + numberOffset(payroll.footer_ss_quotation.common_contingency.company_input), footerTop + 34)
+
+        .moveTo(fourthColumn + 80, footerTop + 38).lineTo(topLeftCorner + 320, footerTop + 38).stroke()
+            .moveTo(seventColumn - 15, footerTop + 38).lineTo(topLeftCorner + boxWidth, footerTop + 38).stroke()
+
+        .text('Prorrata Pagas Extr.', fifthColumn, footerTop + 44)
+            .text('Líquido a percibir', ninColumn, footerTop + 44)
+            .text(formatMoney(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), sixthColumn + numberOffset(payroll.footer_ss_quotation.common_contingency.extraordinary_pay_packet), footerTop + 54)
+            .text(formatMoney(payroll.liquid_perceive), tenthColumn + numberOffset(payroll.liquid_perceive), footerTop + 54)
+
+        .moveTo(topLeftCorner, footerTop + 66).lineTo(fifthColumn + 95, footerTop + 66).stroke()
+            .moveTo(ninColumn - 15, footerTop + 66).lineTo(topLeftCorner + boxWidth, footerTop + 66).stroke();
+
+        pdf
+            .text('2. Cont. Profesionales', firstColumn, footerTop + 74)
+
+        .text('AT/EP', thirdColumn, footerTop + 74)
+            .text(formatMoney(payroll.footer_ss_quotation.professional_contingency.base), secondColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.base), footerTop + 84)
+            .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_at) + addMiddleBar(payroll.footer_ss_quotation.professional_contingency.type_percent_at), fourthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_at), footerTop + 84)
+            .text(formatMoney(payroll.footer_ss_quotation.professional_contingency.company_input_at), fourthColumn + 45 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_at), footerTop + 84)
+            .moveTo(thirdColumn - 10, footerTop + 94).lineTo(fourthColumn + 80, footerTop + 94).stroke()
+
+        .text('Desempleo', thirdColumn, footerTop + 102)
+            .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment) + addMiddleBar(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), fourthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_unemployment), footerTop + 112)
+            .text(formatMoney(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), fourthColumn + 45 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_unemployment), footerTop + 112)
+            .moveTo(thirdColumn - 10, footerTop + 122).lineTo(fourthColumn + 80, footerTop + 122).stroke()
+
+        .text('Formación profesional', thirdColumn, footerTop + 130)
+            .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation) + addMiddleBar(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), fourthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_professional_formation), footerTop + 140)
+            .text(formatMoney(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), fourthColumn + 45 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_professional_formation), footerTop + 140)
+            .moveTo(thirdColumn - 10, footerTop + 150).lineTo(fourthColumn + 80, footerTop + 150).stroke()
+
+        .text('FOGASA', thirdColumn, footerTop + 158)
+            .text(formatPercent(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty) + addMiddleBar(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), fourthColumn + numberOffset(payroll.footer_ss_quotation.professional_contingency.type_percent_salary_warranty), footerTop + 168)
+            .text(formatMoney(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), fourthColumn + 45 + numberOffset(payroll.footer_ss_quotation.professional_contingency.company_input_salary_warranty), footerTop + 168);
+
+        pdf
+            .moveTo(topLeftCorner, footerTop + 178).lineTo(topLeftCorner + 320, footerTop + 178).stroke()
+            .text('3. Horas Extras', firstColumn, footerTop + 188)
+            .text('No Estructurales', thirdColumn, footerTop + 188)
+            .text('Base HE (NE)', fifthColumn, footerTop + 188)
+            .text(formatMoney(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), fourthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_overwhelming_force), footerTop + 198)
+            .text(formatMoney(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), sixthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_overwhelming_force), footerTop + 198)
+
+        .moveTo(thirdColumn - 10, footerTop + 208).lineTo(topLeftCorner + 320, footerTop + 208).stroke()
+            .text('Estruc./Fuerza Mayor', thirdColumn, footerTop + 218)
+            .text('Base HE (E/FM)', fifthColumn, footerTop + 218)
+            .text(formatMoney(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), fourthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.company_input_non_structural), footerTop + 228)
+            .text(formatMoney(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), sixthColumn + numberOffset(payroll.footer_ss_quotation.aditional_quotation.base_non_structural), footerTop + 228);
+
+        pdf
+            .moveTo(topLeftCorner, footerTop + 238).lineTo(topLeftCorner + 320, footerTop + 238).stroke()
+            .text('4. IRPF', firstColumn, footerTop + 248)
+            .text(formatAmount(payroll.footer_ss_quotation.base_irpf), secondColumn + numberOffset(payroll.footer_ss_quotation.base_irpf), footerTop + 258)
+            .moveTo(topLeftCorner, footerTop + 268).lineTo(thirdColumn - 10, footerTop + 268).stroke();
+
+        // Vertical lines
+        pdf
+            .moveTo(topLeftCorner, footerTop + 10).lineTo(topLeftCorner, footerTop + 268).stroke()
+            .moveTo(thirdColumn - 10, footerTop + 10).lineTo(thirdColumn - 10, footerTop + 268).stroke()
+            .moveTo(fourthColumn + 80, footerTop + 10).lineTo(fourthColumn + 80, footerTop + 238).stroke()
+            .moveTo(fifthColumn + 95, footerTop + 10).lineTo(fifthColumn + 95, footerTop + 66).stroke()
+            .moveTo(fifthColumn + 95, footerTop + 178).lineTo(fifthColumn + 95, footerTop + 238).stroke()
+
+        .moveTo(seventColumn - 15, footerTop + 10).lineTo(seventColumn - 15, footerTop + 38).stroke()
+            .moveTo(ninColumn - 15, footerTop + 10).lineTo(ninColumn - 15, footerTop + 66).stroke()
+            .moveTo(topLeftCorner + boxWidth, footerTop + 10).lineTo(topLeftCorner + boxWidth, footerTop + 66).stroke();
+    }
+
+    var newSignatureDate = function() {
+        // -----------------------------------------------------------------------------------------------------------------
+        // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+        signatureTop = 640;
+        firstColumn = 350;
+        secondColumn = 400;
+
+        start_date = formatDate(payroll.settlement.start_date);
+        end_date = formatDate(payroll.settlement.end_date);
+
+        pdf
+            .font(textFooterFont)
+            .fontSize(textFooterSize)
+            .text('Firma y sello de la empresa', firstColumn, signatureTop)
+            .image(payroll.signature_logo, firstColumn + 10, signatureTop + 20, { scale: 0.06 })
+
+        .text(`RECIBÍ (${end_date}) :`, secondColumn, signatureTop + 85)
+            .fontSize(textFooterSize)
+            .text(formatInputData(payroll.employee.fullname, 'string'), secondColumn, signatureTop + 160);
+
+    }
+
+    var newAccrual = function() {
+        // -----------------------------------------------------------------------------------------------------------------
+        // --------------------------------------------- ACCRUAL -----------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+        accrualTop = 190;
+
+        firstColumn = 70;
+        secondColumn = 140;
+        thirdColumn = 430;
+        quarterColumn = 520;
+
+        for (i = 0; i < payroll.accruals.length; i++) {
+            accrual = payroll.accruals[i];
+            if (accrual.types.length > 0) {
+                pdf
+                    .font(titleFont)
+                    .text(checkAccrualName(accrual.accrual_name), secondColumn, accrualTop);
+
+                accrualTop += 12;
+
+                for (j = 0; j < accrual.types.length; j++) {
+                    type = accrual.types[j];
+                    pdf
+                        .font(textFont)
+                        .text(parseExpression(type.type_expression), secondColumn + 15, accrualTop)
+                        .text(formatMoney(type.type_value), thirdColumn + numberOffset(type.type_value), accrualTop);
+
+                    accrualTop += 12;
+                }
+            }
+        }
+    }
+
+    var newDeduction = function() {
+        // -----------------------------------------------------------------------------------------------------------------
+        // --------------------------------------------- DEDUCTION ---------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------------------------
+        deductionTop = accrualTop + 12;
+        firstColumn = 50;
+        secondColumn = 140;
+        quarterColumn = 530;
+
+        totalIRPF = 0;
+        //Get total IRPF
+        for (i = 0; i < payroll.payments.length; i++) {
+            payment = payroll.payments[i];
+            if (payment.amount != 0 && payment.code == 13) {
+                totalIRPF += payment.amount;
+            }
+        }
+
+        for (i = 0; i < payroll.deductions.length; i++) {
+            deduction = payroll.deductions[i];
+            if (deduction.value != 0) {
+                if (deduction.name == "Especie" || deduction.name == "Dinerario")
+                    continue;
+                if (deduction.name == "IRPF") {
+                    totalIRPF += deduction.amount;
+                    deduction.amount = totalIRPF;
+                }
+
+                pdf
+                    .font(textFont);
+                if (deduction.percent) {
+                    pdf
+                        .text(formatPercent(deduction.percent), firstColumn + numberOffset(deduction.percent), deductionTop);
+                }
+                pdf
+                    .text(parseDeductionName(deduction.name), secondColumn, deductionTop)
+                    .text(formatMoney(deduction.amount), quarterColumn + numberOffset(deduction.amount), deductionTop);
+                deductionTop += 12;
+
+            }
+        }
+    }
+
+    //Main
+    newHearderTittle();
+    newEnterpriseBox();
+    newEmployeeBox();
+    newSettlementBox();
+    newCentralBox();
+    newCentralInnerBox();
+    newAccrual();
+    newDeduction();
+    newSignatureDate();
+    newFooterBox();
+
+    //End PDF
+    pdf.end();
 
 }
 
