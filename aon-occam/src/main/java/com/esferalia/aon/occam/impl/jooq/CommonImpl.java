@@ -160,6 +160,12 @@ public class CommonImpl implements ICommon {
 	}
 
 	// ------------------ DOMAIN
+
+	@Override
+	public Stream<Domain> getDomainStream(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> DomainDAO.getDomainStream(ctx));
+	}
 	
 	@Override
 	public Domain insertDomain(AONContext ctx, Integer parentDomain,

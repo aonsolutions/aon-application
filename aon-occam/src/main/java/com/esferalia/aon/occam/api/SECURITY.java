@@ -1,10 +1,9 @@
 package com.esferalia.aon.occam.api;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
 
 public class SECURITY {
@@ -13,31 +12,20 @@ public class SECURITY {
 		return new SecurityImpl();
 	}
 
-	public static AonToken getAonToken(String token) {
-		JSONObject json = SECURITY.decodeJWT(token);
-		AonToken aonToken = AonToken.parse(json);
+	public static String getUserPassword(String domainName, int domainId, String login, Integer userId) {
 		AONContext ctx = null;
 		try {
-//			ctx = AONContext.getAONContext(aonToken.getSchema());
-			ctx = AONContext.getAONContext(aonToken.getSchemaFirstDomain(), 0, "");
-			aonToken.setAuth(getSecurity().unHexUuid(ctx, aonToken.getUuid()));
-		} finally {
-			if(ctx != null) {
-				ctx.close();
-			}
-		}
-		return aonToken;
-	}
-	
-	public static String getUserPassword(String domainName, int domainId, String login, Integer userId) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().getUserPassword(ctx, userId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
 		}
 	}
 	
-	public static JSONObject decodeJWT(String token) {
+	public static JSONArray decodeJWT(String token) {
 		DecodedJWT jwt = JWT.decode(token);
-		return new JSONObject(jwt.getSubject());
+		return new JSONArray(jwt.getSubject());
 	}
 
 }

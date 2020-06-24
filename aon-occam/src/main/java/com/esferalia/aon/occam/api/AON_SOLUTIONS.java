@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonConnection;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON_SOLUTIONS {
 	
@@ -33,87 +32,62 @@ public class AON_SOLUTIONS {
 	private static ISecurity getSecurity() {
 		return new SecurityImpl();
 	}
-
-	public static Auth getAuth(String domainName, Integer domainId, String email) { 
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, "");
-			return getSecurity().getAuth(ctx, email);
-		} finally {
-			if(ctx != null) {
-				ctx.close();
-			}
-		}
-	}
 	
 	public static Auth getAuth(String schema, String email) { 
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(schema);
+		try (AONContext ctx = AONContext.getAONContext(schema)){		
 			return getSecurity().getAuth(ctx, email);
-		} finally {
-			if(ctx != null) {
-				ctx.close();
-			}
 		}
 	}
 	
-	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+	public static Auth insertAuth(String schema, Auth auth) { 
+		try (AONContext ctx = AONContext.getAONContext(schema)){		
 			return getSecurity().insertAuth(ctx, auth);
 		}
 	}
 	
-	public static void assignAuthToUser(String domainName, Integer domainId, User user, String uuid) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
-			byte[] auth = getSecurity().unHexUuid(ctx, uuid);
-			getSecurity().assignAuthToUser(ctx, user, auth);
-		}
-
-	}
-	
 	public static User getUser(Domain domain, String token) {
-		AonToken aonToken = SECURITY.getAonToken(token);
+		Integer length = domain.getParentId() != null ? 2 : 1; 
+		Integer[] domains = new Integer[length];
+		domains[0] = domain.getId();
+		if(domain.getParentId() != null) 
+			domains[1] = domain.getParentId();
+		AonConnection c = AONContext.getAonConnections(token).stream().filter(ac -> ac.getDomains().contains(domain.getId())
+				|| ac.getDomains().contains(domain.getParentId()))
+				.findFirst().orElse(new AonConnection());
+		Integer[] users = c.getUsers().toArray(new Integer[c.getUsers().size()]);
+	
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
-			return getSecurity().getUser(ctx, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
+			return getSecurity().getUser(ctx, f -> f.getDomainProperty().in(domains).and(f.getIdProperty().in(users)));
 		}
 	}
 	
-	public static LinkedList<User> getUsersByEmail(String domainName, Integer domainId, String email) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+	public static LinkedList<User> getUsersByEmail(String schema, String email) {
+		try (AONContext ctx = AONContext.getAONContext(schema)){		
 			return getSecurity().getUsersByEmail(ctx, email);
 		}
 	}
 	
-	public static String getUserPassword(String domainName, Integer domainId, Integer user) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
+	public static String getUserPassword(String schema, Integer user) {
+		try (AONContext ctx = AONContext.getAONContext(schema)){
 			return getSecurity().getUserPassword(ctx, user);
 		}
 	}
 	
-	public static User getUserUuid(Domain domain, String uuid) {
-		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "")){		
-			byte[] auth = getSecurity().unHexUuid(ctx, uuid);
-			return getSecurity().getUser(ctx, f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(auth)));
+	public static Stream<Domain> getDomainStream(String token) {	
+		Stream<Domain> stream = new LinkedList<Domain>().stream();
+		for(AonConnection ac : AONContext.getAonConnections(token)) {
+			try (AONContext ctx = AONContext.getAONContext(ac)){
+				stream = Stream.concat(stream, getCommon().getDomainStream(ctx));
+			}
 		}
+		return stream;
 	}
-	
+
 	public static Stream<Company> getCompanyStream(String token) {	
-		AonToken aonToken = SECURITY.getAonToken(token);
 		Stream<Company> stream = new LinkedList<Company>().stream();
-		for(String schema : AONContext.getSchemas()) {
-			AONContext ctx = null;
-			try {
-				String domain = AONContext.getSchemaFirstDomain(schema);
-//				ctx = AONContext.getAONContext(schema);
-				if(!AonStringUtils.isBlank(domain)) {
-					ctx = AONContext.getAONContext(domain, 0, "");
-					stream = Stream.concat(stream, getRegistry().getCompanyStream(ctx, aonToken.getAuth()));
-				}
-			} finally {
-				if(ctx != null) {
-					ctx.close();
-				}
+		for(AonConnection ac : AONContext.getAonConnections(token)) {
+			try (AONContext ctx = AONContext.getAONContext(ac)){
+				stream = Stream.concat(stream, getRegistry().getCompanyStream(ctx));
 			}
 		}
 		return stream;

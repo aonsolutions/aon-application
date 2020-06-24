@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 
 public interface ISecurity {
 	public Auth getAuth(AONContext ctx, String email);
-	public byte[] unHexUuid(AONContext ctx, String uuid);
 	public Auth insertAuth(AONContext ctx, Auth auth);
 	
 	public User getUser(AONContext ctx, UserFilter filter);
@@ -40,7 +39,7 @@ public interface ISecurity {
 	public Stream<Scope> getUserScopeStream(AONContext ctx, Integer userId, ScopeFilter filter);
 	public Scope insertScope(AONContext ctx, Scope scope);
 	public Integer deleteScope(AONContext ctx, Integer scopeId);
-	public void assignAuthToUser(AONContext ctx, User user, byte[] auth);
+	
 	public void insertUserScope(AONContext ctx, UserScope userScope);
 	
 	// SIGNATURE

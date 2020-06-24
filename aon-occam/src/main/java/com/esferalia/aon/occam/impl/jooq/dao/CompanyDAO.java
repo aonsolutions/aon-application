@@ -224,18 +224,14 @@ public class CompanyDAO {
 			.fetch().stream().map(new CompanyFiller());
 	}
 	
-	public static Stream<Company> getCompanyStream(AONContext ctx, byte[] auth){
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
-		
+	public static Stream<Company> getCompanyStream(AONContext ctx){
 		return ctx.getDslContext().select()
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 			.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
 			.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
-			.where(DOMAIN.ID.in(domains)
-					.or(DOMAIN.PARENT.in(domains)
-						.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))))
+			.where(DOMAIN.PARENT.isNotNull().and(DOMAIN.ID.in(ctx.getDomains())
+				.or(DOMAIN.PARENT.in(ctx.getDomains()))))
 			.fetch().stream().map(new CompanyFiller());
 	}
 

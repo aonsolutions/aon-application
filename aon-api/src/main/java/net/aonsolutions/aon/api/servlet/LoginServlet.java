@@ -3,7 +3,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.auth0.jwt.JWT;
@@ -22,9 +22,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.code.aon.jaas.auth.util.Util;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "LoginServlet", urlPatterns = {"/ms/api/login/*"})
@@ -39,67 +37,43 @@ public class LoginServlet extends HttpServlet{
 		String username = json.getString("username");
 		String password = json.getString("password");
 
-		JSONObject tokenObject = new JSONObject();
+	    JSONArray tokenObject = new JSONArray();
 
 	    Boolean ok = false;
-		Auth auth = new Auth();
-	    if(isEmail(username)) {
-	    	List<String> schemas = AONContext.getSchemas();
-	    	for(String schema: schemas) {
-	    		String domain = AONContext.getSchemaFirstDomain(schema);
-	    		
-	    		if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
-//	    	    	auth = AON_SOLUTIONS.getAuth(schema, username);
-    				auth = AON_SOLUTIONS.getAuth(domain, 0, username);
+	    Boolean empty = true;
+	    if(isEmail(username)) {	
+	    	for(String schema : AONContext.getSchemas()) {
+	    		System.out.println(schema);
+	    	    JSONObject object = new JSONObject();
+	    	    JSONArray domainArray = new JSONArray();
+	    	    JSONArray userArray = new JSONArray();
+	    	    LinkedList<User> users = AON_SOLUTIONS.getUsersByEmail(schema, username);
 
-	    	    	if(auth.getUuid() != null) {
-	    	    		try {
-	    	    			String pass = createPasswordHash(auth.getEmail(), password, "digestCallback");
-							ok = pass.equals(auth.getPassword());
-	    	    			tokenObject
-	    	    				.put("schema", schema)
-	    	    				.put("schema_first_domain", domain)
-	    	    				.put("uuid", auth.getUuid());
-	    	    		} catch (LoginException e) {
-							e.printStackTrace();
-	    	    		}
-	    	    	} 
-	    	    }	    		
-	    	}
-	    	if(auth.getUuid() == null) {
-	    		for(String schema : schemas) {
-	    			String domain = AONContext.getSchemaFirstDomain(schema);
-	    			if(!AonStringUtils.isBlank(domain)){
-	    				LinkedList<User> users = AON_SOLUTIONS.getUsersByEmail(domain, 0, username);
-	    				for (User user : users) {
-	    					try {
-	    						String pass = createPasswordHash(user.getLogin(), password, "digestCallback");
-	    						String expectedPass = AON_SOLUTIONS.getUserPassword(domain, 0, user.getId());
-	    						ok = ok || pass.equals(expectedPass);
-	    						if(auth.getUuid() == null && pass.equals(expectedPass)) {
-	    							String authPass = createPasswordHash(username, password, "digestCallback");
-	    							auth = AON_SOLUTIONS.insertAuth(domain, 0, new Auth().setEmail(username).setPassword(authPass));
-	    							if(auth.getUuid() != null) {
-	    								tokenObject
-	    									.put("schema", schema)
-	    									.put("schema_first_domain", domain)
-	    									.put("uuid", auth.getUuid());
-	    							}
-	    						}
-	    						AON_SOLUTIONS.assignAuthToUser(domain, 0, user, auth.getUuid());
-	    					} catch (LoginException e) {
-	    						e.printStackTrace();
-	    					}
-	    				}
-	    			}
-	    		}
+	    	    for (User user : users) {
+					domainArray.put(user.getDomain());
+					userArray.put(user.getId());
+					try {
+						String pass = createPasswordHash(user.getLogin(), password, "digestCallback");
+						String expectedPass = AON_SOLUTIONS.getUserPassword(schema, user.getId());
+						ok = ok || pass.equals(expectedPass);
+					} catch (LoginException e) {
+						e.printStackTrace();
+					}
+				}
+	    	    
+	    	    object.put("schema", schema);
+			    object.put("domains", domainArray);
+			    object.put("users", userArray);
+			    object.put("email", username);
+			    tokenObject.put(object);
+			    if(!domainArray.isEmpty()) {
+			    	empty = false;
+			    }
 	    	}
 		}
-	    if(auth.getUuid() == null) {
-    		resp.sendError(401, "El Usuario No existe.");
-    	} else if(!ok) {
-    		resp.sendError(401, "La Contraseña no coincide.");	    		
-    	} else {
+	    if(empty) {
+	    	resp.sendError(401, "El Usuario No existe.");
+	    } else {
 	     
 	    	String token = "";
 	    	try {
@@ -109,7 +83,6 @@ public class LoginServlet extends HttpServlet{
 	    				.withIssuer("auth0")
 	    				.withSubject(tokenObject.toString())
 	    				.withIssuedAt(new Date())
-	    				//.withExpiresAt(AonDateUtils.addDays(new Date(), 1))
 	    				.sign(algorithm);
 	    	} catch (JWTCreationException exception){
 
