@@ -1084,6 +1084,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	private static Optional<Double> calculateExtra(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate) throws AonException {
 		SQLContractSalaryCalculatorContext extraCtx = null;
 		try {
+			Date extraEnDate = endDate;
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), ctx.getId());
 			Date extraStartDate = add(endDate, Calendar.YEAR, -1);
@@ -1113,6 +1114,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 						if ( contractPayment.getId().equals(((IContractPayment)payment).getId()) ) {						
 							extraQuote += quote;
 						} else if (
+							lastDayOfMonth.before(extraEnDate) &&
 							contractPayment.getMonth() == ((IContractPayment)payment).getMonth() &&
 							AonStringUtils.equals(contractPayment.getName(), ((IContractPayment)payment).getName() )
 							
