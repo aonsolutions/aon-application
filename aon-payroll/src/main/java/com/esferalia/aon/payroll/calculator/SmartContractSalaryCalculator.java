@@ -1153,7 +1153,8 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 			
 			double extra = extraQuotes;
-			Period extraPeriod = new Period(extraStartDate, endDate);
+			
+			Period extraPeriod = new Period(extraStartDate, Period.min(endDate, ctx.getDate(CONTRACT.getName() , CONTRACT.END_DATE.getName() )));
 			List<Period> undefined = Period.sub(extraPeriod, defined);
 			undefined.forEach(p -> { throw new UndefinedExtraException(extra, defined, undefined); }) ;
 			
