@@ -15,22 +15,22 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.json.JSONObject;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.vendor.tomcat.HttpServletRequestValve;
+
 import net.aonsolutions.core.pool.AonConnectionException;
-import net.aonsolutions.core.pool.ConnectionInfo;
+import net.aonsolutions.core.pool.AonDataSource;
 
 public class OpenIDLoginModule extends LoginModule {
-	private final static Logger LOGGER = LoggerFactory
-			.getLogger(OpenIDLoginModule.class);
-
 	private static final String OPENID_EMAIL = "OpenID_Email=";
+	private static final String UUID = "uuid";
 	
 	private String domain ;
-
+	private String token; 
 	private Boolean isGoogle = false;
 	private Boolean isAmazon = false;
 	
@@ -38,13 +38,15 @@ public class OpenIDLoginModule extends LoginModule {
 	public void initialize(Subject subject, CallbackHandler callbackHandler,
 			Map sharedState, Map options) {
 		super.initialize(subject, callbackHandler, sharedState, options);
+		String t = HttpServletRequestValve.getHttpServletRequest().getParameter("token");
+		token = t != null ? IDN.toUnicode(HttpServletRequestValve.getHttpServletRequest().getParameter("token")) : null;
 		domain = IDN.toUnicode(HttpServletRequestValve.getHttpServletRequest().getServerName());
 	}
 	
 	@Override
 	protected Principal createIdentity(String username) throws Exception {
-		
 		if (StringUtils.contains(username, OPENID_EMAIL )) {
+			Integer domainId = getDomainId(domain);
 			String emailAux = StringUtils.substringAfter(username,
 					OPENID_EMAIL );
 			int pos = emailAux.indexOf("&");
@@ -67,7 +69,7 @@ public class OpenIDLoginModule extends LoginModule {
 
 			}
 
-			username = getUserName(email, domain);	
+			username = getUserName(domain, domainId, email, null);	
 
 			
 			if ( username == null ) {
@@ -82,6 +84,11 @@ public class OpenIDLoginModule extends LoginModule {
 		
 		}
 		
+		else if(token != null) {
+			Integer domainId = getDomainId(domain);
+			username = getUserName(domain, domainId, null, token);			
+		}
+		
 		return super.createIdentity(username);
 	}
 
@@ -89,8 +96,10 @@ public class OpenIDLoginModule extends LoginModule {
 	protected String getUsersPassword() throws LoginException {
 		
 		String[] info = getUsernameAndPassword();
-		if (StringUtils.contains(info[0], OPENID_EMAIL )) {
-			try {
+		try {
+			if (StringUtils.contains(info[0], OPENID_EMAIL )) {
+			
+				Integer domainId = getDomainId(domain);
 				String userAux = StringUtils.substringAfter(info[0],
 						OPENID_EMAIL );
 
@@ -98,7 +107,7 @@ public class OpenIDLoginModule extends LoginModule {
 
 				String email = userAux.substring(0, pos);
 				
-				String user = getUserName(email,domain);
+				String user = getUserName(domain, domainId, email, null);
 				
 				
 				if ( user==null ) {
@@ -109,49 +118,62 @@ public class OpenIDLoginModule extends LoginModule {
 				super.getUsersPassword(); // TODO: No comments, only remove it.
 
 				return createPasswordHash(user, password, "storeDigestCallback");
-
-			} catch (AonConnectionException e) {
-				throw new FailedLoginException( e.getLocalizedMessage());
-			} catch (SQLException e) {
-				throw new FailedLoginException( e.getLocalizedMessage());
 			}
+			
+			else if(token != null) {
+				Integer domainId = getDomainId(domain);
+				String user = getUserName(domain, domainId, null, token);
+				String password = info[1];
+				super.getUsersPassword(); // TODO: No comments, only remove it.
+				return createPasswordHash(user, password, "storeDigestCallback");
+			}
+		} catch (AonConnectionException e) {
+			throw new FailedLoginException( e.getLocalizedMessage());
+		} catch (SQLException e) {
+			throw new FailedLoginException( e.getLocalizedMessage());
 		}
-		
+
 		return super.getUsersPassword();
 	}
 
 	// -------------------------------------
 
-	private String getUserName(String email, String domainName) throws AonConnectionException, SQLException{
-		
-		
+	private String getUserName(String domainName, Integer domainId, String email, String token) throws AonConnectionException, SQLException{
 		ResultSet rs = null;
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		try {
-			
-			
-		
-		String sql="SELECT U.login"
-				+ " FROM user AS U inner join mail_account AS MA ON (U.id = MA.user_id) inner join domain AS D ON (D.id=U.domain)"
-				+ " WHERE MA.email=? AND D.name = ?";
 
-		ConnectionInfo connectionInfo = ConnectionInfo.getDefaultConnectionInfo();
-		
-		Util util = new Util(connectionInfo);
-		util.createMetadataConnection();
-		Domain domain = util.getDomain(domainName);
-		connection = connectionInfo.getDomainConnection(domain.getDataBaseName());
-	
-		stmt = connection.prepareStatement(sql);
-		stmt.setString(1,email);
-		stmt.setString(2, domainName);
-		rs = stmt.executeQuery();
-		
-		return rs.next() ? rs.getString("login") : null;
-		
-		}finally {
-		
+
+			String sql="SELECT U.login"
+					+ " FROM user AS U inner join mail_account AS MA ON (U.id = MA.user_id) inner join domain AS D ON (D.id=U.domain OR D.parent = U.domain)"
+					+ " WHERE MA.email=? AND D.id = ?";
+
+			if(token != null) {
+				sql = "SELECT U.login"
+					+ " FROM user AS U inner join domain AS D ON (D.id=U.domain OR D.parent = U.domain)"
+					+ " WHERE U.auth=unhex(?) AND D.id = ?";
+			} 
+			
+			connection = AonDataSource.getInstance().getConnection(domainName);
+			
+			stmt = connection.prepareStatement(sql);
+
+			if(token != null) {
+				JSONObject json = decodeJWT(token);
+				String uuid = json.getString(UUID);
+				stmt.setString(1, uuid);
+			} else {
+				stmt.setString(1, email);
+			}
+
+			stmt.setInt(2, domainId);
+			rs = stmt.executeQuery();
+
+			return rs.next() ? rs.getString("login") : null;
+
+		} finally {
+
 			if (rs != null)
 				rs.close();
 			if (connection != null)
@@ -159,7 +181,37 @@ public class OpenIDLoginModule extends LoginModule {
 			if (stmt != null)
 				stmt.close();
 		}
-		
+	}
+	
+	private Integer getDomainId(String domainName) throws AonConnectionException, SQLException{
+		ResultSet rs = null;
+		Connection connection = null;
+		PreparedStatement stmt = null;
+		try {
+			connection = AonDataSource.getInstance().getConnection(domainName);
+			
+			String sql="SELECT D.id"
+					+ " FROM domain AS D"
+					+ " WHERE D.name = ?";
+
+			stmt = connection.prepareStatement(sql);
+			stmt.setString(1, domainName);
+			rs = stmt.executeQuery();
+			return rs.next() ? rs.getInt("id") : null;
+		} finally {
+
+			if (rs != null)
+				rs.close();
+			if (connection != null)
+				connection.close();
+			if (stmt != null)
+				stmt.close();
+		}
+	}
+	
+	public static JSONObject decodeJWT(String token) {
+		DecodedJWT jwt = JWT.decode(token);
+		return new JSONObject(jwt.getSubject());
 	}
 
 }
