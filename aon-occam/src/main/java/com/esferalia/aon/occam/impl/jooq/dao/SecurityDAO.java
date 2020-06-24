@@ -34,6 +34,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Record6;
 import org.jooq.impl.DSL;
 
@@ -94,17 +95,40 @@ public class SecurityDAO {
 
 	public static Auth getAuth(AONContext ctx, String email) {
 		return ctx.getDslContext()
-			.select(DSLExtensions.hex(AUTH.ID), AUTH.EMAIL)
+			.select(DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD)
 			.from(AUTH)
 			.where(AUTH.EMAIL.eq(email))
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 	
+	public static Integer[] getAuthDomains (AONContext ctx, byte[] auth) {
+		return ctx.getDslContext()
+			.select(USER.DOMAIN)
+			.from(USER)
+			.where(USER.AUTH.eq(auth))
+			.fetch().stream().map(r -> r.getValue(USER.DOMAIN)).toArray(Integer[]::new);
+	}
+
+	public static Integer[] getAuthScopes (AONContext ctx, byte[] auth) {
+		return ctx.getDslContext()
+			.select(USER_SCOPE.SCOPE)
+			.from(USER_SCOPE)
+			.where(USER_SCOPE.USER_ID.in(
+					ctx.getDslContext()
+						.select(USER.ID)
+						.from(USER)
+						.where(USER.AUTH.eq(auth))))
+			.fetch().stream().map(r -> r.getValue(USER_SCOPE.SCOPE)).toArray(Integer[]::new);
+	}
+
+	public static byte[] unHexUuid(AONContext ctx, String uuid) {
+		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().get();
+	}
+	
 	public static Auth insertAuth(AONContext ctx, Auth auth) {
 		String uuid = ctx.getDslContext().fetch("select uuid();").stream().map(r -> r.getValue(0).toString()).findFirst().get().replace("-", "");
-		byte[] id = ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().get();
 		ctx.getDslContext().insertInto(AUTH)
-			.set(AUTH.ID, id)
+			.set(AUTH.ID, unHexUuid(ctx, uuid))
 			.set(AUTH.EMAIL, auth.getEmail())
 			.set(AUTH.PASSWORD, auth.getPassword())
 			.execute();
@@ -186,13 +210,14 @@ public class SecurityDAO {
 		
 	}
 	
-	public static class AuthFiller  implements Function<Record2<String, String>,Auth> {
+	public static class AuthFiller  implements Function<Record3<String, String, String>,Auth> {
 
 		@Override
-		public Auth apply(Record2<String, String> record) {
+		public Auth apply(Record3<String, String, String> record) {
 			return new Auth()
 				.setUuid(record.value1())
-				.setEmail(record.value2());
+				.setEmail(record.getValue(AUTH.EMAIL))
+				.setPassword(record.getValue(AUTH.PASSWORD));
 		}
 		
 	}
@@ -218,8 +243,7 @@ public class SecurityDAO {
 	}
 	
 	public static User getUser(AONContext ctx, UserFilter filter) {
-		return USER_PROPERTIES.build(ctx.getDslContext().select().from(USER), filter)
-				.fetch().stream().map(new UserFiller()).findFirst().orElse(new User());
+		return getUserStream(ctx, filter).findFirst().orElse(new User());
 	}
 	
 	public static User getUser(AONContext ctx, String login) {
@@ -263,6 +287,13 @@ public class SecurityDAO {
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		return user;
+	}
+	
+	public static void assignAuthToUser(AONContext ctx, User user, byte[] auth) {
+		ctx.getDslContext().update(USER)
+			.set(USER.AUTH, auth)
+			.where(USER.ID.eq(user.getId()))
+			.execute();
 	}
 	
 	public static AonRole[] getUserRoles(AONContext ctx, Integer userId) {
