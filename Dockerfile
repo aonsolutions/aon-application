@@ -12,8 +12,8 @@ ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
 
 WORKDIR $TOMCAT_LIBDIR
 
-COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar
-COPY pool/target/pool-${AON_VERSION}.jar pool.jar
+COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar 
+COPY pool/target/pool-${AON_VERSION}.jar pool.jar 
 
 
 ENV SLF4J_API_URL=https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.8.0-beta2/slf4j-api-1.8.0-beta2.jar
@@ -28,13 +28,6 @@ ENV COMMONS_COLLECTIONS_URL=https://repo1.maven.org/maven2/commons-collections/c
 ENV IZENPESIGNER_APPLET=http://aonsolutions.github.io/aon-application/maven/2/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
 ENV DYNAMODB_SESSION_MANAGER=https://github.com/aws/aws-dynamodb-session-tomcat/releases/download/v2.0.4/aws-dynamodb-session-tomcat-2.0.4.jar
 
-ENV JAVA_JWT_URL=https://repo1.maven.org/maven2/com/auth0/java-jwt/3.9.0/java-jwt-3.9.0.jar
-ENV JACKSON_ANNOTATIONS_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.10.0.pr3/jackson-annotations-2.10.0.pr3.jar
-ENV JACKSON_CORE_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.10.0.pr3/jackson-core-2.10.0.pr3.jar
-ENV JACKSON_DATABIND_URL=https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.10.0.pr3/jackson-databind-2.10.0.pr3.jar
-ENV COMMONS_CODEC_URL=https://repo1.maven.org/maven2/commons-codec/commons-codec/1.9/commons-codec-1.9.jar
-ENV JSON_URL=https://repo1.maven.org/maven2/org/json/json/20180813/json-20180813.jar
-
 RUN set -x \
 	\
 	&& wget "$SLF4J_API_URL" \
@@ -44,15 +37,9 @@ RUN set -x \
 	&& wget "$COMMONS_LANG_URL" \
 	&& wget "$COMMONS_DBUTILS_URL" \
 	&& wget "$COMMONS_LOGGING_URL" \
-	&& wget "$MCHANGE_COMMONS_URL" \
+	&& wget "$MCHANGE_COMMONS_URL" \ 
 	&& wget "$COMMONS_COLLECTIONS_URL" \
-	&& wget "$DYNAMODB_SESSION_MANAGER" \
-	&& wget "$JAVA_JWT_URL" \
-	&& wget "$JACKSON_ANNOTATIONS_URL" \
-	&& wget "$JACKSON_CORE_URL" \
-	&& wget "$JACKSON_DATABIND_URL" \
-	&& wget "$COMMONS_CODEC_URL" \
-	&& wget "$JSON_URL"
+	&& wget "$DYNAMODB_SESSION_MANAGER"
 
 
 ENV TOMCAT_BINDIR $CATALINA_HOME/bin
@@ -62,7 +49,7 @@ ENV AON_AIO_COMMON /home/COMMON-RESOURCES
 
 
 WORKDIR $CATALINA_HOME/webapps
-
+ 
 RUN set -x \
 	&& rm -rf docs \
 	&& rm -rf ROOT \
@@ -79,7 +66,7 @@ COPY aon-common-resources/target/aon-common-resources-${AON_VERSION}-templates.j
 
 RUN set -x \
 	&& unzip aon-common-resources-templates.jar -x META-INF/* \
-	&& rm aon-common-resources-templates.jar
+	&& rm aon-common-resources-templates.jar 
 
 RUN mkdir -p "$AON_AIO_COMMON/aon-ui-sign"
 WORKDIR $AON_AIO_COMMON/aon-ui-sign
@@ -87,7 +74,7 @@ WORKDIR $AON_AIO_COMMON/aon-ui-sign
 RUN set -x \
 	&& wget $IZENPESIGNER_APPLET
 
-RUN ln -s izenpesigner-applet-*.jar izenpesigner-applet.jar
+RUN ln -s izenpesigner-applet-*.jar izenpesigner-applet.jar 
 
 RUN mkdir -p "$AON_AIO_HOME"
 WORKDIR $AON_AIO_HOME
@@ -97,7 +84,7 @@ COPY aon-web-aio/target/aon-aio.war aon-aio.war
 RUN set -x \
 	\
 	&& unzip aon-aio.war \
-	&& rm aon-aio.war
+	&& rm aon-aio.war 
 
 
 RUN mkdir -p "$AON_AIO_CONF"
@@ -124,3 +111,5 @@ ENV JAVA_OPTS="${JAVA_OPTS} -Duser.language=es -Duser.country=ES"
 ENV JAVA_OPTS="${JAVA_OPTS} -Djava.security.auth.login.config=${TOMCAT_CONFDIR}/login.config"
 
 CMD ["catalina.sh", "run"]
+	
+
