@@ -6,7 +6,6 @@ import java.util.List;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IOffice;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
-import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -15,23 +14,10 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.AonHubDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class OfficeImpl implements IOffice {
 	
 	// ----------------------------------------------------- SELECTS
-	
-	@Override
-	public User getUser(AONContext ctx, UserFilter filter) {
-		return ctx.getDslContext().transactionResult(
-				conf -> UserDAO.getUser(ctx, filter));		
-	}
-	
-	@Override
-	public User getUser(AONContext ctx, Integer id) {
-		return ctx.getDslContext().transactionResult(
-				conf -> UserDAO.getUser(ctx, id));		
-	}
 	
 	@Override
 	public List<User> getUsers(AONContext ctx) {		

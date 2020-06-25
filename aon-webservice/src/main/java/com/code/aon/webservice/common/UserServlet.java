@@ -60,7 +60,7 @@ public class UserServlet extends HttpServlet{
 		JSONArray arr = new JSONArray();
 		String fltr = "";
 	
-		AON.getUserStream(domain.getId(), domain.getName(), "", f -> userFilter(domain, req.getParameterMap(), f)).forEach(u -> {
+		AON.getUserStream(domain.getName(), domain.getId(), "", f -> userFilter(domain, req.getParameterMap(), f)).forEach(u -> {
 			arr.put(ToJSON.userToJSON(u));
 		});
 		

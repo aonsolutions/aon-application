@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
-import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
@@ -14,10 +13,6 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 
 public interface IOffice {
 
-	public User getUser(AONContext ctx, UserFilter filter);
-	
-	public User getUser(AONContext ctx, Integer id);
-	
 	public List<User> getUsers(AONContext ctx);
 					
 	public boolean deleteTag(AONContext ctx, String labelName);

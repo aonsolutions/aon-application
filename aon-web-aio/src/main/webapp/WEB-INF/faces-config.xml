@@ -50,6 +50,15 @@
 	   </managed-property>      	    				
 	</managed-bean>
 
+	<!--  **** EMAIL VERIFY CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>emailVerify</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.aio.controller.EmailVerifyController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  **** DESKTOP CONTROLLER **** -->
 	<managed-bean>
 		<managed-bean-name>desktop</managed-bean-name>

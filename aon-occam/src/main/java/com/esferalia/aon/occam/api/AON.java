@@ -2248,17 +2248,10 @@ public class AON {
 	
 	public static User getUser(Integer domainId, String domainName,
 			String userName, Integer userId) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, userName);
-			return getOffice().getUser(ctx, userId);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
+		return getUserStream(domainName, domainId, userName, f -> f.getIdProperty().eq(userId)).findFirst().orElse(new User());
 	}
 
-	public static Stream<User> getUserStream(Integer domainId, String domainName, String userName, UserFilter filter) {
+	public static Stream<User> getUserStream(String domainName, Integer domainId, String userName, UserFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, userName)){
 			return getSecurity().getUserStream(ctx, filter);
 		} 

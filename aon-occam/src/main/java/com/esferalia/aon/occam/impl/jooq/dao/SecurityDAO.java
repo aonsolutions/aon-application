@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record2;
 import org.jooq.Record3;
 import org.jooq.Record6;
 import org.jooq.impl.DSL;
@@ -231,7 +230,8 @@ public class SecurityDAO {
 				.setDomain(record.getValue(USER.DOMAIN))
 				.setLogin(record.getValue(USER.LOGIN))
 				.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)))
-				.setRegistry(record.getValue(USER.REGISTRY));
+				.setRegistry(record.getValue(USER.REGISTRY))
+				.setAuth(record.getValue(USER.AUTH));
 				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		

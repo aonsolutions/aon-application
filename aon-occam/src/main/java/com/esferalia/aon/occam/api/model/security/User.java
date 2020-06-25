@@ -16,6 +16,7 @@ public class User implements Serializable {
 	private boolean active;
 	private Integer registry;
 	private AonRole[] userRoles;
+	private byte[] auth;
 	
 	public Integer getId() {
 		return id;
@@ -66,6 +67,18 @@ public class User implements Serializable {
 		this.registry = registry;
 		return this;
 	}	
+	
+	public byte[] getAuth() {
+		return auth;
+	}
+	public User setAuth(byte[] auth) {
+		this.auth = auth;
+		return this;
+	}
+
+	public boolean hasAuth() {
+		return getAuth() != null;  
+	}
 	
 	public boolean hasAdminRole() {
 		return hasRole(AonRole.ADMIN);  

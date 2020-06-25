@@ -172,8 +172,8 @@ public class AonHubDAO {
 				notice.setId(record.getValue(NOTICE.ID));
 				notice.setDomain(record.getValue(NOTICE.DOMAIN));
 				notice.setStartDate(record.getValue(NOTICE.DATE));
-				User user = UserDAO.getUser(ctx,
-						record.getValue(NOTICE.SENDER));
+				User user = SecurityDAO.getUser(ctx, f -> 
+					f.getIdProperty().eq(record.getValue(NOTICE.SENDER)));
 				notice.setSender(user);
 				notice.setBody(record.getValue(NOTICE.SUBJECT));
 				comments.add(notice);
