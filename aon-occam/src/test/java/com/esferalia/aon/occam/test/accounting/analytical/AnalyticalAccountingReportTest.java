@@ -13,9 +13,9 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.model.AccountOperatingAccount;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountingAnalyticalColumn;
 import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
-import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport.AccountingAnalyticalColumn;
-import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport.AccountingAnalyticalStatement;
+import com.esferalia.aon.occam.api.model.AccountingAnalyticalStatement;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
 import com.esferalia.aon.occam.jooq.test.AbstractOccamTest;
@@ -64,7 +64,7 @@ public class AnalyticalAccountingReportTest extends AbstractOccamTest {
 			for (AccountingAnalyticalColumn column: report.getColumns() ) {
 				writer.write(
 					(column.isTotalColumn()?"":(AonStringUtils.leftPad( FMT.format(column.getPercent()) + "%", 7)) + pipe() ) + 
-					AonStringUtils.center((column.getName() + (column.isDefaultColumn()?"*":"")), 15) + pipe());
+					AonStringUtils.center((column.getName() + (column.isMain()?"*":"")), 15) + pipe());
 			}
 			writer.write("\n");
 			writer.write(line());

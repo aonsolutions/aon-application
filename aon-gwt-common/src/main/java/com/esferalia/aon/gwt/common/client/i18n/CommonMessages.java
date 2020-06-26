@@ -3748,6 +3748,21 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Centro de costo")
 	String costCenter();
 	
+	@DefaultMessage("Centro de costo por defecto")
+	String defaultMainCostCenter();
+	
+	@DefaultMessage("A\u00F1adir centro de costo")
+	String addCostCenter();
+
+	@DefaultMessage("\u00BFDesea borrar centro de costo?")
+	String confirmRemoveCostCenter();
+
+	@DefaultMessage("Editar centro de costo")
+	String editCostCenter();
+
+	@DefaultMessage("Borrar centro de costo")
+	String removeCostCenter();
+
 	@DefaultMessage("M\u00E1s recientes primero")
 	String newersFirst();
 
@@ -3807,6 +3822,8 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("R.E.")
 	String re();
-	
+
+	@DefaultMessage("Click para modificar")
+	String clickToUpdate();
 }
 

@@ -84,7 +84,6 @@ public interface FiscalService extends RemoteService {
 	// --------------------------------------------------------------- ACCOUNT BALANCE
 	AccountBalanceReport getAccountBalanceReport(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
 
-
 	LinkedList<Finance> getAccountFinances(String domainName, int domain, FinanceParams params, int offset,
 			int limit) throws AonCoreException;
 	FinanceEntry getFinanceEntry(String domainName, int domain, Integer accountEntry) throws AonCoreException;

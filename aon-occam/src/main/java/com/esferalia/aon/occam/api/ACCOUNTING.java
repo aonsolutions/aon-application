@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
+import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -29,6 +30,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -858,6 +860,42 @@ public class ACCOUNTING {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return  getAccounting().getBalanceReport(ctx, params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccountingAnalyticalReport getAccountAnalyticalReport(String domainName, String user, int domain,
+			AccountingReportParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return  getAccounting().getAccountAnalyticalReport(ctx, params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccountingAnalyticalReport getAccountAnalyticalReport(String domainName, String user, int domain,
+			AccountingReportParams params, Analytical analytical) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return  getAccounting().getAccountAnalyticalReport(ctx, params, analytical);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static AccountingAnalyticalReport saveAnalyticConfiguration(String domainName, String user, int domain, AccountingReportParams params, Analytical analytical) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			analytical = getAccounting().saveAnalyticConfiguration(ctx,analytical);
+			return getAccounting().getAccountAnalyticalReport(ctx, params, analytical);
 		} finally {
 			if (ctx != null)
 				ctx.close();

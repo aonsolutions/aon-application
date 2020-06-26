@@ -116,6 +116,19 @@ public class AonMathUtils {
 	}
 
 	/**
+	 * Devuelve verdadero si el valor es menor que valueToCompare 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @param threshold
+	 *            el valor a comparar
+	 * @return boolean verdadero si el value es menor threshold.
+	 */
+	public static boolean isLessThan(double value,double threshold) {
+		return round( value ) < threshold;
+	}
+
+	/**
 	 * Devuelve verdadero si el valor es mayor a cero. 
 	 * 
 	 * @param value
@@ -124,6 +137,19 @@ public class AonMathUtils {
 	 */
 	public static boolean isGreatherThanZero(double value) {
 		return round( value ) > 0.0;
+	}
+
+	/**
+	 * Devuelve verdadero si el valor es mayor que valueToCompare 
+	 * 
+	 * @param value
+	 *            el valor a evaluar
+	 * @param threshold
+	 *            el valor a comparar
+	 * @return boolean verdadero si el value es mayor threshold.
+	 */
+	public static boolean isGreatherThan(double value,double threshold) {
+		return round( value ) > threshold;
 	}
 
 	/**

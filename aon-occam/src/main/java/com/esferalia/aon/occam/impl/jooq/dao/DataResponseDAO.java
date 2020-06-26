@@ -90,17 +90,30 @@ public class DataResponseDAO {
 			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());
 	}
 	
+	public static DataResponseDetail getLastDataResponseDetail(AONContext ctx, Integer dataResponseId){
+		return ctx.getDslContext()
+			.select().from(DATA_RESPONSE_DETAIL)
+			.where(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(dataResponseId))
+			.orderBy(DATA_RESPONSE_DETAIL.ID.desc())
+			.limit(1)
+			.fetchInto(DATA_RESPONSE_DETAIL)
+			.stream()
+			.map(new DataResponseDetailFiller())
+			.findFirst()
+			.orElse(null);
+	}
+
 	public static DataResponseDetail insertDataResponseDetail(AONContext ctx, DataResponseDetail dataResponseDetail){	
 		return ctx.getDslContext().insertInto(DATA_RESPONSE_DETAIL, DATA_RESPONSE_DETAIL.DOMAIN,
 				DATA_RESPONSE_DETAIL.DATA_RESPONSE, DATA_RESPONSE_DETAIL.DATA_VARIABLE, DATA_RESPONSE_DETAIL.DATA_VALUE, 
-				DATA_RESPONSE.CREATION_DATE, DATA_RESPONSE.CREATION_USER,
-				DATA_RESPONSE.MODIFICATION_DATE, DATA_RESPONSE.MODIFICATION_USER)
+				DATA_RESPONSE_DETAIL.CREATION_DATE, DATA_RESPONSE_DETAIL.CREATION_USER,
+				DATA_RESPONSE_DETAIL.MODIFICATION_DATE, DATA_RESPONSE_DETAIL.MODIFICATION_USER)
 		.values(dataResponseDetail.getDomain(), dataResponseDetail.getDataResponse(),
 				dataResponseDetail.getDataVariable(), dataResponseDetail.getDataValue(),
 				AonDateUtils.toTimestamp(new Date()), ctx.getUser(), AonDateUtils.toTimestamp(new Date()), ctx.getUser())
 		.returning().fetch().stream().map(new DataResponseDetailFiller()).findFirst().orElse(dataResponseDetail);
 	}
-	
+
 	public static DataResponseDetail updateDataResponseDetail(AONContext ctx, DataResponseDetail dataResponseDetail, DataResponseDetailFilter filter){	
 		ctx.getDslContext().update(DATA_RESPONSE_DETAIL)
 			.set(DATA_RESPONSE_DETAIL.DATA_RESPONSE, dataResponseDetail.getDataResponse())

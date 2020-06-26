@@ -102,9 +102,8 @@ public interface FiscalServiceAsync {
 	void getAccountBalanceReport(String domainName, String user, int domain
 			,AccountingReportParams params
 			,AsyncCallback<AccountBalanceReport> callback) throws AonCoreException;
-	
 
-	
+
 	void getAccountFinances(String domainName, int domain,
 			FinanceParams params,int offset, int limit,
 			AsyncCallback<LinkedList<Finance>> callback);

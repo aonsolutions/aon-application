@@ -8,7 +8,7 @@
 
 package com.esferalia.aon.occam.impl.jooq.dao.accounting.analytical;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -68,7 +68,7 @@ public class JAXBAnalyticalAccounts {
      */
     public List<JAXBAnalyticalAccount> getAccount() {
         if (account == null) {
-            account = new ArrayList<JAXBAnalyticalAccount>();
+            account = new LinkedList<JAXBAnalyticalAccount>();
         }
         return this.account;
     }

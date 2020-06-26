@@ -1,156 +1,31 @@
 package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
-import com.esferalia.aon.occam.api.model.AccountOperatingReport.AccountOperatingStatementType;
 import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
+import com.esferalia.aon.occam.api.model.accounting.analytical.AnalyticalAccount;
+import com.esferalia.aon.occam.api.model.accounting.analytical.AnalyticalCostCenter;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingAnalyticalReport implements Serializable {
 
 	private static final long serialVersionUID = -3452585307541273807L;
+	private static final Logger LOGGER = Logger.getLogger(AccountingAnalyticalReport.class.getName());  
 	
-	/**
-	 * @author ecastellano
-	 *
-	 */
-	/**
-	 * @author ecastellano
-	 *
-	 */
-	public static class AccountingAnalyticalColumn implements Serializable, Comparable<AccountingAnalyticalColumn> {
-
-		private static final long serialVersionUID = 3412611142698585498L;
-		
-		private String name;
-		private double percent;
-		private boolean totalColumn;
-		private boolean defaultColumn;
-
-		public String getName() {
-			return name;
-		}
-		public AccountingAnalyticalColumn setName(String name) {
-			this.name = name;
-			return this;
-		}
-		public double getPercent() {
-			return percent;
-		}
-		public AccountingAnalyticalColumn setPercent(double percent) {
-			this.percent = percent;
-			return this;
-		}
-		
-		public boolean isTotalColumn() {
-			return totalColumn;
-		}
-		public AccountingAnalyticalColumn setTotalColumn(boolean totalColumn) {
-			this.totalColumn = totalColumn;
-			return this;
-		}
-		public boolean isDefaultColumn() {
-			return defaultColumn;
-		}
-		public AccountingAnalyticalColumn setDefaultColumn(boolean defaultColumn) {
-			this.defaultColumn = defaultColumn;
-			return this;
-		}
-		@Override
-		public int compareTo(AccountingAnalyticalColumn other) {
-			return AonStringUtils.compare(getName(), other.getName());
-		}
-	}
-	
-	public static class AccountingAnalyticalStatement implements Serializable, Cloneable {
-
-		private static final long serialVersionUID = -1037494768508954210L;
-		
-		private AccountOperatingAccount account; 
-		private double debit;
-		private double credit;
-		private double percent;
-
-		protected AccountingAnalyticalStatement clone() {
-			return new AccountingAnalyticalStatement()
-					.setAccount( getAccount().clone())
-					.setDebit(debit)
-					.setCredit(credit)
-					.setPercent(percent)
-					;
-		}
-		public boolean isCalculated() {
-			return getAccount() != null && getAccount().getType() != null && getAccount().getType().isCalculated();
-		}
-		public boolean modifies() {
-			return getAccount() != null && getAccount().getType() != null && getAccount().getType().modifies() != null;
-		}
-		
-		public AccountOperatingAccount getAccount() {
-			return account;
-		}
-		public AccountingAnalyticalStatement setAccount(AccountOperatingAccount account) {
-			this.account = account;
-			return this;
-		}
-		
-		public double getDebit() {
-			return debit;
-		}
-		public AccountingAnalyticalStatement setDebit(double debit) {
-			this.debit = debit;
-			return this;
-		}
-
-		public double getCredit() {
-			return credit;
-		}
-		public AccountingAnalyticalStatement setCredit(double credit) {
-			this.credit = credit;
-			return this;
-		}
-		
-		public double getPercent() {
-			return percent;
-		}
-		public AccountingAnalyticalStatement setPercent(double percent) {
-			this.percent = percent;
-			return this;
-		}
-
-		public double getBalance() {
-			return AonMathUtils.round( credit - debit);
-		}
-		public double getAmount() {
-			return AonMathUtils.round( (credit - debit) * percent / 100);
-		}
-		public double getPercentDebit() {
-			return AonMathUtils.round( debit * percent / 100);
-		}
-		public double getPercentCredit() {
-			return AonMathUtils.round( credit * percent / 100);
-		}
-
-		public double getDebitBalance() {
-			double d = AonMathUtils.round( debit - credit);
-			return d>0?d:0.0;
-		}
-		
-		public double getUnpaidBalance() {
-			double d = AonMathUtils.round( credit - debit);
-			return d>0?d:0.0;
-		}
-	}
 	private AccountingReportParams params;
 	private Analytical analytical;
 	private TreeSet<AccountOperatingAccount> accounts = new TreeSet<AccountOperatingAccount>();
-	
-	private TreeSet<AccountingAnalyticalColumn> columns = new TreeSet<AccountingAnalyticalColumn>();
+	private LinkedHashSet<AccountingAnalyticalColumn> columns = new LinkedHashSet<AccountingAnalyticalColumn>();
 	private TreeMap<String, TreeMap<AccountingAnalyticalColumn, AccountingAnalyticalStatement>> map = 
 			new TreeMap<String, TreeMap<AccountingAnalyticalColumn, AccountingAnalyticalStatement>>();
+	
+	public AccountingAnalyticalReport() {
+		super();
+	}
 	
 	public AccountingReportParams getParams() {
 		return params;
@@ -175,10 +50,9 @@ public class AccountingAnalyticalReport implements Serializable {
 		return this;
 	}
 	
-	public TreeSet<AccountingAnalyticalColumn> getColumns() {
+	public LinkedHashSet<AccountingAnalyticalColumn> getColumns() {
 		return columns;
 	}
-
 	public void ensureColumn(AccountingAnalyticalColumn column) {
 		if (column != null && !columns.contains(column)) {
 			columns.add(column);
@@ -195,7 +69,14 @@ public class AccountingAnalyticalReport implements Serializable {
 		}
 		return account.getCode();
 	}
-
+	public AccountingAnalyticalStatement get(String accountCode, String columnName) {
+		for ( AccountingAnalyticalColumn column : getColumns()) {
+			if ( columnName != null && columnName.equals(column.getName())) {
+				return get(accountCode,column); 
+			}
+		}
+		return null;
+	}
 	public AccountingAnalyticalStatement get(String accountCode, AccountingAnalyticalColumn column) {
 		if (map.containsKey(accountCode)) {
 			return map.get(accountCode).get(column);
@@ -208,48 +89,55 @@ public class AccountingAnalyticalReport implements Serializable {
 		ensureColumn( column);
 		AccountingAnalyticalStatement exist = map.get(code).get(column);
 		if ( exist == null) {
-			map.get(code).put(column, aas.clone());
+			map.get(code).put(column, aas.duplicate());
 		} else {
 			exist.setDebit( AonMathUtils.round(exist.getDebit() + aas.getDebit() ));
 			exist.setCredit( AonMathUtils.round(exist.getCredit() + aas.getCredit() ));
 		}
-//		AccountOperatingStatementType modifies = aas.getAccount().getType().modifies();
-//		if (modifies != null) {
-//			AccountingAnalyticalStatement total = new  AccountingAnalyticalStatement()
-//				.setAccount(new AccountOperatingAccount()
-//					.setType(modifies)
-//					.setCode(modifies.toString())
-//					.setDescription(modifies.getDescription()))
-//				.setDebit(aas.getDebit())
-//				.setCredit(aas.getCredit())
-//				.setPercent(-1);
-//			put(column, total);
-//		}
 	}
 	
 	public boolean isEmpty() {
 		return getAccounts().size() == 0;
 	}
 	
-	public void calculate() {
-		for (AccountOperatingAccount account : getAccounts() ) {
-			for (AccountingAnalyticalColumn column : getColumns() ) {
-				AccountingAnalyticalStatement aas = get(account.getCode(), column);
-				if (aas != null && aas.modifies()) {
-					AccountOperatingStatementType modifies = aas.getAccount().getType().modifies();
-					if (modifies != null) {
-						AccountingAnalyticalStatement total = new  AccountingAnalyticalStatement()
-								.setAccount(new AccountOperatingAccount()
-										.setType(modifies)
-										.setCode(modifies.toString())
-										.setDescription(modifies.getDescription()))
-								.setDebit((aas.isCalculated() || column.isTotalColumn())?aas.getDebit():aas.getPercentDebit())
-								.setCredit((aas.isCalculated() || column.isTotalColumn())?aas.getCredit():aas.getPercentCredit())
-								.setPercent(-1);
-						put(column, total);
-					}
+	public void updatePercent(AccountingAnalyticalColumn column, AccountOperatingAccount account, Double value) {
+		if (account == null) {
+			column.setPercent(value);
+			getAnalytical().getCostCenters().get(column.getName()).setPercent(value);
+			double sum = 0.0;
+			for ( AnalyticalCostCenter ccc : getAnalytical().getCostCenters().values() ) {
+				sum = AonMathUtils.round(sum + (ccc.isMain()?0.0:ccc.getPercent()));
+			}
+			sum = AonMathUtils.round( 100 - sum );
+			AnalyticalCostCenter defAnalyticalCostCenter = getAnalytical().getCostCenters().get( getAnalytical().getDefaultCostCenter() );
+			defAnalyticalCostCenter.setPercent(sum);
+		} else {
+			get(account.getCode(), column).setPercent(value);
+			ensureConfig(account.getCode(), column.getName()).setPercent(value);
+			double sum = 0.0;
+			for ( AccountingAnalyticalColumn col : getColumns() ) {
+				if (!col.isTotalColumn()) {
+					AccountingAnalyticalStatement aas = get(account.getCode(), col);
+					LOGGER.info (aas==null?"NULL":"NOT NULL");
+					sum = AonMathUtils.round(sum + (col.isMain()?0.0:aas.getPercent()));
+					LOGGER.info( "["+account.getCode()+"],["+col.getName()+"] ---> " + sum + " (" + (col.isMain()?0.0:aas.getPercent()) + ")");
+					ensureConfig(account.getCode(), col.getName()).setPercent(aas.getPercent());
 				}
 			}
+			sum = AonMathUtils.round( 100 - sum );
+			AccountingAnalyticalStatement defAas =  get(account.getCode(), getAnalytical().getDefaultCostCenter());
+			defAas.setPercent(sum);
+			ensureConfig(account.getCode(), getAnalytical().getDefaultCostCenter()).setPercent(sum);
 		}
 	}
+
+	private AnalyticalAccount ensureConfig(String account, String column) {
+		AnalyticalAccount acc = getAnalytical().getCostCenters().get(column).getAccounts().get(account);
+		if (acc == null) {
+			acc = new AnalyticalAccount().setCode(account);
+			getAnalytical().getCostCenters().get(column).getAccounts().put(account, acc);	
+		}
+		return acc;
+	}
+	
 }

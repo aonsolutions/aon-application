@@ -145,6 +145,10 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/operatingStatement.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_accountAnalyticStatement</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/analyticStatement.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_accountTrialBalance</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/trialBalance.xhtml</to-view-id>
 		</navigation-case>

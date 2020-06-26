@@ -440,7 +440,6 @@ public class AccountStatementDAO {
 						.setEnd(params.getToDate())
 						.setName(ap.getName());
 				map.put(inter,params);
-				System.out.println( inter.getName() + " -->  from " + inter.getStart() + "    to    " + inter.getEnd());
 			} else if (map.size() > 0 && params.getPreviousPeriods() >= map.size() ) {
 				AccountingReportParams cloned = params.clone();
 				cloned.setPeriod(ap.getId());
@@ -451,7 +450,6 @@ public class AccountStatementDAO {
 						.setStart(cloned.getFromDate())
 						.setEnd(cloned.getToDate())
 						.setName(ap.getName());
-				System.out.println( inter.getName() + " -->  from " + inter.getStart() + "    to    " + inter.getEnd());				
 				map.put(inter,cloned);
 			}
 		}

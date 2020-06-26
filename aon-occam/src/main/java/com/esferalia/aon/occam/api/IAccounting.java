@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
+import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -122,6 +124,11 @@ public interface IAccounting {
 	public AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx);
 	public AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year);
 	public boolean isUndeductibleInvoice(AONContext ctx, Integer id);
+	
+	// ANALYTIC ACCOUNTING	
+	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
+	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params, Analytical analytical) throws AonCoreException;
+	public Analytical saveAnalyticConfiguration(AONContext ctx, Analytical analytical);
 	
 	
 	

@@ -46,6 +46,9 @@ public class ANALYTICAL {
 						.setMain(jaxbCostCenter.isDefault())
 						.setPercent(jaxbCostCenter.getPercent())
 						.setName(jaxbCostCenter.getName());
+				if (jaxbCostCenter.isDefault()) {
+					analytical.setDefaultCostCenter(jaxbCostCenter.getName());
+				}
 				JAXBAnalyticalAccounts jaxbAccounts = jaxbCostCenter.getAccounts();
 				if (jaxbAccounts != null) {
 					for (JAXBAnalyticalAccount jaxbAccount : jaxbAccounts.getAccount()) {

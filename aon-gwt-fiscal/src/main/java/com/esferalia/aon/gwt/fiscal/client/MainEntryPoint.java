@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountAnalyticalReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountConsolidatedBalanceReport;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
@@ -88,6 +89,7 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_LEDGER_REPORT_ENTRY_POINT = "LedgerReportModule";
 	private static final String ACC_STATEMENT_REPORT_ENTRY_POINT = "StatementReportModule";
 	private static final String ACC_OPERATING_REPORT_ENTRY_POINT = "AccountOperatingReport";
+	private static final String ACC_ANALYTICAL_REPORT_ENTRY_POINT = "AccountAnalyticalReport";
 	private static final String ACC_TRIAL_BALANCE_REPORT_ENTRY_POINT = "AccountTrialBalanceReport";
 	private static final String ACC_OPERATION_ENTRY_POINT = "OperationReport";
 	private static final String ACC_ACCOUNT_ENTRY_ENTRY_POINT = "AccountEntryModule";
@@ -600,6 +602,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					AccountOperatingReport accountOperatingStatementReport = new AccountOperatingReport();
 					accountOperatingStatementReport.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(ACC_ANALYTICAL_REPORT_ENTRY_POINT)) {
+			GWT.runAsync(AccountAnalyticalReport.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					AccountAnalyticalReport accountAnalyticalReport = new AccountAnalyticalReport();
+					accountAnalyticalReport.onModuleLoad();
 				}
 				
 			});

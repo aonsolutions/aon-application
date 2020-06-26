@@ -1,12 +1,15 @@
 package com.esferalia.aon.occam.api.model.accounting.analytical;
 
-import java.util.TreeMap;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
 
-public class Analytical {
+public class Analytical implements Serializable {
 
+	private static final long serialVersionUID = 3481819751297188336L;
+	
 	private String name;
 	private String defaultCostCenter;
-	private TreeMap<String, AnalyticalCostCenter> costCenters;
+	private LinkedHashMap<String, AnalyticalCostCenter> costCenters;
 	
 	public String getName() {
 		return name;
@@ -16,14 +19,14 @@ public class Analytical {
 		return this;
 	}
 	
-	public TreeMap<String, AnalyticalCostCenter> getCostCenters() {
+	public LinkedHashMap<String, AnalyticalCostCenter> getCostCenters() {
 		if (costCenters == null) {
-			setCostCenters(new TreeMap<String, AnalyticalCostCenter>());
+			setCostCenters(new LinkedHashMap<String, AnalyticalCostCenter>());
 		}
 		return costCenters;
 	}
 
-	public Analytical setCostCenters(TreeMap<String, AnalyticalCostCenter> costCenters) {
+	public Analytical setCostCenters(LinkedHashMap<String, AnalyticalCostCenter> costCenters) {
 		this.costCenters = costCenters;
 		return this;
 	}
@@ -38,6 +41,9 @@ public class Analytical {
 	}
 	public void add(AnalyticalCostCenter costCenter) {
 		getCostCenters().put(costCenter.getName(), costCenter);
+	}
+	public void remove(String costCenterName) {
+		getCostCenters().remove(costCenterName);
 	}
 
 }

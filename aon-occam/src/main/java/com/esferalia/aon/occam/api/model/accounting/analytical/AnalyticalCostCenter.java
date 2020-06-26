@@ -1,8 +1,11 @@
 package com.esferalia.aon.occam.api.model.accounting.analytical;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class AnalyticalCostCenter {
+public class AnalyticalCostCenter implements Serializable {
+	
+	private static final long serialVersionUID = 4411510092968918129L;
 	
 	private String name;
 	private double percent;

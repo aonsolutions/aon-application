@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	AnalyticalAccountingSaveTest.class,
+	AnalyticalAccountingCreateTest.class,
 	AnalyticalAccountingGetTest.class,
 	AnalyticalAccountingReportTest.class,
 })

@@ -8,8 +8,9 @@
 
 package com.esferalia.aon.occam.impl.jooq.dao.accounting.analytical;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -72,7 +73,7 @@ public class JAXBAnalyticalConfiguration {
      */
     public List<JAXBAnalyticalCostCenter> getCostCenter() {
         if (costCenter == null) {
-            costCenter = new ArrayList<JAXBAnalyticalCostCenter>();
+            costCenter = new LinkedList<JAXBAnalyticalCostCenter>();
         }
         return this.costCenter;
     }

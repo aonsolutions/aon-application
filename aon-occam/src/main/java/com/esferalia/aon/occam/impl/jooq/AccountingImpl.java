@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
+import com.esferalia.aon.occam.api.model.AccountingAnalyticalReport;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Filter.AccountEntryFilter;
@@ -31,6 +32,7 @@ import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.accounting.AccMiningParameters;
 import com.esferalia.aon.occam.api.model.accounting.AccountBalance;
+import com.esferalia.aon.occam.api.model.accounting.analytical.Analytical;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -47,6 +49,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountStatementDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountingUtilitiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.AnalyticalAccountingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceEntryDAO;
@@ -496,5 +499,22 @@ public class AccountingImpl implements IAccounting {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.regenerateInputVat(ctx,year)
 			 );		
+	}
+	
+	// ANALYTIC ACCOUNTING	
+	@Override
+	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params) throws AonCoreException {
+		return AnalyticalAccountingDAO.analyticalReport(ctx, params);
+	}
+	@Override
+	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params,
+			Analytical analytical) throws AonCoreException {
+		return AnalyticalAccountingDAO.analyticalReport(ctx, params,analytical);
+	}
+	@Override
+	public Analytical saveAnalyticConfiguration(AONContext ctx, Analytical analytical) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AnalyticalAccountingDAO.save(ctx,analytical)
+		 );		
 	}
 }

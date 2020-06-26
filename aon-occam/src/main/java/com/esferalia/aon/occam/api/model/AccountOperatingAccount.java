@@ -15,6 +15,10 @@ public class AccountOperatingAccount implements Serializable, Comparable<Account
 	private String code;
 	private String description;
 	
+	public AccountOperatingAccount() {
+		
+	}
+	
 	public AccountOperatingAccount clone() {
 		return new AccountOperatingAccount()
 				.setType(getType())
