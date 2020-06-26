@@ -40,7 +40,7 @@ public class AnalyticalCostCenterPanel extends SimplePanel implements Focusable 
 		
 		boolean isNew = (cc==null);
 		AnalyticalCostCenter costCenter = cc==null?new AnalyticalCostCenter().setMain(true):cc;
-		originalName = cc.getName();
+		originalName = costCenter.getName();
 		FlowPanel rootPanel = new FlowPanel();
 		
 		final ErrorPanel errorPanel = new ErrorPanel();
@@ -131,32 +131,35 @@ public class AnalyticalCostCenterPanel extends SimplePanel implements Focusable 
 			}
 		});
     	buttons.add(cancelButton);
+
+    	if (!isNew) {
+    		final Button removeButton = new Button();
+    		removeButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
+    		removeButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    		removeButton.setText( AON.MSG.deleteAction());
+    		removeButton.addKeyUpHandler( keyUpHandler);
+    		removeButton.addClickHandler(new ClickHandler() {
+    			
+    			@Override
+    			public void onClick(ClickEvent event) {
+    				removeButton.setEnabled(false);
+    				ConfirmDialog cd = new ConfirmDialog();
+    				cd.confirm(AON.MSG.confirmRemoveCostCenter(), new ConfirmDialogCallback() {
+    					
+    					@Override
+    					public void onCancel() {
+    					}
+    					
+    					@Override
+    					public void onAccept() {
+    						callback.onRemove(costCenter);
+    					}
+    				});
+    			}
+    		});
+    		buttons.add(removeButton);
+    	}
     	
-    	final Button removeButton = new Button();
-    	removeButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-    	removeButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-    	removeButton.setText( AON.MSG.deleteAction());
-    	removeButton.addKeyUpHandler( keyUpHandler);
-    	removeButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				removeButton.setEnabled(false);
-		    	ConfirmDialog cd = new ConfirmDialog();
-				cd.confirm(AON.MSG.confirmRemoveCostCenter(), new ConfirmDialogCallback() {
-
-					@Override
-					public void onCancel() {
-					}
-
-					@Override
-					public void onAccept() {
-						callback.onRemove(costCenter);
-					}
-				});
-			}
-		});
-    	buttons.add(removeButton);
     	rootPanel.add(buttons);
 		setWidget(rootPanel);
 	}
