@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -27,6 +26,7 @@ public class MainCRAObjectNew {
 	private HashMap<Integer, String> enterprisesMap;
 	
 	private List<CRA> allCRAs;
+	private List<CRA> filterCRAs;
 	private List<CRA> cras;
 	private List<CRA> crasRectif;
 	
@@ -40,8 +40,10 @@ public class MainCRAObjectNew {
 		this.enterprisesMap = new HashMap<Integer, String>();
 		
 		this.allCRAs = new ArrayList<CRA>();
+		this.filterCRAs = new ArrayList<CRA>();
 		this.cras = new ArrayList<CRA>();
 		this.crasRectif = new ArrayList<CRA>();
+		
 	}
 	
 	public void getEnterpriseCCCs(Consumer<List<Enterprise>> success, Consumer<Throwable> failure){
@@ -143,8 +145,8 @@ public class MainCRAObjectNew {
 				Integer activityId = activity.getId();
 				String activityDescription = activity.getDescription();
 				for(CCC ccc : activity.getCccs()) {
-					if(ccc.getEmployees().isEmpty())
-						continue;
+//					if(ccc.getEmployees().isEmpty())
+//						continue;
 					
 					CCCInfo cccInfo = new CCCInfo();
 					cccInfo.setCccId(ccc.getId());
@@ -153,6 +155,7 @@ public class MainCRAObjectNew {
 					cccInfo.setCccRegimeCode(ccc.getRegime());
 					cccInfo.setTypeStr(ccc.getRegime());
 					cccInfo.setGeozone(ccc.getGeozone());
+					cccInfo.setType(ccc.getType());
 					cccInfo.setActivityId(activityId);
 					cccInfo.setActivityDescription(activityDescription);
 					cccInfo.setUseByContracts(ccc.getEmployees().isEmpty() ? false : true);
@@ -215,38 +218,46 @@ public class MainCRAObjectNew {
 
 	}
 
-	public void filterEnterpriseCCCListByType(String type) {
-		List<CCCInfo> newEnterpriseCCCs = new ArrayList<CCCInfo>();
-		for(CCCInfo cccInfo : getEnterpriseCCCs().size() != 0 ? getEnterpriseCCCs() : this.allEnterpriseCCCs) {
-			if(cccInfo.getTypeStr().equals(type) || cccInfo.getTypeStr() == type) {
-				newEnterpriseCCCs.add(cccInfo);
+	public void filterCRAsListByType(Byte type) {
+		List<CRA> newCRAs = new ArrayList<CRA>();
+		
+		for(CRA cra : filterCRAs.size() != 0 ? filterCRAs : allCRAs) {
+			if(cra.getCccType() == type || cra.getCccType().equals(type)) {
+				newCRAs.add(cra);
 			}
 		}
 		
-		setEnterpriseCCCs(newEnterpriseCCCs);
+		filterCRAs = newCRAs;
 	}
 	
-	public void filterEnterpriseCCCListByGeozone(String geozone) {
-		List<CCCInfo> newEnterpriseCCCs = new ArrayList<CCCInfo>();
-		for(CCCInfo cccInfo : getEnterpriseCCCs().size() != 0 ? getEnterpriseCCCs() : this.allEnterpriseCCCs) {
-			if(cccInfo.getGeozone().equals(geozone) || cccInfo.getGeozone() == geozone) {
-				newEnterpriseCCCs.add(cccInfo);
+	public void filterCRAListByGeozone(String geozone) {
+		List<CRA> newCRAs = new ArrayList<CRA>();
+		
+		for(CRA cra : filterCRAs.size() != 0 ? filterCRAs : allCRAs) {
+			if(cra.getCccProvince() == geozone || cra.getCccProvince().equals(geozone)) {
+				newCRAs.add(cra);
 			}
 		}
 		
-		setEnterpriseCCCs(newEnterpriseCCCs);
+		filterCRAs = newCRAs;
 	}
 
 	public void resetEnterpriseCCCList() {
 		this.enterpriseCCCs = allEnterpriseCCCs;
 	}
 	
+	public void resetCRAsList() {
+		this.filterCRAs = allCRAs;
+	}
+	
 	private void initCRAs(List<CRA> dbCRAs) {
 		this.allCRAs.clear();
+		this.filterCRAs.clear();
 		this.cras.clear();
 		this.crasRectif.clear();
 		
 		this.allCRAs.addAll(dbCRAs);
+		this.filterCRAs.addAll(dbCRAs);
 		
 		for(CRA cra : dbCRAs){
 			if(cra.getType() == "N") {
@@ -260,6 +271,10 @@ public class MainCRAObjectNew {
 	public List<CRA> getAllCRAs() {
 		return allCRAs;
 	}
+	
+	public List<CRA> getFilteredCRAs() {
+		return filterCRAs;
+	}
 
 	public List<CRA> getCras() {
 		return cras;
@@ -268,17 +283,27 @@ public class MainCRAObjectNew {
 	public List<CRA> getCrasRectif() {
 		return crasRectif;
 	}
-
-	public List<Integer> getEnterprisesIds(String pattern) {
-		List<Integer> ids = new ArrayList<Integer>();
-		
-		for(CCCInfo cccInfo : this.allEnterpriseCCCs) {
-			if(StringUtils.containsIgnoreCase(cccInfo.getEnterpriseDesciption(), pattern))
-				ids.add(cccInfo.getEnterpriseId());
+	
+	public void filterCrasByDates(Date startDate, Date endDate) {
+		List<CRA> newCRAs = new ArrayList<CRA>();
+		for(CRA cra : filterCRAs.size() != 0 ? filterCRAs : allCRAs) {
+			if( (cra.getDate().after(startDate) || cra.getDate().equals(startDate)) &&
+				(cra.getDate().before(endDate) || cra.getDate().equals(endDate)) ) {
+				newCRAs.add(cra);
+			}
 		}
-		return ids;
+		
+		filterCRAs = newCRAs;
 	}
-	
-	
+
+//	public List<Integer> getEnterprisesIds(String pattern) {
+//		List<Integer> ids = new ArrayList<Integer>();
+//		
+//		for(CCCInfo cccInfo : this.allEnterpriseCCCs) {
+//			if(StringUtils.containsIgnoreCase(cccInfo.getEnterpriseDesciption(), pattern))
+//				ids.add(cccInfo.getEnterpriseId());
+//		}
+//		return ids;
+//	}
 		
 }

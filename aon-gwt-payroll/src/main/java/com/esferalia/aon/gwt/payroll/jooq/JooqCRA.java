@@ -120,7 +120,7 @@ public class JooqCRA {
 						.fetchOne();
 				
 				cra.setCcc(getCCCType(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)) + enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC));
-				cra.setCccType(getCCCTypeName(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE)));
+				cra.setCccType(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
 				
 				String geozone = dslContext.select(GEOZONE.NAME).from(GEOZONE)
 						.where(GEOZONE.ID.eq(enterpriseCCCRecord.get(ENTERPRISE_CCC.GEOZONE)))

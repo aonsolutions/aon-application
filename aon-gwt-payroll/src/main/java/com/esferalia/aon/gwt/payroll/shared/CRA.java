@@ -14,7 +14,7 @@ public class CRA implements Serializable{
 	private Date date;
 	
 	private String ccc;
-	private String cccType;
+	private Byte cccType;
 	private String cccProvince;
 	private String activityName;
 	
@@ -66,11 +66,11 @@ public class CRA implements Serializable{
 		this.ccc = ccc;
 	}
 
-	public String getCccType() {
+	public Byte getCccType() {
 		return cccType;
 	}
 
-	public void setCccType(String cccType) {
+	public void setCccType(Byte cccType) {
 		this.cccType = cccType;
 	}
 

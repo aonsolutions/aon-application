@@ -44,8 +44,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
@@ -87,11 +85,23 @@ public class MainCRANew extends MainEntryPoint {
 	@UiField
 	DisclosurePanel collapsePanel;
 	
-	@UiField
-	SuggestBox enterpriseSB;
+//	@UiField
+//	SuggestBox enterpriseSB;
 	
 	@UiField
 	ListBox typeList;
+	
+	@UiField
+	ListBox monthTillT;
+	
+	@UiField
+	ListBox yearTillT;
+	
+	@UiField
+	ListBox monthTTo;
+	
+	@UiField
+	ListBox yearTTo;
 	
 	@UiField
 	HTMLPanel mainTablePanel;
@@ -128,8 +138,32 @@ public class MainCRANew extends MainEntryPoint {
 		RootLayoutPanel.get("rootPanel").add(ui);
 		
 		initCollapseAndDeckPanel();
+		
+		initListBoxes();
 	}
 	
+	private void initListBoxes() {
+		// Clear LB
+		monthTillT.clear();
+		monthTTo.clear();
+		yearTillT.clear();
+		yearTTo.clear();
+		
+		String[] months = new String[]{"Enero", "Frebero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		for(int i=0; i<months.length; i++) {
+			monthTillT.addItem(months[i], i+"");
+			monthTTo.addItem(months[i], i+"");
+		}
+		
+		Integer year = new Date().getYear();
+		
+		yearTillT.addItem((year + 1900) + "", year + "");
+		yearTillT.addItem((year + 1900 - 1) + "", (year - 1) + "");
+		
+		yearTTo.addItem((year + 1900) + "", year + "");
+		yearTTo.addItem((year + 1900 - 1) + "", (year - 1) + "");
+	}
+
 	// --------------------------------------------------------------------------------------------
 	// 									PROVIDE SALARY DATA GRID
 	// --------------------------------------------------------------------------------------------
@@ -251,13 +285,14 @@ public class MainCRANew extends MainEntryPoint {
 	    TextColumn<CCCInfo> typeColumn = new TextColumn<CCCInfo>() {
 	      @Override
 	      public String getValue(CCCInfo cccInfo) {
-	    	  return parseCCCType(cccInfo.getTypeStr());
+	    	  return getCCCType(cccInfo.getType());
+//	    	  return parseCCCType(cccInfo.getTypeStr());
 	      }
 
 	    };
 
 	    typeColumn.setSortable(true);
-	    cccDataGrid.setColumnWidth(typeColumn, 10, Unit.PCT);
+	    cccDataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
 	    
 	    TextColumn<CCCInfo> cccColumn = new TextColumn<CCCInfo>() {
 	      @Override
@@ -335,8 +370,8 @@ public class MainCRANew extends MainEntryPoint {
 		      }
 		    };
 
-		    periodColumn.setSortable(true);
-		    crasDataGrid.setColumnWidth(periodColumn, 15, Unit.PCT);
+	    periodColumn.setSortable(true);
+	    crasDataGrid.setColumnWidth(periodColumn, 10, Unit.PCT);
 	    
 	    TextColumn<CRA> activityNameColumn = new TextColumn<CRA>() {
 	      @Override
@@ -371,13 +406,13 @@ public class MainCRANew extends MainEntryPoint {
 	    TextColumn<CRA> typeColumn = new TextColumn<CRA>() {
 	      @Override
 	      public String getValue(CRA cra) {
-	    	  return parseCCCType(cra.getCccType());
+	    	  return getCCCType(cra.getCccType());
 	      }
 
 	    };
 
 	    typeColumn.setSortable(true);
-	    crasDataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
+	    crasDataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
 	    
 	    TextColumn<CRA> cccColumn = new TextColumn<CRA>() {
 	      @Override
@@ -501,7 +536,7 @@ public class MainCRANew extends MainEntryPoint {
 	private MainCRAObjectNew mainCRAObjectNew;
 	private MultiSelectionModel<CCCInfo> selectionCCCInfoModel;
 	private MultiSelectionModel<CRA> selectionCraModel;
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("MM/yyyy");
 	private DateTimeFormat formatFullDateHour = DateTimeFormat.getFormat("dd/MM/yyyy HH:mm");
 	
 	// --------------------------------------------------------------------------------------------
@@ -563,13 +598,14 @@ public class MainCRANew extends MainEntryPoint {
 	    	cccList.add(cccInfo);
 	    } 
 	    
-	    addSortColums(cccList);
-	    
-		// Set page size
+	    // Set page size
 	    cccDataGrid.setPageSize(cccs.size());
 	    
 	    // Add style to table header
 	    addStyleToHeader();
+	    
+	    addSortColums(cccList); 
+		
 	}
 	
 	private void addSortColums(List<CCCInfo> cccInfoList) {
@@ -667,23 +703,37 @@ public class MainCRANew extends MainEntryPoint {
 	    List<CRA> crasList = dataProvider.getList();
 	    crasList.clear();
 	    
-	    this.cras = this.mainCRAObjectNew.getAllCRAs();
+	    this.cras = this.mainCRAObjectNew.getFilteredCRAs();
 	    
 	    for (CRA cra : this.cras) {
 	    	crasList.add(cra);
 	    }
 	    
-	    addSortCRAColums(crasList);
+	    crasList.sort(new Comparator<CRA>() {
+			@Override
+			public int compare(CRA o1, CRA o2) {
+				if(null == o2.getDate())
+					return -1;
+				
+				if(null == o1.getDate())
+					return -1;
+				
+				return o2.getDate().compareTo(o1.getDate());
+			}
+		});
 	    
 		// Set page size
 	    crasDataGrid.setPageSize(cras.size());
 	    
 	    // Add style to table header
 	    addStyleToHeader();
+	    
+	    addSortCRAColums(crasList);
 	}
 	
 	private void addSortCRAColums(List<CRA> crasList) {
 		ListHandler<CRA> columnSortHandler = new ListHandler<CRA>(crasList);
+		
 	    columnSortHandler.setComparator(crasDataGrid.getColumn(0), new Comparator<CRA>() {
 	          public int compare(CRA o1, CRA o2) {
 	            if (o1 == o2) {
@@ -765,10 +815,12 @@ public class MainCRANew extends MainEntryPoint {
 	    
 	    
 	    crasDataGrid.addColumnSortHandler(columnSortHandler);
-
+	    
 	    // We know that the data is sorted alphabetically by default.
-	    crasDataGrid.getColumn(0).setDefaultSortAscending(false);
-	    crasDataGrid.getColumnSortList().push(crasDataGrid.getColumn(0));   
+//	    Column<CRA, ?> creationColumn = crasDataGrid.getColumn(0);
+//	    creationColumn.setDefaultSortAscending(false);
+//	    crasDataGrid.getColumnSortList().push(creationColumn);
+//	    crasDataGrid.getColumnSortList().push(creationColumn);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -793,8 +845,8 @@ public class MainCRANew extends MainEntryPoint {
 	public void onNewCRAButton(ClickEvent event) {
 		clearSelectionModel();
 		showCCCs();
-		enterpriseSB.setText("");
-		this.mainCRAObjectNew.resetEnterpriseCCCList();
+//		enterpriseSB.setText("");
+//		this.mainCRAObjectNew.resetEnterpriseCCCList();
 		exportButton.setVisible(true);
 		listButton.setVisible(true);
 		newCRAButton.setVisible(false);
@@ -876,27 +928,51 @@ public class MainCRANew extends MainEntryPoint {
 	@UiHandler("typeList")
 	public void onTypeListChange(ChangeEvent event) {
 		if(0 == typeList.getSelectedIndex()) {
-			this.enterpriseSB.setValue("");
-			this.mainCRAObjectNew.resetEnterpriseCCCList();
-			initCCCsTable();
+//			this.enterpriseSB.setValue("");
+			this.mainCRAObjectNew.resetCRAsList();
+			initCRATable();
 		} else {
-			String type = typeList.getSelectedValue();
-			mainCRAObjectNew.filterEnterpriseCCCListByType(type);
-			initCCCsTable();
+			Byte type = Byte.parseByte(typeList.getSelectedValue());
+			mainCRAObjectNew.filterCRAsListByType(type);
+			initCRATable();
 		}
 	}
 	
 	@UiHandler("geozoneList")
 	public void onGeozoneListChange(ChangeEvent event) {
 		if(0 == geozoneList.getSelectedIndex()) {
-			this.enterpriseSB.setValue("");
-			this.mainCRAObjectNew.resetEnterpriseCCCList();
-			initCCCsTable();
+//			this.enterpriseSB.setValue("");
+			this.mainCRAObjectNew.resetCRAsList();
+			initCRATable();
 		} else {
-			String geozoneCode = geozoneList.getSelectedValue();
-			mainCRAObjectNew.filterEnterpriseCCCListByGeozone(geozoneCode);
-			initCCCsTable();
+			String geozoneCode = geozoneList.getSelectedItemText();
+			mainCRAObjectNew.filterCRAListByGeozone(geozoneCode);
+			initCRATable();
 		}
+	}
+	
+	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
+	public void onFilterDatesChange(ChangeEvent event) {
+		Date date1 = new Date(Integer.parseInt(yearTillT.getSelectedValue()), Integer.parseInt(monthTillT.getSelectedValue()), 1);
+		Date date2 = new Date(Integer.parseInt(yearTTo.getSelectedValue()), Integer.parseInt(monthTTo.getSelectedValue()), 1);
+		
+		Date startDate = null;
+		Date endDate = null;
+		
+		if(date1.before(date2) || date1.equals(date2)) {
+			startDate = DateUtils.copyDateOnly(date1);
+			
+			endDate = DateUtils.copyDateOnly(date2);
+			endDate = DateUtils.getLastDayOfMonth(endDate);
+		} else {
+			startDate = DateUtils.copyDateOnly(date2);
+			
+			endDate = DateUtils.copyDateOnly(date1);
+			endDate = DateUtils.getLastDayOfMonth(endDate);
+		}
+		
+		mainCRAObjectNew.filterCrasByDates(startDate, endDate);
+		initCRATable();
 	}
 	
 	@UiHandler("collapsePanel")
@@ -942,15 +1018,15 @@ public class MainCRANew extends MainEntryPoint {
 		// Type List
 		typeList.clear();
 		typeList.addItem("-", "-1");
-		typeList.addItem("Principal", "0111");
-		typeList.addItem("Formacion y aprendizaje", "0111");
-		typeList.addItem("Aprendizaje", "0111");
-		typeList.addItem("Representantes de comercio", "0111");
-		typeList.addItem("Asimilados R.General", "0111");
-		typeList.addItem("Becarios", "0111");
-		typeList.addItem("Emploead@s de hogar", "0138");
-		typeList.addItem("Trabajadores cuenta ajena agrarios", "0163");
-		typeList.addItem("Artistas", "0112");
+		typeList.addItem("Principal", "0");
+		typeList.addItem("Formacion y aprendizaje", "1");
+		typeList.addItem("Aprendizaje", "2");
+		typeList.addItem("Representantes de comercio", "3");
+		typeList.addItem("Asimilados R.General", "4");
+		typeList.addItem("Becarios", "5");
+		typeList.addItem("Emploead@s de hogar", "6");
+		typeList.addItem("Trabajadores cuenta ajena agrarios", "7");
+		typeList.addItem("Artistas", "8");
 		typeList.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
 		typeList.addStyleName("aon-selectOneMenu");
 		
@@ -960,27 +1036,27 @@ public class MainCRANew extends MainEntryPoint {
 		for(String enterprise : enterprises)
 			enterprisesSuggest.add(enterprise+"");
 		
-		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) enterpriseSB.getSuggestOracle();
-		orclEnterprise.addAll(enterprisesSuggest);
-		enterpriseSB.setAutoSelectEnabled(false);
-		
-		enterpriseSB.addKeyUpHandler(e-> {
-			String value = enterpriseSB.getValue();
-			if(StringUtils.isBlank(value) || value.length() < 3) {
-				mainCRAObjectNew.resetEnterpriseCCCList();
-			} else {
-				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
-			}
-			initCCCsTable();
-		});
-		
-		enterpriseSB.addSelectionHandler(e -> {
-			String value = enterpriseSB.getValue();
-			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
-			initCCCsTable();
-		});
+//		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) enterpriseSB.getSuggestOracle();
+//		orclEnterprise.addAll(enterprisesSuggest);
+//		enterpriseSB.setAutoSelectEnabled(false);
+//		
+//		enterpriseSB.addKeyUpHandler(e-> {
+//			String value = enterpriseSB.getValue();
+//			if(StringUtils.isBlank(value) || value.length() < 3) {
+//				mainCRAObjectNew.resetEnterpriseCCCList();
+//			} else {
+//				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+//				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+//			}
+//			initCCCsTable();
+//		});
+//		
+//		enterpriseSB.addSelectionHandler(e -> {
+//			String value = enterpriseSB.getValue();
+//			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+//			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+//			initCCCsTable();
+//		});
 		
 		//Geozone
 		geozoneList.clear();
@@ -1080,6 +1156,29 @@ public class MainCRANew extends MainEntryPoint {
 			
 		}
 		return true;
+	}
+	
+	private String getCCCType(Byte type) {
+		switch (type) {
+			case (byte) 0:
+				return "PRINCIPAL";
+			case (byte) 1:
+				return "FORMACION Y APRENDIZAJE";
+			case (byte) 3:
+				return "REPRESENTANTES DE COMERCIO";
+			case (byte) 4:
+				return "ASIMILADOS R.GENERAL";
+			case (byte) 5:
+				return "BECARIOS";
+			case (byte) 6:
+				return "EMPLEADOS DE HOGAR";
+			case (byte) 7:
+				return "TRABAJADOR CUENTA AJENA";
+			case (byte) 8:
+				return "ARTISTA";
+			default:
+				return "PRINCIPAL";
+		}
 	}
 
 }

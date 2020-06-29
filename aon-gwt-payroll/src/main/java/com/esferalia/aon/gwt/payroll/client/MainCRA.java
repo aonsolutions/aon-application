@@ -393,7 +393,7 @@ public class MainCRA extends MainEntryPoint {
 		activity.addStyleName(style.textCenter());
 		mainTable.setWidget(newRow, 3, activity);
 		
-		Label activityType = new Label(cra.getCccType());
+		Label activityType = new Label(getCCCType(cra.getCccType()));
 		activityType.addStyleName(style.textCenter());
 		mainTable.setWidget(newRow, 4, activityType);
 		
@@ -662,6 +662,29 @@ public class MainCRA extends MainEntryPoint {
 			enterpriseCCCs.put(activityDescription, cccs);
 		} else {
 			enterpriseCCCs.get(activityDescription).add(ccc);
+		}
+	}
+	
+	private String getCCCType(Byte type) {
+		switch (type) {
+			case (byte) 0:
+				return "PRINCIPAL";
+			case (byte) 1:
+				return "FORMACION Y APRENDIZAJE";
+			case (byte) 3:
+				return "REPRESENTANTES DE COMERCIO";
+			case (byte) 4:
+				return "ASIMILADOS R.GENERAL";
+			case (byte) 5:
+				return "BECARIOS";
+			case (byte) 6:
+				return "EMPLEADOS DE HOGAR";
+			case (byte) 7:
+				return "TRABAJADOR CUENTA AJENA";
+			case (byte) 8:
+				return "ARTISTA";
+			default:
+				return "PRINCIPAL";
 		}
 	}
 

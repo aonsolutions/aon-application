@@ -12,6 +12,7 @@ public class CCC implements Serializable, HasId<Integer>{
 	private String code;
 	private String geozone;
 	private String regime;
+	private Byte type;
 	
 	private List<Employee> employees;
 
@@ -64,4 +65,13 @@ public class CCC implements Serializable, HasId<Integer>{
 	public void setEmployees(List<Employee> employees) {
 		this.employees = employees;
 	}
+
+	public Byte getType() {
+		return type;
+	}
+
+	public void setType(Byte type) {
+		this.type = type;
+	}
+	
 }

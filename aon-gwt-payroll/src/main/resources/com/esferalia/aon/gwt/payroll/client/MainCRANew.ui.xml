@@ -95,6 +95,7 @@
 		}
 		
 		.mb0{
+			margin-top: 5px !important;
 			margin-bottom: 0 !important;
 		}
 	</ui:style>
@@ -144,7 +145,17 @@
 									<g:ListBox ui:field="year"></g:ListBox>
 								</g:HorizontalPanel>
 							</g:HTMLPanel>
-							
+						
+						 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
+						 		<c:DataGrid ui:field="cccDataGrid"></c:DataGrid>
+						 	</g:HTMLPanel>
+					 		
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+				</g:HTMLPanel>
+				<g:HTMLPanel ui:field="crasContainer" styleName="{style.widthAll}">
+					<g:ScrollPanel height="100%" styleName="{style.p5}">
+						<g:VerticalPanel styleName="{style.tableStylePanel}">
 							<g:HTMLPanel styleName="aon-panelGrid-search">
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
 									<g:Label styleName="aon-panelGrid-search-info-internal">FILTRAR BUSQUEDA</g:Label>
@@ -153,14 +164,14 @@
 									<g:header>FILTRAR BUSQUEDA</g:header>
 									<g:HTMLPanel>
 										<table class="aon-panelGrid">
-											<tr>
+											<!-- tr>
 												<td class="aon-panelGrid-odd">
 													<g:Label styleName="aon-outputLabel {style.pt9}">Empresa</g:Label>
 												</td>
 												<td class="aon-panelGrid-even">
 													<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w300}" ui:field="enterpriseSB"></g:SuggestBox>
 												</td>
-											</tr>
+											</tr -->
 											<tr>
 												<td class="aon-panelGrid-odd">
 													<g:Label styleName="aon-outputLabel  {style.pt4}">Tipo CCC</g:Label>
@@ -177,21 +188,34 @@
 													<g:ListBox styleName="aon-selectOneMenu {style.ml9}" ui:field="geozoneList"></g:ListBox>
 												</td>
 											</tr>
+											<tr>
+												<td class="aon-panelGrid-odd">
+													<g:Label styleName="aon-outputLabel {style.pt9}">Desde/Hasta</g:Label>
+												</td>
+												<td class="aon-panelGrid-even" colspan="2">
+													<table>
+														<tr>
+															<td>
+																<g:ListBox styleName="aon-selectOneMenu {style.ml8}" ui:field="monthTillT"></g:ListBox>
+															</td>
+															<td>
+																<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTillT"></g:ListBox>
+															</td>
+															<td>
+																<g:ListBox styleName="aon-selectOneMenu {style.ml8}" ui:field="monthTTo"></g:ListBox>
+															</td>
+															<td>
+																<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTTo"></g:ListBox>
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
 										</table>
 									</g:HTMLPanel>
 								</g:DisclosurePanel>
 							</g:HTMLPanel>
-						
-						 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
-						 		<c:DataGrid ui:field="cccDataGrid"></c:DataGrid>
-						 	</g:HTMLPanel>
-					 		
-						</g:VerticalPanel>
-					</g:ScrollPanel>
-				</g:HTMLPanel>
-				<g:HTMLPanel ui:field="crasContainer" styleName="{style.widthAll}">
-					<g:ScrollPanel height="100%" styleName="{style.p5}">
-						<g:VerticalPanel styleName="{style.tableStylePanel}">
+							
 							<g:HTMLPanel styleName="aon-panelGrid-search-info {style.mb0}">
 								<g:Label styleName="aon-panelGrid-search-info-internal">HISTORIAL CRA</g:Label>
 							</g:HTMLPanel>
