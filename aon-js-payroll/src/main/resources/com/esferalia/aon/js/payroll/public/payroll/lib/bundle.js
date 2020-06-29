@@ -963,9 +963,6 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 advancesTOTAL += type.value;
             }
 
-            if (!taxesD.value && !taxesS.value)
-                existingTaxes = -25;
-
             pdf
                 .font(headingFont)
                 .text("3. Anticipos", secondColumn, deductionTop + 120 + existingTaxes)
@@ -1179,9 +1176,6 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 type = advances.types[i];
                 advancesTOTAL += type.value;
             }
-
-            if (!taxesD.value && !taxesS.value)
-                existingTaxes = -25;
 
             pdf
                 .font(headingFont)
