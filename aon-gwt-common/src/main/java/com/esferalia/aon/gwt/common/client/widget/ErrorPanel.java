@@ -42,7 +42,11 @@ public class ErrorPanel extends FlowPanel {
 	
 	public void hide() {
 		panel.clear();
-		ErrorPanel.this.setVisible(false);
+		setVisible(false);
+	}
+	
+	public void show() {
+		setVisible(true);
 	}
 	
 	public void initialize() {

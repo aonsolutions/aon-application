@@ -6,6 +6,8 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.ErrorPanel;
 import com.esferalia.aon.occam.api.model.accounting.analytical.AnalyticalCostCenter;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -28,7 +30,7 @@ public class AnalyticalCostCenterPanel extends SimplePanel implements Focusable 
 		void onRemove(AnalyticalCostCenter costCenter);
 		void onCancel();
 	}
-
+	final ErrorPanel errorPanel = new ErrorPanel();
 	private String originalName = null;
 	private TextBox nameBox = new TextBox();
 	private DoubleBox percentBox = new DoubleBox();
@@ -39,11 +41,9 @@ public class AnalyticalCostCenterPanel extends SimplePanel implements Focusable 
 		setHeight("120px");
 		
 		boolean isNew = (cc==null);
-		AnalyticalCostCenter costCenter = cc==null?new AnalyticalCostCenter().setMain(true):cc;
+		AnalyticalCostCenter costCenter = cc==null?new AnalyticalCostCenter():cc;
 		originalName = costCenter.getName();
 		FlowPanel rootPanel = new FlowPanel();
-		
-		final ErrorPanel errorPanel = new ErrorPanel();
 		rootPanel.add(errorPanel);
 		
 		FlowPanel tablePanel = new FlowPanel();
@@ -103,14 +103,16 @@ public class AnalyticalCostCenterPanel extends SimplePanel implements Focusable 
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				okButton.setEnabled(false);
 				costCenter.setName(nameBox.getValue());
 				costCenter.setPercent(percentBox.getValue());
 				costCenter.setMain(mainCheck.getValue());
-				if (isNew) {
-					callback.onCreate(costCenter);
-				} else {
-					callback.onUpdate(originalName,costCenter);
+				if (validate(isNew,costCenter )) {
+					okButton.setEnabled(false);
+					if (isNew) {
+						callback.onCreate(costCenter);
+					} else {
+						callback.onUpdate(originalName,costCenter);
+					}
 				}
 			}
 		});
@@ -162,6 +164,25 @@ public class AnalyticalCostCenterPanel extends SimplePanel implements Focusable 
     	
     	rootPanel.add(buttons);
 		setWidget(rootPanel);
+	}
+
+	protected boolean validate(boolean isNew, AnalyticalCostCenter costCenter) {
+		boolean ret = true;
+		errorPanel.initialize();
+		if ( AonMathUtils.isLessThanZero( costCenter.getPercent()) || AonMathUtils.isGreatherThan(costCenter.getPercent(),100) ) {
+			errorPanel.addError("Porcentaje incorrecto");
+			setHeight("160px");
+			ret = false;
+		}
+		if ( AonStringUtils.isBlank( AonStringUtils.trim(costCenter.getName()))) {
+			errorPanel.addError("El nombre del centro de costo no es v\u00E1lido");
+			setHeight(ret?"160px":"200px");
+			ret = false;
+		}
+		if (!ret) {
+			errorPanel.show();
+		}
+		return ret;
 	}
 
 	@Override

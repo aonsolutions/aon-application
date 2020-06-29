@@ -122,7 +122,12 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 			newCostCenterButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					showCostCenter( report, null );
+					Analytical analytical = report.getAnalytical();
+					if (analytical == null) {
+						analytical = new Analytical();
+						report.setAnalytical(analytical);
+					}
+					editCostCenter( report, null );
 				}
 			});
 			tab.setWidget(0, 0, newCostCenterButton );
@@ -336,54 +341,6 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 		}
 	}
 
-	private void showCostCenter(AccountingAnalyticalReport report, AnalyticalCostCenter cc) {
-		Analytical analytical = report.getAnalytical();
-		if (analytical == null) {
-			analytical = new Analytical();
-			report.setAnalytical(analytical);
-		}
-
-		final CustomDialog dialog = new CustomDialog();
-		dialog.setCaption(AON.MSG.account());
-		final AnalyticalCostCenterPanel costCenterPanel = new AnalyticalCostCenterPanel( cc, new AnalyticalCostCenterPanelCallback() {
-			
-			@Override
-			public void onCancel() {
-				dialog.hide();
-			}
-			@Override
-			public void onCreate(AnalyticalCostCenter result) {
-				dialog.hide();
-				report.getAnalytical().add(result);
-				report.getColumns().add( new AccountingAnalyticalColumn()
-						.setName(result.getName())
-						.setTotalColumn(false)
-						.setPercent(result.getPercent()));
-				saveConfiguration(report);
-			}
-			
-			@Override
-			public void onUpdate(String originalName, AnalyticalCostCenter result) {
-				onCancel();	
-			}
-			
-			@Override
-			public void onRemove(AnalyticalCostCenter result) {
-				onCancel();	
-			}
-			
-		});
-		dialog.add( costCenterPanel );
-		dialog.center();
-		dialog.show();
-		
-		Scheduler.get().scheduleDeferred(new Command() {
-	        public void execute() {
-	        	costCenterPanel.setFocus(true);
-	        }
-	    });		
-	}
-	
 	protected void saveConfiguration(AccountingAnalyticalReport report) {
 		AccountingReportParams params = report.getParams();
 		SERVICE.saveConfiguration(params.getDomainName(), params.getUser(), params.getDomain(), params, report.getAnalytical(), new AsyncCallback<AccountingAnalyticalReport>() {
@@ -402,7 +359,7 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 
 	private void editCostCenter(AccountingAnalyticalReport report, AnalyticalCostCenter costCenter) {
 		final CustomDialog dialog = new CustomDialog();
-		dialog.setCaption(AON.MSG.account());
+		dialog.setCaption(AON.MSG.costCenter());
 		final AnalyticalCostCenterPanel costCenterPanel = new AnalyticalCostCenterPanel( costCenter, new AnalyticalCostCenterPanelCallback() {
 			
 			@Override
@@ -412,6 +369,13 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 			@Override
 			public void onCreate(AnalyticalCostCenter result) {
 				dialog.hide();
+				report.getAnalytical().add(result);
+				report.getColumns().add( new AccountingAnalyticalColumn()
+						.setName(result.getName())
+						.setTotalColumn(false)
+						.setPercent(result.getPercent()));
+				checkDefault( result );
+				saveConfiguration(report);
 			}
 			
 			@Override
@@ -421,6 +385,11 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 				cc.setName(result.getName());
 				cc.setPercent(result.getPercent());
 				cc.setMain(result.isMain());
+				Analytical analytical = report.getAnalytical();
+				if (AonStringUtils.equals(originalName, analytical.getDefaultCostCenter())) {
+					analytical.setDefaultCostCenter( cc.isMain()? result.getName() : null);
+				}
+				checkDefault( cc );
 				saveConfiguration(report);
 			}
 			
@@ -432,6 +401,41 @@ public class AnalyticalPanel extends ScrollPanel implements HasSelectionHandlers
 				saveConfiguration(report);
 			}
 			
+			private void checkDefault(AnalyticalCostCenter cc) {
+				Analytical analytical = report.getAnalytical();
+				if (!cc.isMain()) {
+					if (analytical.getCostCenters().size() == 1) {
+						cc.setMain(true);
+						analytical.setDefaultCostCenter(cc.getName());
+					} else {
+						boolean hasMain = false;
+						for (AnalyticalCostCenter costCenter : analytical.getCostCenters().values() ) {
+							if (hasMain && costCenter.isMain()) {
+								costCenter.setMain(false);
+							}
+							hasMain = hasMain && costCenter.isMain();
+						}
+						if (!hasMain) {
+							for (AnalyticalCostCenter costCenter : analytical.getCostCenters().values() ) {
+								if (!AonStringUtils.equals( costCenter.getName(), cc.getName())) {
+									costCenter.setMain(true);
+									analytical.setDefaultCostCenter(cc.getName());			
+								}		
+							}
+						}
+					}
+				} else {
+					for (AnalyticalCostCenter costCenter : analytical.getCostCenters().values() ) {
+						if (AonStringUtils.equals( costCenter.getName(), cc.getName())) {
+							costCenter.setMain(true);
+							analytical.setDefaultCostCenter(cc.getName());			
+						} else {
+							costCenter.setMain(false);
+						}
+					}
+				}
+				
+			}
 		});
 		dialog.add( costCenterPanel );
 		dialog.center();
