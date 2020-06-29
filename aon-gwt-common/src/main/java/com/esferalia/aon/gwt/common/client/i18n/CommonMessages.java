@@ -1488,7 +1488,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("S\u00F3lo para sujetos pasivos que tributan a varias Administraciones")
 	String page8HelpText();
 	
-	@DefaultMessage("Datos de secretario, representantes y administradores")
+	@DefaultMessage("Secretario, Grupo Fiscal, Representantes y Administradores")
 	String administratorPage();
 
 	@DefaultMessage("Relaci\u00F3n de administradores")
@@ -2142,7 +2142,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Datos de Grupo Fiscal")
 	String fiscalGroupLabel();
 
-	@DefaultMessage("Numero de Grupo Fiscal")
+	@DefaultMessage("N\u00FAmero de Grupo Fiscal")
 	String fiscalGroup();
 
 	@DefaultMessage("NIF de la sociedad dominante")
@@ -3825,5 +3825,24 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Click para modificar")
 	String clickToUpdate();
+
+	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: NIF o equivalente")
+	String ultimateDocument();
+	
+	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: C\u00F3digo pa\u00EDs")
+	String ultimateDocumentCountry();
+	
+	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Nombre o raz\u00F3n social")
+	String ultimateName();
+	
+	@DefaultMessage("Datos de la sociedad matriz \u00FAltima: Pa\u00EDs o jurisdicci\u00F3n")
+	String ultimateCountry();
+
+    @DefaultMessage("Participaciones y Entidades Menores")
+    String participations2019();
+    
+   	@DefaultMessage("Entidades menores dependientes de di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica integradas en la declaraci\u00F3n, previamente autorizadas")
+   	String minorEntities();
+	
 }
 

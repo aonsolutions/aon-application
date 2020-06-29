@@ -45,6 +45,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -348,6 +349,19 @@ public interface IFiscal {
 	public void deleteMod2002018(AONContext ctx, int id);
 	public String dumpAEATMod2002018(Mod2002018 mod200);
 	public Mod2002018 importMod2002017(AONContext ctx, Mod2002018 mod200);
+	
+	// 				   		  MOD200 - 2019
+	public Mod2002019 createMod2002019(AONContext ctx, int year);
+	public Mod2002019 initializeNewMod2002019(AONContext ctx, Mod2002019 mod200);
+	public Mod2002019 initializeMod2002019(AONContext ctx, Mod2002019 mod200);
+	public Mod2002019 getMod2002019ByYear(AONContext ctx, int year);
+	public Mod2002019 getMod2002019ById(AONContext ctx, int id);
+	public Mod2002019 calculateMod2002019(Mod2002019 mod200);
+	public Mod2002019 validateMod2002019(Mod2002019 mod200);
+	public Mod2002019 saveMod2002019(AONContext ctx, Mod2002019 mod200);
+	public void deleteMod2002019(AONContext ctx, int id);
+	public String dumpAEATMod2002019(Mod2002019 mod200);
+	public Mod2002019 importMod2002018(AONContext ctx, Mod2002019 mod200);
 	
 	// 				   		  MOD349
 	public LinkedList<Mod349> getMod349s(AONContext ctx,int domain);

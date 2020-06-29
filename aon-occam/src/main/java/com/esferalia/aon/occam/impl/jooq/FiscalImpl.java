@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2015.Mod2002015;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2018.Mod2002018;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -86,6 +87,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod200_2015.Mod2002015DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2016.Mod2002016DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2017.Mod2002017DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2018.Mod2002018DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod200_2019.Mod2002019DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod303.change.VatToMod303;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 
@@ -1329,6 +1331,59 @@ public class FiscalImpl implements IFiscal {
 	@Override
 	public Mod2002018 importMod2002017(AONContext ctx, Mod2002018 mod200) {
 		return Mod2002018DAO.importMod2002017(ctx,mod200);
+	}
+	
+	// ----------------------------------------------------------- [MODELO 200 - 2019]
+	@Override
+	public Mod2002019 createMod2002019(AONContext ctx, int year) {
+		return Mod2002019DAO.createNewMod200(ctx,year);
+	}
+	@Override
+	public Mod2002019 initializeNewMod2002019(AONContext ctx, Mod2002019 mod200) {
+		return Mod2002019DAO.initializeNewMod200(ctx,mod200);
+	}
+	
+	@Override
+	public Mod2002019 initializeMod2002019(AONContext ctx, Mod2002019 mod200) {
+		return Mod2002019DAO.initializeMod200(ctx,mod200);
+	}
+
+	@Override
+	public Mod2002019 getMod2002019ByYear(AONContext ctx, int year) {
+		return Mod2002019DAO.getByYear(ctx,year);
+	}
+
+	@Override
+	public Mod2002019 getMod2002019ById(AONContext ctx, int id) {
+		return Mod2002019DAO.getById(ctx,id);
+	}
+	@Override
+	public Mod2002019 calculateMod2002019(Mod2002019 mod200) {
+		return Mod2002019DAO.calculate(mod200);
+	}
+	@Override
+	public Mod2002019 validateMod2002019(Mod2002019 mod200) {
+		return Mod2002019DAO.validate(mod200);
+	}
+	@Override
+	public Mod2002019 saveMod2002019(AONContext ctx, Mod2002019 mod200) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod2002019DAO.save(ctx, mod200));
+	}
+	@Override
+	public void deleteMod2002019(AONContext ctx, int id) {
+		ctx.getDslContext().transaction(
+				configuration -> Mod2002019DAO.delete(ctx, id));
+	}
+
+	@Override
+	public String dumpAEATMod2002019(Mod2002019 mod200) {
+		return Mod2002019DAO.dumpAEAT(mod200);
+	}
+
+	@Override
+	public Mod2002019 importMod2002018(AONContext ctx, Mod2002019 mod200) {
+		return Mod2002019DAO.importMod2002018(ctx,mod200);
 	}	
 	
 	// ---------------------------------------------------- [VAT]

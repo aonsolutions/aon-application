@@ -1,0 +1,66 @@
+package com.esferalia.aon.gwt.fiscal.server;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.server.fiscal.format.Mod2002019Writer;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
+
+@SuppressWarnings("serial")
+@WebServlet(name = "Mod200 - 2019 File download", urlPatterns = { "/aon_gwt_fiscal/Model2002019File" })
+public class Mod2002019File extends HttpServlet {
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+		try {
+			int id = Integer.parseInt(req.getParameter("modId"));
+			String domainName = req.getParameter("domainName");
+			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			String user = req.getParameter("user");
+			Mod2002019 mod200 = FISCAL.getMod2002019ById(domainName,domainId,user,id);
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			OutputStreamWriter wr = null;
+			try {
+				wr = new OutputStreamWriter(output,"ISO-8859-1");
+			} catch (UnsupportedEncodingException e) {
+				wr = new OutputStreamWriter(output);
+			}
+			PrintWriter writer = new PrintWriter(wr);
+			Mod2002019Writer.fillWriter(mod200, writer);
+
+			String s = mod200.getEnterpriseName();
+			StringBuilder sb = new StringBuilder();
+			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
+				sb.append("_");
+			}
+			for (char c : s.toCharArray()) {
+				if (Character.isJavaIdentifierPart(c)) {
+					sb.append(c);
+				}
+			}
+			String fileName = "Mod200" + "_" + mod200.getYear() + "_" + sb.toString();
+			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
+			resp.setContentType(MimeType.TXT.getName());
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
+			AonIOUtils.copy(in, resp.getOutputStream());
+			resp.flushBuffer();
+		} catch (Throwable e) {
+			throw new ServletException(e);
+		}
+
+	}
+
+}
