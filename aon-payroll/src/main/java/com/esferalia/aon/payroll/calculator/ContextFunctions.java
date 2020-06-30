@@ -238,8 +238,10 @@ public class ContextFunctions {
 					} catch ( Throwable t) {
 						try {
 							for (ITimedVariable<Number> data :context.eval(name, varPeriod.getStart(), varPeriod.getEnd(), Number.class)){
-								if ( data.getPeriod().contains(date))
+								if ( data.getPeriod().contains(date)) {
+									varPeriod = data.getPeriod();
 									varDoubleValue += data.getValue(data.getPeriod()).doubleValue();
+								}
 							}
 						} catch (Throwable t1) {
 							continue;
@@ -249,16 +251,19 @@ public class ContextFunctions {
 					}
 					
 					Double varValue = varDoubleValue;
+					Period valuePeriod  = varPeriod;
 					
 					//TODO: Checks that 'varPeriod' is whole month.
 					boolean wholeMonth = isWholeMonth(varPeriod);
 					long varDays = wholeMonth ? monthDays : Math.min(getDaysBetweenDates(varPeriod.getStart(), varPeriod.getEnd())+ 1, monthDays);
 					
+					
+					
 					ITimedVariable<Object> firstVariable = new ITimedVariable<Object>() {
 						
 						@Override
 						public Period getPeriod() {
-							return new Period(varPeriod.getStart(), date);
+							return new Period(valuePeriod.getStart(), date);
 						}
 						
 						@Override
@@ -280,7 +285,7 @@ public class ContextFunctions {
 					ITimedVariable<Object> lastVariable = new ITimedVariable<Object>() {
 						@Override
 						public Period getPeriod() {
-							return new Period( AonDateUtils.addDays(date, 1), varPeriod.getEnd());
+							return new Period( AonDateUtils.addDays(date, 1), valuePeriod.getEnd());
 						}
 						
 						@Override
