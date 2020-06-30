@@ -9,6 +9,11 @@ export class AonService {
   companies: Company[];
   company: Company;
 
+  schema = 'first';
+  page = 1;
+  per_page = 50;
+  end = false;
+
   getToken(): string {
     return localStorage.getItem('aon_session_id');
   }
@@ -21,21 +26,58 @@ export class AonService {
     return Request.request('POST', '/ms/api/login', undefined, data);
   }
 
+  close() {
+    this.company = undefined;
+    this.companies = undefined;
+    this.schema = 'first';
+    this.page = 1;
+    this.per_page = 50;
+    this.end = false;
+  }
+
   // Company
 
   getCompanies() : Observable<Company[]> {
-    if (this.companies) {
+    if (this.companies && this.end) {
       return Observable.create((observer: Observer<Company[]>) => {
         observer.next(this.companies);
         observer.complete();
       });
     } else {
       return Observable.create((observer: Observer<Company[]>) => {
-        Request.request('GET', '/ms/api/company', this.getToken())
+        Request.request('GET', '/ms/api/company', this.getToken(), undefined, {
+          schema: this.schema,
+          page: this.page,
+          per_page: this.per_page
+        })
         .subscribe(result => {
-          this.companies = result;
-          observer.next(this.companies);
-          observer.complete();
+          if(result && result.companies) {
+            if(this.companies){
+              this.companies = this.companies.concat(result.companies);
+            } else {
+              this.companies = result.companies;
+            }
+            this.companies.sort(function (a, b) {
+              if (a.name.toUpperCase() > b.name.toUpperCase()) {
+                return 1;
+              }
+              if (a.name.toUpperCase() < b.name.toUpperCase()) {
+                return -1;
+              }
+              // a must be equal to b
+              return 0;
+            });
+            this.schema = result.schema;
+            this.page = result.page;
+            this.per_page = result.per_page;
+            this.end = result.end;
+            observer.next(result.companies);
+            observer.complete();
+          } else {
+            observer.next([]);
+            observer.complete();
+          }
+
         }, error => {
           observer.error(error);
         });

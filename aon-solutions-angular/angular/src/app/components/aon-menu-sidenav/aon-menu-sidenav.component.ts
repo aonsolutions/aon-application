@@ -59,7 +59,7 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    RootLoader.rootPanel("");
+    
   }
 
   ngOnDestroy() {
@@ -145,6 +145,7 @@ export class AonMenuSidenavComponent implements OnInit, OnDestroy {
     }
     localStorage.clear();
     this.service.isUserLoggedIn = false;
+    this.aonService.close();
     this.service.close();
     this.router.navigate(['login']);
   }

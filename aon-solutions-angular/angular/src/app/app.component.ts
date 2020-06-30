@@ -3,8 +3,6 @@ import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { SharedService, AonService } from './services/services';
-import { Company } from './models/AonModel';
-import { TediUtils } from './utils/tedi-utils';
 import { RootLoader } from './utils/loader';
 import './js/components/aon-desktop.js';
 
@@ -23,17 +21,7 @@ export class AppComponent implements OnInit {
     this.service.isUserLoggedIn = false;
     if (this.service.getToken()) {
       this.service.isUserLoggedIn = true;
-      this.aonService.getCompanies().subscribe( (companies: Company[]) => {
-        if(companies.length === 1) {
-          RootLoader.rootPanel('<aon-desktop></aon-desktop>');
-        } else {
-          RootLoader.angularPanel(this.router, this.location,  'companyList');
-        }
-      }, (error: any) => {
-        this.service.isUserLoggedIn = false;
-        TediUtils.showError(this.dialog, error.error);
-        localStorage.clear();
-      });
+      RootLoader.angularPanel(this.router, this.location,  'companyList');
     }
   }
 

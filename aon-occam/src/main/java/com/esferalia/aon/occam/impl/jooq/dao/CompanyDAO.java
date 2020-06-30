@@ -224,7 +224,7 @@ public class CompanyDAO {
 			.fetch().stream().map(new CompanyFiller());
 	}
 	
-	public static Stream<Company> getCompanyStream(AONContext ctx, byte[] auth){
+	public static Stream<Company> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage){
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		
@@ -236,6 +236,8 @@ public class CompanyDAO {
 			.where(DOMAIN.ID.in(domains)
 					.or(DOMAIN.PARENT.in(domains)
 						.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))))
+			.limit(perPage)
+			.offset(perPage * (page -1))
 			.fetch().stream().map(new CompanyFiller());
 	}
 

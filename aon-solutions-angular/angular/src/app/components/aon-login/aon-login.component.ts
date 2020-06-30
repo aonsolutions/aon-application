@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material';
 import { Company } from '../../models/AonModel';
 import { TediUtils } from '../../utils/tedi-utils';
 import { RootLoader } from '../../utils/loader';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'aon-login',
@@ -31,7 +33,8 @@ export class AonLoginComponent implements OnInit {
       this.login(this.email.nativeElement.value, this.password.nativeElement.value);
     }
 
-  constructor(public service: SharedService, public aonService : AonService,
+  constructor(private router: Router, private location: Location,
+      public service: SharedService, public aonService : AonService,
       public dialog: MatDialog) {}
 
   ngOnInit() {
@@ -53,20 +56,7 @@ export class AonLoginComponent implements OnInit {
           this.service.isUserLoggedIn = true;
           this.service.setToken(result.session_id);
           this.service.setUserEmail(email);
-          this.aonService.getCompanies().subscribe( (companies: Company[]) => {
-            this.service.isUserLoggedIn = true;
-            localStorage.setItem('aon_domain_id', `${companies[0].id}`);
-            localStorage.setItem('aon_domain_name', companies[0].domain);
-            if(companies.length === 1){
-              RootLoader.rootPanel('<aon-desktop></aon-desktop>');
-            } else {
-              RootLoader.rootPanel('<aon-company-list></aon-company-list>');
-            }
-          }, (error: any) => {
-            TediUtils.showError(this.dialog, error.error);
-            localStorage.clear();
-          });
-
+          RootLoader.angularPanel(this.router, this.location,  'companyList');
         }
       }, error => {
         this.service.loading = false;

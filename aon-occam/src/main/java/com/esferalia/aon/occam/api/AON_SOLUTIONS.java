@@ -98,24 +98,17 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static Stream<Company> getCompanyStream(String token) {	
+	public static Stream<Company> getCompanyStream(String token, String schema, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
 		Stream<Company> stream = new LinkedList<Company>().stream();
-		for(String schema : AONContext.getSchemas()) {
-			AONContext ctx = null;
-			try {
-				String domain = AONContext.getSchemaFirstDomain(schema);
-//				ctx = AONContext.getAONContext(schema);
-				if(!AonStringUtils.isBlank(domain)) {
-					ctx = AONContext.getAONContext(domain, 0, "");
-					stream = Stream.concat(stream, getRegistry().getCompanyStream(ctx, aonToken.getAuth()));
-				}
-			} finally {
-				if(ctx != null) {
-					ctx.close();
-				}
+		String domain = AONContext.getSchemaFirstDomain(schema);
+		if(!AonStringUtils.isBlank(domain)) {
+			try (AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+				Stream<Company> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), page, perPage);
+				stream = Stream.concat(stream, s);
+		
 			}
-		}
+		} 
 		return stream;
 	}
 	

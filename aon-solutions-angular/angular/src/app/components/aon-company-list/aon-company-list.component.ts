@@ -14,15 +14,7 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router, public aonService: AonService, public service : SharedService, public companyService: CompanyService) {
     this.companyService.filterObservable.subscribe( (value: CompanyFilter) => {
-      if(this.aonService.companies === undefined || this.aonService.companies.length === 0){
-        this.service.loading = true;
-        this.aonService.getCompanies().subscribe(
-          (r: Company[]) => {
-            this.companies = r.filter(f => this.companyFilter(f));
-            this.service.loading = false;
-          }
-        );
-      } else {
+      if(this.aonService.companies && this.aonService.companies.length > 0){
         this.companies = this.aonService.companies.filter(f => this.companyFilter(f));
       }
     });
@@ -60,9 +52,27 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.init();
+  }
+
+  init() {
     this.aonService.getCompanies().subscribe(
       (r: Company[]) => {
-        this.companies = r.filter(f => this.companyFilter(f));
+
+        this.companies = this.companies ? this.companies.concat(r.filter(f => this.companyFilter(f))) : r.filter(f => this.companyFilter(f));
+        this.companies.sort(function (a, b) {
+          if (a.name.toUpperCase() > b.name.toUpperCase()) {
+            return 1;
+          }
+          if (a.name.toUpperCase() < b.name.toUpperCase()) {
+            return -1;
+          }
+          // a must be equal to b
+          return 0;
+        });
+        if(!this.aonService.end){
+          this.init();
+        }
       },
       (error: any) => this.closeSession()
     );
@@ -71,6 +81,7 @@ export class AonCompanyListComponent implements OnInit, OnDestroy {
   closeSession(): void {
     localStorage.clear();
     this.service.isUserLoggedIn = false;
+    this.aonService.close();
     this.service.close();
     this.router.navigate(['login']);
   }

@@ -10,7 +10,7 @@ export class RootLoader {
 
   static angularPanel(router: Router, location: Location, route: string, color?: string) : Promise<boolean> {
     let contentPanel = document.getElementById("contentPanel");
-    contentPanel.style.background = color ? color : 'white';
+    if(contentPanel) contentPanel.style.background = color ? color : 'white';
     this.displayAngularPanel();
     let prom: Promise<boolean> = router.navigateByUrl(route, {skipLocationChange: true});
     location.replaceState('');
@@ -28,17 +28,19 @@ export class RootLoader {
 
   static displayRootPanel() : void {
     let angularPanel = document.getElementById("angularPanel");
-    angularPanel.style.display = 'none';
+    if(angularPanel) angularPanel.style.display = 'none';
     let rootPanel = document.getElementById("rootPanel");
-    rootPanel.style.display = 'block';
+    if(rootPanel) rootPanel.style.display = 'block';
   }
 
   static displayAngularPanel() : void {
     const rootPanel = document.getElementById("rootPanel");
-    rootPanel.innerHTML = '';
-    rootPanel.style.display = 'none';
+    if(rootPanel) {
+      rootPanel.innerHTML = '';
+      rootPanel.style.display = 'none';
+    }
     let angularPanel = document.getElementById("angularPanel");
-    angularPanel.style.display = 'block';
+    if(angularPanel) angularPanel.style.display = 'block';
   }
 }
 

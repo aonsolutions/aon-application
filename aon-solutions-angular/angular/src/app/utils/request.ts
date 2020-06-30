@@ -11,7 +11,7 @@ export class Request {
 		xhr.send(formData);
 	}
 
-	static request(method: string, url: string, token: string, sendData?: any) : Observable<any>{
+	static request(method: string, url: string, token: string, sendData?: any, headers?: any) : Observable<any>{
 		return Observable.create((observer: Observer<any>) => {
 			let xhr = new XMLHttpRequest();
 			xhr.open(method, /*'/tedi-angular'+*/ url);
@@ -21,6 +21,11 @@ export class Request {
 			const domainName = localStorage.getItem("aon_domain_name");
 			xhr.setRequestHeader('domain_name', domainName);
 			xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+			if(headers) {
+				xhr.setRequestHeader("schema", headers.schema);
+				xhr.setRequestHeader("page", headers.page);
+				xhr.setRequestHeader("per_page", headers.per_page);
+			}
 			xhr.send(JSON.stringify(sendData));
 
 			xhr.onload = () => {
@@ -43,7 +48,7 @@ export class Request {
 			};
 
 			xhr.onerror = (error) => {
-				console.log("Request failed");
+				console.log('Request failed');
 				observer.error(error);
 			};
 		});
