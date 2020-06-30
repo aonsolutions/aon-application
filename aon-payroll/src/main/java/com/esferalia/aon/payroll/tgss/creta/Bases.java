@@ -1905,7 +1905,20 @@ public class Bases {
 					public Double get(Salary salary, Fecha desde, Fecha hasta) 
 					throws NoSuchVariableException 
 					,UnMatchedVariableException {
-						return (1.00 - super.get(salary, desde, hasta)) * 1000.00;
+						double h05 = 0.00;
+						Period p = new Period(toDate(desde), toDate(hasta));
+						for ( String var: variables ) {
+							try {								
+								h05 = get(var, salary, p);								
+							} catch (NoSuchVariableException e) {
+								continue;
+							}
+							catch ( UnMatchedVariableException e) {
+								h05 = ExpressionContext.eval(e.getContextData().getExpression(),Double.class);
+							}
+							return (1.00 - h05 ) * 1000.00;
+						} 
+						throw new NoSuchVariablesException(variables.toArray(String[]::new));				
 					};
 					}.add(ERE_FACTORS)
 			);
