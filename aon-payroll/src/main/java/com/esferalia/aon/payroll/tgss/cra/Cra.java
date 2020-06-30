@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDatabaseOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbPasswordOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbUserOption;
@@ -17,6 +18,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
@@ -200,7 +202,11 @@ public class Cra {
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)0))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.CGC_BASE.gt(0.00))
 					.fetch();
+			
+			// TODO : eliminar cuando avergigue por que se pone ss_regime 0 en vez de 3 en este caso
+			salaryRecords = filterRETARecords(salaryRecords, dslContext);
 			
 			// EnterpriseCCCRecord
 			Result<Record> enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
@@ -529,6 +535,24 @@ public class Cra {
 		return mainCRAJSON;
 	}
 	
+	private static Result<Record> filterRETARecords(Result<Record> salaryRecords, DSLContext dslContext) {
+		ArrayList<Integer> deletePos = new ArrayList<Integer>();
+		for(int i=0; i<salaryRecords.size(); i++) {
+			Byte ss_regime = dslContext.select(CONTRACT.SS_REGIME).from(CONTRACT).where(CONTRACT.ID.eq(salaryRecords.get(i).get(SALARY.CONTRACT))).fetchOne(CONTRACT.SS_REGIME);
+			if(ss_regime != (byte) 3)
+				continue;
+			deletePos.add(i);
+		}
+		
+		Collections.sort(deletePos, Collections.reverseOrder());
+		
+		for(int pos : deletePos) {
+			salaryRecords.remove(pos);
+		}
+		
+		return salaryRecords;
+	}
+
 	// ********************************************************************************************************************************************
 	//													AUXILIAR METHODS
 	// ********************************************************************************************************************************************

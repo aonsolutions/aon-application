@@ -145,8 +145,8 @@ public class MainCRAObjectNew {
 				Integer activityId = activity.getId();
 				String activityDescription = activity.getDescription();
 				for(CCC ccc : activity.getCccs()) {
-//					if(ccc.getEmployees().isEmpty())
-//						continue;
+					if(ccc.getEmployees().isEmpty())
+						continue;
 					
 					CCCInfo cccInfo = new CCCInfo();
 					cccInfo.setCccId(ccc.getId());
