@@ -437,6 +437,7 @@ public class Cra {
 								.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
 						.and(SALARY.TYPE.eq((byte)2))
 						.and(SALARY.SS_REGIME.notEqual((byte)3))
+						.and(SALARY.CGC_BASE.gt(0.00))
 					.fetch();
 			
 			if(!salaryRecords.isEmpty()){
