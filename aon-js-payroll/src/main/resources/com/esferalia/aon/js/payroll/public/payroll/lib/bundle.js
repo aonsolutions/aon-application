@@ -221,6 +221,15 @@ module.exports.newStandardPayroll = function(payroll, stream){
     String.prototype.splice = function(idx, rem, str) {
         return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
     };
+    
+    var checkDates = function(accrualType, accrualTypeExpression) {
+    	console.log(accrualType.startDate.jsdate);
+    	console.log(accrualType.endDate.jsdate);
+        if(null != accrualType.startDate && null != accrualType.endDate && accrualType.startDate.jsdate != accrualType.endDate.jsdate){
+        	return accrualTypeExpression + " ( " + accrualType.startDate.jsdate.getDate() + "/" + (accrualType.startDate.jsdate.getMonth() + 1) + " - " +  accrualType.endDate.jsdate.getDate() + "/" + (accrualType.endDate.jsdate.getMonth() + 1) + " )";
+        }
+        return accrualTypeExpression;
+    }
 
     var checkAccrualName = function(accrualName) {
         if (accrualName) {
@@ -787,7 +796,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
                     pdf
                         .font(textFont)
                         .text(formatMoney(type.type_value), thirdColumn + numberOffset(type.type_value), actualLine)
-                        .text("  por " + parseExpression(type.type_expression), fourthColumn, actualLine);
+                        .text("  por " + checkDates(type, parseExpression(type.type_expression)), fourthColumn, actualLine);
                 }
 
                 pdf
@@ -2848,6 +2857,15 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
     String.prototype.splice = function(idx, rem, str) {
         return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
     };
+    
+    var checkDates = function(accrualType, accrualTypeExpression) {
+    	console.log(accrualType.startDate.jsdate);
+    	console.log(accrualType.endDate.jsdate);
+        if(null != accrualType.startDate && null != accrualType.endDate && accrualType.startDate.jsdate != accrualType.endDate.jsdate){
+        	return accrualTypeExpression + " ( " + accrualType.startDate.jsdate.getDate() + "/" + (accrualType.startDate.jsdate.getMonth() + 1) + " - " +  accrualType.endDate.jsdate.getDate() + "/" + (accrualType.endDate.jsdate.getMonth() + 1) + " )";
+        }
+        return accrualTypeExpression;
+    }
 
     var checkAccrualName = function(accrualName) {
         if (accrualName) {
@@ -3441,7 +3459,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
                     type = accrual.types[j];
                     pdf
                         .font(textFont)
-                        .text(parseExpression(type.type_expression), secondColumn + 15, accrualTop)
+                        .text(checkDates(type, parseExpression(type.type_expression)), secondColumn + 15, accrualTop)
                         .text(formatMoney(type.type_value), thirdColumn + numberOffset(type.type_value), accrualTop);
 
                     accrualTop += 12;

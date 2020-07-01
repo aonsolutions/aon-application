@@ -335,6 +335,7 @@ public class Reports {
 			
 			return commonContAmount + aTyEPAmount + unemploymentAmount + profesionalFormatAmount + 
 					fogasaAmount + hExtraAmount + nonHExtraAmount;
+			
 		}
 
 	}
@@ -344,6 +345,8 @@ public class Reports {
 		public String getDescription();
 		public int getCode();
 		public String getCodeDescription();
+		public Date getStartDate();
+		public Date getEndDate();
 	}
 	
 	public static interface Deduction {
@@ -613,7 +616,9 @@ public class Reports {
 					amount : amount,
 					description : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
 					cra: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCodeDescription()(),
-					code: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()()
+					code: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
+					startDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getStartDate()(),
+					endDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getEndDate()()
 				});
 			}
 		}
@@ -703,7 +708,9 @@ public class Reports {
 			accrual.types.push({
 				type_expression : paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
        			code : paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
-       			type_value : paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
+       			type_value : paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()(),
+       			startDate: paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getStartDate()(),
+				endDate: paymentFirst.@com.esferalia.aon.js.payroll.client.Reports.Payment::getEndDate()()
 			});
 		}
 		
@@ -722,7 +729,9 @@ public class Reports {
 						accrual.types.push({
 							type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
 		           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
-		           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
+		           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()(),
+		           			startDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getStartDate()(),
+							endDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getEndDate()()
 						});
 					}
 					if(paymentsOrdered.@java.util.List::size()() == i+1){
@@ -740,7 +749,9 @@ public class Reports {
 							accrual.types.push({
 								type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
 			           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
-			           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
+			           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()(),
+			           			startDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getStartDate()(),
+								endDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getEndDate()()
 							});
 							json.accruals.push(accrual);
 						}
@@ -750,7 +761,9 @@ public class Reports {
 							accrual.types.push({
 								type_expression : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()(),
 			           			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
-			           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()()
+			           			type_value : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()(),
+			           			startDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getStartDate()(),
+								endDate: payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getEndDate()()
 							});
 						}
 					}
