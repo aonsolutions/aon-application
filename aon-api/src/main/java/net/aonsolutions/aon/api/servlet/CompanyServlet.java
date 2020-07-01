@@ -54,6 +54,7 @@ public class CompanyServlet extends HttpServlet{
 				next = jsArray.length() >= 0 && jsArray.length() < perPage;
 				page = page + 1;
 				rsch = schema;
+				sch = sch.equalsIgnoreCase("first") ? "" : sch;
 			}
 		}
 		JSONObject json = new JSONObject();
