@@ -227,6 +227,7 @@ public abstract class PageAbs extends ResizeComposite {
 				}
 			}
 		});
+			
 		text.setValue(callback.getMod200Object().getDoubleValue(k));
 		text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());
 		text.addStyleName(AON.AON_CSS.aonFiscalPaddingLeft());

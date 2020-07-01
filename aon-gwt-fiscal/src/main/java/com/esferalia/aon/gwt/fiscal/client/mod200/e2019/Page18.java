@@ -124,7 +124,7 @@ public class Page18 extends PageAbs {
 					newBase = new Button();
 					newBase.setStyleName(AON.AON_CSS.aonIconReset());
 					newBase.addStyleName(AON.AON_CSS.aonBorderNone());
-					newBase.addStyleName(AON.AON_CSS.aonMarginTop());
+					newBase.addStyleName(AON.AON_CSS.aonMarginTop5());
 					newBase.addClickHandler(new ClickHandler() {
 						
 						@Override
@@ -162,7 +162,7 @@ public class Page18 extends PageAbs {
 				newParticipation = new Button();
 				newParticipation.setStyleName(AON.AON_CSS.aonIconReset());
 				newParticipation.addStyleName(AON.AON_CSS.aonBorderNone());
-				newParticipation.addStyleName(AON.AON_CSS.aonMarginTop());
+				newParticipation.addStyleName(AON.AON_CSS.aonMarginTop5());
 				newParticipation.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -209,7 +209,7 @@ public class Page18 extends PageAbs {
 			newForeign = new Button();
 			newForeign.setStyleName(AON.AON_CSS.aonIconReset());
 			newForeign.addStyleName(AON.AON_CSS.aonBorderNone());
-			newForeign.addStyleName(AON.AON_CSS.aonMarginTop());
+			newForeign.addStyleName(AON.AON_CSS.aonMarginTop5());
 			newForeign.addClickHandler(new ClickHandler() {
 				
 				@Override

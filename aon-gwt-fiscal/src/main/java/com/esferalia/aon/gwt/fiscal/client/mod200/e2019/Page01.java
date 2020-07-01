@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.CountryListBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DocumentTextBox;
@@ -19,12 +20,15 @@ import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Key;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -76,12 +80,12 @@ public class Page01 extends PageAbs {
 	@UiField 
 	TextBox ultimateDocument;           
 	@UiField
-	TextBox ultimateDocumentCountry;  // FALTA - POR AHORA ES SIMPLEMENTE UN STRING A FALTA DE SABER QUE PAISES PUEDEN SER 	
+	CountryListBox ultimateDocumentCountry;
 	@UiField
 	TextBox ultimateName;				
 	@UiField
-	TextBox ultimateCountry; // FALTA - POR AHORA ES SIMPLEMENTE UN STRING A FALTA DE SABER QUE PAISES PUEDEN SER			
-	
+	CountryListBox ultimateCountry; 
+
 	@UiField
 	Button newLegalRepresentative;
 	@UiField
@@ -145,20 +149,32 @@ public class Page01 extends PageAbs {
 
 		this.ultimateDocument.setValue(callback.getMod200Object().getMod200().getUltimateDocument());
 		this.ultimateDocument.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002019Key.C0081));
-	    this.ultimateDocumentCountry.setValue(callback.getMod200Object().getMod200().getUltimateDocumentCountry());
+		
 	    this.ultimateDocumentCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002019Key.C0081));
+		this.ultimateDocumentCountry.setWidth("240px");
+		this.ultimateDocumentCountry.setValue(callback.getMod200Object().getMod200().getUltimateDocumentCountry());
+		this.ultimateDocumentCountry.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				callback.getMod200Object().getMod200().setUltimateDocumentCountry(Country.safeValueOf(ultimateDocumentCountry.getSelectedValue()));
+			}
+		});
+		
 	    this.ultimateName.setValue(callback.getMod200Object().getMod200().getUltimateName());
 	    this.ultimateName.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002019Key.C0081));
-	    this.ultimateCountry.setValue(callback.getMod200Object().getMod200().getUltimateCountry());
+	    
 	    this.ultimateCountry.setEnabled(callback.getMod200Object().getMod200().isChecked(Mod2002019Key.C0081));
+		this.ultimateCountry.setWidth("240px");
+		this.ultimateCountry.setValue(callback.getMod200Object().getMod200().getUltimateCountry());
+		this.ultimateCountry.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				callback.getMod200Object().getMod200().setUltimateCountry(Country.safeValueOf(ultimateCountry.getSelectedValue()));
+			}
+		});
 	
-	    // FALTA - ACTIVARLOS, AUN NO ESTAN AÑADIDOS LOS CAMPOS A LA BASE DE DATOS
-		this.ultimateDocument.setEnabled(false);
-	    this.ultimateDocumentCountry.setEnabled(false);
-	    this.ultimateName.setEnabled(false);
-	    this.ultimateCountry.setEnabled(false);
-	    // -----	    
-
 		Secretary secretary = callback.getMod200Object().getMod200().getSecretary();
 		if (secretary != null) {
 			this.secretaryDocument.setValue(secretary.getDocument());
@@ -188,7 +204,7 @@ public class Page01 extends PageAbs {
 		callback.getMod200Object().getMod200().setDominantIdentificationNumber(dominantIdentificationNumber.getValue());
 		
 		callback.getMod200Object().getMod200().setUltimateDocument(this.ultimateDocument.getValue());         
-	    callback.getMod200Object().getMod200().setUltimateDocumentCountry(this.ultimateDocumentCountry.getValue());
+//	    callback.getMod200Object().getMod200().setUltimateDocumentCountry(this.ultimateDocumentCountry.getValue());
 	    callback.getMod200Object().getMod200().setUltimateName(this.ultimateName.getValue());
 	    callback.getMod200Object().getMod200().setUltimateCountry(this.ultimateCountry.getValue());
 		

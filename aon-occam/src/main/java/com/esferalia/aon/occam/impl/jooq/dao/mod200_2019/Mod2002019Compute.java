@@ -807,8 +807,8 @@ public class Mod2002019Compute {
 				if (key1 != null) {
 					// Si es el desglose la casilla 561 (compensacion de cuotas cooperativas), 
 					// esta casilla es cero si no es cooperativa
-					if (breakdownKey == Mod2002019Key.LQ561)
-						COMPUTE_EXPRESSION_MAP.put(key1,"(isCooperativa())?"+key1.toString()+":0.0");
+//					if (breakdownKey == Mod2002019Key.LQ561)
+//						COMPUTE_EXPRESSION_MAP.put(key1,"(!isCooperativa())?(0.0):("+key1.toString()+")");
 
 					s1 = s1 + (s1.isEmpty() ? "" : "+") + key1.toString();
 				}
@@ -817,8 +817,8 @@ public class Mod2002019Compute {
 				if (key2 != null) {
 					// Si es el desglose la casilla 561 (compensacion de cuotas cooperativas), 
 					// esta casilla es cero si no es cooperativa
-					if (breakdownKey == Mod2002019Key.LQ561)
-						COMPUTE_EXPRESSION_MAP.put(key2,"(isCooperativa())?"+key2.toString()+":0.0");
+//					if (breakdownKey == Mod2002019Key.LQ561)
+//						COMPUTE_EXPRESSION_MAP.put(key2,"(!isCooperativa())?(0.0):("+key2.toString()+")");
 					
 					s2 = s2 + (s2.isEmpty() ? "" : "+") + key2.toString();
 				}

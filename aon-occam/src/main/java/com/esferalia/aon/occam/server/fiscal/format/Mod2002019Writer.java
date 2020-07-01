@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.IMod200KeysProvider;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019.EcpnType;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019BN082Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019BN1040Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019BN1041Key;
@@ -414,7 +415,7 @@ public class Mod2002019Writer {
 					if (key != null) {
 						if (fromKey == null || (fromKey != null && key == fromKey))
 							printKey = true;
-						if (printKey) {
+						if (printKey) {							
 							res = res || (m.getDoubleValue(key) != 0.0);
 							if (l!=null)
 								addSignedKey(l, m, key);							
@@ -431,7 +432,7 @@ public class Mod2002019Writer {
 					if (key != null) {
 						if (fromKey == null || (fromKey != null && key == fromKey))
 							printKey = true;
-						if (printKey) {						
+						if (printKey) {
 							res = res || (m.getDoubleValue(key) != 0.0);
 							if (l!=null)
 								addSignedKey(l, m, key);							
@@ -562,9 +563,9 @@ public class Mod2002019Writer {
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantDocument(), 9))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getDominantIdentificationNumber(), 15))
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocument(), 15))       // Grupo - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateDocumentCountry(), 2)) // Grupo - Clave 00081 - Datos de la sociedad matriz última: Código país
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text((Country.safeIso2(mod200.getUltimateDocumentCountry())=="ES"?"":Country.safeIso2(mod200.getUltimateDocumentCountry())), 2)) // Grupo - Clave 00081 - Datos de la sociedad matriz última: Código país
 				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateName(), 40))           // Grupo - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
-				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(mod200.getUltimateCountry(), 2))         // Grupo - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
+				,(line, mod200, label) -> line.append(AonFiscalFileUtils.text(Country.safeIso2(mod200.getUltimateCountry()), 2))         // Grupo - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002019Key.C0041, 9, 2)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002019Key.C0042, 9, 2)
 				,(line, mod200, label) -> line.append(mod200.isComplementary() ? "1" : "0")

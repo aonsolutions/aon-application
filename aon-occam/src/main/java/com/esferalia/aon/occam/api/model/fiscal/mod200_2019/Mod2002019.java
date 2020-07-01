@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.fiscal.MinorEntity;
 import com.esferalia.aon.occam.api.model.fiscal.Secretary;
 import com.esferalia.aon.occam.api.model.fiscal.mod200.IMod200Key;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -67,9 +68,9 @@ public class Mod2002019 implements IFiscalModel {
 	private String dominantIdentificationNumber;  // Grupo - Clave 00010 - Nº identificación de la sociedad dominante (en el caso de grupos constituidos solo por entidades depend.)
 	
 	private String ultimateDocument;            // Grupo - Clave 00081 - Datos de la sociedad matriz última: NIF o equivalente.
-    private String ultimateDocumentCountry; 	// Grupo - Clave 00081 - Datos de la sociedad matriz última: Código país
+	private Country ultimateDocumentCountry; 	// Grupo - Clave 00081 - Datos de la sociedad matriz última: Código país
     private String ultimateName;				// Grupo - Clave 00081 - Datos de la sociedad matriz última: Nombre o razón social
-    private String ultimateCountry; 			// Grupo - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
+    private Country ultimateCountry; 			// Grupo - Clave 00081 - Datos de la sociedad matriz última: País o jurisdicción
 	
 	private BalanceType balanceType;
 	private EcpnType ecpnType;
@@ -475,10 +476,10 @@ public class Mod2002019 implements IFiscalModel {
 	public void setUltimateDocument(String ultimateDocument) {
 		this.ultimateDocument = ultimateDocument;
 	}
-	public String getUltimateDocumentCountry() {
+	public Country getUltimateDocumentCountry() {
 		return ultimateDocumentCountry;
 	}
-	public void setUltimateDocumentCountry(String ultimateDocumentCountry) {
+	public void setUltimateDocumentCountry(Country ultimateDocumentCountry) {
 		this.ultimateDocumentCountry = ultimateDocumentCountry;
 	}
 	public String getUltimateName() {
@@ -487,14 +488,12 @@ public class Mod2002019 implements IFiscalModel {
 	public void setUltimateName(String ultimateName) {
 		this.ultimateName = ultimateName;
 	}
-	public String getUltimateCountry() {
+	public Country getUltimateCountry() {
 		return ultimateCountry;
 	}
-	public void setUltimateCountry(String ultimateCountry) {
+	public void setUltimateCountry(Country ultimateCountry) {
 		this.ultimateCountry = ultimateCountry;
 	}
-	
-// ------------------------------------------	
 	
 //	public EnumMap<Mod2002019Key, DoubleVariable2019> getKeysMap() {
 //	return keysMap;
@@ -643,7 +642,5 @@ public class Mod2002019 implements IFiscalModel {
 	public boolean isCooperativa() {
 		return isChecked(Mod2002019Key.C0017) || isChecked(Mod2002019Key.C0018) || isChecked(Mod2002019Key.C0019);
 	}
-	
-	
 	
 }

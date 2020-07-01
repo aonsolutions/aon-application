@@ -48,7 +48,7 @@ public class Mod2002019Description {
 		DESCRIPTION_MAP.put(Mod2002019Key.C0066,"Entidad patrimonial");
 		DESCRIPTION_MAP.put(Mod2002019Key.C0078,"Di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica que integra entidades menores de ellas dependientes");
 		DESCRIPTION_MAP.put(Mod2002019Key.C0006,"Incentivos entidad de reducida dimensi\u00F3n (Cap. XI, T\u00EDt. VII LIS)");
-		DESCRIPTION_MAP.put(Mod2002019Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal");
+		DESCRIPTION_MAP.put(Mod2002019Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal)");
 		DESCRIPTION_MAP.put(Mod2002019Key.C0079,"Entidad ZEC en consolidaci\u00F3n fiscal");		
 		DESCRIPTION_MAP.put(Mod2002019Key.C0022,"R\u00E9gimen entid. navieras en funci\u00F3n del tonelaje");
 		DESCRIPTION_MAP.put(Mod2002019Key.C0028,"Tribut. conjunta Estado/Diput. Cdad. Forales");		

@@ -259,14 +259,14 @@ public class Model200 extends MainEntryPoint {
 		toolbar.setWidget(0, 2, buttonContainer);
 		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
 		
-		// Botón Nuevo 2019 (aun en Beta)
+		// Botón Nuevo 2019 
 		final Button new2019 = new Button();
 		new2019.setText(AON.MSG.newSomething("2019"));
-		new2019.setTitle(new2019.getText()+" (Beta)");
+		//new2019.setTitle(new2019.getText()+" (Beta)");
 		new2019.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		//new2019.addStyleName(AON.AON_CSS.aonIconReset());
-		new2019.addStyleName("aon-icon-beta-text");
-		new2019.setVisible(aonData.isBetaEnabled());
+		new2019.addStyleName(AON.AON_CSS.aonIconReset());
+		//new2019.addStyleName("aon-icon-beta-text");
+		//new2019.setVisible(aonData.isBetaEnabled());
 		new2019.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -274,20 +274,6 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 		buttonContainer.add(new2019);
-		
-		// Botón Nuevo 2018
-		final Button new2018 = new Button();
-		new2018.setText(AON.MSG.newSomething("2018"));
-		new2018.setTitle(new2018.getText());
-		new2018.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		new2018.addStyleName(AON.AON_CSS.aonIconReset());
-		new2018.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				new2018();
-			}
-		});
-		buttonContainer.add(new2018);
 		
 		final NewContextMenu newContextMenu = new NewContextMenu();
 		final Button newButton = new Button();

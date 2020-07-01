@@ -47,6 +47,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019Key;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.Mod2002019KeyDC;
 import com.esferalia.aon.occam.api.model.fiscal.mod200_2019.ValidationMessage2019;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -294,6 +295,10 @@ public class Mod2002019DAO  {
 			 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 			 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 			 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
+			 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
+			 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
+			 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
+			 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
 			 .returning()
 			 .fetchOne();
 		mod200.setId(record.getValue(FS_MODEL200.ID));
@@ -559,6 +564,10 @@ public class Mod2002019DAO  {
 		 .set(FS_MODEL200.NRS_ANEXOIV,mod200.getNrsAnexoIV())
 		 .set(FS_MODEL200.NRS_ANEXOV,mod200.getNrsAnexoV())
 		 .set(FS_MODEL200.JUST_ACTIVOS,mod200.getJustActivos())
+		 .set(FS_MODEL200.ULTIMATE_DOCUMENT,mod200.getUltimateDocument())
+		 .set(FS_MODEL200.ULTIMATE_DOCUMENT_COUNTRY, Country.safeIso2(mod200.getUltimateDocumentCountry()))
+		 .set(FS_MODEL200.ULTIMATE_NAME,mod200.getUltimateName())
+		 .set(FS_MODEL200.ULTIMATE_COUNTRY, Country.safeIso2(mod200.getUltimateCountry()))
 		 .where(FS_MODEL200.ID.equal(mod200.getId()))
 		 .execute();
 		ctx.log().info("\t\t MOD 200 UPDATED (" + mod200.getId() + ")");
@@ -691,6 +700,10 @@ public class Mod2002019DAO  {
 		mod200.setNrsAnexoIV(record.getNrsAnexoiv());
 		mod200.setNrsAnexoV(record.getNrsAnexov());
 		mod200.setJustActivos(record.getJustActivos());
+		mod200.setUltimateDocument(record.getUltimateDocument());
+		mod200.setUltimateDocumentCountry(Country.safeValueOf(record.getUltimateDocumentCountry()));
+		mod200.setUltimateName(record.getUltimateName());
+		mod200.setUltimateCountry(Country.safeValueOf(record.getUltimateCountry()));
 		return mod200;
 	}
 	
@@ -982,7 +995,8 @@ public class Mod2002019DAO  {
 		params.setDomain(mod200.getDomain());
 		params.setYear(mod200.getYear());
 		 
-		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, mod200.getYear());
+//		AccountPeriod period =  AccountPeriodDAO.fetchOneByYear(ctx, mod200.getYear());
+		AccountPeriod period =  AccountPeriodDAO.getPeriodByYear(ctx, mod200.getYear());
 		if (period == null) {
 			return null;
 		}

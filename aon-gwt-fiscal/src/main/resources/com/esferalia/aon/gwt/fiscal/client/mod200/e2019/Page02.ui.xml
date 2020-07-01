@@ -11,17 +11,27 @@
 		<g:HTMLPanel styleName="{aonResources.css.aonFiscalContainer}">
 			<g:SimplePanel ui:field="headerPanel"/>
 			<g:HTMLPanel ui:field="basePanel" styleName="{aonResources.css.aonWidthAll}">
+			
 				<div class="{aonResources.css.aonGroup}">
 					<div class="{aonResources.css.aonGroupTitle}">
 						<g:InlineLabel text="{msg.participationsOut}" />
 					</div>
 					<div class="{aonResources.css.aonGroupBody}">
-						<cell:CellTable ui:field="tableOut"/>
-						<g:Button ui:field="newParticipationOut"
-							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone} {aonResources.css.aonMarginTop}">
-							&#160;
-						</g:Button>
-						<br/>
+						<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginBottom}">
+							<tr>
+								<td>					
+									<cell:CellTable ui:field="tableOut"/>
+								</td>
+							</tr>
+							<tr>
+								<td>				
+									<g:Button ui:field="newParticipationOut"
+										styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone} {aonResources.css.aonMarginBottom}">
+										&#160;
+									</g:Button>
+								</td>
+							</tr>
+						</table>
 						<div class="{aonResources.css.aonGroup} {aonResources.css.aonMarginTop}">
 							<div class="{aonResources.css.aonGroupTitle}">
 								<g:InlineLabel text="{msg.totals}" />
@@ -31,33 +41,57 @@
 							</div>
 						</div>
 					</div> 
-				</div>				
+				</div>
+					
 				<div class="{aonResources.css.aonGroup} {aonResources.css.aonMarginTop}">
 					<div class="{aonResources.css.aonGroupTitle}">
 						<g:InlineLabel text="{msg.participationsIn}" />
 					</div>
 					<div class="{aonResources.css.aonGroupBody}">
-						<cell:CellTable ui:field="tableIn"/>
-						<g:Button ui:field="newParticipationIn"
-							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone} {aonResources.css.aonMarginTop}">
-							&#160;
-						</g:Button>
+						<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginBottom}">
+							<tr>
+								<td>
+									<cell:CellTable ui:field="tableIn"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Button ui:field="newParticipationIn"
+										styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone}">
+										&#160;
+									</g:Button>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</div>
+				
 				<g:FlexTable ui:field="table1" styleName="{aonResources.css.aonWidthAll}"/>
-				<br/>
+				<br/>	
+							
 				<div class="{aonResources.css.aonGroup} {aonResources.css.aonMarginTop}">
 					<div class="{aonResources.css.aonGroupTitle}">
 						<g:InlineLabel text="{msg.minorEntities}" />
 					</div>
 					<div class="{aonResources.css.aonGroupBody}">
-						<cell:CellTable ui:field="tableMinor"/>
-						<g:Button ui:field="newMinor"
-							styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone} {aonResources.css.aonMarginTop}">
-							&#160;
-						</g:Button>
+						<table class="{aonResources.css.aonWidthAll} {aonResources.css.aonMarginBottom}">
+							<tr>
+								<td>
+									<cell:CellTable ui:field="tableMinor"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<g:Button ui:field="newMinor"
+										styleName="{aonResources.css.aonIconReset} {aonResources.css.aonBorderNone}">
+										&#160;
+									</g:Button>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</div>
+				
 			</g:HTMLPanel>
 		</g:HTMLPanel>
 	</g:ScrollPanel>

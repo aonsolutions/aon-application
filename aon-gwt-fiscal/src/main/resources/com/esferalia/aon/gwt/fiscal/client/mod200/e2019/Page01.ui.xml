@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"
+	xmlns:aon="urn:import:com.esferalia.aon.gwt.common.client.widget"	
 	xmlns:cell="urn:import:com.google.gwt.user.cellview.client">
 
 	<ui:with type="com.esferalia.aon.gwt.common.client.i18n.CommonMessages" field="msg"></ui:with>
@@ -88,16 +88,16 @@
 										styleName="{aonResources.css.aonInputText}"/>	
 								</td>
 							</tr>
-							<tr>	
+					 		<tr>	
 								<td class="{aonResources.css.aonTextRight} {aonResources.css.aonPaddingRight}">
 									<g:Label text="{msg.ultimateDocumentCountry}"  />	
 								</td>
 								<td>
-									<g:TextBox ui:field="ultimateDocumentCountry" 
-										visibleLength="2" maxLength="2"
+									<aon:CountryListBox ui:field="ultimateDocumentCountry"
 										styleName="{aonResources.css.aonInputText}"/>
 								</td>
 							</tr>
+							
 							<tr>	
 								<td class="{aonResources.css.aonTextRight} {aonResources.css.aonPaddingRight}">
 									<g:Label text="{msg.ultimateName}"  />	
@@ -113,8 +113,7 @@
 									<g:Label text="{msg.ultimateCountry}"  />	
 								</td>
 								<td>
-									<g:TextBox ui:field="ultimateCountry" 
-										visibleLength="2" maxLength="2"
+									<aon:CountryListBox ui:field="ultimateCountry"										
 										styleName="{aonResources.css.aonInputText}"/>
 								</td>
 							</tr>
