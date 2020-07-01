@@ -1955,6 +1955,134 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( decemberExtra , settle.getTotalPayment(), DELTA);
 
 	}
+
+	
+	@Test
+	public void testSettleWithContractExtrasI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		
+		Date contractStart = getFirstDayOfYear(getToday());
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"100\"");
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"01\"");
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" }, 
+						null);
+		
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA JULIO", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA DICIEMBRE", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		//@formatter:off
+		
+		
+		addSSRegimeStuff(aonContext);
+
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+				
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println( description + ":" + amount + "," + startDate);
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(settleCtx);
+		
+		
+		int months = get(getToday(), Calendar.MONTH );
+		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
+		
+		double extra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
+		
+
+		Assert.assertEquals( extra *2, settle.getTotalPayment(), DELTA);
+
+	}
+	
+	@Test
+	public void testSettleWithContractExtrasII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		
+		Date contractStart = add(getFirstDayOfYear(getToday()), Calendar.YEAR, -2);
+		Date contractEnd = getToday();
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				contractEnd,
+				new HashMap<String, String>() {
+					{
+						put(TC2.getName(), "\"100\"");
+						put(MONTH_DAYS.getName(), "30");
+						put(QUOTE_GROUP.getName(), "\"01\"");
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * 0.00/100" }, 
+						null);
+		
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA JULIO", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004, (byte) Month.JULY.ordinal());
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA DICIEMBRE", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004, (byte) Month.DECEMBER.ordinal());
+		//@formatter:off
+		
+		
+		addSSRegimeStuff(aonContext);
+
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+				
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder() {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date startDate, java.util.Date endDate, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println( description + ":" + amount + "," + startDate);
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		}).calculate(settleCtx);
+		
+		
+		int decemberExtramonths = get(getToday(), Calendar.MONTH );
+		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
+		int julyExtraMonths = (decemberExtramonths > 6 ? decemberExtramonths -6 : decemberExtramonths + 5);
+		
+		double decemberExtra = ( 1750.00 * 1.10 ) * ((decemberExtramonths * 30) + days ) / 360;
+		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360;
+		
+
+		Assert.assertEquals( decemberExtra + julyExtra, settle.getTotalPayment(), DELTA);
+
+	}
+
 	// ------------------------------------------------------------------------
 
 	public  void addSSRegimeStuff(AONContext aonContext) {
