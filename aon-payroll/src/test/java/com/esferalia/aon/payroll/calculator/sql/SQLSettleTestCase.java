@@ -1134,8 +1134,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		int julyExtraMonths = (months >= 6 ? months -6 : months );
 		// Settle at 01/07, so we have two extras for July .
-		if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
-			julyExtraMonths += 6;
+		//if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
+		//julyExtraMonths += 6;
 
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths  * 30) + days ) / 360 ;
 		
@@ -1215,8 +1215,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		int julyExtraMonths = (months >= Calendar.JULY ? months - Calendar.JULY : months );
 		// Settle at 01/07, so we have two extras for July .
-		if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
-			julyExtraMonths += 6;
+		//if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
+		//	julyExtraMonths += 6;
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360 ;
 		
 		if ( months == Calendar.DECEMBER && days > 15 )
@@ -1544,8 +1544,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		int julyExtraMonths = (months >= Calendar.JULY ? months - Calendar.JULY : months );
 		// Settle at 01/07, so we have two extras for July .
-		if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
-			julyExtraMonths += 6;
+		//if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
+		//	julyExtraMonths += 6;
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths * 30) + days ) / 360 ;
 		double bonusExtra = months == 11 ? ( 1750.00 * 1.10 ) * days  / 30 : 0.00;
 		
@@ -1857,8 +1857,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
 		int julyExtraMonths = (months >= 6 ? months -6 : months );
 		// Settle at 01/07, so we have two extras for July .
-		if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
-			julyExtraMonths += 6;
+		//if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
+		//	julyExtraMonths += 6;
 		double julyExtra = ( 1750.00 * 1.10 ) * ((julyExtraMonths  * 30) + days ) / 360 ;
 		
 		if ( months == Calendar.DECEMBER && days > 15 )

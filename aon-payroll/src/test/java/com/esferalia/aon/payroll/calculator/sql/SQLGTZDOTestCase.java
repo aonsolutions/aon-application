@@ -4411,7 +4411,7 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 				AonDateUtils.getFirstDayOfYear(getToday()),
 				new HashMap<String,String>(){
 				{
-					put("DIAS_MES", "30"); // Monthly quote
+//					put("DIAS_MES", "30"); // Monthly quote
 				}
 				}
 				, new String[] { 
@@ -4463,7 +4463,9 @@ public class SQLGTZDOTestCase extends AbstractSQLTestCase {
 		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
 		//@formatter:off
 		Assert.assertEquals(
-				1000.00/monthDays*(monthDays -5) + 1000.00/monthDays*3.00*0.10 + 1000.00/monthDays*2.00*0.70, 
+				1000.00/monthDays*(monthDays -5) 
+				+ 1000.00/monthDays*3.00*0.10 
+				+ 1000.00/monthDays*2.00*0.70, 
 				salary.getTotalPayment() 
 				
 				, DELTA);
