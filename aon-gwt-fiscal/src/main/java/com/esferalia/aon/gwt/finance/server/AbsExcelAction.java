@@ -122,7 +122,9 @@ public abstract class AbsExcelAction  {
 		cell.setCellStyle( centerCellStyle );
 		return cell;
 	}
-
+	protected Cell addEmptyCell() {
+		return addCell("");
+	}
 	protected Cell addCell(String value) {
 		Cell cell = row.createCell(cellCount++);
 		cell.setCellValue(AonStringUtils.trimToEmpty( value ) );
