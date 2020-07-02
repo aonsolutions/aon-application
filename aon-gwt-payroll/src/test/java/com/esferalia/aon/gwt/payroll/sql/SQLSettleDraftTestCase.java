@@ -101,5 +101,18 @@ public class SQLSettleDraftTestCase extends
 		return EmployeesServiceHelper.getSettleCalculatorContextImpl(connection, draft, null);
 	}
 	
+	protected ISQLContractSalaryCalculatorContext getSmartSQLContractSettleContext(Connection connection, Date contractStart,
+			Date endDate, ContractRecord contract) throws SQLException, ExpressionException {
+		Employee employee = new Employee();
+		employee.setId(contract.getId());
+
+		draft.setEmployee(employee);
+		draft.setStartDate(contractStart);
+		draft.setEndDate(endDate);
+		draft.setIssueDate(getToday());
+		draft.setType(Salary.Type.SETTLE);
+		
+		return EmployeesServiceHelper.getSettleCalculatorContextImpl(connection, draft, null);
+	}
 
 }
