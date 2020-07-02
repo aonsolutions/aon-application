@@ -2814,7 +2814,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				try {
 					ISQLContractSalaryCalculatorContext ctx = getPaymentCalculatorContext(connection, start, end, end,
 							contractCriteria, x);
-					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+					SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
+						// skip extras from BRUTO
+						protected TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
+							return TaxCalculator.getTaxCalculator(ctx);
+						};
+					};
 					calculator.setSalaryBuilder(new SalaryBuilder());
 
 					ISalary salary = calculator.calculate(ctx);
