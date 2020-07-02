@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding:0px;
+}
+
+
+.container > * {
+  width: 100%;
+  padding: 0px !important;
+}

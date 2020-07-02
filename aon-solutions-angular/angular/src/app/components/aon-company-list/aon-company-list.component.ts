@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { Company, CompanyFilter } from '../../models/models';
 import { CompanyService, SharedService, AonService } from '../../services/services';
 import { RootLoader } from '../../utils/loader';
+import { AonCompanyOptionDialogComponent } from '../dialogs/aon-company-option-dialog/aon-company-option-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'aon-company-list',
@@ -12,12 +14,31 @@ import { RootLoader } from '../../utils/loader';
 export class AonCompanyListComponent implements OnInit, OnDestroy {
   companies: Company[] = [];
 
-  constructor(private router: Router, public aonService: AonService, public service : SharedService, public companyService: CompanyService) {
+  constructor(private router: Router, public aonService: AonService, public dialog: MatDialog,
+    public service : SharedService, public companyService: CompanyService) {
     this.companyService.filterObservable.subscribe( (value: CompanyFilter) => {
       if(this.aonService.companies && this.aonService.companies.length > 0){
         this.companies = this.aonService.companies.filter(f => this.companyFilter(f));
       }
     });
+  }
+
+  companyOption(event: any, company:Company) : void{
+    event.preventDefault();
+    const x = event.pageX;
+    const y = event.pageY;
+    const dialogRef = this.dialog.open(AonCompanyOptionDialogComponent, {
+      width: '250px',
+      backdropClass: 'aon-user-dialog-backdrop',
+      panelClass: 'aon-user-dialog-panel',
+      position: {
+        top: y + 'px',
+        left: x +'px'
+      },
+      data: company
+    });
+
+    dialogRef.afterClosed().subscribe();
   }
 
   companyFilter(f: Company) : boolean {

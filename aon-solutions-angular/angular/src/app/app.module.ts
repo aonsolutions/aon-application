@@ -39,7 +39,8 @@ import { AdvancedUserSearchDialogComponent } from './components/dialogs/advanced
 import { AdvancedCompanySearchDialogComponent } from './components/dialogs/advanced-company-search-dialog/advanced-company-search-dialog.component';
 import { AonMenuSidenavComponent } from './components/aon-menu-sidenav/aon-menu-sidenav.component';
 import { AonIconButtonComponent } from './components/aon-icon-button/aon-icon-button.component';
-
+import { AonCompanyOptionDialogComponent } from './components/dialogs/aon-company-option-dialog/aon-company-option-dialog.component';
+import { AonCompanyShareDialogComponent } from './components/dialogs/aon-company-share-dialog/aon-company-share-dialog.component';
 
 import { TediSearchBoxComponent } from './components/tedi-search-box/tedi-search-box.component';
 import { AonSearchBoxComponent } from './components/aon-search-box/aon-search-box.component';
@@ -80,6 +81,8 @@ import {NgxImageCompressService } from 'ngx-image-compress';
     AdvancedSearchDialogComponent,
     AdvancedUserSearchDialogComponent,
     AdvancedCompanySearchDialogComponent,
+    AonCompanyOptionDialogComponent,
+    AonCompanyShareDialogComponent,
     TediNoDropZoneDirective,
     TediInitValueDirective
   ],
@@ -113,7 +116,9 @@ import {NgxImageCompressService } from 'ngx-image-compress';
     RememberPasswordDialogComponent,
     AdvancedSearchDialogComponent,
     AdvancedUserSearchDialogComponent,
-    AdvancedCompanySearchDialogComponent
+    AdvancedCompanySearchDialogComponent,
+    AonCompanyOptionDialogComponent,
+    AonCompanyShareDialogComponent
   ],
   providers: [SharedService, UserService, CompanyService, NgxImageCompressService, ExcelService, AonService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
