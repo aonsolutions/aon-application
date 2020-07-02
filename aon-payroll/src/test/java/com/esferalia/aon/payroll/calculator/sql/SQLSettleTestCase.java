@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
@@ -2083,6 +2084,157 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testSettleVacationsEREI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				getToday(),
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+//						put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+						}, 
+						new String[] {
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+						}, 
+				null);
+		//@formatter:off
+		
+		 addSSRegimeStuff(aonContext);
+		// VACACIONES RETRIBUIDAS NO DISFRUTADAS
+//		addSSRegimePayment(aonContext, 
+//				SSRegimeType.GENERAL, 
+//				contract.getStartDate(), 
+//				PaymentType.CRA_0006, 
+//				"DIAS_VACACIONES_NO_DISFRUTADOS * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )",
+//				"_P" ,
+//				"_P", 
+//				SalaryType.SETTLE);
+		
+		setData(aonContext, contract, 
+				add(getToday(), Calendar.DAY_OF_MONTH,1)
+				, null
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 4));
+			}
+		});
+		
+		setData(aonContext, contract, 
+				getFirstDayOfMonth(getToday())
+				, getToday()
+				, new HashMap<String, String>() {
+			{
+				put("COEFICIENTE_ERE_FZA_EXONERADO", format("%f", 1.0));
+			}
+		});
+		PaymentConceptRecord ere = addConcept(aonContext,"ERE_FZA_EXONERADO");
+		addPayment(aonContext, contract, ere, "0.00" , "DIAS_ERE_FZA_EXONERADO* BASE_REGULADORA");
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contract.getStartDate(), contract.getEndDate(), contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		double br = (1750.00 * 1.10)  * 12 / 365; 
+		
+//		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
+		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
+
+		Assert.assertEquals( ( br * 4 ), settle.getTotalPayment(), DELTA);
+		
+		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		
+	}
+	
+	@Ignore("Too difficult for SALARIO_DIA")
+	@Test
+	public void testSettleVacationsEREII() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				getToday(),
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+//						put(COMPENSATION_CAUSE.getName(), OBJECTIVE.getName());
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES"
+						}, 
+						new String[] {
+//						"BASE_CGC * 0.10", 
+//						"BASE_CGP * 0.05",
+//						"BASE_IRPF * PORCENTAJE_IRPF/100" 
+						}, 
+				null);
+		//@formatter:off
+		
+		// addSSRegimeStuff(aonContext);
+		// VACACIONES RETRIBUIDAS NO DISFRUTADAS
+		addSSRegimePayment(aonContext, 
+				SSRegimeType.GENERAL, 
+				contract.getStartDate(), 
+				PaymentType.CRA_0006, 
+				"DIAS_VACACIONES_NO_DISFRUTADOS * ( SALARIO_DIA + SALARIO_VARIABLE_DIA )",
+				"_P" ,
+				"_P", 
+				SalaryType.SETTLE);
+		
+		setData(aonContext, contract, 
+				add(getToday(), Calendar.DAY_OF_MONTH,1)
+				, null
+				, new HashMap<String, String>() {
+			{
+				put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 4));
+			}
+		});
+		
+		setData(aonContext, contract, 
+				getFirstDayOfMonth(getToday())
+				, getToday()
+				, new HashMap<String, String>() {
+			{
+				put("COEFICIENTE_ERE_FZA_EXONERADO", format("%f", 0.50));
+			}
+		});
+		PaymentConceptRecord ere = addConcept(aonContext,"ERE_FZA_EXONERADO");
+		addPayment(aonContext, contract, ere, "TRACE('BASE_REGULADORA=%f\r\n', DIAS_ERE_FZA_EXONERADO*BASE_REGULADORA);0.00" , "DIAS_ERE_FZA_EXONERADO* BASE_REGULADORA");
+		
+
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contract.getStartDate(), contract.getEndDate(), contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		double br = (1750.00 * 1.10)  * 12 / 365; 
+		
+//		settle.getSalaryDatas().stream().forEach(d->System.out.println(d.getName() + " = "  + d.getExpression() ));
+		settle.getSalaryPayments().stream().forEach(p->System.out.println(p.getExpression() + " = "  + p.getAmount() ));
+
+		Assert.assertEquals( ( br * 4 ), settle.getTotalPayment(), DELTA);
+		
+		Assert.assertEquals( br * 4 , settle.getCommonBase(), DELTA);
+		
+	}
 	// ------------------------------------------------------------------------
 
 	public  void addSSRegimeStuff(AONContext aonContext) {

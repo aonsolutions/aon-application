@@ -1232,7 +1232,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				} catch (UnsupportedOperationException e) {
 					onCheckError(contractPayment, e.getMessage());
 				}
-			} else if ( !AonStringUtils.equals(ContextVariable.IMPROVEMENT, name)
+			} else if ( contractPaymentType != PaymentType.CRA_0006
+					&& !AonStringUtils.equals(ContextVariable.IMPROVEMENT, name)
 					&& Period.intersects(results.stream().filter(r -> r.getValue() != null && r.getValue() != 0.00)
 					.map(r -> r.getPeriod()).iterator(), strikePeriods.iterator())) {
 				try {
