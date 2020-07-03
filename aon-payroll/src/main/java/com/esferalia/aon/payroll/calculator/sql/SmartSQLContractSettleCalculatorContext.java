@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.AgreementExtra.AGREEMENT_EXTRA;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
@@ -23,6 +24,7 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Result;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.AonException;
@@ -256,8 +258,10 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		Result<ContractPaymentRecord> extras = dslCtx
 		.select()
 		.from(CONTRACT_PAYMENT)
+		.innerJoin(PAYMENT_CONCEPT).onKey()
 		.where(CONTRACT_PAYMENT.CONTRACT.eq(getId()))
-		.and(CONTRACT_PAYMENT.TYPE.eq((byte)4))
+		.and(CONTRACT_PAYMENT.TYPE.eq((byte)4)
+		.or(CONTRACT_PAYMENT.TYPE.isNull().and(PAYMENT_CONCEPT.TYPE.eq((byte)4))))
 		.fetchInto(CONTRACT_PAYMENT)
 		;
 		
@@ -398,7 +402,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 							;
 					if ( record == null ) {
 						extrasPayments.addAll(extraPayments);
-						extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
+//						extrasPayments.add(newExtraMsgPayment(extraPayments.get(0).getDescription()));
 					}
 				} else { 
 					calculatedExtras.add(record.getId());
