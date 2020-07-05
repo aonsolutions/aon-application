@@ -361,6 +361,7 @@
 
 								<g:ListBox debugId="salaryPreviewListBox" ui:field="salaryPreviewListBox" visible="false">
 									<g:item value="{JASPER}">CL&Aacute;SICO</g:item>
+									<g:item value="{CLASSIC_NEW}">CL&Aacute;SICO (&Beta;)</g:item>
 									<!-- g:item value="{STANDARD}">EST&Aacute;NDAR I (&Beta;)</g:item -->
 									<g:item value="{STANDARD_NEW}">EST&Aacute;NDAR (&Beta;)</g:item>
 									<!-- g:item value="{STANDARD_COLS}">EST&Aacute;NDAR COLUMNADO (&Beta;)</g:item -->

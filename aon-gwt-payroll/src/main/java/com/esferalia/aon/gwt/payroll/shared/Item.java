@@ -79,6 +79,10 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
+	
+	public Long getEndDateTime() {
+		return null == endDate ? null : endDate.getTime();
+	}
 
 	public Date getEndDate() {
 		return endDate;
@@ -86,6 +90,10 @@ public abstract class Item<T extends Enum<?>> implements HasStartAndEndDate,
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	public Long getStartDateTime() {
+		return null == startDate ? null : startDate.getTime();
 	}
 
 	public Date getStartDate() {

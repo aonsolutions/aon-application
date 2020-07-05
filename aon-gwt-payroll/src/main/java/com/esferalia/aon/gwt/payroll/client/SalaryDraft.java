@@ -153,6 +153,7 @@ public class SalaryDraft extends ResizeComposite
 	public static final String JASPER = SettleType.JASPER.name();
 	public static final String STANDARD = SalaryType.STANDARD.name();
 	public static final String STANDARD_NEW = SalaryType.STANDARD_NEW.name();
+	public static final String CLASSIC_NEW = SalaryType.CLASSIC_NEW.name();
 	public static final String STANDARD_COLS = SalaryType.STANDARD_COLS.name();
 	public static final String RECIBE = SalaryType.RECIBE.name();
 	public static final String RECIBE_CRA = SalaryType.RECIBE_CRA.name();
@@ -172,6 +173,7 @@ public class SalaryDraft extends ResizeComposite
 
 	public static enum SalaryType {
 		JASPER,
+		CLASSIC_NEW,
 		RECIBE,
 		RECIBE_CRA,
 		STANDARD,
@@ -4533,6 +4535,12 @@ public class SalaryDraft extends ResizeComposite
 		
 		SalaryType type = SalaryType.valueOf(salaryPreviewListBox.getSelectedValue());
 		switch (type) {
+		case CLASSIC_NEW:
+			Reports.classic_new(salaryDraftObject,  dataURI -> {
+				SalaryDraft.this.showPreview();
+				SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+			});
+			break;
 		case STANDARD:
 			Reports.standard(salaryDraftObject,  dataURI -> {
 				SalaryDraft.this.showPreview();
