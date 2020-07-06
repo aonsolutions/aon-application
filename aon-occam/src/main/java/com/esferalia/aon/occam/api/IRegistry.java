@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
@@ -113,7 +114,7 @@ public interface IRegistry {
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes);
 	public Stream<Company> getUserCompanyStream(AONContext ctx, Integer[] scopes, CompanyFilter filter);
 	public Stream<Company> getCompanyStream(AONContext ctx, CompanyFilter filter);
-	public Stream<Company> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);
+	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage);
 	
 	public Stream<RegistryItem> getRItemStream(AONContext ctx, RegistryItemFilter filter);
 

@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRegistry;
+import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.CarrierFilter;
@@ -278,7 +279,7 @@ public class RegistryImpl implements IRegistry{
 	}
 	
 	@Override
-	public Stream<Company> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage) {
+	public Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> CompanyDAO.getCompanyStream(ctx, auth, page, perPage));
 	}

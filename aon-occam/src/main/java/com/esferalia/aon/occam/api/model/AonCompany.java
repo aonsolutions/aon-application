@@ -1,0 +1,73 @@
+package com.esferalia.aon.occam.api.model;
+
+import java.io.Serializable;
+
+import org.json.JSONObject;
+
+import com.esferalia.aon.occam.api.model.type.Administration;
+
+public class AonCompany implements Serializable {
+
+	private static final long serialVersionUID = -4970548127101817530L;
+
+	private Domain domain;
+	private Domain parentDomain;
+    private Company company;
+    Administration administration;
+	
+	public AonCompany() {
+
+	}
+
+	public Domain getDomain() {
+		return domain;
+	}
+
+	public AonCompany setDomain(Domain domain) {
+		this.domain = domain;
+		return this;
+	}
+
+	public Domain getParentDomain() {
+		return parentDomain;
+	}
+
+	public AonCompany setParentDomain(Domain parentDomain) {
+		this.parentDomain = parentDomain;
+		return this;
+	}
+
+	public Company getCompany() {
+		return company;
+	}
+
+	public AonCompany setCompany(Company company) {
+		this.company = company;
+		return this;
+	}
+
+	public Administration getAdministration() {
+		return administration;
+	}
+
+	public AonCompany setAdministration(Administration administration) {
+		this.administration = administration;
+		return this;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject()
+			.put("id", getDomain().getId())
+			.put("domain", getDomain().getName())
+			.put("name", getCompany().getName())
+			.put("document", getCompany().getDocument())
+			.put("active", getCompany().isDomainActive())
+			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
+			.put("logo", "https://" + getDomain().getName() + "/aonDocuments/company.logo")
+			.put("parent",getDomain().isParent());
+		if(!getDomain().isParent()) {
+			json.put("parentLogo", "https://" + getParentDomain().getName() + "/aonDocuments/company.logo");
+		}
+		return json;
+	}
+}

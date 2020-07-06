@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Cnae2009.CNAE2009;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -23,8 +24,10 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.Rmedia;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.CompanyAdministrator;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -35,11 +38,13 @@ import com.esferalia.aon.occam.api.model.EnterpriseProperties;
 import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.InvestAsset;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.AonCompanyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CompanyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.CompanyPropertiesDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -224,21 +229,25 @@ public class CompanyDAO {
 			.fetch().stream().map(new CompanyFiller());
 	}
 	
-	public static Stream<Company> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage){
+	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, Integer page, Integer perPage){
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		
+		Domain domain = DOMAIN.as("d");
+		Domain parent = DOMAIN.as("p");
 		return ctx.getDslContext().select()
 			.from(COMPANY)
 			.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-			.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
-			.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
-			.where(DOMAIN.ID.in(domains)
-					.or(DOMAIN.PARENT.in(domains)
-						.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))))
+			.join(domain).on(COMPANY.DOMAIN.eq(domain.ID))
+			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
+			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
+			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
+			.where(domain.ID.in(domains)
+					.or(domain.PARENT.in(domains)
+						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
 			.limit(perPage)
 			.offset(perPage * (page -1))
-			.fetch().stream().map(new CompanyFiller());
+			.fetch().stream().map(new AonCompanyFiller());
 	}
 
 	public static Company getCompany(AONContext ctx,int domain) {

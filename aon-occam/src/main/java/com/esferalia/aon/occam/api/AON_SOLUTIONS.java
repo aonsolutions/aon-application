@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.LinkedList;
 import java.util.stream.Stream;
 
-import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -98,13 +98,13 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static Stream<Company> getCompanyStream(String token, String schema, Integer page, Integer perPage) {	
+	public static Stream<AonCompany> getCompanyStream(String token, String schema, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
-		Stream<Company> stream = new LinkedList<Company>().stream();
+		Stream<AonCompany> stream = new LinkedList<AonCompany>().stream();
 		String domain = AONContext.getSchemaFirstDomain(schema);
 		if(!AonStringUtils.isBlank(domain)) {
 			try (AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
-				Stream<Company> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), page, perPage);
+				Stream<AonCompany> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), page, perPage);
 				stream = Stream.concat(stream, s);
 		
 			}

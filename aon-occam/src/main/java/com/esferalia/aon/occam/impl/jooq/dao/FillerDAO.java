@@ -40,16 +40,18 @@ import static com.esferalia.aon.jooq.tables.RecordData.RECORD_DATA;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Rnote.RNOTE;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.Target.TARGET;
-import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.util.function.Function;
 
 import org.jooq.Record;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -92,10 +94,12 @@ import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.IncomeStatus;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -123,6 +127,7 @@ import com.esferalia.aon.occam.api.model.warehouse.PaturpatQuality;
 import com.esferalia.aon.occam.api.model.warehouse.UdapaQuality;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.util.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class FillerDAO {
 
@@ -617,6 +622,57 @@ public class FillerDAO {
 		}
 	}
 	
+	public static class AonCompanyFiller implements Function<Record, AonCompany> {
+		@Override
+		public AonCompany apply(Record r) {
+			Domain domain = DOMAIN.as("d");
+			Domain parent = DOMAIN.as("p");
+			
+			Company company = new Company();
+			company.setDomainName(r.getValue(domain.NAME));
+			company.setAlias(r.getValue(REGISTRY.ALIAS));
+			company.setConfidential(SecurityLevel.CONFIDENTIAL.value().equals(r.getValue(REGISTRY.SECURITY_LEVEL)));
+			company.setDocumentCountry(Country.valueOf(r.getValue(REGISTRY.DOCUMENT_COUNTRY))); // TODO
+			company.setDocumentType(DocumentType.safeValueOf(r.getValue(REGISTRY.DOCUMENT_TYPE)));
+			company.setNationality(r.getValue(REGISTRY.NATIONALITY) != null ? Country.valueOf(r.getValue(REGISTRY.NATIONALITY)): null); // TODO
+			company.setSecurityLevel(SecurityLevel.safeValueOf(r.getValue(REGISTRY.SECURITY_LEVEL)));
+			company.setType(r.getValue(REGISTRY.TYPE));	
+			company.setScope(new Scope()
+					.setId(r.getValue(SCOPE.ID))
+					.setDomain(r.getValue(SCOPE.DOMAIN))
+					.setDescription(r.getValue(SCOPE.DESCRIPTION)));
+			company
+				.setActive(r.getValue(COMPANY.ACTIVE) == 1)
+				.setDomainActive(r.getValue(domain.ACTIVE) == 1)
+				.seteInvoice(r.getValue(COMPANY.E_INVOICE) == 1)
+				.setDomain(r.getValue(COMPANY.DOMAIN))
+				.setDocument(r.getValue(REGISTRY.DOCUMENT))
+				.setId(r.getValue(REGISTRY.ID))
+				.setName(r.getValue(REGISTRY.NAME))
+				.setSurcharge(r.getValue(COMPANY.SURCHARGE) == 1)
+				.setVatAccrualPayment(r.getValue(COMPANY.VAT_ACCRUAL_PAYMENT) == 1)
+				.setWithholding(r.getValue(COMPANY.WITHHOLDING) == 1);
+
+			return new AonCompany()
+				.setDomain(new com.esferalia.aon.occam.api.model.Domain()
+					.setId(r.getValue(domain.ID))
+					.setName(r.getValue(domain.NAME))
+					.setParentId(r.getValue(domain.PARENT))
+					.setActive(AonEnumUtils.getBoolean(r.getValue(domain.ACTIVE)))
+					.setDescription(r.getValue(domain.DESCRIPTION))
+					.setDomainType(DomainType.values()[r.getValue(domain.TYPE)])
+					.setScope(r.getValue(domain.SCOPE))
+					.setEnableHeredity(AonEnumUtils.getBoolean(r.getValue(domain.ENABLEHEREDITY)))
+					.setDomainManagement(AonEnumUtils.getBoolean(r.getValue(domain.DOMAINMANAGEMENT))))
+			
+				.setParentDomain(new com.esferalia.aon.occam.api.model.Domain()
+					.setId(r.getValue(parent.ID))
+					.setName(r.getValue(parent.NAME)))
+			
+				.setCompany(company)
+				.setAdministration(Administration.safeValueOf(AonNumberUtils.toInteger(r.getValue(APP_PARAM.VALUE))));
+		}
+	}
 	public static class CompanyFiller implements Function<Record, Company> {
 		@Override
 		public Company apply(Record r) {
