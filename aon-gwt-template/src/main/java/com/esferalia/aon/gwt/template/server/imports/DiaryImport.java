@@ -371,7 +371,7 @@ public class DiaryImport {
 				}
 				ae.getEntry().getDetails().get(i).setAccount(acc.getId());
 				if(i > 0) {
-					ae.getEntry().getDetails().get(i-1).setBalancingAccount(acc.getId());
+				//	ae.getEntry().getDetails().get(i-1).setBalancingAccount(acc.getId());
 				}
 			}
 			if(ae.getEntry().getEntryType() == null) {
