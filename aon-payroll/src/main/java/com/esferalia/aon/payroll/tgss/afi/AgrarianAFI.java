@@ -17,6 +17,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -420,9 +421,28 @@ public class AgrarianAFI {
 			))
 			.fetchOne();
 		
-		json.put("firstSurname", personRecord.get(PERSON.FIRST_SURNAME));
-		json.put("secondSurname", personRecord.get(PERSON.SECOND_SURNAME));
-		json.put("name", personRecord.get(PERSON.NAME));
+		String fisrtSurname = personRecord.get(PERSON.FIRST_SURNAME);
+		String secondSurname = personRecord.get(PERSON.SECOND_SURNAME);
+		String name = personRecord.get(PERSON.NAME);
+		
+		if(null != fisrtSurname) 
+			fisrtSurname = Normalizer
+	        .normalize(fisrtSurname, Normalizer.Form.NFD)
+	        .replaceAll("[^\\p{ASCII}]", "");
+		
+		if(null != secondSurname) 
+			secondSurname = Normalizer
+	        .normalize(secondSurname, Normalizer.Form.NFD)
+	        .replaceAll("[^\\p{ASCII}]", "");
+		
+		if(null != name) 
+			name = Normalizer
+	        .normalize(name, Normalizer.Form.NFD)
+	        .replaceAll("[^\\p{ASCII}]", "");
+		
+		json.put("firstSurname", fisrtSurname);
+		json.put("secondSurname", secondSurname);
+		json.put("name", name);
 		
 		return json;
 	}
