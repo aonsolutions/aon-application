@@ -3461,17 +3461,15 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		AONContext aonContext = new AONContext(connection);
 
 		//@formatter:off
-//		ContractRecord contract = newContract(aonContext, 
-//				new String[] {
-//				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
-//				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
-//				}, 
-//				new String[] {
-//				}, null);
-		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
-		ContractRecord contract =  SQLCretaTestCase.newContract(aonContext, ccc);
-		
-		SQLCretaTestCase.newContract(aonContext, ccc);
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+				}, null);
+//		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+//		ContractRecord contract =  SQLCretaTestCase.newContract(aonContext, ccc);
 		
 		//@formatter:on
 		Date startEre = getFirstDayOfMonth(getToday());
@@ -3483,8 +3481,8 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 					}
 				});
 		
-//		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
-//		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
 
 		Date startDate = getFirstDayOfMonth(getToday());
 		Date endDate = getLastDayOfMonth(startDate);
@@ -3533,22 +3531,19 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(1750.00*2, delay.getProfessionalBase());
 		Assert.assertEquals(1750.00*2, delay.getIrpfBase());
 		
-		delayCtx = new SQLContractDelayCalculatorContext(connection, 
-				getFirstDayOfMonth(getToday()), 
-				add(startDate, DAY_OF_MONTH, -1), 
-				endDate, 
-				criteria);
-		delayCtx.next();
-		delayCalculator = new SmartContractSalaryCalculator<Salary>();	
-		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
-		delayCalculator.setSalaryBuilder(jooqSalaryBuilder);
-		delayCalculator.calculate(delayCtx);
-		jooqSalaryBuilder.execute();
+//		delayCtx = new SQLContractDelayCalculatorContext(connection, 
+//				getFirstDayOfMonth(getToday()), 
+//				add(startDate, DAY_OF_MONTH, -1), 
+//				endDate, 
+//				criteria);
+//		delayCtx.next();
+//		delayCalculator = new SmartContractSalaryCalculator<Salary>();	
+//		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+//		delayCalculator.setSalaryBuilder(jooqSalaryBuilder);
+//		delayCalculator.calculate(delayCtx);
+//		jooqSalaryBuilder.execute();
 
-		TrabajadoresTramos trabajadoresYTramos = SQLCretaTestCase.getTrabajadoresTramos(connection, contract, getFirstDayOfMonth(getToday()), getLastDayOfMonth(getToday()), ccc, "L90");
-		
-		Utils.marshal(trabajadoresYTramos, System.out);
-		
+//		TrabajadoresTramos trabajadoresYTramos = new SQLCretaTestCase().getTrabajadoresTramos(connection, contract, getFirstDayOfMonth(getToday()), getLastDayOfMonth(getToday()), ccc, "L90");			
 //		List<Tramo> bases = SQLCretaTestCase.getBases(connection, startDate, endDate, ccc, contract);
 	}
 

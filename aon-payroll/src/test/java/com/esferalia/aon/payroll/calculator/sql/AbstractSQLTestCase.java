@@ -156,7 +156,7 @@ public abstract class AbstractSQLTestCase {
 
 	// ------------------------------------------------------------------------
 
-	protected static ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
 			Connection connection, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria, IContractSalaryCalculatorContext.IListener listener) throws ExpressionException,
 			SQLException {
@@ -168,12 +168,12 @@ public abstract class AbstractSQLTestCase {
 		return ctx;
 	}
 
-	protected static ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, null);
 	}
 
-	protected static  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, ContractRecord contract,
 			IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
 		Criteria criteria = new Criteria();
@@ -181,7 +181,7 @@ public abstract class AbstractSQLTestCase {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, listener);
 	}
 
-	protected static  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, ContractRecord contract)
 			throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract, null);
