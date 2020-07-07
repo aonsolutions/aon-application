@@ -6,9 +6,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -39,7 +39,7 @@ public class AccountBalancePanel extends SplitLayoutPanel implements HasSelectio
 	  
 	private static final String SESSION_LOG_BACKGROUND_COLOR = "lightyellow";
 	
-	static FiscalServiceAsync fiscalService;
+	static AccountingReportServiceAsync SERVICE;
 	
 	private boolean showEntry;
 	private boolean showBalances;
@@ -56,8 +56,8 @@ public class AccountBalancePanel extends SplitLayoutPanel implements HasSelectio
 		this.showBalances = showBalances;
 		
 		accounts = new HashSet<Integer>();
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
+		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
 		
 		if (showEntry) {
 			entryPanel = new SessionLog();
@@ -154,8 +154,9 @@ public class AccountBalancePanel extends SplitLayoutPanel implements HasSelectio
 				params.setFromDate(from);
 				params.setToDate(to);
 				
-				fiscalService.getAccountBalance(AccountEntryModule.getCurrentDomainName(),
-						AccountEntryModule.getCurrentDomain(), params,  
+				SERVICE.getAccountBalance(AccountEntryModule.getCurrentDomainName(),
+						AccountEntryModule.getCurrentDomain()
+						,AccountEntryModule.getCurrentUser(), params,  
 						new AsyncCallback<LinkedList<AccountStatement>>() {
 							
 							@Override

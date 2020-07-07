@@ -4,21 +4,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
-import com.esferalia.aon.occam.api.model.AccountBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountOperatingReport;
-import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -43,36 +32,6 @@ public interface FiscalServiceAsync {
 	void saveMemory(Memory memory, AsyncCallback<Memory> callback);
 
 	void deleteMemory(Memory memory, AsyncCallback<Void> callback);
-
-	// --------------------------------------------------------------- ACCOUNT
-	// PERIOD
-	void getDomainPeriods(String domainName, int domain, AsyncCallback<LinkedList<AccountPeriod>> callback);
-
-	// --------------------------------------------------------------- ACCOUNT
-	// STATEMENT
-	void getAccountStatement(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountStatementReport> callback) throws AonCoreException;
-
-	void getAccountBalance(String domainName, int domain, AccountingReportParams params, AsyncCallback<LinkedList<AccountStatement>> callback) throws AonCoreException;
-
-	// --------------------------------------------------------------- ACCOUNT
-	// OPERATING STATEMENT
-	void getAccountOperatingReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountOperatingReport> callback) throws AonCoreException;
-
-	// --------------------------------------------------------------- ACCOUNT TRIAL
-	// BALANCE
-	void getAccountTrialBalanceReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountTrialBalanceReport> callback) throws AonCoreException;
-
-	// --------------------------------------------------------------- ACCOUNT
-	// BALANCE
-	void getAccountBalanceReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountBalanceReport> callback) throws AonCoreException;
-
-	void getAccountFinances(String domainName, int domain, FinanceParams params, int offset, int limit, AsyncCallback<LinkedList<Finance>> callback);
-
-
-	// --------------------------------------------------------------- IRPF
-	void getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params, AsyncCallback<LinkedList<IrpfBreakdown>> callback);
-
-	void getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params, AsyncCallback<LinkedList<IrpfBreakdown>> callback);
 
 	// --------------------------------------------------------------- GWT API INFO
 

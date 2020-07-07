@@ -7,9 +7,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountStatement;
@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class StatementPanel extends ScrollPanel implements HasAccountEntrySelectionHandlers{
 
-	private static FiscalServiceAsync fiscalService;
+	private static AccountingReportServiceAsync SERVICE;
 	
 	private FlowPanel root;
 	private int rowOffset; 
@@ -80,10 +80,11 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 
 	private void search(boolean allowChecks) {
 		root.clear();
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		
-		fiscalService.getAccountStatement(currentDomainName,currentUser,currentDomainId,params
+		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
+		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
+		
+		SERVICE.getAccountStatement(currentDomainName,currentUser,currentDomainId,params
 				,  new AsyncCallback<AccountStatementReport>() {
 			
 			@Override

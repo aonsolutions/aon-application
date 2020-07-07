@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -12,30 +11,18 @@ import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.client.FiscalService;
 import com.esferalia.aon.gwt.fiscal.server.util.AONMVELUtils;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
-import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FISCAL;
-import com.esferalia.aon.occam.api.model.AccountBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountOperatingReport;
-import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
@@ -132,63 +119,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 	@Override
 	public void deleteMemory(Memory memory) throws AonCoreException {
 		// TODO
-	}
-	
-	// --------------------------------------------------------------- ACCOUNT PERIOD
-	@Override
-	public LinkedList<AccountPeriod> getDomainPeriods(String domainName,
-			int domain) throws AonCoreException {
-		return ACCOUNTING.getDomainPeriods(domainName, domain, this.getUserLogin());
-	}
-	
-	@Override
-	public AccountStatementReport getAccountStatement(String domainName, String user,
-			int domain, AccountingReportParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountStatement(domainName,domain,user,params);
-	}
-	
-	@Override
-	public AccountTrialBalanceReport getAccountTrialBalanceReport(String domainName, String user, int domain,
-			AccountingReportParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountTrialBalance(domainName,domain,user,params);
-	}
-	
-	@Override
-	public AccountBalanceReport getAccountBalanceReport(String domainName, String user, int domain,
-			AccountingReportParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountBalanceReport(domainName,domain,user,params);
-	}
-
-	@Override
-	public LinkedList<AccountStatement> getAccountBalance(String domainName,
-			int domain, AccountingReportParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountBalance(domainName,domain,this.getUserLogin(),params)
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	
-	@Override
-	public AccountOperatingReport getAccountOperatingReport(String domainName, String user, int domain,
-			AccountingReportParams params) throws AonCoreException {
-		return ACCOUNTING.getAccountOperatingReport(domainName, user, domain,params);
-	}
-
-	public LinkedList<Finance> getAccountFinances(String domainName, int domain
-			, FinanceParams params, int offset, int limit) {
-		return ACCOUNTING.getAccountFinances(domainName, domain, this.getUserLogin(), params, offset, limit);		
-	}
-	
-	// --------------------------------------------------------------- IRPF
-	@Override
-	public LinkedList<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain,
-			IRPFParams params) throws AonCoreException {
-		return FISCAL.getIrpfBreakdownSummary(domainName, user, domain, params)
-				.collect(Collectors.toCollection(LinkedList::new));
-	}
-	@Override
-	public LinkedList<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain,
-			IRPFParams params) throws AonCoreException {
-		return FISCAL.getIrpfBreakdown(domainName, user, domain, params)
-				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	// --------------------------------------------------------------- GWT API INFO

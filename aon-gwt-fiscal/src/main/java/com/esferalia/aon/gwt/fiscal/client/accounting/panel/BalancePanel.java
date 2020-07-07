@@ -4,9 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountBalanceLineStyle;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<AccountingReportParams>{
 
-	private static FiscalServiceAsync fiscalService;
+	private static AccountingReportServiceAsync SERVICE;
 	
 	private FlowPanel root;
 	
@@ -65,9 +65,11 @@ public class BalancePanel extends ScrollPanel implements HasSelectionHandlers<Ac
 
 	private void search() {
 		root.clear();
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
-		fiscalService.getAccountBalanceReport(currentDomainName,currentUser,currentDomainId,params
+		
+		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
+		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
+		
+		SERVICE.getAccountBalanceReport(currentDomainName,currentUser,currentDomainId,params
 				,  new AsyncCallback<AccountBalanceReport>() {
 			
 			@Override

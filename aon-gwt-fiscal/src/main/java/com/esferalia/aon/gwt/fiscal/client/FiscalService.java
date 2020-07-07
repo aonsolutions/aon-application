@@ -4,21 +4,10 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
-import com.esferalia.aon.occam.api.model.AccountBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountOperatingReport;
-import com.esferalia.aon.occam.api.model.AccountPeriod;
-import com.esferalia.aon.occam.api.model.AccountStatement;
-import com.esferalia.aon.occam.api.model.AccountStatementReport;
-import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
-import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -45,35 +34,6 @@ public interface FiscalService extends RemoteService {
 	Memory saveMemory(Memory memory) throws AonCoreException;
 
 	void deleteMemory(Memory memory) throws AonCoreException;
-
-	// --------------------------------------------------------------- IRPF
-	LinkedList<IrpfBreakdown> getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params) throws AonCoreException;
-
-	LinkedList<IrpfBreakdown> getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params) throws AonCoreException;
-
-	// -------------------------------- ------------------------------- ACCOUNT
-	// PERIOD
-	LinkedList<AccountPeriod> getDomainPeriods(String domainName, int domain) throws AonCoreException;
-
-	// --------------------------------------------------------------- ACCOUNT
-	// STATEMENT
-	AccountStatementReport getAccountStatement(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
-
-	LinkedList<AccountStatement> getAccountBalance(String domainName, int domain, AccountingReportParams params) throws AonCoreException;
-
-	// --------------------------------------------------------------- ACCOUNT
-	// OPERATING STATEMENT
-	AccountOperatingReport getAccountOperatingReport(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
-
-	// --------------------------------------------------------------- ACCOUNT TRIAL
-	// BALANCE
-	AccountTrialBalanceReport getAccountTrialBalanceReport(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
-
-	// --------------------------------------------------------------- ACCOUNT
-	// BALANCE
-	AccountBalanceReport getAccountBalanceReport(String domainName, String user, int domain, AccountingReportParams params) throws AonCoreException;
-
-	LinkedList<Finance> getAccountFinances(String domainName, int domain, FinanceParams params, int offset, int limit) throws AonCoreException;
 
 	// --------------------------------------------------------------- GWT API INFO
 

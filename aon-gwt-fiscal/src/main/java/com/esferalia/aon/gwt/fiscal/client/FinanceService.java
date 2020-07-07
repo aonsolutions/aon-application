@@ -32,5 +32,8 @@ public interface FinanceService extends RemoteService {
 	Finance undoFinance(String domainName, int domainId, String user, Integer finance) throws AonCoreException;
 	FinanceTracking payFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;
 	FinanceTracking returnFinance(String domainName, int domainId, String user, FinanceTracking tracking) throws AonCoreException;
+	
+	LinkedList<Finance> getAccountFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit) throws AonCoreException;
+	
 
 }

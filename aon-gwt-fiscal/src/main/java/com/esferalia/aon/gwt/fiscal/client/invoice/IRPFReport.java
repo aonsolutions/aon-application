@@ -16,9 +16,9 @@ import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
 import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportService;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.AccountingReportServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -62,7 +62,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class IRPFReport extends MainEntryPoint {
 
 	private static CommonServiceAsync commonService;
-	private static FiscalServiceAsync fiscalService;
+	private static AccountingReportServiceAsync SERVICE;
 	
 	private String currentDomainName;
 	private int currentDomain;
@@ -120,8 +120,8 @@ public class IRPFReport extends MainEntryPoint {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
 		
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		AccountingReportServiceAsync serviceRaw = GWT.create(AccountingReportService.class);
+		SERVICE = new AccountingReportServiceAsyncDecorator(serviceRaw);
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
@@ -544,7 +544,7 @@ public class IRPFReport extends MainEntryPoint {
 		summaryContent.clear();
 		ScrollPanel scroll = new ScrollPanel();			
 		summaryContent.setWidget(scroll);
-		fiscalService.getIrpfBreakdownSummary(getDomainName(), getUser(), getDomain(), params 
+		SERVICE.getIrpfBreakdownSummary(getDomainName(), getUser(), getDomain(), params 
 				, new AsyncCallback<LinkedList<IrpfBreakdown>>() {
 			
 			@Override

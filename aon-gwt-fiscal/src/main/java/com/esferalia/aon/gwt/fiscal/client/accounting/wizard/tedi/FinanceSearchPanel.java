@@ -7,9 +7,9 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.FinanceService;
+import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.finance.FinancePrinter;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceParams;
@@ -50,7 +50,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, HasSelectionHandlers<Finance>{
 
-	static FiscalServiceAsync fiscalService;
+	static FinanceServiceAsync financeService;
 	
 	private String domainName;
 	private int domainId;
@@ -105,8 +105,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		addStyleName(AON.AON_CSS.aonScrollArea());
 		addStyleName(AON.AON_CSS.aonMarginBottom());
 		
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
+		financeService = new FinanceServiceAsyncDecorator(financeServiceRaw);
 		
 		northPanel = new SimpleLayoutPanel();
 
@@ -419,7 +419,7 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 			.setOrder(order.getSelectedIndex())
 			;
 		
-		fiscalService.getAccountFinances(domainName,domainId, params, ofs, limit
+		financeService.getAccountFinances(domainName,domainId, currentUser, params, ofs, limit
 				, new AsyncCallback<LinkedList<Finance>>() {
 					
 					@Override

@@ -29,6 +29,7 @@ public interface FinanceServiceAsync {
 	void payFinance(String domainName, int domainId, String user, FinanceTracking finance, AsyncCallback<FinanceTracking> callback);
 	void returnFinance(String domainName, int domainId, String user, FinanceTracking finance,AsyncCallback<FinanceTracking> callback);
 	
+	void getAccountFinances(String domainName, int domain, String user, FinanceParams params, int offset, int limit, AsyncCallback<LinkedList<Finance>> callback);
 	
 
 }
