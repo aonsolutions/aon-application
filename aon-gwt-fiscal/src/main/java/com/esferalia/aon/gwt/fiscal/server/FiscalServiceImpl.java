@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -18,24 +17,18 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
-import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
@@ -59,7 +52,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod347;
 import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
@@ -148,102 +140,7 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			int domain) throws AonCoreException {
 		return ACCOUNTING.getDomainPeriods(domainName, domain, this.getUserLogin());
 	}
-	// --------------------------------------------------------------- ACCOUNT ENTRIES
-	@Override
-	public LinkedList<AccountEntry> getAccountEntries(String domainName,String user,
-			int domain, final AccountEntryParams params,int offset, int limit) throws AonCoreException {
-		return ACCOUNTING.getAccountEntries(domainName, domain, user, params, offset, limit);
-	}
-
-	@Override
-	public AccountEntry getAccountEntry(String domainName, int domain, int id)
-			throws AonCoreException {
-		return ACCOUNTING.getAccountEntry(domainName, domain, this.getUserLogin(), id);
-	}
-
-	@Override
-	public AccountEntry save(String domainName, int domain, AccountEntry ae)
-			throws AonCoreException {
-		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), ae);
-	}
-	@Override
-	public LinkedList<SalaryEntry> getSalaryEntries(String domainName,
-			int domain, Date from, Date to ) {
-		return ACCOUNTING.getSalaryEntries(domainName, domain, this.getUserLogin(),from,to);
-	}
-
-	@Override
-	public String getSalaryFormatted(String domainName, int domain, Date from, Date to ) {
-		return ACCOUNTING.getSalaryFormatted(domainName, domain, this.getUserLogin(),from,to);
-	}
-
-	@Override
-	public void deleteAccountEntry(String domainName, int domain, Integer id) {
-		ACCOUNTING.deleteAccountEntry(domainName, domain, this.getUserLogin(), id);
-	}
-
-	@Override
-	public AccountingInvoice initializeInvoice(String domainName, int domain, 
-			AccountingRegistry registry, Integer activity, Date issueDate)
-			throws AonCoreException {
-		return ACCOUNTING.initializeInvoice(domainName, domain, this.getUserLogin(), 
-				registry, activity, issueDate);
-	}
-
-	@Override
-	public AccountingInvoice getAccountingInvoice(String domainName, int domain, Integer accountEntry)
-			throws AonCoreException {
-		return ACCOUNTING.getAccountingInvoice(domainName, domain, this.getUserLogin(), accountEntry);
-	}
-
-	@Override
-	public AccountingInvoice getAccountingInvoiceFromInvoice(String domainName, int domain, Integer invoiceId)
-			throws AonCoreException {
-		return ACCOUNTING.getAccountingInvoiceFromInvoice(domainName, domain, this.getUserLogin(), invoiceId);
-	}
-	@Override
-	public LinkedList<AccountingInvoice> getPendingImportAccountingInvoices(String domainName, int domain, String user, String query)
-			throws AonCoreException {
-		return ACCOUNTING.getPendingImportAccountingInvoices(domainName, domain, user, query);
-	}
-	@Override
-	public AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain,
-			Integer registryId) {
-		return ACCOUNTING.getRegistryLastAccountingInvoice(domainName, domain, this.getUserLogin(), registryId);
-	}
 	
-	@Override
-	public AccountingInvoice rectifyInvoice(String domainName, int domain, Integer invoiceId,
-			InvoiceRectificationData data) throws AonCoreException {
-		return ACCOUNTING.rectifyInvoice(domainName, domain, this.getUserLogin(), invoiceId, data );
-	}
-
-	@Override
-	public AccountingInvoice save(String domainName, int domain, AccountingInvoice invoice)
-			throws AonCoreException {
-		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), invoice);
-	}
-
-//	@Override
-//	public LinkedList<AccountEntry> insertSalaryAccountEntries(
-//			String domainName, int domain, Date from, Date to, String concept,
-//			Integer registryBank) {
-//		List<Integer> ids = ACCOUNTING.insertSalaryEntries(domainName, domain,
-//				this.getUserLogin() , from, to, concept, registryBank);
-//		final Integer[] arr = ids.toArray(new Integer[ids.size()]);  
-//		return ACCOUNTING.getAccountEntries(domainName, domain, this.getUserLogin()
-//				, p -> p.getIdProperty().in(arr)
-//						.and(p.getDomainProperty().eq(domain) )
-//				, 0, 100);
-//	}
-//	@Override
-//	public LinkedList<AccountEntry> previewSalaryAccountEntries(
-//			String domainName, int domain, Date from, Date to, String concept,
-//			Integer registryBank) {
-//		return ACCOUNTING.previewSalaryEntries(domainName, domain,
-//				this.getUserLogin() , from, to, concept, registryBank);
-//	}
-
 	@Override
 	public AccountStatementReport getAccountStatement(String domainName, String user,
 			int domain, AccountingReportParams params) throws AonCoreException {
@@ -279,15 +176,6 @@ public class FiscalServiceImpl extends AonRemoteServiceServlet implements Fiscal
 			, FinanceParams params, int offset, int limit) {
 		return ACCOUNTING.getAccountFinances(domainName, domain, this.getUserLogin(), params, offset, limit);		
 	}
-	@Override
-	public FinanceEntry save(String domainName, int domain, FinanceEntry financeEntry)
-			throws AonCoreException {
-		return ACCOUNTING.save(domainName, domain, this.getUserLogin(), financeEntry);		
-	}
-	@Override
-	public FinanceEntry getFinanceEntry(String domainName, int domain, Integer accountEntry) {
-		return ACCOUNTING.getFinanceEntry(domainName, domain, this.getUserLogin(), accountEntry);		
-	};
 	
 	// --------------------------------------------------------------- IRPF
 	@Override

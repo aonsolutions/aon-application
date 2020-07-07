@@ -6,9 +6,9 @@ import java.util.LinkedHashSet;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -50,7 +50,7 @@ import es.translogia.tedi.ewok.TediRegistry;
 
 public class TediContextVisitor implements ITediContextVisitor {
 
-	private static FiscalServiceAsync FISCAL_SERVICE;
+	private static AccountEntryServiceAsync SERVICE;
 	private String currentDomainName;
 	private int currentDomain;
 	private String currentUser;
@@ -63,8 +63,8 @@ public class TediContextVisitor implements ITediContextVisitor {
 		this.currentUser = user;
 		this.configuration = configuration;
 		this.container = container;
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		AccountEntryServiceAsync serviceRaw = GWT.create(AccountEntryService.class);
+		SERVICE = new AccountEntryServiceAsyncDecorator(serviceRaw);
 	}
 
 	private String getCurrentDomainName() {
@@ -188,7 +188,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 				@Override
 				public void onAccept(AccountingRegistry registry) {
 					final AccountingRegistry ar = registry;
-					FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
+					SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), ar, null,
 							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 						
 						@Override
@@ -232,7 +232,7 @@ public class TediContextVisitor implements ITediContextVisitor {
 				@Override
 				public void onAccept(AccountingRegistry registry) {
 					final AccountingRegistry ar = registry;
-					FISCAL_SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), ar, null,
+					SERVICE.initializeInvoice(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), ar, null,
 							callback.getResult().getInvoice().getIssueDate(), new AsyncCallback<AccountingInvoice>() {
 	
 								@Override

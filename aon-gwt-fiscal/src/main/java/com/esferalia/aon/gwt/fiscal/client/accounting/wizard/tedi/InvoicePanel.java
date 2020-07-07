@@ -174,8 +174,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getFiscalService().getAccountingInvoice(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId(),id
+			getAccountEntryService().getAccountingInvoice(getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser(),id
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
@@ -269,8 +269,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 
 	@Override
 	public void save(final AsyncCallback<IAccountEntryWrapper> cbk) {
-		getFiscalService().save(getCallback().getCurrentDomainName()
+		getAccountEntryService().save(getCallback().getCurrentDomainName()
 				, getCallback().getCurrentDomainId()
+				, getCallback().getCurrentUser()
 				, getWrapper(), new AsyncCallback<AccountingInvoice>() {
 
 			@Override

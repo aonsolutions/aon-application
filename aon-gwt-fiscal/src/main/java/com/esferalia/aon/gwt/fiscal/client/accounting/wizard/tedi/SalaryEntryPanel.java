@@ -946,8 +946,8 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 		tab.getColumnFormatter().setWidth(0, "15px");
 		tab.getColumnFormatter().setWidth(0, "15px");
 		centerPanel.add(tab);
-		getFiscalService().getSalaryEntries(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId() ,start, end
+		getAccountEntryService().getSalaryEntries(getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser() ,start, end
 				, new AsyncCallback<LinkedList<SalaryEntry>>() {
 					
 			@Override
@@ -977,9 +977,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 						reportButton.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
-								getFiscalService().getSalaryFormatted(
+								getAccountEntryService().getSalaryFormatted(
 										getCallback().getCurrentDomainName()
 									, getCallback().getCurrentDomainId()
+									, getCallback().getCurrentUser()
 									, entry.getAccountEntry().getEntryDate()
 									, entry.getAccountEntry().getEntryDate()
 									,new AsyncCallback<String>() {
@@ -1033,9 +1034,10 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 
 										@Override
 										public void onAccept() {
-											getFiscalService().deleteAccountEntry(
+											getAccountEntryService().deleteAccountEntry(
 													getCallback().getCurrentDomainName()
 													, getCallback().getCurrentDomainId()
+													, getCallback().getCurrentUser()
 													, entry.getAccountEntry().getId(),
 													new AsyncCallback<Void>() {
 

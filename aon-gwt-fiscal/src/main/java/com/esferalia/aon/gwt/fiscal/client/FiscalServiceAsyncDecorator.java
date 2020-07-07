@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.fiscal.client;
 
-import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -8,28 +7,21 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.fiscal.shared.Memory;
 import com.esferalia.aon.occam.api.model.AccountBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountEntry;
-import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountOperatingReport;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountStatement;
 import com.esferalia.aon.occam.api.model.AccountStatementReport;
 import com.esferalia.aon.occam.api.model.AccountTrialBalanceReport;
-import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.FinanceEntry;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
-import com.esferalia.aon.occam.api.model.SalaryEntry;
 import com.esferalia.aon.occam.api.model.finance.Finance;
-import com.esferalia.aon.occam.api.model.finance.InvoiceRectificationData;
 import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod200;
-import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -45,35 +37,28 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	@Override
 	public void mathExpression(String expression, AsyncCallback<Double> callback) {
 		AON.start();
-		fsa.mathExpression(expression, new AsyncCallbackWrapper<Double>(
-				callback));
+		fsa.mathExpression(expression, new AsyncCallbackWrapper<Double>(callback));
 	}
 
 	// -------------------------------------------------------------- PARAMS
 	@Override
-	public void getFiscalParameters(String domainName, int domain,
-			AsyncCallback<FiscalParameters> callback) {
+	public void getFiscalParameters(String domainName, int domain, AsyncCallback<FiscalParameters> callback) {
 		AON.start();
-		fsa.getFiscalParameters(domainName, domain,
-				new AsyncCallbackWrapper<FiscalParameters>(callback));
+		fsa.getFiscalParameters(domainName, domain, new AsyncCallbackWrapper<FiscalParameters>(callback));
 	}
 
 	// -------------------------------------------------------------- ACTIVITIES
 	@Override
-	public void getActivities(int activityGroup,
-			AsyncCallback<LinkedList<Activity>> callback) {
+	public void getActivities(int activityGroup, AsyncCallback<LinkedList<Activity>> callback) {
 		AON.start();
-		fsa.getActivities(activityGroup,
-				new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
+		fsa.getActivities(activityGroup, new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
 	}
 
 	// ---------------------------------------------------------------MODELO 200
 	@Override
-	public void getMod200s(String domainName, int domain,
-			AsyncCallback<LinkedList<Mod200>> callback) {
+	public void getMod200s(String domainName, int domain, AsyncCallback<LinkedList<Mod200>> callback) {
 		AON.start();
-		fsa.getMod200s(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<Mod200>>(callback));
+		fsa.getMod200s(domainName, domain, new AsyncCallbackWrapper<LinkedList<Mod200>>(callback));
 	}
 
 	// ---------------------------------------------------------------
@@ -99,232 +84,86 @@ public class FiscalServiceAsyncDecorator implements FiscalServiceAsync {
 	// --------------------------------------------------------------- ACCOUNT
 	// PERIOD
 	@Override
-	public void getDomainPeriods(String domainName, int domain,
-			AsyncCallback<LinkedList<AccountPeriod>> callback) {
+	public void getDomainPeriods(String domainName, int domain, AsyncCallback<LinkedList<AccountPeriod>> callback) {
 		AON.start();
-		fsa.getDomainPeriods(domainName, domain,
-				new AsyncCallbackWrapper<LinkedList<AccountPeriod>>(callback));
+		fsa.getDomainPeriods(domainName, domain, new AsyncCallbackWrapper<LinkedList<AccountPeriod>>(callback));
 	}
 
 	// --------------------------------------------------------------- ACCOUNT
-	// ENTRIES
+	// STATEMENT
 	@Override
-	public void getAccountEntries(String domainName, String user, int domain,
-			AccountEntryParams params, int offset, int limit,
-			AsyncCallback<LinkedList<AccountEntry>> callback) {
+	public void getAccountStatement(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountStatementReport> callback) {
 		AON.start();
-		fsa.getAccountEntries(domainName, user, domain, params, offset, limit,
-				new AsyncCallbackWrapper<LinkedList<AccountEntry>>(callback));
+		fsa.getAccountStatement(domainName, user, domain, params, new AsyncCallbackWrapper<AccountStatementReport>(callback));
+	}
+
+	// --------------------------------------------------------------- ACCOUNT TRIAL
+	// BALANCE
+	@Override
+	public void getAccountTrialBalanceReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountTrialBalanceReport> callback) {
+		AON.start();
+		fsa.getAccountTrialBalanceReport(domainName, user, domain, params, new AsyncCallbackWrapper<AccountTrialBalanceReport>(callback));
+	}
+
+	// --------------------------------------------------------------- ACCOUNT TRIAL
+	// BALANCE
+	@Override
+	public void getAccountBalanceReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountBalanceReport> callback) {
+		AON.start();
+		fsa.getAccountBalanceReport(domainName, user, domain, params, new AsyncCallbackWrapper<AccountBalanceReport>(callback));
 	}
 
 	@Override
-	public void getAccountEntry(String domainName, int domain, int id,
-			AsyncCallback<AccountEntry> callback) {
+	public void getAccountBalance(String domainName, int domain, AccountingReportParams params, AsyncCallback<LinkedList<AccountStatement>> callback) {
 		AON.start();
-		fsa.getAccountEntry(domainName, domain, id,
-				new AsyncCallbackWrapper<AccountEntry>(callback));
+		fsa.getAccountBalance(domainName, domain, params, new AsyncCallbackWrapper<LinkedList<AccountStatement>>(callback));
 	}
 
 	@Override
-	public void save(String domainName, int domain, AccountEntry ae,
-			AsyncCallback<AccountEntry> callback) {
+	public void getAccountOperatingReport(String domainName, String user, int domain, AccountingReportParams params, AsyncCallback<AccountOperatingReport> callback) {
 		AON.start();
-		fsa.save(domainName, domain, ae,
-				new AsyncCallbackWrapper<AccountEntry>(callback));
+		fsa.getAccountOperatingReport(domainName, user, domain, params, new AsyncCallbackWrapper<AccountOperatingReport>(callback));
+
 	}
 
 	@Override
-	public void deleteAccountEntry(String domainName, int domain, Integer id,
-			AsyncCallback<Void> callback) {
+	public void getAccountFinances(String domainName, int domain, FinanceParams params, int offset, int limit, AsyncCallback<LinkedList<Finance>> callback) {
 		AON.start();
-		fsa.deleteAccountEntry(domainName, domain, id,
-				new AsyncCallbackWrapper<Void>(callback));
-	}
-
-	@Override
-	public void initializeInvoice(String domainName, int domain,AccountingRegistry registry
-		,Integer activity,Date issueDate,AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.initializeInvoice(domainName, domain, registry,activity,issueDate,
-				new AsyncCallbackWrapper<AccountingInvoice>(callback));
-	}
-	
-	@Override
-	public void getAccountingInvoice(String domainName, int domain, Integer accountEntry,
-			AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.getAccountingInvoice(domainName, domain, accountEntry,
-				new AsyncCallbackWrapper<AccountingInvoice>(callback));
-	}
-	
-	@Override
-	public void getAccountingInvoiceFromInvoice(String domainName, int domain, Integer invoiceId,
-			AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.getAccountingInvoiceFromInvoice(domainName, domain, invoiceId,
-				new AsyncCallbackWrapper<AccountingInvoice>(callback));
-	}
-	
-	@Override
-	public void getPendingImportAccountingInvoices(String domainName, int domain, String user, String query,
-			AsyncCallback<LinkedList<AccountingInvoice>> callback) {
-		AON.start();
-		fsa.getPendingImportAccountingInvoices(domainName, domain, user, query,
-				new AsyncCallbackWrapper<LinkedList<AccountingInvoice>>(callback));
-	}
-
-	@Override
-	public void save(String domainName, int domain, AccountingInvoice invoice,
-			AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.save(domainName, domain, invoice,
-				new AsyncCallbackWrapper<AccountingInvoice>(callback));
-	}
-
-	@Override
-	public void getRegistryLastAccountingInvoice(String currentDomainName, int currentDomain, Integer registryId,
-			AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.getRegistryLastAccountingInvoice(currentDomainName,currentDomain, registryId,
-				new AsyncCallbackWrapper<AccountingInvoice>(callback));
-	}
-
-	@Override
-	public void rectifyInvoice(String currentDomainName, int currentDomain, Integer invoiceId, InvoiceRectificationData data,
-			AsyncCallback<AccountingInvoice> callback) {
-		AON.start();
-		fsa.rectifyInvoice(currentDomainName,currentDomain, invoiceId, data,
-				new AsyncCallbackWrapper<AccountingInvoice>(callback));
-	}
-
-	@Override
-	public void getSalaryEntries(String domainName, int domain, Date from, Date to,
-			AsyncCallback<LinkedList<SalaryEntry>> callback) {
-		AON.start();
-		fsa.getSalaryEntries(domainName,domain, from, to,
-				new AsyncCallbackWrapper<LinkedList<SalaryEntry>>(callback));
-	}
-	
-	@Override
-	public void getSalaryFormatted(String domainName, int domain, Date from, Date to, AsyncCallback<String> callback) {
-		AON.start();
-		fsa.getSalaryFormatted(domainName,domain, from, to,
-				new AsyncCallbackWrapper<String>(callback));
-	}
-
-	// --------------------------------------------------------------- ACCOUNT STATEMENT
-	@Override
-	public void getAccountStatement(String domainName,String user, int domain,
-			AccountingReportParams params,
-			AsyncCallback<AccountStatementReport> callback) {
-		AON.start();
-		fsa.getAccountStatement(domainName, user, domain, params,
-				new AsyncCallbackWrapper<AccountStatementReport>(callback));
-	}
-	
-	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
-	@Override
-	public void getAccountTrialBalanceReport(String domainName, String user, int domain,
-			AccountingReportParams params, AsyncCallback<AccountTrialBalanceReport> callback) {
-		AON.start();
-		fsa.getAccountTrialBalanceReport(domainName, user, domain, params,
-				new AsyncCallbackWrapper<AccountTrialBalanceReport>(callback));
-	}
-
-	// --------------------------------------------------------------- ACCOUNT TRIAL BALANCE
-	@Override
-	public void getAccountBalanceReport(String domainName, String user, int domain,
-			AccountingReportParams params, AsyncCallback<AccountBalanceReport> callback) {
-		AON.start();
-		fsa.getAccountBalanceReport(domainName, user, domain, params,
-				new AsyncCallbackWrapper<AccountBalanceReport>(callback));
-	}
-
-	@Override
-	public void getAccountBalance(String domainName, int domain,
-			AccountingReportParams params,
-			AsyncCallback<LinkedList<AccountStatement>> callback) {
-		AON.start();
-		fsa.getAccountBalance(
-				domainName,
-				domain,
-				params,
-				new AsyncCallbackWrapper<LinkedList<AccountStatement>>(callback));
-	}
-
-	@Override
-	public void getAccountOperatingReport(String domainName, String user, int domain, AccountingReportParams params,
-			AsyncCallback<AccountOperatingReport> callback) {
-		AON.start();
-		fsa.getAccountOperatingReport(
-				domainName,
-				user,
-				domain,
-				params,
-				new AsyncCallbackWrapper<AccountOperatingReport>(callback));
-		
-	}
-
-	@Override
-	public void getAccountFinances(String domainName, int domain, FinanceParams params, int offset, int limit,
-			AsyncCallback<LinkedList<Finance>> callback) {
-		AON.start();
-		fsa.getAccountFinances(domainName, domain, params, offset, limit,
-				new AsyncCallbackWrapper<LinkedList<Finance>>(callback));
-	}
-
-	@Override
-	public void getFinanceEntry(String domainName, int domain, Integer accountEntry,
-			AsyncCallback<FinanceEntry> callback) {
-		AON.start();
-		fsa.getFinanceEntry(domainName, domain, accountEntry,
-				new AsyncCallbackWrapper<FinanceEntry>(callback));
-	}
-
-	@Override
-	public void save(String domainName, int domain, FinanceEntry financeEntry,
-			AsyncCallback<FinanceEntry> asyncCallback) {
-		AON.start();
-		fsa.save(domainName, domain, financeEntry,
-				new AsyncCallbackWrapper<FinanceEntry>(asyncCallback));
+		fsa.getAccountFinances(domainName, domain, params, offset, limit, new AsyncCallbackWrapper<LinkedList<Finance>>(callback));
 	}
 
 	// --------------------------------------------------------------- IRPF
 	@Override
-	public void getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params,
-			AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
+	public void getIrpfBreakdownSummary(String domainName, String user, int domain, IRPFParams params, AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
 		AON.start();
-		fsa.getIrpfBreakdownSummary(domainName, user, domain, params,
-				new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
+		fsa.getIrpfBreakdownSummary(domainName, user, domain, params, new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
 	}
 
 	@Override
-	public void getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params,
-			AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
+	public void getIrpfBreakdown(String domainName, String user, int domain, IRPFParams params, AsyncCallback<LinkedList<IrpfBreakdown>> callback) {
 		AON.start();
-		fsa.getIrpfBreakdown(domainName, user, domain, params,
-				new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
+		fsa.getIrpfBreakdown(domainName, user, domain, params, new AsyncCallbackWrapper<LinkedList<IrpfBreakdown>>(callback));
 	}
 
 	// --------------------------------------------------------------- GWT API INFO
-	
+
 	@Override
 	public void getAonData(String domainName, Integer domainId, String user, AsyncCallback<AonData> callback) {
-		
+
 	}
-	
+
 	@Override
 	public void getAonDataToken(String domainName, Integer domainId, String token, AsyncCallback<AonData> callback) {
-		
+
 	}
 
 	@Override
 	public void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback) {
-		
+
 	}
 
 	@Override
 	public void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException {
-		
+
 	}
 }

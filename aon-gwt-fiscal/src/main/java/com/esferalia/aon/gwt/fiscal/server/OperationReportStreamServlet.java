@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "Operation Report Stream", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportStream" })
@@ -38,8 +39,22 @@ public class OperationReportStreamServlet extends HttpServlet {
 			OperationParams params = new OperationParams();
 			JSONParser parser = new JSONParser();
 			JSONObject jsonParams =  (JSONObject) parser.parse(irpfParams);
-			Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-			params.setDomain(domain.intValue());
+			
+			Object dom = jsonParams.get(IRequestParamsNames.DOMAIN);
+			if (dom == null) {
+				throw new IllegalArgumentException("NULL DOMAIN!");
+			}
+			if (dom instanceof Long) {
+				Long domain = (Long) dom; 
+				params.setDomain(domain.intValue());
+			} else if (dom instanceof String) {
+				Integer domain = AonNumberUtils.toInteger((String) dom);
+				if (domain == null) {
+					throw new IllegalArgumentException("NULL DOMAIN!");
+				}
+				params.setDomain(domain);
+			}
+			
 			Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
 			if (activity != null) {
 				params.setActivity(activity.intValue());	

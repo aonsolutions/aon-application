@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JsonParser {
@@ -88,8 +89,20 @@ public class JsonParser {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonParams =  (JSONObject) parser.parse(accountEntryParams);
 		
-		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-		params.setDomain(domain.intValue());
+		Object dom = jsonParams.get(IRequestParamsNames.DOMAIN);
+		if (dom == null) {
+			throw new IllegalArgumentException("NULL DOMAIN!");
+		}
+		if (dom instanceof Long) {
+			Long domain = (Long) dom; 
+			params.setDomain(domain.intValue());
+		} else if (dom instanceof String) {
+			Integer domain = AonNumberUtils.toInteger((String) dom);
+			if (domain == null) {
+				throw new IllegalArgumentException("NULL DOMAIN!");
+			}
+			params.setDomain(domain);
+		}
 		
 		Long accountEntryId = (Long) jsonParams.get(IRequestParamsNames.ACCOUNT_ENTRY_ID);
 		if (accountEntryId!= null) {
@@ -229,8 +242,21 @@ public class JsonParser {
 		JSONObject jsonParams =  (JSONObject) parser.parse(accountReportParams);
 		
 		// ******************* DOMAIN ******************* 
-		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-		params.setDomain(domain.intValue());
+		Object dom = jsonParams.get(IRequestParamsNames.DOMAIN);
+		if (dom == null) {
+			throw new IllegalArgumentException("NULL DOMAIN!");
+		}
+		if (dom instanceof Long) {
+			Long domain = (Long) dom; 
+			params.setDomain(domain.intValue());
+		} else if (dom instanceof String) {
+			Integer domain = AonNumberUtils.toInteger((String) dom);
+			if (domain == null) {
+				throw new IllegalArgumentException("NULL DOMAIN!");
+			}
+			params.setDomain(domain);
+		}
+		
 
 		// ******************* PERIOD ******************* 
 		Long period = (Long) jsonParams.get(IRequestParamsNames.PERIOD);

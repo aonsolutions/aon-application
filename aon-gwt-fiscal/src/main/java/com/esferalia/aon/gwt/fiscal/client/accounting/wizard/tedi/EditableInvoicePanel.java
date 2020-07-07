@@ -18,12 +18,12 @@ import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
@@ -103,7 +103,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	protected static final String DUA_BACKGROUND_COLOR = "HoneyDew";
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
-	private static FiscalServiceAsync FISCAL_SERVICE;
+	private static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
 	
 	private SimplePanel invoicePanelContainer;
 	private AccountingRegistryBox registryBox;
@@ -218,8 +218,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	public EditableInvoicePanel(final InvoicePanelCallback invoiceCallback) {
 	
 		this.invCallback = invoiceCallback; 
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
+		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
 
 		FinanceServiceAsync financeServiceRaw = GWT.create(FinanceService.class);
 		FINANCE_SERVICE = new FinanceServiceAsyncDecorator(financeServiceRaw);
@@ -314,8 +314,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					FISCAL_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
-							,invoiceCallback.getCurrentDomainId()
+					ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
+							,invoiceCallback.getCurrentDomainId(),invoiceCallback.getCurrentUser()
 							,invoiceCallback.getInvoice().getDuaNationalInvoice()
 							,new AsyncCallback<AccountingInvoice>() {
 						
@@ -356,8 +356,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					FISCAL_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
+					ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
 							,invoiceCallback.getCurrentDomainId()
+							,invoiceCallback.getCurrentUser()
 							,invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice().getId()
 							,new AsyncCallback<AccountingInvoice>() {
 						
@@ -412,8 +413,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						FISCAL_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
+						ACCOUNT_ENTRY_SERVICE.getAccountingInvoiceFromInvoice(invoiceCallback.getCurrentDomainName()
 								,invoiceCallback.getCurrentDomainId()
+								,invoiceCallback.getCurrentUser()
 								,invoiceCallback.getInvoice().getInvoice().getRectificationInvoice()
 								,new AsyncCallback<AccountingInvoice>() {
 							
@@ -473,8 +475,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 									
 									@Override
 									public void onAccept(InvoiceRectificationData data) {
-										FISCAL_SERVICE.rectifyInvoice(invoiceCallback.getCurrentDomainName()
+										ACCOUNT_ENTRY_SERVICE.rectifyInvoice(invoiceCallback.getCurrentDomainName()
 												,invoiceCallback.getCurrentDomainId()
+												,invoiceCallback.getCurrentUser()
 												,invoiceCallback.getInvoice().getInvoice().getId()
 												,data
 												,new AsyncCallback<AccountingInvoice>() {
@@ -586,9 +589,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 
 	protected void initializeInvoice(InvoicePanelCallback invoiceCallback, AccountingRegistry ar) {
-		FISCAL_SERVICE.initializeInvoice(
+		ACCOUNT_ENTRY_SERVICE.initializeInvoice(
 				invoiceCallback.getCurrentDomainName()
 				,invoiceCallback.getCurrentDomainId()
+				,invoiceCallback.getCurrentUser()
 				,ar
 				,invoiceCallback.getModule().getActivity()
 				,invoiceCallback.getModule().getEntryDate()
@@ -681,8 +685,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 	private void repeatLastInvoice(InvoicePanelCallback invoiceCallback, final ISelectionCallback cbk) {
 		Integer registryId = invoiceCallback.getInvoice().getRegistry().getId();
-		FISCAL_SERVICE.getRegistryLastAccountingInvoice(invoiceCallback.getCurrentDomainName()
-				,invoiceCallback.getCurrentDomainId(), registryId
+		ACCOUNT_ENTRY_SERVICE.getRegistryLastAccountingInvoice(invoiceCallback.getCurrentDomainName()
+				,invoiceCallback.getCurrentDomainId(),invoiceCallback.getCurrentUser(), registryId
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {

@@ -8,9 +8,9 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.InvoiceRectificationDataPanel.InvoiceRectificationDataPanelCallback;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
@@ -54,15 +54,15 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 	
 	private AccountingRegistryVisitor accountingRegistryVisitor;
 	
-	static FiscalServiceAsync fiscalService;
+	static AccountEntryServiceAsync SERVICE;
 	protected IAccountEntryModuleCallback callback;
 	
-	protected static FiscalServiceAsync getFiscalService() {
-		if (fiscalService == null) {
-			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-			fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+	protected static AccountEntryServiceAsync getAccountEntryService() {
+		if (SERVICE == null) {
+			AccountEntryServiceAsync serviceRaw = GWT.create(AccountEntryService.class);
+			SERVICE = new AccountEntryServiceAsyncDecorator(serviceRaw);
 		}
-		return fiscalService;
+		return SERVICE;
 	}
 	
 	FlowPanel flexContainer;
@@ -183,8 +183,9 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					getFiscalService().getAccountingInvoiceFromInvoice(callback.getCurrentDomainName()
+					getAccountEntryService().getAccountingInvoiceFromInvoice(callback.getCurrentDomainName()
 							,callback.getCurrentDomainId()
+							,callback.getCurrentUser()
 							,callback.getInvoice().getInvoice().getRectificationInvoice()
 							,new AsyncCallback<AccountingInvoice>() {
 								
@@ -587,8 +588,9 @@ public class InvoiceExtraPanel extends ScrollPanel implements HasValueChangeHand
 							
 							@Override
 							public void onAccept(InvoiceRectificationData data) {
-								getFiscalService().rectifyInvoice(callback.getCurrentDomainName()
+								getAccountEntryService().rectifyInvoice(callback.getCurrentDomainName()
 										,callback.getCurrentDomainId()
+										,callback.getCurrentUser()
 										,callback.getInvoice().getInvoice().getId()
 										,data
 										,new AsyncCallback<AccountingInvoice>() {

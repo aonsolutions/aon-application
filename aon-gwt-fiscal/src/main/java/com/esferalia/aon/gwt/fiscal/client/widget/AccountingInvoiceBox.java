@@ -4,9 +4,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -55,7 +55,7 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 	private static final int MIN_CHARACTERS = 3;
 	private static final int MAX_CHARACTERS = 9;
 
-	private FiscalServiceAsync SERVICE;
+	private AccountEntryServiceAsync SERVICE;
 
 	private Integer id;
 	private String description;
@@ -124,8 +124,8 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 	}
 	
 	public AccountingInvoiceBox(final String domainName, final int domain, final String user,final AonConfiguration config, boolean showDescription) {
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw );
+		AccountEntryServiceAsync serviceRaw = GWT.create(AccountEntryService.class);
+		SERVICE = new AccountEntryServiceAsyncDecorator(serviceRaw );
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {

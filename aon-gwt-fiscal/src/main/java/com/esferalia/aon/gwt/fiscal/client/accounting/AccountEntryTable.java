@@ -133,7 +133,7 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		resolver = new ExpressionResolver() {
 			@Override
 			public void resolve(String expression, AsyncCallback<Double> callback) {
-				AccountEntryModule.fiscalService.mathExpression(expression,callback);
+				AccountEntryModule.FISCAL_SERVICE.mathExpression(expression,callback);
 			}
 		}; 
 	}

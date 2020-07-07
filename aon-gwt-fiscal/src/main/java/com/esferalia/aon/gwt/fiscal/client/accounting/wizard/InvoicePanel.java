@@ -326,9 +326,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
 				final AccountingRegistry ar = event.getSelectedItem();
-				getFiscalService().initializeInvoice(
+				getAccountEntryService().initializeInvoice(
 						getCallback().getCurrentDomainName()
 						,getCallback().getCurrentDomainId()
+						,getCallback().getCurrentUser()
 						,ar
 						,getCallback().getModule().getActivity()
 						,getCallback().getModule().getEntryDate()
@@ -743,8 +744,8 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		getCallback().getModule().onClearSessionLog();
 		attachPanel.clear();
 		if (id != null) {
-			getFiscalService().getAccountingInvoice(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId(),id
+			getAccountEntryService().getAccountingInvoice(getCallback().getCurrentDomainName()
+				,getCallback().getCurrentDomainId(),getCallback().getCurrentUser(),id
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {
@@ -1063,8 +1064,9 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 		fastSave.setVisible(false);
 		vatPanel.hideButtons(false);
 		extraPanel.hideButtons(false);
-		getFiscalService().save(getCallback().getCurrentDomainName()
+		getAccountEntryService().save(getCallback().getCurrentDomainName()
 				, getCallback().getCurrentDomainId()
+				, getCallback().getCurrentUser()
 				, getWrapper(), new AsyncCallback<AccountingInvoice>() {
 
 			@Override
@@ -1157,8 +1159,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	
 	private void repeatLastInvoice(final ISelectionCallback cbk) {
 		Integer registryId = getWrapper().getRegistry().getId();
-		getFiscalService().getRegistryLastAccountingInvoice(getCallback().getCurrentDomainName()
-				,getCallback().getCurrentDomainId(), registryId
+		getAccountEntryService().getRegistryLastAccountingInvoice(getCallback().getCurrentDomainName()
+				, getCallback().getCurrentDomainId()
+				, getCallback().getCurrentUser()
+				, registryId
 				,new AsyncCallback<AccountingInvoice>() {
 						@Override
 						public void onSuccess(AccountingInvoice result) {

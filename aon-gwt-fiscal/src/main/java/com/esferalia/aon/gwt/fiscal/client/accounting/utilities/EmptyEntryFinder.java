@@ -4,11 +4,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesEmptyEntryItem;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 class EmptyEntryFinder extends OptionBase {
 
-	private static FiscalServiceAsync FISCAL_SERVICE;
+	private static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
 	private static AccountingUtilitiesServiceAsync SERVICE;
 	
 	 
@@ -54,8 +54,8 @@ class EmptyEntryFinder extends OptionBase {
 		AccountingUtilitiesServiceAsync serviceRaw = GWT.create(AccountingUtilitiesService.class);
 		SERVICE = new AccountingUtilitiesServiceAsyncDecorator(serviceRaw);
 
-		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
+		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
 
 		content = new SimpleLayoutPanel();
 		container = new ScrollPanel();
@@ -279,7 +279,7 @@ class EmptyEntryFinder extends OptionBase {
 						
 						@Override
 						public void onAccept() {
-							FISCAL_SERVICE.deleteAccountEntry(domainName, item.getDomain(), item.getEntryId(), new AsyncCallback<Void>() {
+							ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(domainName, item.getDomain(), EmptyEntryFinder.this.user, item.getEntryId(), new AsyncCallback<Void>() {
 
 								@Override
 								public void onFailure(Throwable caught) {

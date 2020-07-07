@@ -119,8 +119,9 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	public final static int JOURNAL_PANEL_TAB_OFFSET = 1000000;
 
-	static FiscalServiceAsync fiscalService;
-	static CommonServiceAsync commonService;
+	static AccountEntryServiceAsync ACCOUNT_ENTRY_SERVICE;
+	static FiscalServiceAsync FISCAL_SERVICE;
+	static CommonServiceAsync COMMON_SERVICE;
 
 	private AccountEntryModuleOptions options;
 	private AccountEntry base;
@@ -258,10 +259,12 @@ public class AccountEntryModule extends MainEntryPoint {
 
 		AON.ensureInjected();
 		
+		AccountEntryServiceAsync accountEntryServiceRaw = GWT.create(AccountEntryService.class);
+		ACCOUNT_ENTRY_SERVICE = new AccountEntryServiceAsyncDecorator(accountEntryServiceRaw);
 		FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-		fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+		FISCAL_SERVICE = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
-		commonService = new CommonServiceAsyncDecorator(commonServiceRaw);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel() , 26);
@@ -315,7 +318,7 @@ public class AccountEntryModule extends MainEntryPoint {
 		if (getOptions().getConfiguration() != null) {
 			loadModule();
 		} else {
-			commonService.getAonConfiguration(getOptions().getDomainName(), getOptions().getDomain(), getOptions().getUser(),
+			COMMON_SERVICE.getAonConfiguration(getOptions().getDomainName(), getOptions().getDomain(), getOptions().getUser(),
 					new AsyncCallback<AonConfiguration>() {
 				@Override
 				public void onSuccess(AonConfiguration result) {
@@ -785,8 +788,8 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	private void selectEntry(final Integer id) {
 		if (id != null) {
-			fiscalService.getAccountEntry(getOptions().getDomainName(),
-				getOptions().getDomain(), id ,
+			ACCOUNT_ENTRY_SERVICE.getAccountEntry(getOptions().getDomainName(),
+				getOptions().getDomain(), getOptions().getUser(), id ,
 				new AsyncCallback<AccountEntry>() {
 					@Override
 					public void onSuccess(AccountEntry result) {
@@ -972,7 +975,7 @@ public class AccountEntryModule extends MainEntryPoint {
 
 	private void showFullStatement(Integer selectedItem) {
 		tabLayout.selectTab(getStatementTabIndex());
-		commonService.getAccount(getOptions().getDomainName()
+		COMMON_SERVICE.getAccount(getOptions().getDomainName()
 				, getOptions().getDomain()
 				, getOptions().getUser()
 				, selectedItem

@@ -1,10 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.accounting.wizard;
 
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.gwt.fiscal.client.FiscalService;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.FiscalServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule.IAccountEntryModuleCallback;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.accounting.IContentAttachCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.IWizardContent;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -17,15 +17,15 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 
 public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends ResizeComposite implements RequiresResize, IWizardContent  {
 
-	static FiscalServiceAsync fiscalService;
+	static AccountEntryServiceAsync SERVICE;
 	private IAccountEntryModuleCallback callback;
 	
-	protected static FiscalServiceAsync getFiscalService() {
-		if (fiscalService == null) {
-			FiscalServiceAsync fiscalServiceRaw = GWT.create(FiscalService.class);
-			fiscalService = new FiscalServiceAsyncDecorator(fiscalServiceRaw);
+	protected static AccountEntryServiceAsync getAccountEntryService() {
+		if (SERVICE == null) {
+			AccountEntryServiceAsync fiscalServiceRaw = GWT.create(AccountEntryService.class);
+			SERVICE = new AccountEntryServiceAsyncDecorator(fiscalServiceRaw);
 		}
-		return fiscalService;
+		return SERVICE;
 	}
 	
 	public AonConfiguration getConfiguration() {
@@ -48,7 +48,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 	
 	@Override
 	public void save(final AsyncCallback<IAccountEntryWrapper> callback) {
-		getFiscalService().save(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getWrapper().getAccountEntry()
+		getAccountEntryService().save(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser(), getWrapper().getAccountEntry()
 			, new AsyncCallback<AccountEntry>() {
 
 			@Override
@@ -73,7 +73,7 @@ public abstract class WizardContentBase<T extends IAccountEntryWrapper> extends 
 		// pantalla.
 		// Es lo mismo que un reset().
 		if (getWrapper().getAccountEntry().getId() != null) {
-			getFiscalService().deleteAccountEntry(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId()
+			getAccountEntryService().deleteAccountEntry(getCallback().getCurrentDomainName(), getCallback().getCurrentDomainId(), getCallback().getCurrentUser()
 					, getWrapper().getAccountEntry().getId(),
 					new AsyncCallbackWrapper<Void>(callback) {
 

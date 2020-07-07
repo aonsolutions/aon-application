@@ -50,8 +50,8 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	public void select(final Integer id,final IAccountEntryWrapper wrp,final ISelectionCallback cbk) {
 		getCallback().getModule().onClearSessionLog();
 		if (id != null) {
-			getFiscalService().getAccountEntry(getCallback().getCurrentDomainName(),
-					getCallback().getCurrentDomainId(), id ,
+			getAccountEntryService().getAccountEntry(getCallback().getCurrentDomainName(),
+					getCallback().getCurrentDomainId(), getCallback().getCurrentUser(),id ,
 					new AsyncCallback<AccountEntry>() {
 						@Override
 						public void onSuccess(AccountEntry result) {
