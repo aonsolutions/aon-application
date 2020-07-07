@@ -22,7 +22,13 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.SerializationPolicy;
 import com.google.gwt.user.server.rpc.SerializationPolicyLoader;
 
+/**
+ * @deprecated 
+ * Esta clase accede a datos de la sesion. Utilizar AonStatelessRemoteServiceServlet 
+ * 
+ */
 @SuppressWarnings("serial")
+@Deprecated
 public class AonRemoteServiceServlet extends RemoteServiceServlet {
 	
 	protected Integer getUserID() {
