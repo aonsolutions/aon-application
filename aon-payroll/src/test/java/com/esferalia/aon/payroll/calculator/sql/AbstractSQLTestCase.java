@@ -156,7 +156,7 @@ public abstract class AbstractSQLTestCase {
 
 	// ------------------------------------------------------------------------
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
+	protected static ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(
 			Connection connection, Date startDate, Date endDate,
 			Date issueDate, Criteria criteria, IContractSalaryCalculatorContext.IListener listener) throws ExpressionException,
 			SQLException {
@@ -168,12 +168,12 @@ public abstract class AbstractSQLTestCase {
 		return ctx;
 	}
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+	protected static ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Criteria criteria) throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, null);
 	}
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+	protected static  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, ContractRecord contract,
 			IContractSalaryCalculatorContext.IListener listener) throws ExpressionException, SQLException {
 		Criteria criteria = new Criteria();
@@ -181,7 +181,7 @@ public abstract class AbstractSQLTestCase {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, criteria, listener);
 	}
 
-	protected ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
+	protected static  ISQLContractSalaryCalculatorContext getContractSalaryCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, ContractRecord contract)
 			throws ExpressionException, SQLException {
 		return getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract, null);
@@ -1038,6 +1038,12 @@ public abstract class AbstractSQLTestCase {
 					.where(AGREEMENT_DATA.NAME.eq(name))
 					.execute();
 	}
+	public static final void cleanData(AONContext aonContext, ContractRecord contract,String name) {
+		aonContext.getDslContext().delete(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contract.getId()))
+		.and(CONTRACT_DATA.NAME.eq(name)).execute();
+
+	}
+	
 
 	public static final void addData(AONContext aonContext, AgreementLevelCategoryRecord category, Date startDate,
 			Date endDate, Map<String, String> datas) {

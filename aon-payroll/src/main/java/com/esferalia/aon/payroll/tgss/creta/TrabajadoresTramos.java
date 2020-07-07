@@ -252,9 +252,9 @@ public class TrabajadoresTramos {
 				props.getCCCProperty().eq(ccc)
 				.and(props.getEndDateProperty().ge(startDate))
 				.and(props.getStartDateProperty().le(endDate))
-				.and(props.getIsDelayProperty().eq(AonStringUtils.equalsIgnoreCase("L03", tipo)))
+				.and(props.getIsDelayProperty().eq(AonStringUtils.containsIgnoreCase("L03,L90", tipo)))
 				.and(props.getIsSettlementProperty().eq(AonStringUtils.equalsIgnoreCase("L13", tipo)))
-				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91,L90", tipo)))
+				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
 				)
 		.forEach(
 				salary -> {

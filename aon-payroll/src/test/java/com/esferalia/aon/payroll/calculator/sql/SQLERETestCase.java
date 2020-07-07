@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
@@ -19,6 +20,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -28,10 +30,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.ql.Criteria;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
@@ -45,6 +52,7 @@ import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -55,6 +63,9 @@ import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
 import junit.framework.Assert;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 
 public class SQLERETestCase extends AbstractSQLTestCase {
 
@@ -3440,6 +3451,107 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 				, salary.getSocialSecurityContributions(),
 				DELTA);
 	}
+	
+	
+	
+	@Test
+	public void testEREDelaysI() throws ExpressionException, SQLException,
+			SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+//		ContractRecord contract = newContract(aonContext, 
+//				new String[] {
+//				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+//				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+//				}, 
+//				new String[] {
+//				}, null);
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		ContractRecord contract =  SQLCretaTestCase.newContract(aonContext, ccc);
+		
+		SQLCretaTestCase.newContract(aonContext, ccc);
+		
+		//@formatter:on
+		Date startEre = getFirstDayOfMonth(getToday());
+
+		addData(aonContext, contract, startEre, null,
+				new HashMap<String, String>() {
+					{
+						put(getFactorVariable().getName(), "1");
+					}
+				});
+		
+//		PaymentConceptRecord ere = addConcept(aonContext, getEreVariable().getName());
+//		addPayment(aonContext, contract, ere, "0.00" , String.format("%s * BASE_REGULADORA",getDaysVariable().getName()));
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 2 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+		
+		cleanData(aonContext, contract, getFactorVariable().getName());
+		
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+//		for (com.esferalia.aon.payroll.SalaryData data: delay.getSalaryDatas()) {
+//			System.out.println(data.getName() + " :" + data.getExpression());
+//			
+//		}
+		
+		Assert.assertEquals(1750.00*2, delay.getTotalPayment());
+		Assert.assertEquals(1750.00*2, delay.getCommonBase());
+		Assert.assertEquals(1750.00*2, delay.getRawCommonBase());
+		Assert.assertEquals(1750.00*2, delay.getProfessionalBase());
+		Assert.assertEquals(1750.00*2, delay.getIrpfBase());
+		
+		delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				getFirstDayOfMonth(getToday()), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		delayCalculator = new SmartContractSalaryCalculator<Salary>();	
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		delayCalculator.setSalaryBuilder(jooqSalaryBuilder);
+		delayCalculator.calculate(delayCtx);
+		jooqSalaryBuilder.execute();
+
+		TrabajadoresTramos trabajadoresYTramos = SQLCretaTestCase.getTrabajadoresTramos(connection, contract, getFirstDayOfMonth(getToday()), getLastDayOfMonth(getToday()), ccc, "L90");
+		
+		Utils.marshal(trabajadoresYTramos, System.out);
+		
+//		List<Tramo> bases = SQLCretaTestCase.getBases(connection, startDate, endDate, ccc, contract);
+	}
+
 
 	protected ISalary calculate (ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		return new SmartContractSalaryCalculator<Salary>(
@@ -3485,4 +3597,5 @@ public class SQLERETestCase extends AbstractSQLTestCase {
 	protected ContextVariable getDaysVariable() {
 		return ERE_DAYS;
 	}
+	
 }

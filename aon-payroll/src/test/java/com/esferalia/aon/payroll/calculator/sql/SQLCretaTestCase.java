@@ -431,7 +431,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Date endDate = getLastDayOfMonth(startDate);
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresYTramos = 
-		getTrabajadoresTramos(connection, contract, startDate, endDate, ccc);
+		getTrabajadoresTramos(connection, contract, startDate, endDate, ccc, "L00");
 
 		addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H04, "44");
 		addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H03, "33");
@@ -4824,7 +4824,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		;
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
-				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc);
+				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc, "L00");
 
 		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, trabajadoresTramos);
 		org.junit.Assert.assertEquals( 1, bases.size());
@@ -4958,23 +4958,23 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 	
 	
-	protected ContractRecord newContract(AONContext aonContext, String ccc) {
+	protected static ContractRecord newContract(AONContext aonContext, String ccc) {
 		return newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.PRINCIPAL);
 	}
 
-	protected ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode) {
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode) {
 		return newContract(aonContext, ccc, contractCode, "03", CCCType.PRINCIPAL);
 	}
 
-	protected ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup ) {
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup ) {
 		return newContract(aonContext, ccc, contractCode, quoteGroup, CCCType.PRINCIPAL);
 	}
 
-	protected ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType) {
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType) {
 		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, getFirstDayOfYear(getToday()), null, null);
 	}
 
-	protected ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category ) {
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category ) {
 		DomainRecord domain = newDomain(aonContext);
 		
 		ScopeRecord scope = newScope(aonContext, domain.getId());
@@ -5102,7 +5102,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	private net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+	protected static net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc, String tipo) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
@@ -5133,7 +5133,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 											anho , 		//hastaAnho, 
 											mes, 		//ctrlMes, 
 											anho , 		//ctrlAnho, 
-											"L00",		//tipo, 
+											tipo,		//tipo, 
 											new String[]
 											{
 											"0111" + "" + ccc
@@ -5166,7 +5166,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
-				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc);
+				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc, "L00");
 		
 		return
 			trabajadoresTramos
@@ -5187,7 +5187,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		
 		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
-				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc);
+				getTrabajadoresTramos(connection, contract, startDate, endDate, ccc, "L00");
 		
 		return
 			trabajadoresTramos
@@ -5206,7 +5206,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		return ctx;
 	}
 
-	private List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> getBases ( Connection connection, Date startDate, Date endDate, String ccc, ContractRecord ...contracts ) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+	protected static List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> getBases ( Connection connection, Date startDate, Date endDate, String ccc, ContractRecord ...contracts ) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		
 		net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion = getLiquidacion(connection, startDate, endDate, ccc,
 				contracts);
@@ -5222,7 +5222,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				;
 	}
 
-	private net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion getLiquidacion(Connection connection, Date startDate,
+	private static net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion getLiquidacion(Connection connection, Date startDate,
 			Date endDate, String ccc, ContractRecord... contracts)
 			throws ExpressionException, SQLException, SalaryException, EmptyBasesException, JAXBException,
 			XMLStreamException, FactoryConfigurationError, IOException {

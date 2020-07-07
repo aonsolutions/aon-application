@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,6 +73,7 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 public class SQLContractDelayCalculatorContext extends
 		SQLContractSalaryCalculatorContext {
 	
+	private static final String ERE_BASES = Arrays.stream(ContextVariable.ERE_BASES).map(v -> "'"+v.getName()+"'" ).collect(Collectors.joining(","));
 	
 	private static class DelaySQLContractSalaryCalculatorContext extends SQLContractSalaryCalculatorContext{
 		
@@ -430,6 +432,8 @@ public class SQLContractDelayCalculatorContext extends
 
 		Collection<Period> cgcPeriods = new LinkedList<Period>();
 		try {
+					
+
 			stmt = connection.prepareStatement(
 				"SELECT" 
 				+" " + SALARY_DATA + "." + SalaryDataColumns.START_DATE 
@@ -441,7 +445,7 @@ public class SQLContractDelayCalculatorContext extends
 				+" AND " + SALARY + "." + SalaryColumns.START_DATE + " >= ? " 
 				+" AND " + SALARY + "." + SalaryColumns.END_DATE + " <= ? "
 				+" AND " + SALARY_DATA + "." + SalaryDataColumns.NAME 
-				+ " IN( '" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "')"
+				+ " IN( '" + CGC_BASE.getName() + "', '" + MATERNITY_BASE.getName() + "', '" + DIRECT_BASE.getName() + "', " + ERE_BASES + " )"
 				+" GROUP BY 1, 2"
 				); 
 			stmt.setInt(1, contract);

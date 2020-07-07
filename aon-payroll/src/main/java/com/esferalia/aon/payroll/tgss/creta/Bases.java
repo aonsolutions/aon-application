@@ -606,6 +606,13 @@ public class Bases {
 			
 		}
 		
+		@Override
+		public void salaryNotFound(String ccc, Trabajador<?> trabajador, Periodo mes) {
+			if (!nafs.contains(trabajador.getNaf())) {
+				throw new FilterOut();
+			}
+		}
+		
 	}
 
 	private static class DefaultsCallback implements BasesCallback {
@@ -2142,8 +2149,13 @@ public class Bases {
 		// @formatter:on
 
 		trabajadores.values().forEach(t -> {
-			for (BasesCallback cb : cbs)
-				cb.salaryNotFound(ccc, t, mesLiquidativo);
+			try {
+				for (BasesCallback cb : cbs) {
+						cb.salaryNotFound(ccc, t, mesLiquidativo);
+				}
+			} catch ( FilterOut f ) {
+				
+			}
 		});
 
 	}
