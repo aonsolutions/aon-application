@@ -260,6 +260,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		.from(CONTRACT_PAYMENT)
 		.innerJoin(PAYMENT_CONCEPT).onKey()
 		.where(CONTRACT_PAYMENT.CONTRACT.eq(getId()))
+		.and(CONTRACT_PAYMENT.MONTH.isNotNull())
 		.and(CONTRACT_PAYMENT.TYPE.eq((byte)4)
 		.or(CONTRACT_PAYMENT.TYPE.isNull().and(PAYMENT_CONCEPT.TYPE.eq((byte)4))))
 		.fetchInto(CONTRACT_PAYMENT)
