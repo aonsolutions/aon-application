@@ -223,10 +223,19 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			.and(p.getContractProperty().eq(contractId))
 			.and(p.getStartDateProperty().le(getEnd()))
 			.and(p.getEndDateProperty().ge(getStart())))
-		.forEach(salary -> salary.getPayments().forEach( salaryPayment -> 
-		getSalaryPaymentOf(salaryPayment, extraPayments)
-		.ifPresent( p -> monthlyQuotedPayments.add(salary2ContractPayment(salary,salaryPayment, p)))
-		));
+		.forEach(salary -> {
+			List<IContractPayment> payments = new ArrayList<IContractPayment>();
+			salary.getPayments().forEach( salaryPayment -> 
+			getSalaryPaymentOf(salaryPayment, extraPayments)
+			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
+			);
+			payments.stream().findFirst()
+			.ifPresentOrElse(
+			(p) -> monthlyQuotedPayments.addAll(payments), 
+			() -> extraPayments.forEach(p -> monthlyQuotedPayments.add(salary2ContractPayment(salary, p,"0.00"))));
+
+		})
+		;
 		
 		
 		return monthlyQuotedPayments;
@@ -254,6 +263,11 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			}
 			
 			@Override
+			public ExpressionScope getScope() {
+				return ExpressionScope.APPLICATION;
+			}
+
+			@Override
 			public String getExpression() {
 				return Double.toString(salaryPayment.getQuote());
 			}
@@ -264,6 +278,42 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return payment;
 	}
 	
+	private IContractPayment salary2ContractPayment(
+			com.esferalia.aon.occam.api.model.Salary salary, 
+			IContractPayment contractPayment,
+			String expression) {
+		DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
+			
+			@Override
+			public Integer getId() {
+				return  Integer.MIN_VALUE + ( contractPayment.getId() % 1000 ); //;super.getId() * (-1)
+			}
+			
+			@Override
+			public Date getEndDate() {
+				return salary.getEndDate();
+			}
+
+			@Override
+			public Date getStartDate() {
+				return salary.getStartDate();
+			}
+			
+			@Override
+			public String getExpression() {
+				return expression;
+			}
+			@Override
+			public ExpressionScope getScope() {
+				return ExpressionScope.APPLICATION;
+			}
+		};
+		
+		;
+		
+		return payment;
+	}
+
 	private Optional<IContractPayment> getSalaryPaymentOf(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
 		for (IContractPayment contractPayment : contractPayments) {
 			if ( AonStringUtils.equals(contractPayment.getDescription(), salaryPayment.getDescription()) ) {
