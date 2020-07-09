@@ -303,6 +303,53 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtrasAtSalary() throws ExpressionException, SQLException {
+
+		Consumer<IrpfResult> asserts = result -> {
+			int month = result.getEffectiveDate().getMonth();
+
+			assertAnnualRemuneration(CommonUtil.round(
+					1000.00 * 14  , 3),
+					result.getAnnualRemuneration());
+		};
+
+//		asserts = asserts.andThen(result -> {
+//			int month = result.getEffectiveDate().getMonth();
+//			assertDeduccibleExpenses(CommonUtil.round((1000.00 * 2 / 12) * 0.15
+//					* (12 ), 3), result.getDeducciblesExpenses());
+//		});
+		
+		//Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date lastDayOfMonth = getLastDayOfMonth(getToday());
+		
+
+		test(asserts, 
+				new String[] {
+						"1000.00 * DIAS_TRABAJADOS / DIAS_MES ",
+						"TRACE('TOTAL=%f\r\n',TOTAL_DEVENGADO);0.00"
+				}, 
+				new String[] { 
+				"TRACE('BASE_CGC=%f\r\n',BASE_CGC);BASE_CGC * 0.10",
+				"TRACE('BASE_CGP=%f\r\n',BASE_CGP);BASE_CGP * 0.05", 
+				"BASE_ESTR * 0.10", 
+				"BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF/100",
+				}, 
+				new Payment[] { 
+				new Payment() {
+			{
+				this.expression = "1000.00 * DIAS_TRABAJADOS / DIAS_MES ";
+				this.month = Month.DECEMBER;
+			}
+		}, new Payment() {
+			{
+				this.expression = "1000.00 * DIAS_TRABAJADOS / DIAS_MES ";
+				this.month = Month.getMonthByValue(AonDateUtils.get(getToday(), MONTH));
+			}
+		}, });
+	}
+
+	@Test
 	public void testIssueOutExtras() throws ExpressionException, SQLException, SalaryException {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -1717,6 +1764,11 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		test(c, getFirstDayOfYear(getToday()), null, payments, deductions, extras);
 	}
 
+	private void test(Consumer<IrpfResult> c, String[] payments,
+			String[] deductions, Payment [] extras ) throws ExpressionException, SQLException {
+		test(c, getFirstDayOfYear(getToday()), null, payments, deductions, extras);
+	}
+
 	private void test(Consumer<IrpfResult> c, 
 			String[] payments,
 			String[] deductions, 
@@ -1824,6 +1876,54 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		ctx.getIrpf();
 	}
 	
+	private void test(Consumer<IrpfResult> c, 
+			Date contractStart,
+			Date contractEnd,
+			String[] payments,
+			String[] deductions, 
+			Payment[] extras) throws ExpressionException,
+			SQLException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		ContractRecord contract = newContract(aonContext, 
+				contractStart, 
+				contractEnd, 
+				Collections.emptyMap(), 
+				payments, 
+				deductions,
+				null);
+		
+		PaymentConceptRecord concept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		for ( Payment extra : extras ) {
+			addPayment(aonContext, contract, contractStart, contractEnd, concept, "PAGA EXTRAORDINARIA", extra.expression, "_P", "_P", PaymentType.CRA_0004, (byte)extra.month.ordinal());
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		// Be care that the first day of the month has value 1.
+		calendar.set(DAY_OF_MONTH, 1);
+		Date start = new Date(calendar.getTimeInMillis());
+
+		calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
+		Date end = new Date(calendar.getTimeInMillis());
+
+		Date issue = new Date(calendar.getTimeInMillis());
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, start, end, issue, contract);
+
+		ctx.setListener(new Listener() {
+
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				c.accept(irpfOutcome.getIrpfResult());
+			}
+		});
+
+		ctx.getIrpf();
+	}
+
 	private static int calculateAndSave(Connection connection,
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);

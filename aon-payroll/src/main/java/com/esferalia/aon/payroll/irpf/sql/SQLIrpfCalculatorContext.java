@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -61,6 +62,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.Period;
@@ -70,8 +72,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 	private static final int SCALE = 2;
 
-	private static final String SALARY_SQL = "SELECT  * FROM  "
-			+ SQLConstants.SALARY + " WHERE " + SalaryColumns.CONTRACT
+	private static final String SALARY_SQL = "SELECT"
+			+ "  "+ SQLConstants.SALARY + ".*"  
+			+ " FROM  " + SQLConstants.SALARY 
+			+ " WHERE " + SalaryColumns.CONTRACT
 			+ " = ? " + " AND " + SalaryColumns.CHARGE_DATE
 			+ " BETWEEN   ? AND  ?   ORDER BY " + SalaryColumns.END_DATE 
 			+ " ASC" + ", " + SalaryColumns.TYPE + " ASC";
@@ -1150,7 +1154,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 					irpfCtx.getEndDate(), irpfCtx.getStartDate(),
 					irpfCtx.getEndDate());
 
-			ISalary salary = calculator.calculate(irpfCtx);
+			Salary salary = calculator.calculate(irpfCtx);
 			
 			Double irpf = irpfCtx.getIrpfPercent();
 			if (irpf != null && irpf > 0.00) {
@@ -1163,11 +1167,24 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 			if ( irpfCtx.isFullStandard() ) {
 				
+				
+				double irpfBase = ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
+				double proration = ( salary.getExtraPayProration() != null ? salary.getExtraPayProration() : 0.00 ) ;
+				if ( proration > 0.00 ) {
+					double extrasPayment = 
+					salary.getSalaryPayments().stream()
+					.filter(p -> p.getAmount() > 0.00 && p.getType() == PaymentType.CRA_0004  )				
+					.collect(Collectors.summingDouble(p -> p.getAmount()));		
+					irpfBase -= extrasPayment;
+				}
+				
 				nextIrpfBase = (
-						( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00)
-						+ ( salary.getExtraPayProration() != null ? salary.getExtraPayProration() : 0.00 ) 
+						( irpfBase )
+						+ ( proration ) 
 						) * size;
 				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
+				
+				
 				
 				break;
 			}
