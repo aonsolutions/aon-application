@@ -1875,11 +1875,14 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
+		
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
 
 		// @formatter:on
 		AgreementLevelCategoryRecord category = newAgreement(aonContext,
 				new Extra[] { new Extra() {
 					{
+						this.concept = pagaExtraConcept.getId();
 						this.expression = "P_0 + P_1 + P_2 /*DICIEMBRE*/";
 						this.month = Month.DECEMBER;
 						this.start = "01/01";
@@ -1888,6 +1891,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 					}
 				}, new Extra() {
 					{
+						this.concept = pagaExtraConcept.getId();
 						this.expression = "P_0 + P_1 + P_2 /*JUNIO*/";
 						this.month = Month.JUNE;
 						this.start = "01/07 -1";

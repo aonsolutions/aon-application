@@ -120,7 +120,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		Collection<IContractPayment> extraPayments = 
 				new FilterCollection<IContractPayment>(
 				getExtraPaymentFilter(), 
-				new CompositePayments<IContractPayment>(super.getContractPayments(),getWarnPayment(monthlyQuotedPayments)));
+				new CompositePayments<IContractPayment>(monthlyQuotedPayments, super.getContractPayments(),getWarnPayment(monthlyQuotedPayments)));
 
 		return extraPayments;
 	}

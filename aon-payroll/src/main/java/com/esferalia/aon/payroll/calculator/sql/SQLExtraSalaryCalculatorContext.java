@@ -39,6 +39,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.Period;
 
 public class SQLExtraSalaryCalculatorContext implements
@@ -157,7 +158,7 @@ public class SQLExtraSalaryCalculatorContext implements
 			
 			@Override
 			protected Filter<IContractPayment> getExtraPaymentFilter() {
-				return e -> e.getId() == paymentId;
+				return  e -> e.getScope() == ExpressionScope.APPLICATION || e.getId() == paymentId;
 			}
 		}; 
 		
