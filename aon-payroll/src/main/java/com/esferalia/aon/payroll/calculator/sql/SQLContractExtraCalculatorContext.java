@@ -5,6 +5,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
+import static com.esferalia.aon.watson.util.AonStringUtils.isNotBlank;
 import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.sql.Connection;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
@@ -416,7 +418,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		List<ITimedResult<Double>> results = expressionContext.eval(payment.getExpression(), paymentStart, paymentEnd,
 				Double.class);
 		
-		if ( results.isEmpty() )
+		
+		if ( results.isEmpty() && isNotBlank(payment.getName()) )
 			expressionContext.setVariable(payment.getName(), 0.00, paymentStart, paymentEnd);
 		
 		if ( results.size() == 1 && isConstant(payment, results)) {
@@ -435,12 +438,12 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			addResult(expressionContext, payment, resultStart, resultEnd, resultValue);
 		}
 		Date start = results.get(0).getPeriod().getStart();
-		if ( start.after(paymentStart) ) {
+		if ( start.after(paymentStart) && isNotBlank(payment.getName())) {
 			expressionContext.setVariable(payment.getName(), 0.00, paymentStart, prev(start));
 		}
 		
 		Date end = results.get(results.size()-1).getPeriod().getEnd();
-		if ( end.before(paymentEnd) && AonStringUtils.isNotBlank(payment.getName()))
+		if ( end.before(paymentEnd) && isNotBlank(payment.getName()))
 			expressionContext.setVariable(payment.getName(), 0.00, next(end), paymentEnd);
 		
 	}
@@ -602,10 +605,22 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			"Noviembre", 
 			"Diciembre"};
 
+		Stream<Integer> months = Stream.empty();
+		
+		try {
+			months = 
+			getExpressionContext()
+			.eval(NATURAL_MONTH_DAYS.getName(), getStartDate(), getEndDate())
+			.stream().map(v -> AonDateUtils.get(v.getPeriod().getStart(), Calendar.MONTH));
+		} catch (ExpressionException e) {
+			months = 
+			getExpressionContext()
+			.getTimedVariables(NATURAL_MONTH_DAYS.getName())
+			.stream().map(v -> AonDateUtils.get(v.getPeriod().getStart(), Calendar.MONTH));
+		}
+		 
 		return
-		getExpressionContext()
-		.getTimedVariables(NATURAL_MONTH_DAYS.getName())
-		.stream().map(v -> AonDateUtils.get(v.getPeriod().getStart(), Calendar.MONTH))
+		months
 		.filter(month -> Arrays.binarySearch(salaryMonths, month) < 0 )
 		.map(month -> meses[month])
 		.collect(Collectors.joining(", "))
