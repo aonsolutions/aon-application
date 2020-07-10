@@ -406,16 +406,18 @@ public class JooqEnterprise {
 			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetSendTypeId()))
 			.execute();
 		
-		if("EMAIL" == enterpriseInfo.getPaysheetSendType() || enterpriseInfo.getPaysheetSendType().equals("EMAIL"))
-			dslContext.update(ENTERPRISE_DATA)
-				.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetEmail())
+		if(null != enterpriseInfo.getPaysheetSendType()) {
+			if("EMAIL" == enterpriseInfo.getPaysheetSendType() || enterpriseInfo.getPaysheetSendType().equals("EMAIL"))
+				dslContext.update(ENTERPRISE_DATA)
+					.set(ENTERPRISE_DATA.EXPRESSION, enterpriseInfo.getPaysheetEmail())
+					.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
+					.execute();
+			else
+				dslContext.update(ENTERPRISE_DATA)
+				.set(ENTERPRISE_DATA.EXPRESSION, (String) null)
 				.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
 				.execute();
-		else
-			dslContext.update(ENTERPRISE_DATA)
-			.set(ENTERPRISE_DATA.EXPRESSION, (String) null)
-			.where(ENTERPRISE_DATA.ID.eq(enterpriseInfo.getPaysheetEmailId()))
-			.execute();
+		}
 		
 		dslContext.delete(ENTERPRISE_DATA)
 			.where(ENTERPRISE_DATA.DOMAIN.eq(enterpriseInfo.getDomainId()))

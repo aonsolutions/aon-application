@@ -3003,11 +3003,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			CCCHandler cccHandler = new CCCHandler(
 					workplaceHandler);
-
+			
 			groups(rs, enterpriseHandler, workplaceHandler, cccHandler);
 
 			Enterprise enterprise = enterpriseHandler.getEnterprise();
-
+			
 			if (enterprise == null)
 				return null;
 
@@ -3017,8 +3017,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 			List<BankAccount> bankAccounts = getEnterpriseBankAccounts(connection, enterprise.getId());
 			enterprise.setBankAccounts(bankAccounts);
-
-
+			
 			return enterprise;
 		} finally {
 			if (rs != null) {
@@ -4438,7 +4437,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ccc.setCode(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.CCC)));
 			ccc.setGeozone(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.GEOZONE)));
 			ccc.setRegime(getSSRegime(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.TYPE))).getCode());
-			workplaceHandler.getWorkplace().getActivity().addCcc(ccc);
+			if(null != workplaceHandler.getWorkplace().getActivity())
+				workplaceHandler.getWorkplace().getActivity().addCcc(ccc);
 		}
 
 	}

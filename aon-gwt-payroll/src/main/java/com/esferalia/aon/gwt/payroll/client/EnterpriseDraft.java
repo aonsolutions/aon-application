@@ -495,7 +495,7 @@ public class EnterpriseDraft extends Composite {
 	}
 	
 	private void checkPaysheetSendType() {
-		if(enterpriseDraftObject.getPaysheetSend() == "EMAIL" || enterpriseDraftObject.getPaysheetSend().equals("EMAIL")) {
+		if(null != enterpriseDraftObject.getPaysheetSend() && (enterpriseDraftObject.getPaysheetSend() == "EMAIL" || enterpriseDraftObject.getPaysheetSend().equals("EMAIL"))) {
 			enterprise.enterprisePaysheetSendPanel.removeStyleName(enterprise.style.hide());
 			enterprise.enterprisePaysheetSendPanel.getElement().getStyle().setWidth(100.00, Unit.PCT);
 			enterprise.enterprisePaysheetSendEmail.setValue(enterpriseDraftObject.getPaysheetSendEmail());
