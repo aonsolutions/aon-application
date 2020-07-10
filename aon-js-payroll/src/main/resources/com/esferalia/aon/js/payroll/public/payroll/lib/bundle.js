@@ -223,14 +223,46 @@ module.exports.newStandardPayroll = function(payroll, stream){
     };
     
     var checkDates = function(accrualType, accrualTypeExpression) {
-        startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
+    	startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
         endDate = new Intl.DateTimeFormat('en-GB').format(accrualType.endDate);
         
-        if (null != startDate && null != endDate && startDate != endDate && startDate.split("\/")[0] != 1) {
-            return accrualTypeExpression + " ( " + startDate.split("\/")[0] + "/" + startDate.split("\/")[1] + " - " + endDate.split("\/")[0] + "/" + endDate.split("\/")[1] + " )";
+        console.log(startDate);
+        console.log(endDate);
+
+        if (null != accrualType.startDate && null != accrualType.endDate && accrualType.startDate != accrualType.endDate && startDate.split("\/")[0] != "01") {
+            return accrualTypeExpression + parseDDMMDate(startDate, endDate);
         }
-        
         return accrualTypeExpression;
+    }
+
+    var parseDDMMDate = function(startDate, endDate) {
+        /*
+    	startDay = startDate.getDate();
+        startMonth = startDate.getMonth() + 1;
+
+        if (startDay < 10)
+            startDay = "0" + startDay;
+
+        if (startMonth < 10)
+            startMonth = "0" + startMonth;
+
+        endDay = endDate.getDate();
+        endMonth = endDate.getMonth() + 1;
+
+        if (endDay < 10)
+            endDay = "0" + endDay;
+
+        if (endMonth < 10)
+            endMonth = "0" + endMonth;
+        */
+    	
+    	startDay = startDate.split("\/")[0];
+    	startMonth = startDate.split("\/")[1];
+    	
+    	endDay = endDate.split("\/")[0];
+    	endMonth = endDate.split("\/")[1];
+
+        return " ( " + startDay + "/" + startMonth + " - " + endDay + "/" + endMonth + " )";
     }
 
     var checkAccrualName = function(accrualName) {
@@ -1324,10 +1356,10 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
     signature = 585;
 
-    var salary_perceptions_codes = [0001];
-    var extra_hours_codes = [0002, 0003];
-    var extra_perks_codes = [0004, 0005];
-    var spices_salary_codes = [0013, 0014, 0015, 0016, 0017, 0018, 0019, 0020, 0021, 0022, 0023, 0024, 0025, 0026];
+    var salary_perceptions_codes = [1, 55];
+    var extra_hours_codes = [2, 3];
+    var extra_perks_codes = [4, 5];
+    var spices_salary_codes = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26];
 
     //SET BLANKs IMAGES
     // var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
@@ -1342,14 +1374,43 @@ module.exports.newClassicPayroll = function(payroll, stream){
     };
 
     var checkDates = function(accrualType, accrualTypeExpression) {
-        startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
+    	startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
         endDate = new Intl.DateTimeFormat('en-GB').format(accrualType.endDate);
-        
-        if (null != startDate && null != endDate && startDate != endDate && startDate.split("\/")[0] != 1) {
-            return accrualTypeExpression + " ( " + startDate.split("\/")[0] + "/" + startDate.split("\/")[1] + " - " + endDate.split("\/")[0] + "/" + endDate.split("\/")[1] + " )";
+
+        if (null != accrualType.startDate && null != accrualType.endDate && accrualType.startDate != accrualType.endDate && startDate.split("\/")[0] != "01") {
+            return accrualTypeExpression + parseDDMMDate(startDate, endDate);
         }
-        
         return accrualTypeExpression;
+    }
+
+    var parseDDMMDate = function(startDate, endDate) {
+        /*
+    	startDay = startDate.getDate();
+        startMonth = startDate.getMonth() + 1;
+
+        if (startDay < 10)
+            startDay = "0" + startDay;
+
+        if (startMonth < 10)
+            startMonth = "0" + startMonth;
+
+        endDay = endDate.getDate();
+        endMonth = endDate.getMonth() + 1;
+
+        if (endDay < 10)
+            endDay = "0" + endDay;
+
+        if (endMonth < 10)
+            endMonth = "0" + endMonth;
+        */
+    	
+    	startDay = startDate.split("\/")[0];
+    	startMonth = startDate.split("\/")[1];
+    	
+    	endDay = endDate.split("\/")[0];
+    	endMonth = endDate.split("\/")[1];
+
+        return " ( " + startDay + "/" + startMonth + " - " + endDay + "/" + endMonth + " )";
     }
 
     var checkAccrualName = function(accrualName) {
@@ -1884,7 +1945,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
         firstColumn = 25;
         secondColumn = 30;
         thirdColumn = 50;
-        fourthColumn = 85;
+        fourthColumn = 65;
         fifthColumn = 220;
         sixthColumn = 450;
         seventhColumn = 535;
@@ -1920,7 +1981,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
         for (var i = 0; i < payroll.accruals.length; i++) {
             for (var j = 0; j < payroll.accruals[i].types.length; j++) {
-                if (salary_perceptions_codes.includes(payroll.accruals[i].types[j].code)) {
+                if (salary_perceptions_codes.includes(payroll.accruals[i].types[j].code) && payroll.accruals[i].types[j].type_expression.includes("SALARIO BASE")) {
                     actualLine += 12;
                     type = payroll.accruals[i].types[j];
                     pdf
@@ -1941,12 +2002,12 @@ module.exports.newClassicPayroll = function(payroll, stream){
             .font(textFont)
             .text('Complementos salariales', thirdColumn, actualLine);
 
+        console.log(salary_perceptions_codes);
+        
         for (var i = 0; i < payroll.accruals.length; i++) {
             for (var j = 0; j < payroll.accruals[i].types.length; j++) {
-                if (!salary_perceptions_codes.includes(payroll.accruals[i].types[j].code) &&
-                    !extra_hours_codes.includes(payroll.accruals[i].types[j].code) &&
-                    !extra_perks_codes.includes(payroll.accruals[i].types[j].code) &&
-                    !spices_salary_codes.includes(payroll.accruals[i].types[j].code)) {
+            	console.log("Includes CRA : " + payroll.accruals[i].types[j].code + " -> " + salary_perceptions_codes.includes(payroll.accruals[i].types[j].code));
+                if (salary_perceptions_codes.includes(payroll.accruals[i].types[j].code) && !payroll.accruals[i].types[j].type_expression.includes("SALARIO BASE")) {
 
                     type = payroll.accruals[i].types[j];
                     actualLine += 12;
@@ -1956,7 +2017,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
                         .font(textFont)
                         .text(checkDates(type, parseExpression(type.type_expression)), fourthColumn, actualLine)
                         .text(formatMoney(type.type_value), sixthColumn + numberOffset(type.type_value), actualLine)
-                        .moveTo(thirdColumn, actualLine + 8).lineTo(sixthColumn - 25, actualLine + 8).dash(1, { space: 2 }).stroke()
+                        .moveTo(fourthColumn, actualLine + 8).lineTo(sixthColumn - 25, actualLine + 8).dash(1, { space: 2 }).stroke()
                         .moveTo(sixthColumn - 25, actualLine + 8).lineTo(sixthColumn + 25, actualLine + 8).undash().stroke();
                 }
             }
@@ -4163,14 +4224,46 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
     };
     
     var checkDates = function(accrualType, accrualTypeExpression) {
-        startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
+    	startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
         endDate = new Intl.DateTimeFormat('en-GB').format(accrualType.endDate);
         
-        if (null != startDate && null != endDate && startDate != endDate && startDate.split("\/")[0] != 1) {
-            return accrualTypeExpression + " ( " + startDate.split("\/")[0] + "/" + startDate.split("\/")[1] + " - " + endDate.split("\/")[0] + "/" + endDate.split("\/")[1] + " )";
+        console.log(startDate);
+        console.log(endDate);
+
+        if (null != accrualType.startDate && null != accrualType.endDate && accrualType.startDate != accrualType.endDate && startDate.split("\/")[0] != "01") {
+            return accrualTypeExpression + parseDDMMDate(startDate, endDate);
         }
-        
         return accrualTypeExpression;
+    }
+
+    var parseDDMMDate = function(startDate, endDate) {
+        /*
+    	startDay = startDate.getDate();
+        startMonth = startDate.getMonth() + 1;
+
+        if (startDay < 10)
+            startDay = "0" + startDay;
+
+        if (startMonth < 10)
+            startMonth = "0" + startMonth;
+
+        endDay = endDate.getDate();
+        endMonth = endDate.getMonth() + 1;
+
+        if (endDay < 10)
+            endDay = "0" + endDay;
+
+        if (endMonth < 10)
+            endMonth = "0" + endMonth;
+        */
+    	
+    	startDay = startDate.split("\/")[0];
+    	startMonth = startDate.split("\/")[1];
+    	
+    	endDay = endDate.split("\/")[0];
+    	endMonth = endDate.split("\/")[1];
+
+        return " ( " + startDay + "/" + startMonth + " - " + endDay + "/" + endMonth + " )";
     }
 
     var checkAccrualName = function(accrualName) {
@@ -4748,7 +4841,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
         accrualTop = 190;
 
         firstColumn = 70;
-        secondColumn = 140;
+        secondColumn = 120;
         thirdColumn = 430;
         quarterColumn = 520;
 
@@ -4780,7 +4873,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
         // -----------------------------------------------------------------------------------------------------------------
         deductionTop = accrualTop + 12;
         firstColumn = 50;
-        secondColumn = 140;
+        secondColumn = 120;
         quarterColumn = 530;
 
         totalIRPF = 0;
