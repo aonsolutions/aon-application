@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -492,7 +491,7 @@ public class EmployeeDialog extends CustomDialog {
 			employeeDialogObject.setEmployeeAddressZip(this.addressZip.getValue());
 			if(this.addressZip.getValue().length() >= 2) {
 				String zip = this.addressZip.getValue().substring(0, 2);
-				this.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
+				setSelectedValueLB(addressProvince, zip); 
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
 			}
 		}
@@ -504,7 +503,7 @@ public class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onEmployeeAddressProvinceChange() {
-			String addressProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
+			String addressProvinceCode = this.addressProvince.getSelectedValue();
 			employeeDialogObject.setEmployeeAddressProvince(addressProvinceCode);
 			employeeDialogObject.setEmployeeAddressCity("-1");
 			updateMunicipalities();
@@ -1039,7 +1038,7 @@ public class EmployeeDialog extends CustomDialog {
 	}
 	
 	public void updateMunicipalities() {
-		String provinceCode = ProvinceContract.getProvinceCode(employee.addressProvince.getSelectedItemText());
+		String provinceCode = employee.addressProvince.getSelectedValue();
 		employee.addressMunicipality.clear();
 		employee.addressMunicipality.addItem("-");;
 		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);

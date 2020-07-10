@@ -21,7 +21,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -32,8 +31,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -540,7 +537,7 @@ public class EmployeeDraft extends Composite {
 		public void onEmployeeAddressZipChange() {
 			if(this.addressZip.getValue().length() >= 2) {
 				String zip = this.addressZip.getValue().substring(0, 2);
-				this.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
+				setSelectedValueLB(addressProvince, zip); 
 				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
 			}
 		}
@@ -554,7 +551,8 @@ public class EmployeeDraft extends Composite {
 
 		@Override
 		public void onEmployeeAddressProvinceChange() {
-			String addressProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
+			String province = this.addressProvince.getSelectedItemText();
+			String addressProvinceCode = this.addressProvince.getSelectedValue();
 			employeeDraftObject.setEmployeeAddressProvince(addressProvinceCode);
 			employeeDraftObject.setEmployeeAddressCity("-1");
 			updateMunicipalities();
@@ -869,20 +867,21 @@ public class EmployeeDraft extends Composite {
 				return;
 			
 			employeeDraftObject.setEmployeeAddressZip(value);
-			saving();
+			// saving();
 		});
 		
-		employee.addressZip.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(employee.addressZip.getValue().length() >= 2) {
-					String zip = employee.addressZip.getValue().substring(0, 2);
-					employee.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
-					employee.onEmployeeAddressProvinceChange();
-				}
-			}
-		});
+//		employee.addressZip.addValueChangeHandler(new ValueChangeHandler<String>() {
+//			
+//			@Override
+//			public void onValueChange(ValueChangeEvent<String> event) {
+//				if(employee.addressZip.getValue().length() >= 2) {
+//					String zip = employee.addressZip.getValue().substring(0, 2);
+//					employee.addressProvince.setSelectedIndex( ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
+//					employee.onEmployeeAddressProvinceChange();
+//					.
+//				}
+//			}
+//		});
 		
 		employee.mobile.addKeyUpHandler(e-> {
 			
@@ -1387,7 +1386,7 @@ public class EmployeeDraft extends Composite {
 	}
 	
 	public void updateMunicipalities() {
-		String provinceCode = ProvinceContract.getProvinceCode(employee.addressProvince.getSelectedItemText());
+		String provinceCode = employee.addressProvince.getSelectedValue();
 		employee.addressMunicipality.clear();
 		employee.addressMunicipality.addItem("-");;
 		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
