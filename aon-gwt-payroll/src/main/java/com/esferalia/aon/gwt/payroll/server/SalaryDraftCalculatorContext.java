@@ -593,7 +593,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	private Collection<IContractPayment> getSuperContractPayments()
 			throws AonException {
 		return new FilterCollection<IContractPayment>(
-				p -> !hasDraftPayments()  || !isDefault(p), 
+				p -> inTime(p, ctx.getStartDate(), ctx.getEndDate())  && (!hasDraftPayments()  || !isDefault(p)), 
 				super.getContractPayments());
 	}
 
@@ -857,6 +857,12 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		return draftPayment;
 	}
 
+	private static boolean inTime( IContractPayment p, Date startDate, Date endDate) {
+		return 
+		Period.compare(p.getEndDate(),  startDate ) >= 0 
+		&& Period.compare(p.getStartDate(),  endDate ) <= 0 ;
+	}
+	
 	private static SalaryType getSalaryType(Salary.Type type) {
 		return type != null ? SalaryType.values()[type.ordinal()] : null;
 	}
@@ -880,4 +886,6 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 	private static boolean isDefault(IContractPayment payment) {
 		return AonStringUtils.startsWith(payment.getExpression(), "/*default*/" );
 	}
+	
+
 }
