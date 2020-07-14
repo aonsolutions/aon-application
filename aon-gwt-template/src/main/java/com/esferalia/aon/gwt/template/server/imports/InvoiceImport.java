@@ -180,7 +180,7 @@ public class InvoiceImport {
 	
 		if("TIPO OPERACIÓN".equalsIgnoreCase(title)
 				|| "TIPO OPERACION".equalsIgnoreCase(title)) {
-			inv.setType(InvoiceOpType.safeValueOf(o.toString()));
+			inv.setType(InvoiceOpType.safeValueOf(o.toString().trim()));
 			return;
 		}
 		
