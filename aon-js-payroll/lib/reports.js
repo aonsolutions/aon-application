@@ -2,6 +2,7 @@ var PDF = require('pdfkit');
 var PAYSHEET = require('./paysheet');
 var WRITTEN_NUMBER = require('written-number');
 
+module.exports.classic_new = PAYSHEET.newClassicPayroll; 
 module.exports.standard = PAYSHEET.standardPayroll; 
 module.exports.standard_new = PAYSHEET.newStandardPayroll; 
 module.exports.standard_cols = PAYSHEET.standardTwoColumnsPayroll; 
