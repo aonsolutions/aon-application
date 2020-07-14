@@ -97,15 +97,18 @@ public class DBIncome {
 	}
 	
 	public static JSONObject insertIncome(Domain domain, String login, JSONObject json) {
-		Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getInt("supplier")));
-		Date date = AonDateUtils.dateTimeParse(json.getString("issue_time"));
+		JSONObject registry = json.optJSONObject("registry");
+		Integer sup = json.opt("supplier") != null ? json.getInt("supplier") : (registry != null ? registry.optInt("id"): null);
+		
+		Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(sup));
+		Date date = AonDateUtils.dateTimeParse(json.optString("issue_time"));
 		Income income = new Income()
 				.setCarrierPacking(json.getInt("carrier_packing"))
 				.setDomain(domain.getId())
 				.setIssueDate(date != null ? date : new Date())
 				.setReferenceCode(json.getString("reference_code"))
 				.setScope(supplier.get().getScope())
-				.setSupplier(json.getInt("supplier"))
+				.setSupplier(sup)
 				.setWorkplace(json.getInt("workplace"))
 				.setAddress(json.optInt("address") != 0 ? json.optInt("address") : null)
 				// Por Defecto ¿?
@@ -250,7 +253,7 @@ public class DBIncome {
 		Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(json.getInt("item")));
 		Product product = AON.getProduct(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(item.getProductId()));
 		Integer incomeId = json.getInt("income");
-		Integer purchaseDetailId = json.getInt("purchase_detail");
+		Integer purchaseDetailId = json.optInt("purchase_detail");
 		Optional<IncomeDetail> incomeDetail = AON.getIncomeDetail(domain.getName(), domain.getId(), login, f ->
 			f.getIncomeProperty().eq(incomeId)
 			.and(f.getPurchaseDetailProperty().eq(purchaseDetailId)));

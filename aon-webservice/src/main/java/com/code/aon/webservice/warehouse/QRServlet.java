@@ -259,7 +259,7 @@ public class QRServlet extends HttpServlet{
 		for (int i = 0; i < incomes.length(); i++) {
 			JSONObject income = incomes.getJSONObject(i);
 			income.put("workplace", workplaceId);
-			Optional<Income> opt = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().eq(income.getString("number")));
+			Optional<Income> opt = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().eq(income.getString("reference_code")));
 			
 			Integer incomeId = opt.isPresent() ? opt.get().getId() : DBIncome.insertIncome(domain, login, income).getInt("id");
 			JSONArray details = income.getJSONArray("details");
@@ -281,7 +281,7 @@ public class QRServlet extends HttpServlet{
 				pd.put("delivered", detail.getDouble("quantity"));
 				pd.put("id", detail.getInt("purchase_detail"));
 				pd.put("saldar", detail.getBoolean("saldar"));
-				DBPurchase.updatePurchaseDetail(domain, login, json);		
+				DBPurchase.updatePurchaseDetail(domain, login, pd);		
 			}	
 		}		
 		JSONObject object = new JSONObject();
