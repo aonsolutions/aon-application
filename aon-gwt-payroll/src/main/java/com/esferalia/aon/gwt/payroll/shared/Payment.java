@@ -369,5 +369,15 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment{
 		return null == type ? "01 RETRIBUCION NO INCLUIDA OTROS APARTADOS" : this.type.getDescription2();
 	}
 	
+	@Override
+	public Long getStartDateTime() {
+		return startDate.getTime();
+	}
+	
+	@Override
+	public Long getEndDateTime() {
+		return endDate.getTime();
+	}
+	
 
 }

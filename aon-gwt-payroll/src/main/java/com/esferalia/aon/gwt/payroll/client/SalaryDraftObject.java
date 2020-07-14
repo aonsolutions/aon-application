@@ -651,6 +651,18 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public List<Deduction> getDeductions() {
 		return salaryDraft.getDeductions();
 	}
+	
+	@Override
+	public List<Deduction> getAllDeductions() {
+		List<Deduction> deductions = salaryDraft.getDeductions();
+		List<Deduction> embargos = salaryDraft.getEmbargos();
+		
+		List<Deduction> allDeductions = new ArrayList<Deduction>();
+		allDeductions.addAll(deductions);
+		allDeductions.addAll(embargos);
+		
+		return allDeductions;
+	}
 
 	public List<Deduction> getEmbargos() {
 		return salaryDraft.getEmbargos();

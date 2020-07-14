@@ -3361,6 +3361,7 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public void onClick(ClickEvent event) {
+				salaryPreviewListBox.setSelectedIndex(0);
 				printPreview();
 			}
 		});
