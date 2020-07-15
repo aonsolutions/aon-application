@@ -64,41 +64,19 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 	}
 
 	public double calculateIngresoCuenta(int actNum, double daysAct, double daysTrim, double quota, double reductions, double tempIndex, double percent) {
-		
-		if (isLastPeriod()) return 0.0; 
+		if (isLastPeriod())
+			return 0.0;
 		double diasActividad = 0;
 		if (tempIndex == 0) {
 			tempIndex = 1;
-			
-// ** DESCOMENTAR DESPUES TRASPASO [START]
-// 		diasActividad = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303),FiscalUtils.getPeriodEnd(mod303)) + 1;
-// ** DESCOMENTAR DESPUES TRASPASO [END]
-
-// ** BORRAR DESPUES TRASPASO [START]
-			if (mod303.getYear() < 2017 || (mod303.getYear() == 2017 && mod303.getPeriod().ordinal() < Period.T2.ordinal()) || actNum > 1) {
-				diasActividad = 90;
-			} else {
-				diasActividad = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303),FiscalUtils.getPeriodEnd(mod303)) + 1;
-			}
-// ** BORRAR DESPUES TRASPASO [END]
-
-			if (daysTrim == 0) {
-				daysTrim = diasActividad;
-			}
+			diasActividad = AonDateUtils.getDaysBetweenDates(FiscalUtils.getPeriodStart(mod303), FiscalUtils.getPeriodEnd(mod303)) + 1;
 		} else {
 			diasActividad = daysAct;
 		}
-		
-// ** BORRAR DESPUES TRASPASO [START]
-		double f1 = AonMathUtils.round( (quota - reductions) * percent / 100 );
-		f1 = AonMathUtils.round(f1 * tempIndex );
-// ** BORRAR DESPUES TRASPASO [END]
-		
-// ** DESCOMENTAR DESPUES TRASPASO [START]
-//		double f1 =(quota - reductions) * percent / 100;
-//		f1 = f1 * tempIndex;
-// ** DESCOMENTAR DESPUES TRASPASO [END]
-		f1 = AonMathUtils.round( f1 * daysTrim / diasActividad );
+
+		double f1 = (quota - reductions) * percent / 100;
+		f1 = f1 * tempIndex;
+		f1 = AonMathUtils.round(f1 * daysTrim / diasActividad);
 		return f1;
 	}
 	
