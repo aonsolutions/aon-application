@@ -229,7 +229,8 @@ public class Mod2002019Import2018 {
 					                                                                  (mod200old.getDoubleValue(Mod2002018Key.C0017)==0 
                                                                                       && mod200old.getDoubleValue(Mod2002018Key.C0018)==0 
                                                                                       && mod200old.getDoubleValue(Mod2002018Key.C0019)==0 
-                                                                                      && mod200old.getDoubleValue(Mod2002018Key.LQ552)<0 
+                                                                                      && mod200old.getDoubleValue(Mod2002018Key.LQ552)<0
+                                                                                      && mod200old.getDoubleValue(Mod2002018Key.LQ1049)==0
                                                                                        ?Math.abs(mod200old.getDoubleValue(Mod2002018Key.LQ552)) : 0) )  
 																						// Si la base imponible (casilla 552) del 2018 era negativa, tambien se suma a esta casilla (si no es cooperativa)
 			
