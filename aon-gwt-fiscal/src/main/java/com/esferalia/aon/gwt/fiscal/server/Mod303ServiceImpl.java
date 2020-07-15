@@ -92,10 +92,10 @@ public class Mod303ServiceImpl extends AonStatelessRemoteServiceServlet implemen
 		
 	}
 
-	@Override
-	public void importMod303(String domainName, String user, int domain) throws AonCoreException {
-		FISCAL.importMod303(domainName, domain, user);
-	}
+//	@Override
+//	public void importMod303(String domainName, String user, int domain) throws AonCoreException {
+//		FISCAL.importMod303(domainName, domain, user);
+//	}
 
 	@Override
 	public Mod303 markAsSent(String domainName, String user, Mod303 mod303) throws AonCoreException {

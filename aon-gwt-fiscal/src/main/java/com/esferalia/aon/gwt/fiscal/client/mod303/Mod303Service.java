@@ -26,7 +26,7 @@ public interface Mod303Service extends RemoteService {
 	Mod303 initializeForFinish(String domainName,String user, Mod303 mod303) throws AonCoreException;
 	Mod303 calculate(String domainName,String user, Mod303 mod303) throws AonCoreException;
 	String getInfo(String domainName,String user, int domain, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
-	void importMod303(String domainName,String user, int currentDomain) throws AonCoreException;
+//	void importMod303(String domainName,String user, int currentDomain) throws AonCoreException;
 	Mod303 markAsFinished(String domainName,String user, Mod303 mod303) throws AonCoreException;
 	Mod303 markAsPending(String domainName,String user, Mod303 mod303) throws AonCoreException;
 	Mod303 markAsSent(String domainName,String user, Mod303 mod303) throws AonCoreException;

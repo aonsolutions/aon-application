@@ -117,10 +117,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 			return this.callback.getDomain();
 		}
 
-		@Override
-		public void onTransfer() {
-			this.callback.onTransfer();
-		}
+//		@Override
+//		public void onTransfer() {
+//			this.callback.onTransfer();
+//		}
 
 	};
 

@@ -2706,16 +2706,16 @@ public class FISCAL {
 		}
 	}
 
-	public static void importMod303(String domainName, int domain, String userLogin) {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, userLogin);
-			getFiscal().importMod303(ctx, domain);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
+//	public static void importMod303(String domainName, int domain, String userLogin) {
+//		AONContext ctx = null;
+//		try {
+//			ctx = AONContext.getAONContext(domainName, domain, userLogin);
+//			getFiscal().importMod303(ctx, domain);
+//		} finally {
+//			if (ctx != null)
+//				ctx.close();
+//		}
+//	}
 	
 	// ----------------------------------MODELO 349
 	public static LinkedList<Mod349> getMod349s(String domainName, int domainId,

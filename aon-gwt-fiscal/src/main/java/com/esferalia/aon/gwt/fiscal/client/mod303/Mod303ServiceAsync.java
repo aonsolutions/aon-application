@@ -22,7 +22,7 @@ public interface Mod303ServiceAsync {
 	void initializeForFinish(String domainName,String user, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void calculate(String domainName,String user, Mod303 mod303,AsyncCallback<Mod303> callback);
 	void getInfo(String domainName,String user, int domain, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
-	void importMod303(String domainName,String user, int currentDomain, AsyncCallback<Void> asyncCallback);
+//	void importMod303(String domainName,String user, int currentDomain, AsyncCallback<Void> asyncCallback);
 	void markAsFinished(String domainName,String user, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void markAsPending(String domainName,String user, Mod303 mod303,AsyncCallback<Mod303> asyncCallback);
 	void markAsSent(String domainName,String user, Mod303 mod303, AsyncCallback<Mod303> asyncCallback);

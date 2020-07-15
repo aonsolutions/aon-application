@@ -88,7 +88,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod200_2016.Mod2002016DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2017.Mod2002017DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2018.Mod2002018DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod200_2019.Mod2002019DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.mod303.change.VatToMod303;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 
 public class FiscalImpl implements IFiscal {
@@ -534,10 +533,10 @@ public class FiscalImpl implements IFiscal {
 		return Mod303DAO.getMod303Info(ctx,mod303,script,infoKey);
 	}
 
-	@Override
-	public void importMod303(AONContext ctx, int domain) {
-		ctx.getDslContext().transaction(configuration -> VatToMod303.importModels(ctx, domain));
-	}
+//	@Override
+//	public void importMod303(AONContext ctx, int domain) {
+//		ctx.getDslContext().transaction(configuration -> VatToMod303.importModels(ctx, domain));
+//	}
 
 	// ----------------------------------------------------------- [MODELO 390HF]
 	@Override
