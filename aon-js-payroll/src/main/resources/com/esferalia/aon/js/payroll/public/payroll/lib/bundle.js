@@ -4317,8 +4317,8 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
     var parseExpression = function(expression) {
     	 if (null != expression && undefined != expression && expression.includes("]"))
             expression = expression.split("]")[1].trim();
-    	 if(null != expression && undefined != expression && expression.length > 49)
-     		expression = expression.substring(0,49);
+    	 if(null != expression && undefined != expression && expression.length > 46)
+     		expression = expression.substring(0,46);
         
         return expression.trim();
     }
@@ -4920,12 +4920,12 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
                 }
                 
                 if(deduction.name){
-                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
+//                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
                 	pdf
                     .text(parseDeductionName(deduction.name), secondColumn, deductionTop)
                     .text(formatMoney(deduction.amount), quarterColumn + numberOffset(deduction.amount), deductionTop);
                 }else{
-                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
+//                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
                 	pdf
                     .text(parseDeductionName(deduction.type_name), secondColumn, deductionTop)
                     .text(formatMoney(deduction.amount), quarterColumn + numberOffset(deduction.amount), deductionTop);
@@ -5429,7 +5429,7 @@ module.exports.salaryRecibe = function(payroll, stream){
         
         if(!name || null == name || undefined == name){
         	name = deduction.description;
-        	console.log("NAME : " + name);
+//        	console.log("NAME : " + name);
         }
         
         pdf
