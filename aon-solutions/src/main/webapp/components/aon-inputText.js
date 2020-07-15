@@ -57,18 +57,18 @@
 		attributeChangedCallback(name, oldValue, newValue) {
 			//console.log(`attribute ${name} change!! ${newValue}`);
 			if('value' === name) {
-				document.getElementById(this.getAttribute('id') + 'Text').value = newValue;
+				//document.getElementById(this.getAttribute('id') + 'Text').value = "";
 
 				componentHandler.upgradeDom();
 
 				var textField = document.getElementById(this.getAttribute('id') + 'TextField');
-				textField.MaterialTextfield.checkDirty();
+				if(textField) textField.MaterialTextfield.checkDirty();
 			}
 
 			if('readonly' === name){
 				document.getElementById(this.getAttribute('id') + 'Text').setAttribute('readonly', 'readonly');
 			}
-			
+
 			if('visible' === name){
 				if(this.getAttribute('visible') != undefined && 'false' == this.getAttribute('visible')){
 					this.style.width = '0px';
@@ -77,7 +77,7 @@
 					this.style.width = null;
 					this.style.display = 'block';
 				}
-			
+
 			}
 		}
 

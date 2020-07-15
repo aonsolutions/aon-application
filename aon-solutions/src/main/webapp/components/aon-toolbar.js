@@ -1,49 +1,77 @@
+import './aon-icon-button.js';
+
 (function() {
 
-	const template = document.createElement('template');
-	  template.innerHTML = `
-	  <head>
-		  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-		  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-		  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+	class AonToolbar extends HTMLElement {
 
-		  <style>
-		  	.tedi-topbar {
-		  		background-color: white !important;
-		  		color: black !important;
-		  		position: inherit !important;
-		  		border-bottom: 1px solid #ddd;
-		  	}
-		  </style>
-		</head>
-		<body>
-			<header class=" mdc-top-app-bar mdc-top-app-bar--dense tedi-topbar">
-		  	<div class="mdc-top-app-bar__row">
-		  		<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-		  			<button class="mdc-icon-button material-icons mdc-top-app-bar__navigation-icon--unbounded" onclick="toogleNav()">menu</button>
-		  			<span class="mdc-top-app-bar__title">CONFIGURACIÓN</span>
-		  		</section>
-		  		<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-		  			<button class="mdc-icon-button material-icons mdc-top-app-bar__action-item--unbounded" aria-label="Download">add</button>
-		  		</section>
-		  	</div>
-			</header>
-		</body>
-	  `;
+		static get observedAttributes() {
+			return [];
+		}
 
-	class AonConfigurationToolbar extends HTMLElement {
+		get id() {
+			return this.getAttribute('id');
+		}
+
+		set id(id) {
+			this.setAttribute('id', id);
+		}
+
+		get title() {
+			return this.getAttribute('title');
+		}
+
+		set title(title) {
+			this.setAttribute('title', title);
+		}
+
+		attributeChangedCallback(name, oldValue, newValue) {
+
+		}
+
 		constructor () {
 			super();
-			this._user = {};
-			this.attachShadow({mode: 'open'});
-	    this.shadowRoot.appendChild(template.content.cloneNode(true));
+			this.appendChild(this.build());
 		}
 
 		connectedCallback () {
 
 		}
+
+		build() {
+			let header = document.createElement('header');
+			header.setAttribute('id', this.getAttribute('id') + 'aon-toolbar');
+			header.className = "aon-toolbar";
+
+			let section = document.createElement('section');
+			section.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-section');
+			section.className = "aon-toolbar-section";
+
+
+			let button = '<aon-icon-button id="' + this.getAttribute('id')
+				+ 'aon-toolbar-menu' + '" icon="menu" onclick="toogleNav()"> </aon-icon-button>';
+			section.innerHTML = button;
+
+			let title = document.createElement('span');
+			title.setAttribute('id', 'aon-toolbar-title');
+			title.innerHTML = this.getAttribute('title');
+			section.appendChild(title)
+
+			header.appendChild(section);
+
+			let toolSection = document.createElement('section');
+			toolSection.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-tool-section');
+			toolSection.className = "aon-toolbar-section aon-toolbar-section-end";
+
+			let addbutton = '<aon-icon-button id="' + this.getAttribute('id')
+				+ 'aon-toolbar-add' + '" icon="add"> </aon-icon-button>';
+			toolSection.innerHTML = addbutton;
+
+			header.appendChild(toolSection);
+
+		 	return header;
+		}
 	}
 
-	window.customElements.define('aon-configuration-toolbar',  AonConfigurationToolbar);
+	window.customElements.define('aon-toolbar',  AonToolbar);
 
 })();

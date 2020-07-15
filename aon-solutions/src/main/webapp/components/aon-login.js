@@ -24,7 +24,7 @@ class AonLogin extends HTMLElement {
 				}
 
 
-				.aon-card {
+				.aon-login-card {
 					padding-bottom:50px;
 					padding-top: 20px;
 					padding-left: 20px;
@@ -52,9 +52,9 @@ class AonLogin extends HTMLElement {
 			</style>
 			<div class="form-center">
 
-			<div class="aon-card">
+			<div class="aon-login-card">
 				<div style="margin-bottom:15px;">
-					<img style="width:300px;" src="tedi-center/assets/logo.png"/>
+					<img style="width:300px;" src="aon-solutions/assets/logo.png"/>
 				</div>
 
 				<form action="#">

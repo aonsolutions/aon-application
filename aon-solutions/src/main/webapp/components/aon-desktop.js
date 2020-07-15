@@ -98,6 +98,9 @@ class AonDesktop extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
+			<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+			<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+			<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 			<!-- Wide card with share menu button -->
 			<style>
 				.demo-card-wide.mdl-card {
@@ -130,14 +133,21 @@ class AonDesktop extends HTMLElement {
 					font-style: italic;
 					text-align:center;
 				}
+
+				.aon-desktop-list {
+					margin: 0px;
+					height: 100%;
+					overflow-y: auto;
+					background-color: #f1f1f1;
+				}
 			</style>
 
-			<ul>
+			<ul class="aon-desktop-list">
 			<li style="display: inline-block;">
 
 			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
-					<h2 class="mdl-card__title-text">Facturas</h2>
+					<h2 style="font-size: 20px;" class="mdl-card__title-text">Facturas</h2>
 				</div>
 				<div id="invoice_drop_zone" class='dropzone' ondrop="invoiceDropHandler(event);" ondragover="dragOverHandler(event);" onclick="invoiceClickHandler()" >
 					<div class='dropzone-text-wrapper'>
@@ -147,17 +157,16 @@ class AonDesktop extends HTMLElement {
 				</div>
 
 
-				<div class="mdl-card__menu">
-					<button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-						<i class="material-icons">add</i>
-					</button>
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-invoice-add-button" icon="add"></aon-icon-button>
 				</div>
 			</div>
 			</li>
+
 			<li style="display: inline-block;">
 			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
-					<h2 class="mdl-card__title-text">Documental</h2>
+					<h2 style="font-size: 20px;" class="mdl-card__title-text">Documental</h2>
 				</div>
 				<div id="documental_drop_zone" class='dropzone' ondrop="documentalDropHandler(event);" ondragover="dragOverHandler(event);" onclick="documentalClickHandler()" >
 					<div class='dropzone-text-wrapper'>
@@ -166,17 +175,76 @@ class AonDesktop extends HTMLElement {
 					<input id='documental_file' style='display:none;' type='file' name='documental_file' multiple onchange="documentalUploadFile(this.files)">
 				</div>
 
-			<!--
-				<div class="mdl-card__actions mdl-card--border">
-					<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-						Get Started
-					</a>
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-documental-add-button" icon="add"></aon-icon-button>
 				</div>
-			-->
-				<div class="mdl-card__menu">
-					<button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-						<i class="material-icons">add</i>
-					</button>
+			</div>
+			</li>
+
+			<li style="display: inline-block;">
+			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
+				<div class="mdl-card__title">
+					<h2 style="font-size: 20px;" class="mdl-card__title-text">Carga Ficheros Excel</h2>
+				</div>
+				<div id="excel_drop_zone" class='dropzone'  >
+					<div class='dropzone-text-wrapper'>
+						<div class='dropzone-centered'>Arrastre aquí el archivo o click para seleccionar</div>
+					</div>
+					<input id='excel_file' style='display:none;' type='file' name='excel_file' multiple >
+				</div>
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-excel-add-button" icon="add"></aon-icon-button>
+				</div>
+			</div>
+			</li>
+
+			<li style="display: inline-block;">
+			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
+				<div class="mdl-card__title">
+					<h2 style="font-size: 20px;" class="mdl-card__title-text">Carga de Nóminas (PDF)</h2>
+				</div>
+				<div id="excel_drop_zone" class='dropzone'  >
+					<div class='dropzone-text-wrapper'>
+						<div class='dropzone-centered'>Arrastre aquí el archivo o click para seleccionar</div>
+					</div>
+					<input id='nominas_file' style='display:none;' type='file' name='nominas_file' multiple >
+				</div>
+
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-payroll-add-button" icon="add"></aon-icon-button>
+				</div>
+			</div>
+			</li>
+
+			<li style="display: inline-block;">
+			<div style="min-height: 40px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
+				<div class="mdl-card__title">
+					<h2 style="font-size: 20px;" class="mdl-card__title-text">Portal Laboral</h2>
+				</div>
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-payroll-launch-button" icon="launch"></aon-icon-button>
+				</div>
+			</div>
+			</li>
+
+			<li style="display: inline-block;">
+			<div style="min-height: 40px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
+				<div class="mdl-card__title">
+					<h2 style="font-size: 20px;" class="mdl-card__title-text">Resumen Contable/Fiscal</h2>
+				</div>
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-fiscal-launch-button" icon="launch"></aon-icon-button>
+				</div>
+			</div>
+			</li>
+
+			<li style="display: inline-block;">
+			<div style="min-height: 40px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
+				<div class="mdl-card__title">
+					<h2 style="font-size: 20px;" class="mdl-card__title-text">Estadística Gestión</h2>
+				</div>
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-management-stat-launch-button" icon="launch"></aon-icon-button>
 				</div>
 			</div>
 			</li>

@@ -8,20 +8,26 @@ let company;
 let invoices;
 let invoice;
 
+let schema = 'first';
+let page = 1;
+let per_page = 50;
+let end = false;
+
+
 window.closeSession = closeSession;
 window.login = login;
 window.getCompanies = getCompanies;
 window.getCompany = getCompany;
 window.companySelection = companySelection;
-
+window.getUsers = getUsers;
 window.getInvoices = getInvoices;
 window.getInvoice = getInvoice;
 window.invoiceSelection = invoiceSelection;
 
 function closeSession() {
-	localStorage.removeItem('session_id');
-	localStorage.removeItem('domain_id');
-	localStorage.removeItem('domain_name');
+	localStorage.removeItem('aon_session_id');
+	localStorage.removeItem('aon_domain_id');
+	localStorage.removeItem('aon_domain_name');
 	document.getElementById("aonLogin").style.display = 'block';
 	document.getElementById("aonHome").style.display = 'none';
 }
@@ -35,19 +41,11 @@ function login() {
 	}
 
 	console.log(JSON.stringify(data));
-	request('POST', '/ms/apì/login', undefined, data, function (token, error) {
-
-		localStorage.setItem('session_id', JSON.parse(token).session_id);
+	request('POST', '/ms/api/login', undefined, data, undefined, function (token, error) {
+		localStorage.setItem('aon_session_id', JSON.parse(token).session_id);
 		getCompanies().then(companies => {
 			document.getElementById("aonLogin").style.display = 'none';
 			document.getElementById("aonHome").style.display = 'block';
-			if(JSON.parse(companies).length === 1) {
-				localStorage.setItem('domain_id', JSON.parse(companies)[0].id);
-				localStorage.setItem('domain_name', JSON.parse(companies)[0].domain);
-				rootPanel('<aon-desktop></aon-desktop>');
-			} else {
-				rootPanel('<aon-parent></aon-parent>');
-			}
 		}).catch(error => {
 			alert(error);
 		});
@@ -55,34 +53,93 @@ function login() {
 }
 
 function companySelection(domainName, domainId) {
-	localStorage.setItem("domain_id", domainId);
-	localStorage.setItem("domain_name", domainName);
+	let aonHeaderCompanyList = document.getElementById('aon-header-company-list');
+	aonHeaderCompanyList.style.display = 'block';
+
+	let aonHeaderHelp = document.getElementById('aon-header-help');
+	aonHeaderHelp.style.display = 'block';
+
+	let aonHeaderApps = document.getElementById('aon-header-apps');
+	aonHeaderApps.style.display = 'none';
+
+	let aonHeaderHome = document.getElementById('aon-header-home');
+	aonHeaderHome.style.display = 'block';
+
+	let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
+	aonHeaderShowMenu.style.display = 'block';
+
+	let aonMenu = document.getElementById('aonMenu');
+	aonMenu.toogle();
+
+	localStorage.setItem("aon_domain_id", domainId);
+	localStorage.setItem("aon_domain_name", domainName);
 	rootPanel('<aon-desktop></aon-desktop>');
 }
 
 function getCompanies() {
   return new Promise(function(resolve, reject){
-    if(companies) {
-		resolve(companies);
-    } else {
-      request('GET', '/ms/api/company', localStorage.getItem('session_id'), undefined, function (result, error) {
+		if(end) {
+			resolve({companies:companies, end:true});
+		} else {
+			let headers = {
+				schema: schema,
+				page: page,
+				per_page: per_page
+			};
+      request('GET', '/ms/api/company', localStorage.getItem('aon_session_id'),  undefined, headers, function (r, error) {
+			  if(error) {
+          reject(error);
+        } else {
+					let result = JSON.parse(r);
+					if(result && result.companies) {
+            if(companies){
+              companies = companies.concat(result.companies);
+            } else {
+              companies = result.companies;
+            }
+        		companies.sort(function (a, b) {
+              if (a.name.toUpperCase() > b.name.toUpperCase()) {
+                return 1;
+              }
+              if (a.name.toUpperCase() < b.name.toUpperCase()) {
+                return -1;
+              }
+              // a must be equal to b
+              return 0;
+            });
+            schema = result.schema;
+            page = result.page;
+            per_page = result.per_page;
+            end = result.end;
+						result.companies = companies;
+						resolve(result);
+          } else {
+            resolve({companies:[], end: false});
+          }
+        }
+   	  });
+	 	}
+  });
+}
+
+function getUsers() {
+  return new Promise(function(resolve, reject){
+      request('GET', '/ms/api/user', localStorage.getItem('aon_session_id'),  undefined, undefined, function (result, error) {
         if(error) {
           reject(error);
         } else {
-          companies = JSON.parse(result);
-          resolve(companies);
+          resolve(JSON.parse(result));
         }
    	  });
-   	 }
-  });
+   });
 }
 
 function getCompany() {
   return new Promise(function(resolve, reject){
-    if(!company && localStorage.getItem('domain_id')) {
+    if(!company && localStorage.getItem('aon_domain_id')) {
       getCompanies().then(companies => {
           for(let i = 0; i < companies.length; i++){
-           	if(companies[i].id == localStorage.getItem('domain_id')){
+           	if(companies[i].id == localStorage.getItem('aon_domain_id')){
             	setCompany(companies[i]);
             }
           }
@@ -101,7 +158,7 @@ function invoiceSelection(inv) {
 
 function getInvoice(id) {
 	return new Promise(function(resolve, reject){
-		request('GET', '/ms/api/invoice'  + getInvoiceQuery({id}), localStorage.getItem('session_id'), undefined, function (result, error) {
+		request('GET', '/ms/api/invoice'  + getInvoiceQuery({id}), localStorage.getItem('aon_session_id'), undefined,  undefined,  function (result, error) {
 			if(error) {
 				reject(error);
 			} else {
@@ -113,7 +170,7 @@ function getInvoice(id) {
 
 function getInvoices(data) {
   return new Promise(function(resolve, reject){
-    request('GET', '/ms/api/invoice'  + getInvoiceQuery(data), localStorage.getItem('session_id'), undefined, function (result, error) {
+    request('GET', '/ms/api/invoice'  + getInvoiceQuery(data), localStorage.getItem('aon_session_id'), undefined,  undefined, function (result, error) {
       if(error) {
         reject(error);
       } else {
@@ -125,7 +182,7 @@ function getInvoices(data) {
 
 function insertInvoice(invoice) {
 	return new Promise(function(resolve, reject){
-  	request('POST', '/ms/api/invoice', localStorage.getItem('session_id'), invoice, function (result, error) {
+  	request('POST', '/ms/api/invoice', localStorage.getItem('aon_session_id'), invoice,  undefined, function (result, error) {
 			if(error) {
 				reject(error);
 			} else {
@@ -135,9 +192,9 @@ function insertInvoice(invoice) {
 	});
 }
 
-function deleteInvoices(invoiceIds) : Observable<Invoice> {
+function deleteInvoices(invoiceIds) {
 	return new Promise(function(resolve, reject){
-  	request('DELETE', '/ms/api/invoice', localStorage.getItem('session_id'), {id: invoiceIds}, function (result, error) {
+  	request('DELETE', '/ms/api/invoice', localStorage.getItem('aon_session_id'), {id: invoiceIds}, undefined, function (result, error) {
 			if(error) {
 				reject(error);
 			} else {
@@ -170,8 +227,8 @@ function getInvoiceQuery(params){
 
 
 
-function getInvoice() {
+/*function getInvoice() {
   return new Promise(function(resolve, reject){
     resolve(invoice);
   });
-}
+}*/

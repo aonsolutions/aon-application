@@ -228,6 +228,7 @@ public class SecurityDAO {
 			return new User()
 				.setId(record.getValue(USER.ID))
 				.setDomain(record.getValue(USER.DOMAIN))
+				.setName(record.getValue(USER.NAME))
 				.setLogin(record.getValue(USER.LOGIN))
 				.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)))
 				.setRegistry(record.getValue(USER.REGISTRY))

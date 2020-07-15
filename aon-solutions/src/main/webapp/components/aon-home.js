@@ -1,3 +1,4 @@
+import './aon-header.js';
 import './aon-menu.js';
 import './aon-inputText.js';
 
@@ -8,22 +9,9 @@ class AonHome extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-
-			<style>
-
-				.root-panel {
-					width: 100%;
-					min-height: 100%;
-					height: auto !important;
-					height: 100%;
-					margin: 0;
-				}
-
-			</style>
-						
-			<aon-menu></aon-menu>
-			<div id="rootPanel" class="root-panel" ></div>
-
+			<aon-header></aon-header>
+			<aon-menu id="aonMenu"></aon-menu>
+			<div id="rootPanel" class="root-panel"></div>
 		`;
   }
 }

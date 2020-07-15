@@ -24,22 +24,12 @@ import './aon-desktop.js';
 		}
 
 		load() {
-			if(localStorage.getItem('session_id')){
-				getCompanies().then(companies => {
-					document.getElementById("aonLogin").style.display = 'none';
-					document.getElementById("aonHome").style.display = 'block';
-					if(companies.length === 1){
-						localStorage.setItem('domain_id', companies[0].id);
-						localStorage.setItem('domain_name', companies[0].domain);
-						rootPanel('<aon-desktop></aon-desktop>');
-					} else {
-						localStorage.removeItem('domain_id');
-						localStorage.removeItem('domain_name');
-						rootPanel('<aon-parent></aon-parent>');
-					}
-				}).catch(error => {
-					alert(error);
-				});
+			if(localStorage.getItem('aon_session_id')){
+				document.getElementById("aonLogin").style.display = 'none';
+				document.getElementById("aonHome").style.display = 'block';
+				localStorage.removeItem('aon_domain_id');
+				localStorage.removeItem('aon_domain_name');
+				rootPanel('<aon-parent></aon-parent>');
 			} else {
 				document.getElementById("aonLogin").style.display = 'block';
 				document.getElementById("aonHome").style.display = 'none';

@@ -1,4 +1,5 @@
 import '../services/country.js';
+import './aon-select.js';
 
 (function() {
 
@@ -145,77 +146,86 @@ import '../services/country.js';
 				<aon-input-text class='aon-width-25' id='${this.getAttribute('id') + 'Province'}' description='Provincia'></aon-input-text>
 				<aon-select class='aon-width-25' id='${this.getAttribute('id') + 'Country'}' description='País' ></aon-select>
 			`;
-			
+
 			div.innerHTML = html;
 			this.appendChild(div);
-			
+
 			let address = document.getElementById(this.getAttribute('id') + 'Address');
-			address.value = value.address;
-			address.addEventListener('change', () => this.updateAddress());
-			
+			if(address) {
+				address.value = value.address;
+				address.addEventListener('change', () => this.updateAddress());
+			}
+
 			let zip = document.getElementById(this.getAttribute('id') + 'Zip')
-			zip.value = value.zip;
-			zip.addEventListener('change', () => this.updateZip());
-			
+			if(zip) {
+				zip.value = value.zip;
+				zip.addEventListener('change', () => this.updateZip());
+			}
+
 			let city = document.getElementById(this.getAttribute('id') + 'City');
-			city.value = value.city;
-			city.addEventListener('change', () => this.updateCity());
-			
+			if(city) {
+				city.value = value.city;
+				city.addEventListener('change', () => this.updateCity());
+			}
 			let province = document.getElementById(this.getAttribute('id') + 'Province');
-			province.value = value.province;
-			province.addEventListener('change', () => this.updateProvince());
-			
+			if(province) {
+				province.value = value.province;
+				province.addEventListener('change', () => this.updateProvince());
+			}
+
 			let country = document.getElementById(this.getAttribute('id') + 'Country');
-			country.options = JSON.stringify(getCountries().map(c => {return {value: c.iso2, name: c.nombre};}));
-			country.value = value.country;
-			country.addEventListener('select', () => this.updateCountry());
+			if(country) {
+				country.options = JSON.stringify(getCountries().map(c => {return {value: c.iso2, name: c.nombre};}));
+				country.value = value.country;
+				country.addEventListener('select', () => this.updateCountry());
+			}
 		}
-				
+
 		updateAddress() {
 			if(this.hasAttribute('value')){
-				let address = document.getElementById(this.getAttribute('id') + 'Address');	
+				let address = document.getElementById(this.getAttribute('id') + 'Address');
 				let value = JSON.parse(this.getAttribute('value'));
 				value.address = address.value;
 				this.value = JSON.stringify(value);
 			}
 		}
-		
+
 		updateZip() {
 			if(this.hasAttribute('value')){
-				let zip = document.getElementById(this.getAttribute('id') + 'Zip');	
+				let zip = document.getElementById(this.getAttribute('id') + 'Zip');
 				let value = JSON.parse(this.getAttribute('value'));
 				value.zip = zip.value;
 				this.value = JSON.stringify(value);
 			}
 		}
-		
+
 		updateCity() {
 			if(this.hasAttribute('value')) {
-				let city = document.getElementById(this.getAttribute('id') + 'City');	
+				let city = document.getElementById(this.getAttribute('id') + 'City');
 				let value = JSON.parse(this.getAttribute('value'));
 				value.city = city.value;
 				this.setAttribute('value', JSON.stringify(value));
 			}
 		}
-		
+
 		updateProvince() {
 			if(this.hasAttribute('value')){
-				let province = document.getElementById(this.getAttribute('id') + 'Province');	
+				let province = document.getElementById(this.getAttribute('id') + 'Province');
 				let value = JSON.parse(this.getAttribute('value'));
 				value.province = province.value;
 				this.setAttribute('value', JSON.stringify(value));
 			}
 		}
-		
+
 		updateCountry() {
 			if(this.hasAttribute('value')){
-				let country = document.getElementById(this.getAttribute('id') + 'Country');	
+				let country = document.getElementById(this.getAttribute('id') + 'Country');
 				let value = JSON.parse(this.getAttribute('value'));
-				value.country = country.value;	
+				value.country = country.value;
 				this.setAttribute('value', JSON.stringify(value));
 			}
 		}
-		
+
 	}
 
 	window.customElements.define('aon-address',  AonAddress);

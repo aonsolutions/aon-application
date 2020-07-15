@@ -5,6 +5,7 @@
 
 	function rootPanel(html) {
 		const myNode = document.getElementById("rootPanel");
+		myNode.innerHTML = '';
 		myNode.innerHTML = html;
 		componentHandler.upgradeDom();
 	}
@@ -14,7 +15,7 @@
 	}
 
 	function getToken() {
-		return localStorage.getItem("session_id");
+		return localStorage.getItem("aon_session_id");
 	}
 
 	function isTediSnapshot() {
@@ -55,7 +56,7 @@
 			var script = window.document.createElement("script");
 			script.type = "text/javascript";
 			script.defer = "true";
-			script.src = `tedi-center/${module}/${module}.nocache.js?entryPoint=${entrypoint}`;
+			script.src = `aon-solutions/${module}/${module}.nocache.js?entryPoint=${entrypoint}`;
 			var heads = window.document.getElementsByTagName("head");
 			if (heads && heads[0]) {
 				heads[0].appendChild(script);
