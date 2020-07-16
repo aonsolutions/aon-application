@@ -7,7 +7,6 @@ import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
@@ -15,7 +14,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesBuilder;
@@ -238,6 +236,16 @@ public class AgreementsTree extends Composite implements KeyDownHandler, Context
 		return agreement.getDomain() == 0 ?
 				IMAGES.logo() :
 				RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
+	}
+	
+	public static ImageResource getImageResource(Agreement agreement, Integer actualDomain) {
+		if (NumberUtils.equals(0, agreement.getDomain()))
+			return IMAGES.aon_icon_row_s();
+		else if(NumberUtils.notEquals(actualDomain, agreement.getDomain()))
+			return IMAGES.aon_icon_row_c();
+		else 
+			return IMAGES.rowSelector();
+//			return RESOURCES[0][0][agreement.hasLevelsWithoutCategories() ? 1 : 0];
 	}
 
 	public static class OverlayImagesImpl {

@@ -165,9 +165,12 @@ public class Agreements extends ResizeComposite implements
 				&& NumberUtils.notEquals(domain, agreement.getDomain()) )
 			marks.add(IMAGES.parent());
 
+//		TreeItem agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
+//				AgreementsTree.getImageResource(agreement, domain),
+//				marks.toArray(new ImageResource[marks.size()])));
+		
 		TreeItem agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
-				AgreementsTree.getImageResource(agreement),
-				marks.toArray(new ImageResource[marks.size()])));
+				AgreementsTree.getImageResource(agreement, domain)));
 
 		agreementTreeItem.setUserObject(agreement);
 

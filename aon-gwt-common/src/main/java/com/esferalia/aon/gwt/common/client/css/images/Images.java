@@ -109,6 +109,9 @@ public interface Images extends ClientBundle, Tree.Resources {
 	ImageResource f();
 
 	ImageResource fx();
+	
+	@Source("aon-icon-rowSelector.png")
+	ImageResource rowSelector();
 
 	@Source("aon-icon-statistics.png")
 	ImageResource statistics();

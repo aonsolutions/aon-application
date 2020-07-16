@@ -376,7 +376,8 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				))
 				.or(AGREEMENT.ID.eq(0))
 				
-				.orderBy(AGREEMENT.DESCRIPTION)
+				.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
+				
 				.offset(offset)
 				.limit(limit)
 				.fetchInto(AGREEMENT);
