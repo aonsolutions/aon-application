@@ -3361,7 +3361,7 @@ public class SalaryDraft extends ResizeComposite
 
 			@Override
 			public void onClick(ClickEvent event) {
-				salaryPreviewListBox.setSelectedIndex(0);
+				salaryPreviewListBox.setSelectedIndex(1);
 				printPreview();
 			}
 		});
@@ -4615,7 +4615,11 @@ public class SalaryDraft extends ResizeComposite
 			
 			@Override
 			public Void visitSalary(Type type) {
-				print();
+				Reports.classic_new(salaryDraftObject,  dataURI -> {
+					SalaryDraft.this.showPreview();
+					SalaryDraft.this.pdfViewer.setDocument(dataURI, zoom / 100.00 );
+				});
+//				print();
 				return null;
 			}
 			
