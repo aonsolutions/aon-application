@@ -51,7 +51,7 @@ public class DocumentalServlet extends HttpServlet{
 		Object object = new Object();
 		JSONObject meta = new JSONObject();
 
-		switch (pathInfo[pathInfo.length - 1]) {
+		switch (pathInfo[3]) {
 		case "file":
 			object = getAttachJSON(domain, userName, Integer.parseInt(pathInfo[4]));
 			break;
