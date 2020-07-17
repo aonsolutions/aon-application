@@ -24,6 +24,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingStatus;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPackingType;
 import com.esferalia.aon.occam.api.model.warehouse.Income;
 
@@ -246,13 +247,15 @@ public class QRServlet extends HttpServlet{
 			Domain domain = AON.getDomain(domainName, carrierPacking.getInt("domain"), "");
 			String login = "";
 		
-		
 			CarrierPacking cp = AON.getCarrierPacking(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(carrierPacking.getInt("id")));
+			if(CarrierPackingStatus.FINISHED.equals(cp.getStatus())) {
+				throw new Exception("La " + cp.getType().getName() + " está Finalizada.");
+			}
 			cp.setAdditionalTare(carrierPacking.getDouble("additional_tare"));
 			cp.setTare(carrierPacking.getDouble("tare"));
 			cp.setNet(carrierPacking.getDouble("net"));
 			cp.setGross(carrierPacking.getDouble("gross"));
-			
+			cp.setStatus(CarrierPackingStatus.FINISHED);
 			AON.updateCarrierPacking(domain.getName(), domain.getId(), login, cp);
 			
 			JSONArray incomes = json.getJSONArray("incomes");
