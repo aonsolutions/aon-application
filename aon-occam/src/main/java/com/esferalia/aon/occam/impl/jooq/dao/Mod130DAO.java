@@ -161,7 +161,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		,C08 (Mod130Key.C08 , (mod -> mod.isAEAT())
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C08, getInitialC08(ctx,mod))
 			,null
-			,"<li>Desde contabilidad, saldo acreedor de las cuentas del grupo 7 desde el @{yearStartDate} al @{periodEndDate}</li>"
+			,"<li>Desde contabilidad, saldo acreedor de las cuentas del grupo 7 desde el @{periodStartDate} al @{periodEndDate}</li>"
 			+"<li>Actividades agr\u00EDcolas (la actividad del apunte contable debe ser agr\u00EDcola)</li>"			
 			+"<li>Resultado: @{com.esferalia.aon.watson.util.AonMathUtils.round(RAW_C08)}</li>"
 			+"<li>Porcentaje de participaci\u00F3n: <b>@{P1}%</b></li>"
@@ -702,7 +702,7 @@ public class Mod130DAO extends FiscalModelDAO {
 	private static Stream<AccountingBreakdown> getInitialBaseC08(AONContext ctx, final Mod130 mod) {
 		return AccountEntryDAO.getAccountingBreakdown(ctx,
 				p -> p.getDomainProperty().eq(ctx.getDomainId())
-				.and(p.getEntryDateProperty().ge(AonDateUtils.getYearFirstDay(mod.getYear())))
+				.and(p.getEntryDateProperty().ge(FiscalUtils.getPeriodStart(mod)))
 				.and(p.getEntryDateProperty().le(FiscalUtils.getPeriodEnd(mod)))
 				.and(p.getAccountCodeProperty().like("7%"))
 				)
