@@ -236,60 +236,65 @@ public class QRServlet extends HttpServlet{
 			  ]
 			}
 */		
-		
-		JSONObject json = Utils.getRequestJSON(req);
+		JSONObject response = new JSONObject();
+		try {
+			JSONObject json = Utils.getRequestJSON(req);
 	
-		JSONObject carrierPacking = json.getJSONObject("carrier_packing");
+			JSONObject carrierPacking = json.getJSONObject("carrier_packing");
 		
-		String domainName = req.getServerName();
-		Domain domain = AON.getDomain(domainName, carrierPacking.getInt("domain"), "");
-		String login = "";
+			String domainName = req.getServerName();
+			Domain domain = AON.getDomain(domainName, carrierPacking.getInt("domain"), "");
+			String login = "";
 		
 		
-		CarrierPacking cp = AON.getCarrierPacking(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(carrierPacking.getInt("id")));
-		cp.setAdditionalTare(carrierPacking.getDouble("additional_tare"));
-		cp.setTare(carrierPacking.getDouble("tare"));
-		cp.setNet(carrierPacking.getDouble("net"));
-		cp.setGross(carrierPacking.getDouble("gross"));
-		
-		AON.updateCarrierPacking(domain.getName(), domain.getId(), login, cp);
-		
-		JSONArray incomes = json.getJSONArray("incomes");
-		Integer workplaceId = AON.getWarehouseStream(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId())).findFirst().get().getWorkplace();
-		for (int i = 0; i < incomes.length(); i++) {
-			JSONObject income = incomes.getJSONObject(i);
-			income.put("workplace", workplaceId);
-			Optional<Income> opt = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().eq(income.getString("reference_code")));
+			CarrierPacking cp = AON.getCarrierPacking(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(carrierPacking.getInt("id")));
+			cp.setAdditionalTare(carrierPacking.getDouble("additional_tare"));
+			cp.setTare(carrierPacking.getDouble("tare"));
+			cp.setNet(carrierPacking.getDouble("net"));
+			cp.setGross(carrierPacking.getDouble("gross"));
 			
-			Integer incomeId = opt.isPresent() ? opt.get().getId() : DBIncome.insertIncome(domain, login, income).getInt("id");
-			JSONArray details = income.getJSONArray("details");
-			for (int j = 0; j < details.length(); j++) {
-				JSONObject detail = details.getJSONObject(j);
-				Integer itemId = detail.getInt("item");
-				if(detail.getBoolean("lotable")) {
-					JSONObject item = new JSONObject();
-					item.put("item_id", detail.getInt("item"));
-					item.put("lote", detail.getString("lote"));
-					itemId = ProductServlet.getInstance().insertItem(domain, login, item).getInt("id");
-				}
-				detail.put("item", itemId);
-				detail.put("workplace", workplaceId);
-				detail.put("income", incomeId);
-				DBIncome.insertIncomeDetail(domain, login, detail);
+			AON.updateCarrierPacking(domain.getName(), domain.getId(), login, cp);
+			
+			JSONArray incomes = json.getJSONArray("incomes");
+			Integer workplaceId = AON.getWarehouseStream(domain.getName(), domain.getId(), login,f -> f.getDomainProperty().eq(domain.getId())).findFirst().get().getWorkplace();
+			for (int i = 0; i < incomes.length(); i++) {
+				JSONObject income = incomes.getJSONObject(i);
+				income.put("workplace", workplaceId);
+				Optional<Income> opt = AON.getIncome(domain.getName(), domain.getId(), login, f -> f.getReferenceCodeProperty().eq(income.getString("reference_code")));
 				
-				JSONObject pd = new JSONObject();
-				pd.put("delivered", detail.getDouble("quantity"));
-				pd.put("id", detail.getInt("purchase_detail"));
-				pd.put("saldar", detail.getBoolean("saldar"));
-				DBPurchase.updatePurchaseDetail(domain, login, pd);		
-			}	
-		}		
-		JSONObject object = new JSONObject();
+				Integer incomeId = opt.isPresent() ? opt.get().getId() : DBIncome.insertIncome(domain, login, income).getInt("id");
+				JSONArray details = income.getJSONArray("details");
+				for (int j = 0; j < details.length(); j++) {
+					JSONObject detail = details.getJSONObject(j);
+					Integer itemId = detail.getInt("item");
+					if(detail.getBoolean("lotable")) {
+						JSONObject item = new JSONObject();
+						item.put("item_id", detail.getInt("item"));
+						item.put("lote", detail.getString("lote"));
+						itemId = ProductServlet.getInstance().insertItem(domain, login, item).getInt("id");
+					}
+					detail.put("item", itemId);
+					detail.put("workplace", workplaceId);
+					detail.put("income", incomeId);
+					DBIncome.insertIncomeDetail(domain, login, detail);
+				
+					JSONObject pd = new JSONObject();
+					pd.put("delivered", detail.getDouble("quantity"));
+					pd.put("id", detail.getInt("purchase_detail"));
+					pd.put("saldar", detail.getBoolean("saldar"));
+					DBPurchase.updatePurchaseDetail(domain, login, pd);		
+				}	
+			}		
+		} catch (Exception e) {
+			response.put("code", 405);
+			response.put("message", e.getMessage());
+		}
+		
 		
 		resp.setContentType("application/json;charset=UTF-8");
 		Utils.addCorsHeader(resp);
 		PrintStream os = new PrintStream(resp.getOutputStream(), false, "UTF-8");
-		os.println(object.toString());
+		os.println(response.toString());
 		os.flush();
 		os.close();
 	}

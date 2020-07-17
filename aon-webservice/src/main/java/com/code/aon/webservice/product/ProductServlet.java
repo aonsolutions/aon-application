@@ -275,10 +275,15 @@ public class ProductServlet extends HttpServlet{
     
     public JSONObject insertItem(Domain domain, String login, JSONObject json) {
     	Integer itemId = json.getInt("item_id");
+    	String lote = json.getString("lote");
     	Item item = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(itemId));
-    	item.setBarcode(null);
-    	item.setSerialNumber(json.getString("lote"));
-    	item = AON.insertItem(domain.getName(), domain.getId(), login, item);
+    	Integer productId = item.getProductId();
+    	Item itemLote = AON.getItem(domain.getName(), domain.getId(), login, f -> f.getProductProperty().eq(productId).and(f.getSerialNumberProperty().eq(lote)));
+    	if(itemLote.getId() == null) {
+    		item.setBarcode(null);
+    		item.setSerialNumber(lote);
+    		item = AON.insertItem(domain.getName(), domain.getId(), login, item);
+    	}
     	return ToJSON.itemToJSON(item);
     }
 }
