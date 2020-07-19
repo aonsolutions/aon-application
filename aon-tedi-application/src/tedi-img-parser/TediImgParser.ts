@@ -1,152 +1,75 @@
-import vision = require('@google-cloud/vision');
-import { Observable, Observer } from 'rxjs';
-import { TediAnnotateImageResponse, TediAnnotateImagesResponse, TediAutoML } from '../tedi-automl/TediAutoML';
-import { AutoMLInvoiceAmount, Company, Invoice, InvoiceStatus, InvoiceType, Nif, Registry, TediImportInvoicesInfo } from '../tedi-ewok/TediEwok';
-// import { TediRegistry } from '../tedi/registry';
+import { ClientRequest, IncomingMessage } from 'http';
+import { request, RequestOptions } from 'https';
+import { PDFExtractOptions, PDFExtractResult } from 'pdf.js-extract';
+import { Invoice, TediImportInvoicesInfo } from '../tedi-ewok/TediEwok';
+import { AutoML } from '../tedi-pdf-parser/invoice/AutoML';
+import { TediPdfParser } from '../tedi-pdf-parser/TediPdfParser';
 
 export class TediImgParser {
-  public static extract(buffer: Buffer): Observable<Invoice> {
-    return Observable.create((observer: Observer<Invoice>) => {
-      // Instantiate a vision client
-      const client = new vision.ImageAnnotatorClient();
-
-      const request = {
-        image: {
-          // source: {filename: '/path/to/image.jpg'}
-          // source: {imageUri: 'gs://path/to/image.jpg'}
-          content: buffer,
-        },
-      };
-
-      client
-        .textDetection(request)
-        .then(response => {
-          // tslint:disable-next-line: no-console
-          // console.log(response[0].textAnnotations);
-          observer.complete();
-        })
-        .catch(err => {
-          observer.error(err);
-        });
-    });
-  }
-
-  public static predict(info: TediImportInvoicesInfo): Observable<Invoice> {
-    return Observable.create((observer: Observer<Invoice>) => {
-      TediImgParser.predictAysnc(info)
-        .then(invoice => observer.next(invoice))
-        .catch(err => observer.error(err));
-    });
-  }
-
   public static parse(info: TediImportInvoicesInfo): Promise<Invoice> {
-    return TediImgParser.predictAysnc(info).then((invoice: Invoice) => TediAutoML.insight(invoice));
+    const imgExtract: ImgExtract = new ImgExtract();
+    const options: PDFExtractOptions = { disableCombineTextItems: true };
+    const buffer: Buffer = info.content instanceof Buffer ? info.content : Buffer.from(info.content, 'base64');
+
+    return new Promise((resolve, reject) =>
+      imgExtract.extractBuffer(buffer, options, (err: Error | null, result: PDFExtractResult | undefined) => {
+        if (err !== null) {
+          reject(err);
+        } else if (result === undefined) {
+          reject(new Error('No Data'));
+        } else {
+          try {
+            resolve(TediPdfParser.precog(result));
+          } catch (errr) {
+            AutoML.predict(info, result).subscribe(
+              (invoice: Invoice) => resolve(AutoML.insight(invoice)),
+              errrr => reject(errrr),
+            );
+          }
+        }
+      }),
+    );
   }
+}
 
-  private static async predictAysnc(info: TediImportInvoicesInfo): Promise<Invoice> {
-    const invoice: Invoice = {
-      type: InvoiceType.RECIBIDA,
-      status: InvoiceStatus.photonmilkbath,
+export class ImgExtract {
+  public extractBuffer(buffer: Buffer, opts: PDFExtractOptions, callback: (err: Error | null, pdf?: PDFExtractResult) => void): void {
+    const options: RequestOptions = {
+      hostname: '55evus1cy8.execute-api.eu-west-1.amazonaws.com',
+      port: 443,
+      path: '/default/google-cloud-vision',
+      method: 'POST',
+      headers: {
+        Origin: 'http://127.0.0.1:80',
+        'Content-Type': 'image/jpg',
+        'Content-Length': buffer.length,
+      },
     };
 
-    (info.companies || []).sort((c1, c2) => {
-      if (c1.document === 'DEFAULT') {
-        return c2.document === 'DEFAULT' ? 0 : -1;
-      }
-      if (c2.document === 'DEFAULT') {
-        return 1;
-      }
-      return c1.document.localeCompare(c2.document);
-    });
+    const req: ClientRequest = request(options, (res: IncomingMessage) => {
+      // tslint:disable-next-line: no-console
+      // console.log(`statusCode: ${res.statusCode}`);
 
-    // sets default company
-    (info.companies || []).forEach((company: Company) => {
-      invoice.receiver = {
-        name: company.name,
-        address: company.address,
-        document: company.document,
-        document_country: 'ES',
-      };
-      invoice.company = company.document;
-    });
+      let data: string = '';
 
-    const response: TediAnnotateImageResponse = await TediImgParser.textDetection(info);
-
-    // invoice.insight = {
-    //   dates: TediAutoML.getDates(response),
-    //   amounts: TediAutoML.getAmounts(response),
-    //   references: TediAutoML.getReferences(response),
-    // };
-    //
-    const amounts: AutoMLInvoiceAmount[] = []; // TediAutoML.getAutoMLInvoiceAmounts(response);
-
-    invoice.automl_tables = {
-      amounts,
-    };
-
-    let nifs: Nif[] = (response.fullTextAnnotation && response.fullTextAnnotation.text && Nif.find(response.fullTextAnnotation.text)) || [];
-    nifs = Array.from(nifs.reduce((map: Map<string, Nif>, nif: Nif) => map.set(nif.str, nif), new Map()).values());
-    invoice.type = nifs.length <= 1 ? InvoiceType.TICKET : invoice.type;
-
-    const docs: string[] = (nifs || []).map((nif: Nif) => nif.str);
-
-    // sets the company that appears at image
-    (info.companies || [])
-      .filter((company: Company) => docs.includes(company.document))
-      .forEach((company: Company) => {
-        invoice.receiver = {
-          name: company.name,
-          address: company.address,
-          document: company.document,
-          document_country: 'ES',
-        };
-        invoice.company = company.document;
+      res.on('data', d => {
+        data += d;
       });
 
-    // const senders: Nif[] = nifs.filter((nif: Nif) => invoice.company !== nif.str);
-
-    const registries: Registry[] = []; // await TediRegistry.getRegistriesAsync(senders.map(sender => sender.str));
-
-    registries.forEach(registry => {
-      invoice.sender = registry;
+      res.on('end', () => {
+        // tslint:disable-next-line: no-console
+        // console.log(`data: ${data}`);
+        callback(null, JSON.parse(data));
+      });
     });
 
-    if (registries.length === 0 && nifs.length === 1) {
-      const document: string = nifs[0].str;
-      invoice.sender = {
-        document,
-        document_country: 'ES',
-      };
-    }
-
-    invoice.insight = {
-      dates: TediAutoML.getDates(response),
-      amounts: TediAutoML.getAmounts(response),
-      taxTypes: TediAutoML.getTaxTypes([response]),
-      references: await TediAutoML.getReferences([response], invoice.sender?.document),
-    };
-
-    return invoice;
-  }
-
-  private static async textDetection(info: TediImportInvoicesInfo): Promise<TediAnnotateImageResponse> {
-    // Instantiate a vision client
-    const client = new vision.ImageAnnotatorClient();
-
-    // TediAnnotateImagesResponse
-    const request = {
-      image: {
-        content: info.content,
-      },
-      features: [
-        {
-          type: 'DOCUMENT_TEXT_DETECTION',
-        },
-      ],
-    };
-    // @ts-ignore
-    return client.annotateImage(request).then((result: TediAnnotateImagesResponse[]) => {
-      return result[0];
+    req.on('error', error => {
+      // tslint:disable-next-line: no-console
+      console.error(error);
+      callback(error);
     });
+
+    req.write(buffer);
+    req.end();
   }
 }

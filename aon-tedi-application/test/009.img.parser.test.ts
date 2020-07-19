@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 // import fileType from 'file-type';
 import fs = require('fs');
-import { TediAutoML } from '../src/tedi-automl/TediAutoML';
+// import { TediAutoML } from '../src/tedi-automl/TediAutoML';
 // import path = require('path');
 import { TediImportInvoicesInfo, TaxType } from '../src/tedi-ewok/TediEwok';
 
@@ -39,20 +39,14 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A08225013');
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A08225013');
+			done();
+		})
+      	.catch (reason => done(reason));
   });
 
 	it('PARSE BM [BM.jpg]', done => {
@@ -64,21 +58,15 @@ describe('TEDI IMG PARSER TESTs', () => {
 			content: buffer,
 			contentType: 'image/jpg'
 		};
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'B20099586');
+			done();
+		})
+      	.catch (reason => done(reason));
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'B20099586');
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
   });
 
 	// it('PARSE BM II [BM_SMALL.jpg]', done => {
@@ -117,21 +105,16 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'P0106800F');
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
-  });
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'P0106800F');
+			done();
+		})
+		.catch (reason => done(reason));
+		  
+    });
 
 	it('PARSE ARTEPAN [artepan.jpg]', done => {
 
@@ -143,33 +126,26 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A01023720');
-				expect(invoice.date).to.be.eql(new Date(2019,9,26));
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A01023720');
+			expect(invoice.date).to.be.eql(new Date(2019,9,26));
 
-				expect(invoice.total).to.be.eq(2.90);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 2.78,
-						quota: 0.11,
-						percentage: 4.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
-  });
+			expect(invoice.total).to.be.eq(2.90);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 2.78,
+					quota: 0.11,
+					percentage: 4.00
+				}
+			]);
+		done();
+		})
+		.catch (reason => done(reason));
+    });
 
 	it('PARSE NESPRESSO [nespresso.jpg]', done => {
 
@@ -181,32 +157,26 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A01023720');
-				expect(invoice.date).to.be.eql(new Date(2019,9,11));
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A01023720');
+			// expect(invoice.date).to.be.eql(new Date(2019,9,11));
 
-				expect(invoice.total).to.be.eq(27.60);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 25.09,
-						quota: 2.51,
-						percentage: 10.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
+			expect(invoice.total).to.be.eq(27.60);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 25.09,
+					quota: 2.51,
+					percentage: 10.00
+				}
+			]);			done();
+		})
+		.catch (reason => done(reason));
+		
+
   });
 
 	it.skip('PARSE ZARA [zara.jpg]', done => {
@@ -219,32 +189,27 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A01023720');
-				expect(invoice.date).to.be.eql(new Date(2019,9,24));
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A01023720');
+			expect(invoice.date).to.be.eql(new Date(2019,9,24));
 
-				expect(invoice.total).to.be.eq(72.75);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 60.11,
-						quota: 12.64,
-						percentage: 21.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
+			expect(invoice.total).to.be.eq(72.75);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 60.11,
+					quota: 12.64,
+					percentage: 21.00
+				}
+			]);
+			done();
+		})
+		.catch (reason => done(reason));
+
+
   });
 
 	it('PARSE IBERICOS [ibericos.jpg]', done => {
@@ -257,33 +222,26 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'B37503935');
-				// expect(invoice.date).to.be.eql(new Date(2019,9,26));
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'B37503935');
+			// expect(invoice.date).to.be.eql(new Date(2019,9,26));
 
-				expect(invoice.total).to.be.eq(30.69);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 27.90,
-						quota: 2.79,
-						percentage: 10.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
-  });
+			expect(invoice.total).to.be.eq(30.69);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 27.90,
+					quota: 2.79,
+					percentage: 10.00
+				}
+			]);
+			done();
+		})
+		.catch (reason => done(reason));
+  	});
 
 	it('PARSE MEDIAMARKT [mediamarkt.jpg]', done => {
 
@@ -295,32 +253,27 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A62581798');
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A62581798');
 
-				expect(invoice.total).to.be.eq(14.99);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 12.39,
-						quota: 2.60,
-						percentage: 21.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
-  });
+			expect(invoice.total).to.be.eq(14.99);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 12.39,
+					quota: 2.60,
+					percentage: 21.00
+				}
+			]);
+			done();
+		})
+		.catch (reason => done(reason));
+
+
+  	});
 
 	it('PARSE TULIPAN [tulipandeoro.jpg]', done => {
 
@@ -332,32 +285,28 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A62581798');
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A62581798');
 
-				expect(invoice.total).to.be.eq(5.50);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 5.00,
-						quota: 0.50,
-						percentage: 10.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
-  });
+			expect(invoice.total).to.be.eq(5.50);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 5.00,
+					quota: 0.50,
+					percentage: 10.00
+				}
+			]);
+
+			done();
+		})
+		.catch (reason => done(reason));
+
+
+  	});
 
 	it('PARSE GINOS [ginos.jpg]', done => {
 
@@ -369,32 +318,26 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A62581798');
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A62581798');
 
-				expect(invoice.total).to.be.eq(28.90);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 26.27,
-						quota: 2.63,
-						percentage: 10.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
-  });
+			expect(invoice.total).to.be.eq(28.90);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 26.27,
+					quota: 2.63,
+					percentage: 10.00
+				}
+			]);
+			done();
+		})
+		.catch (reason => done(reason));
+
+  	});
 
 	it('PARSE IKASTOLA [ikastola.jpg]', done => {
 
@@ -406,32 +349,26 @@ describe('TEDI IMG PARSER TESTs', () => {
 			contentType: 'image/jpg'
 		};
 
-		TediImgParser.predict(info).subscribe(
-      invoice => {
-				TediAutoML.insight(invoice);
-				expect(invoice).not.to.be.null;
-		    expect(invoice).not.to.be.undefined;
-				// expect(invoice).to.has.property('rdocument', 'A62581798');
-				// expect(invoice.date).to.be.eql(new Date(2019,9,28));
+		TediImgParser.parse(info)
+		.then( invoice => {
+			expect(invoice).not.to.be.null;
+			expect(invoice).not.to.be.undefined;
+			// expect(invoice).to.has.property('rdocument', 'A62581798');
+			// expect(invoice.date).to.be.eql(new Date(2019,9,28));
 
-				expect(invoice.total).to.be.eq(15.00);
-				expect(invoice.taxes).to.have.deep.members([
-					{
-						tax: TaxType.IVA,
-						base: 12.40,
-						quota: 2.60,
-						percentage: 21.00
-					}
-				]);
-				done();
-			},
-			error => {
-        done(error);
-      },
-      () => {
-        done();
-      },
-		);
+			expect(invoice.total).to.be.eq(15.00);
+			expect(invoice.taxes).to.have.deep.members([
+				{
+					tax: TaxType.IVA,
+					base: 12.40,
+					quota: 2.60,
+					percentage: 21.00
+				}
+			]);
+			done();
+		})
+		.catch (reason => done(reason));
+		
   });
 
 });

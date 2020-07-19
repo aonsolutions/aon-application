@@ -1,48 +1,46 @@
-import { Observable, of } from 'rxjs';
-import { Registry, TediError } from '../tedi-ewok/TediEwok';
-import { TediOccam } from '../tedi-occam/TediOccam';
-import { REGISTRY, SidAttribute } from '../tedi-sid/TediSid';
+import { ClientRequest, IncomingMessage } from 'http';
+import { request, RequestOptions } from 'https';
+import { Registry } from '../tedi-ewok/TediEwok';
 
 export class TediRegistry {
-  public static getRegistry(document: string): Observable<Registry> {
-    return TediOccam.getRegistry(document);
-  }
+  public static getRegistries(documents: string[]): Promise<Registry[]> {
+    // tslint:disable-next-line: no-console
+    // console.log(`NIFs: ${JSON.stringify(documents)} :-( !!!!`);
+    return new Promise((resolve, reject) => {
+      const options: RequestOptions = {
+        hostname: '55evus1cy8.execute-api.eu-west-1.amazonaws.com',
+        port: 443,
+        path: `/default/registries?documents=${documents.join(',')}`,
+        method: 'GET',
+        headers: {
+          Origin: 'http://127.0.0.1:80',
+        },
+      };
 
-  public static getRegistries(filter: SidAttribute): Observable<Registry[]> {
-    return TediOccam.getRegistriesArray(filter);
-  }
+      const req: ClientRequest = request(options, (res: IncomingMessage) => {
+        // tslint:disable-next-line: no-console
+        // console.log(`statusCode: ${res.statusCode}`);
 
-  public static updateRegistry(registry: Registry): Observable<Registry> {
-    return TediOccam.updateRegistry(registry);
-  }
+        let data: string = '';
 
-  public static putRegistry(registry: Registry): Observable<Registry> {
-    return TediOccam.putRegistry(registry);
-  }
+        res.on('data', d => {
+          data += d;
+        });
 
-  public static deleteRegistry(document: string): Observable<string> {
-    return TediOccam.deleteRegistry(document);
-  }
+        res.on('end', () => {
+          // tslint:disable-next-line: no-console
+          // console.log(`data: ${data}`);
+          resolve(JSON.parse(data));
+        });
+      });
 
-  public static getFilter(data: Registry): Observable<SidAttribute> {
-    if (data && data.name) {
-      return of(REGISTRY.NAME.like(data.name));
-    }
-    if (data && data.document) {
-      return of(REGISTRY.DOCUMENT.like(data.document));
-    }
-    return Observable.create(observer => observer.error(new TediError('Invalid registry filter')));
-  }
+      req.on('error', error => {
+        // tslint:disable-next-line: no-console
+        console.error(error);
+        reject(error);
+      });
 
-  public static getRegistriesAsync(documents: string[]): Promise<Registry[]> {
-    return TediOccam.getRegistriesAsync(documents);
-  }
-
-  public static getForeignRegistriesAsync(): Promise<Registry[]> {
-    const foreigns: Promise<Registry[]> = Promise.all([
-      TediOccam.getRegistriesArrayAsync(REGISTRY.DOCUMENT_COUNTRY.lt('ES')),
-      TediOccam.getRegistriesArrayAsync(REGISTRY.DOCUMENT_COUNTRY.gt('ES')),
-    ]).then((r: [Registry[], Registry[]]) => r[0].concat(r[1]));
-    return foreigns;
+      req.end();
+    });
   }
 }

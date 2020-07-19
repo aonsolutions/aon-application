@@ -60,10 +60,12 @@
   },
   "compileOnSave": true,
   "include": [
-    "src/index.ts",
+    "src/lambda.ts",
+    "src/browser.ts",
     "src/tedi-ewok",
     "src/tedi-pdf-parser",
     "src/tedi-img-parser",
+    "src/tedi/registry.ts",
   ],
   "exclude": [
   ]

@@ -1,19 +1,39 @@
+
 // Import path for resolving file paths
 var path = require('path');
 
-module.exports = {
+const serverConfig = {
   // Specify the entry point for our app.
   entry: [
     path.join(__dirname, 'lib/lambda.js')
   ],
-  mode : "development",
-  target: 'node',
-  // Specify the output file containing our bundled code
+  mode : "development",  target: 'node',
   output: {
-    path: __dirname,
-    filename: 'index.js',
-    libraryTarget: 'commonjs'
-  },
-  module: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'lib.node.js'
   }
-}
+  //…
+};
+
+const clientConfig = {
+  node: {
+    fs: "empty",
+    tls: "empty",
+    net: "empty",
+    child_process: "empty"
+  },
+  // Specify the entry point for our app.
+  entry: [
+    path.join(__dirname, 'lib/browser.js')
+  ],
+  mode : "development",  
+  target: 'web', // <=== can be omitted as default is 'web'
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'lib.js',
+    library: 'tedi',
+  }
+  //…
+};
+
+module.exports = [clientConfig]

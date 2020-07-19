@@ -6,4 +6,5 @@
 --reporter spec
 --bail
 --check-leaks
+test/009.img.parser.test.ts
 test/006.pdf.parser.test.ts
