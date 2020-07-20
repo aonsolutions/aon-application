@@ -40,10 +40,10 @@ public class BOEBalanceAsocAbbreviateScript extends BalanceScript {
 			,ACI(1,LEAF,"I","Existencias","sdb({30,31,32,33,34,35,36,407})-sab({(39)})",null)
 			,ACII(1,LEAF,"II","Usuarios y otros deudores de la actividad propia","sdb({447,448}) - sab({495})",null)
 			,ACIII(1,HEADER1,"III","Deudores comerciales y otras cuentas a cobrar","sdb({430,431,432,433,434,435,436})-sab({437,490,493,440,441,446,449,460,464,470,471,472,473,558,544,558})",null)
-			,ACIV(1,LEAF,"IV","Inversiones en empresas del grupo y asociadas a corto plazo","sdb({5303,5304,5313,5314, 5323, 5324,5333, 5334, 5343,5344, 5353, 5354})+sdbPositivo({5523,5524})-sab({5393,5394,593,5943,5944,5953,5954})",null)
+			,ACIV(1,LEAF,"IV","Inversiones en empresas del grupo y asociadas a corto plazo","sdb({5303,5304,5313,5314, 5323, 5324,5333, 5334, 5343,5344, 5353, 5354})+sdbPositivo({5523})+sdbPositivo({5524})-sab({5393,5394,593,5943,5944,5953,5954})",null)
 			
 			,ACV(1,LEAF,"V","Inversiones financieras a corto plazo"
-					,"sdb({5305,5315,5325,5345,5355,540,541,542,543,545,546,547,548,5315,5335,541,546,5590,5593,565,566})-sab({5395,549,5945,5955,597,598})+sdbPositivo({551,5525})",null)
+					,"sdb({5305,5315,5325,5345,5355,540,541,542,543,545,546,547,548,5315,5335,541,546,5590,5593,565,566})-sab({5395,549,5945,5955,597,598})+sdbPositivo({551})+sdbPositivo({5525})",null)
 			,ACVI(1,LEAF,"VI","Periodificaciones a corto plazo","sdb({480,567})",null)
 			,ACVII(1,LEAF,"VII","Efectivo y otros activos l\u00EDquidos equivalentes","sdb({57})",null)
 		,TC(0,TOTAL0,"(A+B)","TOTAL ACTIVO",null,"ANC + AC")
@@ -75,8 +75,8 @@ public class BOEBalanceAsocAbbreviateScript extends BalanceScript {
 			,PCII(1,HEADER1,"II","Deudas a corto plazo",null,"PCII1+PCII2+PCII3")
 				,PCII1(2,LEAF,"1","Deudas con entidades de cr\u00E9dito","sab({5105,520,527})",null)
 				,PCII2(2,LEAF,"2","Acreedores por arrendamiento financiero","sab({5125,524})",null)
-				,PCII3(2,LEAF,"3","Otras deudas a corto plazo","sab({500,505,506,509,5115,5135,5145,521,522,523,525,528,5530,5532,555,5565,5566,5595,5598,560,561,569})+sabPositivo({551,5525})",null)
-			,PCIII(1,LEAF,"III","Deudas con entidadesdel grupo y asociadas a corto plazo","sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5563,5564})+sabPositivo({5523,5524})",null)
+				,PCII3(2,LEAF,"3","Otras deudas a corto plazo","sab({500,505,506,509,5115,5135,5145,521,522,523,525,528,5530,5532,555,5565,5566,5595,5598,560,561,569})+sabPositivo({551})+sabPositivo({5525})",null)
+			,PCIII(1,LEAF,"III","Deudas con entidadesdel grupo y asociadas a corto plazo","sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5563,5564})+sabPositivo({5523})+sabPositivo({5524})",null)
 			,PCIV(1,LEAF,"IV","Beneficiarios - Acreedores","sab({412})",null)
 			,PCV(1,HEADER1,"V","Acreedores comerciales y otras cuentas a pagar",null,"PCV1+PCV2")
 				,PCV1(2,LEAF,"1","Proveedores","sab({400,401,403,404,405})-sdb({406})",null)
