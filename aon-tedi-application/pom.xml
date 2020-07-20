@@ -51,6 +51,17 @@
 			<arguments>install</arguments>
 		    </configuration>
 		</execution>
+		<execution>
+		    <id>webpack build</id>
+		    <goals>
+			<goal>webpack</goal>
+		    </goals>
+
+		    <!-- optional: the default phase is "generate-resources" -->
+		    <phase>generate-resources</phase>
+
+
+		</execution>
 		
 		</executions>
 		<configuration>
