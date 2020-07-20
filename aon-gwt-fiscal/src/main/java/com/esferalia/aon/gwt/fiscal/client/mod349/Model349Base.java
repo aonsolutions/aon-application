@@ -49,6 +49,7 @@ abstract class Model349Base extends DockLayoutPanel {
 
 	static final String MODEL349_PRINT = "/aon_gwt_fiscal/ms/Model349Print";
 	static final String MODEL349_FILE = "/aon_gwt_fiscal/ms/Model349File";
+	static final String MODEL349_DRAFT = "/aon_gwt_fiscal/ms/Model349Draft";
 	
 	protected interface IModel349Detail extends IsWidget {
 		Integer getSelectedOperatorIndex(); 		 
@@ -134,6 +135,7 @@ abstract class Model349Base extends DockLayoutPanel {
 	protected final Button markAsFinishedButton = new Button();
 	protected final Button markAsSentButton = new Button();
 	protected final Button auditButton = new Button();
+	protected final Button draftButton = new Button();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod349Hidden = new Hidden("mod349");
@@ -422,6 +424,35 @@ abstract class Model349Base extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(auditButton);
+		
+		draftButton.setText(AON.MSG.draft());
+		draftButton.setTitle(draftButton.getText());
+		draftButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		draftButton.addStyleName(AON.AON_CSS.aonIconExcel());
+		draftButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (isDirty()) {
+					new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+							, new ConfirmDialogCallback() {
+							
+							@Override
+							public void onAccept() {
+								submitForm(cbk,MODEL349_DRAFT);
+							}
+			
+							@Override
+							public void onCancel() {
+								// Nothing
+							}
+						});
+				} else {
+					submitForm(cbk,MODEL349_DRAFT);
+				}
+			}
+		});
+		buttonContainer.add(draftButton);
 
 		toolbarPanel.add(toolbar);
 		
