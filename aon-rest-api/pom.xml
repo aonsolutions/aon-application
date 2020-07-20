@@ -81,12 +81,20 @@
       <version>1.1.0</version>
     </dependency>
 	
+    <dependency>
+	    <groupId>org.json</groupId>
+	    <artifactId>json</artifactId>
+    	<version>20200518</version>
+    </dependency>
+
 	<!-- AON SOLUTIONS -->
     <dependency>
         <groupId>com.esferalia.aon</groupId>
         <artifactId>aon.gwt.payroll</artifactId>
         <version>${project.version}</version>
     </dependency>
+    
+       
 
   </dependencies>
 </project>
