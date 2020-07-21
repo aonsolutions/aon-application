@@ -324,9 +324,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 	private void addDropContractData(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate) {
 		aonContext.getDslContext().insertInto(CONTRACT_DATA)
 			.set(CONTRACT_DATA.DOMAIN, contract.getDomain())
-			.set(CONTRACT_DATA.NAME, "DIAS_AUSENCIA")
+			.set(CONTRACT_DATA.NAME, "COEFICIENTE_AUSENCIA")
 			.set(CONTRACT_DATA.CONTRACT, contract.getId())
-			.set(CONTRACT_DATA.EXPRESSION, getDaysBetweenDates(startDate, endDate).toString())
+			.set(CONTRACT_DATA.EXPRESSION, "1.0")
 			.set(CONTRACT_DATA.START_DATE, new java.sql.Date(startDate.getTime()))
 			.set(CONTRACT_DATA.END_DATE, new java.sql.Date(endDate.getTime()))
 			.execute();

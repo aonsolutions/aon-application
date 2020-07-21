@@ -22,6 +22,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_STA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DELAY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DROP_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BACK;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
@@ -4496,11 +4497,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		intersects = Period.sub(intersects, offs);
 
 		// DropDays
-		List<Period> drops = ctx.getPeriods(DROP_DAYS);
+		List<Period> drops = ctx.getPeriods(DROP_FACTOR);
 		intersects = Period.sub(intersects, drops);
 		
 		for(Period p: drops) {
-			ITimedVariable<Double> salaryDays = new ITimedVariable<Double>() {
+			ITimedVariable<Double> dropDays = new ITimedVariable<Double>() {
 				@Override
 				public Period getPeriod() {
 					return p;
@@ -4516,7 +4517,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			};
 			
-			ctx.putVariable(SALARY_DAYS, salaryDays);
+			ctx.putVariable(DROP_DAYS, dropDays);
+			ctx.putVariable(SALARY_DAYS, dropDays);			
 		}
 
 		
