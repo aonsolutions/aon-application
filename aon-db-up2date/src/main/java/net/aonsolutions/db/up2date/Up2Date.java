@@ -19,10 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod2002019;
-import net.aonsolutions.db.up2date.security.AuthCreation;
-import net.aonsolutions.db.up2date.tgss.RealDecreeLaw182020UpdateIII;
-import net.aonsolutions.db.up2date.tgss.SalaryHoursUpdateMonthDays;
+import net.aonsolutions.db.up2date.security.DomainAppCreation;
+import net.aonsolutions.db.up2date.security.UserAppRoleCreation;
 
 public class Up2Date {
 
@@ -128,7 +126,9 @@ public class Up2Date {
 //    		AuthCreation.AUTH_CREATION,
 //    		SalaryHoursUpdateMonthDays.SALARYHOURSUPDATEMONTHDAYS,
 //    		RealDecreeLaw182020UpdateIII.REALDECREELAW182020UPDATEIII,
-    		AlterFsMod2002019.ALTER_FS_MODEL_200_2019
+//    		AlterFsMod2002019.ALTER_FS_MODEL_200_2019
+    		DomainAppCreation.DOMAIN_APP_CREATION,
+    		UserAppRoleCreation.USER_APP_ROLE_CREATION
     };
 
 
