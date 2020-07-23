@@ -47,6 +47,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	static final String MODEL190_PRINT = "/aon_gwt_fiscal/ms/Model190Print";
 	private static final String MODEL190_CERTIFICATE_PRINT = "/aon_gwt_fiscal/ms/Model190CertificatePrint";
 	static final String MODEL190_FILE = "/aon_gwt_fiscal/ms/Model190File";
+	static final String MODEL190_DRAFT = "/aon_gwt_fiscal/ms/Model190Draft";
 	
 	protected interface IModel190Detail extends IsWidget {
 		Integer getSelectedPerceptorIndex();
@@ -125,6 +126,7 @@ abstract class Model190Base extends DockLayoutPanel {
 	protected final Button markAsSentButton = new Button();
 	protected final Button duplicateButton = new Button();
 	protected final Button auditButton = new Button();
+	protected final Button draftButton = new Button();
 	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	protected Hidden mod190Hidden = new Hidden("mod190");
@@ -451,6 +453,35 @@ abstract class Model190Base extends DockLayoutPanel {
 			}
 		});
 		buttonContainer.add(auditButton);
+		
+		draftButton.setText(AON.MSG.draft());
+		draftButton.setTitle(draftButton.getText());
+		draftButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		draftButton.addStyleName(AON.AON_CSS.aonIconExcel());
+		draftButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (isDirty()) {
+					new ConfirmDialog().confirm(AON.MSG.draftPrint(),AON.MSG.draftPrintNote() 
+							, new ConfirmDialogCallback() {
+							
+							@Override
+							public void onAccept() {
+								submitForm(cbk,MODEL190_DRAFT);
+							}
+			
+							@Override
+							public void onCancel() {
+								// Nothing
+							}
+						});
+				} else {
+					submitForm(cbk,MODEL190_DRAFT);
+				}
+			}
+		});
+		buttonContainer.add(draftButton);
 
 		toolbarPanel.add(toolbar);
 		
