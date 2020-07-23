@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.security.DomainAppCreation;
 import net.aonsolutions.db.up2date.security.UserAppRoleCreation;
+import net.aonsolutions.db.up2date.tgss.RealDecreeLaw182020UpdateIV;
 
 public class Up2Date {
 
@@ -127,8 +128,10 @@ public class Up2Date {
 //    		SalaryHoursUpdateMonthDays.SALARYHOURSUPDATEMONTHDAYS,
 //    		RealDecreeLaw182020UpdateIII.REALDECREELAW182020UPDATEIII,
 //    		AlterFsMod2002019.ALTER_FS_MODEL_200_2019
-    		DomainAppCreation.DOMAIN_APP_CREATION,
-    		UserAppRoleCreation.USER_APP_ROLE_CREATION
+//    		DomainAppCreation.DOMAIN_APP_CREATION,
+//    		UserAppRoleCreation.USER_APP_ROLE_CREATION,
+    		RealDecreeLaw182020UpdateIV.REALDECREELAW182020UPDATEIV
+
     };
 
 
