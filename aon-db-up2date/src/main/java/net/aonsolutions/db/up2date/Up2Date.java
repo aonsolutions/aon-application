@@ -128,7 +128,7 @@ public class Up2Date {
 //    		RealDecreeLaw182020UpdateIII.REALDECREELAW182020UPDATEIII,
 //    		AlterFsMod2002019.ALTER_FS_MODEL_200_2019
     		DomainAppCreation.DOMAIN_APP_CREATION,
-    		UserAppRoleCreation.USER_APP_ROLE_CREATION,
+//    		UserAppRoleCreation.USER_APP_ROLE_CREATION,
 //    		RealDecreeLaw182020UpdateIV.REALDECREELAW182020UPDATEIV
 
     };

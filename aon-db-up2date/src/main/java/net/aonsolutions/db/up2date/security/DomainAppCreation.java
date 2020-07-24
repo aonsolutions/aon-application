@@ -22,10 +22,9 @@ public class DomainAppCreation implements Update {
 //	  `app` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'App',
 //	  `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Aplicacion del Dominio esta activa o no',
 //	  PRIMARY KEY (`id`),
-//    UNIQUE KEY `IDX_UNQ_DOMAIN_APP` (`domain`),
 //	  KEY `IDX_DOMAIN_APP_DOMAIN` (`domain`),
 //	  CONSTRAINT `FK_DOMAIN_APP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-//	) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
+//	) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';
 
 
 	public static DomainAppCreation DOMAIN_APP_CREATION = new DomainAppCreation();
@@ -52,10 +51,9 @@ public class DomainAppCreation implements Update {
 			  + "`app` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'App',"
 			  + "`active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Aplicacion del Dominio esta activa o no',"
 		  + "PRIMARY KEY (`id`),"
-		  + "UNIQUE KEY `IDX_UNQ_DOMAIN_APP` (`domain`),"
 		  + "KEY `IDX_DOMAIN_APP_DOMAIN` (`domain`),"
 		  + "CONSTRAINT `FK_DOMAIN_APP_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)"
-		+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';"
+		+ ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Aplicacion web';"
 		;
 
 		dslContext.execute(SQL);
