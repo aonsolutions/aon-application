@@ -305,7 +305,7 @@ public class Mod2002019MVELContext implements Map<String, Object> { // extends A
 		return (AonMathUtils.isGreatherThanZero(lq552))?0.0:1.0;
 	}
 
-	public double computeLQ558() throws AonCoreException {
+	public double computeLQ558() throws AonCoreException {		
 		if ( isChecked(C0030) || 
 				isChecked(C0047) ||
 				isChecked(C0078) || 
@@ -331,7 +331,9 @@ public class Mod2002019MVELContext implements Map<String, Object> { // extends A
 		if ( isChecked(C0010) ) return roundKey(LQ558);
 		
 		if ( isChecked(C0017) ) return roundKey(LQ558);
-		if ( isChecked(C0018) ) return roundKey(LQ558);		
+		if ( isChecked(C0018) ) return roundKey(LQ558);
+		
+		if ( isChecked(C0013) && (getValue(Mod2002019Key.UT060) == 100.0) ) return 0.0;
 		
 		if ( isChecked(C0006) && isChecked(C0034)) return 30.0;
 		if ( isChecked(C0057) && isChecked(C0006) && isChecked(C0034)) return 30.0;
@@ -339,7 +341,7 @@ public class Mod2002019MVELContext implements Map<String, Object> { // extends A
 		if ( isChecked(C0006) ) return 25.0;
 		
 		if ( isChecked(C0012) ) return 25.0;
-		if ( isChecked(C0013) && (getValue(Mod2002019Key.UT060) == 100.0) ) return 0.0;
+		//if ( isChecked(C0013) && (getValue(Mod2002019Key.UT060) == 100.0) ) return 0.0;
 		if ( isChecked(C0014) ) return 0.0;
 		
 		// --- 
