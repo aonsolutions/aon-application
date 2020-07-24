@@ -23,10 +23,13 @@
     "aws-sdk": "^2.696.0",
     "file-type": "^14.6.2",
     "googleapis": "^39.2.0",
+    "jimp": "^0.14.0",
+    "mariadb": "^2.4.1",
     "moment": "^2.22.2",
     "pdf.js-extract": "^0.1.1",
     "request": "^2.88.2",
     "rxjs": "^6.4.0",
+    "tesseract.js": "^2.1.1",
     "voca": "^1.4.0"
   },
   "_dependencies": {

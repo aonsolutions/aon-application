@@ -65,6 +65,7 @@
     "src/tedi-ewok",
     "src/tedi-pdf-parser",
     "src/tedi-img-parser",
+    // "src/tedi/lambda.ts",
     "src/tedi/registry.ts",
   ],
   "exclude": [

@@ -6,7 +6,7 @@
     <link rel="icon" image="image/png" href="https://tedi.center/assets/tedi-favicon.png">
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <!--script src="https://www.google.com/recaptcha/api.js" async defer></script-->
-    <script src="dist/lib.js"></script>
+    <script src="dist/tedi.js"></script>
     <script src="dist/vendors~pdfjsWorker.lib.js"></script>
 
     <script type="text/javascript">
@@ -80,16 +80,27 @@
                 const reader = new FileReader();
                 reader.onload = (function(f) { 
                     return function(e) { 
-                        tedi.parse(e.target.result, f.type)
-                        .then((invoice) => {
-                            load(invoice);
-                            display();
-                            loadJSON(invoice);
-                        }).catch( err => alert(err))
-                        ;
+                        tedi.parse(e.target.result,
+                        ( err, invoice) => {
+                            if ( err ) {
+                                alert(err)
+                            } else {
+                                load(invoice);
+                                display();
+                                loadJSON(invoice);
+                            }
+                        }
+                        );
+                        // tedi.parse(e.target.result, f.type)
+                        // .then((invoice) => {
+                        //     load(invoice);
+                        //     display();
+                        //     loadJSON(invoice);
+                        // }).catch( err => alert(err))
+                        // ;
                     }; 
                 })(file);
-                reader.readAsArrayBuffer(file);
+                reader.readAsDataURL(file);
             }            
         }
 
