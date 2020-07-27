@@ -39,6 +39,17 @@
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="confirmacionMenuItem"  text="{SOLICITUD_CONFIRMACION.getFilename}" enabled="false"/>
 						</g:MenuBar>
 					</g:MenuItem>
+					<g:MenuItem ui:field="viewMenuItem" text="Ver">
+						<g:MenuBar vertical="true">
+							<g:MenuItem ui:field="l00MenuItem" text="L00 Normal" />
+							<g:MenuItem ui:field="l13MenuItem" text="L13 Vacaciones" />
+							<g:MenuItem styleName="gwt-MenuItemSeparator">
+								<div class="menuSeparatorInner"></div>
+							</g:MenuItem>
+							<g:MenuItem ui:field="nextMonthMenuItem" text="-" />
+							<g:MenuItem ui:field="prevMonthMenuItem" text="-" />							
+						</g:MenuBar>
+					</g:MenuItem>
 				</g:MenuBar>
 				
 				<g:FlowPanel styleName="aon-finding-title-toolbar" >
