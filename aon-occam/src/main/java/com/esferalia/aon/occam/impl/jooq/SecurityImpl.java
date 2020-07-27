@@ -8,14 +8,18 @@ import com.esferalia.aon.occam.api.ISecurity;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -188,5 +192,29 @@ public class SecurityImpl implements ISecurity {
 	public Stream<UserWorkgroup> getUserWorkgroupStream(AONContext ctx, UserWorkgroupFilter filter) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getUserWorkgroupStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<DomainApp> getDomainAppStream(AONContext ctx, DomainAppFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getDomainAppStream(ctx, filter));
+	}
+
+	@Override
+	public Stream<UserAppRole> getUserAppRoleStream(AONContext ctx, UserAppRoleFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getUserAppRoleStream(ctx, filter));
+	}
+
+	@Override
+	public DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.insertDomainApp(ctx, domainApp));
+	}
+
+	@Override
+	public DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.updateDomainApp(ctx, domainApp));
 	}
 }

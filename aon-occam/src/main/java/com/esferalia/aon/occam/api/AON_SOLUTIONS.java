@@ -5,7 +5,11 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.security.Auth;
@@ -69,7 +73,31 @@ public class AON_SOLUTIONS {
 			byte[] auth = getSecurity().unHexUuid(ctx, uuid);
 			getSecurity().assignAuthToUser(ctx, user, auth);
 		}
-
+	}
+	
+	public static Stream<DomainApp> getDomainApp(String domainName, Integer domainId, String login, DomainAppFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+			return getSecurity().getDomainAppStream(ctx, filter);
+		}
+	}
+	
+	public static DomainApp insertDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+			return getSecurity().insertDomainApp(ctx, domainApp);
+		}
+	}
+	
+	public static DomainApp updateDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+			return getSecurity().updateDomainApp(ctx, domainApp);
+		}
+	}
+	
+	
+	public static Stream<UserAppRole> getUserAppRole(String domainName, Integer domainId, String login, UserAppRoleFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+			return getSecurity().getUserAppRoleStream(ctx, filter);
+		}
 	}
 	
 	public static User getUser(Domain domain, String token) {

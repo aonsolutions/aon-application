@@ -55,22 +55,6 @@ import '../services/transaction.js';
 
 				}
 
-
-				.aon-width-25{
-				    width: 24%;
-    				display: inline-block !important;
-				}
-
-				.aon-width-75{
-				    width: 73.5%;
-    				display: inline-block !important;
-				}
-
-				.aon-width-50{
-				    width: 48.7%;
-    				display: inline-block !important;
-				}
-
 				.aon-width-100{
 				    width: 98%;
     				display: inline-block !important;
@@ -112,7 +96,7 @@ import '../services/transaction.js';
 
 					<form action="#" class="aon-margin-0">
 						<aon-input-text class="aon-width-25" id="nif" description="NIF"></aon-input-text>
-						<aon-input-text class="aon-width-75" id="name" description="Razón Social"></aon-input-text>
+						<aon-input-text class="aonWidth75" id="name" description="Razón Social"></aon-input-text>
 					</form>
 
 					<form action="#" class="aon-margin-0">
@@ -120,8 +104,8 @@ import '../services/transaction.js';
 					</form>
 
 					<form action="#" class="aon-margin-0">
-						<aon-select class="aon-width-50" id="category" description="Categoría"></aon-select>
-						<aon-select class="aon-width-50" id="pay_method" description="Forma de Pago"></aon-select>
+						<aon-select class="aonWidth50" id="category" description="Categoría"></aon-select>
+						<aon-select class="aonWidth50" id="pay_method" description="Forma de Pago"></aon-select>
 					</form>
 				</div>
 			</div>
@@ -144,7 +128,7 @@ import '../services/transaction.js';
 				</div>
 				<div class="demo-card-wide mdl-card mdl-shadow--2dp aon-card-content">
 					<form action="#">
-						<aon-checkbox class="aon-width-50" id="irpfCheckbox" description="IRPF"></aon-checkbox>
+						<aon-checkbox class="aonWidth50" id="irpfCheckbox" description="IRPF"></aon-checkbox>
 						<aon-checkbox class="aon-width-25" id="suplidosCheckbox" description="Suplidos"></aon-checkbox>
 						<aon-input-text class="aon-width-25" id="t-suplidos" description="Total Suplidos" visible="false"></aon-input-text>
 					</form>

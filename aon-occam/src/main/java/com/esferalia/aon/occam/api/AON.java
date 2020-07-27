@@ -2243,8 +2243,10 @@ public class AON {
 	// ********************************************
 	// ****************************** GWT-OFFICE **
 	// ********************************************
-
-	// TODO
+	
+	public static User getUser(String domainName, Integer domainId, String userName, UserFilter filter) {
+		return getUserStream(domainName, domainId, userName, filter).findFirst().orElse(new User());
+	}
 	
 	public static User getUser(Integer domainId, String domainName,
 			String userName, Integer userId) {

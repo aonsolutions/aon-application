@@ -141,10 +141,10 @@ import './aon-select.js';
 			div.style.display = 'none';
 			let html = `
 				<aon-input-text class='aon-width-100' id='${this.getAttribute('id') + 'Address'}' description='Dirección'></aon-input-text>
-				<aon-input-text class='aon-width-25' id='${this.getAttribute('id') + 'Zip'}' description='Código Postal'></aon-input-text>
-				<aon-input-text class='aon-width-25' id='${this.getAttribute('id') + 'City'}' description='Ciudad'></aon-input-text>
-				<aon-input-text class='aon-width-25' id='${this.getAttribute('id') + 'Province'}' description='Provincia'></aon-input-text>
-				<aon-select class='aon-width-25' id='${this.getAttribute('id') + 'Country'}' description='País' ></aon-select>
+				<aon-input-text class='aonWidth25' id='${this.getAttribute('id') + 'Zip'}' description='Código Postal'></aon-input-text>
+				<aon-input-text class='aonWidth25' id='${this.getAttribute('id') + 'City'}' description='Ciudad'></aon-input-text>
+				<aon-input-text class='aonWidth25' id='${this.getAttribute('id') + 'Province'}' description='Provincia'></aon-input-text>
+				<aon-select class='aonWidth25' id='${this.getAttribute('id') + 'Country'}' description='País' ></aon-select>
 			`;
 
 			div.innerHTML = html;

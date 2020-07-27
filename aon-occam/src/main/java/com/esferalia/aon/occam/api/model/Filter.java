@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.Properties.DepartmentProperties;
+import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.Properties.FeeProperties;
 import com.esferalia.aon.occam.api.model.Properties.GeoZoneProperties;
@@ -75,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Properties.TaskHolderWorkgroupPropertie
 import com.esferalia.aon.occam.api.model.Properties.TaskProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaskTagProperties;
 import com.esferalia.aon.occam.api.model.Properties.TaxProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserAppRoleProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
@@ -178,8 +180,18 @@ public interface Filter {
 	}
 	
 	@FunctionalInterface
+	public interface DomainAppFilter{
+		Filter filter(DomainAppProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ScopeFilter{
 		Filter filter(ScopeProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface UserAppRoleFilter{
+		Filter filter(UserAppRoleProperties properties);
 	}
 	
 	@FunctionalInterface

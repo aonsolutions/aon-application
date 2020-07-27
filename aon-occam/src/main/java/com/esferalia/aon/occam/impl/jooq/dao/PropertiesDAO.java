@@ -52,6 +52,8 @@ import static com.esferalia.aon.jooq.tables.Target.TARGET;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
+import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -81,6 +83,7 @@ import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.DeliveryFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InventoryDetailFilter;
@@ -107,6 +110,7 @@ import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SellerFilter;
 import com.esferalia.aon.occam.api.model.Filter.SupplierFilter;
 import com.esferalia.aon.occam.api.model.Filter.TargetFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
@@ -128,6 +132,7 @@ import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties
 import com.esferalia.aon.occam.api.model.Properties.DataResponseProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
+import com.esferalia.aon.occam.api.model.Properties.DomainAppProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeDetailProperties;
 import com.esferalia.aon.occam.api.model.Properties.IncomeProperties;
 import com.esferalia.aon.occam.api.model.Properties.InventoryDetailProperties;
@@ -153,6 +158,7 @@ import com.esferalia.aon.occam.api.model.Properties.ScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.SellerProperties;
 import com.esferalia.aon.occam.api.model.Properties.SupplierProperties;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
+import com.esferalia.aon.occam.api.model.Properties.UserAppRoleProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserScopeProperties;
 import com.esferalia.aon.occam.api.model.Properties.UserWorkgroupProperties;
@@ -1543,6 +1549,47 @@ public class PropertiesDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.DOMAIN);}
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.USER_ID);}
 		@Override public Property<Integer> getWorkgroupProperty() {return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.WORKGROUP);}
+	}
+	
+	protected static class DomainAppPropertiesDAO implements DomainAppProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, DomainAppFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(DomainAppFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN_APP.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN_APP.DOMAIN);}
+		@Override public Property<Byte> getAppProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN_APP.APP);}
+		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN_APP.ACTIVE);}
+	}
+	
+	protected static class UserAppRolePropertiesDAO implements UserAppRoleProperties {
+		protected Select<Record> build(SelectJoinStep<Record> select, UserAppRoleFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(UserAppRoleFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.DOMAIN);}
+		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.USER_ID);}
+		@Override public Property<Byte> getAppProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.APP);}
+		@Override public Property<Byte> getRoleProperty() {return new FilterDAO.PropertyDAO<>(USER_APP_ROLE.ROLE);}
 	}
 	
 }

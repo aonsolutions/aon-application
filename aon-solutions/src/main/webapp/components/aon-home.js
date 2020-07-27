@@ -10,8 +10,8 @@ class AonHome extends HTMLElement {
 	connectedCallback () {
 		this.innerHTML = `
 			<aon-header></aon-header>
-			<aon-menu id="aonMenu"></aon-menu>
-			<div id="rootPanel" class="root-panel"></div>
+			<aon-menu id="aonMenu" class="aonMenu"></aon-menu>
+			<div id="rootPanel" class="rootPanel"></div>
 		`;
   }
 }

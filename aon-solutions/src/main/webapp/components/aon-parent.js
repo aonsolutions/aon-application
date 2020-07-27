@@ -8,7 +8,7 @@ class AonParent extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<ul id="aon-company-list" class="demo-list-two mdl-list aon-company-list"></ul>
+			<ul id="aon-company-list" class="demo-list-two mdl-list aonCompanyList"></ul>
 		`;
 		this.init();
  	}
@@ -28,16 +28,6 @@ class AonParent extends HTMLElement {
 		list.innerHTML = '';
 		for(let i = 0; i < companies.length; i++){
 			list.appendChild(this.buildLi(companies[i], (i === 0 || i%2 === 0) ? '#f1f1f1' : 'transparent'));
-			// html = html + `
-			// 	<li class="mdl-list__item mdl-list__item--two-line aon-li"
-			// 			 onclick="companySelection('${companies[i].domain}','${companies[i].id}' )">
-			// 		<span class="mdl-list__item-primary-content">
-			// 			<i class="material-icons aon-avatar">business</i>
-			// 			<span> ${companies[i].name}</span>
-			// 			<span class="mdl-list__item-sub-title">${companies[i].document}</span>
-			// 		</span>
-			// 	</li>
-			// `;
 		}
 
 
@@ -45,10 +35,10 @@ class AonParent extends HTMLElement {
 
 	buildLi(company, color) {
 		let li = document.createElement('li');
-		li.className = 'mdl-list__item mdl-list__item--two-line aon-li';
+		li.className = 'mdl-list__item mdl-list__item--two-line aonLi';
 		li.style.backgroundColor = color;
 		li.addEventListener('click', () => {
-			companySelection(company.domain, company.id);
+			companySelection(company);
 		});
 
 		li.addEventListener('mouseover', () => {
@@ -63,7 +53,7 @@ class AonParent extends HTMLElement {
 		span.className = 'mdl-list__item-primary-content';
 
 		let i = document.createElement('i');
-		i.className = 'material-icons aon-avatar';
+		i.className = 'material-icons aonAvatar';
 		i.innerHTML = 'business';
 
 		let span2 = document.createElement('span');

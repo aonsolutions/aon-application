@@ -1,4 +1,5 @@
-import Apps from  '../services/app.js';
+import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
+	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu} from  '../services/app.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -22,13 +23,20 @@ class AonMenu extends HTMLElement {
 		this.setAttribute('opened', opened);
 	}
 
-
 	get app() {
 		return this.getAttribute('app');
 	}
 
 	set app(app) {
 		this.setAttribute('app', app);
+	}
+
+	get administration() {
+		return this.getAttribute('administration');
+	}
+
+	set administration(administration) {
+		this.setAttribute('administration', administration);
 	}
 
 	constructor () {
@@ -38,7 +46,7 @@ class AonMenu extends HTMLElement {
 	connectedCallback () {
 		this.innerHTML = `
 
-			<div id="aonMenuSidenav" class="aon-menu-sidenav">
+			<div id="aonMenuSidenav" class="aonMenuSidenav">
 
 			</div>
 			`;
@@ -55,9 +63,11 @@ class AonMenu extends HTMLElement {
 		} else if(this.getAttribute('app')){
 			aonMenuSidenav.style.width = '250px';
 			rootPanel.style.marginRight = '250px';
+			this.setAttribute('opened', true);
 		} else {
 			aonMenuSidenav.style.width = '100px';
 			rootPanel.style.marginRight = '100px';
+			this.setAttribute('opened', true);
 		}
 	}
 
@@ -73,19 +83,19 @@ class AonMenu extends HTMLElement {
 				startModule('aon_gwt_aio', 'issues');
 				break;
     	case Apps.ACCOUNTING.app:
-				alert('ACCOUNTING');
+				this.buildAppMenu(Apps.ACCOUNTING);
 				break;
 			case Apps.FISCAL.app:
-				alert('FISCAL');
+				this.buildAppMenu(Apps.FISCAL);
 				break;
 			case Apps.PAYROLL.app:
-				alert('PAYROLL');
+				this.buildAppMenu(Apps.PAYROLL);
 				break;
 			case Apps.OCR.app:
 				alert('OCR');
 				break;
 			case Apps.AIO.app:
-				alert('AIO');
+	      open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
 				break;
 			case Apps.SELFCONTA.app:
 				alert('SELFCONTA');
@@ -94,7 +104,7 @@ class AonMenu extends HTMLElement {
 				alert('SALTRA');
 				break;
 			case Apps.BIDOQ.app:
-				alert('BIDOQ');
+				open('https://mispapeles.es/');
 				break;
 			case Apps.ALMA.app:
 				alert('ALMA');
@@ -124,6 +134,19 @@ class AonMenu extends HTMLElement {
 
 		ul.appendChild(this.buildApp(Apps.INVOICE));
 		ul.appendChild(this.buildApp(Apps.DOCUMENTAL));
+		ul.appendChild(this.buildApp(Apps.HELPDESK));
+		ul.appendChild(this.buildApp(Apps.ACCOUNTING));
+		ul.appendChild(this.buildApp(Apps.FISCAL));
+		ul.appendChild(this.buildApp(Apps.PAYROLL));
+		// ul.appendChild(this.buildApp(Apps.OCR));
+		ul.appendChild(this.buildApp(Apps.AIO));
+		//
+		// ul.appendChild(this.buildApp(Apps.SELFCONTA));
+		// ul.appendChild(this.buildApp(Apps.SALTRA));
+		// ul.appendChild(this.buildApp(Apps.BIDOQ));
+		// ul.appendChild(this.buildApp(Apps.ALMA));
+		// ul.appendChild(this.buildApp(Apps.LEARNING));
+		aonMenuSidenav.innerHTML = '';
 		aonMenuSidenav.appendChild(ul);
 	}
 
@@ -169,6 +192,109 @@ class AonMenu extends HTMLElement {
 		li.appendChild(a);
 
 		return li;
+	}
+
+	buildAppMenu(app) {
+		let rootPanel = document.getElementById('rootPanel');
+		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
+
+		aonMenuSidenav.style.width = '250px';
+		rootPanel.style.marginRight = '250px';
+
+		let div = document.createElement('div');
+	 	div.className = 'aonMenuSidenavAppToolbar';
+		div.style.backgroundColor = this.getAppToolbarBackgroundColor(app.app);
+
+		let span = document.createElement('span');
+		span.className= 'aonTitle';
+		span.innerHTML = app.title;
+
+		let span2 = document.createElement('span');
+		span2.className = 'aonRight40';
+		span2.innerHTML = '<aon-icon-button id="aon-menu-sidenav-app-launch-button" icon="launch" color="white" noHover="true"></aon-icon-button>';
+
+		let span3 = document.createElement('span');
+		span3.className = 'aonRight0';
+		span3.innerHTML = '<aon-icon-button id="aon-menu-sidenav-app-close-button" icon="close" color="white" noHover="true"></aon-icon-button>';
+		div.appendChild(span);
+		div.appendChild(span2);
+		div.appendChild(span3);
+
+		let div2 = document.createElement('div');
+		let ul = document.createElement('ul');
+		ul.className = 'aonMenuSidenavSubAppList';
+		this.getSubApps(app.app).forEach(subapp => {
+			ul.appendChild(this.buildSubAppMenu(subapp));
+		});
+
+		div2.appendChild(ul);
+
+		aonMenuSidenav.innerHTML = '';
+		aonMenuSidenav.appendChild(div);
+		aonMenuSidenav.appendChild(div2);
+
+		let launchButton = document.getElementById('aon-menu-sidenav-app-launch-button');
+		let closeButton = document.getElementById('aon-menu-sidenav-app-close-button');
+		closeButton.addEventListener('click', () => {
+			this.buildMenu();
+		});
+	}
+
+	getSubApps(app){
+		switch(app){
+			case Apps.ACCOUNTING.app:
+			 	return AccountingMenu;
+			case Apps.FISCAL.app:
+				return AeatFiscalMenu;
+			case Apps.PAYROLL.app:
+				return PayrollMenu;
+		}
+	}
+
+	buildSubAppMenu(subapp) {
+		let li = document.createElement('li');
+		li.className = 'aonMenuSidenavSubAppListItem';
+		li.title = subapp.title;
+		li.addEventListener('mouseover', () => {
+ 			li.style.backgroundColor = '#f1f1f1';
+		});
+		li.addEventListener('mouseleave', () => {
+			li.style.backgroundColor = 'transparent';
+		});
+
+		let a = document.createElement('a');
+		a.className = 'aonMenuLink';
+
+		let span = document.createElement('span');
+		span.style.fontSize = "12px";
+		span.style.fontWeight = "400";
+		span.innerHTML = subapp.title;
+		a.appendChild(span);
+		li.appendChild(a);
+		li.addEventListener('click', () => {
+			startModule(subapp.module, subapp.entryPoint);
+		});
+		return li
+	}
+
+	getAppToolbarBackgroundColor(app) {
+		switch(app){
+			case Apps.ACCOUNTING.app:
+				return '#D8B03D';
+			case Apps.FISCAL.app:
+				if(this.getAttribute('administration') && 'ALAVA' === this.getAttribute('administration')){
+					return '#a30c51';
+				} else if(this.getAttribute('administration') && 'BIZKAIA' === this.getAttribute('administration')){
+					return '#d70004';
+				} else if(this.getAttribute('administration') && 'GIPUZKOA' === this.getAttribute('administration')){
+					return '#a1c031';
+				} else if(this.getAttribute('administration') && 'NAVARRA' === this.getAttribute('administration')){
+					return '#da002a';
+				} else return '#3a85c3';
+			case Apps.PAYROLL.app:
+				return '#90BD75';
+			default: return '#f1f1f1';
+		}
 	}
 
 }

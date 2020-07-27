@@ -29,14 +29,14 @@ function createUser(user){
 
 function createTable(header, values) {
 	let table = document.createElement("table");
-	table.className = "mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aon-table";
+	table.className = "mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable";
 	let tbody = document.createElement("tbody");
 	let thead = document.createElement("thead");
 	let trHead = document.createElement("tr");
 
 	for(let i = 0; i < header.length ; i++){
 	  	let th = document.createElement("th");
-	  	th.className = "aon-table-th";
+	  	th.className = "aonTableTh";
 	  	th.appendChild(document.createTextNode(header[i].title));
 	  	trHead.appendChild(th);
 	}
@@ -46,7 +46,7 @@ function createTable(header, values) {
 		let tr = document.createElement("tr");
 		  for(let k = 0; k < header.length; k++){
 			  let td = document.createElement("td");
-			  td.className = "aon-table-th";
+			  td.className = "aonTableTh";
 		  	  td.appendChild(document.createTextNode(values[j][header[k].attribute]));
 		  	  if(header[k].func){
 		  		tr.addEventListener("click", function(){
@@ -79,6 +79,23 @@ function closeNav() {
 }
 
 class AonConfiguration extends HTMLElement {
+
+	get id() {
+		return this.getAttribute('id');
+	}
+
+	set id(id) {
+		this.setAttribute('id', id);
+	}
+
+	get domain() {
+		return this.getAttribute('domain');
+	}
+
+	set domain(domain) {
+		this.setAttribute('domain', domain);
+	}
+
 	constructor () {
 		super();
 	}
@@ -91,32 +108,40 @@ class AonConfiguration extends HTMLElement {
 			<aon-toolbar title="CONFIGURACIÓN"></aon-toolbar>
 			<!-- AON CONFIGURATION MENU (SIDENAV) -->
 			<div id="aon-configuration-sidenav" class="sidenav">
-				<ul class="aon-clip">
-					<li id="aon-configuration-general" class="aon-app-menu-sidenav-list aon-opacity" >
-						<i class="material-icons aon-vertical-middle">business</i>
-						<span class="aon-menu-item-span"> Información General	</span>
+				<ul class="aonClip">
+					<li id="aon-configuration-personal" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">person</i>
+						<span class="aonMenuItemSpan"> Datos Usuario </span>
 					</li>
 
-					<li id="aon-configuration-user" class="aon-app-menu-sidenav-list aon-opacity">
-						<i class="material-icons aon-vertical-middle">person</i>
-						<span class="aon-menu-item-span"> Usuarios </span>
+					<li id="aon-configuration-general" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">business</i>
+						<span class="aonMenuItemSpan"> Información General	</span>
 					</li>
 
-					<li id="aon-configuration-store" class="aon-app-menu-sidenav-list aon-opacity" >
-						<i class="material-icons aon-vertical-middle">store_mall_directory</i>
-						<span class="aon-menu-item-span"> Contratación </span>
+					<li id="aon-configuration-user" class="aonAppMenuSidenavList aonOpacity">
+						<i class="material-icons aonVerticalMiddle">people</i>
+						<span class="aonMenuItemSpan"> Usuarios </span>
+					</li>
+
+					<li id="aon-configuration-store" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">store_mall_directory</i>
+						<span class="aonMenuItemSpan"> Contratación </span>
 					</li>
 				</ul>
 			</div>
 
 			<!-- AON CONFIGURATION CONTENT -->
-			<div id="aon-configuration-content" class="aon-content">
+			<div id="aon-configuration-content" class="aonContent">
 
 			</div>
 			`;
-			let listIds = ['aon-configuration-general', 'aon-configuration-user', 'aon-configuration-store']
+			let listIds = ['aon-configuration-personal', 'aon-configuration-general', 'aon-configuration-user', 'aon-configuration-store']
 			listIds.forEach((id, i) => {
 					let el = document.getElementById(id);
+					if(!this.getAttribute('domain') && i != 0) {
+						el.style.display = 'none';
+					}
 					el.addEventListener('mouseover', () => {
 						el.style.backgroundColor = '#f1f1f1';
 					});
@@ -152,8 +177,8 @@ class AonConfiguration extends HTMLElement {
 		cardDiv.style.width = '500px';
 		card.addContent(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-25" id="aon-configuration-general-nif" description="NIF" value=""></aon-input-text>
-				<aon-input-text class="aon-width-75" id="aon-configuration-general-name" description="Razón Social" value=""></aon-input-text>
+				<aon-input-text class="aonWidth25" id="aon-configuration-general-nif" description="NIF" value=""></aon-input-text>
+				<aon-input-text class="aonWidth75" id="aon-configuration-general-name" description="Razón Social" value=""></aon-input-text>
 			</form>
 			<form action="#" class="aon-margin-0">
 				<aon-address class="aon-width-100" id="address" description="Dirección"></aon-address>
@@ -165,8 +190,8 @@ class AonConfiguration extends HTMLElement {
 		cardDiv2.style.width = '500px';
 		card2.addContent(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-50" id="aon-configuration-general2-phone" description="Teléfono" value=""></aon-input-text>
-				<aon-input-text class="aon-width-50" id="aon-configuration-general2-fax" description="Fax" value=""></aon-input-text>
+				<aon-input-text class="aonWidth50" id="aon-configuration-general2-phone" description="Teléfono" value=""></aon-input-text>
+				<aon-input-text class="aonWidth50" id="aon-configuration-general2-fax" description="Fax" value=""></aon-input-text>
 			</form>
 
 			<form action="#" class="aon-margin-0">
@@ -190,7 +215,7 @@ class AonConfiguration extends HTMLElement {
 	buildStore() {
 		let content = document.getElementById('aon-configuration-content');
 		content.style.display = "block";
-		content.innerHTML = '<aon-marketplace> </aon-marketplace>' ;
+		content.innerHTML = '<aon-marketplace domain="' + this.getAttribute('domain') + '"> </aon-marketplace>' ;
 	}
 
 }

@@ -148,7 +148,7 @@
 			if(options.length === 0) return document.createElement('div');
 			let ul = document.createElement('ul');
 			ul.style['max-height'] = "200px";
-			ul.className = options.length > 4 ? "mdl-menu mdl-js-menu mdl-js-ripple-effect aon-scroll" : "mdl-menu mdl-js-menu mdl-js-ripple-effect";
+			ul.className = options.length > 4 ? "mdl-menu mdl-js-menu mdl-js-ripple-effect aonScroll" : "mdl-menu mdl-js-menu mdl-js-ripple-effect";
 			ul.setAttribute('for', this.getAttribute('id') + 'Icon');
 			for(let i = 0; i < options.length; i++) {
 				let li = document.createElement('li');

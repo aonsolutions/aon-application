@@ -12,8 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @SuppressWarnings("serial")
@@ -34,29 +38,37 @@ public class CompanyServlet extends HttpServlet{
 		Boolean bool = sch == null;
 		Boolean next = false;
 		List<String> schemas = AONContext.getSchemas();
-		for(String schema : schemas) {
-			if(next) {
-				rsch = schema;
-				page = 1;
-				next = false;
-			}
-			if(bool || (sch != null && (sch.equalsIgnoreCase(schema) || sch.equalsIgnoreCase("first")))) {
-				AON_SOLUTIONS.getCompanyStream(token, schema, page, perPage)
-					//.filter(f -> f.isActive())
-					.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
-						ac -> jsArray.put(ac.toJSON()));
-				next = jsArray.length() >= 0 && jsArray.length() < perPage;
-				page = page + 1;
-				rsch = schema;
-				sch = sch.equalsIgnoreCase("first") ? "" : sch;
-			}
-		}
+		String domainName = req.getHeader("domain_name");
+		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
 		JSONObject json = new JSONObject();
-		json.put("companies", jsArray);
-		json.put("page", page);
-		json.put("per_page", perPage);
-		json.put("schema", rsch);
-		json.put("end", next);
+		if(pathInfo  != null) {
+			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+			json = getDomainApps(domain);
+		} else {
+			for(String schema : schemas) {
+				if(next) {
+					rsch = schema;
+					page = 1;
+					next = false;
+				}
+				if(bool || (sch != null && (sch.equalsIgnoreCase(schema) || sch.equalsIgnoreCase("first")))) {
+					AON_SOLUTIONS.getCompanyStream(token, schema, page, perPage)
+						//.filter(f -> f.isActive())
+						.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
+								ac -> jsArray.put(ac.toJSON()));
+					next = jsArray.length() >= 0 && jsArray.length() < perPage;
+					page = page + 1;
+					rsch = schema;
+					sch = sch.equalsIgnoreCase("first") ? "" : sch;
+				}
+			}
+		
+			json.put("companies", jsArray);
+			json.put("page", page);
+			json.put("per_page", perPage);
+			json.put("schema", rsch);
+			json.put("end", next);
+		}
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, json, new JSONObject());
 	}
@@ -64,5 +76,46 @@ public class CompanyServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("COMPANY SERVLET - POST METHOD");
+		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
+		JSONObject json = Utils.getRequestJSON(req);
+		if(pathInfo != null) {
+			if("app".equalsIgnoreCase(pathInfo[1])) {
+				json = setDomainApp(json);
+			}
+		}
+		Utils.addCorsHeader(resp);
+		Utils.giveBack(req, resp, json, new JSONObject());
 	}
+		
+	private JSONObject getDomainApps(Domain domain){
+		JSONObject json = new JSONObject();
+		AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> 
+		f.getDomainProperty().eq(domain.getId())).forEach(domainApp -> {	
+			json.put(domainApp.getApp().name().toLowerCase(), domainApp.getActive());
+		});
+		return json;
+	}
+	
+	private JSONObject setDomainApp(JSONObject json){
+		String domainName = json.getString("domain");
+		String app = json.getString("app");
+		Boolean active = json.getBoolean("active");
+		AonApp aonApp = AonApp.safeValueOf(app);
+		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+		DomainApp domainApp = AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> 
+			f.getDomainProperty().eq(domain.getId()).and(f.getAppProperty().eq(aonApp.value()))).findFirst().orElse(null);
+		if(domainApp == null) {
+			domainApp = new DomainApp()
+					.setDomain(domain.getId())
+					.setApp(aonApp)
+					.setActive(active);
+			domainApp = AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", domainApp);
+		} else {
+			domainApp.setActive(active);
+			domainApp = AON_SOLUTIONS.updateDomainApp(domain.getName(), domain.getId(), "", domainApp);
+		}
+		
+		return domainApp.toJSON();
+	}
+	
 }

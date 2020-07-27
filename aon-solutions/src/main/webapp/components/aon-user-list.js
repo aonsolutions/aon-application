@@ -1,7 +1,7 @@
 (function() {
 
 	const html = `
-	<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aon-table">
+	<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable">
 	  <thead>
 	    <tr>
 	      <th class="mdl-data-table__cell--non-numeric">Nombre</th>

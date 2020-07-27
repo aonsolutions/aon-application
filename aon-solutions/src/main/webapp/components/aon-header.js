@@ -3,9 +3,12 @@ import './aon-invoice-panel.js';
 import './aon-invoice.js';
 import './aon-user.js';
 import './aon-icon-button.js';
+import './aon-search-box.js';
 
 function aonConfiguration() {
-	rootPanel('<aon-configuration></aon-configuration>');
+	let domain = localStorage.getItem('aon_domain_name');
+	alert(domain);
+	rootPanel('<aon-configuration domain="'+ domain +'" ></aon-configuration>');
 }
 
 function aonInvoicePanel() {
@@ -20,43 +23,51 @@ class AonMenu extends HTMLElement {
 	connectedCallback () {
 		this.innerHTML = `
 
-			<div class="aon-header" >
+			<div class="aonHeader" >
 				<span>
-					<img id="aon-logo" class="aon-logo" src="../aon-solutions/assets/logo.png" onclick="load()"  width="240px" />
+					<img id="aon-logo" class="aonLogo" src="../aon-solutions/assets/logo.png" onclick="load()"  width="240px" />
 				</span>
 
-				<span id="aon-header-company-list" class="aon-right100" style="display:none;">
+				<span id="aon-header-company-list" class="aonRight100" style="display:none;">
 					<aon-icon-button id="aon-header-company-list-button" icon="business"></aon-icon-button>
 				</span>
 
-				<span id="aon-header-help" class="aon-right60" style="display:none;">
+				<span id="aon-header-search" class="aonRight100" >
+					<aon-search-box id="aon-header-search-box"></aon-search-box>
+				</span>
+
+				<span id="aon-header-help" class="aonRight60" style="display:none;">
 					<aon-icon-button id="aon-header-help-button" icon="help_outline"></aon-icon-button>
 				</span>
 
-				<span id="aon-header-apps" class="aon-right60">
+				<span id="aon-header-apps" class="aonRight60">
 					<aon-icon-button id="aon-header-apps-button" icon="apps"></aon-icon-button>
 				</span>
 
-				<span id="aon-header-user" class="aon-right20">
+				<span id="aon-header-user" class="aonRight20">
 					<aon-icon-button id="aon-header-user-button" icon="account_circle"></aon-icon-button>
 				</span>
 
-				<span id="aon-header-home" class="aon-right100" style="display:none;top:40px;">
-					<aon-icon-button id="aon-header-home-button" icon="home"></aon-icon-button>
+				<span id="aon-header-company" class="aonRight140" style="display:none;top:55px;">
+					<span id="aon-header-company-name"> </span>
 				</span>
 
-				<span id="aon-header-show-menu" class="aon-right20" style="display:none; top:40px;background-color:#f1f1f1; border-radius: 100px 0 0 100px;right: 0;padding-right: 20px;">
-					<aon-icon-button id="aon-header-show-menu-button" icon="keyboard_arrow_right"></aon-icon-button>
+				<span id="aon-header-home" class="aonRight100" style="display:none;top:40px;">
+					<aon-icon-button id="aon-header-home-button" icon="home" outlined="true"></aon-icon-button>
 				</span>
 
-				<span class="aon-right160">
+				<span id="aon-header-show-menu" class="aonRight20" style="display:none; top:40px;background-color:#f1f1f1; border-radius: 100px 0 0 100px;right: 0;padding-right: 20px;">
+					<aon-icon-button id="aon-header-show-menu-button" icon="keyboard_arrow_right" noHover="true"></aon-icon-button>
+				</span>
+
+				<span class="aonRight160">
 					<ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect" for="aon-header-user-button">
 						<li class="mdl-menu__item" onclick="aonConfiguration()">
-							<i class="material-icons mdl-list__item-icon aon-menu-icon">settings</i>
+							<i class="material-icons mdl-list__item-icon aonMenuIcon">settings</i>
 							Configuración
 						</li>
 						<li class="mdl-menu__item" onclick="closeSession()">
-							<i class="material-icons mdl-list__item-icon aon-menu-icon">input</i>
+							<i class="material-icons mdl-list__item-icon aonMenuIcon">input</i>
 							Cerrar Sesión
 						</li>
 					</ul>
@@ -75,6 +86,10 @@ class AonMenu extends HTMLElement {
 			let aonHeaderCompanyList = document.getElementById('aon-header-company-list');
 			aonHeaderCompanyList.style.display = 'none';
 
+			let aonHeaderSearch = document.getElementById('aon-header-search');
+			aonHeaderSearch.style.display = 'block';
+
+
 			let aonHeaderHelp = document.getElementById('aon-header-help');
 			aonHeaderHelp.style.display = 'none';
 
@@ -87,13 +102,27 @@ class AonMenu extends HTMLElement {
 			let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
 			aonHeaderShowMenu.style.display = 'none';
 
+			let aonHeaderCompany = document.getElementById('aon-header-company');
+			aonHeaderCompany.style.display = 'none';
+
 			let aonMenu = document.getElementById('aonMenu');
+			aonMenu.buildMenu();
 			aonMenu.setAttribute('opened', true);
 			aonMenu.toogle();
 
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
 			rootPanel('<aon-parent></aon-parent>');
+		});
+
+		let aonHeaderHomeButton = document.getElementById('aon-header-home-button');
+		aonHeaderHomeButton.addEventListener('click', () => {
+			rootPanel('<aon-desktop></aon-desktop>');
+		});
+
+		let aonHeaderHelpButton = document.getElementById('aon-header-help-button');
+		aonHeaderHelpButton.addEventListener('click', () => {
+			open('https://faqs.aonsolutions.es/');
 		});
 	}
 

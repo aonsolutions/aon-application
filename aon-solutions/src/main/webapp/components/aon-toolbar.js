@@ -40,11 +40,11 @@ import './aon-icon-button.js';
 		build() {
 			let header = document.createElement('header');
 			header.setAttribute('id', this.getAttribute('id') + 'aon-toolbar');
-			header.className = "aon-toolbar";
+			header.className = "aonToolbar";
 
 			let section = document.createElement('section');
 			section.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-section');
-			section.className = "aon-toolbar-section";
+			section.className = "aonToolbarSection";
 
 
 			let button = '<aon-icon-button id="' + this.getAttribute('id')
@@ -60,7 +60,7 @@ import './aon-icon-button.js';
 
 			let toolSection = document.createElement('section');
 			toolSection.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-tool-section');
-			toolSection.className = "aon-toolbar-section aon-toolbar-section-end";
+			toolSection.className = "aonToolbarSection aonToolbarSectionEnd";
 
 			let addbutton = '<aon-icon-button id="' + this.getAttribute('id')
 				+ 'aon-toolbar-add' + '" icon="add"> </aon-icon-button>';

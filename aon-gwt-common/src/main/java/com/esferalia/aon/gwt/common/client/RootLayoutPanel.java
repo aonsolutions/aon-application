@@ -13,11 +13,18 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public final class RootLayoutPanel extends LayoutPanel {
-
+	
+	public static native String getToken()
+	/*-{
+		return $wnd.localStorage.getItem("aon_session_id");
+	}-*/;
+	
+	Boolean newAon = getToken() != null;
+	
 	public static RootLayoutPanel get(String id) {
 		RootLayoutPanel rootLayoutPanel = new RootLayoutPanel();
 		RootPanel.get(id).add(rootLayoutPanel);
-		return rootLayoutPanel;
+		return rootLayoutPanel;	
 	}
 
 	private RootLayoutPanel() {
@@ -39,8 +46,8 @@ public final class RootLayoutPanel extends LayoutPanel {
 		Element elem = getElement();
 		Element parent = elem.getParentElement();
 		
-		int top = parent.getOffsetTop();
-		int left = parent.getOffsetLeft();
+		int top = !isNewAon() ? parent.getOffsetTop() : 0;
+		int left = !isNewAon() ? parent.getOffsetLeft() : 0;
 		
 		Style style = elem.getStyle();
 		style.setPosition(Position.ABSOLUTE);
@@ -48,6 +55,14 @@ public final class RootLayoutPanel extends LayoutPanel {
 		style.setTop(top, PX);
 		style.setRight(0, PX);
 		style.setBottom(0, PX);
+	}
+	
+	public Boolean isNewAon() {
+		return newAon;
+	}
+	
+	public void setNewAon(Boolean newAon) {
+		this.newAon = newAon;
 	}
 	
 }

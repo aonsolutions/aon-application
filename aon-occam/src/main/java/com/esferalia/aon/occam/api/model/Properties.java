@@ -272,10 +272,25 @@ public interface Properties {
 		Property<Byte> getTypeProperty();
 	}
 	
+	public interface DomainAppProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getAppProperty();
+		Property<Byte> getActiveProperty();
+	}
+	
 	public interface ScopeProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getDescriptionProperty();
+	}
+	
+	public interface UserAppRoleProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getUserIdProperty();
+		Property<Byte> getAppProperty();
+		Property<Byte> getRoleProperty();
 	}
 	
 	public interface UserScopeProperties {

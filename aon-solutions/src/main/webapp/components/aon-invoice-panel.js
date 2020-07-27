@@ -20,7 +20,7 @@ class AonInvoicePanel extends HTMLElement {
 		</style>
 
 		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-			<header class="mdl-layout__header aon-header">
+			<header class="mdl-layout__header aonHeader">
 				<div class="mdl-layout__header-row aon-padding-left20">
 					<button id="aon-invoice-menu-button" class="mdl-button mdl-js-button mdl-button--icon">
 						<i class="material-icons">menu</i>
@@ -37,20 +37,20 @@ class AonInvoicePanel extends HTMLElement {
 				<div class="page-content">
 					<!-- AON INVOICE PANEL MENU (SIDENAV) -->
 					<div id="aon-invoice-sidenav" class="sidenav">
-						<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect aon-clip">
-							<li class="mdl-menu__item aon-opacity">
+						<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect aonClip">
+							<li class="mdl-menu__item aonOpacity">
 								<i class="material-icons mdl-list__item-icon"  style="vertical-align: middle;">person</i>
-								<span class="aon-menu-item-span"> Usuarios </span>
+								<span class="aonMenuItemSpan"> Usuarios </span>
 							</li>
-							<li class="mdl-menu__item aon-opacity">
+							<li class="mdl-menu__item aonOpacity">
 								<i class="material-icons mdl-list__item-icon" style="vertical-align: middle;">business</i>
-								<span class="aon-menu-item-span"> Empresas	</span>
+								<span class="aonMenuItemSpan"> Empresas	</span>
 							</li>
 						</ul>
 					</div>
 
 					<!-- AON INVOICE PANEL CONTENT -->
-					<div id="aon-invoice-content" class"aon-content">
+					<div id="aon-invoice-content" class"aonContent">
 						<aon-invoice-list id="invoice-list" ></aon-invoice-list>
 					</div>
 

@@ -30,12 +30,12 @@
 			this.setAttribute('color', color);
 		}
 
-		get outline() {
-			return this.getAttribute('outline');
+		get outlined() {
+			return this.getAttribute('outlined');
 		}
 
-		set outline(outline) {
-			this.setAttribute('outline', outline);
+		set outlined(outlined) {
+			this.setAttribute('outlined', outlined);
 		}
 
 		get noHover() {
@@ -92,7 +92,7 @@
 		build() {
 			let button = document.createElement('button');
 			button.setAttribute('id', this.getAttribute('id') + 'IconButton');
-			button.className = "aon-icon-button";
+			button.className = "aonIconButton";
 			button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
 
 			if(this.getAttribute('disabled')){
@@ -111,17 +111,17 @@
 				});
 
 				button.addEventListener('mouseleave', () => {
-					button.style.backgroundColor = 'white';
+					button.style.backgroundColor = 'transparent';
 					button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
+				});
+
+				this.addEventListener('click', () => {
+					button.style.backgroundColor = '#ddd';
 				});
 			}
 
-			this.addEventListener('click', () => {
-				button.style.backgroundColor = '#ddd';
-			});
-
 			let icon = document.createElement('i');
-			icon.className = "material-icons";
+			icon.className = this.getAttribute('outlined') ? 'material-icons-outlined' : 'material-icons';
 			icon.innerHTML = this.getAttribute('icon');
 			button.appendChild(icon);
 			return button;

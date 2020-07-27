@@ -24,6 +24,12 @@ window.getInvoices = getInvoices;
 window.getInvoice = getInvoice;
 window.invoiceSelection = invoiceSelection;
 
+window.getDomainApps = getDomainApps;
+window.setDomainApp = setDomainApp;
+window.getUserAppRole = getUserAppRole;
+window.setUserAppRole = setUserAppRole;
+
+
 function closeSession() {
 	localStorage.removeItem('aon_session_id');
 	localStorage.removeItem('aon_domain_id');
@@ -52,7 +58,7 @@ function login() {
 	});
 }
 
-function companySelection(domainName, domainId) {
+function companySelection(company) {
 	let aonHeaderCompanyList = document.getElementById('aon-header-company-list');
 	aonHeaderCompanyList.style.display = 'block';
 
@@ -62,17 +68,27 @@ function companySelection(domainName, domainId) {
 	let aonHeaderApps = document.getElementById('aon-header-apps');
 	aonHeaderApps.style.display = 'none';
 
+	let aonHeaderSearch = document.getElementById('aon-header-search');
+	aonHeaderSearch.style.display = 'none';
+
 	let aonHeaderHome = document.getElementById('aon-header-home');
 	aonHeaderHome.style.display = 'block';
 
 	let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
 	aonHeaderShowMenu.style.display = 'block';
 
+	let aonHeaderCompany = document.getElementById('aon-header-company');
+	aonHeaderCompany.style.display = 'block';
+
+	let aonHeaderCompanyName = document.getElementById('aon-header-company-name');
+	aonHeaderCompanyName.innerHTML = company.name;
+
 	let aonMenu = document.getElementById('aonMenu');
+	aonMenu.setAttribute('administration', company.administration);
 	aonMenu.toogle();
 
-	localStorage.setItem("aon_domain_id", domainId);
-	localStorage.setItem("aon_domain_name", domainName);
+	localStorage.setItem("aon_domain_id", company.id);
+	localStorage.setItem("aon_domain_name", company.domain);
 	rootPanel('<aon-desktop></aon-desktop>');
 }
 
@@ -120,6 +136,63 @@ function getCompanies() {
    	  });
 	 	}
   });
+}
+
+function getDomainApps(domain) {
+	let d = true;
+	if(!localStorage.getItem('aon_domain_name')){
+		localStorage.setItem('aon_domain_name', domain)
+		d = false;
+	}
+
+	return new Promise(function(resolve, reject){
+			request('GET', '/ms/api/company/app', localStorage.getItem('aon_session_id'),  undefined, undefined, function (result, error) {
+				if(!d) {
+					localStorage.removeItem('aon_domain_name');
+				}
+				if(error) {
+					reject(error);
+				} else {
+					resolve(JSON.parse(result));
+				}
+			});
+	 });
+}
+
+function setDomainApp(domainApp) {
+	return new Promise(function(resolve, reject){
+			request('POST', '/ms/api/company/app', localStorage.getItem('aon_session_id'),  domainApp, undefined, function (result, error) {
+				if(error) {
+					reject(error);
+				} else {
+					resolve(JSON.parse(result));
+				}
+			});
+	 });
+}
+
+function getUserAppRole() {
+	return new Promise(function(resolve, reject){
+			request('GET', '/ms/api/user/app', localStorage.getItem('aon_session_id'),  undefined, undefined, function (result, error) {
+				if(error) {
+					reject(error);
+				} else {
+					resolve(JSON.parse(result));
+				}
+			});
+	 });
+}
+
+function setUserAppRole(userAppRole) {
+	return new Promise(function(resolve, reject){
+			request('POST', '/ms/api/user/app', localStorage.getItem('aon_session_id'),  userAppRole, undefined, function (result, error) {
+				if(error) {
+					reject(error);
+				} else {
+					resolve(JSON.parse(result));
+				}
+			});
+	 });
 }
 
 function getUsers() {

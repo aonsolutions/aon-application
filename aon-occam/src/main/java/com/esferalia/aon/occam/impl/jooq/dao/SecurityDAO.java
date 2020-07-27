@@ -21,6 +21,8 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,10 +47,12 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
@@ -57,6 +61,9 @@ import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -64,7 +71,9 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DomainAppPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserAppRolePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserWorkgroupPropertiesDAO;
@@ -78,6 +87,8 @@ public class SecurityDAO {
 	private static final UserWorkgroupPropertiesDAO USER_WORKGROUP_PROPERTIES = new UserWorkgroupPropertiesDAO();
 	private static final ScopePropertiesDAO SCOPE_PROPERTIES = new ScopePropertiesDAO();
 	private static final SignaturePropertiesDAO SIGNATURE_PROPERTIES = new SignaturePropertiesDAO();
+	private static final DomainAppPropertiesDAO DOMAIN_APP_PROPERTIES = new DomainAppPropertiesDAO();
+	private static final UserAppRolePropertiesDAO USER_APP_ROLE_PROPERTIES = new UserAppRolePropertiesDAO();
 	protected static class SignaturePropertiesDAO implements SignatureProperties {
 		protected Condition[] getConditions(SignatureFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -133,6 +144,24 @@ public class SecurityDAO {
 			.execute();
 		
 		return getAuth(ctx, auth.getEmail());
+	}
+	
+	public static DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
+		Integer id = ctx.getDslContext().insertInto(DOMAIN_APP)
+			.set(DOMAIN_APP.DOMAIN, domainApp.getDomain())
+			.set(DOMAIN_APP.APP, domainApp.getApp().value())
+			.set(DOMAIN_APP.ACTIVE, domainApp.getActive() ? (byte) 1 : (byte) 0)
+			.execute();
+		
+		return domainApp.setId(id);
+	}
+	
+	public static DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp) {
+		ctx.getDslContext().update(DOMAIN_APP)
+			.set(DOMAIN_APP.ACTIVE, domainApp.getActive() ? (byte) 1 : (byte) 0)
+			.where(DOMAIN_APP.ID.eq(domainApp.getId()))
+			.execute();
+		return domainApp;
 	}
 	
 	public static User getUser(AONContext ctx, Integer userId) {
@@ -319,6 +348,18 @@ public class SecurityDAO {
 		AonRole[] roles = new AonRole[list.size()];
 		list.toArray(roles);
 		return roles;
+	}
+	
+	public static Stream<DomainApp> getDomainAppStream(AONContext ctx, DomainAppFilter filter){
+		return ctx.getDslContext().select().from(DOMAIN_APP)
+				.where(DOMAIN_APP_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new DomainAppFiller());
+	}
+	
+	public static Stream<UserAppRole> getUserAppRoleStream(AONContext ctx, UserAppRoleFilter filter){
+		return ctx.getDslContext().select().from(USER_APP_ROLE)
+				.where(USER_APP_ROLE_PROPERTIES.getConditions(filter))
+				.fetch().stream().map(new UserAppRoleFiller());
 	}
 	
 	public static Condition getSecurityLevelCondition(AONContext ctx, Field<Byte> field) {
@@ -540,6 +581,29 @@ public class SecurityDAO {
 					.setSignature(r.getSignature())
 					.setUserId(r.getUserId())
 					;
+		}
+	}
+	
+	private static class DomainAppFiller implements Function<Record, DomainApp> {
+		@Override
+		public DomainApp apply(Record r) {
+			return new DomainApp()
+				.setId(r.getValue(DOMAIN_APP.ID))
+				.setDomain(r.getValue(DOMAIN_APP.DOMAIN))
+				.setApp(AonApp.safeValueOf(r.getValue(DOMAIN_APP.APP)))
+				.setActive(r.getValue(DOMAIN_APP.ACTIVE) == 1);
+		}
+	}
+	
+	private static class UserAppRoleFiller implements Function<Record, UserAppRole> {
+		@Override
+		public UserAppRole apply(Record r) {
+			return new UserAppRole()
+				.setId(r.getValue(USER_APP_ROLE.ID))
+				.setDomain(r.getValue(USER_APP_ROLE.DOMAIN))
+				.setUser(r.getValue(USER_APP_ROLE.USER_ID))
+				.setApp(AonApp.safeValueOf(r.getValue(USER_APP_ROLE.APP)))
+				.setRole(com.esferalia.aon.occam.api.model.aonsolutions.AonRole.safeValueOf(r.getValue(USER_APP_ROLE.ROLE)));
 		}
 	}
 	

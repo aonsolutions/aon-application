@@ -29,7 +29,7 @@
 		build() {
 			let div = document.createElement('div');
 			div.setAttribute('id', this.getAttribute('id') + '-div');
-			div.className = "demo-card-wide mdl-card mdl-shadow--2dp aon-card";
+			div.className = "demo-card-wide mdl-card mdl-shadow--2dp aonCard";
 
 			let div1 = document.createElement('div');
 			div1.className = "mdl-card__title";

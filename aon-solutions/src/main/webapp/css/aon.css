@@ -1,17 +1,38 @@
-	.aon-marketplace-title {
+	body {
+		padding: 0px !important;
+		margin: 0px !important;
+		font-family: "Roboto","Helvetica","Arial",sans-serif !important;
+    font-weight: 400 !important;
+		font-size: 14px !important;
+		line-height: normal !important;
+	}
+
+	.aonTitle {
+			font-size: 20px;
+			font-weight:400;
+			line-height: normal;
+			margin: 0;
+	}
+
+	.aonMarketplaceTitle {
 		color: #5f6368;
 		font-weight: bold;
 		padding-left: 40px;
 	}
 
-	.root-panel {
+	.aonMenu {
+		position: relative;
+		height:calc(100% - 81px);
+	}
+
+	.rootPanel {
+		position: relative;
     margin-right: 100px;
-    right: 100px;
 		height:calc(100% - 81px);
 		margin: 0;
 	}
 
-	.aon-icon-button {
+	.aonIconButton {
 		border-radius: 50%;
     font-size: 24px;
     height: 40px;
@@ -30,7 +51,7 @@
 		cursor: pointer;
 	}
 
-  .aon-card {
+  .aonCard {
     margin: 20px;
     padding-bottom:50px;
     padding-top: 20px;
@@ -42,54 +63,85 @@
     box-sizing: border-box;
   }
 
-	.aon-logo {
+	.aonLogo {
 		position: absolute;
 		margin: 10px;
 		top: 14px;
 		cursor: pointer;
 	}
 
-  .aon-width-25{
+  .aonWidth25{
       width: 24%;
       display: inline-block !important;
   }
 
-  .aon-width-50{
+  .aonWidth50{
       width: 49%;
       display: inline-block !important;
   }
 
-  .aon-width-75{
+  .aonWidth75{
       width: 73.5%;
       display: inline-block !important;
   }
 
-	.aon-right20 {
+	.aonRight0 {
+		position: absolute;
+		right:0px;
+	}
+
+	.aonRight20 {
 		position: absolute;
 		right:20px;
 	}
 
-  .aon-right60 {
+	.aonRight40 {
+		position: absolute;
+		right:40px;
+	}
+
+  .aonRight60 {
 		position: absolute;
 		right:60px;
 	}
 
-	.aon-right100 {
+	.aonRight100 {
 		position: absolute;
 		right:100px;
 	}
 
-	.aon-right160 {
+	.aonRight140 {
+		position: absolute;
+		right:140px;
+	}
+
+	.aonRight160 {
 		position: absolute;
 		right:160px;
 	}
 
-	.aon-menu-icon {
+	.aonMenuIcon {
 		position: relative;
 		top: 7px;
 	}
 
-	.aon-header {
+	.aonMenuSidenavSubAppListItem {
+		height: 30px;
+    padding: 0px 16px;
+    background-color: transparent;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 215px;
+	}
+
+	.aonMenuLink {
+		height: 30px;
+		color: #000;
+    white-space: nowrap;
+	}
+
+	.aonHeader {
 	    background-color: #fff;
 	    padding: 0!important;
 	    margin: 0!important;
@@ -98,7 +150,7 @@
 	    height: 80px;
 	}
 
-	.aon-avatar {
+	.aonAvatar {
 		color: #5f6368;
 		margin-top: 5px;
 		font-size: 24px;
@@ -108,12 +160,12 @@
 		border-radius: 50%;
 	}
 
-	.aon-li {
+	.aonLi {
 	    border-bottom: 1px solid #ddd;
 			cursor:pointer;
 	}
 
-	.aon-toolbar {
+	.aonToolbar {
     display:flex;
 		height:40px;
 		padding-left:16px;
@@ -122,7 +174,7 @@
     font-size: 16px;
 	}
 
-  .aon-toolbar-section {
+  .aonToolbarSection {
     display: inline-flex;
     flex: 1 1 auto;
     align-items: center;
@@ -130,21 +182,21 @@
     z-index: 1;
   }
 
-  .aon-toolbar-section-end {
+  .aonToolbarSectionEnd {
     justify-content: flex-end;
   }
 
-	.aon-table {
+	.aonTable {
 		width: 100%;
 		border: 0px;
 	}
 
-	.aon-table-th {
+	.aonTableTh {
 		text-align: center !important;
 	}
 
-	.aon-menu-sidenav {
-		height: 100%;
+	.aonMenuSidenav {
+		height: calc(100% - 81px);
 		width: 100px;
 		position: fixed;
 		z-index: 1;
@@ -155,11 +207,27 @@
 		overflow-x: hidden;
 	}
 
-  .aon-menu-sidenav-app {
-		width: 250px !important;
+	.aonMenuSidenavAppToolbar {
+		height: 64px;
+		color: white;
+		display: flex;
+    box-sizing: border-box;
+    padding: 0 16px;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
 	}
 
-	.aon-company-list {
+	.aonMenuSidenavSubAppList {
+		margin: 0px;
+    padding: 0px;
+    list-style: none;
+    height: calc(100% - 65px);
+    overflow: auto;
+	}
+
+	.aonCompanyList {
 		margin: 0px;
 		padding: 0px;
 		height: 100%;
@@ -178,18 +246,18 @@
 		overflow-x: hidden;
 	}
 
-	.aon-content {
+	.aonContent {
 		display: block;
 		transition: 0.5s;
 		height: calc(100% - 41px);
 		overflow-y: auto;
 	}
 
-	.aon-scroll {
+	.aonScroll {
 		overflow: scroll !important;
 	}
 
-	.aon-app-menu-sidenav-list {
+	.aonAppMenuSidenavList {
 		height: 48px;
   	line-height: 48px;
 		margin: 0;
@@ -197,11 +265,11 @@
     cursor: pointer;
 	}
 
-	.aon-vertical-middle {
+	.aonVerticalMiddle {
 		vertical-align: middle;
 	}
 
-	.aon-clip {
+	.aonClip {
 		clip: rect(0px, 250px, 112px, 0px) !important;
 		opacity: 1;
 		z-index: 1;
@@ -210,30 +278,30 @@
 		width: 100%;
 	}
 
-	.aon-opacity {
+	.aonOpacity {
 		opacity: 1 !important;
 		width: 100%;
 	}
 
-	.aon-menu-item-span {
+	.aonMenuItemSpan {
 		position: absolute;
 		margin-left: 10px;
 		margin-top: 2px;
 		font-size: 16px;
 	}
 
-  .aon-div-button {
+  .aonDivButton {
     position: absolute;
     bottom: 20px;
     right: 20px;
   }
 
-  .aon-green-button {
-    background: green !important;
-    color: white;
-  }
+	.tedi-search-box {
+	    height: 20px;
+	    border: none;
+	    -webkit-appearance: none;
+	}
 
-  .aon-red-button {
-    background: red !important;
-    color: white;
-  }
+	.tedi-search-noborder {
+	  outline: 0px;
+	}

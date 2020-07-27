@@ -6,14 +6,18 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
+import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
 import com.esferalia.aon.occam.api.model.Filter.ScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.SignatureFilter;
+import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.Signature;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -61,4 +65,13 @@ public interface ISecurity {
 	
 	public Stream<UserWorkgroup> getUserWorkgroupStream(AONContext ctx, UserWorkgroupFilter filter); 
 	
+	// DOMAIN APP
+	
+	public Stream<DomainApp> getDomainAppStream(AONContext ctx, DomainAppFilter filter);
+	public DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp);
+	public DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp);
+	
+	// USER APP ROLE
+	
+	public Stream<UserAppRole> getUserAppRoleStream(AONContext ctx, UserAppRoleFilter filter);
 }
