@@ -1,59 +1,45 @@
 'use strict';
 import AWS from 'aws-sdk';
-// import { Company, Invoice, TediImportInvoicesInfo } from './tedi-ewok/TediEwok';
-// import { TediPdfParser } from './tedi-pdf-parser/TediPdfParser';
-import MailParser from 'mailparser';
-import { Invoice, TediImportInvoicesInfo } from './tedi-ewok/TediEwok';
+import { Company, Invoice, TediImportInvoicesInfo } from './tedi-ewok/TediEwok';
+import { TediImgParser } from './tedi-img-parser/TediImgParser';
 import { TediPdfParser } from './tedi-pdf-parser/TediPdfParser';
 
-const S3 = new AWS.S3();
-
-function parse(attach: MailParser.Attachment): Promise<Invoice> {
+function parse(content: Buffer, contentType: string): Promise<Invoice> {
+  const companies: Company[] = [];
   const info: TediImportInvoicesInfo = {
-    content: attach.content,
-    contentType: attach.contentType,
+    content,
+    contentType,
+    companies,
   };
-  return TediPdfParser.parse(info);
+  // if (contentType.match(/^image/)) {
+  //   return TediImgParser.parse(info);
+  // }
+  return TediPdfParser.parse(info).catch(reason => TediImgParser.parse(info));
 }
 
-module.exports.handler = (event: any, context: any, callback: (err: AWS.AWSError | null, data?: any | null) => void) => {
+module.exports.apiGatewayHandler = (event: any, context: any, callback: (err: AWS.AWSError | null, data?: any | null) => void) => {
   // tslint:disable-next-line: no-console
-  console.log('Process email');
+  // console.log(JSON.stringify(event));
 
-  const sesNotification = event.Records[0].ses;
-  // tslint:disable-next-line: no-console
-  console.log('SES Notification:\n', JSON.stringify(sesNotification, null, 2));
+  const contentType: string = event.contentType;
+  const buffer: Buffer = Buffer.from(event.body, 'base64');
 
-  // Retrieve the email from your bucket
-  S3.getObject(
-    {
-      Bucket: 'aon-ses-inbox',
-      Key: `facturas@aon.solutions/${sesNotification.mail.messageId}`,
-    },
-    (err, data) => {
-      if (err) {
-        // tslint:disable-next-line: no-console
-        console.log(err, err.stack);
-        callback(err);
-      } else {
-        // tslint:disable-next-line: no-console
-        console.log('Raw email:\n' + data.Body);
+  parse(buffer, contentType)
+    .then(result => {
+      const response = {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': '*',
+          'Access-Control-Allow-Headers': '*',
+        },
+        body: JSON.stringify(result),
+      };
 
-        // Custom email processing goes here
-        return MailParser.simpleParser(data.Body as string | Buffer)
-          .then(message => message.attachments.map(attach => parse(attach)))
-          .then(invoices => Promise.all(invoices))
-          .then(invoices => {
-            // tslint:disable-next-line: no-console
-            invoices.forEach(invoice => console.log(JSON.stringify(invoice)));
-            callback(null, invoices);
-          })
-          .catch(exception => {
-            // tslint:disable-next-line: no-console
-            console.log(exception, exception.stack);
-            callback(exception);
-          });
-      }
-    },
-  );
+      callback(null, response);
+    })
+    .catch(error => {
+      callback(error, null);
+    });
 };

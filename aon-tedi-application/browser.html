@@ -6,8 +6,9 @@
     <link rel="icon" image="image/png" href="https://tedi.center/assets/tedi-favicon.png">
     <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <!--script src="https://www.google.com/recaptcha/api.js" async defer></script-->
-    <script src="dist/tedi.js"></script>
-    <script src="dist/vendors~pdfjsWorker.lib.js"></script>
+
+    <!--script src="dist/tedi.js"></script-->
+    <!--script src="dist/vendors~pdfjsWorker.lib.js"></script-->
 
     <script type="text/javascript">
         // Loaded via <script> tag, create shortcut to access PDF.js exports.
@@ -72,7 +73,7 @@
             $id('json-response').innerHTML = prettyPrint(jsonobj); // prettyJSON;
         }
 
-        function fileUpload() {
+        function __fileUpload() {
             let fileselect = $id('fileselect');
             let files  = fileselect.files;
             for (let index = 0; index < files.length; index++) {
@@ -80,17 +81,17 @@
                 const reader = new FileReader();
                 reader.onload = (function(f) { 
                     return function(e) { 
-                        tedi.parse(e.target.result,
-                        ( err, invoice) => {
-                            if ( err ) {
-                                alert(err)
-                            } else {
-                                load(invoice);
-                                display();
-                                loadJSON(invoice);
-                            }
-                        }
-                        );
+                        // tedi.parse(e.target.result,
+                        // ( err, invoice) => {
+                        //     if ( err ) {
+                        //         alert(err)
+                        //     } else {
+                        //         load(invoice);
+                        //         display();
+                        //         loadJSON(invoice);
+                        //     }
+                        // }
+                        // );
                         // tedi.parse(e.target.result, f.type)
                         // .then((invoice) => {
                         //     load(invoice);
@@ -141,59 +142,84 @@
             show();
         }
 
+        function fileUpload() {
+            let fileselect = $id('fileselect');
+            let files  = fileselect.files;
+            for (let index = 0; index < files.length; index++) {
+                const file = files[index];
+                const reader = new FileReader();
+                reader.onload = (function(f) { 
+                    return function(e) { 
+                        let request = new XMLHttpRequest();
+                        request.onload = function(e) {               
+                            invoice = JSON.parse(this.responseText);
+                            display();
+                            load(invoice);
+                            loadJSON(invoice);
+                        }
+                        request.open('POST', 'https://55evus1cy8.execute-api.eu-west-1.amazonaws.com/default/invoice/parse');
+                        request.setRequestHeader("Content-Type", file.type);
+                        request.send(e.target.result);
+                    }; 
+                })(file);
+                reader.readAsArrayBuffer(file);
+            }            
+        }
+
         // 
-        function __fileUpload() {
+        function formUpload() {
             let upload = $id('upload');
             let formData = new FormData(upload);
             let request = new XMLHttpRequest();
 
-            request.onload = function(e) {
-                loadJSON(this.responseText);
-                invoices = JSON.parse(this.responseText);
-                invoice = invoices[0];
+            request.onload = function(e) {               
+                invoice = JSON.parse(this.responseText);
                 load(invoice);
+                loadJSON(invoice);
             }
 
-            request.onreadystatechange = function() {
-                if (request.readyState == 4 && request.status == 200) {
+            // request.onreadystatechange = function() {
+            //     if (request.readyState == 4 && request.status == 200) {
 
-                    // 
-                    $id("viewer").style.display = "initial";
-                    $id("invoice-data").style.display = "initial";
-                    $id("json-data").style.display = "initial";
-                    $id("uploader").style.display = "none";
+            //         // 
+            //         $id("viewer").style.display = "initial";
+            //         $id("invoice-data").style.display = "initial";
+            //         $id("json-data").style.display = "initial";
+            //         $id("uploader").style.display = "none";
 
-                    // "Reboot" Button
-                    // Set Refresh button listener  || Cursor = Pointer | Enable
-                    $id("reload").style.cursor = "pointer";
-                    $id("reload").disabled = false;
+            //         // "Reboot" Button
+            //         // Set Refresh button listener  || Cursor = Pointer | Enable
+            //         $id("reload").style.cursor = "pointer";
+            //         $id("reload").disabled = false;
 
-                    $id('reload').addEventListener("click", function() {
-                        location.reload();
-                    });
+            //         $id('reload').addEventListener("click", function() {
+            //             location.reload();
+            //         });
 
-                    // Show JSON listener || Some styles 
-                    $id("print-json").addEventListener("click", function() {
+            //         // Show JSON listener || Some styles 
+            //         $id("print-json").addEventListener("click", function() {
 
-                        // Data visible 
-                        $id('json-data').style.display =
-                            "initial"; // OR initial / inherit(father properties)
+            //             // Data visible 
+            //             $id('json-data').style.display =
+            //                 "initial"; // OR initial / inherit(father properties)
 
-                        // Change Button name 
-                        if ($id('print-json').innerText == "Ver JSON") {
-                            $id('print-json').innerText = "Ocultar JSON";
-                        } else {
+            //             // Change Button name 
+            //             if ($id('print-json').innerText == "Ver JSON") {
+            //                 $id('print-json').innerText = "Ocultar JSON";
+            //             } else {
 
-                            // Hide data
-                            $id('print-json').innerText = "Ver JSON";
-                            $id('json-data').style.display = "none";
-                        }
-                    });
+            //                 // Hide data
+            //                 $id('print-json').innerText = "Ver JSON";
+            //                 $id('json-data').style.display = "none";
+            //             }
+            //         });
 
-                    show();
-                }
-            };
-            request.open('POST', 'https://europe-west1-tedi-snapshot.cloudfunctions.net/parse/invoice');
+            //         show();
+            //     }
+            // };
+            // request.open('POST', 'https://europe-west1-tedi-snapshot.cloudfunctions.net/parse/invoice');
+            request.open('POST', 'https://55evus1cy8.execute-api.eu-west-1.amazonaws.com/default/invoice/parse');
+            request.setRequestHeader("origin", 'http://127.0.0.1:80');
             request.send(formData);
         }
 

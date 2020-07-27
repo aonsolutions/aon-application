@@ -5,6 +5,7 @@ import { PDFExtractOptions, PDFExtractResult } from 'pdf.js-extract';
 import { Invoice, TediImportInvoicesInfo } from '../tedi-ewok/TediEwok';
 import { AutoML } from '../tedi-pdf-parser/invoice/AutoML';
 import { TediPdfParser } from '../tedi-pdf-parser/TediPdfParser';
+import { detectText } from './lambda/GoogleCloudVision';
 
 export class TediImgParser {
   public static parse(info: TediImportInvoicesInfo): Promise<Invoice> {
@@ -12,9 +13,10 @@ export class TediImgParser {
     const options: PDFExtractOptions = { disableCombineTextItems: true };
     const buffer: Buffer = info.content instanceof Buffer ? info.content : Buffer.from(info.content, 'base64');
 
-    return new Promise((resolve, reject) =>
-      imgExtract.resize(buffer).then(rbuffer =>
-        imgExtract.extractBuffer(rbuffer, options, (err: Error | null, result: PDFExtractResult | undefined) => {
+    return new Promise(
+      (resolve, reject) =>
+        // imgExtract.resize(buffer).then(rbuffer =>
+        imgExtract.extractBuffer(buffer, options, (err: Error | null, result: PDFExtractResult | undefined) => {
           if (err !== null) {
             reject(err);
           } else if (result === undefined) {
@@ -30,7 +32,7 @@ export class TediImgParser {
             }
           }
         }),
-      ),
+      // ),
     );
   }
 }
@@ -53,8 +55,13 @@ export class ImgExtract {
         return Promise.reject(err);
       });
   }
-
   public extractBuffer(buffer: Buffer, opts: PDFExtractOptions, callback: (err: Error | null, pdf?: PDFExtractResult) => void): void {
+    detectText(buffer)
+      .then(pdf => callback(null, pdf))
+      .catch(err => callback(err));
+  }
+
+  public __extractBuffer(buffer: Buffer, opts: PDFExtractOptions, callback: (err: Error | null, pdf?: PDFExtractResult) => void): void {
     const options: RequestOptions = {
       hostname: '55evus1cy8.execute-api.eu-west-1.amazonaws.com',
       port: 443,

@@ -10,7 +10,7 @@ export type TediAnnotateImageResponse = vision.protos.google.cloud.vision.v1.IAn
 export type TediAnnotateFileResponseV1p4beta1 = vision_v1.Schema$GoogleCloudVisionV1p4beta1AnnotateFileResponse;
 export type TediAnnotateImageResponseV1p4beta1 = vision_v1.Schema$GoogleCloudVisionV1p4beta1AnnotateImageResponse;
 
-function detectText(buffer: Buffer): Promise<PDFExtractResult> {
+export function detectText(buffer: Buffer): Promise<PDFExtractResult> {
   return detectImgText(buffer);
 }
 
@@ -72,7 +72,7 @@ function detectPDFText(content: Buffer | string, pages: number[]): Promise<TediA
   });
 }
 
-function detectTextFromFile(filename: string): Promise<PDFExtractResult> {
+export function detectTextFromFile(filename: string): Promise<PDFExtractResult> {
   return new Promise((resolve, reject) =>
     readFile(filename, {}, (err, data) => {
       if (err) {
@@ -84,7 +84,7 @@ function detectTextFromFile(filename: string): Promise<PDFExtractResult> {
   );
 }
 
-function detectPDFTextFromFile(filename: string): Promise<TediAnnotateImageResponseV1p4beta1[]> {
+export function detectPDFTextFromFile(filename: string): Promise<TediAnnotateImageResponseV1p4beta1[]> {
   return new Promise((resolve, reject) =>
     readFile(filename, {}, (err, data) => {
       if (err) {
@@ -96,7 +96,7 @@ function detectPDFTextFromFile(filename: string): Promise<TediAnnotateImageRespo
   );
 }
 
-function detectImgTextFromFile(filename: string): Promise<PDFExtractResult> {
+export function detectImgTextFromFile(filename: string): Promise<PDFExtractResult> {
   return new Promise((resolve, reject) =>
     readFile(filename, {}, (err, data) => {
       if (err) {
@@ -158,9 +158,9 @@ function imageResponse2Result(response: TediAnnotateImageResponse, result: PDFEx
   return result;
 }
 
-module.exports.detectText = detectTextFromFile;
-module.exports.detectPDFText = detectPDFTextFromFile;
-module.exports.detectImgText = detectImgTextFromFile;
+// module.exports.detectText = detectTextFromFile;
+// module.exports.detectPDFText = detectPDFTextFromFile;
+// module.exports.detectImgText = detectImgTextFromFile;
 
 module.exports.handler = (event: any, context: any, callback: (err: AWS.AWSError | null, data?: any | null) => void) => {
   // tslint:disable-next-line: no-console
