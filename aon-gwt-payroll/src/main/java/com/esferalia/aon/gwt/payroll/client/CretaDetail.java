@@ -568,7 +568,7 @@ public abstract class CretaDetail extends Composite {
 			
 			filtered.addAll(filter(visibleTrabajadoresYTramos));
 
-			//respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
+			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
 			Collection<CretaService.JsRespuesta> visibleRespuestas = 
 					filterVisible(respuestasMap.values());
 
@@ -736,14 +736,14 @@ public abstract class CretaDetail extends Composite {
 	private <T extends CretaService.JsFile> Collection<T> filterVisible(Collection<T> trabajadoresYTramos) {
 		return
 		trabajadoresYTramos.stream()
-		.filter(t -> {
-			String type = t.getType();
+		.filter(file -> {
+			String type = file.getType();
 			if ( AonStringUtils.equalsIgnoreCase("L00", type) && !isChecked(l00MenuItem))
 				return false;
 			if ( AonStringUtils.equalsIgnoreCase("L13", type) && !isChecked(l13MenuItem))
 				return false;
 			
-			int month = Integer.parseInt(t.getFrom().split("-")[1]);
+			int month = Integer.parseInt(file.getFrom().split("-")[1]);
 			
 			int nextMonth = getNextMonth().getMonth() + 1;
 			if ( month == nextMonth && !isChecked(nextMonthMenuItem))
