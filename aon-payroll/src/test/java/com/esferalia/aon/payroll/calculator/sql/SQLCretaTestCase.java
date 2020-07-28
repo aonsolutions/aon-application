@@ -2696,7 +2696,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 		
 		
-		Assert.assertEquals(4, tramos.size());
+		Assert.assertEquals(5, tramos.size());
 		
 		//Activo
 		Tramo tramo0 = tramos.get(0); 
@@ -2711,13 +2711,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		Tramo tramo2 = tramos.get(2); 
 		Assert.assertEquals("18", tramo2.getFechaDesde().getDia());
-		Assert.assertEquals("27", tramo2.getFechaHasta().getDia());
+		Assert.assertEquals("22", tramo2.getFechaHasta().getDia());
 		assertTramoITPagoDelegado(tramo2);
-
+		
 		Tramo tramo3 = tramos.get(3); 
-		Assert.assertEquals("28", tramo3.getFechaDesde().getDia());
-		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
-		assertTramoActivoNormalTiempoCompleto(tramo3);
+		Assert.assertEquals("23", tramo3.getFechaDesde().getDia());
+		Assert.assertEquals("27", tramo3.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo3);
+
+		Tramo tramo4 = tramos.get(4); 
+		Assert.assertEquals("28", tramo4.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo4.getFechaHasta().getDia());
+		assertTramoActivoNormalTiempoCompleto(tramo4);
 		
 
 	}
@@ -2756,7 +2761,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
 		
 		
-		Assert.assertEquals(3, tramos.size());
+		Assert.assertEquals(4, tramos.size());
 		
 		//Activo
 		Tramo tramo0 = tramos.get(0); 
@@ -2771,9 +2776,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 		Tramo tramo2 = tramos.get(2); 
 		Assert.assertEquals("21", tramo2.getFechaDesde().getDia());
-		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo2.getFechaHasta().getDia());
+		Assert.assertEquals("25", tramo2.getFechaHasta().getDia());
 		assertTramoITPagoDelegado(tramo2);
 
+		Tramo tramo3 = tramos.get(3); 
+		Assert.assertEquals("26", tramo3.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(endDate.getDate()), tramo3.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo3);
 		
 
 	}

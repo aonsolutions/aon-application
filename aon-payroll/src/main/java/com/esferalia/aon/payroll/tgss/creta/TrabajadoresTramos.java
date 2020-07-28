@@ -966,7 +966,6 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitIncapacidadTemporalPagoDelegado() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = itDelegate;
 				}
 
 				public void visitIncapacidadTemporalPagoDirecto() {
@@ -1064,7 +1063,6 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitIncapacidadTemporalPagoDelegado() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = itDelegate;
 				}
 
 				@Override
@@ -1118,106 +1116,6 @@ public class TrabajadoresTramos {
 				}
 			};
 			
-			SalaryVisitor itDelegate = new SalaryVisitor(){
-				
-				private void visitOthers(){
-					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = standard;
-				}
-				
-				@Override
-				public void visitFormacionNormal() {
-					visitOthers();
-				}
-				
-				@Override
-				public void visitTiempoParcialNormal() {
-					visitOthers();
-				}
-
-				@Override
-				public void visitTiempoCompletoNormal() {
-					visitOthers();
-				}
-				
-				@Override
-				public void visitRegimenArtistasNormal() {
-					visitOthers();
-				}
-
-				@Override
-				public void visitGrupoCotizacionDiario() {
-					// noop
-				}
-
-				@Override
-				public void visitGrupoCotizacionMensual() {
-				}
-
-				@Override
-				public void visitIncapacidadTemporal15PrimerosDias() {
-					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = it15PrimerosDias;
-				}
-
-				@Override
-				public void visitIncapacidadTemporalPagoDelegado() {
-					Period last = cretaPeriods.removeLast();
-					cretaPeriods.add(new Period(last.getStart(), period.getEnd()));
-				}
-
-
-				@Override
-				public void visitIncapacidadTemporalPagoDirecto() {
-					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-				}
-
-				@Override
-				public void visitIncapacidadTemporalATEPPagoDelegado() {
-					visitOthers();
-				}
-				
-				@Override
-				public void visitMaternidadPaternidadTiempoCompleto() {
-					visitOthers();
-				}
-				
-				@Override
-				public void visitMaternidadPaternidadTiempoParcial() {
-					visitOthers();
-				}
-				
-				@Override
-				public void visitExpedienteRegulacionEmpleoTotal() {
-					visitOthers();
-				}
-				
-				@Override
-				public void visitExpedienteRegulacionEmpleoParcial() {
-					visitOthers();
-				}
-
-				@Override
-				public void visitIncapacidadTemporalPagoDelegadoFormacion() {
-					visitOthers();
-				}
-
-				@Override
-				public void visitExpedienteRegulacionEmpleoParcialFormacion() {
-					visitOthers();
-				}
-
-				@Override
-				public void visitMaternidadPaternidadTiempoParcialFormacion() {
-					visitOthers();
-				}
-
-				@Override
-				public void visitIncapacidadTemporalATEPPagoDelegadoFormacion() {
-					visitOthers();
-				}
-			};
-
 			SalaryVisitor _fullMaternity = new SalaryVisitor(){
 				
 				private void visitOthers(){
@@ -1263,7 +1161,7 @@ public class TrabajadoresTramos {
 				@Override
 				public void visitIncapacidadTemporalPagoDelegado() {
 					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
-					state = itDelegate;
+//					state = itDelegate;
 				}
 
 				@Override
