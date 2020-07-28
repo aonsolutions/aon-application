@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.security.UserAppRoleCreation;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2020Fix;
 
 public class Up2Date {
 
@@ -129,6 +130,7 @@ public class Up2Date {
 //    		DomainAppCreation.DOMAIN_APP_CREATION,
     		UserAppRoleCreation.USER_APP_ROLE_CREATION,
 //    		RealDecreeLaw182020UpdateIV.REALDECREELAW182020UPDATEIV
+    		TrainningBases2020Fix.TRAINNINGBASES2020FIX
     };
 
 
