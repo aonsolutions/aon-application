@@ -8,7 +8,7 @@
     "copy-resources": "grunt copy",
     "build": "rimraf lib/ && tsc && npm run copy-resources",
     "test-mocha": "nyc mocha --opts ./test/mocha.opts",
-    "test-cov": "nyc node_modules/mocha/bin/_mocha --opts ./test/mocha.opts",
+    "test-cov": "GOOGLE_APPLICATION_CREDENTIALS='./test/service-account-key.json' nyc node_modules/mocha/bin/_mocha --opts ./test/mocha.opts",
     "_test-cov": "$env:GOOGLE_APPLICATION_CREDENTIALS='./test/service-account-key.json' nyc node_modules/mocha/bin/_mocha --opts ./test/mocha.opts",
     "test": "npm run test-cov && grunt clean",
     "prepare": "npm run format && npm run lint && npm run build && npm run test",

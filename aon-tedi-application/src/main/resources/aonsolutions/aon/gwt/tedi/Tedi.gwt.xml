@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='aon_gwt_tedi' >
+	<inherits name="com.google.gwt.core.Core"/>
+	
+	
+	
+
+	
+	<!--  script src="dist/lib.js"/>
+	<script src="dist/vendors~pdfjsWorker.tedi.js"/-->
+
+	<source path="client"/>
+
+</module>
