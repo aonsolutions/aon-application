@@ -29,6 +29,7 @@ window.setDomainApp = setDomainApp;
 window.getUserAppRole = getUserAppRole;
 window.setUserAppRole = setUserAppRole;
 
+window.getManifest = getManifest;
 
 function closeSession() {
 	localStorage.removeItem('aon_session_id');
@@ -58,6 +59,14 @@ function login() {
 	});
 }
 
+function getManifest() {
+	return new Promise(function(resolve, reject){
+		request('GET', '/ms/api/manifest', undefined, undefined, undefined, function(result, error) {
+			resolve(result);
+		});
+	});
+}
+
 function companySelection(company) {
 	let aonHeaderCompanyList = document.getElementById('aon-header-company-list');
 	aonHeaderCompanyList.style.display = 'block';
@@ -83,13 +92,25 @@ function companySelection(company) {
 	let aonHeaderCompanyName = document.getElementById('aon-header-company-name');
 	aonHeaderCompanyName.innerHTML = company.name;
 
-	let aonMenu = document.getElementById('aonMenu');
-	aonMenu.setAttribute('administration', company.administration);
-	aonMenu.toogle();
-
 	localStorage.setItem("aon_domain_id", company.id);
 	localStorage.setItem("aon_domain_name", company.domain);
-	rootPanel('<aon-desktop></aon-desktop>');
+
+	getUserAppRole().then(user => {
+		let aonMenu = document.getElementById('aonMenu');
+		aonMenu.setAttribute('company', JSON.stringify(company));
+		aonMenu.setAttribute('user', JSON.stringify(user));
+		aonMenu.buildMenu();
+		aonMenu.toogle();
+
+		let aonHeader = document.getElementById('aonHeader');
+		aonHeader.setAttribute('company', JSON.stringify(company));
+		aonHeader.setAttribute('user', JSON.stringify(user));
+
+		rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+		let aonDesktop = document.getElementById('aonDesktop');
+		aonDesktop.setAttribute('company', JSON.stringify(company));
+		aonDesktop.setAttribute('user', JSON.stringify(user));
+	});
 }
 
 function getCompanies() {

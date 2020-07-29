@@ -5,17 +5,26 @@ import './aon-user.js';
 import './aon-icon-button.js';
 import './aon-search-box.js';
 
-function aonConfiguration() {
-	let domain = localStorage.getItem('aon_domain_name');
-	alert(domain);
-	rootPanel('<aon-configuration domain="'+ domain +'" ></aon-configuration>');
-}
 
-function aonInvoicePanel() {
-	rootPanel('<aon-invoice-panel></aon-invoice-panel>');
-}
 
-class AonMenu extends HTMLElement {
+class AonHeader extends HTMLElement {
+
+	get id() {
+		return this.getAttribute('id');
+	}
+
+	set id(id) {
+		this.setAttribute('id', id);
+	}
+
+	get company() {
+		return this.getAttribute('company');
+	}
+
+	set company(company) {
+		this.setAttribute('company', company);
+	}
+
 	constructor () {
 		super();
 	}
@@ -25,7 +34,7 @@ class AonMenu extends HTMLElement {
 
 			<div class="aonHeader" >
 				<span>
-					<img id="aon-logo" class="aonLogo" src="../aon-solutions/assets/logo.png" onclick="load()"  width="240px" />
+					<img id="aonLogo" class="aonLogo" src="../aon-solutions/assets/logo.png" width="240px" />
 				</span>
 
 				<span id="aon-header-company-list" class="aonRight100" style="display:none;">
@@ -62,11 +71,11 @@ class AonMenu extends HTMLElement {
 
 				<span class="aonRight160">
 					<ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect" for="aon-header-user-button">
-						<li class="mdl-menu__item" onclick="aonConfiguration()">
+						<li id="aonHeaderConfiguration" class="mdl-menu__item">
 							<i class="material-icons mdl-list__item-icon aonMenuIcon">settings</i>
 							Configuración
 						</li>
-						<li class="mdl-menu__item" onclick="closeSession()">
+						<li id="aonHeaderCloseSession" class="mdl-menu__item" onclick="closeSession()">
 							<i class="material-icons mdl-list__item-icon aonMenuIcon">input</i>
 							Cerrar Sesión
 						</li>
@@ -89,7 +98,6 @@ class AonMenu extends HTMLElement {
 			let aonHeaderSearch = document.getElementById('aon-header-search');
 			aonHeaderSearch.style.display = 'block';
 
-
 			let aonHeaderHelp = document.getElementById('aon-header-help');
 			aonHeaderHelp.style.display = 'none';
 
@@ -108,7 +116,12 @@ class AonMenu extends HTMLElement {
 			let aonMenu = document.getElementById('aonMenu');
 			aonMenu.buildMenu();
 			aonMenu.setAttribute('opened', true);
+			aonMenu.removeAttribute('company');
+			aonMenu.removeAttribute('user');
 			aonMenu.toogle();
+
+			this.removeAttribute('company');
+			this.removeAttribute('user');
 
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
@@ -124,10 +137,15 @@ class AonMenu extends HTMLElement {
 		aonHeaderHelpButton.addEventListener('click', () => {
 			open('https://faqs.aonsolutions.es/');
 		});
+
+		let aonHeaderConfiguration = document.getElementById('aonHeaderConfiguration');
+		aonHeaderConfiguration.addEventListener('click', () => {
+			this.aonConfiguration();
+		});
 	}
 
 	buildLogo() {
-		let aonLogo = document.getElementById('aon-logo');
+		let aonLogo = document.getElementById('aonLogo');
 		if(window.location.href.includes('ayudat')){
 			aonLogo.src = '../aon-solutions/assets/ayudat-logo.png';
 			aonLogo.style.top = '0px';
@@ -138,9 +156,26 @@ class AonMenu extends HTMLElement {
 		} else {
 			aonLogo.src = '../aon-solutions/assets/logo.png';
 		}
+		aonLogo.addEventListener('click', () => {
+			if(localStorage.getItem('aon_domain_id')){
+				rootPanel('<aon-desktop></aon-desktop>');
+			} else {
+				rootPanel('<aon-parent></aon-parent>');
+			}
+		})
+
+	}
+
+	aonConfiguration() {
+		rootPanel('<aon-configuration id="aonConfiguration"></aon-configuration>');
+		let aonConfiguration = document.getElementById('aonConfiguration');
+		if(this.getAttribute('company')){
+			aonConfiguration.setAttribute('company', this.getAttribute('company'));
+		}
+		if(this.getAttribute('user')){
+			aonConfiguration.setAttribute('user', this.getAttribute('user'));
+		}
 	}
 }
 
-window.customElements.define('aon-header', AonMenu);
-window.aonConfiguration = aonConfiguration;
-window.aonInvoicePanel = aonInvoicePanel;
+window.customElements.define('aon-header', AonHeader);

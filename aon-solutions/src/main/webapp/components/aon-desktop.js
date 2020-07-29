@@ -92,6 +92,31 @@
 	}
 
 class AonDesktop extends HTMLElement {
+
+	get id() {
+		return this.getAttribute('id');
+	}
+
+	set id(id) {
+		this.setAttribute('id', id);
+	}
+
+	get company() {
+		return thiS.getAttribute('company');
+	}
+
+	set company(company) {
+		this.setAttribute('company', company);
+	}
+
+	get user() {
+		return this.getAttribute('user');
+	}
+
+	set user(user) {
+		this.setAttribute('user', user);
+	}
+
 	constructor () {
 		super();
 	}

@@ -31,16 +31,20 @@ class AonMenu extends HTMLElement {
 		this.setAttribute('app', app);
 	}
 
-	get administration() {
-		return this.getAttribute('administration');
+	get company() {
+		return this.getAttribute('company');
 	}
 
-	set administration(administration) {
-		this.setAttribute('administration', administration);
+	set company(company) {
+		this.setAttribute('company', company);
 	}
 
-	constructor () {
-		super();
+	get user() {
+		return this.getAttribute('user');
+	}
+
+	set user(user) {
+		this.setAttribute('user', user);
 	}
 
 	connectedCallback () {
@@ -50,7 +54,7 @@ class AonMenu extends HTMLElement {
 
 			</div>
 			`;
-			this.buildMenu();
+		this.buildMenu();
   }
 
 	toogle() {
@@ -115,7 +119,42 @@ class AonMenu extends HTMLElement {
 		}
 	}
 
+	getApp(app) {
+		switch(app.toLowerCase()){
+    	case Apps.INVOICE.app:
+				return Apps.INVOICE;
+    	case Apps.DOCUMENTAL.app:
+				return Apps.DOCUMENTAL;
+			case Apps.HELPDESK.app:
+				return Apps.HELPDESK;
+    	case Apps.ACCOUNTING.app:
+				return Apps.ACCOUNTING;
+			case Apps.FISCAL.app:
+				return Apps.FISCAL;
+			case Apps.PAYROLL.app:
+				return Apps.PAYROLL;
+			case Apps.OCR.app:
+				return Apps.OCR;
+			case Apps.AIO.app:
+				return Apps.AIO;
+			case Apps.SELFCONTA.app:
+				return Apps.SELFCONTA;
+			case Apps.SALTRA.app:
+				return Apps.SALTRA;
+			case Apps.BIDOQ.app:
+				return Apps.BIDOQ;
+			case Apps.ALMA.app:
+				return Apps.ALMA;
+			case Apps.LEARNING.app:
+				return Apps.LEARNING;
+		}
+	}
+
 	buildMenu() {
+		let company;
+		if(this.getAttribute('company')){
+			company = JSON.parse(this.getAttribute('company'));
+		}
 		let rootPanel = document.getElementById('rootPanel');
 		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
 
@@ -131,21 +170,12 @@ class AonMenu extends HTMLElement {
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
 		ul.style.listStyle = 'none';
-
-		ul.appendChild(this.buildApp(Apps.INVOICE));
-		ul.appendChild(this.buildApp(Apps.DOCUMENTAL));
-		ul.appendChild(this.buildApp(Apps.HELPDESK));
-		ul.appendChild(this.buildApp(Apps.ACCOUNTING));
-		ul.appendChild(this.buildApp(Apps.FISCAL));
-		ul.appendChild(this.buildApp(Apps.PAYROLL));
-		// ul.appendChild(this.buildApp(Apps.OCR));
-		ul.appendChild(this.buildApp(Apps.AIO));
-		//
-		// ul.appendChild(this.buildApp(Apps.SELFCONTA));
-		// ul.appendChild(this.buildApp(Apps.SALTRA));
-		// ul.appendChild(this.buildApp(Apps.BIDOQ));
-		// ul.appendChild(this.buildApp(Apps.ALMA));
-		// ul.appendChild(this.buildApp(Apps.LEARNING));
+		if(localStorage.getItem('aon_domain_id') && this.getAttribute('user')){
+			let user = JSON.parse(this.getAttribute('user'));
+			for (let key in user.apps){
+				ul.appendChild(this.buildApp(this.getApp(key)));
+			}
+		}
 		aonMenuSidenav.innerHTML = '';
 		aonMenuSidenav.appendChild(ul);
 	}
@@ -278,17 +308,21 @@ class AonMenu extends HTMLElement {
 	}
 
 	getAppToolbarBackgroundColor(app) {
+		let company;
+		if(this.getAttribute('company')){
+			company = JSON.parse(this.getAttribute('company'));
+		}
 		switch(app){
 			case Apps.ACCOUNTING.app:
 				return '#D8B03D';
 			case Apps.FISCAL.app:
-				if(this.getAttribute('administration') && 'ALAVA' === this.getAttribute('administration')){
+				if(company && company.administration && 'ALAVA' === company.administration){
 					return '#a30c51';
-				} else if(this.getAttribute('administration') && 'BIZKAIA' === this.getAttribute('administration')){
+				} else if(company && company.administration && 'BIZKAIA' === company.administration){
 					return '#d70004';
-				} else if(this.getAttribute('administration') && 'GIPUZKOA' === this.getAttribute('administration')){
+				} else if(company && company.administration && 'GIPUZKOA' === company.administration){
 					return '#a1c031';
-				} else if(this.getAttribute('administration') && 'NAVARRA' === this.getAttribute('administration')){
+				} else if(company && company.administration && 'NAVARRA' === company.administration){
 					return '#da002a';
 				} else return '#3a85c3';
 			case Apps.PAYROLL.app:

@@ -9,7 +9,7 @@ class AonHome extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-header></aon-header>
+			<aon-header id="aonHeader"></aon-header>
 			<aon-menu id="aonMenu" class="aonMenu"></aon-menu>
 			<div id="rootPanel" class="rootPanel"></div>
 		`;

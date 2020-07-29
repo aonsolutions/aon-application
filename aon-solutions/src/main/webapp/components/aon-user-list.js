@@ -1,3 +1,5 @@
+import './aon-user.js'
+
 (function() {
 
 	const html = `
@@ -18,51 +20,22 @@
 	`;
 
 class AonUserList extends HTMLElement {
-
-	_users;
-
-	static get observedAttributes() {
-		return ['users'];
-	}
-
-	get users() {
-		return JSON.parse(this.getAttribute('users'));
-	}
-
-	set users(value) {
-		 this.setAttribute('users', JSON.stringify(value));
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if('users' === name) {
-				let tbody = document.getElementById('user-tbody');
-				this._users = JSON.parse(newValue);
-				tbody.innerHTML = '';
-				this.build();
-		}
-	}
-
 	constructor () {
 		super();
-
-		// if(this.hasAttribute('users')) {
-		// 	this._users =  JSON.parse(this.getAttribute('users'));
-		// }
+		this.innerHTML = html;
+		getUsers().then(users => {
+			this.build(users);
+		});
 	}
 
 	connectedCallback () {
-		this.innerHTML = html;
-		getUsers().then(users => {
-			console.log(users);
-			this._users = users;
-			this.build();
-		});
+
  	}
 
- 	build() {
+ 	build(users) {
 		let tbody = document.getElementById('user-tbody');
-		for(let i = 0; i < this._users.length; i++) {
-			let user = this._users[i];
+		for(let i = 0; i < users.length; i++) {
+			let user = users[i];
 			var event = new CustomEvent('select', { 'detail': user });
 			let tr = document.createElement('tr');
 			tr.style.cursor = 'pointer';
@@ -89,7 +62,7 @@ class AonUserList extends HTMLElement {
 			// TODO:
 			let td5 = document.createElement('td');
 			td5.className = 'mdl-data-table__cell--non-numeric';
-			td5.innerHTML = 'INFO';
+			td5.innerHTML = '<aon-icon-button id="aonUserListSecurityButton-'+ user.id +'" icon="security"></aon-icon-button>';
 			td5.addEventListener('click', () => this.dispatchEvent(event));
 
 			tr.appendChild(td1);
@@ -100,6 +73,19 @@ class AonUserList extends HTMLElement {
 
 
 			tbody.appendChild(tr);
+
+			let aonUserListSecurityButton = document.getElementById('aonUserListSecurityButton-' + user.id);
+			aonUserListSecurityButton.addEventListener('click', () => {
+				let content = document.getElementById('aon-configuration-content');
+				content.innerHTML = '<aon-user id="aonUser-' + user.id + '" ><aon-user>';
+				let aonUser = document.getElementById('aonUser-' + user.id);
+				aonUser.style.display = "flex";
+				aonUser.style.width = "100%";
+				aonUser.setAttribute('user', JSON.stringify(user));
+				getDomainApps().then(apps => {
+					aonUser.setAttribute('apps', JSON.stringify(apps));
+				});
+			})
 		}
 
 	}

@@ -6,18 +6,6 @@ import './aon-inputText.js';
 import './aon-marketplace.js';
 import './aon-user-list.js';
 
-// function getUsers(){
-// 	request('GET', '/ms/user', localStorage.getItem('aon_session_id'), undefined, undefined, function (users) {
-// 		let header = [
-// 			{title: 'Nombre', attribute: 'name', func: (user) => createUser(user)},
-// 			{title: 'Usuario', attribute: 'login', func: (user) => createUser(user)}
-// 		];
-// 		let table = createTable(header, JSON.parse(users));
-// 		let content = document.getElementById("aon-configuration-content");
-// 		content.appendChild(table);
-// 	});
-// }
-
 function createUser(user){
 	let str = JSON.stringify(user);
 	let content = document.getElementById("aon-configuration-content");
@@ -80,6 +68,10 @@ function closeNav() {
 
 class AonConfiguration extends HTMLElement {
 
+	static get observedAttributes() {
+		return ['company', 'user'];
+	}
+
 	get id() {
 		return this.getAttribute('id');
 	}
@@ -88,13 +80,28 @@ class AonConfiguration extends HTMLElement {
 		this.setAttribute('id', id);
 	}
 
-	get domain() {
-		return this.getAttribute('domain');
+	get company() {
+		return this.getAttribute('company');
 	}
 
-	set domain(domain) {
-		this.setAttribute('domain', domain);
+	set company(company) {
+		this.setAttribute('company', company);
 	}
+
+	get user() {
+		return this.getAttribute('user');
+	}
+
+	set user(user) {
+		this.setAttribute('user', user);
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if('company' === name || 'user' === name){
+			this.actualize();
+		}
+	}
+
 
 	constructor () {
 		super();
@@ -121,7 +128,12 @@ class AonConfiguration extends HTMLElement {
 
 					<li id="aon-configuration-user" class="aonAppMenuSidenavList aonOpacity">
 						<i class="material-icons aonVerticalMiddle">people</i>
-						<span class="aonMenuItemSpan"> Usuarios </span>
+						<span class="aonMenuItemSpan"> Gestión de Usuarios </span>
+					</li>
+
+					<li id="aon-configuration-company" class="aonAppMenuSidenavList aonOpacity">
+						<i class="material-icons aonVerticalMiddle">business</i>
+						<span class="aonMenuItemSpan"> Gestión de Empresas </span>
 					</li>
 
 					<li id="aon-configuration-store" class="aonAppMenuSidenavList aonOpacity" >
@@ -136,24 +148,53 @@ class AonConfiguration extends HTMLElement {
 
 			</div>
 			`;
-			let listIds = ['aon-configuration-personal', 'aon-configuration-general', 'aon-configuration-user', 'aon-configuration-store']
-			listIds.forEach((id, i) => {
-					let el = document.getElementById(id);
-					if(!this.getAttribute('domain') && i != 0) {
-						el.style.display = 'none';
-					}
-					el.addEventListener('mouseover', () => {
-						el.style.backgroundColor = '#f1f1f1';
-					});
-					el.addEventListener('mouseleave', () => {
-						el.style.backgroundColor = 'white';
-					});
-					el.addEventListener('click', () => {
-						el.style.backgroundColor = '#ddd';
-						this.buildContent(id);
-					});
-			});
+			this.build();
   }
+
+	build() {
+		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let listIds = ['aon-configuration-personal', 'aon-configuration-general', 'aon-configuration-user', 'aon-configuration-company', 'aon-configuration-store']
+		listIds.forEach((id, i) => {
+				let el = document.getElementById(id);
+				if((!company || !user || (user && !user.admin)) && i != 0) {
+					el.style.display = 'none';
+				} else if(this.getAttribute('company') && i === 3) {
+					let company = JSON.parse(this.getAttribute('company'));
+					if(!company.parent) {
+						el.style.display = 'none';
+					} else el.style.display = 'list-item';
+				} else el.style.display = 'list-item';
+
+				el.addEventListener('mouseover', () => {
+					el.style.backgroundColor = '#f1f1f1';
+				});
+				el.addEventListener('mouseleave', () => {
+					el.style.backgroundColor = 'white';
+				});
+				el.addEventListener('click', () => {
+					el.style.backgroundColor = '#ddd';
+					this.buildContent(id);
+				});
+		});
+	}
+
+	actualize() {
+		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let listIds = ['aon-configuration-personal', 'aon-configuration-general', 'aon-configuration-user', 'aon-configuration-company', 'aon-configuration-store']
+		listIds.forEach((id, i) => {
+				let el = document.getElementById(id);
+				if((!company || !user || (user && !user.admin)) && i != 0) {
+					el.style.display = 'none';
+				} else if(this.getAttribute('company') && i === 3) {
+					let company = JSON.parse(this.getAttribute('company'));
+					if(!company.parent) {
+						el.style.display = 'none';
+					} else el.style.display = 'list-item';
+				} else el.style.display = 'list-item';
+		});
+	}
 
 	buildContent(id) {
 		if('aon-configuration-general' === id ) {
@@ -204,6 +245,8 @@ class AonConfiguration extends HTMLElement {
 
 			LOGO
 		`);
+
+		componentHandler.upgradeAllRegistered();
 	}
 
 	buildUser() {
@@ -215,7 +258,11 @@ class AonConfiguration extends HTMLElement {
 	buildStore() {
 		let content = document.getElementById('aon-configuration-content');
 		content.style.display = "block";
-		content.innerHTML = '<aon-marketplace domain="' + this.getAttribute('domain') + '"> </aon-marketplace>' ;
+		content.innerHTML = '<aon-marketplace id="aonMarketplace" > </aon-marketplace>';
+		if(this.getAttribute('company')){
+			let aonMarketplace = document.getElementById('aonMarketplace');
+			aonMarketplace.setAttribute('company', this.getAttribute('company'));
+		}
 	}
 
 }

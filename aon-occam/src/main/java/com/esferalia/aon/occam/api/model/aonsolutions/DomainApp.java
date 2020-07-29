@@ -53,7 +53,6 @@ public class DomainApp {
 		JSONObject json = new JSONObject();
 		json.put("id", getId());
 		json.put("domain", getDomain());
-		json.put("domain", getDomain());
 		json.put("app", getApp().name());
 		json.put("active", getActive());
 		return json;

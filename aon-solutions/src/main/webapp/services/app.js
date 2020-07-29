@@ -429,3 +429,5 @@ export const AeatFiscalMenu =
   }];
 
 export default Apps;
+// String SQL1 = "alter table `domain_app` drop index IDX_UNQ_DOMAIN_APP;";
+// String SQL2 = "alter table `user_app_role` drop index IDX_UNQ_USER_APP_ROLE;";

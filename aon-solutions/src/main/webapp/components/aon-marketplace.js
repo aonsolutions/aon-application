@@ -2,6 +2,10 @@ import {Apps} from  '../services/app.js';
 
 class AonMarketplace extends HTMLElement {
 
+	static get observedAttributes() {
+		return ['company'];
+	}
+
 	get id() {
 		return this.getAttribute('id');
 	}
@@ -10,12 +14,24 @@ class AonMarketplace extends HTMLElement {
 		this.setAttribute('id', id);
 	}
 
-	get domain() {
-		return this.getAttribute('domain');
+	get company() {
+		return this.getAttribute('company');
 	}
 
-	set domain(domain) {
-		this.setAttribute('domain', domain);
+	set company(company) {
+		this.setAttribute('company', company);
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if('company' === name){
+			let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+			if(company) {
+				getDomainApps(company.domain).then(r => {
+					this.build(r);
+					componentHandler.upgradeAllRegistered();
+				});
+			}
+		}
 	}
 
 	constructor () {
@@ -23,15 +39,18 @@ class AonMarketplace extends HTMLElement {
 	}
 
 	connectedCallback () {
-		getDomainApps(this.getAttribute('domain')).then(r => {
-			this.build(r);
-			componentHandler.upgradeAllRegistered();
-		});
+		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+		if(company) {
+			getDomainApps(company.domain).then(r => {
+				this.build(r);
+				componentHandler.upgradeAllRegistered();
+			});
+		}
   }
 
 	build(r) {
 			let ul = document.createElement('ul');
-			for (var key in Apps){
+			for (let key in Apps){
 				let li = document.createElement('li');
 				li.style.display = 'inline-block';
 
@@ -73,8 +92,9 @@ class AonMarketplace extends HTMLElement {
 				input.checked = r[Apps[key].app] ? r[Apps[key].app] : false;
 			 	let a = Apps[key].app;
 				input.addEventListener('change', () => {
+					let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 					setDomainApp({
-						domain: this.getAttribute('domain'),
+						domain: company.domain,
 						app: a,
 						active: input.checked
 					});

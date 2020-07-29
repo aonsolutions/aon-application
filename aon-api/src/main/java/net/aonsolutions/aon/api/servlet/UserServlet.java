@@ -35,11 +35,10 @@ public class UserServlet extends HttpServlet{
 		LOGGER.info("AON USER SERVLET - GET METHOD");
 		String token = req.getHeader("session_id");
 
-		Boolean next = false;
 		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
 		
 		String domainName = req.getHeader("domain_name");
-		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id")) != null 
+		Integer domainId = !"null".equalsIgnoreCase(req.getHeader("domain_id")) && AonNumberUtils.toInteger(req.getHeader("domain_id")) != null 
 				? AonNumberUtils.toInteger(req.getHeader("domain_id")) : 0;
 		Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		
@@ -51,7 +50,8 @@ public class UserServlet extends HttpServlet{
 			JSONArray jsArray = new JSONArray();
 			AON.getUserStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))
 			.forEach(r -> {
-				jsArray.put(userToJSON(r));
+				JSONObject json = getUserApps(domain, r);
+				jsArray.put(userToJSON(r, json));
 			});
 			Utils.addCorsHeader(resp);
 			Utils.giveBack(req, resp, jsArray, new JSONObject());
@@ -62,15 +62,22 @@ public class UserServlet extends HttpServlet{
 	private JSONObject getDomainUser(Domain domain, String token) {
 		AonToken aonToken = SECURITY.getAonToken(token);
 		User user = AON.getUser(domain.getName(), domain.getId(), "", f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
+		return getUserApps(domain, user);
+	}
+	
+	private JSONObject getUserApps(Domain domain, User user) {
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(user.getId())).collect(Collectors.toCollection(LinkedList::new));
 		JSONObject userAppRoles = new JSONObject();
+		Boolean admin = true; //false;
 		if(roles.stream().filter(f -> f.getApp() == null && AonRole.ADMIN.equals(f.getRole())).count() > 0) {
+			admin = true;
 			AonApp.aonValues().forEach(app -> userAppRoles.put(app.name(), AonRole.ADMIN));
 		} else {
 			roles.stream().forEach(uar -> userAppRoles.put(uar.getApp().name(), uar.getRole()));
 		}
 		JSONObject json = new JSONObject();
 		json.put("id", user.getId());
+		json.put("admin", admin);
 		json.put("apps", userAppRoles);
 		return json;
 	}
@@ -80,8 +87,7 @@ public class UserServlet extends HttpServlet{
 		LOGGER.info("USER SERVLET - POST METHOD");
 	}
 	
-	private JSONObject userToJSON(User user) {
-		JSONObject json = new JSONObject();
+	private JSONObject userToJSON(User user, JSONObject json) {
 		json.put("id", user.getId());
 		json.put("name", user.getName());
 		json.put("surname", "");
