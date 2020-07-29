@@ -47,6 +47,7 @@ public class Model3902018 extends DockLayoutPanel  {
 	private static final Integer DEFAULT_YEAR = 2017;
 	private static final  String MOD390_2018_PRINT = "/aon_gwt_fiscal/Model3902018Print";
 	private static final  String MOD390_2018_FILE = "/aon_gwt_fiscal/Model3902018File";
+	private static final  String MOD390_2018_DRAFT = "/aon_gwt_fiscal/Model3902018Draft";
 			
 	private Mod3902018ServiceAsync MOD390_SERVICE;
 	
@@ -349,6 +350,20 @@ public class Model3902018 extends DockLayoutPanel  {
 			}
 		});
 		buttonContainer.add(markAsPendingButton);
+		
+		Button draftButton = new Button();
+		draftButton.setText(AON.MSG.draft());
+		draftButton.setTitle(draftButton.getText());
+		draftButton.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
+		draftButton.addStyleName(AON.AON_CSS.aonIconExcel());
+		draftButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+					submitForm(MOD390_2018_DRAFT,m390.getId());				
+			}
+		});
+		buttonContainer.add(draftButton);
 		
 		toolbarPanel.add(toolbar);
 				

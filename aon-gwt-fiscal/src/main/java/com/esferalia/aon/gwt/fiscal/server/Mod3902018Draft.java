@@ -1,0 +1,67 @@
+package com.esferalia.aon.gwt.fiscal.server;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.server.io.AonIOUtils;
+
+@WebServlet(name = "Mod3902018 Draft", urlPatterns = { "/aon_gwt_fiscal/Model3902018Draft" })
+public class Mod3902018Draft extends HttpServlet {
+
+	private static final long serialVersionUID = -8218397890165226115L;
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+
+		try {
+			int id = Integer.parseInt(req.getParameter("mod390"));
+			String domainName = req.getParameter("domainName");
+			String user = req.getParameter("user");
+			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			Mod3902018 mod390 = FISCAL.getMod3902018(domainName, domainId, user,id);
+
+			Mod3902018ExcelAction action = new Mod3902018ExcelAction(mod390);
+			action.initialize(FiscalModelUtils.getModelName(mod390));
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			
+			action.accept(mod390);				
+			
+			action.finalize(output);
+			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
+			
+			String s = mod390.getName();
+			StringBuilder sb = new StringBuilder();
+			if (!Character.isJavaIdentifierStart(s.charAt(0))) {
+				sb.append("_");
+			}
+			for (char c : s.toCharArray()) {
+				if (Character.isJavaIdentifierPart(c)) {
+					sb.append(c);
+				}
+			}
+
+			String fileName = "Mod390" + "_" + mod390.getYear() + "_" + sb.toString();			
+			
+			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
+			resp.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
+			AonIOUtils.copy(in, resp.getOutputStream());
+			resp.flushBuffer();
+
+		} catch (Throwable e) {
+			throw new ServletException(e);
+		}
+
+	}
+}
