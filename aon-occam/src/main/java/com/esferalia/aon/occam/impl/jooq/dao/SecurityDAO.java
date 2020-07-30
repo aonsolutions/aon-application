@@ -164,6 +164,33 @@ public class SecurityDAO {
 		return domainApp;
 	}
 	
+	public static UserAppRole insertUserAppRole(AONContext ctx, UserAppRole userAppRole) {
+		Integer id = ctx.getDslContext().insertInto(USER_APP_ROLE)
+			.set(USER_APP_ROLE.DOMAIN, userAppRole.getDomain())
+			.set(USER_APP_ROLE.APP, userAppRole.getApp() != null ? userAppRole.getApp().value() : -1)
+			.set(USER_APP_ROLE.USER_ID, userAppRole.getUser())
+			.set(USER_APP_ROLE.ROLE, userAppRole.getRole().value())
+			.execute();
+		
+		return userAppRole.setId(id);
+	}
+	
+	public static UserAppRole updateUserAppRole(AONContext ctx, UserAppRole userAppRole) {
+		ctx.getDslContext().update(USER_APP_ROLE)
+			.set(USER_APP_ROLE.ROLE, userAppRole.getRole().value())
+			.where(USER_APP_ROLE.ID.eq(userAppRole.getId()))
+			.execute();
+		return userAppRole;
+	}
+	
+	public static UserAppRole deleteUserAppRole(AONContext ctx, UserAppRoleFilter filter) {
+		ctx.getDslContext()
+			.delete(USER_APP_ROLE)
+			.where(USER_APP_ROLE_PROPERTIES.getConditions(filter))
+			.execute();
+		return new UserAppRole();
+	}
+	
 	public static User getUser(AONContext ctx, Integer userId) {
 		ctx.checkRead();
 		Record6<Integer, Integer, String, String, Byte, Integer> record = 

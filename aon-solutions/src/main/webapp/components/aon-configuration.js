@@ -152,6 +152,8 @@ class AonConfiguration extends HTMLElement {
   }
 
 	build() {
+		document.getElementById("aon-configuration-sidenav").style.width = "250px";
+		document.getElementById("aon-configuration-content").style['margin-left'] = "250px";
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 		let listIds = ['aon-configuration-personal', 'aon-configuration-general', 'aon-configuration-user', 'aon-configuration-company', 'aon-configuration-store']

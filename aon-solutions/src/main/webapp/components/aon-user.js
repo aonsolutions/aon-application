@@ -141,7 +141,16 @@ class AonUser extends HTMLElement {
 		input.id = 'switch-' + (app ? app.app : 'admin');
 		input.className = 'mdl-switch__input';
 		input.checked = app && !user.admin ? user.apps[app.app] : user.admin;
-
+		input.addEventListener('change', () => {
+			let uar = {
+				domain: localStorage.getItem('aon_domain_name'),
+				app: app ? app.app : undefined,
+				role: 'admin',
+				user: user.id,
+				active: input.checked
+			};
+			setUserAppRole(uar);
+		});
 		let span3 = document.createElement('span');
 		span3.className = 'mdl-switch__label'
 
@@ -149,8 +158,14 @@ class AonUser extends HTMLElement {
 		label.appendChild(span3);
 
 		let span4 = document.createElement('span');
-		span4.innerHTML = '<aon-select id="aonSelectUserRol-'+ (app ? app.app : 'admin') +'"></aon-select>';
-
+		let options = ['Administrador', 'Invitado'];
+		let roleOptions = [
+			{value:'admin', name:'Administrador'},
+			{value:'guest', name:'Invitado'}
+		];
+		if(app){
+			// span4.innerHTML = `<aon-select class="aon-width-25" id="aonSelectUserRol-${app.app}" description="Rol" options='${JSON.stringify(roleOptions)}' ></aon-select>`;
+		}
 		let td2 = document.createElement('td');
 		td2.style.height = '40px';
 		td2.appendChild(span2);

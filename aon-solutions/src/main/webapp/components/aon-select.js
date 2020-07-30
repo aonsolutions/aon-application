@@ -58,8 +58,11 @@
 			console.log(`attribute ${name} change!! ${newValue}`);
 			if('options' === name) {
 				let span = document.getElementById(this.getAttribute('id') + 'Span');
-				span.innerHTML = "";
-				span.appendChild(this.buildOptions());
+				alert(span);
+				if(span){
+					span.innerHTML = "";
+					span.appendChild(this.buildOptions());
+				}
 			}
 
 			if('value' === name) {
@@ -131,6 +134,7 @@
 
 			let span = document.createElement('span');
 			span.setAttribute('id', this.getAttribute('id') + 'Span');
+			console.log('AAAA-' + this.offsetWidth);
 			span.style.position = "absolute";
 			span.style.left = -(this.offsetWidth-32) + "px";
 			span.style.top = "0px";
@@ -148,7 +152,7 @@
 			if(options.length === 0) return document.createElement('div');
 			let ul = document.createElement('ul');
 			ul.style['max-height'] = "200px";
-			ul.className = options.length > 4 ? "mdl-menu mdl-js-menu mdl-js-ripple-effect aonScroll" : "mdl-menu mdl-js-menu mdl-js-ripple-effect";
+			ul.className = "mdl-menu mdl-js-menu mdl-js-ripple-effect aonScroll";
 			ul.setAttribute('for', this.getAttribute('id') + 'Icon');
 			for(let i = 0; i < options.length; i++) {
 				let li = document.createElement('li');

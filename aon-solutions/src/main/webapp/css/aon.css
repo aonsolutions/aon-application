@@ -254,7 +254,7 @@
 	}
 
 	.aonScroll {
-		overflow: scroll !important;
+		overflow: auto;
 	}
 
 	.aonAppMenuSidenavList {

@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
+import org.json.JSONObject;
+
 public class UserAppRole {
 
 	private Integer id;
@@ -57,5 +59,13 @@ public class UserAppRole {
 		return this;
 	}
 	
-	
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		json.put("id", getId());
+		json.put("domain", getDomain());
+		json.put("user", getUser());
+		if(getApp() != null) json.put("app", getApp().name());
+		if(getApp() != null) json.put("role", getRole().name());
+		return json;
+	}
 }

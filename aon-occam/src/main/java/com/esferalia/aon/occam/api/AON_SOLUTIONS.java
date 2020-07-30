@@ -76,27 +76,45 @@ public class AON_SOLUTIONS {
 	}
 	
 	public static Stream<DomainApp> getDomainApp(String domainName, Integer domainId, String login, DomainAppFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().getDomainAppStream(ctx, filter);
 		}
 	}
 	
 	public static DomainApp insertDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().insertDomainApp(ctx, domainApp);
 		}
 	}
 	
 	public static DomainApp updateDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().updateDomainApp(ctx, domainApp);
 		}
 	}
 	
 	
 	public static Stream<UserAppRole> getUserAppRole(String domainName, Integer domainId, String login, UserAppRoleFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().getUserAppRoleStream(ctx, filter);
+		}
+	}
+	
+	public static UserAppRole insertUserAppRole(String domainName, Integer domainId, String login, UserAppRole userAppRole) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+			return getSecurity().insertUserAppRole(ctx, userAppRole);
+		}
+	}
+	
+	public static UserAppRole updateUserAppRole(String domainName, Integer domainId, String login, UserAppRole userAppRole) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+			return getSecurity().updateUserAppRole(ctx, userAppRole);
+		}
+	}
+	
+	public static UserAppRole deleteUserAppRole(String domainName, Integer domainId, String login, UserAppRoleFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+			return getSecurity().deleteUserAppRole(ctx, filter);
 		}
 	}
 	

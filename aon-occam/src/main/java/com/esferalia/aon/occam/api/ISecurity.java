@@ -74,4 +74,7 @@ public interface ISecurity {
 	// USER APP ROLE
 	
 	public Stream<UserAppRole> getUserAppRoleStream(AONContext ctx, UserAppRoleFilter filter);
+	public UserAppRole insertUserAppRole(AONContext ctx, UserAppRole userAppRole);
+	public UserAppRole updateUserAppRole(AONContext ctx, UserAppRole userAppRole);
+	public UserAppRole deleteUserAppRole(AONContext ctx, UserAppRoleFilter filter);
 }

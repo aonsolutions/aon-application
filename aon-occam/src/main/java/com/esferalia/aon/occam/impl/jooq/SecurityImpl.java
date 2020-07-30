@@ -201,12 +201,6 @@ public class SecurityImpl implements ISecurity {
 	}
 
 	@Override
-	public Stream<UserAppRole> getUserAppRoleStream(AONContext ctx, UserAppRoleFilter filter) {
-		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.getUserAppRoleStream(ctx, filter));
-	}
-
-	@Override
 	public DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.insertDomainApp(ctx, domainApp));
@@ -217,4 +211,29 @@ public class SecurityImpl implements ISecurity {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.updateDomainApp(ctx, domainApp));
 	}
+	
+	@Override
+	public Stream<UserAppRole> getUserAppRoleStream(AONContext ctx, UserAppRoleFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getUserAppRoleStream(ctx, filter));
+	}
+
+	@Override
+	public UserAppRole insertUserAppRole(AONContext ctx, UserAppRole userAppRole) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.insertUserAppRole(ctx, userAppRole));
+	}
+
+	@Override
+	public UserAppRole updateUserAppRole(AONContext ctx, UserAppRole userAppRole) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.updateUserAppRole(ctx, userAppRole));
+	}
+	
+	@Override
+	public UserAppRole deleteUserAppRole(AONContext ctx, UserAppRoleFilter filter) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.deleteUserAppRole(ctx, filter));
+	}
+
 }

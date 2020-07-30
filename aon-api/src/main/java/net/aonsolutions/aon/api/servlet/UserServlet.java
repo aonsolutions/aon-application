@@ -68,10 +68,15 @@ public class UserServlet extends HttpServlet{
 	private JSONObject getUserApps(Domain domain, User user) {
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(user.getId())).collect(Collectors.toCollection(LinkedList::new));
 		JSONObject userAppRoles = new JSONObject();
-		Boolean admin = true; //false;
+		Boolean admin = false;
 		if(roles.stream().filter(f -> f.getApp() == null && AonRole.ADMIN.equals(f.getRole())).count() > 0) {
 			admin = true;
-			AonApp.aonValues().forEach(app -> userAppRoles.put(app.name(), AonRole.ADMIN));
+			AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId())).forEach(da -> {
+				if(da.getActive()) {
+					userAppRoles.put(da.getApp().name(), AonRole.ADMIN);
+				}
+			});
+//			AonApp.aonValues().forEach(app -> userAppRoles.put(app.name(), AonRole.ADMIN));
 		} else {
 			roles.stream().forEach(uar -> userAppRoles.put(uar.getApp().name(), uar.getRole()));
 		}
@@ -85,7 +90,55 @@ public class UserServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("USER SERVLET - POST METHOD");
+		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
+		JSONObject json = Utils.getRequestJSON(req);
+		if(pathInfo != null) {
+			if("app".equalsIgnoreCase(pathInfo[1])) {
+				json = setUserAppRole(json);
+			}
+		}
+		Utils.addCorsHeader(resp);
+		Utils.giveBack(req, resp, json, new JSONObject());
 	}
+		
+	private JSONObject setUserAppRole(JSONObject json){
+		String domainName = json.optString("domain");
+		String app = json.optString("app");
+		String role = json.optString("role");
+		Integer user = json.optInt("user");
+		Boolean active = json.optBoolean("active"); 
+
+		AonApp aonApp = AonApp.safeValueOf(app);
+		AonRole aonRole = AonRole.safeValueOf(role);
+		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+
+		UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
+		f.getDomainProperty().eq(domain.getId())
+		.and(f.getUserIdProperty().eq(user))
+		.and((aonApp != null ? f.getAppProperty().eq(aonApp.value()): f.getAppProperty().isNull()))).findFirst().orElse(new UserAppRole());
+		
+		if(active) {
+			if(uar.getId() == null) {
+				uar = new UserAppRole();
+				uar.setApp(aonApp)
+					.setDomain(domain.getId())
+					.setRole(aonRole)
+					.setUser(user);
+				uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
+			} else {
+				uar.setRole(aonRole);
+				AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
+			}
+		} else {
+			if(uar.getId() != null) {
+				Integer id = uar.getId();
+				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(id));
+			}
+		}
+
+		return uar.toJSON();
+	}
+	
 	
 	private JSONObject userToJSON(User user, JSONObject json) {
 		json.put("id", user.getId());

@@ -1,3 +1,5 @@
+import {Apps} from  '../services/app.js';
+
 	function invoiceDropHandler(ev) {
 		dropHandler(ev);
 	}
@@ -168,7 +170,7 @@ class AonDesktop extends HTMLElement {
 			</style>
 
 			<ul class="aon-desktop-list">
-			<li style="display: inline-block;">
+			<li id="aonDesktop-invoice" style="display: inline-block;">
 
 			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
@@ -188,7 +190,7 @@ class AonDesktop extends HTMLElement {
 			</div>
 			</li>
 
-			<li style="display: inline-block;">
+			<li id="aonDesktop-documental" style="display: inline-block;">
 			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
 					<h2 class="aonTitle">Documental</h2>
@@ -206,7 +208,7 @@ class AonDesktop extends HTMLElement {
 			</div>
 			</li>
 
-			<li style="display: inline-block;">
+			<li id="aonDesktop-import" style="display: inline-block;">
 			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
 					<h2 class="aonTitle">Carga Ficheros Excel</h2>
@@ -223,7 +225,7 @@ class AonDesktop extends HTMLElement {
 			</div>
 			</li>
 
-			<li style="display: inline-block;">
+			<li id="aonDesktop-payroll" style="display: inline-block;">
 			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
 					<h2 class="aonTitle">Carga de Nóminas (PDF)</h2>
@@ -241,7 +243,7 @@ class AonDesktop extends HTMLElement {
 			</div>
 			</li>
 
-			<li style="display: inline-block;">
+			<li id="aonDesktop-payroll2" style="display: inline-block;">
 			<div style="min-height: 40px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
 					<h2 class="aonTitle">Portal Laboral</h2>
@@ -252,10 +254,10 @@ class AonDesktop extends HTMLElement {
 			</div>
 			</li>
 
-			<li style="display: inline-block;">
+			<li id="aonDesktop-accounting" style="display: inline-block;">
 			<div style="min-height: 40px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
-					<h2 class="aonTitle">Resumen Contable/Fiscal</h2>
+					<h2 class="aonTitle">Resumen Contable</h2>
 				</div>
 				<div class="mdl-card__menu" style="top:10px;">
 					<aon-icon-button id="aon-desktop-fiscal-launch-button" icon="launch"></aon-icon-button>
@@ -263,7 +265,18 @@ class AonDesktop extends HTMLElement {
 			</div>
 			</li>
 
-			<li style="display: inline-block;">
+			<li id="aonDesktop-fiscal" style="display: inline-block;">
+			<div style="min-height: 40px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
+				<div class="mdl-card__title">
+					<h2 class="aonTitle">Resumen Fiscal</h2>
+				</div>
+				<div class="mdl-card__menu" style="top:10px;">
+					<aon-icon-button id="aon-desktop-fiscal-launch-button" icon="launch"></aon-icon-button>
+				</div>
+			</div>
+			</li>
+
+			<li id="aonDesktop-managementStat" style="display: inline-block;">
 			<div style="min-height: 40px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
 				<div class="mdl-card__title">
 					<h2 class="aonTitle">Estadística Gestión</h2>
@@ -275,7 +288,7 @@ class AonDesktop extends HTMLElement {
 			</li>
 			</ul>
 			`;
-  }
+	}
 }
 
 window.customElements.define('aon-desktop', AonDesktop);
