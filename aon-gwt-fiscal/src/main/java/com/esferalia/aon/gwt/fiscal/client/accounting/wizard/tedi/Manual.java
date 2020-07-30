@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryTable;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
@@ -24,7 +23,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Manual extends WizardContentBase<AccountEntryWrapper> {
 	
-	private static final String BACKGROUND_COLOR = "#EEEEEE";
 	private ScrollPanel tableContainer;
 	private VerticalPanel tableInnerContainer;
 	private AccountEntryTable table;
@@ -148,7 +146,6 @@ public class Manual extends WizardContentBase<AccountEntryWrapper> {
 		tableInnerContainer.addStyleName(AON.AON_CSS.aonWidthAll());
 		
 		table = new AccountEntryTable(getCallback().getCurrentDomainName(),getCallback().getCurrentUser(),getCallback().getCurrentDomainId(),this);
-		table.getElement().getStyle().setBackgroundColor(BACKGROUND_COLOR);
 		table.addErrorHandler(new ErrorHandler() {
 
 			@Override

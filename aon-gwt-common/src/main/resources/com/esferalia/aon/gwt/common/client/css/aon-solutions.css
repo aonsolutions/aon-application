@@ -1,0 +1,511 @@
+/* Use @external GWT specific CSS at-rule followed by list of class names to 
+   declare classes that shouldn't be obfuscated. */
+@external .*;
+
+input:focus, select:focus, textarea:focus{
+	background-color: #FBEDB6;
+	border: solid black 1px;
+}
+input[type="checkbox"]:focus + label {
+	background-color: #FBEDB6;
+}
+[type="checkbox"]{
+    vertical-align:middle;
+}
+
+/* ICONS */
+@url iconAdd aonIconAdd;
+.aon_icon_add { background-image: iconAdd;}
+@url iconSave aonIconSave;
+.aon_icon_save { background-image: iconSave;}
+@url iconDelete aonIconDelete;
+.aon_icon_delete { background-image: iconDelete;}
+@url iconSearch aonIconSearch;
+.aon_icon_search { background-image: iconSearch;}
+@url iconBack aonIconBack;
+.aon_icon_back { background-image: iconBack;}
+@url iconCopy aonIconCopy;
+.aon_icon_copy { background-image: iconCopy;}
+@url iconAudit aonIconAudit;
+.aon_icon_audit { background-image: iconAudit;}
+@url iconPdf aonIconPdf;
+.aon_icon_pdf { background-image: iconPdf;}
+@url iconExcel aonIconExcel;
+.aon_icon_excel { background-image: iconExcel;}
+@url iconComments aonIconComments;
+.aon_icon_comments { background-image: iconComments;}
+@url iconNoComments aonIconNoComments;
+.aon_icon_no_comments { background-image: iconNoComments;}
+@url iconInfo aonIconInfo;
+.aon_icon_info { background-image: iconInfo;}
+@url iconError aonIconError;
+.aon_icon_error { background-image: iconRrror;}
+@url iconMinimize aonIconMinimize;
+.aon_icon_minimize { background-image: iconMinimize;}
+@url iconMaximize aonIconMaximize;
+.aon_icon_maximize { background-image: iconMaximize;}
+@url iconEuro aonIconEuro;
+.aon_icon_euro { background-image: iconEuro;}
+@url iconBook aonIconBook;
+.aon_icon_book { background-image: iconBook;}
+@url iconList aonIconList;
+.aon_icon_list { background-image: iconList;}
+@url iconHistory aonIconHistory;
+.aon_icon_history { background-image: iconHistory;}
+@url iconUndo aonIconUndo;
+.aon_icon_undo { background-image: iconUndo;}
+@url iconRedo aonIconRedo;
+.aon_icon_redo { background-image: iconRedo;}
+@url iconAccept aonIconAccept;
+.aon_icon_accept { background-image: iconAccept;}
+@url iconCancel aonIconCancel;
+.aon_icon_cancel { background-image: iconCancel;}
+@url iconClose aonIconClose;
+.aon_icon_close { background-image: iconClose;}
+
+/* BASICS */
+.aon_selector {
+	margin: 0px;
+	color: #4B4B4B;
+	font: 12px/1.333 "arial", "lucida Grande", "Trebuchet MS", sans-serif;
+}
+
+.aon_scroll_area {
+	padding: 8px 1.5em 1.5em 1.5em;
+}
+.aon_input_text {
+	border: 1px solid #808080;
+}
+.aon_width_all {
+	width: 100%;
+}
+.aon_height_all {
+	height: 100%;
+}
+.aon_italic {
+	font-style: italic;
+}
+.aon_bold {
+	font-weight: bold;
+}
+.aon_nowrap {
+	white-space: nowrap;
+}
+.aon_text_center {
+	text-align: center;
+}
+.aon_text_right {
+	text-align: right;
+}
+.aon_padding {
+	padding: 1em;
+}
+.aon_margin {
+	margin: 1em;
+}
+.aon_margin_bottom {
+	margin-bottom: 1em;
+}
+.aon_margin_left {
+	margin-left: 1em;
+}
+
+.aon_color_red {
+	color: red;
+}
+.aon_color_green {
+	color: green;
+}
+.aon_color_royalblue {
+	color: RoyalBlue;
+}
+
+.aon_pointer_events_none {
+	pointer-events: none;
+}
+
+.aon_pointer_events_auto {
+	pointer-events: auto;
+}
+
+.aon_border_top {
+	border-top: #c4c4c4 1px solid;
+}
+
+/* CONFIRM DIALOG  */
+.aon_confirm_dialog {
+	background: white none repeat scroll 0 0;
+	border: 1px solid black;
+}
+
+.aon_confirm_dialog-msg {
+	font-size: 1.2em;
+	margin: 1em;
+	text-align: center;
+}
+
+/* TABLE  */
+.aon_table {
+	border-collapse: collapse;
+}
+.aon_table td {
+	padding: 1px 0.5em 1px 0.5em;
+	vertical-align: middle;
+}
+.aon_table_label {
+	font-weight: bold;
+	white-space: nowrap;
+}
+.aon_table_icon {
+	height: 16px;
+	width: 16px;
+	background-size: 100% auto;	
+}
+.aon_table_button {
+	width: 20px;
+	height: 20px;
+	background-size: 100% auto;
+}
+/* GRID */
+.aon_grid {
+	border-collapse: collapse;
+	width: 100%;
+	padding: 0px 1.5em 0em 1.5em;
+	box-sizing: border-box;
+}
+.aon_grid td {
+	padding: 1px 0.5em 1px 0.5em;
+	border: #c4c4c4 1px solid;
+	vertical-align: middle;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.aon_grid_header {
+	padding: 5px 1em;
+	height: 18px;
+	font-weight: bold;
+	font-size: 0.8em;
+	text-transform: uppercase;
+	background-image: linear-gradient(#EEE, #DDD);
+}
+.aon_text_line_through {
+	text-decoration: line-through;
+}
+
+/* TOOLBAR */
+.aon_toolbar {
+	width: 100%;
+	padding: 0px 1.5em 0em 1.5em;
+	box-sizing: border-box;
+	height: 50px;
+}
+.aon_toolbar_inner {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	border-bottom: solid #c4c4c4 1px;
+}
+.aon_toolbar_button_container {
+	margin-left: 1em;
+}
+
+.aon_toolbar_message_container {
+	margin-left: 40px;
+	margin-right: 40px;
+	display: flex;
+	flex-grow: 1;
+	justify-content: center;
+}
+
+.aon_toolbar_message {
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	padding: 0px 20px 0px 40px;
+	height: 28px;
+	line-height: 28px;
+	font-weight: bold;
+}
+.aon_toolbar_info_message {
+	background-image: iconInfo;
+	background-color: #ECECEC;
+	border: solid black 1px;
+}
+.aon_toolbar_error_message {
+	background-image: iconError;
+	background-color: #ffd0d0;
+	border: solid black 1px;
+}
+
+
+.aon_toolbar_title_container {
+	padding-right: 2em;
+	float: right;
+	text-align: right;
+	white-space: nowrap;
+	width: auto;
+}
+.aon_toolbar_title {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 1.2em;
+}
+
+.aon_toolbar_button {
+	width: 36px;
+	height: 36px;
+}
+
+.aon_button {
+	flex-shrink: 0;
+	border-radius: 50%;
+	-webkit-border-radius: none;
+	-moz-border-radius: 50%;
+	box-sizing: border-box;
+	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: pointer;
+	outline: 0;
+	border: none;
+	overflow: visible;	
+	display: inline-block;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-color: white;
+}
+
+.aon_button:hover {
+ 	background-color: #EEE;
+}
+.aon_custom_dialog {
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid black;
+}
+.aon_custom_dialog .popupContent {
+	background-color: white;
+}
+.aon_custom_dialog_header {
+	margin: 0px;
+	padding: 1px;
+	height: 22px;
+	width: auto;
+	border-bottom: 1px solid black;
+	display: flex;
+	align-items: center;
+	background-image: linear-gradient(to bottom, #eaeced, #cfcfcf);	
+}
+
+.aon_custom_dialog_title {
+	font-weight: bold;
+	padding: 5px 1em;
+	text-transform: uppercase;
+	width: auto;
+	font-size: 11px;
+	flex-grow: 1;
+	cursor: hand;
+}
+
+.aon_custom_dialog_close {
+	background-image: iconClose;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: center center;
+	background-size: 20px auto;
+	background-color: transparent;
+	cursor: pointer;
+	height: 20px;
+	width: 20px;
+	border: none;
+}
+
+
+
+.aon_tab_button {
+	padding: 0 0 0 16px;
+	text-align: left;
+	border: 0px;
+	width: 20px;
+	height: 24px;
+	overflow: visible;
+	cursor: pointer;
+	border: none;
+	background-repeat: no-repeat;
+	background-size: 20px auto;
+	background-color: white;
+	background-position: 2px;
+	margin-right: 5px;	
+}
+.aon_tab_button:hover {
+ 	background-color: #EEE;
+}
+
+.aon_tab_label {
+    width: auto;
+    height: 20px;
+    padding-right: 1em;
+    padding-left: 25px;
+    background-size: 20px auto;
+    background-repeat: no-repeat;
+    background-position: top left;
+    display: flex;
+    align-items: center;
+}
+.aon_selector .gwt-SplitLayoutPanel-HDragger, .aon_selector .gwt-SplitLayoutPanel-VDragger
+	{
+	background-color: #eee;
+}
+
+.aon_selector .gwt-SplitLayoutPanel-HDragger {
+	cursor: col-resize;
+}
+
+.aon_selector .gwt-SplitLayoutPanel-VDragger {
+	cursor: row-resize;
+}
+
+.aon_selector .gwt-TabBar .gwt-TabBarFirst {
+	width: 5px;
+}
+
+.aon_selector .gwt-TabBar .gwt-TabBarRest {
+
+}
+
+.aon_selector .gwt-TabLayoutPanel {
+	height: 100%;
+	pointer-events: none;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+	background: transparent none repeat scroll 0 0;
+	padding-left: 5px;
+	padding-top: 6px;
+	pointer-events: none;
+	border-bottom: 1px solid #ccc;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
+	border-color: #EEE;
+	border-style: solid;
+	border-width: 0 1px 1px;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
+	overflow: hidden;
+	padding: 6px;
+	pointer-events: auto;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+	background: #CBCBCB none repeat scroll 0 0;
+	border-radius: 3px 3px 0 0;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	color: black;
+	cursor: pointer;
+	font-weight: normal;
+	margin-left: 4px;
+	padding: 4px 8px;
+	text-align: center;
+	pointer-events: auto;
+}
+
+.aon_selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+	background: white none repeat scroll 0 0;
+	top: 1px;
+	color: #333;
+	cursor: default;
+	font-weight: bold;
+}
+
+.aon_selector .gwt-TabBar {
+	background: none repeat scroll 0 0 #fff;
+	padding-top: 6px;
+}
+.aon_selector .gwt-TabBar .gwt-TabBarItem {
+	background: none repeat scroll 0 0 #ddd;
+	border-color: #666;
+	border-style: solid;
+	border-radius: 3px 3px 0 0;
+	border-width: 1px 1px 0;
+	color: #555;
+	cursor: pointer;
+	font-weight: normal;
+	margin-left: 4px;
+	padding: 4px 8px;
+	text-align: center;
+}
+
+.aon_selector .gwt-TabBar .gwt-TabBarItem-selected {
+	background: none repeat scroll 0 0 white;
+	color: #333;
+	cursor: default;
+	font-weight: bold;
+}
+
+.aon_selector .gwt-TabBar .gwt-TabBarItem-disabled {
+	color: #999999;
+	cursor: default;
+}
+
+.aon_selector .gwt-TabPanel {
+}
+
+.aon_selector .gwt-TabPanelBottom {
+	border-color: #ccc;
+	border-style: solid;
+	border-width: 1px;
+	overflow: hidden;
+	padding: 6px;
+}
+
+.aon_ok_button {
+	background-image: iconAccept;
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	height: 30px;
+	overflow: visible;
+	padding-left: 25px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+
+.aon_ok_button:hover, .aon_ok_button:focus	{
+	background-color: #FBEDB6;
+}
+
+.aon_cancel_button {
+	background-image: iconCancel;
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	height: 30px;
+	overflow: visible;
+	padding-left: 25px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+.aon-confirm-dialog-cancel-button:hover,	.aon-confirm-dialog-cancel-button:focus {
+	background-color: #FBEDB6;
+}

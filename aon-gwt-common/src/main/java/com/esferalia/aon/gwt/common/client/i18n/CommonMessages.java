@@ -258,7 +258,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("La Fecha del Asiento no est\u00E1 dentro del periodo asignado al ejercicio")
 	String accountEntryOutOfRange();
 	
-	@DefaultMessage("El ejericio contable se encuentra en estado \"{0}\". No se permite la modificaci\u00F3n/borrado del asiento.")
+	@DefaultMessage("El ejercicio contable se encuentra en estado \"{0}\". No se permite la modificaci\u00F3n/borrado del asiento.")
 	String periodStatusWarning(String periotStatus);
 
 	@DefaultMessage("No se permite la modificaci\u00F3n/borrado del asiento..")
@@ -3673,7 +3673,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Aviso: Se generar\u00E1 un apunte manual")
 	String manualEntryGeneration();
 
-	@DefaultMessage("El ejericio de la declaraci\u00F3n no est\u00E1 soportado")
+	@DefaultMessage("El ejercicio de la declaraci\u00F3n no est\u00E1 soportado")
 	String noModuleForYear();
 	
 	@DefaultMessage("A) Porcentaje de imputaci\u00F3n de bases imponibles y dem\u00E1s conceptos liquidatorios")

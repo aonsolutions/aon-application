@@ -9,17 +9,19 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
-import com.esferalia.aon.gwt.common.client.widget.AuditDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.ErrorPanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MaximizeHandler;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MaximizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeEvent;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel.MinimizeHandler;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
@@ -90,7 +92,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -99,7 +100,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AccountEntryModuleTEDI extends MainEntryPoint {
 	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
-		@Template ("<span class=\"gwt-InlineLabel .aon-padding-right aon-padding-left-20 {1}\">{0}</span>")
+		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
@@ -109,7 +110,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		LOGGER.addHandler( new ConsoleLogHandler() );
 	}
 
-	private int errorLogTabIndex;
 	private int sessionLogTabIndex;
 	private int balancesTabIndex;
 	private int statementTabIndex;
@@ -200,23 +200,22 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	};
 
 	private SimpleLayoutPanel wizardPanel;
-	private MinimizePanel footPanel;
+	private AonMinimizePanel footPanel;
 	private TabLayoutPanel tabLayout;
-	private SimplePanel errorsContainer;
 	private SessionLog sessionLog;
 	private JournalPanelReport journalPanel;
 	private AccountBalancePanel balancePanel;
 	private SimpleLayoutPanel statementPanelContainer;
 	private ScrollPanel extraInfoContainer;
-	private ErrorPanel errors;
 	// Toolbar
-	private Button search;
-	private Button reset;
-	private Button accept;
-	private Button remove;
-	private Button back;
-	private Button duplicate;
-	private Button audit;
+	private AonToolbar toolbar;
+	private AonToolbarButton search;
+	private AonToolbarButton reset;
+	private AonToolbarButton accept;
+	private AonToolbarButton remove;
+	private AonToolbarButton back;
+	private AonToolbarButton duplicate;
+	private AonToolbarButton audit;
 	
 	private SplitLayoutPanel splitLayoutPanel;	
 	
@@ -231,9 +230,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	private InlineLabel id;
 	private ListBox activity;
 	private CheckBox confidential;
-	private Button commentsButton;
-	private InlineLabel statusMsg;
-	
+	private AonTableButton commentsButton;
+
 	boolean minimizedByUser;
 	
 	private boolean periodErrorShown;
@@ -271,14 +269,15 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		dockLayoutPanel.addNorth(getToolbarPanel() , 26);
+		toolbar = getToolbarPanel();
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		splitLayoutPanel = new SplitLayoutPanel();
 		wizardPanel = new SimpleLayoutPanel();
-		wizardPanel.setStyleName(AON.AON_CSS.aonSelector());
+		wizardPanel.setStyleName(AON.CSS.aonSelector());
 		splitLayoutPanel.addSouth(getMinimizePanel(), 30);
 		splitLayoutPanel.add(wizardPanel);
 		centerDockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		centerDockLayoutPanel.addNorth( getEntryHeader(), 50);
+		centerDockLayoutPanel.addNorth( getEntryHeader(), 35);
 		centerDockLayoutPanel.add(splitLayoutPanel);
 		dockLayoutPanel.add(centerDockLayoutPanel);
 		
@@ -292,9 +291,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			entryType.addItem(et.getDescription());
 		}
 		
-		errors = new ErrorPanel();
-		errorsContainer.setWidget(errors);
-
 		entryDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
@@ -375,9 +371,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		}
 	}
 	
-	private int getErrorLogTabIndex(){
-		return errorLogTabIndex;
-	}
 	private int getSessionLogTabIndex(){
 		return sessionLogTabIndex;
 	}
@@ -395,9 +388,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 
 	protected void invalidateModule(String msg) {
-		errors = new ErrorPanel();
 		showError(msg);
-		errorsContainer.setWidget(errors);
 		entryHeader.setVisible(false);
 		if (getOptions().isJournalTabVisible()) {
 			search.setVisible(false);
@@ -411,8 +402,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			back.setVisible(false);
 		}
 	}
-
-	// -------------------------------------------------------------- UiHandler
 
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 30);
@@ -465,17 +454,16 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		} else {
 			if (periodErrorShown) {
 				periodErrorShown = false;
-				errors.hide();
+				toolbar.hideMesages();
 			}
 		}
 	}
 
 	public void onComments(ClickEvent event) {
-		final CustomDialog toast = new CustomDialog();
+		final AonCustomDialog toast = new AonCustomDialog();
 		toast.setCaption(AON.MSG.comments());
 		FlowPanel commentPanel = new FlowPanel();
-		commentPanel.setStyleName(AON.AON_CSS.aonHeightAll());
-		commentPanel.addStyleName(AON.AON_CSS.aonTextCenter());
+		commentPanel.setStyleName(AON.CSS.aonTextCenter());
 		TextArea comment = new TextArea();
 		toast.addCloseHandler(new CloseHandler<PopupPanel>() {
 			
@@ -543,22 +531,20 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			}
 		}
 		
-		statusMsg.setText(AonStringUtils.EMPTY);
-		statusMsg.removeStyleName(AON.AON_CSS.aonInfoMessage());
+		toolbar.hideMesages();
 		
 		if (!canEdit && wizardContent.isStatusMsgEnabled() ) {
-			statusMsg.addStyleName(AON.AON_CSS.aonInfoMessage());
 			if (!wizardContent.getMainEntry().isPeriodActive()) {
 				if (!canRemove) {
-					statusMsg.setText(AON.MSG.periodStatusWarning(wizardContent.getMainEntry().getPeriodStatus().getDescription()));
+					toolbar.showInfoMessage(AON.MSG.periodStatusWarning(wizardContent.getMainEntry().getPeriodStatus().getDescription()));			
 				} else {
-					statusMsg.setText(AON.MSG.automaticEntryNoUpdateWarning());
+					toolbar.showInfoMessage(AON.MSG.automaticEntryNoUpdateWarning());
 				}
 			} else {
 				if (AonStringUtils.isEmpty(wizardContent.getNoUpdatableCause())) {
-					statusMsg.setText(AON.MSG.entryNoUpdatable());	
+					toolbar.showInfoMessage(AON.MSG.entryNoUpdatable());
 				} else {
-					statusMsg.setText(AON.MSG.entryNoUpdatable() + " ["+ wizardContent.getNoUpdatableCause() +"]");
+					toolbar.showInfoMessage(AON.MSG.entryNoUpdatable() + " ["+ wizardContent.getNoUpdatableCause() +"]");
 				}
 			}
 		}
@@ -571,22 +557,19 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (getOptions().isJournalTabVisible()) {
 			search.setVisible(!getOptions().hasExternalCallback());
 		}
-		//duplicate.setVisible(!getOptions().hasExternalCallback() && !isNew());
 		duplicate.setVisible(!guest && !isNew());
 		
 		period.setEnabled(canEdit);
 		entryDate.setEnabled(canEdit);
 		confidential.setEnabled(canEdit);
 		entryType.setEnabled(canEdit);
-		accept.setEnabled(canEdit);
-		remove.setEnabled(canRemove);
+		accept.setVisible(canEdit);
+		remove.setVisible(canRemove);
 		if (getOptions().isBackButtonVisible()) {
 			back.setVisible(getOptions().hasExternalCallback());
 		}
 		
 		styleCommentsButton();
-		errors = new ErrorPanel();
-		errorsContainer.setWidget(errors);
 	}
 
 	public void refreshIdLabel() {
@@ -597,19 +580,19 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			(isNew()? "[NUEVO]": ("(" + wizardContent.getMainEntry().getId() + ") "))
 			+ (!isNew() && wizardContent.getMainEntry().isDirty()?AonStringUtils.ASTERISK:AonStringUtils.EMPTY));
 		if (wizardContent.getMainEntry().isDirty()) {
-			id.addStyleName(AON.AON_CSS.aonColorRed());
+			id.addStyleName(AON.CSS.aonColorBlue());
 		} else {
-			id.removeStyleName(AON.AON_CSS.aonColorRed());
+			id.removeStyleName(AON.CSS.aonColorBlue());
 		}
 	}
 
 	private void styleCommentsButton() {
 		if (AonStringUtils.isEmpty(wizardContent.getMainEntry().getComments())) {
-			commentsButton.addStyleName(AON.AON_CSS.aonIconComment());
-			commentsButton.removeStyleName(AON.AON_CSS.aonIconCommentRed());
+			commentsButton.addStyleName(AON.CSS.aonIconNoComments());
+			commentsButton.removeStyleName(AON.CSS.aonIconComments());
 		} else {
-			commentsButton.addStyleName(AON.AON_CSS.aonIconCommentRed());
-			commentsButton.removeStyleName(AON.AON_CSS.aonIconComment());
+			commentsButton.addStyleName(AON.CSS.aonIconComments());
+			commentsButton.removeStyleName(AON.CSS.aonIconNoComments());
 		}
 	}
 
@@ -685,8 +668,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 
 	public void onReset(ClickEvent event) {
-		ConfirmDialog cd = new ConfirmDialog();
-		cd.confirm("Nuevo?", "Nuevo",new ConfirmDialogCallback() {
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.newAction() + "?", AON.MSG.newAction(),new AonConfirmDialogCallback() {
 			
 			@Override
 			public void onCancel() {
@@ -708,8 +691,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 
 	public void onRemove(ClickEvent event) {
 		remove.setEnabled(false);
-		ConfirmDialog cd = new ConfirmDialog();
-		cd.confirm(AON.MSG.confirmDeleteAction(), new ConfirmDialogCallback() {
+		AonConfirmDialog cd = new AonConfirmDialog();
+		cd.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
 
 			@Override
 			public void onCancel() {
@@ -746,7 +729,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	}
 
 	public void onAudit(ClickEvent event) {
-		AuditDialog dialog = new AuditDialog();
+		AonAuditDialog dialog = new AonAuditDialog();
 		dialog.show(wizardContent.getMainEntry());
 	}
 
@@ -798,9 +781,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (wrp.getAccountEntry().getEntryType() != AccountEntryType.MANUAL) {
 			showError("No se puede recuperar un asiento borrado");
 		} else {
-			ConfirmDialog cd = new ConfirmDialog();
+			AonConfirmDialog cd = new AonConfirmDialog();
 			cd.confirm(AON.MSG.recoverEntry(),
-					new ConfirmDialogCallback() {
+					new AonConfirmDialogCallback() {
 				
 				@Override
 				public void onCancel() {
@@ -1088,32 +1071,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		if (AonStringUtils.isBlank(msg)) {
 			msg = "Se ha producido un error no codificado.";
 		}
-		errors.showError(msg);
-		if (splitLayoutPanel.getWidgetSize(footPanel) <= 30) {
-			int effectiveHeigth = getOptions().isEmbedded()?5:3;
-			splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / effectiveHeigth);
-			splitLayoutPanel.animate(300, new AnimationCallback() {
-
-				@Override
-				public void onLayout(Layer layer, double progress) {
-				}
-
-				@Override
-				public void onAnimationComplete() {
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							tabLayout.selectTab(AccountEntryModuleTEDI.this.getErrorLogTabIndex());
-						}
-					});
-				}
-			});
-		} else {
-			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-				public void execute() {
-					tabLayout.selectTab(AccountEntryModuleTEDI.this.getErrorLogTabIndex());
-				}
-			});
-		}
+		toolbar.showErrorMessage(msg);
 	}
 	
 	public static AccountEntryWrapper[] getWrapperArray(LinkedList<AccountEntry> entries ) {
@@ -1244,77 +1202,69 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 	
 	public void onDuplicate(ClickEvent event) {
 		final AccountEntry orig = wizardContent.getMainEntry();
-		final CustomDialog dialog = new CustomDialog();
+		final AonCustomDialog dialog = new AonCustomDialog();
 		dialog.setCaption(AON.MSG.duplicate());
-		SimplePanel duplicatePanel = new SimplePanel(); 
 		FlowPanel rootPanel = new FlowPanel();
-		FlowPanel tablePanel = new FlowPanel();
-		tablePanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		rootPanel.setStyleName(AON.CSS.aonScrollArea());
 		FlexTable table = new FlexTable();
-		table.setStyleName(AON.AON_CSS.aonPanelGrid());
-		table.addStyleName(AON.AON_CSS.aonWidthAll());
+		table.setStyleName(AON.CSS.aonTable());
+		table.addStyleName(AON.CSS.aonWidthAll());
 		int row = 0;
 		
 		if (orig.getEntryType() != AccountEntryType.MANUAL) {
 			table.setWidget(row,0,new Label(AON.MSG.manualEntryGeneration()));
 			table.getFlexCellFormatter().setColSpan(row, 0, 2);
-			table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
-			table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonColorRed());
-			table.getCellFormatter().addStyleName(row, 0, AON.AON_CSS.aonTextCenter());
+			table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonColorRed());
+			table.getCellFormatter().addStyleName(row, 0, AON.CSS.aonTextCenter());
 			row++;
 		}
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.period()));
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		AccountPeriodBox period = new AccountPeriodBox();
 		period.fill(getOptions().getConfiguration().getPeriods());
 		period.select(orig.getPeriod());
 		table.setWidget(row,1,period);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
 		table.setWidget(row,0,new InlineLabel(AON.MSG.accountEntryDate()));
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final DateBoxEx issueDate = new DateBoxEx();
 		issueDate.setValue(orig.getEntryDate());
 		table.setWidget(row,1,issueDate);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
 		table.setWidget(row,0,new InlineLabel(AON.MSG.concept()));
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final TextBox concept = new TextBox();
-		concept.setStyleName(AON.AON_CSS.aonInputText());
+		concept.setStyleName(AON.CSS.aonInputText());
 		concept.setMaxLength(32);
 		concept.setValue(orig.getDetails().get(0).getConcept());
 		table.setWidget(row,1,concept);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 		
 		table.setWidget(row,0,new InlineLabel(AON.MSG.document()));
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final TextBox document = new TextBox();
-		document.setStyleName(AON.AON_CSS.aonInputText());
+		document.setStyleName(AON.CSS.aonInputText());
 		document.setMaxLength(32);
 		document.setValue(orig.getDetails().get(0).getDocumentNumber());
 		table.setWidget(row,1,document);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
 
 		table.setWidget(row,1,new Label());
-		table.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridOdd());
+		table.getCellFormatter().setStyleName(row, 0, AON.CSS.aonTableLabel());
 		final CheckBox invert = new CheckBox( AON.MSG.invertData());
 		table.setWidget(row,1,invert);
-		table.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 		row++;
-		tablePanel.add( table );
-		rootPanel.add( tablePanel );
+		rootPanel.add( table );
 		
 		FlowPanel buttons = new FlowPanel();
-    	buttons.setStyleName(AON.AON_CSS.aonTextCenter());
+    	buttons.setStyleName(AON.CSS.aonTextCenter());
+    	buttons.addStyleName(AON.CSS.aonMarginBottom());
     	
     	final Button okButton = new Button();
-    	okButton.setStyleName(AON.AON_CSS.aonConfirmDialogOkButton());
+    	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
     	okButton.addClickHandler(new ClickHandler() {
 			
@@ -1355,8 +1305,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
     	buttons.add(okButton);
     	
     	final Button cancelButton = new Button();
-    	cancelButton.setStyleName(AON.AON_CSS.aonConfirmDialogCancelButton());
-    	cancelButton.addStyleName(AON.AON_CSS.aonMarginLeft());
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
     	cancelButton.addClickHandler(new ClickHandler() {
 			
@@ -1368,9 +1318,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		});
     	buttons.add(cancelButton);
     	rootPanel.add(buttons);
-		
-		duplicatePanel.setWidget(rootPanel);
-		dialog.add( duplicatePanel );
+		dialog.add( rootPanel );
 		dialog.center();
 		dialog.show();
 		
@@ -1382,8 +1330,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		
 	}
 	
-	private MinimizePanel getMinimizePanel() {
-		footPanel = new MinimizePanel();
+	private AonMinimizePanel getMinimizePanel() {
+		footPanel = new AonMinimizePanel();
 		footPanel.addMinimizeHandler(new MinimizeHandler() {
 			
 			@Override
@@ -1399,17 +1347,12 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				openFootPanel();
 			}
 		});
-		footPanel.setStyleName(AON.AON_CSS.aonSelector());
+		footPanel.setStyleName(AON.CSS.aonSelector());
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
 		tabLayout.setWidth("100%");
 		
 		footPanel.add(tabLayout);
 		int tabIndex = 0;
-		
-		errorsContainer = new SimplePanel();
-		tabLayout.add(errorsContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.notifications(), AON.AON_CSS.aonIconError()));
-		errorLogTabIndex = tabIndex;
-		tabIndex++;
 		
 		if (getOptions().isSessionLogTabVisible()) {
 			sessionLog = new SessionLog();
@@ -1421,7 +1364,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 					selectEntry(entry.getId(),event.getSelectedItem());
 				}
 			});
-			tabLayout.add(sessionLog, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.sessionLog(), AON.AON_CSS.aonIconJournalLog()));
+			tabLayout.add(sessionLog, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.sessionLog(), AON.CSS.aonIconHistory()));
 			sessionLogTabIndex = tabIndex;
 			tabIndex++;
 		}
@@ -1438,14 +1381,14 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 					}
 				});
 			}
-			tabLayout.add(balancePanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountBalances(), AON.AON_CSS.aonIconEuro()));
+			tabLayout.add(balancePanel, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountBalances(), AON.CSS.aonIconEuro()));
 			balancesTabIndex = tabIndex;
 			tabIndex++;
 		}
 		
 		if (getOptions().isStatementTabVisible()) {
 			statementPanelContainer = new SimpleLayoutPanel();
-			tabLayout.add(statementPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountStatetement(), AON.AON_CSS.aonIconStatement()));
+			tabLayout.add(statementPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.accountStatetement(), AON.CSS.aonIconList()));
 			statementTabIndex = tabIndex;
 			tabIndex++;
 		}
@@ -1462,14 +1405,14 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 				}
 			});
 			journalPanelContainer.setWidget(journalPanel);
-			tabLayout.add(journalPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.journalBook(), AON.AON_CSS.aonIconJournal()));
+			tabLayout.add(journalPanelContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.journalBook(), AON.CSS.aonIconBook()));
 			journalTabIndex = tabIndex;
 			tabIndex++;
 		}
 		
 		if (getOptions().isExtraInfoTabVisible()) {
 			extraInfoContainer = new ScrollPanel();
-			tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.AON_CSS.aonIconInfo()));
+			tabLayout.add(extraInfoContainer, TABLAYOUT_FOLDER_TEMPLATE.tab(AON.MSG.additionalData(), AON.CSS.aonIconInfo()));
 			extraInfoTabIndex = tabIndex;
 			tabIndex++;
 		}
@@ -1486,140 +1429,91 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		return footPanel; 
 	}
 	
-	private FlowPanel getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(AON.MSG.accountEntries()));
-		toolbar.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonNowrap());
-
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonFindingSubtitleIternal());
+	private AonToolbar getToolbarPanel() {
 		
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonFindingToolbar());
-		
-		if (getOptions().isJournalTabVisible()) {
-			search = new Button();
-			search.setText(AON.MSG.searchAction());
-			search.setTitle(AON.MSG.searchAction());
-			search.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-			search.addStyleName(AON.AON_CSS.aonIconSearch());
-			search.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					onSearch(event);
-				}
-			});
-			buttonContainer.add(search);
-		}
-
-		reset = new Button();
-		reset.setText(AON.MSG.newAction());
-		reset.setTitle(AON.MSG.newAction());
-		reset.setAccessKey('N');
-		reset.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		reset.addStyleName(AON.AON_CSS.aonIconReset());
-		reset.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onReset(event);
-			}
-		});
-		buttonContainer.add(reset);
-
-		accept = new Button();
-		accept.setText(AON.MSG.saveAction());
-		accept.setTitle(AON.MSG.saveAction());
-		accept.setAccessKey('G');
-		accept.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		accept.addStyleName(AON.AON_CSS.aonIconSave());
-		accept.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onAccept(event);
-			}
-		});
-		buttonContainer.add(accept);
-
-		remove = new Button();
-		remove.setText(AON.MSG.deleteAction());
-		remove.setTitle(AON.MSG.deleteAction());
-		remove.setAccessKey('B');
-		remove.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		remove.addStyleName(AON.AON_CSS.aonIconDelete());
-		remove.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onRemove(event);
-			}
-		});
-		buttonContainer.add(remove);
+		AonToolbar toolbar = new AonToolbar(AON.MSG.accountEntries());
 		
 		if (getOptions().isBackButtonVisible()) {
-			back = new Button();
-			back.setText(AON.MSG.backAction());
-			back.setTitle(AON.MSG.backAction());
-			back.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-			back.addStyleName(AON.AON_CSS.aonIconCancel());
+			back = new AonToolbarButton( AON.MSG.backAction(), AON.CSS.aonIconBack() );
 			back.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					onBack(event);
 				}
 			});
-			buttonContainer.add(back);
+			toolbar.add(back);
 		}
 
-		duplicate = new Button();
-		duplicate.setText(AON.MSG.duplicate());
-		duplicate.setTitle(AON.MSG.duplicate());
-		duplicate.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		duplicate.addStyleName(AON.AON_CSS.aonIconDuplicate());
+		if (getOptions().isJournalTabVisible()) {
+			search = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
+			search.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					onSearch(event);
+				}
+			});
+			toolbar.add(search);
+		}
+
+		reset = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		reset.setAccessKey('N');
+		reset.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onReset(event);
+			}
+		});
+		toolbar.add(reset);
+
+		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		accept.setAccessKey('G');
+		accept.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAccept(event);
+			}
+		});
+		toolbar.add(accept);
+
+		remove = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		remove.setAccessKey('B');
+		remove.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onRemove(event);
+			}
+		});
+		toolbar.add(remove);
+		
+		duplicate = new AonToolbarButton( AON.MSG.duplicate(), AON.CSS.aonIconCopy() );
 		duplicate.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				onDuplicate(event);
 			}
 		});
-		buttonContainer.add(duplicate);
+		toolbar.add(duplicate);
 
-		audit = new Button();
-		audit.setText(AON.MSG.audit());
-		audit.setTitle(AON.MSG.audit());
-		audit.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		audit.addStyleName(AON.AON_CSS.aonIconAudit());
+		audit = new AonToolbarButton( AON.MSG.audit(), AON.CSS.aonIconAudit() );
 		audit.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				onAudit(event);
 			}
 		});
-		buttonContainer.add(audit);
+		toolbar.add(audit);
 
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
+		return toolbar;
 
 	}
 	
 	private Widget getEntryHeader() {
 		entryHeader = new FlowPanel();
-		entryHeader.setStyleName(AON.AON_CSS.aonScrollArea());
+		entryHeader.setStyleName(AON.CSS.aonScrollArea());
 		
 		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonPanelGrid());
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		tab.setStyleName(AON.CSS.aonTable());
+		tab.addStyleName(AON.CSS.aonWidthAll());
 		tab.getColumnFormatter().setWidth(0, "65px");
 		tab.getColumnFormatter().setWidth(1, "65px");
 		tab.getColumnFormatter().setWidth(2, "65px");
@@ -1629,10 +1523,10 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		tab.getColumnFormatter().setWidth(6, "200px");
 		tab.getColumnFormatter().setWidth(7, "100px");
 		tab.getColumnFormatter().setWidth(8, "100px");
-		tab.getColumnFormatter().setWidth(9, "100px");
+		tab.getColumnFormatter().setWidth(9, "30px");
 		
 		tab.setWidget(0, 0, new InlineLabel(AON.MSG.fiscalYear()));
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0, 0, AON.CSS.aonTableLabel());
 		
 		period = new AccountPeriodBox();
 		period.setTabIndex(1);
@@ -1643,10 +1537,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			}
 		});
 		tab.setWidget(0, 1, period);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
 		
 		tab.setWidget(0, 2, new InlineLabel(AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(0, 2, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0, 2, AON.CSS.aonTableLabel());
 		
 		entryDate = new DateBoxEx();
 		entryDate.setTabIndex(2);
@@ -1659,10 +1552,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		});
 
 		tab.setWidget(0, 3, entryDate);
-		tab.getCellFormatter().setStyleName(0, 3, AON.AON_CSS.aonPanelGridEven());
 		
 		tab.setWidget(0, 4, new InlineLabel(AON.MSG.type()));
-		tab.getCellFormatter().setStyleName(0, 4, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0, 4, AON.CSS.aonTableLabel());
 		
 		entryType = new ListBox();
 		entryType.setTabIndex(3);
@@ -1674,20 +1566,19 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			}
 		});
 		tab.setWidget(0, 5, entryType);
-		tab.getCellFormatter().setStyleName(0, 5, AON.AON_CSS.aonPanelGridEven());
 		
 		FlowPanel idsContainer = new FlowPanel();
 		journal = new InlineLabel();
-		journal.setStyleName(AON.AON_CSS.aonNowrap());
+		journal.setStyleName(AON.CSS.aonNowrap());
 		id = new InlineLabel();
-		id.setStyleName(AON.AON_CSS.aonNowrap());
-		id.addStyleName(AON.AON_CSS.aonMarginLeft());
+		id.setStyleName(AON.CSS.aonNowrap());
+		id.addStyleName(AON.CSS.aonMarginLeft());
 		idsContainer.add( journal );
 		idsContainer.add( id );
 		tab.setWidget(0, 6, idsContainer);		
-		tab.getCellFormatter().setStyleName(0, 6, AON.AON_CSS.aonTextCenter());
-		tab.getCellFormatter().addStyleName(0, 6, AON.AON_CSS.aonNowrap());
-		tab.getCellFormatter().addStyleName(0, 6, AON.AON_CSS.aonPanelGridEven());
+		tab.getCellFormatter().setStyleName(0, 6, AON.CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonNowrap());
+		tab.getCellFormatter().addStyleName(0, 6, AON.CSS.aonTableLabel());
 		
 		activity = new ListBox();
 		activity.addChangeHandler( new ChangeHandler() {
@@ -1701,7 +1592,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		activity.setWidth("120px");
 		activity.setVisible(false);
 		tab.setWidget(0, 7, activity);
-		tab.getCellFormatter().setStyleName(0, 7, AON.AON_CSS.aonPanelGridEven());
 		
 		confidential = new CheckBox( AON.MSG.confidential());
 		confidential.addClickHandler(new ClickHandler() {
@@ -1712,13 +1602,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			}
 		});
 		tab.setWidget(0, 8, confidential);
-		tab.getCellFormatter().setStyleName(0, 8, AON.AON_CSS.aonPanelGridEven());
-		tab.getCellFormatter().addStyleName(0, 8, AON.AON_CSS.aonNowrap());
+		tab.getCellFormatter().addStyleName(0, 8, AON.CSS.aonNowrap());
 		
-		commentsButton = new Button();
-		commentsButton.setText(AON.MSG.comments());
-		commentsButton.setTitle(AON.MSG.comments());
-		commentsButton.setStyleName(AON.AON_CSS.aonIconCommandButton());
+		commentsButton = new AonTableButton(AON.MSG.comments(), AON.CSS.aonIconComments() );
 		commentsButton.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -1727,15 +1613,8 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			}
 		});
 		tab.setWidget(0, 9, commentsButton);
-		tab.getCellFormatter().setStyleName(0, 9, AON.AON_CSS.aonPanelGridEven());
 		
 		entryHeader.add(tab);
-		
-		FlowPanel statusPnel = new FlowPanel();
-		statusPnel.setStyleName(AON.AON_CSS.aonTextRight());
-		statusMsg = new InlineLabel();
-		statusPnel.add(statusMsg);
-		entryHeader.add(statusMsg);
 		
 		return entryHeader;
 	}
