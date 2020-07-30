@@ -139,15 +139,17 @@ public class Tedi extends TediRequest {
 	}
 
 	public TediInvoice parseInvoice(String company, String fileName, InputStream input) throws TediException {
-		String url = MessageFormat.format(PARSE_INVOICE,company);
-		TediResponse tediResponse = postMultipartFile(url, getToken(), fileName, input);
+		String url = "https://55evus1cy8.execute-api.eu-west-1.amazonaws.com/default/invoice/parse"; //MessageFormat.format(PARSE_INVOICE,company);
+//		TediResponse tediResponse = postMultipartFile(url, getToken(), fileName, input);
+		TediResponse tediResponse = postFile(url, getToken(), fileName, input);
 		if (tediResponse.ok()) {
 			
-			JSONArray array = tediResponse.getJSONArray();
-			if (array.length() > 0) {
-				return TediInvoiceJSON.fromJSON(array.getJSONObject(0));
-			}
-			return null;
+//			JSONArray array = tediResponse.getJSONArray();
+//			if (array.length() > 0) {
+//				return TediInvoiceJSON.fromJSON(array.getJSONObject(0));
+//			}
+//			return null;
+			return TediInvoiceJSON.fromJSON(tediResponse.getJSONObject());
 		}
 		throw new TediException("parseInvoice: " + tediResponse.getResponseCode() + " - " + tediResponse.getResponseMessage() );
 	}

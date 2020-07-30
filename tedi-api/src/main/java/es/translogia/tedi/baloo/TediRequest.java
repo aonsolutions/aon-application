@@ -152,4 +152,49 @@ public class TediRequest {
 
 	}
 	
+	protected TediResponse postFile(String tediUrl, String token, String fileName, InputStream input) {
+		HttpsURLConnection conn = null;
+		Integer responseCode = null;
+		try {
+			URL url = new URL(tediUrl);
+			conn = (HttpsURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+//			conn.setRequestProperty("session_id", token);
+			conn.setRequestProperty("Content-Type", URLConnection.guessContentTypeFromName(fileName));
+			
+			OutputStream os = conn.getOutputStream();
+			
+						
+	    	final int DEFAULT_BUFFER_SIZE = 10240; // 10KB.
+			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+			for (int length = 0; ((length = input.read(buffer)) > 0);) {
+				os.write(buffer, 0, length);
+			}
+
+	        os.flush();
+			
+			responseCode = conn.getResponseCode();
+			
+			if (responseCode != null && responseCode == HttpsURLConnection.HTTP_OK) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						(conn.getInputStream())));
+				
+				String outputResponse;	
+				String response = "";
+				while ((outputResponse = br.readLine()) != null) {
+					response = outputResponse;	
+				}
+				return new TediResponse(response);
+			} else {
+				return new TediResponse(conn.getResponseMessage(), conn.getResponseCode());
+			}
+		} catch (Throwable  e) {
+			e.printStackTrace();
+			return new TediResponse(e.getMessage(), responseCode==null?null:responseCode);
+		} finally {
+			if (conn != null) conn.disconnect();
+		}
+
+	}
 }
