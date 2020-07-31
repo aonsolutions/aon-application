@@ -40,7 +40,7 @@
 						</g:MenuBar>
 					</g:MenuItem>
 					<g:MenuItem ui:field="viewMenuItem" text="Ver">
-						<g:MenuBar vertical="true">
+						<g:MenuBar ui:field="viewMenuBar" vertical="true">
 							<g:MenuItem ui:field="l00MenuItem" text="L00 Normal" />
 							<g:MenuItem ui:field="l13MenuItem" text="L13 Vacaciones" />
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
@@ -48,6 +48,14 @@
 							</g:MenuItem>
 							<g:MenuItem ui:field="nextMonthMenuItem" text="-" />
 							<g:MenuItem ui:field="prevMonthMenuItem" text="-" />							
+							<g:MenuItem styleName="gwt-MenuItemSeparator">
+								<div class="menuSeparatorInner"></div>
+							</g:MenuItem>
+							<g:MenuItem ui:field="pendingMenuItem" ><span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;<span> Pendiente </span></span></g:MenuItem>	
+							<g:MenuItem ui:field="processingMenuItem" ><span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;</span><span> En Proceso </span></g:MenuItem>	
+							<g:MenuItem ui:field="errorMenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span> Con Errores </span></g:MenuItem>							
+							<g:MenuItem ui:field="calculatedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Calculada </span></g:MenuItem>						
+							<g:MenuItem ui:field="confirmedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Confirmada </span></g:MenuItem>							
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>

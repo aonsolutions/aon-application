@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBasesResult;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
@@ -70,6 +71,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.ImageResourceRenderer;
+import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -171,6 +173,9 @@ public abstract class CretaDetail extends Composite {
 	DataGrid<JsFile> dataGrid;
 	
 	@UiField
+	MenuBar viewMenuBar;
+	
+	@UiField
 	MenuItem l00MenuItem;
 	@UiField 
 	MenuItem l13MenuItem;
@@ -179,6 +184,17 @@ public abstract class CretaDetail extends Composite {
 	MenuItem nextMonthMenuItem;
 	@UiField 
 	MenuItem prevMonthMenuItem;
+
+	@UiField 
+	MenuItem pendingMenuItem;
+	@UiField 
+	MenuItem processingMenuItem;
+	@UiField 
+	MenuItem errorMenuItem;
+	@UiField 
+	MenuItem calculatedMenuItem;
+	@UiField 
+	MenuItem confirmedMenuItem;
 
 
 	private PopupPanel popupTooltip;
@@ -455,31 +471,31 @@ public abstract class CretaDetail extends Composite {
 
 		fileUpload.getElement().setPropertyString("multiple", "multiple");
 		
-		// View Menu
-		setCheckedStyle(l00MenuItem, true);
-		setCheckedStyle(l13MenuItem, true);
+		
+		
+		// View Menu 
+		MenuItem viewMenuItems [] = {
+				l00MenuItem,
+				l13MenuItem,
+				nextMonthMenuItem,
+				prevMonthMenuItem,
+				pendingMenuItem,
+				processingMenuItem,
+				errorMenuItem,
+				calculatedMenuItem,
+				confirmedMenuItem
+		};
+		for ( MenuItem menuItem: viewMenuItems ) {
+			setCheckedStyle(menuItem, true);
+			menuItem.setScheduledCommand( () -> {
+				setCheckedStyle(menuItem, !isChecked(menuItem));
+				onTrabajadoresYTramos();
+			} );
+		}
 		
 		nextMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getNextMonth())));
 		prevMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getPrevMonth())));
-		setCheckedStyle(nextMonthMenuItem, true);
-		setCheckedStyle(prevMonthMenuItem, true);
-		
-		l00MenuItem.setScheduledCommand( () -> {
-			setCheckedStyle(l00MenuItem, !isChecked(l00MenuItem));
-			onTrabajadoresYTramos();
-		} );
-		l13MenuItem.setScheduledCommand( () -> {
-			setCheckedStyle(l13MenuItem, !isChecked(l13MenuItem));
-			onTrabajadoresYTramos();
-		} );
-		nextMonthMenuItem.setScheduledCommand( () -> {
-			setCheckedStyle(nextMonthMenuItem, !isChecked(nextMonthMenuItem));
-			onTrabajadoresYTramos();
-		} );
-		prevMonthMenuItem.setScheduledCommand( () -> {
-			setCheckedStyle(prevMonthMenuItem, !isChecked(prevMonthMenuItem));
-			onTrabajadoresYTramos();
-		} );
+
 
 	}
 
@@ -559,27 +575,34 @@ public abstract class CretaDetail extends Composite {
 
 			trabajadoresYTramosMap = MainCreta
 					.add(File.TRABAJADORES_TRAMOS, trabajadoresYTramos);
-			
+			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
 
-			List<JsFile> filtered = new ArrayList<JsFile>();
+			Map<String, JsFile> filteredMap = new HashMap<String, JsFile>();
 			
 			Collection<CretaService.JsTrabajadoresYTramos> visibleTrabajadoresYTramos = 
 					filterVisible(trabajadoresYTramosMap.values());
 			
-			filtered.addAll(filter(visibleTrabajadoresYTramos));
+			
+			
+			filter(visibleTrabajadoresYTramos).forEach(f -> filteredMap.putIfAbsent(f.getId(), f));
+//			filtered.addAll(filter(visibleTrabajadoresYTramos));
 
-			respuestasMap = MainCreta.add(File.RESPUESTA, respuestas);
+			
 			Collection<CretaService.JsRespuesta> visibleRespuestas = 
 					filterVisible(respuestasMap.values());
 
 			basesMap = MainCreta.add(File.BASES, bases);
 
 			for (JsRespuesta jsRespuesta : visibleRespuestas ) {
-				if (!contains(filtered, jsRespuesta)
+				if (
+//						!contains(filtered, jsRespuesta)
+						!filteredMap.containsKey(jsRespuesta.getId())
 						&& hasTrabajadoresYTramos(jsRespuesta))
-					filtered.addAll(filter(Collections.singleton(jsRespuesta)));
+					filter(Collections.singleton(jsRespuesta)).forEach(f -> filteredMap.putIfAbsent(f.getId(), f));
+//					filtered.addAll(filter(Collections.singleton(jsRespuesta)));
 			}
 			
+			List<JsFile> filtered = new ArrayList<JsFile>(filteredMap.values());
 			Collections.sort(filtered, JsFileComparator.newInstace());
 			
 			dataGrid.setRowData(filtered);
@@ -733,27 +756,67 @@ public abstract class CretaDetail extends Composite {
 		jsFileSelectionModel.setSelected(trabajadoresYTramosMap.get(id), selectionModel.getSelectedSet().size() > 0);
 	}
 	
-	private <T extends CretaService.JsFile> Collection<T> filterVisible(Collection<T> trabajadoresYTramos) {
+	private <T extends CretaService.JsFile> Collection<T> filterVisible(Collection<T> jsFiles) {
 		return
-		trabajadoresYTramos.stream()
-		.filter(file -> {
-			String type = file.getType();
-			if ( AonStringUtils.equalsIgnoreCase("L00", type) && !isChecked(l00MenuItem))
-				return false;
-			if ( AonStringUtils.equalsIgnoreCase("L13", type) && !isChecked(l13MenuItem))
-				return false;
+		jsFiles.stream()
+		.filter(jsFile -> {
 			
-			int month = Integer.parseInt(file.getFrom().split("-")[1]);
+			try {
 			
-			int nextMonth = getNextMonth().getMonth() + 1;
-			if ( month == nextMonth && !isChecked(nextMonthMenuItem))
-				return false;
-			
-			int prevMonth = getPrevMonth().getMonth() + 1;
-			if ( month == prevMonth && !isChecked(prevMonthMenuItem))
-				return false;
-			
-
+				String type = jsFile.getType();
+				if ( AonStringUtils.equalsIgnoreCase("L00", type) && !isChecked(l00MenuItem))
+					return false;
+				if ( AonStringUtils.equalsIgnoreCase("L13", type) && !isChecked(l13MenuItem))
+					return false;
+				
+				int month = Integer.parseInt(jsFile.getFrom().split("-")[1]);
+				
+				int nextMonth = getNextMonth().getMonth() + 1;
+				if ( month == nextMonth && !isChecked(nextMonthMenuItem))
+					return false;
+				
+				int prevMonth = getPrevMonth().getMonth() + 1;
+				if ( month == prevMonth && !isChecked(prevMonthMenuItem))
+					return false;
+				
+				JsRespuesta jsRespuesta = respuestasMap.get(jsFile.getId());
+				if ( jsRespuesta == null && !isChecked(pendingMenuItem))
+					return false;
+	//			if ( jsRespuesta == null && !isChecked(processingMenuItem))
+	//				return false;
+				
+				JsError jsErros[] = jsRespuesta.getErrors();
+				if ( jsErros == null && !isChecked(processingMenuItem) )
+					return false;
+				
+				boolean error = false;
+				boolean confirmed = false;
+				boolean calculated = false;
+					
+				for (JsError jsError : jsErros) {
+					// Confirmed
+					if ( AonStringUtils.equalsIgnoreCase("A9761", jsError.getCode())) {
+						confirmed = true ;
+					// Calculated
+					}else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
+						calculated = true ;
+					}
+					else {
+						error = true ;
+					}
+				}
+				
+				if ( !error && confirmed && !isChecked(confirmedMenuItem))
+					return false;
+				if ( !error && calculated && !isChecked(calculatedMenuItem))
+					return false;
+				if ( error && !isChecked(errorMenuItem))
+					return false;
+				
+				
+			} catch ( Throwable e ) {
+				
+			}
 			
 			return true;
 		})
