@@ -36,6 +36,12 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	public Auth getAuth(AONContext ctx, byte[] auth) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getAuth(ctx, auth));
+	}
+	
+	@Override
 	public byte[] unHexUuid(AONContext ctx, String uuid) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.unHexUuid(ctx, uuid));
@@ -61,6 +67,11 @@ public class SecurityImpl implements ISecurity {
 	@Override
 	public User getUser(AONContext ctx, String login) {
 		return SecurityDAO.getUser(ctx, login);
+	}
+	
+	@Override
+	public User insertUser(AONContext ctx, User user) {
+		return SecurityDAO.insertUser(ctx, user);
 	}
 	
 	@Override

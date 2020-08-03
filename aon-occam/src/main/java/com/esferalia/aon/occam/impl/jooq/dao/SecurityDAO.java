@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
@@ -18,11 +19,10 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
-import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
-import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.Record6;
 import org.jooq.impl.DSL;
 
@@ -103,9 +103,17 @@ public class SecurityDAO {
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<Integer>(SIGNATURE.USER_ID);}
 	}
 
+	public static Auth getAuth(AONContext ctx, byte[] auth) {
+		return ctx.getDslContext()
+			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD)
+			.from(AUTH)
+			.where(AUTH.ID.eq(auth))
+			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
+	}
+	
 	public static Auth getAuth(AONContext ctx, String email) {
 		return ctx.getDslContext()
-			.select(DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD)
+			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD)
 			.from(AUTH)
 			.where(AUTH.EMAIL.eq(email))
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
@@ -227,6 +235,18 @@ public class SecurityDAO {
 		return getUser(ctx,ctx.getUser());
 	}
 	
+	public static User insertUser(AONContext ctx, User user) {
+		Integer id = ctx.getDslContext().insertInto(USER)
+			.set(USER.NAME, user.getName())
+			.set(USER.LOGIN, user.getLogin())
+			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
+			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.AUTH, user.getAuth())
+			.execute();
+		
+		return user.setId(id);
+	}
+	
 	public static LinkedList<User> getUsersByEmail(AONContext ctx, String email){
 		return ctx.getDslContext().select()
 		.from(USER).join(MAIL_ACCOUNT).on(USER.ID.eq(MAIL_ACCOUNT.USER_ID))
@@ -265,12 +285,13 @@ public class SecurityDAO {
 		
 	}
 	
-	public static class AuthFiller  implements Function<Record3<String, String, String>,Auth> {
+	public static class AuthFiller  implements Function<Record4<byte[], String, String, String>,Auth> {
 
 		@Override
-		public Auth apply(Record3<String, String, String> record) {
+		public Auth apply(Record4<byte[], String, String, String> record) {
 			return new Auth()
-				.setUuid(record.value1())
+				.setAuth(record.getValue(AUTH.ID))
+				.setUuid(record.value2())
 				.setEmail(record.getValue(AUTH.EMAIL))
 				.setPassword(record.getValue(AUTH.PASSWORD));
 		}

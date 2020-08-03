@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.code.aon.jaas.auth.util.Util;
 import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.task.IssueFilter;
 import com.esferalia.aon.occam.api.model.task.TaskStatus;
@@ -224,5 +225,12 @@ public class Utils {
 				.setDateDiff(parameters.get("date_diff"))
 				.setFrom(from)
 				.setTo(to);
+	}
+    
+    public static String createPasswordHash(String username, String password) {
+		String hashAlgorithm="SHA";
+		String hashEncoding="BASE64";
+	    String passwordHash = Util.createPasswordHash(hashAlgorithm, hashEncoding, null, username, password);
+	    return passwordHash;
 	}
 }

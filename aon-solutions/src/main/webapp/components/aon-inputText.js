@@ -57,7 +57,7 @@
 		attributeChangedCallback(name, oldValue, newValue) {
 			//console.log(`attribute ${name} change!! ${newValue}`);
 			if('value' === name) {
-				document.getElementById(this.getAttribute('id') + 'Text').value = newValue;
+				if(newValue) document.getElementById(this.getAttribute('id') + 'Text').value = newValue;
 
 				componentHandler.upgradeDom();
 
@@ -123,6 +123,11 @@
 			div.appendChild(label);
 
 			return div;
+		}
+
+		onChange(fn){
+			let input = document.getElementById(this.getAttribute('id') + 'Text');
+			input.addEventListener('change', fn);
 		}
 	}
 

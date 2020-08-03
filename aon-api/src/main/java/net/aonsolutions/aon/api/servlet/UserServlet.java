@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -51,6 +52,14 @@ public class UserServlet extends HttpServlet{
 			AON.getUserStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))
 			.forEach(r -> {
 				JSONObject json = getUserApps(domain, r);
+				if(r.getAuth() != null) {
+					Auth auth = AON_SOLUTIONS.getAuth(domainName, domainId, r.getAuth());
+					if(auth.getEmail() != null) {
+						auth = AON_SOLUTIONS.getAuth(r.getAuth());
+					}
+					json.put("email", auth.getEmail());
+					json.put("uuid", auth.getUuid());
+				}
 				jsArray.put(userToJSON(r, json));
 			});
 			Utils.addCorsHeader(resp);
@@ -91,16 +100,24 @@ public class UserServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("USER SERVLET - POST METHOD");
 		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
+
+		String domainName = req.getHeader("domain_name");
+		Integer domainId = !"null".equalsIgnoreCase(req.getHeader("domain_id")) && AonNumberUtils.toInteger(req.getHeader("domain_id")) != null 
+				? AonNumberUtils.toInteger(req.getHeader("domain_id")) : 0;
+		Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
+		
 		JSONObject json = Utils.getRequestJSON(req);
 		if(pathInfo != null) {
 			if("app".equalsIgnoreCase(pathInfo[1])) {
 				json = setUserAppRole(json);
 			}
+		} else {
+			json = setUser(domain, json);
 		}
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, json, new JSONObject());
 	}
-		
+	
 	private JSONObject setUserAppRole(JSONObject json){
 		String domainName = json.optString("domain");
 		String app = json.optString("app");
@@ -114,8 +131,8 @@ public class UserServlet extends HttpServlet{
 
 		UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
 		f.getDomainProperty().eq(domain.getId())
-		.and(f.getUserIdProperty().eq(user))
-		.and((aonApp != null ? f.getAppProperty().eq(aonApp.value()): f.getAppProperty().isNull()))).findFirst().orElse(new UserAppRole());
+			.and(f.getUserIdProperty().eq(user))
+			.and((aonApp != null ? f.getAppProperty().eq(aonApp.value()): f.getAppProperty().isNull()))).findFirst().orElse(new UserAppRole());
 		
 		if(active) {
 			if(uar.getId() == null) {
@@ -139,12 +156,40 @@ public class UserServlet extends HttpServlet{
 		return uar.toJSON();
 	}
 	
+	private JSONObject setUser(Domain domain, JSONObject json) {
+		String email = json.optString("email");
+		Integer pos = email.indexOf("@");
+		String login = email.substring(0, pos);
+		Auth auth = AON_SOLUTIONS.getAuth(email);
+		if(auth.getUuid() != null) {
+			String pass = Utils.createPasswordHash(email, login);
+			auth.setEmail(email)
+				.setPassword(pass);
+			auth = AON_SOLUTIONS.insertAuth(domain.getName(), domain.getId(), auth);
+		} 
+		byte[] a = auth.getAuth();
+		User user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(a));
+		if(user != null && user.getId() != null) {
+			
+		} else {
+			user.setAuth(auth.getAuth())
+				.setActive(true)
+				.setDomain(domain.getId())
+				.setLogin(login)
+				.setName(json.opt("name") != null ? json.getString("name") : login);
+			user = AON.insertUser(domain.getName(), domain.getId(), "", user);
+		}
+		JSONObject js = new JSONObject();
+		js.put("email", email);
+		return userToJSON(user, js);
+	}
 	
 	private JSONObject userToJSON(User user, JSONObject json) {
 		json.put("id", user.getId());
 		json.put("name", user.getName());
 		json.put("surname", "");
-		json.put("email", "email");
+		if(json.opt("email") == null)
+			json.put("email", "");
 		return json;
 	}
 }

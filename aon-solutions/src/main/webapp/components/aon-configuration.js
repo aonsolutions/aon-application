@@ -5,6 +5,7 @@ import './aon-address.js';
 import './aon-inputText.js';
 import './aon-marketplace.js';
 import './aon-user-list.js';
+// import './aon-dialog.js';
 
 function createUser(user){
 	let str = JSON.stringify(user);
@@ -96,12 +97,19 @@ class AonConfiguration extends HTMLElement {
 		this.setAttribute('user', user);
 	}
 
+	get option() {
+		return this.getAttribute('option');
+	}
+
+	set option(option) {
+		this.setAttribute('option', option);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('company' === name || 'user' === name){
 			this.actualize();
 		}
 	}
-
 
 	constructor () {
 		super();
@@ -112,7 +120,8 @@ class AonConfiguration extends HTMLElement {
 
 			<!-- AON CONFIGURATION TOOLBAR -->
 			<!-- <aon-configuration-toolbar> </aon-configuration-toolbar> -->
-			<aon-toolbar title="CONFIGURACIÓN"></aon-toolbar>
+			<aon-toolbar id="aonConfigurationToolbar" title="CONFIGURACIÓN"></aon-toolbar>
+
 			<!-- AON CONFIGURATION MENU (SIDENAV) -->
 			<div id="aon-configuration-sidenav" class="sidenav">
 				<ul class="aonClip">
@@ -147,6 +156,8 @@ class AonConfiguration extends HTMLElement {
 			<div id="aon-configuration-content" class="aonContent">
 
 			</div>
+
+			<!-- <aon-dialog id="aonConfigurationDialog" title="CONFIGURACIÓN"></aon-dialog> -->
 			`;
 			this.build();
   }
@@ -179,6 +190,23 @@ class AonConfiguration extends HTMLElement {
 					this.buildContent(id);
 				});
 		});
+
+		let addButton = document.getElementById('aonConfigurationToolbarAddButton');
+		addButton.addEventListener('click', () => {
+			let id = this.getAttribute('option');
+			if('aon-configuration-personal' === id){
+
+			} else if('aon-configuration-general' === id ) {
+
+			} else if('aon-configuration-user' === id) {
+				this.buildCreateUser();
+			} else if('aon-configuration-company' === id ) {
+
+			} else if('aon-configuration-store' === id) {
+
+			}
+		});
+
 	}
 
 	actualize() {
@@ -199,16 +227,23 @@ class AonConfiguration extends HTMLElement {
 	}
 
 	buildContent(id) {
-		if('aon-configuration-general' === id ) {
+		this.setAttribute('option', id);
+		if('aon-configuration-personal' === id){
+
+		} else if('aon-configuration-general' === id ) {
 			this.buildGeneral();
 		} else if('aon-configuration-user' === id) {
 			this.buildUser();
+		} else if('aon-configuration-company' === id ) {
+
 		} else if('aon-configuration-store' === id) {
 			this.buildStore();
 		}
 	}
 
 	buildGeneral() {
+		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+
 		let content = document.getElementById('aon-configuration-content');
 		content.style.display = "flex";
 		content.innerHTML = `
@@ -220,8 +255,8 @@ class AonConfiguration extends HTMLElement {
 		cardDiv.style.width = '500px';
 		card.addContent(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth25" id="aon-configuration-general-nif" description="NIF" value=""></aon-input-text>
-				<aon-input-text class="aonWidth75" id="aon-configuration-general-name" description="Razón Social" value=""></aon-input-text>
+				<aon-input-text class="aonWidth25" id="aon-configuration-general-nif" description="NIF" value="${company.document}"></aon-input-text>
+				<aon-input-text class="aonWidth75" id="aon-configuration-general-name" description="Razón Social" value="${company.name}"></aon-input-text>
 			</form>
 			<form action="#" class="aon-margin-0">
 				<aon-address class="aon-width-100" id="address" description="Dirección"></aon-address>
@@ -245,7 +280,7 @@ class AonConfiguration extends HTMLElement {
 				<aon-input-text class="aon-width-100" id="aon-configuration-general2-web" description="Web" value=""></aon-input-text>
 			</form>
 
-			LOGO
+			<!-- LOGO -->
 		`);
 
 		componentHandler.upgradeAllRegistered();
@@ -255,6 +290,18 @@ class AonConfiguration extends HTMLElement {
 		let content = document.getElementById('aon-configuration-content');
 		content.style.display = "block";
 		content.innerHTML = '<aon-user-list> </aon-user-list>' ;
+	}
+
+	buildCreateUser() {
+		let content = document.getElementById('aon-configuration-content');
+		content.innerHTML = '<aon-user id="aonUserCreate" ><aon-user>';
+		let aonUser = document.getElementById('aonUserCreate');
+		aonUser.style.display = "flex";
+		aonUser.style.width = "100%";
+		aonUser.setAttribute('user', JSON.stringify({}));
+		getDomainApps().then(apps => {
+			aonUser.setAttribute('apps', JSON.stringify(apps));
+		});
 	}
 
 	buildStore() {

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 @SuppressWarnings("serial")
 public class Auth implements Serializable {
 	
+	byte[] auth;
 	String uuid;
 	String email;
 	String password;
@@ -13,6 +14,15 @@ public class Auth implements Serializable {
 	
 	public Auth() { }
 
+	public byte[] getAuth() {
+		return auth;
+	}
+
+	public Auth setAuth(byte[] auth) {
+		this.auth = auth;
+		return this;
+	}
+	
 	public String getUuid() {
 		return uuid;
 	}
@@ -48,4 +58,6 @@ public class Auth implements Serializable {
 		this.users = users;
 		return this;
 	}	
+	
+	
 }

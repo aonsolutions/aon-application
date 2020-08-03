@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AonCompany;
@@ -50,6 +51,18 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Auth getAuth(String domainName, Integer domainId, byte[] auth) { 
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, "");
+			return getSecurity().getAuth(ctx, auth);
+		} finally {
+			if(ctx != null) {
+				ctx.close();
+			}
+		}
+	}
+	
 	public static Auth getAuth(String schema, String email) { 
 		AONContext ctx = null;
 		try {
@@ -60,6 +73,30 @@ public class AON_SOLUTIONS {
 				ctx.close();
 			}
 		}
+	}
+	
+	public static Auth getAuth(String email) {
+		Auth auth = new Auth();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
+				auth = getAuth(domain, 0, email);
+		   	}	    		
+		}
+		return auth;
+	}
+	
+	public static Auth getAuth(byte[] auth) {
+		Auth auth0 = new Auth();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(auth0.getUuid() == null && !AonStringUtils.isBlank(domain)) {
+				auth0 = getAuth(domain, 0, auth);
+		   	}	    		
+		}
+		return auth0;
 	}
 	
 	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 

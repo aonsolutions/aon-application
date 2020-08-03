@@ -26,10 +26,12 @@ import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 
 public interface ISecurity {
 	public Auth getAuth(AONContext ctx, String email);
+	public Auth getAuth(AONContext ctx, byte[] auth);
 	public byte[] unHexUuid(AONContext ctx, String uuid);
 	public Auth insertAuth(AONContext ctx, Auth auth);
 	
 	public User getUser(AONContext ctx, UserFilter filter);
+	public User insertUser(AONContext ctx, User user);
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter);
 	public User getUser(AONContext ctx, String login);
 	public LinkedList<User> getUsersByEmail(AONContext ctx, String email);

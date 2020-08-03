@@ -398,6 +398,18 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static User insertUser(String domainName, int domainId, String login, User user) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().insertUser(ctx, user);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static String getUserPassword(String domainName, int domainId, String login, Integer userId) {
 		AONContext ctx = null;
 		try {

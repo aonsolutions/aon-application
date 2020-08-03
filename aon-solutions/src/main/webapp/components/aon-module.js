@@ -29,7 +29,7 @@ import './aon-desktop.js';
 				document.getElementById("aonHome").style.display = 'block';
 				localStorage.removeItem('aon_domain_id');
 				localStorage.removeItem('aon_domain_name');
-				rootPanel('<aon-parent></aon-parent>');
+				rootPanel('<aon-parent id="aonParent"></aon-parent>');
 			} else {
 				document.getElementById("aonLogin").style.display = 'block';
 				document.getElementById("aonHome").style.display = 'none';

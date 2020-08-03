@@ -63,7 +63,7 @@ import './aon-icon-button.js';
 			toolSection.className = "aonToolbarSection aonToolbarSectionEnd";
 
 			let addbutton = '<aon-icon-button id="' + this.getAttribute('id')
-				+ 'aon-toolbar-add' + '" icon="add"> </aon-icon-button>';
+				+ 'AddButton" icon="add"> </aon-icon-button>';
 			toolSection.innerHTML = addbutton;
 
 			header.appendChild(toolSection);

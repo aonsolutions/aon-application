@@ -126,6 +126,20 @@ public class LoginServlet extends HttpServlet{
 	    }
 	}
 	
+	public static Auth getAuth(String email) {
+		Auth auth = new Auth();
+		if(isEmail(email)) {
+		 	List<String> schemas = AONContext.getSchemas();
+		   	for(String schema: schemas) {
+		   		String domain = AONContext.getSchemaFirstDomain(schema);
+		   		if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
+	   				auth = AON_SOLUTIONS.getAuth(domain, 0, email);
+		   		}	    		
+		   	}
+		}
+		return auth;
+	}
+		
 	protected String createPasswordHash(String username, String password, String digestOption) throws LoginException {
 		String hashAlgorithm="SHA";
 		String hashEncoding="BASE64";
@@ -133,7 +147,7 @@ public class LoginServlet extends HttpServlet{
 	    return passwordHash;
 	}
 	   
-	private boolean isEmail(String email) {
+	private static boolean isEmail(String email) {
 		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
                 "[a-zA-Z0-9_+&*-]+)*@" + 
                 "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 

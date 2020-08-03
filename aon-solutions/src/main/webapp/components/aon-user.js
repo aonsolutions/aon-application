@@ -85,6 +85,9 @@ class AonUser extends HTMLElement {
 		cardDiv.style.width = '500px';
 		card.addContent(`
 			<form action="#" class="aon-margin-0">
+				<aon-input-text class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input-text>
+			</form>
+			<form action="#" class="aon-margin-0">
 				<aon-input-text class="aonWidth25" id="aonConfigurationUserCardName" description="Nombre" value=""></aon-input-text>
 				<aon-input-text class="aonWidth75" id="aonConfigurationUserCardSurname" description="Apellidos" value=""></aon-input-text>
 			</form>
@@ -92,10 +95,19 @@ class AonUser extends HTMLElement {
 				<aon-input-text class="aonWidth50" id="aonConfigurationUserCardDocument" description="DNI/NIE" value=""></aon-input-text>
 				<aon-input-text class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input-text>
 			</form>
-			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input-text>
-			</form>
+
 		`);
+
+		let email = document.getElementById('aonConfigurationUserCardEmail');
+		email.onChange(() => {
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+			user.email = email.getAttribute('value');
+			setUser(user).then(r => {
+				alert('aaaaaaaaaaaaa');
+				alert(r);
+			});
+
+		});
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		let cardDiv2 = document.getElementById('aonConfigurationUserSecurityCard-div');
@@ -140,7 +152,7 @@ class AonUser extends HTMLElement {
 		input.type = 'checkbox';
 		input.id = 'switch-' + (app ? app.app : 'admin');
 		input.className = 'mdl-switch__input';
-		input.checked = app && !user.admin ? user.apps[app.app] : user.admin;
+		input.checked = app && !user.admin && user.apps ? user.apps[app.app] : user.admin;
 		input.addEventListener('change', () => {
 			let uar = {
 				domain: localStorage.getItem('aon_domain_name'),

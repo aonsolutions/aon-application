@@ -20,6 +20,7 @@ window.getCompanies = getCompanies;
 window.getCompany = getCompany;
 window.companySelection = companySelection;
 window.getUsers = getUsers;
+window.setUser = setUser;
 window.getInvoices = getInvoices;
 window.getInvoice = getInvoice;
 window.invoiceSelection = invoiceSelection;
@@ -219,6 +220,18 @@ function setUserAppRole(userAppRole) {
 function getUsers() {
   return new Promise(function(resolve, reject){
       request('GET', '/ms/api/user', localStorage.getItem('aon_session_id'),  undefined, undefined, function (result, error) {
+        if(error) {
+          reject(error);
+        } else {
+          resolve(JSON.parse(result));
+        }
+   	  });
+   });
+}
+
+function setUser(user) {
+  return new Promise(function(resolve, reject){
+      request('POST', '/ms/api/user', localStorage.getItem('aon_session_id'), user, undefined, function (result, error) {
         if(error) {
           reject(error);
         } else {

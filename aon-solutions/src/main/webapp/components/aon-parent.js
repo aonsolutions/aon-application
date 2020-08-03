@@ -13,24 +13,54 @@ class AonParent extends HTMLElement {
 		this.init();
  	}
 
-	init() {
-    getCompanies().then( r => {
+	init(filter) {
+		getCompanies()
+		.then( r => {
 			  if(!r.end){
-          this.init();
+          this.init(filter);
         }
-        this.build(r.companies)
+        this.build(r.companies.filter(f => this.companyFilter(f, filter)))
       }, () => this.closeSession()
     );
   }
 
+	companyFilter(f, q) {
+		if(!q) {
+			q = {
+				inactive: false,
+				active: true,
+				shared: true
+			};
+		}
+		let value = true;
+		if(q && q.value) {
+			const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
+			const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
+			value = document || name;
+		}
+
+		if(q && q.active && !q.inactive) {
+			value = f.active && value;
+		}
+
+		if(q && q.inactive && !q.active) {
+			value = !f.active && value;
+		}
+
+		if(q && q.shared) {
+			// TODO
+		}
+
+		return value;
+	}
+
  	build(companies) {
 		let list = document.getElementById("aon-company-list");
 		list.innerHTML = '';
+
 		for(let i = 0; i < companies.length; i++){
 			list.appendChild(this.buildLi(companies[i], (i === 0 || i%2 === 0) ? '#f1f1f1' : 'transparent'));
 		}
-
-
 	}
 
 	buildLi(company, color) {
@@ -47,6 +77,10 @@ class AonParent extends HTMLElement {
 
 		li.addEventListener('mouseleave', () => {
 			li.style.backgroundColor = color;
+		});
+
+		li.addEventListener('contextmenu', () => {
+
 		});
 
 		let span = document.createElement('span');

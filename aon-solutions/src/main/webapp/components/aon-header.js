@@ -125,7 +125,7 @@ class AonHeader extends HTMLElement {
 
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
-			rootPanel('<aon-parent></aon-parent>');
+			rootPanel('<aon-parent id="aonParent"></aon-parent>');
 		});
 
 		let aonHeaderHomeButton = document.getElementById('aon-header-home-button');
@@ -136,6 +136,15 @@ class AonHeader extends HTMLElement {
 		let aonHeaderHelpButton = document.getElementById('aon-header-help-button');
 		aonHeaderHelpButton.addEventListener('click', () => {
 			open('https://faqs.aonsolutions.es/');
+		});
+
+		let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
+		aonHeaderShowMenu.addEventListener('click', () => {
+			let aonMenu = document.getElementById('aonMenu');
+			aonMenu.toogle();
+			if(aonMenu.getAttribute('opened')) {
+				aonHeaderShowMenu.style.paddingRight = '20px';
+			} else aonHeaderShowMenu.style.paddingRight = '0px';
 		});
 
 		let aonHeaderConfiguration = document.getElementById('aonHeaderConfiguration');
@@ -160,7 +169,7 @@ class AonHeader extends HTMLElement {
 			if(localStorage.getItem('aon_domain_id')){
 				rootPanel('<aon-desktop></aon-desktop>');
 			} else {
-				rootPanel('<aon-parent></aon-parent>');
+				rootPanel('<aon-parent id="aonParent"></aon-parent>');
 			}
 		})
 
