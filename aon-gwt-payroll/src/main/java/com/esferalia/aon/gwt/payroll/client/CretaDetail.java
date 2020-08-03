@@ -41,6 +41,7 @@ import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.builder.shared.InputBuilder;
 import com.google.gwt.dom.builder.shared.TableCellBuilder;
@@ -62,6 +63,7 @@ import com.google.gwt.user.cellview.client.AbstractCellTable.Style;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.DefaultCellTableBuilder;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
@@ -172,7 +174,7 @@ public abstract class CretaDetail extends Composite {
 	@UiField(provided = true)
 	DataGrid<JsFile> dataGrid;
 	
-	@UiField
+	@UiField(provided = true)
 	MenuBar viewMenuBar;
 	
 	@UiField
@@ -185,6 +187,8 @@ public abstract class CretaDetail extends Composite {
 	@UiField 
 	MenuItem prevMonthMenuItem;
 
+	@UiField 
+	MenuItem viewMenuItem;
 	@UiField 
 	MenuItem pendingMenuItem;
 	@UiField 
@@ -214,6 +218,42 @@ public abstract class CretaDetail extends Composite {
 			protected void onBrowserEvent2(Event event) {
 				// TODO Auto-generated method stub
 				super.onBrowserEvent2(event);
+			}
+		};
+		
+		viewMenuBar = new MenuBar(true) {
+			  private MenuItem findItem(Element hItem) {
+			    for (MenuItem item : getItems()) {
+			      if (item.getElement().isOrHasChild(hItem)) {
+			        return item;
+			      }
+			    }
+			    return null;
+			  }
+			  @Override
+			  public void onBrowserEvent(Event event) {
+				
+				MenuItem item = findItem(DOM.eventGetTarget(event));
+			    switch (DOM.eventGetType(event)) {
+			      case Event.ONCLICK: {
+			    	  if (item != null) {
+			    	      // Fire the item's command. The command must be fired in the same event
+			    	      // loop or popup blockers will prevent popups from opening.
+			    	      final ScheduledCommand cmd = item.getScheduledCommand();
+			    	      Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
+			    	        @Override
+			    	        public void execute() {
+			    	          cmd.execute();
+			    	        }
+			    	      });
+			    	      event.stopPropagation();
+			    	      event.preventDefault();
+			    	  }
+			    	  return;
+			    	 
+			      }
+			    }
+			    super.onBrowserEvent(event);
 			}
 		};
 
@@ -473,7 +513,8 @@ public abstract class CretaDetail extends Composite {
 		
 		
 		
-		// View Menu 
+		// View Menu
+		viewMenuItem.addStyleName("aon-float-right");
 		MenuItem viewMenuItems [] = {
 				l00MenuItem,
 				l13MenuItem,
@@ -806,9 +847,9 @@ public abstract class CretaDetail extends Composite {
 					}
 				}
 				
-				if ( !error && confirmed && !isChecked(confirmedMenuItem))
+				if ( !error && !confirmed && calculated && !isChecked(calculatedMenuItem))
 					return false;
-				if ( !error && calculated && !isChecked(calculatedMenuItem))
+				if ( !error && confirmed && !isChecked(confirmedMenuItem))
 					return false;
 				if ( error && !isChecked(errorMenuItem))
 					return false;

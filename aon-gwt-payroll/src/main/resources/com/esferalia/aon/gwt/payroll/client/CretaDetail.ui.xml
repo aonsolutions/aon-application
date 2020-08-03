@@ -27,9 +27,8 @@
 		<g:north size="114"  >
 
 			<g:FlowPanel >
-
-				<g:MenuBar >
-					<g:MenuItem text="SLD-Cret@" enabled="false">
+				<g:MenuBar width="100%">
+					<g:MenuItem text="SLD-Cret@" enabled="false" width="100%">
 						<g:MenuBar vertical="true">
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="msjRecMenuItem"  text="Mensajes Recibidos" />
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="dclMenuItem"  text="{DOCUMENTO_CALCULO_LIQUIDACION.getFilename}" />
@@ -39,7 +38,7 @@
 							<g:MenuItem styleName="aon-icon-segsocial-small aon-icon-commandButton" ui:field="confirmacionMenuItem"  text="{SOLICITUD_CONFIRMACION.getFilename}" enabled="false"/>
 						</g:MenuBar>
 					</g:MenuItem>
-					<g:MenuItem ui:field="viewMenuItem" text="Ver">
+					<g:MenuItem ui:field="viewMenuItem" text="Filtrar..."  >
 						<g:MenuBar ui:field="viewMenuBar" vertical="true">
 							<g:MenuItem ui:field="l00MenuItem" text="L00 Normal" />
 							<g:MenuItem ui:field="l13MenuItem" text="L13 Vacaciones" />
@@ -51,7 +50,9 @@
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
-							<g:MenuItem ui:field="pendingMenuItem" ><span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;<span> Pendiente </span></span></g:MenuItem>	
+							<g:MenuItem ui:field="pendingMenuItem" >
+								<span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;<span> Pendiente </span></span>
+							</g:MenuItem>	
 							<g:MenuItem ui:field="processingMenuItem" ><span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;</span><span> En Proceso </span></g:MenuItem>	
 							<g:MenuItem ui:field="errorMenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span> Con Errores </span></g:MenuItem>							
 							<g:MenuItem ui:field="calculatedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Calculada </span></g:MenuItem>						
