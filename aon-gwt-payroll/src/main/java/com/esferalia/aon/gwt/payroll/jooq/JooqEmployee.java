@@ -553,18 +553,20 @@ public class JooqEmployee {
 			
 			Integer rbank = rPayMethodRecord.get(RPAYMETHOD.RBANK);
 			
-			if(null == rbank) {
-				employeeData.setRbankId(null);
-				employeeData.setAccount(null);
-				employeeData.setBic(null);
-			}else {
+			employeeData.setRbankId(null);
+			employeeData.setAccount(null);
+			employeeData.setBic(null);
+			
+			if(null != rbank) {
 				Record rBankTable = dslContext.select().from(RBANK)
 						.where(RBANK.ID.eq(rbank))
 						.fetchOne();
 				
-				employeeData.setRbankId(rBankTable.get(RBANK.ID));
-				employeeData.setAccount(rBankTable.get(RBANK.BANK_ACCOUNT));
-				employeeData.setBic(rBankTable.get(RBANK.BIC));
+				if(null != rBankTable) {
+					employeeData.setRbankId(rBankTable.get(RBANK.ID));
+					employeeData.setAccount(rBankTable.get(RBANK.BANK_ACCOUNT));
+					employeeData.setBic(rBankTable.get(RBANK.BIC));
+				}
 			}
 			
 		}

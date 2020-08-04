@@ -59,6 +59,7 @@ public class JooqCRA {
 					CONTRACT.END_DATE.isNull()
 					.or(CONTRACT.END_DATE.ge(endDateSQL)))
 			.and(CONTRACT.ENTERPRISE_CCC.in(cccList))
+			.and(CONTRACT.ID.ge(0))
 			.fetch();
 		
 		for(Record contractRecord : contractsActiveRecords) {
