@@ -76,7 +76,7 @@ class AonUserList extends HTMLElement {
 
 			let aonUserListSecurityButton = document.getElementById('aonUserListSecurityButton-' + user.id);
 			aonUserListSecurityButton.addEventListener('click', () => {
-				let content = document.getElementById('aon-configuration-content');
+				let content = document.getElementById('aonConfigurationContent');
 				content.innerHTML = '<aon-user id="aonUser-' + user.id + '" ><aon-user>';
 				let aonUser = document.getElementById('aonUser-' + user.id);
 				aonUser.style.display = "flex";

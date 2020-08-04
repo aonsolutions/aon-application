@@ -77,7 +77,7 @@ public class UserServlet extends HttpServlet{
 	private JSONObject getUserApps(Domain domain, User user) {
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(user.getId())).collect(Collectors.toCollection(LinkedList::new));
 		JSONObject userAppRoles = new JSONObject();
-		Boolean admin = false;
+		Boolean admin = true;
 		if(roles.stream().filter(f -> f.getApp() == null && AonRole.ADMIN.equals(f.getRole())).count() > 0) {
 			admin = true;
 			AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId())).forEach(da -> {

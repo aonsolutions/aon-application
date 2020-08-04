@@ -57,7 +57,8 @@
 		attributeChangedCallback(name, oldValue, newValue) {
 			//console.log(`attribute ${name} change!! ${newValue}`);
 			if('value' === name) {
-				if(newValue) document.getElementById(this.getAttribute('id') + 'Text').value = newValue;
+				let text = document.getElementById(this.getAttribute('id') + 'Text');
+				if(newValue && text) text.value = newValue;
 
 				componentHandler.upgradeDom();
 

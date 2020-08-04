@@ -129,8 +129,8 @@ import '../services/transaction.js';
 				<div class="demo-card-wide mdl-card mdl-shadow--2dp aon-card-content">
 					<form action="#">
 						<aon-checkbox class="aonWidth50" id="irpfCheckbox" description="IRPF"></aon-checkbox>
-						<aon-checkbox class="aon-width-25" id="suplidosCheckbox" description="Suplidos"></aon-checkbox>
-						<aon-input-text class="aon-width-25" id="t-suplidos" description="Total Suplidos" visible="false"></aon-input-text>
+						<aon-checkbox class="aonWidth25" id="suplidosCheckbox" description="Suplidos"></aon-checkbox>
+						<aon-input-text class="aonWidth25" id="t-suplidos" description="Total Suplidos" visible="false"></aon-input-text>
 					</form>
 					<div class="row" id="irpf-taxe"></div>
 				</div>
@@ -613,10 +613,10 @@ import '../services/transaction.js';
 				`;
 				line = line + `
 					<form action="#" class="${className}">
-						<aon-select class="aon-width-25" id='${'tax_type' + i}' options='${JSON.stringify(taxTypeOptions)}' value="IVA" description="Tipo" ${readonly}></aon-select>
-						<aon-select class="aon-width-25" id='${'tax_percentage' + i}' options='${JSON.stringify(taxPercentageOptions)}' value='${this._invoice.taxes[i].percentage}' description="%" ${readonly}></aon-select>
-						<aon-input-text class="aon-width-25" id='${'tax_base' + i}' value="${this._invoice.taxes[i].base}" description="Base Imponible" ${readonly}></aon-input-text>
-						<aon-input-text class="aon-width-25" id='${'tax_quota' + i}' value="${this._invoice.taxes[i].quota}" description="Cuota" ${readonly}></aon-input-text>
+						<aon-select class="aonWidth25" id='${'tax_type' + i}' options='${JSON.stringify(taxTypeOptions)}' value="IVA" description="Tipo" ${readonly}></aon-select>
+						<aon-select class="aonWidth25" id='${'tax_percentage' + i}' options='${JSON.stringify(taxPercentageOptions)}' value='${this._invoice.taxes[i].percentage}' description="%" ${readonly}></aon-select>
+						<aon-input-text class="aonWidth25" id='${'tax_base' + i}' value="${this._invoice.taxes[i].base}" description="Base Imponible" ${readonly}></aon-input-text>
+						<aon-input-text class="aonWidth25" id='${'tax_quota' + i}' value="${this._invoice.taxes[i].quota}" description="Cuota" ${readonly}></aon-input-text>
 					</form>
 					${button}
 				`;
@@ -713,10 +713,10 @@ import '../services/transaction.js';
 				let readonly = this._invoice.type === "Emitida" ? 'readonly' : '';
 				let line = `
 					<form action="#" class="aon-margin-0">
-						<aon-select class="aon-width-25" id='irpf_type' options='${JSON.stringify(irpfTypeOptions)}' value="IRPF" description="Tipo" readonly></aon-select>
-						<aon-select class="aon-width-25" id='irpf_percentage' options='${JSON.stringify(irpfPercentageOptions)}' value='${this._invoice.irpf.percentage}' description="%"></aon-select>
-						<aon-input-text class="aon-width-25" id='irpf_base' value="${this._invoice.irpf.base}" description="Base Imponible" ${readonly} ></aon-input-text>
-						<aon-input-text class="aon-width-25" id='irpf_quota' value="${this._invoice.irpf.quota}" description="Cuota" ${readonly}></aon-input-text>
+						<aon-select class="aonWidth25" id='irpf_type' options='${JSON.stringify(irpfTypeOptions)}' value="IRPF" description="Tipo" readonly></aon-select>
+						<aon-select class="aonWidth25" id='irpf_percentage' options='${JSON.stringify(irpfPercentageOptions)}' value='${this._invoice.irpf.percentage}' description="%"></aon-select>
+						<aon-input-text class="aonWidth25" id='irpf_base' value="${this._invoice.irpf.base}" description="Base Imponible" ${readonly} ></aon-input-text>
+						<aon-input-text class="aonWidth25" id='irpf_quota' value="${this._invoice.irpf.quota}" description="Cuota" ${readonly}></aon-input-text>
 					</form>
 				`;
 
@@ -880,10 +880,10 @@ import '../services/transaction.js';
 				`;
 				line = line + `
 					<form action="#" class="aon-margin-0 aon-width-90">
-						<aon-input-text class="aon-width-25" id='${'finance_date' + i}' value="${this._invoice.finances[i].due_date}" type="date" description="Fecha Vencimiento" ></aon-input-text>
-						<aon-select class="aon-width-25" id='${'finance_paymethod' + i}' options='${JSON.stringify(getPayMethods())}' value="${this._invoice.finances[i].pay_method}" description="Forma de Pago" ></aon-select>
-						<aon-input-text class="aon-width-25" id='${'finance_amount' + i}' value="${this._invoice.finances[i].amount}" description="Importe"></aon-input-text>
-						<aon-input-text class="aon-width-25" id='${'finance_iban' + i}' value="${this._invoice.finances[i].iban}" description="IBAN" ></aon-input-text>
+						<aon-input-text class="aonWidth25" id='${'finance_date' + i}' value="${this._invoice.finances[i].due_date}" type="date" description="Fecha Vencimiento" ></aon-input-text>
+						<aon-select class="aonWidth25" id='${'finance_paymethod' + i}' options='${JSON.stringify(getPayMethods())}' value="${this._invoice.finances[i].pay_method}" description="Forma de Pago" ></aon-select>
+						<aon-input-text class="aonWidth25" id='${'finance_amount' + i}' value="${this._invoice.finances[i].amount}" description="Importe"></aon-input-text>
+						<aon-input-text class="aonWidth25" id='${'finance_iban' + i}' value="${this._invoice.finances[i].iban}" description="IBAN" ></aon-input-text>
 					</form>
 					${button}
 				`;
