@@ -1312,7 +1312,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				Date resultEnd = result.getPeriod().getEnd();
 
 				Double resultDouble = result.getValue();
-				double resultValue = resultDouble != null ? resultDouble : 0.00;
+				double resultValue = AonNumberUtils.isValid(resultDouble) ? resultDouble : 0.00;
 
 				addResult(expressionContext, name, resultStart, resultEnd, resultValue);
 

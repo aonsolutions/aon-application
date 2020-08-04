@@ -295,12 +295,12 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				if ( extraIssueDate.before(settleEndDate)
 					 && extraIssueDate.after(contractStartDate) ) {
 					extraStartDate  = getStartDate(extra, ++year);
-					extraIssueDate  = getEndDate(extra, ++year);
+					extraIssueDate  = getEndDate(extra, year);
 					if ( extraStartDate.after(settleEndDate))  
 						break;  // Nothing to calculate
 				} else if (extraEndDate.before(settleEndDate)  ) {
 					extraStartDate  = getStartDate(extra, ++year);
-					extraIssueDate  = getEndDate(extra, ++year);
+					extraIssueDate  = getEndDate(extra, year);
 					if ( extraStartDate.after(settleEndDate))  
 						break;  // Nothing to calculate
 				}
@@ -342,6 +342,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						extraPayment.setExpression(String.format(Locale.US, "%f", amount));
 						extraPayment.setIrpfExpression(String.format(Locale.US, "%f", tax));
 						extraPayment.setQuoteExpression(String.format(Locale.US, "%f", quote));
+						
 						
 						extraPayments.add( extraPayment );
 						super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);

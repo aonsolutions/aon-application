@@ -3288,6 +3288,92 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testCretaTrabajadoresYTramosEREFZATotalAndIT()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, -1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date endERE = add(startDate, DAY_OF_MONTH, 6);
+		
+		addData(aonContext, contract, startDate, endERE, ContextVariable.ERE_FACTOR_FORCE_OFF, 1.00);
+		
+		Date startIT = add(endERE, DAY_OF_MONTH, 2);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIT, null, null);
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		PaymentConceptRecord ereFzaExonerado = addConcept(aonContext, "ERE_FZA_EXONERADO");
+
+		addPayment(aonContext, contract, ereFzaExonerado, null, 
+				String.format("%s * BASE_REGULADORA",  ERE_DAYS_FORCE_OFF)
+				);
+		//@formatter:on
+		
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		Assert.assertEquals(5, tramos.size());
+		
+		// ERE 
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("07", tramo0.getFechaHasta().getDia());
+		assertTramoExpedienteRegulacionEmpleoTotal(tramo0);
+		
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("08", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("08", tramo1.getFechaHasta().getDia());
+		assertTramoActivoNormal(tramo1);
+		
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("09", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals("23", tramo2.getFechaHasta().getDia());
+		assertTramoIT15PrimerosDias(tramo2);
+		
+		Tramo tramo3 = tramos.get(3); 
+		Assert.assertEquals("24", tramo3.getFechaDesde().getDia());
+		Assert.assertEquals("28", tramo3.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo3);
+		
+		Tramo tramo4 = tramos.get(4); 
+		Assert.assertEquals("29", tramo4.getFechaDesde().getDia());
+		//Assert.assertEquals("28", tramo4.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo4);
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, startDate, endDate, ccc, contract);
+		
+		Assert.assertEquals(5, bases.size());
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosEREFZAOFFTotal()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
