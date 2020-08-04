@@ -103,8 +103,6 @@ class AonUser extends HTMLElement {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 			user.email = email.getAttribute('value');
 			setUser(user).then(r => {
-				alert('aaaaaaaaaaaaa');
-				alert(r);
 			});
 
 		});

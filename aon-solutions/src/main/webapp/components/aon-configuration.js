@@ -9,7 +9,7 @@ import './aon-user-list.js';
 
 function createUser(user){
 	let str = JSON.stringify(user);
-	let content = document.getElementById("aon-configuration-content");
+	let content = document.getElementById("aonConfigurationContent");
 	console.log(str);
 	content.innerHTML = '';
 	let aonUser = document.createElement("aon-user");
@@ -52,19 +52,19 @@ function createTable(header, values) {
 	return table;
 }
 
-function toogleNav() {
-	if(document.getElementById("aon-configuration-sidenav").style.width === "250px"){
-		document.getElementById("aon-configuration-sidenav").style.width = "0px";
-		document.getElementById("aon-configuration-content").style.marginLeft = "0px";
+function toogleNav(id, content) {
+	if(document.getElementById(id).style.width === "250px"){
+		document.getElementById(id).style.width = "0px";
+		document.getElementById(content).style.marginLeft = "0px";
 	} else {
-		document.getElementById("aon-configuration-sidenav").style.width = "250px";
-		document.getElementById("aon-configuration-content").style['margin-left'] = "250px";
+		document.getElementById(id).style.width = "250px";
+		document.getElementById(content).style['margin-left'] = "250px";
 	}
 }
 
 function closeNav() {
-	document.getElementById("aon-configuration-sidenav").style.width = "0px";
-	document.getElementById("aon-configuration-content").style.marginLeft = "250px";
+	document.getElementById("aonConfigurationSidenav").style.width = "0px";
+	document.getElementById("aonConfigurationContent").style.marginLeft = "250px";
 }
 
 class AonConfiguration extends HTMLElement {
@@ -119,33 +119,32 @@ class AonConfiguration extends HTMLElement {
 		this.innerHTML = `
 
 			<!-- AON CONFIGURATION TOOLBAR -->
-			<!-- <aon-configuration-toolbar> </aon-configuration-toolbar> -->
-			<aon-toolbar id="aonConfigurationToolbar" title="CONFIGURACIÓN"></aon-toolbar>
+			<aon-toolbar id="aonConfiguration" title="CONFIGURACIÓN"></aon-toolbar>
 
 			<!-- AON CONFIGURATION MENU (SIDENAV) -->
-			<div id="aon-configuration-sidenav" class="sidenav">
+			<div id="aonConfigurationSidenav" class="sidenav">
 				<ul class="aonClip">
-					<li id="aon-configuration-personal" class="aonAppMenuSidenavList aonOpacity" >
+					<li id="aonConfigurationPersonal" class="aonAppMenuSidenavList aonOpacity" >
 						<i class="material-icons aonVerticalMiddle">person</i>
 						<span class="aonMenuItemSpan"> Datos Usuario </span>
 					</li>
 
-					<li id="aon-configuration-general" class="aonAppMenuSidenavList aonOpacity" >
+					<li id="aonConfigurationGeneral" class="aonAppMenuSidenavList aonOpacity" >
 						<i class="material-icons aonVerticalMiddle">business</i>
 						<span class="aonMenuItemSpan"> Información General	</span>
 					</li>
 
-					<li id="aon-configuration-user" class="aonAppMenuSidenavList aonOpacity">
+					<li id="aonConfigurationUser" class="aonAppMenuSidenavList aonOpacity">
 						<i class="material-icons aonVerticalMiddle">people</i>
 						<span class="aonMenuItemSpan"> Gestión de Usuarios </span>
 					</li>
 
-					<li id="aon-configuration-company" class="aonAppMenuSidenavList aonOpacity">
+					<li id="aonConfigurationCompany" class="aonAppMenuSidenavList aonOpacity">
 						<i class="material-icons aonVerticalMiddle">business</i>
 						<span class="aonMenuItemSpan"> Gestión de Empresas </span>
 					</li>
 
-					<li id="aon-configuration-store" class="aonAppMenuSidenavList aonOpacity" >
+					<li id="aonConfigurationStore" class="aonAppMenuSidenavList aonOpacity" >
 						<i class="material-icons aonVerticalMiddle">store_mall_directory</i>
 						<span class="aonMenuItemSpan"> Contratación </span>
 					</li>
@@ -153,7 +152,7 @@ class AonConfiguration extends HTMLElement {
 			</div>
 
 			<!-- AON CONFIGURATION CONTENT -->
-			<div id="aon-configuration-content" class="aonContent">
+			<div id="aonConfigurationContent" class="aonContent">
 
 			</div>
 
@@ -163,11 +162,11 @@ class AonConfiguration extends HTMLElement {
   }
 
 	build() {
-		document.getElementById("aon-configuration-sidenav").style.width = "250px";
-		document.getElementById("aon-configuration-content").style['margin-left'] = "250px";
+		document.getElementById("aonConfigurationSidenav").style.width = "250px";
+		document.getElementById("aonConfigurationContent").style['margin-left'] = "250px";
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		let listIds = ['aon-configuration-personal', 'aon-configuration-general', 'aon-configuration-user', 'aon-configuration-company', 'aon-configuration-store']
+		let listIds = ['aonConfigurationPersonal', 'aonConfigurationGeneral', 'aonConfigurationUser', 'aonConfigurationCompany', 'aonConfigurationStore']
 		listIds.forEach((id, i) => {
 				let el = document.getElementById(id);
 				if((!company || !user || (user && !user.admin)) && i != 0) {
@@ -194,15 +193,15 @@ class AonConfiguration extends HTMLElement {
 		let addButton = document.getElementById('aonConfigurationToolbarAddButton');
 		addButton.addEventListener('click', () => {
 			let id = this.getAttribute('option');
-			if('aon-configuration-personal' === id){
+			if('aonConfigurationPersonal' === id){
 
-			} else if('aon-configuration-general' === id ) {
+			} else if('aonConfigurationGeneral' === id ) {
 
-			} else if('aon-configuration-user' === id) {
+			} else if('aonConfigurationUser' === id) {
 				this.buildCreateUser();
-			} else if('aon-configuration-company' === id ) {
+			} else if('aonConfigurationCompany' === id ) {
 
-			} else if('aon-configuration-store' === id) {
+			} else if('aonConfigurationStore' === id) {
 
 			}
 		});
@@ -212,7 +211,7 @@ class AonConfiguration extends HTMLElement {
 	actualize() {
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		let listIds = ['aon-configuration-personal', 'aon-configuration-general', 'aon-configuration-user', 'aon-configuration-company', 'aon-configuration-store']
+		let listIds = ['aonConfigurationPersonal', 'aonConfigurationGeneral', 'aonConfigurationUser', 'aonConfigurationCompany', 'aonConfigurationStore']
 		listIds.forEach((id, i) => {
 				let el = document.getElementById(id);
 				if((!company || !user || (user && !user.admin)) && i != 0) {
@@ -228,15 +227,15 @@ class AonConfiguration extends HTMLElement {
 
 	buildContent(id) {
 		this.setAttribute('option', id);
-		if('aon-configuration-personal' === id){
+		if('aonConfigurationPersonal' === id){
 
-		} else if('aon-configuration-general' === id ) {
+		} else if('aonConfigurationGeneral' === id ) {
 			this.buildGeneral();
-		} else if('aon-configuration-user' === id) {
+		} else if('aonConfigurationUser' === id) {
 			this.buildUser();
-		} else if('aon-configuration-company' === id ) {
+		} else if('aonConfigurationCompany' === id ) {
 
-		} else if('aon-configuration-store' === id) {
+		} else if('aonConfigurationStore' === id) {
 			this.buildStore();
 		}
 	}
@@ -244,40 +243,40 @@ class AonConfiguration extends HTMLElement {
 	buildGeneral() {
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 
-		let content = document.getElementById('aon-configuration-content');
+		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "flex";
 		content.innerHTML = `
-			<aon-card id="aon-configuration-general-card" title="Información General"></aon-card>
-			<aon-card id="aon-configuration-general2-card" title="Información Adicional"></aon-card>
+			<aon-card id="aonConfigurationGeneralCard" title="Información General"></aon-card>
+			<aon-card id="aonConfigurationGeneral2Card" title="Información Adicional"></aon-card>
 		`;
-		let card = document.getElementById('aon-configuration-general-card');
-		let cardDiv = document.getElementById('aon-configuration-general-card-div');
+		let card = document.getElementById('aonConfigurationGeneralCard');
+		let cardDiv = document.getElementById('aonConfigurationGeneralCard-div');
 		cardDiv.style.width = '500px';
 		card.addContent(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth25" id="aon-configuration-general-nif" description="NIF" value="${company.document}"></aon-input-text>
-				<aon-input-text class="aonWidth75" id="aon-configuration-general-name" description="Razón Social" value="${company.name}"></aon-input-text>
+				<aon-input-text class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input-text>
+				<aon-input-text class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input-text>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-address class="aon-width-100" id="address" description="Dirección"></aon-address>
+				<aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-address>
 			</form>
 		`);
 
-		let card2 = document.getElementById('aon-configuration-general2-card');
-		let cardDiv2 = document.getElementById('aon-configuration-general2-card-div');
+		let card2 = document.getElementById('aonConfigurationGeneral2Card');
+		let cardDiv2 = document.getElementById('aonConfigurationGeneral2Card-div');
 		cardDiv2.style.width = '500px';
 		card2.addContent(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth50" id="aon-configuration-general2-phone" description="Teléfono" value=""></aon-input-text>
-				<aon-input-text class="aonWidth50" id="aon-configuration-general2-fax" description="Fax" value=""></aon-input-text>
+				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input-text>
+				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input-text>
 			</form>
 
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-100" id="aon-configuration-general2-email" description="Email" value=""></aon-input-text>
+				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value=""></aon-input-text>
 			</form>
 
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-100" id="aon-configuration-general2-web" description="Web" value=""></aon-input-text>
+				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value=""></aon-input-text>
 			</form>
 
 			<!-- LOGO -->
@@ -287,13 +286,13 @@ class AonConfiguration extends HTMLElement {
 	}
 
 	buildUser() {
-		let content = document.getElementById('aon-configuration-content');
+		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "block";
 		content.innerHTML = '<aon-user-list> </aon-user-list>' ;
 	}
 
 	buildCreateUser() {
-		let content = document.getElementById('aon-configuration-content');
+		let content = document.getElementById('aonConfigurationContent');
 		content.innerHTML = '<aon-user id="aonUserCreate" ><aon-user>';
 		let aonUser = document.getElementById('aonUserCreate');
 		aonUser.style.display = "flex";
@@ -305,7 +304,7 @@ class AonConfiguration extends HTMLElement {
 	}
 
 	buildStore() {
-		let content = document.getElementById('aon-configuration-content');
+		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "block";
 		content.innerHTML = '<aon-marketplace id="aonMarketplace" > </aon-marketplace>';
 		if(this.getAttribute('company')){

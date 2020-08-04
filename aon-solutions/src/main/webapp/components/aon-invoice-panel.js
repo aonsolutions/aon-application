@@ -8,64 +8,78 @@ class AonInvoicePanel extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-		<style>
-			.aon-header {
-				background-color: #fff;
-				color: #000;
-			}
+			<!-- AON INVOICE PANEL TOOLBAR -->
+			<aon-toolbar id="aonInvoicePanel" title="FACTURAS"></aon-toolbar>
 
-			.aon-padding-left20 {
-				padding-left: 20px !important;
-			}
-		</style>
 
-		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-			<header class="mdl-layout__header aonHeader">
-				<div class="mdl-layout__header-row aon-padding-left20">
-					<button id="aon-invoice-menu-button" class="mdl-button mdl-js-button mdl-button--icon">
-						<i class="material-icons">menu</i>
-					</button>
-					<span class="mdl-layout-title aon-padding-left20">FACTURAS</span>
-				<div class="mdl-layout-spacer"></div>
+			<!-- AON INVOICE PANEL MENU (SIDENAV) -->
+			<div id="aonInvoicePanelSidenav" class="sidenav">
+				<ul class="aonClip">
+					<li id="aonInvoicePanelInbox" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">inbox</i>
+						<span class="aonMenuItemSpan"> Inbox </span>
+					</li>
 
-				<button class="mdl-button mdl-js-button mdl-button--icon">
-					<i class="material-icons">add</i>
-				</button>
-			</header>
+					<li id="aonInvoicePanelRefused" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">report</i>
+						<span class="aonMenuItemSpan"> Rechazadas	</span>
+					</li>
 
-			<main class="mdl-layout__content">
-				<div class="page-content">
-					<!-- AON INVOICE PANEL MENU (SIDENAV) -->
-					<div id="aon-invoice-sidenav" class="sidenav">
-						<ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect aonClip">
-							<li class="mdl-menu__item aonOpacity">
-								<i class="material-icons mdl-list__item-icon"  style="vertical-align: middle;">person</i>
-								<span class="aonMenuItemSpan"> Usuarios </span>
-							</li>
-							<li class="mdl-menu__item aonOpacity">
-								<i class="material-icons mdl-list__item-icon" style="vertical-align: middle;">business</i>
-								<span class="aonMenuItemSpan"> Empresas	</span>
-							</li>
-						</ul>
-					</div>
+					<li id="aonInvoicePanelTrash" class="aonAppMenuSidenavList aonOpacity" style="border-bottom: 1px solid #ddd;">
+						<i class="material-icons aonVerticalMiddle">delete</i>
+						<span class="aonMenuItemSpan"> Papelera </span>
+					</li>
 
-					<!-- AON INVOICE PANEL CONTENT -->
-					<div id="aon-invoice-content" class"aonContent">
-						<aon-invoice-list id="invoice-list" ></aon-invoice-list>
-					</div>
+					<li id="aonInvoicePanelIssued" class="aonAppMenuSidenavList aonOpacity">
+						<i class="material-icons aonVerticalMiddle">unarchive</i>
+						<span class="aonMenuItemSpan"> Emitidas </span>
+					</li>
 
-				</div>
-			</main>
-		</div>
+					<li id="aonInvoicePanelReceived" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">archive</i>
+						<span class="aonMenuItemSpan"> Recibidas </span>
+					</li>
+
+					<li id="aonInvoicePanelTicket" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">receipt</i>
+						<span class="aonMenuItemSpan"> Tickets/Justificantes </span>
+					</li>
+				</ul>
+			</div>
+
+			<!-- AON INVOICE PANEL CONTENT -->
+			<div id="aonInvoicePanelContent" class="aonContent">
+				<aon-invoice-list id="aonInvoiceList" ></aon-invoice-list>
+			</div>
 		`;
 		this.build();
   	}
 
   	build(){
-			let menu = document.getElementById('aon-invoice-menu-button');
- 			menu.addEventListener('click', () => this.toogle());
+			document.getElementById("aonInvoicePanelSidenav").style.width = "250px";
+			document.getElementById("aonInvoicePanelContent").style['margin-left'] = "250px";
 
-			let invoiceList = document.getElementById('invoice-list');
+			let listIds = ['aonInvoicePanelInbox', 'aonInvoicePanelRefused', 'aonInvoicePanelTrash', 'aonInvoicePanelIssued', 'aonInvoicePanelReceived', 'aonInvoicePanelTicket']
+			listIds.forEach((id, i) => {
+					let el = document.getElementById(id);
+
+					el.addEventListener('mouseover', () => {
+						el.style.backgroundColor = '#f1f1f1';
+					});
+					el.addEventListener('mouseleave', () => {
+						el.style.backgroundColor = 'white';
+					});
+					el.addEventListener('click', () => {
+						el.style.backgroundColor = '#ddd';
+					});
+			});
+
+			// let addButton = document.getElementById('aonConfigurationToolbarAddButton');
+			// addButton.addEventListener('click', () => {
+			//
+			// });
+
+			let invoiceList = document.getElementById('aonInvoiceList');
 			invoiceList.addEventListener('select', (e) => this.aonInvoice(e.detail));
 			var d = new Date();
 			var month = d.getMonth() + 1;
@@ -101,19 +115,9 @@ class AonInvoicePanel extends HTMLElement {
 			]));
   	}
 
-		toogle() {
-			if(document.getElementById("aon-invoice-sidenav").style.width === "250px"){
-				document.getElementById("aon-invoice-sidenav").style.width = "0px";
-				document.getElementById("aon-invoice-content").style.marginLeft = "0px";
-			} else {
-				document.getElementById("aon-invoice-sidenav").style.width = "250px";
-				document.getElementById("aon-invoice-content").style['margin-left'] = "250px";
-			}
-		}
-
 		aonInvoice(invoice) {
 		console.log(invoice);
-			let invoiceContent = document.getElementById('aon-invoice-content');
+			let invoiceContent = document.getElementById('aonInvoicePanelContent');
 			invoiceContent.innerHTML = `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`;
 		}
 }

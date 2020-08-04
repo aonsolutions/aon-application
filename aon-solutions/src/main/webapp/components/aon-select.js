@@ -58,7 +58,6 @@
 			console.log(`attribute ${name} change!! ${newValue}`);
 			if('options' === name) {
 				let span = document.getElementById(this.getAttribute('id') + 'Span');
-				alert(span);
 				if(span){
 					span.innerHTML = "";
 					span.appendChild(this.buildOptions());

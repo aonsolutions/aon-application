@@ -36,7 +36,6 @@ class AonSearchBox extends HTMLElement {
 		input.addEventListener('keyup', () => {
 			let aonParent = document.getElementById('aonParent');
 			aonParent.init({value: input.value});
-			alert(input.value);
 		});
 
 		let advanced = document.getElementById('aon-search-advanced-button');

@@ -39,16 +39,17 @@ import './aon-icon-button.js';
 
 		build() {
 			let header = document.createElement('header');
-			header.setAttribute('id', this.getAttribute('id') + 'aon-toolbar');
+			header.setAttribute('id', this.getAttribute('id') + 'Toolbar');
 			header.className = "aonToolbar";
 
 			let section = document.createElement('section');
 			section.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-section');
 			section.className = "aonToolbarSection";
 
-
+			let sidenav = this.getAttribute('id') + 'Sidenav';
+			let content = this.getAttribute('id') + 'Content';
 			let button = '<aon-icon-button id="' + this.getAttribute('id')
-				+ 'aon-toolbar-menu' + '" icon="menu" onclick="toogleNav()"> </aon-icon-button>';
+				+ 'aon-toolbar-menu' + '" icon="menu" onclick="toogleNav(\'' + sidenav + '\', \'' + content + '\')"> </aon-icon-button>';
 			section.innerHTML = button;
 
 			let title = document.createElement('span');
@@ -62,7 +63,7 @@ import './aon-icon-button.js';
 			toolSection.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-tool-section');
 			toolSection.className = "aonToolbarSection aonToolbarSectionEnd";
 
-			let addbutton = '<aon-icon-button id="' + this.getAttribute('id')
+			let addbutton = '<aon-icon-button id="' + header.getAttribute('id')
 				+ 'AddButton" icon="add"> </aon-icon-button>';
 			toolSection.innerHTML = addbutton;
 

@@ -176,8 +176,8 @@ class AonHeader extends HTMLElement {
 	}
 
 	aonConfiguration() {
-		rootPanel('<aon-configuration id="aonConfiguration"></aon-configuration>');
-		let aonConfiguration = document.getElementById('aonConfiguration');
+		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');
+		let aonConfiguration = document.getElementById('aon-configuration');
 		if(this.getAttribute('company')){
 			aonConfiguration.setAttribute('company', this.getAttribute('company'));
 		}

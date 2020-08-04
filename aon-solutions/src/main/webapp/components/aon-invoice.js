@@ -87,15 +87,15 @@ import '../services/transaction.js';
 					</div>
 
 					<form action="#" class="aon-margin-0">
-						<aon-input-text class="aon-width-25" id="serie" description="Serie"></aon-input-text>
-						<aon-input-text class="aon-width-25" id="number" description="Número"></aon-input-text>
-						<aon-input-text class="aon-width-25" id="reference" visible="false" description="Nº Factura"></aon-input-text>
-						<aon-input-text class="aon-width-25" id="date" type="date" description="Fecha"></aon-input-text>
-						<aon-input-text class="aon-width-25" id="total" description="Total"></aon-input-text>
+						<aon-input-text class="aonWidth25" id="serie" description="Serie"></aon-input-text>
+						<aon-input-text class="aonWidth25" id="number" description="Número"></aon-input-text>
+						<aon-input-text class="aonWidth25" id="reference" visible="false" description="Nº Factura"></aon-input-text>
+						<aon-input-text class="aonWidth25" id="date" type="date" description="Fecha"></aon-input-text>
+						<aon-input-text class="aonWidth25" id="total" description="Total"></aon-input-text>
 					</form>
 
 					<form action="#" class="aon-margin-0">
-						<aon-input-text class="aon-width-25" id="nif" description="NIF"></aon-input-text>
+						<aon-input-text class="aonWidth25" id="nif" description="NIF"></aon-input-text>
 						<aon-input-text class="aonWidth75" id="name" description="Razón Social"></aon-input-text>
 					</form>
 
