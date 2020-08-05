@@ -4,6 +4,7 @@ import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showBases;
 import static com.esferalia.aon.gwt.payroll.client.EmployeeTree.showResults;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,6 +51,7 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
+import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.InfoDescription;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.SaveService;
@@ -456,39 +458,51 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return jsEmployees != null && jsEmployees.length > 0;
 	}
 
-	public static String getIconStyle(JsRespuesta respuesta) {
+	public static boolean isAON(JsFile jsFile) {
+		return jsFile.getExternalReference().equals("66666666");
+	}
+
+	public static String getIconStyle(JsTrabajadoresYTramos trabajadoresYTramos, JsRespuesta respuesta) {
 		if (respuesta == null)
 			return AON.AON_ICON_ERRORWARNING;
 
 		JsError jsErros[] = respuesta.getErrors();
 
-		byte icon = 0x0; // 00000000
+		short icon = 0x0; // 00000000
 		for (JsError jsError : jsErros) {
 			ErrorDescription error = ErrorDescription.getErrorDescription(jsError.getCode());
 			if (error == null)
 				icon |= 0x03b;
 			else
-				icon |= error.accept(new ErrorDescription.Visitor<Byte>() {
-					public Byte visitError(ErrorDescription error) {
+				icon |= error.accept(new ErrorDescription.Visitor<Short>() {
+					@Override
+					public Short visitInfo(InfoDescription error) {
+						return 0x08b;
+					}
+
+					public Short visitError(ErrorDescription error) {
 						return 0x01b;
 					}
 
-					public Byte visitWarning(ErrorDescription.WarningDescription error) {
+					public Short visitWarning(ErrorDescription.WarningDescription error) {
 						return 0x02b;
 					}
 
-					public Byte visitSuccess(ErrorDescription.SuccessDescription error) {
+					public Short visitSuccess(ErrorDescription.SuccessDescription error) {
 						return 0x04b;
 					}
+
 				});
 		}
 
-		if ((icon & 0x01b) == 0x01b)
+		if ((icon & 0x01b) == 0x01b) 			// Error
 			return AON.AON_ICON_EXCEPTION;
-		if ((icon & 0x02b) == 0x02b)
+		if ((icon & 0x02b) == 0x02b)			// Warning
 			return AON.AON_ICON_OKWARNING;
-		if ((icon & 0x04b) == 0x04b)
+		if ((icon & 0x04b) == 0x04b)			// Success
 			return AON.AON_ICON_OK;
+		if ((icon & 0x08b) == 0x08b)			// Info 
+			return  isTrabajadoressYTramos(trabajadoresYTramos) ? AON.AON_ICON_ERRORWARNING : AON.AON_ICON_WARN ;
 
 		return AON.AON_ICON_WARN;
 	}
@@ -1907,6 +1921,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	protected static void sync(final AsyncCallback<Void> cb, Map<String, Collection<String>> options) {
 
 		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
+		respuestas = Arrays.stream(respuestas).filter( r -> !isAON(r)).toArray(JsFile[]::new);
+
 		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
 
 		ArrayList<JsFile> jsFiles = new ArrayList<JsFile>(respuestas.length + trabajadoresYTramos.length);
@@ -2373,7 +2389,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 
 	// ------------------------------------------------------------------------
-
+	protected static boolean isTrabajadoressYTramos(JsFile jsFile) {
+		return AonStringUtils.equals(CretaService.File.TRABAJADORES_TRAMOS.name(), jsFile.getName());
+	}
+	
 	private static void sendAsBinary(XMLHttpRequest xmlHttpRequest, String sData) {
 		int nBytes = sData.length();
 		Uint8Array ui8Data = Uint8ArrayNative.create(nBytes);
@@ -2461,6 +2480,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		int ln = lineOf(string, str);
 		return Pos.create(ln, 0);
 	}
+	
+	 
+
 	// ------------------------------------------------------------------------
 
 }

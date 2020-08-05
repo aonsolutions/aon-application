@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.client.MainCreta.hasTrabajadoresYTramos;
+import static com.esferalia.aon.gwt.payroll.client.MainCreta.isAON;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.CRETA_URL;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.DOCUMENTO_CALCULO_LIQUIDACION;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.TRABAJADORES_TRAMOS;
@@ -426,14 +427,15 @@ public abstract class CretaDetail extends Composite {
 				List<JsFile> jsFiles = new ArrayList<JsFile>(3);
 				jsFiles.add(jsFile);
 				JsRespuesta jsRespuesta = CretaDetail.this.respuestasMap.get(jsFile.getId());
-				if ( jsRespuesta != null ) {
+				if ( jsRespuesta != null) {
 					
 					if ( !isSolicitudTrabajdoresYTramosRespuesta(jsRespuesta, jsFile))
-						jsFiles.add(jsRespuesta);
+						if ( !exist(jsRespuesta, jsFiles)  && !isAON(jsRespuesta) )
+							jsFiles.add(jsRespuesta);
 					
 					for ( JsFile old: MainCreta.getOld(File.RESPUESTA, jsRespuesta) )
 						if ( !isSolicitudTrabajdoresYTramosRespuesta(old, jsFile))
-							if ( !exist(old, jsFiles))
+							if ( !exist(old, jsFiles) && !isAON(old))
 								jsFiles.add(old);
 					
 					JsBases jsBases = CretaDetail.this.basesMap.get(jsFile.getId());
@@ -536,7 +538,7 @@ public abstract class CretaDetail extends Composite {
 		
 		nextMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getNextMonth())));
 		prevMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getPrevMonth())));
-
+		setCheckedStyle(prevMonthMenuItem, new Date().getDate() < 5 );
 
 	}
 
@@ -638,7 +640,8 @@ public abstract class CretaDetail extends Composite {
 				if (
 //						!contains(filtered, jsRespuesta)
 						!filteredMap.containsKey(jsRespuesta.getId())
-						&& hasTrabajadoresYTramos(jsRespuesta))
+//						&& ( hasTrabajadoresYTramos(jsRespuesta) || isAON(jsRespuesta))
+					)
 					filter(Collections.singleton(jsRespuesta)).forEach(f -> filteredMap.putIfAbsent(f.getId(), f));
 //					filtered.addAll(filter(Collections.singleton(jsRespuesta)));
 			}
@@ -725,7 +728,7 @@ public abstract class CretaDetail extends Composite {
 	}
 
 	private String getIconStyle(JsTrabajadoresYTramos t) {
-		return MainCreta.getIconStyle(respuestasMap.get(t.getId()));
+		return MainCreta.getIconStyle(t, respuestasMap.get(t.getId()));
 	}
 
 	private void submitBases() {
@@ -803,12 +806,17 @@ public abstract class CretaDetail extends Composite {
 		.filter(jsFile -> {
 			
 			try {
+				
+				Date from = getDate(jsFile.getFrom());
+				if ( from.before(getPrevMonth())) 
+					return false;
 			
 				String type = jsFile.getType();
 				if ( AonStringUtils.equalsIgnoreCase("L00", type) && !isChecked(l00MenuItem))
 					return false;
 				if ( AonStringUtils.equalsIgnoreCase("L13", type) && !isChecked(l13MenuItem))
 					return false;
+				
 				
 				int month = Integer.parseInt(jsFile.getFrom().split("-")[1]);
 				
@@ -821,16 +829,18 @@ public abstract class CretaDetail extends Composite {
 					return false;
 				
 				JsRespuesta jsRespuesta = respuestasMap.get(jsFile.getId());
-				if ( jsRespuesta == null && !isChecked(pendingMenuItem))
+//				if ( jsRespuesta == null && !isChecked(pendingMenuItem))
+//					return false;
+				if ( jsRespuesta == null && !isChecked(processingMenuItem))
 					return false;
-	//			if ( jsRespuesta == null && !isChecked(processingMenuItem))
-	//				return false;
 				
 				JsError jsErros[] = jsRespuesta.getErrors();
 				if ( jsErros == null && !isChecked(processingMenuItem) )
 					return false;
 				
 				boolean error = false;
+				boolean pending = false;
+				boolean processing = false;
 				boolean confirmed = false;
 				boolean calculated = false;
 					
@@ -841,6 +851,14 @@ public abstract class CretaDetail extends Composite {
 					// Calculated
 					}else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
 						calculated = true ;
+					}else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
+							&& AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
+						processing = true ;
+					}else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
+							&& AonStringUtils.equalsIgnoreCase("R9998", jsError.getCode())) {
+						processing = true ;
+					}else if ( AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
+						pending = true ;
 					}
 					else {
 						error = true ;
@@ -850,6 +868,10 @@ public abstract class CretaDetail extends Composite {
 				if ( !error && !confirmed && calculated && !isChecked(calculatedMenuItem))
 					return false;
 				if ( !error && confirmed && !isChecked(confirmedMenuItem))
+					return false;
+				if ( !error && processing && !isChecked(processingMenuItem))
+					return false;
+				if ( !error && pending && !isChecked(pendingMenuItem))
 					return false;
 				if ( error && !isChecked(errorMenuItem))
 					return false;
@@ -912,14 +934,20 @@ public abstract class CretaDetail extends Composite {
 	}
 	
 	private static Date getNextMonth() {
-		Date prevMonth = new Date();
-		CalendarUtil.addMonthsToDate(prevMonth, -1);
-		return prevMonth;
+		Date nextMonth = new Date();
+		CalendarUtil.setToFirstDayOfMonth(nextMonth);
+		CalendarUtil.addMonthsToDate(nextMonth, -1);
+		return nextMonth;
 	}
 	private static Date getPrevMonth() {
 		Date prevMonth = new Date();
+		CalendarUtil.setToFirstDayOfMonth(prevMonth);
 		CalendarUtil.addMonthsToDate(prevMonth, -2);
 		return prevMonth;
+	}
+	
+	private static Date getDate ( String text ) {
+		return DateTimeFormat.getFormat("yyyy-MM").parse(text);
 	}
 
 }

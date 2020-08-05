@@ -478,5 +478,6 @@ public interface CretaService {
 	
 	public static final String CRETA_URL = URL
 			.encode(GWT.getModuleBaseURL() + "sdl");
+	String AON_REFERENCIA_EXTERNA = "66666666";
 
 }

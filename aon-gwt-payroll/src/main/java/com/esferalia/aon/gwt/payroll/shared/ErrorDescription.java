@@ -9,6 +9,9 @@ import com.google.gwt.http.client.URL;
 public class ErrorDescription {
 
 	public static interface Visitor<T> {
+
+		T visitInfo(InfoDescription error);
+
 		T visitError(ErrorDescription error);
 
 		T visitWarning(WarningDescription error);
@@ -49,6 +52,13 @@ public class ErrorDescription {
 
 	public <T> T accept(ErrorDescription.Visitor<T> visitor) {
 		return visitor.visitError(this);
+	}
+
+	public static class InfoDescription extends ErrorDescription {
+		@Override
+		public <T> T accept(Visitor<T> visitor) {
+			return visitor.visitInfo(this);
+		}
 	}
 
 	public static class SuccessDescription extends ErrorDescription {
@@ -136,6 +146,17 @@ public class ErrorDescription {
 				+"enviar el fichero de solicitud de confirmaci\u00F3n hasta el d\u00EDa "
 				+"20 de cada mes. "));
 	
+		// ------------------------------------------------------------------------
+		// 								MENSAJES DE INFO
+		
+		put(/*A*/"9999", new InfoDescription() 
+				.setMessage("Liquidaci\u00F3n no iniciada")
+				.setCause("No existen mensajes para Liquidaci\u00F3n")
+				.setSolution("Envie la Solicitud del Fichero de Trabajadores e importe los Mensajes Recibidos."));
+		put(/*R*/"9998", new InfoDescription() 
+				.setMessage("Peticiu00F3n procesada correctamente")
+				.setCause("")
+				.setSolution(""));
 	}};
 	//@formatter:on
 

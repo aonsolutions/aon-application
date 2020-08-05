@@ -50,9 +50,7 @@
 							<g:MenuItem styleName="gwt-MenuItemSeparator">
 								<div class="menuSeparatorInner"></div>
 							</g:MenuItem>
-							<g:MenuItem ui:field="pendingMenuItem" >
-								<span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;<span> Pendiente </span></span>
-							</g:MenuItem>	
+							<g:MenuItem ui:field="pendingMenuItem" ><span class="aon-icon-warn aon-icon-commandButton" >&nbsp;<span> Pendiente </span></span></g:MenuItem>	
 							<g:MenuItem ui:field="processingMenuItem" ><span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;</span><span> En Proceso </span></g:MenuItem>	
 							<g:MenuItem ui:field="errorMenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span> Con Errores </span></g:MenuItem>							
 							<g:MenuItem ui:field="calculatedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Calculada </span></g:MenuItem>						

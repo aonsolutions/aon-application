@@ -256,7 +256,7 @@ public class CretaResponseDialog extends SelectDialog<CretaService.JsFile> {
 	}
 
 	private String getIconStyle(JsTrabajadoresYTramos t) {
-		return MainCreta.getIconStyle(respuestasMap.get(t.getId()));
+		return MainCreta.getIconStyle(t, respuestasMap.get(t.getId()));
 	}
 
 	private void submit(CretaService.File file) {

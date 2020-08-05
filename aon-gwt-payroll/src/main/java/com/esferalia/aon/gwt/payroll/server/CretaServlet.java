@@ -1,5 +1,11 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.jooq.Keys.FK_CONTRACT_ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.Keys.FK_SALARY_CONTRACT;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.CRETA_RESPUESTA;
 import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS;
 import static java.lang.String.format;
@@ -28,6 +34,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,12 +53,19 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.jooq.DSLContext;
+import org.jooq.conf.ParamType;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
+
 import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Province;
+import com.esferalia.aon.jooq.Keys;
+import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -384,17 +400,19 @@ public class CretaServlet extends HttpServlet
 				)
 				.filter(t -> t.getLiquidacion() != null)
 				.filter(t -> toDate(t.getLiquidacion().getFechaHoraRecaudacion()).after(fromDate)),
-				Stream.concat(
+				Stream.of(
 					req.getParts().stream()
 					.map(part -> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class, part))
 					.filter(optional -> optional.isPresent())
 					.map(optional -> optional.get())
+					.filter( r -> !AonStringUtils.equals(r.getReferenciaExterna(), CretaService.AON_REFERENCIA_EXTERNA))
 					.peek(r -> {saveRespuesta(req, r);})
 					.peek(r -> os.printf("//MESSAGE %s %s Guardada\r\n", File.RESPUESTA.getFilename(), r.getReferenciaExterna()))
 					.peek(r -> os.flush())
 					,
-					findRespuestas(req)
-				)
+					findRespuestas(req), 
+					findNotStarted(req)
+				).flatMap(s -> s)
 				.filter(r -> r.getLiquidacion() != null && r.getLiquidacion().size() > 0 )
 				.filter(r -> toDate(r.getLiquidacion().get(0).getFechaHoraRecaudacion()).after(fromDate))
 				,
@@ -1431,10 +1449,9 @@ public class CretaServlet extends HttpServlet
 	
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.bases.Bases> findBases(HttpServletRequest req) throws SQLException{
 		String login = ":-)" ; 
+		Date from = getFromDate();
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
 		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
 		
 		return
@@ -1447,10 +1464,9 @@ public class CretaServlet extends HttpServlet
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req) throws SQLException{
 		String login = ":-)" ; 
+		Date from = getFromDate();
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
 		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
 		
 		return
@@ -1461,13 +1477,36 @@ public class CretaServlet extends HttpServlet
 		;
 	}
 
+	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findNotStarted(HttpServletRequest req) throws SQLException{
+		String login = ":-)" ; 
+		Date from = getFromDate();
+		String domainName = req.getServerName();
+		Integer domainId = AonServletUtils.getDomainID(domainName);
+		Collection<String> cccs = getParameterValues(req, Parameter.CCC, () -> findCCCs(domainName, domainId, new java.sql.Date(from.getTime())));		
+
+		return cccs.stream()
+		.map(ccc -> getNotStartedAttachData(ccc, from))
+		.map(data-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class,data) )
+		.filter(optional -> optional.isPresent())
+		.map(optional -> optional.get())
+//		.peek(r -> System.out.println(r.getAutorizado()))
+		;
+	}
+
+	private static Date getFromDate() {
+		Date today = new Date();
+		int dayOfMonth = AonDateUtils.get(today, Calendar.DAY_OF_MONTH);
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(today);				
+		return dayOfMonth < 5 ? firstDayOfMonth : AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
+	}
+
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req) throws SQLException{
 		String login = ":-)" ; 
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
-		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
+		Date from = getFromDate();
+		Collection<String>  cccs = getParameterValues(req, Parameter.CCC);
+
 		
 		return distinct(
 			findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_TRABAJADORES_Y_TRAMOS, from, cccs)
@@ -1616,6 +1655,8 @@ public class CretaServlet extends HttpServlet
 				.filter(a -> checkData(a, login));
 		
 	}
+
+
 
 	private static void __onTrabajadoresYTramos (PrintWriter os, 
 			Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> ts,
@@ -1832,6 +1873,10 @@ public class CretaServlet extends HttpServlet
 		return Optional.ofNullable(req.getParameterValues(param.name())).map(values -> Arrays.asList(values)).orElse(Collections.emptyList());
 	}
 
+	private static Collection<String> getParameterValues (HttpServletRequest req, CretaService.Parameter param, Supplier<Collection<String>> supplier) {
+		return Optional.ofNullable(req.getParameterValues(param.name())).map(values -> ( Collection<String> )Arrays.asList(values)).orElseGet(supplier);
+	}
+
 	private static int getAnhoControl() {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MONTH, -1);
@@ -1978,4 +2023,123 @@ public class CretaServlet extends HttpServlet
 			return compare;
 		return compare(t1.getDatosTramo().getDato(),  t2.getDatosTramo().getDato(), (d1,d2) -> compare(d1,d2,c));
 	}
+	
+	private static byte[] getNotStartedAttachData(String ccc, Date from) {
+		// 012345XXXXXX
+		String regimen = AonStringUtils.substring(ccc,0,2);
+		String provincia = AonStringUtils.substring(ccc,2,6);
+		String numero = AonStringUtils.substring(ccc,6);
+		
+		int mes = AonDateUtils.get(from, Calendar.MONTH) +1;
+		int anho =  AonDateUtils.get(from, Calendar.YEAR);
+		
+		
+		return String.format(
+		"<?xml version='1.0' encoding='UTF-8'?>\n" + 
+		"<Respuesta xmlns=\"http://www.seg-social.es/creta/esquemas/V120/Respuesta\">\n" + 
+		"  <Autorizado>%d</Autorizado>\n" + 
+		"  <ReferenciaExterna>%s</ReferenciaExterna>\n" + 
+		"  <Liquidacion>\n" + 
+		"    <Ccc>\n" + 
+		"      <Regimen>%s</Regimen>\n" + 
+		"      <Provincia>%s</Provincia>\n" + 
+		"      <Numero>%s</Numero>\n" + 
+		"    </Ccc>\n" + 
+		"    <PeriodoDesde>\n" + 
+		"      <Mes>%02d</Mes>\n" + 
+		"      <Anho>%d</Anho>\n" + 
+		"    </PeriodoDesde>\n" + 
+		"    <PeriodoHasta>\n" + 
+		"      <Mes>%02d</Mes>\n" + 
+		"      <Anho>%d</Anho>\n" + 
+		"    </PeriodoHasta>\n" + 
+		"    <Tipo>L00</Tipo>\n" + 
+		"    <FechaHoraRecaudacion>\n" + 
+		"      <FechaRecaudacion>\n" + 
+		"        <Dia>01</Dia>\n" + 
+		"        <Mes>%02d</Mes>\n" + 
+		"        <Anho>%d</Anho>\n" + 
+		"      </FechaRecaudacion>\n" + 
+		"      <HoraRecaudacion>000000</HoraRecaudacion>\n" + 
+		"    </FechaHoraRecaudacion>\n" + 
+		"    <Errores>\n" + 
+		"      <Error>\n" + 
+		"        <CodigoErr>A9999</CodigoErr>\n" + 
+		"        <Descripcion>Liquidación, no inciada</Descripcion>\n" + 
+		"      </Error>\n" + 
+		"    </Errores>\n" + 
+		"  </Liquidacion>\n" + 
+		"</Respuesta>"
+		, System.currentTimeMillis()
+		, CretaService.AON_REFERENCIA_EXTERNA
+		, regimen
+		, provincia
+		, numero 
+		, mes
+		, anho
+		, mes
+		, anho
+		, mes
+		, anho
+		)
+		.getBytes()		
+		;
+	}
+	
+	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month ) {
+		Settings settings = new Settings();
+		settings.setRenderSchema(false);
+		try ( 
+				Connection connection = AonServletUtils.getConnection(domain) ;
+				DSLContext dslContect = DSL.using(connection, settings );
+			){
+			java.sql.Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(month);
+			java.sql.Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(month);
+			
+			return 
+			dslContect
+			.select()
+			.from(SALARY)
+			.innerJoin(CONTRACT).onKey(FK_SALARY_CONTRACT)
+			.innerJoin(ENTERPRISE_CCC).onKey(FK_CONTRACT_ENTERPRISE_CCC)
+			.innerJoin(DOMAIN).onKey(Keys.FK_ENTERPRISE_CCC_DOMAIN)
+			.where(DOMAIN.ID.eq(domainId))
+			.or(DOMAIN.PARENT.eq(domainId))
+			.and(SALARY.START_DATE.le(lastDayOfMonth))
+			.and(SALARY.END_DATE.ge(firstDayOfMonth))
+			.fetchStreamInto(ENTERPRISE_CCC)
+			.map(ccc -> String.format("%s%s", getCCCType(ccc.getType()), ccc.getCcc() ))			
+			.collect(Collectors.toSet())
+			;
+			
+		} catch ( Throwable t ) {
+			return Collections.emptySet();
+		}
+		
+	}
+	
+	private static String getCCCType(Byte cccType) {
+		switch (cccType) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		default:
+			return "0111";
+		}
+	} 
+	
+
 }
