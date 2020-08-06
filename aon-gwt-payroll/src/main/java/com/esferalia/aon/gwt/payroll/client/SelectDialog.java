@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -266,6 +266,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		selectDataGrid.onResize();
 		super.center();
 	}
+	
 
 	public void setData(List<T> data) {
 		selectDataGrid.setRowData(data);
@@ -276,7 +277,7 @@ public class SelectDialog<T extends HasId<?>> extends CustomDialog {
 		return selectionModel.getSelectedSet();
 	}
 
-	public void setSelectedData(List<T> data) {
+	public void setSelectedData(Collection<T> data) {
 		selectionModel.clear();
 		for (T t : data)
 			selectionModel.setSelected(t, true);

@@ -1569,10 +1569,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			super(file, MainCreta.this.detailPanel);
 		}
 
-		void setSelected(List<CCC> cccs) {
-			dialog.setSelectedData(cccs);
-		}
-
 		@Override
 		protected String getDescription(CCC ccc) {
 			return MainCreta.getDescription(ccc, enterprises);
@@ -1583,7 +1579,11 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.enterprises = enterprises;
 			dialog.setData(getCCCs(enterprises));
 		}
-
+		
+		public void setEnterprises(List<Enterprise> enterprises, List<CCC> cccs) {
+			this.enterprises = enterprises;
+			dialog.setData(cccs);
+		}
 	}
 
 	private class EnterprisesDBACommand extends EmployeeTree.DBACommand implements EnterprisesCommand {
@@ -1707,6 +1707,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		protected void onRequestCommand(File file) {
 			EnterprisesCretaRequestCommand cmd = new EnterprisesCretaRequestCommand(file);
 			cmd.setEnterprises(enterprises);
+			cmd.setSelected(getSelectedCCCs());
 			cmd.execute();
 		}
 
@@ -1721,6 +1722,17 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			return super.getEmployeeFullName(jsEmployee);
 		}
+		
+		Collection<CCC> getSelectedCCCs() {
+			Set<String> selected = getSelected().stream().map(f -> f.getCCC()).collect(Collectors.toSet());
+			return 
+			enterprises.stream()
+			.flatMap( e -> e.getActivities().stream().flatMap( a -> a.getCccs().stream()))
+			.filter( ccc -> selected.contains( AonStringUtils.join(ccc.getRegime(),ccc.getCode()) ) )
+			.collect(Collectors.toSet())
+			;
+		}
+
 	}
 
 	private Enterprise getEnterprise(CCC ccc) {

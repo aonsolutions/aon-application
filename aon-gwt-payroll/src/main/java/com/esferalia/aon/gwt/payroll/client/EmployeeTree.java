@@ -927,6 +927,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		// --------------------------------------------------------------------
+		protected void setSelected(Collection<CCC> cccs ) {
+			dialog.setSelectedData(cccs);
+			
+		}
+		// --------------------------------------------------------------------
 
 		protected abstract String getDescription(CCC ccc);
 
