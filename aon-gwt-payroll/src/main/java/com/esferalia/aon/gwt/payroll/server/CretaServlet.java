@@ -54,6 +54,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -1474,6 +1476,13 @@ public class CretaServlet extends HttpServlet
 		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class, attach.getData()))
 		.filter(optional -> optional.isPresent())
 		.map(optional -> optional.get())
+		.map( r -> {
+			if ( cccs != null && !cccs.isEmpty() ) {
+				r.getLiquidacion().removeIf(l -> !cccs.contains(l.getCcc().getProvincia() + l.getCcc().getNumero() ) );
+			}
+			return r;
+		})
+
 		;
 	}
 
@@ -1482,7 +1491,7 @@ public class CretaServlet extends HttpServlet
 		Date from = getFromDate();
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Collection<String> cccs = getParameterValues(req, Parameter.CCC, () -> findCCCs(domainName, domainId, new java.sql.Date(from.getTime())));		
+		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getParameterValues(req, Parameter.CCC));		
 
 		return cccs.stream()
 		.map(ccc -> getNotStartedAttachData(ccc, from))
@@ -2086,7 +2095,7 @@ public class CretaServlet extends HttpServlet
 		;
 	}
 	
-	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month ) {
+	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month, Collection<String> cccs) {
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
 		try ( 
@@ -2096,7 +2105,7 @@ public class CretaServlet extends HttpServlet
 			java.sql.Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(month);
 			java.sql.Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(month);
 			
-			return 
+			SelectConditionStep<Record> selectCCCs = 
 			dslContect
 			.select()
 			.from(SALARY)
@@ -2107,6 +2116,13 @@ public class CretaServlet extends HttpServlet
 			.or(DOMAIN.PARENT.eq(domainId))
 			.and(SALARY.START_DATE.le(lastDayOfMonth))
 			.and(SALARY.END_DATE.ge(firstDayOfMonth))
+			;
+			
+			if ( cccs != null && !cccs.isEmpty())
+				selectCCCs = selectCCCs.and(ENTERPRISE_CCC.CCC.in(cccs));
+			
+			return 
+			selectCCCs
 			.fetchStreamInto(ENTERPRISE_CCC)
 			.map(ccc -> String.format("%s%s", getCCCType(ccc.getType()), ccc.getCcc() ))			
 			.collect(Collectors.toSet())
