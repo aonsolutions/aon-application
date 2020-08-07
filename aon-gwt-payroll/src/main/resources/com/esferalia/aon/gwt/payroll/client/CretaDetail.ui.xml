@@ -54,7 +54,15 @@
 							<g:MenuItem ui:field="processingMenuItem" ><span class="aon-icon-errorwarning aon-icon-commandButton" >&nbsp;</span><span> En Proceso </span></g:MenuItem>	
 							<g:MenuItem ui:field="errorMenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span> Con Errores </span></g:MenuItem>							
 							<g:MenuItem ui:field="calculatedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Calculada </span></g:MenuItem>						
-							<g:MenuItem ui:field="confirmedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Confirmada </span></g:MenuItem>							
+							<g:MenuItem ui:field="confirmedMenuItem" ><span class="aon-icon-predetermine aon-icon-commandButton" >&nbsp;</span><span> Confirmada </span></g:MenuItem>
+							<g:MenuItem ui:field="moreViewMenuItem" text="M&aacute;s..."  >
+								<g:MenuBar ui:field="moreViewMenuBar" vertical="true">
+									<g:MenuItem ui:field="r9546MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > R9546 CCC no asignado a la autorizaci&oacute;n </span></g:MenuItem>
+									<g:MenuItem ui:field="r9607MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > R9607 Liquidaci&oacute;n sin trabajadores en alta </span></g:MenuItem>
+									<g:MenuItem ui:field="r9650MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > R9650 No existen trabajadores en alta por vacaciones no disfrutadas </span></g:MenuItem>
+									<g:MenuItem ui:field="r9544MenuItem" ><span class="aon-icon-exception aon-icon-commandButton" >&nbsp;</span><span class="aon-nowrap" > A9544 Existe obligación de presentar en este periodo Liquidaci&oacute;n L13 del mes </span></g:MenuItem>
+								</g:MenuBar>
+							</g:MenuItem>						
 						</g:MenuBar>
 					</g:MenuItem>
 				</g:MenuBar>

@@ -201,6 +201,18 @@ public abstract class CretaDetail extends Composite {
 	@UiField 
 	MenuItem confirmedMenuItem;
 
+	@UiField(provided = true)
+	MenuBar moreViewMenuBar;
+
+	@UiField 
+	MenuItem r9546MenuItem;
+	@UiField 
+	MenuItem r9607MenuItem;
+	@UiField 
+	MenuItem r9650MenuItem;
+	@UiField 
+	MenuItem r9544MenuItem;
+
 
 	private PopupPanel popupTooltip;
 	private Timer jsFileToolTipTimer;
@@ -222,8 +234,13 @@ public abstract class CretaDetail extends Composite {
 			}
 		};
 		
-		viewMenuBar = new MenuBar(true) {
-			  private MenuItem findItem(Element hItem) {
+		class ViewMenuBar extends MenuBar {
+			  
+			public ViewMenuBar(boolean vertical) {
+				super(vertical);
+			}
+
+			private MenuItem findItem(Element hItem) {
 			    for (MenuItem item : getItems()) {
 			      if (item.getElement().isOrHasChild(hItem)) {
 			        return item;
@@ -231,6 +248,7 @@ public abstract class CretaDetail extends Composite {
 			    }
 			    return null;
 			  }
+			  
 			  @Override
 			  public void onBrowserEvent(Event event) {
 				
@@ -239,7 +257,7 @@ public abstract class CretaDetail extends Composite {
 			      case Event.ONCLICK: {
 			    	  if (item != null) {
 			    	      // Fire the item's command. The command must be fired in the same event
-			    	      // loop or popup blockers will prevent popups from opening.
+			    		  // loop or popup blockers will prevent popups from opening.
 			    	      final ScheduledCommand cmd = item.getScheduledCommand();
 			    	      Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
 			    	        @Override
@@ -255,8 +273,11 @@ public abstract class CretaDetail extends Composite {
 			      }
 			    }
 			    super.onBrowserEvent(event);
-			}
+			}		
 		};
+		
+		viewMenuBar = new ViewMenuBar(true);
+		moreViewMenuBar = new ViewMenuBar(true);
 
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -526,7 +547,11 @@ public abstract class CretaDetail extends Composite {
 				processingMenuItem,
 				errorMenuItem,
 				calculatedMenuItem,
-				confirmedMenuItem
+				confirmedMenuItem,
+				r9544MenuItem,
+				r9546MenuItem,
+				r9607MenuItem,
+				r9650MenuItem
 		};
 		for ( MenuItem menuItem: viewMenuItems ) {
 			setCheckedStyle(menuItem, true);
@@ -538,6 +563,10 @@ public abstract class CretaDetail extends Composite {
 		
 		nextMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getNextMonth())));
 		prevMonthMenuItem.setText(AonWordUtils.capitalize(MONTH_FORMAT.format(getPrevMonth())));
+		
+		setCheckedStyle(r9546MenuItem, false );
+		setCheckedStyle(r9650MenuItem, false );
+		setCheckedStyle(r9607MenuItem, false );
 		setCheckedStyle(prevMonthMenuItem, new Date().getDate() < 5 );
 
 	}
@@ -843,13 +872,30 @@ public abstract class CretaDetail extends Composite {
 				boolean processing = false;
 				boolean confirmed = false;
 				boolean calculated = false;
+				
+				boolean r9544 = false;
+				boolean r9546 = false;
+				boolean r9607 = false;
+				boolean r9650 = false;
 					
 				for (JsError jsError : jsErros) {
 					// Confirmed
 					if ( AonStringUtils.equalsIgnoreCase("A9761", jsError.getCode())) {
 						confirmed = true ;
 					// Calculated
-					}else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
+					}
+					
+					else if ( AonStringUtils.equalsIgnoreCase("R9544", jsError.getCode())) {
+						r9544 = true ;
+					}else if ( AonStringUtils.equalsIgnoreCase("R9546", jsError.getCode())) {
+						r9546 = true ;
+					}else if ( AonStringUtils.equalsIgnoreCase("R9607", jsError.getCode())) {
+						r9607 = true ;
+					}else if ( AonStringUtils.equalsIgnoreCase("R9650", jsError.getCode())) {
+						r9650 = true ;
+					}
+					
+					else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
 						calculated = true ;
 					}else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
 							&& AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
@@ -873,6 +919,16 @@ public abstract class CretaDetail extends Composite {
 					return false;
 				if ( !error && pending && !isChecked(pendingMenuItem))
 					return false;
+				
+				if ( !error && r9544 && !isChecked(r9544MenuItem))
+					return false;
+				if ( !error && r9546 && !isChecked(r9546MenuItem))
+					return false;
+				if ( !error && r9607 && !isChecked(r9607MenuItem))
+					return false;				
+				if ( !error && r9650 && !isChecked(r9650MenuItem))
+					return false;				
+				
 				if ( error && !isChecked(errorMenuItem))
 					return false;
 				
