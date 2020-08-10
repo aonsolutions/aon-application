@@ -564,7 +564,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		confidential.setEnabled(canEdit);
 		entryType.setEnabled(canEdit);
 		accept.setVisible(canEdit);
+		accept.setEnabled(canEdit);
 		remove.setVisible(canRemove);
+		remove.setEnabled(canRemove);
 		if (getOptions().isBackButtonVisible()) {
 			back.setVisible(getOptions().hasExternalCallback());
 		}
@@ -1261,6 +1263,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		
 		FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
+    	buttons.addStyleName(AON.CSS.aonMarginTop());
     	buttons.addStyleName(AON.CSS.aonMarginBottom());
     	
     	final Button okButton = new Button();

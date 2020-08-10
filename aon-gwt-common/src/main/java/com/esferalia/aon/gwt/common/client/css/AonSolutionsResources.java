@@ -106,5 +106,25 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-close.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconClose();
+
+	@Source("icons/aon-icon-check.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCheck();
+
+	@Source("icons/aon-icon-checked.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconChecked();
+
+	@Source("icons/aon-icon-launch.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLaunch();
+	
+	@Source("icons/aon-icon-swap.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconSwap();
+	
+	@Source("icons/aon-icon-help.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconHelp();
 }
 

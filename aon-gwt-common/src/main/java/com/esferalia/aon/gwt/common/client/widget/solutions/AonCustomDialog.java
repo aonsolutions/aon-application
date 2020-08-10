@@ -45,7 +45,8 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 
 	private FocusPanel focusAll;
 	private SimpleResizePanel simplePanel;
-	private AonCustomDialogBar dialogBar;
+	private FlowPanel dialogBar;
+	private Label captionLabel;
 	private FlowPanel flowPanel;
 	private List<AonCustomDialogListener> listeners;
 
@@ -53,7 +54,13 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 		setStyleName(AON.CSS.aonCustomDialog());
 		flowPanel = new FlowPanel();
 
-		dialogBar = new AonCustomDialogBar();
+		dialogBar = new FlowPanel();
+		dialogBar.setStyleName(AON.CSS.aonCustomDialogHeader());
+		captionLabel = new Label();
+		captionLabel.setStyleName(AON.CSS.aonCustomDialogTitle());
+		dialogBar.add(captionLabel);
+		
+		listeners = new LinkedList<AonCustomDialogListener>();
 		FocusPanel focusBar = new FocusPanel(dialogBar);
 		flowPanel.add(focusBar);
 
@@ -69,7 +76,9 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 
 		new WindowResizeHandler();
 		setGlassEnabled(true);
-		setAnimationEnabled(false);
+		setGlassStyleName(AON.CSS.aonCustomDialogGlass());
+		setAnimationEnabled(true);
+		setModal(false);
 		addCloseHandler(this);
 	}
 
@@ -100,11 +109,11 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 	}
 
 	public String getCaption() {
-		return dialogBar.getCaption();
+		return captionLabel.getText();
 	}
 
 	public void setCaption(String caption) {
-		dialogBar.setCaption(caption);
+		captionLabel.setText(caption);
 	}
 
 	public void handleMove(int absX, int absY) {
@@ -241,45 +250,6 @@ public class AonCustomDialog extends PopupPanel implements AonCustomDialogListen
 		inputDialog.setWidget(htmlPanel);
 
 		inputDialog.center();
-
-	}
-
-	private class AonCustomDialogBar extends FlowPanel {
-
-		private Label captionLabel;
-		private Button closeButton;
-
-		public AonCustomDialogBar() {
-			setStyleName(AON.CSS.aonCustomDialogHeader());
-			captionLabel = new Label();
-			captionLabel.setStyleName(AON.CSS.aonCustomDialogTitle());
-			add(captionLabel);
-			closeButton = new Button();
-			closeButton.setStyleName(AON.CSS.aonCustomDialogClose());
-			add(closeButton);
-			listeners = new LinkedList<AonCustomDialogListener>();
-			closeButton.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					fireOnClose();
-				}
-			});
-		}
-
-		public String getCaption() {
-			return captionLabel.getText();
-		}
-
-		public void setCaption(String caption) {
-			captionLabel.setText(caption);
-		}
-
-		private void fireOnClose() {
-			for (AonCustomDialogListener listener : listeners) {
-				listener.onClose();
-			}
-		}
 
 	}
 

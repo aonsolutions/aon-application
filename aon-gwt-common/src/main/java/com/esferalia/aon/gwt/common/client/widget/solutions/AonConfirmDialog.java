@@ -29,11 +29,7 @@ public class AonConfirmDialog extends AonCustomDialog {
 	private SimpleLayoutPanel root;
 	
 	public AonConfirmDialog() {
-		setVisible(false);
-		setAnimationEnabled(true);
-		setGlassEnabled(true);
-		setModal(true);
-		setStyleName(AON.CSS.aonConfirmDialog());
+		addStyleName(AON.CSS.aonConfirmDialog());
 		root = new SimpleLayoutPanel();
 		root.setWidth("500px");
 		root.setHeight("90px");

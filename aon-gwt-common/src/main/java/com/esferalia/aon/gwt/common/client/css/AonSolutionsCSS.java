@@ -26,6 +26,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_bold")
 	String aonBold();
 
+	@ClassName("aon_font_medium")
+	String aonFontMedium();
+
 	@ClassName("aon_nowrap")
 	String aonNowrap();
 
@@ -38,11 +41,29 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_text_right")
 	String aonTextRight();
 
+	@ClassName("aon_clickable")
+	String aonClickable();
+
+	@ClassName("aon_flex_block")
+	String aonFlexBlock();
+	
+	@ClassName("aon_flox_grow_1")
+	String aonFlexGrow1();
+	
+	@ClassName("aon_flex_label")
+	String aonFlexLabel();
+
 	@ClassName("aon_padding")
 	String aonPadding();
 
+	@ClassName("aon_padding_bottom")
+	String aonPaddingBottom();
+	
 	@ClassName("aon_margin")
 	String aonMargin();
+
+	@ClassName("aon_margin_top")
+	String aonMarginTop();
 
 	@ClassName("aon_margin_bottom")
 	String aonMarginBottom();
@@ -50,8 +71,20 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_margin_left")
 	String aonMarginLeft();
 
+	@ClassName("aon_margin_right")
+	String aonMarginRight();
+
+	@ClassName("aon_margin_left_double")
+	String aonMarginLeftDouble();
+
+	@ClassName("aon_margin_right_double")
+	String aonMarginRightDouble();
+
 	@ClassName("aon_border_top")
 	String aonBorderTop();
+
+	@ClassName("aon_border_bottom")
+	String aonBorderBottom();
 
 	@ClassName("aon_color_red")
 	String aonColorRed();
@@ -74,6 +107,9 @@ public interface AonSolutionsCSS extends CssResource {
 	/* CUSTOM DIALOG*/
 	@ClassName("aon_custom_dialog")
 	String aonCustomDialog();
+	
+	@ClassName("aon_custom_dialog_glass")
+	String aonCustomDialogGlass();
 	
 	@ClassName("aon_custom_dialog_header")
 	String aonCustomDialogHeader();
@@ -109,6 +145,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_table_button")
 	String aonTableButton();
 	
+	@ClassName("aon_tab_icon")
+	String aonTabIcon();
+
 	@ClassName("aon_tab_label")
 	String aonTabLabel();
 	
@@ -226,4 +265,21 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_icon_close")
 	String aonIconClose();
+	
+	@ClassName("aon_icon_check")
+	String aonIconCheck();
+
+	@ClassName("aon_icon_checked")
+	String aonIconChecked();
+
+	@ClassName("aon_icon_launch")
+	String aonIconLaunch();
+	
+	@ClassName("aon_icon_swap")
+	String aonIconSwap();
+	
+	@ClassName("aon_icon_help")
+	String aonIconHelp();
+
 }
+

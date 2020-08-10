@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.FinanceService;
@@ -51,8 +52,6 @@ import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -75,7 +74,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -113,7 +111,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private ListBox series;
 	private TextBox referenceCode;
 	private DoubleBox invoiceTotal;
-	private Button fastSave;
+//	private Button fastSave;
 	private DateBoxEx taxDate;
 	private CheckLabel service;
 	private CheckLabel rectifier;
@@ -203,9 +201,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		}
 
 		public void paint( boolean checked) {
-			this.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			this.addStyleName(AON.AON_CSS.aonClickable());
-			this.addStyleName(checked?AON.AON_CSS.aonIconCheckYesRaw():AON.AON_CSS.aonIconCheckNoRaw());		
+			this.setStyleName(AON.CSS.aonTabIcon());
+			this.addStyleName(AON.CSS.aonClickable());
+			this.addStyleName(checked?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());		
 			this.addStyleName(setWidthStyle);
 		}
 
@@ -229,25 +227,18 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// *************************************************************************
 
 		FlowPanel registryPanel = new FlowPanel();
-		registryPanel.setStyleName(AON.AON_CSS.aonPadding2Bottom());
-		registryPanel.addStyleName(AON.AON_CSS.aonBorderBottom());
+		registryPanel.setStyleName(AON.CSS.aonPaddingBottom());
+		registryPanel.addStyleName(AON.CSS.aonBorderBottom());
 		
-		FlexTable regTable = new FlexTable();
-		regTable.getColumnFormatter().setWidth(0, "150px");
-		regTable.getColumnFormatter().setWidth(1, "auto");
-		regTable.getColumnFormatter().setWidth(2, "185px");
-		regTable.getColumnFormatter().setWidth(3, "250px");
-		regTable.getColumnFormatter().setWidth(4, "20px");
-		
-		regTable.setStyleName(AON.AON_CSS.aonWidthAll());
+		FlowPanel regTable = new FlowPanel();
+		regTable.setStyleName(AON.CSS.aonFlexBlock());
+		regTable.addStyleName(AON.CSS.aonWidthAll());
+
 		registryPanel.add(regTable);
 		
 		InlineLabel label = new InlineLabel("Titular de la factura");
-		label.setStyleName(AON.AON_CSS.aonInnerLabel());
-		label.addStyleName(AON.AON_CSS.aonBold());
-		label.addStyleName(AON.AON_CSS.aonNowrap());
-		label.addStyleName(AON.AON_CSS.aonWidth180());
-		regTable.setWidget(0, 0, label);
+		label.setStyleName(AON.CSS.aonFlexLabel());
+		regTable.add(label);
 		
 		undeductible = new CheckBox("Gastos no deducibles");
 		undeductible.setTabIndex(-1);
@@ -260,6 +251,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				,invoiceCallback.getCurrentUser()
 				,invoiceCallback.getConfiguration()
 				,true);
+		registryBox.addStyleName(AON.CSS.aonFlexGrow1());
+		
 		registryBox.addKeyUpHandler( new KeyUpHandler() {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_F9) {
@@ -281,7 +274,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				initializeInvoice(invoiceCallback, ar );
 			}
 		});
-		regTable.setWidget(0, 1, registryBox);
+		regTable.add(registryBox);
 		
 		undeductible.addClickHandler(new ClickHandler() {
 			
@@ -296,21 +289,16 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				initializeInvoice(invoiceCallback, ar );
 			}
 		});
-		regTable.setWidget(0, 2, undeductible);
+		regTable.add(undeductible);
 		
 		
-		FlowPanel labelsPanel = new FlowPanel(); 
+		FlowPanel labelsPanel = new FlowPanel();
+		labelsPanel.setStyleName(AON.CSS.aonFlexBlock());
 		if (invoiceCallback.getInvoice().getInvoice() != null 
 			&& invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed() 
 			&& invoiceCallback.getInvoice().getDuaNationalInvoice() != null ) {
-			InlineLabel duaLabel = new InlineLabel("[Fra. DUA]");
-			duaLabel.setStyleName(AON.AON_CSS.aonIconGoto());
-			duaLabel.addStyleName(AON.AON_CSS.aonBold());
-			duaLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			duaLabel.addStyleName(AON.AON_CSS.aonNowrap());
-			duaLabel.addStyleName(AON.AON_CSS.aonMarginRight());
-			duaLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
-			duaLabel.addClickHandler(new ClickHandler() {
+			AonTableButton duaButton = new AonTableButton("Ver Factura DUA",AON.CSS.aonIconLaunch());
+			duaButton.addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
@@ -335,7 +323,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					});								
 				}
 			});
-			labelsPanel.add(duaLabel);
+			labelsPanel.add(duaButton);
 			
 		}
 		
@@ -345,13 +333,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			&& invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice() != null
 			&& invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice() != null
 				) {
-			InlineLabel duaLabel = new InlineLabel("[Fra. Extr.]");
-			duaLabel.setStyleName(AON.AON_CSS.aonIconGoto());
-			duaLabel.addStyleName(AON.AON_CSS.aonBold());
-			duaLabel.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			duaLabel.addStyleName(AON.AON_CSS.aonNowrap());
-			duaLabel.addStyleName(AON.AON_CSS.aonMarginRight());
-			duaLabel.addStyleName(AON.AON_CSS.aonClickableLabel());
+			AonTableButton duaLabel = new AonTableButton("Ver Factura de compra Extracomunitaria",AON.CSS.aonIconLaunch());
 			duaLabel.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -385,11 +367,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceTypeLabel = new InlineLabel();
 		labelsPanel.add(invoiceTypeLabel);
 		invoiceTypeLabel.setText( getInvoiceLabel(invoiceCallback.getInvoice()));
-		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonMarginAuto());
-		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonInvoiceLabel());
-		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonTextRight());
-		invoiceTypeLabel.addStyleName(AON.AON_CSS.aonNowrap());
-		invoiceTypeLabel.getElement().getStyle().setProperty("flex-grow", "1");
+		invoiceTypeLabel.setStyleName(AON.CSS.aonFlexLabel());
+		invoiceTypeLabel.addStyleName(AON.CSS.aonFontMedium());
+		invoiceTypeLabel.addStyleName(AON.CSS.aonMarginLeftDouble());
+		invoiceTypeLabel.addStyleName(AON.CSS.aonMarginRightDouble());
 		
 		if (invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getInvoice().getId() != null) {
 			
@@ -399,16 +380,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					&& (invoiceCallback.getInvoice().getInvoice().isRectifier() 
 					|| invoiceCallback.getInvoice().getInvoice().isRectified())) {
 				
-				InlineLabel rectLabel = new InlineLabel();
-				rectLabel.setStyleName(AON.AON_CSS.aonIconGoto());
-				rectLabel.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-				rectLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-				rectLabel.addStyleName(AON.AON_CSS.aonCursorPointer());
-				if (invoiceCallback.getInvoice().getInvoice().isRectified()) {
-					rectLabel.setTitle( AON.MSG.seeRectifierInvoice());
-				} else {
-					rectLabel.setTitle( AON.MSG.seeRectifiedInvoice());
-				}
+				AonTableButton rectLabel = (invoiceCallback.getInvoice().getInvoice().isRectified())
+					?new AonTableButton(AON.MSG.seeRectifierInvoice(),AON.CSS.aonIconLaunch())
+					:new AonTableButton(AON.MSG.seeRectifiedInvoice(),AON.CSS.aonIconLaunch());
 				rectLabel.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -440,14 +414,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			if (!guest 
 					 && !invoiceCallback.getInvoice().getInvoice().isRectifier() 
 					 && !invoiceCallback.getInvoice().isUndeductible()) {
-						InlineLabel rectify = new InlineLabel();
-						rectify.setTitle(AON.MSG.rectifyInvoice());
-						labelsPanel.add(rectify);
-						rectify.setStyleName(AON.AON_CSS.aonIconRectifyInvoice());
-						rectify.addStyleName(AON.AON_CSS.aonPaddingLeft20());
-						rectify.addStyleName(AON.AON_CSS.aonPadding2Bottom());
-						rectify.addStyleName(AON.AON_CSS.aonMarginLeft());
-						rectify.addStyleName(AON.AON_CSS.aonCursorPointer());
+						AonTableButton rectify  = new AonTableButton(AON.MSG.rectifyInvoice(),AON.CSS.aonIconSwap());
 						rectify.addClickHandler(new ClickHandler() {
 							
 							@Override
@@ -512,14 +479,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 								
 							}
 						});
+						labelsPanel.add(rectify);
 					}
 			
 		}
-		regTable.setWidget(0, 3, labelsPanel);
+		regTable.add(labelsPanel);
 		
-		Button helpButton = new Button();
-		helpButton.setStyleName(AON.AON_CSS.aonIconInfo());
-		helpButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
+		AonTableButton helpButton  = new AonTableButton(AON.MSG.help(),AON.CSS.aonIconHelp());
 		helpButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -555,7 +521,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				dialog.show();
 			}
 		});
-		regTable.setWidget(0, 4, helpButton);
+		regTable.add(helpButton);
 		
 		
 		FlowPanel invoiceRootPanel = new FlowPanel();
@@ -1266,11 +1232,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 						@Override
 						public void onSuccess() {
-							fastSave.setFocus(true);
+//							fastSave.setFocus(true);
 						}
 
 						@Override
 						public void onFailure() {
+							invoiceCallback.getModule().onError(AON.MSG.invoiceNotFound());
 						}
 						
 					});
@@ -1294,8 +1261,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							if (invoiceTotal.getValue() != null && invoiceTotal.getValue() != 0) {
-								fastSave.setEnabled(true);
-								fastSave.setFocus(true);
+//								fastSave.setEnabled(true);
+//								fastSave.setFocus(true);
 							} else {
 								vatPanel.setFocus(true);
 							}
@@ -1309,24 +1276,24 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------
 		// --------- FAST SAVE BUTTON ----------
 		// -------------------------------------
-		fastSave = new Button(AON.MSG.saveAction());
-		fastSave.setStyleName(AON.AON_CSS.aonIconSave());
-		fastSave.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		fastSave.addStyleName(AON.AON_CSS.aonMarginLeft());
-		fastSave.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				invoiceCallback.getModule().onAccept(event);
-			}
-		});
-		fastSave.addBlurHandler(new BlurHandler() {
-			
-			@Override
-			public void onBlur(BlurEvent event) {
-				vatPanel.setFocus(true);
-			}
-		});
-		headerPanel4.add(fastSave);
+//		fastSave = new Button(AON.MSG.saveAction());
+//		fastSave.setStyleName(AON.AON_CSS.aonIconSave());
+//		fastSave.addStyleName(AON.AON_CSS.aonIconCommandButton());
+//		fastSave.addStyleName(AON.AON_CSS.aonMarginLeft());
+//		fastSave.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				invoiceCallback.getModule().onAccept(event);
+//			}
+//		});
+//		fastSave.addBlurHandler(new BlurHandler() {
+//			
+//			@Override
+//			public void onBlur(BlurEvent event) {
+//				vatPanel.setFocus(true);
+//			}
+//		});
+//		headerPanel4.add(fastSave);
 		
 		invoicePanel.add(invoiceDataTable);
 		// *************************************************************************

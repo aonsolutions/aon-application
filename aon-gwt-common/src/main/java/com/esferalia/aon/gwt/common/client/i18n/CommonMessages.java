@@ -359,7 +359,10 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Auditor\u00eda")
 	String audit();
 
-	@DefaultMessage("No hay informaci\u00F3n acerca de la creaci\u00F3n")
+   	@DefaultMessage("Ayuda")
+	String help();
+
+   	@DefaultMessage("No hay informaci\u00F3n acerca de la creaci\u00F3n")
 	String emptyCreatedBy();
 	
 	@DefaultMessage("Creado por \"{0}\" el dia \"{1,date,medium}\" a las  \"{1,time,medium}\"") 
