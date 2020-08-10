@@ -219,6 +219,14 @@ public class CretaResults extends Composite implements RequiresResize{
 		this.selectionHandler = selectionHandler;
 	}
 	
+	public void addWarnings(String ...messages ) {
+		for (String message : messages)
+			addWarning(message);
+
+		syncWarnings();
+	}
+
+
 	// ------------------------------------------------------------ @UiHandlers
 
 	@UiHandler("runButton")
@@ -314,6 +322,14 @@ public class CretaResults extends Composite implements RequiresResize{
 		return treeItem;
 	}
 	
+	private TreeItem addWarning(String  message) {
+		TreeItem treeItem = new TreeItem(
+				imageItemHTML(images.warn(), message));
+		warningsItem.addItem(treeItem);
+		treeItem.setUserObject(message);
+		return treeItem;
+	}
+
 	private TreeItem addInfo(CretaService.JsEvent info) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images.info(), info.getMessage()));

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
@@ -914,7 +915,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			String i54 = dialog.getI54();
 			boolean reftificationMark = dialog.reftificationMark();
 
-			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, ccs, basesMesAnterior, calcsDetailed, i54, reftificationMark);
+			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, checkCCCs(ccs), basesMesAnterior, calcsDetailed, i54, reftificationMark);
 
 			return true;
 		}
@@ -934,8 +935,48 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// --------------------------------------------------------------------
 
 		protected abstract String getDescription(CCC ccc);
+		
+		protected abstract void onCCCError(CCC ccc, String message);
 
 		// --------------------------------------------------------------------
+		
+		private Set<CCC> checkCCCs(Set<CCC> cccs ) {
+			return 
+			cccs.stream()
+			.filter(ccc -> {
+				String code = ccc.getCode();
+				if ( AonStringUtils.isBlank(code)) {
+					onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n vac\u00EDo");
+					return false;
+				}
+				if ( AonStringUtils.trim(code).length() < 11 ) {
+					onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '"+ code +"'. Recuerde dos d\u00EDgitos para la provincia y nueve d\u00EDgitos para el n\u00FAmero de cotizaci\u00F3n");
+					return false;
+				}
+				try {
+					int provincia  = Integer.parseInt(AonStringUtils.substring(code, 0, 2));
+					if ( provincia < 1  || provincia > 52 ) {
+						onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '"+ code +"'. C\u00F3digo de provincia '"+ AonStringUtils.substring(code, 0, 2) +"' desconocido. Recuerde debe estar entre ( 01 y 52 )");
+						return false;
+					}
+					
+				} catch ( Exception e ) {
+					onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '"+ code +"'. C\u00F3digo de provincia '"+ AonStringUtils.substring(code, 0, 2) +"' desconocido. Recuerde debe estar entre ( 01 y 52 )");	
+					return false;
+				} 
+				
+				
+				
+				String numero = AonStringUtils.substring(code, 2);
+				String control = AonStringUtils.substring(code, -2);
+				
+				
+				
+				
+				
+				return true;
+			}).collect(Collectors.toSet());
+		}
 
 		private static void setUpDialog(File file,
 				final CretaRequestDialog dialog) {
@@ -1014,6 +1055,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		// --------------------------------------------------------------------
 		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addWarnings(message);
+			resultsPanel.setWidget(cretaResults);
+			showResultsPanel();
+		}
+
+		@Override
 		public void setWorkplace(Workplace workplace) {
 			this.workplace = workplace;
 			dialog.setData(getCCs(workplace));
@@ -1034,6 +1083,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			dialog.selectLabel.setVisible(false);
 			dialog.selectDataGrid.setVisible(false);
+		}
+
+		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addWarnings(message);
+			resultsPanel.setWidget(cretaResults);
+			showResultsPanel();
 		}
 
 		@Override
@@ -1109,7 +1166,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		void setEnterprise(Enterprise enterprise);
 	}
 
-	public static class EnterpriseCretaRequestCommand
+	public class EnterpriseCretaRequestCommand
 			extends CreateRequestCommand implements EnterpriseCommand{
 
 		protected Enterprise enterprise;
@@ -1132,6 +1189,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		
 
 		// --------------------------------------------------
+
+		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addWarnings(message);
+			resultsPanel.setWidget(cretaResults);
+			showResultsPanel();
+		}
 
 		@Override
 		protected String getDescription(CCC ccc) {
@@ -2723,6 +2788,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 	// ------------------------------------------------------ Protected methods
 	
+	protected static String getDescription(CCC ccc, Enterprise enterprise) {
+		String province = ccc.getGeozone();
+
+		for (Activity activity : enterprise.getActivities())
+			for (CCC cc : activity.getCccs())
+				if (ccc.getCode().equals(cc.getCode()))
+					return activity.getDescription() + ", "
+							+ ccc.getCode();
+
+		return ccc.getCode();
+	}
+	
 	protected static JsBasesResult showBases(String json , DetailPanel detailPanel) {
 		JsBasesResult result = eval("(" + json + ")");
 		showBases(result, detailPanel);
@@ -3275,18 +3352,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 	
 
-	private static String getDescription(CCC ccc, Enterprise enterprise) {
-		String province = ccc.getGeozone();
 
-		for (Activity activity : enterprise.getActivities())
-			for (CCC cc : activity.getCccs())
-				if (ccc.getCode().equals(cc.getCode()))
-					return activity.getDescription() + ", "
-							+ ccc.getCode();
-
-		return ccc.getCode();
-	}
-	
 	private static  String getDescription(CCC ccc, Workplace workplace) {
 		String province = ccc.getGeozone();
 		Activity activity = workplace.getActivity();

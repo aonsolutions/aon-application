@@ -842,10 +842,25 @@ public class CretaServlet extends HttpServlet
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores trabajadores) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(trabajadores.getTrabajador().stream()
-				.map(trabajador -> String.format("{\"naf\":\"%s\",\"ipf\":\"%s\",\"caf\":\"%s\"}", trabajador.getNaf(), trabajador.getIpf().getNumeroIpf() ,trabajador.getCaf()))
+				.map(trabajador -> String.format("{\"naf\":\"%s\",\"ipf\":\"%s\",\"caf\":\"%s\",\"tramos\":[%s]}", trabajador.getNaf(), trabajador.getIpf().getNumeroIpf() ,trabajador.getCaf(), toJSON(trabajador.getTramos())))
 				.collect(Collectors.joining(",")));
 
 		return buffer.toString();
+	}
+
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramos tramos) {
+		return tramos.getTramo().stream()
+				.map(tramo -> String.format("{\"desde\":\"%s\", \"hasta\":\"%s\", \"peculiaridades\": [%s]}", toString(tramo.getFechaDesde()),toString(tramo.getFechaHasta()), toJSON(tramo.getInformacionAfiliacion().getPeculiaridades())))
+				.collect(Collectors.joining(","));
+	}
+	
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Peculiaridades peculiaridades) {
+		if ( peculiaridades == null )
+			return "";
+		
+		return peculiaridades.getPeculiaridad().stream()
+				.map(peculiaridad -> String.format("{\"cod\":\"%s\", \"colectivo\":\"%s\", \"fraccion\":\"%s\", \"valor\":\"%s\"}", peculiaridad.getCodPec(), peculiaridad.getColectIncentivado(),peculiaridad.getFraccionCuota(), peculiaridad.getValorPec()))
+				.collect(Collectors.joining(","));
 	}
 
 	private static String toJS0N(Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes> liquidacionesMes) {

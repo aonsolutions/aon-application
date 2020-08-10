@@ -45,14 +45,17 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEmployee;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsError;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsEvent;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsPeculiaridad;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTramo;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription;
 import com.esferalia.aon.gwt.payroll.shared.ErrorDescription.InfoDescription;
 import com.esferalia.aon.gwt.payroll.shared.HttpException;
+import com.esferalia.aon.gwt.payroll.shared.PEC;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -65,9 +68,12 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 //import com.google.gwt.storage.client.Storage;
 import com.google.gwt.typedarrays.client.Uint8ArrayNative;
 import com.google.gwt.typedarrays.shared.Uint8Array;
@@ -557,6 +563,95 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return popupPanel;
 	}
 
+	public static PopupPanel showjsEmployeeToolTip(final JsEmployee employee, final int x, final int y) {
+		
+		final DateTimeFormat yearMonthNumDayFormat = DateTimeFormat.getFormat("y-M-d");
+		final DateTimeFormat dayMonthNumYearFormat = DateTimeFormat.getFormat("dd-MM-yyyy");
+
+		
+		final DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
+		popupPanel.setAutoHideEnabled(true);
+		popupPanel.getElement().getStyle().setZIndex(70);
+		
+		int rows = 4 + 
+				Arrays.stream(employee.getTramos())
+				.collect(Collectors.summingInt(t -> 1 + t.getPeculiaridades().length));
+		Grid grid = new Grid(rows, 5);
+		grid.setBorderWidth(1);
+		grid.getElement().getStyle().setProperty("borderCollapse", "collapse");
+		
+		int row = 0;
+		grid.setCellPadding(2);
+		// Header
+//		grid.setText(row, 0, "PECULIARIDADES/TIPOS DE COTIZACI\u00D3N");
+//		grid.getCellFormatter().addStyleName(row, 0, AON.AON_BOLD);
+
+		
+		//row++;
+		grid.setText(row, 0, "TRAMO");
+		grid.setHTML(row, 1, SafeHtmlUtils.fromString(" FECHA DESDE    FECHA HASTA "));
+		for ( int col = 0; col < 2; col++ ) {
+			grid.getCellFormatter().addStyleName(row, col, AON.AON_BOLD);
+			grid.getCellFormatter().addStyleName(row, col, AON.AON_TEXT_CENTER);
+		}
+				
+		row++;
+		grid.setText(row, 0, "");
+		grid.setHTML(row, 1, SafeHtmlUtils.fromString(" TIPO DE PECULIARIDAD "));
+		grid.setHTML(row, 2, SafeHtmlUtils.fromString(" POR/TIPO "));
+		grid.setHTML(row, 3, SafeHtmlUtils.fromString(" FRACCI\u00D3N DE CUOTA "));
+		grid.setHTML(row, 4, SafeHtmlUtils.fromString(" COLECTIVO INCENTIVADO "));
+		for ( int col = 0; col < 5; col++ ) {
+			grid.getCellFormatter().addStyleName(row, col, AON.AON_BOLD);
+			grid.getCellFormatter().addStyleName(row, col, AON.AON_TEXT_CENTER);
+		}
+		
+		int i = 1;
+		
+		for ( JsTramo tramo :  employee.getTramos()) {
+						
+			row++;
+			grid.setText(row, 0, String.valueOf( i++ ));
+			Date desde = yearMonthNumDayFormat.parse(tramo.getDesde());
+			Date hasta = yearMonthNumDayFormat.parse(tramo.getHasta());
+			grid.setText(row, 1, dayMonthNumYearFormat.format(desde) + "    " + dayMonthNumYearFormat.format(hasta) );
+			
+			for ( JsPeculiaridad peculiaridad: tramo.getPeculiaridades() ) {
+				row++;
+				String code = peculiaridad.getCod();
+				String fraccion = peculiaridad.getFraccion();
+				String colectivo = peculiaridad.getColectivo();
+				String valor = AonStringUtils.defaultIfBlank(peculiaridad.getValor(), "");
+				
+				grid.setHTML(row, 1, new SafeHtmlBuilder().append('\t').append('\t')
+						.appendHtmlConstant("<b>").appendEscaped(code).appendHtmlConstant("</b>")
+						.append(' ').appendEscaped(PEC.getPEC(peculiaridad.getCod()).getMessage()).toSafeHtml());
+				grid.setHTML(row, 2, new SafeHtmlBuilder().append('\t').append('\t')
+						.appendHtmlConstant("<b>").appendEscaped(valor).toSafeHtml());
+				grid.setHTML(row, 3, new SafeHtmlBuilder().append('\t').append('\t')
+						.appendHtmlConstant("<b>").appendEscaped(fraccion).appendHtmlConstant("</b>")
+						.append(' ').appendEscaped(PEC.getCuotaDescription(fraccion)).toSafeHtml());
+				grid.setHTML(row, 4, new SafeHtmlBuilder().append('\t').append('\t')
+						.appendHtmlConstant("<b>").appendEscaped(colectivo).appendHtmlConstant("</b>")
+						.append(' ').appendEscaped(PEC.getColectivoDescription(colectivo)).toSafeHtml());
+			}
+			
+			
+		}
+		
+		
+
+		popupPanel.add(grid);
+
+		popupPanel.setPopupPositionAndShow(new PositionCallback() {
+			@Override
+			public void setPosition(int offsetWidth, int offsetHeight) {
+				popupPanel.setPopupPosition(x, y);
+			}
+		});
+		return popupPanel;
+	}
+
 	private static interface EnterpriseCommand extends ScheduledCommand {
 		void setEnterprise(Enterprise enterprise);
 	}
@@ -801,18 +896,36 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 	}
 
-	private class MainEnterpriseCretaRequestCommand extends EnterpriseCretaRequestCommand implements EnterpriseCommand {
+	private class MainEnterpriseCretaRequestCommand extends EmployeeTree.CreateRequestCommand implements EnterpriseCommand {
+		
+		protected Enterprise enterprise;
 
 		public MainEnterpriseCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
 		}
 
-		@Override
+
+		// --------------------------------------------------------------------
 		public void setEnterprise(Enterprise enterprise) {
 			this.enterprise = enterprise;
 			dialog.setData(getCCs(enterprise));
 		}
+		
 
+		// --------------------------------------------------
+
+		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addWarnings(message);
+			resultsPanel.setWidget(cretaResults);
+			showResultsPanel();
+		}
+
+		@Override
+		protected String getDescription(CCC ccc) {
+			return EmployeeTree.getDescription(ccc, this.enterprise);
+		}
 	}
 
 	private class MainEnterpriseDBACommand extends EnterpriseDBACommand implements EnterpriseCommand {
@@ -973,7 +1086,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		protected void onRequestCommand(File file) {
 			MainEnterpriseCretaRequestCommand cmd = new MainEnterpriseCretaRequestCommand(file);
-			cmd.setEnterprise(enterprise);
+			cmd.setEnterprise(enterprise);	
+//			cmd.setSelected(getSelectedCCCs());
 			cmd.execute();
 		}
 
@@ -987,6 +1101,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			
 			return super.getEmployeeFullName(jsEmployee);
 		}
+		
 	}
 
 	private class ActivityContextMenu extends ContextMenu {
@@ -1052,10 +1167,18 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		// ---------------------------------------------------- ActivityCommand
 		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addWarnings(message);
+			resultsPanel.setWidget(cretaResults);
+			showResultsPanel();
+		}
+
+		@Override
 		protected String getDescription(CCC ccc) {
 			return activity.getDescription() + ", " + Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 		}
-
+		
 		// ---------------------------------------------------- ActivityCommand
 		@Override
 		public void setActivity(Activity activity) {
@@ -1251,6 +1374,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 			dialog.selectLabel.setVisible(false);
 			dialog.selectDataGrid.setVisible(false);
+		}
+
+		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addWarnings(message);
+			resultsPanel.setWidget(cretaResults);
+			showResultsPanel();
 		}
 
 		@Override
@@ -1567,6 +1698,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		public EnterprisesCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
+		}
+
+		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			CretaResults cretaResults = new CretaResults();
+			cretaResults.addWarnings(message);
+			resultsPanel.setWidget(cretaResults);
+			showResultsPanel();
 		}
 
 		@Override

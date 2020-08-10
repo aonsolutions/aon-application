@@ -195,6 +195,10 @@ public interface CretaService {
 		public final native String getMessage() /*-{
 			return this.message;
 		}-*/;
+
+		public final native void setMessage(String message) /*-{
+			this.message = message;
+		}-*/;
 	}
 
 	public static class JsCCC extends JavaScriptObject {
@@ -357,6 +361,58 @@ public interface CretaService {
 		public final native String getCaf() /*-{
 			return this.caf;
 		}-*/;
+
+		public final native JsTramo [] getTramos() /*-{
+			return this.tramos;
+		}-*/;
+
+	}
+
+	public static class JsTramo extends JavaScriptObject 
+	{
+		protected JsTramo() {
+		}
+
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+		
+		public final native String getDesde() /*-{
+			return this.desde;
+		}-*/;
+
+		public final native String getHasta() /*-{
+			return this.hasta;
+		}-*/;
+
+		
+		public final native JsPeculiaridad [] getPeculiaridades() /*-{
+			return this.peculiaridades;
+		}-*/;
+
+	}
+
+	public static class JsPeculiaridad extends JavaScriptObject 
+	{
+		protected JsPeculiaridad() {
+		}
+
+		// ----------------------------------- JSNI (Native JavaScript Methods)
+
+		public final native String getCod() /*-{
+			return this.cod;
+		}-*/;
+	
+		public final native String getValor() /*-{
+			return this.valor;
+		}-*/;
+
+		public final native String getColectivo() /*-{
+			return this.colectivo;
+		}-*/;
+
+		public final native String getFraccion() /*-{
+			return this.fraccion;
+		}-*/;
+
 	}
 
 	public static class JsFile extends JavaScriptObject

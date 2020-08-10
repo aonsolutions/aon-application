@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import static com.esferalia.aon.gwt.payroll.client.MainCreta.hasTrabajadoresYTramos;
 import static com.esferalia.aon.gwt.payroll.client.MainCreta.isAON;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.CRETA_URL;
 import static com.esferalia.aon.gwt.payroll.shared.CretaService.File.DOCUMENTO_CALCULO_LIQUIDACION;
@@ -376,6 +375,8 @@ public abstract class CretaDetail extends Composite {
 						
 						TableRowBuilder tr = startRow();
 						tr.className(trStyle);
+						tr.attribute("onmouseout", "javascript:onEmployeeOut();");
+						tr.attribute("onmouseover", "javascript:onEmployeeOver('"+jsFile.getId()+"','"+employee.getNaf()+"',event.x,event.y);");
 						
 						TableCellBuilder td = tr.startTD();
 						td.className(tdStyle);
@@ -404,6 +405,8 @@ public abstract class CretaDetail extends Composite {
 						td.endTD();
 
 						tr.endTR();
+						
+						
 					}
 				}
 			}
@@ -694,10 +697,36 @@ public abstract class CretaDetail extends Composite {
 
 	}
 	
+	public void onEmployeeOut() {
+		if (jsFileToolTipTimer != null)
+			jsFileToolTipTimer.cancel();		
+	}
+
+	public void onEmployeeOver(String trabajadoresYTramosId, String naf, int x , int y ) {
+		jsFileToolTipTimer = new Timer() {
+			
+			
+			@Override
+			public void run() {
+
+				if (CretaDetail.this.popupTooltip != null)
+					CretaDetail.this.popupTooltip.hide();
+				
+				Arrays.stream(trabajadoresYTramosMap.get(trabajadoresYTramosId).getEmployees())
+				.filter(e -> e.getNaf().equalsIgnoreCase(naf)).findAny()
+				.ifPresent(e -> CretaDetail.this.popupTooltip = MainCreta.showjsEmployeeToolTip(e, x, y));								
+				
+			}
+		};
+
+		jsFileToolTipTimer.schedule(1000);
+		
+	}
+	
 	public void onEmployeeChange(String trabajadoresYTramosId, String naf, boolean checked ) {
 		setSelectedEmployee(trabajadoresYTramosId, naf, checked);
 	}
-	
+
 	public void onDocumentoCalculoLiquidacion(
 			CretaService.JsDCLResult success[],
 			CretaService.JsDCLResult errors[]) {
@@ -710,6 +739,8 @@ public abstract class CretaDetail extends Composite {
 	@Override
 	protected void onAttach() {
 		exportSubmitComplete();
+		exportOnEmployeeOut();
+		exportOnEmployeeOver();
 		exportOnEmployeeChange();
 		super.onAttach();
 	}
@@ -893,12 +924,10 @@ public abstract class CretaDetail extends Composite {
 						r9607 = true ;
 					}else if ( AonStringUtils.equalsIgnoreCase("R9650", jsError.getCode())) {
 						r9650 = true ;
-					}
-					
-					else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
+					}else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
 						calculated = true ;
-					}else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
-							&& AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
+					}else if ( /*MainCreta.isTrabajadoressYTramos(jsFile) 
+							&&*/ AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
 						processing = true ;
 					}else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
 							&& AonStringUtils.equalsIgnoreCase("R9998", jsError.getCode())) {
@@ -954,6 +983,20 @@ public abstract class CretaDetail extends Composite {
 		$wnd.__onDocumentoCalculoLiquidacion = $entry(function(success,
 				errors) {
 			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onDocumentoCalculoLiquidacion([Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;[Lcom/esferalia/aon/gwt/payroll/shared/CretaService$JsDCLResult;)(success, errors);
+		});
+	}-*/;
+
+	private native void exportOnEmployeeOut() /*-{
+		var that = this;
+		$wnd.onEmployeeOut = $entry(function() {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOut()();
+		});
+	}-*/;
+
+	private native void exportOnEmployeeOver() /*-{
+		var that = this;
+		$wnd.onEmployeeOver = $entry(function(trabajadoresYTramosId, naf, x, y) {
+			that.@com.esferalia.aon.gwt.payroll.client.CretaDetail::onEmployeeOver(Ljava/lang/String;Ljava/lang/String;II)(trabajadoresYTramosId, naf, x, y);
 		});
 	}-*/;
 
