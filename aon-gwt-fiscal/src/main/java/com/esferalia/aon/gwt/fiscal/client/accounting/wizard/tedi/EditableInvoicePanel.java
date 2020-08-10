@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
@@ -74,6 +75,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.logging.client.ConsoleLogHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -489,18 +491,18 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		helpButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				final CustomDialog dialog = new CustomDialog();
+				final AonCustomDialog dialog = new AonCustomDialog();
 				dialog.setCaption(AON.MSG.information());
 				FlowPanel tabContainer = new FlowPanel();
-				tabContainer.addStyleName(AON.AON_CSS.aonPadding());
+				tabContainer.addStyleName(AON.CSS.aonPadding());
 				FlexTable infoTab = new FlexTable();
-				infoTab.addStyleName(AON.AON_CSS.aonDataTable());
+				infoTab.addStyleName(AON.CSS.aonTable());
 				infoTab.setWidget(0, 0, new Label( "CAMPO" ));
-				infoTab.getFlexCellFormatter().addStyleName(0, 0,AON.AON_CSS.aonDataTableHeader());
+				infoTab.getFlexCellFormatter().addStyleName(0, 0,AON.CSS.aonTableLabel());
 				infoTab.setWidget(0, 1, new Label( "TECLAS" ));
-				infoTab.getFlexCellFormatter().addStyleName(0, 1,AON.AON_CSS.aonDataTableHeader());
+				infoTab.getFlexCellFormatter().addStyleName(0, 1,AON.CSS.aonTableLabel());
 				infoTab.setWidget(0, 2, new Label( "ACCI\u00D3N" ));
-				infoTab.getFlexCellFormatter().addStyleName(0, 2,AON.AON_CSS.aonDataTableHeader());
+				infoTab.getFlexCellFormatter().addStyleName(0, 2,AON.CSS.aonTableLabel());
 
 				infoTab.setWidget(1, 0, new Label( "Titular"));
 				infoTab.setWidget(1, 1, new Label( "F9"));
@@ -515,7 +517,23 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				infoTab.setWidget(4, 1, new Label( "Ctrl+F3"));
 				infoTab.setWidget(4, 2, new Label( "Posibilidad de crear o modificar la cuenta."));
 				
-				tabContainer.add( infoTab );   
+				tabContainer.add( infoTab );
+				FlowPanel buttons = new FlowPanel();
+		    	buttons.setStyleName(AON.CSS.aonTextCenter());
+		    	buttons.addStyleName(AON.CSS.aonMarginTop());
+		    	buttons.addStyleName(AON.CSS.aonMarginBottom());
+		    	final Button okButton = new Button();
+		    	okButton.setStyleName(AON.CSS.aonOkButton());
+		    	okButton.setText( AON.MSG.accept());
+		    	okButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						dialog.hide();
+					}
+				});
+		    	buttons.add(okButton);
+		    	
+				tabContainer.add( buttons );
 				dialog.add( tabContainer );
 				dialog.center();
 				dialog.show();
