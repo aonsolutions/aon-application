@@ -300,6 +300,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			&& invoiceCallback.getInvoice().getInvoice().isDUALinkAllowed() 
 			&& invoiceCallback.getInvoice().getDuaNationalInvoice() != null ) {
 			AonTableButton duaButton = new AonTableButton("Ver Factura DUA",AON.CSS.aonIconLaunch());
+			duaButton.addStyleName(AON.CSS.aonMarginLeft());
 			duaButton.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -336,6 +337,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			&& invoiceCallback.getInvoice().getDuaInvoice().getAccountingInvoice().getInvoice() != null
 				) {
 			AonTableButton duaLabel = new AonTableButton("Ver Factura de compra Extracomunitaria",AON.CSS.aonIconLaunch());
+			duaLabel.addStyleName(AON.CSS.aonMarginLeft());
 			duaLabel.addClickHandler(new ClickHandler() {
 				
 				@Override
@@ -385,6 +387,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				AonTableButton rectLabel = (invoiceCallback.getInvoice().getInvoice().isRectified())
 					?new AonTableButton(AON.MSG.seeRectifierInvoice(),AON.CSS.aonIconLaunch())
 					:new AonTableButton(AON.MSG.seeRectifiedInvoice(),AON.CSS.aonIconLaunch());
+				rectLabel.addStyleName(AON.CSS.aonMarginLeft());
 				rectLabel.addClickHandler(new ClickHandler() {
 					
 					@Override
@@ -417,6 +420,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					 && !invoiceCallback.getInvoice().getInvoice().isRectifier() 
 					 && !invoiceCallback.getInvoice().isUndeductible()) {
 						AonTableButton rectify  = new AonTableButton(AON.MSG.rectifyInvoice(),AON.CSS.aonIconSwap());
+						rectify.addStyleName(AON.CSS.aonMarginLeft());
 						rectify.addClickHandler(new ClickHandler() {
 							
 							@Override
@@ -488,6 +492,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		regTable.add(labelsPanel);
 		
 		AonTableButton helpButton  = new AonTableButton(AON.MSG.help(),AON.CSS.aonIconHelp());
+		helpButton.addStyleName(AON.CSS.aonMarginRight());
+		helpButton.addStyleName(AON.CSS.aonMarginLeft());
 		helpButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
