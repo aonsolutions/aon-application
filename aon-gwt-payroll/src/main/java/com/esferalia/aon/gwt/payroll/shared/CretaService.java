@@ -472,10 +472,13 @@ public interface CretaService {
 			return this.employees;
 		}-*/;
 		
+		public final native String getAuthorized() /*-{
+			return this.authorized;
+		}-*/;
+		
 		public final native String getExternalReference() /*-{
 		return this.externalReference;
 	}-*/;
-		
 
 	}
 

@@ -97,6 +97,17 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
+	public static String getAuthorized() {
+		
+		for ( File file: new File [] {File.TRABAJADORES_TRAMOS, File.RESPUESTA})
+			for ( JsFile jsFile: get(file, new  JsFile [] {}))
+				return jsFile.getAuthorized();
+		
+		return null;
+		
+	}	
+
+	
 	public static <T extends JsFile> T[] get(File file, T[] ts) {
 		Map<String, T> map = get(file.name());
 		return map.values().toArray(ts);
@@ -110,6 +121,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		return getOlder(file.name(), t);
 	}
 
+
+	
 	private final class MainCretaSyncCallback implements SyncCallback {
 
 		private IndeterminateTask syncTask ;
@@ -583,8 +596,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		int row = 0;
 		grid.setCellPadding(2);
 		// Header
-//		grid.setText(row, 0, "PECULIARIDADES/TIPOS DE COTIZACI\u00D3N");
-//		grid.getCellFormatter().addStyleName(row, 0, AON.AON_BOLD);
+		//grid.setText(row, 0, "PECULIARIDADES/TIPOS DE COTIZACI\u00D3N");
+		//grid.getCellFormatter().addStyleName(row, 0, AON.AON_BOLD);
 
 		
 		//row++;
@@ -612,6 +625,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						
 			row++;
 			grid.setText(row, 0, String.valueOf( i++ ));
+			grid.getCellFormatter().addStyleName(row, 0, AON.AON_TEXT_CENTER);
 			Date desde = yearMonthNumDayFormat.parse(tramo.getDesde());
 			Date hasta = yearMonthNumDayFormat.parse(tramo.getHasta());
 			grid.setText(row, 1, dayMonthNumYearFormat.format(desde) + "    " + dayMonthNumYearFormat.format(hasta) );
@@ -623,15 +637,17 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				String colectivo = peculiaridad.getColectivo();
 				String valor = AonStringUtils.defaultIfBlank(peculiaridad.getValor(), "");
 				
-				grid.setHTML(row, 1, new SafeHtmlBuilder().append('\t').append('\t')
+				grid.setHTML(row, 1, new SafeHtmlBuilder().append(' ').append(' ')
 						.appendHtmlConstant("<b>").appendEscaped(code).appendHtmlConstant("</b>")
 						.append(' ').appendEscaped(PEC.getPEC(peculiaridad.getCod()).getMessage()).toSafeHtml());
-				grid.setHTML(row, 2, new SafeHtmlBuilder().append('\t').append('\t')
+				grid.setHTML(row, 2, new SafeHtmlBuilder().append(' ').append(' ')
 						.appendHtmlConstant("<b>").appendEscaped(valor).toSafeHtml());
-				grid.setHTML(row, 3, new SafeHtmlBuilder().append('\t').append('\t')
+				grid.getCellFormatter().addStyleName(row, 2, AON.AON_TEXT_RIGHT);
+				
+				grid.setHTML(row, 3, new SafeHtmlBuilder().append(' ').append(' ')
 						.appendHtmlConstant("<b>").appendEscaped(fraccion).appendHtmlConstant("</b>")
 						.append(' ').appendEscaped(PEC.getCuotaDescription(fraccion)).toSafeHtml());
-				grid.setHTML(row, 4, new SafeHtmlBuilder().append('\t').append('\t')
+				grid.setHTML(row, 4, new SafeHtmlBuilder().append(' ').append(' ')
 						.appendHtmlConstant("<b>").appendEscaped(colectivo).appendHtmlConstant("</b>")
 						.append(' ').appendEscaped(PEC.getColectivoDescription(colectivo)).toSafeHtml());
 			}

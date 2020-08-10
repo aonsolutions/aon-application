@@ -1697,7 +1697,7 @@ public class CretaServlet extends HttpServlet
 			String sep = "";
 			while ( tsIt.hasNext() ){
 				net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos t = tsIt.next();
-				os.printf("%s\r\n{\"name\":\"%s\",\"externalReference\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, t.getReferenciaExterna(), toJSON(t.getLiquidacion()),toJS0N(t.getLiquidacion().getLiquidacionMes().stream()), marshallAndEncode(t));
+				os.printf("%s\r\n{\"name\":\"%s\",\"authorized\":\"%s\",\"externalReference\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n", sep ,CretaService.File.TRABAJADORES_TRAMOS, t.getAutorizado(), t.getReferenciaExterna(), toJSON(t.getLiquidacion()),toJS0N(t.getLiquidacion().getLiquidacionMes().stream()), marshallAndEncode(t));
 				os.flush();
 				sep = ",";
 			}
@@ -1719,7 +1719,7 @@ public class CretaServlet extends HttpServlet
 				Respuesta r = rsIt.next();
 				List<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion> liquidacion = r.getLiquidacion();
 				for  (net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion l : liquidacion ){
-					os.printf("%s\r\n{\"name\":\"%s\",\"externalReference\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, r.getReferenciaExterna(), toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(create(l,r)));
+					os.printf("%s\r\n{\"name\":\"%s\",\"authorized\":\"%s\",\"externalReference\":\"%s\",%s,\"errors\":[%s],\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.RESPUESTA, r.getAutorizado(), r.getReferenciaExterna(), toJSON(l), toJSON(l.getErrores()),toJSON(l.getLiquidacionMes().stream()), marshallAndEncode(create(l,r)));
 					os.flush();
 					sep = ",";
 					
@@ -1743,7 +1743,7 @@ public class CretaServlet extends HttpServlet
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Bases b = bsIt.next();
 				List<net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion> liquidacion = b.getLiquidacion();
 				for  (net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion l : liquidacion ){
-					os.printf("%s\r\n{\"name\":\"%s\",\"externalReference\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.BASES, b.getReferenciaExterna(), toJSON(l), toJSoN(l.getLiquidacionMes().stream()), marshallAndEncode(create(l,b)));
+					os.printf("%s\r\n{\"name\":\"%s\",\"authorized\":\"%s\",\"externalReference\":\"%s\",%s,\"employees\":[%s],\"file\":\"%s\"}\r\n",sep, CretaService.File.BASES, b.getAutorizado(), b.getReferenciaExterna(), toJSON(l), toJSoN(l.getLiquidacionMes().stream()), marshallAndEncode(create(l,b)));
 					os.flush();
 					sep = ",";
 					

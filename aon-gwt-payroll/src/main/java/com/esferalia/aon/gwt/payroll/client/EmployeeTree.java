@@ -1035,8 +1035,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				}
 
 			}, null, null);
+			
+			dialog.setAuthorized(MainCreta.getAuthorized());
 
 		}
+		
 
 	}
 	

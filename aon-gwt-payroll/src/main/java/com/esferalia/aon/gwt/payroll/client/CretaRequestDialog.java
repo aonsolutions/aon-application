@@ -424,6 +424,10 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		authLongBox.setValue(authorized);
 	}
 	
+	public void setAuthorized(String authorized){
+		authLongBox.setText(authorized);
+	}
+
 	public boolean previousBases(){
 		return previousBasesCheckBox.getValue();
 	}
