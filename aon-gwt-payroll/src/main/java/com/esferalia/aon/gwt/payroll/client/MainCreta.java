@@ -594,7 +594,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		grid.getElement().getStyle().setProperty("borderCollapse", "collapse");
 		
 		int row = 0;
-		grid.setCellPadding(2);
+		grid.setCellPadding(3);
 		// Header
 		//grid.setText(row, 0, "PECULIARIDADES/TIPOS DE COTIZACI\u00D3N");
 		//grid.getCellFormatter().addStyleName(row, 0, AON.AON_BOLD);
@@ -628,7 +628,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			grid.getCellFormatter().addStyleName(row, 0, AON.AON_TEXT_CENTER);
 			Date desde = yearMonthNumDayFormat.parse(tramo.getDesde());
 			Date hasta = yearMonthNumDayFormat.parse(tramo.getHasta());
-			grid.setText(row, 1, dayMonthNumYearFormat.format(desde) + "    " + dayMonthNumYearFormat.format(hasta) );
+			grid.setText(row, 1, dayMonthNumYearFormat.format(desde) + "    " + dayMonthNumYearFormat.format(hasta) + " " + tramo.getDias());
 			
 			for ( JsPeculiaridad peculiaridad: tramo.getPeculiaridades() ) {
 				row++;
@@ -911,8 +911,31 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 		
 	}
+	
+	private abstract class ResultsCretaRequestCommand extends EmployeeTree.CreateRequestCommand {
+		
+		private CretaResults cretaResults;
 
-	private class MainEnterpriseCretaRequestCommand extends EmployeeTree.CreateRequestCommand implements EnterpriseCommand {
+		public ResultsCretaRequestCommand(File file, DetailPanel detailPanel, FileEditor fileEditor) {
+			super(file, detailPanel, fileEditor);
+		}
+		public ResultsCretaRequestCommand(File file, DetailPanel detailPanel) {
+			super(file, detailPanel);
+		}
+		@Override
+		protected void onCCCError(CCC ccc, String message) {
+			if ( cretaResults == null ) {
+				cretaResults = new CretaResults();
+				resultsPanel.setWidget(cretaResults);
+				showResultsPanel();
+			}
+			cretaResults.addWarnings(message);
+		}
+
+		
+	}
+
+	private class MainEnterpriseCretaRequestCommand extends ResultsCretaRequestCommand implements EnterpriseCommand {
 		
 		protected Enterprise enterprise;
 
@@ -929,14 +952,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		
 
 		// --------------------------------------------------
-
-		@Override
-		protected void onCCCError(CCC ccc, String message) {
-			CretaResults cretaResults = new CretaResults();
-			cretaResults.addWarnings(message);
-			resultsPanel.setWidget(cretaResults);
-			showResultsPanel();
-		}
 
 		@Override
 		protected String getDescription(CCC ccc) {
@@ -1173,7 +1188,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainActivityCretaRequestCommand extends EmployeeTree.CreateRequestCommand implements ActivityCommand {
+	private class MainActivityCretaRequestCommand extends ResultsCretaRequestCommand implements ActivityCommand {
 
 		private Activity activity;
 
@@ -1182,13 +1197,6 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		}
 
 		// ---------------------------------------------------- ActivityCommand
-		@Override
-		protected void onCCCError(CCC ccc, String message) {
-			CretaResults cretaResults = new CretaResults();
-			cretaResults.addWarnings(message);
-			resultsPanel.setWidget(cretaResults);
-			showResultsPanel();
-		}
 
 		@Override
 		protected String getDescription(CCC ccc) {
@@ -1383,7 +1391,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class MainCCCCretaRequestCommand extends EmployeeTree.CreateRequestCommand implements CCCCommand {
+	private class MainCCCCretaRequestCommand extends ResultsCretaRequestCommand implements CCCCommand {
 
 		public MainCCCCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
@@ -1392,13 +1400,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			dialog.selectDataGrid.setVisible(false);
 		}
 
-		@Override
-		protected void onCCCError(CCC ccc, String message) {
-			CretaResults cretaResults = new CretaResults();
-			cretaResults.addWarnings(message);
-			resultsPanel.setWidget(cretaResults);
-			showResultsPanel();
-		}
+
 
 		@Override
 		protected String getDescription(CCC ccc) {
@@ -1707,21 +1709,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
-	private class EnterprisesCretaRequestCommand extends EmployeeTree.CreateRequestCommand
+	private class EnterprisesCretaRequestCommand extends ResultsCretaRequestCommand
 			implements EnterprisesCommand {
 
+		private CretaResults cretaResults ;
 		private List<Enterprise> enterprises;
 
 		public EnterprisesCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
-		}
-
-		@Override
-		protected void onCCCError(CCC ccc, String message) {
-			CretaResults cretaResults = new CretaResults();
-			cretaResults.addWarnings(message);
-			resultsPanel.setWidget(cretaResults);
-			showResultsPanel();
 		}
 
 		@Override
@@ -1739,6 +1734,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.enterprises = enterprises;
 			dialog.setData(cccs);
 		}
+		
+		
 	}
 
 	private class EnterprisesDBACommand extends EmployeeTree.DBACommand implements EnterprisesCommand {

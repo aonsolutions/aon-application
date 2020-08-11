@@ -850,10 +850,22 @@ public class CretaServlet extends HttpServlet
 
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramos tramos) {
 		return tramos.getTramo().stream()
-				.map(tramo -> String.format("{\"desde\":\"%s\", \"hasta\":\"%s\", \"peculiaridades\": [%s]}", toString(tramo.getFechaDesde()),toString(tramo.getFechaHasta()), toJSON(tramo.getInformacionAfiliacion().getPeculiaridades())))
+				.map(tramo -> String.format("{\"desde\":\"%s\", \"hasta\":\"%s\", \"dias\":\"%s\",\"peculiaridades\": [%s], \"datos\": [%s]}", 
+						toString(tramo.getFechaDesde()),
+						toString(tramo.getFechaHasta()), 
+						tramo.getDiasCotizados(), 
+						toJSON(tramo.getInformacionAfiliacion().getPeculiaridades()), 
+						toJSON(tramo.getDatosTramo())))
 				.collect(Collectors.joining(","));
 	}
 	
+	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatosTramo datosTramo) {
+		if ( datosTramo == null )
+			return "";
+		return "";
+
+	}
+
 	private static String toJSON(net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Peculiaridades peculiaridades) {
 		if ( peculiaridades == null )
 			return "";

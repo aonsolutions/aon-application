@@ -1050,6 +1050,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class WorkplaceCreateRequestCommand extends CreateRequestCommand implements WorkplaceCommand {
 		
 		private Workplace workplace; 
+		private CretaResults cretaResults;
 
 		public WorkplaceCreateRequestCommand(File file, DetailPanel detailPanel,
 				FileEditor fileEditor) {
@@ -1059,10 +1060,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		// --------------------------------------------------------------------
 		@Override
 		protected void onCCCError(CCC ccc, String message) {
-			CretaResults cretaResults = new CretaResults();
+			if ( cretaResults == null ) {
+				cretaResults = new CretaResults();
+				resultsPanel.setWidget(cretaResults);
+				showResultsPanel();
+			}
 			cretaResults.addWarnings(message);
-			resultsPanel.setWidget(cretaResults);
-			showResultsPanel();
 		}
 
 		@Override
@@ -1080,6 +1083,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	class CCCCretaRequestCommand extends CreateRequestCommand implements CCCCommand{
+		
+		private CretaResults cretaResults;
 
 		public CCCCretaRequestCommand(File file) {
 			super(file, employeeDetail);
@@ -1090,10 +1095,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		@Override
 		protected void onCCCError(CCC ccc, String message) {
-			CretaResults cretaResults = new CretaResults();
-			cretaResults.addWarnings(message);
+			if ( cretaResults == null ) {
+				cretaResults = new CretaResults();
+				resultsPanel.setWidget(cretaResults);
+				showResultsPanel();
+			}
 			resultsPanel.setWidget(cretaResults);
-			showResultsPanel();
 		}
 
 		@Override
@@ -1173,6 +1180,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			extends CreateRequestCommand implements EnterpriseCommand{
 
 		protected Enterprise enterprise;
+		private CretaResults cretaResults;
 
 		public EnterpriseCretaRequestCommand(File file,
 				DetailPanel detailPanel) {
@@ -1195,10 +1203,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		@Override
 		protected void onCCCError(CCC ccc, String message) {
-			CretaResults cretaResults = new CretaResults();
-			cretaResults.addWarnings(message);
+			if ( cretaResults == null ) {
+				cretaResults = new CretaResults();
+				resultsPanel.setWidget(cretaResults);
+				showResultsPanel();
+			}
 			resultsPanel.setWidget(cretaResults);
-			showResultsPanel();
 		}
 
 		@Override

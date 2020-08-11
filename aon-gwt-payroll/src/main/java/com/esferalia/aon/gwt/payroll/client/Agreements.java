@@ -324,7 +324,7 @@ public class Agreements extends ResizeComposite implements
 						if ( agreements.size() == limit )
 							getAgreements(offset + limit, limit);
 						else 
-							toolbar.setSearchTextBox(true);
+							toolbar.setVisibleSearchTextBox(true);
 
 					}
 				});

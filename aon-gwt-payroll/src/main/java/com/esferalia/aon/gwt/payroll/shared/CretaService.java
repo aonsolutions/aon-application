@@ -375,6 +375,10 @@ public interface CretaService {
 
 		// ----------------------------------- JSNI (Native JavaScript Methods)
 		
+		public final native String getDias() /*-{
+			return this.dias;
+		}-*/;
+
 		public final native String getDesde() /*-{
 			return this.desde;
 		}-*/;

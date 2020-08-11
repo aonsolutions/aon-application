@@ -3,19 +3,30 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
+import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
+import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
+import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -23,9 +34,14 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -34,7 +50,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Enterprises extends ResizeComposite implements
 		SelectionHandler<TreeItem>, 
-		ContextMenuHandler{
+		OptionsToolbar.Listener,
+		ContextMenuHandler {
 
 	interface Listener {
 
@@ -67,8 +84,8 @@ public class Enterprises extends ResizeComposite implements
 	@UiField
 	ScrollPanel scrollPanel;
 
-//	@UiField
-//	OptionsToolbar toolbar;
+	@UiField
+	OptionsToolbar toolbar;
 
 	private Images images;
 	private List<Listener> listeners;
@@ -84,6 +101,15 @@ public class Enterprises extends ResizeComposite implements
 		enterprisesService = DomainEnterprisesServiceAsync.newInstance();		
 				
 		initWidget(binder.createAndBindUi(this));
+		
+		toolbar.addListener(this);
+		
+		toolbar.setVisibleSearchTextBox(false);
+		toolbar.setVisibleViewButton(false);
+		toolbar.setVisibleNewButton(false);
+		toolbar.setVisiblePasteButton(false);
+		toolbar.setVisibleDraftButton(false);		
+		toolbar.setVisibleCopyButton(false);
 
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
@@ -101,6 +127,7 @@ public class Enterprises extends ResizeComposite implements
 			}
 
 		});
+		
 
 	}
 	
@@ -130,9 +157,11 @@ public class Enterprises extends ResizeComposite implements
 	// -
 	
 	protected void onEnterprise(Enterprise enterprise, TreeItem rootItem) {
-
+		
 		clearEnterprise(enterprise);
 		
+//		if ( !hasEmployees(enterprise) ) 
+//			return;
 		
 		final TreeItem enterpriseItem = addImageItem(rootItem,
 				enterprise.getName(), images.enterprise());
@@ -155,7 +184,7 @@ public class Enterprises extends ResizeComposite implements
 		}
 
 
-		enterpriseItem.setState(true, true);
+		//enterpriseItem.setState(true, true);
 
 		scrollPanel.scrollToLeft();
 
@@ -176,6 +205,9 @@ public class Enterprises extends ResizeComposite implements
 		tree.setSelectedItem(enterprisesItem);
 
 		onEnterpr1ses(enterprises);
+		
+		toolbar.setVisibleSearchTextBox(true);
+
 	}
 
 	public void clearEnterprise(Enterprise enterprise) {
@@ -283,6 +315,35 @@ public class Enterprises extends ResizeComposite implements
 		}
 		throw new NoSuchElementException();
 	}
+	
+	// ------------------------------------------------------------------------
+	@Override
+	public void onNewButtonClick(ClickEvent event){
+	}
+	
+	@Override
+	public void onPasteButtonClick(ClickEvent event){
+	}
+	
+	@Override
+	public void onCopyButtonClick(ClickEvent event){
+	}
+	
+	@Override
+	public void onDraftButtonClick(ClickEvent event){
+	}
+			
+	@Override
+	public void onKeyUpSearchTextBox(KeyUpEvent event){
+		filter(toolbar.getSearchTextBox().getValue());
+	}
+
+	@Override
+	public void onCollapseAllButtonClick(ClickEvent event){
+	}	
+	
+	// ------------------------------------------------------------------------
+	
 
 	protected Collection<Enterprise> getEnterprises( ) {
 		List<Enterprise> enterprises = new ArrayList<Enterprise>();
@@ -392,4 +453,64 @@ public class Enterprises extends ResizeComposite implements
 			enterprises.addAll(getEnterprises(treeItem.getChild(i)));
 		return enterprises;
 	}
+	private void filter(String pattern) {
+		for (int i = 0; i < tree.getItemCount(); i++)
+			filterEnterprises(pattern, tree.getItem(0));
+		
+	}
+
+	private void filterEnterprises(String pattern, TreeItem enterprisesItem) {
+		
+		for ( int i = 0; i < enterprisesItem.getChildCount(); i++ ) {
+			TreeItem enterpriseItem = enterprisesItem.getChild(i);
+			
+			Enterprise enterprise = ( Enterprise ) enterpriseItem.getUserObject();
+			String name = enterprise.getName();
+			
+			boolean visible = 
+			AonStringUtils.isBlank(pattern) 
+			|| AonStringUtils.containsIgnoreCase(name, pattern)
+			|| filterActivities(pattern, enterpriseItem);
+			;	
+			
+			enterpriseItem.setVisible(visible);
+			enterpriseItem.setState(visible);
+		}
+	}
+
+	private boolean filterActivities(String pattern, TreeItem enterpriseItem) {
+		
+		if (!AonStringUtils.isNumeric(pattern)) 
+			return false;
+		
+		boolean found = false;
+		for ( int i = 0; i < enterpriseItem.getChildCount(); i++ ) {
+			TreeItem activityItem = enterpriseItem.getChild(i);
+			boolean visible = filterCCCs(pattern, activityItem);
+			activityItem.setVisible(visible);
+			activityItem.setState(visible);
+			found |= visible;
+		}
+		return found;
+	}
+
+	private boolean filterCCCs(String pattern, TreeItem activityItem) {
+		
+		boolean found = false;
+		for ( int i = 0; i < activityItem.getChildCount(); i++ ) {
+			TreeItem cccItem = activityItem.getChild(i);
+			CCC ccc = ( CCC ) cccItem.getUserObject();
+			boolean visible = AonStringUtils.containsIgnoreCase(ccc.getCode(), pattern);	
+			cccItem.setVisible(visible);
+			found |= visible;
+		}
+
+		return found;
+
+	}
+	
+	private static boolean hasEmployees(Enterprise enterprise) {
+		return enterprise.getActivities().stream().flatMap(a -> a.getCccs().stream()).collect(Collectors.summingInt(ccc -> ccc.getEmployees().size())) > 0 ;
+	}
+
 }

@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -353,7 +354,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		scrollPanel.scrollToLeft();
 
 		initViewButton(toolbar.getViewButton());
-		
+		toolbar.setVisibleSearchTextBox(true);
 
 	}
 
@@ -2011,7 +2012,56 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	@Override
 	public void onKeyUpSearchTextBox(KeyUpEvent event) {
+		filter(toolbar.getSearchTextBox().getValue());
 	}
 	
+	// ------------------------------------------------------------------------
+	
+	private void filter( String pattern ) {
+		
+		for ( int i = 0; i < tree.getItemCount(); i++ ) {
+			TreeItem enterpriseItem = tree.getItem(i);	
+
+			boolean visible = filterEnterprise( pattern, enterpriseItem);
+			enterpriseItem.setVisible(visible);
+			enterpriseItem.setState(visible);
+		}
+		
+	}
+	
+	private boolean filterEnterprise( String pattern, TreeItem enterpriseItem ) {
+		boolean found = false;
+		int workplacesOffset = getWorkplacesOffset(enterpriseItem);
+		for ( int i = workplacesOffset; i < enterpriseItem.getChildCount(); i++ ) {			
+			TreeItem workplaceItem = enterpriseItem.getChild(i);	
+
+			boolean visible  = filterWorkplace( pattern, workplaceItem);
+			workplaceItem.setVisible(visible);
+			workplaceItem.setState(visible);	
+			found |= visible;
+		}
+		return found;
+	}
+	
+	private boolean filterWorkplace( String pattern, TreeItem workplaceItem ) {
+		boolean found = false;
+		int employeesOffset = getEmployeesOffset(workplaceItem);
+		for ( int i = employeesOffset; i < workplaceItem.getChildCount(); i++ ) {
+			TreeItem employeeItem = workplaceItem.getChild(i);
+
+			EmployeeDraftObject employee = (EmployeeDraftObject) employeeItem.getUserObject();
+			
+			boolean visible  = 
+			AonStringUtils.isBlank(pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getFullname(), pattern)
+			|| AonStringUtils.containsIgnoreCase(employee.getEmployee().getDocument(), pattern)
+			;
+			
+			employeeItem.setVisible(visible);
+			found |= visible;
+		}
+		return found;
+	}
+
 	
 }
