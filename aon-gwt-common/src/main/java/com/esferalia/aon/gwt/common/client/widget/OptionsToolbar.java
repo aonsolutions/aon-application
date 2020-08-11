@@ -65,7 +65,7 @@ public class OptionsToolbar extends Composite {
 		this.listeners = new ArrayList<Listener>();
 	}
 
-	public void setSearchTextBox(boolean visible) {
+	public void setVisibleSearchTextBox(boolean visible) {
 		searchTextBox.setVisible(visible);
 	}
 	
