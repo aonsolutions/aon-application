@@ -4,9 +4,9 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.EditableInvoicePanel.IEditableInvoicePanelCallback;
 import com.esferalia.aon.occam.api.model.Account;
@@ -287,19 +287,19 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 
 	private class InvoicePanelRow implements Focusable {
 		private final AccountBox expAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
-		private final DoubleBox taxableBase = new DoubleBox(12,4);
-		private final DoubleBox vatPercent = new DoubleBox(6);
-		private final DoubleBox vatQuota = new DoubleBox(8);
-		private final DoubleBox surchargePercent = new DoubleBox(6);
-		private final DoubleBox surchargeQuota = new DoubleBox(8);
+		private final AonDoubleBox taxableBase = new AonDoubleBox(12,4);
+		private final AonDoubleBox vatPercent = new AonDoubleBox(6);
+		private final AonDoubleBox vatQuota = new AonDoubleBox(8);
+		private final AonDoubleBox surchargePercent = new AonDoubleBox(6);
+		private final AonDoubleBox surchargeQuota = new AonDoubleBox(8);
 		private final AccountBox inputVatAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		private final AccountBox outputVatAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		private final CheckBox withholding  = new CheckBox();
 		private final CheckBox prepayment  = new CheckBox();
 		private final AonTableButton removeButton = new AonTableButton( AON.MSG.deleteAction(),AON.CSS.aonIconDelete() );
 		private final InvestAssetListBox investAsset = new InvestAssetListBox(); 
-		private final DoubleBox dedPercent = new DoubleBox(6);
-		private final DoubleBox dedQuota = new DoubleBox(8);
+		private final AonDoubleBox dedPercent = new AonDoubleBox(6);
+		private final AonDoubleBox dedQuota = new AonDoubleBox(8);
 		private final AccountBox adjAccount = new AccountBox(callback.getCurrentDomainName(), callback.getCurrentDomainId(), callback.getCurrentUser(), false);
 		
 		private InvoicePanelRow(final InvoiceVAT vat, FlexTable tab, boolean focus) {
@@ -693,7 +693,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			double gap = InvoiceCalculator.getQuotaGap(vat, vatQuota.getValue());
 			decorateEditableQuota(gap, quota, vatQuota);
 		}
-		private void decorateEditableQuota(double gap, double quota, DoubleBox editableBox) {
+		private void decorateEditableQuota(double gap, double quota, AonDoubleBox editableBox) {
 			editableBox.removeStyleName(AON.CSS.aonChanged());
 			editableBox.removeStyleName(AON.CSS.aonInputError());
 			if (AonMathUtils.isNotZero( gap )) {
@@ -761,7 +761,7 @@ public class InvoiceVATPanel extends ScrollPanel implements HasValueChangeHandle
 			prepaymentLabel.setVisible(!isUndeductible() && enabled);
 		}
 		
-		private void checkCalculate(final InvoiceVAT vat, DoubleBox toFocus) {
+		private void checkCalculate(final InvoiceVAT vat, AonDoubleBox toFocus) {
 			if (vat.isAnyquotaEdited()) {
 				AonConfirmDialog cd = new AonConfirmDialog();
 				cd.confirm(AON.MSG.manualChangeConfirm(),new AonConfirmDialogCallback() {

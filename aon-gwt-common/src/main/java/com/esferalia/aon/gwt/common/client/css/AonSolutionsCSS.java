@@ -14,6 +14,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_input_text")
 	String aonInputText();
 
+	@ClassName("aon_number_box")
+	String aonNumberBox();
+
+	@ClassName("aon_value_changed")
+	String aonValueChanged();
+
 	@ClassName("aon_width_all")
 	String aonWidthAll();
 

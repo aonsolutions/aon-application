@@ -8,12 +8,12 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.FullDocument;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
 import com.esferalia.aon.gwt.common.client.widget.InvoiceTransactionListBox;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
@@ -113,7 +113,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private FlowPanel dropPanel; 	
 	private ListBox series;
 	private TextBox referenceCode;
-	private DoubleBox invoiceTotal;
+	private AonDoubleBox invoiceTotal;
 	private DateBoxEx taxDate;
 	private CheckLabel service;
 	private CheckLabel rectifier;
@@ -798,7 +798,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		number.setVisible( inv.isSales() );
 		referenceCode.setVisible( !inv.isSales() );
 		
-		invoiceTotal = new DoubleBox();
+		invoiceTotal = new AonDoubleBox();
 		invoiceTotal.setValue(inv.getTotalInvoice());
 		manualConcept.setValue(inv.getManualConcept());
 		

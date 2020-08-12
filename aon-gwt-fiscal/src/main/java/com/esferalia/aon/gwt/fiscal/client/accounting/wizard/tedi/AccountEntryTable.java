@@ -6,8 +6,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountBox;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.gwt.common.client.widget.DoubleBox.ExpressionResolver;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.IWizardContent;
 import com.esferalia.aon.occam.api.model.Account;
@@ -53,7 +52,6 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 	private IWizardContent wizardContent;
 	private Label sumDebit;
 	private Label sumCredit;
-	private ExpressionResolver resolver;
 	
 	private boolean confirmConceptChange;
 	private boolean confirmDocumentChange;
@@ -299,15 +297,13 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		conceptBox.setValue(aed.getConcept());
 		setWidget(row, COLS.CON.ordinal(), conceptSuggestBox );
 		
-		final DoubleBox debitBox = new DoubleBox();
+		final AonDoubleBox debitBox = new AonDoubleBox();
 		debitBox.setValue(aed.getDebit());
-		debitBox.setResolver(resolver);
 		setWidget(row, COLS.DEB.ordinal(), debitBox );
 		getFlexCellFormatter().addStyleName(row, COLS.DEB.ordinal(),AON.CSS.aonTextRight());
 		
-		final DoubleBox creditBox = new DoubleBox();
+		final AonDoubleBox creditBox = new AonDoubleBox();
 		creditBox.setValue(aed.getCredit());
-		creditBox.setResolver(resolver);
 		setWidget(row, COLS.CRE.ordinal(), creditBox );
 		getFlexCellFormatter().addStyleName(row, COLS.CRE.ordinal(),AON.CSS.aonTextRight());
 		

@@ -91,6 +91,16 @@ input[type="checkbox"]:focus + label {
 .aon_input_text {
 	border: 1px solid #808080;
 }
+.aon_number_box {
+	text-align: right;
+	padding-left: 15px;
+	padding-right: 2px;
+}
+.aon_value_changed {
+	color: #897820;
+	font-weight: bold;
+	text-shadow: 0.1em 0.1em 0.2em #9E945E;
+}
 .aon_width_all {
 	width: 100%;
 }
