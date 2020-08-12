@@ -68,6 +68,8 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -570,9 +572,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		popupPanel.setPopupPositionAndShow(new PositionCallback() {
 			@Override
 			public void setPosition(int offsetWidth, int offsetHeight) {
-				popupPanel.setPopupPosition(x, y);
+				popupPanel.setPopupPosition(x-15, y-15);
 			}
 		});
+		
+		popupPanel.addDomHandler((e) -> {
+			popupPanel.hide();
+		}, MouseOutEvent.getType());
+		
 		return popupPanel;
 	}
 
@@ -662,9 +669,15 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		popupPanel.setPopupPositionAndShow(new PositionCallback() {
 			@Override
 			public void setPosition(int offsetWidth, int offsetHeight) {
-				popupPanel.setPopupPosition(x, y);
+				popupPanel.setPopupPosition(x-15, y-15);
 			}
 		});
+		
+		popupPanel.addDomHandler((e) -> {
+			popupPanel.hide();
+		}, MouseOutEvent.getType());
+		
+		
 		return popupPanel;
 	}
 

@@ -80,6 +80,8 @@ public abstract class JsFileColumn extends Column<JsFile, JsFile> {
 				handler.onJsFileOut(jsFile, event);
 			else if (BrowserEvents.MOUSEOVER.equals(type))
 				handler.onJsFileOver(jsFile, event);
+			else if (BrowserEvents.MOUSEWHEEL.equals(type))
+				;
 		}
 
 		// ----------------------------------------------------------------

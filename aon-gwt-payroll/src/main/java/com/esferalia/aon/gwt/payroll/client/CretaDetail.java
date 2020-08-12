@@ -230,7 +230,10 @@ public abstract class CretaDetail extends Composite {
 			protected void onBrowserEvent2(Event event) {
 				// TODO Auto-generated method stub
 				super.onBrowserEvent2(event);
+				
 			}
+			
+			
 		};
 		
 		class ViewMenuBar extends MenuBar {
@@ -420,7 +423,8 @@ public abstract class CretaDetail extends Composite {
 
 			@Override
 			void onJsFileOut(JsFile jsFile, NativeEvent event) {
-				CretaDetail.this.onJsFileOut();
+				CretaDetail.this.onJsFileOut(
+						event.getClientX(), event.getClientY());
 			}
 
 			@Override
@@ -528,9 +532,9 @@ public abstract class CretaDetail extends Composite {
 
 			}
 		});
-
+		
 		dataGrid.setRowData(new ArrayList<CretaService.JsFile>(0));
-
+				
 		basesMap = new HashMap<String, CretaService.JsBases>();
 		respuestasMap = new HashMap<String, CretaService.JsRespuesta>();
 		trabajadoresYTramosMap = new HashMap<String, CretaService.JsTrabajadoresYTramos>();
@@ -571,6 +575,7 @@ public abstract class CretaDetail extends Composite {
 		setCheckedStyle(r9650MenuItem, false );
 		setCheckedStyle(r9607MenuItem, false );
 		setCheckedStyle(prevMonthMenuItem, new Date().getDate() < 5 );
+		
 
 	}
 
@@ -763,7 +768,7 @@ public abstract class CretaDetail extends Composite {
 
 	// ------------------------------------------------------------------------
 
-	private void onJsFileOut() {
+	private void onJsFileOut(final int clientX, final int clientY) {
 		if (jsFileToolTipTimer != null)
 			jsFileToolTipTimer.cancel();
 	}
@@ -926,11 +931,11 @@ public abstract class CretaDetail extends Composite {
 						r9650 = true ;
 					}else if ( AonStringUtils.equalsIgnoreCase("R9529", jsError.getCode())) {
 						calculated = true ;
-					}else if ( /*MainCreta.isTrabajadoressYTramos(jsFile) 
-							&&*/ AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
-						processing = true ;
 					}else if ( MainCreta.isTrabajadoressYTramos(jsFile) 
-							&& AonStringUtils.equalsIgnoreCase("R9998", jsError.getCode())) {
+							&& AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
+						processing = true ;
+					}else if (/* MainCreta.isTrabajadoressYTramos(jsFile) 
+							&& */AonStringUtils.equalsIgnoreCase("R9998", jsError.getCode())) {
 						processing = true ;
 					}else if ( AonStringUtils.equalsIgnoreCase("A9999", jsError.getCode())) {
 						pending = true ;
@@ -1048,5 +1053,10 @@ public abstract class CretaDetail extends Composite {
 	private static Date getDate ( String text ) {
 		return DateTimeFormat.getFormat("yyyy-MM").parse(text);
 	}
+	
+	public static native void log (String message ) /*-{
+		console.log(message);
+	}-*/
+	;
 
 }
