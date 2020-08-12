@@ -53,6 +53,7 @@ import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -99,7 +100,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 
 	protected static final String INNER_BACKGROUND_COLOR = "WhiteSmoke";
-	protected static final String LABEL_BACKGROUND_COLOR = "Silver";
+	protected static final String LABEL_BACKGROUND_COLOR = "#DDD";
 	protected static final String DUA_BACKGROUND_COLOR = "HoneyDew";
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
@@ -113,7 +114,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private ListBox series;
 	private TextBox referenceCode;
 	private DoubleBox invoiceTotal;
-//	private Button fastSave;
 	private DateBoxEx taxDate;
 	private CheckLabel service;
 	private CheckLabel rectifier;
@@ -195,24 +195,21 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 	
 	public static class CheckLabel extends InlineLabel {
-		
-		private String setWidthStyle;
 
-		public CheckLabel(String text) {
-			super(text); 
+		private double width;
+		
+		public CheckLabel(String text, double width) {
+			super(text);
+			this.width = width;
 		}
 
 		public void paint( boolean checked) {
 			this.setStyleName(AON.CSS.aonTabIcon());
 			this.addStyleName(AON.CSS.aonClickable());
 			this.addStyleName(checked?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());		
-			this.addStyleName(setWidthStyle);
+			this.getElement().getStyle().setWidth(width, Unit.PX);
 		}
 
-		public void setWidthStyle(String widthStyle) {
-			this.setWidthStyle = widthStyle;
-		}
-		
 	}
 
 	public EditableInvoicePanel(final InvoicePanelCallback invoiceCallback) {
@@ -553,12 +550,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceRootPanel.getElement().getStyle().setProperty("min-width", "850px");
 		
 		invoicePanelContainer = new SimplePanel();
-		invoicePanelContainer.setStyleName(AON.AON_CSS.aonWidthAll());
+		invoicePanelContainer.setStyleName(AON.CSS.aonWidthAll());
 		
 		invoiceRootPanel.add(invoicePanelContainer);
 		
 		ScrollPanel rootScrollPanel = new ScrollPanel();
-		rootScrollPanel.setStyleName(AON.AON_CSS.aonScrollArea());
+		rootScrollPanel.setStyleName(AON.CSS.aonScrollArea());
 		rootScrollPanel.setWidget(invoiceRootPanel);
 		
 		LOGGER.info("EditablePanel Constructor " + (invoiceCallback.getInvoice() != null && invoiceCallback.getInvoice().getInvoice() != null && invoiceCallback.getInvoice().getInvoice().getId() != null));
@@ -574,7 +571,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			invoicePanelContainer.setWidget(dropPanel);
 		}
 		
-		setStyleName(AON.AON_CSS.aonWidthAll());
+		setStyleName(AON.CSS.aonWidthAll());
 		setWidget(rootScrollPanel);
 	}
 
@@ -632,9 +629,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		if(    (issue == null && tax != null)
 			|| (issue != null && tax == null)
 			|| (issue.compareTo(tax) != 0)) {
-			taxDate.addStyleName(AON.AON_CSS.aonBackgroundHighlightedOrange());
+			taxDate.addStyleName(AON.CSS.aonBackgroundOrange());
 		} else {
-			taxDate.removeStyleName(AON.AON_CSS.aonBackgroundHighlightedOrange());
+			taxDate.removeStyleName(AON.CSS.aonBackgroundOrange());
 		}
 	}
 
@@ -719,15 +716,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		taxDate = new DateBoxEx();
 		InvoiceTransactionListBox transactionBox = new InvoiceTransactionListBox();
 		IntegerBox number = new IntegerBox();
-		service = new CheckLabel(AON.MSG.service());
-		rectifier = new CheckLabel(AON.MSG.rectifiedInvoice());
-		prepayment = new CheckLabel(AON.MSG.hasPrepayments());
-		investment = new CheckLabel(AON.MSG.investAsset());
-		withholding = new CheckLabel(AON.MSG.withholding());
-		surcharge = new CheckLabel(AON.MSG.surcharge());
-		vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr());
-		withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr());
-		duaLinked = new CheckLabel("DUA");
+		service = new CheckLabel(AON.MSG.service() , 80);
+		rectifier = new CheckLabel(AON.MSG.rectifiedInvoice() ,120);
+		prepayment = new CheckLabel(AON.MSG.hasPrepayments(),150);
+		investment = new CheckLabel(AON.MSG.investAsset(),120);
+		withholding = new CheckLabel(AON.MSG.withholding(),110);
+		surcharge = new CheckLabel(AON.MSG.surcharge() ,130);
+		vatAccrualPayment = new CheckLabel(AON.MSG.vatAccrualPaymentAbbr(),100);
+		withholdingFarmer = new CheckLabel(AON.MSG.withholdingFarmerAbbr(),150);
+		duaLinked = new CheckLabel("DUA",80);
 		
 		TextBox manualConcept = new TextBox();
 		
@@ -815,7 +812,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 
 		FlowPanel invoicePanel = new FlowPanel();
-		invoicePanel.setStyleName(AON.AON_CSS.aonWidthAll());
+		invoicePanel.setStyleName(AON.CSS.aonWidthAll());
 		
 		// *************************************************************************
 		// ** PANEL ( Datos de la factura) *****************************************
@@ -824,10 +821,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceDataTable.getColumnFormatter().setWidth(0, "40px");
 		invoiceDataTable.getColumnFormatter().setWidth(1, "auto");
 		
-		invoiceDataTable.setStyleName(AON.AON_CSS.aonAccountTable());
-		invoiceDataTable.addStyleName(AON.AON_CSS.aonMarginTop5());
-		invoiceDataTable.addStyleName(AON.AON_CSS.aonWidthAll());
-		invoiceDataTable.addStyleName(AON.AON_CSS.aonSimpleBorder());
+		invoiceDataTable.setStyleName(AON.CSS.aonTable());
+		invoiceDataTable.addStyleName(AON.CSS.aonMarginTop());
+		invoiceDataTable.addStyleName(AON.CSS.aonWidthAll());
+		// invoiceDataTable.addStyleName(AON.CSS.aonSimpleBorder());
 		invoiceDataTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
 
 		
@@ -836,20 +833,19 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// *************************************************************************
 		
 		Label description = new Label("Datos");
-		description.setStyleName(AON.AON_CSS.aonTextVertical());
-		description.addStyleName(AON.AON_CSS.aonBold());
+		description.setStyleName(AON.CSS.aonTextVertical());
+		description.addStyleName(AON.CSS.aonBold());
 		invoiceDataTable.setWidget(0, 0, description);
 		invoiceDataTable.getFlexCellFormatter().setRowSpan(0, 0, 4);
-		invoiceDataTable.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonSimpleBorder());
 		invoiceDataTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		
 		FlowPanel headerPanel1 = new  FlowPanel();
 		invoiceDataTable.setWidget(0, 1, headerPanel1);
-		headerPanel1.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
+		headerPanel1.setStyleName(AON.CSS.aonAccountingInvoicePanel());
 		
 		InlineLabel documentLabel = new InlineLabel(AON.MSG.document());
-		documentLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		documentLabel.addStyleName(AON.AON_CSS.aonWidth80());
+		documentLabel.setStyleName(AON.CSS.aonInnerLabel());
+		documentLabel.getElement().getStyle().setWidth(80, Unit.PX);
 		headerPanel1.add(documentLabel);
 		
 		
@@ -873,10 +869,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 		headerPanel1.add(fullDocument);
 		InlineLabel nameLabel = new InlineLabel(AON.MSG.name());
-		nameLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+		nameLabel.setStyleName(AON.CSS.aonInnerLabel());
 		headerPanel1.add(nameLabel);
 		
-		rName.setStyleName(AON.AON_CSS.aonInputText());
+		rName.setStyleName(AON.CSS.aonInputText());
 		rName.setVisibleLength(50);
 		rName.setMaxLength(50);
 		rName.addValueChangeHandler(new  ValueChangeHandler<String>() {
@@ -899,16 +895,16 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 
 		FlowPanel headerPanel2 = new  FlowPanel();
 		invoiceDataTable.setWidget(1, 0, headerPanel2);
-		headerPanel2.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
+		headerPanel2.setStyleName(AON.CSS.aonAccountingInvoicePanel());
 		
 		InlineLabel taxDateLabel = new InlineLabel(AON.MSG.taxDate());
-		taxDateLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		taxDateLabel.addStyleName(AON.AON_CSS.aonWidth80());
+		taxDateLabel.setStyleName(AON.CSS.aonInnerLabel());
+		taxDateLabel.getElement().getStyle().setWidth(80, Unit.PX);
 		taxDateLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(taxDateLabel);
 		
 		FlowPanel taxDateContainer = new FlowPanel();
-		taxDateContainer.setStyleName(AON.AON_CSS.aonWidth100());
+		taxDateContainer.getElement().getStyle().setWidth(100, Unit.PX);
 		
 		taxDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
@@ -926,13 +922,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- TRANSACTION ---------
 		// -------------------------------
 		InlineLabel transactionLabel = new InlineLabel(AON.MSG.transaction());
-		transactionLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		transactionLabel.addStyleName(AON.AON_CSS.aonWidth80());
+		transactionLabel.setStyleName(AON.CSS.aonInnerLabel());
+		transactionLabel.getElement().getStyle().setWidth(80, Unit.PX);
 		transactionLabel.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel2.add(transactionLabel);
 		
 		FlowPanel transactionContainer = new FlowPanel();
-		transactionContainer.setStyleName(AON.AON_CSS.aonWidth150());
+		transactionContainer.getElement().getStyle().setWidth(150, Unit.PX);
 
 		transactionBox.addChangeHandler(new ChangeHandler() {
 			
@@ -951,7 +947,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// ---------------------------
 		// --------- SERVICE ---------
 		// ---------------------------
-		service.setWidthStyle( AON.AON_CSS.aonWidth80Important());
 		if (invoiceCallback.getInvoice().isExpenses()) {
 			service.paint(true);
 		} else {
@@ -971,7 +966,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------
 		// --------- Fra. Rectificativa --------
 		// -------------------------------------
-		rectifier.setWidthStyle( AON.AON_CSS.aonWidth100Important());
 		rectifier.paint(invoiceCallback.getInvoice().getInvoice().isRectifier());
 		rectifier.addClickHandler( new ClickHandler() {
 			
@@ -988,7 +982,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------
 		// --------- CONTIENE SUPLIDOS ---------
 		// -------------------------------------
-		prepayment.setWidthStyle( AON.AON_CSS.aonWidth150Important());
 		prepayment.paint(invoiceCallback.getInvoice().hasPrepayments());
 		prepayment.addClickHandler( new ClickHandler() {
 			
@@ -1010,22 +1003,21 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// *************************************************************************
 		FlowPanel headerPanel3 = new  FlowPanel();
 		invoiceDataTable.setWidget(2, 0, headerPanel3);
-		headerPanel3.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
-		headerPanel3.addStyleName(AON.AON_CSS.aonPaddingTopHalf());
+		headerPanel3.setStyleName(AON.CSS.aonAccountingInvoicePanel());
+		headerPanel3.addStyleName(AON.CSS.aonPaddingTop());
 		
 		// ----------------------------------
 		// --------- EMPTY LABEL ------------
 		// ----------------------------------
 		InlineLabel emptyLabel1 = new InlineLabel();
-		emptyLabel1.setStyleName(AON.AON_CSS.aonInnerLabel());
-		emptyLabel1.addStyleName(AON.AON_CSS.aonWidth20());
+		emptyLabel1.setStyleName(AON.CSS.aonInnerLabel());
+		emptyLabel1.getElement().getStyle().setWidth(20, Unit.PX);
 		emptyLabel1.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel3.add(emptyLabel1);
 
 		// -------------------------------------
 		// --------- Aplicar retencion ---------
 		// -------------------------------------
-		withholding.setWidthStyle(AON.AON_CSS.aonWidth100Important());
 		withholding.paint(invoiceCallback.getInvoice().getInvoice().isWithholding());
 		withholding.addClickHandler( new ClickHandler() {
 			
@@ -1046,7 +1038,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------------
 		// --------- RECARGO DE EQUIVALENCIA ---------
 		// -------------------------------------------
-		surcharge.setWidthStyle( AON.AON_CSS.aonWidth120Important());
 		surcharge.paint(invoiceCallback.getInvoice().getInvoice().isSurcharge());
 		surcharge.addClickHandler( new ClickHandler() {
 			
@@ -1063,7 +1054,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// -------------------------------------------
 		// --------- Reg. agric, gan y pesca ---------
 		// -------------------------------------------
-		withholdingFarmer.setWidthStyle(AON.AON_CSS.aonWidth150Important());
 		withholdingFarmer.paint(invoiceCallback.getInvoice().getInvoice().isWithholdingFarmer());
 		withholdingFarmer.addClickHandler( new ClickHandler() {
 			
@@ -1080,7 +1070,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------------------------------------------
 		// --------- Regimne criterio de caja ---------
 		// --------------------------------------------
-		vatAccrualPayment.setWidthStyle(AON.AON_CSS.aonWidth100Important());
 		vatAccrualPayment.paint(invoiceCallback.getInvoice().getInvoice().isVatAccrualPayment());
 		vatAccrualPayment.addClickHandler( new ClickHandler() {
 			
@@ -1096,7 +1085,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// ------------------------
 		// --------- DUA ----------
 		// ------------------------
-		duaLinked.setWidthStyle(AON.AON_CSS.aonWidth100Important());
 		duaLinked.paint(invoiceCallback.getInvoice().isDuaLinked() && invoiceCallback.getInvoice().getInvoice().isDUAAllowed());
 		duaLinked.addClickHandler( new ClickHandler() {
 			
@@ -1129,13 +1117,12 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// *************************************************************************
 		FlowPanel headerPanel4 = new  FlowPanel();
 		invoiceDataTable.setWidget(3, 0, headerPanel4);
-		headerPanel4.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
-		headerPanel4.addStyleName(AON.AON_CSS.aonPaddingTop());
+		headerPanel4.setStyleName(AON.CSS.aonAccountingInvoicePanel());
+		headerPanel4.addStyleName(AON.CSS.aonPaddingTop());
 		
 		// ---------------------------------------
 		// --------- BIENES DE INVERSION ---------
 		// ---------------------------------------
-		investment.setWidthStyle( AON.AON_CSS.aonWidth120Important());
 		investment.paint(invoiceCallback.getInvoice().isInvestment());
 		investment.addClickHandler( new ClickHandler() {
 			
@@ -1152,8 +1139,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- EMPTY LABEL ------------
 		// ----------------------------------
 		InlineLabel emptyLabel2 = new InlineLabel();
-		emptyLabel2.setStyleName(AON.AON_CSS.aonInnerLabel());
-		emptyLabel2.addStyleName(AON.AON_CSS.aonWidth30());
+		emptyLabel2.setStyleName(AON.CSS.aonInnerLabel());
+		emptyLabel2.getElement().getStyle().setWidth(30, Unit.PX);
 		emptyLabel2.setVisible(!invoiceCallback.getInvoice().isUndeductible());
 		headerPanel4.add(emptyLabel2);
 
@@ -1161,9 +1148,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- NUMERO FACTURA ---------
 		// ----------------------------------
 		InlineLabel invoiceNumberLabel = new InlineLabel(AON.MSG.invoiceNumber());
-		invoiceNumberLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		invoiceNumberLabel.addStyleName(AON.AON_CSS.aonWidth80());
-		invoiceNumberLabel.addStyleName(AON.AON_CSS.aonBold());
+		invoiceNumberLabel.setStyleName(AON.CSS.aonInnerLabel());
+		invoiceNumberLabel.addStyleName(AON.CSS.aonBold());
+		invoiceNumberLabel.getElement().getStyle().setWidth(80,Unit.PX);
 		headerPanel4.add(invoiceNumberLabel);
 		
 			// -------------------------
@@ -1204,8 +1191,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			// -------------------------
 			// --------- NUMBER---------
 			// -------------------------
-		number.setStyleName(AON.AON_CSS.aonMarginLeft5());
-		number.addStyleName(AON.AON_CSS.aonInputText());
+		number.setStyleName(AON.CSS.aonMarginLeft());
+		number.addStyleName(AON.CSS.aonInputText());
 		number.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 			
 			@Override
@@ -1223,7 +1210,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			// ----------------------------------
 			// --------- REFERENCE CODE ---------
 			// ----------------------------------
-		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
+		referenceCode.setStyleName(AON.CSS.aonInputText());
 		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
@@ -1244,9 +1231,9 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		// --------- INVOICE TOTAL ----------
 		// ----------------------------------
 		InlineLabel label0 = new InlineLabel(AON.MSG.invoiceTotal());
-		label0.setStyleName(AON.AON_CSS.aonInnerLabel());
-		label0.addStyleName(AON.AON_CSS.aonMarginLeft());
-		label0.addStyleName(AON.AON_CSS.aonBold());
+		label0.setStyleName(AON.CSS.aonInnerLabel());
+		label0.addStyleName(AON.CSS.aonMarginLeft());
+		label0.addStyleName(AON.CSS.aonBold());
 		headerPanel4.add(label0);
 
 		invoiceTotal.addKeyUpHandler( new KeyUpHandler() {
@@ -1297,28 +1284,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		invoiceTotal.setVisibleLength(12);
 		headerPanel4.add(invoiceTotal);
 		
-		// -------------------------------------
-		// --------- FAST SAVE BUTTON ----------
-		// -------------------------------------
-//		fastSave = new Button(AON.MSG.saveAction());
-//		fastSave.setStyleName(AON.AON_CSS.aonIconSave());
-//		fastSave.addStyleName(AON.AON_CSS.aonIconCommandButton());
-//		fastSave.addStyleName(AON.AON_CSS.aonMarginLeft());
-//		fastSave.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				invoiceCallback.getModule().onAccept(event);
-//			}
-//		});
-//		fastSave.addBlurHandler(new BlurHandler() {
-//			
-//			@Override
-//			public void onBlur(BlurEvent event) {
-//				vatPanel.setFocus(true);
-//			}
-//		});
-//		headerPanel4.add(fastSave);
-		
 		invoicePanel.add(invoiceDataTable);
 		// *************************************************************************
 		// ** PANEL ( Bases Imponibles) ********************************************
@@ -1350,17 +1315,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		vatTable.getColumnFormatter().setWidth(0, "40px");
 		vatTable.getColumnFormatter().setWidth(1, "auto");
 		
-		vatTable.setStyleName(AON.AON_CSS.aonAccountTable());
-		vatTable.addStyleName(AON.AON_CSS.aonWidthAll());
-		vatTable.addStyleName(AON.AON_CSS.aonSimpleBorder());
-		vatTable.addStyleName(AON.AON_CSS.aonMarginTop5());
+		vatTable.setStyleName(AON.CSS.aonTable());
+		vatTable.addStyleName(AON.CSS.aonWidthAll());
+		vatTable.addStyleName(AON.CSS.aonMarginTop());
 		vatTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
 		
 		Label baseDescription = new Label("Bases");
-		baseDescription.setStyleName(AON.AON_CSS.aonTextVertical());
-		baseDescription.addStyleName(AON.AON_CSS.aonBold());
+		baseDescription.setStyleName(AON.CSS.aonTextVertical());
+		baseDescription.addStyleName(AON.CSS.aonBold());
 		vatTable.setWidget(0, 0, baseDescription);
-		vatTable.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonSimpleBorder());
 		vatTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		//vatTable.getCellFormatter().getElement(0, 0).getStyle().setHeight(80.0, Unit.PX);
 		vatTable.setWidget(0, 1, vatPanel);
@@ -1408,17 +1371,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		financesTable.getColumnFormatter().setWidth(0, "40px");
 		financesTable.getColumnFormatter().setWidth(1, "auto");
 		
-		financesTable.setStyleName(AON.AON_CSS.aonAccountTable());
-		financesTable.addStyleName(AON.AON_CSS.aonWidthAll());
-		financesTable.addStyleName(AON.AON_CSS.aonSimpleBorder());
-		financesTable.addStyleName(AON.AON_CSS.aonMarginTop5());
+		financesTable.setStyleName(AON.CSS.aonTable());
+		financesTable.addStyleName(AON.CSS.aonWidthAll());
+		financesTable.addStyleName(AON.CSS.aonMarginTop());
 		financesTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
 		
 		Label financesDescription = new Label("VTOS");
-		financesDescription.setStyleName(AON.AON_CSS.aonTextVertical());
-		financesDescription.addStyleName(AON.AON_CSS.aonBold());
+		financesDescription.setStyleName(AON.CSS.aonTextVertical());
+		financesDescription.addStyleName(AON.CSS.aonBold());
 		financesTable.setWidget(0, 0, financesDescription);
-		financesTable.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonSimpleBorder());
 		financesTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		financesTable.setWidget(0, 1, financePanel);
 		invoicePanel.add(financesTable);
@@ -1444,31 +1405,28 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		othersTable.getColumnFormatter().setWidth(0, "40px");
 		othersTable.getColumnFormatter().setWidth(1, "auto");
 		
-		othersTable.setStyleName(AON.AON_CSS.aonAccountTable());
-		othersTable.addStyleName(AON.AON_CSS.aonWidthAll());
-		othersTable.addStyleName(AON.AON_CSS.aonSimpleBorder());
-		othersTable.addStyleName(AON.AON_CSS.aonMarginTop5());
+		othersTable.setStyleName(AON.CSS.aonTable());
+		othersTable.addStyleName(AON.CSS.aonWidthAll());
+		othersTable.addStyleName(AON.CSS.aonMarginTop());
 		othersTable.getElement().getStyle().setBackgroundColor(INNER_BACKGROUND_COLOR);
 		
 		Label othersDescription = new Label("");
-		othersDescription.setStyleName(AON.AON_CSS.aonTextVertical());
-		othersDescription.addStyleName(AON.AON_CSS.aonBold());
+		othersDescription.setStyleName(AON.CSS.aonTextVertical());
+		othersDescription.addStyleName(AON.CSS.aonBold());
 		othersTable.setWidget(0, 0, othersDescription);
-		othersTable.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonSimpleBorder());
 		othersTable.getCellFormatter().getElement(0, 0).getStyle().setBackgroundColor(LABEL_BACKGROUND_COLOR);
 		FlowPanel conceptPanel1 = new  FlowPanel();
-		conceptPanel1.setStyleName(AON.AON_CSS.aonInvoicePanelInner());
+		conceptPanel1.setStyleName(AON.CSS.aonAccountingInvoicePanel());
 		
 		FlowPanel manualConceptPanel = new FlowPanel();
-		manualConceptPanel.setStyleName(AON.AON_CSS.aonTextLeft());
-		manualConceptPanel.addStyleName(AON.AON_CSS.aonPaddingLeft());
+		manualConceptPanel.setStyleName(AON.CSS.aonPaddingLeft());
 		manualConceptPanel.getElement().getStyle().setProperty("flex-grow", "1");
 		
 		InlineLabel label1 = new InlineLabel(AON.MSG.conceptComplement());
-		label1.setStyleName(AON.AON_CSS.aonInnerLabel());
+		label1.setStyleName(AON.CSS.aonInnerLabel());
 		manualConceptPanel.add(label1);
 
-		manualConcept.setStyleName(AON.AON_CSS.aonInputText());
+		manualConcept.setStyleName(AON.CSS.aonInputText());
 		manualConcept.setTabIndex(-1);
 		manualConcept.setVisibleLength(20);
 		manualConcept.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -1620,16 +1578,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	
 	private Widget getSplashWidget() {
 		HorizontalPanel hp = new HorizontalPanel();
-		hp.setStyleName(AON.AON_CSS.aonBlockCenter());
-		hp.addStyleName(AON.AON_CSS.aonSimpleBorder() );
-		hp.addStyleName(AON.AON_CSS.aonMarginTop() );
+		hp.setStyleName(AON.CSS.aonBlockCenter());
+		hp.addStyleName(AON.CSS.aonMarginTop() );
 		Label iconWaitLabel = new Label();
-		iconWaitLabel.setStyleName(AON.AON_CSS.aonLoader());
-		iconWaitLabel.addStyleName(AON.AON_CSS.aonMargin());
+		iconWaitLabel.setStyleName(AON.CSS.aonLoader());
+		iconWaitLabel.addStyleName(AON.CSS.aonMargin());
 		hp.add(iconWaitLabel);
 		Label textWaitLabel = new Label("Procesando el reconocimiento del archivo. Conectando con tEDI Center. Un  momento, por favor.....");
-		textWaitLabel.setStyleName(AON.AON_CSS.aonMargin());
-		textWaitLabel.addStyleName(AON.AON_CSS.aonBold());
+		textWaitLabel.setStyleName(AON.CSS.aonMargin());
+		textWaitLabel.addStyleName(AON.CSS.aonBold());
 		hp.add(textWaitLabel);
 		return hp;
 	}
@@ -1661,14 +1618,14 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		if (invoiceCallback.getConfiguration().isTediActive()) {
 			if (invoiceCallback.getConfiguration().isTediSnapshotUser()) {
-				dropZone.setStyleName(AON.AON_CSS.aonTediSnapshotDropZone());
+				dropZone.setStyleName(AON.CSS.aonTediSnapshotDropZone());
 			} else if (invoiceCallback.getConfiguration().isTediUser()) {
-				dropZone.setStyleName(AON.AON_CSS.aonTediDropZone());
+				dropZone.setStyleName(AON.CSS.aonTediDropZone());
 			} else {
-				dropZone.setStyleName(AON.AON_CSS.aonDropZone());	
+				dropZone.setStyleName(AON.CSS.aonDropZone());	
 			}
 		} else {
-			dropZone.setStyleName(AON.AON_CSS.aonDropZone());
+			dropZone.setStyleName(AON.CSS.aonDropZone());
 		}
 		
 		dropZone.getElement().getStyle().setCursor(Style.Cursor.POINTER);
@@ -1684,7 +1641,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			
 			@Override
 			public void onDragOver(DragOverEvent event) {
-				dropZone.addStyleName(AON.AON_CSS.aonDropZoneHover());
+				dropZone.addStyleName(AON.CSS.aonDropZoneHover());
 				event.stopPropagation();
 				event.preventDefault();
 		        DataTransfer dataTransfer = event.getDataTransfer();
@@ -1694,7 +1651,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		dropZone.addDragLeaveHandler(new DragLeaveHandler() {
 			@Override
 			public void onDragLeave(DragLeaveEvent event) {
-				dropZone.removeStyleName(AON.AON_CSS.aonDropZoneHover());
+				dropZone.removeStyleName(AON.CSS.aonDropZoneHover());
 				event.preventDefault();
 			}
 		});
@@ -1702,7 +1659,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				
 			@Override
 			public void onDrop(DropEvent event) {
-				dropZone.removeStyleName(AON.AON_CSS.aonDropZoneHover());
+				dropZone.removeStyleName(AON.CSS.aonDropZoneHover());
 				LOGGER.info("File Droped!");
 				event.stopPropagation();
 				event.preventDefault();

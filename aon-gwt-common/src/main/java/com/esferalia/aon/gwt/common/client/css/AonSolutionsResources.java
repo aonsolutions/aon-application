@@ -4,6 +4,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.DataResource.MimeType;
+import com.google.gwt.resources.client.ImageResource;
 
 public interface AonSolutionsResources extends ClientBundle {
 
@@ -11,6 +12,18 @@ public interface AonSolutionsResources extends ClientBundle {
 	@CssResource.NotStrict
 	AonSolutionsCSS css();
 	
+	@Source("images/logo-tedi-transparent.png")
+	ImageResource aonTediLogoTransparent();
+	
+	@Source("images/logo-tedi-gray.png")
+	ImageResource aonTediLogoGray();
+
+	@Source("images/logo-tedi-red.png")
+	ImageResource aonTediLogoRed();
+
+	@Source("images/logo-tedi-snapshot.png")
+	ImageResource aonTediSnapshotLogo();
+
 	@Source("icons/aon-icon-add.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAdd();
@@ -79,6 +92,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconError();
 	
+	@Source("icons/aon-icon-warning.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconWarning();
+
 	@Source("icons/aon-icon-euro.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconEuro();
@@ -126,5 +143,13 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-help.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconHelp();
+
+	@Source("icons/aon-icon-calc.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconCalc();
+
+	@Source("icons/aon-icon-changed.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconChanged();
 }
 

@@ -40,12 +40,15 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_text_right")
 	String aonTextRight();
-
+	
 	@ClassName("aon_clickable")
 	String aonClickable();
 
 	@ClassName("aon_flex_block")
 	String aonFlexBlock();
+	
+	@ClassName("aon_block_center")
+	String aonBlockCenter();
 	
 	@ClassName("aon_flox_grow_1")
 	String aonFlexGrow1();
@@ -58,6 +61,15 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_padding_bottom")
 	String aonPaddingBottom();
+	
+	@ClassName("aon_padding_top")
+	String aonPaddingTop();
+
+	@ClassName("aon_padding_left")
+	String aonPaddingLeft();
+
+	@ClassName("aon_padding_right")
+	String aonPaddingRight();
 	
 	@ClassName("aon_margin")
 	String aonMargin();
@@ -94,6 +106,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_color_royalblue")
 	String aonColorBlue();
+	
+	@ClassName("aon_background_orange")
+	String aonBackgroundOrange();
 
 	@ClassName("aon_pointer_events_none")
 	String aonPointerEventsNone();
@@ -101,8 +116,17 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_pointer_events_auto")
 	String aonPointerEventsAuto();
 
+	@ClassName("aon_text_vertical")
+	String aonTextVertical();
+	
+	@ClassName("aon_inner_label")
+	String aonInnerLabel();
+
 	@ClassName("aon_button")
 	String aonButton();
+
+	@ClassName("aon_loader")
+	String aonLoader();
 
 	/* CUSTOM DIALOG*/
 	@ClassName("aon_custom_dialog")
@@ -233,6 +257,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_error")
 	String aonIconError();
 
+	@ClassName("aon_icon_warning")
+	String aonIconWarning();
+
 	@ClassName("aon_icon_minimize")
 	String aonIconMinimize();
 
@@ -280,6 +307,36 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_help")
 	String aonIconHelp();
+
+	@ClassName("aon_icon_changed")
+	String aonIconChaged();
+
+	@ClassName("aon_icon_calc")
+	String aonIconCalc();
+
+	@ClassName("aon_accounting_invoice_panel")
+	String aonAccountingInvoicePanel();
+	
+	@ClassName("aon_drop_zone")
+	String aonDropZone();
+	
+	@ClassName("aon_tedi_drop_zone")
+	String aonTediDropZone();
+	
+	@ClassName("aon_tedi_snapshot_drop_zone")
+	String aonTediSnapshotDropZone();
+
+	@ClassName("aon_drop_zone_hover")
+	String aonDropZoneHover();
+	
+	@ClassName("aon_changed")
+	String aonChanged();
+
+	@ClassName("aon_input_error")
+	String aonInputError();
+
+	@ClassName("aon_input_calc")
+	String aonInputCalc();
 
 }
 

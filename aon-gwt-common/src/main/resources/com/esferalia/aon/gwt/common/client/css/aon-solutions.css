@@ -39,7 +39,9 @@ input[type="checkbox"]:focus + label {
 @url iconInfo aonIconInfo;
 .aon_icon_info { background-image: iconInfo;}
 @url iconError aonIconError;
-.aon_icon_error { background-image: iconRrror;}
+.aon_icon_error { background-image: iconError;}
+@url iconWarning aonIconWarning;
+.aon_icon_warning { background-image: iconWarning;}
 @url iconMinimize aonIconMinimize;
 .aon_icon_minimize { background-image: iconMinimize;}
 @url iconMaximize aonIconMaximize;
@@ -72,6 +74,10 @@ input[type="checkbox"]:focus + label {
 .aon_icon_swap { background-image: iconSwap;}
 @url iconHelp aonIconHelp;
 .aon_icon_help { background-image: iconHelp;}
+@url iconChanged aonIconChanged;
+.aon_icon_changed { background-image: iconChanged;}
+@url iconCalc aonIconCalc;
+.aon_icon_calc { background-image: iconCalc;}
 
 /* BASICS */
 .aon_selector {
@@ -100,6 +106,10 @@ input[type="checkbox"]:focus + label {
 .aon_font_medium{
 	font-size: medium;
 }
+.aon_block_center {
+	margin-left: auto;
+	margin-right: auto;
+}
 
 .aon_nowrap {
 	white-space: nowrap;
@@ -118,6 +128,15 @@ input[type="checkbox"]:focus + label {
 }
 .aon_padding_bottom {
 	padding-bottom: 1em;
+}
+.aon_padding_top {
+	padding-top: 1em;
+}
+.aon_padding_left {
+	padding-left: 1em;
+}
+.aon_padding_right {
+	padding-right: 1em;
 }
 .aon_margin {
 	margin: 1em;
@@ -151,6 +170,10 @@ input[type="checkbox"]:focus + label {
 	color: RoyalBlue;
 }
 
+.aon_background_orange {
+	background-color: #ffa54f;
+}
+
 .aon_pointer_events_none {
 	pointer-events: none;
 }
@@ -164,6 +187,28 @@ input[type="checkbox"]:focus + label {
 }
 .aon_border_bottom {
 	border-bottom: #c4c4c4 1px solid;
+}
+
+.aon_text_vertical {
+	transform: rotate(-90deg);
+	text-indent: 0em;
+	font-size: 1.1em !important;	
+}
+
+.aon_inner_label {
+	font-style: italic;
+	margin-left: 5px;
+	margin-right: 5px;
+	display: inline;
+}
+.aon_loader {
+	border: 2px solid #f3f3f3;
+	border-radius: 50%;
+  	border-top: 2px solid #bbb;
+  	width: 8px;
+  	height: 8px;
+  	-webkit-animation: spin 2s linear infinite; /* Safari */
+  	animation: spin 2s linear infinite;
 }
 
 /* CONFIRM DIALOG  */
@@ -572,3 +617,135 @@ input[type="checkbox"]:focus + label {
 	background-color: #FBEDB6;
 }
 
+.aon_accounting_invoice_panel {
+	display: flex;
+	align-items: flex-start;
+	width: 100%;
+    margin-top: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+@sprite .aon_drop_zone {
+	gwt-image: "aonTediLogoRed";
+	background-position: center right;
+	background-size: 50%;
+	background-color: white;
+	min-height: 150px;
+	height: 150px;
+	min-width: 180px;
+	display: table;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	border-width: 2px;
+	border-style: dashed;
+	border-color: #bbb;
+	border-radius: 2em;
+	text-align: center;
+	vertical-align: middle;	
+    padding-top: 28px;
+    padding-bottom: 28px;
+    font-size: 1.2em;
+    color: #2d4b6d;
+    font-weight: bold;
+}
+
+@sprite .aon_tedi_drop_zone {
+	gwt-image: "aonTediLogoGray";
+	background-position: center right;
+	background-size: 50%;
+	background-color: white;
+	min-height: 150px;
+	height: 150px;
+	min-width: 180px;
+	display: table;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	border-width: 2px;
+	border-style: dashed;
+	border-color: #bbb;
+	border-radius: 2em;
+	text-align: center;
+	vertical-align: middle;	
+    padding-top: 28px;
+    padding-bottom: 28px;
+    font-size: 1.2em;
+    color: #2d4b6d;
+    font-weight: bold;
+}
+
+@sprite .aon_tedi_snapshot_drop_zone {
+	gwt-image: "aonTediSnapshotLogo";
+	background-position: center right;
+	background-size: 50%;
+	background-color: white;
+	min-height: 150px;
+	height: 150px;
+	min-width: 180px;
+	display: table;
+	margin-top: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	border-width: 2px;
+	border-style: dashed;
+	border-color: #bbb;
+	border-radius: 2em;
+	text-align: center;
+	vertical-align: middle;	
+    padding-top: 28px;
+    padding-bottom: 28px;
+    font-size: 1.2em;
+    color: #2d4b6d;
+    font-weight: bold;
+}
+
+.aon_drop_zone_hover {
+    border: 2px solid #444444;
+    color: #7c9647;
+}
+
+.aon_changed {
+	background-image: iconChanged;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 2px 3px;
+	background-size: 10px auto;
+	background-color: transparent;
+	width: auto;
+	height: auto;
+	background-color: white;
+	padding-left: 10px !important;
+}
+
+.aon_input_error {
+	background-image: iconWarning;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 2px 3px;
+	background-size: 10px auto;
+	background-color: transparent;
+	color: red !important;
+	width: auto;
+	height: auto;
+	background-color: white;
+	padding-left: 10px !important;
+}
+
+.aon_input_calc {
+	background-image: iconCalc;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 2px 3px;
+	background-size: 10px auto;
+	background-color: transparent;
+	background-position: 2px 3px;
+	color: red !important;
+	width: auto;
+	height: auto;
+	padding-left: 15px !important;
+}
