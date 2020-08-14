@@ -315,7 +315,7 @@ public class MainTrash extends MainEntryPoint implements
 	@Override
 	public void getAgreements() {
 		agreementsTree.clearTree();
-		agreementsTree.getEnterpriseService().getAgreements(0, 100,
+		agreementsTree.getEnterpriseService().getAgreements(0, 10000,
 				new AsyncCallback<List<Agreement>>() {
 
 					@Override
@@ -417,14 +417,19 @@ public class MainTrash extends MainEntryPoint implements
 					getDomain(),
 					Wnd.getCurrentDomainNameURL(),
 					draft,
-					agreementsTree.getEmployeesService());
+					agreementsTree.getEmployeesService()) {
+				@Override
+				public boolean isMine() {
+					return false;
+				}
+			};
 			agreementDrafts.put(agreement.getId(), agreementDraftObject);			
 	
 		} // end-if: Not exists, create it then...
-		else {
-			agreementDraft.setAgreementDraftObject(agreementDraftObject);
-		}
-		agreementDraft.setReadOnly(true);
+//		else {
+		agreementDraft.setAgreementDraftObject(agreementDraftObject);
+//		}
+//		agreementDraft.setReadOnly(true);
 	}
 
 	@Override
