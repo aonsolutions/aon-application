@@ -98,6 +98,48 @@ public abstract class CretaDetail extends Composite {
 	interface CretaDetailUiBinder extends UiBinder<Widget, CretaDetail> {
 	}
 	
+	public static class ViewMenuBar extends MenuBar {
+		  
+		public ViewMenuBar(boolean vertical) {
+			super(vertical);
+		}
+
+		private MenuItem findItem(Element hItem) {
+		    for (MenuItem item : getItems()) {
+		      if (item.getElement().isOrHasChild(hItem)) {
+		        return item;
+		      }
+		    }
+		    return null;
+		  }
+		  
+		  @Override
+		  public void onBrowserEvent(Event event) {
+			
+			MenuItem item = findItem(DOM.eventGetTarget(event));
+		    switch (DOM.eventGetType(event)) {
+		      case Event.ONCLICK: {
+		    	  if (item != null) {
+		    	      // Fire the item's command. The command must be fired in the same event
+		    		  // loop or popup blockers will prevent popups from opening.
+		    	      final ScheduledCommand cmd = item.getScheduledCommand();
+		    	      Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
+		    	        @Override
+		    	        public void execute() {
+		    	          cmd.execute();
+		    	        }
+		    	      });
+		    	      event.stopPropagation();
+		    	      event.preventDefault();
+		    	  }
+		    	  return;
+		    	 
+		      }
+		    }
+		    super.onBrowserEvent(event);
+		}		
+	};
+
 	private class ExpandCollapseCell extends AbstractCell<JsFile> {
 
 		private ImageResourceRenderer renderer;
@@ -236,47 +278,6 @@ public abstract class CretaDetail extends Composite {
 			
 		};
 		
-		class ViewMenuBar extends MenuBar {
-			  
-			public ViewMenuBar(boolean vertical) {
-				super(vertical);
-			}
-
-			private MenuItem findItem(Element hItem) {
-			    for (MenuItem item : getItems()) {
-			      if (item.getElement().isOrHasChild(hItem)) {
-			        return item;
-			      }
-			    }
-			    return null;
-			  }
-			  
-			  @Override
-			  public void onBrowserEvent(Event event) {
-				
-				MenuItem item = findItem(DOM.eventGetTarget(event));
-			    switch (DOM.eventGetType(event)) {
-			      case Event.ONCLICK: {
-			    	  if (item != null) {
-			    	      // Fire the item's command. The command must be fired in the same event
-			    		  // loop or popup blockers will prevent popups from opening.
-			    	      final ScheduledCommand cmd = item.getScheduledCommand();
-			    	      Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
-			    	        @Override
-			    	        public void execute() {
-			    	          cmd.execute();
-			    	        }
-			    	      });
-			    	      event.stopPropagation();
-			    	      event.preventDefault();
-			    	  }
-			    	  return;
-			    	 
-			      }
-			    }
-			    super.onBrowserEvent(event);
-			}		
-		};
 		
 		viewMenuBar = new ViewMenuBar(true);
 		moreViewMenuBar = new ViewMenuBar(true);
@@ -1014,6 +1015,19 @@ public abstract class CretaDetail extends Composite {
 
 	// ------------------------------------------------------------------------
 
+	protected static boolean isChecked(MenuItem menuItem) {
+		return AonStringUtils.containsIgnoreCase(menuItem.getStyleName(), STYLENAME_CHECKED_ITEM);
+	}
+
+	protected static void setCheckedStyle(MenuItem menuItem, boolean checked) {
+		if (checked) {
+			menuItem.addStyleName(STYLENAME_CHECKED_ITEM);
+		} else {
+			menuItem.removeStyleName(STYLENAME_CHECKED_ITEM);
+		}
+	}
+	
+	
 	private static boolean contains(List<JsFile> jsFiles, String id) {
 		for (JsFile jsF : jsFiles)
 			if (jsF.getId().equals(id))
@@ -1025,18 +1039,7 @@ public abstract class CretaDetail extends Composite {
 		return contains(jsFiles, jsFile.getId());
 	}
 	
-	private static boolean isChecked(MenuItem menuItem) {
-		return AonStringUtils.containsIgnoreCase(menuItem.getStyleName(), STYLENAME_CHECKED_ITEM);
-	}
 
-	private static void setCheckedStyle(MenuItem menuItem, boolean checked) {
-		if (checked) {
-			menuItem.addStyleName(STYLENAME_CHECKED_ITEM);
-		} else {
-			menuItem.removeStyleName(STYLENAME_CHECKED_ITEM);
-		}
-	}
-	
 	private static Date getNextMonth() {
 		Date nextMonth = new Date();
 		CalendarUtil.setToFirstDayOfMonth(nextMonth);

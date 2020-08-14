@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import static com.esferalia.aon.gwt.payroll.shared.Province.getProvinces;
 import static com.esferalia.aon.jooq.Keys.FK_CONTRACT_ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.Keys.FK_SALARY_CONTRACT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
@@ -62,6 +63,7 @@ import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
@@ -1518,7 +1520,8 @@ public class CretaServlet extends HttpServlet
 		Date from = getFromDate();
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getParameterValues(req, Parameter.CCC));		
+		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getParameterValues(req, Parameter.CCC));
+		cccs = filter(cccs);
 
 		return cccs.stream()
 		.map(ccc -> getNotStartedAttachData(ccc, from))
@@ -2160,6 +2163,31 @@ public class CretaServlet extends HttpServlet
 		}
 		
 	}
+	
+	private static Collection<String> filter(Collection<String> cccs) {
+		return cccs.stream().filter(ccc -> checkCCC(ccc)).collect(Collectors.toList());
+	}
+	
+	private static boolean checkCCC(String ccc) {
+		ccc = AonStringUtils.trim(ccc);
+		
+		return AonStringUtils.length(ccc) == 11 
+				&& AonStringUtils.isNumeric(ccc) 
+				&& checkProvinceCCC(ccc)
+//				&& checkCtrlDigitCCC(ccc)
+				;
+	}
+
+	private static boolean checkProvinceCCC(String ccc) {
+		return getProvinces().containsKey(AonStringUtils.substring(ccc, 0,2));
+	}
+	
+	private static boolean checkCtrlDigitCCC(String ccc) {
+		int code = Integer.parseInt(AonStringUtils.substring(ccc, 2, 9));
+		int ctrl = Integer.parseInt(AonStringUtils.substring(ccc, -2));
+		return code % 97 == ctrl;
+	}
+	
 	
 	private static String getCCCType(Byte cccType) {
 		switch (cccType) {

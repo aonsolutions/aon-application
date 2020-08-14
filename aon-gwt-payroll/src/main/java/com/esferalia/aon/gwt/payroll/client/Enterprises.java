@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.CretaDetail.isChecked;
+import static com.esferalia.aon.gwt.payroll.client.CretaDetail.setCheckedStyle;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +10,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
@@ -19,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -86,6 +91,12 @@ public class Enterprises extends ResizeComposite implements
 
 	@UiField
 	OptionsToolbar toolbar;
+	
+	private PopupPanel viewPopupPanel;
+	private MenuItem viewErrorCCCsMenuItem; 
+	private MenuItem viewSuccessCCCsMenuItem; 
+	private MenuItem viewEmployeesCCCsMenuItem; 
+	private MenuItem viewNoEmployeesCCCsMenuItem; 
 
 	private Images images;
 	private List<Listener> listeners;
@@ -102,14 +113,8 @@ public class Enterprises extends ResizeComposite implements
 				
 		initWidget(binder.createAndBindUi(this));
 		
-		toolbar.addListener(this);
+		initToolbar();
 		
-		toolbar.setVisibleSearchTextBox(false);
-		toolbar.setVisibleViewButton(false);
-		toolbar.setVisibleNewButton(false);
-		toolbar.setVisiblePasteButton(false);
-		toolbar.setVisibleDraftButton(false);		
-		toolbar.setVisibleCopyButton(false);
 
 		tree.addSelectionHandler(this);
 		tree.addDomHandler(this, ContextMenuEvent.getType());
@@ -129,6 +134,67 @@ public class Enterprises extends ResizeComposite implements
 		});
 		
 
+	}
+
+	private void initToolbar() {
+		toolbar.addListener(this);
+		
+		toolbar.setVisibleSearchTextBox(false);
+		toolbar.setVisibleViewButton(false);
+		toolbar.setVisibleNewButton(false);
+		toolbar.setVisiblePasteButton(false);
+		toolbar.setVisibleDraftButton(false);		
+		toolbar.setVisibleCopyButton(false);
+		
+		Button viewButton = toolbar.getViewButton();
+		viewPopupPanel = new PopupPanel() ;
+		viewPopupPanel.setAutoHideEnabled(true);
+		MenuBar viewMenuBar = new CretaDetail.ViewMenuBar(true);
+		
+		viewErrorCCCsMenuItem = 
+		new MenuItem(new SafeHtmlBuilder().appendEscaped("CCCs Err\u00f3neos").toSafeHtml());
+		viewErrorCCCsMenuItem.setScheduledCommand(() -> {
+			setCheckedStyle(viewErrorCCCsMenuItem, !isChecked(viewErrorCCCsMenuItem));
+			filter();
+		});
+		viewMenuBar.addItem(viewErrorCCCsMenuItem);		
+		viewSuccessCCCsMenuItem = 
+		new MenuItem(new SafeHtmlBuilder().appendEscaped("CCCs V\u00e1lidos").toSafeHtml());
+		viewSuccessCCCsMenuItem.setScheduledCommand(() -> {
+			setCheckedStyle(viewSuccessCCCsMenuItem, !isChecked(viewSuccessCCCsMenuItem));
+			filter();
+		});
+		setCheckedStyle(viewSuccessCCCsMenuItem, true);
+		viewMenuBar.addItem(viewSuccessCCCsMenuItem);
+		
+		viewMenuBar.addSeparator();
+		
+		viewNoEmployeesCCCsMenuItem = 
+		new MenuItem(new SafeHtmlBuilder().appendEscaped("Sin Empleados").toSafeHtml());
+		viewNoEmployeesCCCsMenuItem.setScheduledCommand(() -> {
+			setCheckedStyle(viewNoEmployeesCCCsMenuItem, !isChecked(viewNoEmployeesCCCsMenuItem));
+			filter();
+		});
+		viewMenuBar.addItem(viewNoEmployeesCCCsMenuItem);
+		viewEmployeesCCCsMenuItem = 
+		new MenuItem(new SafeHtmlBuilder().appendEscaped("Con Empleados").toSafeHtml());
+		viewEmployeesCCCsMenuItem.setScheduledCommand(() -> {
+			setCheckedStyle(viewEmployeesCCCsMenuItem, !isChecked(viewEmployeesCCCsMenuItem));
+			filter();
+		});
+		setCheckedStyle(viewEmployeesCCCsMenuItem, true);
+		viewMenuBar.addItem(viewEmployeesCCCsMenuItem);
+		
+		
+
+		viewPopupPanel.add(viewMenuBar);
+		
+		viewButton.addClickHandler((e) -> {
+			viewPopupPanel.setPopupPosition(
+					viewButton.getAbsoluteLeft(), 
+					viewButton.getAbsoluteTop() + viewButton.getOffsetHeight());
+			viewPopupPanel.show();
+		});
 	}
 	
 	public void setInactive(boolean inactive) {
@@ -176,8 +242,8 @@ public class Enterprises extends ResizeComposite implements
 			activityItem.setUserObject(activity);
 			
 			for ( CCC ccc : activity.getCccs() ) {
-				TreeItem cccItem = addImageItem(activityItem, ccc.getCode(),
-						images.segsocial());
+				TreeItem cccItem = addImageItem(activityItem, ccc.getCode(),getImage(ccc)
+						);
 				cccItem.setUserObject(ccc);
 			}
 			
@@ -205,7 +271,9 @@ public class Enterprises extends ResizeComposite implements
 		tree.setSelectedItem(enterprisesItem);
 
 		onEnterpr1ses(enterprises);
-		
+
+		filter();	
+		toolbar.setVisibleViewButton(true);
 		toolbar.setVisibleSearchTextBox(true);
 
 	}
@@ -335,7 +403,7 @@ public class Enterprises extends ResizeComposite implements
 			
 	@Override
 	public void onKeyUpSearchTextBox(KeyUpEvent event){
-		filter(toolbar.getSearchTextBox().getValue());
+		filter();
 	}
 
 	@Override
@@ -453,11 +521,17 @@ public class Enterprises extends ResizeComposite implements
 			enterprises.addAll(getEnterprises(treeItem.getChild(i)));
 		return enterprises;
 	}
+	
+	private void filter() {
+		filter(toolbar.getSearchTextBox().getValue());
+	}
+
 	private void filter(String pattern) {
 		for (int i = 0; i < tree.getItemCount(); i++)
 			filterEnterprises(pattern, tree.getItem(0));
 		
 	}
+
 
 	private void filterEnterprises(String pattern, TreeItem enterprisesItem) {
 		
@@ -468,14 +542,50 @@ public class Enterprises extends ResizeComposite implements
 			String name = enterprise.getName();
 			
 			boolean visible = 
-			AonStringUtils.isBlank(pattern) 
+			filterEnterprise(enterpriseItem)
+			&& (AonStringUtils.isBlank(pattern) 
 			|| AonStringUtils.containsIgnoreCase(name, pattern)
-			|| filterActivities(pattern, enterpriseItem);
-			;	
+			|| filterActivities(pattern, enterpriseItem)
+			);	
 			
 			enterpriseItem.setVisible(visible);
 			enterpriseItem.setState(visible);
 		}
+	}
+	
+	private boolean filterEnterprise(TreeItem enterpriseItem) {
+		boolean found = false;
+		for ( int i = 0; i < enterpriseItem.getChildCount(); i++ ) {
+			TreeItem activityItem = enterpriseItem.getChild(i);
+			boolean visible = filterActivity(activityItem);
+			activityItem.setVisible(visible);
+			activityItem.setState(visible);
+			found |= visible;
+		}
+		return found;
+		
+	}
+
+	private boolean filterActivity( TreeItem activityItem) {
+		
+		boolean found = false;
+		for ( int i = 0; i < activityItem.getChildCount(); i++ ) {
+			TreeItem cccItem = activityItem.getChild(i);
+			CCC ccc = ( CCC ) cccItem.getUserObject();
+			boolean checkCCC = checkCCC(ccc);
+			boolean hasEmployees = hasEmployees(ccc);
+			boolean visible = 
+					((checkCCC && isChecked(viewSuccessCCCsMenuItem))
+					|| ( !checkCCC && isChecked(viewErrorCCCsMenuItem)))
+					&& ((hasEmployees && isChecked(viewEmployeesCCCsMenuItem))
+					|| ( !hasEmployees && isChecked(viewNoEmployeesCCCsMenuItem)))
+					;	
+			cccItem.setVisible(visible);
+			found |= visible;
+		}
+
+		return found;
+
 	}
 
 	private boolean filterActivities(String pattern, TreeItem enterpriseItem) {
@@ -486,7 +596,11 @@ public class Enterprises extends ResizeComposite implements
 		boolean found = false;
 		for ( int i = 0; i < enterpriseItem.getChildCount(); i++ ) {
 			TreeItem activityItem = enterpriseItem.getChild(i);
-			boolean visible = filterCCCs(pattern, activityItem);
+			
+			boolean visible = 
+			activityItem.isVisible() 
+			&& filterCCCs(pattern, activityItem);
+
 			activityItem.setVisible(visible);
 			activityItem.setState(visible);
 			found |= visible;
@@ -500,7 +614,9 @@ public class Enterprises extends ResizeComposite implements
 		for ( int i = 0; i < activityItem.getChildCount(); i++ ) {
 			TreeItem cccItem = activityItem.getChild(i);
 			CCC ccc = ( CCC ) cccItem.getUserObject();
-			boolean visible = AonStringUtils.containsIgnoreCase(ccc.getCode(), pattern);	
+			boolean visible = 
+			cccItem.isVisible()		
+			&& AonStringUtils.containsIgnoreCase(ccc.getCode(), pattern);	
 			cccItem.setVisible(visible);
 			found |= visible;
 		}
@@ -509,8 +625,50 @@ public class Enterprises extends ResizeComposite implements
 
 	}
 	
+	
 	private static boolean hasEmployees(Enterprise enterprise) {
 		return enterprise.getActivities().stream().flatMap(a -> a.getCccs().stream()).collect(Collectors.summingInt(ccc -> ccc.getEmployees().size())) > 0 ;
 	}
+	
+	private static boolean hasEmployees(CCC ccc) {
+		return ccc.getEmployees().size() > 0 ;
+	}
+
+	private static boolean checkCCC(CCC ccc ) {
+		String code = ccc.getCode();
+		if ( AonStringUtils.isBlank(code)) {
+			return false;
+		}
+		if ( !AonStringUtils.isNumeric(code) ) {
+			return false;
+		}
+		if ( AonStringUtils.trim(code).length() != 11 ) {
+			return false;
+		}
+		
+		int provincia  = Integer.parseInt(AonStringUtils.substring(code, 0, 2));
+		int numero = Integer.parseInt(AonStringUtils.substring(code, 2,9));
+		int control = Integer.parseInt(AonStringUtils.substring(code, -2));
+//		log ( provincia + " = " + (provincia >= 1  && provincia <= 52 ));
+//		log(numero + " % " + 97 + " = " + control + ", "+ (numero % 97 == control));
+		return provincia >= 1  
+				&& provincia <= 52 
+//				&& (numero % 97 == control)
+				;
+	}
+	
+	private static native void log(String message)  /*-{
+		console.log( message );
+	}-*/;
+	
+	private  ImageResource getImage(CCC ccc) {
+		if ( !checkCCC(ccc))
+			return images.warn();
+		else if ( !hasEmployees(ccc) )
+			return images.aon_icon_okwarning();
+		else 
+			return images.segsocial();
+	}
+	
 
 }
