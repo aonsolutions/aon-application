@@ -13,11 +13,13 @@ public enum AonApp implements Serializable{
 	PAYROLL,
 	OCR,
 	AIO,
+	TOOLS,
 	SELFCONTA,
 	SALTRA,
 	BIDOQ,
 	ALMA,
-	LEARNING;
+	LEARNING,
+	SERVICONVENIOS;
 	
 	public Byte value(){
 		return (byte) ordinal();
@@ -52,6 +54,8 @@ public enum AonApp implements Serializable{
 			return OCR;
 		} else if(i.equalsIgnoreCase(AIO.name())) {
 			return AIO;
+		} else if(i.equalsIgnoreCase(TOOLS.name())) {
+			return TOOLS;
 		} else if(i.equalsIgnoreCase(SELFCONTA.name())) {
 			return SELFCONTA;
 		} else if(i.equalsIgnoreCase(SALTRA.name())) {
@@ -62,12 +66,14 @@ public enum AonApp implements Serializable{
 			return ALMA;
 		} else if(i.equalsIgnoreCase(LEARNING.name())) {
 			return LEARNING;
+		} else if(i.equalsIgnoreCase(SERVICONVENIOS.name())) {
+			return SERVICONVENIOS;
 		} 
 		return null;
 	}
 	
 	public static Stream<AonApp> aonValues() {
-		AonApp[] array = {INVOICE, DOCUMENTAL, HELPDESK, ACCOUNTING, FISCAL, PAYROLL, OCR, AIO};
+		AonApp[] array = {INVOICE, DOCUMENTAL, HELPDESK, ACCOUNTING, FISCAL, PAYROLL, OCR, AIO, TOOLS};
 		return Arrays.stream(array);
 	}
 }

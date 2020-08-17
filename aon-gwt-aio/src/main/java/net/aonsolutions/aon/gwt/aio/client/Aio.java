@@ -71,7 +71,9 @@ public class Aio implements EntryPoint {
 	
 	public static native String getSubEntryPoint()
 	/*-{
-		return $wnd.getSubEntryPoint();
+		if(typeof $wnd.getSubEntryPoint === 'function') {
+			return $wnd.getSubEntryPoint();
+		} else return null;
 	}-*/;
 	
 	@Override
@@ -206,7 +208,21 @@ public class Aio implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					new Templates(aonData).onModuleLoad(getSubEntryPoint());
+					new Templates(aonData).onModuleLoad(getSubEntryPoint() != null ? getSubEntryPoint() : Modules.TEMPLATES);
+				}
+			});		
+			break;
+		case Modules.IMPORT:
+			GWT.runAsync(Templates.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					new Templates(aonData).onModuleLoad(Modules.IMPORT);
 				}
 			});		
 			break;

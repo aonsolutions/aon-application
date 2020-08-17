@@ -103,9 +103,9 @@ public class Templates extends Composite implements EntryPoint {
 			finalIdAux, onlyNegativeAux, detailAux, w, wAux, incomeId, seriesAux, commentsAux;
 	
 	public void onModuleLoad(String entryPoint){
-		if(CONTRACT_MEDIA.equals(entryPoint)){
+		if(entryPoint.equals(CONTRACT_MEDIA)){
 			new ContractMediaPage(aonData).onModuleLoad();
-		} else if(IMPORT.equals(entryPoint)){
+		} else if(entryPoint.equals(IMPORT)){
 			GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
 			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
@@ -116,7 +116,7 @@ public class Templates extends Composite implements EntryPoint {
 			GWT.<AonResources> create(AonResources.class).css().ensureInjected();
 			GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 			pagesPanel = new FlowPanel();
-			if (SILENT.equals(entryPoint)){
+			if (entryPoint.equals(SILENT)){
 				item.getTemplates(getDomain(), getUser(), new AsyncCallback<LinkedList<TemplateInfo>>() {		
 					@Override
 					public void onSuccess(LinkedList<TemplateInfo> result) {
@@ -151,7 +151,7 @@ public class Templates extends Composite implements EntryPoint {
 					@Override
 					public void onFailure(Throwable caught) {print(caught);}
 				});
-			} else if(DOWNLOAD_AMAZON_DELIVERY.equals(entryPoint)){
+			} else if(entryPoint.equals(DOWNLOAD_AMAZON_DELIVERY)){
 				deliveryx();
 			} else {
 				item.getTemplates(getDomain(), getUser(), new AsyncCallback<LinkedList<TemplateInfo>>() {		

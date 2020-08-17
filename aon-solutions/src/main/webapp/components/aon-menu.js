@@ -1,5 +1,5 @@
 import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
-	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu} from  '../services/app.js';
+	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -101,6 +101,9 @@ class AonMenu extends HTMLElement {
 			case Apps.AIO.app:
 	      open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
 				break;
+			case Apps.TOOLS.app:
+				this.buildAppMenu(Apps.TOOLS);
+				break;
 			case Apps.SELFCONTA.app:
 				alert('SELFCONTA');
 				break;
@@ -137,6 +140,8 @@ class AonMenu extends HTMLElement {
 				return Apps.OCR;
 			case Apps.AIO.app:
 				return Apps.AIO;
+			case Apps.TOOLS.app:
+				return Apps.TOOLS;
 			case Apps.SELFCONTA.app:
 				return Apps.SELFCONTA;
 			case Apps.SALTRA.app:
@@ -278,6 +283,8 @@ class AonMenu extends HTMLElement {
 				return AeatFiscalMenu;
 			case Apps.PAYROLL.app:
 				return PayrollMenu;
+			case Apps.TOOLS.app:
+				return ToolsMenu;
 		}
 	}
 
@@ -327,6 +334,8 @@ class AonMenu extends HTMLElement {
 				} else return '#3a85c3';
 			case Apps.PAYROLL.app:
 				return '#90BD75';
+			case Apps.TOOLS.app:
+				return 'gray';
 			default: return '#f1f1f1';
 		}
 	}

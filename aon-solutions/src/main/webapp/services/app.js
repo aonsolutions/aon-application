@@ -47,6 +47,12 @@ export const Apps = {
       description: 'AON SOLUTIONS AiO.',
       logo: 'assets/aon.png'
     },
+    TOOLS: {
+      app: 'tools',
+      title: 'Herramientas',
+      description: 'Utilidades Generales de Aon Solutions.',
+      logo: 'assets/apps/ocr.png'
+    },
     SELFCONTA: {
       app: 'selfconta',
       title: 'Selfconta',
@@ -76,6 +82,12 @@ export const Apps = {
       title: 'Learning',
       description: 'Learning',
       logo: 'assets/apps/learning.png'
+    },
+    SERVICONVENIOS: {
+      app: 'serviconvenios',
+      title: 'ServiConvenios',
+      description: 'ServiConvenios',
+      logo: 'assets/apps/serviconvenios.png'
     }
 };
 
@@ -152,6 +164,21 @@ export const PayrollMenu =
     module: 'aon_gwt_payroll',
     entryPoint:'MainTrash'
   }];
+
+  export const ToolsMenu =
+    [{
+      title:'Gestion de Seguridad.',
+      module: 'aon_gwt_aio',
+      entryPoint: 'scope'
+    },{
+      title: 'Carga de datos desde ficheros Excel (Predefinidos)',
+      module: 'aon_gwt_aio',
+      entryPoint:'import',
+    },{
+      title: 'Gestión Plantillas para carga de datos',
+      module: 'aon_gwt_aio',
+      entryPoint:'templates',
+    }];
 
 export const ArabaFiscalMenu =
   [{
