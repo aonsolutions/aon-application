@@ -16,12 +16,12 @@ import net.aonsolutions.db.up2date.Update;
 
 public class AuthUpdate implements Update {
 
-// 	ALTER TABLE `auth` ADD `name` varchar(64) DEFAULT NULL COMMENT `Nombre del usuario.`;
-// 	ALTER TABLE `auth` ADD `surname` varchar(64) DEFAULT NULL COMMENT `Apellidos del usuario.`;
-// 	ALTER TABLE `auth` ADD `document` varchar(16) DEFAULT NULL COMMENT `Documento de identificacion.`;
-// 	ALTER TABLE `auth` ADD `phone` varchar(16) DEFAULT NULL COMMENT `Número de telefono movil del usuario.`;
+// 	ALTER TABLE `auth` ADD `name` varchar(64) DEFAULT NULL COMMENT 'Nombre del usuario.';
+// 	ALTER TABLE `auth` ADD `surname` varchar(64) DEFAULT NULL COMMENT 'Apellidos del usuario.';
+// 	ALTER TABLE `auth` ADD `document` varchar(16) DEFAULT NULL COMMENT 'Documento de identificacion.';
+// 	ALTER TABLE `auth` ADD `phone` varchar(16) DEFAULT NULL COMMENT 'Número de telefono movil del usuario.';
 //
-// 	ALTER TABLE `user` ADD `shared` tinyint(1) DEFAULT NULL COMMENT `Indica si el usuario es compartido o no.`;
+// 	ALTER TABLE `user` ADD `shared` tinyint(1) DEFAULT NULL COMMENT 'Indica si el usuario es compartido o no.';
 
 
 	public static AuthUpdate AUTH_UPDATE = new AuthUpdate();

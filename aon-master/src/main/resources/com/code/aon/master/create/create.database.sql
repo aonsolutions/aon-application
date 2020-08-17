@@ -1391,8 +1391,8 @@ CREATE TABLE `auth` (
   `password` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Contrasena del Usuario',
   `name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del usuario',
   `surname` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Apellidos del usuario.',
-  `document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Documento de identificacion.';
-  `phone` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Número de telefono movil del usuario.';
+  `document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Documento de identificacion.',
+  `phone` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Número de telefono movil del usuario.',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';
 
