@@ -1389,6 +1389,10 @@ CREATE TABLE `auth` (
   `id` BINARY(16) NOT NULL COMMENT 'Identificador unico',
   `email` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Identificador del Usuario (Email)',
   `password` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Contrasena del Usuario',
+  `name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre del usuario',
+  `surname` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Apellidos del usuario.',
+  `document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Documento de identificacion.';
+  `phone` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Número de telefono movil del usuario.';
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';
 
@@ -1415,6 +1419,7 @@ CREATE TABLE `user` (
   `initAction` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre la acicï¿½n de inicio del Usuario',
   `lastAccess` datetime DEFAULT NULL COMMENT 'Fecha del ultimo acceso del Usuario',
   `auth` binary(16) DEFAULT NULL COMMENT 'uuid auth.',
+  `shared` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indica si el usuario es compartido o no.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_USER_DOMAIN_LOGIN` (`domain`,`login`),
   KEY `IDX_USER_ENTERPRISE` (`enterprise`),
