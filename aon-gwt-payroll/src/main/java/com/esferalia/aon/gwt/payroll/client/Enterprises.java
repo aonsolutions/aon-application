@@ -6,29 +6,21 @@ import static com.esferalia.aon.gwt.payroll.client.CretaDetail.setCheckedStyle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
-import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
 import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.gwt.payroll.shared.CretaService.JsFile;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -39,7 +31,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -625,16 +616,7 @@ public class Enterprises extends ResizeComposite implements
 
 	}
 	
-	
-	private static boolean hasEmployees(Enterprise enterprise) {
-		return enterprise.getActivities().stream().flatMap(a -> a.getCccs().stream()).collect(Collectors.summingInt(ccc -> ccc.getEmployees().size())) > 0 ;
-	}
-	
-	private static boolean hasEmployees(CCC ccc) {
-		return ccc.getEmployees().size() > 0 ;
-	}
-
-	private static boolean checkCCC(CCC ccc ) {
+	protected static boolean checkCCC(CCC ccc ) {
 		String code = ccc.getCode();
 		if ( AonStringUtils.isBlank(code)) {
 			return false;
@@ -656,7 +638,16 @@ public class Enterprises extends ResizeComposite implements
 //				&& (numero % 97 == control)
 				;
 	}
+		
+	protected static boolean hasEmployees(Enterprise enterprise) {
+		return enterprise.getActivities().stream().flatMap(a -> a.getCccs().stream()).collect(Collectors.summingInt(ccc -> ccc.getEmployees().size())) > 0 ;
+	}
 	
+	protected static boolean hasEmployees(CCC ccc) {
+		return ccc.getEmployees().size() > 0 ;
+	}
+
+
 	private static native void log(String message)  /*-{
 		console.log( message );
 	}-*/;

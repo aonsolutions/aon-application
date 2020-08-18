@@ -60,6 +60,7 @@ import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -99,6 +100,9 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
+	private static final int LIMIT = 100;
+
+
 	public static String getAuthorized() {
 		
 		for ( File file: new File [] {File.TRABAJADORES_TRAMOS, File.RESPUESTA})
@@ -125,7 +129,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 
 	
-	private final class MainCretaSyncCallback implements SyncCallback {
+	private class MainCretaSyncCallback implements SyncCallback {
 
 		private IndeterminateTask syncTask ;
 		private List<JsBases> jsBasess;
@@ -422,7 +426,31 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			IndeterminateTask syncTask = new IndeterminateTask();
 			syncTask.setDescription("Sincronizando mensajes");
 			progressPanel.showIndeterminateTask(syncTask);
-			sync( new MainCretaSyncCallback(syncTask), enterprises.size() > 1 ? Collections.emptyList() : getCCCs(enterprises) );
+			//sync( new MainCretaSyncCallback(syncTask), enterprises.size() > 1 ? Collections.emptyList() : getCCCs(enterprises) );
+			
+			List<CCC> cccs = getCCCs(enterprises,0,LIMIT*2);
+			
+			sync( new MainCretaSyncCallback(syncTask) {
+				private int offset = 0;
+				private List<CCC> cccss = cccs;
+				
+				@Override
+				public void onEnd() {
+					super.onEnd();
+					log("onEnd(" + cccss.size() +")");
+					if ( cccss.size() >= LIMIT )
+						syncNexts();
+					
+				}
+				
+				private void syncNexts() {
+					offset += cccss.size();
+					cccss = getCCCs(enterprises, offset, LIMIT);
+					log("syncNexts(" + offset + ")");
+					sync(this, cccss);
+				}
+			}, cccs );
+			
 			
 		});
 		showProgressPanel();
@@ -2147,9 +2175,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				});
 
 	}
-	protected static void sync(final SyncCallback cb) {
-		sync(cb, Collections.emptyMap());
-	}
+
+//	protected static void sync(final SyncCallback cb) {
+//		sync(cb, Collections.emptyMap());
+//	}
 
 
 	protected static void sync(final SyncCallback cb, Collection<CCC> cccs) {
@@ -2161,12 +2190,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	protected static void sync(final SyncCallback cb , Map<String, Collection<String>> options) {
 
-		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
-		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
-
-		ArrayList<JsFile> jsFiles = new ArrayList<JsFile>(respuestas.length + trabajadoresYTramos.length);
-		Collections.addAll(jsFiles, respuestas);
-		Collections.addAll(jsFiles, trabajadoresYTramos);
+//		JsFile respuestas[] = MainCreta.get(CretaService.File.RESPUESTA, new JsFile[] {});
+//		JsFile trabajadoresYTramos[] = MainCreta.get(CretaService.File.TRABAJADORES_TRAMOS, new JsFile[] {});
+//
+//		ArrayList<JsFile> jsFiles = new ArrayList<JsFile>(respuestas.length + trabajadoresYTramos.length);
+//		Collections.addAll(jsFiles, respuestas);
+//		Collections.addAll(jsFiles, trabajadoresYTramos);
+		
+		List<JsFile> jsFiles = Collections.emptyList();
 
 		cb.onBegin();
 
@@ -2603,6 +2634,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 	}
 
+	private static List<CCC> getCCCs(List<Enterprise> enterprises, int offset, int limit) {
+		return 
+		enterprises.stream()
+		.flatMap(e -> e.getActivities().stream())
+		.flatMap(a -> a.getCccs().stream())
+		.filter( ccc -> Enterprises.checkCCC(ccc))
+		.filter( ccc -> Enterprises.hasEmployees(ccc))
+		.sorted((ccc1, ccc2) -> ccc1.getCode().compareTo(ccc2.getCode()))
+		.skip(offset)
+		.limit(limit)
+		.collect(Collectors.toList())
+		;
+	}
+
 	private static Collection<BankAccount> getBankAccounts(Collection<Enterprise> enterprises) {
 		List<BankAccount> bankAccounts = new ArrayList<BankAccount>();
 		for (Enterprise enterprise : enterprises)
@@ -2661,5 +2706,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	 
 
 	// ------------------------------------------------------------------------
+	private  static native void log (String message ) /*-{
+		console.log(message);
+	}-*/;
 
 }

@@ -2170,6 +2170,7 @@ public class CretaServlet extends HttpServlet
 	
 	private static boolean checkCCC(String ccc) {
 		ccc = AonStringUtils.trim(ccc);
+		ccc = AonStringUtils.substring(ccc, 4);
 		
 		return AonStringUtils.length(ccc) == 11 
 				&& AonStringUtils.isNumeric(ccc) 
