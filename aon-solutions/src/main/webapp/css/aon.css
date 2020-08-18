@@ -22,13 +22,13 @@
 
 	.aonMenu {
 		position: relative;
-		height:calc(100% - 81px);
+		height:calc(100vh - 81px);
 	}
 
 	.rootPanel {
 		position: relative;
     margin-right: 100px;
-		height:calc(100% - 81px);
+		height:calc(100vh - 81px);
 		margin: 0;
 	}
 
@@ -196,7 +196,7 @@
 	}
 
 	.aonMenuSidenav {
-		height: calc(100% - 81px);
+		height: calc(100vh - 81px);
 		width: 100px;
 		position: fixed;
 		z-index: 1;
@@ -223,7 +223,7 @@
 		margin: 0px;
     padding: 0px;
     list-style: none;
-    height: calc(100% - 65px);
+    height: calc(100vh - 65px);
     overflow: auto;
 	}
 
@@ -249,7 +249,7 @@
 	.aonContent {
 		display: block;
 		transition: 0.5s;
-		height: calc(100% - 41px);
+		height: calc(100vh - 122px);
 		overflow-y: auto;
 	}
 

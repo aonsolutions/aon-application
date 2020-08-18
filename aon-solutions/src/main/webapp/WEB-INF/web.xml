@@ -17,8 +17,29 @@
       <param-value>true</param-value>
     </init-param>
   </servlet>
+  
   <servlet-mapping>
     <servlet-name>Resource Servlet</servlet-name>
     <url-pattern>/aon_gwt_aio/*</url-pattern>
   </servlet-mapping>
+  
+  	<!-- Aon GWT Template -->
+
+	<servlet>
+		<servlet-name>TemplateGwtServlet</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.TemplatesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TemplateGwtServlet</servlet-name>
+		<url-pattern>/aon_gwt_aio/gwt_template</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UploadProducts</servlet-name>
+		<servlet-class>com.esferalia.aon.gwt.template.server.UploadProductsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UploadProducts</servlet-name>
+		<url-pattern>/aon_gwt_aio/gwt_upload</url-pattern>
+	</servlet-mapping>
 </web-app>

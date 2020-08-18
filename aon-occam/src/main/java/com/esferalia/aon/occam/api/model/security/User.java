@@ -14,6 +14,7 @@ public class User implements Serializable {
 	private String name;
 	private String login;
 	private boolean active;
+	private boolean shared;
 	private Integer registry;
 	private AonRole[] userRoles;
 	private byte[] auth;
@@ -53,6 +54,16 @@ public class User implements Serializable {
 		this.active = active;
 		return this;
 	}
+	
+	public boolean isShared() {
+		return shared;
+	}
+	
+	public User setShared(boolean shared) {
+		this.shared = shared;
+		return this;
+	}
+	
 	public AonRole[] getUserRoles() {
 		return userRoles;
 	}

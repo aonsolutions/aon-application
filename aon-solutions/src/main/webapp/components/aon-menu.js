@@ -199,7 +199,6 @@ class AonMenu extends HTMLElement {
 		let a = document.createElement('a');
 		a.style.width = '80px';
 		a.style.cursor = 'pointer';
-		a.style.margin = '8px 2px';
 		a.style.textAlign = 'center';
 
 		a.addEventListener('click', () => {

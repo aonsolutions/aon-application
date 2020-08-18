@@ -82,6 +82,7 @@ public class AON_SOLUTIONS {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
 				auth = getAuth(domain, 0, email);
+				auth.setSchema(schema);
 		   	}	    		
 		}
 		return auth;
@@ -94,9 +95,21 @@ public class AON_SOLUTIONS {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(auth0.getUuid() == null && !AonStringUtils.isBlank(domain)) {
 				auth0 = getAuth(domain, 0, auth);
+				auth0.setSchema(schema);
 		   	}	    		
 		}
 		return auth0;
+	}
+	
+	public static Auth updateAuth(Auth auth) { 
+		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
+		return updateAuth(domain, 0, auth);
+	}
+	
+	public static Auth updateAuth(String domainName, Integer domainId, Auth auth) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
+			return getSecurity().updateAuth(ctx, auth);
+		}
 	}
 	
 	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 
@@ -108,6 +121,12 @@ public class AON_SOLUTIONS {
 	public static void assignAuthToUser(String domainName, Integer domainId, User user, String uuid) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			byte[] auth = getSecurity().unHexUuid(ctx, uuid);
+			getSecurity().assignAuthToUser(ctx, user, auth);
+		}
+	}
+	
+	public static void assignAuthToUser(String domainName, Integer domainId, User user, byte[] auth) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			getSecurity().assignAuthToUser(ctx, user, auth);
 		}
 	}
@@ -129,7 +148,6 @@ public class AON_SOLUTIONS {
 			return getSecurity().updateDomainApp(ctx, domainApp);
 		}
 	}
-	
 	
 	public static Stream<UserAppRole> getUserAppRole(String domainName, Integer domainId, String login, UserAppRoleFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		

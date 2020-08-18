@@ -42,21 +42,22 @@ class AonUserList extends HTMLElement {
 
 			let td1 = document.createElement('td');
 			td1.className = 'mdl-data-table__cell--non-numeric';
-			td1.innerHTML = user.name;
+			td1.innerHTML = user.name ? user.name : '';
 			td1.addEventListener('click', () => this.dispatchEvent(event));
 
 			let td2 = document.createElement('td');
 			td2.className = 'mdl-data-table__cell--non-numeric';
-			td2.innerHTML = user.surname;
+			td2.innerHTML = user.surname ? user.surname : '';
 			td2.addEventListener('click', () => this.dispatchEvent(event));
 
 			let td3 = document.createElement('td');
 			td3.className = 'mdl-data-table__cell--non-numeric';
-			td3.innerHTML = user.email;
+			td3.innerHTML = user.email ? user.email : '';
 			td3.addEventListener('click', () => this.dispatchEvent(event));
 
 			let td4 = document.createElement('td');
-			td4.innerHTML = user.document;
+			td4.className = 'mdl-data-table__cell--non-numeric';
+			td4.innerHTML = user.document ? user.document : '';
 			td4.addEventListener('click', () => this.dispatchEvent(event));
 
 			// TODO:

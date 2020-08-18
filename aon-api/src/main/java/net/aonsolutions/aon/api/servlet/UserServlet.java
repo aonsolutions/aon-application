@@ -57,15 +57,19 @@ public class UserServlet extends HttpServlet{
 					if(auth.getEmail() != null) {
 						auth = AON_SOLUTIONS.getAuth(r.getAuth());
 					}
+					json.put("id", r.getId());
 					json.put("email", auth.getEmail());
 					json.put("uuid", auth.getUuid());
-				}
-				jsArray.put(userToJSON(r, json));
+					json.put("name", auth.getName() != null ? auth.getName() : r.getName());
+					json.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
+					json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
+					json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+					jsArray.put(json);
+				} else jsArray.put(userToJSON(r, json));
 			});
 			Utils.addCorsHeader(resp);
 			Utils.giveBack(req, resp, jsArray, new JSONObject());
 		}
-
 	}
 
 	private JSONObject getDomainUser(Domain domain, String token) {
@@ -161,27 +165,50 @@ public class UserServlet extends HttpServlet{
 		Integer pos = email.indexOf("@");
 		String login = email.substring(0, pos);
 		Auth auth = AON_SOLUTIONS.getAuth(email);
-		if(auth.getUuid() != null) {
+		if(auth.getUuid() == null) {
 			String pass = Utils.createPasswordHash(email, login);
 			auth.setEmail(email)
-				.setPassword(pass);
+				.setPassword(pass)
+				.setName(json.optString("name"))
+				.setSurname(json.optString("surname"))
+				.setDocument(json.optString("document"))
+				.setPhone(json.optString("phone"));
 			auth = AON_SOLUTIONS.insertAuth(domain.getName(), domain.getId(), auth);
-		} 
-		byte[] a = auth.getAuth();
-		User user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(a));
-		if(user != null && user.getId() != null) {
-			
 		} else {
+			if(json.opt("document") != null) auth.setDocument(json.getString("document"));
+			if(json.opt("phone") != null) auth.setPhone(json.getString("phone"));
+			if(json.opt("name") != null) auth.setName(json.getString("name"));
+			if(json.opt("surname") != null) auth.setSurname(json.getString("surname"));
+			AON_SOLUTIONS.updateAuth(auth);
+		}
+		User user;
+		if(json.opt("id") != null) {
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(json.getInt("id")));
+		} else {
+			byte[] a = auth.getAuth();
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(a));
+		}
+		if(user == null || user.getId() == null) {
 			user.setAuth(auth.getAuth())
 				.setActive(true)
 				.setDomain(domain.getId())
 				.setLogin(login)
-				.setName(json.opt("name") != null ? json.getString("name") : login);
+				.setName(json.opt("name") != null ? json.getString("name") : login)
+				.setShared(json.optBoolean("shared"));
 			user = AON.insertUser(domain.getName(), domain.getId(), "", user);
+		} else if(user.getAuth() == null) {
+			AON_SOLUTIONS.assignAuthToUser(domain.getName(), domain.getId(), user, auth.getAuth());
 		}
+
 		JSONObject js = new JSONObject();
-		js.put("email", email);
-		return userToJSON(user, js);
+		js.put("id", user.getId());
+		js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
+		js.put("uuid", auth.getUuid());
+		js.put("name", auth.getName() != null ? auth.getName() : user.getName());
+		js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
+		js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
+		js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+		return js;
 	}
 	
 	private JSONObject userToJSON(User user, JSONObject json) {

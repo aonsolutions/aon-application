@@ -29,6 +29,7 @@ public interface ISecurity {
 	public Auth getAuth(AONContext ctx, byte[] auth);
 	public byte[] unHexUuid(AONContext ctx, String uuid);
 	public Auth insertAuth(AONContext ctx, Auth auth);
+	public Auth updateAuth(AONContext ctx, Auth auth);
 	
 	public User getUser(AONContext ctx, UserFilter filter);
 	public User insertUser(AONContext ctx, User user);

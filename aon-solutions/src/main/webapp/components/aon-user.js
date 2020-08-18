@@ -103,8 +103,45 @@ class AonUser extends HTMLElement {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 			user.email = email.getAttribute('value');
 			setUser(user).then(r => {
+				this.setAttribute('user', JSON.stringify(r));
 			});
+		});
 
+		let name = document.getElementById('aonConfigurationUserCardName');
+		name.onChange(() => {
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+			user.name = name.getAttribute('value');
+			setUser(user).then(r => {
+				this.setAttribute('user', JSON.stringify(r));
+			});
+		});
+
+		let surname = document.getElementById('aonConfigurationUserCardSurname');
+		surname.onChange(() => {
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+			user.surname= surname.getAttribute('value');
+			setUser(user).then(r => {
+				this.setAttribute('user', JSON.stringify(r));
+			});
+		});
+
+		let doc = document.getElementById('aonConfigurationUserCardDocument');
+		doc.onChange(() => {
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+			user.document= doc.getAttribute('value');
+			setUser(user).then(r => {
+				this.setAttribute('user', JSON.stringify(r));
+			});
+		});
+
+		let phone = document.getElementById('aonConfigurationUserCardPhone');
+		phone.onChange(() => {
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+			user.phone= phone.getAttribute('value');
+			console.log(JSON.stringify(user));
+			setUser(user).then(r => {
+				this.setAttribute('user', JSON.stringify(r));
+			});
 		});
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');

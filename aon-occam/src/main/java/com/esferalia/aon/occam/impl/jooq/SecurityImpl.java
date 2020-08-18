@@ -54,6 +54,12 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	public Auth updateAuth(AONContext ctx, Auth auth) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.updateAuth(ctx, auth));
+	}
+	
+	@Override
 	public Stream<User> getUserStream(AONContext ctx, UserFilter filter) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getUserStream(ctx, filter));

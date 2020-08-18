@@ -10,6 +10,12 @@ public class Auth implements Serializable {
 	String uuid;
 	String email;
 	String password;
+	String name;
+	String surname;
+	String document;
+	String phone;
+	String schema;
+	
 	LinkedList<User> users;
 	
 	public Auth() { }
@@ -57,7 +63,50 @@ public class Auth implements Serializable {
 	public Auth setUsers(LinkedList<User> users) {
 		this.users = users;
 		return this;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Auth setName(String name) {
+		this.name = name;
+		return this;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public Auth setSurname(String surname) {
+		this.surname = surname;
+		return this;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public Auth setDocument(String document) {
+		this.document = document;
+		return this;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public Auth setPhone(String phone) {
+		this.phone = phone;
+		return this;
 	}	
 	
+	public String getSchema() {
+		return schema;
+	}
 	
+	public Auth setSchema(String schema) {
+		this.schema = schema;
+		return this;
+	}
 }

@@ -35,8 +35,8 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record4;
 import org.jooq.Record6;
+import org.jooq.Record8;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.extension.DSLExtensions;
@@ -105,7 +105,7 @@ public class SecurityDAO {
 
 	public static Auth getAuth(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
-			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD)
+			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
 			.from(AUTH)
 			.where(AUTH.ID.eq(auth))
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
@@ -113,7 +113,7 @@ public class SecurityDAO {
 	
 	public static Auth getAuth(AONContext ctx, String email) {
 		return ctx.getDslContext()
-			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD)
+			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
 			.from(AUTH)
 			.where(AUTH.EMAIL.eq(email))
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
@@ -152,6 +152,17 @@ public class SecurityDAO {
 			.execute();
 		
 		return getAuth(ctx, auth.getEmail());
+	}
+	
+	public static Auth updateAuth(AONContext ctx, Auth auth) {
+		ctx.getDslContext().update(AUTH)
+			.set(AUTH.NAME, auth.getName())
+			.set(AUTH.SURNAME, auth.getSurname())
+			.set(AUTH.DOCUMENT, auth.getDocument())
+			.set(AUTH.PHONE, auth.getPhone())
+			.where(AUTH.ID.eq(auth.getAuth()))
+			.execute();
+		return auth;
 	}
 	
 	public static DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
@@ -285,14 +296,18 @@ public class SecurityDAO {
 		
 	}
 	
-	public static class AuthFiller  implements Function<Record4<byte[], String, String, String>,Auth> {
+	public static class AuthFiller  implements Function<Record8<byte[], String, String, String, String, String, String, String>,Auth> {
 
 		@Override
-		public Auth apply(Record4<byte[], String, String, String> record) {
+		public Auth apply(Record8<byte[], String, String, String, String, String, String, String> record) {
 			return new Auth()
 				.setAuth(record.getValue(AUTH.ID))
 				.setUuid(record.value2())
 				.setEmail(record.getValue(AUTH.EMAIL))
+				.setName(record.getValue(AUTH.NAME))
+				.setSurname(record.getValue(AUTH.SURNAME))
+				.setDocument(record.getValue(AUTH.DOCUMENT))
+				.setPhone(record.getValue(AUTH.PHONE))
 				.setPassword(record.getValue(AUTH.PASSWORD));
 		}
 		
@@ -309,7 +324,8 @@ public class SecurityDAO {
 				.setLogin(record.getValue(USER.LOGIN))
 				.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)))
 				.setRegistry(record.getValue(USER.REGISTRY))
-				.setAuth(record.getValue(USER.AUTH));
+				.setAuth(record.getValue(USER.AUTH))
+				.setShared(AonEnumUtils.getBoolean(record.getValue(USER.SHARED)));
 				//.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
 		}
 		

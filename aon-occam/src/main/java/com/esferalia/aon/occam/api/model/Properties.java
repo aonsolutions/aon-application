@@ -1262,5 +1262,6 @@ public interface Properties {
 		Property<Integer> getEnterpriseProperty();
 		Property<Integer> getRegistryProperty();
 		Property<byte[]> getAuthProperty();
+		Property<Byte> getSharedProperty();
 	}
 }
