@@ -217,9 +217,6 @@ public class Enterprises extends ResizeComposite implements
 		
 		clearEnterprise(enterprise);
 		
-//		if ( !hasEmployees(enterprise) ) 
-//			return;
-		
 		final TreeItem enterpriseItem = addImageItem(rootItem,
 				enterprise.getName(), images.enterprise());
 
@@ -240,12 +237,7 @@ public class Enterprises extends ResizeComposite implements
 			
 		}
 
-
-		//enterpriseItem.setState(true, true);
-
 		scrollPanel.scrollToLeft();
-
-
 	}
 
 	protected void onEnterprises(List<Enterprise> enterprises) {

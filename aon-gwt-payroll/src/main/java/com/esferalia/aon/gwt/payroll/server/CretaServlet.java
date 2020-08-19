@@ -35,8 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,19 +55,16 @@ import javax.xml.stream.XMLStreamWriter;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
-import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.code.aon.google.apis.DriveUtils;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
-import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.Parameter;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.jooq.Keys;
-import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -110,6 +105,10 @@ import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.LiquidacionBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.bases.TramoBuilder;
 import net.aonsolutions.core.tgss.creta.jaxb.dcl.LineaDCL;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.CtaCot;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Error;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Errores;
+import net.aonsolutions.core.tgss.creta.jaxb.respuesta.FechaHoraRecaudacion;
 import net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta;
 
 @MultipartConfig
@@ -1479,18 +1478,19 @@ public class CretaServlet extends HttpServlet
 
 	
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.bases.Bases> findBases(HttpServletRequest req) throws SQLException{
-		String login = ":-)" ; 
-		Date from = getFromDate();
-		String domainName = req.getServerName();
-		Integer domainId = AonServletUtils.getDomainID(domainName);
-		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
-		
-		return
-		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from, cccs)
-		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, attach.getData()))
-		.filter(optional -> optional.isPresent())
-		.map(optional -> optional.get())
-		;
+		return Stream.empty();
+//		String login = ":-)" ; 
+//		Date from = getFromDate();
+//		String domainName = req.getServerName();
+//		Integer domainId = AonServletUtils.getDomainID(domainName);
+//		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
+//		
+//		return
+//		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from, cccs)
+//		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, attach.getData()))
+//		.filter(optional -> optional.isPresent())
+//		.map(optional -> optional.get())
+//		;
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req) throws SQLException{
@@ -1517,17 +1517,22 @@ public class CretaServlet extends HttpServlet
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findNotStarted(HttpServletRequest req) throws SQLException{
 		String login = ":-)" ; 
-		Date from = getFromDate();
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());				
+		Date from = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
+
 		String domainName = req.getServerName();
 		Integer domainId = AonServletUtils.getDomainID(domainName);
 		Collection<String> cccs = findCCCs(domainName, domainId, new java.sql.Date(from.getTime()), getParameterValues(req, Parameter.CCC));
 		cccs = filter(cccs);
-
+		
+		
+		
 		return cccs.stream()
-		.map(ccc -> getNotStartedAttachData(ccc, from))
-		.map(data-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class,data) )
-		.filter(optional -> optional.isPresent())
-		.map(optional -> optional.get())
+		.map(ccc -> getNotStartedRespuesta(ccc, from))
+//		.map(ccc -> getNotStartedAttachData(ccc, from))
+//		.map(data-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta.class,data) )
+//		.filter(optional -> optional.isPresent())
+//		.map(optional -> optional.get())
 //		.peek(r -> System.out.println(r.getAutorizado()))
 		;
 	}
@@ -1536,7 +1541,7 @@ public class CretaServlet extends HttpServlet
 		Date today = new Date();
 		int dayOfMonth = AonDateUtils.get(today, Calendar.DAY_OF_MONTH);
 		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(today);				
-		return dayOfMonth < 5 ? firstDayOfMonth : AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
+		return dayOfMonth >= 5 ? firstDayOfMonth : AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1 );
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos> findTrabajadoresYTramos(HttpServletRequest req) throws SQLException{
@@ -2125,6 +2130,66 @@ public class CretaServlet extends HttpServlet
 		;
 	}
 	
+	private static Respuesta getNotStartedRespuesta(String ccc, Date from) {
+		// 012345XXXXXX
+		String regimen = AonStringUtils.substring(ccc,0,2);
+		String provincia = AonStringUtils.substring(ccc,2,6);
+		String numero = AonStringUtils.substring(ccc,6);
+		
+		String mes = String.format("%02d", AonDateUtils.get(from, Calendar.MONTH) +1);
+		String anho =  String.format("%02d", AonDateUtils.get(from, Calendar.YEAR));
+		
+		Respuesta respuesta = new Respuesta();
+		respuesta.setAutorizado( String.valueOf(System.currentTimeMillis()));
+		respuesta.setReferenciaExterna(CretaService.AON_REFERENCIA_EXTERNA);
+		
+		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion liquidacion = 
+		new net.aonsolutions.core.tgss.creta.jaxb.respuesta.Liquidacion();
+		
+		liquidacion.setTipo("L00");
+		
+		CtaCot ctaCot = new CtaCot();
+		ctaCot.setRegimen(regimen);
+		ctaCot.setNumero(numero);
+		ctaCot.setProvincia(provincia);
+		liquidacion.setCcc(ctaCot);
+		
+		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Periodo periodo = 
+		new net.aonsolutions.core.tgss.creta.jaxb.respuesta.Periodo();
+		periodo.setMes(mes);
+		periodo.setAnho(anho);
+		liquidacion.setPeriodoDesde(periodo);
+		liquidacion.setPeriodoHasta(periodo);	
+//		liquidacion.setFechaControl(periodo);
+		
+		FechaHoraRecaudacion fechaHoraRecaudacion = 
+		new FechaHoraRecaudacion();
+		net.aonsolutions.core.tgss.creta.jaxb.respuesta.Fecha fecha = 
+		new net.aonsolutions.core.tgss.creta.jaxb.respuesta.Fecha();
+		fecha.setDia("01");
+		fecha.setMes(mes);
+		fecha.setAnho(anho);
+		fechaHoraRecaudacion.setFechaRecaudacion(fecha);
+		fechaHoraRecaudacion.setHoraRecaudacion("000000");
+		liquidacion.setFechaHoraRecaudacion(fechaHoraRecaudacion);
+		
+
+		Errores errores = new Errores();
+		Error error = new Error();
+		error.setCodigoErr("A9999");
+		error.setDescripcion("Liquidación, no inciada");
+		errores.getError().add(error);
+		
+		liquidacion.setErrores(errores);
+		
+		respuesta.getLiquidacion().add(liquidacion);
+		
+		
+		return respuesta;
+		
+		
+	}
+
 	private static Collection<String> findCCCs(String domain , int domainId, java.sql.Date month, Collection<String> cccs) {
 		Settings settings = new Settings();
 		settings.setRenderSchema(false);
