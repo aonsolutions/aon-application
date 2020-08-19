@@ -253,6 +253,7 @@ public class SecurityDAO {
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
 			.set(USER.DOMAIN, user.getDomain())
 			.set(USER.AUTH, user.getAuth())
+			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.execute();
 		
 		return user.setId(id);

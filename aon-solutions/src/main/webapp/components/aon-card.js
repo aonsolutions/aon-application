@@ -2,6 +2,10 @@
 
 	class AonCard extends HTMLElement {
 
+		static get observedAttributes() {
+			return ['visible'];
+		}
+
 		get id() {
 			return this.getAttribute('id');
 		}
@@ -18,13 +22,31 @@
 			this.setAttribute('title', title);
 		}
 
+		get visible() {
+			return this.getAttribute('visible');
+		}
+
+		set visible(visible) {
+			this.setAttribute('visible', visible);
+		}
+
+		attributeChangedCallback(name, oldValue, newValue) {
+			if('visible' === name){
+				if(this.getAttribute('visible') != undefined && 'false' == this.getAttribute('visible')){
+					this.style.display = 'none';
+				} else {
+					this.style.display = 'block';
+				}
+			}
+		}
+
 		constructor () {
 			super();
 		}
 
 		connectedCallback () {
 			this.appendChild(this.build());
-		}
+		}s
 
 		build() {
 			let div = document.createElement('div');
@@ -49,6 +71,10 @@
 			let div2 = document.createElement('div');
 			div2.innerHTML = content;
 			div.appendChild(div2);
+		}
+
+		setVisible(visible) {
+			this.setAttribute('visible', visible)
 		}
 	}
 

@@ -189,23 +189,6 @@ class AonConfiguration extends HTMLElement {
 					this.buildContent(id);
 				});
 		});
-
-		let addButton = document.getElementById('aonConfigurationToolbarAddButton');
-		addButton.addEventListener('click', () => {
-			let id = this.getAttribute('option');
-			if('aonConfigurationPersonal' === id){
-
-			} else if('aonConfigurationGeneral' === id ) {
-
-			} else if('aonConfigurationUser' === id) {
-				this.buildCreateUser();
-			} else if('aonConfigurationCompany' === id ) {
-
-			} else if('aonConfigurationStore' === id) {
-
-			}
-		});
-
 	}
 
 	actualize() {
@@ -226,6 +209,9 @@ class AonConfiguration extends HTMLElement {
 	}
 
 	buildContent(id) {
+		let toolbar = document.getElementById('aonConfiguration');
+		toolbar.removeButtons();
+
 		this.setAttribute('option', id);
 		if('aonConfigurationPersonal' === id){
 
@@ -286,21 +272,32 @@ class AonConfiguration extends HTMLElement {
 	}
 
 	buildUser() {
+		let toolbar = document.getElementById('aonConfiguration');
+		toolbar.addButton('aonConfigurationUserShareButton', 'share');
+		toolbar.addButton('aonConfigurationUserAddButton', 'add');
+
+		let shareButton = document.getElementById('aonConfigurationUserShareButton');
+		shareButton.addEventListener('click', () => {
+			this.buildCreateUser(true);
+		});
+
+		let addButton = document.getElementById('aonConfigurationUserAddButton');
+		addButton.addEventListener('click', () => {
+			this.buildCreateUser(false);
+		});
+
 		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "block";
 		content.innerHTML = '<aon-user-list> </aon-user-list>' ;
 	}
 
-	buildCreateUser() {
+	buildCreateUser(share) {
 		let content = document.getElementById('aonConfigurationContent');
 		content.innerHTML = '<aon-user id="aonUserCreate" ><aon-user>';
 		let aonUser = document.getElementById('aonUserCreate');
 		aonUser.style.display = "flex";
 		aonUser.style.width = "100%";
-		aonUser.setAttribute('user', JSON.stringify({}));
-		getDomainApps().then(apps => {
-			aonUser.setAttribute('apps', JSON.stringify(apps));
-		});
+		if(share)	aonUser.setAttribute('share', share);
 	}
 
 	buildStore() {

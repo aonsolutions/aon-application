@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -232,5 +233,16 @@ public class Utils {
 		String hashEncoding="BASE64";
 	    String passwordHash = Util.createPasswordHash(hashAlgorithm, hashEncoding, null, username, password);
 	    return passwordHash;
+	}
+    
+	public static boolean isEmail(String email) {
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+ 
+                "[a-zA-Z0-9_+&*-]+)*@" + 
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" + 
+                "A-Z]{2,7}$";
+		Pattern pat = Pattern.compile(emailRegex); 
+		if (email == null) 
+			return false; 
+		return pat.matcher(email).matches();
 	}
 }

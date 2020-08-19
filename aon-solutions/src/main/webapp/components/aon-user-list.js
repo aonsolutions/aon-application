@@ -83,9 +83,6 @@ class AonUserList extends HTMLElement {
 				aonUser.style.display = "flex";
 				aonUser.style.width = "100%";
 				aonUser.setAttribute('user', JSON.stringify(user));
-				getDomainApps().then(apps => {
-					aonUser.setAttribute('apps', JSON.stringify(apps));
-				});
 			})
 		}
 

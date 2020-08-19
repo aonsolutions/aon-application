@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,7 @@ public class UserServlet extends HttpServlet{
 				JSONObject json = getUserApps(domain, r);
 				if(r.getAuth() != null) {
 					Auth auth = AON_SOLUTIONS.getAuth(domainName, domainId, r.getAuth());
-					if(auth.getEmail() != null) {
+					if(auth.getEmail() == null) {
 						auth = AON_SOLUTIONS.getAuth(r.getAuth());
 					}
 					json.put("id", r.getId());
@@ -90,6 +91,39 @@ public class UserServlet extends HttpServlet{
 				}
 			});
 //			AonApp.aonValues().forEach(app -> userAppRoles.put(app.name(), AonRole.ADMIN));
+		} else if(roles.stream().count() == 0) {
+			User usr = AON.getUser(domain.getName(), user.getDomain(), user.getLogin());
+			for(Integer i = 0; i < usr.getUserRoles().length; i++) {				
+				com.esferalia.aon.occam.api.model.type.AonRole aonRole = usr.getUserRoles()[i];
+				if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER.equals(aonRole)) {
+					userAppRoles.put(AonApp.ACCOUNTING.name(), AonRole.ADMIN);
+					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ADMIN);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING.equals(aonRole)) {
+					userAppRoles.put(AonApp.ACCOUNTING.name(), AonRole.GUEST);
+					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.GUEST);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER.equals(aonRole)) {
+					userAppRoles.put(AonApp.HELPDESK.name(), AonRole.ADMIN);
+					setUserAppRole(domain, user, AonApp.HELPDESK, AonRole.ADMIN);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER.equals(aonRole)) {
+					userAppRoles.put(AonApp.HELPDESK.name(), AonRole.GUEST);
+					setUserAppRole(domain, user, AonApp.HELPDESK, AonRole.GUEST);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER.equals(aonRole)) {
+					userAppRoles.put(AonApp.DOCUMENTAL.name(), AonRole.ADMIN);
+					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.ADMIN);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT.equals(aonRole)) {
+					userAppRoles.put(AonApp.DOCUMENTAL.name(), AonRole.GUEST);
+					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.GUEST);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL.equals(aonRole)) {
+					userAppRoles.put(AonApp.FISCAL.name(), AonRole.ADMIN);
+					setUserAppRole(domain, user, AonApp.FISCAL, AonRole.ADMIN);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL.equals(aonRole)) {
+					userAppRoles.put(AonApp.PAYROLL.name(), AonRole.ADMIN);
+					setUserAppRole(domain, user, AonApp.PAYROLL, AonRole.ADMIN);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN.equals(aonRole)) {
+					admin = true;
+					setUserAppRole(domain, user, null, AonRole.ADMIN);
+				}		
+			}
 		} else {
 			roles.stream().forEach(uar -> userAppRoles.put(uar.getApp().name(), uar.getRole()));
 		}
@@ -120,6 +154,25 @@ public class UserServlet extends HttpServlet{
 		}
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, json, new JSONObject());
+	}
+	
+	private void setUserAppRole(Domain domain, User user, AonApp app, AonRole role){
+		UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
+			f.getDomainProperty().eq(domain.getId())
+				.and(f.getUserIdProperty().eq(user.getId()))
+				.and((app != null ? f.getAppProperty().eq(app.value()): f.getAppProperty().eq((byte) -1))))
+			.findFirst().orElse(new UserAppRole());
+		if(uar.getId() == null) {
+			uar = new UserAppRole();
+			uar.setApp(app)
+				.setDomain(domain.getId())
+				.setRole(role)
+				.setUser(user.getId());
+			uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
+		} else {
+			uar.setRole(role);
+			AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
+		}
 	}
 	
 	private JSONObject setUserAppRole(JSONObject json){
@@ -161,54 +214,79 @@ public class UserServlet extends HttpServlet{
 	}
 	
 	private JSONObject setUser(Domain domain, JSONObject json) {
-		String email = json.optString("email");
-		Integer pos = email.indexOf("@");
-		String login = email.substring(0, pos);
-		Auth auth = AON_SOLUTIONS.getAuth(email);
-		if(auth.getUuid() == null) {
-			String pass = Utils.createPasswordHash(email, login);
-			auth.setEmail(email)
-				.setPassword(pass)
-				.setName(json.optString("name"))
-				.setSurname(json.optString("surname"))
-				.setDocument(json.optString("document"))
-				.setPhone(json.optString("phone"));
-			auth = AON_SOLUTIONS.insertAuth(domain.getName(), domain.getId(), auth);
-		} else {
-			if(json.opt("document") != null) auth.setDocument(json.getString("document"));
-			if(json.opt("phone") != null) auth.setPhone(json.getString("phone"));
-			if(json.opt("name") != null) auth.setName(json.getString("name"));
-			if(json.opt("surname") != null) auth.setSurname(json.getString("surname"));
-			AON_SOLUTIONS.updateAuth(auth);
-		}
-		User user;
-		if(json.opt("id") != null) {
-			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(json.getInt("id")));
-		} else {
-			byte[] a = auth.getAuth();
-			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(a));
-		}
-		if(user == null || user.getId() == null) {
-			user.setAuth(auth.getAuth())
-				.setActive(true)
-				.setDomain(domain.getId())
-				.setLogin(login)
-				.setName(json.opt("name") != null ? json.getString("name") : login)
-				.setShared(json.optBoolean("shared"));
-			user = AON.insertUser(domain.getName(), domain.getId(), "", user);
-		} else if(user.getAuth() == null) {
-			AON_SOLUTIONS.assignAuthToUser(domain.getName(), domain.getId(), user, auth.getAuth());
-		}
-
 		JSONObject js = new JSONObject();
-		js.put("id", user.getId());
-		js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
-		js.put("uuid", auth.getUuid());
-		js.put("name", auth.getName() != null ? auth.getName() : user.getName());
-		js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
-		js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
-		js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+		String email = json.optString("email");
+		String login = ramdonLogin();
+		if(Utils.isEmail(email)) {
+			Auth auth = AON_SOLUTIONS.getAuth(email);
+			if(auth.getUuid() == null) {
+				auth = createAuth(domain, json, login);
+			} else updateAuth(auth, json);
+			User user;
+			if(json.opt("id") != null) {
+				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(json.getInt("id")));
+			} else {
+				byte[] a = auth.getAuth();
+				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(a));
+			}
+			if(auth.getAuth() != null) {
+				if(user == null || user.getId() == null) {
+					createUser(domain, json, login, auth.getAuth());
+				} else AON_SOLUTIONS.assignAuthToUser(domain.getName(), domain.getId(), user, auth.getAuth());
+
+				js.put("id", user.getId());
+				js.put("email", auth.getEmail() != null ? auth.getEmail() : "");
+				js.put("uuid", auth.getUuid());
+				js.put("name", auth.getName() != null ? auth.getName() : user.getName());
+				js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
+				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
+				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+
+				JSONObject apps = getUserApps(domain, user);
+				js.put("admin", apps.optBoolean("admin"));
+				js.put("apps", apps.optJSONObject("apps"));
+			}
+		}
 		return js;
+	}
+	
+	private Auth createAuth(Domain domain, JSONObject json, String login) {
+		String pass = Utils.createPasswordHash(json.optString("email"), login);
+		Auth auth = new Auth()
+			.setEmail(json.optString("email"))
+			.setPassword(pass)
+			.setName(json.optString("name"))
+			.setSurname(json.optString("surname"))
+			.setDocument(json.optString("document"))
+			.setPhone(json.optString("phone"));
+		auth = AON_SOLUTIONS.insertAuth(domain.getName(), domain.getId(), auth);
+		return new Auth();
+	}
+	
+	private Auth updateAuth(Auth auth, JSONObject json) {
+		if(json.opt("document") != null) auth.setDocument(json.getString("document"));
+		if(json.opt("phone") != null) auth.setPhone(json.getString("phone"));
+		if(json.opt("name") != null) auth.setName(json.getString("name"));
+		if(json.opt("surname") != null) auth.setSurname(json.getString("surname"));
+		
+		return AON_SOLUTIONS.updateAuth(auth);
+	}
+	
+	private User createUser(Domain domain, JSONObject json, String login, byte[] auth) {
+		User user = new User()
+			.setAuth(auth)
+			.setActive(true)
+			.setDomain(domain.getId())
+			.setLogin(login)
+			.setName(json.opt("name") != null ? json.getString("name") : login)
+			.setShared(json.optBoolean("shared"));
+		return AON.insertUser(domain.getName(), domain.getId(), "", user);
+	}
+	
+	private String ramdonLogin() {
+		Random rnd = new Random();
+		Integer i = rnd.nextInt(100000000-10000000+1)+10000000;
+		return i.toString();	
 	}
 	
 	private JSONObject userToJSON(User user, JSONObject json) {
@@ -218,5 +296,6 @@ public class UserServlet extends HttpServlet{
 		if(json.opt("email") == null)
 			json.put("email", "");
 		return json;
-	}
+	}	
+	
 }

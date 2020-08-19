@@ -44,7 +44,7 @@ class AonUser extends HTMLElement {
 			let table = document.getElementById('aonUserRoleTable');
 			table.appendChild(this.buildAppSelect(undefined));
 			for(let key in apps){
-				if(apps[key]) table.appendChild(this.buildAppSelect(this.getApp(key)));
+					if(apps[key]) table.appendChild(this.buildAppSelect(this.getApp(key)));
 			}
 			componentHandler.upgradeAllRegistered();
 		}
@@ -65,15 +65,27 @@ class AonUser extends HTMLElement {
 	initUser() {
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 		let aonUserName = document.getElementById('aonConfigurationUserCardName');
+		aonUserName.setVisible(!this.isNew());
 		aonUserName.setAttribute('value', user && user.name ? user.name : '');
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
+		aonUserSurname.setVisible(!this.isNew());
 		aonUserSurname.setAttribute('value', user && user.surname ? user.surname : '');
 		let aonUserDocument = document.getElementById('aonConfigurationUserCardDocument');
+		aonUserDocument.setVisible(!this.isNew());
 		aonUserDocument.setAttribute('value', user && user.document ? user.document : '');
 		let aonUserPhone = document.getElementById('aonConfigurationUserCardPhone');
+		aonUserPhone.setVisible(!this.isNew());
 		aonUserPhone.setAttribute('value', user && user.phone ? user.phone : '');
 		let aonUserEmail = document.getElementById('aonConfigurationUserCardEmail');
 		aonUserEmail.setAttribute('value', user && user.email ? user.email : '');
+
+		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
+		card2.setVisible(!this.isNew());
+		if(user && !this.hasAttribute('apps')) {
+			getDomainApps().then(apps => {
+				this.setAttribute('apps', JSON.stringify(apps));
+			});
+		}
 	}
 
 	build() {
@@ -98,16 +110,8 @@ class AonUser extends HTMLElement {
 
 		`);
 
-		let email = document.getElementById('aonConfigurationUserCardEmail');
-		email.onChange(() => {
-			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
-			user.email = email.getAttribute('value');
-			setUser(user).then(r => {
-				this.setAttribute('user', JSON.stringify(r));
-			});
-		});
-
 		let name = document.getElementById('aonConfigurationUserCardName');
+		name.setVisible(!this.isNew());
 		name.onChange(() => {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 			user.name = name.getAttribute('value');
@@ -117,6 +121,7 @@ class AonUser extends HTMLElement {
 		});
 
 		let surname = document.getElementById('aonConfigurationUserCardSurname');
+		surname.setVisible(!this.isNew());
 		surname.onChange(() => {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 			user.surname= surname.getAttribute('value');
@@ -126,6 +131,7 @@ class AonUser extends HTMLElement {
 		});
 
 		let doc = document.getElementById('aonConfigurationUserCardDocument');
+		doc.setVisible(!this.isNew());
 		doc.onChange(() => {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 			user.document= doc.getAttribute('value');
@@ -135,6 +141,7 @@ class AonUser extends HTMLElement {
 		});
 
 		let phone = document.getElementById('aonConfigurationUserCardPhone');
+		phone.setVisible(!this.isNew());
 		phone.onChange(() => {
 			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
 			user.phone= phone.getAttribute('value');
@@ -144,7 +151,18 @@ class AonUser extends HTMLElement {
 			});
 		});
 
+		let email = document.getElementById('aonConfigurationUserCardEmail');
+		email.onChange(() => {
+			let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : {};
+			user.email = email.getAttribute('value');
+			user.share = this.hasAttribute('share');
+			setUser(user).then(r => {
+				this.setAttribute('user', JSON.stringify(r));
+			});
+		});
+
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
+		card2.setVisible(!this.isNew());
 		let cardDiv2 = document.getElementById('aonConfigurationUserSecurityCard-div');
 		cardDiv2.style.width = '500px';
 
@@ -232,6 +250,11 @@ class AonUser extends HTMLElement {
 		return tr;
 	}
 
+	isNew() {
+		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		return user === undefined;
+	}
+
 	getApp(app) {
 		switch(app.toLowerCase()){
 			case Apps.INVOICE.app:
@@ -250,6 +273,8 @@ class AonUser extends HTMLElement {
 				return Apps.OCR;
 			case Apps.AIO.app:
 				return Apps.AIO;
+			case Apps.TOOLS.app:
+				return Apps.TOOLS;
 			case Apps.SELFCONTA.app:
 				return Apps.SELFCONTA;
 			case Apps.SALTRA.app:

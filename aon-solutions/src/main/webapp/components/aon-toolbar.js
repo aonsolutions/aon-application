@@ -63,13 +63,22 @@ import './aon-icon-button.js';
 			toolSection.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-tool-section');
 			toolSection.className = "aonToolbarSection aonToolbarSectionEnd";
 
-			let addbutton = '<aon-icon-button id="' + header.getAttribute('id')
-				+ 'AddButton" icon="add"> </aon-icon-button>';
-			toolSection.innerHTML = addbutton;
-
 			header.appendChild(toolSection);
 
 		 	return header;
+		}
+
+		addButton(id, icon) {
+			let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
+			let span = document.createElement('span');
+			span.innerHTML= button;
+			let toolSection = document.getElementById(this.getAttribute('id') + 'aon-toolbar-tool-section');
+			toolSection.appendChild(span);
+		}
+
+		removeButtons() {
+			let toolSection = document.getElementById(this.getAttribute('id') + 'aon-toolbar-tool-section');
+			toolSection.innerHTML = '';
 		}
 	}
 

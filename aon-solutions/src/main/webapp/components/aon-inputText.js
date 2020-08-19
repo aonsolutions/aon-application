@@ -130,6 +130,14 @@
 			let input = document.getElementById(this.getAttribute('id') + 'Text');
 			input.addEventListener('change', fn);
 		}
+
+		setVisible(visible){
+			this.setAttribute('visible', visible);
+		}
+
+		setDisabled(disabled){
+			this.setAttribute('readonly', disabled);
+		}
 	}
 
 	window.customElements.define('aon-input-text',  AonInputText);
