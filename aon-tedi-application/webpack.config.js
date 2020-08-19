@@ -2,6 +2,7 @@
 // Import path for resolving file paths
 var path = require('path');
 
+
 const serverConfig = {
   // Specify the entry point for our app.
   entry: [
@@ -36,4 +37,25 @@ const clientConfig = {
   //…
 };
 
-module.exports = [clientConfig]
+const graalvmConfig = {
+  node: {
+    fs: "empty",
+    tls: "empty",
+    net: "empty",
+    child_process: "empty"
+  },
+  // Specify the entry point for our app.
+  entry: [
+    path.join(__dirname, 'lib/graalvm.js')
+  ],
+  mode : "development",  
+  target: 'web', // <=== can be omitted as default is 'web'
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'tedi.js',
+    library: 'tedi',
+  }
+  //…
+};
+
+module.exports = [graalvmConfig]

@@ -9,6 +9,8 @@
 -------------------------------------------------------------------
 */
 
+import { Nif } from './TediNif';
+
 export enum InvoiceType {
   EMITIDA = 'EMITIDA',
   RECIBIDA = 'RECIBIDA',
@@ -332,6 +334,7 @@ export interface AutoMLInvoiceTables {
 }
 
 export interface InsightInvoice {
+  nifs: Nif[];
   dates: Date[];
   amounts: number[];
   references: string[];

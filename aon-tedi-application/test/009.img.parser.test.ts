@@ -324,7 +324,7 @@ describe('TEDI IMG PARSER TESTs', () => {
 			expect(invoice).not.to.be.undefined;
 			// expect(invoice).to.has.property('rdocument', 'A62581798');
 
-			expect(invoice.total).to.be.eq(28.90);
+			expect(invoice.total).to.be.eq(28.9);
 			expect(invoice.taxes).to.have.deep.members([
 				{
 					tax: TaxType.IVA,

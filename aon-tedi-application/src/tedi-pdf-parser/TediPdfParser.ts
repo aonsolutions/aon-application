@@ -105,7 +105,6 @@ export class TediPdfParser {
         switchMap((content: Buffer) => {
           info = info || { content: '', contentType: 'application/pdf' };
           info.content = content;
-
           return TediPdfParser.predict(info);
         }),
       );

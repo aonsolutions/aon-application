@@ -1,7 +1,7 @@
 import { PDFExtractPage, PDFExtractResult, PDFExtractText } from 'pdf.js-extract';
 import { Observable, Observer } from 'rxjs';
 import { Company, Invoice, InvoiceStatus, InvoiceTax, InvoiceType, Nif, NifType, TaxType, TediImportInvoicesInfo } from '../../tedi-ewok/TediEwok';
-import { TediRegistry } from '../../tedi/registry';
+// import { TediRegistry } from '../../tedi/registry';
 
 export class AutoML {
   public static predict(info: TediImportInvoicesInfo, result: PDFExtractResult): Observable<Invoice> {
@@ -31,6 +31,7 @@ export class AutoML {
         });
 
       invoice.insight = {
+        nifs,
         dates: AutoML.getDates(result),
         amounts: AutoML.getAmounts(result),
         taxTypes: AutoML.getTaxTypes(result),
@@ -46,18 +47,21 @@ export class AutoML {
         document: senders[0] && senders[0].str,
       };
 
-      TediRegistry.getRegistries(senders.map(s => s.str))
-        .then(registries => {
-          registries.forEach(registry => {
-            invoice.sender = registry;
-          });
-          observer.next(invoice);
-          observer.complete();
-        })
-        .catch(reason => {
-          observer.next(invoice);
-          observer.complete();
-        });
+      // TediRegistry.getRegistries(senders.map(s => s.str))
+      //   .then(registries => {
+      //     registries.forEach(registry => {
+      //       invoice.sender = registry;
+      //     });
+      //     observer.next(invoice);
+      //     observer.complete();
+      //   })
+      //   .catch(reason => {
+      //     observer.next(invoice);
+      //     observer.complete();
+      //   });
+
+      observer.next(invoice);
+      observer.complete();
 
       // const pages: number = Math.max(result.pages.length, 5);
     });

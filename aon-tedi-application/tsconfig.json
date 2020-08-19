@@ -60,8 +60,9 @@
   },
   "compileOnSave": true,
   "include": [
-    "src/lambda.ts",
-    "src/browser.ts",
+    // "src/lambda.ts",
+    // "src/browser.ts",
+    "src/graalvm.ts",
     "src/tedi-ewok",
     "src/tedi-pdf-parser",
     "src/tedi-img-parser",
