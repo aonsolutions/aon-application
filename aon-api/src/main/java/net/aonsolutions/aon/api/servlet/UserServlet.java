@@ -119,6 +119,9 @@ public class UserServlet extends HttpServlet{
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL.equals(aonRole)) {
 					userAppRoles.put(AonApp.PAYROLL.name(), AonRole.ADMIN);
 					setUserAppRole(domain, user, AonApp.PAYROLL, AonRole.ADMIN);
+				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE.equals(aonRole)) {
+					userAppRoles.put(AonApp.INVOICE.name(), AonRole.ADMIN);
+					setUserAppRole(domain, user, AonApp.INVOICE, AonRole.ADMIN);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN.equals(aonRole)) {
 					admin = true;
 					setUserAppRole(domain, user, null, AonRole.ADMIN);
@@ -222,13 +225,13 @@ public class UserServlet extends HttpServlet{
 			if(auth.getUuid() == null) {
 				auth = createAuth(domain, json, login);
 			} else updateAuth(auth, json);
-			User user;
-			if(json.opt("id") != null) {
+			
+			byte[] a = auth.getAuth();
+			User user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(a));
+			if((user == null || user.getId() == null) && json.opt("id") != null) {
 				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(json.getInt("id")));
-			} else {
-				byte[] a = auth.getAuth();
-				user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getAuthProperty().eq(a));
-			}
+			} 
+			
 			if(auth.getAuth() != null) {
 				if(user == null || user.getId() == null) {
 					createUser(domain, json, login, auth.getAuth());
@@ -260,7 +263,7 @@ public class UserServlet extends HttpServlet{
 			.setDocument(json.optString("document"))
 			.setPhone(json.optString("phone"));
 		auth = AON_SOLUTIONS.insertAuth(domain.getName(), domain.getId(), auth);
-		return new Auth();
+		return auth;
 	}
 	
 	private Auth updateAuth(Auth auth, JSONObject json) {
