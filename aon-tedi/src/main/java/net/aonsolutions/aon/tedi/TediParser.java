@@ -1,6 +1,8 @@
 package net.aonsolutions.aon.tedi;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,7 +52,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import es.translogia.tedi.ewok.TediAddress;
 import es.translogia.tedi.ewok.TediComments;
 import es.translogia.tedi.ewok.TediFinance;
-import es.translogia.tedi.ewok.TediInsightInvoice;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceDetail;
 import es.translogia.tedi.ewok.TediInvoiceTax;
@@ -437,7 +438,8 @@ public class TediParser {
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setInvoice(new Invoice());
 		
-		
+		checkSenderAndReceiver(aonCtx, tedi);
+		setSender(aonCtx, tedi);
 		setReceiver(aonCtx, tedi);
 		
 		// TODO
@@ -494,6 +496,64 @@ public class TediParser {
 		
 	}
 
+	private static void setSender(AonConfiguration aonCtx, TediInvoice tedi) {
+		if ( tedi.getSender() != null )
+			return ;
+		if ( tedi.getInsight() == null )
+			return;
+		if ( tedi.getInsight().getNifs() == null )
+			return;
+		if ( tedi.getInsight().getNifs().length == 0 )
+			return;
+		
+		Company company = aonCtx.getCompany();
+		TediNif[] nifs = tedi.getInsight().getNifs();
+		
+		if ( nifs.length == 1  ) {
+			tedi.setSender(newRegistry(nifs[0].getStr()));
+			return;
+		}
+		
+		for (TediNif nif : nifs) {
+			if ( !AonStringUtils.equalsIgnoreCase(nif.getStr(), company.getDocument()) ) {
+				tedi.setSender(newRegistry(nif.getStr()));
+			}
+		}
+		
+		
+	}
+
+	private static void checkSenderAndReceiver(AonConfiguration aonCtx, TediInvoice tedi) {
+		Company company = aonCtx.getCompany();
+		
+		List<TediRegistry> registries =  new ArrayList<TediRegistry>();
+		if ( tedi.getSender() != null )
+			registries.add( tedi.getSender());
+		if ( tedi.getReceiver() != null )
+			registries.add(tedi.getReceiver());
+		
+		tedi.setSender(null);
+		tedi.setReceiver(null);
+		
+		registries.stream()
+		.filter(r -> AonStringUtils.equalsIgnoreCase(r.getDocument(), company.getDocument()))
+		.findFirst().ifPresent(r -> tedi.setReceiver(r));
+		;
+		
+		registries.stream()
+		.filter(r -> !AonStringUtils.equalsIgnoreCase(r.getDocument(), company.getDocument()))
+		.findFirst().ifPresent(r -> tedi.setSender(r));
+		;
+		
+	}
+
+	private static TediRegistry newRegistry(String document) {
+		TediRegistry registry = new TediRegistry();
+		registry.setDocument(document);
+		registry.setDocumentCountry(Country.ES.getIso2());
+		return registry;
+	}
+	
 	private static TediRegistry newRegistry(Company company) {
 		TediRegistry registry = new TediRegistry();
 		registry.setName(company.getName());
