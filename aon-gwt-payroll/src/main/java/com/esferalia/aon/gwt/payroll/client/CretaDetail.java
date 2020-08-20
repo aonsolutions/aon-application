@@ -873,8 +873,8 @@ public abstract class CretaDetail extends Composite {
 			
 			try {
 				
-				Date from = getDate(jsFile.getFrom());
-				if ( from.before(getPrevMonth())) 
+				Date date = getDate(jsFile.getDate());
+				if ( date.before(getNextMonth())) 
 					return false;
 			
 				String type = jsFile.getType();
@@ -1054,6 +1054,7 @@ public abstract class CretaDetail extends Composite {
 	}
 	
 	private static Date getDate ( String text ) {
+		text = AonStringUtils.substring(text, 0, 7);
 		return DateTimeFormat.getFormat("yyyy-MM").parse(text);
 	}
 	
