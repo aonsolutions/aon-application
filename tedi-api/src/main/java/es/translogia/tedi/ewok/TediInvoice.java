@@ -29,6 +29,8 @@ public class TediInvoice implements Serializable{
 	private String source;
 	private LinkedList<TediComments> comments;
 	private TediEmailInfo email;
+	private TediInsightInvoice insight;
+	
 
 	public String getUuid() {
 		return uuid;
@@ -231,6 +233,15 @@ public class TediInvoice implements Serializable{
 		} else {
 			setSender(registry);
 		}
+		return this;
+	}
+
+	public TediInsightInvoice getInsight() {
+		return insight;
+	}
+
+	public TediInvoice setInsight(TediInsightInvoice insight) {
+		this.insight = insight;
 		return this;
 	}
 

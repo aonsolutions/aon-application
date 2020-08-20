@@ -26,6 +26,7 @@ public class Tedi extends TediRequest {
 	String GET_VERIFIED_INVOICES;
 	String GET_COUNT_INVOICES;
 	String PARSE_INVOICE;
+	String PARSE_INVOICE_URL;
 	
 	String COMPANY_BASE;
 	String GET_COMPANIES_BY_COMPANY;
@@ -68,6 +69,7 @@ public class Tedi extends TediRequest {
 		GET_COUNT_INVOICES = INVOICE_BASE + "/count/{0}/{1}"; // '/cout/:company/:status'
 		REGISTRY_BASE = TEDI_URL	+ "/registry/{0}";
 		PARSE_INVOICE = TEDI_URL + "/parse/{0}";
+		PARSE_INVOICE_URL = "https://55evus1cy8.execute-api.eu-west-1.amazonaws.com/default/invoice/parse";
 	}
 
 	private Tedi(String token,boolean snapshot) {
@@ -139,9 +141,8 @@ public class Tedi extends TediRequest {
 	}
 
 	public TediInvoice parseInvoice(String company, String fileName, InputStream input) throws TediException {
-		String url = "https://55evus1cy8.execute-api.eu-west-1.amazonaws.com/default/invoice/parse"; //MessageFormat.format(PARSE_INVOICE,company);
 //		TediResponse tediResponse = postMultipartFile(url, getToken(), fileName, input);
-		TediResponse tediResponse = postFile(url, getToken(), fileName, input);
+		TediResponse tediResponse = postFile(PARSE_INVOICE_URL, getToken(), fileName, input);
 		if (tediResponse.ok()) {
 			
 //			JSONArray array = tediResponse.getJSONArray();

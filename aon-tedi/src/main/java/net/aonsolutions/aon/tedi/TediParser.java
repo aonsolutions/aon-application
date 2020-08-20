@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
@@ -46,12 +47,16 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import es.translogia.tedi.ewok.TediAddress;
 import es.translogia.tedi.ewok.TediComments;
 import es.translogia.tedi.ewok.TediFinance;
+import es.translogia.tedi.ewok.TediInsightInvoice;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceDetail;
 import es.translogia.tedi.ewok.TediInvoiceTax;
+import es.translogia.tedi.ewok.TediNif;
 import es.translogia.tedi.ewok.TediPayMethod;
+import es.translogia.tedi.ewok.TediRegistry;
 import es.translogia.tedi.ewok.TediTaxType;
 import net.aonsolutions.aon.tedi.visitors.InvoiceTypeVisitor;
 
@@ -433,6 +438,8 @@ public class TediParser {
 		ai.setInvoice(new Invoice());
 		
 		
+		setReceiver(aonCtx, tedi);
+		
 		// TODO
 		ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 		// ----
@@ -456,6 +463,62 @@ public class TediParser {
 		// ----------
 		TediValidator.validateInvoice(ctx,result);
 		return result; 
+	}
+	
+	private static void setReceiver(AonConfiguration aonCtx, TediInvoice tedi) {
+		if ( tedi.getReceiver() != null )
+			return ;
+		if ( tedi.getInsight() == null )
+			return;
+		if ( tedi.getInsight().getNifs() == null )
+			return;
+		if ( tedi.getInsight().getNifs().length == 0 )
+			return;
+		
+		Company company = aonCtx.getCompany();
+		TediNif[] nifs = tedi.getInsight().getNifs();
+		
+		if ( nifs.length == 1  ) {
+			tedi.setReceiver(newRegistry(company));
+			tedi.setCompany(company.getName());
+			return;
+		}
+		
+		for (TediNif nif : nifs) {
+			if ( AonStringUtils.equalsIgnoreCase(nif.getStr(), company.getDocument()) ) {
+				tedi.setReceiver(newRegistry(company));
+				tedi.setCompany(company.getName());
+			}
+		}
+		
+		
+	}
+
+	private static TediRegistry newRegistry(Company company) {
+		TediRegistry registry = new TediRegistry();
+		registry.setName(company.getName());
+		registry.setDocument(company.getDocument());
+		if ( company.getDocumentCountry() != null )
+			registry.setDocumentCountry(company.getDocumentCountry().getIso2());
+		else 
+			registry.setDocumentCountry(Country.ES.getIso2());
+		
+		if ( company.getAddress() == null ) 
+			return registry;
+		
+		TediAddress address = new TediAddress();
+		address.setCity(company.getAddress().getCity());
+		address.setProvince(company.getAddress().getGeozoneName());
+		address.setAddress(company.getAddress().getFullAddress());
+		address.setPostalCode(company.getAddress().getZip());
+		registry.setAddress(address);
+		
+		if ( address.getCountry() == null )
+			return registry;
+		
+		address.setCountry(company.getAddress().getCountry().getIso2());		
+		
+		return registry;
 	}
 	
 	private static AccountEntry getEntryBase(AONContext ctx, AonConfiguration aonCtx,AccountingInvoice ai) {

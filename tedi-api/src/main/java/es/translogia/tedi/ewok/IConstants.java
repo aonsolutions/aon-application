@@ -3,6 +3,7 @@ package es.translogia.tedi.ewok;
 public interface IConstants {
 
 	String AMOUNT = "amount";
+	String AMOUNTS = "amounts";
 	String ACTIVE = "active";
 	String ADDRESS = "address";
 	String ALIAS = "alias";
@@ -17,6 +18,7 @@ public interface IConstants {
 	String CONTENT_TYPE = "content_type";
 	String COUNTRY = "country";
 	String DATE = "date";
+	String DATES = "dates";
 	String DESCRIPTION = "description";
 	String DETAILS = "details";
 	String DISCOUNT = "discount";
@@ -31,7 +33,9 @@ public interface IConstants {
 	String IBAN = "iban";
 	String ID = "id";
 	String INVESTMENT = "investment";
+	String INSIGHT = "insight";
 	String NAME = "name";
+	String NIFS = "nifs";
 	String NUMBER = "number";
 	String OLD_STATUS = "oldStatus";
 	String PAY_METHOD = "pay_method";
@@ -49,12 +53,14 @@ public interface IConstants {
 //	String RNAME = "rname";
 	String RECEIVER = "receiver";
 	String REFERENCE = "reference";
+	String REFERENCES = "references";
 	String SENDER = "sender";
 	String SERIES = "series";
 	String SOURCE = "source";
 	String SURCHARGE = "surcharge";
 	String SURCHARGE_QUOTA = "surcharge_quota";
 	String STATUS = "status";
+	String STR = "str";
 	String TAX = "tax";
 	String TAXES = "taxes";
 	String TOTAL = "total";

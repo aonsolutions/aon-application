@@ -7,10 +7,12 @@ import es.translogia.tedi.ewok.TediComments;
 import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediEmailInfo;
 import es.translogia.tedi.ewok.TediFinance;
+import es.translogia.tedi.ewok.TediInsightInvoice;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceDetail;
 import es.translogia.tedi.ewok.TediInvoiceFile;
 import es.translogia.tedi.ewok.TediInvoiceTax;
+import es.translogia.tedi.ewok.TediNif;
 import es.translogia.tedi.ewok.TediPlan;
 import es.translogia.tedi.ewok.TediRegistry;
 
@@ -124,5 +126,25 @@ public class FunctionalInterfaces {
 	@FunctionalInterface
 	public static interface ITediCommentsToJSON {
 		JSONObject to(TediComments t, JSONObject json);
+	}
+	
+	@FunctionalInterface
+	public static interface ITediInsightInvoiceFromJSON {
+		TediInsightInvoice from(TediInsightInvoice t, JSONObject json);
+	}
+
+	@FunctionalInterface
+	public static interface ITediInsightInvoiceToJSON {
+		JSONObject to(TediInsightInvoice t, JSONObject json);
+	}
+	
+	@FunctionalInterface
+	public static interface ITediNifFromJSON {
+		TediNif from(TediNif t, JSONObject json);
+	}
+
+	@FunctionalInterface
+	public static interface ITediNifToJSON {
+		JSONObject to(TediNif t, JSONObject json);
 	}
 }

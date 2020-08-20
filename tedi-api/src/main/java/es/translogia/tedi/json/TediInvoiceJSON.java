@@ -179,7 +179,18 @@ public enum TediInvoiceJSON {
 		(invoice, json) -> (invoice.getEmail() != null)
 			? json.put(IConstants.EMAIL, TediEmailInfoJSON.toJSON(invoice.getEmail()))
 			: json
-	);
+	),
+	INSIGHT(
+			(invoice, json) -> {
+				
+				JSONObject jsonInsight = json.optJSONObject(IConstants.INSIGHT);
+				return (jsonInsight != null) ? invoice.setInsight(TediInsightInvoiceJSON.fromJSON(jsonInsight)) : invoice;
+			}, 
+			(invoice, json) -> (invoice.getInsight() != null)
+			? json.put(IConstants.INSIGHT, TediInsightInvoiceJSON.toJSON(invoice.getInsight()))
+			: json
+	)	
+	;
 
 	private ITediInvoiceFromJSON fromJSON;
 	private ITediInvoiceToJSON toJSON;
@@ -198,12 +209,12 @@ public enum TediInvoiceJSON {
 	}
 
 	public static TediInvoice fromJSON(JSONObject json) {
-		TediInvoice emailInfo = new TediInvoice();
+		TediInvoice tediInvoice = new TediInvoice();
 		if (json != null) {
 			for (TediInvoiceJSON p : TediInvoiceJSON.values()) {
-				p.fromJSON.from(emailInfo, json);
+				p.fromJSON.from(tediInvoice, json);
 			}
 		}
-		return emailInfo;
+		return tediInvoice;
 	}
 }
