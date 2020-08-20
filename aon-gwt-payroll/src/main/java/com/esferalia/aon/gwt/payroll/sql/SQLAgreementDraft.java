@@ -1076,9 +1076,7 @@ public class SQLAgreementDraft {
 //				removeLevelData(conn, dbVariable.getId());
 //				continue;
 //			}
-			if(!dbVariable.getStartDate().equals(variable.getStartDate())) {
-				continue;
-			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
+			if(dbVariable.getId().equals(variable.getId()) && StringUtils.isBlank(variable.getExpression()) && dbVariable.getStartDate().equals(variable.getStartDate())){
 				removeData(conn, variable.getId());
 				continue;
 			} else if(dbVariable.getId().equals(variable.getId()) && StringUtils.isNotBlank(variable.getExpression()) && !dbVariable.getStartDate().equals(variable.getStartDate())) {
@@ -1089,6 +1087,8 @@ public class SQLAgreementDraft {
 				continue;
 			} else if(dbVariable.getStartDate().equals(variable.getStartDate()) && null != variable.getId()) {
 				updateData(conn, variable.getId(), variable.getStartDate());
+				continue;
+			} else if(!dbVariable.getStartDate().equals(variable.getStartDate())) {
 				continue;
 			}
 

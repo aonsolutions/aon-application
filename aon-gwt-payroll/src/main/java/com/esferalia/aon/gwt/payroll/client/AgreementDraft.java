@@ -578,7 +578,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					String text = event.getValue();
 					AgreementDraft.this.agreementDraftObject.addDraftCategories(level, text);
 					// TODO: really need to go server side.
-					isOnCategoryTab = true;
+//					isOnCategoryTab = true;
 					AgreementDraft.this.calculate(getNextFocusCallback());
 				}
 			});
@@ -1229,6 +1229,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		filterSearchTxtBox = new TextBox();
 		filterPattern = "";
 		
+		isOnCategoryTab = false;
+		
 	}
 	
 	// -------------------------------------------------------------------------
@@ -1387,33 +1389,47 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			@Override
 			public void onClick(ClickEvent event) {
 				if(button.isDown()){
-					// Put all buttons up
-					putAllToggleButtonsUp(readOnly);
-					
-					// Set toggleButton down
-					button.setDown(true);
-					
-					moreOptionsBtn.addStyleName(style.bgWhite());
-					
-					Integer selectedButtonPos = getSelectedButtonPos(button);
-					
-					Date clickedDate = datesList[selectedButtonPos];
-					Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
-					
-					isOnCategoryTab = false;
-					
-					// Calculate
-					agreementDraftObject.setStartDate(clickedDate);
-					agreementDraftObject.setEndDate(clickedDateEndDate);
-					agreementDraftObject.clearSalaryDraftTable();
-					calculate();
-				
+					changeTab(button, readOnly, moreOptionsBtn, datesList);
 				}
 			}
 
 		});
 		
 		return button;
+	}
+	
+	private void changeTab(ToggleButton button, boolean readOnly, Button moreOptionsBtn, Date[] datesList) {
+		agreementDraftObject.save(new CalculateCallback() {
+
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+			}
+
+			@Override
+			public void onCalculateSucces(AgreementDraftObject object) {
+				// Put all buttons up
+				putAllToggleButtonsUp(readOnly);
+				
+				// Set toggleButton down
+				button.setDown(true);
+				
+				moreOptionsBtn.addStyleName(style.bgWhite());
+				
+				Integer selectedButtonPos = getSelectedButtonPos(button);
+				
+				Date clickedDate = datesList[selectedButtonPos];
+				Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
+				
+				isOnCategoryTab = false;
+				
+				// Calculate
+				agreementDraftObject.setStartDate(clickedDate);
+				agreementDraftObject.setEndDate(clickedDateEndDate);
+				agreementDraftObject.clearSalaryDraftTable();
+				calculate();			}
+
+		});
+		
 	}
 	
 	private Button createModifyPeriodButton(Date date, Date previusDate, Date[] datesList, ToggleButton dateButton, PopupPanel moreOptionsPopUp) {
@@ -1476,40 +1492,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					@Override
 					public void onValueChange(ValueChangeEvent<Date> event) {
 						popup.hide();
-						
 						Date newDate = event.getValue();
-						
-						Date previusDate =  null;
-						
-						if(agreementDraftObject.getDatesWithChanges().size() > 0)
-							previusDate = agreementDraftObject.getDatesWithChanges().last();
-						
-						agreementDraftObject.addNewDatesWithChanges(newDate);
-						
-						Date endDate = getNextDateWithChanges(newDate);
-						
-						if(null != previusDate) {
-							for(String varName : agreementDraftObject.getVariables()) {
-								for(Level level : agreementDraftObject.getLevels()) {
-									Variable variable = agreementDraftObject.getVariable(level, varName);
-									if(variable != null && variable.getStartDate().equals(previusDate)) {
-										// Copy Variable and set Dates
-										Variable newVariable = copyVariable(variable);
-										newVariable.setStartDate(newDate);
-										
-										if(!newVariable.isImpicit())
-											agreementDraftObject.addDraftVariable(level, newVariable);
-									}
-								}
-							}
-						}
-
-						agreementDraftObject.setStartDate(newDate);
-						agreementDraftObject.setEndDate(endDate);
-						calculate();
+						createNewPeriod(newDate);
 					}
-
-					
 
 				});
 				
@@ -1528,6 +1513,52 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return moreButton;
 	}
 	
+	private void createNewPeriod(Date newDate) {
+		Date previusDate =  null;
+		
+		if(agreementDraftObject.getDatesWithChanges().size() > 0)
+			previusDate = agreementDraftObject.getDatesWithChanges().last();
+		
+		agreementDraftObject.addNewDatesWithChanges(newDate);
+		
+		Date endDate = getNextDateWithChanges(newDate);
+		
+		if(null != previusDate) {
+			for(String varName : agreementDraftObject.getVariables()) {
+				for(Level level : agreementDraftObject.getLevels()) {
+					Variable variable = agreementDraftObject.getVariable(level, varName);
+					if(variable != null && variable.getStartDate().equals(previusDate)) {
+						// Copy Variable and set Dates
+						Variable newVariable = copyVariable(variable);
+						newVariable.setStartDate(newDate);
+						
+						if(!newVariable.isImpicit())
+							agreementDraftObject.addDraftVariable(level, newVariable);
+					}
+				}
+			}
+		}
+
+		agreementDraftObject.setStartDate(newDate);
+		agreementDraftObject.setEndDate(endDate);
+//		calculate();
+		
+		calculate(new CalculateCallback() {
+
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+			}
+
+			@Override
+			public void onCalculateSucces(AgreementDraftObject object) {
+				acceptButton.click();
+			}
+
+		});
+		
+		
+	}
+	
 	// -------------------------------------------------------------------------
 	// 					INIT SALARY TAB PANEL (METHODS)
 	// -------------------------------------------------------------------------
@@ -1537,7 +1568,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			HorizontalPanel hPanel = (HorizontalPanel) salaryToggleButtonsPanel.getWidget(tabPos);
 			
 			ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-			toggleButton.setDown(true);
+			toggleButton.setValue(true, true);
+			
+//			toggleButton.setDown(true);
 			
 			if(!readOnly) {
 				Button moreOptionsBtn = (Button) hPanel.getWidget(1);
@@ -1689,7 +1722,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 						// Update actual variable to delete
 						variable.setStartDate(newDate);
 						
-						agreementDraftObject.addDraftVariable(level, variable);
+						if(!variable.isImpicit())
+							agreementDraftObject.addDraftVariable(level, variable);
 						
 					}
 				}
@@ -1698,7 +1732,22 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				
 				agreementDraftObject.setStartDate(newDate);
 				agreementDraftObject.setEndDate(endDate);
-				calculate();
+				
+//				calculate();
+				
+				calculate(new CalculateCallback() {
+
+					@Override
+					public void onCalculateFailure(Throwable throwable) {
+					}
+
+					@Override
+					public void onCalculateSucces(AgreementDraftObject object) {
+						acceptButton.click();
+					}
+
+				});
+				
 			}
 
 		});
@@ -1791,7 +1840,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		setDescription();
 
-		if ( agreementDraftObject.getDatesWithChanges().isEmpty() || isOnCategoryTab )
+		if ( agreementDraftObject.getDatesWithChanges().isEmpty() /*&& isOnCategoryTab*/ )
 			categoryButton.click();
 		else
 			createSalaryTable();
@@ -2076,7 +2125,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				if(toggleButton.isDown())
 					return false;
 			}
-			return true;
+			return false;
 		}
 	}
 
