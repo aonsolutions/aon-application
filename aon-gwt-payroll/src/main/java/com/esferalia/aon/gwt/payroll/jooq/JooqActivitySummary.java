@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -32,7 +33,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 public class JooqActivitySummary {
 
 	public static List<ActivitySummaryObject> getActivitySummary(
-			String domainName, boolean parentDomain, Integer domainId,
+			Integer userId, String domainName, boolean parentDomain, Integer domainId,
 			Date startDate, Date endDate, Boolean starts, Boolean ends,
 			Boolean salary, Boolean salaryExtra, Boolean salarySettle,
 			Boolean salaryOther, Boolean itCommonDisease,
@@ -50,7 +51,12 @@ public class JooqActivitySummary {
 				Map<Integer, ActivitySummaryObject> itMap = null;
 				if (parentDomain) {
 					try {
-						Integer[] childDomains = getChildDomainIDs(ctx, domainId);
+						Integer[] childDomains = null;
+						if(null != userId)
+							childDomains = getChildDomainIDs(ctx, domainId, userId);
+						else
+							childDomains = getChildDomainIDs(ctx, domainId, null);
+						
 						summaryMap = getSummaryEnterprise(childDomains,
 								domainId, domainName, startDate, endDate,
 								starts, ends);
@@ -90,12 +96,26 @@ public class JooqActivitySummary {
 		return new ArrayList<>();
 	}
 
-	public static Integer[] getChildDomainIDs(AONContext aonContext, Integer domain) throws SQLException {
-		return  aonContext.getDslContext()
-		.select()
-		.from(DOMAIN)
-		.where(DOMAIN.PARENT.eq(domain))
-		.fetchArray(DOMAIN.ID);
+	public static Integer[] getChildDomainIDs(AONContext aonContext, Integer domain, Integer userId) throws SQLException {
+		List<Integer> userScopes = aonContext.getDslContext()
+				.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+				.where(USER_SCOPE.USER_ID.eq(userId))
+				.fetch(USER_SCOPE.SCOPE);
+		
+		if(userScopes.isEmpty())
+			return  aonContext.getDslContext()
+					.select()
+					.from(DOMAIN)
+					.where(DOMAIN.PARENT.eq(domain))
+					.fetchArray(DOMAIN.ID);
+			
+		else
+			return  aonContext.getDslContext()
+					.select()
+					.from(DOMAIN)
+					.where(DOMAIN.PARENT.eq(domain))
+					.and(DOMAIN.SCOPE.in(userScopes))
+					.fetchArray(DOMAIN.ID);
 	}
 
 

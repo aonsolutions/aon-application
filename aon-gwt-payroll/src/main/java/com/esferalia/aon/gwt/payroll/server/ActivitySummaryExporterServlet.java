@@ -79,10 +79,11 @@ public class ActivitySummaryExporterServlet extends HttpServlet {
 		try {
 			String domainName = AonServletUtils.getDomainName(_domainId);
 			
+			
 			boolean isParentDomain = !NumberUtils.isNumber(_parentDomainId);
 
 			List<ActivitySummaryObject> list = JooqActivitySummary
-					.getActivitySummary(domainName, isParentDomain, NumberUtils
+					.getActivitySummary(null, domainName, isParentDomain, NumberUtils
 							.toInt(_domainId), startDate, endDate, new Boolean(
 							_starts), new Boolean(_ends), new Boolean(_salary),
 							new Boolean(_salaryExtra), new Boolean(_salarySettle),
