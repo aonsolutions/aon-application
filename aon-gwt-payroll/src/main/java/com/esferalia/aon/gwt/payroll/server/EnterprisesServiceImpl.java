@@ -48,6 +48,7 @@ import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -2061,6 +2062,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} 
+	}
+
+	@Override
+	public List<CCCInfo> getEnterprisesCCCInfo(String domain, String user, long findPeriodTime) {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
+			return JooqEnterprise.getEnterprisesCCCInfo(connection, userId, domainId, parentDomainId, findPeriodTime);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	

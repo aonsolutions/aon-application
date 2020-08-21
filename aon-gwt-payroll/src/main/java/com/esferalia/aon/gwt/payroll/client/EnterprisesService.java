@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -149,5 +150,7 @@ public interface EnterprisesService extends RemoteService {
 			String completeURL);
 
 	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
+
+	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 	
 }

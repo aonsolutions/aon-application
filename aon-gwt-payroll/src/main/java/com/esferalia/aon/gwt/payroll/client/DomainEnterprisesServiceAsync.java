@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -276,6 +277,10 @@ public class DomainEnterprisesServiceAsync {
 
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
+	}
+
+	public void getEnterprisesCCCInfo(long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback) {
+		enterprisesServiceAsync.getEnterprisesCCCInfo(getCurrentDomainName(), getCurrentUser(), findPeriodTime, asyncCallback);
 	}
 
 	

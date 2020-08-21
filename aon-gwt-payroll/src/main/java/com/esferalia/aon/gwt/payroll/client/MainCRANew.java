@@ -179,7 +179,7 @@ public class MainCRANew extends MainEntryPoint {
 		cccDataGrid.setAutoHeaderRefreshDisabled(true);
 		
 		// Set the message to display when the table is empty.
-		cccDataGrid.setEmptyTableWidget(new Label("No existen cuentas de cotizacion".toUpperCase()));
+		cccDataGrid.setEmptyTableWidget(new Label("No existen cuentas de cotizacion con nominas para este periodo".toUpperCase()));
 		
 		// Add a selection model so we can select cells.
 	    this.selectionCCCInfoModel = new MultiSelectionModel<CCCInfo>(CCCInfo.KEY_PROVIDER);
@@ -546,19 +546,27 @@ public class MainCRANew extends MainEntryPoint {
 	public void onModuleLoad(MainCRAObjectNew mainCRAObjectNew) {
 		this.mainCRAObjectNew = mainCRAObjectNew;
 		showCCCs();
-		this.mainCRAObjectNew.getEnterpriseCCCs(
+		
+		// Get first day of previus month
+		Date actualDate = new Date();
+		actualDate.setDate(1);
+		actualDate = DateUtils.addMonths2Date(actualDate, -1);
+		
+		Integer initialYear = actualDate.getYear();
+		Integer initialMonth = actualDate.getMonth();
+		
+		Date findPeriod = DateUtils.copyDateOnly(actualDate);
+		
+//		this.mainCRAObjectNew.getEnterpriseCCCs(
+		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
 				s -> {
 					clearSelectionModel();
 					initListBox();
 					initCCCsTable();
 					initCRATable();
 					
-					Integer year = new Date().getYear() + 1900;
-					Integer month = new Date().getMonth();
-					month--;
-					
-					setSelectedValueLB(this.year, year+"");
-					setSelectedValueLB(this.month, (-1 == month ? 12 : month)+"");
+					setSelectedValueLB(this.year, initialYear+"");
+					setSelectedValueLB(this.month, initialMonth+"");
 					
 					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
 					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
@@ -841,6 +849,60 @@ public class MainCRANew extends MainEntryPoint {
 		);
 	}
 	
+	@UiHandler("month")
+	public void onMonthChange(ChangeEvent event) {
+		showCCCs();
+		
+		Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
+		
+		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
+				s -> {
+					clearSelectionModel();
+					initListBox();
+					initCCCsTable();
+					initCRATable();
+					
+					setSelectedValueLB(this.year, findPeriod.getYear()+"");
+					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
+					
+					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
+					
+					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+					crasPanel.getElement().getStyle().setHeight(500, Unit.PX);
+				}, 
+				f -> {}
+		);
+
+	}
+	
+	@UiHandler("year")
+	public void onYearChange(ChangeEvent event) {
+		showCCCs();
+		
+		Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
+		
+		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
+				s -> {
+					clearSelectionModel();
+					initListBox();
+					initCCCsTable();
+					initCRATable();
+					
+					setSelectedValueLB(this.year, findPeriod.getYear()+"");
+					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
+					
+					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
+					
+					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+					crasPanel.getElement().getStyle().setHeight(500, Unit.PX);
+				}, 
+				f -> {}
+		);
+
+	}
+	
 	@UiHandler("newCRAButton")
 	public void onNewCRAButton(ClickEvent event) {
 		clearSelectionModel();
@@ -868,10 +930,7 @@ public class MainCRANew extends MainEntryPoint {
 			cccsSelected.addAll(selectionCCCInfoModel.getSelectedSet());
 			Integer cccId = cccsSelected.get(0).getCccId();
 			
-			Integer yearInt = Integer.parseInt(year.getSelectedValue()) - 1900;
-			Integer monthInt = month.getSelectedIndex();
-			Date findingDate = new Date(yearInt, monthInt, 1);
-			
+			Date findingDate = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			
 			if(checkRectificavo()) {
 				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
@@ -1011,9 +1070,9 @@ public class MainCRANew extends MainEntryPoint {
 		// Year
 		Integer actualYear = new Date().getYear() + 1900;
 		year.clear();
-		year.addItem((actualYear-2)+"", (actualYear-2)+"");
-		year.addItem((actualYear-1)+"", (actualYear-1)+"");
-		year.addItem((actualYear)+"", (actualYear)+"");
+		year.addItem((actualYear)+"", (actualYear-1900)+"");
+		year.addItem((actualYear-1)+"", (actualYear-1-1900)+"");
+		year.addItem((actualYear-2)+"", (actualYear-2-1900)+"");
 		
 		// Type List
 		typeList.clear();

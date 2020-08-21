@@ -1,20 +1,27 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
@@ -24,9 +31,12 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 
 public class JooqEnterprise {
 
@@ -571,6 +581,138 @@ public class JooqEnterprise {
 		}
 		
 		return activities;
+	}
+	
+	// --------------------------------------------------------------------------------------------------
+	//										MAIN CRA GET CCC INFO
+	// --------------------------------------------------------------------------------------------------
+
+	public static List<CCCInfo> getEnterprisesCCCInfo(Connection conn, Integer userId, Integer domainId, Integer parentDomainId, long findPeriodTime) {
+		return getEnterprisesCCCInfoDB(DSL.using(conn, getDefaultSettings()), userId, domainId, parentDomainId, findPeriodTime);
+	}
+
+	private static List<CCCInfo> getEnterprisesCCCInfoDB(DSLContext dslContext, Integer userId, Integer domainId, Integer parentDomainId, long findPeriodTime) {
+		
+		List<CCCInfo> enterprisesCCCInfo = new ArrayList<CCCInfo>();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(findPeriodTime);
+		
+		Date findPeriod = new Date(calendar.getTimeInMillis());
+		
+		Result<Record> enterprises = dslContext.select().from(ENTERPRISE)
+				.where(ENTERPRISE.DOMAIN.in(
+						dslContext.select(DOMAIN.ID).from(DOMAIN)
+							.where(DOMAIN.ID.eq(domainId).or(DOMAIN.PARENT.eq(domainId)))
+							.and(DOMAIN.SCOPE.in(
+									dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
+										.where(USER_SCOPE.USER_ID.eq(userId))
+										.fetch(USER_SCOPE.SCOPE)
+							).or(DOMAIN.SCOPE.isNull()))
+							.fetch(DOMAIN.ID)
+				))
+				.fetch();
+		
+		for(Record enterprise : enterprises) {
+			Result<Record> enterpriseActivities = dslContext.select().from(ENTERPRISE_ACTIVITY)
+					.where(ENTERPRISE_ACTIVITY.ENTERPRISE.eq(enterprise.get(ENTERPRISE.REGISTRY)))
+					.fetch();
+			
+			if(enterpriseActivities.isEmpty())
+				continue;
+			
+			
+			for(Record enterpriseActivity : enterpriseActivities) {
+				Integer enterpriseActivityId = enterpriseActivity.get(ENTERPRISE_ACTIVITY.ID);
+				String enterpriseActivityDescription = enterpriseActivity.get(ENTERPRISE_ACTIVITY.DESCRIPTION);
+				
+				Result<Record> enterpriseActivityCCCs = dslContext.select().from(ENTERPRISE_CCC)
+						.where(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(enterpriseActivityId))
+						.fetch();
+				
+				if(enterpriseActivityCCCs.isEmpty())
+					continue;
+				
+				for(Record enterpriseActivityCCC : enterpriseActivityCCCs) {
+					Integer cccId = enterpriseActivityCCC.get(ENTERPRISE_CCC.ID);
+					String cccCode = enterpriseActivityCCC.get(ENTERPRISE_CCC.CCC);
+					String regime = getSSRegime(enterpriseActivityCCC.get(ENTERPRISE_CCC.TYPE)).getCode();
+					Byte type = enterpriseActivityCCC.get(ENTERPRISE_CCC.TYPE);
+					
+					String completeCCCAccount = regime + cccCode;
+					
+					List<Integer> activeContracts = dslContext.select(CONTRACT.ID).from(CONTRACT)
+							.where(CONTRACT.ENTERPRISE_CCC.eq(cccId))
+							.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
+							.and(CONTRACT.SS_REGIME.ne((byte) 3))
+							.fetch(CONTRACT.ID);
+					
+					if(activeContracts.isEmpty())
+						continue;
+					
+					Calendar endPeriod = Calendar.getInstance();
+					endPeriod.setTimeInMillis(findPeriodTime);
+					endPeriod.set(Calendar.DATE, endPeriod.getActualMaximum(Calendar.DATE));
+					
+					Date findEndPeriod = new Date(endPeriod.getTimeInMillis());
+					
+					Result<Record> currentSalariesPeriod = dslContext.select().from(SALARY)
+						.where(SALARY.CCC.eq(cccCode).or(SALARY.CCC.isNull()).or(SALARY.CCC.eq(completeCCCAccount)))
+						.and(
+							(SALARY.START_DATE.ge(findPeriod).and(SALARY.END_DATE.le(findEndPeriod)).and(SALARY.CONTRACT.in(activeContracts)))
+							.or(SALARY.END_DATE.between(findPeriod, findEndPeriod)))
+						.fetch();
+					
+					if(currentSalariesPeriod.isEmpty())
+						continue;
+					
+					String geozoneCode = dslContext.select(GEOZONE.CODE).from(GEOZONE)
+							.where(GEOZONE.ID.eq(enterpriseActivityCCC.get(ENTERPRISE_CCC.GEOZONE)))
+							.fetchOne(GEOZONE.CODE);
+					
+					// ENTERPRISE REGISTRY
+					
+					Record enterpriseRegistry = dslContext.select().from(REGISTRY)
+							.where(REGISTRY.ID.eq(enterprise.get(ENTERPRISE.REGISTRY)))
+							.fetchOne();
+					
+					Integer enterpriseId = enterpriseRegistry.get(REGISTRY.ID);
+					String enterpriseName =  enterpriseRegistry.get(REGISTRY.NAME);
+					
+					CCCInfo cccInfo = new CCCInfo();
+					cccInfo.setCccId(cccId);
+					cccInfo.setCcc(cccCode);
+					cccInfo.setCccAccount(cccCode);
+					cccInfo.setCccRegimeCode(regime);
+					cccInfo.setTypeStr(regime);
+					cccInfo.setGeozone(geozoneCode);
+					cccInfo.setType(type);
+					cccInfo.setActivityId(enterpriseActivityId);
+					cccInfo.setActivityDescription(enterpriseActivityDescription);
+					cccInfo.setUseByContracts(true);
+					cccInfo.setEnterpriseDesciption(enterpriseName);
+					cccInfo.setEnterpriseId(enterpriseId);
+					
+					enterprisesCCCInfo.add(cccInfo);
+							
+				}
+			}
+		}
+		
+		return enterprisesCCCInfo;
+	}
+	
+	public static SSRegimeType getSSRegime( int cccType ) {
+		Map<CCCType, SSRegimeType> regimes = new HashMap<CCCType, SSRegimeType>(){
+			{
+				put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
+			}
+		};
+		
+		try {
+			return regimes.getOrDefault(CCCType.values()[cccType], SSRegimeType.GENERAL);
+		} catch ( Throwable t){
+			return SSRegimeType.GENERAL;
+		}
 	}
 	
 }

@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
@@ -439,6 +440,12 @@ public class EnterprisesServiceAsyncDecorator implements
 			String bodyHTML, String completeURL, AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.sendPayrollEmailToEmployees(currentDomainName, from, cc, cco, bodyHTML, completeURL, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterprisesCCCInfo(currentDomainName, user, findPeriodTime, new AsyncCallbackWrapper<List<CCCInfo>>(callback));
 	}
 
 }

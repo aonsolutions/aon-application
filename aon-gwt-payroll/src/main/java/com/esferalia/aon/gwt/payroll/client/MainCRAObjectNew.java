@@ -46,26 +46,71 @@ public class MainCRAObjectNew {
 		
 	}
 	
-	public void getEnterpriseCCCs(Consumer<List<Enterprise>> success, Consumer<Throwable> failure){
-		
-		impl.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
+//	public void getEnterprises(Consumer<List<Enterprise>> success, Consumer<Throwable> failure){
+//		
+//		impl.getEnterprises(new AsyncCallback<List<Enterprise>>() {
+//			
+//			@Override
+//			public void onSuccess(List<Enterprise> enterprises) {
+//				initEnterpriseMap(enterprises);
+//				getEnterprisesCCCInfo(s -> {
+//					success.accept(enterprises);
+//				}, 
+//				f -> {});
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) { }
+//		});
+//		
+//	}
+	
+	public void getEnterprisesCCCInfo(long findPeriodTime, Consumer<List<CCCInfo>> success, Consumer<Throwable> failure){
+	
+		impl.getEnterprisesCCCInfo(findPeriodTime, new AsyncCallback<List<CCCInfo>>() {
 			
 			@Override
-			public void onSuccess(List<Enterprise> enterprises) {
-				initEnterpriseMap(enterprises);
-				initEnterpriseCCCs(enterprises);
+			public void onSuccess(List<CCCInfo> enterprisesCCCInfo) {
+//				initEnterpriseMap(enterprisesCCCInfo);
+				enterpriseCCCs.clear();
+				allEnterpriseCCCs.clear();
+				enterpriseCCCs.addAll(enterprisesCCCInfo);
+				allEnterpriseCCCs.addAll(enterprisesCCCInfo);
+				
 				getCRAs(
 					s -> {
-						success.accept(enterprises);
+						success.accept(enterprisesCCCInfo);
 					}, 
 					f -> {});	
 			}
-
+	
 			@Override
 			public void onFailure(Throwable caught) { }
 		});
 		
 	}
+
+	
+//	public void getEnterpriseCCCs(Consumer<List<Enterprise>> success, Consumer<Throwable> failure){
+//		
+//		impl.getEnterprises(0, Integer.MAX_VALUE, new AsyncCallback<List<Enterprise>>() {
+//			
+//			@Override
+//			public void onSuccess(List<Enterprise> enterprises) {
+//				initEnterpriseMap(enterprises);
+//				initEnterpriseCCCs(enterprises);
+//				getCRAs(
+//					s -> {
+//						success.accept(enterprises);
+//					}, 
+//					f -> {});	
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) { }
+//		});
+//		
+//	}
 	
 	public void getCRAs(Consumer<List<CRA>> success, Consumer<Throwable> failure){
 		
