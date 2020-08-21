@@ -1,16 +1,17 @@
 package com.esferalia.aon.payroll.tgss.cra;
 
 import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDatabaseOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbPasswordOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbUserOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getHostNameOption;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -34,6 +35,7 @@ import org.jooq.Result;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 
+import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
@@ -246,7 +248,17 @@ public class Cra {
 					// Prepare TRB
 					JSONObject trb = new JSONObject();
 					
-					trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+					if(null != salary.get(SALARY.SOCIAL_SECURITY_NUMBER) && salary.get(SALARY.SOCIAL_SECURITY_NUMBER).length()>0)
+						trb.put("numAfilicion", salary.get(SALARY.SOCIAL_SECURITY_NUMBER));
+					else {
+						String ss = dslContext.select(PERSON.SOCIAL_SECURITY_NUM).from(PERSON)
+								.where(PERSON.REGISTRY.eq(
+										dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+											.where(CONTRACT.ID.eq(salary.get(SALARY.CONTRACT)))
+											.fetchOne(CONTRACT.PERSON)
+								)).fetchOne(PERSON.SOCIAL_SECURITY_NUM);
+						trb.put("numAfilicion", ss);
+					}
 					
 					// Prepare CRES
 					JSONArray cres = new JSONArray();
@@ -457,6 +469,7 @@ public class Cra {
 					
 					// Get salaryId
 					Integer salaryId = salary.get(SALARY.ID);
+					Date issueDate = salary.get(SALARY.ISSUE_DATE);
 					
 					// Get salaryDatas of Settelment salary
 					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
@@ -464,6 +477,12 @@ public class Cra {
 							.and(SALARY_DATA.NAME.eq("BASE_CGC"))
 							.and(SALARY_DATA.START_DATE.between(startDateSQL, endDateSQL))
 							.fetch();
+					
+//					Result<Record> salaryDatas = dslContext.select().from(SALARY_DATA)
+//							.where(SALARY_DATA.SALARY.eq(salaryId))
+//							.and(SALARY_DATA.NAME.eq("BASE_CGC"))
+//							.and(SALARY_DATA.START_DATE.between(startDateSQL, endDateSQL))
+//							.fetch();
 					
 					// Prepare TRBF
 					JSONObject trbf = new JSONObject();
@@ -473,36 +492,58 @@ public class Cra {
 					// Prepare CRES
 					JSONArray cres = new JSONArray();
 					
+					Double craAmount = 0.00;
+					
 					for(Record salatyData: salaryDatas){
 						
 						// Get CRA amount
-						Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+						craAmount += Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
 						
-						if(craAmount > 0){
-							
-							// Get typeCRA 풹lways 6?
-							PaymentType typeCRA = PaymentType.values()[6];
-							
-							// Try to add Cre to Cres
-							addCreToCres(craAmount, typeCRA, cres);
-							
-						}
 					}
 					
-					Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
-							.where(SALARY_PAYMENT.SALARY.eq(salaryId))
-							.and(SALARY_PAYMENT.TYPE.ne((byte)6))
-							.fetch();
-					
-					for(Record salaryPayment : salaryPayments) {
+					if(craAmount > 0){
+						
 						// Get typeCRA 풹lways 6?
-						PaymentType typeCRA = PaymentType.values()[salaryPayment.get(SALARY_PAYMENT.TYPE)];
+						PaymentType typeCRA = PaymentType.values()[6];
 						
-						Double amount = salaryPayment.get(SALARY_PAYMENT.AMOUNT);
+						// Try to add Cre to Cres
+						addCreToCres(craAmount, typeCRA, cres);
 						
-						if(null != amount && 0.0 != amount) {
-							// Try to add Cre to Cres
-							addCreToCres(amount, typeCRA, cres);
+					}
+					
+//					for(Record salatyData: salaryDatas){
+//						
+//						// Get CRA amount
+//						Double craAmount = Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+//						
+//						if(craAmount > 0){
+//							
+//							// Get typeCRA 풹lways 6?
+//							PaymentType typeCRA = PaymentType.values()[6];
+//							
+//							// Try to add Cre to Cres
+//							addCreToCres(craAmount, typeCRA, cres);
+//							
+//						}
+//					}
+					
+					if((issueDate.after(startDateSQL) || issueDate.equals(startDateSQL)) && (issueDate.before(endDateSQL) || issueDate.equals(endDateSQL))) {
+					
+						Result<Record> salaryPayments = dslContext.select().from(SALARY_PAYMENT)
+								.where(SALARY_PAYMENT.SALARY.eq(salaryId))
+								.and(SALARY_PAYMENT.TYPE.ne((byte)6))
+								.fetch();
+						
+						for(Record salaryPayment : salaryPayments) {
+							// Get typeCRA 풹lways 6?
+							PaymentType typeCRA = PaymentType.values()[salaryPayment.get(SALARY_PAYMENT.TYPE)];
+							
+							Double amount = salaryPayment.get(SALARY_PAYMENT.AMOUNT);
+							
+							if(null != amount && 0.0 != amount) {
+								// Try to add Cre to Cres
+								addCreToCres(amount, typeCRA, cres);
+							}
 						}
 					}
 					
