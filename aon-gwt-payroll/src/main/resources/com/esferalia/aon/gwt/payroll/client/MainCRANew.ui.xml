@@ -10,6 +10,10 @@
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainCRANew.MyStyle">
 		/*UI Style*/
 		
+		.panelGridSearch{
+			margin-top: 0px !important;
+		}
+		
 		.suggestBox{
 			width: 100%;
 			margin: 3px;
@@ -58,7 +62,7 @@
 		}
 		
 		.mt10{
-			margin-top: 10px;
+			margin-top: 5px;
 		}
 		
 		.p5{
@@ -136,7 +140,7 @@
 					<g:ScrollPanel height="100%" styleName="{style.p5}">
 						<g:VerticalPanel styleName="{style.tableStylePanel}">
 						
-							<g:HTMLPanel styleName="aon-panelGrid-search">
+							<g:HTMLPanel styleName="aon-panelGrid-search {style.panelGridSearch}">
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
 									<g:Label styleName="aon-panelGrid-search-info-internal">PERIODO DE LIQUIDACION</g:Label>
 								</g:HTMLPanel>
