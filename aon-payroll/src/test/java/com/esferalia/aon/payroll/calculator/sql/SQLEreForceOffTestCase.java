@@ -59,7 +59,10 @@ public class SQLEreForceOffTestCase extends SQLERETestCase {
 		return ContextVariable.ERE_FACTOR_FORCE_OFF;
 	}
 	
-	
+	@Override
+	protected ContextVariable getBaseVariable() {
+		return ContextVariable.ERE_BASE_FORCE_OFF;
+	}	
 	@Test
 	public void testEREOffI() throws ExpressionException, SQLException,
 			SalaryException {

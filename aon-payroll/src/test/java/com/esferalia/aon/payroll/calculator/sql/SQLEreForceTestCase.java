@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASE;
+
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 public class SQLEreForceTestCase extends SQLERETestCase {
@@ -17,4 +19,8 @@ public class SQLEreForceTestCase extends SQLERETestCase {
 		return ContextVariable.ERE_FACTOR_FORCE;
 	}
 	
+	@Override
+	protected ContextVariable getBaseVariable() {
+		return ContextVariable.ERE_BASE_FORCE;
+	}
 }

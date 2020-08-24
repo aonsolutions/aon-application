@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -158,6 +159,28 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public String getQuoteExpression() {
 			return "0.00";
 		
+		}
+		
+	}
+	
+	private static class FACTORContractPayment extends DelegateContractPayment{
+		
+		private Date start;
+		private double factor ;
+		
+		private FACTORContractPayment(IContractPayment contractPayment, double factor, Date start) {
+			super(contractPayment);
+			this.start = start;
+			this.factor = factor;
+		}
+		
+
+		@Override
+		public String getQuoteExpression() {
+			int year = AonDateUtils.get(start, Calendar.YEAR);
+			int month = AonDateUtils.get(start, Calendar.MONTH) +1;
+			int day = AonDateUtils.get(start, Calendar.DAY_OF_MONTH) -1;
+			return String.format(Locale.ROOT,"SELF.addBonus('TRAMO ERE & IT %d/%d', 'TRAMO(FECHA(%d,%d,%d));0.00');(%s) * (1.00 - %f)", day, month, year, month, day, super.getQuoteExpression(), factor);
 		}
 		
 	}
@@ -304,9 +327,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	private class SmartQuoteCalculator extends QuoteCalculator {
 		
 		private QuoteCalculator delegate;
+		private ExpressionContext expressionContext;
 		
-		private SmartQuoteCalculator(QuoteCalculator calculator) {
+		private SmartQuoteCalculator(QuoteCalculator calculator, ExpressionContext expressionContext) {
 			this.delegate = calculator;
+			this.expressionContext = expressionContext;
 		}
 		
 		public Double getItBase() throws AonException {
@@ -374,6 +399,13 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return Collections.emptyList();
 			}
 			
+			if ( AonStringUtils.equals(PREST_IT, payment.getName())) {
+				double ereFactor = getEreFactor(expressionContext, new Period(start, end));
+				if ( ereFactor > 0.00 ) {					
+					return delegate.quote(new FACTORContractPayment(payment, ereFactor, start), start, end, amount);
+				}
+			}
+
 			if ( AonStringUtils.equals(GUARENTEED, payment.getName())) {
 				return delegate.quote(new GUARENTEEDContractPayment(payment), start, end, amount);
 			}
@@ -915,6 +947,10 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			Date end,
 			ExpressionContext expressionContext) throws UnsupportedOperationException {
 		
+		if ( AonStringUtils.equals(ContextVariable.PREST_IT,contractPayment.getName())) {
+			return fixEREITResults(results, expressionContext);
+		}
+		
 		if ( results.size() > 1  )
 			return results;
 
@@ -959,7 +995,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	
 	@Override
 	protected QuoteCalculator getQuoteCalculator(IContractSalaryCalculatorContext ctx) {
-		return new SmartQuoteCalculator(super.getQuoteCalculator(ctx));
+		return new SmartQuoteCalculator(super.getQuoteCalculator(ctx), ctx.getExpressionContext());
 	}
 	
 	@Override
@@ -979,7 +1015,47 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	
 	// ------------------------------------------------------------------------
 	
+	static List<ITimedResult<Double>> fixEREITResults(List<ITimedResult<Double>> results , ExpressionContext ctx) {
+		List<ITimedResult<Double>> fixed = new ArrayList<ITimedResult<Double>>();
+
+
+		for (ITimedResult<Double> result : results) {
+			fixed.add(new ITimedResult<Double>() {
+				@Override
+				public Period getPeriod() {
+					return result.getPeriod();
+				}
+
+				@Override
+				public Double getValue() {
+					return getValue(getPeriod());
+				}
+
+				@Override
+				public Double getValue(Period period) {
+					return result.getValue() * ( 1.00 - getEreFactor(ctx, getPeriod()));
+				}
+
+				@Override
+				public Map<String, ITimedVariable<?>> getContext() {
+					return result.getContext();
+				}
+			});
+		}
+		;
+
+		return fixed;
+	}	
 	
+	private static double getEreFactor(ExpressionContext ctx, Period p ) {
+		for ( ContextVariable ereFactorVar : ContextVariable.ERE_FACTORS ) {
+			Number ereFactor =  ctx.getVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);
+			if ( ereFactor != null  && ereFactor.doubleValue() > 0.00  ) 
+				return ereFactor.doubleValue();
+		}	
+		return 0.00;
+	}
+		
 	private ITimedResult<Double> fixImprovementResult(ITimedResult<Double> result, ExpressionContext expressionContext) throws UndefinedContextVariablesException {
 		Period period = result.getPeriod();
 		Double value = result.getValue();

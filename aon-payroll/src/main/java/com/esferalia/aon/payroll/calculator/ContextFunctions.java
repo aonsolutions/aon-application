@@ -221,6 +221,8 @@ public class ContextFunctions {
 				ContextVariable.CGC_BASE.getName(),
 				ContextVariable.CGP_BASE.getName(),
 				ContextVariable.MATERNITY_BASE.getName(),
+				ContextVariable.ERE_BASE.getName(),
+				ContextVariable.ERE_BASE_FORCE.getName(),
 				ContextVariable.ERE_BASE_FORCE_OFF.getName(),
 				ContextVariable.STRUCTURAL_OVERTIME_BASE.getName(),
 				ContextVariable.NON_STRUCTURAL_OVERTIME_BASE.getName(),

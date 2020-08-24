@@ -3485,7 +3485,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 		}
 		
-		if ( p.compareTo(adjust) != 0 )
+//		if ( p.compareTo(adjust) != 0 )
+		if ( !AonUtils.equals(p.getEnd(), adjust.getEnd() ) )
 			return availableDays * factor;
 				
 		return (availableDays + (30 - naturalMonthDays)) * factor;
@@ -4597,7 +4598,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			.replaceAll(ERE_FACTOR.getName(), ERE_DAYS.getName());
 			
 			ctx.putVariable(daysVar, ereDays);
-			ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
+			
+			ITimedVariable<?> prevQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, period.getStart(),period.getEnd());		
+			if (prevQuoteDays == null ) {
+				ctx.putVariable(QUOTE_DAYS.getName(), quoteDays);
+			}
 
 			Date ereStartDate = getStartDate(ereFactorVar, period);
 
