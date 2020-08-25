@@ -30,6 +30,8 @@ public class MainCRAObjectNew {
 	private List<CRA> cras;
 	private List<CRA> crasRectif;
 	
+	private Integer domainId;
+	
 	
 	public MainCRAObjectNew() {
 		super();
@@ -43,6 +45,8 @@ public class MainCRAObjectNew {
 		this.filterCRAs = new ArrayList<CRA>();
 		this.cras = new ArrayList<CRA>();
 		this.crasRectif = new ArrayList<CRA>();
+		
+		this.domainId = -1;
 		
 	}
 	
@@ -66,7 +70,7 @@ public class MainCRAObjectNew {
 //	}
 	
 	public void getEnterprisesCCCInfo(long findPeriodTime, Consumer<List<CCCInfo>> success, Consumer<Throwable> failure){
-	
+		
 		impl.getEnterprisesCCCInfo(findPeriodTime, new AsyncCallback<List<CCCInfo>>() {
 			
 			@Override
@@ -119,7 +123,9 @@ public class MainCRAObjectNew {
 			@Override
 			public void onSuccess(List<CRA> dbCRAs) {
 				initCRAs(dbCRAs);
-				success.accept(dbCRAs);
+				getDomainId(s-> {
+					success.accept(dbCRAs);
+				}, f -> {});
 			}
 
 			@Override
@@ -128,8 +134,24 @@ public class MainCRAObjectNew {
 		
 	}
 	
-	public void createNewCRA (Date startDate, ArrayList<String> cccList, Integer cccId, String type, Consumer<String> success, Consumer<Throwable> failure){
-		impl.createNewCRA(startDate.getTime(), cccList, cccId, type, new AsyncCallback<String>() {
+	public void getDomainId(Consumer<Integer> success, Consumer<Throwable> failure){
+		
+		impl.getDomain(new AsyncCallback<Integer>() {
+			
+			@Override
+			public void onSuccess(Integer domain) {
+				domainId = domain;
+				success.accept(domainId);
+			}
+	
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+		
+	}
+	
+	public void createNewCRA (Date startDate, ArrayList<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, Consumer<String> success, Consumer<Throwable> failure){
+		impl.createNewCRA(startDate.getTime(), cccList, cccIdList, cccId, type, new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				Window.alert(caught.getMessage());	
@@ -350,5 +372,40 @@ public class MainCRAObjectNew {
 //		}
 //		return ids;
 //	}
+	
+	public Integer getDomainId() {
+		return this.domainId;
+	}
+
+	public void filterCras(Date startDate, Date endDate, String geozoneName, Byte cccType) {
+		List<CRA> newCRAs = new ArrayList<CRA>();
+		List<CRA> auxListCRAs = new ArrayList<CRA>();
+		
+		// NOT FILTER BY DATE CAUSE THE TABLE CAN BE ORDERED BY PERIOD
+		
+		for(CRA cra : allCRAs) {
+			if("-" == geozoneName || "-".equals(geozoneName)) {
+				auxListCRAs.add(cra);
+				continue;
+			}
+			
+			if(cra.getCccProvince() == geozoneName || cra.getCccProvince().equals(geozoneName))
+				auxListCRAs.add(cra);
+			
+		}
+		
+		for(CRA cra : auxListCRAs) {
+			if((byte) -1 == cccType || cccType.equals((byte)-1)) {
+				newCRAs.add(cra);
+				continue;
+			}
+			
+			if(cra.getCccType() == cccType || cra.getCccType().equals(cccType))
+				newCRAs.add(cra);
+			
+		}
+		
+		filterCRAs = newCRAs;
+	}
 		
 }

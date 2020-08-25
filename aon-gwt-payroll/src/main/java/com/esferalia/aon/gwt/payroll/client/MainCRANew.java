@@ -22,6 +22,7 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -78,6 +79,9 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiField
 	ListBox year;
+	
+	@UiField
+	TableElement filterTable;
 	
 	@UiField
 	ListBox geozoneList;
@@ -140,6 +144,8 @@ public class MainCRANew extends MainEntryPoint {
 		initCollapseAndDeckPanel();
 		
 		initListBoxes();
+		
+		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void initListBoxes() {
@@ -359,6 +365,7 @@ public class MainCRANew extends MainEntryPoint {
 	    };
 
 	    creationColumn.setSortable(true);
+	    creationColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    crasDataGrid.setColumnWidth(creationColumn, 15, Unit.PCT);
 	    
 	    TextColumn<CRA> periodColumn = new TextColumn<CRA>() {
@@ -371,6 +378,7 @@ public class MainCRANew extends MainEntryPoint {
 		    };
 
 	    periodColumn.setSortable(true);
+	    periodColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    crasDataGrid.setColumnWidth(periodColumn, 10, Unit.PCT);
 	    
 	    TextColumn<CRA> activityNameColumn = new TextColumn<CRA>() {
@@ -381,7 +389,7 @@ public class MainCRANew extends MainEntryPoint {
 	    };
 
 	    activityNameColumn.setSortable(true);
-	    crasDataGrid.setColumnWidth(activityNameColumn, 20, Unit.PCT);
+	    crasDataGrid.setColumnWidth(activityNameColumn, 25, Unit.PCT);
 	    
 	    TextColumn<CRA> rectificativeColumn = new TextColumn<CRA>() {
 	      @Override
@@ -412,7 +420,7 @@ public class MainCRANew extends MainEntryPoint {
 	    };
 
 	    typeColumn.setSortable(true);
-	    crasDataGrid.setColumnWidth(typeColumn, 20, Unit.PCT);
+	    crasDataGrid.setColumnWidth(typeColumn, 15, Unit.PCT);
 	    
 	    TextColumn<CRA> cccColumn = new TextColumn<CRA>() {
 	      @Override
@@ -423,6 +431,41 @@ public class MainCRANew extends MainEntryPoint {
 
 	    cccColumn.setSortable(true);
 	    crasDataGrid.setColumnWidth(cccColumn, 10, Unit.PCT);
+	    
+	    ActionCell<CRA> infoActionCell = new ActionCell<CRA>("", new ActionCell.Delegate<CRA>() {
+
+			@Override
+			public void execute(CRA cra) {
+				if(cra.getIsConsignment()) {
+					String message = "";
+					for(CCCInfo cccInfo : cra.getIncludeCCCs()) {
+						message += cccInfo.toString() + "\n";
+					}
+					Window.alert(message);
+				}
+					
+			}
+			
+		});
+	    
+	    Column<CRA, CRA> infoColumn = new Column<CRA, CRA>(infoActionCell) {
+
+			@Override
+			public CRA getValue(CRA object) {
+				return object;
+			}
+			
+			@Override
+			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
+				if(null != object) {
+					if(object.getIncludeCCCs().size() > 1)
+						sb.appendHtmlConstant("<button type=\"button\" title=\"Ver CCCs\" class=\"aon-finding-toolbar-item aon-icon-info\" style=\"border: none !important;\"></button>");
+				}
+			}
+		};
+		
+		infoColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		crasDataGrid.setColumnWidth(infoColumn, 5, Unit.PCT);
 	    
 	    ActionCell<CRA> downloadActionCell = new ActionCell<CRA>("", new ActionCell.Delegate<CRA>() {
 
@@ -477,7 +520,8 @@ public class MainCRANew extends MainEntryPoint {
 			@Override
 			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
 				if(null != object) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-delete\" style=\"border: none !important; height: 20px;\"></button>");
+					if(object.getDomain() == mainCRAObjectNew.getDomainId() || object.getDomain().equals(mainCRAObjectNew.getDomainId()))
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-delete\" style=\"border: none !important; height: 20px;\"></button>");
 				}
 			}
 		};
@@ -497,6 +541,7 @@ public class MainCRANew extends MainEntryPoint {
 	    crasDataGrid.addColumn(typeColumn, "Tipo CCC");
 	    crasDataGrid.addColumn(cccColumn, "CCC");
 	    
+	    crasDataGrid.addColumn(infoColumn, "");
 	    crasDataGrid.addColumn(downloadColumn, "");
 	    crasDataGrid.addColumn(deleteColumn, "");
 	      
@@ -523,6 +568,7 @@ public class MainCRANew extends MainEntryPoint {
 		crasDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		crasDataGrid.getHeader(7).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		crasDataGrid.getHeader(8).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		crasDataGrid.getHeader(9).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
 	
 	private void initCollapseAndDeckPanel() {
@@ -569,10 +615,10 @@ public class MainCRANew extends MainEntryPoint {
 					setSelectedValueLB(this.month, initialMonth+"");
 					
 					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
+					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 225), Unit.PX);
 					
 					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					crasPanel.getElement().getStyle().setHeight(500, Unit.PX);
+					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
 				}, 
 				f -> {}
 		);
@@ -866,10 +912,10 @@ public class MainCRANew extends MainEntryPoint {
 					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
 					
 					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
+					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 225), Unit.PX);
 					
 					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					crasPanel.getElement().getStyle().setHeight(500, Unit.PX);
+					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
 				}, 
 				f -> {}
 		);
@@ -893,10 +939,10 @@ public class MainCRANew extends MainEntryPoint {
 					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
 					
 					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
+					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 225), Unit.PX);
 					
 					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					crasPanel.getElement().getStyle().setHeight(500, Unit.PX);
+					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
 				}, 
 				f -> {}
 		);
@@ -936,7 +982,7 @@ public class MainCRANew extends MainEntryPoint {
 				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
 						s -> {
 							if(StringUtils.isBlank(s)) {
-								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccId, "N",
+								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
 										v -> {
 											showCRAS();
 											initCRATable();
@@ -947,7 +993,7 @@ public class MainCRANew extends MainEntryPoint {
 									
 									@Override
 									protected void onAccept() {
-										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccId, "N",
+										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
 												v -> {
 													showCRAS();
 													initCRATable();
@@ -964,7 +1010,7 @@ public class MainCRANew extends MainEntryPoint {
 					
 					@Override
 					protected void onAccept() {
-						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccId, "R",
+						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
 								v -> {
 									WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
 											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
@@ -984,34 +1030,59 @@ public class MainCRANew extends MainEntryPoint {
 		}
 	}
 	
-	@UiHandler("typeList")
-	public void onTypeListChange(ChangeEvent event) {
-		if(0 == typeList.getSelectedIndex()) {
-//			this.enterpriseSB.setValue("");
-			this.mainCRAObjectNew.resetCRAsList();
-			initCRATable();
-		} else {
-			Byte type = Byte.parseByte(typeList.getSelectedValue());
-			mainCRAObjectNew.filterCRAsListByType(type);
-			initCRATable();
-		}
-	}
+//	@UiHandler("typeList")
+//	public void onTypeListChange(ChangeEvent event) {
+//		if(0 == typeList.getSelectedIndex()) {
+////			this.enterpriseSB.setValue("");
+//			this.mainCRAObjectNew.resetCRAsList();
+//			initCRATable();
+//		} else {
+//			Byte type = Byte.parseByte(typeList.getSelectedValue());
+//			mainCRAObjectNew.filterCRAsListByType(type);
+//			initCRATable();
+//		}
+//	}
+//	
+//	@UiHandler("geozoneList")
+//	public void onGeozoneListChange(ChangeEvent event) {
+//		if(0 == geozoneList.getSelectedIndex()) {
+////			this.enterpriseSB.setValue("");
+//			this.mainCRAObjectNew.resetCRAsList();
+//			initCRATable();
+//		} else {
+//			String geozoneCode = geozoneList.getSelectedItemText();
+//			mainCRAObjectNew.filterCRAListByGeozone(geozoneCode);
+//			initCRATable();
+//		}
+//	}
+//	
+//	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
+//	public void onFilterDatesChange(ChangeEvent event) {
+//		Date date1 = new Date(Integer.parseInt(yearTillT.getSelectedValue()), Integer.parseInt(monthTillT.getSelectedValue()), 1);
+//		Date date2 = new Date(Integer.parseInt(yearTTo.getSelectedValue()), Integer.parseInt(monthTTo.getSelectedValue()), 1);
+//		
+//		Date startDate = null;
+//		Date endDate = null;
+//		
+//		if(date1.before(date2) || date1.equals(date2)) {
+//			startDate = DateUtils.copyDateOnly(date1);
+//			
+//			endDate = DateUtils.copyDateOnly(date2);
+//			endDate = DateUtils.getLastDayOfMonth(endDate);
+//		} else {
+//			startDate = DateUtils.copyDateOnly(date2);
+//			
+//			endDate = DateUtils.copyDateOnly(date1);
+//			endDate = DateUtils.getLastDayOfMonth(endDate);
+//		}
+//		
+//		mainCRAObjectNew.filterCrasByDates(startDate, endDate);
+//		initCRATable();
+//	}
 	
-	@UiHandler("geozoneList")
-	public void onGeozoneListChange(ChangeEvent event) {
-		if(0 == geozoneList.getSelectedIndex()) {
-//			this.enterpriseSB.setValue("");
-			this.mainCRAObjectNew.resetCRAsList();
-			initCRATable();
-		} else {
-			String geozoneCode = geozoneList.getSelectedItemText();
-			mainCRAObjectNew.filterCRAListByGeozone(geozoneCode);
-			initCRATable();
-		}
-	}
-	
-	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
-	public void onFilterDatesChange(ChangeEvent event) {
+	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo", "geozoneList", "typeList"})
+	public void onFilterChange(ChangeEvent event) {
+		// DATES
 		Date date1 = new Date(Integer.parseInt(yearTillT.getSelectedValue()), Integer.parseInt(monthTillT.getSelectedValue()), 1);
 		Date date2 = new Date(Integer.parseInt(yearTTo.getSelectedValue()), Integer.parseInt(monthTTo.getSelectedValue()), 1);
 		
@@ -1030,20 +1101,30 @@ public class MainCRANew extends MainEntryPoint {
 			endDate = DateUtils.getLastDayOfMonth(endDate);
 		}
 		
-		mainCRAObjectNew.filterCrasByDates(startDate, endDate);
+		// GEOZONE
+		String geozoneName = geozoneList.getSelectedItemText();
+		
+		// CCC TYPE
+		Byte cccType = null;
+		if(0 == typeList.getSelectedIndex())
+			cccType = Byte.parseByte("-1");
+		else
+			cccType = Byte.parseByte(typeList.getSelectedValue());
+		
+		mainCRAObjectNew.filterCras(startDate, endDate, geozoneName, cccType);
 		initCRATable();
 	}
 	
 	@UiHandler("collapsePanel")
 	public void onOpenPanel(OpenEvent<DisclosurePanel> event) {
-		mainTablePanel.getElement().getStyle().setHeight(575, Unit.PX);
-		cccDataGrid.redraw();
+		crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 310), Unit.PX);
+		crasDataGrid.redraw();
 	}
 	
 	@UiHandler("collapsePanel")
 	public void onClosePanel(CloseEvent<DisclosurePanel> event) {
-		mainTablePanel.getElement().getStyle().setHeight(725, Unit.PX);
-		cccDataGrid.redraw();
+		crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
+		crasDataGrid.redraw();
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -1190,13 +1271,13 @@ public class MainCRANew extends MainEntryPoint {
 	}
 	
 	private boolean checkRectificavo() {
-		Integer yearInt = Integer.parseInt(year.getSelectedValue()) - 1900;
-		Integer monthInt = month.getSelectedIndex();
+		Integer yearInt = Integer.parseInt(year.getSelectedValue());
+		Integer monthInt = Integer.parseInt(month.getSelectedValue());
 		Date findingDate = new Date(yearInt, monthInt, 1);
 		
-		ArrayList<String> cccList = new ArrayList<String>();
+		ArrayList<Integer> cccIdList = new ArrayList<Integer>();
 		for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
-			cccList.add(cccInfo.getCcc());
+			cccIdList.add(cccInfo.getCccId());
 		}
 		
 		for(CRA cra : mainCRAObjectNew.getAllCRAs()) {
@@ -1209,9 +1290,14 @@ public class MainCRANew extends MainEntryPoint {
 			Date findDate = DateUtils.copyDateOnly(findingDate);
 			DateUtils.resetTime(findDate);
 			
-			if(cccList.contains(cra.getCcc().substring(4)) && creationDate.equals(findDate)) {
-				return false;
+			for(CCCInfo ccc : cra.getIncludeCCCs()) {
+				if(cccIdList.contains(ccc.getCccId()) && creationDate.equals(findDate))
+					return false;
 			}
+			
+//			if(cccList.contains(cra.getCcc().substring(4)) && creationDate.equals(findDate)) {
+//				return false;
+//			}
 			
 		}
 		return true;
@@ -1236,7 +1322,7 @@ public class MainCRANew extends MainEntryPoint {
 			case (byte) 8:
 				return "ARTISTA";
 			default:
-				return "PRINCIPAL";
+				return "-";
 		}
 	}
 

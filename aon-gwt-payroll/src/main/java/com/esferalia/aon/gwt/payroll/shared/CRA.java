@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -9,14 +10,13 @@ import com.google.gwt.view.client.ProvidesKey;
 public class CRA implements Serializable{
 	
 	private Integer code; //ID UNIQUE
+	private Integer domain;
 	private Date creationDate;
 	private byte status;
 	private Date date;
 	
-	private String ccc;
-	private Byte cccType;
-	private String cccProvince;
-	private String activityName;
+	private Boolean isConsignment;
+	private List<CCCInfo> includeCCCs;
 	
 	private String type;
 	
@@ -42,6 +42,14 @@ public class CRA implements Serializable{
 		this.code = code;
 	}
 
+	public Integer getDomain() {
+		return domain;
+	}
+
+	public void setDomain(Integer domain) {
+		this.domain = domain;
+	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -58,38 +66,6 @@ public class CRA implements Serializable{
 		this.status = status;
 	}
 
-	public String getCcc() {
-		return ccc;
-	}
-
-	public void setCcc(String ccc) {
-		this.ccc = ccc;
-	}
-
-	public Byte getCccType() {
-		return cccType;
-	}
-
-	public void setCccType(Byte cccType) {
-		this.cccType = cccType;
-	}
-
-	public String getCccProvince() {
-		return cccProvince;
-	}
-
-	public void setCccProvince(String cccProvince) {
-		this.cccProvince = cccProvince;
-	}
-
-	public String getActivityName() {
-		return activityName;
-	}
-
-	public void setActivityName(String activityName) {
-		this.activityName = activityName;
-	}
-
 	public String getType() {
 		return type;
 	}
@@ -104,6 +80,62 @@ public class CRA implements Serializable{
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public Boolean getIsConsignment() {
+		return isConsignment;
+	}
+
+	public void setIsConsignment(Boolean isConsignment) {
+		this.isConsignment = isConsignment;
+	}
+
+	public List<CCCInfo> getIncludeCCCs() {
+		return includeCCCs;
+	}
+
+	public void setIncludeCCCs(List<CCCInfo> includeCCCs) {
+		this.includeCCCs = includeCCCs;
+	}
+
+	public String getActivityName() {
+		if(getIncludeCCCs().isEmpty())
+			return "EMPTY CCCS";
+		
+		if(getIncludeCCCs().size() > 1)
+			return "REMESA";
+		
+		return getIncludeCCCs().get(0).getActivityDescription();
+	}
+
+	public String getCccProvince() {
+		if(getIncludeCCCs().isEmpty())
+			return "EMPTY CCCS";
+		
+		if(getIncludeCCCs().size() > 1)
+			return "-";
+		
+		return ProvinceContract.getName(getIncludeCCCs().get(0).getGeozone());
+	}
+
+	public Byte getCccType() {
+		if(getIncludeCCCs().isEmpty())
+			return (byte) -1;
+		
+		if(getIncludeCCCs().size() > 1)
+			return (byte) -1;
+		
+		return getIncludeCCCs().get(0).getType();
+	}
+
+	public String getCcc() {
+		if(getIncludeCCCs().isEmpty())
+			return "EMPTY CCCS";
+		
+		if(getIncludeCCCs().size() > 1)
+			return "REMESA";
+		
+		return getIncludeCCCs().get(0).getCccAccount();
 	}
 
 }

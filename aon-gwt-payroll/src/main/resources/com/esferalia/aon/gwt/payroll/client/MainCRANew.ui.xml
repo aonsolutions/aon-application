@@ -160,14 +160,14 @@
 				<g:HTMLPanel ui:field="crasContainer" styleName="{style.widthAll}">
 					<g:ScrollPanel height="100%" styleName="{style.p5}">
 						<g:VerticalPanel styleName="{style.tableStylePanel}">
-							<g:HTMLPanel styleName="aon-panelGrid-search">
+							<g:HTMLPanel styleName="aon-panelGrid-search  {style.panelGridSearch}">
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
 									<g:Label styleName="aon-panelGrid-search-info-internal">FILTRAR BUSQUEDA</g:Label>
 								</g:HTMLPanel>
 								<g:DisclosurePanel ui:field="collapsePanel" styleName="{style.widthAll}">
 									<g:header>FILTRAR BUSQUEDA</g:header>
 									<g:HTMLPanel>
-										<table class="aon-panelGrid">
+										<table ui:field="filterTable" class="aon-panelGrid">
 											<!-- tr>
 												<td class="aon-panelGrid-odd">
 													<g:Label styleName="aon-outputLabel {style.pt9}">Empresa</g:Label>

@@ -1756,11 +1756,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<CRA> getCRAs(String domainStr) {
+	public List<CRA> getCRAs(String domain, String user) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(domainStr);
-			return JooqCRA.getDomainCRAs(domainStr, connection);
+			connection = AonServletUtils.getConnection(domain);
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
+			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
+			return JooqCRA.getDomainCRAs(domainId, parentDomainId, userId, connection);
 //			return JooqCRA.getDomainCRAs(getDomain(domainStr), connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -1775,7 +1778,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public String createNewCRA(String domainName, long findingDate, List<String> cccList, Integer cccId, String craType) {
+	public String createNewCRA(String domainName, long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String craType) {
 		Connection connection = null;
 		
 		try {
@@ -1784,7 +1787,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			
-			return JooqCRA.setMainCra(domainName, cccId.toString(), agrarianAFI, findingDate, craType, connection);
+			return JooqCRA.setMainCra(domainName, cccId.toString(), cccList, cccIdList, agrarianAFI, findingDate, craType, connection);
 			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

@@ -158,6 +158,9 @@ public class CCCInfo implements Serializable{
 		this.enterpriseId = enterpriseId;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return enterpriseDesciption + " (" + activityDescription + " -> " + cccAccount + ")";
+	}
 	
 }
