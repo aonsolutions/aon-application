@@ -742,7 +742,7 @@ public class TrabajadoresTramos {
 							@Override
 							public void visitExpedienteRegulacionEmpleoParcial() {
 
-								visitTiempoParcialNormal();
+								//visitTiempoParcialNormal();
 								
 								// Base de contingencias comunes en situación de Expediente de Regulación de Empleo
 								dataSolicitadoBuilder.setTipo("C");
@@ -994,7 +994,7 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitExpedienteRegulacionEmpleoParcial() {
-					cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
+					//cretaPeriods.add(new Period(period.getStart(), period.getEnd()));
 				}
 
 				@Override
@@ -1092,7 +1092,7 @@ public class TrabajadoresTramos {
 				
 				@Override
 				public void visitExpedienteRegulacionEmpleoParcial() {
-					visitOthers();
+					//visitOthers();
 				}
 
 				@Override
@@ -1456,7 +1456,7 @@ public class TrabajadoresTramos {
 		boolean ereParcial = ( ereFactor > 0.00 && ereFactor < 1.00 ) ; 
 		
 
-		boolean tiempoCompleto = fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
+		boolean tiempoCompleto = !ereParcial && fullTime && ("14".indexOf(tc2.charAt(0)) != -1);
 		
 		
 		boolean formacion = "421".equals(tc2) ;
@@ -1512,8 +1512,8 @@ public class TrabajadoresTramos {
 			visitor.visitIncapacidadTemporalPagoDirecto();
 		else if ( ereTotal )
 			visitor.visitExpedienteRegulacionEmpleoTotal();
-		else if ( ereParcial )
-			visitor.visitExpedienteRegulacionEmpleoParcial();
+//		else if ( ereParcial )
+//			visitor.visitExpedienteRegulacionEmpleoParcial();
 		else if ( artistas )
 			visitor.visitRegimenArtistasNormal();
 		else if (tiempoCompleto)
@@ -1521,6 +1521,9 @@ public class TrabajadoresTramos {
 		else 
 			visitor.visitTiempoParcialNormal();
 		
+		if (ereParcial && !formacion )
+			visitor.visitExpedienteRegulacionEmpleoParcial();
+
 		Visit grupoCotizacion ;
 		String quoteGroup = getContextData(QUOTE_GROUP.getName(), salary, startDate, endDate,  "01");
 		if ( Integer.parseInt(quoteGroup ) >= 8 )

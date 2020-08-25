@@ -15,8 +15,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE_OFF;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE_OFF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -84,6 +84,7 @@ import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -490,8 +491,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 	}
 
+
+
 	@Test
-	public void testCretaFormacionEREParcialI()
+	public void testCretaFormacionEREParcialITI()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
@@ -1017,7 +1020,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		int salaries = calculateAndSave(connection, ctx);
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		int salaries =  jooqSalaryBuilder.execute();
+		//int salaries = calculateAndSave(connection, ctx);
 
 		// Only one salary saved to DB.
 		Assert.assertEquals(1, salaries);
@@ -1100,7 +1106,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		int salaries = calculateAndSave(connection, ctx);
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		int salaries =  jooqSalaryBuilder.execute();
+//		int salaries = calculateAndSave(connection, ctx);
 
 		// Only one salary saved to DB.
 		Assert.assertEquals(1, salaries);
@@ -1177,7 +1186,10 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, endDate, contract);
 
-		int salaries = calculateAndSave(connection, ctx);
+		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
+		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		int salaries = jooqSalaryBuilder.execute();
+//		int salaries = calculateAndSave(connection, ctx);
 
 		// Only one salary saved to DB.
 		Assert.assertEquals(1, salaries);
@@ -3374,6 +3386,179 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaTrabajadoresYTramosEREFZAParcialAndIT()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		addData(aonContext, contract, startDate, null, ContextVariable.ERE_FACTOR_FORCE_OFF, 0.15);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startDate, null, null);
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		PaymentConceptRecord ereFzaExonerado = addConcept(aonContext, "ERE_FZA_EXONERADO");
+
+		addPayment(aonContext, contract, ereFzaExonerado, null, 
+				String.format("%s; %s * BASE_REGULADORA",  ERE_FACTOR_FORCE_OFF, ERE_DAYS_FORCE_OFF)
+				);
+		//@formatter:on
+		
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		for (Tramo tramo : tramos) {
+			System.out.println(tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia());
+		}
+		
+		Assert.assertEquals(3, tramos.size());
+		
+		// ERE 
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("15", tramo0.getFechaHasta().getDia());
+		assertTramoIT15PrimerosDias(tramo0);
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo0);
+		
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("16", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("20", tramo1.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo1);
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
+		
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("21", tramo2.getFechaDesde().getDia());
+		assertTramoITPagoDelegado(tramo1);
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo2);
+		
+
+		
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, startDate, endDate, ccc, contract);
+		
+		Assert.assertEquals(3, bases.size());
+	}
+
+	@Test
+	public void testCretaTrabajadoresYTramosEREFZAParcialAndITII()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		addData(aonContext, contract, startDate, null, ContextVariable.ERE_FACTOR_FORCE_OFF, 0.15);
+		
+		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 6);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, null, null);
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		PaymentConceptRecord ereFzaExonerado = addConcept(aonContext, "ERE_FZA_EXONERADO");
+
+		addPayment(aonContext, contract, ereFzaExonerado, null, 
+				String.format("%s; %s * BASE_REGULADORA",  ERE_FACTOR_FORCE_OFF, ERE_DAYS_FORCE_OFF)
+				);
+		//@formatter:on
+		
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		for (Tramo tramo : tramos) {
+			System.out.println(tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia());
+		}
+		
+		Assert.assertEquals(4, tramos.size());
+		
+		// ERE 
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("06", tramo0.getFechaHasta().getDia());
+		assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo0);
+
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("07", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("21", tramo1.getFechaHasta().getDia());
+		assertTramoIT15PrimerosDias(tramo1);
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
+		
+
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("22", tramo2.getFechaDesde().getDia());
+		Assert.assertEquals("26", tramo2.getFechaHasta().getDia());
+		assertTramoITPagoDelegado(tramo2);
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo2);
+		
+
+		Tramo tramo3 = tramos.get(3); 
+		Assert.assertEquals("27", tramo3.getFechaDesde().getDia());
+		assertTramoITPagoDelegado(tramo3);
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo3);
+		
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, startDate, endDate, ccc, contract);
+		
+		Assert.assertEquals(4, bases.size());
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosEREFZAOFFTotal()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
@@ -3453,7 +3638,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Tramo tramo1 = tramos.get(1); 
 		Assert.assertEquals("11", tramo1.getFechaDesde().getDia());
 		Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
-		assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
+		assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo1);
 		
 	}
 
@@ -5603,7 +5788,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		}
 	}
 
-	private static void assertTramoExpedienteRegulacionEmpleoParcial(Tramo tramo) {
+	private static void assertTramoExpedienteRegulacionEmpleoParcialActivo(Tramo tramo) {
 		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
 		// PARTE JORNADA TRABAJADA 
 		assertDatosSolicitado(datoSolicitados, "C", "500", "B");
@@ -5616,6 +5801,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		} catch ( AssertException e ) {
 			assertDatosSolicitado(datoSolicitados, "C", "611", "B");
 		}
+
+		// PARTE JORNADA EN SITUACIÓN DE DESCANSO 
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo);
+	}
+
+	private static void assertTramoExpedienteRegulacionEmpleoParcial(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
 
 		// PARTE JORNADA EN SITUACIÓN DE DESCANSO 
 		assertDatosSolicitado(datoSolicitados, "H", "05", "B");
@@ -5664,9 +5856,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 	private static int calculateAndSave(Connection connection,
 			ISQLContractSalaryCalculatorContext ctx) throws SalaryException {
-		ContractSalaryCalculator<Salary> calculator = new ContractSalaryCalculator<Salary>();
 		JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder(connection);
-		new ContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
 	}
 	
