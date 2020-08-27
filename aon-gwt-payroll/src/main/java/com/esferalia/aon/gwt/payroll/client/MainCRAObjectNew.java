@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -406,6 +407,49 @@ public class MainCRAObjectNew {
 		}
 		
 		filterCRAs = newCRAs;
+	}
+	
+	public void filterEmitedCCC(Date date) {
+		List<CCCInfo> emitedCCCs = new ArrayList<CCCInfo>();
+		DateUtils.resetTime(date);
+		
+		for(CCCInfo cccInfo : allEnterpriseCCCs) {
+			if(cccInfo.getCRADates().contains(date))
+				emitedCCCs.add(cccInfo);
+		}
+		
+		setEnterpriseCCCs(emitedCCCs);
+	}
+	
+	public void filterPenddingCCC(Date date) {
+		List<CCCInfo> peddingCCCs = new ArrayList<CCCInfo>();
+		DateUtils.resetTime(date);
+		
+		for(CCCInfo cccInfo : allEnterpriseCCCs) {
+			if(!cccInfo.getCRADates().contains(date))
+				peddingCCCs.add(cccInfo);
+		}
+		
+		setEnterpriseCCCs(peddingCCCs);
+	}
+
+	public void removeCCCCRADate(CRA cra) {
+		Date date = cra.getCreationDate();
+		DateUtils.resetTime(date);
+		
+		for(CCCInfo cccInfo : cra.getIncludeCCCs()) {
+			for(CCCInfo enterpriseCCC : allEnterpriseCCCs) {
+				if(cccInfo.getCccId() == enterpriseCCC.getCccId() || cccInfo.getCccId().equals(enterpriseCCC.getCccId())) {
+					List<Date> craDatesAux = new ArrayList<Date>();
+					craDatesAux.addAll(enterpriseCCC.getCRADates());
+					Boolean isRemoved = false;
+					for(Date craDate : craDatesAux)
+						if(date == craDate || date.equals(craDate) || date.getTime() == craDate.getTime())
+							isRemoved = enterpriseCCC.getCRADates().remove(craDate);
+					
+				}
+			}
+		}
 	}
 		
 }

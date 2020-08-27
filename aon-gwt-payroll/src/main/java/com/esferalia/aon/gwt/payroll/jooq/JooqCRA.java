@@ -1,23 +1,21 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
-import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
 import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -161,9 +159,15 @@ public class JooqCRA {
 			for(Record craBatchDetailRecord : craBatchDetailRecords) {
 				Integer enterpriseCCCId = craBatchDetailRecord.get(CRA_BATCH_DETAIL.ENTERPRISE_CCC);
 				
+				if(null == enterpriseCCCId)
+					continue;
+				
 				Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
 						.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))
 						.fetchOne();
+				
+				if(null == enterpriseCCCRecord)
+					continue;
 				
 				Integer cccId = enterpriseCCCRecord.get(ENTERPRISE_CCC.ID);
 				String cccCode = enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC);

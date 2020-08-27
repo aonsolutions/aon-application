@@ -2,6 +2,8 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.CraBatch.CRA_BATCH;
+import static com.esferalia.aon.jooq.tables.CraBatchDetail.CRA_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
@@ -18,6 +20,7 @@ import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -31,6 +34,7 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
@@ -640,6 +644,29 @@ public class JooqEnterprise {
 					
 					String completeCCCAccount = regime + cccCode;
 					
+					// ---------------------------------- Has CRA emited
+					
+					 List<Integer> craBatchDetailRecords = dslContext.select(CRA_BATCH_DETAIL.CRA_BATCH).from(CRA_BATCH_DETAIL)
+							.where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(cccId))
+							.fetch(CRA_BATCH_DETAIL.CRA_BATCH);
+					 
+					 List<java.util.Date> craDatesList = new ArrayList<java.util.Date>();
+					 
+					 for(Integer craBatchId : craBatchDetailRecords) {
+						List<Timestamp> craDates = dslContext.select(CRA_BATCH.OUTCOME_FILE_DATE).from(CRA_BATCH)
+								.where(CRA_BATCH.ID.eq(craBatchId))
+								.fetch(CRA_BATCH.OUTCOME_FILE_DATE);
+						
+						for(Timestamp craDate : craDates) {
+							if(null != craDate) {
+								java.util.Date date = new java.util.Date(craDate.getTime());
+								DateUtils.resetTime(date);
+								craDatesList.add(date);
+							}
+						}
+					 }
+					
+					// -------------------------------------------------
 					List<Integer> activeContracts = dslContext.select(CONTRACT.ID).from(CONTRACT)
 							.where(CONTRACT.ENTERPRISE_CCC.eq(cccId))
 							.and(CONTRACT.END_DATE.ge(findPeriod).or(CONTRACT.END_DATE.isNull()))
@@ -691,6 +718,7 @@ public class JooqEnterprise {
 					cccInfo.setUseByContracts(true);
 					cccInfo.setEnterpriseDesciption(enterpriseName);
 					cccInfo.setEnterpriseId(enterpriseId);
+					cccInfo.setCRADates(craDatesList);
 					
 					enterprisesCCCInfo.add(cccInfo);
 							

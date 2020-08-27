@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -18,6 +20,7 @@ public class CCCInfo implements Serializable{
 	private Boolean useByContracts;
 	private String enterpriseDesciption;
 	private Integer enterpriseId;
+	private List<Date> CRADates;
 	
 	/**
      * The key provider that provides the unique ID of a contact.
@@ -156,6 +159,14 @@ public class CCCInfo implements Serializable{
 
 	public void setEnterpriseId(Integer enterpriseId) {
 		this.enterpriseId = enterpriseId;
+	}
+	
+	public List<Date> getCRADates() {
+		return this.CRADates;
+	}
+	
+	public void setCRADates(List<Date> craDatesList) {
+		this.CRADates = craDatesList;
 	}
 	
 	@Override

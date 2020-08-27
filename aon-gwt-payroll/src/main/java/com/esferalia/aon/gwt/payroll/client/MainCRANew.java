@@ -27,6 +27,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -40,9 +42,13 @@ import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -79,6 +85,18 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiField
 	ListBox year;
+	
+	@UiField
+	HorizontalPanel checkBoxPanel;
+	
+	@UiField
+	CheckBox allCCCsCB;
+	
+	@UiField
+	CheckBox emitCCCsCB;
+	
+	@UiField
+	CheckBox peddingCCCsCB;
 	
 	@UiField
 	TableElement filterTable;
@@ -146,6 +164,7 @@ public class MainCRANew extends MainEntryPoint {
 		initListBoxes();
 		
 		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
+		checkBoxPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 	}
 	
 	private void initListBoxes() {
@@ -503,6 +522,7 @@ public class MainCRANew extends MainEntryPoint {
 			public void execute(CRA cra) {
 				mainCRAObjectNew.deteleCRA(cra.getCode(), 
 						s -> {
+							mainCRAObjectNew.removeCCCCRADate(cra);
 							initCRATable();
 						}, 
 						f -> {});
@@ -614,8 +634,12 @@ public class MainCRANew extends MainEntryPoint {
 					setSelectedValueLB(this.year, initialYear+"");
 					setSelectedValueLB(this.month, initialMonth+"");
 					
+					this.allCCCsCB.setValue(true);
+					this.emitCCCsCB.setValue(false);
+					this.peddingCCCsCB.setValue(false);
+					
 					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 225), Unit.PX);
+					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
 					
 					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
 					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
@@ -895,6 +919,54 @@ public class MainCRANew extends MainEntryPoint {
 		);
 	}
 	
+	@UiHandler("allCCCsCB")
+	public void onAllCCCsCB(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			this.emitCCCsCB.setValue(false);
+			this.peddingCCCsCB.setValue(false);
+			
+			this.mainCRAObjectNew.resetEnterpriseCCCList();
+			
+			showCCCs();
+			clearSelectionModel();
+			initCCCsTable();
+			initCRATable();
+		}
+	}
+	
+	@UiHandler("emitCCCsCB")
+	public void onEmitCCCsCB(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			this.allCCCsCB.setValue(false);
+			this.peddingCCCsCB.setValue(false);
+			
+			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
+			this.mainCRAObjectNew.filterEmitedCCC(findPeriod);
+			
+			showCCCs();
+			clearSelectionModel();
+			initCCCsTable();
+			initCRATable();
+		}
+		
+	}
+	
+	@UiHandler("peddingCCCsCB")
+	public void onPenddingCCCsCB(ValueChangeEvent<Boolean> event) {
+		if(event.getValue()) {
+			this.allCCCsCB.setValue(false);
+			this.emitCCCsCB.setValue(false);
+			
+			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
+			this.mainCRAObjectNew.filterPenddingCCC(findPeriod);
+			
+			showCCCs();
+			clearSelectionModel();
+			initCCCsTable();
+			initCRATable();
+		}
+	}
+	
 	@UiHandler("month")
 	public void onMonthChange(ChangeEvent event) {
 		showCCCs();
@@ -911,8 +983,12 @@ public class MainCRANew extends MainEntryPoint {
 					setSelectedValueLB(this.year, findPeriod.getYear()+"");
 					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
 					
+					this.allCCCsCB.setValue(true);
+					this.emitCCCsCB.setValue(false);
+					this.peddingCCCsCB.setValue(false);
+					
 					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 225), Unit.PX);
+					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
 					
 					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
 					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
@@ -938,8 +1014,12 @@ public class MainCRANew extends MainEntryPoint {
 					setSelectedValueLB(this.year, findPeriod.getYear()+"");
 					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
 					
+					this.allCCCsCB.setValue(true);
+					this.emitCCCsCB.setValue(false);
+					this.peddingCCCsCB.setValue(false);
+					
 					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 225), Unit.PX);
+					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
 					
 					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
 					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
@@ -951,14 +1031,20 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiHandler("newCRAButton")
 	public void onNewCRAButton(ClickEvent event) {
-		clearSelectionModel();
-		showCCCs();
-//		enterpriseSB.setText("");
-//		this.mainCRAObjectNew.resetEnterpriseCCCList();
 		exportButton.setVisible(true);
 		listButton.setVisible(true);
 		newCRAButton.setVisible(false);
+		
+		this.allCCCsCB.setValue(true);
+		this.emitCCCsCB.setValue(false);
+		this.peddingCCCsCB.setValue(false);
+		
+		this.mainCRAObjectNew.resetEnterpriseCCCList();
+		
+		showCCCs();
+		clearSelectionModel();
 		initCCCsTable();
+		initCRATable();
 	}
 	
 	@UiHandler("exportButton")
@@ -977,6 +1063,7 @@ public class MainCRANew extends MainEntryPoint {
 			Integer cccId = cccsSelected.get(0).getCccId();
 			
 			Date findingDate = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
+			DateUtils.resetTime(findingDate);
 			
 			if(checkRectificavo()) {
 				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
@@ -984,6 +1071,9 @@ public class MainCRANew extends MainEntryPoint {
 							if(StringUtils.isBlank(s)) {
 								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
 										v -> {
+											for(CCCInfo cccInfo : cccsSelected) {
+												cccInfo.getCRADates().add(findingDate);
+											}
 											showCRAS();
 											initCRATable();
 										}, 
@@ -995,6 +1085,9 @@ public class MainCRANew extends MainEntryPoint {
 									protected void onAccept() {
 										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
 												v -> {
+													for(CCCInfo cccInfo : cccsSelected) {
+														cccInfo.getCRADates().add(findingDate);
+													}
 													showCRAS();
 													initCRATable();
 												}, 
@@ -1016,6 +1109,10 @@ public class MainCRANew extends MainEntryPoint {
 											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
 									warning.center();
 									warning.show();
+									
+									for(CCCInfo cccInfo : cccsSelected) {
+										cccInfo.getCRADates().add(findingDate);
+									}
 									
 									showCRAS();
 									initCRATable();
