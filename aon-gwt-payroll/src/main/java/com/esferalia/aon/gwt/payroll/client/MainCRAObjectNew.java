@@ -81,12 +81,13 @@ public class MainCRAObjectNew {
 				allEnterpriseCCCs.clear();
 				enterpriseCCCs.addAll(enterprisesCCCInfo);
 				allEnterpriseCCCs.addAll(enterprisesCCCInfo);
+				success.accept(enterprisesCCCInfo);
 				
-				getCRAs(
-					s -> {
-						success.accept(enterprisesCCCInfo);
-					}, 
-					f -> {});	
+//				getCRAs(
+//					s -> {
+//						success.accept(enterprisesCCCInfo);
+//					}, 
+//					f -> {});	
 			}
 	
 			@Override
@@ -442,10 +443,9 @@ public class MainCRAObjectNew {
 				if(cccInfo.getCccId() == enterpriseCCC.getCccId() || cccInfo.getCccId().equals(enterpriseCCC.getCccId())) {
 					List<Date> craDatesAux = new ArrayList<Date>();
 					craDatesAux.addAll(enterpriseCCC.getCRADates());
-					Boolean isRemoved = false;
 					for(Date craDate : craDatesAux)
 						if(date == craDate || date.equals(craDate) || date.getTime() == craDate.getTime())
-							isRemoved = enterpriseCCC.getCRADates().remove(craDate);
+							enterpriseCCC.getCRADates().remove(craDate);
 					
 				}
 			}

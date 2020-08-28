@@ -159,34 +159,63 @@ public class MainCRANew extends MainEntryPoint {
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get("rootPanel").add(ui);
 		
-		initCollapseAndDeckPanel();
-		
+		// Init view and listboxes
+		initPreView();
 		initListBoxes();
 		
-		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
-		checkBoxPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 	}
 	
 	private void initListBoxes() {
-		// Clear LB
+		// Set list box for filter by dates
+		month.clear();
 		monthTillT.clear();
 		monthTTo.clear();
+		year.clear();
 		yearTillT.clear();
 		yearTTo.clear();
 		
 		String[] months = new String[]{"Enero", "Frebero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
 		for(int i=0; i<months.length; i++) {
+			month.addItem(months[i], i+"");
 			monthTillT.addItem(months[i], i+"");
 			monthTTo.addItem(months[i], i+"");
 		}
 		
-		Integer year = new Date().getYear();
+		Integer yearInt = new Date().getYear();
 		
-		yearTillT.addItem((year + 1900) + "", year + "");
-		yearTillT.addItem((year + 1900 - 1) + "", (year - 1) + "");
+		year.addItem((yearInt + 1900) + "", yearInt + "");
+		year.addItem((yearInt + 1900 - 1) + "", (yearInt - 1) + "");
 		
-		yearTTo.addItem((year + 1900) + "", year + "");
-		yearTTo.addItem((year + 1900 - 1) + "", (year - 1) + "");
+		yearTillT.addItem((yearInt + 1900) + "", yearInt + "");
+		yearTillT.addItem((yearInt + 1900 - 1) + "", (yearInt - 1) + "");
+		
+		yearTTo.addItem((yearInt + 1900) + "", year + "");
+		yearTTo.addItem((yearInt + 1900 - 1) + "", (yearInt - 1) + "");
+		
+		// Type List
+		typeList.clear();
+		typeList.addItem("-", "-1");
+		typeList.addItem("Principal", "0");
+		typeList.addItem("Formacion y aprendizaje", "1");
+		typeList.addItem("Aprendizaje", "2");
+		typeList.addItem("Representantes de comercio", "3");
+		typeList.addItem("Asimilados R.General", "4");
+		typeList.addItem("Becarios", "5");
+		typeList.addItem("Emploead@s de hogar", "6");
+		typeList.addItem("Trabajadores cuenta ajena agrarios", "7");
+		typeList.addItem("Artistas", "8");
+		typeList.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
+		typeList.addStyleName("aon-selectOneMenu");
+		
+		//Geozone
+		geozoneList.clear();
+		geozoneList.addItem("-", "-1");
+		
+		for(Entry<String, String> province : ProvinceContract.getProvinces().entrySet()) {
+			geozoneList.addItem(province.getValue(), province.getKey());
+		}
+		
+		
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -460,7 +489,9 @@ public class MainCRANew extends MainEntryPoint {
 					for(CCCInfo cccInfo : cra.getIncludeCCCs()) {
 						message += cccInfo.toString() + "\n";
 					}
-					Window.alert(message);
+					WarningDialog info = new WarningDialog("CCCs contenidas", message);
+					info.center();
+					info.show();
 				}
 					
 			}
@@ -591,8 +622,10 @@ public class MainCRANew extends MainEntryPoint {
 		crasDataGrid.getHeader(9).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
 	
-	private void initCollapseAndDeckPanel() {
+	private void initPreView() {
 		collapsePanel.setOpen(false);
+		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
+		checkBoxPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -611,43 +644,58 @@ public class MainCRANew extends MainEntryPoint {
 	
 	public void onModuleLoad(MainCRAObjectNew mainCRAObjectNew) {
 		this.mainCRAObjectNew = mainCRAObjectNew;
+		
+		// Show CCCs on start
 		showCCCs();
 		
-		// Get first day of previus month
-		Date actualDate = new Date();
-		actualDate.setDate(1);
-		actualDate = DateUtils.addMonths2Date(actualDate, -1);
+		// Create findPeriod, first day of previus month
+		Date initialDate = createInitialDate();
 		
-		Integer initialYear = actualDate.getYear();
-		Integer initialMonth = actualDate.getMonth();
+		Integer initialYear = initialDate.getYear();
+		Integer initialMonth = initialDate.getMonth();
 		
-		Date findPeriod = DateUtils.copyDateOnly(actualDate);
-		
-//		this.mainCRAObjectNew.getEnterpriseCCCs(
+		Date findPeriod = DateUtils.copyDateOnly(initialDate);
+
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
 				s -> {
+					
 					clearSelectionModel();
-					initListBox();
+//					initListBox();
 					initCCCsTable();
-					initCRATable();
+//					initCRATable();
+					setInitialLBAndCBSelected(initialYear, initialMonth);
+					setTableHeights();		
 					
-					setSelectedValueLB(this.year, initialYear+"");
-					setSelectedValueLB(this.month, initialMonth+"");
-					
-					this.allCCCsCB.setValue(true);
-					this.emitCCCsCB.setValue(false);
-					this.peddingCCCsCB.setValue(false);
-					
-					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
-					
-					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
 				}, 
 				f -> {}
 		);
 	}
 	
+	private Date createInitialDate() {
+		// Get first day of previus month
+		Date actualDate = new Date();
+		actualDate.setDate(1);
+		actualDate = DateUtils.addMonths2Date(actualDate, -1);
+		return actualDate;
+	}
+	
+	private void setInitialLBAndCBSelected(Integer initialYear, Integer initialMonth) {
+		setSelectedValueLB(this.year, initialYear+"");
+		setSelectedValueLB(this.month, initialMonth+"");
+		
+		this.allCCCsCB.setValue(true);
+		this.emitCCCsCB.setValue(false);
+		this.peddingCCCsCB.setValue(false);
+	}
+	
+	private void setTableHeights() {
+		cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
+		
+		crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+		crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
+	}
+
 	// --------------------------------------------------------------------------------------------
 	// 										INIT CCCs TABLE
 	// --------------------------------------------------------------------------------------------
@@ -910,9 +958,6 @@ public class MainCRANew extends MainEntryPoint {
 		mainCRAObjectNew.getCRAs(
 				s -> {
 					showCRAS();
-					exportButton.setVisible(false);
-					listButton.setVisible(false);
-					newCRAButton.setVisible(true);
 					initCRATable();
 				}, 
 				f -> {}
@@ -927,10 +972,10 @@ public class MainCRANew extends MainEntryPoint {
 			
 			this.mainCRAObjectNew.resetEnterpriseCCCList();
 			
-			showCCCs();
+//			showCCCs();
 			clearSelectionModel();
 			initCCCsTable();
-			initCRATable();
+//			initCRATable();
 		}
 	}
 	
@@ -943,10 +988,10 @@ public class MainCRANew extends MainEntryPoint {
 			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			this.mainCRAObjectNew.filterEmitedCCC(findPeriod);
 			
-			showCCCs();
+//			showCCCs();
 			clearSelectionModel();
 			initCCCsTable();
-			initCRATable();
+//			initCRATable();
 		}
 		
 	}
@@ -960,38 +1005,31 @@ public class MainCRANew extends MainEntryPoint {
 			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			this.mainCRAObjectNew.filterPenddingCCC(findPeriod);
 			
-			showCCCs();
+//			showCCCs();
 			clearSelectionModel();
 			initCCCsTable();
-			initCRATable();
+//			initCRATable();
 		}
 	}
 	
 	@UiHandler("month")
 	public void onMonthChange(ChangeEvent event) {
-		showCCCs();
+//		showCCCs();
 		
 		Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 		
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
 				s -> {
 					clearSelectionModel();
-					initListBox();
+//					initListBox();
 					initCCCsTable();
-					initCRATable();
+//					initCRATable();
 					
-					setSelectedValueLB(this.year, findPeriod.getYear()+"");
-					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
+					int initialYear = findPeriod.getYear();
+					int initialMonth = findPeriod.getMonth();
+					setInitialLBAndCBSelected(initialYear, initialMonth);
+					setTableHeights();		
 					
-					this.allCCCsCB.setValue(true);
-					this.emitCCCsCB.setValue(false);
-					this.peddingCCCsCB.setValue(false);
-					
-					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
-					
-					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
 				}, 
 				f -> {}
 		);
@@ -1000,29 +1038,21 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiHandler("year")
 	public void onYearChange(ChangeEvent event) {
-		showCCCs();
+//		showCCCs();
 		
 		Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 		
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
 				s -> {
 					clearSelectionModel();
-					initListBox();
+//					initListBox();
 					initCCCsTable();
-					initCRATable();
+//					initCRATable();
 					
-					setSelectedValueLB(this.year, findPeriod.getYear()+"");
-					setSelectedValueLB(this.month, findPeriod.getMonth()+"");
-					
-					this.allCCCsCB.setValue(true);
-					this.emitCCCsCB.setValue(false);
-					this.peddingCCCsCB.setValue(false);
-					
-					cccDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
-					
-					crasDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-					crasPanel.getElement().getStyle().setHeight((Window.getClientHeight() - 250), Unit.PX);
+					int initialYear = findPeriod.getYear();
+					int initialMonth = findPeriod.getMonth();
+					setInitialLBAndCBSelected(initialYear, initialMonth);
+					setTableHeights();
 				}, 
 				f -> {}
 		);
@@ -1031,20 +1061,12 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiHandler("newCRAButton")
 	public void onNewCRAButton(ClickEvent event) {
-		exportButton.setVisible(true);
-		listButton.setVisible(true);
-		newCRAButton.setVisible(false);
-		
-		this.allCCCsCB.setValue(true);
-		this.emitCCCsCB.setValue(false);
-		this.peddingCCCsCB.setValue(false);
-		
 		this.mainCRAObjectNew.resetEnterpriseCCCList();
 		
 		showCCCs();
 		clearSelectionModel();
 		initCCCsTable();
-		initCRATable();
+//		initCRATable();
 	}
 	
 	@UiHandler("exportButton")
@@ -1127,31 +1149,27 @@ public class MainCRANew extends MainEntryPoint {
 		}
 	}
 	
-//	@UiHandler("typeList")
-//	public void onTypeListChange(ChangeEvent event) {
-//		if(0 == typeList.getSelectedIndex()) {
-////			this.enterpriseSB.setValue("");
-//			this.mainCRAObjectNew.resetCRAsList();
-//			initCRATable();
-//		} else {
-//			Byte type = Byte.parseByte(typeList.getSelectedValue());
-//			mainCRAObjectNew.filterCRAsListByType(type);
-//			initCRATable();
-//		}
-//	}
-//	
-//	@UiHandler("geozoneList")
-//	public void onGeozoneListChange(ChangeEvent event) {
-//		if(0 == geozoneList.getSelectedIndex()) {
-////			this.enterpriseSB.setValue("");
-//			this.mainCRAObjectNew.resetCRAsList();
-//			initCRATable();
-//		} else {
-//			String geozoneCode = geozoneList.getSelectedItemText();
-//			mainCRAObjectNew.filterCRAListByGeozone(geozoneCode);
-//			initCRATable();
-//		}
-//	}
+	@UiHandler("typeList")
+	public void onTypeListChange(ChangeEvent event) {
+		if(0 == typeList.getSelectedIndex())
+			this.mainCRAObjectNew.resetCRAsList();
+		else {
+			Byte type = Byte.parseByte(typeList.getSelectedValue());
+			mainCRAObjectNew.filterCRAsListByType(type);
+		}
+		initCRATable();
+	}
+	
+	@UiHandler("geozoneList")
+	public void onGeozoneListChange(ChangeEvent event) {
+		if(0 == geozoneList.getSelectedIndex())
+			this.mainCRAObjectNew.resetCRAsList();
+		else {
+			String geozoneCode = geozoneList.getSelectedItemText();
+			mainCRAObjectNew.filterCRAListByGeozone(geozoneCode);
+		}
+		initCRATable();
+	}
 //	
 //	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo"})
 //	public void onFilterDatesChange(ChangeEvent event) {
@@ -1228,96 +1246,96 @@ public class MainCRANew extends MainEntryPoint {
 	// 										AUX METHODS
 	// --------------------------------------------------------------------------------------------
 	
-	private void initListBox() {
-		//Month
-		month.clear();
-		month.addItem("Enero", "0");
-		month.addItem("Febrero", "1");
-		month.addItem("Marzo", "2");
-		month.addItem("Abril", "3");
-		month.addItem("Mayo", "4");
-		month.addItem("Junio", "5");
-		month.addItem("Julio", "6");
-		month.addItem("Agosto", "7");
-		month.addItem("Septiembre", "8");
-		month.addItem("Octubre", "9");
-		month.addItem("Noviembre", "10");
-		month.addItem("Diciembre", "11");
-		
-		
-		// Year
-		Integer actualYear = new Date().getYear() + 1900;
-		year.clear();
-		year.addItem((actualYear)+"", (actualYear-1900)+"");
-		year.addItem((actualYear-1)+"", (actualYear-1-1900)+"");
-		year.addItem((actualYear-2)+"", (actualYear-2-1900)+"");
-		
-		// Type List
-		typeList.clear();
-		typeList.addItem("-", "-1");
-		typeList.addItem("Principal", "0");
-		typeList.addItem("Formacion y aprendizaje", "1");
-		typeList.addItem("Aprendizaje", "2");
-		typeList.addItem("Representantes de comercio", "3");
-		typeList.addItem("Asimilados R.General", "4");
-		typeList.addItem("Becarios", "5");
-		typeList.addItem("Emploead@s de hogar", "6");
-		typeList.addItem("Trabajadores cuenta ajena agrarios", "7");
-		typeList.addItem("Artistas", "8");
-		typeList.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
-		typeList.addStyleName("aon-selectOneMenu");
-		
-		// Enteprise List
-		List<String> enterprises = new ArrayList<>(mainCRAObjectNew.getEnterprisesMap().values());
-		List<String> enterprisesSuggest = new ArrayList<String>();
-		for(String enterprise : enterprises)
-			enterprisesSuggest.add(enterprise+"");
-		
-//		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) enterpriseSB.getSuggestOracle();
-//		orclEnterprise.addAll(enterprisesSuggest);
-//		enterpriseSB.setAutoSelectEnabled(false);
+//	private void initListBox() {
+//		//Month
+//		month.clear();
+//		month.addItem("Enero", "0");
+//		month.addItem("Febrero", "1");
+//		month.addItem("Marzo", "2");
+//		month.addItem("Abril", "3");
+//		month.addItem("Mayo", "4");
+//		month.addItem("Junio", "5");
+//		month.addItem("Julio", "6");
+//		month.addItem("Agosto", "7");
+//		month.addItem("Septiembre", "8");
+//		month.addItem("Octubre", "9");
+//		month.addItem("Noviembre", "10");
+//		month.addItem("Diciembre", "11");
 //		
-//		enterpriseSB.addKeyUpHandler(e-> {
-//			String value = enterpriseSB.getValue();
-//			if(StringUtils.isBlank(value) || value.length() < 3) {
-//				mainCRAObjectNew.resetEnterpriseCCCList();
-//			} else {
-//				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-//				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
-//			}
-//			initCCCsTable();
-//		});
 //		
-//		enterpriseSB.addSelectionHandler(e -> {
-//			String value = enterpriseSB.getValue();
-//			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
-//			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
-//			initCCCsTable();
-//		});
-		
-		//Geozone
-		geozoneList.clear();
-		geozoneList.addItem("-", "-1");
-		for(Entry<String, String> province : ProvinceContract.getProvinces().entrySet()) {
-			geozoneList.addItem(province.getValue(), province.getKey());
-		}
-		
-	}
+//		// Year
+//		Integer actualYear = new Date().getYear() + 1900;
+//		year.clear();
+//		year.addItem((actualYear)+"", (actualYear-1900)+"");
+//		year.addItem((actualYear-1)+"", (actualYear-1-1900)+"");
+//		year.addItem((actualYear-2)+"", (actualYear-2-1900)+"");
+//		
+//		// Type List
+//		typeList.clear();
+//		typeList.addItem("-", "-1");
+//		typeList.addItem("Principal", "0");
+//		typeList.addItem("Formacion y aprendizaje", "1");
+//		typeList.addItem("Aprendizaje", "2");
+//		typeList.addItem("Representantes de comercio", "3");
+//		typeList.addItem("Asimilados R.General", "4");
+//		typeList.addItem("Becarios", "5");
+//		typeList.addItem("Emploead@s de hogar", "6");
+//		typeList.addItem("Trabajadores cuenta ajena agrarios", "7");
+//		typeList.addItem("Artistas", "8");
+//		typeList.getElement().getElementsByTagName("option").getItem(2).setAttribute("disabled", "disabled");
+//		typeList.addStyleName("aon-selectOneMenu");
+//		
+//		// Enteprise List
+//		List<String> enterprises = new ArrayList<>(mainCRAObjectNew.getEnterprisesMap().values());
+//		List<String> enterprisesSuggest = new ArrayList<String>();
+//		for(String enterprise : enterprises)
+//			enterprisesSuggest.add(enterprise+"");
+//		
+////		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) enterpriseSB.getSuggestOracle();
+////		orclEnterprise.addAll(enterprisesSuggest);
+////		enterpriseSB.setAutoSelectEnabled(false);
+////		
+////		enterpriseSB.addKeyUpHandler(e-> {
+////			String value = enterpriseSB.getValue();
+////			if(StringUtils.isBlank(value) || value.length() < 3) {
+////				mainCRAObjectNew.resetEnterpriseCCCList();
+////			} else {
+////				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+////				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+////			}
+////			initCCCsTable();
+////		});
+////		
+////		enterpriseSB.addSelectionHandler(e -> {
+////			String value = enterpriseSB.getValue();
+////			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+////			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+////			initCCCsTable();
+////		});
+//		
+//		//Geozone
+//		geozoneList.clear();
+//		geozoneList.addItem("-", "-1");
+//		for(Entry<String, String> province : ProvinceContract.getProvinces().entrySet()) {
+//			geozoneList.addItem(province.getValue(), province.getKey());
+//		}
+//		
+//	}
 
-	private String parseCCCType(String typeStr) {
-		switch (typeStr) {
-			case "0111":
-				return "Principal";
-			case "0138":
-				return "Emploead@s de hogar";
-			case "0163":
-				return "Trabajadores cuenta ajena agrarios";
-			case "0112":
-				return "Artistas";
-			default:
-				return "Principal";
-		}
-	}
+//	private String parseCCCType(String typeStr) {
+//		switch (typeStr) {
+//			case "0111":
+//				return "Principal";
+//			case "0138":
+//				return "Emploead@s de hogar";
+//			case "0163":
+//				return "Trabajadores cuenta ajena agrarios";
+//			case "0112":
+//				return "Artistas";
+//			default:
+//				return "Principal";
+//		}
+//	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
@@ -1339,6 +1357,10 @@ public class MainCRANew extends MainEntryPoint {
 		exportButton.setVisible(true);
 		listButton.setVisible(true);
 		newCRAButton.setVisible(false);
+		
+		this.allCCCsCB.setValue(true);
+		this.emitCCCsCB.setValue(false);
+		this.peddingCCCsCB.setValue(false);
 	}
 	
 	private void showCRAS() {
