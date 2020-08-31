@@ -94,6 +94,10 @@
 			margin-left: 20px;	
 		}
 		
+		.ml4{
+			margin-left: 4px;	
+		}
+		
 		.w300{
 			width: 300px;
 		}
@@ -109,6 +113,10 @@
 		
 		.pt2{
 			padding-top: 2px;
+		}
+		
+		.mr16{
+			margin-right: 16px;
 		}
 	</ui:style>
 
@@ -150,9 +158,10 @@
 						
 							<g:HTMLPanel styleName="aon-panelGrid-search {style.panelGridSearch}">
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
-									<g:Label styleName="aon-panelGrid-search-info-internal">PERIODO DE LIQUIDACION</g:Label>
+									<g:Label styleName="aon-panelGrid-search-info-internal">LIQUIDACIÓN</g:Label>
 								</g:HTMLPanel>
 								<g:HorizontalPanel styleName="{style.ml20}">
+									<g:Label styleName="aon-outputLabel {style.pt4} {style.mr16}">Periodo</g:Label>
 									<g:ListBox ui:field="month" styleName="{style.mr10}"></g:ListBox>
 									<g:ListBox ui:field="year" styleName="{style.mr10}"></g:ListBox>
 									<g:CheckBox ui:field="allCCCsCB"></g:CheckBox>
@@ -165,6 +174,8 @@
 								<g:HorizontalPanel ui:field="enterprisePanel" styleName="{style.ml20} {style.mt10}">
 									<g:Label styleName="aon-outputLabel {style.pt4}">Empresa</g:Label>
 									<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w300}" ui:field="enterpriseSB"></g:SuggestBox>
+									<g:Label styleName="aon-outputLabel {style.pt4} {style.ml4}">Selcs.: </g:Label>
+									<g:Label ui:field="enterprisesSelected" styleName="aon-outputLabel {style.pt4} {style.ml4}"></g:Label>
 								</g:HorizontalPanel>
 							</g:HTMLPanel>
 						
@@ -180,10 +191,10 @@
 						<g:VerticalPanel styleName="{style.tableStylePanel}">
 							<g:HTMLPanel styleName="aon-panelGrid-search  {style.panelGridSearch}">
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
-									<g:Label styleName="aon-panelGrid-search-info-internal">FILTRAR BUSQUEDA</g:Label>
+									<g:Label styleName="aon-panelGrid-search-info-internal">FILTRAR LISTADO</g:Label>
 								</g:HTMLPanel>
 								<g:DisclosurePanel ui:field="collapsePanel" styleName="{style.widthAll}">
-									<g:header>FILTRAR BUSQUEDA</g:header>
+									<g:header>OPCIONES DE BUSQUEDA</g:header>
 									<g:HTMLPanel>
 										<table ui:field="filterTable" class="aon-panelGrid">
 											<!-- tr>

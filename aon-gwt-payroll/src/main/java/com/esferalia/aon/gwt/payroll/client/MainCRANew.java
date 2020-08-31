@@ -106,6 +106,9 @@ public class MainCRANew extends MainEntryPoint {
 	SuggestBox enterpriseSB;
 	
 	@UiField
+	Label enterprisesSelected;
+	
+	@UiField
 	ListBox typeList;
 	
 	@UiField
@@ -140,6 +143,7 @@ public class MainCRANew extends MainEntryPoint {
 	
 	private List<CCCInfo> cccs = Collections.emptyList();
 	private List<CRA> cras = Collections.emptyList();
+	private Integer enterprisesSelectedCount = 0;
 	
 	public MainCRANew() {
 		provideCCCDataGrid();
@@ -246,6 +250,8 @@ public class MainCRANew extends MainEntryPoint {
 	        
 	        @Override
 	        public void onSelectionChange(SelectionChangeEvent event) {
+	        	enterprisesSelectedCount = selectionCCCInfoModel.getSelectedSet().size();
+	        	enterprisesSelected.setText(enterprisesSelectedCount.toString());
 	            if(selectionCCCInfoModel.getSelectedSet().size() > 0) {
 	            	exportButton.setEnabled(true);
 	            }else {
@@ -620,6 +626,7 @@ public class MainCRANew extends MainEntryPoint {
 	private void initPreView() {
 		collapsePanel.setOpen(false);
 		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
+		enterprisesSelected.setText(enterprisesSelectedCount.toString());
 	}
 	
 	// --------------------------------------------------------------------------------------------
