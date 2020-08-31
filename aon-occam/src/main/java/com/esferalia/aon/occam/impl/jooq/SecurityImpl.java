@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
@@ -251,6 +252,12 @@ public class SecurityImpl implements ISecurity {
 	public UserAppRole deleteUserAppRole(AONContext ctx, UserAppRoleFilter filter) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.deleteUserAppRole(ctx, filter));
+	}
+
+	@Override
+	public Stream<Module> getDomainModules(AONContext ctx) {
+		return ctx.getDslContext().transactionResult( 
+				configuration -> SecurityDAO.getDomainModules(ctx));
 	}
 
 }

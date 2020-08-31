@@ -15,7 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "LoginServlet", urlPatterns = {"/ms/api/example/*"})
+@WebServlet(name = "ExampleServlet", urlPatterns = {"/ms/api/example/*"})
 public class ExampleServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(ExampleServlet.class.getName());

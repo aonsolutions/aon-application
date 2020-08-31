@@ -5922,5 +5922,11 @@ public class AON {
 				ctx.close();
 		}
 	}
+	
+	public static Stream<com.esferalia.aon.occam.api.model.Module> getDomainModules(String domainName, Integer domainId, String login) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
+			return getSecurity().getDomainModules(ctx);
+		}
+	}
 
 }

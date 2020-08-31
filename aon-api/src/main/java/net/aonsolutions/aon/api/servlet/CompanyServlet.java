@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -93,10 +94,48 @@ public class CompanyServlet extends HttpServlet{
 		f.getDomainProperty().eq(domain.getId())).forEach(domainApp -> {	
 			json.put(domainApp.getApp().name().toLowerCase(), domainApp.getActive());
 		});
+		if(json.isEmpty()) {
+			return oldModules(domain);
+		}
+		return json;
+	}
+	
+	private JSONObject oldModules(Domain domain) {
+		JSONObject json = new JSONObject();
+		AON.getDomainModules(domain.getName(), domain.getId(), "").forEach(r -> {
+			DomainApp dapp = new DomainApp()
+					.setDomain(domain.getId())
+					.setActive(true);
+			if(Module.ACCOUNTING.equals(r)) {
+				dapp.setApp(AonApp.ACCOUNTING);
+				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+			} else if(Module.AON_FINANCE.equals(r)) {
+				dapp.setApp(AonApp.INVOICE);
+				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+			} else if(Module.CALL_CENTER.equals(r)) {
+				dapp.setApp(AonApp.HELPDESK);
+				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+			} else if(Module.CONTRATA.equals(r)) {
+				
+			} else if(Module.DOCUMENT.equals(r)) {
+				dapp.setApp(AonApp.DOCUMENTAL);
+				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+			} else if(Module.FISCAL.equals(r)) {
+				dapp.setApp(AonApp.FISCAL);
+				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+			} else if(Module.PAYROLL.equals(r)) {
+				dapp.setApp(AonApp.PAYROLL);
+				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+			}
+			if(dapp.getApp() != null)
+				json.put(dapp.getApp().name().toLowerCase(), dapp.getActive());
+
+		});			
 		return json;
 	}
 	
 	private JSONObject setDomainApp(JSONObject json){
+		// TODO ACTUALIZAR LA PARTE VIEJA!
 		String domainName = json.getString("domain");
 		String app = json.getString("app");
 		Boolean active = json.getBoolean("active");

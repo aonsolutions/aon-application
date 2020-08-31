@@ -80,4 +80,7 @@ public interface ISecurity {
 	public UserAppRole insertUserAppRole(AONContext ctx, UserAppRole userAppRole);
 	public UserAppRole updateUserAppRole(AONContext ctx, UserAppRole userAppRole);
 	public UserAppRole deleteUserAppRole(AONContext ctx, UserAppRoleFilter filter);
+	
+	// DOMAIN MODULES
+	public Stream<com.esferalia.aon.occam.api.model.Module> getDomainModules(AONContext ctx);
 }

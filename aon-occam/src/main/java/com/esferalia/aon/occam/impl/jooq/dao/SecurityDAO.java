@@ -11,6 +11,7 @@ import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.DomainApp.DOMAIN_APP;
+import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLICATION_MODULE;
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
@@ -57,6 +58,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -920,5 +922,11 @@ public class SecurityDAO {
 				: new Integer[]{domain,parentDomain};
 	}
 
+	public static Stream<Module> getDomainModules(AONContext ctx){
+		return ctx.getDslContext().select().from(DOMAIN_APPLICATION_MODULE)
+				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(ctx.getDomainId())).fetchInto(DOMAIN_APPLICATION_MODULE)
+				.stream().map(r -> Module.safeValueOf(r.getValue(DOMAIN_APPLICATION_MODULE.MODULE).intValue()));
+	}
+	
 }
 
