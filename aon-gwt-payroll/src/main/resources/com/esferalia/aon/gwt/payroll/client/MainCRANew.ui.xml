@@ -154,15 +154,17 @@
 								</g:HTMLPanel>
 								<g:HorizontalPanel styleName="{style.ml20}">
 									<g:ListBox ui:field="month" styleName="{style.mr10}"></g:ListBox>
-									<g:ListBox ui:field="year"></g:ListBox>
-								</g:HorizontalPanel>
-								<g:HorizontalPanel ui:field="checkBoxPanel" styleName="{style.ml20} {style.mt10}">
+									<g:ListBox ui:field="year" styleName="{style.mr10}"></g:ListBox>
 									<g:CheckBox ui:field="allCCCsCB"></g:CheckBox>
 									<g:Label styleName="{style.pt2}">Todos</g:Label>
 									<g:CheckBox ui:field="emitCCCsCB"></g:CheckBox>
 									<g:Label styleName="{style.pt2}">Emitidos</g:Label>
 									<g:CheckBox ui:field="peddingCCCsCB"></g:CheckBox>
 									<g:Label styleName="{style.pt2}">Pendientes</g:Label>
+								</g:HorizontalPanel>
+								<g:HorizontalPanel ui:field="enterprisePanel" styleName="{style.ml20} {style.mt10}">
+									<g:Label styleName="aon-outputLabel {style.pt4}">Empresa</g:Label>
+									<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w300}" ui:field="enterpriseSB"></g:SuggestBox>
 								</g:HorizontalPanel>
 							</g:HTMLPanel>
 						

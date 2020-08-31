@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -76,7 +77,7 @@ public class MainCRAObjectNew {
 			
 			@Override
 			public void onSuccess(List<CCCInfo> enterprisesCCCInfo) {
-//				initEnterpriseMap(enterprisesCCCInfo);
+				initEnterpriseMap(enterprisesCCCInfo);
 				enterpriseCCCs.clear();
 				allEnterpriseCCCs.clear();
 				enterpriseCCCs.addAll(enterprisesCCCInfo);
@@ -196,11 +197,11 @@ public class MainCRAObjectNew {
 		});
 	}
 	
-	private void initEnterpriseMap(List<Enterprise> enterprises) {
+	private void initEnterpriseMap(List<CCCInfo> enterprisesCCCInfo) {
 		this.enterprisesMap.clear();
 		
-		for(Enterprise enterprise: enterprises) {
-			this.enterprisesMap.put(enterprise.getId(), enterprise.getName());
+		for(CCCInfo enterpriseCCCInfo: enterprisesCCCInfo) {
+			this.enterprisesMap.put(enterpriseCCCInfo.getEnterpriseId(), enterpriseCCCInfo.getEnterpriseDesciption());
 		}
 	}
 	
@@ -277,7 +278,7 @@ public class MainCRAObjectNew {
 	
 	public void filterEnterpriseCCCListByEnterprise(List<Integer> enterprisesIds) {
 		List<CCCInfo> newEnterpriseCCCs = new ArrayList<CCCInfo>();
-		for(CCCInfo cccInfo :  getEnterpriseCCCs().size() != 0 ? getEnterpriseCCCs() : this.allEnterpriseCCCs) {
+		for(CCCInfo cccInfo :  allEnterpriseCCCs) {
 			if(enterprisesIds.contains(cccInfo.getEnterpriseId())) {
 				newEnterpriseCCCs.add(cccInfo);
 			}
@@ -365,15 +366,15 @@ public class MainCRAObjectNew {
 		filterCRAs = newCRAs;
 	}
 
-//	public List<Integer> getEnterprisesIds(String pattern) {
-//		List<Integer> ids = new ArrayList<Integer>();
-//		
-//		for(CCCInfo cccInfo : this.allEnterpriseCCCs) {
-//			if(StringUtils.containsIgnoreCase(cccInfo.getEnterpriseDesciption(), pattern))
-//				ids.add(cccInfo.getEnterpriseId());
-//		}
-//		return ids;
-//	}
+	public List<Integer> getEnterprisesIds(String pattern) {
+		List<Integer> ids = new ArrayList<Integer>();
+		
+		for(CCCInfo cccInfo : this.allEnterpriseCCCs) {
+			if(StringUtils.containsIgnoreCase(cccInfo.getEnterpriseDesciption(), pattern))
+				ids.add(cccInfo.getEnterpriseId());
+		}
+		return ids;
+	}
 	
 	public Integer getDomainId() {
 		return this.domainId;

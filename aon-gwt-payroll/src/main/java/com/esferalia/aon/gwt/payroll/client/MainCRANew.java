@@ -28,7 +28,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -46,11 +45,10 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
@@ -87,9 +85,6 @@ public class MainCRANew extends MainEntryPoint {
 	ListBox year;
 	
 	@UiField
-	HorizontalPanel checkBoxPanel;
-	
-	@UiField
 	CheckBox allCCCsCB;
 	
 	@UiField
@@ -107,8 +102,8 @@ public class MainCRANew extends MainEntryPoint {
 	@UiField
 	DisclosurePanel collapsePanel;
 	
-//	@UiField
-//	SuggestBox enterpriseSB;
+	@UiField
+	SuggestBox enterpriseSB;
 	
 	@UiField
 	ListBox typeList;
@@ -625,7 +620,6 @@ public class MainCRANew extends MainEntryPoint {
 	private void initPreView() {
 		collapsePanel.setOpen(false);
 		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
-		checkBoxPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -658,7 +652,7 @@ public class MainCRANew extends MainEntryPoint {
 
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
 				s -> {
-					
+					initEnterpriseSB();
 					clearSelectionModel();
 //					initListBox();
 					initCCCsTable();
@@ -670,13 +664,43 @@ public class MainCRANew extends MainEntryPoint {
 				f -> {}
 		);
 	}
-	
+
 	private Date createInitialDate() {
 		// Get first day of previus month
 		Date actualDate = new Date();
 		actualDate.setDate(1);
 		actualDate = DateUtils.addMonths2Date(actualDate, -1);
 		return actualDate;
+	}
+	
+	private void initEnterpriseSB() {
+		// Enteprise List
+		List<String> enterprises = new ArrayList<>(mainCRAObjectNew.getEnterprisesMap().values());
+		List<String> enterprisesSuggest = new ArrayList<String>();
+		for(String enterprise : enterprises)
+			enterprisesSuggest.add(enterprise+"");
+		
+		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) enterpriseSB.getSuggestOracle();
+		orclEnterprise.addAll(enterprisesSuggest);
+		enterpriseSB.setAutoSelectEnabled(false);
+		
+		enterpriseSB.addKeyUpHandler(e-> {
+			String value = enterpriseSB.getValue();
+			if(StringUtils.isBlank(value) || value.length() < 3) {
+				mainCRAObjectNew.resetEnterpriseCCCList();
+			} else {
+				List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+				mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+			}
+			initCCCsTable();
+		});
+		
+		enterpriseSB.addSelectionHandler(e -> {
+			String value = enterpriseSB.getValue();
+			List<Integer> enterprisesIds = mainCRAObjectNew.getEnterprisesIds(value);
+			mainCRAObjectNew.filterEnterpriseCCCListByEnterprise(enterprisesIds);
+			initCCCsTable();
+		});
 	}
 	
 	private void setInitialLBAndCBSelected(Integer initialYear, Integer initialMonth) {
