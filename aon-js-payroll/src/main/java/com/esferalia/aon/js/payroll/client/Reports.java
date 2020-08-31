@@ -515,6 +515,8 @@ public class Reports {
 	private static native JavaScriptObject payroll2JSON(Payroll payroll) /*-{
 		var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
 		
+		var jsonArray = [];
+		
 		var json =  {
 			logoEnterprise : blank_image,
 			logoEnterprise2 : blank_image,
@@ -537,8 +539,6 @@ public class Reports {
 				ccc: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCCC()()
 		}
 		
-		console.log("payroll2JSON 3");
-		
 		json.employee = {
 				ss: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSS()(),
 				nif: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeDocument()(),
@@ -551,8 +551,6 @@ public class Reports {
 				seniority_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSeniorityDateTime()(),
 				contract_type: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeContractType()()
 		}
-		
-		console.log("payroll2JSON 4");
 		
 		json.settlement = {
 				start_date: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getMediumStartDate()(),
@@ -575,8 +573,6 @@ public class Reports {
 					company_input : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContAmount()()
 				}
 				
-		console.log("payroll2JSON 5");
-				
 		json.footer_ss_quotation.professional_contingency = {
 					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgpBase()(),
 		      		type_percent_at : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getATyEPPercent()(),
@@ -588,8 +584,6 @@ public class Reports {
 		      		type_percent_salary_warranty : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getFogasaPercent()(),
 		      		company_input_salary_warranty : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getFogasaAmount()()
 				}
-				
-		console.log("payroll2JSON 6");
 				
 		json.footer_ss_quotation.aditional_quotation = {
 					base_overwhelming_force :  payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::gethExtraBase()(),
@@ -604,7 +598,7 @@ public class Reports {
 		json.logo = blank_image;
 		json.signature_logo = blank_image;
 		
-//		console.log('Payments');
+		console.log('Payments');
 		
 		var payments = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getPayments()();
 		for ( i = 0; i <  payments.@java.util.List::size()(); i++ ) {
@@ -612,12 +606,11 @@ public class Reports {
 			var amount = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()();
 			var description = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()();
 			
-//			console.log('Payment -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()() + '\n' +
-//					   'Code -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()() + '\n' +
-//					   'Amount -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()() + '\n' + 
-//					   'Includes EXPDTE : ' + description.includes("EXPDTE."));
+			console.log('Payment -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()() + '\n' +
+					   'Code -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()() + '\n' +
+					   'Amount -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()());
 					   
-			if ( amount || description.includes("EXPDTE.") || description.includes("MATERNIDAD") ){
+			if ( amount || description.includes("EXPDTE.") || description.includes("MATERNIDAD") || description.includes("PATERNIDAD") || description.includes("AUSENCIA") ){
 				json.payments.push( {
 					amount : amount,
 					description : description,
@@ -629,18 +622,16 @@ public class Reports {
 			}
 		}
 		
-		console.log('Deductions');
-		
 		var contributions = 0;
 		var deductions = payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getAllDeductions()();
 		for ( i = 0; i <  deductions.@java.util.List::size()(); i++ ) {
 			var deduction = deductions.@java.util.List::get(I)(i);
 			var amount =  deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getAmount()();
 			
-			console.log('Deduction -> ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getName()() + '\n' +
-					   'Percent -> ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()() + '\n' +
-					   'Amount -> ' + amount + '\n' + 
-					   'Type Name : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getTypeName()());
+//			console.log('Deduction -> ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getName()() + '\n' +
+//					   'Percent -> ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getDescription()() + '\n' +
+//					   'Amount -> ' + amount + '\n' + 
+//					   'Type Name : ' + deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getTypeName()());
 				
 			if ( amount ) {
 				if('IRPF' == deduction.@com.esferalia.aon.js.payroll.client.Reports.Deduction::getName()()){
@@ -780,7 +771,7 @@ public class Reports {
 		for ( i = 0; i <  payments.@java.util.List::size()(); i++ ) {
 			var payment = payments.@java.util.List::get(I)(i);
 			var description = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()();
-			if(description.includes("EXPDTE.") || description.includes("MATERNIDAD")){
+			if(description.includes("EXPDTE.") || description.includes("MATERNIDAD") || description.includes("PATERNIDAD") || description.includes("AUSENCIA") ){
 				accrual.types.push({
 					type_expression : description,
 	       			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
@@ -793,9 +784,10 @@ public class Reports {
 		
 		json.accruals.push(accrual);
 		
+		jsonArray.push(json);
 
-		console.log(json);
-		return json;
+		console.log(jsonArray);
+		return jsonArray;
 	}-*/;
 
 	private static native String base64ArrayBuffer(ArrayBuffer arrayBuffer) /*-{

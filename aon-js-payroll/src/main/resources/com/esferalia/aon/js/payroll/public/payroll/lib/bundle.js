@@ -164,7 +164,7 @@ module.exports.journal = function(metadata , flatEntries, stream){
 },{"pdfkit":201}],3:[function(require,module,exports){
 var PDF = require('pdfkit');
 
-module.exports.newStandardPayroll = function(payroll, stream){
+module.exports.newStandardPayroll = function(payrolls, stream){
 	//Initialize pdf object
 	var pdf = new PDF({
         size: [595.28, 841.89],
@@ -411,7 +411,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
 
   //Main Methods
-    var newHearderTittle = function() {
+    var newHearderTittle = function(payroll) {
         titleSize = 10;
         titleFont = 'Helvetica-Bold';
 
@@ -426,7 +426,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .moveDown(1);
     }
 
-    var newEnterpriseBox = function() {
+    var newEnterpriseBox = function(payroll) {
         enterpriseTop = 30;
         enterpriseHeight = 90;
         topLeftCorner = 10;
@@ -472,7 +472,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
     }
 
-    var newEmployeeBox = function() {
+    var newEmployeeBox = function(payroll) {
         enterpriseTop = 30;
         employeeHeight = 90;
         topLeftCorner = 295;
@@ -535,7 +535,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .moveDown(1);
     }
 
-    var newSettlementBox = function() {
+    var newSettlementBox = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- SETTLEMENT --------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -569,7 +569,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
     }
 
-    var newFooterBox = function() {
+    var newFooterBox = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // -------------------------------------------- FOOTER -------------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -692,7 +692,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .moveTo(thirdColumn + 70, footer + 138).lineTo(thirdColumn + 130, footer + 138).undash().stroke()
             .moveTo(fourthColumn + 50, footer + 138).lineTo(thirdColumn + 265, footer + 138).stroke();
 
-        taxesS = getDeduction("Especie");
+        taxesS = getDeduction(payroll, "Especie");
         if (!taxesS.value || taxesS.value == 0) {
             pdf
                 .font(textFooterFont)
@@ -713,7 +713,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .moveTo(boxWidth, footer).lineTo(boxWidth, footer + 167).stroke() //Vertical right line
                 .moveTo(topLeftCorner, footer + 167).lineTo(boxWidth, footer + 167).stroke(); //Horizontal bottom line
         } else {
-            taxesD = getDeduction("Dinerario");
+            taxesD = getDeduction(payroll, "Dinerario");
             pdf
                 .font(textFooterFont)
                 .text('4. Base sujeta a retención del IRPF: ' + formatMoney(taxesS.amount) + '€  en especie + ' + formatMoney(taxesD.amount) + "€  en retribuciones dinerarias", firstColumn, footer + 142)
@@ -733,7 +733,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
         }
     }
 
-    var newSignatureDate = function() {
+    var newSignatureDate = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -775,7 +775,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .moveTo(topLeftCorner, accrualTop + accrualHeigt).lineTo(boxWidth, accrualTop + accrualHeigt).stroke(); //Horizontal bottom line
     }
 
-    var newAccrual = function() {
+    var newAccrual = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- ACCRUAL -----------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -854,7 +854,7 @@ module.exports.newStandardPayroll = function(payroll, stream){
             .moveTo(seventhColumn - 25, totalAccrualLine + 10).lineTo(seventhColumn + 35, totalAccrualLine + 10).undash().stroke();
     }
 
-    var getDeduction = function(nameDeduction) {
+    var getDeduction = function(payroll, nameDeduction) {
         for (i = 0; i < payroll.deductions.length; i++) {
             deduction = payroll.deductions[i];
             if (deduction.name == nameDeduction) {
@@ -868,19 +868,19 @@ module.exports.newStandardPayroll = function(payroll, stream){
         };
         //return undefined;
     }
-    
-    var getDeductions = function(namesDeductions) {
+
+    var getDeductions = function(payroll, namesDeductions) {
         deductions = [];
-    	for (i = 0; i < payroll.deductions.length; i++) {
+        for (i = 0; i < payroll.deductions.length; i++) {
             deduction = payroll.deductions[i];
             if (namesDeductions.includes(deduction.type_name)) {
-            	deductions.push(deduction);
+                deductions.push(deduction);
             }
         }
         return deductions;
     }
 
-    var newDeductionFirstPage = function() {
+    var newDeductionFirstPage = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- DEDUCTION ---------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -896,17 +896,17 @@ module.exports.newStandardPayroll = function(payroll, stream){
 
         totalColumn = 220;
 
-        common_contingency = getDeduction("CGC");
-        unemployment = getDeduction("DESMPL");
-        professional_formation = getDeduction("FP");
-        extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
-        extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
-        taxesD = getDeduction("Dinerario");
-        taxesS = getDeduction("Especie");
-        advances = getDeductions(["Anticipo"]);
-        spices = getDeduction("Spices");
-        other_deductions = getDeductions(["Otras deducciones", "Embargo"]);
-        irpf = getDeduction("IRPF");
+        common_contingency = getDeduction(payroll, "CGC");
+        unemployment = getDeduction(payroll, "DESMPL");
+        professional_formation = getDeduction(payroll, "FP");
+        extra_hours_e = getDeduction(payroll, "Horas Extraordinarias Fuerza Mayor");
+        extra_hours_ne = getDeduction(payroll, "Resto Horas Extraordinarias");
+        taxesD = getDeduction(payroll, "Dinerario");
+        taxesS = getDeduction(payroll, "Especie");
+        advances = getDeductions(payroll, ["Anticipo"]);
+        spices = getDeduction(payroll, "Spices");
+        other_deductions = getDeductions(payroll, ["Otras deducciones", "Embargo"]);
+        irpf = getDeduction(payroll, "IRPF");
 
         existingTaxes = 0;
 
@@ -1101,17 +1101,17 @@ module.exports.newStandardPayroll = function(payroll, stream){
         }
     }
 
-    var newDeductionSecondPage = function() {
+    var newDeductionSecondPage = function(payroll) {
         console.error('newDeductionSecondPage totalAccrualLine : ' + totalAccrualLine);
         if (totalAccrualLine > 550) {
             //NEW PAGE
             pdf.addPage();
             //PDF Styles
 
-            newHearderTittle();
-            newEnterpriseBox();
-            newEmployeeBox();
-            newSettlementBox();
+            newHearderTittle(payroll);
+            newEnterpriseBox(payroll);
+            newEmployeeBox(payroll);
+            newSettlementBox(payroll);
 
             deductionTop = 125;
 
@@ -1129,17 +1129,17 @@ module.exports.newStandardPayroll = function(payroll, stream){
             boxWidth = 585;
             accrualTop = 115;
 
-            common_contingency = getDeduction("CGC");
-            unemployment = getDeduction("DESMPL");
-            professional_formation = getDeduction("FP");
-            extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
-            extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
-            taxesD = getDeduction("Dinerario");
-            taxesS = getDeduction("Especie");
-            advances = getDeduction("Anticipo");
-            spices = getDeduction("Valor de productos en especie");
-            other_deductions = getDeduction("Otras deducciones");
-            irpf = getDeduction("IRPF");
+            common_contingency = getDeduction(payroll, "CGC");
+            unemployment = getDeduction(payroll, "DESMPL");
+            professional_formation = getDeduction(payroll, "FP");
+            extra_hours_e = getDeduction(payroll, "Horas Extraordinarias Fuerza Mayor");
+            extra_hours_ne = getDeduction(payroll, "Resto Horas Extraordinarias");
+            taxesD = getDeduction(payroll, "Dinerario");
+            taxesS = getDeduction(payroll, "Especie");
+            advances = getDeduction(payroll, "Anticipo");
+            spices = getDeduction(payroll, "Valor de productos en especie");
+            other_deductions = getDeduction(payroll, "Otras deducciones");
+            irpf = getDeduction(payroll, "IRPF");
 
             pdf
                 .moveTo(topLeftCorner, accrualTop).lineTo(boxWidth, accrualTop).stroke();
@@ -1296,21 +1296,27 @@ module.exports.newStandardPayroll = function(payroll, stream){
                 .moveTo(totalColumn, deductionTop + totalAccrualLine + 27 + existingTaxes).lineTo(seventhColumn - 25, deductionTop + totalAccrualLine + 27 + existingTaxes).dash(1, { space: 2 }).stroke()
                 .moveTo(seventhColumn - 25, deductionTop + totalAccrualLine + 27 + existingTaxes).lineTo(seventhColumn + 35, deductionTop + totalAccrualLine + 27 + existingTaxes).undash().stroke();
 
-            newSignatureDate();
-            newFooterBox();
+            newSignatureDate(payroll);
+            newFooterBox(payroll);
         }
     }
 
     //Main
-    newHearderTittle();
-    newEnterpriseBox();
-    newEmployeeBox();
-    newSettlementBox();
-    newAccrual();
-    newDeductionFirstPage();
-    newSignatureDate();
-    newFooterBox();
-    newDeductionSecondPage();
+    for (let i = 0; i < payrolls.length; i++) {
+        const payroll = payrolls[i];
+        newHearderTittle(payroll);
+        newEnterpriseBox(payroll);
+        newEmployeeBox(payroll);
+        newSettlementBox(payroll);
+        newAccrual(payroll);
+        newDeductionFirstPage(payroll);
+        newSignatureDate(payroll);
+        newFooterBox(payroll);
+        newDeductionSecondPage(payroll);
+
+        if ((i + 1) != payrolls.length)
+            pdf.addPage();
+    }
 
     //End PDF
     pdf.end();
@@ -2846,7 +2852,7 @@ module.exports.standardTwoColumnsPayroll = function(payroll, stream){
 
 }
 
-module.exports.newClassicPayroll = function(payroll, stream){
+module.exports.newClassicPayroll = function(payrolls, stream){
 	
 	//Initialize pdf object
     var pdf = new PDF({
@@ -3090,8 +3096,8 @@ module.exports.newClassicPayroll = function(payroll, stream){
     }
 
 
-    //Main Methods
-    var newHearderTittle = function() {
+  //Main Methods
+    var newHearderTittle = function(payroll) {
         titleSize = 10;
         titleFont = 'Helvetica-Bold';
 
@@ -3106,7 +3112,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
             .moveDown(1);
     }
 
-    var newEnterpriseBox = function() {
+    var newEnterpriseBox = function(payroll) {
         enterpriseTop = 30;
         enterpriseHeight = 90;
         topLeftCorner = 10;
@@ -3152,7 +3158,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
     }
 
-    var newEmployeeBox = function() {
+    var newEmployeeBox = function(payroll) {
         enterpriseTop = 30;
         employeeHeight = 90;
         topLeftCorner = 295;
@@ -3215,7 +3221,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
             .moveDown(1);
     }
 
-    var newSettlementBox = function() {
+    var newSettlementBox = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- SETTLEMENT --------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -3249,7 +3255,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
     }
 
-    var newFooterBox = function() {
+    var newFooterBox = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // -------------------------------------------- FOOTER -------------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -3372,7 +3378,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
             .moveTo(thirdColumn + 70, footer + 138).lineTo(thirdColumn + 130, footer + 138).undash().stroke()
             .moveTo(fourthColumn + 50, footer + 138).lineTo(thirdColumn + 265, footer + 138).stroke();
 
-        taxesS = getDeduction("Especie");
+        taxesS = getDeduction(payroll, "Especie");
         if (!taxesS.value || taxesS.value == 0) {
             pdf
                 .font(textFooterFont)
@@ -3393,7 +3399,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
                 .moveTo(boxWidth, footer).lineTo(boxWidth, footer + 167).stroke() //Vertical right line
                 .moveTo(topLeftCorner, footer + 167).lineTo(boxWidth, footer + 167).stroke(); //Horizontal bottom line
         } else {
-            taxesD = getDeduction("Dinerario");
+            taxesD = getDeduction(payroll, "Dinerario");
             pdf
                 .font(textFooterFont)
                 .text('4. Base sujeta a retención del IRPF: ' + formatMoney(taxesS.amount) + '€  en especie + ' + formatMoney(taxesD.amount) + "€  en retribuciones dinerarias", firstColumn, footer + 142)
@@ -3413,7 +3419,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
         }
     }
 
-    var newSignatureDate = function() {
+    var newSignatureDate = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -3455,7 +3461,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
             .moveTo(topLeftCorner, accrualTop + accrualHeigt).lineTo(boxWidth, accrualTop + accrualHeigt).stroke(); //Horizontal bottom line
     }
 
-    var getAccrual = function(accrualName) {
+    var getAccrual = function(payroll, accrualName) {
         for (i = 0; i < payroll.accruals.length; i++) {
             accrual = payroll.accruals[i];
             if (accrual.accrual_name == accrualName)
@@ -3464,7 +3470,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
         return undefined;
     }
 
-    var newAccrual = function() {
+    var newAccrual = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- ACCRUAL -----------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -3535,7 +3541,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
         for (var i = 0; i < payroll.accruals.length; i++) {
             for (var j = 0; j < payroll.accruals[i].types.length; j++) {
-            	if (salary_perceptions_codes.includes(payroll.accruals[i].types[j].code) && !payroll.accruals[i].types[j].type_expression.includes("SALARIO BASE") && payroll.accruals[i].types[j].type_value > 0) {
+                if (salary_perceptions_codes.includes(payroll.accruals[i].types[j].code) && !payroll.accruals[i].types[j].type_expression.includes("SALARIO BASE") && payroll.accruals[i].types[j].type_value > 0) {
 
                     type = payroll.accruals[i].types[j];
                     actualLine += 12;
@@ -3637,7 +3643,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
             .text('2. Percepciones no salariales', secondColumn, actualLine);
 
 
-        suplies = getAccrual("Indemnizaciones o suplidos");
+        suplies = getAccrual(payroll, "Indemnizaciones o suplidos");
 
         actualLine += 12;
 
@@ -3659,7 +3665,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
         }
 
-        compensations_SS = getAccrual('Prestaciones e indemnizaciones a la Seguridad Social');
+        compensations_SS = getAccrual(payroll, 'Prestaciones e indemnizaciones a la Seguridad Social');
 
         actualLine += 12;
 
@@ -3680,7 +3686,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
         }
 
-        other_perceptions = getAccrual('Otras percepciones no salariales');
+        other_perceptions = getAccrual(payroll, 'Otras percepciones no salariales');
 
         actualLine += 12;
 
@@ -3714,7 +3720,7 @@ module.exports.newClassicPayroll = function(payroll, stream){
             .moveTo(seventhColumn - 25, totalAccrualLine + 10).lineTo(seventhColumn + 35, totalAccrualLine + 10).undash().stroke();
     }
 
-    var getDeduction = function(nameDeduction) {
+    var getDeduction = function(payroll, nameDeduction) {
         for (i = 0; i < payroll.deductions.length; i++) {
             deduction = payroll.deductions[i];
             if (deduction.name == nameDeduction) {
@@ -3729,18 +3735,18 @@ module.exports.newClassicPayroll = function(payroll, stream){
         //return undefined;
     }
 
-    var getDeductions = function(namesDeductions) {
+    var getDeductions = function(payroll, namesDeductions) {
         deductions = [];
-    	for (i = 0; i < payroll.deductions.length; i++) {
+        for (i = 0; i < payroll.deductions.length; i++) {
             deduction = payroll.deductions[i];
             if (namesDeductions.includes(deduction.type_name)) {
-            	deductions.push(deduction);
+                deductions.push(deduction);
             }
         }
         return deductions;
     }
-    
-    var newDeductionFirstPage = function() {
+
+    var newDeductionFirstPage = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- DEDUCTION ---------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -3756,17 +3762,17 @@ module.exports.newClassicPayroll = function(payroll, stream){
 
         totalColumn = 220;
 
-        common_contingency = getDeduction("CGC");
-        unemployment = getDeduction("DESMPL");
-        professional_formation = getDeduction("FP");
-        extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
-        extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
-        taxesD = getDeduction("Dinerario");
-        taxesS = getDeduction("Especie");
-        advances = getDeductions(["Anticipo"]);
-        spices = getDeduction("Spices");
-        other_deductions = getDeductions(["Otras deducciones", "Embargo"]);
-        irpf = getDeduction("IRPF");
+        common_contingency = getDeduction(payroll, "CGC");
+        unemployment = getDeduction(payroll, "DESMPL");
+        professional_formation = getDeduction(payroll, "FP");
+        extra_hours_e = getDeduction(payroll, "Horas Extraordinarias Fuerza Mayor");
+        extra_hours_ne = getDeduction(payroll, "Resto Horas Extraordinarias");
+        taxesD = getDeduction(payroll, "Dinerario");
+        taxesS = getDeduction(payroll, "Especie");
+        advances = getDeductions(payroll, ["Anticipo"]);
+        spices = getDeduction(payroll, "Spices");
+        other_deductions = getDeductions(payroll, ["Otras deducciones", "Embargo"]);
+        irpf = getDeduction(payroll, "IRPF");
 
         existingTaxes = 0;
 
@@ -3961,17 +3967,17 @@ module.exports.newClassicPayroll = function(payroll, stream){
         }
     }
 
-    var newDeductionSecondPage = function() {
+    var newDeductionSecondPage = function(payroll) {
         console.error('newDeductionSecondPage totalAccrualLine : ' + totalAccrualLine);
         if (totalAccrualLine > 550) {
             //NEW PAGE
             pdf.addPage();
             //PDF Styles
 
-            newHearderTittle();
-            newEnterpriseBox();
-            newEmployeeBox();
-            newSettlementBox();
+            newHearderTittle(payroll);
+            newEnterpriseBox(payroll);
+            newEmployeeBox(payroll);
+            newSettlementBox(payroll);
 
             deductionTop = 125;
 
@@ -3989,17 +3995,17 @@ module.exports.newClassicPayroll = function(payroll, stream){
             boxWidth = 585;
             accrualTop = 115;
 
-            common_contingency = getDeduction("CGC");
-            unemployment = getDeduction("DESMPL");
-            professional_formation = getDeduction("FP");
-            extra_hours_e = getDeduction("Horas Extraordinarias Fuerza Mayor");
-            extra_hours_ne = getDeduction("Resto Horas Extraordinarias");
-            taxesD = getDeduction("Dinerario");
-            taxesS = getDeduction("Especie");
-            advances = getDeduction("Anticipos");
-            spices = getDeduction("Valor de productos en especie");
-            other_deductions = getDeduction("Otras deducciones");
-            irpf = getDeduction("IRPF");
+            common_contingency = getDeduction(payroll, "CGC");
+            unemployment = getDeduction(payroll, "DESMPL");
+            professional_formation = getDeduction(payroll, "FP");
+            extra_hours_e = getDeduction(payroll, "Horas Extraordinarias Fuerza Mayor");
+            extra_hours_ne = getDeduction(payroll, "Resto Horas Extraordinarias");
+            taxesD = getDeduction(payroll, "Dinerario");
+            taxesS = getDeduction(payroll, "Especie");
+            advances = getDeduction(payroll, "Anticipos");
+            spices = getDeduction(payroll, "Valor de productos en especie");
+            other_deductions = getDeduction(payroll, "Otras deducciones");
+            irpf = getDeduction(payroll, "IRPF");
 
             pdf
                 .moveTo(topLeftCorner, accrualTop).lineTo(boxWidth, accrualTop).stroke();
@@ -4156,28 +4162,34 @@ module.exports.newClassicPayroll = function(payroll, stream){
                 .moveTo(totalColumn, deductionTop + totalAccrualLine + 27 + existingTaxes).lineTo(seventhColumn - 25, deductionTop + totalAccrualLine + 27 + existingTaxes).dash(1, { space: 2 }).stroke()
                 .moveTo(seventhColumn - 25, deductionTop + totalAccrualLine + 27 + existingTaxes).lineTo(seventhColumn + 35, deductionTop + totalAccrualLine + 27 + existingTaxes).undash().stroke();
 
-            newSignatureDate();
-            newFooterBox();
+            newSignatureDate(payroll);
+            newFooterBox(payroll);
         }
     }
 
     //Main
-    newHearderTittle();
-    newEnterpriseBox();
-    newEmployeeBox();
-    newSettlementBox();
-    newAccrual();
-    newDeductionFirstPage();
-    newSignatureDate();
-    newFooterBox();
-    newDeductionSecondPage();
+    for (let i = 0; i < payrolls.length; i++) {
+        const payroll = payrolls[i];
+        newHearderTittle(payroll);
+        newEnterpriseBox(payroll);
+        newEmployeeBox(payroll);
+        newSettlementBox(payroll);
+        newAccrual(payroll);
+        newDeductionFirstPage(payroll);
+        newSignatureDate(payroll);
+        newFooterBox(payroll);
+        newDeductionSecondPage(payroll);
+
+        if ((i + 1) != payrolls.length)
+            pdf.addPage();
+    }
 
     //End PDF
     pdf.end();
 
 }
 
-module.exports.salaryRecibeCRA = function(payroll, stream){
+module.exports.salaryRecibeCRA = function(payrolls, stream){
   //Initialize pdf object
 	var pdf = new PDF({
         size: [595.28, 841.89],
@@ -4472,8 +4484,8 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
     }
 
 
-  //Main Methods
-    var newHearderTittle = function() {
+    //Main Methods
+    var newHearderTittle = function(payroll) {
         //PDF settings
         pdf.lineWidth(1);
 
@@ -4492,7 +4504,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
     }
 
-    var newEnterpriseBox = function() {
+    var newEnterpriseBox = function(payroll) {
         enterpriseTop = 65;
         enterpriseHeight = enterpriseTop + 84;
         topLeftCorner = 10;
@@ -4547,7 +4559,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
     }
 
-    var newEmployeeBox = function() {
+    var newEmployeeBox = function(payroll) {
         employeeTop = 30;
         employeeHeight = enterpriseTop + 50;
         topLeftCorner = 295;
@@ -4613,7 +4625,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
             .moveTo(topLeftCorner + boxWidth, employeeTop).lineTo(topLeftCorner + boxWidth, employeeHeight).stroke();
     }
 
-    var newSettlementBox = function() {
+    var newSettlementBox = function(payroll) {
         settlementTop = 119;
         settlementHeight = 30;
         topLeftCorner = 295;
@@ -4652,7 +4664,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
             .moveTo(topLeftCorner, settlementTop + settlementHeight).lineTo(topLeftCorner + boxWidth, settlementTop + settlementHeight).stroke();
     }
 
-    var newCentralBox = function() {
+    var newCentralBox = function(payroll) {
         centralBoxTop = 155;
         centralBoxHeight = 670;
         topLeftCorner = 10;
@@ -4670,7 +4682,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
     }
 
-    newCentralInnerBox = function() {
+    newCentralInnerBox = function(payroll) {
         centralBoxTop = 165;
         centralBoxHeight = 380;
         topLeftCorner = 22;
@@ -4704,7 +4716,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
     }
 
-    var newFooterBox = function() {
+    var newFooterBox = function(payroll) {
         padding = 13;
         footerTop = 550;
         footerHeight = 200;
@@ -4827,7 +4839,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
             .moveTo(topLeftCorner + boxWidth, footerTop + 10).lineTo(topLeftCorner + boxWidth, footerTop + 66).stroke();
     }
 
-    var newSignatureDate = function() {
+    var newSignatureDate = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // ------------------------------------------ SIGNATURE / DATE -----------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -4850,7 +4862,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
 
     }
 
-    var newAccrual = function() {
+    var newAccrual = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- ACCRUAL -----------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -4883,7 +4895,7 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
         }
     }
 
-    var newDeduction = function() {
+    var newDeduction = function(payroll) {
         // -----------------------------------------------------------------------------------------------------------------
         // --------------------------------------------- DEDUCTION ---------------------------------------------------------
         // -----------------------------------------------------------------------------------------------------------------
@@ -4937,17 +4949,23 @@ module.exports.salaryRecibeCRA = function(payroll, stream){
         }
     }
 
-    //Main
-    newHearderTittle();
-    newEnterpriseBox();
-    newEmployeeBox();
-    newSettlementBox();
-    newCentralBox();
-    newCentralInnerBox();
-    newAccrual();
-    newDeduction();
-    newSignatureDate();
-    newFooterBox();
+  //Main
+    for (let i = 0; i < payrolls.length; i++) {
+        const payroll = payrolls[i];
+	    newHearderTittle(payroll);
+	    newEnterpriseBox(payroll);
+	    newEmployeeBox(payroll);
+	    newSettlementBox(payroll);
+	    newCentralBox(payroll);
+	    newCentralInnerBox(payroll);
+	    newAccrual(payroll);
+	    newDeduction(payroll);
+	    newSignatureDate(payroll);
+	    newFooterBox(payroll);
+	    
+	    if ((i + 1) != payrolls.length)
+            pdf.addPage();
+    }
 
     //End PDF
     pdf.end();
