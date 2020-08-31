@@ -434,6 +434,15 @@ public class Model3902018 extends DockLayoutPanel  {
 		} else {
 			clear();
 			addNorth( getToolbar(m390,cbk), 26 );
+			// TODO BORRAR EN SU M OMENTO
+			if ( m390.getYear() == 2020) {
+				Label label = new Label("La grabaci\u00F3n del modelo 390 del ejercicio 2020 es temporal, tenga en cuenta que, cuando se publique el modelo, puede que se borren los datos.");
+				label.setStyleName(AON.AON_CSS.aonErrorPanel());
+				label.addStyleName(AON.AON_CSS.aonTextCenter());
+				label.addStyleName(AON.AON_CSS.aonBold());
+				addNorth( label , 30 );
+			}
+			// ------------------------
 			addNorth( getHeaderPanel(m390,cbk), 60 );
 			addNorth( getDeclarationHeaderTable(m390,cbk) , 40);
 			pagesPanel = new DeckPanel();  
