@@ -133,14 +133,15 @@
 										action="gwt_main_afi"
 										value="#{bundle.payroll_afi_module}" />
 								</aon:div>
-								
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="craBatch-payroll"
-										action="craBatch_search-payroll"
-										actionListener="#{craBatch.onEditSearch}"
-										value="#{bundle.payroll_craBatch_module} (Antiguo)" />
-								</aon:div>
-								 
+
+								<aon:if test="#{sepeAppParams.developmentMode or aonRole.sysAdmin}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="craBatch-payroll"
+											action="craBatch_search-payroll"
+											actionListener="#{craBatch.onEditSearch}"
+											value="#{bundle.payroll_craBatch_module} (Antiguo)" />
+									</aon:div>
+								</aon:if>								 
 								<!--
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
