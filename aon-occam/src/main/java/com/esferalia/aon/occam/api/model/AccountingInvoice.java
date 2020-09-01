@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	
@@ -51,6 +52,9 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	public AccountingInvoice setTediParsed(boolean tediParsed) {
 		this.tediParsed = tediParsed;
 		return this;
+	}
+	public boolean hasTotal() {
+		return getInvoice() != null && AonMathUtils.isNotZero( getTotalInvoice() ); 
 	}
 	
 	@Override

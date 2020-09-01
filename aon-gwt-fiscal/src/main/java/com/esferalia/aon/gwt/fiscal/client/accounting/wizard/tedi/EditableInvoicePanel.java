@@ -270,7 +270,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			public void onSelection(SelectionEvent<AccountingRegistry> event) {
 				final AccountingRegistry ar = event.getSelectedItem();
 				undeductible.setValue(false);
-				initializeInvoice(invoiceCallback, ar );
+				registryChanged(invoiceCallback, ar );
 			}
 		});
 		regTable.add(registryBox);
@@ -285,7 +285,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				} else {
 					ar.setType(AccountingRegistryType.CREDITOR);
 				}
-				initializeInvoice(invoiceCallback, ar );
+				registryChanged(invoiceCallback, ar );
 			}
 		});
 		regTable.add(undeductible);
@@ -573,6 +573,93 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		setStyleName(AON.CSS.aonWidthAll());
 		setWidget(rootScrollPanel);
+	}
+
+	private void registryChanged(InvoicePanelCallback invoiceCallback, AccountingRegistry ar) {
+		boolean preserveData = (invoiceCallback.getInvoice() != null 
+				&& invoiceCallback.getInvoice().hasTotal()
+				&& invoiceCallback.getInvoice().getInvoice() != null
+				&& invoiceCallback.getInvoice().getInvoice().getType() == ar.getType().getInvoiceType()  
+				);
+		initializeInvoice(invoiceCallback, ar , preserveData);
+	}
+	
+	protected void initializeInvoice(InvoicePanelCallback invoiceCallback, AccountingRegistry ar, boolean preserveData) {
+		if (preserveData) {
+			ACCOUNT_ENTRY_SERVICE.initializeInvoice(
+					invoiceCallback.getCurrentDomainName()
+					,invoiceCallback.getCurrentDomainId()
+					,invoiceCallback.getCurrentUser()
+					,ar
+					,invoiceCallback.getInvoice()
+					,true
+					,new AsyncCallback<AccountingInvoice>() {
+						
+						@Override
+						public void onSuccess(AccountingInvoice result) {
+							if (invoiceCallback.getInvoice().isDocumentAttached()) {
+								result.setAttach(invoiceCallback.getInvoice().getAttach());
+							}
+							AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
+							invoiceCallback.setInvoice(result);
+							invoiceCallback.setAccountEntry(ae);
+							undeductible.setVisible((result.isExpenses() || result.isUndeductible()) && invoiceCallback.getInvoice().getInvoice().getId() == null);
+							
+							Account account = new Account();
+							account.setId(ar.getAccountId());
+							account.setCode(ar.getAccountCode());
+							account.setDescription(ar.getAccountDescription());
+							if (ar.getAccountId() != null) {
+								invoiceCallback.getModule().onBalance(account);
+							}
+							
+							invoiceCallback.paintEntry();
+							invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							invoiceCallback.getModule().onError(caught.getMessage());
+						}
+					});
+		} else {
+			ACCOUNT_ENTRY_SERVICE.initializeInvoice(
+					invoiceCallback.getCurrentDomainName()
+					,invoiceCallback.getCurrentDomainId()
+					,invoiceCallback.getCurrentUser()
+					,ar
+					,invoiceCallback.getModule().getActivity()
+					,invoiceCallback.getModule().getEntryDate()
+					,new AsyncCallback<AccountingInvoice>() {
+						
+						@Override
+						public void onSuccess(AccountingInvoice result) {
+							if (invoiceCallback.getInvoice().isDocumentAttached()) {
+								result.setAttach(invoiceCallback.getInvoice().getAttach());
+							}
+							AccountEntry ae = invoiceCallback.getInvoice().getAccountEntry();
+							invoiceCallback.setInvoice(result);
+							invoiceCallback.setAccountEntry(ae);
+							undeductible.setVisible((result.isExpenses() || result.isUndeductible()) && invoiceCallback.getInvoice().getInvoice().getId() == null);
+							
+							Account account = new Account();
+							account.setId(ar.getAccountId());
+							account.setCode(ar.getAccountCode());
+							account.setDescription(ar.getAccountDescription());
+							if (ar.getAccountId() != null) {
+								invoiceCallback.getModule().onBalance(account);
+							}
+							
+							invoiceCallback.paintEntry();
+							invoicePanelContainer.setWidget(editInvoice(invoiceCallback));
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							invoiceCallback.getModule().onError(caught.getMessage());
+						}
+					});
+		}
 	}
 
 	protected void initializeInvoice(InvoicePanelCallback invoiceCallback, AccountingRegistry ar) {

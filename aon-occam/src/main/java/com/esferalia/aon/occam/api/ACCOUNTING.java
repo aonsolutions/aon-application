@@ -449,6 +449,17 @@ public class ACCOUNTING {
 		}
 	}
 	
+	public static AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getAccounting().initializeInvoice(ctx, registry, ai, preserveData);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 	public static AccountingInvoice getAccountingInvoice(String domainName, int domain, String user,
 			 Integer accountEntry) {
 		AONContext ctx = null;
@@ -901,6 +912,5 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
-
 		
 }

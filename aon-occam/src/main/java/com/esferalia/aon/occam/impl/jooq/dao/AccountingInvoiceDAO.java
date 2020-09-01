@@ -399,6 +399,35 @@ public class AccountingInvoiceDAO {
 		}
 	}
 
+	public static AccountingInvoice initializeInvoice(AONContext ctx, InvoiceType invoiceType, Integer registryId, AccountingInvoice ai, boolean preserveData) {
+		if (!preserveData) {
+			return initializeInvoice(ctx, invoiceType, registryId, ai.getAccountEntry().getActivity(), ai.getAccountEntry().getEntryDate());
+		}
+		return initializeInvoice(ctx, invoiceType, registryId, ai);
+	}
+	
+	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry, AccountingInvoice ai) {
+		AccountingRegistry reg = RegistryDAO.getAccountingRegistries(ctx, filter -> filter.getIdProperty().eq(registry)).filter(f -> AccountingRegistryType.getFor(type).equals(f.getType()))
+				.findFirst().orElse(null);
+		if (reg == null) {
+			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
+		}
+		if (type == InvoiceType.UNDEDUCTIBLE && reg.getType() == AccountingRegistryType.CREDITOR) {
+			reg.setType(AccountingRegistryType.UNDED_CREDITOR);
+		}
+		if (reg.getType().getInvoiceType() != type) {
+			throw new AonCoreException(
+					"No se puede inicializar una factura de " + type.getDescription() + ". El titular suministrado " + "genera facturas de " + reg.getType().getInvoiceType().getDescription());
+		}
+		final AonConfiguration config = ConfigurationDAO.getConfiguration(ctx, ai.getInvoice().getIssueDate());
+		reg.getType().visit(reg, new  InvoiceRegistryInitializer(ctx, ai.getInvoice(), config));
+		ai.getInvoice().setRegistry(registry);
+		ai.setAuthFinanceCalculation(true)
+		  .getInvoice().setFinances( FinanceDAO.getFinancesForInvoice(ctx, ai.getInvoice()) );
+		ai.setSuggestedAccounts(getSuggestedAccounts(ctx, ai.getRegistry().getId()));
+		return ai;
+	}
+
 	public static AccountingInvoice initializeInvoice(final AONContext ctx, final InvoiceType type, final Integer registry,
 			final Integer activity, final Date issueDate) {
 		AccountingRegistry reg =  RegistryDAO.getAccountingRegistries(ctx
@@ -1227,5 +1256,6 @@ public class AccountingInvoiceDAO {
 			.findFirst()
 			.orElse( InvoiceType.EXPENSES );
 	}
+
 }
 

@@ -51,6 +51,12 @@ public class AccountEntryServiceAsyncDecorator implements AccountEntryServiceAsy
 		AON.start();
 		fsa.initializeInvoice(domainName, domain, user, registry, activity, issueDate, new AsyncCallbackWrapper<AccountingInvoice>(callback));
 	}
+	
+	@Override
+	public void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback) {
+		AON.start();
+		fsa.initializeInvoice(domainName, domain, user, registry, ai, preserveData, new AsyncCallbackWrapper<AccountingInvoice>(callback));
+	}
 
 	@Override
 	public void getAccountingInvoice(String domainName, int domain, String user, Integer accountEntry, AsyncCallback<AccountingInvoice> callback) {

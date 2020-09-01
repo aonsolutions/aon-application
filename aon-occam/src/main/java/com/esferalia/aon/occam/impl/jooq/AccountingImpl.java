@@ -246,7 +246,20 @@ public class AccountingImpl implements IAccounting {
 		}
 		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), activity, issueDate);
 	}
-	
+
+	@Override
+	public AccountingInvoice initializeInvoice(AONContext ctx, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData) {
+		if (ai.getInvoice().getIssueDate() == null) {
+			throw new AonCoreException("No se puede inicializar una factura sin fecha");
+		}
+		if (registry == null) {
+			throw new AonCoreException("No se pudo encontrar al titular de factura \"" + registry + "\"");
+		}
+		if (registry.getType() == null) {
+			throw new AonCoreException("No se puede inicializar una factura sin tipo");
+		}
+		return AccountingInvoiceDAO.initializeInvoice(ctx, registry.getType().getInvoiceType(), registry.getId(), ai, preserveData);
+	}
 	
 	
 

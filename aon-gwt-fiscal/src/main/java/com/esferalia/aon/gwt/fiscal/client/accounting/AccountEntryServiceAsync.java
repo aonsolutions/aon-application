@@ -23,6 +23,8 @@ public interface AccountEntryServiceAsync {
 	void deleteAccountEntry(String domainName, int domain, String user, Integer id, AsyncCallback<Void> callback);
 
 	void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, Integer activity, Date issueDate, AsyncCallback<AccountingInvoice> callback);
+	
+	void initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData, AsyncCallback<AccountingInvoice> callback);
 
 	void getAccountingInvoice(String domainName, int domain, String user, Integer accountEntry, AsyncCallback<AccountingInvoice> callback);
 

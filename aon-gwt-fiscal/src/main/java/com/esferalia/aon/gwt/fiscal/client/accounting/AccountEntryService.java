@@ -35,6 +35,8 @@ public interface AccountEntryService extends RemoteService {
 
 	AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, Integer activity, Date issueDate) throws AonCoreException;
 
+	AccountingInvoice initializeInvoice(String domainName, int domain, String user, AccountingRegistry registry, AccountingInvoice ai, boolean preserveData);
+
 	AccountingInvoice getRegistryLastAccountingInvoice(String domainName, int domain, String user, Integer registryId) throws AonCoreException;
 
 	AccountingInvoice rectifyInvoice(String domainName, int domain, String user, Integer id, InvoiceRectificationData data) throws AonCoreException;
@@ -46,6 +48,6 @@ public interface AccountEntryService extends RemoteService {
 	FinanceEntry getFinanceEntry(String domainName, int domain, String user, Integer accountEntry) throws AonCoreException;
 
 	FinanceEntry save(String domainName, int domain, String user, FinanceEntry financeEntry) throws AonCoreException;
-	
+
 
 }
