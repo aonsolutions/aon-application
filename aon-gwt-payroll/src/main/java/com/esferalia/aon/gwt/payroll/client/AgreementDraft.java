@@ -1055,8 +1055,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	Button acceptButton;
 
-	@UiField
-	Button deleteButton;
+//	@UiField
+//	Button deleteButton;
 
 //	@UiField
 //	ListBox datesListBox;
@@ -1399,36 +1399,58 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 	
 	private void changeTab(ToggleButton button, boolean readOnly, Button moreOptionsBtn, Date[] datesList) {
-		agreementDraftObject.save(new CalculateCallback() {
-
-			@Override
-			public void onCalculateFailure(Throwable throwable) {
-			}
-
-			@Override
-			public void onCalculateSucces(AgreementDraftObject object) {
-				// Put all buttons up
-				putAllToggleButtonsUp(readOnly);
-				
-				// Set toggleButton down
-				button.setDown(true);
-				
-				moreOptionsBtn.addStyleName(style.bgWhite());
-				
-				Integer selectedButtonPos = getSelectedButtonPos(button);
-				
-				Date clickedDate = datesList[selectedButtonPos];
-				Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
-				
-				isOnCategoryTab = false;
-				
-				// Calculate
-				agreementDraftObject.setStartDate(clickedDate);
-				agreementDraftObject.setEndDate(clickedDateEndDate);
-				agreementDraftObject.clearSalaryDraftTable();
-				calculate();			}
-
-		});
+		if(!readOnly || agreementDraftObject.getId() < 0){
+			agreementDraftObject.save(new CalculateCallback() {
+	
+				@Override
+				public void onCalculateFailure(Throwable throwable) {}
+	
+				@Override
+				public void onCalculateSucces(AgreementDraftObject object) {
+					// Put all buttons up
+					putAllToggleButtonsUp(readOnly);
+					
+					// Set toggleButton down
+					button.setDown(true);
+					
+					moreOptionsBtn.addStyleName(style.bgWhite());
+					
+					Integer selectedButtonPos = getSelectedButtonPos(button);
+					
+					Date clickedDate = datesList[selectedButtonPos];
+					Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
+					
+					isOnCategoryTab = false;
+					
+					// Calculate
+					agreementDraftObject.setStartDate(clickedDate);
+					agreementDraftObject.setEndDate(clickedDateEndDate);
+					agreementDraftObject.clearSalaryDraftTable();
+					calculate();			
+				}
+	
+			});
+		} else {
+			// Put all buttons up
+			putAllToggleButtonsUp(readOnly);
+			
+			// Set toggleButton down
+			button.setDown(true);
+			
+			moreOptionsBtn.addStyleName(style.bgWhite());
+			
+			Integer selectedButtonPos = getSelectedButtonPos(button);
+			
+			Date clickedDate = datesList[selectedButtonPos];
+			Date clickedDateEndDate = getClickedTabEndDate(clickedDate);
+			
+			isOnCategoryTab = false;
+			
+			// Calculate
+			agreementDraftObject.setStartDate(clickedDate);
+			agreementDraftObject.setEndDate(clickedDateEndDate);
+			calculate();
+		}
 		
 	}
 	
@@ -2049,7 +2071,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		redoButton.setEnabled(!readOnly);
 		undoAllButton.setEnabled(!readOnly);
 		acceptButton.setEnabled(!readOnly);
-		deleteButton.setEnabled(!readOnly);
+//		deleteButton.setEnabled(!readOnly);
 		
 		if(readOnly)
 			deckPanelPayPeriod.showWidget(1);

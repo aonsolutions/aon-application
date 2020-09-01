@@ -365,9 +365,9 @@
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button debugId='acceptButton' ui:field='acceptButton'
 										styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR" />
-									<g:Button debugId='deleteButton' ui:field='deleteButton'
+									<!--g:Button debugId='deleteButton' ui:field='deleteButton'
 										styleName='aon-finding-toolbar-item aon-icon-delete' text="BORRAR"
-										enabled="false" />
+										enabled="false" / -->
 									<!-- g:ListBox debugId='datesListBox' ui:field='datesListBox' styleName="gwt-ListBox dates-list-box" >
 										<g:item value="{ALWAYS}">Para todo</g:item>
 										<g:item value="{FROM_THIS_MONTH}">A partir de este mes</g:item>
