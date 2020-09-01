@@ -360,22 +360,20 @@ public class Reports {
 		public String getName();
 	}
 	
-	
 	public static interface Callback {
 		public void onSuccess(String dataURI);
 	}
 	
-
 	public static void standard(Payroll salary, Callback callback) {
 		payroll2JS0N(salary, (json) -> standard(json, callback));
 	}
 
 	private static void getEnterpriseLogo(Payroll salary, Consumer<String> consumer) {
-		String LOGO_URL = URL.encode(GWT.getModuleBaseURL() + "reports") + "/Enterprise-Logo?"+"contractid=" + salary.getEmployeeId();
-
+		String LOGO_URL = URL.encode(GWT.getModuleBaseURL() + "reports") + "/Enterprise-Logo?"+"contractid=" + salary.getEmployeeId() + "&type=0";
+		
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("GET", LOGO_URL);
-		//xhr.setResponseType(ResponseType.ArrayBuffer);
+		
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
 			
 			@Override
@@ -386,8 +384,31 @@ public class Reports {
 				if (state != XMLHttpRequest.DONE)
 					return;
 				
-				//consumer.accept("data:image/jpeg;base64,"+base64ArrayBuffer(xhr.getResponseArrayBuffer()));
-				consumer.accept("data:image/jpeg;base64,"+xhr.getResponseText());
+				consumer.accept("data:image/jpeg;base64," + xhr.getResponseText());
+				
+		
+			}
+		});
+		
+		xhr.send("&contractid=" + salary.getEmployeeId());
+	}
+	
+	private static void getEnterpriseSignature(Payroll salary, Consumer<String> consumer) {
+		String SIGNATURE_URL = URL.encode(GWT.getModuleBaseURL() + "reports") + "/Enterprise-Logo?"+"contractid=" + salary.getEmployeeId() + "&type=8";
+		
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("GET", SIGNATURE_URL);
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+			
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				
+				
+				if (state != XMLHttpRequest.DONE)
+					return;
+				
+				consumer.accept("data:image/jpeg;base64," + xhr.getResponseText());
 				
 				
 			}
@@ -499,17 +520,25 @@ public class Reports {
 		JavaScriptObject json = payroll2JSON(payroll);
 		getEnterpriseLogo(payroll, (dataURI) ->  {
 			setEnterpriseLogo(json, dataURI);
-			consumer.accept(json);
+			getEnterpriseSignature(payroll, (signatureDataURI) -> {
+				setEnterpriseSignature(json, signatureDataURI);
+				consumer.accept(json);
+			});
 		} );
 	}
 	
 	private static native void setEnterpriseLogo(JavaScriptObject json, String dataURI) /*-{
-		// TODO: Change blank_image to dataURI 
+		// TODO: Change blank_image to dataURI
 		var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
-		json.logo = blank_image;
-		json.signature_logo = blank_image;
-		json.logoEnterprise = blank_image;
-		json.logoEnterprise2 = blank_image;
+		json[0].logo = dataURI;
+		json[0].logoEnterprise = dataURI;
+		json[0].logoEnterprise2 = dataURI;
+	}-*/;
+	
+	private static native void setEnterpriseSignature(JavaScriptObject json, String dataURI) /*-{
+		// TODO: Change blank_image to dataURI
+		var blank_image = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAABAAEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKAP/2Q==';
+		json[0].signature_logo = dataURI;
 	}-*/;
 	
 	private static native JavaScriptObject payroll2JSON(Payroll payroll) /*-{

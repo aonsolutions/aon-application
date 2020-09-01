@@ -4170,6 +4170,7 @@ module.exports.newClassicPayroll = function(payrolls, stream){
     //Main
     for (let i = 0; i < payrolls.length; i++) {
         const payroll = payrolls[i];
+        
         newHearderTittle(payroll);
         newEnterpriseBox(payroll);
         newEmployeeBox(payroll);
@@ -4329,8 +4330,8 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
     var parseExpression = function(expression) {
     	 if (null != expression && undefined != expression && expression.includes("]"))
             expression = expression.split("]")[1].trim();
-    	 if(null != expression && undefined != expression && expression.length > 46)
-     		expression = expression.substring(0,46);
+    	 if(null != expression && undefined != expression && expression.length > 52)
+     		expression = expression.substring(0,52);
         
         return expression.trim();
     }
@@ -4494,7 +4495,7 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
 
         if (payroll.logo != undefined) {
             pdf
-                .image(payroll.logo, firstColumn, 10, { scale: 0.05 });
+                .image(payroll.logo, firstColumn, 10, { scale: 0.1 });
         }
 
         pdf
@@ -4735,9 +4736,9 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
         fifthColumn = topLeftCorner + 225;
         sixthColumn = topLeftCorner + 250;
         seventColumn = topLeftCorner + 390;
-        eigthColumn = topLeftCorner + 405;
+        eigthColumn = topLeftCorner + 407;
         ninColumn = topLeftCorner + 472;
-        tenthColumn = topLeftCorner + 487;
+        tenthColumn = topLeftCorner + 507;
 
         textSize = 8;
         textFont = 'Helvetica';
@@ -4949,7 +4950,7 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
         }
     }
 
-  //Main
+    //Main
     for (let i = 0; i < payrolls.length; i++) {
         const payroll = payrolls[i];
 	    newHearderTittle(payroll);
