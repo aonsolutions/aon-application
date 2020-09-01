@@ -1399,7 +1399,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 	
 	private void changeTab(ToggleButton button, boolean readOnly, Button moreOptionsBtn, Date[] datesList) {
-		if(!readOnly || agreementDraftObject.getId() < 0){
+		if(!readOnly){
 			agreementDraftObject.save(new CalculateCallback() {
 	
 				@Override
