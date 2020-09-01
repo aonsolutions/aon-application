@@ -105,7 +105,8 @@ public class ActivityDialog extends CustomDialog {
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 						}else {
-							geozone.setText("DESCONOCIDA");
+							province = null == province ? "DESCONOCIDA" : province;
+							geozone.setText(province);
 							geozone.addStyleName(ActivityDialog.this.style.warningColor());
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
@@ -340,7 +341,8 @@ public class ActivityDialog extends CustomDialog {
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 						}else {
-							geozone.setText("DESCONOCIDA");
+							province = null == province ? "DESCONOCIDA" : province;
+							geozone.setText(province);
 							geozone.addStyleName(style.warningColor());
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
