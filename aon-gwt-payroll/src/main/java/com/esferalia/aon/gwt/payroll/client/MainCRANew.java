@@ -1002,6 +1002,7 @@ public class MainCRANew extends MainEntryPoint {
 			this.peddingCCCsCB.setValue(false);
 			
 			this.mainCRAObjectNew.resetEnterpriseCCCList();
+			enterpriseSB.setText("");
 			
 //			showCCCs();
 			clearSelectionModel();
@@ -1018,6 +1019,7 @@ public class MainCRANew extends MainEntryPoint {
 			
 			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			this.mainCRAObjectNew.filterEmitedCCC(findPeriod);
+			enterpriseSB.setText("");
 			
 //			showCCCs();
 			clearSelectionModel();
@@ -1032,6 +1034,7 @@ public class MainCRANew extends MainEntryPoint {
 		if(event.getValue()) {
 			this.allCCCsCB.setValue(false);
 			this.emitCCCsCB.setValue(false);
+			enterpriseSB.setText("");
 			
 			Date findPeriod = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			this.mainCRAObjectNew.filterPenddingCCC(findPeriod);
@@ -1159,7 +1162,7 @@ public class MainCRANew extends MainEntryPoint {
 						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
 								v -> {
 									WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : <br><br> 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
+											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
 									warning.center();
 									warning.show();
 									
