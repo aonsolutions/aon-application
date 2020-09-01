@@ -127,7 +127,7 @@ public class MainAgreementTest {
 				"redoButton",
 				"undoAllButton",
 				"acceptButton",
-				"deleteButton",
+//				"deleteButton",
 				}){
 			Assert.assertEquals(id, ((HtmlButton)getElementById(id)).isDisabled(), true );
 		}
