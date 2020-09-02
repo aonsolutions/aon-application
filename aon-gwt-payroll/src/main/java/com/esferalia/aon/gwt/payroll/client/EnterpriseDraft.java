@@ -76,11 +76,17 @@ public class EnterpriseDraft extends Composite {
 
 		@Override
 		public void onEnterpriseAddressZipChange() {
-			if(addressZip.getValue().length() >= 2) {
-				String zip = addressZip.getValue().substring(0, 2);
-				addressProvince.setSelectedIndex(ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.addressProvince);
+			if(this.addressZip.getValue().length() >= 2) {
+				String zip = this.addressZip.getValue().substring(0, 2);
+				setSelectedValueLB(addressProvince, zip); 
+				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
 			}
+			
+//			if(addressZip.getValue().length() >= 2) {
+//				String zip = addressZip.getValue().substring(0, 2);
+//				addressProvince.setSelectedIndex(ProvinceContract.getProvinceIndex(ProvinceContract.getName(zip)));
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.addressProvince);
+//			}
 		}
 
 		@Override
@@ -88,9 +94,13 @@ public class EnterpriseDraft extends Composite {
 
 		@Override
 		public void onEnterpriseAddressProvinceChange() {
-			String geozoneProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
-			enterpriseDraftObject.setAddressProvince(geozoneProvinceCode);
+			String addressProvinceCode = this.addressProvince.getSelectedValue();
+			enterpriseDraftObject.setAddressProvince(addressProvinceCode);
 			saving();
+			
+//			String geozoneProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
+//			enterpriseDraftObject.setAddressProvince(geozoneProvinceCode);
+//			saving();
 		}
 
 		@Override
@@ -379,7 +389,7 @@ public class EnterpriseDraft extends Composite {
 				return;
 			
 			enterpriseDraftObject.setAddressZip(value);
-			saving();
+			//saving();
 		});
 		
 		enterprise.addressCity.addKeyUpHandler(e-> {
