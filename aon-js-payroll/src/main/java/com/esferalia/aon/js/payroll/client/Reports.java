@@ -104,6 +104,28 @@ public class Reports {
 		
 		// ------------------ Metodos para el pie de la impresion ---------------------
 		
+		default Double getCGCBase(){
+			Double cgc_e = getCommonContAmount();
+			Double cgc_e_p = getCommonContPercent();
+			
+			if(null != cgc_e && null != cgc_e_p)
+				return cgc_e / (cgc_e_p/100);
+			
+			return 0.00;
+			
+		}
+		
+		default Double getCGPBase(){
+			Double fp_e = getProfesionalFormatAmount();
+			Double fp_e_p = getProfesionalFormatPercent();
+			
+			if(null != fp_e && null != fp_e_p)
+				return fp_e / (fp_e_p/100);
+			
+			return 0.00;
+			
+		}
+		
 		default Boolean isCostType(Deduction cost, String typeName) {
 			return (null != cost.getTypeName() && (cost.getTypeName().equals(typeName) || cost.getTypeName() == typeName)) ? true : false;
 		}
@@ -125,15 +147,27 @@ public class Reports {
 		}
 		
 		default Double getCommonContPercent(){
-			Double commonContAmount = getCommonContAmount();
-			Double cgcBase = getCgcBase();
-			if(null == cgcBase)
-				return 0.00;
-			
-			if (commonContAmount != null){
-				return (commonContAmount / cgcBase) * 100;
-			}else
-				return null;
+//			for(int i = 0; i < getCosts().size(); i++){
+//				Deduction cost = getCosts().get(i);
+//				Window.alert("Deduction \n Name : " + cost.getName() + "\n Description : " + cost.getDescription() +
+//						"\n Type : " + cost.getTypeName() + "\n Percent : " + cost.getPercent() + "\n Amount : " + cost.getAmount());
+//			}
+
+			for(int i = 0; i < getCosts().size(); i++){
+				Deduction cost = getCosts().get(i);
+				if(isCostType(cost, "Contingencias Comunes") || isCostName(cost, "CGC_E"))
+					if(cost.getAmount() != null) {
+						String percentStr = cost.getDescription().split("%")[0];
+						try {
+							Double percent = Double.parseDouble(percentStr);
+							return percent;
+						} catch (Exception e) {
+							return 0.00;
+						}
+					}
+						
+			}
+			return null;
 		}
 		
 		default Double getATyEPAmount(){
@@ -149,16 +183,21 @@ public class Reports {
 		}
 		
 		default Double getATyEPPercent(){
-			Double ATyEPAmount = getATyEPAmount();
-			Double cgcBase = getCgcBase();
-			if(null == cgcBase)
-				return 0.00;
+			Double percent = 0.00;
+			for(int i = 0; i < getCosts().size(); i++){
+				Deduction cost = getCosts().get(i);
+				if(isCostName(cost, "IMS_E") || isCostName(cost, "IT_E")) {
+					String percentStr = cost.getDescription().split("%")[0];
+					try {
+						Double percentAux = Double.parseDouble(percentStr);
+						percent += percentAux;
+					} catch (Exception e) {
+						percent += 0.00;
+					}	
+				}
+			}
 			
-			
-			if (ATyEPAmount != null){
-				return (ATyEPAmount / cgcBase) * 100;
-			}else
-				return null;
+			return percent;
 		}
 		
 		default Double getUnemploymentAmount(){
@@ -172,15 +211,21 @@ public class Reports {
 		}
 		
 		default Double getUnemploymentPercent(){
-			Double unemploymentAmount = getUnemploymentAmount();
-			Double cgpBase = getCgpBase();
-			if(null == cgpBase)
-				return 0.00;
-			
-			if (unemploymentAmount != null){
-				return (unemploymentAmount / cgpBase) * 100;
-			}else
-				return null;
+			for(int i = 0; i < getCosts().size(); i++){
+				Deduction cost = getCosts().get(i);
+				if(isCostType(cost, "Desempleo") || isCostName(cost, "DESMPL_E"))
+					if(cost.getAmount() != null) {
+						String percentStr = cost.getDescription().split("%")[0];
+						try {
+							Double percent = Double.parseDouble(percentStr);
+							return percent;
+						} catch (Exception e) {
+							return 0.00;
+						}
+					}
+						
+			}
+			return null;
 		}
 		
 		default Double getProfesionalFormatAmount(){
@@ -194,15 +239,21 @@ public class Reports {
 		}
 		
 		default Double getProfesionalFormatPercent(){
-			Double profesionalFormat = getProfesionalFormatAmount();
-			Double cgpBase = getCgpBase();
-			if(null == cgpBase)
-				return 0.00;
-			
-			if (profesionalFormat != null){
-				return (profesionalFormat / cgpBase) * 100;
-			}else
-				return null;
+			for(int i = 0; i < getCosts().size(); i++){
+				Deduction cost = getCosts().get(i);
+				if(isCostType(cost, "Formaci\u00f3n Profesional") || isCostName(cost, "FP_E"))
+					if(cost.getAmount() != null) {
+						String percentStr = cost.getDescription().split("%")[0];
+						try {
+							Double percent = Double.parseDouble(percentStr);
+							return percent;
+						} catch (Exception e) {
+							return 0.00;
+						}
+					}
+						
+			}
+			return null;
 		}
 		
 		default Double getFogasaAmount(){
@@ -217,7 +268,8 @@ public class Reports {
 		
 		default Double getFogasaPercent(){
 			Double fogasaAmount = getFogasaAmount();
-			Double cgpBase = getCgpBase();
+			Double cgpBase = getCGCBase();
+			
 			if(null == cgpBase)
 				return 0.00;
 			
@@ -225,6 +277,16 @@ public class Reports {
 				return (fogasaAmount / cgpBase) * 100;
 			}else
 				return null;
+			
+//			Double fogasaAmount = getFogasaAmount();
+//			Double cgpBase = getCgpBase();
+//			if(null == cgpBase)
+//				return 0.00;
+//			
+//			if (fogasaAmount != null){
+//				return (fogasaAmount / cgpBase) * 100;
+//			}else
+//				return null;
 		}
 		
 		default Double getHExtraAmount(){
@@ -597,13 +659,15 @@ public class Reports {
 		json.footer_ss_quotation.common_contingency = {
 					monthly_remuneration : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getRemuneration()(),
 					extraordinary_pay_packet : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getProrationBase()(),
-					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgcBase()(),
+					// base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgcBase()(),
+					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCGCBase()(),
 					type_percent : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContPercent()(),
 					company_input : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCommonContAmount()()
 				}
 				
 		json.footer_ss_quotation.professional_contingency = {
-					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgpBase()(),
+					// base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCgpBase()(),
+					base : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getCGPBase()(),
 		      		type_percent_at : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getATyEPPercent()(),
 		      		company_input_at : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getATyEPAmount()(),
 		      		type_percent_unemployment : payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getUnemploymentPercent()(),
@@ -639,7 +703,7 @@ public class Reports {
 					   'Code -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()() + '\n' +
 					   'Amount -> ' + payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getAmount()());
 					   
-			if ( amount || description.includes("EXPDTE.") || description.includes("MATERNIDAD") || description.includes("PATERNIDAD") || description.includes("AUSENCIA") ){
+			if ( amount || (null != description && (description.includes("EXPDTE.") || description.includes("MATERNIDAD") || description.includes("PATERNIDAD") || description.includes("AUSENCIA") || description.includes("RETRIBUIDO"))) ){
 				json.payments.push( {
 					amount : amount,
 					description : description,
@@ -800,7 +864,7 @@ public class Reports {
 		for ( i = 0; i <  payments.@java.util.List::size()(); i++ ) {
 			var payment = payments.@java.util.List::get(I)(i);
 			var description = payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getDescription()();
-			if(description.includes("EXPDTE.") || description.includes("MATERNIDAD") || description.includes("PATERNIDAD") || description.includes("AUSENCIA") ){
+			if(null != description && (description.includes("EXPDTE.") || description.includes("MATERNIDAD") || description.includes("PATERNIDAD") || description.includes("AUSENCIA") || description.includes("RETRIBUIDO")) ){
 				accrual.types.push({
 					type_expression : description,
 	       			code : payment.@com.esferalia.aon.js.payroll.client.Reports.Payment::getCode()(),
