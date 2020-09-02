@@ -108,13 +108,9 @@
 										value="#{bundle.payroll_contrata_contractBatch_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt-cra-payroll"
-										action="gwt_main_cra"
-										title="#{bundle.payroll_cra_module}">
-										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
-											style="margin-left: 5px; padding-left: 20px;"
-											value="#{bundle.payroll_cra_module}" />												
-									</aon:commandLink>
+									<aon:commandLink id="gwt-afi-payroll"
+										action="gwt_main_afi"
+										value="#{bundle.payroll_afi_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="leaveBatch-payroll"
@@ -127,13 +123,16 @@
 										action="gwt_main_creta"
 										value="#{bundle.payroll_creta_module}" />
 								</aon:div>
-								
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt-afi-payroll"
-										action="gwt_main_afi"
-										value="#{bundle.payroll_afi_module}" />
+									<aon:commandLink id="gwt-cra-payroll"
+										action="gwt_main_cra"
+										title="#{bundle.payroll_cra_module}"
+										value="#{bundle.payroll_cra_module}">
+										<!-- aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
+											style="margin-left: 5px; padding-left: 20px;"
+											value="#{bundle.payroll_cra_module}" / -->												
+									</aon:commandLink>
 								</aon:div>
-
 								<aon:if test="#{sepeAppParams.developmentMode or aonRole.sysAdmin}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="craBatch-payroll"
