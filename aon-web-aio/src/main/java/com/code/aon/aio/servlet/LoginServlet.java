@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.AonVersion;
+import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class LoginServlet extends HttpServlet {
 
@@ -83,6 +84,14 @@ public class LoginServlet extends HttpServlet {
 				httpResponse.setHeader("p3p", "CP=\"NOI ADM DEV COM NAV OUR STP\"");
 				httpResponse.sendRedirect("index.jsp");				
 			}
+			String initAction = httpRequest.getParameter("initAction");
+			if(initAction != null) {
+				AuthPrincipal authPrincipal = (AuthPrincipal) request.getUserPrincipal();
+	    		authPrincipal.setInitAction(initAction);
+				request.setUserPrincipal(authPrincipal);
+//	    		session.setPrincipal(authPrincipal);
+			}
+			
 		} else {
 			httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);			
 		}

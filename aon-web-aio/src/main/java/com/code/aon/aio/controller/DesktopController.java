@@ -24,9 +24,15 @@ import com.code.aon.audit.enumeration.Module;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.config.util.AppParamUtil;
+import com.code.aon.faces.controller.IRichConstants;
+import com.code.aon.faces.controller.SelectedMenuController;
 import com.code.aon.groupware.Note;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.audit.ActionSource;
+import com.code.aon.ui.audit.ApplicationCategory;
+import com.code.aon.ui.audit.ApplicationOption;
+import com.code.aon.ui.audit.IOption;
 import com.code.aon.ui.audit.controller.ActionDeniedController;
 import com.code.aon.ui.audit.controller.ApplicationOptionController;
 import com.code.aon.ui.audit.controller.IAuditConstants;
@@ -62,6 +68,7 @@ public class DesktopController implements Serializable {
     	if ( state == null ) {
     		state = new DesktopState();
     	}
+    	checkInitAction();
     	return state;
 	}
     
@@ -190,4 +197,26 @@ public class DesktopController implements Serializable {
 		return false;
 	}
 	
+	private void checkInitAction() {
+		AuthPrincipal principal = AonUtil.getAuthPrincipal();
+		if(principal.getInitAction() != null) {
+			state.setInitOption(getOptionWithoutDenied(principal.getInitAction()));	
+		}
+	}
+	    
+	private IOption getOptionWithoutDenied( String actionName ) {
+		SelectedMenuController smc = (SelectedMenuController) AonUtil.getRegisteredBean(IRichConstants.SELECTED_MENU_CONTROLLER_NAME);
+		ApplicationOptionController aoc = ApplicationOptionController.getInstance();
+		ApplicationOption option = aoc.getOptionMap().get(actionName);
+		if ( option!=null && option.getViewId()!=null) {
+			smc.setLastMenuAction(option.getGroup().getCategory().getAction());
+			return option;	
+		}
+		ApplicationCategory category = aoc.getCategory(actionName);
+		if ( category!=null && category.isRendered()) {
+			smc.setLastMenuAction(category.getAction());
+			return category;	
+		}
+		return null;
+	}
 }

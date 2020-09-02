@@ -308,7 +308,9 @@ class AonMenu extends HTMLElement {
 		a.appendChild(span);
 		li.appendChild(a);
 		li.addEventListener('click', () => {
-			startModule(subapp.module, subapp.entryPoint);
+			if(subapp.initAction) {
+				open('https://' + localStorage.getItem('aon_domain_name') + '/login?initAction='+subapp.initAction+'&token=' + localStorage.getItem('aon_session_id'));
+			} else startModule(subapp.module, subapp.entryPoint);
 		});
 		return li
 	}
