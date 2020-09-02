@@ -93,6 +93,29 @@ function companySelection(company) {
 	let aonHeaderCompanyName = document.getElementById('aon-header-company-name');
 	aonHeaderCompanyName.innerHTML = company.name;
 
+	let aonHeaderCompanyLogo = document.getElementById('aonHeaderCompanyLogo');
+	let aonHeaderCompanyLogoImg = document.getElementById('aonHeaderCompanyLogoImg');
+	if(company.logo){
+		aonHeaderCompanyLogoImg.src = company.logo;
+		aonHeaderCompanyLogo.style.display = 'block';
+	} else {
+		aonHeaderCompanyLogo.style.display = 'none';
+	}
+
+	let aonLogo = document.getElementById('aonLogo');
+	let aonLogo2 = document.getElementById('aonLogo2');
+	let aonLogoParent = document.getElementById('aonLogoParent');
+	if(company.parentLogo){
+		aonLogoParent.src = company.parentLogo;
+		aonLogoParent.style.display = 'block';
+		aonLogo2.style.display = 'block';
+		aonLogo.style.display = 'none';
+	} else {
+		aonLogoParent.style.display = 'none';
+		aonLogo2.style.display = 'none';
+		aonLogo.style.display = 'block';
+	}
+
 	localStorage.setItem("aon_domain_id", company.id);
 	localStorage.setItem("aon_domain_name", company.domain);
 

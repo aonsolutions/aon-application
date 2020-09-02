@@ -3,7 +3,7 @@
 
 	function requestFile(url, token, formData){
 		var xhr = new XMLHttpRequest();
-		xhr.open('POST', "/aon-solutions" + url, true);
+		xhr.open('POST', url, true);
 		xhr.setRequestHeader('session_id', token);
 		const domainId = localStorage.getItem("aon_domain_id");
 		xhr.setRequestHeader('domain_id', domainId);
@@ -12,7 +12,7 @@
 
 	function request(method, url, token, sendData, headers, fn){
 		let xhr = new XMLHttpRequest();
-		xhr.open(method, url.includes('http') ? url : "/aon-solutions" + url);
+		xhr.open(method, url);
 		xhr.setRequestHeader('session_id', token);
 		const domainId = localStorage.getItem("aon_domain_id");
 		xhr.setRequestHeader('domain_id', domainId);

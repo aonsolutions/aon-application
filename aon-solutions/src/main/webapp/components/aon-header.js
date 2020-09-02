@@ -35,10 +35,16 @@ class AonHeader extends HTMLElement {
 			<div class="aonHeader" >
 				<span>
 					<img id="aonLogo" class="aonLogo" src="../aon-solutions/assets/logo.png" width="240px" />
+					<img id="aonLogo2" class="aonLogo" style="display:none;" src="../aon-solutions/assets/logoCompany.png" width="135px" />
+					<img id="aonLogoParent" class="aonParentLogo" style="display:none;" />
 				</span>
 
 				<span id="aon-header-company-list" class="aonRight100" style="display:none;">
 					<aon-icon-button id="aon-header-company-list-button" icon="business"></aon-icon-button>
+				</span>
+
+				<span id="aonHeaderCompanyLogo" class="aonRight140" style="display:none;">
+					<img id="aonHeaderCompanyLogoImg" height="40px"/>
 				</span>
 
 				<span id="aon-header-search" class="aonRight100" >
@@ -92,6 +98,16 @@ class AonHeader extends HTMLElement {
 
 		let aonHeaderCompanyListButton = document.getElementById('aon-header-company-list-button');
 		aonHeaderCompanyListButton.addEventListener('click', () => {
+
+			let aonLogo = document.getElementById('aonLogo');
+			aonLogo.style.display = 'block';
+
+			let aonLogo2 = document.getElementById('aonLogo2');
+			aonLogo2.style.display = 'none';
+
+			let aonLogoParent = document.getElementById('aonLogoParent');
+			aonLogoParent.style.display = 'none';
+
 			let aonHeaderCompanyList = document.getElementById('aon-header-company-list');
 			aonHeaderCompanyList.style.display = 'none';
 
@@ -103,6 +119,9 @@ class AonHeader extends HTMLElement {
 
 			let aonHeaderApps = document.getElementById('aon-header-apps');
 			aonHeaderApps.style.display = 'block';
+
+			let aonHeaderCompanyLogo = document.getElementById('aonHeaderCompanyLogo');
+			aonHeaderCompanyLogo.style.display = 'none';
 
 			let aonHeaderHome = document.getElementById('aon-header-home');
 			aonHeaderHome.style.display = 'none';

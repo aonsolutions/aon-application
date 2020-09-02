@@ -13,7 +13,6 @@
     <app-mobile-search-box> </app-mobile-search-box>
   </span>
 
-
   <span *ngIf="!isMobile() && !mobileSearching" class="aon-company-logo aon-toolbar-first-button aon-right140">
     <img *ngIf="!isMobile() && !isParent()" height="40px" (click)="home()" [src]="getCompanyLogo()" />
   </span>
@@ -42,6 +41,7 @@
   <span class="aon-company-name">
     <span>{{getCompanyName()}}</span>
   </span>
+
   <span *ngIf="!isParent()" class="aon-toolbar-second-button aon-right100" >
     <aon-icon-button icon="home" outline="true" (click)="home()"></aon-icon-button>
   </span>
