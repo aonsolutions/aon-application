@@ -3135,7 +3135,7 @@ module.exports.newClassicPayroll = function(payrolls, stream){
             .moveTo(topLeftCorner + 70, enterpriseTop).lineTo(boxWidth, enterpriseTop).stroke()
             .font(titleFont)
             .fontSize(titleTextSize)
-            .text(formatInputData(payroll.enterprise.name, 'string'), firstColumn, enterpriseTop + 12)
+            .text(payroll.enterprise.name, firstColumn, enterpriseTop + 12)
 
         .font(textFont)
             .fontSize(textSize)
@@ -3145,12 +3145,12 @@ module.exports.newClassicPayroll = function(payrolls, stream){
         .font(headingFont)
             .text('CIF: ', firstColumn, enterpriseTop + 48)
             .font(textFont)
-            .text(formatInputData(payroll.enterprise.cif, 'string'), firstColumn + paddingLeft, enterpriseTop + 48)
+            .text(payroll.enterprise.cif, firstColumn + paddingLeft, enterpriseTop + 48)
 
         .font(headingFont)
             .text('CCC: ', secondColumn, enterpriseTop + 48)
             .font(textFont)
-            .text(formatInputData(payroll.enterprise.ccc, 'string'), secondColumn + paddingLeft + 5, enterpriseTop + 48)
+            .text(payroll.enterprise.ccc, secondColumn + paddingLeft + 5, enterpriseTop + 48)
 
         .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner, enterpriseHeight).stroke() //Vertical left line
             .moveTo(boxWidth, enterpriseTop).lineTo(boxWidth, enterpriseHeight).stroke() //Vertical right line
@@ -3184,11 +3184,11 @@ module.exports.newClassicPayroll = function(payrolls, stream){
             .moveTo(topLeftCorner + 70, enterpriseTop).lineTo(topLeftCorner + boxWidth, enterpriseTop).stroke()
             .font(titleFont)
             .fontSize(titleTextSize)
-            .text(formatInputData(payroll.employee.fullname, 'string'), firstColumn, enterpriseTop + 12)
+            .text(payroll.employee.fullname, firstColumn, enterpriseTop + 12)
 
         .text('NIF: ', firstColumn, enterpriseTop + 24)
             .font(textFont)
-            .text(formatInputData(payroll.employee.nif, 'string'), secondColumn, enterpriseTop + 24)
+            .text(payroll.employee.nif, secondColumn, enterpriseTop + 24)
 
         .font(headingFont)
             .text('Fecha antigüedad: ', thirdColumn, enterpriseTop + 24)
@@ -3198,22 +3198,22 @@ module.exports.newClassicPayroll = function(payrolls, stream){
         .font(headingFont)
             .text('Nº S.S.: ', firstColumn, enterpriseTop + 36)
             .font(textFont)
-            .text(formatInputData(payroll.employee.ss, 'string'), secondColumn, enterpriseTop + 36)
+            .text(payroll.employee.ss, secondColumn, enterpriseTop + 36)
 
         .font(headingFont)
             .text('Grupo cotización: ', thirdColumn, enterpriseTop + 36)
             .font(textFont)
-            .text(formatInputData(payroll.employee.quote_group, 'string'), fourthColumn, enterpriseTop + 36)
+            .text(payroll.employee.quote_group, fourthColumn, enterpriseTop + 36)
 
         .font(headingFont)
             .text('TC2: ', fifthColumn, enterpriseTop + 36)
             .font(textFont)
-            .text(formatInputData(payroll.employee.contract_type, 'string'), sixthColumn, enterpriseTop + 36)
+            .text(payroll.employee.contract_type, sixthColumn, enterpriseTop + 36)
 
         .font(headingFont)
             .text('Grupo profesional: ', firstColumn, enterpriseTop + 48)
             .font(textFont)
-            .text(formatInputData(payroll.employee.professional_group, 'number'), secondColumn + 45, enterpriseTop + 48)
+            .text(payroll.employee.professional_group, secondColumn + 45, enterpriseTop + 48)
 
         .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner, employeeHeight).stroke() //Vertical left line
             .moveTo(topLeftCorner + boxWidth, enterpriseTop).lineTo(topLeftCorner + boxWidth, employeeHeight).stroke() //Vertical right line

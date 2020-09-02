@@ -630,6 +630,8 @@ public class Reports {
 				ccc: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEnterpriseCCC()()
 		}
 		
+		console.log("payroll.enteprise.name = " + json.enterprise.name);
+		
 		json.employee = {
 				ss: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeSS()(),
 				nif: payroll.@com.esferalia.aon.js.payroll.client.Reports.Payroll::getEmployeeDocument()(),
