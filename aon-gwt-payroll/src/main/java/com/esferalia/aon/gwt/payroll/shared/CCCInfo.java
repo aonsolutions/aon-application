@@ -14,6 +14,7 @@ public class CCCInfo implements Serializable{
 	private Byte type;
 	private String typeStr;
 	private String geozone;
+	private String geozoneCode;
 	private Integer activityId;
 	private String activityDescription;
 	private Integer cccId;
@@ -36,22 +37,24 @@ public class CCCInfo implements Serializable{
 		super();
 	}
 	
-	public CCCInfo(String ccc, Byte type, String geozone, Integer activityId, Integer cccId) {
+	public CCCInfo(String ccc, Byte type, String geozone, String geozoneCode, Integer activityId, Integer cccId) {
 		super();
 		this.ccc = ccc;
 		this.type = type;
 		this.geozone = geozone;
+		this.geozoneCode = geozoneCode;
 		this.activityId = activityId;
 		this.cccId = cccId;
 	}
 	
-	public CCCInfo(String ccc, String cccRegime, String cccAccount, Byte type, String geozone, Integer activityId, Integer cccId, Boolean useByContracts) {
+	public CCCInfo(String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode, Integer activityId, Integer cccId, Boolean useByContracts) {
 		super();
 		this.ccc = ccc;
 		this.cccRegimeCode = cccRegime;
 		this.cccAccount = cccAccount;
 		this.type = type;
 		this.geozone = geozone;
+		this.geozoneCode = geozoneCode;
 		this.activityId = activityId;
 		this.cccId = cccId;
 		this.useByContracts = useByContracts;
@@ -95,6 +98,14 @@ public class CCCInfo implements Serializable{
 
 	public void setGeozone(String geozone) {
 		this.geozone = geozone;
+	}
+
+	public String getGeozoneCode() {
+		return geozoneCode;
+	}
+
+	public void setGeozoneCode(String geozoneCode) {
+		this.geozoneCode = geozoneCode;
 	}
 
 	public Integer getActivityId() {

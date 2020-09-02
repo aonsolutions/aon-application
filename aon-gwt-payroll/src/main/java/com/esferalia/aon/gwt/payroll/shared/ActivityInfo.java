@@ -124,14 +124,14 @@ public class ActivityInfo implements Serializable{
 		this.cccs.remove(cccId);
 	}
 
-	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone, Boolean useByContracts) {
-		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, getId(), cccId, useByContracts));
+	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts) {
+		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, geozoneCode, getId(), cccId, useByContracts));
 	}
 	
-	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone) {
+	public void insertCCC(Integer cccId, String ccc, String cccRegime, String cccAccount, Byte type, String geozone, String geozoneCode) {
 		Boolean useByContracts = this.cccs.get(cccId).isUseByContracts();
 		
-		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, getId(), cccId, useByContracts));
+		this.cccs.put(cccId, new CCCInfo(ccc, cccRegime, cccAccount, type, geozone, geozoneCode, getId(), cccId, useByContracts));
 	}
 
 	public Map<String, String> getAllCNAE2009() {

@@ -133,6 +133,7 @@ public class JooqActivity {
 				useByContracts = true;
 			
 			String geozone = null;
+			String geozoneCode = null;
 			if(null != geozoneId) {
 				Result<Record> geozoneName = dslContext.select()
 						.from(GEOZONE)
@@ -140,9 +141,10 @@ public class JooqActivity {
 						.fetch();
 				
 				geozone = geozoneName.get(0).get(GEOZONE.NAME);
+				geozoneCode = geozoneName.get(0).get(GEOZONE.CODE);
 			}
 			
-			activityInfo.insertCCC(cccId, ccc, cccRegimeCode, ccc, cccRegime, geozone, useByContracts);
+			activityInfo.insertCCC(cccId, ccc, cccRegimeCode, ccc, cccRegime, geozone, geozoneCode, useByContracts);
 		}
 		
 		return activityInfo;
@@ -300,15 +302,15 @@ public class JooqActivity {
 			Result<Record> geozoneRecords = null;
 			Integer geozoneId = null;
 			
-			if(null != cccInfo.getGeozone()) {
+			if(null != cccInfo.getGeozoneCode()) {
 				if(hasHerefity) {
 					geozoneRecords = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.where(GEOZONE.CODE.eq(cccInfo.getGeozoneCode()))
 							.and(GEOZONE.DOMAIN.eq(parentDomain))
 							.fetch();
 				}else {
 					geozoneRecords = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.where(GEOZONE.CODE.eq(cccInfo.getGeozoneCode()))
 							.and(GEOZONE.DOMAIN.eq(activityInfo.getDomain()))
 							.fetch();
 				}
@@ -316,7 +318,7 @@ public class JooqActivity {
 				if(null == geozoneRecords || geozoneRecords.isEmpty()) {
 					//TODO: No existe este geozone
 					Result<Record> gezoneRecordsInfo = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.NAME.eq(cccInfo.getGeozone()))
+							.where(GEOZONE.CODE.eq(cccInfo.getGeozoneCode()))
 							.fetch();
 					
 					geozoneId = dslContext.insertInto(GEOZONE)

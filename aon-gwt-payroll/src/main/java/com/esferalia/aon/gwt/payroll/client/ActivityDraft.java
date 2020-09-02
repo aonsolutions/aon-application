@@ -98,6 +98,7 @@ public class ActivityDraft extends Composite{
 					if(!StringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
 						
 						String province = ProvinceContract.getName(accountValue.substring(0, 2));
+						String provinceCode = accountValue.substring(0, 2);
 						
 						if(checkCCC(accountValue)) {
 							geozone.setText(province);
@@ -115,7 +116,7 @@ public class ActivityDraft extends Composite{
 						// Add new CCC and initPreview
 						newId--;
 						id.setText(newId.toString());
-						activityDraftObject.insertCCC(newId, accountValue, typeCode.getText(), accountValue, (byte) types.getSelectedIndex(), province, false);
+						activityDraftObject.insertCCC(newId, accountValue, typeCode.getText(), accountValue, (byte) types.getSelectedIndex(), province, provinceCode, false);
 						initPreview();
 					}
 				}
@@ -300,6 +301,7 @@ public class ActivityDraft extends Composite{
 			
 			geozone.setText(geozoneValue);
 			String province = ProvinceContract.getName(cccInfo.getCcc().substring(0, 2));
+			String provinceCode = cccInfo.getCcc().substring(0, 2);
 			
 			HorizontalPanel hPanel = new HorizontalPanel();
 			Label typeCode = new Label(cccInfo.getCccRegimeCode());
@@ -316,6 +318,7 @@ public class ActivityDraft extends Composite{
 					String accountValue = event.getValue();
 					if(!StringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
 						String province = ProvinceContract.getName(accountValue.substring(0, 2));
+						String provinceCode = accountValue.substring(0, 2);
 						if(checkCCC(accountValue)) {
 							geozone.setText(province);
 							geozone.removeStyleName(style.warningColor());
@@ -328,7 +331,7 @@ public class ActivityDraft extends Composite{
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						}
-						activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+						activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, provinceCode);
 					}
 				}
 			});
@@ -350,7 +353,7 @@ public class ActivityDraft extends Composite{
 				public void onChange(ChangeEvent event) {
 					String newCCCRegimeCode = getCCCRegimeCode((byte)types.getSelectedIndex());
 					typeCode.setText(newCCCRegimeCode);
-					activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+					activityDraftObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, provinceCode);
 				}
 			});
 			

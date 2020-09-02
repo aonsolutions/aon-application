@@ -248,14 +248,16 @@ public class JooqWorkplace {
 			for(Record d : enterpriseCCCRecords){
 				Integer geozoneId = d.get(ENTERPRISE_CCC.GEOZONE);
 				String geozoneName = null;
+				String geozoneCode = null;
 				if(null != geozoneId){
 					Record geozoneRecord = dslContext.select().from(GEOZONE)
 							.where(GEOZONE.ID.eq(geozoneId))
 							.fetchOne();
 					
 					geozoneName = geozoneRecord.get(GEOZONE.NAME);
+					geozoneCode = geozoneRecord.get(GEOZONE.CODE);
 				}
-				activitiesCCC.addCCC(d.get(ENTERPRISE_CCC.ID), d.get(ENTERPRISE_CCC.CCC), d.get(ENTERPRISE_CCC.TYPE), geozoneName, r.get(ENTERPRISE_ACTIVITY.ID));
+				activitiesCCC.addCCC(d.get(ENTERPRISE_CCC.ID), d.get(ENTERPRISE_CCC.CCC), d.get(ENTERPRISE_CCC.TYPE), geozoneName, geozoneCode, r.get(ENTERPRISE_ACTIVITY.ID));
 			}
 		}
 		

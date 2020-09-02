@@ -58,12 +58,12 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		this.activityInfo.deleteCCC(cccId);
 	}
 	
-	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, Boolean useByContracts) {
-		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, useByContracts);
+	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts) {
+		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode, useByContracts);
 	}
 	
-	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone) {
-		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone);
+	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode) {
+		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode);
 	}
 	
 	

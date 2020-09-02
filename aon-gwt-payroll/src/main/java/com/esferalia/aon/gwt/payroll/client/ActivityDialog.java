@@ -98,6 +98,7 @@ public class ActivityDialog extends CustomDialog {
 					if(!StringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
 						
 						String province = ProvinceContract.getName(accountValue.substring(0, 2));
+						String provinceCode = accountValue.substring(0, 2);
 						
 						if(checkCCC(accountValue)) {
 							geozone.setText(province);
@@ -115,7 +116,7 @@ public class ActivityDialog extends CustomDialog {
 						// Add new CCC and initPreview
 						newId--;
 						id.setText(newId.toString());
-						activityDialogObject.insertCCC(newId, accountValue, typeCode.getText(), accountValue, (byte) types.getSelectedIndex(), province, false);
+						activityDialogObject.insertCCC(newId, accountValue, typeCode.getText(), accountValue, (byte) types.getSelectedIndex(), province, provinceCode, false);
 						initPreview();
 					}
 				}
@@ -319,6 +320,7 @@ public class ActivityDialog extends CustomDialog {
 			geozone.addStyleName(activity.style.elementWidth80());
 			
 			String province = ProvinceContract.getName(cccInfo.getCcc().substring(0, 2));
+			String provinceCode = cccInfo.getCcc().substring(0, 2);
 			
 			HorizontalPanel hPanel = new HorizontalPanel();
 			Label typeCode = new Label(cccInfo.getCccRegimeCode());
@@ -335,6 +337,7 @@ public class ActivityDialog extends CustomDialog {
 					String accountValue = event.getValue();
 					if(!StringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
 						String province = ProvinceContract.getName(accountValue.substring(0, 2));
+						String provinceCode = accountValue.substring(0, 2);
 						if(checkCCC(accountValue)) {
 							geozone.setText(province);
 							geozone.removeStyleName(style.warningColor());
@@ -347,7 +350,7 @@ public class ActivityDialog extends CustomDialog {
 							accountStatus.removeStyleName("aon-finding-toolbar-item aon-icon-predetermine aon-finding-toolbar-item-no-border");
 							accountStatus.setStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						}
-						activityDialogObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+						activityDialogObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, provinceCode);
 					}
 				}
 			});
@@ -369,7 +372,7 @@ public class ActivityDialog extends CustomDialog {
 				public void onChange(ChangeEvent event) {
 					String newCCCRegimeCode = getCCCRegimeCode((byte)types.getSelectedIndex());
 					typeCode.setText(newCCCRegimeCode);
-					activityDialogObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province);
+					activityDialogObject.insertCCC(cccInfo.getCccId(), account.getValue(), typeCode.getText(), account.getValue(), (byte) types.getSelectedIndex(), province, provinceCode);
 				}
 			});
 			

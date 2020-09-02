@@ -733,8 +733,8 @@ public class EmployeeInfoDataBase implements Serializable {
 		return this.activities;
 	}
 
-	public void addCCC(Integer cccId, String ccc, Byte type, String geozoneName, Integer activityId) {
-		CCCInfo cccInfo = new CCCInfo(ccc, type, geozoneName, activityId, cccId);
+	public void addCCC(Integer cccId, String ccc, Byte type, String geozoneName, String geozoneCode, Integer activityId) {
+		CCCInfo cccInfo = new CCCInfo(ccc, type, geozoneName, geozoneCode, activityId, cccId);
 		this.cccs.put(cccId, cccInfo);
 	}
 	
