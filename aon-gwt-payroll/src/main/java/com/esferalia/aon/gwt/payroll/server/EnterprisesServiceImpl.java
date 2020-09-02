@@ -1457,6 +1457,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Map<CCCType, SSRegimeType> regimes = new HashMap<CCCType, SSRegimeType>(){
 			{
 				put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
+				put(CCCType.ARTIST, SSRegimeType.ARTIST);
+				put(CCCType.HOME_EMPLOYEES, SSRegimeType.DOMESTIC_EMPLOYEES);
 			}
 		};
 		
