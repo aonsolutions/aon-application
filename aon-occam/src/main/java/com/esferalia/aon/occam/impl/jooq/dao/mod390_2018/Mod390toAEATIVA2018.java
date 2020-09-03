@@ -72,6 +72,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegGeneral.
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegGeneral.Deducciones.OpIntragrupoBienesInversion;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegGeneral.Deducciones.OpIntragrupoCorrientes;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegGeneral.Deducciones.RectifDeducciones;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegGeneral.Deducciones.RectifOpIntragrupo;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegSimplificado;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegSimplificado.ActAgricGanadForest;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018.RegSimplificado.Actividad;
@@ -623,6 +624,7 @@ public class Mod390toAEATIVA2018 {
 		deducciones.setAdqIntracomunitariasServicios(getAdqIntracomunitariasServicios(mod390));
 		deducciones.setComRegAgricGanadPesca(getComRegAgricGanadPesca(mod390));
 		deducciones.setRectifDeducciones(getRectifDeducciones(mod390));
+		deducciones.setRectifOpIntragrupo(getRectifOpIntragrupo(mod390));
 		deducciones.setRegularizInversiones(getRegularizInversiones(mod390));
 		deducciones.setRegularizPorcProrrata(getRegularizPorcProrrata(mod390));
 		deducciones.setSumDeducciones(getSumDeducciones(mod390));
@@ -669,6 +671,15 @@ public class Mod390toAEATIVA2018 {
 		return null;
 	}
 
+	private static RectifOpIntragrupo getRectifOpIntragrupo(Mod3902018 mod390) {
+		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod3902018DetailKey.C0652));
+		if (tipo != null) {
+			RectifOpIntragrupo op = new RectifOpIntragrupo();
+			op.setTipoX(tipo);
+			return op;
+		}
+		return null;
+	}
 
 	private static ComRegAgricGanadPesca getComRegAgricGanadPesca(Mod3902018 mod390) {
 		TipoBaseImponibleYCuota tipo = getTipoBaseImponibleYCuota(getKey(mod390,Mod3902018DetailKey.C0061));

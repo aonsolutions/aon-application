@@ -389,6 +389,10 @@ public class AEATIVA2018toMod390 {
 					put(mod390, Mod3902018DetailKey.C0062, d.getRectifDeducciones()
 							.getTipoX());
 				}
+				if (d.getRectifOpIntragrupo() != null) {
+					put(mod390, Mod3902018DetailKey.C0652, d.getRectifOpIntragrupo()
+							.getTipoX());
+				}
 				if (d.getRegularizInversiones() != null) {
 					put(mod390, Mod3902018DetailKey.C0063,
 							d.getRegularizInversiones());
