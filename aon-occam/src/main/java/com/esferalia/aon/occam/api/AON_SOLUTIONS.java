@@ -112,6 +112,13 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	public static Auth updateAuthPassword(Auth auth) {
+		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
+		try (AONContext ctx = AONContext.getAONContext(domain, 0, "")){		
+			return getSecurity().updateAuthPassword(ctx, auth);
+		}
+	}
+	
 	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getSecurity().insertAuth(ctx, auth);

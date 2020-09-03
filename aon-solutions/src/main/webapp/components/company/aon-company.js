@@ -3,10 +3,10 @@ import {getDomainApps, setUserAppRole, setUser} from  '../services/service.js';
 
 import './aon-select.js';
 
-class AonUser extends HTMLElement {
+class AonCompany extends HTMLElement {
 
 	static get observedAttributes() {
-		return ['user', 'company', 'apps'];
+		return ['company'];
 	}
 
 	get company() {
@@ -17,38 +17,9 @@ class AonUser extends HTMLElement {
 		this.setAttribute('company', company);
 	}
 
-	get user() {
-		return this.getAttribute('user');
-	}
-
-	set user(user) {
-		this.setAttribute('user', user);
-	}
-
-	get apps() {
-		return this.getAttribute('apps');
-	}
-
-	set apps(apps) {
-		this.setAttribute('apps', apps);
-	}
-
 	attributeChangedCallback(name, oldValue, newValue) {
-		if('user' === name){
-			this.initUser();
-		}
 		if('company' === name) {
-			// let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-		}
-
-		if('apps' === name) {
-			let apps = this.getAttribute('apps') ? JSON.parse(this.getAttribute('apps')) : undefined;
-			let table = document.getElementById('aonUserRoleTable');
-			table.appendChild(this.buildAppSelect(undefined));
-			for(let key in apps){
-					if(apps[key]) table.appendChild(this.buildAppSelect(this.getApp(key)));
-			}
-			componentHandler.upgradeAllRegistered();
+			this.initCompany();
 		}
 	}
 
@@ -58,16 +29,15 @@ class AonUser extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-card id="aonConfigurationUserCard" title="USUARIO"></aon-card>
-			<aon-card id="aonConfigurationUserSecurityCard" title="PERMISOS"></aon-card>
+			<aon-card id="aonConfigurationCompanyCard" title="Empresa"></aon-card>
 		`;
 		this.build();
   }
 
-	initUser() {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		let aonUserName = document.getElementById('aonConfigurationUserCardName');
-		aonUserName.setVisible(!this.isNew());
+	initCompany() {
+		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+		let aonCompanyName = document.getElementById('aonConfigurationUserCompanyCardName');
+		aonCompanyName.setVisible(!this.isNew());
 		aonUserName.setAttribute('value', user && user.name ? user.name : '');
 		let aonUserSurname = document.getElementById('aonConfigurationUserCardSurname');
 		aonUserSurname.setVisible(!this.isNew());

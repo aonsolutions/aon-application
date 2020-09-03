@@ -1,3 +1,8 @@
+import {closeSession, getUserAppRole, getCompanies} from  '../services/service.js';
+import {rootPanel} from '../services/gwtLoader.js';
+
+import './aon-desktop.js';
+
 class AonParent extends HTMLElement {
 
 	companies;
@@ -20,7 +25,7 @@ class AonParent extends HTMLElement {
           this.init(filter);
         }
         this.build(r.companies.filter(f => this.companyFilter(f, filter)))
-      }, () => this.closeSession()
+      }, () => closeSession()
     );
   }
 
@@ -68,7 +73,7 @@ class AonParent extends HTMLElement {
 		li.className = 'mdl-list__item mdl-list__item--two-line aonLi';
 		li.style.backgroundColor = color;
 		li.addEventListener('click', () => {
-			companySelection(company);
+			this.companySelection(company);
 		});
 
 		li.addEventListener('mouseover', () => {
@@ -102,6 +107,75 @@ class AonParent extends HTMLElement {
 		span.appendChild(span3);
 		li.appendChild(span);
 		return li;
+	}
+
+	companySelection(company) {
+		let aonHeaderCompanyList = document.getElementById('aon-header-company-list');
+		aonHeaderCompanyList.style.display = 'block';
+
+		let aonHeaderHelp = document.getElementById('aon-header-help');
+		aonHeaderHelp.style.display = 'block';
+
+		let aonHeaderApps = document.getElementById('aon-header-apps');
+		aonHeaderApps.style.display = 'none';
+
+		let aonHeaderSearch = document.getElementById('aon-header-search');
+		aonHeaderSearch.style.display = 'none';
+
+		let aonHeaderHome = document.getElementById('aon-header-home');
+		aonHeaderHome.style.display = 'block';
+
+		let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
+		aonHeaderShowMenu.style.display = 'block';
+
+		let aonHeaderCompany = document.getElementById('aon-header-company');
+		aonHeaderCompany.style.display = 'block';
+
+		let aonHeaderCompanyName = document.getElementById('aon-header-company-name');
+		aonHeaderCompanyName.innerHTML = company.name;
+
+		let aonHeaderCompanyLogo = document.getElementById('aonHeaderCompanyLogo');
+		let aonHeaderCompanyLogoImg = document.getElementById('aonHeaderCompanyLogoImg');
+		if(company.logo){
+			aonHeaderCompanyLogoImg.src = company.logo;
+			aonHeaderCompanyLogo.style.display = 'block';
+		} else {
+			aonHeaderCompanyLogo.style.display = 'none';
+		}
+
+		let aonLogo = document.getElementById('aonLogo');
+		let aonLogo2 = document.getElementById('aonLogo2');
+		let aonLogoParent = document.getElementById('aonLogoParent');
+		if(company.parentLogo){
+			aonLogoParent.src = company.parentLogo;
+			aonLogoParent.style.display = 'block';
+			aonLogo2.style.display = 'block';
+			aonLogo.style.display = 'none';
+		} else {
+			aonLogoParent.style.display = 'none';
+			aonLogo2.style.display = 'none';
+			aonLogo.style.display = 'block';
+		}
+
+		localStorage.setItem("aon_domain_id", company.id);
+		localStorage.setItem("aon_domain_name", company.domain);
+
+		getUserAppRole().then(user => {
+			let aonMenu = document.getElementById('aonMenu');
+			aonMenu.setAttribute('company', JSON.stringify(company));
+			aonMenu.setAttribute('user', JSON.stringify(user));
+			aonMenu.buildMenu();
+			aonMenu.toogle();
+
+			let aonHeader = document.getElementById('aonHeader');
+			aonHeader.setAttribute('company', JSON.stringify(company));
+			aonHeader.setAttribute('user', JSON.stringify(user));
+
+			rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+			let aonDesktop = document.getElementById('aonDesktop');
+			aonDesktop.setAttribute('company', JSON.stringify(company));
+			aonDesktop.setAttribute('user', JSON.stringify(user));
+		});
 	}
 
 }

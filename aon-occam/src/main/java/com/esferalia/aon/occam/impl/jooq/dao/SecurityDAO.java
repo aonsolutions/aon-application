@@ -167,6 +167,14 @@ public class SecurityDAO {
 		return auth;
 	}
 	
+	public static Auth updateAuthPassword(AONContext ctx, Auth auth) {
+		ctx.getDslContext().update(AUTH)
+			.set(AUTH.PASSWORD, auth.getPassword())
+			.where(AUTH.ID.eq(auth.getAuth()))
+			.execute();
+		return auth;
+	}
+	
 	public static DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
 		Integer id = ctx.getDslContext().insertInto(DOMAIN_APP)
 			.set(DOMAIN_APP.DOMAIN, domainApp.getDomain())

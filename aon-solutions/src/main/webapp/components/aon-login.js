@@ -1,4 +1,8 @@
+import {login, getManifest, rememberPassword} from  '../services/service.js';
+import {rootPanel} from '../services/gwtLoader.js';
 import './aon-inputText.js';
+import './aon-parent.js';
+
 
 class AonLogin extends HTMLElement {
 
@@ -80,6 +84,13 @@ class AonLogin extends HTMLElement {
 					width: 100%;
 				}
 
+				.aonErrorPanel {
+				  min-width: 150px;
+				  max-width: 250px;
+				  width: 100%;
+				  color: red;
+				}
+
 			</style>
 			<div class="form-center">
 		  	<div class="aon-login-border">
@@ -89,25 +100,31 @@ class AonLogin extends HTMLElement {
 								<img class="logo" src="aon-solutions/assets/logo.png"/>
 							</div>
 
+							<div id="aonLoginLoading" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+
+							<div id="aonLoginError" class="aonErrorPanel" style="display:none;">
+			          <span id="aonLoginErrorMessage">errorMsg</span>
+			        </div>
+
 							<form action="#">
-								<aon-input-text id="user" description="Usuario"></aon-input-text>
+								<aon-input-text id="aonLoginUser" description="Usuario"></aon-input-text>
 							</form>
 
 							<form action="#">
-								<aon-input-text id="password" description="Contraseña" type="password"></aon-input-text>
+								<aon-input-text id="aonLoginPassword" description="Contraseña" type="password"></aon-input-text>
 							</form>
 
 							<div style="position:relative;padding-bottom:5px; margin-bottom: 5px;">
-								<button class="mdl-button mdl-js-button remember-button" type="submit" >¿Has olvidado tu contraseña?</button>
+								<button id="aonLoginRemember" class="mdl-button mdl-js-button remember-button" type="submit" >¿Has olvidado tu contraseña?</button>
 							</div>
 							<div style="position:relative;">
-								<button class="mdl-button mdl-js-button mdl-button--raised sign-in" type="submit" onclick="login()">Iniciar Sesión</button>
+								<button id="aonLoginSignin"class="mdl-button mdl-js-button mdl-button--raised sign-in" type="submit">Iniciar Sesión</button>
 							</div>
 
 						</div>
 					<!-- </form> -->
 			    <div class="aon-login-info2">
-			      <a target="_blank" href="http://www.aonsolutions.es">
+			      <a target="_blank" style="color:#3677E1;" href="http://www.aonsolutions.es">
 			        <span class="aon-outputText">aon Solutions</span>
 			      </a>
 			      <span class="aon-outputText">
@@ -119,26 +136,18 @@ class AonLogin extends HTMLElement {
 			      </div>
 			    </div>
 
-					<!-- <div class="aon-login-card">
-						<div style="margin-bottom:15px;">
-							<img style="width:300px;" src="aon-solutions/assets/logo.png"/>
-						</div>
-
-						<form action="#">
-							<aon-input-text id="user" description="Usuario"></aon-input-text>
-						</form>
-
-						<form action="#">
-							<aon-input-text id="password" description="Contraseña" type="password"></aon-input-text>
-						</form>
-
-						<div style="position:relative;padding-bottom:5px; margin-bottom: 5px;">
-							<button class="mdl-button mdl-js-button" type="submit" >¿Has olvidado tu contraseña?</button>
-						</div>
-						<div style="position:relative;">
-							<button class="mdl-button mdl-js-button mdl-button--raised sign-in" type="submit" onclick="login()">Iniciar Sesión</button>
-						</div>
-					</div> -->
+					<dialog class="mdl-dialog">
+    				<h4> Recuperar Contraseña</h4>
+    				<div>
+							<form action="#">
+								<aon-input-text id="aonLoginRememberEmail" description="Email"></aon-input-text>
+							</form>
+      			</div>
+    				<div class="mdl-dialog__actions">
+      				<button id="aonLoginRememberSend" type="button" class="mdl-button">Enviar</button>
+      				<button type="button" class="mdl-button close">Cancelar</button>
+    				</div>
+  				</dialog>
 				</div>
 			</div>
 			`;
@@ -149,7 +158,76 @@ class AonLogin extends HTMLElement {
 				aonManifest.innerHTML = 'Version: ' + manifest.build_date;
 			});
 
-  }
+			let username = document.getElementById("aonLoginUser");
+			username.addEventListener('keyup', event => this.onEnter(event));
+			let password = document.getElementById("aonLoginPassword");
+			password.addEventListener('keyup', event => this.onEnter(event));
+
+			let loading = document.getElementById('aonLoginLoading');
+			loading.style.display = 'none';
+
+			let signin = document.getElementById('aonLoginSignin');
+			signin.addEventListener('click', () => this.signin());
+
+
+
+			let dialog = document.querySelector('dialog');
+			if (! dialog.showModal) {
+				dialogPolyfill.registerDialog(dialog);
+			}
+
+			let aonLoginRemember = document.getElementById('aonLoginRemember');
+			aonLoginRemember.addEventListener('click', function() {
+      	dialog.showModal();
+    	});
+
+    	dialog.querySelector('.close').addEventListener('click', function() {
+      	dialog.close();
+    	});
+
+			let aonLoginRememberSend = document.getElementById('aonLoginRememberSend');
+			aonLoginRememberSend.addEventListener('click', function() {
+	     	dialog.close();
+				rememberPassword(document.getElementById('aonLoginRememberEmail').value);
+			});
+	}
+
+	signin() {
+		const username = document.getElementById("aonLoginUser").value;
+		const password = document.getElementById("aonLoginPassword").value;
+		const data = {
+				username: username,
+				password: password
+		}
+
+		let loading = document.getElementById('aonLoginLoading');
+		loading.style.display = 'block';
+		login(data).then(() => {
+			loading.style.display = 'none';
+
+			localStorage.removeItem('aon_domain_id');
+			localStorage.removeItem('aon_domain_name');
+			rootPanel('<aon-parent id="aonParent"></aon-parent>');
+		}).catch(error => {
+			loading.style.display = 'none';
+			let err = JSON.parse(error);
+
+			let aonLoginError = document.getElementById('aonLoginError');
+			aonLoginError.style.display = 'block';
+
+			let aonLoginErrorMessage = document.getElementById('aonLoginErrorMessage');
+			aonLoginErrorMessage.innerHTML = err.message;
+		});
+	}
+
+	onEnter(event) {
+		if (event.keyCode === 13) {
+    	event.preventDefault();
+    	document.getElementById('aonLoginSignin').click();
+  	}
+	}
+
+
 }
 
 window.customElements.define('aon-login', AonLogin);

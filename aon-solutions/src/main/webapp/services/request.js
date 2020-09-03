@@ -1,7 +1,5 @@
-	window.request = request;
-	window.requestFile = requestFile;
 
-	function requestFile(url, token, formData){
+	export const requestFile = (url, token, formData) => {
 		var xhr = new XMLHttpRequest();
 		xhr.open('POST', url, true);
 		xhr.setRequestHeader('session_id', token);
@@ -10,7 +8,7 @@
 		xhr.send(formData);
 	}
 
-	function request(method, url, token, sendData, headers, fn){
+	export const request = (method, url, token, sendData, headers, fn) => {
 		let xhr = new XMLHttpRequest();
 		xhr.open(method, url);
 		xhr.setRequestHeader('session_id', token);
@@ -32,6 +30,7 @@
 		xhr.onload = function() {
 			if (xhr.status != 200) { // analyze HTTP status of the response
 				console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+				fn(undefined, xhr.response);
 			} else { // show the result
 				console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
 				fn(xhr.response);

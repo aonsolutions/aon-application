@@ -1,4 +1,4 @@
-import '../services/country.js';
+import {Countries} from '../services/country.js';
 import './aon-select.js';
 
 (function() {
@@ -175,7 +175,7 @@ import './aon-select.js';
 
 			let country = document.getElementById(this.getAttribute('id') + 'Country');
 			if(country) {
-				country.options = JSON.stringify(getCountries().map(c => {return {value: c.iso2, name: c.nombre};}));
+				country.options = JSON.stringify(Countries.map(c => {return {value: c.iso2, name: c.nombre};}));
 				country.value = value.country;
 				country.addEventListener('select', () => this.updateCountry());
 			}

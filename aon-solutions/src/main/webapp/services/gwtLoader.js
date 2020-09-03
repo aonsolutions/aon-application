@@ -3,7 +3,7 @@
 		myNode.innerHTML = '';
 	}
 
-	function rootPanel(html) {
+	export const rootPanel = (html) => {
 		const myNode = document.getElementById("rootPanel");
 		myNode.innerHTML = '';
 		myNode.innerHTML = html;
@@ -49,7 +49,7 @@
 		}
 	}
 
-	function startModule(module, entrypoint) {
+	export const startModule = (module, entrypoint) => {
 		removeRootPanel();
 		preStartModule(module);
 		if (window.document.createElement && window.document.getElementsByTagName) {

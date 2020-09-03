@@ -1,3 +1,6 @@
+import {closeSession} from  '../services/service.js';
+import {rootPanel} from '../services/gwtLoader.js';
+
 import './aon-configuration.js';
 import './aon-invoice-panel.js';
 import './aon-invoice.js';
@@ -81,7 +84,7 @@ class AonHeader extends HTMLElement {
 							<i class="material-icons mdl-list__item-icon aonMenuIcon">settings</i>
 							Configuración
 						</li>
-						<li id="aonHeaderCloseSession" class="mdl-menu__item" onclick="closeSession()">
+						<li id="aonHeaderCloseSession" class="mdl-menu__item">
 							<i class="material-icons mdl-list__item-icon aonMenuIcon">input</i>
 							Cerrar Sesión
 						</li>
@@ -94,6 +97,10 @@ class AonHeader extends HTMLElement {
   }
 
 	build() {
+
+		document.getElementById('aonHeaderCloseSession')
+			.addEventListener('click', () => closeSession());
+
 		this.buildLogo();
 
 		let aonHeaderCompanyListButton = document.getElementById('aon-header-company-list-button');
@@ -159,11 +166,16 @@ class AonHeader extends HTMLElement {
 
 		let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
 		aonHeaderShowMenu.addEventListener('click', () => {
+			let aonHeaderShowMenuButton = document.getElementById('aon-header-show-menu-button');
 			let aonMenu = document.getElementById('aonMenu');
 			aonMenu.toogle();
 			if(aonMenu.getAttribute('opened')) {
 				aonHeaderShowMenu.style.paddingRight = '20px';
-			} else aonHeaderShowMenu.style.paddingRight = '0px';
+				aonHeaderShowMenuButton.setAttribute('icon', 'keyboard_arrow_right');
+			} else {
+				aonHeaderShowMenu.style.paddingRight = '0px';
+				aonHeaderShowMenuButton.setAttribute('icon', 'keyboard_arrow_left');
+			}
 		});
 
 		let aonHeaderConfiguration = document.getElementById('aonHeaderConfiguration');

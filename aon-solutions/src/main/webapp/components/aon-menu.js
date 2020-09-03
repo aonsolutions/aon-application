@@ -1,5 +1,7 @@
+import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
+
 
 const ID = 'id';
 const OPENED = 'opened';

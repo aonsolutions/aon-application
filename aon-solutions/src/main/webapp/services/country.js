@@ -1,10 +1,5 @@
-window.getCountries = getCountries;
 
-function getCountries() {
-  return countries;
-}
-
-const countries = [{
+export const Countries = [{
         nombre: 'Afganistán',
         name: 'Afghanistan',
         nom: 'Afghanistan',

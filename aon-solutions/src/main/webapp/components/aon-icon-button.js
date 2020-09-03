@@ -3,7 +3,7 @@
 	class AonIconButton extends HTMLElement {
 
 		static get observedAttributes() {
-			return ['disabled', 'visible'];
+			return ['disabled', 'visible', 'icon'];
 		}
 
 		get id() {
@@ -78,6 +78,11 @@
 					this.style.display = 'block';
 				}
 			}
+
+			if('icon' === name){
+				let icon = document.getElementById(this.getAttribute('id') + 'Icon');
+				icon.innerHTML = this.getAttribute('icon');
+			}
 		}
 
 		constructor () {
@@ -121,6 +126,7 @@
 			}
 
 			let icon = document.createElement('i');
+			icon.setAttribute('id', this.getAttribute('id') + 'Icon');
 			icon.className = this.getAttribute('outlined') ? 'material-icons-outlined' : 'material-icons';
 			icon.innerHTML = this.getAttribute('icon');
 			button.appendChild(icon);
