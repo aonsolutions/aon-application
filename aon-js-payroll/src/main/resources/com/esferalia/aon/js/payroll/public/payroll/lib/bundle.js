@@ -1736,7 +1736,7 @@ module.exports.standardPayroll = function(payroll, stream){
     pdf
       .fontSize(titleSize)
       .text('Firma y sello de la empresa' , originalX + 160 , originalY + signature)
-      .image(payroll.signature_logo, originalX + 160, originalY + signature + paddingSignature, {scale: 0.06})
+      .image(payroll.signature_logo, originalX + 160, originalY + signature + paddingSignature, {fit: [100, 100], align: 'center', valign: 'center'})
 
       .text(end_date,  originalX + 310 , originalY + signature)
       .fontSize(titleSize)
@@ -3096,7 +3096,7 @@ module.exports.newClassicPayroll = function(payrolls, stream){
     }
 
 
-  //Main Methods
+    //Main Methods
     var newHearderTittle = function(payroll) {
         titleSize = 10;
         titleFont = 'Helvetica-Bold';
@@ -3449,7 +3449,7 @@ module.exports.newClassicPayroll = function(payrolls, stream){
             .font(textFooterFont)
             .fontSize(textFooterSize)
             .text('Firma y sello de la empresa', firstColumn, accrualTop + signatureTop + 50)
-            .image(payroll.signature_logo, firstColumn + 10, accrualTop + signatureTop, { scale: 0.06 })
+            .image(payroll.signature_logo, firstColumn + 10, accrualTop + signatureTop - 30, {fit: [100, 100], align: 'center', valign: 'center'})
 
         .text(`RECIBÍ (${end_date}) :`, thirdColumn, accrualTop + signatureTop + 24)
             .fontSize(textFooterSize)
@@ -4190,9 +4190,9 @@ module.exports.newClassicPayroll = function(payrolls, stream){
 
 }
 
-module.exports.salaryRecibeCRA = function(payrolls, stream){
-  //Initialize pdf object
-	var pdf = new PDF({
+module.exports.salaryRecibeCRA = function(payrolls, stream) {
+    //Initialize pdf object
+    var pdf = new PDF({
         size: [595.28, 841.89],
         margins: { // by default, all are 72
             top: 5,
@@ -4236,13 +4236,13 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
     String.prototype.splice = function(idx, rem, str) {
         return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
     };
-    
+
     var checkDates = function(accrualType, accrualTypeExpression) {
-    	startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
+        startDate = new Intl.DateTimeFormat('en-GB').format(accrualType.startDate);
         endDate = new Intl.DateTimeFormat('en-GB').format(accrualType.endDate);
-        
-        var diffDates = parseInt((accrualType.endDate-accrualType.startDate)/1000/60/60/24);
-        
+
+        var diffDates = parseInt((accrualType.endDate - accrualType.startDate) / 1000 / 60 / 60 / 24);
+
         if (null != accrualType.startDate && null != accrualType.endDate && startDate != endDate && diffDates > 1 && diffDates < 28) {
             return accrualTypeExpression + parseDDMMDate(startDate, endDate);
         }
@@ -4251,39 +4251,39 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
 
     var parseDDMMDate = function(startDate, endDate) {
         /*
-    	startDay = startDate.getDate();
-        startMonth = startDate.getMonth() + 1;
+          startDay = startDate.getDate();
+          startMonth = startDate.getMonth() + 1;
+  
+          if (startDay < 10)
+              startDay = "0" + startDay;
+  
+          if (startMonth < 10)
+              startMonth = "0" + startMonth;
+  
+          endDay = endDate.getDate();
+          endMonth = endDate.getMonth() + 1;
+  
+          if (endDay < 10)
+              endDay = "0" + endDay;
+  
+          if (endMonth < 10)
+              endMonth = "0" + endMonth;
+          */
 
-        if (startDay < 10)
-            startDay = "0" + startDay;
+        startDay = startDate.split("\/")[0];
+        startMonth = startDate.split("\/")[1];
 
-        if (startMonth < 10)
-            startMonth = "0" + startMonth;
-
-        endDay = endDate.getDate();
-        endMonth = endDate.getMonth() + 1;
-
-        if (endDay < 10)
-            endDay = "0" + endDay;
-
-        if (endMonth < 10)
-            endMonth = "0" + endMonth;
-        */
-    	
-    	startDay = startDate.split("\/")[0];
-    	startMonth = startDate.split("\/")[1];
-    	
-    	endDay = endDate.split("\/")[0];
-    	endMonth = endDate.split("\/")[1];
+        endDay = endDate.split("\/")[0];
+        endMonth = endDate.split("\/")[1];
 
         return " ( " + startDay + "/" + startMonth + " - " + endDay + "/" + endMonth + " )";
     }
 
     var checkAccrualName = function(accrualName) {
         if (accrualName) {
-        	if(accrualName == "Prestaciones e indemnizaciones a la Seguridad Social")
-        		return "00. PRESTACIONES E INDEMNIZACIONES A LA SS";
-        	
+            if (accrualName == "Prestaciones e indemnizaciones a la Seguridad Social")
+                return "00. PRESTACIONES E INDEMNIZACIONES A LA SS";
+
             type = accrualName.split(" ")[0];
             if (type == "01")
                 return "01 RETRIBUCIONES SALARIALES".splice(2, 0, ". ");
@@ -4328,11 +4328,11 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
     }
 
     var parseExpression = function(expression) {
-    	 if (null != expression && undefined != expression && expression.includes("]"))
+        if (null != expression && undefined != expression && expression.includes("]"))
             expression = expression.split("]")[1].trim();
-    	 if(null != expression && undefined != expression && expression.length > 52)
-     		expression = expression.substring(0,52);
-        
+        if (null != expression && undefined != expression && expression.length > 52)
+            expression = expression.substring(0, 52);
+
         return expression.trim();
     }
 
@@ -4387,7 +4387,7 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
             }
         } else {
             var formatNumber = formatPercent(number);
-            var split = formatNumber.split('.');
+            var split = formatNumber.split(',');
             switch (split[0].length) {
                 case 1:
                     return 0;
@@ -4495,7 +4495,7 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
 
         if (payroll.logo != undefined) {
             pdf
-                .image(payroll.logo, firstColumn, 10, { scale: 0.1 });
+                .image(payroll.logo, firstColumn, -20, { fit: [100, 100], align: 'center', valign: 'center' });
         }
 
         pdf
@@ -4506,8 +4506,8 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
     }
 
     var newEnterpriseBox = function(payroll) {
-        enterpriseTop = 65;
-        enterpriseHeight = enterpriseTop + 84;
+        enterpriseTop = 55;
+        enterpriseHeight = enterpriseTop + 94;
         topLeftCorner = 10;
         boxWidth = 290;
 
@@ -4541,18 +4541,19 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
             .text('DOMICILIO', firstColumn, enterpriseTop + 34)
             .font(textFont)
             .fontSize(textSize)
-            .text(formatInputData(payroll.enterprise.address, 'string') + ", " + formatInputData(payroll.enterprise.city.toUpperCase(), 'string'), secondColumn, enterpriseTop + 44)
-            .moveTo(topLeftCorner, enterpriseTop + 56).lineTo(boxWidth, enterpriseTop + 56).stroke()
+            .text(formatFirstPartAddress(payroll.enterprise.address), secondColumn, enterpriseTop + 44)
+            .text(formatSecondPartAddress(payroll.enterprise.address, payroll.enterprise.city.toUpperCase()), secondColumn, enterpriseTop + 56)
+            .moveTo(topLeftCorner, enterpriseTop + 66).lineTo(boxWidth, enterpriseTop + 66).stroke()
 
         .font(textFont)
             .fontSize(headingSize)
-            .text('CIF', firstColumn, enterpriseTop + 62)
-            .text('CCC', thirdColumn, enterpriseTop + 62)
+            .text('CIF', firstColumn, enterpriseTop + 74)
+            .text('CCC', thirdColumn, enterpriseTop + 74)
             .font(textFont)
             .fontSize(textSize)
-            .text(formatInputData(payroll.enterprise.cif, 'string'), secondColumn, enterpriseTop + 72)
-            .text(formatInputData(payroll.enterprise.ccc, 'number'), fourthColumn, enterpriseTop + 72)
-            .moveTo(thirdColumn - 15, enterpriseTop + 56).lineTo(thirdColumn - 15, enterpriseTop + 84).stroke() //Vertical right line
+            .text(formatInputData(payroll.enterprise.cif, 'string'), secondColumn, enterpriseTop + 84)
+            .text(formatInputData(payroll.enterprise.ccc, 'number'), fourthColumn, enterpriseTop + 84)
+            .moveTo(thirdColumn - 15, enterpriseTop + 66).lineTo(thirdColumn - 15, enterpriseTop + 94).stroke() //Vertical right line
 
         .moveTo(topLeftCorner, enterpriseTop).lineTo(topLeftCorner, enterpriseHeight).stroke() //Vertical left line
             .moveTo(boxWidth, enterpriseTop).lineTo(boxWidth, enterpriseHeight).stroke() //Vertical right line
@@ -4562,7 +4563,7 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
 
     var newEmployeeBox = function(payroll) {
         employeeTop = 30;
-        employeeHeight = enterpriseTop + 50;
+        employeeHeight = enterpriseTop + 59;
         topLeftCorner = 295;
         boxWidth = 290;
 
@@ -4855,7 +4856,7 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
             .font(textFooterFont)
             .fontSize(textFooterSize)
             .text('Firma y sello de la empresa', firstColumn, signatureTop)
-            .image(payroll.signature_logo, firstColumn + 10, signatureTop + 20, { scale: 0.06 })
+            .image(payroll.signature_logo, firstColumn + 10, signatureTop, { fit: [100, 100], align: 'center', valign: 'center' })
 
         .text(`RECIBÍ (${end_date}) :`, secondColumn, signatureTop + 85)
             .fontSize(textFooterSize)
@@ -4926,24 +4927,24 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
 
                 pdf
                     .font(textFont);
-                
+
                 if (deduction.percent && deduction.percent.length < 10) {
                     pdf
                         .text(formatPercent(deduction.percent), firstColumn + numberOffset(deduction.percent), deductionTop);
                 }
-                
-                if(deduction.name){
-//                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
-                	pdf
-                    .text(parseDeductionName(deduction.name), secondColumn, deductionTop)
-                    .text(formatMoney(deduction.amount), quarterColumn + numberOffset(deduction.amount), deductionTop);
-                }else{
-//                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
-                	pdf
-                    .text(parseDeductionName(deduction.type_name), secondColumn, deductionTop)
-                    .text(formatMoney(deduction.amount), quarterColumn + numberOffset(deduction.amount), deductionTop);
+
+                if (deduction.name) {
+                    //                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
+                    pdf
+                        .text(parseDeductionName(deduction.name), secondColumn, deductionTop)
+                        .text(formatMoney(deduction.amount), quarterColumn + numberOffset(deduction.amount), deductionTop);
+                } else {
+                    //                	console.log("Name : " +  deduction.name + " -> Type name : " + deduction.type_name);
+                    pdf
+                        .text(parseDeductionName(deduction.type_name), secondColumn, deductionTop)
+                        .text(formatMoney(deduction.amount), quarterColumn + numberOffset(deduction.amount), deductionTop);
                 }
-                
+
                 deductionTop += 12;
 
             }
@@ -4953,18 +4954,18 @@ module.exports.salaryRecibeCRA = function(payrolls, stream){
     //Main
     for (let i = 0; i < payrolls.length; i++) {
         const payroll = payrolls[i];
-	    newHearderTittle(payroll);
-	    newEnterpriseBox(payroll);
-	    newEmployeeBox(payroll);
-	    newSettlementBox(payroll);
-	    newCentralBox(payroll);
-	    newCentralInnerBox(payroll);
-	    newAccrual(payroll);
-	    newDeduction(payroll);
-	    newSignatureDate(payroll);
-	    newFooterBox(payroll);
-	    
-	    if ((i + 1) != payrolls.length)
+        newHearderTittle(payroll);
+        newEnterpriseBox(payroll);
+        newEmployeeBox(payroll);
+        newSettlementBox(payroll);
+        newCentralBox(payroll);
+        newCentralInnerBox(payroll);
+        newAccrual(payroll);
+        newDeduction(payroll);
+        newSignatureDate(payroll);
+        newFooterBox(payroll);
+
+        if ((i + 1) != payrolls.length)
             pdf.addPage();
     }
 
