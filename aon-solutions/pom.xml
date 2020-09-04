@@ -47,6 +47,25 @@
               <buildRevision>${buildNumber}</buildRevision>
             </manifestEntries>
           </archive>
+          <webResources>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>../aon-web-aio/src/main/webapp</directory>
+              <!-- the list has a default value of ** -->
+              <includes>
+                <include>js/**</include>
+                <include>css/**</include>
+                <include>images/**</include>
+              </includes>
+            </resource>
+            <resource>
+              <!-- this is relative to the pom.xml directory -->
+              <directory>../aon-ui-finance/src/main/resources</directory>
+              <includes>
+                <include>com/code/aon/ui/finance/pdfjs/**</include>
+              </includes>
+            </resource>
+          </webResources>
         </configuration>
         <executions>
           <execution>
