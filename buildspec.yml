@@ -71,7 +71,7 @@ phases:
       - docker build --no-cache -t aonsolutions/aon-application:latest .
       # - docker build --no-cache -t aonsolutions/aon-db-up2date:latest ./aon-db-up2date
       - docker build --no-cache -t aonsolutions/aon-micro-services:latest -f ./aon-micro-services/Dockerfile .
-      - docker build --no-cache -t aonsolutions/aon-solutions:latest -f ./aon-solutions-angular/Dockerfile .
+      - docker build --no-cache -t aonsolutions/aon-solutions:latest -f ./aon-solutions/Dockerfile .
       - docker tag aonsolutions/aon-db-up2date:test $REPOSITORY_URI/aon-db-up2date:latest
       - docker tag aonsolutions/aon-application:latest $REPOSITORY_URI/aon-application:latest
       - docker tag aonsolutions/aon-micro-services:latest $REPOSITORY_URI/aon-micro-services:latest
