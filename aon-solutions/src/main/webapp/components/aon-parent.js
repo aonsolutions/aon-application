@@ -71,7 +71,7 @@ class AonParent extends HTMLElement {
 	buildLi(company, color) {
 		let li = document.createElement('li');
 		li.className = 'mdl-list__item mdl-list__item--two-line aonLi';
-		li.style.backgroundColor = color;
+		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		li.addEventListener('click', () => {
 			this.companySelection(company);
 		});
@@ -81,7 +81,7 @@ class AonParent extends HTMLElement {
 		});
 
 		li.addEventListener('mouseleave', () => {
-			li.style.backgroundColor = color;
+			li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		});
 
 		li.addEventListener('contextmenu', () => {
