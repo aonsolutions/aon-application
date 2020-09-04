@@ -1,13 +1,12 @@
+import {Transactions} from '../services/transaction.js';
+import {Paymethods} from '../services/paymethod.js';
+import {getInvoiceCategories} from '../services/invoiceCategory.js';
+
 import './aon-card.js';
 import './aon-inputText.js';
 import './aon-select.js';
 import './aon-address.js';
 import './aon-checkbox.js';
-import '../services/invoiceCategory.js';
-import '../services/country.js';
-import '../services/province.js';
-import '../services/paymethod.js';
-import '../services/transaction.js';
 
 (function() {
 
@@ -281,12 +280,12 @@ import '../services/transaction.js';
 			category.addEventListener('select', () => this.update('category'));
 
 			let paymethod = document.getElementById('pay_method');
-			paymethod.options = JSON.stringify(getPayMethods());
+			paymethod.options = JSON.stringify(Paymethods);
 			// TODO: VALUE
 			paymethod.addEventListener('select', () => ticketPaymethod(document.getElementById('pay_method')));
 
 			let transaction = document.getElementById('transaction');
-			transaction.options = JSON.stringify(getTransactions());
+			transaction.options = JSON.stringify(Transactions);
 			transaction.value = this._invoice.transaction;
 			transaction.addEventListener('select', () => this.update('transaction'));
 
@@ -881,7 +880,7 @@ import '../services/transaction.js';
 				line = line + `
 					<form action="#" class="aon-margin-0 aon-width-90">
 						<aon-input-text class="aonWidth25" id='${'finance_date' + i}' value="${this._invoice.finances[i].due_date}" type="date" description="Fecha Vencimiento" ></aon-input-text>
-						<aon-select class="aonWidth25" id='${'finance_paymethod' + i}' options='${JSON.stringify(getPayMethods())}' value="${this._invoice.finances[i].pay_method}" description="Forma de Pago" ></aon-select>
+						<aon-select class="aonWidth25" id='${'finance_paymethod' + i}' options='${JSON.stringify(Paymethods)}' value="${this._invoice.finances[i].pay_method}" description="Forma de Pago" ></aon-select>
 						<aon-input-text class="aonWidth25" id='${'finance_amount' + i}' value="${this._invoice.finances[i].amount}" description="Importe"></aon-input-text>
 						<aon-input-text class="aonWidth25" id='${'finance_iban' + i}' value="${this._invoice.finances[i].iban}" description="IBAN" ></aon-input-text>
 					</form>

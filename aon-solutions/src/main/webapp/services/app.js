@@ -185,6 +185,10 @@ export const PayrollMenu =
 
   export const ToolsMenu =
     [{
+      title:'Creación de Empresas.',
+      initAction: 'newDomain_form-enterprise',
+      parent: true
+    },{
       title:'Gestion de Seguridad.',
       module: 'aon_gwt_aio',
       entryPoint: 'scope'

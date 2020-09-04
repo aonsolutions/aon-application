@@ -5,67 +5,6 @@ import './aon-address.js';
 import './aon-inputText.js';
 import './aon-marketplace.js';
 import './aon-user-list.js';
-// import './aon-dialog.js';
-
-function createUser(user){
-	let str = JSON.stringify(user);
-	let content = document.getElementById("aonConfigurationContent");
-	console.log(str);
-	content.innerHTML = '';
-	let aonUser = document.createElement("aon-user");
-	content.appendChild(aonUser);
-}
-
-function createTable(header, values) {
-	let table = document.createElement("table");
-	table.className = "mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable";
-	let tbody = document.createElement("tbody");
-	let thead = document.createElement("thead");
-	let trHead = document.createElement("tr");
-
-	for(let i = 0; i < header.length ; i++){
-	  	let th = document.createElement("th");
-	  	th.className = "aonTableTh";
-	  	th.appendChild(document.createTextNode(header[i].title));
-	  	trHead.appendChild(th);
-	}
-	thead.appendChild(trHead);
-
-	for(let j = 0; j < values.length ; j++){
-		let tr = document.createElement("tr");
-		  for(let k = 0; k < header.length; k++){
-			  let td = document.createElement("td");
-			  td.className = "aonTableTh";
-		  	  td.appendChild(document.createTextNode(values[j][header[k].attribute]));
-		  	  if(header[k].func){
-		  		tr.addEventListener("click", function(){
-		  			header[k].func(values[j]);
-		  		});
-		  	  }
-		  	  tr.appendChild(td);
-		  }
-		  tbody.appendChild(tr);
-	}
-
-	table.appendChild(thead);
-	table.appendChild(tbody);
-	return table;
-}
-
-function toogleNav(id, content) {
-	if(document.getElementById(id).style.width === "250px"){
-		document.getElementById(id).style.width = "0px";
-		document.getElementById(content).style.marginLeft = "0px";
-	} else {
-		document.getElementById(id).style.width = "250px";
-		document.getElementById(content).style['margin-left'] = "250px";
-	}
-}
-
-function closeNav() {
-	document.getElementById("aonConfigurationSidenav").style.width = "0px";
-	document.getElementById("aonConfigurationContent").style.marginLeft = "250px";
-}
 
 class AonConfiguration extends HTMLElement {
 
@@ -313,5 +252,3 @@ class AonConfiguration extends HTMLElement {
 }
 
 window.customElements.define('aon-configuration', AonConfiguration);
-window.toogleNav= toogleNav;
-window.closeNav= closeNav;

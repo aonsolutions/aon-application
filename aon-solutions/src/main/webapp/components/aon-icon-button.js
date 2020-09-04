@@ -81,7 +81,7 @@
 
 			if('icon' === name){
 				let icon = document.getElementById(this.getAttribute('id') + 'Icon');
-				icon.innerHTML = this.getAttribute('icon');
+				if(icon) icon.innerHTML = this.getAttribute('icon');
 			}
 		}
 

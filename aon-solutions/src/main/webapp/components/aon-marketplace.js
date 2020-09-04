@@ -92,12 +92,17 @@ class AonMarketplace extends HTMLElement {
 				input.id = 'switch-' + Apps[key].app;
 				input.className = 'mdl-switch__input';
 				input.checked = r[Apps[key].app] ? r[Apps[key].app] : false;
-			 	let a = Apps[key].app;
+			 	let a = Apps[key];
 				input.addEventListener('change', () => {
+					let  aonMenu = document.getElementById('aonMenu');
+					if(input.checked) {
+						aonMenu.addApp(a);
+					} else aonMenu.removeApp(a);
+					
 					let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 					setDomainApp({
 						domain: company.domain,
-						app: a,
+						app: a.app,
 						active: input.checked
 					});
 				});

@@ -1,10 +1,5 @@
-window.getPayMethods = getPayMethods;
 
-function getPayMethods(type) {
-  return paymethods;
-}
-
-const paymethods = [
+export const Paymethods = [
   {
     value: 'CASH',
     name: 'Efectivo'

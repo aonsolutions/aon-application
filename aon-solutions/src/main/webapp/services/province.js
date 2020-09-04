@@ -1,10 +1,5 @@
-window.getProvinces = getProvinces;
 
-function getProvinces() {
-  return provinces;
-}
-
-const provinces = [{
+export const Provinces = [{
     code: '01',
     name: 'Araba/Álava'
 }, {

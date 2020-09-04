@@ -27,7 +27,7 @@
 
 		xhr.send(JSON.stringify(sendData));
 
-		xhr.onload = function() {
+		xhr.onload = () => {
 			if (xhr.status != 200) { // analyze HTTP status of the response
 				console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
 				fn(undefined, xhr.response);
@@ -37,7 +37,7 @@
 			}
 		};
 
-		xhr.onprogress = function(event) {
+		xhr.onprogress = (event) => {
 			if (event.lengthComputable) {
 				console.log(`Received ${event.loaded} of ${event.total} bytes`);
 			} else {
@@ -45,7 +45,7 @@
 			}
 		};
 
-		xhr.onerror = function() {
+		xhr.onerror = () => {
 			console.log("Request failed");
 		};
 	}

@@ -1,10 +1,5 @@
-window.getTransactions = getTransactions;
 
-function getTransactions() {
-  return transactions;
-}
-
-const transactions = [
+export const Transactions = [
   {value: 'NAC', name: 'Nacional'},
   {value: 'INTR', name: 'Intracomunitaria'},
   {value: 'EXTR', name: 'Extracomunitaria'},

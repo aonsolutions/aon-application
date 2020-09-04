@@ -1,9 +1,5 @@
 
-window.getInvoiceCategories = getInvoiceCategories;
-
-
-
-function getInvoiceCategories(type) {
+export const getInvoiceCategories = (type) => {
   if('Emitida' === type) {
     return categoriesEmitida;
   } else if('Recibida' === type) {

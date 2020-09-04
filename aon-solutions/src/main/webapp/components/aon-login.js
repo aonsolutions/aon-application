@@ -177,16 +177,16 @@ class AonLogin extends HTMLElement {
 			}
 
 			let aonLoginRemember = document.getElementById('aonLoginRemember');
-			aonLoginRemember.addEventListener('click', function() {
+			aonLoginRemember.addEventListener('click', () => {
       	dialog.showModal();
     	});
 
-    	dialog.querySelector('.close').addEventListener('click', function() {
+    	dialog.querySelector('.close').addEventListener('click', () => {
       	dialog.close();
     	});
 
 			let aonLoginRememberSend = document.getElementById('aonLoginRememberSend');
-			aonLoginRememberSend.addEventListener('click', function() {
+			aonLoginRememberSend.addEventListener('click', () => {
 	     	dialog.close();
 				rememberPassword(document.getElementById('aonLoginRememberEmail').value);
 			});

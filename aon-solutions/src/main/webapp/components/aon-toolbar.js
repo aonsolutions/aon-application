@@ -31,6 +31,9 @@ import './aon-icon-button.js';
 		constructor () {
 			super();
 			this.appendChild(this.build());
+
+			let button = document.getElementById( this.getAttribute('id') + 'aon-toolbar-menu');
+			button.addEventListener('click', () => this.toogleNav());
 		}
 
 		connectedCallback () {
@@ -46,10 +49,8 @@ import './aon-icon-button.js';
 			section.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-section');
 			section.className = "aonToolbarSection";
 
-			let sidenav = this.getAttribute('id') + 'Sidenav';
-			let content = this.getAttribute('id') + 'Content';
 			let button = '<aon-icon-button id="' + this.getAttribute('id')
-				+ 'aon-toolbar-menu' + '" icon="menu" onclick="toogleNav(\'' + sidenav + '\', \'' + content + '\')"> </aon-icon-button>';
+				+ 'aon-toolbar-menu' + '" icon="menu"> </aon-icon-button>';
 			section.innerHTML = button;
 
 			let title = document.createElement('span');
@@ -79,6 +80,18 @@ import './aon-icon-button.js';
 		removeButtons() {
 			let toolSection = document.getElementById(this.getAttribute('id') + 'aon-toolbar-tool-section');
 			toolSection.innerHTML = '';
+		}
+
+		toogleNav() {
+			let sidenav = this.getAttribute('id') + 'Sidenav';
+			let content = this.getAttribute('id') + 'Content';
+			if(document.getElementById(sidenav).style.width === "250px"){
+				document.getElementById(sidenav).style.width = "0px";
+				document.getElementById(content).style.marginLeft = "0px";
+			} else {
+				document.getElementById(sidenav).style.width = "250px";
+				document.getElementById(content).style['margin-left'] = "250px";
+			}
 		}
 	}
 

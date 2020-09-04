@@ -1,97 +1,4 @@
-import {Apps} from  '../services/app.js';
-
-	function invoiceDropHandler(ev) {
-		dropHandler(ev);
-	}
-
-	function documentalDropHandler(ev) {
-		dropHandler(ev);
-	}
-
-	function dropHandler(ev) {
-		console.log('File(s) dropped');
-
-		// Prevent default behavior (Prevent file from being opened)
-		ev.preventDefault();
-
-		if (ev.dataTransfer.items) {
-			// Use DataTransferItemList interface to access the file(s)
-			for (var i = 0; i < ev.dataTransfer.items.length; i++) {
-		    	// If dropped items aren't files, reject them
-		    	if (ev.dataTransfer.items[i].kind === 'file') {
-		    		var file = ev.dataTransfer.items[i].getAsFile();
-		    		console.log('... file[' + i + '].name = ' + file.name);
-		    	}
-		    }
-		} else {
-			// Use DataTransfer interface to access the file(s)
-		    for (var i = 0; i < ev.dataTransfer.files.length; i++) {
-		      console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
-		    }
-		}
-
-		// Pass event to removeDragData for cleanup
-		removeDragData(ev)
-	}
-
-	function dragOverHandler(ev) {
-		ev.preventDefault();
-	}
-
-	function removeDragData(ev) {
-		console.log('Removing drag data')
-		if (ev.dataTransfer.items) {
-			// Use DataTransferItemList interface to remove the drag data
-			ev.dataTransfer.items.clear();
-		} else {
-			// Use DataTransfer interface to remove the drag data
-		    ev.dataTransfer.clearData();
-		}
-	}
-
-	function invoiceClickHandler() {
-		document.getElementById("invoice_file").click();
-	}
-
-	function documentalClickHandler() {
-		document.getElementById("documental_file").click();
-	}
-
-	function documentalUploadFile(files) {
-		let file = files[0];
-		//const fn = function (base){
-			let formData = new FormData();
-	        formData.append('file', file, file.name);
-			const token = localStorage.getItem("session_id");
-			requestFile("/aon_gwt_aio/ms/uploadDocumentalx", token, formData);
-		//};
-		//uploadFile(files, fn);
-	}
-
-	function invoiceUploadFile(files) {
-		const fn = function (base){
-			const invoiceData = {
-					company: 'B01480201',
-				    content: base,
-				    contentType: 'image/jpeg',
-				    contentEncoding: 'base64'
-		    };
-			const url = 'https://europe-west1-tedi-snapshot.cloudfunctions.net/invoice';
-			const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqZ2FyY2lhQGFvbnNvbHV0aW9ucy5lcyIsImlhdCI6MTU3NzM2NTM4NywiZXhwIjoxNjA4NDY5Mzg3fQ.0cfTgABc7d6cM8TbDbP1bhsRVxSlz_9te5fzbYJjAjg';
-			request('POST', url, token, invoiceData);
-		};
-		uploadFile(files, fn);
-	}
-
-	function uploadFile(files, fn) {
-		let photo = files[0];
-		const reader = new FileReader();
-		reader.onloadend = function () {
-			const base64File = reader.result.split(',')[1];
-		    fn(base64File)
-		}
-		reader.readAsDataURL(photo);
-	}
+import {request, requestFile} from  '../services/request.js';
 
 class AonDesktop extends HTMLElement {
 
@@ -176,11 +83,11 @@ class AonDesktop extends HTMLElement {
 				<div class="mdl-card__title">
 					<h2 class="aonTitle">Facturas</h2>
 				</div>
-				<div id="invoice_drop_zone" class='dropzone' ondrop="invoiceDropHandler(event);" ondragover="dragOverHandler(event);" onclick="invoiceClickHandler()" >
+				<div id="invoice_drop_zone" class='dropzone' >
 					<div class='dropzone-text-wrapper'>
 						<div class='dropzone-centered'>Arrastre aquí el archivo o click para seleccionar</div>
 					</div>
-					<input id='invoice_file' style='display:none;' type='file' name='invoice_file' multiple onchange="invoiceUploadFile(this.files)" >
+					<input id='invoice_file' style='display:none;' type='file' name='invoice_file' multiple>
 				</div>
 
 
@@ -195,11 +102,11 @@ class AonDesktop extends HTMLElement {
 				<div class="mdl-card__title">
 					<h2 class="aonTitle">Documental</h2>
 				</div>
-				<div id="documental_drop_zone" class='dropzone' ondrop="documentalDropHandler(event);" ondragover="dragOverHandler(event);" onclick="documentalClickHandler()" >
+				<div id="documental_drop_zone" class='dropzone' >
 					<div class='dropzone-text-wrapper'>
 						<div class='dropzone-centered'>Arrastre aquí el archivo o click para seleccionar</div>
 					</div>
-					<input id='documental_file' style='display:none;' type='file' name='documental_file' multiple onchange="documentalUploadFile(this.files)">
+					<input id='documental_file' style='display:none;' type='file' name='documental_file' multiple >
 				</div>
 
 				<div class="mdl-card__menu" style="top:10px;">
@@ -288,16 +195,131 @@ class AonDesktop extends HTMLElement {
 			</li>
 			</ul>
 			`;
+
+			let invoiceDropZone = document.getElementById('invoice_drop_zone');
+			invoiceDropZone.addEventListener('drop', (event) => {
+				this.invoiceDropHandler(event);
+			});
+			invoiceDropZone.addEventListener('dragover', (event) => {
+				this.dragOverHandler(event);
+			});
+			invoiceDropZone.addEventListener('click', (event) => {
+				this.invoiceClickHandler();
+			});
+
+			let documentalDropZone = document.getElementById('documental_drop_zone');
+			documentalDropZone.addEventListener('drop', (event) => {
+				this.documentalDropHandler(event);
+			});
+			documentalDropZone.addEventListener('dragover', (event) => {
+				this.dragOverHandler(event);
+			});
+			documentalDropZone.addEventListener('click', (event) => {
+				this.documentalClickHandler();
+			});
+
+			let documentalFile = document.getElementById('documental_file');
+			documentalFile.addEventListener('change', (event) => {
+				this.documentalUploadFile(documentalFile.files);
+			});
+
+			let invoiceFile = document.getElementById('invoice_file');
+			invoiceFile.addEventListener('change', (event) => {
+				this.invoiceUploadFile(invoiceFile.files);
+			});
 	}
+
+
+	invoiceDropHandler(ev) {
+		this.dropHandler(ev);
+	}
+
+	documentalDropHandler(ev) {
+		this.dropHandler(ev);
+	}
+
+	dropHandler(ev) {
+		console.log('File(s) dropped');
+
+		// Prevent default behavior (Prevent file from being opened)
+		ev.preventDefault();
+
+		if (ev.dataTransfer.items) {
+			// Use DataTransferItemList interface to access the file(s)
+			for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+		    	// If dropped items aren't files, reject them
+		    	if (ev.dataTransfer.items[i].kind === 'file') {
+		    		var file = ev.dataTransfer.items[i].getAsFile();
+		    		console.log('... file[' + i + '].name = ' + file.name);
+		    	}
+		    }
+		} else {
+			// Use DataTransfer interface to access the file(s)
+		    for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+		      console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+		    }
+		}
+
+		// Pass event to removeDragData for cleanup
+		this.removeDragData(ev)
+	}
+
+	dragOverHandler(ev) {
+		ev.preventDefault();
+	}
+
+	removeDragData(ev) {
+		console.log('Removing drag data')
+		if (ev.dataTransfer.items) {
+			// Use DataTransferItemList interface to remove the drag data
+			ev.dataTransfer.items.clear();
+		} else {
+			// Use DataTransfer interface to remove the drag data
+		    ev.dataTransfer.clearData();
+		}
+	}
+
+	invoiceClickHandler() {
+		document.getElementById("invoice_file").click();
+	}
+
+	documentalClickHandler() {
+		document.getElementById("documental_file").click();
+	}
+
+	documentalUploadFile(files) {
+		let file = files[0];
+		let formData = new FormData();
+	  formData.append('file', file, file.name);
+		const token = localStorage.getItem("session_id");
+		requestFile("/aon_gwt_aio/ms/uploadDocumentalx", token, formData);
+	}
+
+	invoiceUploadFile(files) {
+		const fn = (base) => {
+			const invoiceData = {
+					company: 'B01480201',
+				    content: base,
+				    contentType: 'image/jpeg',
+				    contentEncoding: 'base64'
+		    };
+			const url = 'https://europe-west1-tedi-snapshot.cloudfunctions.net/invoice';
+			const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqZ2FyY2lhQGFvbnNvbHV0aW9ucy5lcyIsImlhdCI6MTU3NzM2NTM4NywiZXhwIjoxNjA4NDY5Mzg3fQ.0cfTgABc7d6cM8TbDbP1bhsRVxSlz_9te5fzbYJjAjg';
+			request('POST', url, token, invoiceData);
+		};
+		this.uploadFile(files, fn);
+	}
+
+	uploadFile(files, fn) {
+		let photo = files[0];
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			const base64File = reader.result.split(',')[1];
+		    fn(base64File)
+		}
+		reader.readAsDataURL(photo);
+	}
+
 }
 
 window.customElements.define('aon-desktop', AonDesktop);
-window.dragOverHandler = dragOverHandler;
-
-window.invoiceDropHandler = invoiceDropHandler;
-window.invoiceClickHandler = invoiceClickHandler;
-window.invoiceUploadFile = invoiceUploadFile;
-
-window.documentalDropHandler = documentalDropHandler;
-window.documentalClickHandler = documentalClickHandler;
-window.documentalUploadFile = documentalUploadFile;

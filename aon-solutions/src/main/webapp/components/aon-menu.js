@@ -174,6 +174,7 @@ class AonMenu extends HTMLElement {
 		}
 
 		let ul = document.createElement('ul');
+		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
 		ul.style.listStyle = 'none';
@@ -189,6 +190,7 @@ class AonMenu extends HTMLElement {
 
 	buildApp(app) {
 		let li = document.createElement('li');
+		li.id = 'aonMenuList' + app.app;
 		li.style.height = '80px';
 		li.style.backgroundColor = 'transparent';
 		li.addEventListener('mouseover', () => {
@@ -231,6 +233,11 @@ class AonMenu extends HTMLElement {
 	}
 
 	buildAppMenu(app) {
+		let company;
+		if(this.getAttribute('company')){
+			company = JSON.parse(this.getAttribute('company'));
+		}
+
 		let rootPanel = document.getElementById('rootPanel');
 		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
 
@@ -260,7 +267,9 @@ class AonMenu extends HTMLElement {
 		let ul = document.createElement('ul');
 		ul.className = 'aonMenuSidenavSubAppList';
 		this.getSubApps(app.app).forEach(subapp => {
-			ul.appendChild(this.buildSubAppMenu(subapp));
+			if(!subapp.parent || (subapp.parent && company && company.parent)){
+				ul.appendChild(this.buildSubAppMenu(subapp));
+			}
 		});
 
 		div2.appendChild(ul);
@@ -341,6 +350,17 @@ class AonMenu extends HTMLElement {
 				return 'gray';
 			default: return '#f1f1f1';
 		}
+	}
+
+	addApp(app) {
+		let ul = document.getElementById('aonMenuList');
+		ul.appendChild(this.buildApp(app));
+	}
+
+	removeApp(app) {
+		let ul = document.getElementById('aonMenuList');
+		let li = document.getElementById('aonMenuList' + app.app);
+		ul.removeChild(li);
 	}
 
 }
