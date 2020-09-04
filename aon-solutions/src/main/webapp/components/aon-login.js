@@ -97,7 +97,7 @@ class AonLogin extends HTMLElement {
 			    <!-- <form class="aon-login-form form-mobile-div"> -->
 						<div class="aon-login-form" style="max-width:250px;">
 							<div style="margin-bottom:15px;">
-								<img class="logo" src="aon-solutions/assets/logo.png"/>
+								<img class="logo" src="assets/logo.png"/>
 							</div>
 
 							<div id="aonLoginLoading" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>

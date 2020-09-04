@@ -37,8 +37,8 @@ class AonHeader extends HTMLElement {
 
 			<div class="aonHeader" >
 				<span>
-					<img id="aonLogo" class="aonLogo" src="../aon-solutions/assets/logo.png" width="240px" />
-					<img id="aonLogo2" class="aonLogo" style="display:none;" src="../aon-solutions/assets/logoCompany.png" width="135px" />
+					<img id="aonLogo" class="aonLogo" src="../assets/logo.png" width="240px" />
+					<img id="aonLogo2" class="aonLogo" style="display:none;" src="../assets/logoCompany.png" width="135px" />
 					<img id="aonLogoParent" class="aonParentLogo" style="display:none;" />
 				</span>
 
@@ -187,14 +187,14 @@ class AonHeader extends HTMLElement {
 	buildLogo() {
 		let aonLogo = document.getElementById('aonLogo');
 		if(window.location.href.includes('ayudat')){
-			aonLogo.src = '../aon-solutions/assets/ayudat-logo.png';
+			aonLogo.src = '../assets/ayudat-logo.png';
 			aonLogo.style.top = '0px';
 			aonLogo.style.width = '150px';
 		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
-			aonLogo.src = '../aon-solutions/assets/tedi-logo.png';
+			aonLogo.src = '../assets/tedi-logo.png';
 			aonLogo.style.top = '0px';
 		} else {
-			aonLogo.src = '../aon-solutions/assets/logo.png';
+			aonLogo.src = '../assets/logo.png';
 		}
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
