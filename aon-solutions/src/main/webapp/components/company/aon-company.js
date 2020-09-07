@@ -1,7 +1,7 @@
-import {Apps} from  '../services/app.js';
-import {getDomainApps, setUserAppRole, setUser} from  '../services/service.js';
+import {Apps} from  '../../services/app.js';
+import {getDomainApps, setUserAppRole, setUser} from  '../../services/service.js';
 
-import './aon-select.js';
+import '../aon-select.js';
 
 class AonCompany extends HTMLElement {
 
@@ -223,43 +223,55 @@ class AonCompany extends HTMLElement {
 	}
 
 	isNew() {
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
+		let user = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		return user === undefined;
 	}
 
-	getApp(app) {
-		switch(app.toLowerCase()){
-			case Apps.INVOICE.app:
-				return Apps.INVOICE;
-			case Apps.DOCUMENTAL.app:
-				return Apps.DOCUMENTAL;
-			case Apps.HELPDESK.app:
-				return Apps.HELPDESK;
-			case Apps.ACCOUNTING.app:
-				return Apps.ACCOUNTING;
-			case Apps.FISCAL.app:
-				return Apps.FISCAL;
-			case Apps.PAYROLL.app:
-				return Apps.PAYROLL;
-			case Apps.OCR.app:
-				return Apps.OCR;
-			case Apps.AIO.app:
-				return Apps.AIO;
-			case Apps.TOOLS.app:
-				return Apps.TOOLS;
-			case Apps.SELFCONTA.app:
-				return Apps.SELFCONTA;
-			case Apps.SALTRA.app:
-				return Apps.SALTRA;
-			case Apps.BIDOQ.app:
-				return Apps.BIDOQ;
-			case Apps.ALMA.app:
-				return Apps.ALMA;
-			case Apps.LEARNING.app:
-				return Apps.LEARNING;
-		}
+	buildGeneral() {
+		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+
+		let content = document.getElementById('aonConfigurationContent');
+		content.style.display = "flex";
+		content.innerHTML = `
+			<aon-card id="aonConfigurationGeneralCard" title="Información General"></aon-card>
+			<aon-card id="aonConfigurationGeneral2Card" title="Información Adicional"></aon-card>
+		`;
+		let card = document.getElementById('aonConfigurationGeneralCard');
+		let cardDiv = document.getElementById('aonConfigurationGeneralCard-div');
+		cardDiv.style.width = '500px';
+		card.addContent(`
+			<form action="#" class="aon-margin-0">
+				<aon-input-text class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input-text>
+				<aon-input-text class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input-text>
+			</form>
+			<form action="#" class="aon-margin-0">
+				<aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-address>
+			</form>
+		`);
+
+		let card2 = document.getElementById('aonConfigurationGeneral2Card');
+		let cardDiv2 = document.getElementById('aonConfigurationGeneral2Card-div');
+		cardDiv2.style.width = '500px';
+		card2.addContent(`
+			<form action="#" class="aon-margin-0">
+				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input-text>
+				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input-text>
+			</form>
+
+			<form action="#" class="aon-margin-0">
+				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value=""></aon-input-text>
+			</form>
+
+			<form action="#" class="aon-margin-0">
+				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value=""></aon-input-text>
+			</form>
+
+			<!-- LOGO -->
+		`);
+
+		componentHandler.upgradeAllRegistered();
 	}
 
 }
 
-window.customElements.define('aon-user', AonUser);
+window.customElements.define('aon-company', AonCompany);

@@ -5,6 +5,7 @@ import './aon-address.js';
 import './aon-inputText.js';
 import './aon-marketplace.js';
 import './aon-user-list.js';
+import './company/aon-company-list.js';
 
 class AonConfiguration extends HTMLElement {
 
@@ -159,7 +160,7 @@ class AonConfiguration extends HTMLElement {
 		} else if('aonConfigurationUser' === id) {
 			this.buildUser();
 		} else if('aonConfigurationCompany' === id ) {
-
+			this.buildCompany();
 		} else if('aonConfigurationStore' === id) {
 			this.buildStore();
 		}
@@ -228,6 +229,20 @@ class AonConfiguration extends HTMLElement {
 		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "block";
 		content.innerHTML = '<aon-user-list> </aon-user-list>' ;
+	}
+
+	buildCompany() {
+		let toolbar = document.getElementById('aonConfiguration');
+		toolbar.addButton('aonConfigurationCompanyAddButton', 'add');
+
+		let addButton = document.getElementById('aonConfigurationCompanyAddButton');
+		addButton.addEventListener('click', () => {
+
+		});
+
+		let content = document.getElementById('aonConfigurationContent');
+		content.style.display = "block";
+		content.innerHTML = '<aon-company-list> </aon-companny-list>' ;
 	}
 
 	buildCreateUser(share) {

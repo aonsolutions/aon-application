@@ -74,6 +74,10 @@ class AonHeader extends HTMLElement {
 					<aon-icon-button id="aon-header-home-button" icon="home" outlined="true"></aon-icon-button>
 				</span>
 
+				<span id="aon-header-alma" class="aonRight60" style="display:none;top:40px;">
+					<aon-icon-button id="aon-header-alma-button" image="../assets/apps/alma.png"></aon-icon-button>
+				</span>
+
 				<span id="aon-header-show-menu" class="aonRight20" style="display:none; top:40px;background-color:#f1f1f1; border-radius: 100px 0 0 100px;right: 0;padding-right: 20px;">
 					<aon-icon-button id="aon-header-show-menu-button" icon="keyboard_arrow_right" noHover="true"></aon-icon-button>
 				</span>
@@ -133,6 +137,9 @@ class AonHeader extends HTMLElement {
 			let aonHeaderHome = document.getElementById('aon-header-home');
 			aonHeaderHome.style.display = 'none';
 
+			let aonHeaderAlma = document.getElementById('aon-header-alma');
+			aonHeaderAlma.style.display = 'none';
+
 			let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
 			aonHeaderShowMenu.style.display = 'none';
 
@@ -157,6 +164,11 @@ class AonHeader extends HTMLElement {
 		let aonHeaderHomeButton = document.getElementById('aon-header-home-button');
 		aonHeaderHomeButton.addEventListener('click', () => {
 			rootPanel('<aon-desktop></aon-desktop>');
+		});
+
+		let aonHeaderAlmaButton = document.getElementById('aon-header-alma-button');
+		aonHeaderAlmaButton.addEventListener('click', () => {
+				open('http://chatbotalma.com/');
 		});
 
 		let aonHeaderHelpButton = document.getElementById('aon-header-help-button');

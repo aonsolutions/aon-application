@@ -22,6 +22,14 @@
 			this.setAttribute('icon', icon);
 		}
 
+		get image() {
+			return this.getAttribute('image');
+		}
+
+		set image(image) {
+			this.setAttribute('image', image);
+		}
+
 		get color() {
 			return this.getAttribute('color');
 		}
@@ -83,6 +91,11 @@
 				let icon = document.getElementById(this.getAttribute('id') + 'Icon');
 				if(icon) icon.innerHTML = this.getAttribute('icon');
 			}
+
+			if('image' === name){
+				let image = document.getElementById(this.getAttribute('id') + 'Image');
+				if(image) image.src = this.getAttribute('image');
+			}
 		}
 
 		constructor () {
@@ -125,11 +138,20 @@
 				});
 			}
 
-			let icon = document.createElement('i');
-			icon.setAttribute('id', this.getAttribute('id') + 'Icon');
-			icon.className = this.getAttribute('outlined') ? 'material-icons-outlined' : 'material-icons';
-			icon.innerHTML = this.getAttribute('icon');
-			button.appendChild(icon);
+			if(this.hasAttribute('icon')){
+				let icon = document.createElement('i');
+				icon.setAttribute('id', this.getAttribute('id') + 'Icon');
+				icon.className = this.getAttribute('outlined') ? 'material-icons-outlined' : 'material-icons';
+				icon.innerHTML = this.getAttribute('icon');
+				button.appendChild(icon);
+			} else if(this.hasAttribute('image')) {
+				let image = document.createElement('img');
+				image.setAttribute('id', this.getAttribute('id') + 'Image');
+				image.style.width = '24px';
+				image.style.height = '24px';
+				image.src = this.getAttribute('image');
+				button.appendChild(image);
+			}
 			return button;
 		}
 	}

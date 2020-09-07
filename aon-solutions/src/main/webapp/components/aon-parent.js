@@ -125,6 +125,9 @@ class AonParent extends HTMLElement {
 		let aonHeaderHome = document.getElementById('aon-header-home');
 		aonHeaderHome.style.display = 'block';
 
+		let aonHeaderAlma = document.getElementById('aon-header-alma');
+		aonHeaderAlma.style.display = 'block';
+
 		let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
 		aonHeaderShowMenu.style.display = 'block';
 

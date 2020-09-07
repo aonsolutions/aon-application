@@ -43,8 +43,10 @@ public class CompanyServlet extends HttpServlet{
 		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
 		JSONObject json = new JSONObject();
 		if(pathInfo  != null) {
-			Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-			json = getDomainApps(domain);
+			if("app".equalsIgnoreCase(pathInfo[1])) {
+				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+				json = getDomainApps(domain);
+			}
 		} else {
 			for(String schema : schemas) {
 				if(next) {
@@ -82,7 +84,7 @@ public class CompanyServlet extends HttpServlet{
 		if(pathInfo != null) {
 			if("app".equalsIgnoreCase(pathInfo[1])) {
 				json = setDomainApp(json);
-			}
+			} 
 		}
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, json, new JSONObject());
