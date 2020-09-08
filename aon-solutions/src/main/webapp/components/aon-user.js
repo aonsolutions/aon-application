@@ -33,6 +33,14 @@ class AonUser extends HTMLElement {
 		this.setAttribute('apps', apps);
 	}
 
+	get showApps() {
+		return this.getAttribute('showApps');
+	}
+
+	set showApps(showApps) {
+		this.setAttribute('showApps', showApps);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('user' === name){
 			this.initUser();
@@ -82,8 +90,8 @@ class AonUser extends HTMLElement {
 		aonUserEmail.setAttribute('value', user && user.email ? user.email : '');
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
-		card2.setVisible(!this.isNew());
-		if(user && !this.hasAttribute('apps')) {
+		card2.setVisible(!this.isNew() && this.hasAttribute('showApps'));
+		if(user && !this.hasAttribute('apps') && this.hasAttribute('showApps')) {
 			getDomainApps().then(apps => {
 				this.setAttribute('apps', JSON.stringify(apps));
 			});

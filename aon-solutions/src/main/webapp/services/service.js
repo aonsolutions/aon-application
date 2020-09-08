@@ -152,6 +152,18 @@ export const setUserAppRole = (userAppRole) => {
 	 });
 }
 
+export const getAuth = () => {
+  return new Promise((resolve, reject) => {
+      request('GET', '/ms/api/auth', localStorage.getItem('aon_session_id'),  undefined, undefined, (result, error) => {
+        if(error) {
+          reject(error);
+        } else {
+          resolve(JSON.parse(result));
+        }
+   	  });
+   });
+}
+
 export const getUsers = () => {
   return new Promise((resolve, reject) => {
       request('GET', '/ms/api/user', localStorage.getItem('aon_session_id'),  undefined, undefined, (result, error) => {

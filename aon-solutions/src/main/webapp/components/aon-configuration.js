@@ -1,3 +1,5 @@
+import {getAuth} from '../services/service.js';
+
 import './aon-user.js';
 import './aon-toolbar.js';
 import './aon-card.js';
@@ -129,6 +131,7 @@ class AonConfiguration extends HTMLElement {
 					this.buildContent(id);
 				});
 		});
+		this.buildContent('aonConfigurationPersonal');
 	}
 
 	actualize() {
@@ -154,7 +157,7 @@ class AonConfiguration extends HTMLElement {
 
 		this.setAttribute('option', id);
 		if('aonConfigurationPersonal' === id){
-
+			this.buildPersonal();
 		} else if('aonConfigurationGeneral' === id ) {
 			this.buildGeneral();
 		} else if('aonConfigurationUser' === id) {
@@ -164,6 +167,17 @@ class AonConfiguration extends HTMLElement {
 		} else if('aonConfigurationStore' === id) {
 			this.buildStore();
 		}
+	}
+
+	buildPersonal() {
+		getAuth().then( user => {
+			let content = document.getElementById('aonConfigurationContent');
+			content.innerHTML = '<aon-user id="aonUserPersonal" ><aon-user>';
+			let aonUser = document.getElementById('aonUserPersonal');
+			aonUser.style.display = "flex";
+			aonUser.style.width = "100%";
+			aonUser.setAttribute('user', JSON.stringify(user));
+		});
 	}
 
 	buildGeneral() {
@@ -247,7 +261,7 @@ class AonConfiguration extends HTMLElement {
 
 	buildCreateUser(share) {
 		let content = document.getElementById('aonConfigurationContent');
-		content.innerHTML = '<aon-user id="aonUserCreate" ><aon-user>';
+		content.innerHTML = '<aon-user id="aonUserCreate" showApps="true" ><aon-user>';
 		let aonUser = document.getElementById('aonUserCreate');
 		aonUser.style.display = "flex";
 		aonUser.style.width = "100%";

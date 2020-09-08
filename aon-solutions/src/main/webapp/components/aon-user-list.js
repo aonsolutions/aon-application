@@ -79,12 +79,12 @@ class AonUserList extends HTMLElement {
 			let aonUserListSecurityButton = document.getElementById('aonUserListSecurityButton-' + user.id);
 			aonUserListSecurityButton.addEventListener('click', () => {
 				let content = document.getElementById('aonConfigurationContent');
-				content.innerHTML = '<aon-user id="aonUser-' + user.id + '" ><aon-user>';
+				content.innerHTML = '<aon-user id="aonUser-' + user.id + '" showApps="true" ><aon-user>';
 				let aonUser = document.getElementById('aonUser-' + user.id);
 				aonUser.style.display = "flex";
 				aonUser.style.width = "100%";
 				aonUser.setAttribute('user', JSON.stringify(user));
-			})
+			});
 		}
 
 	}
