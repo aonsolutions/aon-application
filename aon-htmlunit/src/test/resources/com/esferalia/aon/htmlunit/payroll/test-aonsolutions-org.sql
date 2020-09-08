@@ -1,6 +1,6 @@
 -- MariaDB dump 10.17  Distrib 10.5.4-MariaDB, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: test-aonsolutions-org
+-- Host: 172.17.0.1    Database: test-aonsolutions-org
 -- ------------------------------------------------------
 -- Server version	10.5.4-MariaDB-1:10.5.4+maria~focal
 
@@ -225,7 +225,7 @@ CREATE TABLE `account_entry_detail` (
   `account_entry` int(4) NOT NULL COMMENT 'Identificador del Asiento',
   `line` int(4) unsigned NOT NULL COMMENT 'Numero de linea del Apunte dentro del Asiento',
   `account` int(4) NOT NULL COMMENT 'Cuenta Contable del Apunte',
-  `concept` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Concepto del Apunte',
+  `concept` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL,
   `balancing_account` int(4) DEFAULT NULL COMMENT 'Contrapartida del Apunte',
   `debit` double DEFAULT 0 COMMENT 'Debe del Apunte',
   `credit` double DEFAULT 0 COMMENT 'Haber del Apunte',
@@ -1372,6 +1372,10 @@ CREATE TABLE `auth` (
   `id` binary(16) NOT NULL COMMENT 'Identificador unico',
   `email` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Identificador del Usuario (Email)',
   `password` varchar(128) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Contrasena del Usuario',
+  `name` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `surname` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `document` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `phone` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Autenticacion';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -4255,7 +4259,7 @@ CREATE TABLE `domain` (
 
 LOCK TABLES `domain` WRITE;
 /*!40000 ALTER TABLE `domain` DISABLE KEYS */;
-INSERT INTO `domain` VALUES (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2016-11-24 08:27:31'),(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2016-02-18 10:47:09',NULL,'admin','2020-04-28 01:54:01'),(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2020-04-28 12:16:57'),(8778,'trainning-payroll-test.aonsolutions.org','FORMACIÓN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2020-04-21 09:52:57'),(8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2019-07-04 21:09:46'),(8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2019-12-18 10:41:44'),(8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2018-03-19 17:35:16'),(8784,'hosteleria-baleares-payroll-test.aonsolutions.org','HOSTELERÍA ISLAS BALEARES',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-18 15:06:04',NULL,NULL,NULL,'admin','2016-05-18 15:06:13'),(8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),(8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2017-11-09 16:43:50'),(8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÓN DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2018-11-28 11:01:48'),(8789,'home-payroll-test.aonsolutions.org','EMPLEADOS DE HOGAR',8776,0,NULL,NULL,0,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2018-02-05 17:30:56',NULL,NULL,NULL,'admin','2019-01-07 19:05:18');
+INSERT INTO `domain` VALUES (0,'admin-test.aonsolutions.org','Consola de ADMINISTRACION (BBDD:PRODUCCION)',NULL,5,NULL,NULL,0,0,0,1,100,5,1,'admin@aonsolutions.org',NULL,'2016-02-18 08:44:47',NULL,NULL,NULL,'admin','2016-11-24 08:27:31'),(8776,'payroll-test.aonsolutions.org','PAYROLL TEST',NULL,1,NULL,'payroll-test.aonsolutions.org',0,1,0,1,100,1,1,'payroll@aonsolutions.org','admin','2016-02-18 10:42:31','admin','2016-02-18 10:47:09',NULL,'admin','2020-09-08 23:08:53'),(8777,'general-payroll-test.aonsolutions.org','RÉGIMEN GENERAL ',8776,0,3535,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-18 10:56:49',NULL,NULL,NULL,'admin','2020-09-08 23:08:56'),(8778,'trainning-payroll-test.aonsolutions.org','FORMACIÓN Y APRENDIZAJE',8776,0,NULL,NULL,1,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2016-02-21 23:49:19',NULL,NULL,NULL,'admin','2020-04-21 09:52:57'),(8779,'doc-test.aonsolutions.org','DOCUMENTAL TEST',NULL,1,NULL,'doc-test.aonsolutions.org',0,1,0,1,100,0,1,'doc@aonsolutions.org','admin','2016-02-22 11:29:06',NULL,NULL,NULL,NULL,NULL),(8780,'agrarian-payroll-test.aonsolutions.org','RÉGIMEN ESPECIAL AGRARIO',8776,0,NULL,NULL,1,0,0,1,100,0,1,'agrarian@aonsolutions.org','admin','2016-02-23 11:32:44',NULL,NULL,NULL,'admin','2019-07-04 21:09:46'),(8781,'inactiva-payroll-test.aonsolutions.org','INACTIVA',8776,0,3535,NULL,1,0,0,1,100,0,0,'info@aonolsutions.org','admin','2016-04-20 15:26:58',NULL,NULL,NULL,'admin','2016-04-20 16:16:22'),(8782,'artistas-payroll-test.aonsolutions.org','ARTISTAS',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-04-21 10:38:45',NULL,NULL,NULL,'admin','2019-12-18 10:41:44'),(8783,'convenios-payroll-test.aonsolutions.org','CONVENIOS COLECTIVOS',8776,0,NULL,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-06 10:19:48',NULL,NULL,NULL,'admin','2018-03-19 17:35:16'),(8784,'hosteleria-baleares-payroll-test.aonsolutions.org','HOSTELERÍA ISLAS BALEARES',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-05-18 15:06:04',NULL,NULL,NULL,'admin','2016-05-18 15:06:13'),(8785,'calendar-payroll-test.aonsolutions.org','CALENDARIOS DE EMPRESA',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-06-06 17:41:19',NULL,NULL,NULL,'admin','2016-06-21 16:28:23'),(8787,'metal-payroll-test.aonsolutions.org','COMERCIO DEL METAL MADRID',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@aonsolutions.org','admin','2016-09-29 18:41:07',NULL,NULL,NULL,'admin','2017-11-09 16:43:50'),(8788,'creta-payroll-test.aonsolutions.org','SISTEMA DE LIQUIDACIÓN DIRECTA (CRET@)',8776,0,3535,NULL,1,0,0,1,100,0,1,'info@test.aonsolutions.org','admin','2016-12-19 11:11:09',NULL,NULL,NULL,'admin','2018-11-28 11:01:48'),(8789,'home-payroll-test.aonsolutions.org','EMPLEADOS DE HOGAR',8776,0,NULL,NULL,0,0,0,1,100,0,1,'payroll@aonsolutions.org','admin','2018-02-05 17:30:56',NULL,NULL,NULL,'admin','2019-01-07 19:05:18');
 /*!40000 ALTER TABLE `domain` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -12773,6 +12777,7 @@ CREATE TABLE `user` (
   `initAction` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Nombre la acicn de inicio del Usuario',
   `lastAccess` datetime DEFAULT NULL COMMENT 'Fecha del ultimo acceso del Usuario',
   `auth` binary(16) DEFAULT NULL,
+  `shared` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_USER_DOMAIN_LOGIN` (`domain`,`login`),
   KEY `IDX_USER_ENTERPRISE` (`enterprise`),
@@ -12790,8 +12795,39 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (2862,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL),(10248,8776,'ADMIN','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,0,'es',NULL,NULL,'','2020-04-28 12:16:54',NULL);
+INSERT INTO `user` VALUES (2862,0,'Administrador','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,6,'es',NULL,NULL,NULL,'2015-04-08 19:01:09',NULL,0),(10248,8776,'ADMIN','admin',NULL,NULL,1,0,'0jtZh1BMGz3khL8uR8dvdau3lNM=',NULL,0,'es',NULL,NULL,'','2020-09-08 23:08:40',NULL,0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user_app_role`
+--
+
+DROP TABLE IF EXISTS `user_app_role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_app_role` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'ID unico del vinculo',
+  `domain` int(4) NOT NULL DEFAULT 0 COMMENT 'Dominio',
+  `app` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'App',
+  `user_id` int(4) NOT NULL DEFAULT 0 COMMENT 'Identificador del Usuario',
+  `role` tinyint(2) NOT NULL DEFAULT 0 COMMENT 'role',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `IDX_UNQ_USER_APP_ROLE` (`domain`,`user_id`),
+  KEY `IDX_USER_APP_ROLE_DOMAIN` (`domain`),
+  KEY `IDX_USER_APP_ROLE_USER` (`user_id`),
+  CONSTRAINT `FK_USER_APP_ROLE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_USER_APP_ROLE_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Rol del usuario en una aplicacion';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_app_role`
+--
+
+LOCK TABLES `user_app_role` WRITE;
+/*!40000 ALTER TABLE `user_app_role` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_app_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -13241,4 +13277,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-01 21:52:58
+-- Dump completed on 2020-09-08 21:09:54
