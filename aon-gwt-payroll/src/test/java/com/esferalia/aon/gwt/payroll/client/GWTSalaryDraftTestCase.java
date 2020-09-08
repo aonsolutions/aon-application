@@ -301,6 +301,15 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void generateCertifaca2(String currentDomainName,
+					com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, AsyncCallback<String> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 		

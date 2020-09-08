@@ -232,5 +232,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees,
 			AsyncCallback<ArrayList<EventEmployee>> callback);
+
+	void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft, AsyncCallback<String> callback);
 	
 }

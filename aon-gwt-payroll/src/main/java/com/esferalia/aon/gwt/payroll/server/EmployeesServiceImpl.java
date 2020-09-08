@@ -91,6 +91,7 @@ import com.esferalia.aon.gwt.payroll.client.EmployeesService;
 import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
+import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
@@ -5091,6 +5092,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public ArrayList<EventEmployee> setEventsDraft(String domainName, ArrayList<EventEmployee> eventEmployees) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqEvents.setEventsDraft(connection, eventEmployees);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public String generateCertifaca2(String domainName, SalaryDraft salaryDraft) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqCertifica2.generateCertifica2(connection, domainId, salaryDraft);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

@@ -705,6 +705,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 			AsyncCallback<ArrayList<EventEmployee>> callback) {
 		AON.start();
 		employeesServiceAsync.setEventsDraft(domainName, eventEmployees, new AsyncCallbackWrapper<ArrayList<EventEmployee>>(callback));
+	}
+
+	@Override
+	public void generateCertifaca2(String domainName, SalaryDraft salaryDraft, AsyncCallback<String> callback) {
+		AON.start();
+		employeesServiceAsync.generateCertifaca2(domainName, salaryDraft, new AsyncCallbackWrapper<String>(callback));
 	} 
 
 	

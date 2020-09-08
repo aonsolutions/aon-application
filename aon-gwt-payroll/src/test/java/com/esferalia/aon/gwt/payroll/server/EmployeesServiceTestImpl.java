@@ -683,6 +683,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
+	@Override
+	public String generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

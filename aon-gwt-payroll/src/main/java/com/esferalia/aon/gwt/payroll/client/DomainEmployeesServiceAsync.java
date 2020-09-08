@@ -481,4 +481,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
 	}
 
+	public void generateCertifaca2(SalaryDraft salaryDraft, AsyncCallback<String> callback) {
+		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), salaryDraft, callback);
+	}
+
 }

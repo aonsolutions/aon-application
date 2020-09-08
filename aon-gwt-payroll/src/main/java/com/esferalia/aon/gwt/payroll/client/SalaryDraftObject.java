@@ -490,7 +490,31 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 			@Override
 			public void onSuccess(SalaryDraft result) {
 				SalaryDraftObject.this.salaryDraft = result;
-				callback.onCalculateSucces(SalaryDraftObject.this);
+				
+				if(!result.getType().equals(Type.SETTLE))
+					callback.onCalculateSucces(SalaryDraftObject.this);
+				else {
+					// TODO: ¿Generate Certific@2 XML here?
+					employeesServiceAsync.generateCertifaca2(result, new AsyncCallback<String>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {
+							WarningDialog dialog = new WarningDialog("Error", caught.getMessage());
+							dialog.center();
+							dialog.show();
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							WarningDialog dialog = new WarningDialog("Certifi@2", result);
+							dialog.center();
+							dialog.show();
+							callback.onCalculateSucces(SalaryDraftObject.this);
+						}
+						
+					});
+				}
+				
 			}
 
 			@Override
