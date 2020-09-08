@@ -127,7 +127,7 @@ public class SalaryEntryPanel extends WizardContentBase<SalaryEntry> {
 			}
 		});
 		concept.setVisibleLength(25); 
-		concept.setMaxLength(32);
+		concept.setMaxLength(64);
 		flexTable.setWidget(row, 1, concept);
 		flexTable.getFlexCellFormatter().setColSpan(row, 1, 3);
 		row++;

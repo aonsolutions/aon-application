@@ -291,8 +291,8 @@ public class AccountEntryTable extends FlexTable implements HasErrorHandlers, Fo
 		
 		final TextBox conceptBox = new TextBox();
 		final SuggestBox conceptSuggestBox = new SuggestBox(oracle,conceptBox);
-		conceptBox.setVisibleLength(20);
-		conceptBox.setMaxLength(32);
+		conceptBox.setVisibleLength(30);
+		conceptBox.setMaxLength(64);
 		conceptBox.setStyleName(AON.CSS.aonInputText());
 		conceptBox.setValue(aed.getConcept());
 		setWidget(row, COLS.CON.ordinal(), conceptSuggestBox );

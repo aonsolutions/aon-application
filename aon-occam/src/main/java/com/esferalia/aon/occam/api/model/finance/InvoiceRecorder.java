@@ -479,11 +479,11 @@ public class InvoiceRecorder {
 			prefix += " " + ABONO;
 		}
 		prefix += ": ";
-		String concept = AonStringUtils.abbreviate(prefix + AonStringUtils.defaultIfBlank(invoice.getReferenceCode(),"????????"), 32);
+		String concept = AonStringUtils.abbreviate(prefix + AonStringUtils.defaultIfBlank(invoice.getReferenceCode(),"????????"), 64);
 		if (AonStringUtils.isNotBlank(manualConcept)) {
 			concept = concept + " [" + manualConcept;
-			if (AonStringUtils.length(concept) > 32) {
-				concept = AonStringUtils.abbreviate(concept,31);
+			if (AonStringUtils.length(concept) > 64) {
+				concept = AonStringUtils.abbreviate(concept,63);
 			}
 			concept = concept + "]";
 		}
@@ -502,7 +502,7 @@ public class InvoiceRecorder {
 		String concept = obtainConcept(invoice.getInvoice(), invoice.getManualConcept());
 		for (AccountEntryDetail detail : ae.getDetails()) {
 			detail.setConcept(concept)
-				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))
+				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 64 ))
 				.setDocumentNumber(invoice.getInvoice().getDocumentNumber());
 		}
 		return ae;
@@ -526,7 +526,7 @@ public class InvoiceRecorder {
 				:invoice.getInvoice().getReferenceCode());
 		for (AccountEntryDetail detail : payEntry.getDetails()) {
 			detail.setConcept(payConcept)
-				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 32 ))
+				.setConcept( AonStringUtils.abbreviate(detail.getConcept(), 64 ))
 				.setDocumentNumber(invoice.getInvoice().getDocumentNumber());
 		}
 		return payEntry;
