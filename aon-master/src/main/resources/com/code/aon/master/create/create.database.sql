@@ -672,7 +672,7 @@ CREATE TABLE `account_entry_detail` (
   `account_entry` int(4) NOT NULL COMMENT 'Identificador del Asiento',
   `line` int(4) unsigned NOT NULL COMMENT 'Numero de linea del Apunte dentro del Asiento',
   `account` int(4) NOT NULL COMMENT 'Cuenta Contable del Apunte',
-  `concept` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Concepto del Apunte',
+  `concept` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Concepto del Apunte',
   `balancing_account` int(4) DEFAULT NULL COMMENT 'Contrapartida del Apunte',
   `debit` double DEFAULT '0' COMMENT 'Debe del Apunte',
   `credit` double DEFAULT '0' COMMENT 'Haber del Apunte',

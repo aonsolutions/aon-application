@@ -19,7 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.security.AuthUpdate;
+import net.aonsolutions.db.up2date.accounting.AlterAccountEntryDetailConcept;
 
 public class Up2Date {
 
@@ -130,7 +130,8 @@ public class Up2Date {
 //   		UserAppRoleCreation.USER_APP_ROLE_CREATION,
 //    		RealDecreeLaw182020UpdateIV.REALDECREELAW182020UPDATEIV
 //    		TrainningBases2020Fix.TRAINNINGBASES2020FIX
-    		AuthUpdate.AUTH_UPDATE
+//    		AuthUpdate.AUTH_UPDATE
+    		AlterAccountEntryDetailConcept.ALTER_ACCOUNT_ENTRY_DETAIL_CONCEPT
     };
 
 
