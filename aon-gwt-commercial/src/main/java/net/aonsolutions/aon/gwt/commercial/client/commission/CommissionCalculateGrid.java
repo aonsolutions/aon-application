@@ -441,7 +441,7 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 	
 	private void deleteCommision(JsCommission commission){
 		
-		AonDialog dialog = new AonDialog("Informaci\u00f3n Factura", new Label("Est\u00e1s seguro de eliminar la comisi\u00f3n seleccionada.")) {
+		AonDialog dialog = new AonDialog("Borrar Comisi\u00f3n Factura", new Label("Est\u00e1s seguro de eliminar la comisi\u00f3n seleccionada.")) {
 					
 			@Override 
 			protected void onCancel() {
@@ -483,11 +483,12 @@ public class CommissionCalculateGrid extends ResizeComposite implements Requires
 				}
 			}
 		};
-
+		
 		dialog.getAccept().setVisible(true);
 		dialog.getCancel().setVisible(false);
 		dialog.setAutoHideEnabled(true);
 		dialog.getElement().getStyle().setWidth(310, Unit.PX);
+		dialog.getElement().getStyle().setZIndex(99);
 		dialog.center();
 	}
 	
