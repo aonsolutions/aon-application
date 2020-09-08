@@ -163,7 +163,9 @@ class AonHeader extends HTMLElement {
 
 		let aonHeaderHomeButton = document.getElementById('aon-header-home-button');
 		aonHeaderHomeButton.addEventListener('click', () => {
-			rootPanel('<aon-desktop></aon-desktop>');
+			rootPanel('<aon-desktop id="AonDesktop"></aon-desktop>');
+			let aonDesktop = document.getElementById('aonDesktop');
+			aonDesktop.setAttribute('company', JSON.stringify(company));
 		});
 
 		let aonHeaderAlmaButton = document.getElementById('aon-header-alma-button');
@@ -210,7 +212,9 @@ class AonHeader extends HTMLElement {
 		}
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
-				rootPanel('<aon-desktop></aon-desktop>');
+				rootPanel('<aon-desktop id="AonDesktop"></aon-desktop>');
+				let aonDesktop = document.getElementById('aonDesktop');
+				aonDesktop.setAttribute('company', JSON.stringify(company));
 			} else {
 				rootPanel('<aon-parent id="aonParent"></aon-parent>');
 			}
