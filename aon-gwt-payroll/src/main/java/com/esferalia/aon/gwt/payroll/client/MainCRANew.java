@@ -1441,8 +1441,6 @@ public class MainCRANew extends MainEntryPoint {
 			cccIdList.add(cccInfo.getCccId());
 		}
 		
-		Window.alert(cccIdList.toString());
-		
 		for(CRA cra : mainCRAObjectNew.getAllCRAs()) {
 			if(null == cra.getCreationDate())
 				continue;
@@ -1451,7 +1449,6 @@ public class MainCRANew extends MainEntryPoint {
 			DateUtils.resetTime(creationDate);
 			
 			for(CCCInfo ccc : cra.getIncludeCCCs()) {
-				Window.alert(ccc.getCccId() + " -> Date Finding : " + findingDate + " Creation Date : " + creationDate);
 				if(cccIdList.contains(ccc.getCccId()) && (creationDate.equals(findingDate) || creationDate.getTime() == findingDate.getTime()))
 					return false;
 			}
