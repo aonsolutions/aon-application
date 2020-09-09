@@ -287,8 +287,9 @@ public class Cra {
 						
 						if(typeCRA == craType) {
 							
-							// Accumulate craAmount
-							craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+							// Accumulate craAmount (important if exists amount)
+							craAmount += salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+//							craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 							
 							// Last iteration
 							if(i+1 == salaryPaymentRecords.size()) {
@@ -309,7 +310,8 @@ public class Cra {
 							typeCRA = craType;
 							
 							// Update craAmount
-							craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+							craAmount = salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+//							craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 							
 							// Last iteration
 							if(i+1 == salaryPaymentRecords.size()) {
@@ -535,7 +537,6 @@ public class Cra {
 								.fetch();
 						
 						for(Record salaryPayment : salaryPayments) {
-							// Get typeCRA ¿always 6?
 							PaymentType typeCRA = PaymentType.values()[salaryPayment.get(SALARY_PAYMENT.TYPE)];
 							
 							Double amount = salaryPayment.get(SALARY_PAYMENT.AMOUNT);
@@ -657,8 +658,17 @@ public class Cra {
 		
 		// Add CRE to CRES if craAmount > 0
 		if(craAmount > 0){
+			String include_exclude = "I";
+			
+			if(craType.isBBCCIncluded() && craType.isBBCCExcluded())
+				include_exclude = "E";
+			else if(craType.isBBCCIncluded())
+				include_exclude = "I";
+			else if(craType.isBBCCExcluded())
+				include_exclude = "E";
+			
 			cre.put("concept", getCRADescription(craType));
-			cre.put("include_exclude", craType.isBBCCIncluded() ? "I" : "E");
+			cre.put("include_exclude", include_exclude);
 			cre.put("amount", amount);
 			cre.put("action", " ");
 			cres.add(cre);

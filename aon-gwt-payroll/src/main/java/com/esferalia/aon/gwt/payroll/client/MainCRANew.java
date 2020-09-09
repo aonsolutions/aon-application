@@ -1121,65 +1121,72 @@ public class MainCRANew extends MainEntryPoint {
 			Date findingDate = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			DateUtils.resetTime(findingDate);
 			
-			if(checkRectificavo()) {
-				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
-						s -> {
-							if(StringUtils.isBlank(s)) {
-								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-										v -> {
-											for(CCCInfo cccInfo : cccsSelected) {
-												cccInfo.getCRADates().add(findingDate);
-											}
-											showCRAS();
-											initCRATable();
-										}, 
-										f -> {});
-							}else {
-								AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", s) {
-									
-									@Override
-									protected void onAccept() {
-										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-												v -> {
-													for(CCCInfo cccInfo : cccsSelected) {
-														cccInfo.getCRADates().add(findingDate);
-													}
-													showCRAS();
-													initCRATable();
-												}, 
-												f -> {});
-									}
-								};
-								dialog.center();
-								dialog.show();
-							}
-						}, f ->{});
-			} else {
-				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
-					
-					@Override
-					protected void onAccept() {
-						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
-								v -> {
-									WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
-									warning.center();
-									warning.show();
-									
-									for(CCCInfo cccInfo : cccsSelected) {
-										cccInfo.getCRADates().add(findingDate);
-									}
-									
-									showCRAS();
-									initCRATable();
-								}, 
-								f -> {});
-					}
-				};
-				
-				dialog.center();
-				dialog.show();
-			}
+			mainCRAObjectNew.getCRAs(
+					s -> {
+						if(checkRectificavo()) {
+							mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
+									p -> {
+										if(StringUtils.isBlank(p)) {
+											mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+													v -> {
+														for(CCCInfo cccInfo : cccsSelected) {
+															cccInfo.getCRADates().add(findingDate);
+														}
+														showCRAS();
+														initCRATable();
+													}, 
+													f -> {});
+										}else {
+											AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
+												
+												@Override
+												protected void onAccept() {
+													mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+															v -> {
+																for(CCCInfo cccInfo : cccsSelected) {
+																	cccInfo.getCRADates().add(findingDate);
+																}
+																showCRAS();
+																initCRATable();
+															}, 
+															f -> {});
+												}
+											};
+											dialog.center();
+											dialog.show();
+										}
+									}, f ->{});
+						} else {
+							AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
+								
+								@Override
+								protected void onAccept() {
+									mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
+											v -> {
+												WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
+														+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
+												warning.center();
+												warning.show();
+												
+												for(CCCInfo cccInfo : cccsSelected) {
+													cccInfo.getCRADates().add(findingDate);
+												}
+												
+												showCRAS();
+												initCRATable();
+											}, 
+											f -> {});
+								}
+							};
+							
+							dialog.center();
+							dialog.show();
+						}
+					}, 
+					f -> {}
+			);
+			
+			
 		}
 	}
 	
@@ -1427,11 +1434,14 @@ public class MainCRANew extends MainEntryPoint {
 		Integer yearInt = Integer.parseInt(year.getSelectedValue());
 		Integer monthInt = Integer.parseInt(month.getSelectedValue());
 		Date findingDate = new Date(yearInt, monthInt, 1);
+		DateUtils.resetTime(findingDate);
 		
 		ArrayList<Integer> cccIdList = new ArrayList<Integer>();
 		for(CCCInfo cccInfo : selectionCCCInfoModel.getSelectedSet()) {
 			cccIdList.add(cccInfo.getCccId());
 		}
+		
+		Window.alert(cccIdList.toString());
 		
 		for(CRA cra : mainCRAObjectNew.getAllCRAs()) {
 			if(null == cra.getCreationDate())
@@ -1440,11 +1450,9 @@ public class MainCRANew extends MainEntryPoint {
 			Date creationDate = DateUtils.copyDateOnly(cra.getCreationDate());
 			DateUtils.resetTime(creationDate);
 			
-			Date findDate = DateUtils.copyDateOnly(findingDate);
-			DateUtils.resetTime(findDate);
-			
 			for(CCCInfo ccc : cra.getIncludeCCCs()) {
-				if(cccIdList.contains(ccc.getCccId()) && creationDate.equals(findDate))
+				Window.alert(ccc.getCccId() + " -> Date Finding : " + findingDate + " Creation Date : " + creationDate);
+				if(cccIdList.contains(ccc.getCccId()) && (creationDate.equals(findingDate) || creationDate.getTime() == findingDate.getTime()))
 					return false;
 			}
 			
