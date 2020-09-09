@@ -29,8 +29,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -687,6 +692,11 @@ public class EmployeeDraft extends Composite {
 	@UiField
 	Viewer pdfViewer;
 	
+	@UiField
+	ListBox zoomListBox;
+	
+	@UiField
+	Button downloadButton;
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
 	private int zoom;
 
@@ -716,7 +726,7 @@ public class EmployeeDraft extends Composite {
 		onSaved = this::onSavedNoop;
 		
 		showEmployee();		
-
+		initZoomList();
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -785,6 +795,20 @@ public class EmployeeDraft extends Composite {
 	@UiHandler("idcButton")
 	void onIdcButtonClick(ClickEvent event) {
 		showIdc();
+	}
+	
+	@UiHandler("zoomListBox")
+	void onZoomListBoxChange(ChangeEvent event) {
+		int index =zoomListBox.getSelectedIndex();
+		String text = zoomListBox.getItemText(index);
+		zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
+		pdfViewer.scale(zoom / 100.00);
+	}	
+	
+	@UiHandler("downloadButton")
+	void onDownloadClick(ClickEvent event) {
+		String fileName = employeeDraftObject.getEmployeeFullName() + " IDC.pdf";
+		pdfViewer.download(fileName);
 	}
 	
 	private void initHandlers() {
@@ -1580,8 +1604,10 @@ public class EmployeeDraft extends Composite {
 		redoButton.setVisible(false);
 		undoAllButton.setVisible(false);
 
+		zoomListBox.setVisible(true);
 		closePdfButton.setVisible(true);
-		
+		downloadButton.setVisible(true);
+
 		showWidget(pdfViewer);
 	}
 
@@ -1599,7 +1625,10 @@ public class EmployeeDraft extends Composite {
 		catch ( Exception e ) {
 			
 		}
+		zoomListBox.setVisible(false);
 		closePdfButton.setVisible(false);
+		downloadButton.setVisible(false);
+		
 		showWidget(employee);
 	}
 	
@@ -1607,6 +1636,17 @@ public class EmployeeDraft extends Composite {
 		deckPanel.showWidget(deckPanel.getWidgetIndex(widget));
 	}
 	
+	private void initZoomList() {
+
+		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+		int selectedIndex = zoomListBox.getItemCount();
+		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
+		zoomListBox.setSelectedIndex(selectedIndex);
+		
+	}
 
 	protected void onSavedNoop(EmployeeContractInfo employeeContractInfo) {}
 	

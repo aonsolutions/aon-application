@@ -69,6 +69,13 @@
 									styleName='aon-finding-toolbar-item aon-icon-cancel' text="Cerrar" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:ListBox debugId='zoomListBox' ui:field="zoomListBox" />
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button debugId='downloadButton' ui:field='downloadButton'
+									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
+							</g:HTMLPanel>
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
 						    </g:HTMLPanel>
 						    

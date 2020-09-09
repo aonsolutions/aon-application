@@ -279,6 +279,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		return this.employeeData.getSecondSurName();
 	}
 	
+	public String getEmployeeFullName() {
+		return this.employeeData.getFullName();
+	}
+	
 	public Integer getContractSSRegimen() {
 		return (int)this.contractData.getSsRegimen();
 	}
