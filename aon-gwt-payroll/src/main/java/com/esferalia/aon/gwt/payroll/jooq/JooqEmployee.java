@@ -36,6 +36,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
@@ -93,6 +94,10 @@ public class JooqEmployee {
 				isQuoteContract, quoteGroup, isOcupationContract, ocupation);
 	}
 	
+	public static Record getEmployeeRecord(Connection conn, Integer contractId) {
+		return getEmployeeRecord(DSL.using(conn, getDefaultSettings()), contractId);
+	}
+
 	private static EmployeeContractInfo createEmployeeContractDB(DSLContext dslContext, EmployeeContractInfo employeeContractData) {
 		System.out.println("GUARDANDO EN DB ...");
 		
@@ -439,6 +444,19 @@ public class JooqEmployee {
 			}
 		
 		return null;
+	}
+	
+	private static Record getEmployeeRecord(DSLContext dslContext, Integer contractId) {
+		return 
+		dslContext
+		.select()
+		.from(CONTRACT)
+		.innerJoin(PERSON).onKey()
+		.innerJoin(ENTERPRISE_CCC).onKey()
+		.where(CONTRACT.ID.eq(contractId))
+		.fetchOne()
+		;
+		
 	}
 
 	private static EmployeeContractInfo getEmployeeInfoDB(DSLContext dslContext, Integer contract) {

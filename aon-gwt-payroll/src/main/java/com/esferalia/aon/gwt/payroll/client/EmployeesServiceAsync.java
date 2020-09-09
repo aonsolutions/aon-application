@@ -235,4 +235,5 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft, AsyncCallback<String> callback);
 	
+	void getIdc(String domain, Integer contractId, Date date, AsyncCallback<String> callback);
 }

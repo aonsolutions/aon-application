@@ -210,5 +210,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	ArrayList<EventEmployee> setEventsDraft(String currentDomainName, ArrayList<EventEmployee> eventEmployees);
 
 	String generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft);
+	
+	String getIdc(String domain, Integer contractId, Date date);
+
 
 }

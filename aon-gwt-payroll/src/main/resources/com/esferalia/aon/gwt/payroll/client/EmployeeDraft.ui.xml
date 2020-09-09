@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" >
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
@@ -16,7 +17,15 @@
     		padding-left: 30px;
     		width: 200px;	
 		}
+
+		.document {
+			margin-top: 5px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 15px;
+		}	
 		
+			
 	</ui:style>
 
 	<g:DockLayoutPanel unit="PX">
@@ -42,7 +51,7 @@
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='peculiaritiesButton'
-									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Peculiaridades de cotización"
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Peculiaridades de Cotización"
 									enabled="true" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
@@ -51,8 +60,18 @@
 									enabled="true" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button ui:field='idcButton'
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Informe de Cotizaci&oacute;n (IDC)"
+									enabled="true" />
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button debugId='closePdfButton' ui:field='closePdfButton'
+									styleName='aon-finding-toolbar-item aon-icon-cancel' text="Cerrar" />
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 							    <g:Label ui:field='saveStatus' styleName="{style.fontSaveStyle}"></g:Label>
 						    </g:HTMLPanel>
+						    
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
@@ -85,9 +104,14 @@
 		</g:north>
 		<g:center> 
 		    <g:ScrollPanel>
-		    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-		    		<e:Employee ui:field="employee"/> 
-		    	</g:HTMLPanel>
+		    	<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
+		    	<!-- g:HTMLPanel styleName="aon-height-all" debugId="paymetDialogHTMLPanel" -->
+		    		<g:DeckPanel ui:field="deckPanel">
+		    			<e:Employee ui:field="employee"/>
+		    			<p:Viewer styleName="reset" ui:field='pdfViewer' /> 
+		    		</g:DeckPanel>
+		    	<!-- /g:HTMLPanel-->
+		    	</g:VerticalPanel>
 		    </g:ScrollPanel>
 		</g:center>
 	</g:DockLayoutPanel>

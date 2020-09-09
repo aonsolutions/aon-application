@@ -712,6 +712,11 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.generateCertifaca2(domainName, salaryDraft, new AsyncCallbackWrapper<String>(callback));
 	} 
-
 	
+	@Override
+	public void getIdc(String domain, Integer contractId, Date date,
+			AsyncCallback<String> callback) {
+		AON.start();
+		employeesServiceAsync.getIdc(domain, contractId, date, new AsyncCallbackWrapper<String>(callback));
+	}
 }

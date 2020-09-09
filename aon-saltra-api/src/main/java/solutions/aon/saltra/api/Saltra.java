@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +42,10 @@ public class Saltra {
 		this.certSecret = certSecret;
 	}
 	
+	public Saltra(String url, String certKey, String certSecret) throws MalformedURLException {
+		this(new URL(url), certKey, certSecret);
+	}
+
 	public void login(String email, String password) throws IOException {
 		URL loginURL = getURL("login");
 		JSONObject requestJsonObject = 
@@ -95,11 +100,11 @@ public class Saltra {
 		return null;
 	}
 	
-	public OutputStream getIDC(String naf, String regime, String ccc, Date date) {
-		return null;
+	public String getIDC(String naf, String regime, String ccc, Date date) throws IOException {
+		return getIDC(naf, regime, ccc, new SimpleDateFormat("dd-MM-yyyy").format(date));
 	}
 
-	public byte[] getIDC(String naf, String regime, String ccc, String date) throws IOException {
+	public String getIDC(String naf, String regime, String ccc, String date) throws IOException {
 		URL idcURL = getURL("movimientos/duplicado-idc");
 		JSONObject requestJsonObject = 
 		new JSONObject()
@@ -114,7 +119,7 @@ public class Saltra {
 		.put("fecha_real", date)
 		;
 		JSONObject responseJsonObject = post(idcURL, requestJsonObject);
-		return Base64.getDecoder().decode(responseJsonObject.getString("pdf"));
+		return responseJsonObject.getString("pdf");
 	}
 	
 	private String getToken() {

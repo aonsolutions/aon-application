@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.common.shared.SocialSecurity;
+import com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -197,6 +198,19 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 						}
 				
 			});
+	}
+	
+	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getIdc(employee.getId(), new Date(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 	
 	// ---------------------------------------------- GETTERS  -------------------------------------------------

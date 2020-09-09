@@ -36,13 +36,18 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class EmployeeDraft extends Composite {
 	
@@ -670,7 +675,20 @@ public class EmployeeDraft extends Composite {
 	@UiField
 	Button undoAllButton;
 	
+	@UiField
+	DeckPanel deckPanel;
+
+	@UiField
+	Button idcButton;
+	
+	@UiField
+	Button closePdfButton;
+	
+	@UiField
+	Viewer pdfViewer;
+	
 	// ------------------------------------------------------ VARIABLES DE LA CLASE -------------------------------------------------
+	private int zoom;
 
 	private EmployeeDraftObject employeeDraftObject;
 	public ContractType contractType;
@@ -682,6 +700,9 @@ public class EmployeeDraft extends Composite {
 	// --------------------------------------------------------- CONSTRUCTOR --------------------------------------------------------
 
 	public EmployeeDraft() {
+		
+		this.zoom = Constants.DEFAULT_ZOOM;
+		
 		employee = new EmployeeImplementation();
 		
 		// Inicializamos la vista del empleado
@@ -694,6 +715,8 @@ public class EmployeeDraft extends Composite {
 		saveStatus.setTitle("Cada cambio que hagas se guarda autom\u00E1ticamente");	
 		onSaved = this::onSavedNoop;
 		
+		showEmployee();		
+
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -752,6 +775,16 @@ public class EmployeeDraft extends Composite {
 		employeeDraftObject.redo();
 		initializeView();
 		saving();
+	}
+	
+	@UiHandler("closePdfButton")
+	void onClosePdfButtonClick(ClickEvent event) {
+		showEmployee();
+	}
+	
+	@UiHandler("idcButton")
+	void onIdcButtonClick(ClickEvent event) {
+		showIdc();
 	}
 	
 	private void initHandlers() {
@@ -957,6 +990,7 @@ public class EmployeeDraft extends Composite {
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
 	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraftObject) {
+		showEmployee();
 		this.employeeDraftObject = employeeDraftObject;
 		this.contractType = new ContractType();
 		this.municipalities = new Municipalities();
@@ -1522,6 +1556,57 @@ public class EmployeeDraft extends Composite {
 		saveStatus.setText("Todos los cambios guardados");	
 		onSaved.accept(employeeDraftObject.getEmployeeContractInfo());
 	}
+	
+	private void showIdc() {
+
+		employeeDraftObject.downloadIdc(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
+	
+	private void showPdf() {
+		afiButton.setVisible(false);
+		peculiaritiesButton.setVisible(false);
+		bonificationsButton.setVisible(false);
+		idcButton.setVisible(false);
+		undoButton.setVisible(false);
+		redoButton.setVisible(false);
+		undoAllButton.setVisible(false);
+
+		closePdfButton.setVisible(true);
+		
+		showWidget(pdfViewer);
+	}
+
+	private void showEmployee() {
+		afiButton.setVisible(true);
+		peculiaritiesButton.setVisible(true);
+		bonificationsButton.setVisible(true);
+		idcButton.setVisible(true);
+		undoButton.setVisible(true);
+		redoButton.setVisible(true);
+		undoAllButton.setVisible(true);
+		try {
+			idcButton.setVisible(Wnd.getCurrentDomainNameURL().toLowerCase().endsWith("aonsolutions.org"));
+		}
+		catch ( Exception e ) {
+			
+		}
+		closePdfButton.setVisible(false);
+		showWidget(employee);
+	}
+	
+	private void showWidget(Widget widget) {
+		deckPanel.showWidget(deckPanel.getWidgetIndex(widget));
+	}
+	
 
 	protected void onSavedNoop(EmployeeContractInfo employeeContractInfo) {}
 	

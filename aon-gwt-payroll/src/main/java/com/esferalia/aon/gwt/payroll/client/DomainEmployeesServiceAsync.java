@@ -456,6 +456,22 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.resetEmployeeCalendarInfo(getCurrentDomainName(), contractId, callback);
 	}
 	
+	public void setEmployeeEvents(Integer idEmployee, EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
+		employeesServiceAsync.setEmployeeEvents(getCurrentDomainName(), idEmployee, employeeEventsData, callback);
+	}
+
+	public void setEventsDraft(ArrayList<EventEmployee> eventEmployees, AsyncCallback<ArrayList<EventEmployee>> callback) {
+		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
+	}
+
+	public void generateCertifaca2(SalaryDraft salaryDraft, AsyncCallback<String> callback) {
+		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), salaryDraft, callback);
+	}
+	
+	public void getIdc(Integer contractId, Date date, AsyncCallback<String> callback) {
+		employeesServiceAsync.getIdc(getCurrentDomainName(), contractId, date, callback);;
+
+	}
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {
@@ -471,18 +487,6 @@ public class DomainEmployeesServiceAsync {
 
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
-	}
-
-	public void setEmployeeEvents(Integer idEmployee, EmployeeEventsData employeeEventsData, AsyncCallback<EmployeeEventsData> callback) {
-		employeesServiceAsync.setEmployeeEvents(getCurrentDomainName(), idEmployee, employeeEventsData, callback);
-	}
-
-	public void setEventsDraft(ArrayList<EventEmployee> eventEmployees, AsyncCallback<ArrayList<EventEmployee>> callback) {
-		employeesServiceAsync.setEventsDraft(getCurrentDomainName(), eventEmployees, callback);
-	}
-
-	public void generateCertifaca2(SalaryDraft salaryDraft, AsyncCallback<String> callback) {
-		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), salaryDraft, callback);
 	}
 
 }

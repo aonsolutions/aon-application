@@ -7,6 +7,7 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoComm
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
 import static com.esferalia.aon.gwt.payroll.server.EnterprisesServiceImpl.getSSRegime;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
@@ -57,12 +58,12 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
-
 import javax.servlet.annotation.WebServlet;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.SortField;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
@@ -157,6 +158,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -166,7 +168,6 @@ import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryCostsFactory;
-import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryDeductionsFactory;
 import com.esferalia.aon.payroll.SalaryPayment;
@@ -243,6 +244,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import solutions.aon.saltra.api.Saltra;
 
 /**
  * The server side implementation of the RPC service.
@@ -5025,21 +5027,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
-	
-	private static List<Integer> getConceptIds(List<Payment> systemPayments) {
-		return systemPayments.stream().filter(p -> p.getConceptId() != null).map(p -> p.getConceptId()).distinct().collect(Collectors.toList());
-	}
-
-	private static List<Payment> sub(List<Payment> paymentConcepts, List<Payment> systemPayments) {
-		List<Integer> systemConceptsIds = getConceptIds(systemPayments);
-		return paymentConcepts.stream().filter(p -> AonStringUtils.isBlank(p.getName()) ||  !systemConceptsIds.contains(p.getId())).collect(Collectors.toList());
-	}
-
-
-	private static boolean isDefault(Payment p) {
-		return AonStringUtils.startsWith(p.getExpression(), "/*default*/" );
-	}
-	
 	// ----- New employee calendar
 
 	@Override
@@ -5104,6 +5091,76 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return JooqCertifica2.generateCertifica2(connection, domainId, salaryDraft);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		}
+	}
+
+	
+	@Override
+	public String getIdc(String domainName, Integer contractId, Date date) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Record record = JooqEmployee.getEmployeeRecord(connection, contractId);
+			String naf = record.get(PERSON.SOCIAL_SECURITY_NUM);
+			String ccc = record.get(EnterpriseCcc.ENTERPRISE_CCC.CCC);
+			Byte cccRegime = record.get(EnterpriseCcc.ENTERPRISE_CCC.TYPE);
+			String regime = getCCCRegimeCode(cccRegime);		
+			Date startDate = record.get(com.esferalia.aon.jooq.tables.Contract.CONTRACT.START_DATE);
+			
+			String base64Pdf =
+			new Saltra(
+					"http://saltra.aon.solutions/api/v1", 
+					"b10c46ce710e43e3fcb818474dab8eac2bc9e5f2", 
+					"a0d0bf7f352d676bffafcd8d7872725e826fd228")
+			.getIDC(naf, regime, ccc, startDate)
+			;
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+			
+			stringWriter.flush();		
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+			
+			return dataUri;
+		} catch (SQLException | IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	private static List<Integer> getConceptIds(List<Payment> systemPayments) {
+		return systemPayments.stream().filter(p -> p.getConceptId() != null).map(p -> p.getConceptId()).distinct().collect(Collectors.toList());
+	}
+
+	private static List<Payment> sub(List<Payment> paymentConcepts, List<Payment> systemPayments) {
+		List<Integer> systemConceptsIds = getConceptIds(systemPayments);
+		return paymentConcepts.stream().filter(p -> AonStringUtils.isBlank(p.getName()) ||  !systemConceptsIds.contains(p.getId())).collect(Collectors.toList());
+	}
+
+
+	private static boolean isDefault(Payment p) {
+		return AonStringUtils.startsWith(p.getExpression(), "/*default*/" );
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
 		}
 	}
 

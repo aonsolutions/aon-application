@@ -267,7 +267,14 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
-
+		
+		
+		@Override
+		public void getIdc(String domain, Integer contractId, Date date,
+				AsyncCallback<String> callback) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 
@@ -507,6 +514,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 
 					@Override
 					public void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft,
+							AsyncCallback<String> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void getIdc(String domain, Integer contractId, Date date,
 							AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						

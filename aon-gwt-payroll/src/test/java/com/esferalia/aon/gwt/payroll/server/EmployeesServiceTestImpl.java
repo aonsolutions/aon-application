@@ -530,6 +530,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	@Override
 	public void setEmployeeEvents(String domain, int contract, EmployeeEventsUpdate updateInfo) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		
 	}
 
@@ -537,24 +538,28 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	public ContextDescriptor getEmployeeEventsVariables(String domain, Integer employeeId, Date startDate, Date endDate)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public EmployeeEventsData getEmployeeEvents(String domain, int contract, ArrayList<String> employeeContractVariables) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public WorkplaceEmployees getWorkplaceEmployees(String domain, Integer workplaceId) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
 	@Override
 	public EventsWorkplace setEventsWorkplace(String domain, EventsWorkplace updateEventsWorkplace) {
 		// TODO Auto-generated method stub
+		System.out.println("Auto-generated method stub");
 		return null;
 	}
 
@@ -689,7 +694,11 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
-	
+	@Override
+	public String getIdc(String domain, Integer contractId, Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	
 
