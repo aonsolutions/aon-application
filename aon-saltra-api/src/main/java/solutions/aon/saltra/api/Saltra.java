@@ -122,6 +122,101 @@ public class Saltra {
 		return responseJsonObject.getString("pdf");
 	}
 	
+	public JSONObject getStatus(String regime, String ccc, String nif, Date date) throws IOException {
+		return getStatus(regime, ccc, nif, new SimpleDateFormat("dd-MM-yyyy").format(date));
+	}
+	
+	public JSONObject getStatus(String regime, String ccc, String nif, String date) throws IOException {
+		URL statusURL = getURL("movimientos/situacion");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put("cert_key", getCertKey())
+		.put("cert_secret", getCertSecret())
+		.put("ccc1", ccc.substring(0,2))
+		.put("ccc2", ccc.substring(2))
+		.put("regimen", regime)
+		.put("fecha", date)
+		.put("dni", nif)
+		.put("identificacion", getIdentificacion(nif))
+		;
+		return post(statusURL, requestJsonObject);
+	}	
+	
+	public JSONObject getActivity(String regime, String ccc, String from, String to) throws IOException {
+		URL idcURL = getURL("sincronizar/movimientos");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put("cert_key", getCertKey())
+		.put("cert_secret", getCertSecret())
+		.put("ccc1", ccc.substring(0,2))
+		.put("ccc2", ccc.substring(2))
+		.put("regimen", regime)
+		.put("fechaini", from)
+		.put("fechafin", to)
+		;
+		return post(idcURL, requestJsonObject);
+	}
+	
+	public JSONObject getActiveEmployees(String regime, String ccc ) throws IOException {
+		URL activeURL = getURL("movimientos/movreales");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put("cert_key", getCertKey())
+		.put("cert_secret", getCertSecret())
+		.put("ccc1", ccc.substring(0,2))
+		.put("ccc2", ccc.substring(2))
+		.put("regimen", regime)
+		.put("options", 1)
+		;
+		return post(activeURL, requestJsonObject);
+	}
+
+	public JSONObject getOldEmployees(String regime, String ccc ) throws IOException {
+		URL activeURL = getURL("movimientos/movreales");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put("cert_key", getCertKey())
+		.put("cert_secret", getCertSecret())
+		.put("ccc1", ccc.substring(0,2))
+		.put("ccc2", ccc.substring(2))
+		.put("regimen", regime)
+		.put("options", 2)
+		;
+		return post(activeURL, requestJsonObject);
+	}
+
+	public String getNaf(String regime, String ccc, String nif, String apellido1, String apellido2) throws IOException {
+		URL nafURL = getURL("movimientos/naf");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put("cert_key", getCertKey())
+		.put("cert_secret", getCertSecret())
+		.put("ccc1", ccc.substring(0,2))
+		.put("ccc2", ccc.substring(2))
+		.put("regimen", regime)
+		.put("dni", nif)
+		.put("apellido1", apellido1)
+		.put("apellido2", apellido2)
+		.put("identificacion", getIdentificacion(nif))
+		;
+		JSONObject responseJson = post(nafURL, requestJsonObject);
+		return responseJson.getString("naf1") + responseJson.getString("naf2");
+	}	
+	
+	public String getNif(String naf) throws IOException {
+		URL nifURL = getURL("movimientos/nifxnaf");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put("cert_key", getCertKey())
+		.put("cert_secret", getCertSecret())
+		.put("naf", naf)
+		;
+		JSONObject responseJson = post(nifURL, requestJsonObject);
+		return responseJson.getString("dni");
+	}	
+
+	// ------------------------------------------------------------------------
+	
 	private String getToken() {
 		return token;
 	}
@@ -159,6 +254,16 @@ public class Saltra {
 				url.getPort(),
 				String.format("%s/%s", url.getFile(), path)
 				);
+	}
+	
+	private static int getIdentificacion(String cif) {
+		if ( cif.matches("[0-9]{8}[A-Z]") ) 
+			return 1; // DNI
+		if ( cif.matches("[KL][0-9]{7}[A-Z]") )
+			return 1; // K,L DNI
+		if ( cif.matches("[MXYZ][0-9]{7}[A-Z]") )
+			return 3; // NIE 
+		return 2;
 	}
 	
 	private static JSONObject post(URL url, JSONObject jsonObject) throws IOException {
