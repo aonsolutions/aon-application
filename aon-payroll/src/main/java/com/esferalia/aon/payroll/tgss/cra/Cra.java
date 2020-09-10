@@ -4,6 +4,7 @@ import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
@@ -11,7 +12,6 @@ import static com.esferalia.aon.payroll.tgss.creta.Bases.getDatabaseOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbPasswordOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getDbUserOption;
 import static com.esferalia.aon.payroll.tgss.creta.Bases.getHostNameOption;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -35,7 +35,6 @@ import org.jooq.Result;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 
-import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
@@ -288,8 +287,7 @@ public class Cra {
 						if(typeCRA == craType) {
 							
 							// Accumulate craAmount (important if exists amount)
-							craAmount += salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
-//							craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+							craAmount += (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 							
 							// Last iteration
 							if(i+1 == salaryPaymentRecords.size()) {
@@ -310,8 +308,7 @@ public class Cra {
 							typeCRA = craType;
 							
 							// Update craAmount
-							craAmount = salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
-//							craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
+							craAmount = (salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) > 0) ? salaryPaymentRecords.get(i).get(SALARY_PAYMENT.QUOTE) : salaryPaymentRecords.get(i).get(SALARY_PAYMENT.AMOUNT);
 							
 							// Last iteration
 							if(i+1 == salaryPaymentRecords.size()) {
@@ -499,7 +496,7 @@ public class Cra {
 					for(Record salatyData: salaryDatas){
 						
 						// Get CRA amount
-						craAmount += Double.parseDouble(salatyData.get(SALARY_DATA.EXPRESSION));
+						craAmount += Double.parseDouble(salatyData.get(SALARY_PAYMENT.EXPRESSION));
 						
 					}
 					
@@ -538,6 +535,9 @@ public class Cra {
 						
 						for(Record salaryPayment : salaryPayments) {
 							PaymentType typeCRA = PaymentType.values()[salaryPayment.get(SALARY_PAYMENT.TYPE)];
+							
+							if(typeCRA.equals(PaymentType.CRA_0000))
+								continue;
 							
 							Double amount = salaryPayment.get(SALARY_PAYMENT.AMOUNT);
 							

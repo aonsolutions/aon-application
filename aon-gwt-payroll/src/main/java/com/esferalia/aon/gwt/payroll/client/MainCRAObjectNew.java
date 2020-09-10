@@ -82,13 +82,12 @@ public class MainCRAObjectNew {
 				allEnterpriseCCCs.clear();
 				enterpriseCCCs.addAll(enterprisesCCCInfo);
 				allEnterpriseCCCs.addAll(enterprisesCCCInfo);
-				success.accept(enterprisesCCCInfo);
 				
-//				getCRAs(
-//					s -> {
-//						success.accept(enterprisesCCCInfo);
-//					}, 
-//					f -> {});	
+				getCRAs(
+					s -> {
+						success.accept(enterprisesCCCInfo);
+					}, 
+					f -> {});	
 			}
 	
 			@Override

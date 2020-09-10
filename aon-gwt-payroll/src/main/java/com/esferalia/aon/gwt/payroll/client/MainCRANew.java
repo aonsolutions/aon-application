@@ -986,13 +986,15 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiHandler("listButton")
 	public void onListButton(ClickEvent event) {
-		mainCRAObjectNew.getCRAs(
-				s -> {
-					showCRAS();
-					initCRATable();
-				}, 
-				f -> {}
-		);
+//		mainCRAObjectNew.getCRAs(
+//				s -> {
+//					showCRAS();
+//					initCRATable();
+//				}, 
+//				f -> {}
+//		);
+		showCRAS();
+		initCRATable();
 	}
 	
 	@UiHandler("allCCCsCB")
@@ -1121,72 +1123,65 @@ public class MainCRANew extends MainEntryPoint {
 			Date findingDate = new Date(Integer.parseInt(year.getSelectedValue()), Integer.parseInt(month.getSelectedValue()), 1);
 			DateUtils.resetTime(findingDate);
 			
-			mainCRAObjectNew.getCRAs(
-					s -> {
-						if(checkRectificavo()) {
-							mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
-									p -> {
-										if(StringUtils.isBlank(p)) {
-											mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-													v -> {
-														for(CCCInfo cccInfo : cccsSelected) {
-															cccInfo.getCRADates().add(findingDate);
-														}
-														showCRAS();
-														initCRATable();
-													}, 
-													f -> {});
-										}else {
-											AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
-												
-												@Override
-												protected void onAccept() {
-													mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
-															v -> {
-																for(CCCInfo cccInfo : cccsSelected) {
-																	cccInfo.getCRADates().add(findingDate);
-																}
-																showCRAS();
-																initCRATable();
-															}, 
-															f -> {});
-												}
-											};
-											dialog.center();
-											dialog.show();
-										}
-									}, f ->{});
-						} else {
-							AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
-								
-								@Override
-								protected void onAccept() {
-									mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
-											v -> {
-												WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-														+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
-												warning.center();
-												warning.show();
-												
-												for(CCCInfo cccInfo : cccsSelected) {
-													cccInfo.getCRADates().add(findingDate);
-												}
-												
-												showCRAS();
-												initCRATable();
-											}, 
-											f -> {});
-								}
-							};
-							
-							dialog.center();
-							dialog.show();
-						}
-					}, 
-					f -> {}
-			);
-			
-			
+			if(checkRectificavo()) {
+				mainCRAObjectNew.checkCreateNewCRA(findingDate, cccIdList,
+						p -> {
+							if(StringUtils.isBlank(p)) {
+								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+										v -> {
+											for(CCCInfo cccInfo : cccsSelected) {
+												cccInfo.getCRADates().add(findingDate);
+											}
+											showCRAS();
+											initCRATable();
+										}, 
+										f -> {});
+							}else {
+								AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", p) {
+									
+									@Override
+									protected void onAccept() {
+										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
+												v -> {
+													for(CCCInfo cccInfo : cccsSelected) {
+														cccInfo.getCRADates().add(findingDate);
+													}
+													showCRAS();
+													initCRATable();
+												}, 
+												f -> {});
+									}
+								};
+								dialog.center();
+								dialog.show();
+							}
+						}, f ->{});
+			} else {
+				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", "Ya existe un fichero CRA para esta cuenta de cotizaci"+String.valueOf("\u00F3")+"n en este periodo. Recuerde que puede eliminar de la tabla dicho fichero CRA. Si por lo contrario quiere generar un fichero CRA rectificativo puede acepte esta ventana." + String.valueOf("\u00BF")+"Desea generar un fichero rectificativo?") {
+					
+					@Override
+					protected void onAccept() {
+						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
+								v -> {
+									WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
+											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
+									warning.center();
+									warning.show();
+									
+									for(CCCInfo cccInfo : cccsSelected) {
+										cccInfo.getCRADates().add(findingDate);
+									}
+									
+									showCRAS();
+									initCRATable();
+								}, 
+								f -> {});
+					}
+				};
+				
+				dialog.center();
+				dialog.show();
+			}
 		}
 	}
 	
