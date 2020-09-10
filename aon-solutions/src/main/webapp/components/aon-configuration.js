@@ -256,7 +256,8 @@ class AonConfiguration extends HTMLElement {
 
 		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "block";
-		content.innerHTML = '<aon-company-list> </aon-companny-list>' ;
+		let companyId = JSON.parse(this.getAttribute('company')).id;
+		content.innerHTML = `<aon-company-list company="${companyId}"> </aon-company-list>` ;
 	}
 
 	buildCreateUser(share) {

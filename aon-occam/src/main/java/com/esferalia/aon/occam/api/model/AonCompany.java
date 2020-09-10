@@ -64,7 +64,8 @@ public class AonCompany implements Serializable {
 			.put("active", getCompany().isDomainActive())
 			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
 			.put("logo", "https://" + getDomain().getName() + "/aonDocuments/company.logo")
-			.put("parent",getDomain().isParent());
+			.put("parent",getDomain().isParent())
+			.put("parentId",getDomain().getParentId());
 		if(!getDomain().isParent()) {
 			json.put("parentLogo", "https://" + getParentDomain().getName() + "/aonDocuments/company.logo");
 		}

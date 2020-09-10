@@ -1,5 +1,5 @@
 import './aon-company.js'
-import { getCompanies} from  '../../services/service.js';
+import { getDomainCompanies, getCompanies} from  '../../services/service.js';
 
 
 (function() {
@@ -20,13 +20,34 @@ import { getCompanies} from  '../../services/service.js';
 	`;
 
 class AonCompanyList extends HTMLElement {
+
+	get company() {
+		return this.getAttribute('company');
+	}
+
+	set company(company) {
+		this.setAttribute('company', company);
+	}
+
 	constructor () {
 		super();
 		this.innerHTML = html;
-		getCompanies().then(companies => {
-			this.build(companies);
+		let parentId = parseInt(this.getAttribute('company'));
+		getCompanies().then(r => {
+      this.build(r.companies.filter(f => !f.parent && f.parentId === parentId ))
 		});
 	}
+
+	init() {
+		getDomainCompanies(localStorage.getItem('aon_domain_name'))
+		.then( r => {
+			  if(!r.end){
+          this.init();
+        }
+        this.build(r.companies);
+      }, () => closeSession()
+    );
+  }
 
 	connectedCallback () {
 
@@ -53,7 +74,7 @@ class AonCompanyList extends HTMLElement {
 			// TODO:
 			let td5 = document.createElement('td');
 			td5.className = 'mdl-data-table__cell--non-numeric';
-			td5.innerHTML = '<aon-icon-button id="aonCompanyListSecurityButton-'+ company.id +'" icon="security"></aon-icon-button>';
+			td5.innerHTML = '<aon-icon-button id="aonCompanyListSecurityButton-'+ company.id +'" icon="edit"></aon-icon-button>';
 			td5.addEventListener('click', () => this.dispatchEvent(event));
 
 			tr.appendChild(td1);
