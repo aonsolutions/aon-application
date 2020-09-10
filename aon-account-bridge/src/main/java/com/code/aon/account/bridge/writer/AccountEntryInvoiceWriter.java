@@ -369,7 +369,7 @@ public class AccountEntryInvoiceWriter implements Serializable {
 	}
 
 	public String obtainConcept(String prefix, Invoice invoice) {
-		return StringUtils.abbreviate(prefix + invoice.getReferenceCode(), 32) ; 
+		return StringUtils.abbreviate(prefix + invoice.getReferenceCode(), 64) ; 
 	}
 
 	public String obtainConcept(Invoice invoice, double total) {

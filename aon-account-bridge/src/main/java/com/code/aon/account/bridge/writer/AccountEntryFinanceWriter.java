@@ -808,13 +808,13 @@ public class AccountEntryFinanceWriter implements Serializable {
 		prefix = prefix + " " + (!finance.isPayroll() ? INVOICE_ABRV + ": " : "");
 		String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();
 		String fbatchConcept = (fbatch != null) ? (" (R:" + fbatch.getId() + ")") : "";
-		return StringUtils.abbreviate(prefix + concept + fbatchConcept, 32);
+		return StringUtils.abbreviate(prefix + concept + fbatchConcept, 64);
 	}
 
 	private String obtainReturnConcept(Finance finance) {
 		String prefix = RETURN + " " + INVOICE_ABRV + ": ";
 		String concept = (!finance.isEmptyInvoice()) ? finance.getInvoice().getReferenceCode() : finance.getConcept();
-		return StringUtils.abbreviate(prefix + concept, 32);
+		return StringUtils.abbreviate(prefix + concept, 64);
 	}
 
 	private double obtainBalancingFactor(boolean payment, AccountEntryType entryType) {
