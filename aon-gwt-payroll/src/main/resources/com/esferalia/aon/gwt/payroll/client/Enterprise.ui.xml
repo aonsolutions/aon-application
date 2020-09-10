@@ -163,17 +163,17 @@
 									<td>
 										<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
 									</td>
-									<td style="width: 10%;">
-										<g:Label styleName='{style.alignTextCenter}'>Localidad</g:Label>
-									</td>
 									<td>
-										<g:TextBox ui:field="addressCity" styleName='aon-inputText {style.maxWidthTextBox3}'></g:TextBox>
-									</td>
-									<td>
-										<g:Label styleName='{style.alignTextCenter}'>  Provincia  </g:Label>
+										<g:Label styleName='{style.alignTextCenter}'>Provincia</g:Label>
 									</td>
 									<td colspan="2"> 
 										<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.maxWidth}'></g:ListBox>
+									</td>
+									<td style="width: 10%;">
+										<g:Label styleName='{style.alignTextCenter}'>Municipio</g:Label>
+									</td>
+									<td>
+										<g:ListBox ui:field="addressCity" debugId="addressCity" styleName='aon-inputText {style.maxWidthTextBox}'></g:ListBox>
 									</td>
 								</tr>
 								<tr>

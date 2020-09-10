@@ -83,7 +83,7 @@ public abstract class Enterprise extends ResizeComposite {
 	TextBox addressZip;
 	
 	@UiField
-	TextBox addressCity;
+	ListBox addressCity;
 	
 	@UiField
 	ListBox addressProvince;
@@ -290,7 +290,7 @@ public abstract class Enterprise extends ResizeComposite {
 		this.address.setValue(null);
 		this.addressNum.setValue(null);
 		this.addressZip.setValue(null);
-		this.addressCity.setValue(null);
+		this.addressCity.clear();
 		this.addressProvince.clear();
 		this.mobile.setValue(null);
 		this.phone.setValue(null);

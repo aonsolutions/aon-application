@@ -37,6 +37,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
+import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.payroll.enumeration.CCCType;
@@ -133,7 +134,8 @@ public class JooqEnterprise {
 			address = raddressRecords.get(0).get(RADDRESS.ADDRESS);
 			addressNum = raddressRecords.get(0).get(RADDRESS.NUMBER);
 			addressZip = raddressRecords.get(0).get(RADDRESS.ZIP);
-			addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
+//			addressCity = raddressRecords.get(0).get(RADDRESS.CITY);
+			addressCity = raddressRecords.get(0).get(RADDRESS.MUNICIPALITY_CODE);
 			geozoneId = raddressRecords.get(0).get(RADDRESS.GEOZONE);
 			
 			if(null != geozoneId) {
@@ -257,6 +259,7 @@ public class JooqEnterprise {
 	}
 	
 	private static EnterpriseInfo setEnterpriseInfoDB(DSLContext dslContext, EnterpriseInfo enterpriseInfo) {
+		Municipalities municipalities = new Municipalities();
 		
 		// --------- ENTERPRISE TABLE
 		
@@ -316,7 +319,8 @@ public class JooqEnterprise {
 					.set(RADDRESS.ADDRESS, enterpriseInfo.getAddress())
 					.set(RADDRESS.NUMBER, enterpriseInfo.getAddressNum())
 					.set(RADDRESS.ZIP, enterpriseInfo.getAddressZip())
-					.set(RADDRESS.CITY, enterpriseInfo.getAddressCity())
+					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(enterpriseInfo.getAddressCity()))
+					.set(RADDRESS.MUNICIPALITY_CODE, enterpriseInfo.getAddressCity())
 					.set(RADDRESS.GEOZONE, geozoneId)
 					.returning(RADDRESS.ID, RADDRESS.GEOZONE)
 					.fetchOne();
@@ -328,7 +332,8 @@ public class JooqEnterprise {
 					.set(RADDRESS.ADDRESS, enterpriseInfo.getAddress())
 					.set(RADDRESS.NUMBER, enterpriseInfo.getAddressNum())
 					.set(RADDRESS.ZIP, enterpriseInfo.getAddressZip())
-					.set(RADDRESS.CITY, enterpriseInfo.getAddressCity())
+					.set(RADDRESS.CITY, municipalities.getMunicipalityByZip(enterpriseInfo.getAddressCity()))
+					.set(RADDRESS.MUNICIPALITY_CODE, enterpriseInfo.getAddressCity())
 					.set(RADDRESS.GEOZONE, geozoneId)
 					.where(RADDRESS.ID.eq(rAddressId))
 					.execute();

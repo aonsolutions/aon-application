@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
@@ -7,7 +8,7 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -90,12 +91,16 @@ public class EnterpriseDraft extends Composite {
 		}
 
 		@Override
-		public void onEnterpriseAddressCityChange() {}
+		public void onEnterpriseAddressCityChange() {
+			enterpriseDraftObject.setAddressCity(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()).toString());
+			saving();
+		}
 
 		@Override
 		public void onEnterpriseAddressProvinceChange() {
 			String addressProvinceCode = this.addressProvince.getSelectedValue();
 			enterpriseDraftObject.setAddressProvince(addressProvinceCode);
+			updateMunicipalities();
 			saving();
 			
 //			String geozoneProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
@@ -191,6 +196,8 @@ public class EnterpriseDraft extends Composite {
 	private Timer saveTimer;
 	
 	private Consumer<EnterpriseInfo> onSaved ;
+	
+	private Municipalities municipalities = new Municipalities();
 
 	// ------------------------------------------------ CONSTRUCTOR ------------------------------------------------------
 
@@ -392,17 +399,6 @@ public class EnterpriseDraft extends Composite {
 			//saving();
 		});
 		
-		enterprise.addressCity.addKeyUpHandler(e-> {
-			
-			String value = enterprise.addressCity.getValue();
-			String saved = enterpriseDraftObject.getEnterpriseInfo().getAddressCity();
-			if ( AonStringUtils.equals(value, saved))
-				return;
-			
-			enterpriseDraftObject.setAddressCity(value);
-			saving();
-		});
-		
 		enterprise.mobile.addKeyUpHandler(e-> {
 			
 			String value = enterprise.mobile.getValue();
@@ -469,8 +465,11 @@ public class EnterpriseDraft extends Composite {
 		enterprise.address.setValue(enterpriseDraftObject.getAddress());
 		enterprise.addressNum.setValue(enterpriseDraftObject.getAddressNum());
 		enterprise.addressZip.setValue(enterpriseDraftObject.getAddressZip());
-		enterprise.addressCity.setValue(enterpriseDraftObject.getAddressCity());
 		enterprise.addressProvince.setSelectedIndex(enterpriseDraftObject.getAddressProvinceIndex());
+		if(null != enterpriseDraftObject.getAddressProvinceIndex()) {
+			updateMunicipalities();
+			enterprise.addressCity.setSelectedIndex(getMunicipalityIndex(enterpriseDraftObject.getAddressProvince(), enterpriseDraftObject.getAddressCity()));
+		}
 		enterprise.mobile.setValue(enterpriseDraftObject.getMobile());
 		enterprise.phone.setValue(enterpriseDraftObject.getPhone());
 		enterprise.email.setValue(enterpriseDraftObject.getEmail());
@@ -586,6 +585,18 @@ public class EnterpriseDraft extends Composite {
 		label.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 		
 		return label;
+	}
+	
+	public void updateMunicipalities() {
+		String provinceCode = enterprise.addressProvince.getSelectedValue();
+		enterprise.addressCity.clear();
+		enterprise.addressCity.addItem("-");;
+		ArrayList<String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
+		municipalitiesOfProvince.forEach(m -> {enterprise.addressCity.addItem(m);});
+	}
+	
+	private int getMunicipalityIndex(String province, String city) {
+		return municipalities.getMunicipalityIndex(province, city) + 1;
 	}
 	
 	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
