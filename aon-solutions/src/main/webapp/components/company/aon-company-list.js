@@ -1,5 +1,5 @@
 import './aon-company.js'
-import { getDomainCompanies, getCompanies} from  '../../services/service.js';
+import { getCompanies} from  '../../services/service.js';
 
 
 (function() {
@@ -37,17 +37,6 @@ class AonCompanyList extends HTMLElement {
       this.build(r.companies.filter(f => !f.parent && f.parentId === parentId ))
 		});
 	}
-
-	init() {
-		getDomainCompanies(localStorage.getItem('aon_domain_name'))
-		.then( r => {
-			  if(!r.end){
-          this.init();
-        }
-        this.build(r.companies);
-      }, () => closeSession()
-    );
-  }
 
 	connectedCallback () {
 
