@@ -3,43 +3,50 @@ export const Apps = {
       app: 'invoice',
       title: 'Facturas',
       description: 'Gestor de Facturas.',
-      logo: 'assets/apps/invoice.png'
+      icon: 'aon_app',
+      color: '#A2A8B6'
     },
     DOCUMENTAL: {
       app: 'documental',
       title: 'Documental',
       description: 'Gestor de Documentos.',
-      logo: 'assets/apps/documental.png'
+      icon: 'aon_app',
+      color: '#6986BB'
     },
     HELPDESK: {
       app: 'helpdesk',
       title: 'Help Desk',
       description: 'Gestor de Ayuda (Help Desk).',
-      logo: 'assets/apps/helpdesk.png'
+      icon: 'aon_app',
+      color: '#D38C5B'
     },
     ACCOUNTING: {
       app: 'accounting',
       title: 'Contabilidad',
       description: 'Gestor de Contabilidad.',
-      logo: 'assets/apps/conta.png'
+      icon: 'aon_app',
+      color: '#D8B03D'
     },
     FISCAL: {
       app: 'fiscal',
       title: 'Fiscal',
       description: 'Gestor Fiscal.',
-      logo: 'assets/apps/fiscal.png'
+      icon: 'aon_app',
+      color: '#3A85C3'
     },
     PAYROLL: {
       app: 'payroll',
       title: 'Laboral',
       description: 'Gestor Laboral.',
-      logo: 'assets/apps/laboral.png'
+      icon: 'aon_app',
+      color: '#90BD75'
     },
     OCR: {
       app: 'ocr',
       title: 'OCR',
       description: 'Gestor OCR.',
-      logo: 'assets/apps/ocr.png'
+      icon: 'aon_app',
+      color: '#535353'
     },
     AIO: {
       app: 'aio',
@@ -51,7 +58,8 @@ export const Apps = {
       app: 'tools',
       title: 'Herramientas',
       description: 'Utilidades Generales de Aon Solutions.',
-      logo: 'assets/apps/ocr.png'
+      icon: 'aon_app',
+      color: 'gray'
     },
     SELFCONTA: {
       app: 'selfconta',

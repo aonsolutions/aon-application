@@ -1,7 +1,7 @@
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
-
+import './aon-icon.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -211,11 +211,15 @@ class AonMenu extends HTMLElement {
 
 		let div = document.createElement('div');
 		div.style.padding = '8px 0px';
-		let img = document.createElement('img');
-		img.style.width = '40px';
-		img.src = app.logo;
-		img.title = app.title;
-
+		if(app.icon) {
+			div.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="40px"></aon-icon>`;
+		} else {
+			let img = document.createElement('img');
+			img.style.width = '40px';
+			img.src = app.logo;
+			img.title = app.title;
+			div.appendChild(img);
+		}
 		let div2 = document.createElement('div');
 
 		let span = document.createElement('span');
@@ -224,7 +228,6 @@ class AonMenu extends HTMLElement {
 		span.style.color = 'black';
 		span.innerHTML = app.title;
 		div2.appendChild(span);
-		div.appendChild(img);
 		div.appendChild(div2);
 		a.appendChild(div);
 		li.appendChild(a);
