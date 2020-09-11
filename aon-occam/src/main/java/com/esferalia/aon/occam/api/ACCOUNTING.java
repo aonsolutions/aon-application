@@ -58,7 +58,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccounting().insert(ctx, reg);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -73,7 +73,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccounting().update(ctx, reg);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -88,7 +88,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccounting().getAccountingRegistries(ctx, filter);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -114,7 +114,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccount(ctx, id);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -128,7 +128,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccount(ctx, code);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -141,7 +141,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser());
 			return getAccounting().getAccounts(ctx, params);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -156,7 +156,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getAccounting().getAccounts(ctx, filter);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -172,7 +172,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, login);
 			return getAccounting().getAccountNextCode(ctx, prefix);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -187,7 +187,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return fetchPeriod(ctx, date);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if(ctx != null) {
@@ -214,7 +214,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return insert(ctx, ap);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if(ctx != null) {
@@ -243,7 +243,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getDomainPeriods(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -260,7 +260,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountEntries(ctx, params, offset, limit);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -277,7 +277,7 @@ public class ACCOUNTING {
 			return getAccounting().getAccountEntries(ctx, params, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -328,7 +328,7 @@ public class ACCOUNTING {
 			AccountEntry saved = getAccounting().getAccountEntry(ctx, id);
 			return saved;
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -352,7 +352,7 @@ public class ACCOUNTING {
 			);
 			return ae;
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -370,7 +370,7 @@ public class ACCOUNTING {
 			return getAccountEntries(ctx, filter, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -398,7 +398,7 @@ public class ACCOUNTING {
 			getAccounting().delete(ctx, id);
 			;
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -470,7 +470,7 @@ public class ACCOUNTING {
 			report = AccountStatementDAO.calculate(report);
 			return report;
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -485,7 +485,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountBalance(ctx, params);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -501,7 +501,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().initializeInvoice(ctx, registry, activity, issueDate);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -515,7 +515,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().initializeInvoice(ctx, registry, ai, preserveData);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -530,7 +530,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountingInvoice(ctx, accountEntry);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -545,7 +545,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountingInvoiceFromInvoice(ctx, invoiceId);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -560,7 +560,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getPendingImportAccountingInvoices(ctx, query);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -574,7 +574,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().save(ctx, invoice);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -589,7 +589,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().save(ctx, account);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -603,7 +603,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().delete(ctx, account);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -618,7 +618,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountEntryWrapper(ctx, accountEntry);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -634,7 +634,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, userLogin);
 			return getAccounting().getRegistryLastAccountingInvoice(ctx, registryId);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -650,7 +650,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, userLogin);
 			return getAccounting().rectifyInvoice(ctx, invoiceId, data);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -665,7 +665,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, userLogin);
 			return getAccounting().getSalaryEntries(ctx, from, to);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -679,7 +679,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, userLogin);
 			return getAccounting().getSalaryFormatted(ctx, from, to);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -696,7 +696,7 @@ public class ACCOUNTING {
 			return getAccounting().getAccountFinances(ctx,params, offset, limit)
 					.collect(Collectors.toCollection(LinkedList::new));
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -711,7 +711,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().save(ctx, financeEntry);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -726,7 +726,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getFinanceEntry(ctx, accountEntry);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -740,7 +740,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().checkParentLinker(ctx, account);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -754,7 +754,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().runParentLinker(ctx, account);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -768,7 +768,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().accountIntegrity(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -782,7 +782,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().accountIntegrityFix(ctx,account);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -796,7 +796,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().domainIntegrity(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -810,7 +810,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().domainIntegrityFix(ctx,account);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -824,7 +824,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().noLowLevelAccounts(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -837,7 +837,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().emptyEntries(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -851,7 +851,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().unbalancedEntries(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -865,7 +865,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
 			return getAccounting().wrongRecordedInvoices(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -880,7 +880,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().removeWrongRecordedInvoice(ctx,accountEntryId);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -895,7 +895,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().removeWrongCheckedInvoice(ctx,invoice);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -909,7 +909,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getAccountLinks(ctx, params);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -924,7 +924,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().changeAccountDescription(ctx, accountId, newDescription);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -939,7 +939,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().createAndLinkAccount(ctx, registryType, registryId);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -953,7 +953,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getJournalRegenerationInfo(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -967,7 +967,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().regenerateJournal(ctx,accuountPeriod);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -981,7 +981,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().getInputVatRegenerationInfo(ctx);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -995,7 +995,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return getAccounting().regenerateInputVat(ctx,year);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -1010,7 +1010,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return  getAccounting().getAccountOperatingReport(ctx, params);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -1025,7 +1025,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return  getAccounting().getTrialBalanceReport(ctx, params);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -1040,7 +1040,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return  getAccounting().getBalanceReport(ctx, params);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -1055,7 +1055,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return  getAccounting().getAccountAnalyticalReport(ctx, params);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -1070,7 +1070,7 @@ public class ACCOUNTING {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			return  getAccounting().getAccountAnalyticalReport(ctx, params, analytical);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
@@ -1085,7 +1085,7 @@ public class ACCOUNTING {
 			analytical = getAccounting().saveAnalyticConfiguration(ctx,analytical);
 			return getAccounting().getAccountAnalyticalReport(ctx, params, analytical);
 		} catch (Throwable t) {
-			ctx.log().printStackTrace(t);
+			t.printStackTrace();
 			throw t;
 		} finally {
 			if (ctx != null)
