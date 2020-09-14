@@ -57,12 +57,13 @@ class AonIcon extends HTMLElement {
 	}
 
 	connectedCallback () {
+    let icon = icons[this.getAttribute('icon')];
   	this.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${icon.width} ${icon.height}"
           width="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}"
           height="${this.hasAttribute('size') ? this.getAttribute('size') : '24px'}">
         <g id="${this.getAttribute('icon')}">
-          <path d="${icons[this.getAttribute('icon')]}" style="fill:${this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368'};"/>
+          <path d="${icon.path}" style="fill:${this.hasAttribute('color') ? this.getAttribute('color'): '#5f6368'};"/>
         </g>
       </svg>
 		`;

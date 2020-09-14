@@ -1,3 +1,4 @@
+import {isMobile} from  '../services/utils.js';
 import {closeSession, getUserAppRole, getCompanies} from  '../services/service.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
@@ -110,66 +111,70 @@ class AonParent extends HTMLElement {
 	}
 
 	companySelection(company) {
-		let aonHeaderCompanyList = document.getElementById('aon-header-company-list');
+		const BASE_ID = isMobile() ? 'aonHeaderMobile' : 'aonHeader';
+		let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 		aonHeaderCompanyList.style.display = 'block';
 
-		let aonHeaderHelp = document.getElementById('aon-header-help');
-		aonHeaderHelp.style.display = 'block';
+		if(!isMobile()){
+			let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
+			aonHeaderHelp.style.display = 'block';
 
-		let aonHeaderApps = document.getElementById('aon-header-apps');
-		aonHeaderApps.style.display = 'none';
+			let aonHeaderApps = document.getElementById(BASE_ID + 'Apps');
+			aonHeaderApps.style.display = 'none';
 
-		let aonHeaderSearch = document.getElementById('aon-header-search');
-		aonHeaderSearch.style.display = 'none';
+			let aonHeaderSearch = document.getElementById(BASE_ID + 'Search');
+			aonHeaderSearch.style.display = 'none';
 
-		let aonHeaderHome = document.getElementById('aon-header-home');
-		aonHeaderHome.style.display = 'block';
+			let aonHeaderHome = document.getElementById(BASE_ID + 'Home');
+			aonHeaderHome.style.display = 'block';
 
-		let aonHeaderAlma = document.getElementById('aon-header-alma');
-		aonHeaderAlma.style.display = 'block';
+			let aonHeaderAlma = document.getElementById(BASE_ID + 'Alma');
+			aonHeaderAlma.style.display = 'block';
 
-		let aonHeaderShowMenu = document.getElementById('aon-header-show-menu');
-		aonHeaderShowMenu.style.display = 'block';
+			let aonHeaderShowMenu = document.getElementById(BASE_ID + 'ShowMenu');
+			aonHeaderShowMenu.style.display = 'block';
 
-		let aonHeaderCompany = document.getElementById('aon-header-company');
-		aonHeaderCompany.style.display = 'block';
+			let aonHeaderCompany = document.getElementById(BASE_ID + 'Company');
+			aonHeaderCompany.style.display = 'block';
 
-		let aonHeaderCompanyName = document.getElementById('aon-header-company-name');
-		aonHeaderCompanyName.innerHTML = company.name;
+			let aonHeaderCompanyName = document.getElementById(BASE_ID + 'CompanyName');
+			aonHeaderCompanyName.innerHTML = company.name;
 
-		let aonHeaderCompanyLogo = document.getElementById('aonHeaderCompanyLogo');
-		let aonHeaderCompanyLogoImg = document.getElementById('aonHeaderCompanyLogoImg');
-		if(company.logo){
-			aonHeaderCompanyLogoImg.src = company.logo;
-			aonHeaderCompanyLogo.style.display = 'block';
-		} else {
-			aonHeaderCompanyLogo.style.display = 'none';
+			let aonHeaderCompanyLogo = document.getElementById(BASE_ID + 'CompanyLogo');
+			let aonHeaderCompanyLogoImg = document.getElementById(BASE_ID + 'CompanyLogoImg');
+			if(company.logo){
+				aonHeaderCompanyLogoImg.src = company.logo;
+				aonHeaderCompanyLogo.style.display = 'block';
+			} else {
+				aonHeaderCompanyLogo.style.display = 'none';
+			}
+
+			let aonLogo = document.getElementById('aonLogo');
+			let aonLogo2 = document.getElementById('aonLogo2');
+			let aonLogoParent = document.getElementById('aonLogoParent');
+			if(company.parentLogo){
+				aonLogoParent.src = company.parentLogo;
+				aonLogoParent.style.display = 'block';
+				aonLogo2.style.display = 'block';
+				aonLogo.style.display = 'none';
+			} else {
+				aonLogoParent.style.display = 'none';
+				aonLogo2.style.display = 'none';
+				aonLogo.style.display = 'block';
+			}
 		}
-
-		let aonLogo = document.getElementById('aonLogo');
-		let aonLogo2 = document.getElementById('aonLogo2');
-		let aonLogoParent = document.getElementById('aonLogoParent');
-		if(company.parentLogo){
-			aonLogoParent.src = company.parentLogo;
-			aonLogoParent.style.display = 'block';
-			aonLogo2.style.display = 'block';
-			aonLogo.style.display = 'none';
-		} else {
-			aonLogoParent.style.display = 'none';
-			aonLogo2.style.display = 'none';
-			aonLogo.style.display = 'block';
-		}
-
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
 
 		getUserAppRole().then(user => {
-			let aonMenu = document.getElementById('aonMenu');
-			aonMenu.setAttribute('company', JSON.stringify(company));
-			aonMenu.setAttribute('user', JSON.stringify(user));
-			aonMenu.buildMenu();
-			aonMenu.toogle();
-
+			if(!isMobile()) {
+				let aonMenu = document.getElementById('aonMenu');
+				aonMenu.setAttribute('company', JSON.stringify(company));
+				aonMenu.setAttribute('user', JSON.stringify(user));
+				aonMenu.buildMenu();
+				aonMenu.toogle();
+			}
+			
 			let aonHeader = document.getElementById('aonHeader');
 			aonHeader.setAttribute('company', JSON.stringify(company));
 			aonHeader.setAttribute('user', JSON.stringify(user));

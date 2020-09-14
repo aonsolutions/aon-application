@@ -142,7 +142,6 @@
     cursor: pointer;
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 215px;
 	}
 
 	.aonMenuLink {
@@ -158,6 +157,11 @@
 	    border-bottom: 1px solid #ddd;
 	    color: #5f6368;
 	    height: 80px;
+	}
+
+	.aonHeaderButtonMobile {
+			height: 80px;
+			top: 20px;
 	}
 
 	.aonAvatar {
