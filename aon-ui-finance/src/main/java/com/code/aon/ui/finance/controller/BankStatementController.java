@@ -1606,7 +1606,7 @@ public class BankStatementController extends BasicController implements IFinance
 						recordingTo.setType((statement.isPayment()) ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
 						recordingTo.setDate(statement.getOperationDate());
 						recordingTo.setPaymentAccount(bankAccount);
-						recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 32));
+						recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 64));
 						recordingTo.setSecurityLevel(statement.getSecurityLevel());
 						recordingTo.setComments(statement.getComments());
 						recordingTo.setAccountMap(accountMap);
