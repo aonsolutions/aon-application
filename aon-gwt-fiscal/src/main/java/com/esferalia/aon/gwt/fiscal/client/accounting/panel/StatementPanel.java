@@ -358,7 +358,7 @@ public class StatementPanel extends ScrollPanel implements HasAccountEntrySelect
 						
 						
 						tab.setWidget(row, 2, new Label( AON.DATE_FORMAT.format(as.getEntryDate()) ));
-						Label conceptLabel = new Label( AonStringUtils.abbreviate(as.getConcept(),32) );
+						Label conceptLabel = new Label( as.getConcept() );
 						conceptLabel.setStyleName(AON.AON_CSS.aonNowrap());
 						tab.setWidget(row, 3, conceptLabel);
 						tab.setWidget(row, 4, new Label( AonMathUtils.isZero(as.getDebit())?AonStringUtils.SPACE:AON.FMT.format(as.getDebit()) ));
