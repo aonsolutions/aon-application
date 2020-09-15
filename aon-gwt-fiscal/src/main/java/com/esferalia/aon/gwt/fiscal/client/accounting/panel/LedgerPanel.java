@@ -46,7 +46,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 
 	private static final String LEDGER_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountStatementStreamServlet");
 
-	private static final int LINE_LENGTH = 165;
+	private static final int LINE_LENGTH = 185;
 	
 	private String domainName;
 	private String user;
@@ -136,7 +136,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 		StringBuffer buf = new StringBuffer();
 		buf.append(AonStringUtils.rightPad("N\u00BA Diario",10));
 		buf.append(AonStringUtils.rightPad("Fecha",11));
-		buf.append(AonStringUtils.rightPad("Concepto", 33));
+		buf.append(AonStringUtils.rightPad("Concepto", 53));
 		buf.append(AonStringUtils.leftPad("Debe",17));		
 		buf.append(AonStringUtils.leftPad("Haber",17));
 		buf.append(AonStringUtils.leftPad("Saldo Deudor",17));
@@ -205,7 +205,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 									initialLabel.setText(
 										AonStringUtils.rightPad( 
 											  AonStringUtils.repeat(" ",21)
-											+ AonStringUtils.leftPad("Saldo anterior al " + AON.DATE_FORMAT.format(params.getFromDate()), 33)
+											+ AonStringUtils.leftPad("Saldo anterior al " + AON.DATE_FORMAT.format(params.getFromDate()), 53)
 											+ AonStringUtils.repeat(" ",17)		
 											+ AonStringUtils.repeat(" ",17)
 											+ AonStringUtils.leftPad(AON.FMT.format(flatEntry.getInitialDebitBalance()),17)		
@@ -220,7 +220,7 @@ public class LedgerPanel extends ScrollPanel implements HasAccountEntrySelection
 							StringBuffer buf = new StringBuffer();
 							buf.append(AonStringUtils.rightPad(("" + flatEntry.getJournal()),10));
 							buf.append(AonStringUtils.rightPad(AON.DATE_FORMAT.format(flatEntry.getEntryDate()),11));
-							buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate( AonStringUtils.defaultString(flatEntry.getConcept()), 32), 33));
+							buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate( AonStringUtils.defaultString(flatEntry.getConcept()), 52), 53));
 							buf.append(AonStringUtils.leftPad(AON.FMT.format(flatEntry.getDebit()),17));		
 							buf.append(AonStringUtils.leftPad(AON.FMT.format(flatEntry.getCredit()),17));
 							buf.append(AonStringUtils.leftPad(AON.FMT.format(flatEntry.getDebitBalance()),17));		
