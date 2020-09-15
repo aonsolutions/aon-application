@@ -64,7 +64,8 @@ public class JooqCRA {
 		Result<Record> contractsActiveRecords = dslContext.select().from(CONTRACT)
 			.where(
 					CONTRACT.END_DATE.isNull()
-					.or(CONTRACT.END_DATE.ge(endDateSQL)))
+					.or(CONTRACT.END_DATE.ge(startDateSQL)))
+			.and(CONTRACT.START_DATE.lt(endDateSQL))
 			.and(CONTRACT.ENTERPRISE_CCC.in(cccList))
 			.and(CONTRACT.ID.ge(0))
 			.fetch();
