@@ -23,11 +23,10 @@ class AonSearchBox extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-		<div id="aon-search-div" style="border-bottom: 1px solid #ddd; height: 40px;">
+		<div id="aon-search-div" style="height: 40px;">
 			<aon-icon-button id="aon-search-button" icon="search"></aon-icon-button>
 			<input role="search" title="Búsqueda" id="search-input"
-				autocomplete="off" placeholder="Búsqueda" class="tedi-search-box tedi-search-noborder">
-			<aon-icon-button id="aon-search-advanced-button" icon="arrow_drop_down"></aon-icon-button>
+				autocomplete="off" placeholder="Búsqueda" class="aonSearchBox">
 		</div>
 		`;
 		this.setAttribute('opened', true);

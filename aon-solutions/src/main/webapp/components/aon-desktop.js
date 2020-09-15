@@ -213,10 +213,10 @@ class AonDesktop extends HTMLElement {
 			case Apps.SELFCONTA.app:
 				alert('SELFCONTA');
 				break;
-			case Apps.SALTRA.app:
-				alert('SALTRA');
+			case Apps.CONTRATA.app:
+				alert('CONTRAT@');
 				break;
-			case Apps.BIDOQ.app:
+			case Apps.PORTAL.app:
 				open('https://mispapeles.es/');
 				break;
 			case Apps.ALMA.app:

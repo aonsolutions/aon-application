@@ -50,13 +50,8 @@ class AonMenu extends HTMLElement {
 	}
 
 	connectedCallback () {
-		this.innerHTML = `
 
-			<div id="aonMenuSidenav" class="aonMenuSidenav">
-
-			</div>
-			`;
-		this.buildMenu();
+		this.build();
   }
 
 	toogle() {
@@ -68,11 +63,10 @@ class AonMenu extends HTMLElement {
 			this.removeAttribute('opened')
 		} else if(this.getAttribute('app')){
 			aonMenuSidenav.style.width = '250px';
-			rootPanel.style.marginRight = '250px';
 			this.setAttribute('opened', true);
 		} else {
-			aonMenuSidenav.style.width = '100px';
-			rootPanel.style.marginRight = '100px';
+			aonMenuSidenav.style.width = '60px';
+			rootPanel.style.marginRight = '60px';
 			this.setAttribute('opened', true);
 		}
 	}
@@ -109,10 +103,10 @@ class AonMenu extends HTMLElement {
 			case Apps.SELFCONTA.app:
 				alert('SELFCONTA');
 				break;
-			case Apps.SALTRA.app:
-				alert('SALTRA');
+			case Apps.CONTRATA.app:
+				alert('CONTRAT@');
 				break;
-			case Apps.BIDOQ.app:
+			case Apps.PORTAL.app:
 				open('https://mispapeles.es/');
 				break;
 			case Apps.ALMA.app:
@@ -120,6 +114,9 @@ class AonMenu extends HTMLElement {
 				break;
 			case Apps.LEARNING.app:
 				alert('LEARNING');
+				break;
+			case Apps.SERVICONVENIOS.app:
+				alert('SERVICONVENIOS');
 				break;
 		}
 	}
@@ -146,38 +143,60 @@ class AonMenu extends HTMLElement {
 				return Apps.TOOLS;
 			case Apps.SELFCONTA.app:
 				return Apps.SELFCONTA;
-			case Apps.SALTRA.app:
-				return Apps.SALTRA;
-			case Apps.BIDOQ.app:
-				return Apps.BIDOQ;
+			case Apps.CONTRATA.app:
+				return Apps.CONTRATA;
+			case Apps.PORTAL.app:
+				return Apps.PORTAL;
 			case Apps.ALMA.app:
 				return Apps.ALMA;
 			case Apps.LEARNING.app:
 				return Apps.LEARNING;
+			case Apps.SERVICONVENIOS.app:
+				return Apps.SERVICONVENIOS;
 		}
 	}
 
-	buildMenu() {
-		let company;
-		if(this.getAttribute('company')){
-			company = JSON.parse(this.getAttribute('company'));
-		}
+	build() {
+		this.innerHTML = `
+			<div id="aonMenuSidenav" class="aonMenuSidenav"></div>
+		`;
 		let rootPanel = document.getElementById('rootPanel');
 		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
 
+		aonMenuSidenav.addEventListener('mouseover', () => {
+			if(aonMenuSidenav.style.width !== '250px'){
+				aonMenuSidenav.style.width = '150px';
+				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+					item.style.display = 'inline-block';
+					item.style.fontSize = '12px';
+					item.style.fontFamily = 'Roboto,sans-serif';
+					item.style.color = 'black';
+				});
+			}
+		});
+
+		aonMenuSidenav.addEventListener('mouseleave', () => {
+			aonMenuSidenav.style.width = '60px';
+			this.buildMenu();
+		});
+
 		if(this.getAttribute('opened')) {
-			aonMenuSidenav.style.width = '100px';
-			rootPanel.style.marginRight = '100px';
+			aonMenuSidenav.style.width = '60px';
+			rootPanel.style.marginRight = '60px';
 		} else {
 			aonMenuSidenav.style.width = '0px';
 			rootPanel.style.marginRight = '0px';
 		}
+		this.buildMenu();
+	}
 
+	buildMenu() {
 		let ul = document.createElement('ul');
 		ul.id = 'aonMenuList';
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
 		ul.style.listStyle = 'none';
+
 		if(localStorage.getItem('aon_domain_id') && this.getAttribute('user')){
 			let user = JSON.parse(this.getAttribute('user'));
 			for (let key in user.apps){
@@ -191,19 +210,23 @@ class AonMenu extends HTMLElement {
 	buildApp(app) {
 		let li = document.createElement('li');
 		li.id = 'aonMenuList' + app.app;
-		li.style.height = '80px';
 		li.style.backgroundColor = 'transparent';
 		li.addEventListener('mouseover', () => {
- 			li.style.backgroundColor = '#f1f1f1';
+			let span = document.getElementById('aonMenuListApp-' + app.app);
+			let img = document.getElementById('aonMenuListAppImg-' + app.app);
+			img.size = '40px';
 		});
+
 		li.addEventListener('mouseleave', () => {
-			li.style.backgroundColor = 'transparent';
+			let span = document.getElementById('aonMenuListApp-' + app.app);
+			let img = document.getElementById('aonMenuListAppImg-' + app.app);
+			img.size = '30px';
 		});
 
 		let a = document.createElement('a');
-		a.style.width = '80px';
+		a.style.width = '60px';
 		a.style.cursor = 'pointer';
-		a.style.textAlign = 'center';
+		a.style.textAlign = 'right';
 
 		a.addEventListener('click', () => {
 			this.appSelection(app.app);
@@ -211,24 +234,30 @@ class AonMenu extends HTMLElement {
 
 		let div = document.createElement('div');
 		div.style.padding = '8px 0px';
+
 		if(app.icon) {
-			div.innerHTML = `<aon-icon icon="${app.icon}" color="${app.color}" size="40px"></aon-icon>`;
+			div.innerHTML = `
+				<span id="aonMenuListApp-${app.app}" style="display:none;"> ${app.title} </span>
+				<aon-icon id="aonMenuListAppImg-${app.app}" icon="${app.icon}" color="${app.color}" size="30px" style="margin-right: 15px;"></aon-icon>
+			`;
 		} else {
+			let span = document.createElement('span');
+			span.id = 'aonMenuListApp-' + app.app;
+			span.style.display = 'none';
+			span.style.marginRight = '5px';
+			span.innerHTML = app.title;
+			div.appendChild(span);
+
 			let img = document.createElement('img');
-			img.style.width = '40px';
+			img.id = 'aonMenuListAppImg-' + app.app;
+			img.style.width = '30px';
+			img.style.marginRight = '15px';
 			img.src = app.logo;
 			img.title = app.title;
 			div.appendChild(img);
 		}
 		let div2 = document.createElement('div');
 
-		let span = document.createElement('span');
-		span.style.fontSize = '12px';
-		span.style.fontFamily = 'Roboto,sans-serif';
-		span.style.color = 'black';
-		span.innerHTML = app.title;
-		div2.appendChild(span);
-		div.appendChild(div2);
 		a.appendChild(div);
 		li.appendChild(a);
 
@@ -241,11 +270,8 @@ class AonMenu extends HTMLElement {
 			company = JSON.parse(this.getAttribute('company'));
 		}
 
-		let rootPanel = document.getElementById('rootPanel');
 		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
-
-		aonMenuSidenav.style.width = '250px';
-		rootPanel.style.marginRight = '250px';
+		aonMenuSidenav.style.width = '250';
 
 		let div = document.createElement('div');
 	 	div.className = 'aonMenuSidenavAppToolbar';
@@ -284,6 +310,7 @@ class AonMenu extends HTMLElement {
 		let launchButton = document.getElementById('aon-menu-sidenav-app-launch-button');
 		let closeButton = document.getElementById('aon-menu-sidenav-app-close-button');
 		closeButton.addEventListener('click', () => {
+			aonMenuSidenav.style.width = '150px';
 			this.buildMenu();
 		});
 	}
@@ -325,6 +352,8 @@ class AonMenu extends HTMLElement {
 			if(subapp.initAction) {
 				open('https://' + localStorage.getItem('aon_domain_name') + '/login?initAction='+subapp.initAction+'&token=' + localStorage.getItem('aon_session_id'));
 			} else startModule(subapp.module, subapp.entryPoint);
+			document.getElementById('aonMenuSidenav').style.width = '60px';
+			this.buildMenu();
 		});
 		return li
 	}

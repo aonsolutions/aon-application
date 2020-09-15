@@ -14,7 +14,26 @@ class AonParent extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<ul id="aon-company-list" class="demo-list-two mdl-list aonCompanyList"></ul>
+			<!-- AON COMPANY (PARENT) TOOLBAR -->
+			<aon-toolbar id="aonParent" title="EMPRESAS"></aon-toolbar>
+			<!-- AON CONFIGURATION MENU (SIDENAV) -->
+			<div id="aonParentSidenav" class="sidenav">
+				<ul class="aonClip">
+					<div id="aonParenSidenavFilter" class="aonSidenavDiv">
+						<div class="aonSidenavTitle"> FILTROS </div>
+						<div> Activas </div>
+						<div> Inactivas </div>
+						<div> Compartidas </div>
+						<div> Entorno </div>
+					</div>
+				</ul>
+			</div>
+
+			<!-- AON CONFIGURATION CONTENT -->
+			<div id="aonParentContent" class="aonContent">
+				<ul id="aon-company-list" class="demo-list-two mdl-list aonCompanyList"></ul>
+			</div>
+
 		`;
 		this.init();
  	}
@@ -111,7 +130,7 @@ class AonParent extends HTMLElement {
 	}
 
 	companySelection(company) {
-		const BASE_ID = isMobile() ? 'aonHeaderMobile' : 'aonHeader';
+		const BASE_ID = 'aonHeader';
 		let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 		aonHeaderCompanyList.style.display = 'block';
 
@@ -119,20 +138,11 @@ class AonParent extends HTMLElement {
 			let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
 			aonHeaderHelp.style.display = 'block';
 
-			let aonHeaderApps = document.getElementById(BASE_ID + 'Apps');
-			aonHeaderApps.style.display = 'none';
-
 			let aonHeaderSearch = document.getElementById(BASE_ID + 'Search');
 			aonHeaderSearch.style.display = 'none';
 
 			let aonHeaderHome = document.getElementById(BASE_ID + 'Home');
 			aonHeaderHome.style.display = 'block';
-
-			let aonHeaderAlma = document.getElementById(BASE_ID + 'Alma');
-			aonHeaderAlma.style.display = 'block';
-
-			let aonHeaderShowMenu = document.getElementById(BASE_ID + 'ShowMenu');
-			aonHeaderShowMenu.style.display = 'block';
 
 			let aonHeaderCompany = document.getElementById(BASE_ID + 'Company');
 			aonHeaderCompany.style.display = 'block';
@@ -140,28 +150,7 @@ class AonParent extends HTMLElement {
 			let aonHeaderCompanyName = document.getElementById(BASE_ID + 'CompanyName');
 			aonHeaderCompanyName.innerHTML = company.name;
 
-			let aonHeaderCompanyLogo = document.getElementById(BASE_ID + 'CompanyLogo');
-			let aonHeaderCompanyLogoImg = document.getElementById(BASE_ID + 'CompanyLogoImg');
-			if(company.logo){
-				aonHeaderCompanyLogoImg.src = company.logo;
-				aonHeaderCompanyLogo.style.display = 'block';
-			} else {
-				aonHeaderCompanyLogo.style.display = 'none';
-			}
-
 			let aonLogo = document.getElementById('aonLogo');
-			let aonLogo2 = document.getElementById('aonLogo2');
-			let aonLogoParent = document.getElementById('aonLogoParent');
-			if(company.parentLogo){
-				aonLogoParent.src = company.parentLogo;
-				aonLogoParent.style.display = 'block';
-				aonLogo2.style.display = 'block';
-				aonLogo.style.display = 'none';
-			} else {
-				aonLogoParent.style.display = 'none';
-				aonLogo2.style.display = 'none';
-				aonLogo.style.display = 'block';
-			}
 		}
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
@@ -169,12 +158,13 @@ class AonParent extends HTMLElement {
 		getUserAppRole().then(user => {
 			if(!isMobile()) {
 				let aonMenu = document.getElementById('aonMenu');
+				aonMenu.innerHTML = '';
 				aonMenu.setAttribute('company', JSON.stringify(company));
 				aonMenu.setAttribute('user', JSON.stringify(user));
-				aonMenu.buildMenu();
+				aonMenu.build();
 				aonMenu.toogle();
 			}
-			
+
 			let aonHeader = document.getElementById('aonHeader');
 			aonHeader.setAttribute('company', JSON.stringify(company));
 			aonHeader.setAttribute('user', JSON.stringify(user));

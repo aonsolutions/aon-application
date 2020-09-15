@@ -287,10 +287,10 @@ class AonUser extends HTMLElement {
 				return Apps.TOOLS;
 			case Apps.SELFCONTA.app:
 				return Apps.SELFCONTA;
-			case Apps.SALTRA.app:
-				return Apps.SALTRA;
-			case Apps.BIDOQ.app:
-				return Apps.BIDOQ;
+			case Apps.CONTRATA.app:
+				return Apps.CONTRATA;
+			case Apps.PORTAL.app:
+				return Apps.PORTAL;
 			case Apps.ALMA.app:
 				return Apps.ALMA;
 			case Apps.LEARNING.app:

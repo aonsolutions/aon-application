@@ -22,13 +22,13 @@
 
 	.aonMenu {
 		position: relative;
-		height:calc(100vh - 81px);
+		height:calc(100vh - 61px);
 	}
 
 	.rootPanel {
 		position: relative;
     margin-right: 100px;
-		height:calc(100vh - 81px);
+		height:calc(100vh - 61px);
   	overflow-y: auto;
 		margin: 0;
 	}
@@ -66,8 +66,8 @@
 
 	.aonLogo {
 		position: absolute;
-		margin: 10px;
-		top: 14px;
+		margin-left: 10px;
+		top: 15px;
 		cursor: pointer;
 	}
 
@@ -130,6 +130,21 @@
 		right:160px;
 	}
 
+	.aonRight180 {
+		position: absolute;
+		right:180px;
+	}
+
+	.aonRight220 {
+		position: absolute;
+		right:220px;
+	}
+
+	.aonLeft250 {
+		position: absolute;
+		left:250px;
+	}
+
 	.aonMenuIcon {
 		position: relative;
 		top: 7px;
@@ -156,12 +171,11 @@
 	    margin: 0!important;
 	    border-bottom: 1px solid #ddd;
 	    color: #5f6368;
-	    height: 80px;
+	    height: 60px;
 	}
 
-	.aonHeaderButtonMobile {
-			height: 80px;
-			top: 20px;
+	.aonHeaderButton {
+			top: 10px;
 	}
 
 	.aonAvatar {
@@ -210,15 +224,15 @@
 	}
 
 	.aonMenuSidenav {
-		height: calc(100vh - 81px);
-		width: 100px;
+		height: calc(100vh - 61px);
+		width: 60px;
 		position: fixed;
-		z-index: 1;
-		top: 81px;
+		top: 61px;
 		right: 0;
 		background-color: #fff;
 		border-left: 1px solid #ddd;
 		overflow-x: hidden;
+		z-index: 2;
 	}
 
 	.aonMenuSidenavAppToolbar {
@@ -237,7 +251,7 @@
 		margin: 0px;
     padding: 0px;
     list-style: none;
-    height: calc(100vh - 146px);
+    height: calc(100vh - 126px);
     overflow: auto;
 	}
 
@@ -248,12 +262,23 @@
 		overflow-y: auto;
 	}
 
+	.aonSidenavDiv {
+		padding-left: 25px;
+	}
+
+	.aonSidenavTitle {
+		font-size: 16px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		color: lightgray;
+	}
+
 	.sidenav {
 		height: 100%;
 		width: 0px;
 		position: fixed;
 		z-index: 1;
-		top: 122px;
+		top: 102px;
 		left: 0;
 		background-color: #fff;
 		border-right: 1px solid #ddd;
@@ -263,7 +288,7 @@
 	.aonContent {
 		display: block;
 		transition: 0.5s;
-		height: calc(100vh - 122px);
+		height: calc(100vh - 102px);
 		overflow-y: auto;
 	}
 
@@ -310,12 +335,11 @@
     right: 20px;
   }
 
-	.tedi-search-box {
-	    height: 20px;
-	    border: none;
-	    -webkit-appearance: none;
-	}
-
-	.tedi-search-noborder {
+	.aonSearchBox {
+		position: absolute;
+	  height: 40px;
+	  border: none;
+	  -webkit-appearance: none;
 	  outline: 0px;
+		font-size: 14px;
 	}

@@ -15,8 +15,8 @@ public enum AonApp implements Serializable{
 	AIO,
 	TOOLS,
 	SELFCONTA,
-	SALTRA,
-	BIDOQ,
+	CONTRATA,
+	PORTAL,
 	ALMA,
 	LEARNING,
 	SERVICONVENIOS;
@@ -58,10 +58,10 @@ public enum AonApp implements Serializable{
 			return TOOLS;
 		} else if(i.equalsIgnoreCase(SELFCONTA.name())) {
 			return SELFCONTA;
-		} else if(i.equalsIgnoreCase(SALTRA.name())) {
-			return SALTRA;
-		} else if(i.equalsIgnoreCase(BIDOQ.name())) {
-			return BIDOQ;
+		} else if(i.equalsIgnoreCase(CONTRATA.name())) {
+			return CONTRATA;
+		} else if(i.equalsIgnoreCase(PORTAL.name())) {
+			return PORTAL;
 		} else if(i.equalsIgnoreCase(ALMA.name())) {
 			return ALMA;
 		} else if(i.equalsIgnoreCase(LEARNING.name())) {

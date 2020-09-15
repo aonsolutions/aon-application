@@ -39,17 +39,7 @@ class AonIcon extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if('icon' === name){
-
-    }
-
-    if('color' === name){
-
-    }
-
-    if('size' === name){
-
-    }
+      this.build();
   }
 
   constructor () {
@@ -57,6 +47,10 @@ class AonIcon extends HTMLElement {
 	}
 
 	connectedCallback () {
+    this.build();
+  }
+
+  build() {
     let icon = icons[this.getAttribute('icon')];
   	this.innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${icon.width} ${icon.height}"
@@ -68,7 +62,6 @@ class AonIcon extends HTMLElement {
       </svg>
 		`;
   }
-
 }
 
 window.customElements.define('aon-icon', AonIcon);

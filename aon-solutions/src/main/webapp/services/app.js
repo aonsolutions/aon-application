@@ -67,17 +67,19 @@ export const Apps = {
       description: 'Selfconta.',
       logo: 'assets/apps/selfconta.png'
     },
-    SALTRA: {
-      app: 'saltra',
-      title: 'Saltra',
-      description: 'Saltra',
-      logo: 'assets/apps/saltra.png'
+    CONTRATA: {
+      app: 'contrata',
+      title: 'Contrat@',
+      description: 'Contrat@',
+      icon: 'aon_app',
+      color: '#6C75AB'
     },
-    BIDOQ: {
-      app: 'bidoq',
-      title: 'Bidoq',
-      description: 'Bidoq',
-      logo: 'assets/apps/bidoq.png'
+    PORTAL: {
+      app: 'portal',
+      title: 'Portal',
+      description: 'Portal',
+      icon: 'aon_app',
+      color: '#002469'
     },
     ALMA: {
       app: 'alma',
