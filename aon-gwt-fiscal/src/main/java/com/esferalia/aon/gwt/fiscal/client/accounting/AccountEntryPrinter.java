@@ -56,7 +56,7 @@ public class AccountEntryPrinter {
 	}
 	
 	public static String toString(AccountEntry entry, boolean abbrv) {
-		int lineSize = abbrv?110:162; 
+		int lineSize = abbrv?110:172; 
 		StringBuffer buf = new StringBuffer();
 		if (!abbrv) {
 			buf.append(entry.isConfidential()
@@ -72,6 +72,7 @@ public class AccountEntryPrinter {
 		} else {
 			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 30));
 		}
+		buf.append(AonStringUtils.repeat(AonStringUtils.SPACE, 8));
 		buf.append(AON.MSG.date());
 		buf.append(AonStringUtils.COLON);
 		buf.append(AonStringUtils.SPACE);
@@ -129,7 +130,7 @@ public class AccountEntryPrinter {
 		StringBuffer buf = new StringBuffer();
 		buf.append(AonStringUtils.rightPad(AonStringUtils.defaultString(ac),10));
 		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate(AonStringUtils.defaultString(ad), abbrv?30:39), abbrv?31:40));
-		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate( AonStringUtils.defaultString(c), abbrv?20:32), abbrv?21:33));
+		buf.append(AonStringUtils.rightPad(AonStringUtils.abbreviate( AonStringUtils.defaultString(c), abbrv?20:45), abbrv?21:45));
 		buf.append(AonStringUtils.leftPad(AON.FMT.format(deb),17));		
 		buf.append(AonStringUtils.leftPad(AON.FMT.format(cre),17));
 		buf.append(AonStringUtils.center(AonStringUtils.defaultString(bc),11));
