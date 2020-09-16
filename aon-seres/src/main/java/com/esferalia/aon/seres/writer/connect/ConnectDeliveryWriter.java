@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -45,6 +44,7 @@ import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1L;
 import com.esferalia.aon.file.seres.connect.delivery.v4.data.SEH1P;
 import com.esferalia.aon.seres.DeliveryPackages;
 import com.esferalia.aon.seres.SeresUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 // TODO replace this writer with ConnectDeliveryWriterOccam 
 @Deprecated
@@ -97,9 +97,19 @@ public class ConnectDeliveryWriter {
 			String customerEdiCode, String deliveryPointEdiCode) {
 		SEH1C seh1c = new SEH1C();
 		
+		String referenceCode = delivery.getReferenceCode();
+		if("A28017895".equalsIgnoreCase(delivery.getCustomer().getRegistry().getDocument())) {
+			referenceCode = "";
+			for(Integer i = 0; i < delivery.getReferenceCode().length(); i++) {
+				if(AonNumberUtils.isNumber("" + delivery.getReferenceCode().charAt(i))) {
+					referenceCode.concat(delivery.getReferenceCode().charAt(i)+ "");
+				}
+			}
+		}
+		
 		seh1c.setTipoDeDocumento_351_35E_(SEH1C.SEH1C_2.NOTAS_DE_ENVIO_351
 				.getValue());
-		seh1c.setNumeroDelDocumento(delivery.getReferenceCode());
+		seh1c.setNumeroDelDocumento(referenceCode);
 		seh1c.setFuncionDelMensaje(SEH1C.SEH1C_4.ORIGINAL___EL_ENVIO_DE_UN_AVISO_DE_EXPEDICION_ORIGINAL_9
 				.getValue());
 		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery
@@ -112,7 +122,7 @@ public class ConnectDeliveryWriter {
 		seh1c.setInformacionAdicional(null);
 		seh1c.setNumeroPedido_comprador__ON_(obtainPurchaseReference(delivery));
 		seh1c.setFecha_horaNumeroPedido_171__102_203_(null);
-		seh1c.setNumeroAlbaran_DQ_(delivery.getReferenceCode());
+		seh1c.setNumeroAlbaran_DQ_(referenceCode);
 		seh1c.setFecha_horaNumeroAlbaran_171__102_203_(null);
 		seh1c.setCalificadorDeReferencia1(null);
 		seh1c.setNumeroDeReferencia1(null);
