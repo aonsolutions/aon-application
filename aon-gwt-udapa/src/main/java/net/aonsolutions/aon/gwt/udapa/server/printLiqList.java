@@ -419,7 +419,7 @@ public class printLiqList extends HttpServlet{
 							cell(libro, row, style3, 35, AonMathUtils.round(eurosNet));				
 							
 							Double totalEuros = eurosPeq + eurosGor + eurosNet;
-							Double eurosKgBruto2 = totalEuros / quantity;
+							Double eurosKgBruto2 = quantity == 0.0 ? totalEuros / quantity : 0;
 							cell(libro, row, style3, 36, AonMathUtils.round(eurosKgBruto2,4));
 							
 							Double eurosKgNeto2 = totalEuros / kgNet;
