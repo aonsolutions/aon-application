@@ -151,6 +151,18 @@ public class InvoicePDFParserTestCase {
 			if ( this.senderDocumentCountry != null )
 				Assert.assertEquals(this.senderDocumentCountry, isoCountryCode);						
 		}
+
+		@Override
+		public void setTotal(double total) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setIVA(double base, double iva, double precentage) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 

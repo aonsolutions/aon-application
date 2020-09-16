@@ -7,6 +7,9 @@ public interface InvoiceBuilder<T extends Object>  {
 	
 	void setDate(Date date);
 	
+	void setTotal(double total);
+	void setIVA(double base, double iva, double precentage);
+	
 	void setSenderName(String name);
 	void setSenderCity(String city);
 	void setSenderAddress(String address);
