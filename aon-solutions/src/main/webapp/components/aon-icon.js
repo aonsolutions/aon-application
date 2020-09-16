@@ -39,7 +39,13 @@ class AonIcon extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-      this.build();
+    if('size' === name){
+      let svg = this.querySelector('svg');
+      if(svg) {
+        svg.style.width = newValue;
+        svg.style.height = newValue;
+      }
+    }
   }
 
   constructor () {

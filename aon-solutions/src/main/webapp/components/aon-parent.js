@@ -131,6 +131,9 @@ class AonParent extends HTMLElement {
 
 	companySelection(company) {
 		const BASE_ID = 'aonHeader';
+
+		let aonShowMenu = document.getElementById('aonShowMenu');
+		aonShowMenu.style.display = 'block';
 		let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 		aonHeaderCompanyList.style.display = 'block';
 
@@ -161,8 +164,7 @@ class AonParent extends HTMLElement {
 				aonMenu.innerHTML = '';
 				aonMenu.setAttribute('company', JSON.stringify(company));
 				aonMenu.setAttribute('user', JSON.stringify(user));
-				aonMenu.build();
-				aonMenu.toogle();
+				aonMenu.build()
 			}
 
 			let aonHeader = document.getElementById('aonHeader');

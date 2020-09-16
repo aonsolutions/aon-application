@@ -2,6 +2,7 @@ import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
 import './aon-icon.js';
+import './contrat@/aon-contrata.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -58,9 +59,7 @@ class AonMenu extends HTMLElement {
 		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
 		let rootPanel = document.getElementById('rootPanel');
 		if(this.getAttribute('opened')) {
-			aonMenuSidenav.style.width = '0px';
-			rootPanel.style.marginRight = '0px';
-			this.removeAttribute('opened')
+			this.close();
 		} else if(this.getAttribute('app')){
 			aonMenuSidenav.style.width = '250px';
 			this.setAttribute('opened', true);
@@ -104,7 +103,7 @@ class AonMenu extends HTMLElement {
 				alert('SELFCONTA');
 				break;
 			case Apps.CONTRATA.app:
-				alert('CONTRAT@');
+				rootPanel('<aon-contrata></aon-contrata>');
 				break;
 			case Apps.PORTAL.app:
 				open('https://mispapeles.es/');
@@ -176,7 +175,11 @@ class AonMenu extends HTMLElement {
 		});
 
 		aonMenuSidenav.addEventListener('mouseleave', () => {
-			aonMenuSidenav.style.width = '60px';
+			if(this.getAttribute('opened')) {
+				aonMenuSidenav.style.width = '60px';
+			} else {
+				aonMenuSidenav.style.width = '0px';
+			}
 			this.buildMenu();
 		});
 
@@ -197,6 +200,13 @@ class AonMenu extends HTMLElement {
 		ul.style.padding = '0px';
 		ul.style.listStyle = 'none';
 
+		let li = document.createElement('li');
+		li.style.textAlign =  'right';
+		li.style.paddingRight = '12px';
+		const icon = this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
+		li.innerHTML =`<aon-icon-button id="aonMenuShowButton" icon="${icon}"></aon-icon-button>`;
+		ul.appendChild(li);
+
 		if(localStorage.getItem('aon_domain_id') && this.getAttribute('user')){
 			let user = JSON.parse(this.getAttribute('user'));
 			for (let key in user.apps){
@@ -205,6 +215,16 @@ class AonMenu extends HTMLElement {
 		}
 		aonMenuSidenav.innerHTML = '';
 		aonMenuSidenav.appendChild(ul);
+
+		let aonMenuShowButton = document.getElementById('aonMenuShowButton');
+		aonMenuShowButton.addEventListener('click', () => {
+			if(this.getAttribute('opened'))
+				this.removeAttribute('opened');
+			else this.setAttribute('opened', true);
+
+			const icon = this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
+			aonMenuShowButton.setAttribute('icon', icon);
+		});
 	}
 
 	buildApp(app) {
@@ -212,22 +232,18 @@ class AonMenu extends HTMLElement {
 		li.id = 'aonMenuList' + app.app;
 		li.style.backgroundColor = 'transparent';
 		li.addEventListener('mouseover', () => {
-			let span = document.getElementById('aonMenuListApp-' + app.app);
 			let img = document.getElementById('aonMenuListAppImg-' + app.app);
 			img.size = '40px';
 		});
 
 		li.addEventListener('mouseleave', () => {
-			let span = document.getElementById('aonMenuListApp-' + app.app);
 			let img = document.getElementById('aonMenuListAppImg-' + app.app);
 			img.size = '30px';
 		});
 
 		let a = document.createElement('a');
-		a.style.width = '60px';
 		a.style.cursor = 'pointer';
 		a.style.textAlign = 'right';
-
 		a.addEventListener('click', () => {
 			this.appSelection(app.app);
 		});
@@ -240,6 +256,7 @@ class AonMenu extends HTMLElement {
 				<span id="aonMenuListApp-${app.app}" style="display:none;"> ${app.title} </span>
 				<aon-icon id="aonMenuListAppImg-${app.app}" icon="${app.icon}" color="${app.color}" size="30px" style="margin-right: 15px;"></aon-icon>
 			`;
+
 		} else {
 			let span = document.createElement('span');
 			span.id = 'aonMenuListApp-' + app.app;
@@ -393,6 +410,12 @@ class AonMenu extends HTMLElement {
 		let ul = document.getElementById('aonMenuList');
 		let li = document.getElementById('aonMenuList' + app.app);
 		ul.removeChild(li);
+	}
+
+	close() {
+		aonMenuSidenav.style.width = '0px';
+		rootPanel.style.marginRight = '0px';
+		this.removeAttribute('opened');
 	}
 
 }

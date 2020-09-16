@@ -119,13 +119,14 @@ class AonHeader extends HTMLElement {
 				let aonHeaderCompany = document.getElementById(BASE_ID + 'Company');
 				aonHeaderCompany.style.display = 'none';
 
+				let aonShowMenu = document.getElementById('aonShowMenu');
+				aonShowMenu.style.display = 'none';
+
 				let aonMenu = document.getElementById('aonMenu');
 				aonMenu.innerHTML = '';
-				aonMenu.setAttribute('opened', true);
-				aonMenu.build();
 				aonMenu.removeAttribute('company');
 				aonMenu.removeAttribute('user');
-				aonMenu.toogle();
+				aonMenu.close();
 			}
 
 			let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
