@@ -108,9 +108,9 @@ public class EmployeeAFIDialog extends CustomDialog {
 	private Date currentEndDateM60;
 	private Date currentEndDateP3;
 	
-	private Integer tc2IdxOriginal;
-	private Integer quoteGroupIdxOriginal;
-	private Integer ocupationIdxOriginal;
+	private String tc2Original;
+	private String quoteGroupOriginal;
+	private String ocupationOriginal;
 	
 	private ArrayList<Date> dateList;
 	private AFIChanges afiChangesMap;
@@ -119,7 +119,7 @@ public class EmployeeAFIDialog extends CustomDialog {
 	// ----------------------------------- CONSTRUCTOR -------------------------------------------
 	// -------------------------------------------------------------------------------------------
 	
-	public EmployeeAFIDialog(Date startDate, Date endDate, int tc2Idx, int quoteGroupIdx, int ocupationIdx, Date payrollDate, Integer contractId, Integer domainId, Integer workplaceId) {
+	public EmployeeAFIDialog(Date startDate, Date endDate, String tc2, String quoteGroup, String ocupation, Date payrollDate, Integer contractId, Integer domainId, Integer workplaceId) {
 		setCaption("Datos AFI");
 		
 		setWidget(binder.createAndBindUi(this));
@@ -127,9 +127,9 @@ public class EmployeeAFIDialog extends CustomDialog {
 		this.contractType = new ContractType();
 		this.payrollDate = payrollDate;
 		
-		tc2IdxOriginal = tc2Idx;
-		quoteGroupIdxOriginal = quoteGroupIdx;
-		ocupationIdxOriginal = ocupationIdx;
+		tc2Original = tc2;
+		quoteGroupOriginal = quoteGroup;
+		ocupationOriginal = ocupation;
 		
 		this.contractId = contractId;
 		this.domainId = domainId;
@@ -678,30 +678,30 @@ public class EmployeeAFIDialog extends CustomDialog {
 		// TC2
 		this.tc2.addItem("-");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			this.tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription());
+			this.tc2.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), entry.getKey().toString());
 		
-		this.quoteGroup.addItem("-");
-		this.quoteGroup.addItem("01. Alta direcci" + String.valueOf("\u00F3") + "n y personal no incluido en el E.T.");
-		this.quoteGroup.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados");
-		this.quoteGroup.addItem("03. Jefes administrativos y de taller");
-		this.quoteGroup.addItem("04. Ayudantes no titulados");
-		this.quoteGroup.addItem("05. Oficiales administrativos");
-		this.quoteGroup.addItem("06. Subalternos");
-		this.quoteGroup.addItem("07. Axiliares administrativos");
-		this.quoteGroup.addItem("08. Oficiales de primera y segunda");
-		this.quoteGroup.addItem("09. Oficiales de tercera y especialista");
-		this.quoteGroup.addItem("10. Peones");
-		this.quoteGroup.addItem("11. Trabajadores menos de dieciocho a" + String.valueOf("\u00F1") + "os");
+		this.quoteGroup.addItem("-", "-1");
+		this.quoteGroup.addItem("01. Alta direcci" + String.valueOf("\u00F3") + "n y personal no incluido en el E.T.", "01");
+		this.quoteGroup.addItem("02. Ingenieros t" + String.valueOf("\u00E9") + "cnicos, peritos y ayudantes titulados", "02");
+		this.quoteGroup.addItem("03. Jefes administrativos y de taller", "03");
+		this.quoteGroup.addItem("04. Ayudantes no titulados", "04");
+		this.quoteGroup.addItem("05. Oficiales administrativos", "05");
+		this.quoteGroup.addItem("06. Subalternos", "06");
+		this.quoteGroup.addItem("07. Axiliares administrativos", "07");
+		this.quoteGroup.addItem("08. Oficiales de primera y segunda", "08");
+		this.quoteGroup.addItem("09. Oficiales de tercera y especialista", "09");
+		this.quoteGroup.addItem("10. Peones", "10");
+		this.quoteGroup.addItem("11. Trabajadores menos de dieciocho a" + String.valueOf("\u00F1") + "os", "11");
 
 		// OCUPACION
-		this.ocupation.addItem("-");
-		this.ocupation.addItem("a. Personal en trabajos exclusivos de oficina");
-		this.ocupation.addItem("b. Tipo de cotizaci" + String.valueOf("\u00F3") + "n para todos los trabajadores que deban desplazarse habitalmente");
-		this.ocupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci" + String.valueOf("\u00F3") + "n en general");
-		this.ocupation.addItem("e. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de pasajeros en general (taxis, autom" + String.valueOf("\u00F3") + "viles, autobuses, etc)");
-		this.ocupation.addItem("f. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de mercanc" + String.valueOf("\u00ED") + "as que tengan una capacidad de carga " + String.valueOf("\u00FA") + "til superior a 3,5 Tm.");
-		this.ocupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles");
-		this.ocupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad");
+		this.ocupation.addItem("-", "-1");
+		this.ocupation.addItem("a. Personal en trabajos exclusivos de oficina", "a");
+		this.ocupation.addItem("b. Tipo de cotizaci" + String.valueOf("\u00F3") + "n para todos los trabajadores que deban desplazarse habitalmente", "b");
+		this.ocupation.addItem("d. Personal de oficios en instalaciones y reparaciones en edificios, obras y trabajos de construcci" + String.valueOf("\u00F3") + "n en general", "d");
+		this.ocupation.addItem("e. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de pasajeros en general (taxis, autom" + String.valueOf("\u00F3") + "viles, autobuses, etc)", "e");
+		this.ocupation.addItem("f. Conductores de veh" + String.valueOf("\u00ED") + "culo autom" + String.valueOf("\u00F3") + "vil de transporte de mercanc" + String.valueOf("\u00ED") + "as que tengan una capacidad de carga " + String.valueOf("\u00FA") + "til superior a 3,5 Tm." , "f");
+		this.ocupation.addItem("g. Personal de limpieza en general. Limpieza de edificios y de todo tipo de establecimientos. Limpieza de calles", "g");
+		this.ocupation.addItem("h. Vigilantes, guardas, guardas jurados y personal de seguridad", "h");
 	}
 
 	public boolean isStartContract() {
@@ -751,13 +751,13 @@ public class EmployeeAFIDialog extends CustomDialog {
 		if(isEndContract())
 			return true;
 		
-		if(tc2.getSelectedIndex() != tc2IdxOriginal)
+		if(tc2.getSelectedValue() != tc2Original)
 			return true;
 		
-		if(quoteGroup.getSelectedIndex() != quoteGroupIdxOriginal)
+		if(quoteGroup.getSelectedValue() != quoteGroupOriginal)
 			return true;
 		
-		if(ocupation.getSelectedIndex() != ocupationIdxOriginal)
+		if(ocupation.getSelectedValue() != ocupationOriginal)
 			return true;
 		
 		return false;

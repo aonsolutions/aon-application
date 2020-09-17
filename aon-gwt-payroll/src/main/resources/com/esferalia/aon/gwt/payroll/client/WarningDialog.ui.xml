@@ -47,7 +47,7 @@
 			</tr>
 			<tr>
 				<td align="right">
-					<g:Button ui:field="cancelButton" styleName="{style.marginTop}" debugId="paymetDialogCancelButton">Cerrar</g:Button>
+					<g:Button ui:field="cancelButton" styleName="gwt-Button {style.marginTop}" debugId="paymetDialogCancelButton">Cerrar</g:Button>
 				</td>
 			</tr>
 		</table>		
