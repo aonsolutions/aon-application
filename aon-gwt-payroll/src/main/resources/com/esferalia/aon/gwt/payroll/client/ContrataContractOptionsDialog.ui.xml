@@ -1,0 +1,51 @@
+<ui:UiBinder 
+    xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:Style>
+
+		.form {
+			padding: 10px;
+		}
+		
+		.optionsPanel{
+			display: flex;
+			flex-direction: row;
+			padding: 5px;
+			border: 1px solid #e1e1e1;
+			margin-bottom: 10px;
+			justify-content: space-evenly;
+			width: 250px;
+		}
+		
+		.button{
+			background: none;
+			font-size: 11px;
+			border: 1px solid;
+		    height: 35px;
+		    width: 115px;
+		}
+		}
+		
+		.button:hover{
+			background: #e1e1e1;
+			border: 1px solid #e1e1e1;
+		}
+
+	</ui:Style>
+	
+	<g:HTMLPanel styleName="{style.form}">
+	
+		<g:HTMLPanel styleName="aon-width-all aon-height-all">
+		
+			<g:HTMLPanel styleName="{style.optionsPanel}">
+				<g:Button ui:field="dischargeButton" styleName="{style.button}">DAR BAJA</g:Button>
+				<g:Button ui:field="movementButton" styleName="{style.button}">MODIFICACIONES</g:Button>
+			</g:HTMLPanel>
+		
+		</g:HTMLPanel>
+			
+	</g:HTMLPanel>
+
+</ui:UiBinder>
