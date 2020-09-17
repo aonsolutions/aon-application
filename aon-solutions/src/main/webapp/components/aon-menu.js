@@ -413,6 +413,7 @@ class AonMenu extends HTMLElement {
 	}
 
 	close() {
+		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
 		aonMenuSidenav.style.width = '0px';
 		rootPanel.style.marginRight = '0px';
 		this.removeAttribute('opened');
