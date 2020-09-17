@@ -4,6 +4,7 @@ import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 import {getDomainApps, setDomainApp} from  '../services/service.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import './aon-icon.js';
+import './aon-marketplace.js';
 
 class AonDesktop extends HTMLElement {
 
@@ -297,49 +298,160 @@ class AonDesktop extends HTMLElement {
 
 
 	build(r) {
-			let ul = document.createElement('ul');
-			ul.style.margin = '0px';
-			for (let key in Apps){
-				if(r[Apps[key].app] ? r[Apps[key].app] : false) {
-					let li = document.createElement('li');
-					li.style.display = 'inline-block';
+		let div = document.createElement('div');
+		div.style.marginLeft = '100px';
+		div.style.marginRight = '100px';
 
-					let div = document.createElement('div');
-					div.style.margin = '20px';
-					div.className = 'demo-card-wide mdl-card mdl-shadow--2dp';
+		let banner = document.createElement('div');
+		banner.style.border = '1px solid #ddd';
+		banner.style.marginTop = '20px';
+		banner.style.height = '100px';
+		div.appendChild(banner);
 
-					let span = document.createElement('span');
-					span.style.margin = '20px';
+		div.appendChild(this.buildTitle('CONTRATADOS'));
 
-					if(Apps[key].icon) {
-						span.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="60px"></aon-icon>`;
-					} else {
-						let img = document.createElement('img');
-						img.style.width = '60px';
-						img.src = Apps[key].logo;
-						span.appendChild(img);
-					}
+		let ul = document.createElement('ul');
+		ul.className = 'list-group';
 
-					let span2 = document.createElement('span');
-					span2.className = 'aonMarketplaceTitle';
-					span2.innerHTML = Apps[key].title;
+		for (let key in Apps){
+			if(r[Apps[key].app] ? r[Apps[key].app] : false) {
+				let li = document.createElement('li');
+				li.className = 'list-group-item';
+				let span = document.createElement('span');
+				span.style.margin = '20px';
 
-					span.appendChild(span2);
-
-					let div2 = document.createElement('div');
-					let span3 = document.createElement('span');
-					span3.style.padding = '25px';
-					span3.style.color = '#7E7E7E';
-					span3.innerHTML = Apps[key].description;
-					div2.appendChild(span3);
-
-					div.appendChild(span);
-					div.appendChild(div2);
-					li.appendChild(div);
-					ul.appendChild(li);
+				if(Apps[key].icon) {
+					span.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="30px"></aon-icon>`;
+				} else {
+					let img = document.createElement('img');
+					img.style.width = '30px';
+					img.src = Apps[key].logo;
+					span.appendChild(img);
 				}
-    }
-		this.appendChild(ul);
+				let span2 = document.createElement('span');
+				span2.className = 'aonAppTitle';
+				span2.innerHTML = Apps[key].title;
+				span.appendChild(span2);
+
+				let buttons = document.createElement('span');
+				buttons.style.position = 'absolute';
+				buttons.style.right = '10px';
+
+				let moreInfo = document.createElement('a');
+				moreInfo.style.margin = '10px';
+				moreInfo.style.color = 'gray';
+				moreInfo.style.cursor = 'pointer';
+				moreInfo.innerHTML = 'Más Info';
+				moreInfo.addEventListener('click', () => {
+					window.open('https://www.aonsolutions.es/');
+				});
+				buttons.appendChild(moreInfo);
+
+				let open = document.createElement('button');
+				open.type = 'button';
+				open.className = 'btn btn-outline-dark';
+				open.style.width = '100px';
+				open.style.borderRadius = '25px';
+				open.innerHTML = 'Abrir';
+				buttons.appendChild(open);
+				span.appendChild(buttons);
+				li.appendChild(span);
+				ul.appendChild(li);
+			}
+  	}
+		div.appendChild(ul);
+
+		div.appendChild(this.buildTitle('DESCUBRIR'));
+		div.appendChild(this.buildCards(r));
+
+		div.appendChild(this.buildTitle('OTROS SERVICIOS'));
+		// TODO
+
+		this.appendChild(div);
+	}
+
+	buildTitle(title) {
+		let div = document.createElement('div');
+		div.style.color = 'gray';
+		div.style.paddingTop = '20px';
+		div.style.paddingBottom = '20px';
+		div.innerHTML = title;
+		return div;
+	}
+
+	buildCards(r) {
+		let ul = document.createElement('ul');
+		ul.style.margin = '0px';
+		ul.style.padding = '0px';
+		for (let key in Apps){
+			if(!r[Apps[key].app]) {
+				let li = document.createElement('li');
+				li.style.display = 'inline-block';
+				li.style.marginRight = '20px';
+				li.style.marginBottom = '20px';
+				let div = document.createElement('div');
+				div.style.margin = '0px';
+				div.className = 'demo-card-wide mdl-card mdl-shadow--2dp';
+
+				let span = document.createElement('span');
+				span.style.margin = '20px';
+
+				span.innerHTML = `<aon-icon icon="aon_app" color="lightgray" size="60px"></aon-icon>`;
+
+
+				let span2 = document.createElement('span');
+				span2.className = 'aonMarketplaceTitle';
+				span2.innerHTML = Apps[key].title;
+
+				span.appendChild(span2);
+
+				let div2 = document.createElement('div');
+				let span3 = document.createElement('span');
+				span3.style.padding = '25px';
+				span3.style.color = '#7E7E7E';
+				span3.innerHTML = Apps[key].description;
+				div2.appendChild(span3);
+
+				let buttons = document.createElement('span');
+				buttons.style.position = 'absolute';
+				buttons.style.bottom = '10px';
+				buttons.style.right = '10px';
+
+				let moreInfo = document.createElement('a');
+				moreInfo.style.margin = '10px';
+				moreInfo.style.color = 'gray';
+				moreInfo.style.cursor = 'pointer';
+				moreInfo.innerHTML = 'Más Info';
+				moreInfo.addEventListener('click', () => {
+					window.open('https://www.aonsolutions.es/');
+				});
+				buttons.appendChild(moreInfo);
+
+				let contratar = document.createElement('button');
+				contratar.type = 'button';
+				contratar.className = 'btn btn-outline-dark';
+				contratar.style.width = '100px';
+				contratar.style.borderRadius = '25px';
+				contratar.innerHTML = 'Contratar';
+				contratar.addEventListener('click', () => {
+				 	rootPanel('<aon-marketplace id="aonMarketplace" > </aon-marketplace>');
+					if(this.getAttribute('company')){
+						let aonMarketplace = document.getElementById('aonMarketplace');
+						aonMarketplace.setAttribute('company', this.getAttribute('company'));
+					}
+				});
+				buttons.appendChild(contratar);
+
+				div.appendChild(span);
+				div.appendChild(div2);
+				div.appendChild(buttons);
+
+
+				li.appendChild(div);
+				ul.appendChild(li);
+			}
+		}
+		return ul;
 	}
 }
 

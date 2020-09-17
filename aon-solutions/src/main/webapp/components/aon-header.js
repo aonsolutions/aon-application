@@ -123,7 +123,6 @@ class AonHeader extends HTMLElement {
 				aonShowMenu.style.display = 'none';
 
 				let aonMenu = document.getElementById('aonMenu');
-				aonMenu.innerHTML = '';
 				aonMenu.removeAttribute('company');
 				aonMenu.removeAttribute('user');
 				aonMenu.close();

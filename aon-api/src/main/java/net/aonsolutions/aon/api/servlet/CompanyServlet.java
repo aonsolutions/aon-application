@@ -94,7 +94,9 @@ public class CompanyServlet extends HttpServlet{
 		JSONObject json = new JSONObject();
 		AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> 
 		f.getDomainProperty().eq(domain.getId())).forEach(domainApp -> {	
-			json.put(domainApp.getApp().name().toLowerCase(), domainApp.getActive());
+			if(domainApp.getApp() != null) {
+				json.put(domainApp.getApp().name().toLowerCase(), domainApp.getActive());
+			}
 		});
 		if(json.isEmpty()) {
 			return oldModules(domain);

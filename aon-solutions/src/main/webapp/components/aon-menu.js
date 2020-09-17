@@ -99,23 +99,17 @@ class AonMenu extends HTMLElement {
 			case Apps.TOOLS.app:
 				this.buildAppMenu(Apps.TOOLS);
 				break;
-			case Apps.SELFCONTA.app:
-				alert('SELFCONTA');
-				break;
 			case Apps.CONTRATA.app:
 				rootPanel('<aon-contrata></aon-contrata>');
 				break;
 			case Apps.PORTAL.app:
 				open('https://mispapeles.es/');
 				break;
-			case Apps.ALMA.app:
-				alert('ALMA');
+			case Apps.MESSENGER.app:
+				alert('MESSENGER');
 				break;
-			case Apps.LEARNING.app:
-				alert('LEARNING');
-				break;
-			case Apps.SERVICONVENIOS.app:
-				alert('SERVICONVENIOS');
+			case Apps.CONVENIOS.app:
+				alert('CONVENIOS');
 				break;
 		}
 	}
@@ -140,18 +134,14 @@ class AonMenu extends HTMLElement {
 				return Apps.AIO;
 			case Apps.TOOLS.app:
 				return Apps.TOOLS;
-			case Apps.SELFCONTA.app:
-				return Apps.SELFCONTA;
 			case Apps.CONTRATA.app:
 				return Apps.CONTRATA;
 			case Apps.PORTAL.app:
 				return Apps.PORTAL;
-			case Apps.ALMA.app:
-				return Apps.ALMA;
-			case Apps.LEARNING.app:
-				return Apps.LEARNING;
-			case Apps.SERVICONVENIOS.app:
-				return Apps.SERVICONVENIOS;
+			case Apps.MESSENGER.app:
+				return Apps.MESSENGER;
+			case Apps.CONVENIOS.app:
+				return Apps.CONVENIOS;
 		}
 	}
 
@@ -177,8 +167,10 @@ class AonMenu extends HTMLElement {
 		aonMenuSidenav.addEventListener('mouseleave', () => {
 			if(this.getAttribute('opened')) {
 				aonMenuSidenav.style.width = '60px';
+				rootPanel.style.marginRight = '60px';
 			} else {
 				aonMenuSidenav.style.width = '0px';
+				rootPanel.style.marginRight = '0px';
 			}
 			this.buildMenu();
 		});
@@ -414,6 +406,7 @@ class AonMenu extends HTMLElement {
 
 	close() {
 		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
+		let rootPanel = document.getElementById('rootPanel');
 		aonMenuSidenav.style.width = '0px';
 		rootPanel.style.marginRight = '0px';
 		this.removeAttribute('opened');

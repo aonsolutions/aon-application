@@ -14,12 +14,10 @@ public enum AonApp implements Serializable{
 	OCR,
 	AIO,
 	TOOLS,
-	SELFCONTA,
 	CONTRATA,
 	PORTAL,
-	ALMA,
-	LEARNING,
-	SERVICONVENIOS;
+	MESSENGER,
+	CONVENIOS;
 	
 	public Byte value(){
 		return (byte) ordinal();
@@ -56,18 +54,14 @@ public enum AonApp implements Serializable{
 			return AIO;
 		} else if(i.equalsIgnoreCase(TOOLS.name())) {
 			return TOOLS;
-		} else if(i.equalsIgnoreCase(SELFCONTA.name())) {
-			return SELFCONTA;
 		} else if(i.equalsIgnoreCase(CONTRATA.name())) {
 			return CONTRATA;
 		} else if(i.equalsIgnoreCase(PORTAL.name())) {
 			return PORTAL;
-		} else if(i.equalsIgnoreCase(ALMA.name())) {
-			return ALMA;
-		} else if(i.equalsIgnoreCase(LEARNING.name())) {
-			return LEARNING;
-		} else if(i.equalsIgnoreCase(SERVICONVENIOS.name())) {
-			return SERVICONVENIOS;
+		} else if(i.equalsIgnoreCase(MESSENGER.name())) {
+			return MESSENGER;
+		} else if(i.equalsIgnoreCase(CONVENIOS.name())) {
+			return CONVENIOS;
 		} 
 		return null;
 	}

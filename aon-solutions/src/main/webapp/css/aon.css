@@ -20,6 +20,12 @@
 		padding-left: 40px;
 	}
 
+	.aonAppTitle {
+		color: #5f6368;
+		font-weight: bold;
+		padding-left: 20px;
+	}
+
 	.aonMenu {
 		position: relative;
 		height:calc(100vh - 61px);
@@ -48,7 +54,7 @@
     border: none;
 		position: relative;
 		display: inline-block;
-		outline: none;
+		outline: none !important;
 		cursor: pointer;
 	}
 

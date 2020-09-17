@@ -61,12 +61,6 @@ export const Apps = {
       icon: 'aon_app',
       color: 'gray'
     },
-    SELFCONTA: {
-      app: 'selfconta',
-      title: 'Selfconta',
-      description: 'Selfconta.',
-      logo: 'assets/apps/selfconta.png'
-    },
     CONTRATA: {
       app: 'contrata',
       title: 'Contrat@',
@@ -81,23 +75,20 @@ export const Apps = {
       icon: 'aon_app',
       color: '#002469'
     },
-    ALMA: {
-      app: 'alma',
-      title: 'Alma',
-      description: 'Alma',
-      logo: 'assets/apps/alma.png'
+    MESSENGER: {
+      app: 'messenger',
+      title: 'Messenger',
+      description: 'Messenger',
+      icon: 'aon_app',
+      color: '#CADEFF'
     },
-    LEARNING: {
-      app: 'learning',
-      title: 'Learning',
-      description: 'Learning',
-      logo: 'assets/apps/learning.png'
-    },
-    SERVICONVENIOS: {
+    CONVENIOS: {
       app: 'serviconvenios',
       title: 'ServiConvenios',
       description: 'ServiConvenios',
-      logo: 'assets/apps/serviconvenios.png'
+      logo: 'assets/apps/serviconvenios.png',
+      icon: 'aon_app',
+      color: '#329905'
     }
 };
 
