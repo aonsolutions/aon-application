@@ -43,7 +43,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeeDialog extends CustomDialog {
+public abstract class EmployeeDialog extends CustomDialog {
 	
 	@SuppressWarnings("deprecation")
 	private class EmployeeImplementation extends Employee{
@@ -575,11 +575,11 @@ public class EmployeeDialog extends CustomDialog {
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
-	interface Callback {
-		void onAccept(EmployeeDialog dialog);
-	}
+//	interface Callback {
+//		void onAccept(EmployeeDialog dialog);
+//	}
 	
-	private Callback cb;
+//	private Callback cb;
 	private EmployeeDialogObject employeeDialogObject;
 	private ContractType contractType;
 	private Municipalities municipalities;
@@ -619,8 +619,12 @@ public class EmployeeDialog extends CustomDialog {
 					this.employeeDialogObject.createEmployeeContract(
 							r -> { 
 									hide();
-									EmployeeTree.invokeRefreshWorkplace();
-									cb.onAccept(this);
+									if(null != employeeDialogObject.getWorkplaceObj()) 
+										EmployeeTree.invokeRefreshWorkplace();
+					
+									onAccept();
+//									cb.onAccept(this);
+									
 								 }, 
 							t -> {}
 					);
@@ -641,6 +645,8 @@ public class EmployeeDialog extends CustomDialog {
 			dialog.show();
 		}
 	}
+	
+	protected abstract void onAccept();
 	
 	private boolean checkIfSaveIsPossible() {
 		//Check name, birthDate and contract startDate
@@ -799,8 +805,13 @@ public class EmployeeDialog extends CustomDialog {
 //		}
 		
 		//WORKPLACE
-		setSelectedValueLB(employee.workplace, this.employeeDialogObject.getWorkplaceId().toString());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
+		if(null != employeeDialogObject.getWorkplaceObj()) {
+			setSelectedValueLB(employee.workplace, this.employeeDialogObject.getWorkplaceId().toString());
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
+		}else {
+			employee.workplace.setSelectedIndex(0);
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.workplace);
+		}
 		
 		//AGREEMENT
 		setSelectedValueLB(employee.agreement, this.employeeDialogObject.getWorkplaceAgreement().toString());
@@ -1223,14 +1234,14 @@ public class EmployeeDialog extends CustomDialog {
 	
 	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
 	
-	public void show(Callback cb) {
-		this.cb = cb;
-		super.show();
-	}
-	
-	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
-		this.cb = callback;
-		super.setPopupPositionAndShow(positionCallback);
-	}
+//	public void show(Callback cb) {
+//		this.cb = cb;
+//		super.show();
+//	}
+//	
+//	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
+//		this.cb = callback;
+//		super.setPopupPositionAndShow(positionCallback);
+//	}
 	
 }

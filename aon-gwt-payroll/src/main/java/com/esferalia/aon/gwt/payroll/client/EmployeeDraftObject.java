@@ -108,7 +108,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
-		enterprisesService.getActivitiesCCC(workplace.getId(), new AsyncCallback<ActivitiesCCC>() {
+		enterprisesService.getActivitiesCCC(workplace, new AsyncCallback<ActivitiesCCC>() {
 			
 			@Override
 			public void onSuccess(ActivitiesCCC result) {
@@ -127,7 +127,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public void getWorkplaces(Consumer<List<Workplace>> success, Consumer<Throwable> failure) {
-		enterprisesService.getWorkplaces(workplace.getId(), new AsyncCallback<List<Workplace>>() {
+		enterprisesService.getWorkplaces(workplace, new AsyncCallback<List<Workplace>>() {
 			
 			@Override
 			public void onSuccess(List<Workplace> result) {

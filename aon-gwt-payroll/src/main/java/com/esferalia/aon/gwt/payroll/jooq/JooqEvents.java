@@ -15,6 +15,7 @@ import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import java.sql.Connection;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.jooq.DSLContext;
@@ -29,6 +30,7 @@ import com.esferalia.aon.gwt.payroll.client.Quintet;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
@@ -36,8 +38,8 @@ public class JooqEvents {
 
 	private static Settings SETTINGS = null;
 	
-	public static WorkplaceEmployees getWorkplaceEmployees(Connection conn, Integer workplaceId) {
-		return getWorkplaceEmployeesInformation(DSL.using(conn, getDefaultSettings()), workplaceId);
+	public static WorkplaceEmployees getWorkplaceEmployees(Connection conn, Workplace workplace, Integer domainId) {
+		return getWorkplaceEmployeesInformation(DSL.using(conn, getDefaultSettings()), workplace, domainId);
 	}
 	
 	public static EventsWorkplace setWorkplaceEmployees(Connection conn, EventsWorkplace updateEventsWorkplace) {
@@ -287,15 +289,22 @@ public class JooqEvents {
 		return workplaceEmployees;
 	}
 	
-	private static WorkplaceEmployees getWorkplaceEmployeesInformation(DSLContext dslContext, Integer workplaceId) {
+	private static WorkplaceEmployees getWorkplaceEmployeesInformation(DSLContext dslContext, Workplace workplace, Integer domainId) {
 		WorkplaceEmployees workplaceEmployees = new WorkplaceEmployees();
-		System.out.println("Workplace :"+workplaceId);
 		
-		Integer enterpriseId = dslContext.select(WORKPLACE.ENTERPRISE)
-				.from(WORKPLACE)
-				.where(WORKPLACE.ID.eq(workplaceId))
-				.fetchOne()
-				.value1();
+		List<Integer> enterprisesId = null;
+		
+		if(null != workplace) {
+			enterprisesId = dslContext.select(WORKPLACE.ENTERPRISE)
+					.from(WORKPLACE)
+					.where(WORKPLACE.ID.eq(workplace.getId()))
+					.fetch(WORKPLACE.ENTERPRISE);
+		} else {
+			enterprisesId = dslContext.select(WORKPLACE.ENTERPRISE)
+					.from(WORKPLACE)
+					.where(WORKPLACE.DOMAIN.eq(domainId))
+					.fetch(WORKPLACE.ENTERPRISE);
+		}
 		
 		Result<Record> personRecords = dslContext.select()
 				.from(PERSON)
@@ -303,7 +312,7 @@ public class JooqEvents {
 				.on(PERSON.REGISTRY.eq(CONTRACT.PERSON))
 				.innerJoin(WORKPLACE)
 				.on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-				.where(WORKPLACE.ENTERPRISE.eq(enterpriseId))
+				.where(WORKPLACE.ENTERPRISE.in(enterprisesId))
 				.and(CONTRACT.ID.gt(0))
 				.and(WORKPLACE.ACTIVE.eq((byte)1))
 				.fetch();

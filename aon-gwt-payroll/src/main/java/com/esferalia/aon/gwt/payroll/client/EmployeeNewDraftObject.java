@@ -194,7 +194,7 @@ public class EmployeeNewDraftObject {
 
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	public void getWorkplaceEmployees(Consumer<WorkplaceEmployees> success, Consumer<Throwable> failure) {
-		employeesService.getWorkplaceEmployees(workplace.getId(), new AsyncCallback<WorkplaceEmployees>() {
+		employeesService.getWorkplaceEmployees(workplace, new AsyncCallback<WorkplaceEmployees>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

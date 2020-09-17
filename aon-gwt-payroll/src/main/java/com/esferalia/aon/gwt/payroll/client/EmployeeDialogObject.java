@@ -60,7 +60,7 @@ public class EmployeeDialogObject {
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
 	public void getWorkplaceEmployees(Consumer<WorkplaceEmployees> success, Consumer<Throwable> failure) {
-		employeesService.getWorkplaceEmployees(workplace.getId(), new AsyncCallback<WorkplaceEmployees>() {
+		employeesService.getWorkplaceEmployees(workplace, new AsyncCallback<WorkplaceEmployees>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -100,7 +100,7 @@ public class EmployeeDialogObject {
 	}
 	
 	public void getWorkplaces(Consumer<List<Workplace>> success, Consumer<Throwable> failure) {
-		enterprisesService.getWorkplaces(workplace.getId(), new AsyncCallback<List<Workplace>>() {
+		enterprisesService.getWorkplaces(workplace, new AsyncCallback<List<Workplace>>() {
 			
 			@Override
 			public void onSuccess(List<Workplace> result) {
@@ -120,7 +120,7 @@ public class EmployeeDialogObject {
 	}
 	
 	public void getActivitiesCCC(Consumer<ActivitiesCCC> success, Consumer<Throwable> failure) {
-		enterprisesService.getActivitiesCCC(workplace.getId(), new AsyncCallback<ActivitiesCCC>() {
+		enterprisesService.getActivitiesCCC(workplace, new AsyncCallback<ActivitiesCCC>() {
 			
 			@Override
 			public void onSuccess(ActivitiesCCC result) {
@@ -326,10 +326,14 @@ public class EmployeeDialogObject {
 		return activeAgreements;
 	}
 	
+	public Workplace getWorkplaceObj() {
+		return this.workplace;
+	}
+	
 	public Integer getWorkplaceId(){
 		Integer workplaceId = null;
 		if(null == employeeData.getEmployeeId()){
-			workplaceId = this.workplace.getId();
+			workplaceId = null == this.workplace ? null : this.workplace.getId();
 			contractData.setWorkplaceId(workplaceId);
 		}else
 			workplaceId = contractData.getWorkplaceId();
@@ -340,7 +344,7 @@ public class EmployeeDialogObject {
 	public Integer getWorkplaceAgreement(){
 		Integer agreementId = null;
 		if(null == employeeData.getEmployeeId()){
-			Activity activity = this.workplace.getActivity();
+			Activity activity = null == this.workplace ? null : this.workplace.getActivity();
 			if(null == activity)
 				return -1;
 			agreementId = activity.getId();

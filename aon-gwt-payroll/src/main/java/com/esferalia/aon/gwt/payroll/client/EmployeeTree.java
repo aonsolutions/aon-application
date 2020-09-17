@@ -181,7 +181,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			employeesService = DomainEmployeesServiceAsync.newInstance();
 			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 			
-			EmployeeDialog employeeDialog = new EmployeeDialog();
+			EmployeeDialog employeeDialog = new EmployeeDialog() {
+				@Override
+				protected void onAccept() {}
+			};
 			EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace, employeesService, enterprisesService);
 			employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 			workplaceContextMenu.hide();
@@ -3034,7 +3037,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
-		EmployeeDialog employeeDialog = new EmployeeDialog();
+		EmployeeDialog employeeDialog = new EmployeeDialog() {
+			@Override
+			protected void onAccept() {}
+		};
 		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace, employeesService, enterprisesService);
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 		employeeDialog.center();

@@ -989,17 +989,18 @@ public class JooqEmployees {
 					.where(CONTRACT_CLAUSE.CONTRACT.eq(personId)).execute();
 
 			dslContext
-					.update(CONTRACT_DATA)
-					.set(CONTRACT_DATA.ID, CONTRACT_DATA.ID.mul(-1))
-					.set(CONTRACT_DATA.CONTRACT, CONTRACT_DATA.CONTRACT.mul(-1))
-					.where(CONTRACT_DATA.CONTRACT.eq(personId)).execute();
-
-			dslContext
 					.update(CONTRACT_DEDUCTION)
 					.set(CONTRACT_DEDUCTION.ID, CONTRACT_DEDUCTION.ID.mul(-1))
 					.set(CONTRACT_DEDUCTION.CONTRACT,
 							CONTRACT_DEDUCTION.CONTRACT.mul(-1))
 					.where(CONTRACT_DEDUCTION.CONTRACT.eq(personId)).execute();
+			
+			dslContext
+			.update(CONTRACT_DATA)
+			.set(CONTRACT_DATA.ID, CONTRACT_DATA.ID.mul(-1))
+			.set(CONTRACT_DATA.CONTRACT, CONTRACT_DATA.CONTRACT.mul(-1))
+			.where(CONTRACT_DATA.CONTRACT.eq(personId)).execute();
+
 
 			// ------------------------------------------- SALARY TABLES
 

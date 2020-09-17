@@ -737,9 +737,9 @@ public class EmployeeDraft extends Composite {
 		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
 				this.employee.start_date.getValue(),
 				this.employee.end_date.getValue(),
-				this.employee.contractType.getSelectedIndex(),
-				this.employee.quote_group.getSelectedIndex(),
-				this.employee.occupation.getSelectedIndex(),
+				this.employee.contractType.getSelectedValue(),
+				this.employee.quote_group.getSelectedValue(),
+				this.employee.occupation.getSelectedValue(),
 				this.employeeDraftObject.getPayrollDate(),
 				this.employeeDraftObject.getContractId(),
 				this.employeeDraftObject.getDomainId(),
