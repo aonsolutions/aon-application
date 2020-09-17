@@ -15,6 +15,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_DAYS_FORCE_OFF;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTOR_FORCE_OFF;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -3559,6 +3560,64 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaTrabajadoresYTramosEREFZAParcialAndITIII()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		
+		addData(aonContext, contract, startDate, endDate, ContextVariable.ERE_FACTOR_FORCE, 0.50);
+		
+		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 14);
+		Date endIT = add(startDate, Calendar.DAY_OF_MONTH, 27);
+		
+		addIT(aonContext, contract, LeaveType.OCCUPATIONAL_DISEASE, startIt, endIT, null);
+		addData(aonContext, contract, startDate, endDate, ContextVariable.REGULATORY_BASE, 35.00);
+		
+
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		
+		for (Tramo tramo : tramos) {
+			System.out.println(tramo.getFechaDesde().getDia() + ".." + tramo.getFechaHasta().getDia());
+		}
+		
+		Assert.assertEquals(3, tramos.size());
+		
+		// ERE 
+		Tramo tramo0 = tramos.get(0); 
+		Assert.assertEquals("01", tramo0.getFechaDesde().getDia());
+		Assert.assertEquals("14", tramo0.getFechaHasta().getDia());
+		assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo0);
+
+		Tramo tramo1 = tramos.get(1); 
+		Assert.assertEquals("15", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals("28", tramo1.getFechaHasta().getDia());
+		assertTramoITATEPPagoDelegado(tramo1);;
+		assertTramoExpedienteRegulacionEmpleoParcial(tramo1);
+		
+		Tramo tramo2 = tramos.get(2); 
+		Assert.assertEquals("29", tramo2.getFechaDesde().getDia());
+		assertTramoExpedienteRegulacionEmpleoParcialActivo(tramo2);
+		
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = getBases(connection, startDate, endDate, ccc, contract);
+		
+		Assert.assertEquals(3, bases.size());
+	}
+	@Test
 	public void testCretaTrabajadoresYTramosEREFZAOFFTotal()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
@@ -5308,7 +5367,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				"BASE_CGC * 0.10", 
 				"BASE_CGP * 0.05",
 				"BASE_IRPF * PORCENTAJE_IRPF/100" ,
-				"TRACE('DIAS_TRABAJADOS=%f\r\n', DIAS_TRABAJADOS); 0.00;"
+//				"TRACE('DIAS_TRABAJADOS=%f\r\n', DIAS_TRABAJADOS); 0.00;"
 				},
 				category
 				,
@@ -5361,19 +5420,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 
 		PaymentConceptRecord ere = addConcept(aonContext, "ERE");
 
-		addPayment(aonContext, contract, ere, null, 
+		addPayment(aonContext, contract, ere, 
+				String.format("/*read-only*/%s * 0.00/**/", ERE_DAYS),
 				String.format("%s * BASE_REGULADORA",  ERE_DAYS)
 				);
 		
 		PaymentConceptRecord ereFza = addConcept(aonContext, "ERE_FZA");
 
-		addPayment(aonContext, contract, ereFza, null, 
+		addPayment(aonContext, contract, ereFza, 
+				String.format("/*read-only*/%s * 0.00/**/", ERE_DAYS_FORCE),
 				String.format("%s * BASE_REGULADORA",  ERE_DAYS_FORCE)
 				);
 
 		PaymentConceptRecord ereFzaExonerado = addConcept(aonContext, "ERE_FZA_EXONERADO");
 
-		addPayment(aonContext, contract, ereFzaExonerado, null, 
+		addPayment(aonContext, contract, ereFzaExonerado, 
+				String.format("/*read-only*/%s * 0.00/**/", ERE_DAYS_FORCE_OFF),
 				String.format("%s * BASE_REGULADORA",  ERE_DAYS_FORCE_OFF)
 				);
 		

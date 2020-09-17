@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseData.ENTERPRISE_DATA;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.SQLNoItContractSalaryCalculatorContext.split;
 import static com.esferalia.aon.payroll.calculator.sql.SQLSystemExpressionContextFactory.DEFAULT_AGRREEMENT_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ABS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTUAL_DAYS;
@@ -4558,14 +4559,18 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			ContextVariable ereFactorVar = ereFactorPair.fst;
 			ITimedVariable<Object> ereFactor = ereFactorPair.snd;
 					
-			Period period = ereFactor.getPeriod();
-			Object value = ereFactor.getValue(period);			
+			//Period period = ereFactor.getPeriod();
+			
+			for ( Period period : split(Collections.singletonList(ereFactor.getPeriod()), leaves) ) {
+			
+			Object value = ereFactor.getValue(period);		
+			
 
 			double factor = ((Number) value).doubleValue();
 			if (((Number) value).doubleValue() >= 1.00)
 				intersects = Period.sub(intersects, Collections.singletonList(period));
 			else
-				intersects = SQLNoItContractSalaryCalculatorContext.split(intersects,
+				intersects = split(intersects,
 						Collections.singletonList(period));
 			
 			ITimedVariable<Double> ereDays = new ITimedVariable<Double>() {
@@ -4576,6 +4581,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 				@Override
 				public Double getValue(Period p) {
+					ctx.readVariable(ereFactorVar, p.getStart(), p.getEnd(), Number.class);
 					return getEreDays(ctx, p, factor, ereFactorsPairs);
 				}
 
@@ -4670,6 +4676,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			
 			getFullERE(period).forEach(v -> ctx.putVariable(FULL_ERE, v ));
 			;
+			}
 		}
 		
 
