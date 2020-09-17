@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -228,18 +229,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getWorkplaces(Integer workplaceId, String doamin, AsyncCallback<List<Workplace>> callback) {
+	public void getWorkplaces(Workplace workplace, String doamin, AsyncCallback<List<Workplace>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getWorkplaces(workplaceId, doamin,
+		enterprisesServiceAsync.getWorkplaces(workplace, doamin,
 				new AsyncCallbackWrapper<List<Workplace>>(callback));	
 		
 	}
 
 	@Override
-	public void getActivitiesCCC(Integer workplaceId, String domain,
+	public void getActivitiesCCC(Workplace workplace, String domain,
 			AsyncCallback<ActivitiesCCC> callback) {
 		AON.start();
-		enterprisesServiceAsync.getActivitiesCCC(workplaceId, domain,
+		enterprisesServiceAsync.getActivitiesCCC(workplace, domain,
 				new AsyncCallbackWrapper<ActivitiesCCC>(callback));
 	}
 
@@ -446,6 +447,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getEnterprisesCCCInfo(currentDomainName, user, findPeriodTime, new AsyncCallbackWrapper<List<CCCInfo>>(callback));
+	}
+
+	@Override
+	public void getEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
 	}
 
 }

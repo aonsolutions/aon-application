@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -88,9 +89,9 @@ public interface EnterprisesService extends RemoteService {
 
 	WorkplaceInfo setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo);
 
-	List<Workplace> getWorkplaces(Integer workplaceId, String domain);
+	List<Workplace> getWorkplaces(Workplace workplace, String domain);
 
-	ActivitiesCCC getActivitiesCCC(Integer workplaceId, String domain);
+	ActivitiesCCC getActivitiesCCC(Workplace workplaceId, String currentDomainName);
 
 	ActivityInfo getActivityInfoDataBase(Integer activityId, String domain);
 
@@ -153,5 +154,7 @@ public interface EnterprisesService extends RemoteService {
 	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
 
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
+
+	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName);
 	
 }

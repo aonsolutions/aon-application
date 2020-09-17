@@ -11,6 +11,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
+import com.google.gwt.user.client.Window;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronLabelElement;
@@ -109,18 +110,18 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_AFI_ENTRY_POINT)) {
 			AgrarianAFI agrarianAFI = new AgrarianAFI();
 			agrarianAFI.onModuleLoad();
-		} 
-		else if (entryPoint
+		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
 			
 			MainCRAObjectNew mainCRAObject = new MainCRAObjectNew();
 			MainCRANew mainCRA = new MainCRANew();
 			mainCRA.onModuleLoad(mainCRAObject);
-			
-//			MainCRA mainCRA = new MainCRA();
-//			mainCRA.onModuleLoad();
-		} 
-		else if (entryPoint
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_CONTRATA_ENTRY_POINT)) {
+			MainContrataContractObject mainContrataContractObject = new MainContrataContractObject();
+			MainContrataContract mainContrataContract = new MainContrataContract();
+			mainContrataContract.onModuleLoad(mainContrataContractObject);
+		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			ActivitySummary activitySummary = new ActivitySummary();
 			activitySummary.onModuleLoad();

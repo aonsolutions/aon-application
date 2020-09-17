@@ -2,10 +2,22 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 
+import com.google.gwt.view.client.ProvidesKey;
+
 public class EmployeeContractInfo implements Serializable{
 	
 	private EmployeeInfo employeeInfo;
 	private ContractInfo contractInfo;
+	
+	/**
+     * The key provider that provides the unique ID of a contact.
+     */
+    public static final ProvidesKey<EmployeeContractInfo> KEY_PROVIDER = new ProvidesKey<EmployeeContractInfo>() {
+      @Override
+      public Object getKey(EmployeeContractInfo item) {
+        return item == null ? null : item.getContractInfo().getContractId();
+      }
+    };
 	
 	public EmployeeContractInfo(){
 		super();

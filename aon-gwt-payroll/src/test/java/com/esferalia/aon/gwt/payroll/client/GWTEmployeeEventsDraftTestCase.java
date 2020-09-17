@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.junit.client.GWTTestCase;
@@ -101,7 +102,7 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void getWorkplaceEmployees(String domain, Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
+			public void getWorkplaceEmployees(String domain, Workplace workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
 				// TODO Auto-generated method stub
 				
 			}

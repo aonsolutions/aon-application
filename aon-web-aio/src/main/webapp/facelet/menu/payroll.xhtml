@@ -264,6 +264,31 @@
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
+					
+					<!-- 
+							CONTRAT@
+						 -->
+					<aon:if test="#{domainSwitcher.alphaUser}">
+						<aon:panelGroup>
+							<aon:panelGrid id="group_payroll_contrata"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-sepe-contrata">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.sepe_contrata}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_main_contrata" 
+											action="gwt_main_contrata"
+											title="#{bundle.payroll_contract_module}"
+											value="#{bundle.payroll_contract_module}" 
+											target="gwt">
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:panelGroup>
+					</aon:if>
 
 					<!--
 						CONFIG 

@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -368,8 +369,8 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getAvaiableEmployees(getCurrentDomainName(),  callback);
 	}
 
-	public void getWorkplaceEmployees(Integer workplaceId, AsyncCallback<WorkplaceEmployees> asyncCallback) {
-		employeesServiceAsync.getWorkplaceEmployees(getCurrentDomainName(),  workplaceId, asyncCallback);
+	public void getWorkplaceEmployees(Workplace workplace, AsyncCallback<WorkplaceEmployees> asyncCallback) {
+		employeesServiceAsync.getWorkplaceEmployees(getCurrentDomainName(), workplace, asyncCallback);
 	}
 
 	public void setEventsWorkplace(EventsWorkplace updateEventsWorkplace,

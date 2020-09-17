@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.SalaryPreview;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -550,7 +551,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceEmployees(String domain, Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceEmployees(String domain, Workplace workplaceId) {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
 		return null;

@@ -60,6 +60,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/calculator.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Main Contrata  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_contrata</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/contrata.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 			
 	<!-- =================== Main Agreement  ========================== -->
 	<navigation-rule>

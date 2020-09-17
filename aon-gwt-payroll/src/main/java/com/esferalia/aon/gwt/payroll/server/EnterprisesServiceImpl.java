@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
@@ -54,6 +55,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -1506,11 +1508,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Workplace> getWorkplaces(Integer workplaceId, String domain) {
+	public List<Workplace> getWorkplaces(Workplace workplace, String domainName) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqWorkplace.getWorkplaces(workplaceId, connection);
+			connection = AonServletUtils.getConnection(domainName);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqWorkplace.getWorkplaces(workplace, domainId, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -1524,11 +1527,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ActivitiesCCC getActivitiesCCC(Integer workplaceId, String domain) {
+	public ActivitiesCCC getActivitiesCCC(Workplace workplace, String domainName) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqWorkplace.getActivitiesCCC(workplaceId, connection);
+			connection = AonServletUtils.getConnection(domainName);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqWorkplace.getActivitiesCCC(workplace, domainId, connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -2077,6 +2081,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
 			return JooqEnterprise.getEnterprisesCCCInfo(connection, userId, domainId, parentDomainId, findPeriodTime);
 
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public List<EmployeeContractInfo> getEmployeesInfo(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getEmployeesInfo(connection, domainId);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

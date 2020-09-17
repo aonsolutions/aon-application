@@ -4765,11 +4765,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public WorkplaceEmployees getWorkplaceEmployees(String domain, Integer workplaceId) {
+	public WorkplaceEmployees getWorkplaceEmployees(String domainName, Workplace workplace) {
 		Connection connection = null;
 		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqEvents.getWorkplaceEmployees(connection, workplaceId);
+			connection = AonServletUtils.getConnection(domainName);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqEvents.getWorkplaceEmployees(connection, workplace, domainId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		} finally {

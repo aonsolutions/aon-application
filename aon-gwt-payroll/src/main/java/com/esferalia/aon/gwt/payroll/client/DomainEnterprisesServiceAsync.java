@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -144,12 +145,12 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setWorkplaceInfo(getCurrentDomainName(), workplaceInfo, asyncCallback);
 	}
 	
-	public void getWorkplaces(Integer workplaceId, AsyncCallback<List<Workplace>> asyncCallback) {
-		enterprisesServiceAsync.getWorkplaces(workplaceId, getCurrentDomainName(), asyncCallback);
+	public void getWorkplaces(Workplace workplace, AsyncCallback<List<Workplace>> asyncCallback) {
+		enterprisesServiceAsync.getWorkplaces(workplace, getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getActivitiesCCC(Integer workplaceId, AsyncCallback<ActivitiesCCC> asyncCallback) {
-		enterprisesServiceAsync.getActivitiesCCC(workplaceId, getCurrentDomainName(), asyncCallback);
+	public void getActivitiesCCC(Workplace workplace, AsyncCallback<ActivitiesCCC> asyncCallback) {
+		enterprisesServiceAsync.getActivitiesCCC(workplace, getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getActivityInfoDataBase(Integer activityId, AsyncCallback<ActivityInfo> asyncCallback) {
@@ -269,6 +270,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.sendPayrollEmailToEmployees(getCurrentDomainName(), from, cc, cco, bodyHTML, completeURL, asyncCallback);
 	}
 	
+	public void getEnterprisesCCCInfo(long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback) {
+		enterprisesServiceAsync.getEnterprisesCCCInfo(getCurrentDomainName(), getCurrentUser(), findPeriodTime, asyncCallback);
+	}
+
+	public void getEmployeesInfo(AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
+		enterprisesServiceAsync.getEmployeesInfo(getCurrentDomainName(), asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
@@ -278,11 +287,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	public void getEnterprisesCCCInfo(long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback) {
-		enterprisesServiceAsync.getEnterprisesCCCInfo(getCurrentDomainName(), getCurrentUser(), findPeriodTime, asyncCallback);
-	}
-
-	
 
 }

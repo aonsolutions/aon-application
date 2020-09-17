@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -56,8 +57,8 @@ public interface EnterprisesServiceAsync {
 	void getParentDomain(String domain, AsyncCallback<Integer> callback);
 	void getWorkplaceInfo(String domain, Integer workplaceId, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void setWorkplaceInfo(String domain, WorkplaceInfo workplaceInfo, AsyncCallback<WorkplaceInfo> asyncCallback);
-	void getWorkplaces(Integer workplaceId, String domain, AsyncCallback<List<Workplace>> asyncCallback);
-	void getActivitiesCCC(Integer workplaceId, String currentDomainName, AsyncCallback<ActivitiesCCC> asyncCallback);
+	void getWorkplaces(Workplace workplace, String domain, AsyncCallback<List<Workplace>> asyncCallback);
+	void getActivitiesCCC(Workplace workplaceId, String currentDomainName, AsyncCallback<ActivitiesCCC> asyncCallback);
 	void getActivityInfoDataBase(Integer activityId, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void updateActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void createActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
@@ -96,5 +97,6 @@ public interface EnterprisesServiceAsync {
 	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList,
 			AsyncCallback<String> asyncCallback);
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
+	void getEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 
 }
