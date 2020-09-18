@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Employee extends ResizeComposite {
@@ -153,6 +154,9 @@ public abstract class Employee extends ResizeComposite {
 	ListBox journeyType;
 
 	// TABLA DATOS EMPLEADO
+	
+	@UiField
+	VerticalPanel employeeTablePanel;
 
 	@UiField
 	TableElement employeeDataTable;

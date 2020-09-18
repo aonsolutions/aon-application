@@ -350,7 +350,7 @@
 				</table>
 			</g:HTMLPanel>
 		</g:VerticalPanel>
-		<g:VerticalPanel styleName="{style.styleBorder2}"> 
+		<g:VerticalPanel ui:field="employeeTablePanel" styleName="{style.styleBorder2}"> 
 			<g:Label ui:field="labelEmployee" debugId="labelEmployee" width="105px" styleName='aon-group-title {style.headerStyle}'>Datos personales</g:Label>
 			<g:HTMLPanel>
 				<table ui:field="employeeDataTable" debugId="employeeDataTable"

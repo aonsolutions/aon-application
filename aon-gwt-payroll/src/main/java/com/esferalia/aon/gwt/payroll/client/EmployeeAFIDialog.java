@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmployeeAFIDialog extends CustomDialog {
+public abstract class EmployeeAFIDialog extends CustomDialog {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
@@ -644,8 +644,11 @@ public class EmployeeAFIDialog extends CustomDialog {
 	void onAcceptClick(ClickEvent event) {
 		onAccept();
 		hide();
+		onAcceptCb();
 	}
 	
+	protected abstract void onAcceptCb();
+
 	@UiHandler("tc2")
 	void onTC2Change(ChangeEvent event) {
 		if(tc2.getSelectedIndex() == 0)

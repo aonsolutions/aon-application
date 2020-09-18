@@ -601,6 +601,24 @@ public abstract class EmployeeDialog extends CustomDialog {
 		});
 	}
 	
+	public EmployeeDialog(Boolean isContrataCall) {
+		employee = new EmployeeImplementation();
+		
+		setCaption("Trabajador");
+		setWidget(binder.createAndBindUi(this));
+		
+		employee.clear_employee.getElement().getStyle().setDisplay(Display.NONE);
+		employee.account.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				reformatAccount(employee.account);
+			}
+		});
+		
+		if(isContrataCall)
+			hideEmployeeTable();
+	}
+	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
 	@UiHandler("cancelButton")
@@ -665,14 +683,16 @@ public abstract class EmployeeDialog extends CustomDialog {
 		if( 0 == this.employee.activityCCC.getSelectedIndex())
 			return false;
 		
-		if(StringUtils.isBlank(this.employee.addressZip.getValue()))
-			return false;
-		
-		if(this.employee.addressMunicipality.getSelectedIndex() == 0)
-			return false;
-		
-		if(this.employee.addressProvince.getSelectedIndex() == 0)
-			return false;
+		if(null != this.employeeDialogObject.getWorkplaceObj()) {
+			if(StringUtils.isBlank(this.employee.addressZip.getValue()))
+				return false;
+			
+			if(this.employee.addressMunicipality.getSelectedIndex() == 0)
+				return false;
+			
+			if(this.employee.addressProvince.getSelectedIndex() == 0)
+				return false;
+		}
 		
 		return true;
 	}
@@ -718,9 +738,13 @@ public abstract class EmployeeDialog extends CustomDialog {
 		initContractType();
 		initAgreements();
 		fillDefaultFields();
-		initFocus();
+		initFocus();	
 	}
 	
+	private void hideEmployeeTable() {
+		employee.employeeTablePanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+
 	private void initSuggestBox() {
 		WorkplaceEmployees workplaceEmployees = employeeDialogObject.getWorkplaceEmployees();
 		

@@ -744,7 +744,10 @@ public class EmployeeDraft extends Composite {
 				this.employeeDraftObject.getContractId(),
 				this.employeeDraftObject.getDomainId(),
 				this.employeeDraftObject.getWorkplaceId()
-				){};
+				){
+					@Override
+					protected void onAcceptCb() {}
+				};
 			
 		dialog.center();
 		dialog.show();

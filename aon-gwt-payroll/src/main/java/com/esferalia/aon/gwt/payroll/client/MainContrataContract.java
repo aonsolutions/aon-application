@@ -135,10 +135,19 @@ public class MainContrataContract extends MainEntryPoint {
 			    				employeeContractInfo.getContractInfo().getContractId(),
 			    				employeeContractInfo.getEmployeeInfo().getDomain(),
 			    				employeeContractInfo.getContractInfo().getWorkplaceId()
-			    				){};
+			    				){
+
+									@Override
+									protected void onAcceptCb() {
+										WarningDialog warn = new WarningDialog("AVISO", "AQUI SE NOTIFICA LA MODIFICACION");
+										warn.center();
+										warn.show();
+										redrawTable();
+									}};
 			    			
 			    		movementsDialog.setModal(true);
 			    		movementsDialog.setAnimationEnabled(true);
+			    		movementsDialog.center();
 	    				movementsDialog.show();
 	    				movementsDialog.center();
 					}
@@ -200,6 +209,10 @@ public class MainContrataContract extends MainEntryPoint {
 	    TextColumn<EmployeeContractInfo> contractTypeColumn = new TextColumn<EmployeeContractInfo>() {
 	      @Override
 	      public String getValue(EmployeeContractInfo employeeContractInfo) {
+	    	  if((byte)3 == employeeContractInfo.getContractInfo().getSsRegimen())
+	    		  return "RETA";
+	    	  if("000" == employeeContractInfo.getContractInfo().getContractType())
+	    		  return "BECARIO";
 	    	  return employeeContractInfo.getContractInfo().getContractType();
 	      }
 
@@ -451,15 +464,15 @@ public class MainContrataContract extends MainEntryPoint {
 		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
-		EmployeeDialog employeeDialog = new EmployeeDialog() {
+		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
 			protected void onAccept() {
-				Window.alert("Accept");
-				WarningDialog dialog = new WarningDialog("AVISO", "¿Desea dar de alta el contrato?");
+				WarningDialog dialog = new WarningDialog("AVISO", "Desea dar de alta el contrato?");
 				dialog.setModal(true);
 				dialog.setAnimationEnabled(true);
 				dialog.center();
 				dialog.show();
+				redrawTable();
 			}
 		};
 		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null, employeesService, enterprisesService);
@@ -468,6 +481,16 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDialog.setAnimationEnabled(true);
 		employeeDialog.center();
 		employeeDialog.show();
+	}
+	
+	private void redrawTable() {
+		this.mainContrataContractObject.getEmployeesInfo(
+				s -> {
+					initContractTable();
+					setTableHeights();
+				},
+				f -> {}
+		);
 	}
 	
 
