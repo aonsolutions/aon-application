@@ -1,6 +1,6 @@
 import './aon-header.js';
 import './aon-menu.js';
-import './aon-inputText.js';
+import './aon-input-text.js';
 
 class AonHome extends HTMLElement {
 	constructor () {

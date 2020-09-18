@@ -7,6 +7,50 @@
 		line-height: normal !important;
 	}
 
+	a{
+		color: #12CCD1;
+		cursor: pointer;
+	}
+
+	a:hover{
+		color: #12CCD1;
+		text-decoration: underline;
+	}
+	button {
+    display: inline-block;
+    border: none;
+    padding: 1rem 2rem;
+    margin: 0;
+    text-decoration: none;
+    background: #002469;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background 250ms ease-in-out,
+                transform 150ms ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+		outline: none !important;
+	}
+
+	button:active {
+    transform: scale(0.99);
+	}
+
+	.aonColorGray {
+		color: #A2A8B6;
+	}
+
+	.aonColorPrimary {
+		color: #002469;
+	}
+
+	.aonColorSecondary {
+		color: #12CCD1;
+	}
+
 	.aonTitle {
 			font-size: 20px;
 			font-weight:400;
@@ -99,6 +143,10 @@
   .aonWidth75{
       width: 73.5%;
       display: inline-block !important;
+  }
+
+	.aonWidth300{
+      width: 300px;
   }
 
 	.aonRight0 {
@@ -314,6 +362,14 @@
 		vertical-align: middle;
 	}
 
+	.aonVerticalCenter {
+		margin: 0;
+	  position: absolute;
+	  top: 50%;
+	  -ms-transform: translateY(-50%);
+	  transform: translateY(-50%);
+	}
+
 	.aonClip {
 		clip: rect(0px, 250px, 112px, 0px) !important;
 		opacity: 1;
@@ -348,4 +404,9 @@
 	  -webkit-appearance: none;
 	  outline: 0px;
 		font-size: 14px;
+	}
+
+	.aonFormCenter {
+		display: flex;
+		justify-content: center;
 	}

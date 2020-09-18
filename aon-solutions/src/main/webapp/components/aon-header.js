@@ -37,7 +37,7 @@ class AonHeader extends HTMLElement {
 		this.innerHTML = `
 			<div id="aonHeaderWeb" class="aonHeader" >
 				<span>
-					<img id="aonLogo" class="aonLogo" width="200px" />
+					<img id="aonLogo" class="aonLogo" width="230px" />
 				</span>
 
 				<span id="aonHeaderSearch" class="aonLeft250 aonHeaderButton" >
@@ -150,12 +150,10 @@ class AonHeader extends HTMLElement {
 
 		if(window.location.href.includes('ayudat')){
 			aonLogo.src = '../assets/ayudat-logo.png';
-			aonLogo.style.top = '0px';
-			aonLogo.style.width = '150px';
 		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
 			aonLogo.src = '../assets/tedi-logo.png';
 			aonLogo.style.top = '0px';
-		} else aonLogo.src = '../assets/logo.png';
+		} else aonLogo.src = '../assets/aon-logo.png';
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
 				rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');

@@ -1,6 +1,6 @@
 import {login, getManifest, rememberPassword} from  '../services/service.js';
 import {rootPanel} from '../services/gwtLoader.js';
-import './aon-inputText.js';
+import './aon-input-text.js';
 import './aon-parent.js';
 
 
@@ -15,43 +15,13 @@ class AonLogin extends HTMLElement {
 			<!-- Wide card with share menu button -->
 			<style>
 
-				.form-center {
-					display: flex;
-					justify-content: center;
-				}
-
 				.aon-login-form {
-				  padding-left: 20px;
 				  padding-top: 20px;
-				  padding-right: 20px;
-				}
-
-				.aon-login-border {
-				  border-radius: 8px;
-				  border: 1px solid #dadce0;
-				  width: 300px;
-				  padding-top: 20px;
-				  top: 25%;
-				  position: absolute;
 				}
 
 				.sign-in {
 					right: 0px;
 					position: absolute;
-				}
-
-				.aon-login-card {
-					padding-bottom:50px;
-					padding-top: 20px;
-					padding-left: 20px;
-					padding-right: 20px;
-					height:350px;
-					margin-top: 15% !important;
-
-				    font-size: 16px;
-				    background: #fff;
-					border-radius: 2px;
-					box-sizing: border-box;
 				}
 
 				.aon-input {
@@ -67,13 +37,14 @@ class AonLogin extends HTMLElement {
 
 				.logo {
 				  width: 250px;
+					margin-left: 25px;
 				}
 
 				.aon-login-info2 {
 				  color: #666;
 				  font-size: 10px;
 				  border-top: 1px solid #ccc;
-				  margin-top: 60px;
+				  margin-top: 10px;
 				  font-size: 9px;
 				  font-weight: normal;
 				  padding: 15px;
@@ -92,12 +63,14 @@ class AonLogin extends HTMLElement {
 				}
 
 			</style>
-			<div class="form-center">
-		  	<div class="aon-login-border">
-			    <!-- <form class="aon-login-form form-mobile-div"> -->
-						<div class="aon-login-form" style="max-width:250px;">
-							<div style="margin-bottom:15px;">
-								<img class="logo" src="assets/logo.png"/>
+			<div class="aonFormCenter">
+		  	<div class="aonVerticalCenter aonWidth300">
+			  	<div id="aonLoginLogoDiv">
+						<img id="aonLoginLogoImg" class="logo"/>
+					</div>
+						<div class="aon-login-form" style="width:300px;">
+							<div class="aonColorSecondary" style="font-weight: bold;padding-bottom: 20px;">
+								INICIO DE SESIÓN
 							</div>
 
 							<div id="aonLoginLoading" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
@@ -106,28 +79,29 @@ class AonLogin extends HTMLElement {
 			          <span id="aonLoginErrorMessage">errorMsg</span>
 			        </div>
 
-							<form action="#">
-								<aon-input-text id="aonLoginUser" description="Usuario"></aon-input-text>
-							</form>
-
-							<form action="#">
-								<aon-input-text id="aonLoginPassword" description="Contraseña" type="password"></aon-input-text>
-							</form>
-
-							<div style="position:relative;padding-bottom:5px; margin-bottom: 5px;">
-								<button id="aonLoginRemember" class="mdl-button mdl-js-button remember-button" type="submit" >¿Has olvidado tu contraseña?</button>
+							<div>
+								<aon-input-text id="aonLoginUser" description="Usuario" filled="true"></aon-input-text>
 							</div>
+
+							<div>
+								<aon-input-text id="aonLoginPassword" description="Contraseña" type="password" filled="true"></aon-input-text>
+							</div>
+
+							<div style="padding-bottom: 20px;">
+								Si olvidaste tus datos de acceso haz <a id="aonLoginRemember" class="aonColorSecondary">click aquí</a>
+							</div>
+
 							<div style="position:relative;">
-								<button id="aonLoginSignin"class="mdl-button mdl-js-button mdl-button--raised sign-in" type="submit">Iniciar Sesión</button>
+								<button id="aonLoginSignin" type="submit" style="width:100%">Iniciar Sesión</button>
 							</div>
 
 						</div>
 					<!-- </form> -->
 			    <div class="aon-login-info2">
-			      <a target="_blank" style="color:#3677E1;" href="http://www.aonsolutions.es">
-			        <span class="aon-outputText">aon Solutions</span>
-			      </a>
-			      <span class="aon-outputText">
+    				<span >
+							<a target="_blank" href="http://www.aonsolutions.es">
+			        	aon Solutions
+			      	</a>
 			        es una marca registrada de AON SOLUTIONS, S.L.
 			      </span>
 
@@ -152,6 +126,8 @@ class AonLogin extends HTMLElement {
 			</div>
 			`;
 
+			this.buildLogo();
+
 			let aonManifest = document.getElementById('aonManifest');
 			getManifest().then(r => {
 				let manifest = JSON.parse(r);
@@ -164,6 +140,7 @@ class AonLogin extends HTMLElement {
 			password.addEventListener('keyup', event => this.onEnter(event));
 
 			let loading = document.getElementById('aonLoginLoading');
+			loading.style.marginBottom = '20px';
 			loading.style.display = 'none';
 
 			let signin = document.getElementById('aonLoginSignin');
@@ -190,6 +167,15 @@ class AonLogin extends HTMLElement {
 	     	dialog.close();
 				rememberPassword(document.getElementById('aonLoginRememberEmail').value);
 			});
+	}
+
+	buildLogo() {
+		let logo = document.getElementById('aonLoginLogoImg');
+		if(window.location.href.includes('ayudat')){
+			logo.src = 'assets/ayudat-logo.png';
+		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
+			logo.src = '../assets/tedi-logo.png';
+		} else logo.src = 'assets/aon-logo.png';
 	}
 
 	signin() {

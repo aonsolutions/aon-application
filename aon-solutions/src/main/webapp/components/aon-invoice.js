@@ -3,7 +3,7 @@ import {Paymethods} from '../services/paymethod.js';
 import {getInvoiceCategories} from '../services/invoiceCategory.js';
 
 import './aon-card.js';
-import './aon-inputText.js';
+import './aon-input-text.js';
 import './aon-select.js';
 import './aon-address.js';
 import './aon-checkbox.js';

@@ -4,7 +4,7 @@ import './aon-user.js';
 import './aon-toolbar.js';
 import './aon-card.js';
 import './aon-address.js';
-import './aon-inputText.js';
+import './aon-input-text.js';
 import './aon-marketplace.js';
 import './aon-user-list.js';
 import './company/aon-company-list.js';
