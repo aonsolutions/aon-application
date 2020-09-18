@@ -11,6 +11,8 @@ import './company/aon-company-list.js';
 
 class AonConfiguration extends HTMLElement {
 
+	selected;
+
 	static get observedAttributes() {
 		return ['company', 'user'];
 	}
@@ -65,12 +67,16 @@ class AonConfiguration extends HTMLElement {
 
 			<!-- AON CONFIGURATION MENU (SIDENAV) -->
 			<div id="aonConfigurationSidenav" class="sidenav">
+				<div class="aonSidenavTitle"> USUARIO </div>
 				<ul class="aonClip">
 					<li id="aonConfigurationPersonal" class="aonAppMenuSidenavList aonOpacity" >
 						<i class="material-icons aonVerticalMiddle">person</i>
 						<span class="aonMenuItemSpan"> Datos Usuario </span>
 					</li>
+				</ul>
 
+				<div id="aonConfigurationCompanyTitle" class="aonSidenavTitle"> EMPRESA </div>
+				<ul class="aonClip">
 					<li id="aonConfigurationGeneral" class="aonAppMenuSidenavList aonOpacity" >
 						<i class="material-icons aonVerticalMiddle">business</i>
 						<span class="aonMenuItemSpan"> Información General	</span>
@@ -121,13 +127,18 @@ class AonConfiguration extends HTMLElement {
 				} else el.style.display = 'list-item';
 
 				el.addEventListener('mouseover', () => {
-					el.style.backgroundColor = '#f1f1f1';
+					if(!this.selected || this.selected !== id)
+						el.style.backgroundColor = '#f1f1f1';
 				});
 				el.addEventListener('mouseleave', () => {
-					el.style.backgroundColor = 'white';
+					if(!this.selected || this.selected !== id)
+						el.style.backgroundColor = 'transparent';
 				});
 				el.addEventListener('click', () => {
-					el.style.backgroundColor = '#ddd';
+					listIds.forEach((id, i) => {
+						let el1 = document.getElementById(id);
+						el1.style.backgroundColor = 'transparent';
+					});
 					this.buildContent(id);
 				});
 		});
@@ -152,6 +163,9 @@ class AonConfiguration extends HTMLElement {
 	}
 
 	buildContent(id) {
+		let el = document.getElementById(id);
+		el.style.backgroundColor = '#ddd';
+		this.selected = id;
 		let toolbar = document.getElementById('aonConfiguration');
 		toolbar.removeButtons();
 

@@ -39,6 +39,10 @@
     transform: scale(0.99);
 	}
 
+	.aonColorIcon {
+		color: #5f6368;
+	}
+
 	.aonColorGray {
 		color: #A2A8B6;
 	}
@@ -325,6 +329,7 @@
 		margin-top: 10px;
 		margin-bottom: 10px;
 		color: lightgray;
+		margin-left: 15px;
 	}
 
 	.sidenav {

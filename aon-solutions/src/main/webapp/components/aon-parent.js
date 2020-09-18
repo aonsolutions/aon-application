@@ -7,6 +7,7 @@ import './aon-desktop.js';
 class AonParent extends HTMLElement {
 
 	companies;
+	selected;
 
 	constructor () {
 		super();
@@ -18,14 +19,27 @@ class AonParent extends HTMLElement {
 			<aon-toolbar id="aonParent" title="EMPRESAS"></aon-toolbar>
 			<!-- AON CONFIGURATION MENU (SIDENAV) -->
 			<div id="aonParentSidenav" class="sidenav">
+				<div class="aonSidenavTitle"> FILTROS </div>
 				<ul class="aonClip">
-					<div id="aonParenSidenavFilter" class="aonSidenavDiv">
-						<div class="aonSidenavTitle"> FILTROS </div>
-						<div> Activas </div>
-						<div> Inactivas </div>
-						<div> Compartidas </div>
-						<div> Entorno </div>
-					</div>
+					<li id="aonParentSidenavActive" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">domain</i>
+						<span class="aonMenuItemSpan"> Activas </span>
+					</li>
+
+					<li id="aonParentSidenavInactive" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">domain_disabled</i>
+						<span class="aonMenuItemSpan"> Inactivas </span>
+					</li>
+
+					<li id="aonParentSidenavShared" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">share</i>
+						<span class="aonMenuItemSpan"> Compartidas </span>
+					</li>
+
+					<li id="aonParentSidenavEntorno" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">apartment</i>
+						<span class="aonMenuItemSpan"> Entorno </span>
+					</li>
 				</ul>
 			</div>
 
@@ -36,7 +50,31 @@ class AonParent extends HTMLElement {
 
 		`;
 		this.init();
- 	}
+		this.toogleNav();
+
+		let listIds = ['aonParentSidenavActive', 'aonParentSidenavInactive', 'aonParentSidenavShared', 'aonParentSidenavEntorno'];
+
+		listIds.forEach((id, i) => {
+				let el = document.getElementById(id);
+
+				el.addEventListener('mouseover', () => {
+					if(!this.selected || this.selected !== id)
+						el.style.backgroundColor = '#f1f1f1';
+				});
+				el.addEventListener('mouseleave', () => {
+					if(!this.selected || this.selected !== id)
+						el.style.backgroundColor = 'transparent';
+				});
+				el.addEventListener('click', () => {
+					listIds.forEach((id, i) => {
+						let el1 = document.getElementById(id);
+						el1.style.backgroundColor = 'transparent';
+					});
+					this.selected = id;
+					el.style.backgroundColor = '#ddd';
+				});
+		});
+	}
 
 	init(filter) {
 		getCompanies()
@@ -48,6 +86,18 @@ class AonParent extends HTMLElement {
       }, () => closeSession()
     );
   }
+
+	toogleNav() {
+		let sidenav = 'aonParentSidenav';
+		let content = 'aonParentContent';
+		if(document.getElementById(sidenav).style.width === "250px"){
+			document.getElementById(sidenav).style.width = "0px";
+			document.getElementById(content).style.marginLeft = "0px";
+		} else {
+			document.getElementById(sidenav).style.width = "250px";
+			document.getElementById(content).style['margin-left'] = "250px";
+		}
+	}
 
 	companyFilter(f, q) {
 		if(!q) {
@@ -113,8 +163,10 @@ class AonParent extends HTMLElement {
 
 		let i = document.createElement('i');
 		i.className = 'material-icons aonAvatar';
-		i.innerHTML = 'business';
-
+		if(company.parent) i.innerHTML = 'apartment';
+		else if(company.shared) i.innerHTML = 'share';
+		else if(!company.active) i.innerHTML = 'domain_disabled';
+		else i.innerHTML = 'business';
 		let span2 = document.createElement('span');
 		span2.innerHTML = company.name;
 
