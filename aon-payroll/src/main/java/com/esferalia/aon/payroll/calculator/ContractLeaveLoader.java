@@ -256,7 +256,10 @@ public class ContractLeaveLoader {
 		final Date end = Period.min(endDate, Period.min(leaveEnd, (Date) contractEnd.getValue(contractEnd.getPeriod())));
 		
 
-		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1;
+		final long leaveDays = CommonUtil.getDaysBetweenDates(start, end, false) + 1;
+		if ( leaveDays == 0 )
+			return;
+		
 
 		exprCtx.setVariable(ContextVariable.IT_START, itStart, start, end);
 		exprCtx.setVariable(ContextVariable.IT_LENGTH, new Period(itStart, leave4Length).daysStream().count(), start, end);
