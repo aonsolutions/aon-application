@@ -1943,9 +1943,9 @@ public class Bases {
 			
 			put("603", new NonNegativeCompositeCCretaData()
 					.add(MATERNITY_BASE)
-					.add(ERE_BASES )
 					.add(DIRECT_BASE)		//   
 					.add(CGP_BASE)
+					.add(ERE_BASES )
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			put("613", new NonNegativeCompositeCCretaData()
