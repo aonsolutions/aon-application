@@ -340,7 +340,11 @@ public class InvoiceImportClass {
 		
 		public static InvoiceOpType safeValueOf(String value) {
 			if(value == null) return null;
-			return valueOf(value);
+			try {
+				return valueOf(value);
+			} catch (Exception e) {
+				return null;
+			}
 		}
 	}
 	
@@ -367,7 +371,11 @@ public class InvoiceImportClass {
 		
 		public static InvoiceClaveRetencion safeValueOf(String value) {
 			if(value == null) return null;
-			return valueOf(value);
+			try {
+				return valueOf(value);
+			} catch (Exception e) {
+				return null;
+			}
 		}
 	}	
 	
