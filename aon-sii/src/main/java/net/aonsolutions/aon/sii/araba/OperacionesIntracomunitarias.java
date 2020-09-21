@@ -54,6 +54,18 @@ public class OperacionesIntracomunitarias extends SIIBuilt {
 	
 	// ------------------- SUMINISTRO OPERACIONES INTRACOMUNITARIAS
 	
+	public byte[] getSuministroOperacionesIntracomunitarias(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, String tipoOp, Boolean mod, String terceros) {
+		JAXBContext ctx;
+		byte[] b = null;
+		try {
+			ctx = JAXBContext.newInstance(SuministroLRDetOperacionIntracomunitaria.class);
+			b = writeXml(ctx, suministroOperacionesIntracomunitarias(domain, login, company, invoiceId, contextList, tipoOp, mod, terceros));
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
+	
 		protected byte[] getSuministroOperacionesIntracomunitarias(SuministroLRDetOperacionIntracomunitaria suministro) {
 			JAXBContext ctx;
 			byte[] b = null;

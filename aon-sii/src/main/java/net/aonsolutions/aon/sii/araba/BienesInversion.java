@@ -47,6 +47,19 @@ public class BienesInversion extends SIIBuilt {
 
 	}
 	// ------------------- BIENES INVERSION
+	
+	public byte[] getSuministroBienesInversion(Domain domain, String login, Company company,
+			Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
+		JAXBContext ctx;
+		byte[] b = null;
+		try {
+			ctx = JAXBContext.newInstance(SuministroLRBienesInversion.class);
+			b = writeXml(ctx, suministroBienesInversion(domain, login, company, invoiceId, contextList, mod, terceros));
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
 
 	protected byte[] getSuministroBienesInversion(SuministroLRBienesInversion suministro) {
 		JAXBContext ctx;

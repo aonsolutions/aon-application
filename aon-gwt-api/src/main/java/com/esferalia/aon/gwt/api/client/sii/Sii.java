@@ -1,5 +1,8 @@
 package com.esferalia.aon.gwt.api.client.sii;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import com.esferalia.aon.gwt.api.client.IApi;
 import com.esferalia.aon.gwt.api.client.IApiAsync;
 import com.esferalia.aon.gwt.api.client.JSON;
@@ -69,5 +72,19 @@ public class Sii extends Methods{
 			@Override public void onFailure(Throwable caught) {}
 		});
 	}
+	
+	public void downloadGenerateSiiXml(HashMap<String, LinkedList<String>> filterMap){
+		String str = getFilter(filterMap) + "&domain="+ getDomainName() + "&login="+getUserName();
+		impl.base(str, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				Window.open(getUrl() + "ms/generate_sii/" + result, "_blank", null);
+			}
+			
+			@Override public void onFailure(Throwable caught) {}
+		});
+	}
+	
 	
 }

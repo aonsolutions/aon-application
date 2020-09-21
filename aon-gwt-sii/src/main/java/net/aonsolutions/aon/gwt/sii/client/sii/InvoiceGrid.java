@@ -76,38 +76,38 @@ import net.aonsolutions.aon.gwt.sii.client.ISiiAsync;
 public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 
 	final ISiiAsync impl = GWT.create(ISii.class);
-	
+
 	interface GridBinder extends UiBinder<Widget, InvoiceGrid> {
 	}
 
 	private static final GridBinder binder = GWT.create(GridBinder.class);
-	
+
 	DataGridResources resources = GWT.create(DataGridResources.class);
-	
+
 	public interface DataGridResources extends DataGrid.Resources {
 		@Source("com/esferalia/aon/gwt/common/client/css/data-grid.css")
 		Style dataGridStyle();
 	}
-	
-	@UiField(provided = true) CustomDataGrid<JsInvoice> dataGrid; 
-	
-	
+
+	@UiField(provided = true) CustomDataGrid<JsInvoice> dataGrid;
+
+
 	SiiPrincipal parent;
 	Integer cont = 0;
-	
+
 	Boolean isFechaIVA;
-	
+
 	private API getAPI() {
 		return parent.getAPI();
 	}
 
 	public InvoiceGrid(SiiPrincipal parent, LinkedList<JsInvoice> list) {
-		this.parent = parent;		
+		this.parent = parent;
 		dataGrid = new CustomDataGrid<JsInvoice>(Integer.MAX_VALUE, resources,
 				JsInvoice.PROVIDES_KEY);
 		ScrollPanel scrollPanel = dataGrid.getScrollPanel();
 		scrollPanel.addScrollHandler(new ScrollHandler() {
-			
+
 			@Override
 			public void onScroll(ScrollEvent event) {
 				if(scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()){
@@ -119,20 +119,20 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 					list.add(page +"");
 					parent.getFilterMap().put("page", list);
 					parent.getAPI().getFinance().getInvoices(parent.getFilterMap(), new AsyncCallback<JSON<JsInvoice>>() {
-						
+
 						@Override
 						public void onSuccess(JSON<JsInvoice> result) {
 							dataProvider.getList().addAll(result.getData().toLinkedList());
 							dataGrid.redraw();
 						}
-						
+
 						@Override public void onFailure(Throwable caught) {}
-					});	
+					});
 				}
 			}
 		});
 		dataGrid.addHandler(new MouseOverHandler() {
-			
+
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				if(cont < 2){
@@ -141,21 +141,21 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				}
 			}
 		}, MouseOverEvent.getType());
-	
+
 		getAPI().getSii().getSiiConfiguration(new AsyncCallback<JSON<JsSiiConfiguration>>() {
-			
+
 			@Override
 			public void onSuccess(JSON<JsSiiConfiguration> result) {
 				isFechaIVA = "Fecha IVA".equals(result.getData().get(0).getOperationDate());
 				load(list);
 			}
-			
+
 			@Override public void onFailure(Throwable caught) {}
 		});
-		
+
 		initWidget(binder.createAndBindUi(this));
-	}	
-	
+	}
+
 	LinkedList<JsInvoice> selFiles = new LinkedList<>();
 	private void load(LinkedList<JsInvoice> list) {
 		DefaultKeyboardSelectionHandler<JsInvoice> selHandler = new DefaultKeyboardSelectionHandler<JsInvoice>(dataGrid){
@@ -173,7 +173,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						 }
 						 dataGrid.getSelectionModel().setSelected(object, true);
 					 }
-					 
+
 					selFiles = new LinkedList<>();
 					for(JsInvoice f :dataProvider.getList()){
 						if(dataGrid.getSelectionModel().isSelected(f)){
@@ -198,23 +198,23 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	//	final SingleSelectionModel<JsInvoice> selectionModel = new SingleSelectionModel<JsInvoice>(
 	//			JsInvoice.PROVIDES_KEY);
 		final MultiSelectionModel<JsInvoice> selectionModel = new MultiSelectionModel<JsInvoice>(JsInvoice.PROVIDES_KEY);
-		
+
 		dataGrid.setSelectionModel(selectionModel,
 				DefaultSelectionEventManager.<JsInvoice> createCheckboxManager());
 	//	dataGrid.setSelectionModel(selectionModel);
 		initTableColumns(selectionModel, sortHandler);
-		
+
 	}
-	
+
 	//------------------------------ DataGrid Utils
-	
+
 	private ListDataProvider<JsInvoice> dataProvider = new ListDataProvider<JsInvoice>();
 
 	public void addDataDisplay(HasData<JsInvoice> display, LinkedList<JsInvoice> list) {
 		dataProvider = new ListDataProvider<JsInvoice>(list);
 		dataProvider.addDataDisplay(display);
 	}
-		
+
 	private ListHandler<JsInvoice> getSortHandler() {
 		return new ListHandler<JsInvoice>(dataProvider.getList()){
 			@Override
@@ -225,23 +225,23 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				List<JsInvoice> aux2 = new LinkedList<JsInvoice>();
 				for(Integer i = 0 ; i< aux.size()-1;i++){
 					aux2.set(i, aux.get(aux.size()-1-i ));
-				} 				
+				}
 				dataProvider.setList(aux2);
 			}
 		};
 	}
-	
+
 	private void initTableColumns(final MultiSelectionModel<JsInvoice> selectionModel, ListHandler<JsInvoice> sortHandler) {
-		
+
 		/** Check Column **/
-		
+
 		Column<JsInvoice, Boolean> checkColumn = new Column<JsInvoice, Boolean>(new CheckboxCell(true, true) {
 			@Override
 			public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent, Boolean value,
 					NativeEvent event, com.google.gwt.cell.client.ValueUpdater<Boolean> valueUpdater) {
 			}
 		}) {
-			
+
 			@Override
 			public Boolean getValue(JsInvoice object) {
 				return selectionModel.isSelected(object);
@@ -250,7 +250,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 
 		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
 		dataGrid.setColumnWidth(checkColumn, 3, Unit.PCT);
-		
+
 		/** code Column **/
 		Column<JsInvoice, String> codeColumn = new Column<JsInvoice, String>(new TextCell()) {
 
@@ -258,12 +258,12 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			public String getValue(JsInvoice object) {
 				return object.getReferenceCode();
 			}
-		
+
 		};
 		codeColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		codeColumn.setSortable(true); 
+		codeColumn.setSortable(true);
 		sortHandler.setComparator(codeColumn,new Comparator<JsInvoice>() {
-			
+
 			@Override
 			public int compare(JsInvoice o1, JsInvoice o2) {
 				return o1.getReferenceCode().compareTo(o2.getReferenceCode());
@@ -282,9 +282,9 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			}
 		};
 		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		taxDateColumn.setSortable(true); 
+		taxDateColumn.setSortable(true);
 		sortHandler.setComparator(taxDateColumn,new Comparator<JsInvoice>() {
-			
+
 			@Override
 			public int compare(JsInvoice o1, JsInvoice o2) {
 				return o1.getIssueDate().compareTo(o2.getIssueDate());
@@ -293,7 +293,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(taxDateColumn);
 		dataGrid.addColumn(taxDateColumn, "Fecha Fact.");
 		dataGrid.setColumnWidth(taxDateColumn, 7.5, Unit.PCT);
-		
+
 		/** VAT DATE Column **/
 		Column<JsInvoice, String> creationDateColumn = new Column<JsInvoice, String>(new TextCell()) {
 
@@ -305,9 +305,9 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			}
 		};
 		taxDateColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		taxDateColumn.setSortable(true); 
+		taxDateColumn.setSortable(true);
 		sortHandler.setComparator(taxDateColumn,new Comparator<JsInvoice>() {
-			
+
 			@Override
 			public int compare(JsInvoice o1, JsInvoice o2) {
 				if(isFechaIVA) {
@@ -318,7 +318,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(creationDateColumn);
 		dataGrid.addColumn(creationDateColumn, "Fecha Op.");
 		dataGrid.setColumnWidth(creationDateColumn, 7.5, Unit.PCT);
-		
+
 		/** Contraparte Column **/
 		Column<JsInvoice, String> contraparteColumn = new Column<JsInvoice, String>(new TextCell()) {
 
@@ -328,9 +328,9 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			}
 		};
 		contraparteColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		contraparteColumn.setSortable(true); 
+		contraparteColumn.setSortable(true);
 		sortHandler.setComparator(contraparteColumn,new Comparator<JsInvoice>() {
-			
+
 			@Override
 			public int compare(JsInvoice o1, JsInvoice o2) {
 				return o1.getRegistryName().compareTo(o2.getRegistryName());
@@ -339,11 +339,11 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(contraparteColumn);
 		dataGrid.addColumn(contraparteColumn, "Contraparte");
 		dataGrid.setColumnWidth(contraparteColumn, 15, Unit.PCT);
-	
+
 		/** Status Column **/
-		
+
 		Column<JsInvoice, String> statusColumn = new Column<JsInvoice, String>(new TextCell()) {
-			@Override	
+			@Override
 			public void render(Context context, JsInvoice object, SafeHtmlBuilder sb) {
 				String icon = AON.AON_CSS.aonIconPointLightGreen();
 				if(object.getSiiStatus().equalsIgnoreCase("Correcto") || object.getSiiStatus().equalsIgnoreCase("Pagado")) icon = AON.AON_CSS.aonIconPointGreen();
@@ -352,17 +352,17 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				else if(object.getSiiStatus().equalsIgnoreCase("Anulada")) icon = AON.AON_CSS.aonIconPointYellow();
 				sb.appendHtmlConstant("<g:Label class=\""+ icon + "\" style=\"padding-left: 16px;\" >"+ "&nbsp;&nbsp;" + object.getSiiStatus());
 			}
-			
+
 			@Override
 			public String getValue(JsInvoice object) {
 				return object.getSiiStatus();
 			}
-		
+
 		};
 		statusColumn.setHorizontalAlignment(HasAlignment.ALIGN_LEFT);
-		statusColumn.setSortable(true); 
+		statusColumn.setSortable(true);
 		sortHandler.setComparator(statusColumn,new Comparator<JsInvoice>() {
-			
+
 			@Override
 			public int compare(JsInvoice o1, JsInvoice o2) {
 				return o1.getSiiStatus().compareTo(o2.getSiiStatus());
@@ -371,19 +371,25 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		dataGrid.getColumnSortList().push(statusColumn);
 		dataGrid.addColumn(statusColumn, "Estado");
 		dataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
-		
+
 		/** Info Column **/
-		
+
 		List<HasCell<JsInvoice, ?>> cells = new LinkedList<HasCell<JsInvoice, ?>>();
-	    
+
 		cells.add(new ActionHasCell("info", new Delegate<JsInvoice>() {
 	        @Override public void execute(JsInvoice object) {
 	        	info(object.getId(), object.getReferenceCode());
 	        }
 	    }));
-	   
+
+		cells.add(new ActionHasCell("download", new Delegate<JsInvoice>() {
+	        @Override public void execute(JsInvoice object) {
+	        	download(object);
+	        }
+	    }));
+
 		CompositeCell<JsInvoice> cell = new CompositeCell<JsInvoice>(cells);
-		
+
 		Column<JsInvoice,JsInvoice> infoColumn = 	new Column<JsInvoice, JsInvoice>(cell){
 
 			@Override
@@ -393,29 +399,29 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		};
 		infoColumn.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
 		dataGrid.addColumn(infoColumn, " ");
-		dataGrid.setColumnWidth(infoColumn, 3, Unit.PCT);
+		dataGrid.setColumnWidth(infoColumn, 6, Unit.PCT);
 	}
 
 	private void info(Integer invoice, String reference) {
 		getAPI().getSii().getSiiInvoiceHistory(invoice, new AsyncCallback<JSON<JsObject>>() {
-			
+
 			@Override
 			public void onSuccess(JSON<JsObject> result) {
-				
+
 				VerticalPanel vp = new VerticalPanel();
 				if(result.getData().length() > 0)
 					result.getData().stream().forEach(r -> {
 						vp.add(buildHistory(r));
 					});
 				else vp.add(new Label("No se ha realizado ning\u00fan env\u00edo a la Agencia Tributaria de la factura " + reference +" a partir del 01/07/2018."));
-				
+
 				AonDialog dialog = new AonDialog("Informaci\u00f3n SII", vp) {
-					
+
 					@Override
 					protected void onCancel() {
 						hide();
 					}
-					
+
 					@Override
 					protected void onAccept() {
 						hide();
@@ -425,14 +431,30 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				dialog.getCancel().setVisible(false);
 				dialog.center();
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				
+
 			}
-		});		
+		});
 	}
-	
+
+	private void download(JsInvoice object) {
+		HashMap<String, LinkedList<String>> map =  new HashMap<>();
+		LinkedList<String> list = new LinkedList<>(); //.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
+		list.add(object.getId() + "");
+		map.put("id", list);
+    	list = new LinkedList<>();
+    	list.add("suministro");
+    	map.put("action", list);
+    	String sii = this.parent.getFilterMap().get("sii").get(0);
+    	list = new LinkedList<>();
+    	list.add(sii);
+    	map.put("option", list);
+    	
+		getAPI().getSii().downloadGenerateSiiXml(map);
+	}
+
     public HorizontalPanel buildHistory(JsObject js){
     	HorizontalPanel hp = new HorizontalPanel();
     	PaperItem pi = new PaperItem();
@@ -442,27 +464,27 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
     	String str = AonDateUtils.formatDate(AonDateUtils.parseDateTime(js.getDate())) + " - " + js.getName();
     	Label label = new Label(str);
     	pi.add(label);
-    	
+
     	pi.setStyle("min-height:24px;height:24px;font-size:12px;padding:0px;");
-    	
+
     	hp.add(pi);
     	PaperIconButton downloadButton = new PaperIconButton();
     	downloadButton.setIcon("file-download");
     	downloadButton.setTitle("Descargar");
     	downloadButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				getAPI().getSii().downloadSiiXml(js.getId());
 			}
 		});
-  
+
     	downloadButton.setStyle("min-height:24px;height:24px;font-size:12px;padding:0px;");
-    	    	
+
     	hp.add(downloadButton);
     	return hp;
     }
-	
+
 	public final class CheckboxHeader extends Header {
 
 	    private final MultiSelectionModel<JsInvoice> selectionModel;
@@ -499,14 +521,14 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 	        }
 	    }
 	}
-	
+
 	public void anular(String sii){
 		VerticalPanel vp = new VerticalPanel();
 		HorizontalPanel hp1 = new HorizontalPanel();
 		hp1.add(new Label("Certificado"));
 		ListBox lb = new ListBox();
 		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
-			
+
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {
 				result.getData().stream().forEach(a -> {
@@ -517,7 +539,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			@Override public void onFailure(Throwable caught) {}
 		});
 		hp1.add(lb);
-		
+
 		HorizontalPanel hp2 = new HorizontalPanel();
 		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
 		hp2.add(new Label("Contrase\u00f1a"));
@@ -526,7 +548,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		hp2.add(tb);
 		vp.add(hp1);
 		vp.add(hp2);
-		
+
 		HorizontalPanel hp3 = new HorizontalPanel();
 		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
 		Label l = new Label("NIF");
@@ -537,25 +559,25 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		t.setVisible(false);
 		CheckBox cb = new CheckBox("Por terceros");
 		cb.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				l.setVisible(cb.getValue());
-				t.setVisible(cb.getValue());	
+				t.setVisible(cb.getValue());
 			}
 		});
 		hp3.add(cb);
 		hp3.add(l);
 		hp3.add(t);
 		vp.add(hp3);
-		
+
 		AonDialog dialog = new AonDialog("Anular Operaci\u00f3n", vp) {
-			
+
 			@Override
 			protected void onCancel() {
 				hide();
 			}
-			
+
 			@Override
 			protected void onAccept() {
 				HashMap<String, LinkedList<String>> map =  new HashMap<>();
@@ -573,14 +595,14 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		    	list = new LinkedList<>();
 		    	list.add(sii);
 		    	map.put("option", list);
-		    	
+
 		    	list = new LinkedList<>();
 		    	list.add(cb.getValue() ? t.getValue() : "false");
 		    	map.put("terceros", list);
-				
+
 		    	hide();
 		    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
-					
+
 					@Override
 					public void onSuccess(JSON<JsObject> result) {
 						VerticalPanel vp = new VerticalPanel();
@@ -598,20 +620,20 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 						parent.openFootPanel();
 						parent.gridContent();
 					}
-					
+
 					@Override
 					public void onFailure(Throwable caught) {
-						
+
 					}
 				});
 			}
 		};
 		dialog.center();
 	}
-	
+
 	public void sendSii(String sii){
 		VerticalPanel vp = new VerticalPanel();
-		
+
 		HorizontalPanel hp0 = new HorizontalPanel();
 		hp0.add(new Label("Tipo de Operacion"));
 		ListBox lb0 = new ListBox();
@@ -621,13 +643,13 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		if("intracomunitarias".equalsIgnoreCase(sii)){
 			vp.add(hp0);
 		}
-		
+
 		HorizontalPanel hp1 = new HorizontalPanel();
 		hp1.addStyleName(AON.AON_CSS.aonPaddingTop());
 		hp1.add(new Label("Certificado"));
 		ListBox lb = new ListBox();
 		getAPI().getAttachment().getCertificates(new AsyncCallback<JSON<JsAttach>>() {
-			
+
 			@Override
 			public void onSuccess(JSON<JsAttach> result) {
 				result.getData().stream().forEach(a -> {
@@ -638,7 +660,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			@Override public void onFailure(Throwable caught) {}
 		});
 		hp1.add(lb);
-		
+
 		HorizontalPanel hp2 = new HorizontalPanel();
 		hp2.addStyleName(AON.AON_CSS.aonPaddingTop());
 		hp2.add(new Label("Contrase\u00f1a"));
@@ -647,7 +669,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		hp2.add(tb);
 		vp.add(hp1);
 		vp.add(hp2);
-		
+
 		HorizontalPanel hp3 = new HorizontalPanel();
 		hp3.addStyleName(AON.AON_CSS.aonPaddingTop());
 		Label l = new Label("NIF");
@@ -658,26 +680,26 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		t.setVisible(false);
 		hp3.add(l);
 		hp3.add(t);
-		
+
 		CheckBox cb = new CheckBox("Por terceros");
 		cb.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				l.setVisible(cb.getValue());
-				t.setVisible(cb.getValue());	
+				t.setVisible(cb.getValue());
 			}
 		});
 		vp.add(cb);
 		vp.add(hp3);
-		
+
 		AonDialog dialog = new AonDialog("Enviar Facturas", vp) {
-			
+
 			@Override
 			protected void onCancel() {
 				hide();
 			}
-			
+
 			@Override
 			protected void onAccept() {
 		    	VerticalPanel vp = new VerticalPanel();
@@ -685,7 +707,7 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 				parent.tabLayout.selectTab(0);
 				parent.openFootPanel();
 				parent.gridContent();
-				
+
 				selFiles.stream().forEach(r -> {
 					HashMap<String, LinkedList<String>> map =  new HashMap<>();
 					LinkedList<String> list = new LinkedList<>(); //.stream().map(s -> s.getId() + "").collect(Collectors.toCollection(LinkedList::new));
@@ -704,17 +726,17 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 			    	list.add(sii);
 			    	map.put("option", list);
 			    	hide();
-			    	
+
 			    	list = new LinkedList<>();
 			    	list.add(lb0.getSelectedValue());
 			    	map.put("tipo_operacion", list);
-		
+
 			    	list = new LinkedList<>();
 			    	list.add(cb.getValue() ? t.getValue() : "false");
 			    	map.put("terceros", list);
-			    	
+
 			    	getAPI().getFinance().sendSii(map, new AsyncCallback<JSON<JsObject>>() {
-						
+
 						@Override
 						public void onSuccess(JSON<JsObject> result) {
 							result.getData().stream().forEach(r -> {
@@ -727,10 +749,10 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 								vp.add(label);
 							});
 						}
-						
+
 						@Override
 						public void onFailure(Throwable caught) {
-							
+
 						}
 					});
 				});
@@ -738,25 +760,30 @@ public class InvoiceGrid extends ResizeComposite implements RequiresResize {
 		};
 		dialog.center();
 	}
-	
+
 	private class ActionHasCell implements HasCell<JsInvoice, JsInvoice> {
 	    private ActionCell<JsInvoice> cell;
 	    String s;
-	    
+
 	    public ActionHasCell(String text, Delegate<JsInvoice> delegate) {
 	    	s = text;
 	        cell = new ActionCell<JsInvoice>(text, delegate){
 	        	String text = s;
 	        	@Override
 	        	public void render(com.google.gwt.cell.client.Cell.Context context,JsInvoice value, SafeHtmlBuilder sb) {
-	        		if(text.equals("info")){	
-	        			String icon = "aon-icon-info";	
-	        			sb.appendHtmlConstant("<button  alt=\""+ "Información SII" +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
-						sb.appendHtmlConstant("</button>");		
+	        		if(text.equals("info")){
+	        			String icon = "aon-icon-info";
+	        			sb.appendHtmlConstant("<button  alt=\""+ "Informaciï¿½n SII" +"\" type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");
+	        		}
+	        		if(text.equals("download")){
+	        			String icon = "aon-icon-mail-save";
+	        			sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button " + icon + "\" tabindex=\"-1\">");
+						sb.appendHtmlConstant("</button>");
 	        		}
 	        	}
 	        };
-	        
+
 	    }
 
 		@Override

@@ -84,6 +84,18 @@ public class FacturasRecibidas extends SIIBuilt{
 	}
 	// ------------------- FACTURAS RECIBIDAS
 
+	public byte[] getSuministroFacturasRecibidas(Domain domain, String login, Company company, Integer invoiceId, LinkedList<VatContext> contextList, Boolean mod, String terceros) {
+		JAXBContext ctx;
+		byte[] b = null;
+		try {
+			ctx = JAXBContext.newInstance(SuministroLRFacturasRecibidas.class);
+			b = writeXml(ctx, suministroFacturasRecibidas(domain, login, company, invoiceId, contextList, mod, terceros));
+		} catch (JAXBException | IOException e) {
+			e.printStackTrace();
+		}
+		return b;
+	}
+	
 	protected byte[] getSuministroFacturasRecibidas(SuministroLRFacturasRecibidas suministro) {
 		JAXBContext ctx;
 		byte[] b = null;
