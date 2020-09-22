@@ -1,8 +1,10 @@
+
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:c='urn:import:com.google.gwt.user.cellview.client'>
+	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
+	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client'>
 
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
@@ -129,34 +131,57 @@
 		.pointer{
 			cursor: pointer;
 		}
+		
+		.ml5{
+			margin-left: 5px;
+		}
+		
+		.filterPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: auto 15px;
+		}
+		
+		.flexPanel{
+			display: flex;
+		}
+		
+		.bold{
+			font-weight: bold;
+		}
+		
+		.contractaEmployeeScPanel{
+			margin: 0 0 10px;
+		}
+		
 	</ui:style>
 
-	<g:DockLayoutPanel unit="PX">
-		<!-- INIT HEADER MENU -->
-		<g:north size="25">
-			<g:FlowPanel styleName="aon-finding-title-toolbar">
-				<g:HorizontalPanel >
-					<g:HTMLPanel styleName="aon-finding-title">
-						<g:HTMLPanel styleName="aon-finding-title-internal" >
-							<g:Label styleName="aon-outputText">Contrat@ - Listado contratos</g:Label>
+	<g:DeckPanel ui:field="deckPanel">
+		<g:DockLayoutPanel unit="PX">
+			<!-- INIT HEADER MENU -->
+			<g:north size="25">
+				<g:FlowPanel styleName="aon-finding-title-toolbar">
+					<g:HorizontalPanel >
+						<g:HTMLPanel styleName="aon-finding-title">
+							<g:HTMLPanel styleName="aon-finding-title-internal" >
+								<g:Label styleName="aon-outputText">Contrat@ - Listado contratos</g:Label>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="aon-finding-subtitle">
-						<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-							<g:Label styleName="aon-outputText" text=" "/> 
+						<g:HTMLPanel styleName="aon-finding-subtitle">
+							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
+								<g:Label styleName="aon-outputText" text=" "/> 
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HorizontalPanel styleName="aon-finding-toolbar">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-							<g:Button ui:field='newContractButton' styleName='aon-finding-toolbar-item aon-icon-reset {style.pl20}' text=" NUEVO CONTRATO"/>
-						</g:HTMLPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+								<g:Button ui:field='newContractButton' styleName='aon-finding-toolbar-item aon-icon-reset {style.pl20}' text=" NUEVO CONTRATO"/>
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
 					</g:HorizontalPanel>
-				</g:HorizontalPanel>
-			</g:FlowPanel>
-		</g:north>
-		<!-- END HEADER MENU -->
-		<g:center>
-			<g:HTMLPanel>
+				</g:FlowPanel>
+			</g:north>
+			<!-- END HEADER MENU -->
+			<g:center>
 				<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll}">
 					<g:ScrollPanel height="100%" styleName="{style.p5}">
 						<g:VerticalPanel styleName="{style.tableStylePanel}">
@@ -165,10 +190,17 @@
 								<g:HTMLPanel styleName="aon-panelGrid-search-info">
 									<g:Label styleName="aon-panelGrid-search-info-internal">LISTADO DE CONTRATOS</g:Label>
 								</g:HTMLPanel>
-								<g:HorizontalPanel ui:field="employeePanel" styleName="{style.ml20} {style.mt10}">
-									<g:Label styleName="aon-outputLabel {style.pt4}">Persona</g:Label>
-									<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w600} {style.sb}" ui:field="employeeSB"></g:SuggestBox>
-								</g:HorizontalPanel>
+								<g:HTMLPanel ui:field="employeePanel" styleName="{style.ml20} {style.mt10} {style.filterPanel}">
+									<g:HTMLPanel styleName="{style.flexPanel}">
+										<g:Label styleName="aon-outputLabel {style.pt4} {style.bold}">Persona</g:Label>
+										<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w600} {style.sb}" ui:field="employeeSB"></g:SuggestBox>
+									</g:HTMLPanel>
+									<g:HTMLPanel styleName="{style.flexPanel}">
+										<g:Label styleName="{style.pt4} {style.bold}">Mostrar Empleados :</g:Label>
+										<g:CheckBox ui:field="inactiveContractsCB" styleName="{style.ml5} {style.pt2}"></g:CheckBox>
+										<g:Label styleName="{style.pt4}">Inactivos</g:Label>
+									</g:HTMLPanel>
+								</g:HTMLPanel>
 							</g:HTMLPanel>
 						
 						 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
@@ -178,8 +210,11 @@
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 				</g:HTMLPanel>
-			</g:HTMLPanel>
-		</g:center>
-	</g:DockLayoutPanel>
+			</g:center>
+		</g:DockLayoutPanel>
+
+		<d:ContrataEmployee ui:field="contrataEmployee"></d:ContrataEmployee>
+		
+	</g:DeckPanel>
 </ui:UiBinder> 
 

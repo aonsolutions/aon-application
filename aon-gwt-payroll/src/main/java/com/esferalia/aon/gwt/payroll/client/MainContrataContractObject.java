@@ -28,9 +28,9 @@ public class MainContrataContractObject {
 		this.employeesFilterMap = new HashMap<String, Integer>();
 	}
 	
-	public void getEmployeesInfo(Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure){
+	public void getEmployeesInfo(Boolean allEmployees, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure){
 		
-		impl.getEmployeesInfo(new AsyncCallback<List<EmployeeContractInfo>>() {
+		impl.getEmployeesInfo(allEmployees, new AsyncCallback<List<EmployeeContractInfo>>() {
 			
 			@Override
 			public void onSuccess(List<EmployeeContractInfo> employeesInfoList) {

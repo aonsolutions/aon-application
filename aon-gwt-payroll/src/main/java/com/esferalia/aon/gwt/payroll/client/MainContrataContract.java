@@ -13,6 +13,8 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -23,6 +25,8 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -36,6 +40,20 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public class MainContrataContract extends MainEntryPoint {
 
+	private class ContrataEmployeeImpl extends ContrataEmployee{
+
+		@Override
+		protected void onListShow(boolean reloadEmployees) {
+			if(reloadEmployees)
+				redrawTable();
+			else 
+				employeeDataGrid.redraw();
+			
+			deckPanel.showWidget(0);
+		}
+		
+	}
+	
 	interface Binder extends UiBinder<Widget, MainContrataContract> {}
 	
 	private static final Binder binder = GWT.create(Binder.class);
@@ -54,13 +72,22 @@ public class MainContrataContract extends MainEntryPoint {
 	SuggestBox employeeSB;
 	
 	@UiField
+	CheckBox inactiveContractsCB;
+	
+	@UiField
 	HTMLPanel mainTablePanel;
 	
 	@UiField
 	HTMLPanel mainContainer;
 	
+	@UiField
+	DeckPanel deckPanel;
+	
 	@UiField(provided = true)
 	DataGrid<EmployeeContractInfo> employeeDataGrid;
+	
+	@UiField(provided = true)
+	ContrataEmployee contrataEmployee;
 	
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
@@ -72,6 +99,8 @@ public class MainContrataContract extends MainEntryPoint {
 	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
 	
 	public MainContrataContract() {
+		contrataEmployee = new ContrataEmployeeImpl();
+		
 		provideEmployeesDataGrid();
 		
 		// Add style to table header
@@ -82,6 +111,9 @@ public class MainContrataContract extends MainEntryPoint {
 	
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get("rootPanel").add(ui);
+		
+		// Show table
+		deckPanel.showWidget(0);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -104,7 +136,6 @@ public class MainContrataContract extends MainEntryPoint {
 		// Add a selection model so we can select cells.
 	    this.selectionCCCInfoModel = new NoSelectionModel<EmployeeContractInfo>(EmployeeContractInfo.KEY_PROVIDER);
 	    employeeDataGrid.setSelectionModel(this.selectionCCCInfoModel);
-//	    employeeDataGrid.setSelectionModel(this.selectionCCCInfoModel, DefaultSelectionEventManager.<EmployeeContractInfo> createCheckboxManager());
 		
 	    // Initialize the columns.
 	    addEmployeeInfoColumns(this.selectionCCCInfoModel);
@@ -120,51 +151,16 @@ public class MainContrataContract extends MainEntryPoint {
 	        public void onSelectionChange(SelectionChangeEvent event) {
 	        	EmployeeContractInfo employeeContractInfo = selectionCCCInfoModel.getLastSelectedObject();
 	        	String fullName = employeeContractInfo.getEmployeeInfo().getFullName();
-        	
-	        	ContrataContractOptionsDialog dialog = new ContrataContractOptionsDialog(fullName) {
-					
-					@Override
-					protected void onMovements() {
-						EmployeeAFIDialog movementsDialog = new EmployeeAFIDialog(
-			        			employeeContractInfo.getContractInfo().getStartDate(),
-			        			employeeContractInfo.getContractInfo().getEndDate(),
-			        			employeeContractInfo.getContractInfo().getContractType(),
-			        			employeeContractInfo.getContractInfo().getQuoteGroup(),
-			        			employeeContractInfo.getContractInfo().getOcupation(),
-			        			employeeContractInfo.getContractInfo().getPayrollDate(),
-			    				employeeContractInfo.getContractInfo().getContractId(),
-			    				employeeContractInfo.getEmployeeInfo().getDomain(),
-			    				employeeContractInfo.getContractInfo().getWorkplaceId()
-			    				){
-
-									@Override
-									protected void onAcceptCb() {
-										WarningDialog warn = new WarningDialog("AVISO", "AQUI SE NOTIFICA LA MODIFICACION");
-										warn.center();
-										warn.show();
-										redrawTable();
-									}};
-			    			
-			    		movementsDialog.setModal(true);
-			    		movementsDialog.setAnimationEnabled(true);
-			    		movementsDialog.center();
-	    				movementsDialog.show();
-	    				movementsDialog.center();
-					}
-					
-					@Override
-					protected void onDischarge() {
-						WarningDialog warn = new WarningDialog("AVISO", "AQUI SE DARA DE BAJA USANDO SALTRA");
-						warn.center();
-						warn.show();
-					}
-				};
 	        	
-				dialog.setModal(true);
-				dialog.setAnimationEnabled(true);
-				dialog.center();
-				dialog.show();
+	        	DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+	    		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+	    		
+//	    		contrataEmployee = new ContrataEmployee();
+	    		
+	    		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject(null, employeesService, enterprisesService);
+	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
 	        	
+	    		deckPanel.showWidget(1);
 	        }
 	    });
 	    
@@ -277,7 +273,7 @@ public class MainContrataContract extends MainEntryPoint {
 	public void onModuleLoad(MainContrataContractObject mainContrataContractObject) {
 		this.mainContrataContractObject = mainContrataContractObject;
 		
-		this.mainContrataContractObject.getEmployeesInfo(
+		this.mainContrataContractObject.getEmployeesInfo(false,
 				s -> {
 					initEnterpriseSB();
 					initContractTable();
@@ -435,12 +431,12 @@ public class MainContrataContract extends MainEntryPoint {
 	    
 	    columnSortHandler.setComparator(employeeDataGrid.getColumn(5), new Comparator<EmployeeContractInfo>() {
 	          public int compare(EmployeeContractInfo o1, EmployeeContractInfo o2) {
-		            if (o1 == o2) {
+		            if (o1.getContractInfo().getEndDate() == o2.getContractInfo().getEndDate()) {
 		              return 0;
 		            }
 	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getContractInfo().getEndDate().compareTo(o2.getContractInfo().getEndDate()) : 1;
+		            if (o1.getContractInfo().getEndDate() != null) {
+		              return (o2.getContractInfo().getEndDate() != null) ? o1.getContractInfo().getEndDate().compareTo(o2.getContractInfo().getEndDate()) : 1;
 		            }
 		            
 		            return -1;
@@ -459,6 +455,18 @@ public class MainContrataContract extends MainEntryPoint {
 	// 										UI HANDLERS
 	// --------------------------------------------------------------------------------------------
 	
+	@UiHandler("inactiveContractsCB")
+	public void onInactiveContractsCBValueChange(ValueChangeEvent<Boolean> event) {
+		this.mainContrataContractObject.getEmployeesInfo(event.getValue(),
+				s -> {
+					initEnterpriseSB();
+					initContractTable();
+					setTableHeights();
+				},
+				f -> {}
+		);
+	}
+	
 	@UiHandler("newContractButton")
 	public void onNewContractButton(ClickEvent event) {
 		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
@@ -475,6 +483,7 @@ public class MainContrataContract extends MainEntryPoint {
 				redrawTable();
 			}
 		};
+		
 		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null, employeesService, enterprisesService);
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 		employeeDialog.setModal(true);
@@ -484,13 +493,24 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	private void redrawTable() {
-		this.mainContrataContractObject.getEmployeesInfo(
+		this.inactiveContractsCB.setValue(false);
+		this.mainContrataContractObject.getEmployeesInfo(false,
 				s -> {
 					initContractTable();
 					setTableHeights();
 				},
 				f -> {}
 		);
+	}
+	
+	protected void onListShow(boolean reloadEmployees) {
+		if(reloadEmployees)
+			redrawTable();
+		else 
+			this.employeeDataGrid.redraw();
+		
+		this.deckPanel.showWidget(0);
+		
 	}
 	
 
