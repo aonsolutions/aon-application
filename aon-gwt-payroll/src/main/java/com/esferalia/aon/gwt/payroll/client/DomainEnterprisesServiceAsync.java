@@ -274,8 +274,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterprisesCCCInfo(getCurrentDomainName(), getCurrentUser(), findPeriodTime, asyncCallback);
 	}
 
-	public void getEmployeesInfo(AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
-		enterprisesServiceAsync.getEmployeesInfo(getCurrentDomainName(), asyncCallback);
+	public void getEmployeesInfo(Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
+		enterprisesServiceAsync.getEmployeesInfo(getCurrentDomainName(), allEmployees, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

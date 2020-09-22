@@ -155,6 +155,6 @@ public interface EnterprisesService extends RemoteService {
 
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 
-	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName);
+	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName, Boolean allEmployees);
 	
 }

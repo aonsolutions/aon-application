@@ -97,6 +97,6 @@ public interface EnterprisesServiceAsync {
 	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList,
 			AsyncCallback<String> asyncCallback);
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
-	void getEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
+	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 
 }

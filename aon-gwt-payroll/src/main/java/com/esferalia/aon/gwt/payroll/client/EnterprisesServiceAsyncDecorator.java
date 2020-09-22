@@ -450,9 +450,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
+	public void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
+		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
 	}
 
 }

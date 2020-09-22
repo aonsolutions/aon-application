@@ -2087,10 +2087,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<EmployeeContractInfo> getEmployeesInfo(String domainName) {
+	public List<EmployeeContractInfo> getEmployeesInfo(String domainName, Boolean allEmployees) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return JooqContrataContract.getEmployeesInfo(connection, domainId);
+			return JooqContrataContract.getEmployeesInfo(connection, domainId, allEmployees);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

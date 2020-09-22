@@ -3,17 +3,10 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
-import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
-import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
-import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
-import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Geotree.GEOTREE;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
@@ -23,45 +16,27 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
-import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
-import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
-import com.esferalia.aon.gwt.payroll.shared.BankEntities;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.gwt.payroll.shared.Municipalities;
-import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
-import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
-import com.esferalia.aon.jooq.tables.records.ContractRecord;
-import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
-import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
-import com.esferalia.aon.jooq.tables.records.RaddressRecord;
-import com.esferalia.aon.jooq.tables.records.RbankRecord;
-import com.esferalia.aon.jooq.tables.records.RegistryRecord;
-import com.esferalia.aon.jooq.tables.records.RmediaRecord;
-import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
+import com.ibm.icu.util.Calendar;
 
 public class JooqContrataContract {
 
@@ -75,18 +50,33 @@ public class JooqContrataContract {
 		return SETTINGS;
 	}
 	
-	public static List<EmployeeContractInfo> getEmployeesInfo(Connection conn, Integer domainId) {
-		return getEmployeesInfoDB(DSL.using(conn, getDefaultSettings()), domainId);
+	public static List<EmployeeContractInfo> getEmployeesInfo(Connection conn, Integer domainId, Boolean allEmployees) {
+		return getEmployeesInfoDB(DSL.using(conn, getDefaultSettings()), domainId, allEmployees);
 	}
 
-	private static List<EmployeeContractInfo> getEmployeesInfoDB(DSLContext dslContext, Integer domainId) {
+	private static List<EmployeeContractInfo> getEmployeesInfoDB(DSLContext dslContext, Integer domainId, Boolean allEmployees) {
 		List<EmployeeContractInfo> employeesInfo = new ArrayList<EmployeeContractInfo>();
 		
-		// ------------------------------------------------ Get all contracts from domainId
+		List<Integer> allContractIds = null;
 		
-		List<Integer> allContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
-				.where(CONTRACT.DOMAIN.eq(domainId))
-				.fetch(CONTRACT.ID);
+		if(allEmployees) {
+			// ------------------------------------------------ Get all contracts from domainId
+			allContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
+					.where(CONTRACT.DOMAIN.eq(domainId))
+					.fetch(CONTRACT.ID);
+		} else {
+			// ------------------------------------------------ Get active contracts from domainId or ends in the last two months
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.add(Calendar.MONTH, -1);
+			
+			Date contract_endDate = new Date(cal.getTimeInMillis());
+			
+			allContractIds = dslContext.select(CONTRACT.ID).from(CONTRACT)
+					.where(CONTRACT.DOMAIN.eq(domainId))
+					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(contract_endDate)))
+					.fetch(CONTRACT.ID);
+		}
 		
 		for(Integer contractId : allContractIds) {
 			
@@ -482,8 +472,8 @@ public class JooqContrataContract {
 			
 			contractData.setContractJourneyDuration(journies);
 				
-			System.out.println(employeeData.toString());
-			System.out.println(contractData.toString());
+//			System.out.println(employeeData.toString());
+//			System.out.println(contractData.toString());
 			
 			employeeContractInfo.setEmployeeInfo(employeeData);
 			employeeContractInfo.setContractInfo(contractData);
