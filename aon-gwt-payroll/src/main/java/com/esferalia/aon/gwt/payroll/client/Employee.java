@@ -558,6 +558,41 @@ public abstract class Employee extends ResizeComposite {
 		this.account.setValue("");
 		this.bic.setValue("");
 	}
+	
+	public void restartEmployee() {
+		// TABLA DATOS CONTRATO
+		
+		this.document.setValue("");
+		this.security_social_num.setValue("");
+		this.name.setValue("");
+		this.first_surname.setValue("");
+		this.second_surname.setValue("");
+		this.ssRegimeType.setSelectedIndex(0);
+		
+		this.start_date.setValue(null);
+		this.end_date.setValue(null);
+		this.seniority_date.setValue(null);
+		
+		this.category.setValue("");
+		
+		this.journeyDuration.setText("");
+
+		// TABLA DATOS EMPLEADO
+		
+		this.birth_date.setValue(null);
+		
+		this.address.setValue("");
+		this.addressNum.setValue("");
+		this.addressInfo.setValue("");
+		this.addressZip.setValue("");
+		
+		this.mobile.setValue("");
+		this.phone.setValue("");
+		this.email.setValue("");
+		
+		this.account.setValue("");
+		this.bic.setValue("");
+	}
 
 	private void initializeListBox() {
 		// TABLA DATOS CONTRATO

@@ -195,7 +195,7 @@ public class Municipalities {
 		municipalities.put("50242","SEDILES"); 
 		municipalities.put("50243","SESTRICA"); 
 		municipalities.put("50244","SIERRA DE LUNA"); 
-		municipalities.put("50245","SIGÜES"); 
+		municipalities.put("50245","SIG" + String.valueOf("\u00DC") + "ES"); 
 		municipalities.put("50246","SISAMON"); 
 		municipalities.put("50247","SOBRADIEL"); 
 		municipalities.put("50248","SOS DEL REY CATOLICO"); 
