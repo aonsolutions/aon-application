@@ -190,7 +190,7 @@ class AonDesktop extends HTMLElement {
 			case Apps.DOCUMENTAL.app:
 				startModule('aon_gwt_aio', 'documents');
 				break;
-			case Apps.HELPDESK.app:
+			case Apps.MESSENGER.app:
 				startModule('aon_gwt_aio', 'issues');
 				break;
 			case Apps.ACCOUNTING.app:
@@ -211,20 +211,17 @@ class AonDesktop extends HTMLElement {
 			case Apps.TOOLS.app:
 				this.buildAppMenu(Apps.TOOLS);
 				break;
-			case Apps.SELFCONTA.app:
-				alert('SELFCONTA');
-				break;
 			case Apps.CONTRATA.app:
 				alert('CONTRAT@');
 				break;
 			case Apps.PORTAL.app:
 				open('https://mispapeles.es/');
 				break;
-			case Apps.ALMA.app:
-				alert('ALMA');
+			case Apps.CONVENIOS.app:
+				alert('CONVENIOS');
 				break;
-			case Apps.LEARNING.app:
-				alert('LEARNING');
+			case Apps.BANK.app:
+				alert('BANK');
 				break;
 		}
 	}

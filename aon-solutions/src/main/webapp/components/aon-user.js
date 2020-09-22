@@ -271,8 +271,8 @@ class AonUser extends HTMLElement {
 				return Apps.INVOICE;
 			case Apps.DOCUMENTAL.app:
 				return Apps.DOCUMENTAL;
-			case Apps.HELPDESK.app:
-				return Apps.HELPDESK;
+			case Apps.MESSENGER.app:
+				return Apps.MESSENGER;
 			case Apps.ACCOUNTING.app:
 				return Apps.ACCOUNTING;
 			case Apps.FISCAL.app:
@@ -285,16 +285,14 @@ class AonUser extends HTMLElement {
 				return Apps.AIO;
 			case Apps.TOOLS.app:
 				return Apps.TOOLS;
-			case Apps.SELFCONTA.app:
-				return Apps.SELFCONTA;
 			case Apps.CONTRATA.app:
 				return Apps.CONTRATA;
 			case Apps.PORTAL.app:
 				return Apps.PORTAL;
-			case Apps.ALMA.app:
-				return Apps.ALMA;
-			case Apps.LEARNING.app:
-				return Apps.LEARNING;
+			case Apps.CONVENIOS.app:
+				return Apps.CONVENIOS;
+			case Apps.BANK.app:
+				return Apps.BANK;
 		}
 	}
 

@@ -13,12 +13,12 @@ export const Apps = {
       icon: 'aon_app',
       color: '#6986BB'
     },
-    HELPDESK: {
-      app: 'helpdesk',
-      title: 'Help Desk',
-      description: 'Gestor de Ayuda (Help Desk).',
+    MESSENGER: {
+      app: 'messenger',
+      title: 'Messenger',
+      description: 'Messenger',
       icon: 'aon_app',
-      color: '#D38C5B'
+      color: '#CADEFF'
     },
     ACCOUNTING: {
       app: 'accounting',
@@ -75,21 +75,20 @@ export const Apps = {
       icon: 'aon_app',
       color: '#002469'
     },
-    MESSENGER: {
-      app: 'messenger',
-      title: 'Messenger',
-      description: 'Messenger',
-      icon: 'aon_app',
-      color: '#CADEFF'
-    },
     CONVENIOS: {
-      app: 'serviconvenios',
-      title: 'ServiConvenios',
-      description: 'ServiConvenios',
-      logo: 'assets/apps/serviconvenios.png',
+      app: 'convenios',
+      title: 'Convenios',
+      description: 'Convenios',
       icon: 'aon_app',
       color: '#329905'
-    }
+    },
+    BANK: {
+      app: 'bank',
+      title: 'Bank',
+      description: 'Gestor de Bancos.',
+      icon: 'aon_app',
+      color: '#D38C5B'
+    },
 };
 
 export const AccountingMenu =

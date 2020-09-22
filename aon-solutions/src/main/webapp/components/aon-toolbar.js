@@ -73,7 +73,10 @@ import './aon-icon-button.js';
 			let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
 			let span = document.createElement('span');
 			span.innerHTML= button;
+
+			let aonMenu = document.getElementById('aonMenu');
 			let toolSection = document.getElementById(this.getAttribute('id') + 'aon-toolbar-tool-section');
+			toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
 			toolSection.appendChild(span);
 		}
 

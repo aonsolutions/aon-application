@@ -1,13 +1,11 @@
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 public enum AonApp implements Serializable{
 	INVOICE,
 	DOCUMENTAL,
-	HELPDESK,
+	MESSENGER,
 	ACCOUNTING,
 	FISCAL,
 	PAYROLL,
@@ -16,8 +14,8 @@ public enum AonApp implements Serializable{
 	TOOLS,
 	CONTRATA,
 	PORTAL,
-	MESSENGER,
-	CONVENIOS;
+	CONVENIOS,
+	BANK;
 	
 	public Byte value(){
 		return (byte) ordinal();
@@ -40,8 +38,8 @@ public enum AonApp implements Serializable{
 			return INVOICE;
 		} else if(i.equalsIgnoreCase(DOCUMENTAL.name())) {
 			return DOCUMENTAL;
-		} else if(i.equalsIgnoreCase(HELPDESK.name())) {
-			return HELPDESK;
+		} else if(i.equalsIgnoreCase(BANK.name())) {
+			return BANK;
 		} else if(i.equalsIgnoreCase(ACCOUNTING.name())) {
 			return ACCOUNTING;
 		} else if(i.equalsIgnoreCase(FISCAL.name())) {
@@ -66,8 +64,4 @@ public enum AonApp implements Serializable{
 		return null;
 	}
 	
-	public static Stream<AonApp> aonValues() {
-		AonApp[] array = {INVOICE, DOCUMENTAL, HELPDESK, ACCOUNTING, FISCAL, PAYROLL, OCR, AIO, TOOLS};
-		return Arrays.stream(array);
-	}
 }

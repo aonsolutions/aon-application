@@ -2,6 +2,9 @@ import './aon-invoice.js';
 import './aon-invoice-list.js';
 
 class AonInvoicePanel extends HTMLElement {
+
+	selected;
+
 	constructor () {
 		super();
 	}
@@ -14,6 +17,7 @@ class AonInvoicePanel extends HTMLElement {
 
 			<!-- AON INVOICE PANEL MENU (SIDENAV) -->
 			<div id="aonInvoicePanelSidenav" class="sidenav">
+				<div class="aonSidenavTitle"> PENDIENTES </div>
 				<ul class="aonClip">
 					<li id="aonInvoicePanelInbox" class="aonAppMenuSidenavList aonOpacity" >
 						<i class="material-icons aonVerticalMiddle">inbox</i>
@@ -25,11 +29,13 @@ class AonInvoicePanel extends HTMLElement {
 						<span class="aonMenuItemSpan"> Rechazadas	</span>
 					</li>
 
-					<li id="aonInvoicePanelTrash" class="aonAppMenuSidenavList aonOpacity" style="border-bottom: 1px solid #ddd;">
+					<li id="aonInvoicePanelTrash" class="aonAppMenuSidenavList aonOpacity">
 						<i class="material-icons aonVerticalMiddle">delete</i>
 						<span class="aonMenuItemSpan"> Papelera </span>
 					</li>
-
+				</ul>
+				<div class="aonSidenavTitle"> CONTABILIZADAS </div>
+				<ul class="aonClip">
 					<li id="aonInvoicePanelIssued" class="aonAppMenuSidenavList aonOpacity">
 						<i class="material-icons aonVerticalMiddle">unarchive</i>
 						<span class="aonMenuItemSpan"> Emitidas </span>
@@ -45,6 +51,13 @@ class AonInvoicePanel extends HTMLElement {
 						<span class="aonMenuItemSpan"> Tickets/Justificantes </span>
 					</li>
 				</ul>
+				<div class="aonSidenavTitle"> CONFIGURACIÓN </div>
+				<ul class="aonClip">
+					<li id="aonInvoicePanelPrint" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle"> print </i>
+						<span class="aonMenuItemSpan"> Impresión Facturas </span>
+					</li>
+				</ul>
 			</div>
 
 			<!-- AON INVOICE PANEL CONTENT -->
@@ -56,20 +69,31 @@ class AonInvoicePanel extends HTMLElement {
   	}
 
   	build(){
+			let aonInvoicePanelToolbar = document.getElementById('aonInvoicePanel');
+			aonInvoicePanelToolbar.addButton('aonInvoiceAdd', 'add');
+
 			document.getElementById("aonInvoicePanelSidenav").style.width = "250px";
 			document.getElementById("aonInvoicePanelContent").style['margin-left'] = "250px";
 
-			let listIds = ['aonInvoicePanelInbox', 'aonInvoicePanelRefused', 'aonInvoicePanelTrash', 'aonInvoicePanelIssued', 'aonInvoicePanelReceived', 'aonInvoicePanelTicket']
+			let listIds = ['aonInvoicePanelInbox', 'aonInvoicePanelRefused', 'aonInvoicePanelTrash',
+			 	'aonInvoicePanelIssued', 'aonInvoicePanelReceived', 'aonInvoicePanelTicket', 'aonInvoicePanelPrint'];
 			listIds.forEach((id, i) => {
 					let el = document.getElementById(id);
 
 					el.addEventListener('mouseover', () => {
-						el.style.backgroundColor = '#f1f1f1';
+						if(!this.selected || this.selected !== id)
+							el.style.backgroundColor = '#f1f1f1';
 					});
 					el.addEventListener('mouseleave', () => {
-						el.style.backgroundColor = 'white';
+						if(!this.selected || this.selected !== id)
+							el.style.backgroundColor = 'transparent';
 					});
 					el.addEventListener('click', () => {
+						listIds.forEach((id, i) => {
+							let el1 = document.getElementById(id);
+							el1.style.backgroundColor = 'transparent';
+						});
+						this.selected = id;
 						el.style.backgroundColor = '#ddd';
 					});
 			});

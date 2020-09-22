@@ -3,8 +3,8 @@ import {isMobile} from  '../services/utils.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import './aon-configuration.js';
-import './aon-invoice-panel.js';
-import './aon-invoice.js';
+import './invoice/aon-invoice-panel.js';
+import './invoice/aon-invoice.js';
 import './aon-user.js';
 import './aon-icon-button.js';
 import './aon-search-box.js';

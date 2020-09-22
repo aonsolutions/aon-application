@@ -47,7 +47,6 @@ class AonParent extends HTMLElement {
 			<div id="aonParentContent" class="aonContent">
 				<ul id="aon-company-list" class="demo-list-two mdl-list aonCompanyList"></ul>
 			</div>
-
 		`;
 		this.init();
 		this.toogleNav();

@@ -102,11 +102,11 @@ public class UserServlet extends HttpServlet{
 					userAppRoles.put(AonApp.ACCOUNTING.name(), AonRole.GUEST);
 					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.GUEST);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER.equals(aonRole)) {
-					userAppRoles.put(AonApp.HELPDESK.name(), AonRole.ADMIN);
-					setUserAppRole(domain, user, AonApp.HELPDESK, AonRole.ADMIN);
+					userAppRoles.put(AonApp.MESSENGER.name(), AonRole.ADMIN);
+					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.ADMIN);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER.equals(aonRole)) {
-					userAppRoles.put(AonApp.HELPDESK.name(), AonRole.GUEST);
-					setUserAppRole(domain, user, AonApp.HELPDESK, AonRole.GUEST);
+					userAppRoles.put(AonApp.MESSENGER.name(), AonRole.GUEST);
+					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.GUEST);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER.equals(aonRole)) {
 					userAppRoles.put(AonApp.DOCUMENTAL.name(), AonRole.ADMIN);
 					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.ADMIN);

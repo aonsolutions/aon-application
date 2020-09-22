@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
@@ -15,12 +16,15 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.DataResponse;
+import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
@@ -122,6 +126,21 @@ public class InvoiceServlet extends HttpServlet{
     	
 		return filter;
     }
+	
+	private static void setInvoice(Domain domain, String login, JSONObject json) {
+		DataResponse dr = new DataResponse()
+				.setDomain(domain.getId())
+				.setSource(DataResponseSource.INVOICE)
+				.setResponseDate(new Date());
+		dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);		
+		DataResponseDetail drd = new DataResponseDetail()
+				.setDomain(domain.getId())
+				.setDataResponse(dr.getId())
+				.setDataVariable("json")
+				.setDataValue(json.toString());
+		drd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
+
+	}
 	
 	private static InvoiceStatus getInvoiceStatus(String status) {
 		InvoiceStatus st = InvoiceStatus.safeValueOf(status);

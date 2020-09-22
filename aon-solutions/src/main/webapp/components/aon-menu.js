@@ -78,7 +78,7 @@ class AonMenu extends HTMLElement {
     	case Apps.DOCUMENTAL.app:
 				startModule('aon_gwt_aio', 'documents');
 				break;
-			case Apps.HELPDESK.app:
+			case Apps.MESSENGER.app:
 				startModule('aon_gwt_aio', 'issues');
 				break;
     	case Apps.ACCOUNTING.app:
@@ -105,11 +105,11 @@ class AonMenu extends HTMLElement {
 			case Apps.PORTAL.app:
 				open('https://mispapeles.es/');
 				break;
-			case Apps.MESSENGER.app:
-				alert('MESSENGER');
-				break;
 			case Apps.CONVENIOS.app:
 				alert('CONVENIOS');
+				break;
+			case Apps.BANK.app:
+				alert('BANK');
 				break;
 		}
 	}
@@ -120,8 +120,8 @@ class AonMenu extends HTMLElement {
 				return Apps.INVOICE;
     	case Apps.DOCUMENTAL.app:
 				return Apps.DOCUMENTAL;
-			case Apps.HELPDESK.app:
-				return Apps.HELPDESK;
+			case Apps.MESSENGER.app:
+				return Apps.MESSENGER;
     	case Apps.ACCOUNTING.app:
 				return Apps.ACCOUNTING;
 			case Apps.FISCAL.app:
@@ -138,10 +138,10 @@ class AonMenu extends HTMLElement {
 				return Apps.CONTRATA;
 			case Apps.PORTAL.app:
 				return Apps.PORTAL;
-			case Apps.MESSENGER.app:
-				return Apps.MESSENGER;
 			case Apps.CONVENIOS.app:
 				return Apps.CONVENIOS;
+			case Apps.BANK.app:
+				return Apps.BANK;
 		}
 	}
 
@@ -205,17 +205,37 @@ class AonMenu extends HTMLElement {
 				ul.appendChild(this.buildApp(this.getApp(key)));
 			}
 		}
+		let liAdd = document.createElement('li');
+		liAdd.style.textAlign =  'right';
+		liAdd.style.paddingRight = '10px';
+		liAdd.innerHTML =`<aon-icon-button id="aonMenuAddButton" icon="add"></aon-icon-button>`;
+		ul.appendChild(liAdd);
+
 		aonMenuSidenav.innerHTML = '';
 		aonMenuSidenav.appendChild(ul);
 
 		let aonMenuShowButton = document.getElementById('aonMenuShowButton');
 		aonMenuShowButton.addEventListener('click', () => {
+
 			if(this.getAttribute('opened'))
 				this.removeAttribute('opened');
 			else this.setAttribute('opened', true);
 
+			let toolSection = document.querySelector("[id*='aon-toolbar-tool-section']");
+			if(toolSection) {
+				toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
+			}
 			const icon = this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
 			aonMenuShowButton.setAttribute('icon', icon);
+		});
+
+		let aonMenuAddButton = document.getElementById('aonMenuAddButton');
+		aonMenuAddButton.addEventListener('click', () => {
+			rootPanel('<aon-marketplace id="aonMarketplace" > </aon-marketplace>');
+		 	if(this.getAttribute('company')){
+				let aonMarketplace = document.getElementById('aonMarketplace');
+			 	aonMarketplace.setAttribute('company', this.getAttribute('company'));
+		 }
 		});
 	}
 

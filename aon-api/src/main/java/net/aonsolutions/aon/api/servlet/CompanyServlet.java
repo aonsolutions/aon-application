@@ -117,7 +117,7 @@ public class CompanyServlet extends HttpServlet{
 				dapp.setApp(AonApp.INVOICE);
 				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
 			} else if(Module.CALL_CENTER.equals(r)) {
-				dapp.setApp(AonApp.HELPDESK);
+				dapp.setApp(AonApp.MESSENGER);
 				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
 			} else if(Module.CONTRATA.equals(r)) {
 				

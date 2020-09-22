@@ -25,7 +25,8 @@ public enum DataResponseSource implements Serializable{
 	MOD390,
 	INGENET_SALES,
 	PATURPAT_QUALITY,
-	ANALYTIC_ACCOUNTING
+	ANALYTIC_ACCOUNTING,
+	INVOICE
 	;
 
 
