@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="AYUDA T">
+        <meta name="generator" content="">
+        <title>aon Suite</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="../css/app.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">aon Suite</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Dropdown
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="row mt-4">
+                <div class="col-12">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col"># ticket</th>
+                                <th scope="col">Última modificación</th>
+                                <th scope="col">Título</th>
+                                <th scope="col">De</th>
+                                <th scope="col">Prioridad</th>
+                                <th scope="col">Asigando</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                                <td>@mdo</td>
+                                <td>@mdo</td>
+                                <td>eliminar</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <small>
+                                        Mostrando X - Y de Z 
+                                    </small>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="../js/app.js"></script>
+        <script>
+            $(document).ready(function(){
+                // Donde meteremos los valores de los tickets
+                var tickets_listado = {};
+                // Metemos los valores de los tickets aleatoriamente
+                for (var i = 1; i < 101; i++) {
+                    tickets_listado[i] = {
+                        id                  : i,                                    // campo ticket
+                        last_update         : '15-8-2020 15:30',                    // ultima modificacion
+                        subject             : 'titulo del ticket',                  // titulo del ticket
+                        comments_quantity   : Math.floor((Math.random() * 10) + 1), // cantidad de comentarios
+                        from                : 'Manolo',                             // creador del ticket
+                        priority            : 'Baja',                               // prioridad del ticket Baja, Media, Alta
+                        assignaed_to        : 'Carmen',                             // asigando a
+                        answer              : Math.floor((Math.random() * 2)),      // tienes que responder = 0 : respondido | 1 : responder     
+                    };
+                };
+                    
+                // Json de lo que llega
+                var datos = {
+                    total       : 100,                  // total de paginas
+                    total_page  : '1 - 10',             // cantidad mostrada por paginas
+                    page        : 1,                    // pagina en la que estamos
+                    tickets     : tickets_listado,      // listado de tickets
+                };
+                
+                // Imprimir los datos por consola
+                console.log(datos);
+            });
+        </script>
+    </body>
+</html>
