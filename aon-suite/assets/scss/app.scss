@@ -1,6 +1,10 @@
 @import "././node_modules/bootstrap/scss/bootstrap";
 @import "_variables.scss";
 
+// Ruta relativa donde se encuentran las fuentes
+$material-design-icons-font-directory-path: '../../node_modules/material-design-icons-iconfont/dist/fonts/';
+
+@import '././node_modules/material-design-icons-iconfont/src/material-design-icons';
 
 .test{
     color: red;

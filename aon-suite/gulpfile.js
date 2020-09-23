@@ -38,7 +38,7 @@ function scripts() {
 function sync(done) {
     browserSync.init({
         server: {
-            baseDir: 'public' // Base directory from where our app will be served
+            baseDir: ['./', './public'] // Base directories exposed to the server
         },
         port: 9000, // Port used by the app
         ui: {
