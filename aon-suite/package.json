@@ -1,0 +1,33 @@
+{
+  "name": "aon-suite",
+  "version": "1.0.0",
+  "description": "New AYUDA T x aonSolutions Suite",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jmpartida@bitbucket.org/hmaeztu/aon-suite.git"
+  },
+  "keywords": [
+    "suite",
+    "tax",
+    "ayudat",
+    "aonsolutions"
+  ],
+  "author": "AYUDA T",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/hmaeztu/aon-suite#readme",
+  "dependencies": {
+    "bootstrap": "^4.5.2",
+    "chart.js": "^2.9.3",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "jquery": "^3.5.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.12",
+    "gulp-sass": "^4.1.0"
+  }
+}
