@@ -25,7 +25,9 @@ function sass() {
 // Añadir al array los módulos JS para que se compilen todos juntos
 function scripts() {
     return gulp.src([
-        'node_modules/jquery/dist/jquery.js'
+        'node_modules/jquery/dist/jquery.js',
+        'node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js',
+        'node_modules/@ckeditor/ckeditor5-build-classic/build/translations/es.js'
     ])
     .pipe(concat('app.js'))
     .pipe(gulp.dest('public/js/'))

@@ -9,3 +9,39 @@
 .text-ayudat{
     color: $primary;
 }
+
+// Tickets
+    .ticket{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .ticket li{
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #F4F2F2;
+    }
+
+    .ticket li.left .ticket-body{
+        margin-left: 60px;
+    }
+
+    .ticket li.right .ticket-body{
+        margin-right: 60px;
+    }
+    
+    .ticket li .ticket-body p{
+        margin: 0;
+        color: #777777;
+    }
+    
+    .border-from {
+        border-left: 5px solid $primary;
+    }
+    
+    .border-to {
+        border-right: 5px solid #ffdf7e;
+    }
+// Fin tickets
+
