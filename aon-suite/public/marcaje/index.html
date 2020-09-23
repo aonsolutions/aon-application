@@ -56,109 +56,260 @@
 
     <!-- Main-->
     <div class="container-fluid pt-5">
-        <div class="row">
-            <!-- <div class="col-12 text-center"> -->
-            <div class="col-12">
-                <h3 class="">Marcaje</h3>
+        <form id="form" name="form" action="#" method="post">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3 class="">Marcaje de empleados</h3>
+                </div>
             </div>
-        </div>
 
-        <br>
-
-        <div class="row">
-            <div class="col-3">
-                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
-                <div class="form-group">
-                    <label for="sel1">Empleado:</label>
-                    <select class="form-control" id="emleado">
-                        <option value='1'>Antonio</option>
-                        <option value='2'>Juan</option>
-                        <option value='3'>Jacinto</option>
-                        <option value='4'>Aurora</option>
-                    </select>
+            <div class="container-fluid pt-3">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="">Empleado</h5>
+                    </div>
                 </div>
 
-            </div>
-        </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-group">
+                            <label for="empleado">Nombre y apellidos:</label>
+                            <select class="form-control" id="empleado" name="empleado">
+                                <option value='0' disabled selected>Selecciona un empleado</option>
+                            </select>
+                        </div>
 
-        <div class="row">
-            <div class="col-3">
-                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
-                <div class="form-group">
-                    <label for="sel1">Tipo de marcaje de entrada:</label>
-                    <select class="form-control" id="tipo">
-                        <option value='1'>Marcaje sin incidencia</option>
-                        <option value='2'>Ausencia justificada</option>
-                        <option value='3'>Baja médica</option>
-                        <option value='4'>Compensación horas extras</option>
-                        <option value='5'>Permiso empresa</option>
-                        <option value='6'>Permiso Maternidad/Paternidad</option>
-                        <option value='7'>Permiso matrimonial</option>
-                        <option value='8'>Teletrabajo</option>
-                        <option value='11'>Vacaciones</option>
-                        <option value='12'>Visita médico</option>
-                    </select>
+                    </div>
                 </div>
 
-            </div>
-            <div class="col-3">
-                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
-                <div class="form-group">
-                    <label for="sel1">Tipo de marcaje de salida:</label>
-                    <select class="form-control" id="tipo">
-                        <option value='1'>Marcaje sin incidencia</option>
-                        <option value='2'>Ausencia justificada</option>
-                        <option value='3'>Baja médica</option>
-                        <option value='4'>Compensación horas extras</option>
-                        <option value='5'>Permiso empresa</option>
-                        <option value='6'>Permiso Maternidad/Paternidad</option>
-                        <option value='7'>Permiso matrimonial</option>
-                        <option value='8'>Teletrabajo</option>
-                        <option value='11'>Vacaciones</option>
-                        <option value='12'>Visita médico</option>
-                    </select>
+                <div class="row pt-3">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="">Entrada</h5>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="fechaEntrada">Fecha:</label>
+                                    <input class="form-control" type="date" value="2011-08-19" id="fechaEntrada"
+                                        name="fechaEntrada">
+                                </div>
+
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="horaEntrada">Hora:</label>
+                                    <input class="form-control" type="time" value="13:45:00" id="horaEntrada"
+                                        name="horaEntrada">
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-6 col-md-12">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="tipoEntrada">Tipo de marcaje:</label>
+                                    <select class="form-control tipoMarcaje" id="tipoEntrada" name="tipoEntrada">
+                                        <option value='1'>Marcaje sin incidencia</option>
+                                        <option value='2'>Ausencia justificada</option>
+                                        <option value='3'>Baja médica</option>
+                                        <option value='4'>Compensación horas extras</option>
+                                        <option value='5'>Permiso empresa</option>
+                                        <option value='6'>Permiso Maternidad/Paternidad</option>
+                                        <option value='7'>Permiso matrimonial</option>
+                                        <option value='8'>Teletrabajo</option>
+                                        <option value='11'>Vacaciones</option>
+                                        <option value='12'>Visita médico</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="notaEntrada">Nota:</label>
+                                    <textarea class="form-control" id="notaEntrada" name="notaEntrada"
+                                        rows="3"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- <div class="row">
+                        <div class="col-3 ">
+                            <button type="button" id="botonEntradaSalida" class="btn btn-info">Marcar
+                                Entrada</button>
+                        </div>
+                    </div> -->
+
+                    </div>
+
+                    <div class="col-lg-6 col-md-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="">Salida</h5>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <label for="fechaSalida">Fecha:</label>
+                                    <input class="form-control" type="date" value="2011-08-19" id="fechaSalida"
+                                        name="fechaSalida">
+                                </div>
+
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <label for="horaSalida">Hora:</label>
+                                    <input class="form-control" type="time" value="13:45:00" id="horaSalida"
+                                        name="horaSalida">
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-6 col-md-12">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="tipoSalida">Tipo de marcaje:</label>
+                                    <select class="form-control tipoMarcaje" id="tipoSalida" name="tipoSalida">
+                                        <option value='1'>Marcaje sin incidencia</option>
+                                        <option value='2'>Ausencia justificada</option>
+                                        <option value='3'>Baja médica</option>
+                                        <option value='4'>Compensación horas extras</option>
+                                        <option value='5'>Permiso empresa</option>
+                                        <option value='6'>Permiso Maternidad/Paternidad</option>
+                                        <option value='7'>Permiso matrimonial</option>
+                                        <option value='8'>Teletrabajo</option>
+                                        <option value='11'>Vacaciones</option>
+                                        <option value='12'>Visita médico</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="notaSalida">Nota:</label>
+                                    <textarea class="form-control" id="notaSalida" name="notaSalida"
+                                        rows="3"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- <div class="row">
+                        <div class="col-3 ">
+                            <button type="button" id="botonEntradaSalida" class="btn btn-info">Marcar
+                                Salida</button>
+                        </div>
+                    </div> -->
+
+                    </div>
+
+
                 </div>
 
-            </div>
-        </div>
+                <div class="row pt-3">
+                    <div class="col-lg-3 col-md-6">
+                        <button type="submit" form="form" id="botonEntradaSalida" class="btn btn-info">Marcar</button>
+                    </div>
+                </div>
 
-        <div class="row">
-            <div class="col-3 ">
-                <button type="button" id="botonEntradaSalida" class="btn btn-info">Marcar entrada/salida</button>
+
             </div>
-        </div>
+        </form>
 
     </div>
 
 
     <!-- Scripts -->
     <script src="../js/app.js"></script>
+
     <script>
         $(document).ready(function () {
-            var datos = [{
+            var datos = {
                 empleados: [
                     {
+                        id: '1',                            // id
                         documento: '12345678A',             // dni
-                        nombre: 'Juan Muriel Fernadez',     // nombre y apellidos          
+                        nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
                     },
                     {
+                        id: '2',                            // id
                         documento: '23456781A',             // dni
-                        nombre: 'Jaime Perez Ruiz',         // nombre y apellidos          
+                        nombre: 'Jaime Perez Ruiz',         // nombre y apellidos
                     },
                 ],
-            }]
+            };
 
-            console.log(datos);
+            var empleados = datos['empleados'];
 
-            for (i in datos) {
-                // $("<option value='" + i + "'>datos[i]['documento']</option>").appendTo("#miselect");
+            // var value;
+            for (i in empleados) {
+                // value = Number.parseInt(i) + 1;
+                $("<option value='" + empleados[i]['id'] + "'>" + empleados[i]['nombre'] + "</option>").appendTo("#empleado");
             }
-            
+
         });
 
-        $('#botonEntradaSalida').on('click', function (e) {
-            alert("marcaje entrada salida");
-        })
+        (function ($) {
+            $.fn.serializeFormJSON = function () {
+
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+        })(jQuery);
+
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var data = $(this).serializeFormJSON();
+            console.log(data);
+            alert(JSON.stringify(data));
+
+            /* Object
+                email: "value"
+                name: "value"
+                password: "value"
+             */
+        });
+
+        // $('#botonEntradaSalida').on('click', function (e) {
+        //     // alert("marcaje entrada salida");
+        //     // $('form').serializeJSON();
+
+        //     e.preventDefault();
+        //     console.log($('form').serializeJSON());
+        // })
+
+        
     </script>
 </body>
 
