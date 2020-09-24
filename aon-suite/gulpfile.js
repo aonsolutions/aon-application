@@ -25,7 +25,8 @@ function sass() {
 // Añadir al array los módulos JS para que se compilen todos juntos
 function scripts() {
     return gulp.src([
-        'node_modules/jquery/dist/jquery.js'
+        'node_modules/jquery/dist/jquery.js',
+        'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
     ])
     .pipe(concat('app.js'))
     .pipe(gulp.dest('public/js/'))
@@ -36,7 +37,7 @@ function scripts() {
 function sync(done) {
     browserSync.init({
         server: {
-            baseDir: ['./', './public'] // Base directories exposed to the server
+            baseDir: 'public' // Base directory from where our app will be served
         },
         port: 9000, // Port used by the app
         ui: {
@@ -50,7 +51,7 @@ function sync(done) {
 }
 
 // First compiles Sass to CSS if there are changes, then starts watching files and Browsersync
-var watch = gulp.series(sass, gulp.parallel(watchFiles, sync));
+var watch = gulp.series(sass, scripts, gulp.parallel(watchFiles, sync));
 
 exports.sass = sass;
 exports.scripts = scripts;

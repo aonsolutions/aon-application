@@ -6,6 +6,10 @@ $material-design-icons-font-directory-path: '../../node_modules/material-design-
 
 @import '././node_modules/material-design-icons-iconfont/src/material-design-icons';
 
+.pointer{
+    cursor: pointer;
+}
+
 .test{
     color: red;
 }
