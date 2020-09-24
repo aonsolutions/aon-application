@@ -56,44 +56,46 @@
                         <div class="col-12 mt-2">
                             <h3>Nuevo ticket</h3>
                         </div>
-                        <div class="col-12 mt-2">
-                            <div class="row">
-                                <div class="col-12">
-                                    <label class="font-weight-bold" for="subject">Asunto:</label>
-                                    <input type="text" id="subject" class="form-control" value="" placeholder="Asunto" />
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <label class="font-weight-bold" for="subject">Tema:</label>
-                                            <select class="form-control" id="select-theme">
-                                                <option value="">Elija un tema</option>
-                                                <option value="1">Error</option>
-                                                <option value="2">Sugerencia</option>
-                                                <option value="3">Consulta</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-6">
-                                            <label class="font-weight-bold" for="subject">Destinatario:</label>
-                                            <select class="form-control" id="select-postings">
-                                                <option value="">Elija un destinatario</option>
-                                            </select>
+                        <form method="post" id="formulario" enctype="multipart/form-data">
+                            <div class="col-12 mt-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class="font-weight-bold" for="subject">Asunto:</label>
+                                        <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <label class="font-weight-bold" for="subject">Tema:</label>
+                                                <select class="form-control" id="select-theme" name="select-theme">
+                                                    <option value="">Elija un tema</option>
+                                                    <option value="1">Error</option>
+                                                    <option value="2">Sugerencia</option>
+                                                    <option value="3">Consulta</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="font-weight-bold" for="subject">Destinatario:</label>
+                                                <select class="form-control" id="select-postings" name="select-postings">
+                                                    <option value="">Elija un destinatario</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <label class="font-weight-bold" for="subject">Mensaje:</label>
-                                    <div id="editor"></div>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
-                                    <input type="file" id="attached" class="form-control" multiple/>
-                                </div>
-                                <div class="col-12 mt-2">
-                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
+                                    <div class="col-12 mt-2">
+                                        <label class="font-weight-bold" for="subject">Mensaje:</label>
+                                        <div id="editor"></div>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
+                                        <input type="file" id="attached" name="attached[]" class="form-control" multiple/>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -148,42 +150,38 @@
             
             // Enviar mensage nuevo
             $('#btn-send').click(function(){
+                // Creamos el formData para enviar
+                var formData = new FormData();
+                
+                // Añadimos los adjuntos
+                var files = $("#attached")[0].files;
+                
+                for (const prop in files) {
+                    formData.append('file', files[prop]);
+                }
+                
+                // Añadimos el resto de datos del formulario
                 var msg_user = theEditor.getData();
-                var ticket_id = $(this).data('ticket');
-                var user_id_login = $(this).data('user');
-                var new_status = $('#select-status').val();
+                formData.append("message", msg_user);
                 
-                // Datos a enviar
-                var send = {
-                    ticket_id : ticket_id,  // ID del ticket al que corresponde
-                    user : user_id_login,   // ID usuario logueado (crea el mensaje)
-                    message : msg_user,     // Mensaje
-                    status : new_status     // Nuevo estado del ticket
+                var subject = $("#subject").val();
+                formData.append('subject', subject);
+                
+                var theme = $("#select-theme").val();
+                formData.append('theme', theme);
+                
+                var postings = $("#select-postings").val();
+                formData.append('postings', postings);
+                
+                // Enviamos los datos del nuevo ticket por AJAX
+                // TO-DO
+                var respuesta = {
+                    ticket_id : '245673'
                 };
                 
-                // Mandamos los datos necesarios y nos devolverán el mensaje con los datos necesarios
-                var message = {
-                    0 : {
-                        user_name : "Juanito",                                      // Nombre del usuario del mensaje
-                        user_id : "425",                                            // ID del usuario que crea el ticket
-                        user_avatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
-                        message_date : "23-09-2020 14:36",                          // Hora y fecha de la creación del mensaje
-                        message : msg_user,                                         // Mensaje
-                        ticket_status : new_status                                  // Nuevo estado del ticket
-                    }
-                };
+                // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
+                document.location.href = "show.html?id="+respuesta.ticket_id; 
                 
-                // Formateamos el mesaje
-                var msg = messages(message, user_id_login);
-                
-                // Cambiamos el estado del ticket
-                $('#ticket-status').html(status_array[message[0].ticket_status]);
-                
-                // Limpiamos el editor
-                theEditor.setData('');
-                
-                // Mostramos el mensaje al final
-                $('#ticket-messages').append(msg);
             });
         </script>
     </body>
