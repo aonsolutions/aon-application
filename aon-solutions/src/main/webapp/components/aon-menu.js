@@ -1,6 +1,7 @@
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
+import {bidoq} from '../services/bidoq.js';
 import './aon-icon.js';
 import './contrat@/aon-contrata.js';
 
@@ -103,7 +104,12 @@ class AonMenu extends HTMLElement {
 				rootPanel('<aon-contrata></aon-contrata>');
 				break;
 			case Apps.PORTAL.app:
-				open('https://mispapeles.es/');
+				bidoq().then((result) => {
+					alert(result)
+				}).catch(error => {
+					alert(error);
+				});
+	//			open('https://mispapeles.es/');
 				break;
 			case Apps.CONVENIOS.app:
 				alert('CONVENIOS');
