@@ -240,7 +240,8 @@ public class ConnectSaleInvoiceWriter {
 			calificadorReferenciaAdicional = "API";
 			referenciaAdicional = rr.getComments();
 		}
-		
+		String ediBY = isDia(customer) ? customerEdiCabeceraCode : customerEdiFacturaCode;
+		String ediIV = isDia(customer) ? customerEdiFacturaCode : customerEdiCabeceraCode;
 		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
 				companyEdiCode, company, companyAddress, recordData));
@@ -251,9 +252,9 @@ public class ConnectSaleInvoiceWriter {
 		list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
 				customerEdiCabeceraCode, customer, invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
-				customerEdiFacturaCode, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
+				ediBY, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
-				customerEdiCabeceraCode, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null));
+				ediIV, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
 				companyEdiCode, company, companyAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PAGADOR__QUIEN_PAGA__PR,
@@ -579,8 +580,8 @@ public class ConnectSaleInvoiceWriter {
 		sincl.setCalificadorOtroTipoDeImpuesto(null);
 		sincl.setPorcentajeOtroTipoDeImpuesto(null);
 		sincl.setImporteOtroTipoDeImpuesto(null);
-		sincl.setNumeroPedido_ON_(obtainSalesNumber(detail));
-		sincl.setNumeroDeAlbaran_DQ_(obtainDeliveryNumber(detail));
+		sincl.setNumeroPedido_ON_(isDia(detail.getInvoice().getRegistry())? null : obtainSalesNumber(detail));
+		sincl.setNumeroDeAlbaran_DQ_(isDia(detail.getInvoice().getRegistry())? null : obtainDeliveryNumber(detail));
 		sincl.setNumeroDeEmbalajes(null);
 		sincl.setTipoDeEmbalaje(null);
 		sincl.setImporteTotalBrutoDeLaLineaDeDetalle(CommonUtil.round(detail.getTotalSalesPrice(), 3));
@@ -806,5 +807,9 @@ public class ConnectSaleInvoiceWriter {
 		}
 		return null;
 	}
-
+	
+	private Boolean isDia(Registry registry) {
+		return "A80782519".equalsIgnoreCase(registry.getDocument());
+	}
+	
 }
