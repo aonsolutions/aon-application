@@ -52,6 +52,14 @@
         <div class="container mb-5">
             <div class="row mt-4">
                 <div class="col-12">
+                    <a class="form-inline text-decoration-none" href="create.html">
+                        <i class="material-icons">add_comment</i>
+                        <span class="pl-1">crear</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
                     <table class="table">
                         <thead>
                             <tr>
@@ -85,7 +93,8 @@
                 //
                 function createTable(data){
                     // recorremos los datos a mostrar
-                    var tbody = '';
+                    var tbody  = '';
+                    var a_href = 'show.html';
                     $.each(data.list, function(i, item) {
                         // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
                         tbody+= item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
@@ -95,14 +104,19 @@
                                     case 'subject':
                                         tbody+= 
                                         '<td>'+
-                                            '<div class="row">'+
-                                                '<div class="col-md-8">'+
-                                                    val+
+                                            '<a class="text-dark text-decoration-none" href="'+a_href+'?ticket='+item.id+'">'+
+                                                '<div class="row">'+
+                                                    '<div class="col-md-8">'+
+                                                        val+
+                                                    '</div>'+
+                                                    '<div class="col-md-4 text-right">'+
+                                                        '<small class="form-inline">'+
+                                                            '<i class="material-icons">comment</i> '+
+                                                            '<span class="pl-1">'+item.comments_quantity+'</span>'+
+                                                        '</small>'+
+                                                    '</div>'+
                                                 '</div>'+
-                                                '<div class="col-md-4 text-right">'+
-                                                    'com: '+item.comments_quantity+
-                                                '</div>'+
-                                            '</div>'+
+                                            '</a>'+
                                         '</td>';
                                         break;
                                     case 'comments_quantity':
@@ -113,10 +127,28 @@
                                         break;
                                             
                                     default:
-                                        tbody+= '<td>'+val+'</td>';
+                                        tbody+= 
+                                            '<td>'+
+                                                '<a class="text-dark text-decoration-none" href="'+a_href+'?ticket='+item.id+'">'+
+                                                    val+
+                                                '</a>'+
+                                            '</td>';
                                         break;
                                 }
                             });
+                        // Agregamos opciones que tenga
+                        tbody+= 
+                            '<td>'+
+                                '<a class="text-dark text-decoration-none">'+
+                                    '<i id="ticket-eliminar" class="material-icons pointer text-danger" title="Eliminar ticket"'+
+                                        ' data-page="'+data.page+'" '+
+                                        ' data-id="'+item.id+'" '+
+                                        ' >delete_forever</i>'+
+                                    '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Eliminar ticket"'+
+                                        ' data-id="'+item.id+'" '+
+                                        '>low_priority</i>'+
+                                '</a>'+
+                            '</td>';
                         // Cerramos el <tr>
                         tbody+= '</tr>';
                     });
@@ -124,86 +156,122 @@
                     // Agregamos el cuerpo de la tabla
                     $('.table tbody').html(tbody);
                     
+                    // Cogemos el paginado que tendía la tabla
+                    var pagination = createPaginate(data.page, data.total_page)
+
                     // Agregamos el paginado en el footer de la tabla
                     var tfoot = 
                     '<tr>'+
                         '<td colspan="7">'+
                             '<div class="row">'+
                                 '<div class="col-md-6">'+
-                                    'Mostrando '+data.shown_page+' entradas de '+data.total_date+
+                                    'Mostrando del '+data.shown_page+' de un total de '+data.total_date+' elementos'+
                                 '</div>'+
-                                '<div class="col-md-6 text-right">'+
-                                    createPaginate(data.page, data.total_page)+
+                                '<div class="col-md-6">'+
+                                    pagination+
                                 '</div>'+
                             '</div>'+
                         '</td>'
                     '</tr>';
                     
                     // Agregamos el cuerpo de la tabla
-                    //$('.table tfoot').html(tfoot);
+                    $('.table tfoot').html(tfoot);
                     
                     // console.log(tbody);
                 }
+
+                //
+                // Eliminar ticket
+                //
+                $(document).on('click', '#ticket-eliminar', function() {
+                    var ticket_id = $(this).data('id');
+
+                    var opcion = confirm("Eliminar el #Ticket "+ticket_id);
+                    if (opcion == true) {
+                        var list = getList($(this).data('page'));
+                        createTable(list);
+                        alert('Eliminado el #Ticket '+ticket_id+' correctamente');
+                    }
+
+                });
+
+                //
+                // Editar prioridad ticket
+                //
+                $(document).on('click', '#ticket-prioridad', function() {
+                    var ticket_id = $(this).data('id');
+                    
+                    $("#ticket-edit").modal();
+
+                });
 
                 // 
                 // Crear el paginado
                 //
                 function createPaginate(page, page_total){
-                    var paginate = '<ul class="pagination margin-top-10 display-block">';
+                    var paginate = '<ul class="pagination display-block float-right">';
 
                     // Si tenemos paginas
                     if (page > 1){ 
                         paginate+= 
                             '<li class="pointer">'+
-                                '<a class="paginado-principio">'+
-                                    '<i class="fa fa-backward" aria-hidden="true" title="Principio" ></i>'+
+                                '<a class="go_page" data-page="1">'+
+                                    '<i class="material-icons" title="Principio">fast_rewind</i>'+
                                 '</a>'+
                             '</li>'+
         
                             '<li class="pointer">'+
-                                '<a class="paginado-volver">'+
-                                    '<i class="fa fa-caret-left fa-2" aria-hidden="true" title="Volver"></i>'+
+                                '<a class="go_page" data-page="'+(page-1)+'">'+
+                                    '<i class="material-icons" title="Volver">arrow_left</i>'+
                                 '</a>'+
                             '</li>';
                     }
 
                     if(page_total > 0){
-                        var sig_pag   = page + 1;
-                        var pag_total = page_total + 1;
-                        paginate+= '<li class="margin-left-10 margin-right-10">'+sig_pag / pag_total+'</li>';
+                        paginate+= '<li class="ml-2 mr-2">'+page+'/'+page_total+'</li>';
                     }
 
                     if (page < page_total) {
                         paginate+= 
                             '<li class="pointer">'+
-                                '<a class="paginado-siguiente">'+
-                                    '<i class="fa fa-caret-right fa-2" aria-hidden="true" title="Siguiente" ></i>'+
+                                '<a class="go_page" data-page="'+(page+1)+'">'+
+                                    '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
                                 '</a>'+
                             '</li>'+
     
                             '<li class="pointer">'+
-                                '<a class="paginado-final">'+
-                                    '<i class="fa fa-forward" aria-hidden="true" title="Final" ></i>'+
+                                '<a class="go_page" data-page="'+page_total+'">'+
+                                    '<i class="material-icons" title="Final">fast_forward</i>'+
                                 '</a>'+
                             '</li>';
                     }
-
                     paginate+= '</ul>';
 
                     return paginate;
                 }
 
                 //
+                // Pasar de pagina
+                //
+                $(document).on('click', '.go_page', function() {
+                    var list = getList($(this).data('page'));
+                    createTable(list);
+                });
+
+                //
                 // Listado para probar
                 //
                 function getList(page_this = 1){
+                    // nombre
+                    var name_a = ['','Manolo','Ambrosio','Abelardo','Fulgensio','Alejandro','Jesús','Julio','David','Alberto','Juan'];
+                    var name_b = ['','Carmen','Angela','Manuela','Margarita','Maribel','Desi','Inma','Jessica','Estefanía','Nieves'];
                     // prioridades
                     var priority_array = ['Baja', 'Media', 'alta']
                     // Donde meteremos los valores de los tickets
-                    var tickets_list = {};
+                    var tickets_list   = {};
                     // Crear cantidades aletorias dependiendo de la pagina en la que estemos
-                    page_this  = page_this == 1 ? page_this : ((page_this - 1) * 10) + 1;
-                    page_total = page_this + 10;
+                    page_this_element  = page_this == 1 ? page_this : ((page_this - 1) * 10) + 1;
+                    page_total         = page_this + 10;
                     // Metemos los valores de los tickets aleatoriamente
                     for (var i = page_this; i < page_total; i++) {
                         tickets_list[i] = {
@@ -211,20 +279,20 @@
                             last_update         : '15-8-2020 15:30',                                // ultima modificacion
                             subject             : 'titulo del ticket',                              // titulo del ticket
                             comments_quantity   : Math.floor((Math.random() * 10) + 1),             // cantidad de comentarios
-                            from                : 'Manolo',                                         // creador del ticket
+                            from                : name_a[Math.floor((Math.random() * 10) + 1)],     // creador del ticket
                             priority            : priority_array[Math.floor((Math.random() * 3))],  // prioridad del ticket Baja, Media, Alta
-                            assignaed_to        : 'Carmen',                                         // asigando a
+                            assignaed_to        : name_b[Math.floor((Math.random() * 10) + 1)],     // asigando a
                             answer              : Math.floor((Math.random() * 2)),                  // tienes que responder = 0 : respondido | 1 : responder     
                         };
                     };
                         
                     // Json de lo que nos llegaria
                     var date = {
-                        total_date  : 100,                              // cantidad total de elementos
-                        total_page  : 10,                               // total de paginas
-                        page        : page_this,                        // pagina en la que estamos
-                        shown_page  : page_this+' - '+(page_total-1),   // cantidad mostrada por paginas 1 - 10
-                        list        : tickets_list,                     // listado de tickets
+                        total_date  : 100,                                      // cantidad total de elementos
+                        total_page  : 10,                                       // total de paginas
+                        page        : page_this,                                // pagina en la que estamos
+                        shown_page  : page_this_element+' - '+(page_total-1),   // cantidad mostrada por paginas 1 - 10
+                        list        : tickets_list,                             // listado de tickets
                     };
                     
                     // Devolver los datos
@@ -233,4 +301,22 @@
             });
         </script>
     </body>
+
+    <div class="modal fade" id="ticket-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    ...
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger btn-ok">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </html>

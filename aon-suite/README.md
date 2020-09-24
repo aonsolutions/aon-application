@@ -2,6 +2,7 @@
 
 ## Dependencias
 - **Bootstrap 4.5.2**
+- **bootstrap.bundle.min.js**: Librería JavaScript de Bootstrap
 - **jQuery 3.5.1**
 - **Chart.js 2.9.3**: Librería JavaScript para la visualización de gráficos con animaciones e interactivos, responsive y con soporte hasta IE11+
 - **CKeditor 5**: Librería Javascript para los textarea vitaminado estilo Word

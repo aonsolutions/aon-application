@@ -37,24 +37,10 @@ class AonSearchBox extends HTMLElement {
 			aonParent.init({value: input.value});
 		});
 
-		let advanced = document.getElementById('aon-search-advanced-button');
-		advanced.addEventListener('click', () => {
-
-		});
 
 		let search = document.getElementById('aon-search-button');
 		search.addEventListener('click', () => {
-			// if(this.getAttribute('opened')){
-			// 	this.removeAttribute('opened');
-			// 	input.style.display = 'none';
-			// 	advanced.style.display = 'none';
-			// 	div.borderBottom = '0px';
-			// } else {
-			// 	this.setAttribute('opened', true);
-			// 	input.style.display = 'block';
-			// 	advanced.style.display = 'block';
-			// 	div.borderBottom = '1px solid #ddd';
-			// }
+
 		});
 	}
 }

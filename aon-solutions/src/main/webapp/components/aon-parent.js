@@ -15,10 +15,8 @@ class AonParent extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<!-- AON COMPANY (PARENT) TOOLBAR -->
-			<aon-toolbar id="aonParent" title="EMPRESAS"></aon-toolbar>
 			<!-- AON CONFIGURATION MENU (SIDENAV) -->
-			<div id="aonParentSidenav" class="sidenav">
+			<div id="aonParentSidenav" class="sidenav" style="top:60px !important">
 				<div class="aonSidenavTitle"> FILTROS </div>
 				<ul class="aonClip">
 					<li id="aonParentSidenavActive" class="aonAppMenuSidenavList aonOpacity" >
@@ -44,8 +42,8 @@ class AonParent extends HTMLElement {
 			</div>
 
 			<!-- AON CONFIGURATION CONTENT -->
-			<div id="aonParentContent" class="aonContent">
-				<ul id="aon-company-list" class="demo-list-two mdl-list aonCompanyList"></ul>
+			<div id="aonParentContent" class="aonContent" style="height: calc(100vh - 61px) !important;">
+
 			</div>
 		`;
 		this.init();
@@ -129,12 +127,27 @@ class AonParent extends HTMLElement {
 	}
 
  	build(companies) {
-		let list = document.getElementById("aon-company-list");
-		list.innerHTML = '';
+		let content = document.getElementById('aonParentContent');
+		content.innerHTML = '';
+		let div = document.createElement('div');
+		div.style.borderBottom = '1px solid #5f6368';
+		div.style.marginTop = '15px';
+		div.style.marginLeft = '20px';
+		div.style.marginRight = '20px';
+		div.style.paddingBottom = '10px';
+		div.style.paddingLeft = '16px';
+		div.innerHTML = 'EMPRESAS';
+		content.appendChild(div);
+
+		let ul = document.createElement('ul');
+		ul.className = 'list-group';
+		ul.style.marginLeft= '20px';
+		ul.style.marginRight= '20px';
 
 		for(let i = 0; i < companies.length; i++){
-			list.appendChild(this.buildLi(companies[i], (i === 0 || i%2 === 0) ? '#f1f1f1' : 'transparent'));
+			ul.appendChild(this.buildLi(companies[i], 'transparent'));
 		}
+		content.appendChild(ul);
 	}
 
 	buildLi(company, color) {
@@ -162,6 +175,7 @@ class AonParent extends HTMLElement {
 
 		let i = document.createElement('i');
 		i.className = 'material-icons aonAvatar';
+
 		if(company.parent) i.innerHTML = 'apartment';
 		else if(company.shared) i.innerHTML = 'share';
 		else if(!company.active) i.innerHTML = 'domain_disabled';
@@ -177,6 +191,13 @@ class AonParent extends HTMLElement {
 		span.appendChild(span2);
 		span.appendChild(span3);
 		li.appendChild(span);
+
+		let sp = document.createElement('span');
+		let i2 = document.createElement('i');
+		i2.className = 'material-icons aonAvatar';
+		i2.innerHTML = 'keyboard_arrow_right';
+		sp.appendChild(i2);
+		li.appendChild(sp);
 		return li;
 	}
 
