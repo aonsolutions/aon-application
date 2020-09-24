@@ -14,7 +14,7 @@ public class Contract implements Serializable{
 	Integer domain;
 	Integer person;
 	Integer workplace;
-	Integer enterpriseCCC;
+	String enterpriseCCC;
 	Date startDate;
 	Date endDate;
 	Integer calendar;
@@ -28,6 +28,8 @@ public class Contract implements Serializable{
 	ContractModel model;
 	String categoryDescription;
 	ContractStatus ssStatus;
+	String personDocument;
+	String personSsNumber;
 		
 	public Contract() {
 	
@@ -69,12 +71,12 @@ public class Contract implements Serializable{
 		return this;
 	}
 
-	public Integer getEnterpriseCCC() {
+	public String getEnterpriseCCC() {
 		return enterpriseCCC;
 	}
 
-	public Contract setEnterpriseCCC(Integer workplaceCCC) {
-		this.enterpriseCCC = workplaceCCC;
+	public Contract setEnterpriseCCC(String enterpriseCCC) {
+		this.enterpriseCCC = enterpriseCCC;
 		return this;
 	}
 
@@ -192,6 +194,24 @@ public class Contract implements Serializable{
 
 	public Contract setSsStatus(ContractStatus ssStatus) {
 		this.ssStatus = ssStatus;
+		return this;
+	}
+	
+	public String getPersonDocument() {
+		return personDocument;
+	}
+	
+	public Contract setPersonDocument(String personDocument) {
+		this.personDocument = personDocument;
+		return this;
+	}
+	
+	public String getPersonSsNumber() {
+		return personSsNumber;
+	}
+	
+	public Contract setPersonSsNumber(String personSsNumber) {
+		this.personSsNumber = personSsNumber;
 		return this;
 	}
 

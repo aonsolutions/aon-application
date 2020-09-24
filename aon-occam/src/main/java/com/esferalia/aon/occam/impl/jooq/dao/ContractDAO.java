@@ -2,6 +2,9 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import java.util.stream.Stream;
 
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
+import com.esferalia.aon.jooq.tables.Person;
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
@@ -22,7 +25,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.IrpfDataFiller;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 
 public class ContractDAO {
@@ -37,8 +43,14 @@ public class ContractDAO {
 	
 	public static Stream<Contract> getContractStream(AONContext ctx, ContractFilter filter){
 		ctx.checkRead();
-		return CONTRACT_PROPERTIES.build(ctx.getDslContext().select()
-			.from(CONTRACT), filter).fetch().stream().map(new ContractFiller());		
+		return CONTRACT_PROPERTIES.build(
+			ctx.getDslContext()
+			.select()
+			.from(CONTRACT)
+			.innerJoin(PERSON).onKey()
+			.innerJoin(REGISTRY).onKey()
+			.innerJoin(ENTERPRISE_CCC).onKey()
+			, filter).fetch().stream().map(new ContractFiller());		
 	}
 	
 	// -------------------- CONTRACT DATA

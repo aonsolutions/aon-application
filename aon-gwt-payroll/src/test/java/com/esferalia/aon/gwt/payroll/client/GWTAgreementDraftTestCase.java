@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -270,12 +271,7 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		}
 		
 		
-		@Override
-		public void getIdc(String domain, Integer contractId, Date date,
-				AsyncCallback<String> callback) {
-			// TODO Auto-generated method stub
-			
-		}
+
 		
 	}
 
@@ -521,12 +517,17 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					}
 					
 					@Override
-					public void getIdc(String domain, Integer contractId, Date date,
+					public void getEmployeeIdc(String domain, String user, Integer contractId, Date date,
 							AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						
 					}
-
+					
+					@Override
+					public void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback) {
+						// TODO Auto-generated method stub
+						
+					}
 					
 				});
 

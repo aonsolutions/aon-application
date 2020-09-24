@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -236,5 +237,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft, AsyncCallback<String> callback);
 	
-	void getIdc(String domain, Integer contractId, Date date, AsyncCallback<String> callback);
+	void getEmployeeIdc(String domain,  String user, Integer contractId, Date date, AsyncCallback<String> callback);
+	
+	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 }

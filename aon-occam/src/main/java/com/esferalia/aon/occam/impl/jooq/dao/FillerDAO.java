@@ -19,6 +19,7 @@ import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DET
 import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Income.INCOME;
 import static com.esferalia.aon.jooq.tables.IncomeDetail.INCOME_DETAIL;
 import static com.esferalia.aon.jooq.tables.InventoryDetail.INVENTORY_DETAIL;
@@ -49,6 +50,7 @@ import java.util.function.Function;
 import org.jooq.Record;
 
 import com.esferalia.aon.jooq.tables.Domain;
+import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.jooq.tables.records.WarehouseRecord;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonCompany;
@@ -843,7 +845,6 @@ public class FillerDAO {
 					.setDomain(r.getValue(CONTRACT.DOMAIN))
 					.setPerson(r.getValue(CONTRACT.PERSON))
 					.setWorkplace(r.getValue(CONTRACT.WORKPLACE))
-					.setEnterpriseCCC(r.getValue(CONTRACT.ENTERPRISE_CCC))
 					.setStartDate(r.getValue(CONTRACT.START_DATE))
 					.setEndDate(r.getValue(CONTRACT.END_DATE))
 					.setCalendar(r.getValue(CONTRACT.CALENDAR))
@@ -854,6 +855,11 @@ public class FillerDAO {
 					.setEnterpriseActivity(r.getValue(CONTRACT.ENTERPRISE_ACTIVITY))
 					.setSsRegime(SSRegimeType.safeValueOf(r.getValue(CONTRACT.SS_REGIME)))
 					.setAgreementLevel(r.getValue(CONTRACT.AGREEMENT_LEVEL))
+					
+					.setEnterpriseCCC(r.getValue(ENTERPRISE_CCC.CCC))
+					.setPersonDocument(r.getValue(REGISTRY.DOCUMENT))
+					.setPersonSsNumber(r.getValue(PERSON.SOCIAL_SECURITY_NUM))
+
 				//TODO	.setModel(ContractModel.values()[r.getValue(CONTRACT.MODEL)])
 					.setCategoryDescription(r.getValue(CONTRACT.CATEGORY_DESCRIPTION));
 				//TODO	.setSsStatus(ContractStatus.values()[r.getValue(CONTRACT.SS_STATUS)]);

@@ -2,8 +2,11 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -20,14 +23,26 @@ import java.util.SortedSet;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 import org.mvel2.CompileException;
+import org.mvel2.MVEL;
 
 import com.code.aon.common.AonException;
 import com.code.aon.ql.Criteria;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
+import com.esferalia.aon.gwt.payroll.jooq.JooqSaltra;
+import com.esferalia.aon.gwt.payroll.jooq.JooqSaltra.SaltraCredentials;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedCCC;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedContractType;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Event.Type;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -35,6 +50,7 @@ import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
+import com.esferalia.aon.gwt.payroll.shared.SaltraCredentialsNotFoundException;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
@@ -42,7 +58,10 @@ import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.payroll.Contract;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -50,7 +69,6 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext.IListener;
 import com.esferalia.aon.payroll.calculator.ISystemPayment;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
@@ -72,7 +90,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.CheckException;
@@ -88,11 +105,343 @@ import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
+
+import solutions.aon.saltra.api.InvalidArgumentException;
+import solutions.aon.saltra.api.NoSuchDataException;
+import solutions.aon.saltra.api.Saltra;
+import solutions.aon.saltra.api.SaltraException;
 
 public class EmployeesServiceHelper {
 
 	public static final String REMOVE = "REMOVE()";
+	
+	private static class OutOfDateException extends RuntimeException {
+
+	}
+
+	private static class TC2NotFoundException extends SaltraException {
+		String tipoContrato ;
+
+		public TC2NotFoundException(String tipoContrato) {
+			this.tipoContrato = tipoContrato;
+		} 
+	}
+	
+	public static String getIDC(Connection connection, String domainName, Integer domainId, String userLogin, Integer contractId) throws SQLException, IOException, SaltraException{
+		
+		Contract contract = 
+		PAYROLL.
+		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+		.orElseThrow(() -> new IOException() );
+		Date date = contract.getStartDate();
+		String ccc = contract.getEnterpriseCCC();
+		String naf = contract.getPersonSsNumber();
+		String regime = contract.getSsRegime().getCode();	
+		
+		Saltra saltra = getSaltra(connection, domainName, userLogin );
+		return saltra.getIDC(naf, regime, ccc, date);
+	}
+
+//	public static String getIDC(Connection connection, String domainName, Integer domainId, String userLogin, Integer contractId, Date date) throws SQLException, IOException, SaltraException{
+//		
+//		Contract contract = 
+//		PAYROLL.
+//		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+//		.orElseThrow(() -> new IOException() );
+//		String ccc = contract.getEnterpriseCCC();
+//		String naf = contract.getPersonSsNumber();
+//		String regime = contract.getSsRegime().getCode();	
+//		
+//		Saltra saltra = getSaltra(connection, userLogin );
+//		return saltra.getIDC(naf, regime, ccc, date);
+//	}
+
+	public static EmployeeStatus getStatus(Connection connection, String domainName, Integer domainId, String userLogin, Integer contractId) throws SQLException, IOException, SaltraException{
+		
+		Contract contract = 
+		PAYROLL.
+		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
+		.orElseThrow(() -> new IOException() );
+		String nif = contract.getPersonDocument();
+		String ccc = contract.getEnterpriseCCC();
+		String regime = contract.getSsRegime().getCode();
+		Date endDate = contract.getEndDate();
+		Date startDate = contract.getStartDate();
+		
+		try ( Saltra saltra = getSaltra(connection, domainName, userLogin ) ) {
+			EmployeeStatus.AndEmployeeStatus employeeStatus = new EmployeeStatus.AndEmployeeStatus();
+			
+			Date date = new Date();
+			java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+			
+			JSONObject statusJsonObject = saltra.getStatus(regime, ccc, nif, date);
+
+			{
+				// check ccc1 ccc2 == ccc 
+				String ssCcc = 
+				statusJsonObject.getString(Saltra.CCC1) 
+				+ statusJsonObject.getString(Saltra.CCC2);
+				if ( AonUtils.notEquals(ssCcc, ccc)) {
+					employeeStatus.and(
+							new EmployeeStatus.MismatchedCCC()
+							.setAonCCC(ccc)
+							.setSsCCC(ssCcc));
+				}
+			}
+			
+			{
+				// check fecha_alta == start_date
+				try {
+					Date ssStartDate = 
+					new SimpleDateFormat("yyyy-MM-dd")
+					.parse(statusJsonObject.getString(Saltra.FECHA_ALTA));
+					if ( AonUtils.notEquals(ssStartDate, startDate)) {
+						employeeStatus.and(
+								new EmployeeStatus.MismatchedStartDate()
+								.setAonStartDate(startDate)
+								.setSsStartDate(ssStartDate));
+					}
+				} catch (Exception e) {
+				}
+			}
+			
+			{
+				// check fecha_baja == end_date
+				try {
+					Date ssEndDate = 
+					new SimpleDateFormat("yyyy-MM-dd")
+					.parse(statusJsonObject.getString(Saltra.FECHA_BAJA));
+					if ( AonUtils.notEquals(ssEndDate, endDate)) {
+						employeeStatus.and(
+								new EmployeeStatus.MismatchedStartDate()
+								.setAonStartDate(startDate)
+								.setSsStartDate(ssEndDate));
+					}
+				} catch (Exception e) {
+					if ( endDate != null ) {
+						employeeStatus.and(new EmployeeStatus.EndDateNotFound());
+					}
+				}
+			}
+
+			
+			
+			LinkedList<ContractData> dataList = PAYROLL
+			.getContractDataList(domainName, domainId, userLogin, p -> 
+			p.getContractProperty().eq(contractId)
+			.and(p.getEndDateProperty().isNull().or(p.getEndDateProperty().ge(sqlDate))) 
+			);
+			
+			{
+				// check tipo_contrato == tc2 
+				String ssContractType = statusJsonObject.getString(Saltra.TIPO_CONTRATO);			
+				String aonContractType = getString(dataList, ContextVariable.TC2, "");
+				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
+					employeeStatus.and(
+							new EmployeeStatus.MismatchedContractType()
+							.setAonContractType(aonContractType)
+							.setSsContractType(ssContractType));
+				} 
+			}
+			
+			{
+				// check grupo_cotizacion == quote_group 
+				String ssQuoteGroup = statusJsonObject.getString(Saltra.GRUPO_COTIZACION);			
+				String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
+				if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
+					employeeStatus.and(
+							new EmployeeStatus.MismatchedQuoteGroup()
+							.setAonQuoteGroup(aonQuoteGroup)
+							.setSsQuoteGroup(ssQuoteGroup));
+				} 
+			}			
+			
+			
+			{
+				/* check ocupacion == occupation 
+				try {
+					String ssOccupation = statusJsonObject.getString(Saltra.OCUPACION);
+					String aonOccupation = getString(dataList, ContextVariable.OCCUPATION, "");
+					if ( AonStringUtils.compareIgnoreCase(aonOccupation, ssOccupation ) != 0 ) {
+						employeeStatus.and(
+								new EmployeeStatus.MismatchedOccupation()
+								.setSsOccupation(ssOccupation)
+								.setAonOccupation(aonOccupation));
+					}									
+				} catch ( JSONException e  ) {
+					dataList.stream()
+					.filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(),ContextVariable.OCCUPATION.getName()))
+					.findFirst().ifPresent(d -> employeeStatus.and(new EmployeeStatus.OccupationNotFound()) );
+				}*/
+			}
+			
+			{
+			}
+
+			try {
+				isUp2Date(employeeStatus); 
+				employeeStatus.and(new EmployeeStatus.Up2Date());
+			} catch ( OutOfDateException e ) {	
+			}
+			
+			trace(employeeStatus);
+			
+			return employeeStatus;	
+			
+		} catch ( NoSuchDataException e ) {
+			return new EmployeeStatus.EmployeeNotFound();
+		} catch ( InvalidArgumentException e ) {
+			return new EmployeeStatus.InvalidData();
+		} catch ( SaltraCredentialsNotFoundException e ) {
+			return new EmployeeStatus.CredentialsNotFound();
+		}
+
+	}
+	
+	private static String getString(List<ContractData> dataList, ContextVariable contextVariable, String def ) {
+		return
+		dataList.stream()
+		.filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(),contextVariable.getName()))
+		.findFirst()
+		.map(data -> MVEL.evalToString(data.getExpression()))
+		.orElse(def)
+		;		
+	}
+
+	private static EmployeeStatus.AndEmployeeStatus isUp2Date(EmployeeStatus.AndEmployeeStatus employeeStatus) {
+		employeeStatus.visit( new Visitor() {
+	
+			@Override
+			public void up2Date() {
+			}
+	
+			@Override
+			public void invalidData() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void endDateNotFound() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void employeeNotFound() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void saltraCredentialsNotFound() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void mismatchedCCC(MismatchedCCC status) {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void mismatchedStartDate(MismatchedStartDate status) {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void mismatchedContractType(MismatchedContractType status) {
+				throw new OutOfDateException();
+			}
+
+			@Override
+			public void occupationNotFound() {
+				throw new OutOfDateException();				
+			}
+
+			@Override
+			public void mismatchedOccupation(MismatchedOccupation status) {
+				throw new OutOfDateException();
+			}
+
+			@Override
+			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				throw new OutOfDateException();
+			}
+			
+			@Override
+			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				throw new OutOfDateException();
+			}
+			
+		});
+		return employeeStatus;
+	}
+
+	private static void trace(EmployeeStatus.AndEmployeeStatus employeeStatus) {
+		employeeStatus.visit(new Visitor() {
+			
+			@Override
+			public void up2Date() {
+				System.out.println("up2Date");					
+			}
+			
+			@Override
+			public void saltraCredentialsNotFound() {
+				System.out.println("saltraCredentialsNotFound");
+			}
+			
+
+			@Override
+			public void invalidData() {
+				System.out.println("invalidData");
+			}
+			
+			@Override
+			public void employeeNotFound() {
+				System.out.println("employeeNotFound");
+			}
+
+			@Override
+			public void endDateNotFound() {
+				System.out.println("endDateNotFound");
+			}
+
+			@Override
+			public void mismatchedCCC(MismatchedCCC status) {
+				System.out.println("mismatchedCCC");
+			}
+
+			@Override
+			public void mismatchedStartDate(MismatchedStartDate status) {
+				System.out.println("mismatchedStartDate");
+			}
+
+			@Override
+			public void mismatchedContractType(MismatchedContractType status) {
+				System.out.println("mismatchedContractType");
+			}
+
+			@Override
+			public void occupationNotFound() {
+				System.out.println("occupationNotFound");
+			}
+
+			@Override
+			public void mismatchedOccupation(MismatchedOccupation status) {
+				System.out.println("mismatchedOccupation");				
+			}
+
+			@Override
+			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				System.out.println("mismatchedPartialFactor");	
+			}
+			
+			@Override
+			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				System.out.println("mismatchedQuoteGroup");	
+			}			
+		});
+	}
+	
 
 	/**
 	 * 
@@ -1171,6 +1520,18 @@ public class EmployeesServiceHelper {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} 
+	}
+
+	static Saltra getSaltra(Connection connection, String domainName, String userLogin) throws MalformedURLException {
+		SaltraCredentials credentials = JooqSaltra.getCredentials(connection, domainName, userLogin);
+		
+		return 	new Saltra(
+				"http://saltra.aon.solutions/api/v1", 
+				credentials.getCertKey(),
+				credentials.getCertSecret()
+//				"b10c46ce710e43e3fcb818474dab8eac2bc9e5f2", 
+//				"a0d0bf7f352d676bffafcd8d7872725e826fd228"
+				);
 	}
 
 	

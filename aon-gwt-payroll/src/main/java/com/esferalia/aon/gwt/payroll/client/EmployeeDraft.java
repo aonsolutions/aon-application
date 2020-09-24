@@ -1029,7 +1029,11 @@ public class EmployeeDraft extends Composite {
 					initializeView();
 			}, t -> {}
 		);
+		
+
+		
 	}
+	
 	
 	private void initializeUndoRedo() {
 		undoButton.setEnabled(employeeDraftObject.canUndo());
@@ -1622,12 +1626,7 @@ public class EmployeeDraft extends Composite {
 		undoButton.setVisible(true);
 		redoButton.setVisible(true);
 		undoAllButton.setVisible(true);
-		try {
-			idcButton.setVisible(Wnd.getCurrentDomainNameURL().toLowerCase().endsWith("aonsolutions.org"));
-		}
-		catch ( Exception e ) {
-			
-		}
+		idcButton.setVisible(true);
 		zoomListBox.setVisible(false);
 		closePdfButton.setVisible(false);
 		downloadButton.setVisible(false);
