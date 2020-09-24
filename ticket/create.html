@@ -62,10 +62,11 @@
                                     <div class="col-12">
                                         <label class="font-weight-bold" for="subject">Asunto:</label>
                                         <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
+                                        <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
                                     </div>
                                     <div class="col-12 mt-2">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <label class="font-weight-bold" for="subject">Tema:</label>
                                                 <select class="form-control" id="select-theme" name="select-theme">
                                                     <option value="">Elija un tema</option>
@@ -73,17 +74,30 @@
                                                     <option value="2">Sugerencia</option>
                                                     <option value="3">Consulta</option>
                                                 </select>
+                                                <label class="d-none errores error-theme text-ayudat font-weight-bold">Debe seleccionar el tema del ticket</label>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <label class="font-weight-bold" for="subject">Destinatario:</label>
                                                 <select class="form-control" id="select-postings" name="select-postings">
                                                     <option value="">Elija un destinatario</option>
                                                 </select>
+                                                <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="font-weight-bold" for="priority">Prioridad:</label>
+                                                <select class="form-control" id="select-priority">
+                                                    <option value="">Elija prioridad</option>
+                                                    <option value="Alta">Alta</option>
+                                                    <option value="Media">Media</option>
+                                                    <option value="Baja">Baja</option>
+                                                </select>
+                                                <label class="d-none errores error-priority text-ayudat font-weight-bold">Debe elegir la prioridad del ticket</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-12 mt-2">
-                                        <label class="font-weight-bold" for="subject">Mensaje:</label>
+                                        <label class="font-weight-bold">Mensaje:</label>
+                                        <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
                                         <div id="editor"></div>
                                     </div>
                                     <div class="col-12 mt-2">
@@ -150,6 +164,13 @@
             
             // Enviar mensage nuevo
             $('#btn-send').click(function(){
+                var envio = true;
+                
+                // Quitamos todos los errores
+                $('.errores').each(function(){
+                    $(this).addClass('d-none');
+                });
+                
                 // Creamos el formData para enviar
                 var formData = new FormData();
                 
@@ -162,26 +183,52 @@
                 
                 // Añadimos el resto de datos del formulario
                 var msg_user = theEditor.getData();
+                if(msg_user == ''){
+                    $('.error-msg').removeClass('d-none');
+                    envio = false;
+                }
                 formData.append("message", msg_user);
                 
                 var subject = $("#subject").val();
+                if(subject == ''){
+                    $('.error-subject').removeClass('d-none');
+                    envio = false;
+                }
                 formData.append('subject', subject);
                 
                 var theme = $("#select-theme").val();
+                if(theme == ''){
+                    $('.error-theme').removeClass('d-none');
+                    envio = false;
+                }
                 formData.append('theme', theme);
                 
                 var postings = $("#select-postings").val();
+                if(postings == ''){
+                    $('.error-postings').removeClass('d-none');
+                    envio = false;
+                }
                 formData.append('postings', postings);
                 
-                // Enviamos los datos del nuevo ticket por AJAX
-                // TO-DO
-                var respuesta = {
-                    ticket_id : '245673'
-                };
+                var priority = $("#select-priority").val();
+                if(priority == ''){
+                    $('.error-priority').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append('priority', priority);
                 
-                // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
-                document.location.href = "show.html?id="+respuesta.ticket_id; 
-                
+                if(envio){
+                    // Enviamos los datos del nuevo ticket por AJAX
+                    // TO-DO
+                    var respuesta = {
+                        ticket_id : '245673'
+                    };
+
+                    // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
+                    document.location.href = "show.html?id="+respuesta.ticket_id;
+                } else {
+                    return 0;
+                }
             });
         </script>
     </body>
