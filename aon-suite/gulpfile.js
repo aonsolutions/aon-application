@@ -27,8 +27,8 @@ function scripts() {
     return gulp.src([
         'node_modules/jquery/dist/jquery.js',
         'node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js',
-        'node_modules/@ckeditor/ckeditor5-build-classic/build/translations/es.js'
-        'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
+        'node_modules/@ckeditor/ckeditor5-build-classic/build/translations/es.js',
+        'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
     ])
     .pipe(concat('app.js'))
     .pipe(gulp.dest('public/js/'))
