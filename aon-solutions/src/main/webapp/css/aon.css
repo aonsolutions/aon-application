@@ -325,10 +325,10 @@
 	}
 
 	.aonSidenavTitle {
-		font-size: 16px;
-		margin-top: 10px;
+		font-size: 14px;
+		margin-top: 15px;
 		margin-bottom: 10px;
-		color: lightgray;
+		color: gray;
 		margin-left: 15px;
 	}
 
@@ -356,8 +356,8 @@
 	}
 
 	.aonAppMenuSidenavList {
-		height: 48px;
-  	line-height: 48px;
+		height: 40px;
+  	line-height: 40px;
 		margin: 0;
     padding: 0 16px;
     cursor: pointer;
@@ -393,7 +393,7 @@
 		position: absolute;
 		margin-left: 10px;
 		margin-top: 2px;
-		font-size: 16px;
+		font-size: 14px;
 	}
 
   .aonDivButton {
