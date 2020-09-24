@@ -10309,6 +10309,9 @@ a.text-dark:hover, a.text-dark:focus {
   .material-icons.zoom_out_map:before {
     content: "\e56b"; }
 
+.pointer {
+  cursor: pointer; }
+
 .test {
   color: red; }
 
