@@ -52,9 +52,9 @@
         <div class="container mb-5">
             <div class="row mt-4">
                 <div class="col-12">
-                    <a class="form-inline text-decoration-none" href="create.html">
+                    <a class="text-decoration-none" href="create.html">
                         <i class="material-icons">add_comment</i>
-                        <span class="pl-1">crear</span>
+                        crear
                     </a>
                 </div>
             </div>
@@ -146,6 +146,7 @@
                                         ' >delete_forever</i>'+
                                     '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Eliminar ticket"'+
                                         ' data-id="'+item.id+'" '+
+                                        ' data-priority="'+item.priority+'" '+
                                         '>low_priority</i>'+
                                 '</a>'+
                             '</td>';
@@ -191,18 +192,51 @@
                         var list = getList($(this).data('page'));
                         createTable(list);
                         alert('Eliminado el #Ticket '+ticket_id+' correctamente');
+                        // Json que mandamos
+                        var ticket_delete ={
+                            method   : 'ticket_delete',
+                            id       : ticket_id,
+                        };
+                        console.log('Eliminar ticket Json que mandamos:');
+                        console.log(ticket_delete);
                     }
 
                 });
 
                 //
-                // Editar prioridad ticket
+                // Abrir el editar prioridad ticket
                 //
                 $(document).on('click', '#ticket-prioridad', function() {
-                    var ticket_id = $(this).data('id');
-                    
+                    // Cogemos los valores
+                    var ticket_id       = $(this).data('id');
+                    var ticket_priority = $(this).data('priority');
+                    // Ponemos el titulo del modal
+                    $('#modal-header-ticket').html('Editar el estado del #Ticket '+ticket_id);
+                    // Metemos el ID del que vamos a editar
+                    $('#ticket-id').val(ticket_id);
+                    // Seleccionamos el valor que se tiene marcado
+                    $('#ticket-select-priority').val(ticket_priority);
+                    // Mostramos el modal
                     $("#ticket-edit").modal();
-
+                    
+                });
+                
+                //
+                // Editar prioridad ticket
+                //
+                $(document).on('click', '#ticket-prioridad-actualizar', function() {
+                    var ticket_id       = $('#ticket-id').val();
+                    var ticket_priority = $('#ticket-select-priority').val();
+                    $("#ticket-edit").modal('hide')
+                    alert('Actualizado el estado del #Ticket '+ticket_id+' correctamente a la prioridad '+ticket_priority);
+                    // Json que mandamos
+                    var ticket_edit_priority ={
+                        method   : 'ticket_edit_priority',
+                        id       : ticket_id,
+                        priority : ticket_priority
+                    };
+                    console.log('Editar prioridad Json que mandamos:');
+                    console.log(ticket_edit_priority);
                 });
 
                 // 
@@ -254,8 +288,16 @@
                 // Pasar de pagina
                 //
                 $(document).on('click', '.go_page', function() {
-                    var list = getList($(this).data('page'));
+                    var page = $(this).data('page');
+                    var list = getList(page);
                     createTable(list);
+                    // Json que mandamos
+                    var ticket_page ={
+                            method   : 'ticket_page',
+                            id       : page,
+                        };
+                    console.log('Pasar paginas de ticket Json que mandamos:');
+                    console.log(ticket_page);
                 });
 
                 //
@@ -266,14 +308,14 @@
                     var name_a = ['','Manolo','Ambrosio','Abelardo','Fulgensio','Alejandro','Jesús','Julio','David','Alberto','Juan'];
                     var name_b = ['','Carmen','Angela','Manuela','Margarita','Maribel','Desi','Inma','Jessica','Estefanía','Nieves'];
                     // prioridades
-                    var priority_array = ['Baja', 'Media', 'alta']
+                    var priority_array = ['Baja', 'Media', 'Alta']
                     // Donde meteremos los valores de los tickets
                     var tickets_list   = {};
                     // Crear cantidades aletorias dependiendo de la pagina en la que estemos
                     page_this_element  = page_this == 1 ? page_this : ((page_this - 1) * 10) + 1;
-                    page_total         = page_this + 10;
+                    page_total         = page_this_element + 10;
                     // Metemos los valores de los tickets aleatoriamente
-                    for (var i = page_this; i < page_total; i++) {
+                    for (var i = page_this_element; i < page_total; i++) {
                         tickets_list[i] = {
                             id                  : i,                                                // campo ticket
                             last_update         : '15-8-2020 15:30',                                // ultima modificacion
@@ -295,6 +337,9 @@
                         list        : tickets_list,                             // listado de tickets
                     };
                     
+                    console.log('Json que recibimos:');
+                    console.log(date);
+
                     // Devolver los datos
                     return date;
                 }
@@ -305,15 +350,27 @@
     <div class="modal fade" id="ticket-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div id="modal-header-ticket" class="modal-header font-weight-bold">
                     ...
                 </div>
                 <div class="modal-body">
-                    ...
+                    <div class="row">
+                        <div class="col-12">
+                            <input id="ticket-id" type="hidden" value="">
+                            <label for="priority">Prioridad</label>
+                            <select class="form-control" id="ticket-select-priority">
+                                <option disabled value="">Elija prioridad</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Media">Media</option>
+                                <option value="Baja">Baja</option>
+                            </select>
+                            <label class="d-none errores error-priority text-ayudat font-weight-bold">Debe elegir la prioridad del ticket</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-danger btn-ok">Delete</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button id="ticket-prioridad-actualizar" type="button" class="btn btn-primary">Actualizar</button>
                 </div>
             </div>
         </div>
