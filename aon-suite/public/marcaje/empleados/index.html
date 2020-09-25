@@ -64,22 +64,22 @@
             </div>
 
             <div class="container-fluid pt-3">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="">Datos de marcaje</h5>
+                    </div>
+                </div>
 
-
-                <div class="row pt-3">
+                <div class="row ">
                     <div class="col-lg-6 col-md-12">
 
 
-                        <!-- <div class="row">
-                            <div class="col-12">
-                                <h5 class="">Empleado</h5>
-                            </div>
-                        </div> -->
+
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="nombreApellido">Nombre y apellidos:</label>
-                                    <input class="form-control" type="text" readonly="readonly"  id="nombreApellido"
+                                    <input class="form-control" type="text" readonly="readonly" id="nombreApellido"
                                         name="nombreApellido">
                                 </div>
 
@@ -88,7 +88,7 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="dni">DNI:</label>
-                                    <input class="form-control" type="text" readonly="readonly"  id="dni" name="dni">
+                                    <input class="form-control" type="text" readonly="readonly" id="dni" name="dni">
                                 </div>
 
                             </div>
@@ -98,14 +98,14 @@
                             <div class="col-lg-3 col-md-3 col-sm-3 col-6">
                                 <div class="form-group">
                                     <label for="fecha">Fecha:</label>
-                                    <input class="form-control" type="text" readonly="readonly"  id="fecha" name="fecha">
+                                    <input class="form-control" type="text" readonly="readonly" id="fecha" name="fecha">
                                 </div>
 
                             </div>
                             <div class="col-lg-3 col-md-3 col-sm-3 col-6">
                                 <div class="form-group">
                                     <label for="reloj">Hora:</label>
-                                    <input class="form-control" type="text" readonly="readonly"  id="reloj" name="reloj">
+                                    <input class="form-control" type="text" readonly="readonly" id="reloj" name="reloj">
                                 </div>
 
                             </div>
@@ -147,10 +147,6 @@
                     </div>
                 </div>
 
-
-
-
-
             </div>
 
             <div class="container-fluid pt-3">
@@ -173,18 +169,64 @@
                     <input id="marcaje" name="marcaje" type="hidden">
                 </div>
             </div>
+        </form>
 
 
+        <div class="container-fluid pt-5">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="">Historial</h5>
+                        </div>
+                        <div class="col-6 text-right">
+                            <label for="mes">Mes:</label>
+                            <input type="month" id="mes" name="mes" step="1" min="" max="" value="2020-09">
+                            <button type="button" form="form" id="actualizar" class="btn btn-info btn-sm"
+                                data-boton="salida">Actualizar</button>
+                        </div>
+                    </div>
 
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Tipo de marcaje</th>
+                                    <th>Nota</th>
+                                    <th>Marcaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>25/09/2020</td>
+                                    <td>08:01:02</td>
+                                    <td>Marcaje sin incidencia</td>
+                                    <td>Todo correcto</td>
+                                    <td>Entrada</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>25/09/2020</td>
+                                    <td>14:01:02</td>
+                                    <td>Marcaje sin incidencia</td>
+                                    <td>Todo correcto</td>
+                                    <td>Salida</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
+            </div>
 
+        </div>
     </div>
 
 
-
-
-
-    </form>
 
     </div>
 
@@ -318,6 +360,12 @@
             var data = $('form').serializeFormJSON();
             console.log(data);
             alert(JSON.stringify(data));
+        })
+
+        $('#actualizar').on('click', function (e) {
+            var mes = $('#mes').val();
+            console.log(mes);
+            alert(mes);
         })
     </script>
 
