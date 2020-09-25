@@ -174,8 +174,7 @@
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-group">
                                     <label for="horaSalida">Hora:</label>
-                                    <input class="form-control" type="time" value="" id="horaSalida"
-                                        name="horaSalida">
+                                    <input class="form-control" type="time" value="" id="horaSalida" name="horaSalida">
                                 </div>
 
                             </div>
@@ -235,6 +234,60 @@
 
             </div>
         </form>
+        <br>
+        <div class="border-top my-3"></div>
+        <div class="container-fluid pt-3">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <h5 class="">Historial</h5>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12 text-right">
+                            <label for="mes">Mes:</label>
+                            <input type="month" id="mes" name="mes" step="1" min="" max="" value="2020-09">
+                            <button type="button" form="form" id="actualizar" class="btn btn-info btn-sm"
+                                data-boton="salida">Actualizar</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Tipo de marcaje</th>
+                                    <th>Nota</th>
+                                    <th>Marcaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>25/09/2020</td>
+                                    <td>08:01:02</td>
+                                    <td>Marcaje sin incidencia</td>
+                                    <td>Todo correcto</td>
+                                    <td>Entrada</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>25/09/2020</td>
+                                    <td>14:01:02</td>
+                                    <td>Marcaje sin incidencia</td>
+                                    <td>Todo correcto</td>
+                                    <td>Salida</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -361,7 +414,12 @@
 
         }
 
-        
+        $('#actualizar').on('click', function (e) {
+            var mes = $('#mes').val();
+            console.log(mes);
+            alert(mes);
+        })
+
     </script>
 </body>
 
