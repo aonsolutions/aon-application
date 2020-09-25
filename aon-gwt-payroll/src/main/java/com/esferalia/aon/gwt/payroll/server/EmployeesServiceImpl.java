@@ -125,6 +125,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -244,7 +245,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import solutions.aon.saltra.api.Saltra;
+import solutions.aon.saltra.api.SaltraException;
 
 /**
  * The server side implementation of the RPC service.
@@ -5097,23 +5098,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	
 	@Override
-	public String getIdc(String domainName, Integer contractId, Date date) {
+	public String getEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date) {
+		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			
-			Record record = JooqEmployee.getEmployeeRecord(connection, contractId);
-			String naf = record.get(PERSON.SOCIAL_SECURITY_NUM);
-			String ccc = record.get(EnterpriseCcc.ENTERPRISE_CCC.CCC);
-			Byte cccRegime = record.get(EnterpriseCcc.ENTERPRISE_CCC.TYPE);
-			String regime = getCCCRegimeCode(cccRegime);		
-			Date startDate = record.get(com.esferalia.aon.jooq.tables.Contract.CONTRACT.START_DATE);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
 			
 			String base64Pdf =
-			new Saltra(
-					"http://saltra.aon.solutions/api/v1", 
-					"b10c46ce710e43e3fcb818474dab8eac2bc9e5f2", 
-					"a0d0bf7f352d676bffafcd8d7872725e826fd228")
-			.getIDC(naf, regime, ccc, startDate)
+//			EmployeesServiceHelper.getSaltra(connection, userLogin ).getIDC(naf, regime, ccc, startDate)
+			EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, contractId)
 			;
+			
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
 			
@@ -5122,10 +5117,22 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stringWriter.close();
 			
 			return dataUri;
-		} catch (SQLException | IOException e) {
+		} catch (SQLException | IOException | SaltraException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	@Override
+	public EmployeeStatus getEmployeeStatus(String domainName, String userLogin, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)){
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return EmployeesServiceHelper.getStatus(connection, domainName, domainId, userLogin, contractId);			
+		} 
+		catch (SQLException | IOException | SaltraException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
 	private static List<Integer> getConceptIds(List<Payment> systemPayments) {
 		return systemPayments.stream().filter(p -> p.getConceptId() != null).map(p -> p.getConceptId()).distinct().collect(Collectors.toList());
 	}

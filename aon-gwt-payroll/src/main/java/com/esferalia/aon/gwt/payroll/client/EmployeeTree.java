@@ -47,6 +47,14 @@ import com.esferalia.aon.gwt.payroll.shared.CretaService.JsRespuesta;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsTrabajadoresYTramos;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedCCC;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedContractType;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -101,6 +109,8 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class EmployeeTree implements EntryPoint, Employees.Listener,
 		MetaData.Listener, Cost.Listener, Salary.Listener, EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener {
+	
+	
 
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	static class EmployeeCalcDialog extends CalcDialog<Employee> {
@@ -2444,9 +2454,76 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 	@Override
 	public void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
+		getEmployeeDraft().setOnSaved(e->{});
 		employeeDetail.setWidget(getEmployeeDraft());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
+		
+		employeeDraftObject.checkStatus(
+		employeeStatus -> {
+			SaltraResults saltraResults = new SaltraResults() {
+				
+				@Override
+				public void run() {
+					employeeDraftObject.checkStatus(
+							employeeStatus -> {
+								removeAll();
+								employeeStatus.visit(this);
+							}, 
+							throwable -> {}
+					);					
+				}
+				
+				@Override
+				protected void saltraCredentialsFound(){
+					employeeDraftObject.checkStatus(
+							employeeStatus -> {
+								removeAll();
+								employeeStatus.visit(this);
+								selectResultsPanel();
+								ifSaltraEnabled(employeeStatus, 
+								() -> {
+									showFootPanel();
+									getEmployeeDraft().idcButton.setVisible(true);
+									getEmployeeDraft().setOnSaved(e-> run());
+								},
+								() -> {
+									closeFootPanel();
+									getEmployeeDraft().idcButton.setVisible(false);
+
+								});
+							}, 
+							throwable -> {
+								closeFootPanel();
+								getEmployeeDraft().idcButton.setVisible(false);
+							}
+					);					
+				}
+			};
+			
+			employeeStatus.visit(saltraResults);
+			resultsPanel.setWidget(saltraResults);
+			selectResultsPanel();
+			
+			ifSaltraEnabled(
+			employeeStatus, 
+			() -> {
+				showFootPanel();
+				getEmployeeDraft().idcButton.setVisible(true);
+				getEmployeeDraft().setOnSaved(e-> saltraResults.run());
+			},
+			() -> {
+				closeFootPanel();
+				getEmployeeDraft().idcButton.setVisible(false);
+			}
+			);
+			
+		}, 
+		throwable -> {
+			closeFootPanel();
+			getEmployeeDraft().idcButton.setVisible(false);
+
+		});
 	}
 	
 	@Override
@@ -2521,6 +2598,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
+	private void showFootPanel() {	
+		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
+			EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+	}
+	
 	private void showResultsPanel() {
 
 		InlineLabel tab = new InlineLabel("Resultados");
@@ -2533,6 +2615,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
+	private void selectResultsPanel() {
+
+		InlineLabel tab = new InlineLabel("Resultados");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
+		footTabPanel.selectTab(resultsPanel);
+
+
+	}
+	
 	private void showProgressPanel() {
 		InlineLabel tab = new InlineLabel("Progreso");
 		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
@@ -2992,6 +3085,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	// --------------------------------------------------------- Private methods
+	
+	protected static void showSaltraOptions(EmployeeStatus employeeStatus) {
+		
+	}
 
 	protected static void showEmployeeCalendar() {
 		EmployeeTree employeeTree = getEmployeeTree();
@@ -3370,7 +3467,132 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return ccs;
 	}
 	
+	private static boolean isSaltraEnabled(EmployeeStatus employeeStatus ) {
+		try {
+			employeeStatus.visit(new Visitor() {
+				
+				@Override
+				public void up2Date() {
+				}
+				
+				@Override
+				public void saltraCredentialsNotFound() {
+					throw new RuntimeException();
+				}
+				
+				@Override
+				public void occupationNotFound() {
+				}
+				
+				@Override
+				public void mismatchedStartDate(MismatchedStartDate status) {
+				}
+				
+				@Override
+				public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				}
+				
+				@Override
+				public void mismatchedOccupation(MismatchedOccupation status) {
+				}
+				
+				@Override
+				public void mismatchedContractType(MismatchedContractType status) {
+				}
+				
+				@Override
+				public void mismatchedCCC(MismatchedCCC status) {
+				}
+				
+				@Override
+				public void invalidData() {
+				}
+				
+				@Override
+				public void endDateNotFound() {
+				}
+				
+				@Override
+				public void employeeNotFound() {
+				}
+				
+				@Override
+				public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				}
+			});
+			return true;
+		} catch ( Exception e ) {
+			return false;
+		}
+	}
+	
 
+	private static void ifSaltraEnabled(EmployeeStatus employeeStatus, Runnable saltraEnable, Runnable saltraDisabled ) {
+		employeeStatus.visit(new Visitor() {
+			
+			@Override
+			public void up2Date() {
+				saltraEnable.run();
+			}
+			
+
+			@Override
+			public void invalidData() {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void endDateNotFound() {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void employeeNotFound() {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void occupationNotFound() {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void saltraCredentialsNotFound() {
+				saltraDisabled.run();
+			}
+						@Override
+			public void mismatchedStartDate(MismatchedStartDate status) {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void mismatchedOccupation(MismatchedOccupation status) {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void mismatchedContractType(MismatchedContractType status) {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void mismatchedCCC(MismatchedCCC status) {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				saltraEnable.run();
+
+			}
+
+		});
+	}
 
 	private static  String getDescription(CCC ccc, Workplace workplace) {
 		String province = ccc.getGeozone();

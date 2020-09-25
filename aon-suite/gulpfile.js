@@ -25,10 +25,14 @@ function sass() {
 // Añadir al array los módulos JS para que se compilen todos juntos
 function scripts() {
     return gulp.src([
-        'node_modules/jquery/dist/jquery.js'
+        'node_modules/jquery/dist/jquery.js',
+        'node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js',
+        'node_modules/@ckeditor/ckeditor5-build-classic/build/translations/es.js',
+        'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
     ])
     .pipe(concat('app.js'))
     .pipe(gulp.dest('public/js/'))
+    .pipe(browserSync.stream()); // Stream changes to the browser (without a full reload)
     //.pipe(rename({suffix: '.min'})) // Cuando vayamos a poner el .min
     //.pipe(uglify())
 }
@@ -50,7 +54,7 @@ function sync(done) {
 }
 
 // First compiles Sass to CSS if there are changes, then starts watching files and Browsersync
-var watch = gulp.series(sass, gulp.parallel(watchFiles, sync));
+var watch = gulp.series(sass, scripts, gulp.parallel(watchFiles, sync));
 
 exports.sass = sass;
 exports.scripts = scripts;

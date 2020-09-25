@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsUpdate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -469,8 +470,13 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), salaryDraft, callback);
 	}
 	
-	public void getIdc(Integer contractId, Date date, AsyncCallback<String> callback) {
-		employeesServiceAsync.getIdc(getCurrentDomainName(), contractId, date, callback);;
+	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) {
+		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
+
+	}
+	
+	public void getEmployeeStatus(Integer contractId, AsyncCallback<EmployeeStatus> callback) {
+		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 
 	}
 	// ------------------------------------------------------------------------

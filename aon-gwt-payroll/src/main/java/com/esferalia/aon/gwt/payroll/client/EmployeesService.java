@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeCalendarInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeEventsData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Events;
@@ -212,7 +213,17 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	String generateCertifaca2(String currentDomainName, SalaryDraft salaryDraft);
 	
-	String getIdc(String domain, Integer contractId, Date date);
-
+	
+	// Sistema RED w2.seg-social.es
+	
+//	EmployeeStatus register(String domain, Integer contractId);
+//	
+//	EmployeeStatus unregister(String domain, Integer contractId);
+	
+	String getEmployeeIdc(String domain, String user, Integer contractId, Date date);
+	
+	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
+	
+	
 
 }

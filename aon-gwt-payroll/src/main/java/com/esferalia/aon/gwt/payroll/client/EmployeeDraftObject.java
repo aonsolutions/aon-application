@@ -10,7 +10,6 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.common.shared.SocialSecurity;
-import com.esferalia.aon.gwt.payroll.server.EmployeesServiceImpl;
 import com.esferalia.aon.gwt.payroll.shared.ActivitiesCCC;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
@@ -19,15 +18,17 @@ import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.Rbank;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.Rbank;
+import com.esferalia.aon.gwt.payroll.shared.SaltraCredentialsNotFoundException;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EmployeeDraftObject extends AbstractDraftObject{
 	private Workplace workplace;
 	private Employee employee;
-	
+		
 	private EmployeeContractInfo employeeContractData;
 	private EmployeeInfo employeeData;
 	private ContractInfo contractData;
@@ -41,6 +42,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	private ActivitiesCCC activitiesCCC;
 	
 	private EmployeeCalendarDraftObject employeeCalendar;
+	
+
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
@@ -63,7 +66,20 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
-	
+	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeStatus(employee.getId(), new AsyncCallback<EmployeeStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EmployeeStatus result) {
+				 success.accept(result);
+			}
+		});
+	}
+		
 	public void initializeEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeInfoDataBase(this.employee.getId(), new AsyncCallback<EmployeeContractInfo>() {
 			
@@ -86,6 +102,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 				failure.accept(caught);
 			}
 		});
+		
 	}
 
 	public void getAgreements(Consumer<List<Agreement>> success, Consumer<Throwable> failure) {
@@ -201,7 +218,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	}
 	
 	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.getIdc(employee.getId(), new Date(), new AsyncCallback<String>() {
+		employeesService.getEmployeeIdc(employee.getId(), new Date(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -213,6 +230,7 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		});
 	}
 	
+
 	// ---------------------------------------------- GETTERS  -------------------------------------------------
 	
 	public Employee getEmployee() {
