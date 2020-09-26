@@ -65,5 +65,5 @@ class AonContrata extends HTMLElement {
 				});
 		});
 	}
-window.customElements.define('aon-contrata', AonContrata);
 }
+window.customElements.define('aon-contrata', AonContrata);
