@@ -43,7 +43,27 @@ class AonContrata extends HTMLElement {
  	}
 
  	build() {
+		let listIds = ['aonContrataEmployee', 'aonContrataContract', 'aonContrataMovements', 'aonContrataIT', 'aonContrataCerts'];
+		listIds.forEach((id, i) => {
+				let el = document.getElementById(id);
 
+				el.addEventListener('mouseover', () => {
+					if(!this.selected || this.selected !== id)
+						el.style.backgroundColor = '#f1f1f1';
+				});
+				el.addEventListener('mouseleave', () => {
+					if(!this.selected || this.selected !== id)
+						el.style.backgroundColor = 'transparent';
+				});
+				el.addEventListener('click', () => {
+					listIds.forEach((id, i) => {
+						let el1 = document.getElementById(id);
+						el1.style.backgroundColor = 'transparent';
+					});
+					this.selected = id;
+					el.style.backgroundColor = '#ddd';
+				});
+		});
 	}
-}
 window.customElements.define('aon-contrata', AonContrata);
+}

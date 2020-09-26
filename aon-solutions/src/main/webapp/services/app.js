@@ -201,6 +201,29 @@ export const PayrollMenu =
       module: 'aon_gwt_aio',
       entryPoint:'templates',
     }];
+export const PortalMenu =
+      [{
+        title:'Documental.',
+        content: '<aon-example></aon-example>'
+      },{
+        title:'Facturas.',
+        content: '<aon-example></aon-example>'
+      },{
+        title: 'Contable.',
+        content: '<aon-example></aon-example>'
+      },{
+        title: 'Fiscal.',
+        content: '<aon-example></aon-example>'
+      },{
+        title: 'Laboral.',
+        content: '<aon-example></aon-example>'
+      },{
+        title: 'Fichaje.',
+        content: '<aon-signin></aon-signin>'
+      },{
+        title: 'Messenger.',
+        content: '<aon-messenger></aon-messenger>'
+      }];
 
 export const ArabaFiscalMenu =
   [{

@@ -1,9 +1,12 @@
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
-	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
+	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
 import {bidoq} from '../services/bidoq.js';
 import './aon-icon.js';
 import './contrat@/aon-contrata.js';
+import './messenger/aon-messenger.js';
+import './signin/aon-signin.js';
+import './example/aon-example.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -104,12 +107,7 @@ class AonMenu extends HTMLElement {
 				rootPanel('<aon-contrata></aon-contrata>');
 				break;
 			case Apps.PORTAL.app:
-				bidoq().then((result) => {
-					alert(result)
-				}).catch(error => {
-					alert(error);
-				});
-	//			open('https://mispapeles.es/');
+				this.buildAppMenu(Apps.PORTAL);
 				break;
 			case Apps.CONVENIOS.app:
 				alert('CONVENIOS');
@@ -360,6 +358,8 @@ class AonMenu extends HTMLElement {
 				return PayrollMenu;
 			case Apps.TOOLS.app:
 				return ToolsMenu;
+			case Apps.PORTAL.app:
+				return PortalMenu;
 		}
 	}
 
@@ -384,7 +384,9 @@ class AonMenu extends HTMLElement {
 		a.appendChild(span);
 		li.appendChild(a);
 		li.addEventListener('click', () => {
-			if(subapp.initAction) {
+			if(subapp.content) {
+				rootPanel(subapp.content);
+			} else if(subapp.initAction) {
 				open('https://' + localStorage.getItem('aon_domain_name') + '/login?initAction='+subapp.initAction+'&token=' + localStorage.getItem('aon_session_id'));
 			} else startModule(subapp.module, subapp.entryPoint);
 			document.getElementById('aonMenuSidenav').style.width = '60px';
