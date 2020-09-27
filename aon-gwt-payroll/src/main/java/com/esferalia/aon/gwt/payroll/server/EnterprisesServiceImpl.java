@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
+import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
 import com.esferalia.aon.gwt.payroll.jooq.JooqMail;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSSBonus;
@@ -59,6 +60,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -2091,6 +2093,36 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqContrataContract.getEmployeesInfo(connection, domainId, allEmployees);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public List<ITEmployee> getEmployeesITInfo(String domainName, Boolean allEmployees) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqIT.getEmployeesITInfo(connection, domainId, allEmployees);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String deleteIT(String domainName, Integer itId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqIT.deleteIT(connection, domainId, itId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public String createUpdateITEmployee(String domainName, ITEmployee employeeITInfo) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqIT.createUpdateITEmployee(connection, domainId, employeeITInfo);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

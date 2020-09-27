@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -156,5 +157,11 @@ public interface EnterprisesService extends RemoteService {
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 
 	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName, Boolean allEmployees);
+
+	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);
+
+	String deleteIT(String currentDomainName, Integer itId);
+
+	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
 }
