@@ -15,6 +15,7 @@ public interface Constants {
 	public static final String MAIN_AFI_ENTRY_POINT = "MainAFI";
 	public static final String MAIN_CRA_ENTRY_POINT = "MainCRA";
 	public static final String MAIN_CONTRATA_ENTRY_POINT = "MainContrata";
+	public static final String MAIN_IT_ENTRY_POINT = "MainIT";
 	public static final String ACTIVITY_SUMMARY_ENTRY_POINT = "ActivitySummary";
 	
 	public static final String MODULE_ENTRY_POINT = "module";	
