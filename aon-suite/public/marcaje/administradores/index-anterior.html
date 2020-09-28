@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
+
+    <!-- Styles -->
+    <link href="../../css/app.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">aon Suite</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main-->
+    <div class="container-fluid pt-5">
+        <form id="form" name="form" action="#" method="post">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3 class="">Marcaje de empleados</h3>
+                </div>
+            </div>
+
+            <div class="container-fluid pt-3">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="">Empleado</h5>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-group">
+                            <label for="empleado">Nombre y apellidos:</label>
+                            <select class="form-control" id="empleado" name="empleado">
+                                <option value='0' disabled selected>Selecciona un empleado</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row pt-3">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="">Entrada</h5>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="fechaEntrada">Fecha:</label>
+                                    <input class="form-control" type="date" value="" id="fechaEntrada"
+                                        name="fechaEntrada">
+                                </div>
+
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="horaEntrada">Hora:</label>
+                                    <input class="form-control" type="time" value="" id="horaEntrada"
+                                        name="horaEntrada">
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-6 col-md-12">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="tipoEntrada">Tipo de marcaje:</label>
+                                    <select class="form-control tipoMarcaje" id="tipoEntrada" name="tipoEntrada">
+                                        <option value='1'>Marcaje sin incidencia</option>
+                                        <option value='2'>Ausencia justificada</option>
+                                        <option value='3'>Baja médica</option>
+                                        <option value='4'>Compensación horas extras</option>
+                                        <option value='5'>Permiso empresa</option>
+                                        <option value='6'>Permiso Maternidad/Paternidad</option>
+                                        <option value='7'>Permiso matrimonial</option>
+                                        <option value='8'>Teletrabajo</option>
+                                        <option value='11'>Vacaciones</option>
+                                        <option value='12'>Visita médico</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="notaEntrada">Nota:</label>
+                                    <textarea class="form-control" id="notaEntrada" name="notaEntrada"
+                                        rows="3"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- <div class="row">
+                        <div class="col-3 ">
+                            <button type="button" id="botonEntradaSalida" class="btn btn-info">Marcar
+                                Entrada</button>
+                        </div>
+                    </div> -->
+
+                    </div>
+
+                    <div class="col-lg-6 col-md-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="">Salida</h5>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <label for="fechaSalida">Fecha:</label>
+                                    <input class="form-control" type="date" value="" id="fechaSalida"
+                                        name="fechaSalida">
+                                </div>
+
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-group">
+                                    <label for="horaSalida">Hora:</label>
+                                    <input class="form-control" type="time" value="" id="horaSalida" name="horaSalida">
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-6 col-md-12">
+                                <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                <div class="form-group">
+                                    <label for="tipoSalida">Tipo de marcaje:</label>
+                                    <select class="form-control tipoMarcaje" id="tipoSalida" name="tipoSalida">
+                                        <option value='1'>Marcaje sin incidencia</option>
+                                        <option value='2'>Ausencia justificada</option>
+                                        <option value='3'>Baja médica</option>
+                                        <option value='4'>Compensación horas extras</option>
+                                        <option value='5'>Permiso empresa</option>
+                                        <option value='6'>Permiso Maternidad/Paternidad</option>
+                                        <option value='7'>Permiso matrimonial</option>
+                                        <option value='8'>Teletrabajo</option>
+                                        <option value='11'>Vacaciones</option>
+                                        <option value='12'>Visita médico</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="notaSalida">Nota:</label>
+                                    <textarea class="form-control" id="notaSalida" name="notaSalida"
+                                        rows="3"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- <div class="row">
+                        <div class="col-3 ">
+                            <button type="button" id="botonEntradaSalida" class="btn btn-info">Marcar
+                                Salida</button>
+                        </div>
+                    </div> -->
+
+                    </div>
+
+
+                </div>
+
+                <div class="row pt-3">
+                    <div class="col-lg-3 col-md-6">
+                        <button type="submit" form="form" id="botonEntradaSalida" class="btn btn-info">Marcar</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+        <br>
+        <div class="border-top my-3"></div>
+        <div class="container-fluid pt-3">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <h5 class="">Historial</h5>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12 text-right">
+                            <label for="mes">Mes:</label>
+                            <input type="month" id="mes" name="mes" step="1" min="" max="" value="2020-09">
+                            <button type="button" form="form" id="actualizar" class="btn btn-info btn-sm"
+                                data-boton="salida">Actualizar</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Tipo de marcaje</th>
+                                    <th>Nota</th>
+                                    <th>Marcaje</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaMarcajes">
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="../../js/app.js"></script>
+
+    <script>
+
+        var datos = {
+            empleados: [
+                {
+                    id: '1',                            // id
+                    documento: '12345678A',             // dni
+                    nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
+                },
+                {
+                    id: '2',                            // id
+                    documento: '23456781A',             // dni
+                    nombre: 'Jaime Perez Ruiz',         // nombre y apellidos
+                },
+            ],
+        };
+
+        var datosHistorial = {
+            historial: [
+                {
+                    id: '1',
+                    fecha: '25/09/2020',
+                    hora: '08:01:02',
+                    tipoMarcaje: 'Marcaje sin incidencia',
+                    nota: 'Todo correcto',
+                    marcaje: 'Entrada',
+                },
+                {
+                    id: '2',
+                    fecha: '25/09/2020',
+                    hora: '14:01:02',
+                    tipoMarcaje: 'Marcaje sin incidencia',
+                    nota: 'Todo correcto',
+                    marcaje: 'Salida',
+                },
+            ],
+        };
+
+        $(document).ready(function () {
+            cargarEmpleados();
+            cargarHistorial();
+            setFecha();
+            setHora();
+
+        });
+
+        function cargarEmpleados() {
+            var empleados = datos['empleados'];
+
+            // var value;
+            for (i in empleados) {
+                // value = Number.parseInt(i) + 1;
+                $("<option value='" + empleados[i]['id'] + "'>" + empleados[i]['nombre'] + "</option>").appendTo("#empleado");
+            }
+        }
+
+        function cargarHistorial() {
+            var historial = datosHistorial['historial'];
+            var hijo = "";
+
+            // var value;
+            for (i in historial) {
+                // value = Number.parseInt(i) + 1;
+                hijo = hijo + "<tr>";
+                hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['fecha'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['hora'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['tipoMarcaje'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['marcaje'] + "</td>";
+                hijo = hijo + "</tr>";
+            }
+
+            $("#tablaMarcajes").empty()
+            $(hijo).appendTo("#tablaMarcajes");
+        }
+
+        (function ($) {
+            $.fn.serializeFormJSON = function () {
+
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+        })(jQuery);
+
+        $('form').submit(function (e) {
+            e.preventDefault();
+            var data = $(this).serializeFormJSON();
+            console.log(data);
+            alert(JSON.stringify(data));
+
+            /* Object
+                email: "value"
+                name: "value"
+                password: "value"
+             */
+        });
+
+        function setHora() {
+            var momentoActual = new Date();
+            var hora = momentoActual.getHours();
+            var minuto = momentoActual.getMinutes();
+            // var segundo = momentoActual.getSeconds();
+
+            // var str_segundo = new String(segundo)
+            // if (str_segundo.length == 1) {
+            //     segundo = "0" + segundo
+            // }
+
+
+            var str_minuto = new String(minuto)
+            if (str_minuto.length == 1) {
+                minuto = "0" + minuto;
+            }
+
+            var str_hora = new String(hora)
+            if (str_hora.length == 1) {
+                hora = "0" + hora;
+            }
+
+            // var horaImprimible = hora + ":" + minuto + ":" + segundo;
+            var horaImprimible = hora + ":" + minuto;
+
+            $('#horaEntrada').val(horaImprimible);
+            $('#horaSalida').val(horaImprimible);
+
+        }
+
+        function setFecha() {
+            var fechaActual = new Date();
+            var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = annio + "-" + mes + "-" + dia;
+
+            $('#fechaEntrada').val(fechaImprimible);
+            $('#fechaSalida').val(fechaImprimible);
+
+        }
+
+        $('#actualizar').on('click', function (e) {
+            var mes = $('#mes').val();
+            console.log(mes);
+            alert(mes);
+            cargarHistorial();
+        })
+
+    </script>
+</body>
+
+</html>
