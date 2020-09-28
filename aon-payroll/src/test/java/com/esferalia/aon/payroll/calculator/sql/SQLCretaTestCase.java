@@ -2058,6 +2058,99 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 	
 	@Test
+	public void testCretaTrabajadoresYTramosArtistasII()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		Date startDateI = getFirstDayOfMonth(getToday());
+		Date endDateI = add(startDateI, Calendar.DAY_OF_MONTH, 5);
+		
+		Date startDateII = add(endDateI, Calendar.DAY_OF_MONTH, 5);
+		Date endDateII = add(startDateII, Calendar.DAY_OF_MONTH, 5);
+		
+		String dni = Integer.toString((int)(Math.random() * 1000000000.00));
+
+		@SuppressWarnings("serial")
+		ContractRecord contractI = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateI, endDateI, dni );
+		ContractRecord contractII = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateII, endDateII, dni);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		List<Tramo> tramos = getTramos(connection, startDateI, endDateII, ccc, contractI, contractII);
+		
+		Assert.assertEquals(2, tramos.size());
+		
+		Tramo tramoI = tramos.get(0); 
+		Assert.assertEquals("01", tramoI.getFechaDesde().getDia());
+		Assert.assertEquals("06", tramoI.getFechaHasta().getDia());
+		assertTramoActivoNormalArtistas(tramoI);
+
+		Tramo tramoII = tramos.get(1); 
+		Assert.assertEquals(Integer.toString(get(startDateII, DAY_OF_MONTH)), tramoII.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(get(endDateII, DAY_OF_MONTH)), tramoII.getFechaHasta().getDia());
+		assertTramoActivoNormalArtistas(tramoII);
+		
+	}
+
+	@Test
+	public void testCretaArtistasII()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		Date startDateI = getFirstDayOfMonth(getToday());
+		Date endDateI = add(startDateI, Calendar.DAY_OF_MONTH, 5);
+		
+		Date startDateII = add(endDateI, Calendar.DAY_OF_MONTH, 5);
+		Date endDateII = add(startDateII, Calendar.DAY_OF_MONTH, 6);
+		
+		String dni = Integer.toString((int)(Math.random() * 1000000000.00));
+
+		@SuppressWarnings("serial")
+		ContractRecord contractI = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateI, endDateI, dni );
+		ContractRecord contractII = newContract(aonContext, ccc, ContractCode.C100, "03", CCCType.ARTIST, startDateII, endDateII, dni);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		 net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = getTrabajadoresTramos(connection, startDateI, endDateII, ccc, contractI, contractII);
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = getBases(connection, trabajadoresTramos);
+		
+		Assert.assertEquals(2, tramos.size());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoI = tramos.get(0); 
+		Assert.assertEquals("01", tramoI.getFechaDesde().getDia());
+		Assert.assertEquals("06", tramoI.getFechaHasta().getDia());
+		double _300 =
+		tramoI.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("300")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_300, (1750.00 * 6 / 30 ) * 100.00, DELTA);
+
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoII = tramos.get(1); 
+		Assert.assertEquals(Integer.toString(get(startDateII, DAY_OF_MONTH)), tramoII.getFechaDesde().getDia());
+		Assert.assertEquals(Integer.toString(get(endDateII, DAY_OF_MONTH)), tramoII.getFechaHasta().getDia());
+		_300 =
+		tramoII.getDatosTramo().getDato().stream()
+		.filter(d -> d.getCodigo().equals("300")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(_300, (int)((1750.00 * 7.00 / 30.00 ) * 100.00), DELTA);
+		
+	}
+
+	@Test
 	public void testCretaTrabajadoresYTramosNormal()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		Connection connection = getConnection();
@@ -5310,10 +5403,18 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType) {
-		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, getFirstDayOfYear(getToday()), null, null);
+		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, getFirstDayOfYear(getToday()), null, null, Integer.toString((int)(Math.random() * 1000000000.00)));
 	}
 
-	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category ) {
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, String dni ) {
+		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, startDate, endDate, null, dni);
+	}
+
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category  ) {
+		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, startDate, endDate, category, Integer.toString((int)(Math.random() * 1000000000.00)));
+	}
+
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category , String dni ) {
 		DomainRecord domain = newDomain(aonContext);
 		
 		ScopeRecord scope = newScope(aonContext, domain.getId());
@@ -5339,7 +5440,7 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		RegistryRecord person = newPerson(
 				aonContext, 
 				domain.getId(),
-				Integer.toString((int)(Math.random() * 1000000000.00)) //"00000000A"
+				dni //"00000000A"
 				);
 
 
@@ -5504,6 +5605,69 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	protected net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos ( Connection connection, Date startDate, Date endDate, String ccc, String tipo, ContractRecord ...contracts ) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		
+		for (ContractRecord contract : contracts) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+
+			int salaries = calculateAndSave(connection, ctx);
+			// Only one salary saved to DB.
+			Assert.assertEquals(1, salaries);
+			
+		}
+
+
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		String mes = Integer.toString(calendar.get(MONTH)+1);
+		String anho = Integer.toString(calendar.get(YEAR));
+		
+		
+		
+		PipedInputStream trabajadoresTramosIs = new PipedInputStream();
+		
+		new Thread( () ->  {
+								try { 
+									PipedOutputStream trabajadoresTramosOs = new PipedOutputStream(trabajadoresTramosIs);
+									TrabajadoresTramos.generate(connection, 
+											"0000", 	//autorizado, 
+											mes, 		//desdeAnhoMes, 
+											anho , 		//desdeAnho, 
+											mes, 		//hastaMes, 
+											anho , 		//hastaAnho, 
+											mes, 		//ctrlMes, 
+											anho , 		//ctrlAnho, 
+											tipo,		//tipo, 
+											new String[]
+											{
+											"0111" + "" + ccc
+											}, 			//cccs
+											trabajadoresTramosOs);
+									trabajadoresTramosOs.close();
+								} catch ( JAXBException | IOException e ){
+									throw new AssertException(e.getMessage());
+								} finally {
+									
+								}
+							}
+		).start();
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = Utils
+				.unmarshal(
+						net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos.class,
+						trabajadoresTramosIs);
+		
+		
+		
+		
+		trabajadoresTramosIs.close();
+		
+		return trabajadoresTramos;
+		
+	}
+
 	private List<Tramo> getTramos ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		
 		
@@ -5524,6 +5688,35 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	private List<Tramo> getTramos ( Connection connection, Date startDate, Date endDate, String ccc, ContractRecord ...contracts) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+				getTrabajadoresTramos(connection, startDate, endDate, ccc, "L00", contracts );
+		
+		return
+			trabajadoresTramos
+			.getLiquidacion()
+			.getLiquidacionMes()
+			.get(0)
+			.getTrabajadores()
+			.getTrabajador()
+			.get(0)
+			.getTramos()
+			.getTramo()
+			;
+		
+	}
+
+	private net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos getTrabajadoresTramos ( Connection connection, Date startDate, Date endDate, String ccc, ContractRecord ...contracts) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
+		
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos = 
+				getTrabajadoresTramos(connection, startDate, endDate, ccc, "L00", contracts );
+		
+		return
+			trabajadoresTramos
+			;
+		
+	}
 
 	private Liquidacion getLiquidacion ( Connection connection, ContractRecord contract, Date startDate, Date endDate, String ccc) throws ExpressionException, SQLException, SalaryException, JAXBException, IOException {
 		
