@@ -141,10 +141,12 @@
                             '<td>'+
                                 '<a class="text-dark text-decoration-none">'+
                                     '<i id="ticket-eliminar" class="material-icons pointer text-danger" title="Eliminar ticket"'+
+                                        ' data-uid="'+data.user_id+'" '+
                                         ' data-page="'+data.page+'" '+
                                         ' data-id="'+item.id+'" '+
                                         ' >delete_forever</i>'+
                                     '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Eliminar ticket"'+
+                                        ' data-uid="'+data.user_id+'" '+
                                         ' data-id="'+item.id+'" '+
                                         ' data-priority="'+item.priority+'" '+
                                         '>low_priority</i>'+
@@ -158,7 +160,7 @@
                     $('.table tbody').html(tbody);
                     
                     // Cogemos el paginado que tendía la tabla
-                    var pagination = createPaginate(data.page, data.total_page)
+                    var pagination = createPaginate(data.user_id, data.page, data.total_page)
 
                     // Agregamos el paginado en el footer de la tabla
                     var tfoot = 
@@ -185,6 +187,7 @@
                 // Eliminar ticket
                 //
                 $(document).on('click', '#ticket-eliminar', function() {
+                    var user_id   = $(this).data('uid');
                     var ticket_id = $(this).data('id');
 
                     var opcion = confirm("Eliminar el #Ticket "+ticket_id);
@@ -196,6 +199,7 @@
                         var ticket_delete ={
                             method   : 'ticket_delete',
                             id       : ticket_id,
+                            uid      : user_id,
                         };
                         console.log('Eliminar ticket Json que mandamos:');
                         console.log(ticket_delete);
@@ -208,10 +212,13 @@
                 //
                 $(document).on('click', '#ticket-prioridad', function() {
                     // Cogemos los valores
+                    var user_id         = $(this).data('uid');
                     var ticket_id       = $(this).data('id');
                     var ticket_priority = $(this).data('priority');
                     // Ponemos el titulo del modal
                     $('#modal-header-ticket').html('Editar el estado del #Ticket '+ticket_id);
+                    // Metemos el UID del que vamos a editar
+                    $('#ticket-uid').val(user_id);
                     // Metemos el ID del que vamos a editar
                     $('#ticket-id').val(ticket_id);
                     // Seleccionamos el valor que se tiene marcado
@@ -225,6 +232,7 @@
                 // Editar prioridad ticket
                 //
                 $(document).on('click', '#ticket-prioridad-actualizar', function() {
+                    var user_id         = $('#ticket-uid').val();
                     var ticket_id       = $('#ticket-id').val();
                     var ticket_priority = $('#ticket-select-priority').val();
                     $("#ticket-edit").modal('hide')
@@ -233,7 +241,8 @@
                     var ticket_edit_priority ={
                         method   : 'ticket_edit_priority',
                         id       : ticket_id,
-                        priority : ticket_priority
+                        uid      : user_id,
+                        priority : ticket_priority,
                     };
                     console.log('Editar prioridad Json que mandamos:');
                     console.log(ticket_edit_priority);
@@ -242,8 +251,10 @@
                 // 
                 // Crear el paginado
                 //
-                function createPaginate(page, page_total){
+                function createPaginate(uid, page, page_total){
                     var paginate = '<ul class="pagination display-block float-right">';
+                    // Agregamos el usuario que estamos paginando
+                    paginate+= '<input id="paginate-uid" type="hidden" value="'+uid+'">';
 
                     // Si tenemos paginas
                     if (page > 1){ 
@@ -288,13 +299,15 @@
                 // Pasar de pagina
                 //
                 $(document).on('click', '.go_page', function() {
-                    var page = $(this).data('page');
-                    var list = getList(page);
+                    var user_id = $('#paginate-uid').val();
+                    var page    = $(this).data('page');
+                    var list    = getList(user_id, page);
                     createTable(list);
                     // Json que mandamos
                     var ticket_page ={
-                            method   : 'ticket_page',
-                            id       : page,
+                            method  : 'ticket_page',
+                            uid     : user_id,
+                            id      : page,
                         };
                     console.log('Pasar paginas de ticket Json que mandamos:');
                     console.log(ticket_page);
@@ -303,7 +316,7 @@
                 //
                 // Listado para probar
                 //
-                function getList(page_this = 1){
+                function getList(uid = 'a5sa645-sa14', page_this = 1){
                     // nombre
                     var name_a = ['','Manolo','Ambrosio','Abelardo','Fulgensio','Alejandro','Jesús','Julio','David','Alberto','Juan'];
                     var name_b = ['','Carmen','Angela','Manuela','Margarita','Maribel','Desi','Inma','Jessica','Estefanía','Nieves'];
@@ -330,6 +343,7 @@
                         
                     // Json de lo que nos llegaria
                     var date = {
+                        user_id     : uid,                                      // Al usuario que le pertenece los tickets
                         total_date  : 100,                                      // cantidad total de elementos
                         total_page  : 10,                                       // total de paginas
                         page        : page_this,                                // pagina en la que estamos
@@ -356,6 +370,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
+                            <input id="ticket-uid" type="hidden" value="">
                             <input id="ticket-id" type="hidden" value="">
                             <label for="priority">Prioridad</label>
                             <select class="form-control" id="ticket-select-priority">

@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -453,6 +454,24 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
+	}
+
+	@Override
+	public void getEmployeesITInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<ITEmployee>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeesITInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
+	}
+
+	@Override
+	public void deleteIT(String currentDomainName, Integer itId, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteIT(currentDomainName, itId, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.createUpdateITEmployee(currentDomainName, employeeITInfo, new AsyncCallbackWrapper<String>(callback));
 	}
 
 }

@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -276,6 +277,18 @@ public class DomainEnterprisesServiceAsync {
 
 	public void getEmployeesInfo(Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
 		enterprisesServiceAsync.getEmployeesInfo(getCurrentDomainName(), allEmployees, asyncCallback);
+	}
+	
+	public void getEmployeesITInfo(Boolean allEmployees, AsyncCallback<List<ITEmployee>> asyncCallback) {
+		enterprisesServiceAsync.getEmployeesITInfo(getCurrentDomainName(), allEmployees, asyncCallback);
+	}
+
+	public void deleteIT(Integer itId, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.deleteIT(getCurrentDomainName(), itId, asyncCallback);
+	}
+
+	public void createUpdateITEmployee(ITEmployee employeeITInfo, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.createUpdateITEmployee(getCurrentDomainName(), employeeITInfo, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

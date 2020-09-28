@@ -122,6 +122,14 @@ public class MainEntryPoint implements EntryPoint {
 			MainContrataContract mainContrataContract = new MainContrataContract();
 			mainContrataContract.onModuleLoad(mainContrataContractObject);
 		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_IT_ENTRY_POINT)) {
+			
+			//TODO: Call MAIN IT
+			MainContrataITObject mainContrataITObject = new MainContrataITObject();
+			MainContrataIT mainContrataIT = new MainContrataIT();
+			mainContrataIT.onModuleLoad(mainContrataITObject);
+		
+		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			ActivitySummary activitySummary = new ActivitySummary();
 			activitySummary.onModuleLoad();

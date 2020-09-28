@@ -3,7 +3,11 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
-	<ui:Style  >
+	<ui:Style>
+	
+		.mr-10{
+			margin-right: 10px !important;
+		}
 	
 	</ui:Style>
 
@@ -22,7 +26,7 @@
 			<tr>
 				<td colspan="2" align="right">
 					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" >Aceptar</g:Button>
+					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" styleName="gwt-Button {style.mr-10}" >Aceptar</g:Button>
 				</td>
 			</tr>
 		</table>

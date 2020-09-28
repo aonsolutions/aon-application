@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -98,5 +99,10 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<String> asyncCallback);
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
+	void getEmployeesITInfo(String currentDomainName, Boolean allEmployees,
+			AsyncCallback<List<ITEmployee>> asyncCallback);
+	void deleteIT(String currentDomainName, Integer itId, AsyncCallback<String> asyncCallback);
+	void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo,
+			AsyncCallback<String> asyncCallback);
 
 }
