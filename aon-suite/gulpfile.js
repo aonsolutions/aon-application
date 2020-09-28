@@ -11,8 +11,8 @@ var concat = require('gulp-concat');
 function watchFiles() {
     gulp.watch('assets/scss/*.scss', sass);
     gulp.watch('assets/js/*.js', scripts);
-    gulp.watch('public/js/*.js').on('change', browserSync.reload); // Triggers a full reload on the brower
-    gulp.watch('public/**/*.html').on('change', browserSync.reload); // Triggers a full reload on the brower
+    gulp.watch('public/js/*.js').on('change', browserSync.reload); // Triggers a full reload on the browser
+    gulp.watch('public/**/*.html').on('change', browserSync.reload); // Triggers a full reload on the browser
 }
 
 // Compiles Sass to CSS
@@ -42,7 +42,7 @@ function scripts() {
 function sync(done) {
     browserSync.init({
         server: {
-            baseDir: ['./', './public'] // Base directories exposed to the server
+            baseDir: 'public' // Base directories exposed to the server
         },
         port: 9000, // Port used by the app
         ui: {

@@ -4,6 +4,9 @@
 - **Bootstrap 4.5.2**
 - **bootstrap.bundle.min.js**: Librería JavaScript de Bootstrap
 - **jQuery 3.5.1**
+- **material-design-icons-iconfont 6.1.0**: Paquete de iconos de Material Design, configurable con Sass y más liviano que el oficial de Google al contener solo las fuentes.
+    - [Lista de iconos oficial de Material Design](https://material.io/resources/icons)
+    - [Lista de iconos disponibles en el paquete](https://jossef.github.io/material-design-icons-iconfont/)
 - **Chart.js 2.9.3**: Librería JavaScript para la visualización de gráficos con animaciones e interactivos, responsive y con soporte hasta IE11+
 - **CKeditor 5**: Librería Javascript para los textarea vitaminado estilo Word
 
