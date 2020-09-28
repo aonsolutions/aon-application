@@ -263,23 +263,8 @@
                                     <th>Marcaje</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>25/09/2020</td>
-                                    <td>08:01:02</td>
-                                    <td>Marcaje sin incidencia</td>
-                                    <td>Todo correcto</td>
-                                    <td>Entrada</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>25/09/2020</td>
-                                    <td>14:01:02</td>
-                                    <td>Marcaje sin incidencia</td>
-                                    <td>Todo correcto</td>
-                                    <td>Salida</td>
-                                </tr>
+                            <tbody id="tablaMarcajes">
+                               
                             </tbody>
                         </table>
                     </div>
@@ -296,22 +281,52 @@
     <script src="../../js/app.js"></script>
 
     <script>
-        $(document).ready(function () {
-            var datos = {
-                empleados: [
-                    {
-                        id: '1',                            // id
-                        documento: '12345678A',             // dni
-                        nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
-                    },
-                    {
-                        id: '2',                            // id
-                        documento: '23456781A',             // dni
-                        nombre: 'Jaime Perez Ruiz',         // nombre y apellidos
-                    },
-                ],
-            };
 
+        var datos = {
+            empleados: [
+                {
+                    id: '1',                            // id
+                    documento: '12345678A',             // dni
+                    nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
+                },
+                {
+                    id: '2',                            // id
+                    documento: '23456781A',             // dni
+                    nombre: 'Jaime Perez Ruiz',         // nombre y apellidos
+                },
+            ],
+        };
+
+        var datosHistorial = {
+            historial: [
+                {
+                    id: '1',
+                    fecha: '25/09/2020',
+                    hora: '08:01:02',
+                    tipoMarcaje: 'Marcaje sin incidencia',
+                    nota: 'Todo correcto',
+                    marcaje: 'Entrada',
+                },
+                {
+                    id: '2',
+                    fecha: '25/09/2020',
+                    hora: '14:01:02',
+                    tipoMarcaje: 'Marcaje sin incidencia',
+                    nota: 'Todo correcto',
+                    marcaje: 'Salida',
+                },
+            ],
+        };
+
+        $(document).ready(function () {
+            cargarEmpleados();
+            cargarHistorial();
+            setFecha();
+            setHora();
+
+        });
+
+        function cargarEmpleados() {
             var empleados = datos['empleados'];
 
             // var value;
@@ -319,11 +334,28 @@
                 // value = Number.parseInt(i) + 1;
                 $("<option value='" + empleados[i]['id'] + "'>" + empleados[i]['nombre'] + "</option>").appendTo("#empleado");
             }
+        }
 
-            setFecha();
-            setHora();
+        function cargarHistorial() {
+            var historial = datosHistorial['historial'];
+            var hijo = "";
 
-        });
+            // var value;
+            for (i in historial) {
+                // value = Number.parseInt(i) + 1;
+                hijo = hijo + "<tr>";
+                hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['fecha'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['hora'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['tipoMarcaje'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['marcaje'] + "</td>";
+                hijo = hijo + "</tr>";
+            }
+
+            $("#tablaMarcajes").empty()
+            $(hijo).appendTo("#tablaMarcajes");
+        }
 
         (function ($) {
             $.fn.serializeFormJSON = function () {
@@ -418,6 +450,7 @@
             var mes = $('#mes').val();
             console.log(mes);
             alert(mes);
+            cargarHistorial();
         })
 
     </script>
