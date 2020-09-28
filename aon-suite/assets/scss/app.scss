@@ -5,6 +5,714 @@
 $material-design-icons-font-directory-path: '../fonts/';
 @import '././node_modules/material-design-icons-iconfont/src/material-design-icons';
 
+/*****************************************************************/
+/************************ CSS AONS *******************************/
+/*****************************************************************/
+
+/* Default */
+
+body{
+    font-family: 'Rubik';
+}
+
+strong, b{
+    font-weight: bold;
+}
+a{
+ text-decoration: none;
+ &:hover{
+     text-decoration: none;
+ }
+}
+
+
+    .atp_color_0{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$border-color;}
+        .st1{fill:#FFFFFF;}
+    }
+    .atp_color_1{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$portal-color;}
+        .st1{fill:#FFFFFF;}
+    }
+
+
+    .atp_color_2{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$despacho-color;}
+        .st1{fill:#FFFFFF;}
+    }
+
+
+    .atp_color_3{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$laboral-color;}
+        .st1{fill:#FFFFFF;}
+    }
+
+
+    .atp_color_4{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$fiscal-color;}
+        .st1{fill:#FFFFFF;}
+    }
+
+
+    .atp_color_5{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$contable-color;}
+        .st1{fill:#FFFFFF;}
+    }
+    .atp_color_6{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$empresa-color;}
+        .st1{fill:#FFFFFF;}
+    }
+    .atp_color_7{
+        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:$contrata-color;}
+        .st1{fill:#FFFFFF;}
+    }
+
+
+.atp_cuerpo{
+    overflow-x: hidden;
+}
+
+/* scroll */
+body::-webkit-scrollbar-track
+{
+/* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); */
+border-radius: 5px;
+background-color: transparent;
+}
+
+body::-webkit-scrollbar
+{
+width: 8px;
+background-color: transparent;
+}
+
+body::-webkit-scrollbar-thumb
+{
+border-radius: 5px;
+/* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); */
+background-color: $icon-color;
+}
+
+
+/* cabecera */
+#atp_cabecera{
+    padding: 0 30px;
+    height: 75px;
+border-bottom: 1px solid $border-color;
+    .row{
+        height: 100%;
+    }
+    #atp_logo {
+        width: 100%;
+        max-width: 317px;
+        .st0{fill:$icon-color;}   
+    }
+    #atp_upload {
+        cursor: pointer;
+        max-width: 47px;
+        width: 100%;
+        margin-left: 10px;
+        &:hover{
+            .st0{
+                fill: $hover-icon-color;
+            }
+        }
+    }
+    .atp_nombre_empresa{
+        font-size: 13px;
+        color: $icon-color;
+        font-weight: bold;
+        margin-bottom: 0;
+        padding-top: 7px;
+        margin-right: 10px;
+    }
+    .material-icons{
+        cursor: pointer;
+        font-size: 28px;
+        padding: 0 8px;
+        color: $icon-color;
+        &:hover{
+            color: $hover-icon-color;
+        }
+    }
+    
+}
+
+/* menu izquierda */
+
+#atp_menu_izquierda{
+    position: relative;
+    padding: 0;
+    max-width: 0;
+    min-height: 100vh;
+    border-right: 1px solid $border-color;
+    transition: max-width .5s;
+    &.atp_abierto{
+        max-width: 252px;
+        transition: max-width .5s;
+    }
+    .atp_opciones_izquierda{
+        border-bottom: 1px solid $border-color;
+        padding: 25px 0;
+        overflow-x: hidden;
+        h3{
+            padding: 0px 30px;
+            font-size: 13px;
+            color: $icon-color;
+            margin-bottom: 15px;
+            white-space: nowrap;
+        }
+        ul{
+            font-size: 13px;
+            padding: 0;
+            ul{
+                font-size: 12px;
+                padding-left: 10px;
+                margin-bottom: 20px;
+                li{
+                    margin-bottom: 0;
+                }
+            }
+            li{
+                white-space: nowrap;
+                cursor: pointer;
+                padding: 0px 30px;
+                list-style: none;
+                color: $default-color;
+                margin-bottom: 5px;
+                &:hover, &.active{
+                    background-color: $border-color;
+                }
+                a{
+                    color: $default-color;
+                }
+            }
+        }
+        &#atp_software_izquierda{
+            padding-top: 50px;
+        }
+    }
+    #atp_cerrar_menu_izquierda{
+        cursor: pointer;
+        width: 39px;
+        position: absolute;
+        z-index: 1;
+        right: -20px;
+        top: 20px;
+        transform: rotate(180deg);
+        transition: all .5s;
+        .st0{fill:#A2A8B6;}
+        .st1{fill:#FFFFFF;}
+    }
+    &.atp_abierto  #atp_cerrar_menu_izquierda{
+        transform: rotate(0);
+        transition: all .5s;
+    }
+}
+
+
+/* menu derecha */
+
+#atp_menu_derecha{
+    position: relative;
+    max-width: 0;
+    min-height: 100vh;
+    border-left: 1px solid $border-color;
+    padding: 50px 0;
+    transition: max-width .5s;
+    &.atp_abierto{
+        max-width: 252px;
+        transition: max-width .5s;
+    }
+    p{
+        margin-bottom: 0;
+        margin-right: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        color: $default-color;
+    }
+   
+    .atp_opciones_derecha{
+        margin: 0 30px;
+        overflow-x: hidden;
+        margin-bottom: 15px;
+        cursor: pointer;
+        .atp_icon_aons_derecha{
+            width: 39px;
+        }
+    }
+    #atp_cerrar_menu_derecha{
+        cursor: pointer;
+        width: 39px;
+        position: absolute;
+        z-index: 1;
+        left: -20px;
+        top: 20px;
+        transform: rotate(0);
+        transition: all .5s;
+        .st0{fill:#A2A8B6;}
+        .st1{fill:#FFFFFF;}
+    }
+    &.atp_abierto  #atp_cerrar_menu_derecha{
+        transform: rotate(180deg);
+        transition: all .5s;
+    }
+}
+
+/* contenido centro */
+
+#atp_contenido_centro{
+    padding-top: 60px;
+    padding-bottom: 60px;
+    #atp_imagen_novedades{
+        img{
+            width: 100%;
+            max-width: 1117px;
+        }
+    }
+    #atp_opciones_contratadas{
+        padding-top: 50px;
+        h3{
+            color: $default-color;
+            font-size: 13px;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        > .container-fluid{
+            border: 1px solid $border-color;
+            border-radius: 5px;
+        }
+        .atp_opcion_contratada{
+            padding: 0 25px;
+            height: 68px;
+            border-bottom: 1px solid $border-color;
+            &:nth-last-child(1){
+                border-bottom: none;
+            }
+            p{
+                margin-bottom: 0;
+                font-size: 13px;
+                font-weight: bold;
+                color: $default-color;
+            }
+            .atp_icon_aons_centro{
+                width: 39px;
+                margin-right: 20px;
+            }
+            a{
+                color: $default-color;
+                font-weight: normal;
+                &.atp_btn_abrir{
+                    border: 1px solid $default-color;
+                    border-radius: 20px;
+                    padding: 2px 15px;
+                    margin-left: 20px;
+                    &:hover{
+                        color: $white-color;
+                        background-color: $default-color;
+                    }
+                }
+            }
+        }
+    }
+    #atp_descubrir{
+        padding-top: 50px;
+        h3{
+            color: $default-color;
+            font-size: 13px;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        .atp_opcion_descubrir{
+            min-height: 218px;
+            border: 1px solid $border-color;
+            border-radius: 5px;
+            max-width: 31.1%;
+            padding: 15px 22px;
+            position: relative;
+            .atp_titulo_opcion_descubrir{
+                margin-bottom: 0;
+                font-size: 13px;
+                font-weight: bold;
+                color: $default-color;
+            }
+            .atp_icon_aons_centro{
+                width: 39px;
+                margin-right: 10px;
+            }
+            .atp_descripcion_opcion_descubrir{
+                margin-bottom: 0;
+                font-size: 13px;
+                font-weight: normal;
+                color: $default-color;
+                margin-top: 15px;
+                line-height: 1.5em;
+            }
+            .atp_btns_opcion_descubrir{
+                position: absolute;
+                bottom: 20px;
+                width: 100%;
+                left: 0;
+                padding-right: 22px;
+                a{
+                    color: $default-color;
+                    font-weight: normal;
+                    &.atp_btn_contratar{
+                        border: 1px solid $default-color;
+                        border-radius: 20px;
+                        padding: 2px 15px;
+                        margin-left: 20px;
+                        &:hover{
+                            color: $white-color;
+                            background-color: $default-color;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #atp_otros{
+        padding-top: 50px;
+        h3{
+            color: $default-color;
+            font-size: 13px;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        .atp_opcion_otros{
+            min-height: 218px;
+            border: 1px solid $border-color;
+            border-radius: 5px;
+            max-width: 31.1%;
+            padding: 15px 22px;
+            position: relative;
+            .atp_titulo_opcion_otros{
+                margin-bottom: 0;
+                font-size: 13px;
+                font-weight: bold;
+                color: $default-color;
+            }
+            .atp_icon_aons_centro{
+                width: 39px;
+                margin-right: 10px;
+            }
+            .atp_descripcion_opcion_otros{
+                margin-bottom: 0;
+                font-size: 13px;
+                font-weight: normal;
+                color: $default-color;
+                margin-top: 15px;
+                line-height: 1.5em;
+            }
+            .atp_btns_opcion_otros{
+                position: absolute;
+                bottom: 20px;
+                width: 100%;
+                left: 0;
+                padding-right: 22px;
+                a{
+                    color: $default-color;
+                    font-weight: normal;
+                    &.atp_btn_contratar{
+                        border: 1px solid $default-color;
+                        border-radius: 20px;
+                        padding: 2px 15px;
+                        margin-left: 20px;
+                        &:hover{
+                            color: $white-color;
+                            background-color: $default-color;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* LOGIN */
+
+#atp_login{
+    background-color: $login-bg-color;
+    height: 100vh;
+    .row{
+        height: 100%;
+    }
+    .atp_cuadro_login{
+        max-width: 364px;
+        #atp_logo{
+            width: 100%;
+            max-width: 219px;
+        .st0{fill:$icon-color;}   
+        }
+        .atp_caja_form_login{
+            padding: 25px 10px 5px;
+            background-color: $white-color;
+            border-radius: 5px;
+            h3{
+                font-size: 15px;
+                font-weight: bold;
+                color: $corporativo-color;
+            }
+            .atp_input_login{
+                position: relative;
+                margin-bottom: 0;
+                input{
+                    height: 50px;
+                    border: none;
+                    background-color: #f5f5f5;
+                    width: 100%;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                    padding: 0 15px;
+                    &:focus {
+                        outline: none;
+                        + span{
+                            font-size: 10px;
+                            top:5px;
+                            transition: all .5s;
+                        }
+                    }
+                    &:valid + span{
+                        font-size: 10px;
+                        top:5px;
+                        transition: all .5s;
+                    }
+                    
+                }
+                span{
+                    position: absolute;
+                    left: 15px;
+                    top: 15px;
+                    color: $default-color;
+                    font-size: 13px;
+                    line-height: 1em;
+                    transition: all .5s;
+                }
+            }
+            .atp_restart_pass{
+                font-size: 13px;
+                color: $default-color;
+                a{
+                    color: $corporativo-color;
+                }
+            }
+            .atp_btn_login{
+                width: 100%;
+                background-color: $btn-login-color;
+                border: none;
+                border-radius: 5px;
+                color: $white-color;
+                font-size: 14px;
+                padding: 10px 0;
+                transition: .5s all;
+                &:hover{
+                    opacity: .7;
+                    transition: .5s all;
+                }
+            }
+            .atp_texto_legal_login{
+                font-size: 10px;
+                color: $default-color;
+                line-height: 1.2em;
+                padding: 15px 15px 0;
+            }
+        }
+    }
+}
+
+/* Single item */
+
+#atp_breadcrumbs{
+    padding: 0 32px 40px;
+    p{
+        margin-bottom: 0;
+                font-size: 13px;
+                font-weight: bold;
+                color: $default-color;
+                line-height: 1.5em;
+    }
+    .atp_icon_aons_breadcrumbs{
+        width: 39px;
+        margin-right: 10px;
+    }
+    .atp_flecha_breadcrumbs{
+        width: 19px;
+        margin-right: 20px;
+    }
+}
+
+#atp_descripcion_item{
+    padding-top: 30px;
+    padding-bottom: 100px;
+        h3{
+            color: $default-color;
+            font-size: 13px;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        p{
+            color: $default-color;
+            font-size: 13px;
+            font-weight: normal;
+            justify-content: center;
+        }
+        .atp_caja_btn_item{
+            margin: 30px 0;
+            .atp_btn_solicitar_item{
+                color: $default-color;
+                border: 1px solid $default-color;
+                border-radius: 20px;
+                padding: 2px 15px;
+                margin-right: 20px;
+                &:hover{
+                    color: $white-color;
+                    background-color: $default-color;
+                }
+            }
+            .atp_btn_contratar_item{
+                color: $white-color;
+                border: 1px solid $corporativo-color;
+                background-color: $corporativo-color;
+                border-radius: 20px;
+                padding: 2px 15px;
+                margin-right: 20px;
+                &:hover{
+                    color: $corporativo-color;
+                    background-color: $white-color;
+                }
+            }
+        }
+}
+
+/* LISTA EMPRESAS */
+
+.atp_buscar_empresa{
+    height: 30px;
+    width: 400px;
+    border: none;
+    padding: 0 10px;
+    color: $default-color;
+    font-size: 13px;
+    &::placeholder{
+        color: $icon-color;
+    }
+}
+
+.apt_titulo_listado_empresas{
+    width: 100%;
+    padding: 20px 30px;
+    border-bottom: 1px solid $default-color;
+    h3{
+        font-size: 13px;
+        font-weight: bold;
+        color: $default-color;
+        margin-bottom: 0;
+    }
+}
+.apt_listado_empresas{
+    .atp_item_listado_empresas{
+        cursor: pointer;
+        padding: 20px 35px;
+        border-bottom: 1px solid $border-color;
+        &:hover{
+            background-color: $border-color;
+        }
+        h2{
+            font-size: 13px;
+            color: $default-color;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+        p{
+            font-size: 13px;
+            color: $default-color;
+            margin-bottom: 0;
+        }
+        .atp_flecha_listado_empresas{
+            width: 15px;
+            transform: rotate(180deg);
+            .st0{
+                fill: $default-color;
+            }
+        }
+    }
+}
+
+#atp_paginacion{
+    padding: 20px 35px;
+    ul{
+        padding: 0;
+        li{
+            cursor: pointer;
+            list-style: none;
+            font-size: 13px;
+            color: $default-color;
+            display: inline-block;
+            margin-right: 5px;
+            transition: all .5s;
+            &:hover{
+                opacity: .7;
+                transition: all .5s;
+            }
+        }
+    }
+}
+
+
+/* APLICACIÓN */
+
+.atp_opciones_derecha_aplicacion{
+    padding-top: 30px;
+    .atp_titulo_opciones_derecha_aplicacion{
+        background-color: $contable-color;
+        padding: 10px 29px;
+        margin-bottom: 20px;
+        h3{
+            color: $white-color;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+    }
+    .atp_contenido_opciones_derecha_aplicacion{
+        padding: 10px 0;
+        ul{
+            padding: 0;
+            li{
+                white-space: nowrap;
+                padding: 0 29px;
+                cursor: pointer;
+                list-style: none;
+                color: $default-color;
+                font-size: 13px;
+                font-weight: normal;
+                margin-bottom: 7px;
+                &:hover{
+                    background-color: $border-color;
+                }
+                a{
+                    color: $default-color;
+                }
+                &.active{
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}
+
+/* MEDIA QUERY */
+
+@media(max-width: 1500px){
+    .col-10{
+        flex: 0 0 100%;
+    max-width: 100%;
+    }
+    #atp_contenido_centro #atp_descubrir .atp_opcion_descubrir {
+        min-height: 20vw;
+    }
+}
+
 .pointer{
     cursor: pointer;
 }

@@ -10,6 +10,7 @@ var concat = require('gulp-concat');
 // Watch files for changes
 function watchFiles() {
     gulp.watch('assets/scss/*.scss', sass);
+    gulp.watch('assets/js/*.js', scripts);
     gulp.watch('public/js/*.js').on('change', browserSync.reload); // Triggers a full reload on the brower
     gulp.watch('public/**/*.html').on('change', browserSync.reload); // Triggers a full reload on the brower
 }
@@ -28,7 +29,8 @@ function scripts() {
         'node_modules/jquery/dist/jquery.js',
         'node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js',
         'node_modules/@ckeditor/ckeditor5-build-classic/build/translations/es.js',
-        'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
+        'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
+        'assets/js/app.js'
     ])
     .pipe(concat('app.js'))
     .pipe(gulp.dest('public/js/'))
