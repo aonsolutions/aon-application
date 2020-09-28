@@ -8,6 +8,7 @@ import static com.code.aon.customer.IEdiSupport.FINANCIERA;
 import static com.code.aon.customer.IEdiSupport.MEDIDA;
 import static com.code.aon.customer.IEdiSupport.PEDIDOS;
 import static com.code.aon.customer.IEdiSupport.PTO_ENTREGA;
+import static com.code.aon.customer.IEdiSupport.DEPARTMENT;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -181,6 +182,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 		ConnectDeliveryWriterOccam writer = new ConnectDeliveryWriterOccam(domainName, domainId, login);
 		Map<String, String> ediCodes = obtainEdiCodes(delivery.getCustomer(), delivery.getAddress());
 		try {			
+			String department = ediCodes.get(IEdiSupport.DEPARTMENT);
 			String customerEdiCode = ediCodes.get(IEdiSupport.ALBARANES);
 			String deliveryPointEdiCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
 			String customerPackage = obtainPackingTag(
@@ -205,7 +207,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 			
 			// write file
 			output = writer.createFile(delivery, new String(attachData), companyEdiCode,
-					customerEdiCode, deliveryPointEdiCode, customerPackage);
+					customerEdiCode, deliveryPointEdiCode, customerPackage, department);
 			return output;
 		} catch (IOException e) {
 			throw new AonException(e.getMessage(), e);
@@ -225,6 +227,7 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 			values.put(FINANCIERA, m.groupCount()>4 ? m.group(5) : null);
 			values.put(ALBARANES, m.groupCount()>5 ? m.group(6) : null);
 			values.put(MEDIDA, m.groupCount()>6 ? m.group(7) : null);
+			values.put(DEPARTMENT, m.groupCount()>7 ? m.group(8) : null);
 		}
 		return values;
 	}

@@ -30,15 +30,18 @@
 				
 			<aon:outputLabel for="Delivery_numberPlate"
 				value="#{bundle.tas_publicCode}" />
-			<aon:outputText value="#{delivery.carrierPacking.numberPlate}" />
+			<aon:outputText rendered="#{delivery.hasCarrierPacking}" value="#{delivery.carrierPacking.numberPlate}" />
+			<aon:inputText rendered="#{!delivery.hasCarrierPacking}" id="Delivery_numberPlate" value="#{delivery.to.numberPlate}" />
 							
 			<aon:outputLabel for="Delivery_driver"
 				value="#{bundle.warehouse_delivery_shipment_driver}" />
-			<aon:outputText value="#{delivery.carrierPacking.driverName}" />
+			<aon:outputText rendered="#{delivery.hasCarrierPacking}" value="#{delivery.carrierPacking.driverName}" />
+			<aon:inputText rendered="#{!delivery.hasCarrierPacking}" id="Delivery_driver" value="#{delivery.to.driver}" />
 			
 			<aon:outputLabel for="Delivery_driverDocument"
 				value="#{bundle.aon_document}" />
-			<aon:outputText value="#{delivery.carrierPacking.driverDocument}" />
+			<aon:outputText rendered="#{delivery.hasCarrierPacking}" value="#{delivery.carrierPacking.driverDocument}" />
+			<aon:inputText rendered="#{!delivery.hasCarrierPacking}" id="Delivery_driverDocument" value="#{delivery.to.driverDocument}" />
 			
 			<aon:outputText value="&#160;" />
 			<aon:outputText value="&#160;" />

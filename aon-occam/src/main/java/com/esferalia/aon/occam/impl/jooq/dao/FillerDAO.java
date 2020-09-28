@@ -567,7 +567,8 @@ public class FillerDAO {
 	public static class RDeliveryFiller extends DeliveryFiller{
 		@Override
 		public Delivery apply(Record r) {
-			return super.apply(r).setCustomerName(r.getValue(REGISTRY.NAME));
+			return super.apply(r).setCustomerName(r.getValue(REGISTRY.NAME))
+					.setCustomerDocument(r.getValue(REGISTRY.DOCUMENT));
 		}
 	}
 	

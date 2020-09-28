@@ -22,6 +22,11 @@
 				<rich:column colspan="2">
 					<aon:outputText value="#{bundle.aon_measurement_unit}" />
 				</rich:column>
+				<aon:if test="#{customerEdiSupport.eci}">
+					<rich:column colspan="1">
+						<aon:outputText value="OTROS DATOS" />
+					</rich:column>
+				</aon:if>
 			</rich:columnGroup>
 		</f:facet>
 		
@@ -103,6 +108,16 @@
 				<f:selectItems value="#{customerEdiSupport.packingTypeTags}" />
 			</aon:selectOneMenu>
 		</aon:column>
+
+		<aon:if test="#{customerEdiSupport.eci}">
+			<aon:column styleClass="aon-editDataTable-textColumn" >
+				<f:facet name="header">
+					<aon:outputText value="Departamento" />
+				</f:facet>
+				<aon:inputText size="13" maxlength="20"
+					value="#{customerEdiSupport.addressCodes[address.id][8]}" />
+			</aon:column>
+		</aon:if>
 		
 	</aon:dataTable>
 	
