@@ -1,324 +1,323 @@
 <!doctype html>
 <html lang="es">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="AYUDA T">
-        <meta name="generator" content="">
-        <title>aon Suite</title>
-
-        <!-- Bootstrap core CSS -->
-        <link href="../css/app.css" rel="stylesheet">
+        <!-- Styles -->
+        <link href="../css/app.css" rel="stylesheet" id="linkcss">
     </head>
     <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">aon Suite</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
+        <!-- start cabecera -->
+        <div class="container-fluid" id="atp_cabecera"></div>
+        <!-- end cabecera -->
         
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>
-            </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-            </div>
-        </nav>
+        <!-- start cuerpo -->
+        <div class="container-fluid atp_cuerpo">
+            <div class="row">
+                <!-- start menu izquierda -->
+                <div class="col atp_abierto" id="atp_menu_izquierda"></div>
+                <!-- end menu izquierda -->
 
-        <div class="container mb-5">
-            <div class="row mt-4">
-                <div class="col-12">
-                    <a class="text-decoration-none btn btn-primary" href="create.html">
-                        <span class="d-flex align-items-center">
-                            <i class="material-icons">add_comment</i>
-                            <span class="pl-1 pb-1">crear</span>
-                        </span>
-                    </a>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#Ticket</th>
-                                <th scope="col">Última modificación</th>
-                                <th scope="col">Título</th>
-                                <th scope="col">De</th>
-                                <th scope="col">Prioridad</th>
-                                <th scope="col">Asigando</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                        <tfoot></tfoot>
-                    </table>
-                </div>
+                <!-- start contenido centro -->
+                <div class="col" id="atp_contenido_centro">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <!-- INICIO VISTA -->
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <a class="text-decoration-none btn btn-primary" href="create.html">
+                                            <span class="d-flex align-items-center">
+                                                <i class="material-icons">add_comment</i>
+                                                <span class="pl-1 pb-1">crear</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#Ticket</th>
+                                                    <th scope="col">Última modificación</th>
+                                                    <th scope="col">Título</th>
+                                                    <th scope="col">De</th>
+                                                    <th scope="col">Prioridad</th>
+                                                    <th scope="col">Asigando</th>
+                                                    <th scope="col"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            <tfoot></tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end contenido centro -->
+                <!-- start menu derecha -->
+                <div class="col atp_abierto" id="atp_menu_derecha"></div>
+                <!-- end menu derecha -->
             </div>
         </div>
-
+        
         <!-- Scripts -->
         <script src="../js/app.js"></script>
         <script>
-            $(document).ready(function(){
-                // Cogemos el listado de datos para mostrar
-                var list = getList();
+            //
+            // Cargamos los menus y head
+            //
+                // Copiamos lo que tengamos el HEAD, ya que funciones como CKEDITOR mete codigo css en el 
+                var html_head = $('head').html();
+                $('head').load('../template/head.html', function(){
+                    // Agregamos el head que tenía la que hemos puesto
+                    $('head').append(html_head);
+                });
+                // Cargamos la cabecera de la pagina
+                $('#atp_cabecera').load('../template/cabecera.html');
+                // Cargamos el menu de la derecha
+                $('#atp_menu_izquierda').load('../template/menu_left.html');
+                // Cargamos el menu de la izquierda
+                $('#atp_menu_derecha').load('../template/menu_right.html');
 
-                createTable(list);
+            //
+            // Cargamos las funciones
+            //
+                $(document).ready(function(){
+                    // Cogemos el listado de datos para mostrar
+                    var list = getList();
 
-                //
-                // Creamos la tabla con los datos a listar
-                //
-                function createTable(data){
-                    // recorremos los datos a mostrar
-                    var tbody  = '';
-                    var a_href = 'show.html';
-                    $.each(data.list, function(i, item) {
-                        // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
-                        tbody+= item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
-                            // Recorremos los <td>    
-                            $.each(item, function(key, val) {
-                                switch (key) {
-                                    case 'subject':
-                                        tbody+= 
-                                        '<td>'+
-                                            '<a class="text-dark text-decoration-none" href="'+a_href+'?ticket='+item.id+'">'+
-                                                '<div class="row">'+
-                                                    '<div class="col-md-8">'+
-                                                        val+
-                                                    '</div>'+
-                                                    '<div class="col-md-4 text-right">'+
-                                                        '<small class="form-inline">'+
-                                                            '<i class="material-icons">comment</i> '+
-                                                            '<span class="pl-1">'+item.comments_quantity+'</span>'+
-                                                        '</small>'+
-                                                    '</div>'+
-                                                '</div>'+
-                                            '</a>'+
-                                        '</td>';
-                                        break;
-                                    case 'comments_quantity':
-                                        // No metemos nada por que este valor lo metemos en el subject
-                                        break;
-                                    case 'answer':
-                                        // No metemos el valor si tiene que responder o no
-                                        break;
-                                            
-                                    default:
-                                        tbody+= 
+                    createTable(list);
+
+                    //
+                    // Creamos la tabla con los datos a listar
+                    //
+                    function createTable(data){
+                        // recorremos los datos a mostrar
+                        var tbody  = '';
+                        var a_href = 'show.html';
+                        $.each(data.list, function(i, item) {
+                            // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
+                            tbody+= item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
+                                // Recorremos los <td>    
+                                $.each(item, function(key, val) {
+                                    switch (key) {
+                                        case 'subject':
+                                            tbody+= 
                                             '<td>'+
                                                 '<a class="text-dark text-decoration-none" href="'+a_href+'?ticket='+item.id+'">'+
-                                                    val+
+                                                    '<div class="row">'+
+                                                        '<div class="col-md-8">'+
+                                                            val+
+                                                        '</div>'+
+                                                        '<div class="col-md-4 text-right">'+
+                                                            '<small class="form-inline">'+
+                                                                '<i class="material-icons">comment</i> '+
+                                                                '<span class="pl-1">'+item.comments_quantity+'</span>'+
+                                                            '</small>'+
+                                                        '</div>'+
+                                                    '</div>'+
                                                 '</a>'+
                                             '</td>';
-                                        break;
-                                }
-                            });
-                        // Agregamos opciones que tenga
-                        tbody+= 
-                            '<td>'+
-                                '<a class="text-dark text-decoration-none">'+
-                                    '<i id="ticket-eliminar" class="material-icons pointer text-danger" title="Eliminar ticket"'+
-                                        ' data-uid="'+data.user_id+'" '+
-                                        ' data-page="'+data.page+'" '+
-                                        ' data-id="'+item.id+'" '+
-                                        ' >delete_forever</i>'+
-                                    '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Editar prioridad"'+
-                                        ' data-uid="'+data.user_id+'" '+
-                                        ' data-id="'+item.id+'" '+
-                                        ' data-priority="'+item.priority+'" '+
-                                        '>low_priority</i>'+
-                                '</a>'+
-                            '</td>';
-                        // Cerramos el <tr>
-                        tbody+= '</tr>';
+                                            break;
+                                        case 'comments_quantity':
+                                            // No metemos nada por que este valor lo metemos en el subject
+                                            break;
+                                        case 'answer':
+                                            // No metemos el valor si tiene que responder o no
+                                            break;
+                                                
+                                        default:
+                                            tbody+= 
+                                                '<td>'+
+                                                    '<a class="text-dark text-decoration-none" href="'+a_href+'?ticket='+item.id+'">'+
+                                                        val+
+                                                    '</a>'+
+                                                '</td>';
+                                            break;
+                                    }
+                                });
+                            // Agregamos opciones que tenga
+                            tbody+= 
+                                '<td>'+
+                                    '<a class="text-dark text-decoration-none">'+
+                                        '<i id="ticket-eliminar" class="material-icons pointer text-danger" title="Eliminar ticket"'+
+                                            ' data-uid="'+data.user_id+'" '+
+                                            ' data-page="'+data.page+'" '+
+                                            ' data-id="'+item.id+'" '+
+                                            ' >delete_forever</i>'+
+                                        '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Editar prioridad"'+
+                                            ' data-uid="'+data.user_id+'" '+
+                                            ' data-id="'+item.id+'" '+
+                                            ' data-priority="'+item.priority+'" '+
+                                            '>low_priority</i>'+
+                                    '</a>'+
+                                '</td>';
+                            // Cerramos el <tr>
+                            tbody+= '</tr>';
+                        });
+
+                        // Agregamos el cuerpo de la tabla
+                        $('.table tbody').html(tbody);
+                        
+                        // Cogemos el paginado que tendía la tabla
+                        var pagination = createPaginate(data.user_id, data.page, data.total_page)
+
+                        // Agregamos el paginado en el footer de la tabla
+                        var tfoot = 
+                        '<tr>'+
+                            '<td colspan="7">'+
+                                '<div class="row">'+
+                                    '<div class="col-md-6">'+
+                                        'Mostrando del '+data.shown_page+' de un total de '+data.total_date+' elementos'+
+                                    '</div>'+
+                                    '<div class="col-md-6">'+
+                                        pagination+
+                                    '</div>'+
+                                '</div>'+
+                            '</td>'
+                        '</tr>';
+                        
+                        // Agregamos el cuerpo de la tabla
+                        $('.table tfoot').html(tfoot);
+                        
+                        // console.log(tbody);
+                    }
+
+                    //
+                    // Eliminar ticket
+                    //
+                    $(document).on('click', '#ticket-eliminar', function() {
+                        var user_id   = $(this).data('uid');
+                        var ticket_id = $(this).data('id');
+
+                        var opcion = confirm("Eliminar el #Ticket "+ticket_id);
+                        if (opcion == true) {
+                            var list = getList($(this).data('page'));
+                            createTable(list);
+                            alert('Eliminado el #Ticket '+ticket_id+' correctamente');
+                            // Json que mandamos
+                            var ticket_delete ={
+                                method   : 'ticket_delete',
+                                id       : ticket_id,
+                                uid      : user_id,
+                            };
+                            console.log('Eliminar ticket Json que mandamos:');
+                            console.log(ticket_delete);
+                        }
+
                     });
 
-                    // Agregamos el cuerpo de la tabla
-                    $('.table tbody').html(tbody);
+                    //
+                    // Abrir el editar prioridad ticket
+                    //
+                    $(document).on('click', '#ticket-prioridad', function() {
+                        // Cogemos los valores
+                        var user_id         = $(this).data('uid');
+                        var ticket_id       = $(this).data('id');
+                        var ticket_priority = $(this).data('priority');
+                        // Ponemos el titulo del modal
+                        $('#modal-header-ticket').html('Editar el estado del #Ticket '+ticket_id);
+                        // Metemos el UID del que vamos a editar
+                        $('#ticket-uid').val(user_id);
+                        // Metemos el ID del que vamos a editar
+                        $('#ticket-id').val(ticket_id);
+                        // Seleccionamos el valor que se tiene marcado
+                        $('#ticket-select-priority').val(ticket_priority);
+                        // Mostramos el modal
+                        $("#ticket-edit").modal();
+                        
+                    });
                     
-                    // Cogemos el paginado que tendía la tabla
-                    var pagination = createPaginate(data.user_id, data.page, data.total_page)
-
-                    // Agregamos el paginado en el footer de la tabla
-                    var tfoot = 
-                    '<tr>'+
-                        '<td colspan="7">'+
-                            '<div class="row">'+
-                                '<div class="col-md-6">'+
-                                    'Mostrando del '+data.shown_page+' de un total de '+data.total_date+' elementos'+
-                                '</div>'+
-                                '<div class="col-md-6">'+
-                                    pagination+
-                                '</div>'+
-                            '</div>'+
-                        '</td>'
-                    '</tr>';
-                    
-                    // Agregamos el cuerpo de la tabla
-                    $('.table tfoot').html(tfoot);
-                    
-                    // console.log(tbody);
-                }
-
-                //
-                // Eliminar ticket
-                //
-                $(document).on('click', '#ticket-eliminar', function() {
-                    var user_id   = $(this).data('uid');
-                    var ticket_id = $(this).data('id');
-
-                    var opcion = confirm("Eliminar el #Ticket "+ticket_id);
-                    if (opcion == true) {
-                        var list = getList($(this).data('page'));
-                        createTable(list);
-                        alert('Eliminado el #Ticket '+ticket_id+' correctamente');
+                    //
+                    // Editar prioridad ticket
+                    //
+                    $(document).on('click', '#ticket-prioridad-actualizar', function() {
+                        var user_id         = $('#ticket-uid').val();
+                        var ticket_id       = $('#ticket-id').val();
+                        var ticket_priority = $('#ticket-select-priority').val();
+                        $("#ticket-edit").modal('hide')
+                        alert('Actualizado el estado del #Ticket '+ticket_id+' correctamente a la prioridad '+ticket_priority);
                         // Json que mandamos
-                        var ticket_delete ={
-                            method   : 'ticket_delete',
+                        var ticket_edit_priority ={
+                            method   : 'ticket_edit_priority',
                             id       : ticket_id,
                             uid      : user_id,
+                            priority : ticket_priority,
                         };
-                        console.log('Eliminar ticket Json que mandamos:');
-                        console.log(ticket_delete);
-                    }
+                        console.log('Editar prioridad Json que mandamos:');
+                        console.log(ticket_edit_priority);
+                    });
 
-                });
+                    // 
+                    // Crear el paginado
+                    //
+                    function createPaginate(uid, page, page_total){
+                        var paginate = '<ul class="pagination display-block float-right">';
+                        // Agregamos el usuario que estamos paginando
+                        paginate+= '<input id="paginate-uid" type="hidden" value="'+uid+'">';
 
-                //
-                // Abrir el editar prioridad ticket
-                //
-                $(document).on('click', '#ticket-prioridad', function() {
-                    // Cogemos los valores
-                    var user_id         = $(this).data('uid');
-                    var ticket_id       = $(this).data('id');
-                    var ticket_priority = $(this).data('priority');
-                    // Ponemos el titulo del modal
-                    $('#modal-header-ticket').html('Editar el estado del #Ticket '+ticket_id);
-                    // Metemos el UID del que vamos a editar
-                    $('#ticket-uid').val(user_id);
-                    // Metemos el ID del que vamos a editar
-                    $('#ticket-id').val(ticket_id);
-                    // Seleccionamos el valor que se tiene marcado
-                    $('#ticket-select-priority').val(ticket_priority);
-                    // Mostramos el modal
-                    $("#ticket-edit").modal();
-                    
-                });
-                
-                //
-                // Editar prioridad ticket
-                //
-                $(document).on('click', '#ticket-prioridad-actualizar', function() {
-                    var user_id         = $('#ticket-uid').val();
-                    var ticket_id       = $('#ticket-id').val();
-                    var ticket_priority = $('#ticket-select-priority').val();
-                    $("#ticket-edit").modal('hide')
-                    alert('Actualizado el estado del #Ticket '+ticket_id+' correctamente a la prioridad '+ticket_priority);
-                    // Json que mandamos
-                    var ticket_edit_priority ={
-                        method   : 'ticket_edit_priority',
-                        id       : ticket_id,
-                        uid      : user_id,
-                        priority : ticket_priority,
-                    };
-                    console.log('Editar prioridad Json que mandamos:');
-                    console.log(ticket_edit_priority);
-                });
+                        // Si tenemos paginas
+                        if (page > 1){ 
+                            paginate+= 
+                                '<li class="pointer">'+
+                                    '<a class="go_page" data-page="1">'+
+                                        '<i class="material-icons" title="Principio">fast_rewind</i>'+
+                                    '</a>'+
+                                '</li>'+
+            
+                                '<li class="pointer">'+
+                                    '<a class="go_page" data-page="'+(page-1)+'">'+
+                                        '<i class="material-icons" title="Volver">arrow_left</i>'+
+                                    '</a>'+
+                                '</li>';
+                        }
 
-                // 
-                // Crear el paginado
-                //
-                function createPaginate(uid, page, page_total){
-                    var paginate = '<ul class="pagination display-block float-right">';
-                    // Agregamos el usuario que estamos paginando
-                    paginate+= '<input id="paginate-uid" type="hidden" value="'+uid+'">';
+                        if(page_total > 0){
+                            paginate+= '<li class="ml-2 mr-2">'+page+'/'+page_total+'</li>';
+                        }
 
-                    // Si tenemos paginas
-                    if (page > 1){ 
-                        paginate+= 
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="1">'+
-                                    '<i class="material-icons" title="Principio">fast_rewind</i>'+
-                                '</a>'+
-                            '</li>'+
+                        if (page < page_total) {
+                            paginate+= 
+                                '<li class="pointer">'+
+                                    '<a class="go_page" data-page="'+(page+1)+'">'+
+                                        '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
+                                    '</a>'+
+                                '</li>'+
         
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+(page-1)+'">'+
-                                    '<i class="material-icons" title="Volver">arrow_left</i>'+
-                                '</a>'+
-                            '</li>';
+                                '<li class="pointer">'+
+                                    '<a class="go_page" data-page="'+page_total+'">'+
+                                        '<i class="material-icons" title="Final">fast_forward</i>'+
+                                    '</a>'+
+                                '</li>';
+                        }
+                        paginate+= '</ul>';
+
+                        return paginate;
                     }
 
-                    if(page_total > 0){
-                        paginate+= '<li class="ml-2 mr-2">'+page+'/'+page_total+'</li>';
-                    }
+                    //
+                    // Pasar de pagina
+                    //
+                    $(document).on('click', '.go_page', function() {
+                        var user_id = $('#paginate-uid').val();
+                        var page    = $(this).data('page');
+                        var list    = getList(user_id, page);
+                        createTable(list);
+                        // Json que mandamos
+                        var ticket_page ={
+                                method  : 'ticket_page',
+                                uid     : user_id,
+                                id      : page,
+                            };
+                        console.log('Pasar paginas de ticket Json que mandamos:');
+                        console.log(ticket_page);
+                    });
 
-                    if (page < page_total) {
-                        paginate+= 
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+(page+1)+'">'+
-                                    '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
-                                '</a>'+
-                            '</li>'+
-    
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+page_total+'">'+
-                                    '<i class="material-icons" title="Final">fast_forward</i>'+
-                                '</a>'+
-                            '</li>';
-                    }
-                    paginate+= '</ul>';
-
-                    return paginate;
-                }
-
-                //
-                // Pasar de pagina
-                //
-                $(document).on('click', '.go_page', function() {
-                    var user_id = $('#paginate-uid').val();
-                    var page    = $(this).data('page');
-                    var list    = getList(user_id, page);
-                    createTable(list);
-                    // Json que mandamos
-                    var ticket_page ={
-                            method  : 'ticket_page',
-                            uid     : user_id,
-                            id      : page,
-                        };
-                    console.log('Pasar paginas de ticket Json que mandamos:');
-                    console.log(ticket_page);
-                });
-
-                //
-                // Listado para probar
-                //
-                function getList(uid = 'a5sa645-sa14', page_this = 1){
+                    //
+                    // Listado para probar
+                    //
+                    function getList(uid = 'a5sa645-sa14', page_this = 1){
                     // nombre
                     var name_a = ['','Manolo','Ambrosio','Abelardo','Fulgensio','Alejandro','Jesús','Julio','David','Alberto','Juan'];
                     var name_b = ['','Carmen','Angela','Manuela','Margarita','Maribel','Desi','Inma','Jessica','Estefanía','Nieves'];
@@ -359,10 +358,12 @@
                     // Devolver los datos
                     return date;
                 }
-            });
+                });
         </script>
+        <!-- FIN Scripts -->
     </body>
 
+    <!-- Modales -->
     <div class="modal fade" id="ticket-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -392,5 +393,5 @@
             </div>
         </div>
     </div>
-
+    <!-- FIN Modales -->
 </html>
