@@ -2,163 +2,177 @@
 <html lang="es">
     <head>
         <!-- Styles -->
-    <link href="../css/app.css" rel="stylesheet" id="linkcss">
+        <link href="../css/app.css" rel="stylesheet" id="linkcss">
     </head>
     <body>
-        <div class="container-fluid" id="atp_cabecera">
-    
-        </div><!-- end cabecera -->
+        <!-- start cabecera -->
+        <div class="container-fluid" id="atp_cabecera"></div>
+        <!-- end cabecera -->
         
+        <!-- start cuerpo -->
         <div class="container-fluid atp_cuerpo">
             <div class="row">
                 <!-- start menu izquierda -->
-                <div class="col atp_abierto" id="atp_menu_izquierda">
+                <div class="col atp_abierto" id="atp_menu_izquierda"></div>
+                <!-- end menu izquierda -->
 
-                </div><!-- end menu izquierda -->
-
+                <!-- start contenido centro -->
                 <div class="col" id="atp_contenido_centro">
                     <div class="container-fluid">
                         <div class="row justify-content-center">
                             <!-- INICIO VISTA -->
-                            
-                            <div class="row mt-4">
-                                <div class="col-10 offset-1 border pb-2">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h3>Ticket #<span id="ticket-id"></span></h3>
-                                        </div>
-                                        <div class="col-12">
-                                            <p id="ticket-subject"></p>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <table cellspacing="0" cellpadding="0" width="100%" border="0">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td width="50%">
-                                                                    <table border="0" cellspacing="" cellpadding="4" width="100%">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <th width="100">Estado:</th>
-                                                                                <td id="ticket-status"></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Prioridad:</th>
-                                                                                <td id="ticket-priority"></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Departamento:</th>
-                                                                                <td id="ticket-department"></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Creado en:</th>
-                                                                                <td id="ticket-created_at"></td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </td>
-                                                                <td width="50%" style="vertical-align:top">
-                                                                    <table border="0" cellspacing="" cellpadding="4" width="100%">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <th width="100">Usuario:</th>
-                                                                                <td><span id="ticket-user_name"></span></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Email:</th>
-                                                                                <td><span id="ticket-user_email"></span></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Organización:</th>
-                                                                                <td id="ticket-organization"></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Fuente:</th>
-                                                                                <td id="ticket-font"></td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                            <div class="col-12 pt-4 border pb-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Ticket #<span id="ticket-id"></span></h3>
+                                    </div>
+                                    <div class="col-12">
+                                        <p id="ticket-subject"></p>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td width="50%">
+                                                                <table border="0" cellspacing="" cellpadding="4" width="100%">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th width="100">Estado:</th>
+                                                                            <td id="ticket-status"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Prioridad:</th>
+                                                                            <td id="ticket-priority"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Departamento:</th>
+                                                                            <td id="ticket-department"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Creado en:</th>
+                                                                            <td id="ticket-created_at"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                            <td width="50%" style="vertical-align:top">
+                                                                <table border="0" cellspacing="" cellpadding="4" width="100%">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th width="100">Usuario:</th>
+                                                                            <td><span id="ticket-user_name"></span></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Email:</th>
+                                                                            <td><span id="ticket-user_email"></span></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Organización:</th>
+                                                                            <td id="ticket-organization"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Fuente:</th>
+                                                                            <td id="ticket-font"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-10 offset-1">
-                                            <hr/>
-                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <hr/>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-12 ticket-body">
-                                            <ul class="ticket" id="ticket-messages">
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 ticket-body">
+                                        <ul class="ticket" id="ticket-messages">
 
-                                            </ul>
-                                        </div>
+                                        </ul>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h3>Responder</h3>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <div id="editor"></div>
-                                        </div>
-                                        <div class="col-12 mt-3">
-                                            <div class="row">
-                                                <div class="col-2">
-                                                    <span>Cambiar estado:</span>
-                                                </div>
-                                                <div class="col-3">
-                                                    <select class="form-control form-control-sm" id="select-status">
-                                                        <option value="1">Abierto</option>
-                                                        <option value="2">Resuelto</option>
-                                                        <option value="0">Cerrado</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-7">
-                                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
-                                                </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Responder</h3>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <div id="editor"></div>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <span>Cambiar estado:</span>
+                                            </div>
+                                            <div class="col-3">
+                                                <select class="form-control form-control-sm" id="select-status">
+                                                    <option value="1">Abierto</option>
+                                                    <option value="2">Resuelto</option>
+                                                    <option value="0">Cerrado</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-7">
+                                                <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
                             <!-- FIN VISTA -->
                         </div>
                     </div>
-                </div>
-
-                <div class="col atp_abierto" id="atp_menu_derecha">
-
-                </div>
+                </div><!-- end contenido centro -->
+                <!-- start menu derecha -->
+                <div class="col atp_abierto" id="atp_menu_derecha"></div>
+                <!-- end menu derecha -->
             </div>
         </div>
-
-      <!-- start cuerpo -->
-
+        
         <!-- Scripts -->
         <script src="../js/app.js"></script>
         <script>
-            var link = $('#linkcss').attr('href');
+            //
             // Cargamos los menus y head
-            $('head').load('../template/head.html', function(){
-                var link_css = "<link href='"+link+"' rel='stylesheet' id='linkcss'>";
-                $('head').append(link_css);
-            });
-            
-            
-            $('#atp_cabecera').load('../template/cabecera.html');
-            $('#atp_menu_izquierda').load('../template/menu_left.html');
-            $('#atp_menu_derecha').load('../template/menu_right.html');
-            
-            
-            
+            //
+                // Copiamos lo que tengamos el HEAD, ya que funciones como CKEDITOR mete codigo css en el 
+                var html_head = $('head').html();
+                $('head').load('../template/head.html', function(){
+                    // Agregamos el head que tenía la que hemos puesto
+                    $('head').append(html_head);
+                });
+                // Cargamos la cabecera de la pagina
+                $('#atp_cabecera').load('../template/cabecera.html');
+                // Cargamos el menu de la derecha
+                $('#atp_menu_izquierda').load('../template/menu_left.html');
+                // Cargamos el menu de la izquierda
+                $('#atp_menu_derecha').load('../template/menu_right.html');
+
+            //
+            // Cargamos el CKEditor
+            //
+                let theEditor;
+                // Inicializamos CKEditor
+                ClassicEditor.create( document.querySelector('#editor'),{
+                    language: 'es'
+                })
+                .then(editor => {
+                    theEditor = editor;
+                    $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 200px !important;}</style>').insertAfter('#editor');
+                })
+                .catch( error => {
+                    console.error( error );
+                } );
+
+            //
             // Array de estados del ticket
-            var status_array = ['Cerrado', 'Abierto', 'Resuelto'];
+            //
+                var status_array = ['Cerrado', 'Abierto', 'Resuelto'];
                 
             $(document).ready(function(){
                 // Datos del ticket en JSON
