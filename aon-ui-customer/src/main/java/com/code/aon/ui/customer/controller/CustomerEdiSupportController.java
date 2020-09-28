@@ -21,6 +21,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
 import com.esferalia.aon.entity.IEntityAlias;
@@ -31,6 +32,15 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 
 	private boolean seresAutoCommitDelivery;
 	private boolean seresInvoicingMainAddress;
+	private Boolean eci;
+	
+	public boolean isEci(){
+		return eci;
+	}
+	
+	public void setEci(boolean eci) {
+		this.eci = eci;
+	}
 	
 	public boolean isSeresAutoCommitDelivery() {
 		return seresAutoCommitDelivery;
@@ -61,6 +71,7 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 	}
 
 	public void onRecover(Customer customer) throws ManagerBeanException {
+		setEci(isECI(customer.getRegistry()));
 		init(customer);
 		
 		RegistryNote autoCommit = this.getRegistryNote(SERES_AUTO_COMMIT_DELIVERY, customer.getId());
@@ -71,6 +82,7 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 	}
 
 	private void clear(Customer customer) {
+		setEci(isECI(customer.getRegistry()));
 		getAddresses(customer).forEach(
 				address -> {
 					getAddressCodes().put(
@@ -173,6 +185,10 @@ public class CustomerEdiSupportController extends CustomerEdiSupport implements 
 		} else if (note.getId() != null) {
 			bean.remove(note);
 		}
+	}
+	
+	private Boolean isECI(Registry registry) {
+		return "A28017895".equalsIgnoreCase(registry.getDocument());
 	}
 
 

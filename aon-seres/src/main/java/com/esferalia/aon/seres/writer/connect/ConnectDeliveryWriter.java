@@ -55,9 +55,9 @@ public class ConnectDeliveryWriter {
 	
 	public FileOutput createFile(Delivery delivery, String packageData, String companyEdiCode,
 			String customerEdiCode, String deliveryPointEdiCode,
-			String customerPackage) throws FileNotFoundException, UnsupportedEncodingException {
+			String customerPackage, String department) throws FileNotFoundException, UnsupportedEncodingException {
 		RECTL rectl = createRECTLRecord(delivery, packageData, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode, customerPackage);
+				customerEdiCode, deliveryPointEdiCode, customerPackage, department);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(outputStream);
 		FileFiller filler = new ConnectDelivery(rectl, writer);
@@ -68,7 +68,7 @@ public class ConnectDeliveryWriter {
 	}
 
 	private RECTL createRECTLRecord(Delivery delivery, String packageData, String companyEdiCode,
-			String customerEdiCode, String deliveryPointEdiCode, String customerPackage) {
+			String customerEdiCode, String deliveryPointEdiCode, String customerPackage, String department) {
 		RECTL rectl = new RECTL();
 		rectl.setTipoDeMensaje(RECTL.RECTL_2.AVISO_DE_EXPEDICION_DESADV.getValue());
 		rectl.setCodigoEmisor(companyEdiCode);
@@ -79,7 +79,7 @@ public class ConnectDeliveryWriter {
 		rectl.seh1c = createSEH1CRecord(delivery, companyEdiCode,
 				customerEdiCode, deliveryPointEdiCode);
 		rectl.seh1dList = createSEH1DList(delivery, companyEdiCode,
-				customerEdiCode, deliveryPointEdiCode);
+				customerEdiCode, deliveryPointEdiCode, department);
 		rectl.seh1pList = createSEH1PList(delivery, packageData, companyEdiCode,
 				customerEdiCode, customerPackage);
 //		rectl.seh1lList = createSEH1LList(delivery, companyEdiCode,
@@ -148,29 +148,29 @@ public class ConnectDeliveryWriter {
 
 	private List<SEH1D> createSEH1DList(Delivery delivery,
 			String companyEdiCode, String customerEdiCode,
-			String deliveryPointEdiCode) {
+			String deliveryPointEdiCode, String department) {
 		List<SEH1D> list = new ArrayList<>();
 
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EMISOR_DEL_MENSAJE_MS,
-				companyEdiCode, delivery.getWorkPlace().getEnterprise()));
+				companyEdiCode, delivery.getWorkPlace().getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.RECEPTOR_DEL_MENSAJE_MR,
-				customerEdiCode, delivery.getCustomer()));
+				customerEdiCode, delivery.getCustomer(), department));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.PROVEEDOR__SU,
 		// null, null));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESDE_DONDE_SE_ENVIAN_LAS_MERCANCIAS_PW,
-				companyEdiCode, delivery.getWorkPlace().getEnterprise()));
+				companyEdiCode, delivery.getWorkPlace().getEnterprise(), department));
 		list.add(createSEH1DRecord(
 				SEH1D.SEH1D_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
-				deliveryPointEdiCode, delivery.getCustomer()));
+				deliveryPointEdiCode, delivery.getCustomer(), department));
 		// list.add(createSEH1DRecord(SEH1D.SEH1D_2.DESTINATARIO_FINAL_UC,
 		// null, null));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.COMPRADOR_BY, customerEdiCode,
-				delivery.getCustomer()));
+				delivery.getCustomer(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.EXPEDIDOR_SH, companyEdiCode,
-				delivery.getWorkPlace().getEnterprise()));
+				delivery.getWorkPlace().getEnterprise(), department));
 		list.add(createSEH1DRecord(SEH1D.SEH1D_2.A_QUIEN_SE_FACTURA_IV,
-				customerEdiCode, delivery.getCustomer()));
+				customerEdiCode, delivery.getCustomer(), department));
 
 		return list;
 	}
@@ -346,7 +346,7 @@ public class ConnectDeliveryWriter {
 	/**
 	 * Información de partes
 	 */
-	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, IRegistry registry) {
+	private SEH1D createSEH1DRecord(SEH1D.SEH1D_2 type, String ediCode, IRegistry registry, String department) {
 		SEH1D record = new SEH1D();
 		record.setCalificadorDelInterlocutor(type.getValue());
 		record.setCodigoInterlocutor(ediCode);
@@ -371,8 +371,8 @@ public class ConnectDeliveryWriter {
 		record.setCalificadorReferencia1(null);
 		record.setReferencia1(null);
 		record.setFuncionDeContacto(null);
-		record.setDepartamentoOIdentificacionDelEmpleado(null);
-		record.setDepartamentoOEmpleado(null);
+		record.setDepartamentoOIdentificacionDelEmpleado(department);
+		record.setDepartamentoOEmpleado(department);
 		record.setCalificadorReferencia2(null);
 		record.setReferencia2(null);
 		return record;

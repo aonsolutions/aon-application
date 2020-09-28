@@ -191,11 +191,22 @@ public class ConnectSaleInvoiceWriter {
 			sincc.setFechaDeVencimientoUnico(Integer.valueOf(SeresUtils.dateFormat()
 					.format(financeList.get(0).getDueDate())));
 		}
-		sincc.setImporteNetoTotalDeFactura_79_(CommonUtil.round(invoice.getTaxableBase(), 3));
-		sincc.setBaseImponible_125_(invoice.getTaxableBase());
-		sincc.setImporteBrutoTotalDeFactura_98_(CommonUtil.round(invoice.getTotal(), 3));
-		sincc.setImporteTotalDeImpuestos_Tasas_176_(CommonUtil.round(invoice.getVatQuota(), 3));
-		sincc.setImporteTotalAPagar_139_(invoice.getTotal());
+		if(isDia(invoice.getRegistry())) {
+			Double total = CommonUtil.round(invoice.getTotal(), 2);
+			Double quota = CommonUtil.round(invoice.getVatQuota(), 2);
+			Double taxablebase = total-quota;
+			sincc.setImporteNetoTotalDeFactura_79_(CommonUtil.round(taxablebase, 2));
+			sincc.setBaseImponible_125_(invoice.getTaxableBase());
+			sincc.setImporteBrutoTotalDeFactura_98_(total);
+			sincc.setImporteTotalDeImpuestos_Tasas_176_(quota);
+			sincc.setImporteTotalAPagar_139_(total);
+		} else {
+			sincc.setImporteNetoTotalDeFactura_79_(CommonUtil.round(invoice.getTaxableBase(), 3));
+			sincc.setBaseImponible_125_(invoice.getTaxableBase());
+			sincc.setImporteBrutoTotalDeFactura_98_(CommonUtil.round(invoice.getTotal(), 3));
+			sincc.setImporteTotalDeImpuestos_Tasas_176_(CommonUtil.round(invoice.getVatQuota(), 3));
+			sincc.setImporteTotalAPagar_139_(invoice.getTotal());
+		}
 		sincc.setSubvencionesVinculadasAlPrecio_80A_(null);
 		sincc.setTotalIncrementosDelImporteBruto_259_(null);
 		sincc.setTotalMinoracionesDelImporteBruto_260_(null);

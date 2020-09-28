@@ -122,11 +122,13 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	private UdapaDeliveryHandler udapaDeliveryHandler;
 	private boolean showEdiFtpWindow;
 	private RegistryAddressFilter addressesFilter;
-	
+
 	private FtpDeliveryUploadHandler ftpEdiUploader;
 	private DeliveryPackagesHandler packagesHandler;
 	
-    public DeliveryController() {
+	private boolean hasCarrierPacking;
+	
+	public DeliveryController() {
     	this.emailUtil = new WarehouseEmailUtil();
     	this.accountHelper = new BankAccountHelper(this);
     }
@@ -206,6 +208,15 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 	public void setShowInvoiceWindow(boolean value) {
 		this.showInvoiceWindow = value;
 	}
+	
+	public boolean isHasCarrierPacking() {
+		return hasCarrierPacking;
+	}
+
+	public void setHasCarrierPacking(boolean value) {
+		this.showInvoiceWindow = value;
+	}
+	
 	
 	public String getInvoiceSeries() {
 		return invoiceSeries;
@@ -288,6 +299,7 @@ public class DeliveryController extends HeaderObjectController implements IWareh
 
 	public CarrierPacking getCarrierPacking() {
 		Delivery delivery = (Delivery)this.getTo();
+		setHasCarrierPacking(delivery.getCarrierPacking() != null);
 		Domain domain = AON.getDomain(AonUtil.getDomainName(), delivery.getDomain(), "");
 		return AON.getCarrierPacking(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(delivery.getCarrierPacking()));	
 	}

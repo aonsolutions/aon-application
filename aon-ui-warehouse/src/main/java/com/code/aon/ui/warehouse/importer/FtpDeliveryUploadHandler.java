@@ -16,6 +16,7 @@ import com.code.aon.AonVersion;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
@@ -28,7 +29,9 @@ import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.seres.DeliveryPackages;
 import com.esferalia.aon.seres.ftp.FtpException;
 import com.esferalia.aon.seres.ftp.FtpLoginException;
@@ -234,17 +237,26 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			Map<String, String> ediCodes = ediSupport.getEdiCodes(
 					delivery.getCustomer().getRegistry(),
 					delivery.getRegistryAddress());
+			String department = ediCodes.get(IEdiSupport.DEPARTMENT);
 			String customerEdiCode = ediCodes.get(
 							IEdiSupport.ALBARANES);
 			String deliveryPointEdiCode = ediCodes.get(
 							IEdiSupport.PTO_ENTREGA);
-			String customerPackage = ediSupport.obtainPackingTag(
+			Tag pt = ediSupport.obtainPackingTag(
 					delivery.getCustomer().getRegistry(),
-					delivery.getRegistryAddress()).getName();
+					delivery.getRegistryAddress());
+			String customerPackage = pt != null ? pt.getName(): "";
 			CompanyController company = (CompanyController) AonUtil
 					.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
 			String companyEdiCode = company.getEdiCompanyCode();
 			
+			if(delivery.getCarrierPacking() != null) {
+				CarrierPacking cp = AON.getCarrierPacking(AonUtil.getDomainName(), delivery.getDomain(), "", f -> f.getIdProperty().eq(delivery.getCarrierPacking()));
+				delivery.setNumberPlate(cp.getNumberPlate());
+				delivery.setDriver(cp.getDriverName());
+				delivery.setDriverDocument(cp.getDriverDocument());
+				delivery.setTrackingNumber(cp.getCarrierReference());
+			}
 
 			byte[] attachData = DeliveryPackages.obtainPackageDataAttach(
 					AonUtil.getDomainName(), delivery.getDomain(),
@@ -266,7 +278,7 @@ public class FtpDeliveryUploadHandler implements Serializable {
 			// write file
 			ConnectDeliveryWriter writer = new ConnectDeliveryWriter();
 			output = writer.createFile(delivery, new String(attachData), companyEdiCode,
-					customerEdiCode, deliveryPointEdiCode, customerPackage);
+					customerEdiCode, deliveryPointEdiCode, customerPackage, department);
 			return output;
 		} catch (IOException e) {
         	AonUtil.addErrorMessage(e.getMessage());
