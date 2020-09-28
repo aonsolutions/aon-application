@@ -52,9 +52,11 @@
         <div class="container mb-5">
             <div class="row mt-4">
                 <div class="col-12">
-                    <a class="text-decoration-none" href="create.html">
-                        <i class="material-icons">add_comment</i>
-                        crear
+                    <a class="text-decoration-none btn btn-primary" href="create.html">
+                        <span class="d-flex align-items-center">
+                            <i class="material-icons">add_comment</i>
+                            <span class="pl-1 pb-1">crear</span>
+                        </span>
                     </a>
                 </div>
             </div>
@@ -145,7 +147,7 @@
                                         ' data-page="'+data.page+'" '+
                                         ' data-id="'+item.id+'" '+
                                         ' >delete_forever</i>'+
-                                    '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Eliminar ticket"'+
+                                    '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Editar prioridad"'+
                                         ' data-uid="'+data.user_id+'" '+
                                         ' data-id="'+item.id+'" '+
                                         ' data-priority="'+item.priority+'" '+
