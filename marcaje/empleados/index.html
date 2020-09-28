@@ -200,23 +200,8 @@
                                     <th>Marcaje</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>25/09/2020</td>
-                                    <td>08:01:02</td>
-                                    <td>Marcaje sin incidencia</td>
-                                    <td>Todo correcto</td>
-                                    <td>Entrada</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>25/09/2020</td>
-                                    <td>14:01:02</td>
-                                    <td>Marcaje sin incidencia</td>
-                                    <td>Todo correcto</td>
-                                    <td>Salida</td>
-                                </tr>
+                            <tbody id="tablaMarcajes">
+                                
                             </tbody>
                         </table>
                     </div>
@@ -236,28 +221,72 @@
     <script src="../../js/app.js"></script>
     <!-- <script src="../../js/marcajes.js"></script> -->
     <script>
+
+        var datosEmpleado = {
+            empleado: {
+                id: '1',                            // id
+                documento: '12345678A',             // dni
+                nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
+            }
+
+        };
+
+        var datosHistorial = {
+            historial: [
+                {
+                    id: '1',
+                    fecha: '25/09/2020',
+                    hora: '08:01:02',
+                    tipoMarcaje: 'Marcaje sin incidencia',
+                    nota: 'Todo correcto',
+                    marcaje: 'Entrada',
+                },
+                {
+                    id: '2',
+                    fecha: '25/09/2020',
+                    hora: '14:01:02',
+                    tipoMarcaje: 'Marcaje sin incidencia',
+                    nota: 'Todo correcto',
+                    marcaje: 'Salida',
+                },
+            ],
+        };
+
         jQuery(function () {
-            // vista empleados
-            var datosEmpleado = {
-                empleado: {
-                    id: '1',                            // id
-                    documento: '12345678A',             // dni
-                    nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
-                }
+            cargarEmpleado();
+            cargarHistorial();
+            mueveReloj();
+            getFecha();
+        });
 
-            };
+        function cargarHistorial() {
+            var historial = datosHistorial['historial'];
+            var hijo = "";
 
+            // var value;
+            for (i in historial) {
+                // value = Number.parseInt(i) + 1;
+                hijo = hijo + "<tr>";
+                hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['fecha'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['hora'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['tipoMarcaje'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['marcaje'] + "</td>";
+                hijo = hijo + "</tr>";
+            }
+
+            $("#tablaMarcajes").empty()
+            $(hijo).appendTo("#tablaMarcajes");
+        }
+
+        function cargarEmpleado() {
             var empleado = datosEmpleado['empleado'];
             // $('#nombreApellido').val(empleado['nombre'])
             // $('#dni').val(empleado['documento'])
             $('#nombreApellido').attr('value', empleado['nombre']);
             $('#dni').attr('value', empleado['documento']);
-            mueveReloj();
-            getFecha();
-        });
-
-
-
+        }
 
         function mueveReloj() {
             var momentoActual = new Date();
@@ -367,6 +396,7 @@
             var mes = $('#mes').val();
             console.log(mes);
             alert(mes);
+            cargarHistorial();
         })
     </script>
 
