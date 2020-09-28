@@ -9,8 +9,10 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -21,6 +23,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -79,34 +82,40 @@ public abstract class ITDialog extends CustomDialog {
 	Button newITButton;
 	
 	@UiField
-	TextBox itObservations;
-	
-	@UiField
-	ListBox raggedList;
+	VerticalPanel itDataTable;
 	
 	@UiField
 	DateBoxEx itStartDate;
 	
 	@UiField
-	TextBox collegiateNumberHighPart;
+	Label realStartDate;
 	
 	@UiField
 	ListBox causeHighPart;
 	
 	@UiField
-	TextBox ciasHighPart;
-	
-	@UiField
 	DateBoxEx itEndDate;
-	
-	@UiField
-	TextBox collegiateNumberLowPart;
 	
 	@UiField
 	ListBox causeLowPart;
 	
 	@UiField
-	TextBox ciasLowPart;
+	VerticalPanel informationDataTable;
+	
+	@UiField
+	TextBox collegiateNumberITPart;
+	
+	@UiField
+	ListBox raggedList;
+	
+	@UiField
+	TextBox ciasITPart;
+	
+	@UiField
+	DateBoxEx directPayDate;
+	
+	@UiField
+	VerticalPanel confirmationsDataTable;
 	
 	@UiField
 	Grid confirmationPartDataTableHeader;
@@ -128,18 +137,6 @@ public abstract class ITDialog extends CustomDialog {
 	
 	@UiField
 	HTMLPanel mainTablePanel;
-	
-	@UiField
-	VerticalPanel itDataTable;
-	
-	@UiField
-	VerticalPanel lowDataTable;
-	
-	@UiField
-	VerticalPanel highDataTable;
-	
-	@UiField
-	VerticalPanel confirmationsDataTable;
 	
 	@UiField(provided = true)
 	DataGrid<IT> itDataGrid;
@@ -164,15 +161,14 @@ public abstract class ITDialog extends CustomDialog {
 		if(advanced)
 			showListOption();
 		else
-			hideListOption();
-			
+			hideListOption();	
 	}
 	
 	public void setITDialogObject(ITDialogObject itDialogObject) {
 		this.itDialogObject = itDialogObject;
 		
 		initRaggedListBox();
-		initPreview();
+		initConfirmationsTable();
 		
 		// Check if exist IT
 		this.it = this.itDialogObject.checkIfIsOpenIt();
@@ -185,9 +181,9 @@ public abstract class ITDialog extends CustomDialog {
 		
 		// Check type of part
 		if(this.itDialogObject.getEmployeeStatus()) {
-			hideHighPartAndConfirmationParts();
+			hideConfirmationParts();
 		} else
-			hideLowPart();
+			showConfirmationParts();
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -236,17 +232,7 @@ public abstract class ITDialog extends CustomDialog {
 	    //							CREATE COLUMNS
 	    //----------------------------------------------------------------------
 		
-		TextColumn<IT> lowCauseColumn = new TextColumn<IT>() {
-	      @Override
-	      public String getValue(IT it) {
-	        return parseLowCauseByte(it.getTypeLowPart());
-	      }
-	    };
-
-	    lowCauseColumn.setSortable(true);
-	    itDataGrid.setColumnWidth(lowCauseColumn, 200, Unit.PX);
-	    
-	    TextColumn<IT> lowDateColumn = new TextColumn<IT>() {
+		TextColumn<IT> lowDateColumn = new TextColumn<IT>() {
 	      @Override
 	      public String getValue(IT it) {
 	        return formatFullDate.format(it.getStartDate());
@@ -256,17 +242,25 @@ public abstract class ITDialog extends CustomDialog {
 	    lowDateColumn.setSortable(true);
 	    lowDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    itDataGrid.setColumnWidth(lowDateColumn, 100, Unit.PX);
-	     
-	    TextColumn<IT> highCauseColumn = new TextColumn<IT>() {
-	      @Override
-	      public String getValue(IT it) {
-	        return parseHighCauseByte(it.getTypeHighPart());
-	      }
-	    };
+	    
+	    TextColumn<IT> lowCauseColumn = new TextColumn<IT>() {
 
-	    highCauseColumn.setSortable(true);
-	    highCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    itDataGrid.setColumnWidth(highCauseColumn, 200, Unit.PX);
+			@Override
+			public String getValue(IT it) {
+				return parseShortLowCauseByte(it.getTypeLowPart());
+			}
+			
+			@Override
+			public void render(Context context, IT it, SafeHtmlBuilder sb) {
+				if(null != it) {
+					sb.appendHtmlConstant("<span title=\"" + parseLowCauseByte(it.getTypeLowPart()) + "\">" + parseShortLowCauseByte(it.getTypeLowPart()) + "</span>");
+				}
+			}
+		};
+	    
+	    lowCauseColumn.setSortable(true);
+	    lowCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    itDataGrid.setColumnWidth(lowCauseColumn, 100, Unit.PX);
 	    
 	    TextColumn<IT> highDateColumn = new TextColumn<IT>() {
 	      @Override
@@ -278,8 +272,19 @@ public abstract class ITDialog extends CustomDialog {
 	    highDateColumn.setSortable(true);
 	    highDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 	    itDataGrid.setColumnWidth(highDateColumn, 100, Unit.PX);
+		    
+	    TextColumn<IT> highCauseColumn = new TextColumn<IT>() {
+	      @Override
+	      public String getValue(IT it) {
+	        return parseHighCauseByte(it.getTypeHighPart());
+	      }
+	    };
+
+	    highCauseColumn.setSortable(true);
+	    highCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    itDataGrid.setColumnWidth(highCauseColumn, 220, Unit.PX);
 	    
-	    TextColumn<IT> rechargeColumn = new TextColumn<IT>() {
+	   TextColumn<IT> rechargeColumn = new TextColumn<IT>() {
 	      @Override
 	      public String getValue(IT it) {
 	    	  return it.getParent() == null ? "NO" : "SI";
@@ -292,10 +297,10 @@ public abstract class ITDialog extends CustomDialog {
 	    itDataGrid.setColumnWidth(rechargeColumn, 50, Unit.PX);
 	    
 	    // Add the columns.
-	    itDataGrid.addColumn(lowCauseColumn, "Causa Baja");
 	    itDataGrid.addColumn(lowDateColumn, "Fecha Baja");
+	    itDataGrid.addColumn(lowCauseColumn, "Causa Baja");
+	    itDataGrid.addColumn(highDateColumn, "Fecha Alta");
 	    itDataGrid.addColumn(highCauseColumn, "Causa Alta");
-	    itDataGrid.addColumn(highDateColumn, "Fecha Baja");
 	    itDataGrid.addColumn(rechargeColumn, "Recaida");
 	      
 	}
@@ -339,7 +344,7 @@ public abstract class ITDialog extends CustomDialog {
 	public void onDeleteITButtonClick(ClickEvent event) {
 		if(null != this.it.getId()) {
 			if(this.it.getIsParent()) {
-				WarningDialog dialog = new WarningDialog("ERROR", "No se puede eliminar un parte que tiene reca" + String.valueOf("\u00ED") + "da.");
+				WarningDialog dialog = new WarningDialog("ERROR", "No se puede eliminar este parte por que tiene reca" + String.valueOf("\u00ED") + "da.");
 				dialog.setModal(true);
 				dialog.setAnimationEnabled(true);
 				dialog.show();
@@ -373,7 +378,7 @@ public abstract class ITDialog extends CustomDialog {
 		}
 		
 		deckPanel.showWidget(1);
-		deckPanel.setWidth("850px");
+		deckPanel.setWidth("770px");
 		initITTable();
 		setTableHeights();
 	}
@@ -388,32 +393,9 @@ public abstract class ITDialog extends CustomDialog {
 	public void onNewITButtonClick(ClickEvent event) {
 		clearITPage();
 		this.it = new IT();
+		hideConfirmationParts();
 		deckPanel.showWidget(0);
 		deckPanel.setWidth("770px");
-		
-		if(this.itDialogObject.getEmployeeStatus()) {
-			hideHighPartAndConfirmationParts();
-		} else {
-			hideLowPart();
-		}
-	}
-	
-	@UiHandler("itObservations")
-	public void onItObservationsChange(ValueChangeEvent<String> event) {
-		if(this.it == null) {
-			this.it = new IT();
-		}
-		
-		this.it.setDescription(event.getValue());
-	}
-	
-	@UiHandler("raggedList")
-	public void onRaggedListChange(ChangeEvent event) {
-		if(this.it == null) {
-			this.it = new IT();
-		}
-		
-		this.it.setParent(Integer.parseInt(raggedList.getSelectedValue()));
 	}
 	
 	@UiHandler("itStartDate")
@@ -425,15 +407,10 @@ public abstract class ITDialog extends CustomDialog {
 		this.it.setStartDate(event.getValue());
 		
 		setDateLowPart(event.getValue());
-	}
-	
-	@UiHandler("collegiateNumberLowPart")
-	public void onCollegiateNumberLowPartChange(ValueChangeEvent<String> event) {
-		if(this.it == null) {
-			this.it = new IT();
-		}
 		
-		setCollegiateNumberLowPart(event.getValue());
+		createRealStartDate();
+		setDirectPayDate();
+		showConfirmationParts();
 	}
 	
 	@UiHandler("causeLowPart")
@@ -445,17 +422,11 @@ public abstract class ITDialog extends CustomDialog {
 		this.it.setTypeLowPart(Byte.parseByte(causeLowPart.getSelectedValue()));
 		
 		setCauseLowPart();
+		
+		createRealStartDate();
+		showConfirmationParts();
 	}
 	
-	@UiHandler("ciasLowPart")
-	public void onCiasLowPartChange(ValueChangeEvent<String> event) {
-		if(this.it == null) {
-			this.it = new IT();
-		}
-		
-		setCiasLowPart(event.getValue());
-	}
-
 	@UiHandler("itEndDate")
 	public void onItEndDateChange(ValueChangeEvent<Date> event) {
 		if(this.it == null) {
@@ -465,15 +436,6 @@ public abstract class ITDialog extends CustomDialog {
 		this.it.setEndDate(event.getValue());
 		
 		setDateHighPart(event.getValue());
-	}
-	
-	@UiHandler("collegiateNumberHighPart")
-	public void onCollegiateNumberHighPartChange(ValueChangeEvent<String> event) {
-		if(this.it == null) {
-			this.it = new IT();
-		}
-		
-		setCollegiateNumberHighPart(event.getValue());
 	}
 	
 	@UiHandler("causeHighPart")
@@ -487,13 +449,41 @@ public abstract class ITDialog extends CustomDialog {
 		setCauseHighPart();
 	}
 	
-	@UiHandler("ciasHighPart")
-	public void onCiasHighPartChange(ValueChangeEvent<String> event) {
+	@UiHandler("collegiateNumberITPart")
+	public void onCollegiateNumberLowPartChange(ValueChangeEvent<String> event) {
 		if(this.it == null) {
 			this.it = new IT();
 		}
 		
-		setCiasHighPart(event.getValue());
+		setCollegiateNumberITPart(event.getValue());
+	}
+	
+	@UiHandler("ciasITPart")
+	public void onCiasLowPartChange(ValueChangeEvent<String> event) {
+		if(this.it == null) {
+			this.it = new IT();
+		}
+		
+		setCiasITPart(event.getValue());
+	}
+	
+	@UiHandler("raggedList")
+	public void onRaggedListChange(ChangeEvent event) {
+		if(this.it == null) {
+			this.it = new IT();
+		}
+		
+		this.it.setParent(Integer.parseInt(raggedList.getSelectedValue()));
+		
+		Date raggedDate = this.itDialogObject.getRaggedDate(raggedList.getSelectedValue());
+		
+		if(null != raggedDate)
+			realStartDate.setText("Fecha Inicio : " + formatFullDate.format(raggedDate));
+		else {
+			if(null == itStartDate.getValue())
+				realStartDate.setText("");
+		}
+			
 	}
 	
 	@UiHandler("newConfirmationPart")
@@ -504,6 +494,8 @@ public abstract class ITDialog extends CustomDialog {
 		
 		ITPart newITPart = new ITPart();
 		newITPart.setType((byte)1);
+		newITPart.setCollegeNumber(collegiateNumberITPart.getValue());
+		newITPart.setCias(ciasITPart.getValue());
 		this.itDialogObject.addITPart(this.it, newITPart);
 		addRowITPart(newITPart);
 		calculateScrollPanelHeight();
@@ -529,54 +521,7 @@ public abstract class ITDialog extends CustomDialog {
 		deckPanel.setWidth("770px");
 	}
 	
-	private void hideListOption() {
-		this.listButton.getElement().getStyle().setDisplay(Display.NONE);
-	}
-	
-	private void showListOption() {
-		this.listButton.getElement().getStyle().clearDisplay();
-	}
-	
-	private void hideDeleteOption() {
-		this.deleteITButton.getElement().getStyle().setDisplay(Display.NONE);
-	}
-	
-	private void showDeleteOption() {
-		this.deleteITButton.getElement().getStyle().clearDisplay();
-	}
-	
-	private void initListBox(){
-		raggedList.clear();
-		raggedList.addItem("NO", "0");
-		
-		causeLowPart.clear();
-		causeLowPart.addItem("-", "-1");
-		causeLowPart.addItem("Enfermedad Com" + String.valueOf("\u00FA") + "n", "0");
-		causeLowPart.addItem("Accidente de trabajo", "1");
-		causeLowPart.addItem("Maternidad", "2");
-		causeLowPart.addItem("Paternidad", "3");
-		causeLowPart.addItem("Riesgo para el embarazo", "4");
-		causeLowPart.addItem("Riesgo durante la lactancia", "5");
-		causeLowPart.addItem("Accidente no laboral", "6");
-		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia", "7");
-		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)", "8");
-		
-		causeHighPart.clear();
-		causeHighPart.addItem("-", "-1");
-		causeHighPart.addItem("Curaci" + String.valueOf("\u00F3") + "n", "0");
-		causeHighPart.addItem("Fallecimiento", "1");
-		causeHighPart.addItem("Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica", "2");
-		causeHighPart.addItem("Propuesta incapacidad", "3");
-		causeHighPart.addItem("Agotamiento de plazo", "4");
-		causeHighPart.addItem("Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual", "5");
-		causeHighPart.addItem("Incompareciencia", "6");
-		causeHighPart.addItem("Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses", "7");
-		causeHighPart.addItem("Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional", "8");
-		causeHighPart.addItem("Incompareciencia contratos de formaci" + String.valueOf("\u00F3") + "n", "9");
-		
-	}
-	
-	private void initPreview() {
+	private void initConfirmationsTable() {
 		confirmationPartDataTableHeader.clear();
 		confirmationPartDataTableHeader.resize(0, 0);
 		confirmationPartDataTableHeader.resizeColumns(5);
@@ -588,347 +533,19 @@ public abstract class ITDialog extends CustomDialog {
 		setColumnWidth();
 		center();
 	}
-	
-	private void hideLowPart() {
-		this.itDataTable.getElement().getStyle().setDisplay(Display.NONE);
-		this.lowDataTable.getElement().getStyle().setDisplay(Display.NONE);
-		this.highDataTable.getElement().getStyle().clearDisplay();
-		this.confirmationsDataTable.getElement().getStyle().clearDisplay();
-	}
 
-	private void hideHighPartAndConfirmationParts() {
-		this.itDataTable.getElement().getStyle().clearDisplay();
-		this.lowDataTable.getElement().getStyle().clearDisplay();
-		this.highDataTable.getElement().getStyle().setDisplay(Display.NONE);
-		this.confirmationsDataTable.getElement().getStyle().setDisplay(Display.NONE);
-	}
-	
 	private void clearITPage() {
-		this.itObservations.setText("");
 		this.raggedList.setSelectedIndex(0);
 		
 		this.itStartDate.setValue(null);
-		this.collegiateNumberLowPart.setText("");
+		this.collegiateNumberITPart.setText("");
 		this.causeLowPart.setSelectedIndex(0);
-		this.ciasLowPart.setText("");
+		this.ciasITPart.setText("");
 		
 		this.itEndDate.setValue(null);
-		this.collegiateNumberHighPart.setText("");
 		this.causeHighPart.setSelectedIndex(0);
-		this.ciasHighPart.setText("");
 		
 		this.confirmationPartDataTable.clear();
-	}
-	
-	private void setDateLowPart(Date date) {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setDate(date);
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		} else {
-			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 0) {
-					itPart.setDate(date);
-				}
-			}
-		}
-	}
-	
-	private void setCollegiateNumberLowPart(String collegiateNumberLowPart) {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setCollegeNumber(collegiateNumberLowPart);
-			itPart.setDate(itStartDate.getValue());
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		} else {
-			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 0) {
-					itPart.setCollegeNumber(collegiateNumberLowPart);
-				}
-			}
-		}
-	}
-	
-	private void setCauseLowPart() {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		}
-	}
-	
-	private void setCiasLowPart(String ciasLowPart) {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 0); // BAJA
-			itPart.setCias(ciasLowPart);
-			itPart.setDate(itStartDate.getValue());
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		} else {
-			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 0) {
-					itPart.setCias(ciasLowPart);
-				}
-			}
-		}
-	}
-	
-	private void setDateHighPart(Date date) {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			itPart.setDate(date);
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		} else {
-			boolean added = false;
-			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 2) {
-					itPart.setDate(date);
-					added = true;
-				}
-			}
-			if(!added) {
-				ITPart itPart = new ITPart();
-				itPart.setType((byte) 2); // ALTA
-				itPart.setDate(date);
-				
-				this.it.addITPart(itPart);
-			}
-		}
-	}
-	
-	private void setCollegiateNumberHighPart(String collegiateNumberHighPart) {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			itPart.setCollegeNumber(collegiateNumberHighPart);
-			itPart.setDate(itStartDate.getValue());
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		} else {
-			boolean added = false;
-			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 2) {
-					itPart.setCollegeNumber(collegiateNumberHighPart);
-					added = true;
-				}
-			}
-			if(!added) {
-				ITPart itPart = new ITPart();
-				itPart.setType((byte) 2); // ALTA
-				itPart.setCollegeNumber(collegiateNumberHighPart);
-				
-				this.it.addITPart(itPart);
-			}
-		}
-	}
-	
-	private void setCauseHighPart() {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		} else {
-			boolean added = false;
-			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 2) {
-					added = true;
-				}
-			}
-			if(!added) {
-				ITPart itPart = new ITPart();
-				itPart.setType((byte) 2); // ALTA
-				
-				this.it.addITPart(itPart);
-			}
-		}
-	}
-	
-	private void setCiasHighPart(String ciasHighPart) {
-		if(this.it.getITParts().isEmpty()) {
-			List<ITPart> itParts = new ArrayList<ITPart>();
-			
-			ITPart itPart = new ITPart();
-			itPart.setType((byte) 2); // ALTA
-			itPart.setCias(ciasHighPart);
-			itPart.setDate(itStartDate.getValue());
-			
-			itParts.add(itPart);
-			
-			this.it.setITParts(itParts);
-		} else {
-			boolean added = false;
-			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 2) {
-					itPart.setCias(ciasHighPart);
-					added = true;
-				}
-			}
-			if(!added) {
-				ITPart itPart = new ITPart();
-				itPart.setType((byte) 2); // ALTA
-				itPart.setCias(ciasHighPart);
-				
-				this.it.addITPart(itPart);
-			}
-		}
-	}
-
-	private boolean checkIfSaveIsPossible() {
-		if(causeLowPart.getSelectedIndex() != 0 && null != itStartDate.getValue())
-			return true;
-		
-		return false;
-	}
-	
-	// --------------------------------------------------------------------------------------------
-	// 										INIT CCCs TABLE
-	// --------------------------------------------------------------------------------------------
-
-	private void initITTable() {		
-		// Create a data provider.
-	    ListDataProvider<IT> dataProvider = new ListDataProvider<IT>();
-
-	    // Connect the table to the data provider.
-	    dataProvider.addDataDisplay(itDataGrid);
-	    
-	    // Add the data to the data provider, which automatically pushes it to the
-	    // widget.
-	    List<IT> itListAux = dataProvider.getList();
-	    itListAux.clear();
-	    
-	    this.itList = itDialogObject.getITList();
-	    
-	    for (IT it : this.itList) {
-	    	itListAux.add(it);
-	    } 
-	    
-	    // Set page size
-	    itDataGrid.setPageSize(itList.size());
-	    
-	    // Add style to table header
-	    addStyleToHeader();
-	    
-	    addSortColums(itListAux); 
-		
-	}
-	
-	private void addSortColums(List<IT> itList) {
-		ListHandler<IT> columnSortHandler = new ListHandler<IT>(itList);
-		
-	    columnSortHandler.setComparator(itDataGrid.getColumn(0), new Comparator<IT>() {
-	          public int compare(IT o1, IT o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getTypeLowPart().compareTo(o2.getTypeLowPart()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    columnSortHandler.setComparator(itDataGrid.getColumn(1), new Comparator<IT>() {
-	          public int compare(IT o1, IT o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getStartDate().compareTo(o2.getEndDate()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    columnSortHandler.setComparator(itDataGrid.getColumn(2), new Comparator<IT>() {
-	          public int compare(IT o1, IT o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getTypeHighPart().compareTo(o2.getTypeHighPart()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    columnSortHandler.setComparator(itDataGrid.getColumn(3), new Comparator<IT>() {
-	          public int compare(IT o1, IT o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getEndDate().compareTo(o2.getEndDate()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    
-	    columnSortHandler.setComparator(itDataGrid.getColumn(4), new Comparator<IT>() {
-	          public int compare(IT o1, IT o2) {
-		            if (o1 == o2) {
-		              return 0;
-		            }
-	
-		            if (o1 != null) {
-		              return (o2 != null) ? o1.getParent().compareTo(o2.getParent()) : 1;
-		            }
-		            
-		            return -1;
-	          }
-	    });
-	    
-	    
-	    itDataGrid.addColumnSortHandler(columnSortHandler);
-
-	    // We know that the data is sorted alphabetically by default.
-	    itDataGrid.getColumn(1).setDefaultSortAscending(false);
-	    itDataGrid.getColumnSortList().push(itDataGrid.getColumn(1));   
 	}
 	
 	private void paintHeader() {
@@ -952,140 +569,24 @@ public abstract class ITDialog extends CustomDialog {
 		confirmationPartDataTableHeader.setWidget(row, 4, blank);
 	}
 	
-	private void calculateScrollPanelHeight() {
-		Integer height = 100;
-		Integer extra = 30;
-		int rows = confirmationPartDataTable.getRowCount();
-		Integer newHeight = 0;
-		if(rows < 4) {
-			int mod = rows%4;
-			newHeight = mod*extra+extra;
-		}else {
-			int div = rows/4;
-			int mod = rows%4;
-			if(div < 2)
-				newHeight = (height*div)+(extra*mod)+extra;
-			else
-				newHeight = 220;
-		}
-		
-		if(newHeight > 100)
-			newHeight = 95;
-		
-		scrollPanel.setHeight(newHeight + "px");
-	}
-	
-	private void setColumnWidth() {
-		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 0, style.columnWidth());
-		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 1, style.columnWidth());
-		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 2, style.columnWidth());
-		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 3, style.columnWidth());
-		
-		confirmationPartDataTable.getColumnFormatter().addStyleName(0, style.columnWidth());
-		confirmationPartDataTable.getColumnFormatter().addStyleName(1, style.columnWidth());
-		confirmationPartDataTable.getColumnFormatter().addStyleName(2, style.columnWidth());
-		confirmationPartDataTable.getColumnFormatter().addStyleName(3, style.columnWidth());
-	}
-	
-	// ----------------------------------------------- METODOS AUXILIARES ------------------------------------------------
-	
-	private void initRaggedListBox(){
-		raggedList.clear();
-		raggedList.addItem("NO", "0");
-		
-		for(IT it : itDialogObject.getITList()) {
-			if(null != it.getEndDate() && notSelectedId(it.getId())) {
-				String item = it.getDescription() + " (" + formatFullDate.format(it.getStartDate()) + " / " + formatFullDate.format(it.getEndDate()) + ")";
-				raggedList.addItem(item, it.getId().toString());
-			}
-		}
-	}
-	
-	private boolean notSelectedId(Integer itId) {
-		return (null == this.it || null == this.it.getId()) ? true : (this.it.getId() == itId || this.it.getId().equals(itId));
-	}
-
-	private String parseLowCauseByte(Byte typeLowPart) {
-		switch (typeLowPart) {
-			case (byte)0:
-				return "Enfermedad Com" + String.valueOf("\u00FA") + "n";
-			case (byte)1:
-				return "Accidente de trabajo";
-			case (byte)2:
-				return "Maternidad";
-			case (byte)3:
-				return "Paternidad";
-			case (byte)4:
-				return "Riesgo para el embarazo";
-			case (byte)5:
-				return "Riesgo durante la lactancia";
-			case (byte)6:
-				return "Accidente no laboral";
-			case (byte)7:
-				return "Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia";
-			case (byte)8:
-				return "Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)";
-			default:
-				return "-";
-		}
-	}
-	
-	private String parseHighCauseByte(Byte typeHighPart) {
-		if(null == typeHighPart)
-			return "-";
-		
-		switch (typeHighPart) {
-			case (byte)0:
-				return "Curaci" + String.valueOf("\u00F3") + "n";
-			case (byte)1:
-				return "Fallecimiento";
-			case (byte)2:
-				return "Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica";
-			case (byte)3:
-				return "Propuesta incapacidad";
-			case (byte)4:
-				return "Agotamiento de plazo";
-			case (byte)5:
-				return "Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual";
-			case (byte)6:
-				return "Incompareciencia";
-			case (byte)7:
-				return "Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses";
-			case (byte)8:
-				return "Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional";
-			case (byte)9:
-				return "Incompareciencia contratos de formaci" + String.valueOf("\u00F3") + "n";
-			default:
-				return "-";
-		}
-	}
-	
-	private void setTableHeights() {
-		itDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
-		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 400), Unit.PX);
-	}
-	
 	private void paintSelectedIT(IT it, boolean showAll) {
-		itObservations.setText(it.getDescription());
-		setSelectedValueLB(raggedList, it.getParent().toString());
-		
 		itStartDate.setValue(it.getStartDate());
 		setSelectedValueLB(causeLowPart, it.getTypeLowPart().toString());
 		
 		itEndDate.setValue(it.getEndDate());
 		setSelectedValueLB(causeHighPart, null == it.getTypeHighPart() ? "-1" : it.getTypeHighPart().toString());
 		
-		initPreview();
+		setSelectedValueLB(raggedList, it.getParent().toString());
+		
+		initConfirmationsTable();
 		
 		for(ITPart itPart : it.getITParts()) {
 			switch (itPart.getType()) {
 				case (byte)0:
-					collegiateNumberLowPart.setValue(itPart.getCollegeNumber());
-					ciasLowPart.setValue(itPart.getCias());
+					collegiateNumberITPart.setValue(itPart.getCollegeNumber());
+					ciasITPart.setValue(itPart.getCias());
 					continue;
 				case (byte)2:
-					collegiateNumberHighPart.setValue(itPart.getCollegeNumber());
-					ciasHighPart.setValue(itPart.getCias());
 					continue;
 				default:
 					addRowITPart(itPart);
@@ -1095,10 +596,12 @@ public abstract class ITDialog extends CustomDialog {
 		
 		calculateScrollPanelHeight();
 		
+		setDirectPayDate();
+		createRealStartDate();
+		
 		if(showAll) {
+			informationDataTable.getElement().getStyle().clearDisplay();
 			itDataTable.getElement().getStyle().clearDisplay();
-			lowDataTable.getElement().getStyle().clearDisplay();
-			highDataTable.getElement().getStyle().clearDisplay();
 			confirmationsDataTable.getElement().getStyle().clearDisplay();
 			deleteITButton.getElement().getStyle().clearDisplay();
 		}
@@ -1175,6 +678,371 @@ public abstract class ITDialog extends CustomDialog {
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
 	}
 	
+	// ----------------------------------------------- METODOS SHOW/HIDE ------------------------------------------------
+	
+	private void hideListOption() {
+		this.listButton.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void showListOption() {
+		this.listButton.getElement().getStyle().clearDisplay();
+	}
+	
+	private void hideDeleteOption() {
+		this.deleteITButton.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void showDeleteOption() {
+		this.deleteITButton.getElement().getStyle().clearDisplay();
+	}
+	
+	private void hideConfirmationParts() {
+		this.confirmationsDataTable.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void showConfirmationParts() {
+		this.confirmationsDataTable.getElement().getStyle().clearDisplay();
+	}
+	
+	// -------------------------------------------------- METODOS AUX --------------------------------------------------
+	
+	private void initListBox(){
+		raggedList.clear();
+		raggedList.addItem("NO", "0");
+		
+		causeLowPart.clear();
+		causeLowPart.addItem("-", "-1");
+		causeLowPart.addItem("Enfermedad Com" + String.valueOf("\u00FA") + "n", "0");
+		causeLowPart.addItem("Accidente de trabajo", "1");
+		causeLowPart.addItem("Maternidad", "2");
+		causeLowPart.addItem("Paternidad", "3");
+		causeLowPart.addItem("Riesgo para el embarazo", "4");
+		causeLowPart.addItem("Riesgo durante la lactancia", "5");
+		causeLowPart.addItem("Accidente no laboral", "6");
+		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia", "7");
+		causeLowPart.addItem("Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)", "8");
+		
+		causeHighPart.clear();
+		causeHighPart.addItem("-", "-1");
+		causeHighPart.addItem("Curaci" + String.valueOf("\u00F3") + "n", "0");
+		causeHighPart.addItem("Fallecimiento", "1");
+		causeHighPart.addItem("Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica", "2");
+		causeHighPart.addItem("Propuesta incapacidad", "3");
+		causeHighPart.addItem("Agotamiento de plazo", "4");
+		causeHighPart.addItem("Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual", "5");
+		causeHighPart.addItem("Incompareciencia", "6");
+		causeHighPart.addItem("Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses", "7");
+		causeHighPart.addItem("Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional", "8");
+		causeHighPart.addItem("Incompareciencia contratos de formaci" + String.valueOf("\u00F3") + "n", "9");
+		
+	}
+	
+	private void initRaggedListBox(){
+		raggedList.clear();
+		raggedList.addItem("NO", "0");
+		
+		for(IT it : itDialogObject.getITList()) {
+			if(null != it.getEndDate() && notSelectedId(it.getId())) {
+				String item = parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + " / " + formatFullDate.format(it.getEndDate()) + ")";
+				raggedList.addItem(item, it.getId().toString());
+			}
+		}
+	}
+	
+	private void setDateLowPart(Date date) {
+		if(this.it.getITParts().isEmpty()) {
+			List<ITPart> itParts = new ArrayList<ITPart>();
+			
+			ITPart itPart = new ITPart();
+			itPart.setType((byte) 0); // BAJA
+			itPart.setDate(date);
+			
+			itParts.add(itPart);
+			
+			this.it.setITParts(itParts);
+		} else {
+			for(ITPart itPart : this.it.getITParts()) {
+				if(itPart.getType() == (byte) 0) {
+					itPart.setDate(date);
+				}
+			}
+		}
+	}
+	
+	private void setCauseLowPart() {
+		if(this.it.getITParts().isEmpty()) {
+			List<ITPart> itParts = new ArrayList<ITPart>();
+			
+			ITPart itPart = new ITPart();
+			itPart.setType((byte) 0); // BAJA
+			
+			itParts.add(itPart);
+			
+			this.it.setITParts(itParts);
+		}
+	}
+	
+	private void setDateHighPart(Date date) {
+		if(this.it.getITParts().isEmpty()) {
+			List<ITPart> itParts = new ArrayList<ITPart>();
+			
+			ITPart itPart = new ITPart();
+			itPart.setType((byte) 2); // ALTA
+			itPart.setDate(date);
+			itPart.setCollegeNumber(collegiateNumberITPart.getValue());
+			itPart.setCias(ciasITPart.getValue());
+			
+			itParts.add(itPart);
+			
+			this.it.setITParts(itParts);
+		} else {
+			boolean added = false;
+			for(ITPart itPart : this.it.getITParts()) {
+				if(itPart.getType() == (byte) 2) {
+					itPart.setDate(date);
+					itPart.setCollegeNumber(collegiateNumberITPart.getValue());
+					itPart.setCias(ciasITPart.getValue());
+					
+					added = true;
+				}
+			}
+			if(!added) {
+				ITPart itPart = new ITPart();
+				itPart.setType((byte) 2); // ALTA
+				itPart.setDate(date);
+				itPart.setCollegeNumber(collegiateNumberITPart.getValue());
+				itPart.setCias(ciasITPart.getValue());
+				
+				this.it.addITPart(itPart);
+			}
+		}
+	}
+	
+	private void setCauseHighPart() {
+		if(this.it.getITParts().isEmpty()) {
+			List<ITPart> itParts = new ArrayList<ITPart>();
+			
+			ITPart itPart = new ITPart();
+			itPart.setType((byte) 2); // ALTA
+			itPart.setCollegeNumber(collegiateNumberITPart.getValue());
+			itPart.setCias(ciasITPart.getValue());
+			
+			itParts.add(itPart);
+			
+			this.it.setITParts(itParts);
+		} else {
+			boolean added = false;
+			for(ITPart itPart : this.it.getITParts()) {
+				if(itPart.getType() == (byte) 2) {
+					added = true;
+				}
+			}
+			if(!added) {
+				ITPart itPart = new ITPart();
+				itPart.setType((byte) 2); // ALTA
+				itPart.setCollegeNumber(collegiateNumberITPart.getValue());
+				itPart.setCias(ciasITPart.getValue());
+				
+				this.it.addITPart(itPart);
+			}
+		}
+	}
+	
+	private void setCollegiateNumberITPart(String collegiateNumberLowPart) {
+		if(this.it.getITParts().isEmpty()) {
+			List<ITPart> itParts = new ArrayList<ITPart>();
+			
+			ITPart itPart = new ITPart();
+			itPart.setType((byte) 0); // BAJA
+			itPart.setCollegeNumber(collegiateNumberLowPart);
+			itPart.setDate(itStartDate.getValue());
+			
+			itParts.add(itPart);
+			
+			this.it.setITParts(itParts);
+		} else {
+			for(ITPart itPart : this.it.getITParts()) {
+				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) {
+					itPart.setCollegeNumber(collegiateNumberLowPart);
+				}
+			}
+		}
+	}
+	
+	private void setCiasITPart(String ciasLowPart) {
+		if(this.it.getITParts().isEmpty()) {
+			List<ITPart> itParts = new ArrayList<ITPart>();
+			
+			ITPart itPart = new ITPart();
+			itPart.setType((byte) 0); // BAJA
+			itPart.setCias(ciasLowPart);
+			itPart.setDate(itStartDate.getValue());
+			
+			itParts.add(itPart);
+			
+			this.it.setITParts(itParts);
+		} else {
+			for(ITPart itPart : this.it.getITParts()) {
+				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) {
+					itPart.setCias(ciasLowPart);
+				}
+			}
+		}
+	}
+	
+	private void setDirectPayDate() {
+		Date date = itStartDate.getValue();
+		if(null != date) {
+			date = DateUtils.addDays2Date(date, 365);
+			directPayDate.setValue(date);
+		}
+	}
+
+	private void createRealStartDate() {
+		Date date = itStartDate.getValue();
+		if(null != date) {
+			if(null != this.it.getParent() && 0 != this.it.getParent())
+				return;
+			
+			if((byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue())) {
+				date = DateUtils.addDays2Date(date, 1);
+				realStartDate.setText("Fecha Inicio : " + formatFullDate.format(date));
+			} else
+				realStartDate.setText("Fecha Inicio : " + formatFullDate.format(date));
+		}
+	}
+	
+	private boolean checkIfSaveIsPossible() {
+		if(causeLowPart.getSelectedIndex() != 0 && null != itStartDate.getValue())
+			return true;
+		
+		return false;
+	}
+	
+	private void calculateScrollPanelHeight() {
+		Integer height = 100;
+		Integer extra = 30;
+		int rows = confirmationPartDataTable.getRowCount();
+		Integer newHeight = 0;
+		if(rows < 4) {
+			int mod = rows%4;
+			newHeight = mod*extra+extra;
+		}else {
+			int div = rows/4;
+			int mod = rows%4;
+			if(div < 2)
+				newHeight = (height*div)+(extra*mod)+extra;
+			else
+				newHeight = 220;
+		}
+		
+		if(newHeight > 100)
+			newHeight = 95;
+		
+		scrollPanel.setHeight(newHeight + "px");
+	}
+	
+	private void setColumnWidth() {
+		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 0, style.columnWidth());
+		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 1, style.columnWidth());
+		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 2, style.columnWidth());
+		confirmationPartDataTableHeader.getCellFormatter().addStyleName(0, 3, style.columnWidth());
+		
+		confirmationPartDataTable.getColumnFormatter().addStyleName(0, style.columnWidth());
+		confirmationPartDataTable.getColumnFormatter().addStyleName(1, style.columnWidth());
+		confirmationPartDataTable.getColumnFormatter().addStyleName(2, style.columnWidth());
+		confirmationPartDataTable.getColumnFormatter().addStyleName(3, style.columnWidth());
+	}
+	
+	private boolean notSelectedId(Integer itId) {
+		return (null == this.it || null == this.it.getId()) ? true : (this.it.getId() == itId || this.it.getId().equals(itId));
+	}
+
+	private String parseLowCauseByte(Byte typeLowPart) {
+		switch (typeLowPart) {
+			case (byte)0:
+				return "Enfermedad Com" + String.valueOf("\u00FA") + "n";
+			case (byte)1:
+				return "Accidente de trabajo";
+			case (byte)2:
+				return "Maternidad";
+			case (byte)3:
+				return "Paternidad";
+			case (byte)4:
+				return "Riesgo para el embarazo";
+			case (byte)5:
+				return "Riesgo durante la lactancia";
+			case (byte)6:
+				return "Accidente no laboral";
+			case (byte)7:
+				return "Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia";
+			case (byte)8:
+				return "Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)";
+			default:
+				return "-";
+		}
+	}
+	
+	private String parseShortLowCauseByte(Byte typeLowPart) {
+		switch (typeLowPart) {
+			case (byte)0:
+				return "ECC";
+			case (byte)1:
+				return "ATT";
+			case (byte)2:
+				return "MAT";
+			case (byte)3:
+				return "PAT";
+			case (byte)4:
+				return "REM";
+			case (byte)5:
+				return "RLA";
+			case (byte)6:
+				return "ANL";
+			case (byte)7:
+				return "ECC";
+			case (byte)8:
+				return "COV";
+			default:
+				return "-";
+		}
+	}
+	
+	private String parseHighCauseByte(Byte typeHighPart) {
+		if(null == typeHighPart)
+			return "-";
+		
+		switch (typeHighPart) {
+			case (byte)0:
+				return "Curaci" + String.valueOf("\u00F3") + "n";
+			case (byte)1:
+				return "Fallecimiento";
+			case (byte)2:
+				return "Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica";
+			case (byte)3:
+				return "Propuesta incapacidad";
+			case (byte)4:
+				return "Agotamiento de plazo";
+			case (byte)5:
+				return "Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual";
+			case (byte)6:
+				return "Incompareciencia";
+			case (byte)7:
+				return "Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses";
+			case (byte)8:
+				return "Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional";
+			case (byte)9:
+				return "Incompareciencia contratos de formaci" + String.valueOf("\u00F3") + "n";
+			default:
+				return "-";
+		}
+	}
+	
+	private void setTableHeights() {
+		itDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 400), Unit.PX);
+	}
+	
 	private void redrawConfirmationPartTable(Integer itId) {
 		IT it = this.itDialogObject.getIT(itId);
 		confirmationPartDataTable.clear();
@@ -1195,5 +1063,120 @@ public abstract class ITDialog extends CustomDialog {
 	    }
 	    lBox.setSelectedIndex(indexToFind);
 	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 										INIT ITs TABLE
+	// --------------------------------------------------------------------------------------------
 
+	private void initITTable() {		
+		// Create a data provider.
+	    ListDataProvider<IT> dataProvider = new ListDataProvider<IT>();
+
+	    // Connect the table to the data provider.
+	    dataProvider.addDataDisplay(itDataGrid);
+	    
+	    // Add the data to the data provider, which automatically pushes it to the
+	    // widget.
+	    List<IT> itListAux = dataProvider.getList();
+	    itListAux.clear();
+	    
+	    this.itList = itDialogObject.getITList();
+	    
+	    for (IT it : this.itList) {
+	    	itListAux.add(it);
+	    } 
+	    
+	    // Set page size
+	    itDataGrid.setPageSize(itList.size());
+	    
+	    // Add style to table header
+	    addStyleToHeader();
+	    
+	    addSortColums(itListAux); 
+		
+	}
+	
+	private void addSortColums(List<IT> itList) {
+		ListHandler<IT> columnSortHandler = new ListHandler<IT>(itList);
+		
+		columnSortHandler.setComparator(itDataGrid.getColumn(0), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getStartDate().compareTo(o2.getStartDate()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+		
+	    columnSortHandler.setComparator(itDataGrid.getColumn(1), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getTypeLowPart().compareTo(o2.getTypeLowPart()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    columnSortHandler.setComparator(itDataGrid.getColumn(2), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getEndDate().compareTo(o2.getEndDate()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    columnSortHandler.setComparator(itDataGrid.getColumn(3), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getTypeHighPart().compareTo(o2.getTypeHighPart()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    
+	    columnSortHandler.setComparator(itDataGrid.getColumn(4), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getParent().compareTo(o2.getParent()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    
+	    itDataGrid.addColumnSortHandler(columnSortHandler);
+
+	    // We know that the data is sorted alphabetically by default.
+	    itDataGrid.getColumn(0).setDefaultSortAscending(false);
+	    itDataGrid.getColumnSortList().push(itDataGrid.getColumn(0));   
+	}
+	
+	
 }
