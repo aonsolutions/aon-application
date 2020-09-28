@@ -106,6 +106,12 @@ public class CustomerEdiSupport implements Serializable, IEdiSupport {
 			for(int i=0; i<m.groupCount(); i++)
 				values[ediCodesCount + i] = m.group(i+1);
 		}
+		
+		Pattern p3 = Pattern.compile(EDI_DEPARTMENT_PATTERN);
+		if (value != null && (m = p3.matcher(value)).find()) {
+			for(int i=0; i<m.groupCount(); i++)
+				values[8] = m.group(i+1);
+		}
 		return Arrays.asList(values);
 	}
 	

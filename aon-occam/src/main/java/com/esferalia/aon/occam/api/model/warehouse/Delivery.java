@@ -23,6 +23,7 @@ public class Delivery implements Serializable {
 	private Integer customer;
 	private Customer customer2;
 	private String customerName;
+	private String customerDocument;
 	private Integer address;
 	
 	private StreetType addressStreetType;
@@ -466,6 +467,15 @@ public class Delivery implements Serializable {
 	}
 	public Delivery setCustomerName(String customerName) {
 		this.customerName = customerName;
+		return this;
+	}
+	
+	public String getCustomerDocument() {
+		return customerDocument;
+	}
+	
+	public Delivery setCustomerDocument(String customerDocument) {
+		this.customerDocument = customerDocument;
 		return this;
 	}
 	
