@@ -359,9 +359,9 @@ public class Mod3902018DAO {
 		 ,K12	 (Mod3902018DetailKey.C0046	, null)
 		 ,K13	 (Mod3902018DetailKey.C0047	, null)
 		 
-		 ,K14_04 (Mod3902018DetailKey.C0191, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4))) 
-		 ,K14_10 (Mod3902018DetailKey.C0604, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10))) 
-		 ,K14_21 (Mod3902018DetailKey.C0606, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21))) 
+		 ,K14_04 (Mod3902018DetailKey.C0191, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() == 4))) 
+		 ,K14_10 (Mod3902018DetailKey.C0604, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() == 10))) 
+		 ,K14_21 (Mod3902018DetailKey.C0606, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() == 21))) 
 		 ,K15	 (Mod3902018DetailKey.C0049	, null)
 		 
 		 ,K16_04 (Mod3902018DetailKey.C0507, null)
@@ -369,9 +369,9 @@ public class Mod3902018DAO {
 		 ,K16_21 (Mod3902018DetailKey.C0610, null)
 		 ,K17	 (Mod3902018DetailKey.C0513	, null)
 		 
-		 ,K18_04 (Mod3902018DetailKey.C0197, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
-		 ,K18_10 (Mod3902018DetailKey.C0612, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10))) 
-		 ,K18_21 (Mod3902018DetailKey.C0614, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
+		 ,K18_04 (Mod3902018DetailKey.C0197, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
+		 ,K18_10 (Mod3902018DetailKey.C0612, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 10))) 
+		 ,K18_21 (Mod3902018DetailKey.C0614, (vc -> ((vc.isNationalPurchase() || vc.isOtherISPPurchase() || vc.isNationalExpenses() || vc.isCanCeuMelExpenses() || vc.isOtherISPExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
 		 ,K19	 (Mod3902018DetailKey.C0051	, null)
 		 
 		 ,K20_04 (Mod3902018DetailKey.C0515, null)
@@ -379,34 +379,37 @@ public class Mod3902018DAO {
 		 ,K20_21 (Mod3902018DetailKey.C0618, null)
 		 ,K21	 (Mod3902018DetailKey.C0521	, null)
 		 
-		 ,K22_04 (Mod3902018DetailKey.C0203, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
-		 ,K22_10 (Mod3902018DetailKey.C0620, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10)))
-		 ,K22_21 (Mod3902018DetailKey.C0622, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
+		 ,K22_04 (Mod3902018DetailKey.C0203, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K22_10 (Mod3902018DetailKey.C0620, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 10)))
+		 ,K22_21 (Mod3902018DetailKey.C0622, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
 		 ,K23	 (Mod3902018DetailKey.C0053	, null)
 		 
-		 ,K24_04 (Mod3902018DetailKey.C0209, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
-		 ,K24_10 (Mod3902018DetailKey.C0624, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10)))
-		 ,K24_21 (Mod3902018DetailKey.C0626, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
+		 ,K24_04 (Mod3902018DetailKey.C0209, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isRectification() && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 4)))
+		 ,K24_10 (Mod3902018DetailKey.C0624, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isRectification() && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 10)))
+		 ,K24_21 (Mod3902018DetailKey.C0626, (vc -> ((vc.isExtracommunityPurchase() || vc.isCanCeuMelPurchase() || vc.isExtracommunityExpenses()) && !vc.isRectification() && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() == 21)))
 		 ,K25	 (Mod3902018DetailKey.C0055	, null)
 		 
-		 ,K26_04 (Mod3902018DetailKey.C0215, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
-		 ,K26_10 (Mod3902018DetailKey.C0628, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  10)))
-		 ,K26_21 (Mod3902018DetailKey.C0630, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  21)))
+		 ,K26_04 (Mod3902018DetailKey.C0215, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  4)))
+		 ,K26_10 (Mod3902018DetailKey.C0628, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  10)))
+		 ,K26_21 (Mod3902018DetailKey.C0630, (vc -> (vc.isIntracommunityPurchase() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  21)))
 		 ,K27	 (Mod3902018DetailKey.C0057	, null)
 		 
-		 ,K28_04 (Mod3902018DetailKey.C0221, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
-		 ,K28_10 (Mod3902018DetailKey.C0632, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  10))) 
-		 ,K28_21 (Mod3902018DetailKey.C0634, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  21))) 
+		 ,K28_04 (Mod3902018DetailKey.C0221, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
+		 ,K28_10 (Mod3902018DetailKey.C0632, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  10))) 
+		 ,K28_21 (Mod3902018DetailKey.C0634, (vc -> ((vc.isIntracommunityPurchase() || vc.isIntracommunityExpenses()) && vc.isInvestment() && !vc.isRectification() && !vc.isFarmerRegime() && vc.getPercentage() ==  21))) 
 		 ,K29	 (Mod3902018DetailKey.C0059   , null)
 		 
-		 ,K30_04 (Mod3902018DetailKey.C0588, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  4)))
-		 ,K30_10 (Mod3902018DetailKey.C0636, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  10)))
-		 ,K30_21 (Mod3902018DetailKey.C0638, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && vc.getPercentage() ==  21)))
+		 ,K30_04 (Mod3902018DetailKey.C0588, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  4)))
+		 ,K30_10 (Mod3902018DetailKey.C0636, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  10)))
+		 ,K30_21 (Mod3902018DetailKey.C0638, (vc -> (vc.isIntracommunityExpenses() && !vc.isInvestment() && !vc.isFarmerRegime() && !vc.isRectification() && vc.getPercentage() ==  21)))
 		 ,K31	 (Mod3902018DetailKey.C0598   , null)
 		 
 		 ,K32	 (Mod3902018DetailKey.C0061   , (vc -> ((vc.isPurchase() || vc.isExpenses()) && vc.isFarmerRegime())))
 		 
-		 ,K33	 (Mod3902018DetailKey.C0062, null)
+		 // **************
+		 ,K33	 (Mod3902018DetailKey.C0062,  (vc -> vc.isRectification() && (vc.isPurchase() || vc.isExpenses() )))
+		 // **************
+		 
 		 ,K34	 (Mod3902018DetailKey.C0063, null)
 		 ,K35	 (Mod3902018DetailKey.C0522, null)
 		 ,K36	 (Mod3902018DetailKey.C0064, null)
