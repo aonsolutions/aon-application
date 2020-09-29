@@ -66,6 +66,10 @@ class AonHeader extends HTMLElement {
 
 				<span class="aonRight160">
 					<ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect" for="aonHeaderUserButton">
+						<li id="aonHeaderFichar" class="mdl-menu__item">
+							<i class="material-icons mdl-list__item-icon aonMenuIcon">alarm</i>
+							Fichar
+						</li>
 						<li id="aonHeaderConfiguration" class="mdl-menu__item">
 							<i class="material-icons mdl-list__item-icon aonMenuIcon">settings</i>
 							Configuración
@@ -142,6 +146,24 @@ class AonHeader extends HTMLElement {
 		let aonHeaderConfiguration = document.getElementById(BASE_ID + 'Configuration');
 		aonHeaderConfiguration.addEventListener('click', () => {
 			this.aonConfiguration();
+		});
+
+		let aonUserConnected = document.createElement('div');
+		aonUserConnected.id = BASE_ID + 'UserConnected';
+		aonUserConnected.className = 'aonConnected';
+		aonUserConnected.style.backgroundColor = 'red';
+
+		let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
+		aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
+
+		let aonHeaderFichar = document.getElementById(BASE_ID + 'Fichar');
+		aonHeaderFichar.addEventListener('click', () => {
+			if(aonUserConnected.style.backgroundColor === 'red'){
+				aonUserConnected.style.backgroundColor = '#35ac19';
+			} else {
+				aonUserConnected.style.backgroundColor = 'red';
+			}
+
 		});
 	}
 

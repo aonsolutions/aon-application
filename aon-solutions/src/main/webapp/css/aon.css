@@ -425,3 +425,13 @@
 		display: flex;
 		justify-content: center;
 	}
+
+	.aonConnected {
+		position: absolute;
+		right: 4px;
+		bottom: 6px;
+		background: #35ac19;
+		width: 8px;
+		height: 8px;
+		border-radius: 10px;
+	}
