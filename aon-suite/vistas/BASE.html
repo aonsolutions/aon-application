@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- 
+
+    BORRAR ESTE COMENTARIO EN LA VISTA, COMENTARIO INFORMATIVO:
+
+    - ¡IMPORTANTE! Este archivo solo sirve como base para empezar una nueva vista.
+    - Variable "puntos" del @@include del head: Pasar dos puntos (..) si la vista está dentro de una carpeta
+      y un punto (.) si está en la raíz.
+    - URL de los includes, si está dentro de una carpeta la vista pasar con 2 puntos delante (../template/xxxx.html).
+
+-->
+<html lang="es">
+    <head>
+        @@include('template/head.html', {
+            "puntos" : "."
+        })
+    </head>
+
+    <body>
+        <!-- start cabecera -->
+        <div class="container-fluid" id="atp_cabecera">
+            @@include('template/cabecera.html')
+        </div>
+        <!-- end cabecera -->
+
+        <!-- start cuerpo -->
+        <div class="container-fluid atp_cuerpo">
+            <div class="row">
+                <!-- start menu izquierda -->
+                <div class="col atp_abierto" id="atp_menu_izquierda">
+                    @@include('template/menu_left.html')
+                </div>
+                <!-- end menu izquierda -->
+
+                <!-- start contenido centro -->
+                <div class="col" id="atp_contenido_centro">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <!-- INICIO VISTA -->
+
+
+                            <!-- FIN VISTA -->
+                        </div>
+                    </div>
+                </div>
+                <!-- end contenido centro -->
+                
+                <!-- start menu derecha -->
+                <div class="col atp_abierto" id="atp_menu_derecha">
+                    @@include('template/menu_right.html')
+                </div>
+                <!-- end menu derecha -->
+            </div>
+        </div><!-- end cuerpo -->
+
+        <!-- Scripts -->
+        <script src="js/app.js"></script>
+    </body >
+</html>

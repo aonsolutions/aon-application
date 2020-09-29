@@ -62,7 +62,8 @@ function sync(done) {
 function includeHTML(){
     return gulp.src([
         'vistas/**/*.html',
-        '!vistas/template/*.html'
+        '!vistas/template/*.html',
+        '!vistas/BASE.html'
       ])
       .pipe(fileinclude({
         prefix: '@@',
