@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+
+    <!-- MATERIAL ICONS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+  
+    <!-- MATERIAL COMPONENTS -->
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    
+    <link href="@@puntos/css/app.css" rel="stylesheet" id="linkcss">
+
+    </head>
+    <body>
+        <!-- start cabecera -->
+        <div class="container-fluid" id="atp_cabecera"></div>
+        <!-- end cabecera -->
+        
+        <!-- start cuerpo -->
+        <div class="container-fluid atp_cuerpo">
+            <div class="row">
+                <!-- start menu izquierda -->
+                <div class="col atp_abierto" id="atp_menu_izquierda"></div>
+                <!-- end menu izquierda -->
+
+                <!-- start contenido centro -->
+                <div class="col" id="atp_contenido_centro">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <!-- INICIO VISTA -->
+                            <div class="col-12 pt-4 border pb-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Ticket #<span id="ticket-id"></span></h3>
+                                    </div>
+                                    <div class="col-12">
+                                        <p id="ticket-subject"></p>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td width="50%">
+                                                                <table border="0" cellspacing="" cellpadding="4" width="100%">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th width="100">Estado:</th>
+                                                                            <td id="ticket-status"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Prioridad:</th>
+                                                                            <td id="ticket-priority"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Departamento:</th>
+                                                                            <td id="ticket-department"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Creado en:</th>
+                                                                            <td id="ticket-created_at"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                            <td width="50%" style="vertical-align:top">
+                                                                <table border="0" cellspacing="" cellpadding="4" width="100%">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <th width="100">Usuario:</th>
+                                                                            <td><span id="ticket-user_name"></span></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Email:</th>
+                                                                            <td><span id="ticket-user_email"></span></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Organización:</th>
+                                                                            <td id="ticket-organization"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>Fuente:</th>
+                                                                            <td id="ticket-font"></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <hr/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 ticket-body">
+                                        <ul class="ticket" id="ticket-messages">
+
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Responder</h3>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <div id="editor"></div>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <span>Cambiar estado:</span>
+                                            </div>
+                                            <div class="col-3">
+                                                <select class="form-control form-control-sm" id="select-status">
+                                                    <option value="1">Abierto</option>
+                                                    <option value="2">Resuelto</option>
+                                                    <option value="0">Cerrado</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-7">
+                                                <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end contenido centro -->
+                <!-- start menu derecha -->
+                <div class="col atp_abierto" id="atp_menu_derecha"></div>
+                <!-- end menu derecha -->
+            </div>
+        </div>
+        
+        <!-- Scripts -->
+        <script src="../js/app.js"></script>
+        <script>
+            //
+            // Cargamos los menus y head
+            //
+                // Copiamos lo que tengamos el HEAD, ya que funciones como CKEDITOR mete codigo css en el 
+                var html_head = $('head').html();
+                $('head').load('../template/head.html', function(){
+                    // Agregamos el head que tenía la que hemos puesto
+                    $('head').append(html_head);
+                });
+                // Cargamos la cabecera de la pagina
+                $('#atp_cabecera').load('../template/cabecera.html');
+                // Cargamos el menu de la derecha
+                $('#atp_menu_izquierda').load('../template/menu_left.html');
+                // Cargamos el menu de la izquierda
+                $('#atp_menu_derecha').load('../template/menu_right.html');
+
+            //
+            // Cargamos el CKEditor
+            //
+                let theEditor;
+                // Inicializamos CKEditor
+                ClassicEditor.create( document.querySelector('#editor'),{
+                    language: 'es'
+                })
+                .then(editor => {
+                    theEditor = editor;
+                    $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 200px !important;}</style>').insertAfter('#editor');
+                })
+                .catch( error => {
+                    console.error( error );
+                } );
+
+            //
+            // Array de estados del ticket
+            //
+                var status_array = ['Cerrado', 'Abierto', 'Resuelto'];
+                
+            $(document).ready(function(){
+                // Datos del ticket en JSON
+                var ticket = {
+                    id : "526849",                      // ID del ticket
+                    subject : "Asunto de prueba",       // Asunto del ticket
+                    status : 2,                         // ID estado del ticket
+                    priority : "Alta",                  // Prioridad
+                    department : "Bidoq",               // Departamento al que se envía
+                    created_at : "23-09-2020 08:47",    // Fecha y hora de cuándo se creó
+                    user_name : "Juanito",              // Nombre del usuario que crea el ticket
+                    user_id_login : "425",              // ID del usuario logueado                    
+                    email : "juanito@prueba.com",       // Email del usuario que crea el ticket
+                    organization : "Bidoq despacho",    // Organización de quien crea el ticket
+                    font : "Web",                       // Desde dónde se ha creado el ticket
+                    messages : {
+                        0 : {
+                            user_name : "Juanito",                                      // Nombre del usuario del mensaje
+                            user_id : "425",                                            // ID del usuario que crea el ticket
+                            user_avatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
+                            message_date : "23-09-2020 08:52",                          // Hora y fecha de la creación del mensaje
+                            message : "Mensaje de prueba"                               // Mensaje
+                        },
+                        1 : {
+                            user_name : "Pepito",                                       // Nombre del usuario del mensaje
+                            user_id : "352",                                            // ID del usuario que crea el ticket
+                            user_avatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
+                            message_date : "23-09-2020 09:12",                          // Hora y fecha de la creación del mensaje
+                            message : "Respuesta de prueba"                             // Mensaje
+                        }
+                    }
+                };
+                
+                // Leemos los datos del ticket y montamos la estructura
+                $('#ticket-id').html(ticket.id);
+                $('#ticket-subject').html(ticket.subject);
+                $('#ticket-status').html(status_array[ticket.status]);
+                $('#ticket-priority').html(ticket.priority);
+                $('#ticket-department').html(ticket.department);
+                $('#ticket-created_at').html(ticket.created_at);
+                $('#ticket-user_name').html(ticket.user_name);
+                $('#ticket-user_email').html(ticket.email);
+                $('#ticket-organization').html(ticket.organization);
+                $('#ticket-font').html(ticket.font);
+                $("#select-status option[value='"+ticket.status+"']").prop('selected', true);
+                
+                // Añadimos al boton el data del id del usuario logueado y el id del ticket
+                $('#btn-send').attr('data-user', ticket.user_id_login);
+                $('#btn-send').attr('data-ticket', ticket.id);
+                
+                // Formateamos los mensajes
+                var msg = messages(ticket.messages, ticket.user_id_login);
+                
+                // Mostramos los mensajes
+                $('#ticket-messages').html(msg);
+            });
+            
+            // Enviar mensage nuevo
+            $('#btn-send').click(function(){
+                var msg_user = theEditor.getData();
+                var ticket_id = $(this).data('ticket');
+                var user_id_login = $(this).data('user');
+                var new_status = $('#select-status').val();
+                
+                // Datos a enviar
+                var send = {
+                    ticket_id : ticket_id,  // ID del ticket al que corresponde
+                    user : user_id_login,   // ID usuario logueado (crea el mensaje)
+                    message : msg_user,     // Mensaje
+                    status : new_status     // Nuevo estado del ticket
+                };
+                
+                // Mandamos los datos necesarios y nos devolverán el mensaje con los datos necesarios
+                var message = {
+                    0 : {
+                        user_name : "Juanito",                                      // Nombre del usuario del mensaje
+                        user_id : "425",                                            // ID del usuario que crea el ticket
+                        user_avatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
+                        message_date : "23-09-2020 14:36",                          // Hora y fecha de la creación del mensaje
+                        message : msg_user,                                         // Mensaje
+                        ticket_status : new_status                                  // Nuevo estado del ticket
+                    }
+                };
+                
+                // Formateamos el mesaje
+                var msg = messages(message, user_id_login);
+                
+                // Cambiamos el estado del ticket
+                $('#ticket-status').html(status_array[message[0].ticket_status]);
+                
+                // Limpiamos el editor
+                theEditor.setData('');
+                
+                // Mostramos el mensaje al final
+                $('#ticket-messages').append(msg);
+            });
+            
+            // Formatea el json de mensajes para mostrarlos
+            function messages(messages, user_login){
+                var msg = "";
+                
+                for (const prop in messages) {
+                    var message = messages[prop];
+                    
+                    if(message.user_id == user_login){ // El mensaje es del usuario logueado
+                        msg += "<li class='right clearfix'>";
+                            msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
+                                msg += "<div class='row clearfix'>";
+                                    msg += "<div class='col-11 border-from'>";
+                                        msg += "<div class='header'>";
+                                            msg += "<strong class='primary-font'>"+message.user_name+"</strong>";
+                                            msg += "<small class='ml-2 text-muted'>"+message.message_date+"</small>";
+                                        msg += "</div>";
+                                        msg += "<p>"+message.message+"</p>";
+                                    msg += "</div>";
+                                    msg += "<div class='col-1'>";
+                                        msg += "<span class='ticket-img float-right'><img src='"+message.user_avatar+"' alt='User Avatar'/></span>";
+                                    msg += "</div>";
+                                msg += "</div>";
+                            msg += "</div>";
+                        msg += "</li>";
+                    } else { // El mensaje es respuesta al usuario que está leyendo
+                        msg += "<li class='left clearfix'>";
+                            msg += "<div class='col-12 pt-2 pb-2 pr-5'>";
+                                msg += "<div class='row clearfix'>";
+                                    msg += "<div class='col-1'>";
+                                        msg += "<span class='ticket-img float-left'><img src='"+message.user_avatar+"' alt='User Avatar'/></span>";
+                                    msg += "</div>";
+                                    msg += "<div class='col-11 border-to'>";
+                                        msg += "<div class='header'>";
+                                            msg += "<strong class='primary-font'>"+message.user_name+"</strong>";
+                                            msg += "<small class='ml-2 text-muted'>"+message.message_date+"</small>";
+                                        msg += "</div>";
+                                        msg += "<p>"+message.message+"</p>";
+                                    msg += "</div>";
+                                msg += "</div>";
+                            msg += "</div>";
+                        msg += "</li>";
+                    }
+                }
+                
+                return msg;
+            }
+        </script>
+        <!-- FIN Scripts -->
+    </body>
+</html>
