@@ -507,16 +507,4 @@ public class MainContrataIT extends MainEntryPoint {
 		);
 	}
 	
-	private void redrawTable() {
-		this.inactiveContractsCB.setValue(false);
-		this.mainContrataITObject.getEmployeesInfo(false,
-				s -> {
-					initContractTable();
-					setTableHeights();
-				},
-				f -> {}
-		);
-	}
-	
-
 }

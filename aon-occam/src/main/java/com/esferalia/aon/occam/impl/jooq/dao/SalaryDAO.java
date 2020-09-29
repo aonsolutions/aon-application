@@ -406,8 +406,21 @@ public class SalaryDAO {
 		.fetchLazy();
 		//@formatter:on
 
+		//@formatter:off
+		Cursor<Record> salaryImplicitDataCursor = 
+		ctx.getDslContext()
+		.select()
+		.from(SALARY)
+		.innerJoin(CONTRACT).onKey()
+		.leftJoin(ENTERPRISE_CCC).onKey()
+		.where(conditions)
+		.orderBy(SALARY.EMPLOYEE_DOCUMENT)
+		.fetchLazy();
+		//@formatter:on
+
 		BackIterator<Record> salaryDataIter = new BackIterator<>(salaryDataCursor.iterator());
 		BackIterator<Record> contractDataIter = new BackIterator<>(contractDataCursor.iterator());
+		BackIterator<Record> salaryImlicitDataIter = new BackIterator<>(salaryImplicitDataCursor.iterator());
 
 		//@formatter:off
 		return Seq.seq(rootCursor)
@@ -427,23 +440,6 @@ public class SalaryDAO {
 					.setEndDate(rootRecord.getValue(SALARY.END_DATE))
 					.setTotalPayment(rootRecord.get(SALARY.TOTAL_PAYMENT))
 					;
-					
-					Optional.ofNullable(rootRecord.get(SALARY.TOTAL_PAYMENT))
-					.ifPresent( d ->  {
-						salary.setContextData(
-								"TOTAL_DEVENGADO", 
-								String.format(Locale.ROOT, "%f", d), 
-								rootRecord.getValue(SALARY.START_DATE), 
-								rootRecord.getValue(SALARY.END_DATE));
-					});
-					Optional.ofNullable(rootRecord.get(ENTERPRISE_CCC.TYPE))
-					.ifPresent( b ->  {
-						salary.setContextData(
-								"CCC_TYPE", 
-								String.format(Locale.ROOT, "%d", b), 
-								rootRecord.getValue(SALARY.START_DATE), 
-								rootRecord.getValue(SALARY.END_DATE));
-					});
 					
 					
 					Seq.limitWhile(
@@ -471,6 +467,32 @@ public class SalaryDAO {
 						contractDataRecord.getValue(CONTRACT_DATA.END_DATE))
 					);
 					contractDataIter.back();
+
+
+					Seq.limitWhile(
+					Seq.skipUntil(Seq.seq(salaryImlicitDataIter), 
+					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) ),
+					r -> r.getValue(SALARY.EMPLOYEE_DOCUMENT).equals(employeeDocument) )
+					.forEachOrdered(salaryRecord-> {
+						Optional.ofNullable(salaryRecord.get(SALARY.TOTAL_PAYMENT))
+						.ifPresent( d ->  {
+							salary.setContextData(
+									"TOTAL_DEVENGADO", 
+									String.format(Locale.ROOT, "%f", d), 
+									salaryRecord.getValue(SALARY.START_DATE), 
+									salaryRecord.getValue(SALARY.END_DATE));
+						});
+						Optional.ofNullable(salaryRecord.get(ENTERPRISE_CCC.TYPE))
+						.ifPresent( b ->  {
+							salary.setContextData(
+									"CCC_TYPE", 
+									String.format(Locale.ROOT, "%d", b), 
+									salaryRecord.getValue(SALARY.START_DATE), 
+									salaryRecord.getValue(SALARY.END_DATE));
+						});
+					}
+					);
+					salaryImlicitDataIter.back();
 
 					//TODO: Delete this fix for old/incomplete salaries. 
 					fixSalaryData("BASE_CGC", salary, SALARY.CGC_BASE, rootRecord);

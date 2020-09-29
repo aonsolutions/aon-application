@@ -25,7 +25,8 @@ ENV MYSQL_JDBC_URL=https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0
 ENV MCHANGE_COMMONS_URL=https://repo1.maven.org/maven2/com/mchange/mchange-commons-java/0.2.15/mchange-commons-java-0.2.15.jar
 ENV COMMONS_LOGGING_URL=https://repo1.maven.org/maven2/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar
 ENV COMMONS_COLLECTIONS_URL=https://repo1.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar
-ENV IZENPESIGNER_APPLET=http://aonsolutions.github.io/aon-application/maven/2/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
+#ENV IZENPESIGNER_APPLET=http://aonsolutions.github.io/aon-application/maven/2/external_free/izenpe/izenpesigner-applet/1.0/izenpesigner-applet-1.0.jar
+ENV IZENPESIGNER_APPLET=https://github.com/aonsolutions/izenpe/raw/master/izenpesigner-applet-1.0.jar
 ENV DYNAMODB_SESSION_MANAGER=https://github.com/aws/aws-dynamodb-session-tomcat/releases/download/v2.0.4/aws-dynamodb-session-tomcat-2.0.4.jar
 
 ENV JAVA_JWT_URL=https://repo1.maven.org/maven2/com/auth0/java-jwt/3.9.0/java-jwt-3.9.0.jar
