@@ -1,4 +1,4 @@
-import {Apps} from  '../services/app.js';
+import {Apps, Services} from  '../services/app.js';
 import {getDomainApps, setDomainApp} from  '../services/service.js';
 import './aon-icon.js';
 
@@ -51,8 +51,16 @@ class AonMarketplace extends HTMLElement {
   }
 
 	build(r) {
-			let ul = document.createElement('ul');
-			for (let key in Apps){
+		this.appendChild(this.buildTitle('Aplicaciones'));
+		this.appendChild(this.buildApps(Apps, r));
+
+		this.appendChild(this.buildTitle('Servicios'));
+		this.appendChild(this.buildApps(Services, r));
+	}
+
+	buildApps(apps, r) {
+		let ul = document.createElement('ul');
+		for (let key in apps){
 				let li = document.createElement('li');
 				li.style.display = 'inline-block';
 
@@ -63,18 +71,18 @@ class AonMarketplace extends HTMLElement {
 				let span = document.createElement('span');
 				span.style.margin = '20px';
 
-				if(Apps[key].icon) {
-					span.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="60px"></aon-icon>`;
+				if(apps[key].icon) {
+					span.innerHTML = `<aon-icon icon="${apps[key].icon}" color="${apps[key].color}" size="60px"></aon-icon>`;
 				} else {
 					let img = document.createElement('img');
 					img.style.width = '60px';
-					img.src = Apps[key].logo;
+					img.src = apps[key].logo;
 					span.appendChild(img);
 				}
 
 				let span2 = document.createElement('span');
 				span2.className = 'aonMarketplaceTitle';
-				span2.innerHTML = Apps[key].title;
+				span2.innerHTML = apps[key].title;
 
 				span.appendChild(span2);
 
@@ -82,21 +90,21 @@ class AonMarketplace extends HTMLElement {
 				let span3 = document.createElement('span');
 				span3.style.padding = '25px';
 				span3.style.color = '#7E7E7E';
-				span3.innerHTML = Apps[key].description;
+				span3.innerHTML = apps[key].description;
 				div2.appendChild(span3);
 
 				let div3 = document.createElement('div');
 				div3.className = 'aonDivButton';
 				let label = document.createElement('label');
 				label.className = 'mdl-switch mdl-js-switch mdl-js-ripple-effect';
-				label.for = 'switch-' + Apps[key].app;
+				label.for = 'switch-' + apps[key].app;
 
 				let input = document.createElement('input');
 				input.type = 'checkbox';
-				input.id = 'switch-' + Apps[key].app;
+				input.id = 'switch-' + apps[key].app;
 				input.className = 'mdl-switch__input';
-				input.checked = r[Apps[key].app] ? r[Apps[key].app] : false;
-			 	let a = Apps[key];
+				input.checked = r[apps[key].app] ? r[apps[key].app] : false;
+			 	let a = apps[key];
 				input.addEventListener('change', () => {
 					let  aonMenu = document.getElementById('aonMenu');
 					if(input.checked) {
@@ -123,7 +131,17 @@ class AonMarketplace extends HTMLElement {
 				li.appendChild(div);
 				ul.appendChild(li)
     }
-		this.appendChild(ul);
+		return ul;
+	}
+
+	buildTitle(title) {
+		let div = document.createElement('div');
+		div.style.color = 'gray';
+		div.style.paddingTop = '20px';
+		div.style.paddingBottom = '20px';
+		div.style.marginLeft = '60px';
+		div.innerHTML = title.toUpperCase();
+		return div;
 	}
 }
 

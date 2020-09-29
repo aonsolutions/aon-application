@@ -1,5 +1,5 @@
 import {startModule, rootPanel} from '../services/gwtLoader.js';
-import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
+import {Apps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
 import {bidoq} from '../services/bidoq.js';
 import './aon-icon.js';
@@ -76,15 +76,15 @@ class AonMenu extends HTMLElement {
 
 	appSelection(app) {
 		switch(app){
-    	case Apps.INVOICE.app:
-				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
-				break;
+    	// case Apps.INVOICE.app:
+			// 	rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+			// 	break;
     	case Apps.DOCUMENTAL.app:
 				startModule('aon_gwt_aio', 'documents');
 				break;
-			case Apps.MESSENGER.app:
-				startModule('aon_gwt_aio', 'issues');
-				break;
+			// case Apps.MESSENGER.app:
+			// 	startModule('aon_gwt_aio', 'issues');
+			// 	break;
     	case Apps.ACCOUNTING.app:
 				this.buildAppMenu(Apps.ACCOUNTING);
 				break;
@@ -94,58 +94,58 @@ class AonMenu extends HTMLElement {
 			case Apps.PAYROLL.app:
 				this.buildAppMenu(Apps.PAYROLL);
 				break;
-			case Apps.OCR.app:
-				alert('OCR');
-				break;
-			case Apps.AIO.app:
-	      open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
-				break;
-			case Apps.TOOLS.app:
-				this.buildAppMenu(Apps.TOOLS);
-				break;
+			// case Apps.OCR.app:
+			// 	alert('OCR');
+			// 	break;
+			// case Apps.AIO.app:
+	    //   open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
+			// 	break;
+			// case Apps.TOOLS.app:
+			// 	this.buildAppMenu(Apps.TOOLS);
+			// 	break;
 			case Apps.CONTRATA.app:
 				rootPanel('<aon-contrata></aon-contrata>');
 				break;
 			case Apps.PORTAL.app:
 				this.buildAppMenu(Apps.PORTAL);
 				break;
-			case Apps.CONVENIOS.app:
-				alert('CONVENIOS');
-				break;
-			case Apps.BANK.app:
-				alert('BANK');
-				break;
+			// case Apps.CONVENIOS.app:
+			// 	alert('CONVENIOS');
+			// 	break;
+			// case Apps.BANK.app:
+			// 	alert('BANK');
+			// 	break;
 		}
 	}
 
 	getApp(app) {
 		switch(app.toLowerCase()){
-    	case Apps.INVOICE.app:
-				return Apps.INVOICE;
+    	// case Apps.INVOICE.app:
+			// 	return Apps.INVOICE;
     	case Apps.DOCUMENTAL.app:
 				return Apps.DOCUMENTAL;
-			case Apps.MESSENGER.app:
-				return Apps.MESSENGER;
+			// case Apps.MESSENGER.app:
+			// 	return Apps.MESSENGER;
     	case Apps.ACCOUNTING.app:
 				return Apps.ACCOUNTING;
 			case Apps.FISCAL.app:
 				return Apps.FISCAL;
 			case Apps.PAYROLL.app:
 				return Apps.PAYROLL;
-			case Apps.OCR.app:
-				return Apps.OCR;
-			case Apps.AIO.app:
-				return Apps.AIO;
-			case Apps.TOOLS.app:
-				return Apps.TOOLS;
+			// case Apps.OCR.app:
+			// 	return Apps.OCR;
+			// case Apps.AIO.app:
+			// 	return Apps.AIO;
+			// case Apps.TOOLS.app:
+			// 	return Apps.TOOLS;
 			case Apps.CONTRATA.app:
 				return Apps.CONTRATA;
 			case Apps.PORTAL.app:
 				return Apps.PORTAL;
-			case Apps.CONVENIOS.app:
-				return Apps.CONVENIOS;
-			case Apps.BANK.app:
-				return Apps.BANK;
+			// case Apps.CONVENIOS.app:
+			// 	return Apps.CONVENIOS;
+			// case Apps.BANK.app:
+			// 	return Apps.BANK;
 		}
 	}
 
@@ -157,7 +157,8 @@ class AonMenu extends HTMLElement {
 		let aonMenuSidenav = document.getElementById('aonMenuSidenav');
 
 		aonMenuSidenav.addEventListener('mouseover', () => {
-			if(aonMenuSidenav.style.width !== '250px'){
+			if(aonMenuSidenav.style.width !== '250px' && aonMenuSidenav.style.width !== '0px' && localStorage.getItem('aon_domain_id')){
+				aonMenuSidenav.style.transitionDuration = '0ms';
 				aonMenuSidenav.style.width = '150px';
 				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
 					item.style.display = 'inline-block';
@@ -169,6 +170,7 @@ class AonMenu extends HTMLElement {
 		});
 
 		aonMenuSidenav.addEventListener('mouseleave', () => {
+			aonMenuSidenav.style.transitionDuration = '500ms';
 			if(this.getAttribute('opened')) {
 				aonMenuSidenav.style.width = '60px';
 				rootPanel.style.marginRight = '60px';
@@ -205,8 +207,18 @@ class AonMenu extends HTMLElement {
 
 		if(localStorage.getItem('aon_domain_id') && this.getAttribute('user')){
 			let user = JSON.parse(this.getAttribute('user'));
+			let userApps = [];
 			for (let key in user.apps){
-				ul.appendChild(this.buildApp(this.getApp(key)));
+				userApps.push(key);
+			}
+
+			for (let item in MenuApps){
+				console.log(MenuApps[item]);
+				console.log(userApps);
+
+				if(userApps.includes(MenuApps[item].toUpperCase())){
+					ul.appendChild(this.buildApp(this.getApp(MenuApps[item])));
+				}
 			}
 		}
 		let liAdd = document.createElement('li');
@@ -308,7 +320,7 @@ class AonMenu extends HTMLElement {
 
 		let div = document.createElement('div');
 	 	div.className = 'aonMenuSidenavAppToolbar';
-		div.style.backgroundColor = this.getAppToolbarBackgroundColor(app.app);
+		div.style.backgroundColor = this.getAppToolbarBackgroundColor(app);
 
 		let span = document.createElement('span');
 		span.className= 'aonTitle';
@@ -400,7 +412,7 @@ class AonMenu extends HTMLElement {
 		if(this.getAttribute('company')){
 			company = JSON.parse(this.getAttribute('company'));
 		}
-		switch(app){
+		switch(app.app){
 			case Apps.ACCOUNTING.app:
 				return '#D8B03D';
 			case Apps.FISCAL.app:
@@ -417,7 +429,7 @@ class AonMenu extends HTMLElement {
 				return '#90BD75';
 			case Apps.TOOLS.app:
 				return 'gray';
-			default: return '#f1f1f1';
+			default: return app.color ? app.color : '#f1f1f1';
 		}
 	}
 

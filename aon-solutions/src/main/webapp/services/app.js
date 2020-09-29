@@ -1,4 +1,82 @@
+export const MenuApps = ['accounting', 'fiscal', 'payroll', 'contrata', 'documental', 'portal'];
+
 export const Apps = {
+  ACCOUNTING: {
+    app: 'accounting',
+    title: 'Contabilidad',
+    description: 'Gestor de Contabilidad.',
+    icon: 'aon_app',
+    color: '#D8B03D'
+  },
+  FISCAL: {
+    app: 'fiscal',
+    title: 'Fiscal',
+    description: 'Gestor Fiscal.',
+    icon: 'aon_app',
+    color: '#3A85C3'
+  },
+  PAYROLL: {
+    app: 'payroll',
+    title: 'Laboral',
+    description: 'Gestor Laboral.',
+    icon: 'aon_app',
+    color: '#90BD75'
+  },
+  CONTRATA: {
+    app: 'contrata',
+    title: 'Contrat@',
+    description: 'Contrat@',
+    icon: 'aon_app',
+    color: '#6C75AB'
+  },
+  DOCUMENTAL: {
+    app: 'documental',
+    title: 'Documental',
+    description: 'Gestor de Documentos.',
+    icon: 'aon_app',
+    color: '#6986BB'
+  },
+  PORTAL: {
+    app: 'portal',
+    title: 'Portal',
+    description: 'Portal',
+    icon: 'aon_app',
+    color: '#002469'
+  }
+}
+
+export const Services = {
+  MESSENGER: {
+    app: 'messenger',
+    title: 'Messenger',
+    description: 'Messenger',
+    icon: 'aon_app',
+    color: '#CADEFF'
+  },
+  OCR: {
+    app: 'ocr',
+    title: 'OCR',
+    description: 'Gestor OCR.',
+    icon: 'aon_app',
+    color: '#535353'
+  },
+  CONVENIOS: {
+    app: 'convenios',
+    title: 'Convenios',
+    description: 'Convenios',
+    icon: 'aon_app',
+    color: '#329905'
+  },
+  BANK: {
+    app: 'bank',
+    title: 'Bank',
+    description: 'Gestor de Bancos.',
+    icon: 'aon_app',
+    color: '#D38C5B'
+  }
+}
+
+export const AllApps = {
     INVOICE: {
       app: 'invoice',
       title: 'Facturas',
@@ -48,12 +126,6 @@ export const Apps = {
       icon: 'aon_app',
       color: '#535353'
     },
-    AIO: {
-      app: 'aio',
-      title: 'AiO',
-      description: 'AON SOLUTIONS AiO.',
-      logo: 'assets/aon.png'
-    },
     TOOLS: {
       app: 'tools',
       title: 'Herramientas',
@@ -88,7 +160,7 @@ export const Apps = {
       description: 'Gestor de Bancos.',
       icon: 'aon_app',
       color: '#D38C5B'
-    },
+    }
 };
 
 export const AccountingMenu =
@@ -207,7 +279,7 @@ export const PortalMenu =
         content: '<aon-example></aon-example>'
       },{
         title:'Facturas.',
-        content: '<aon-example></aon-example>'
+        content: '<aon-invoice-panel></aon-invoice-panel>'
       },{
         title: 'Contable.',
         content: '<aon-example></aon-example>'

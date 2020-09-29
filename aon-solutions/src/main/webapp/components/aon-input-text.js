@@ -86,7 +86,7 @@
           if('visible' === name){
             if(!this.isVisible()){
               this.style.width = '0px';
-              this.style.display = 'none';
+              this.style.display = 'none !important';
             } else {
               this.style.width = null;
               this.style.display = 'block';
@@ -124,8 +124,7 @@
           input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
           input.type = this.getAttribute('type') ? this.getAttribute('type') : 'text';
           if('date' === this.getAttribute('type')){
-            input.style.paddingTop = '1px';
-            input.style.paddingBottom = '1px';
+            this.style.minWidth = '150px';
           }
           if(this.isDisabled())
             input.disabled = true;
@@ -155,7 +154,7 @@
 
           if(!this.isVisible()){
             this.style.width = '0px';
-            this.style.display = 'none';
+            this.style.display = 'none !important';
           }
 
           div.appendChild(label);

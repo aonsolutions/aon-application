@@ -16,7 +16,7 @@ class AonParent extends HTMLElement {
 	connectedCallback () {
 		this.innerHTML = `
 			<!-- AON CONFIGURATION MENU (SIDENAV) -->
-			<div id="aonParentSidenav" class="sidenav" style="top:60px !important">
+			<div id="aonParentSidenav" class="sidenav" style="top:60px !important;height: calc(100vh - 61px) !important;">
 				<div class="aonSidenavTitle"> FILTROS </div>
 				<ul class="aonClip">
 					<li id="aonParentSidenavActive" class="aonAppMenuSidenavList aonOpacity" >
@@ -39,6 +39,29 @@ class AonParent extends HTMLElement {
 						<span class="aonMenuItemSpan"> Entorno </span>
 					</li>
 				</ul>
+
+				<div class="aonSidenavTitle"> TAREAS PENDIENTOS </div>
+				<ul class="aonClip">
+					<li id="aonParentSidenavInvoiceInbox" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">inbox</i>
+						<span class="aonMenuItemSpan" style="font-weight:bold;"> Facturas Pendientes (22) </span>
+					</li>
+
+					<li id="aonParentSidenavInvoiceReport" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">report</i>
+						<span class="aonMenuItemSpan"> Incidencias </span>
+					</li>
+
+					<li id="aonParentSidenavNotification" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">notifications</i>
+						<span class="aonMenuItemSpan"> Notificaciones </span>
+					</li>
+
+					<li id="aonParentSidenavTicket" class="aonAppMenuSidenavList aonOpacity" >
+						<i class="material-icons aonVerticalMiddle">article</i>
+						<span class="aonMenuItemSpan" style="font-weight:bold;"> Tickets (7)</span>
+					</li>
+				</ul>
 			</div>
 
 			<!-- AON CONFIGURATION CONTENT -->
@@ -49,7 +72,8 @@ class AonParent extends HTMLElement {
 		this.init();
 		this.toogleNav();
 
-		let listIds = ['aonParentSidenavActive', 'aonParentSidenavInactive', 'aonParentSidenavShared', 'aonParentSidenavEntorno'];
+		let listIds = ['aonParentSidenavActive', 'aonParentSidenavInactive', 'aonParentSidenavShared', 'aonParentSidenavEntorno',
+		 	'aonParentSidenavInvoiceInbox', 'aonParentSidenavInvoiceReport', 'aonParentSidenavNotification', 'aonParentSidenavTicket'];
 
 		listIds.forEach((id, i) => {
 				let el = document.getElementById(id);

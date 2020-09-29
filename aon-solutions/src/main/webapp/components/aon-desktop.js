@@ -1,5 +1,5 @@
 import {isMobile} from  '../services/utils.js';
-import {Apps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
+import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
 import {getDomainApps, setDomainApp} from  '../services/service.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
@@ -295,14 +295,58 @@ class AonDesktop extends HTMLElement {
 
 
 	build(r) {
+
+		this.innerHTML = `
+			<!-- AON CONFIGURATION MENU (SIDENAV) -->
+			<div id="aonDesktopSidenav" class="sidenav" style="top:60px !important;height: calc(100vh - 61px) !important;">
+				<div class="aonSidenavTitle"> APLICACIONES CONTRATADAS </div>
+				<ul id="aonDesktopContratados" class="aonClip">
+
+				</ul>
+
+				<div class="aonSidenavTitle"> SERVICIOS CONTRATADOS </div>
+				<ul id="aonDesktopServiceContratados" class="aonClip">
+
+				</ul>
+
+				<div class="aonSidenavTitle"> VISTA CLÁSICA</div>
+				<ul class="aonClip">
+					<li id="aonDesktopSidenavAio" class="aonAppMenuSidenavList aonOpacity" >
+						<img src="../assets/apps/aon.png" style="width: 18px;">
+						<span class="aonMenuItemSpan"> Aon Solutions </span>
+					</li>
+
+					<li id="aonDesktopSidenavBidoq" class="aonAppMenuSidenavList aonOpacity" >
+						<img src="../assets/apps/bidoq.png" style="width: 18px;">
+						<span class="aonMenuItemSpan"> Bidoq </span>
+					</li>
+				</ul>
+			</div>
+
+			<!-- AON CONFIGURATION CONTENT -->
+			<div id="aonDesktopContent" class="aonContent" style="height: calc(100vh - 61px) !important;">
+
+			</div>
+		`;
+		document.getElementById('aonDesktopSidenav').style.width = "250px";
+		document.getElementById('aonDesktopContent').style['margin-left'] = "250px";
+
+		this.buildClassic('aonDesktopSidenavAio', () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id')));
+		this.buildClassic('aonDesktopSidenavBidoq', () => open('https://mispapeles.es/'));
+
+
 		let div = document.createElement('div');
 		div.style.marginLeft = '100px';
 		div.style.marginRight = '100px';
 
 		let banner = document.createElement('div');
-		banner.style.border = '1px solid #ddd';
 		banner.style.marginTop = '20px';
-		banner.style.height = '100px';
+
+		let bannerImg = document.createElement('img');
+		bannerImg.src = '../assets/img/atp_img_publi.jpg';
+		bannerImg.style.width = '100%';
+		bannerImg.style.maxWidth = '1117px';
+		banner.appendChild(bannerImg);
 		div.appendChild(banner);
 
 		div.appendChild(this.buildTitle('CONTRATADOS'));
@@ -310,8 +354,45 @@ class AonDesktop extends HTMLElement {
 		let ul = document.createElement('ul');
 		ul.className = 'list-group';
 
+		let contratados = document.getElementById('aonDesktopContratados');
+		let services = document.getElementById('aonDesktopServiceContratados');
+
+		for (let key in Services){
+			if(r[Services[key].app] ? r[Services[key].app] : false) {
+				let contratadosLi = document.createElement('li');
+				contratadosLi.className = 'aonAppMenuSidenavList aonOpacity';
+				contratadosLi.id = 'aonDesktopSidenav' + Services[key].app;
+
+				//contratadosLi.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="18px"></aon-icon>`;
+
+				let contratadosSpan = document.createElement('span');
+				contratadosSpan.className = 'aonMenuItemSpan';
+				contratadosSpan.style.marginLeft = '0px';
+				contratadosSpan.innerHTML = Services[key].title;
+
+				contratadosLi.appendChild(contratadosSpan);
+				services.appendChild(contratadosLi);
+				this.buildClassic(contratadosLi.id, () => alert('Panel ' + Apps[key].title));
+			}
+		}
 		for (let key in Apps){
 			if(r[Apps[key].app] ? r[Apps[key].app] : false) {
+				let contratadosLi = document.createElement('li');
+				contratadosLi.className = 'aonAppMenuSidenavList aonOpacity';
+				contratadosLi.id = 'aonDesktopSidenav' + Apps[key].app;
+
+				//contratadosLi.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="18px"></aon-icon>`;
+
+				let contratadosSpan = document.createElement('span');
+				contratadosSpan.className = 'aonMenuItemSpan';
+				contratadosSpan.style.marginLeft = '0px';
+				contratadosSpan.innerHTML = Apps[key].title;
+
+				contratadosLi.appendChild(contratadosSpan);
+				contratados.appendChild(contratadosLi);
+
+				this.buildClassic(contratadosLi.id, () => alert('Panel ' + Apps[key].title));
+
 				let li = document.createElement('li');
 				li.className = 'list-group-item';
 				let span = document.createElement('span');
@@ -364,7 +445,8 @@ class AonDesktop extends HTMLElement {
 		div.appendChild(this.buildTitle('OTROS SERVICIOS'));
 		// TODO
 
-		this.appendChild(div);
+		let content = document.getElementById('aonDesktopContent');
+		content.appendChild(div);
 	}
 
 	buildTitle(title) {
@@ -380,8 +462,8 @@ class AonDesktop extends HTMLElement {
 		let ul = document.createElement('ul');
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
-		for (let key in Apps){
-			if(!r[Apps[key].app]) {
+		for (let key in AllApps){
+			if(!r[AllApps[key].app]) {
 				let li = document.createElement('li');
 				li.style.display = 'inline-block';
 				li.style.marginRight = '20px';
@@ -398,7 +480,7 @@ class AonDesktop extends HTMLElement {
 
 				let span2 = document.createElement('span');
 				span2.className = 'aonMarketplaceTitle';
-				span2.innerHTML = Apps[key].title;
+				span2.innerHTML = AllApps[key].title;
 
 				span.appendChild(span2);
 
@@ -406,7 +488,7 @@ class AonDesktop extends HTMLElement {
 				let span3 = document.createElement('span');
 				span3.style.padding = '25px';
 				span3.style.color = '#7E7E7E';
-				span3.innerHTML = Apps[key].description;
+				span3.innerHTML = AllApps[key].description;
 				div2.appendChild(span3);
 
 				let buttons = document.createElement('span');
@@ -449,6 +531,19 @@ class AonDesktop extends HTMLElement {
 			}
 		}
 		return ul;
+	}
+
+	buildClassic(id, fn) {
+		let el = document.getElementById(id);
+
+		el.addEventListener('mouseover', () => {
+			el.style.backgroundColor = '#f1f1f1';
+		});
+		el.addEventListener('mouseleave', () => {
+			el.style.backgroundColor = 'transparent';
+		});
+
+		el.addEventListener('click', fn);
 	}
 }
 
