@@ -1,18 +1,28 @@
 <!doctype html>
 <html lang="es">
     <head>
-        @@include('../template/head.html')
+        @@include('../template/head.html', {
+            "puntos" : ".."
+        })
     </head>
     <body>
         <!-- start cabecera -->
-        <div class="container-fluid" id="atp_cabecera"></div>
+        <div class="container-fluid" id="atp_cabecera">
+            @@include('../template/cabecera.html', {
+                "puntos" : ".."
+            })
+        </div>
         <!-- end cabecera -->
         
         <!-- start cuerpo -->
         <div class="container-fluid atp_cuerpo">
             <div class="row">
                 <!-- start menu izquierda -->
-                <div class="col atp_abierto" id="atp_menu_izquierda"></div>
+                <div class="col atp_abierto" id="atp_menu_izquierda">
+                    @@include('../template/menu_left.html', {
+                        "puntos" : ".."
+                    })
+                </div>
                 <!-- end menu izquierda -->
 
                 <!-- start contenido centro -->
@@ -127,7 +137,11 @@
                     </div>
                 </div><!-- end contenido centro -->
                 <!-- start menu derecha -->
-                <div class="col atp_abierto" id="atp_menu_derecha"></div>
+                <div class="col atp_abierto" id="atp_menu_derecha">
+                    @@include('../template/menu_right.html', {
+                        "puntos" : ".."
+                    })
+                </div>
                 <!-- end menu derecha -->
             </div>
         </div>
@@ -135,22 +149,6 @@
         <!-- Scripts -->
         <script src="../js/app.js"></script>
         <script>
-            //
-            // Cargamos los menus y head
-            //
-                // Copiamos lo que tengamos el HEAD, ya que funciones como CKEDITOR mete codigo css en el 
-                var html_head = $('head').html();
-                $('head').load('../template/head.html', function(){
-                    // Agregamos el head que tenía la que hemos puesto
-                    $('head').append(html_head);
-                });
-                // Cargamos la cabecera de la pagina
-                $('#atp_cabecera').load('../template/cabecera.html');
-                // Cargamos el menu de la derecha
-                $('#atp_menu_izquierda').load('../template/menu_left.html');
-                // Cargamos el menu de la izquierda
-                $('#atp_menu_derecha').load('../template/menu_right.html');
-
             //
             // Cargamos el CKEditor
             //
