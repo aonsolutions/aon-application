@@ -25,6 +25,7 @@
     "chart.js": "^2.9.3",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
+    "gulp-file-include": "^2.2.2",
     "jquery": "^3.5.1",
     "material-design-icons-iconfont": "^6.1.0"
   },

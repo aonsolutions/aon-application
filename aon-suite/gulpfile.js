@@ -7,12 +7,16 @@ var browserSync = require('browser-sync').create();
 var sassPlugin = require('gulp-sass');
 var concat = require('gulp-concat');
 
+// HTML include
+const fileinclude = require('gulp-file-include');
+
 // Watch files for changes
 function watchFiles() {
     gulp.watch('assets/scss/*.scss', sass);
     gulp.watch('assets/js/*.js', scripts);
     gulp.watch('public/js/*.js').on('change', browserSync.reload); // Triggers a full reload on the browser
     gulp.watch('public/**/*.html').on('change', browserSync.reload); // Triggers a full reload on the browser
+    gulp.watch('vistas/**/*.html', includeHTML).on('change', browserSync.reload); // Triggers a full reload on the browser
 }
 
 // Compiles Sass to CSS
@@ -55,9 +59,24 @@ function sync(done) {
     done();
 }
 
+function includeHTML(){
+    return gulp.src([
+        'vistas/**/*.html',
+        '!vistas/template/*.html'
+      ])
+      .pipe(fileinclude({
+        prefix: '@@',
+        basepath: '@file'
+      }))
+      .pipe(gulp.dest('public/'))
+      .pipe(browserSync.stream());
+}
+
+
 // First compiles Sass to CSS if there are changes, then starts watching files and Browsersync
-var watch = gulp.series(sass, scripts, gulp.parallel(watchFiles, sync));
+var watch = gulp.series(sass, scripts, includeHTML, gulp.parallel(watchFiles, sync));
 
 exports.sass = sass;
 exports.scripts = scripts;
 exports.watch = watch;
+exports.default = includeHTML;
