@@ -26,3 +26,4 @@
         ```
 
         Nota: para que este cambio surta efecto debemos terminar el proceso de gulp en la terminal, y volver a ejecutar `gulp watch`
+- **gulp-file-include**: Compilador automático de template de HTML usado como base para las vistas
