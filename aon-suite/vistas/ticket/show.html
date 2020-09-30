@@ -17,7 +17,7 @@
             <div class="row">
                 <!-- start menu izquierda -->
                 <div class="col atp_abierto" id="atp_menu_izquierda">
-                    @@include('../template/menu_left.html')
+                    @@include('_template/menu_left.html')
                 </div>
                 <!-- end menu izquierda -->
 
@@ -57,7 +57,7 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <th>Creado en:</th>
-                                                                            <td id="ticket-created_at"></td>
+                                                                            <td id="ticket-createdAt"></td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
@@ -67,7 +67,7 @@
                                                                     <tbody>
                                                                         <tr>
                                                                             <th width="100">Usuario:</th>
-                                                                            <td><span id="ticket-user_name"></span></td>
+                                                                            <td><span id="ticket-userName"></span></td>
                                                                         </tr>
                                                                         <tr>
                                                                             <th>Email:</th>
@@ -162,7 +162,7 @@
             //
             // Array de estados del ticket
             //
-                var status_array = ['Cerrado', 'Abierto', 'Resuelto'];
+                var statusArray = ['Cerrado', 'Abierto', 'Resuelto'];
                 
             $(document).ready(function(){
                 // Datos del ticket en JSON
@@ -172,25 +172,25 @@
                     status : 2,                         // ID estado del ticket
                     priority : "Alta",                  // Prioridad
                     department : "Bidoq",               // Departamento al que se envía
-                    created_at : "23-09-2020 08:47",    // Fecha y hora de cuándo se creó
-                    user_name : "Juanito",              // Nombre del usuario que crea el ticket
-                    user_id_login : "425",              // ID del usuario logueado                    
+                    createdAt : "23-09-2020 08:47",    // Fecha y hora de cuándo se creó
+                    userName : "Juanito",              // Nombre del usuario que crea el ticket
+                    userIdLogin : "425",              // ID del usuario logueado                    
                     email : "juanito@prueba.com",       // Email del usuario que crea el ticket
                     organization : "Bidoq despacho",    // Organización de quien crea el ticket
                     font : "Web",                       // Desde dónde se ha creado el ticket
                     messages : {
                         0 : {
-                            user_name : "Juanito",                                      // Nombre del usuario del mensaje
-                            user_id : "425",                                            // ID del usuario que crea el ticket
-                            user_avatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
-                            message_date : "23-09-2020 08:52",                          // Hora y fecha de la creación del mensaje
+                            userName : "Juanito",                                      // Nombre del usuario del mensaje
+                            userId : "425",                                            // ID del usuario que crea el ticket
+                            userAvatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
+                            messageDate : "23-09-2020 08:52",                          // Hora y fecha de la creación del mensaje
                             message : "Mensaje de prueba"                               // Mensaje
                         },
                         1 : {
-                            user_name : "Pepito",                                       // Nombre del usuario del mensaje
-                            user_id : "352",                                            // ID del usuario que crea el ticket
-                            user_avatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
-                            message_date : "23-09-2020 09:12",                          // Hora y fecha de la creación del mensaje
+                            userName : "Pepito",                                       // Nombre del usuario del mensaje
+                            userId : "352",                                            // ID del usuario que crea el ticket
+                            userAvatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
+                            messageDate : "23-09-2020 09:12",                          // Hora y fecha de la creación del mensaje
                             message : "Respuesta de prueba"                             // Mensaje
                         }
                     }
@@ -199,22 +199,22 @@
                 // Leemos los datos del ticket y montamos la estructura
                 $('#ticket-id').html(ticket.id);
                 $('#ticket-subject').html(ticket.subject);
-                $('#ticket-status').html(status_array[ticket.status]);
+                $('#ticket-status').html(statusArray[ticket.status]);
                 $('#ticket-priority').html(ticket.priority);
                 $('#ticket-department').html(ticket.department);
-                $('#ticket-created_at').html(ticket.created_at);
-                $('#ticket-user_name').html(ticket.user_name);
+                $('#ticket-createdAt').html(ticket.createdAt);
+                $('#ticket-userName').html(ticket.userName);
                 $('#ticket-user_email').html(ticket.email);
                 $('#ticket-organization').html(ticket.organization);
                 $('#ticket-font').html(ticket.font);
                 $("#select-status option[value='"+ticket.status+"']").prop('selected', true);
                 
                 // Añadimos al boton el data del id del usuario logueado y el id del ticket
-                $('#btn-send').attr('data-user', ticket.user_id_login);
+                $('#btn-send').attr('data-user', ticket.userIdLogin);
                 $('#btn-send').attr('data-ticket', ticket.id);
                 
                 // Formateamos los mensajes
-                var msg = messages(ticket.messages, ticket.user_id_login);
+                var msg = messages(ticket.messages, ticket.userIdLogin);
                 
                 // Mostramos los mensajes
                 $('#ticket-messages').html(msg);
@@ -222,36 +222,36 @@
             
             // Enviar mensage nuevo
             $('#btn-send').click(function(){
-                var msg_user = theEditor.getData();
-                var ticket_id = $(this).data('ticket');
-                var user_id_login = $(this).data('user');
-                var new_status = $('#select-status').val();
+                var msgUser = theEditor.getData();
+                var ticketId = $(this).data('ticket');
+                var userIdLogin = $(this).data('user');
+                var newStatus = $('#select-status').val();
                 
                 // Datos a enviar
                 var send = {
-                    ticket_id : ticket_id,  // ID del ticket al que corresponde
-                    user : user_id_login,   // ID usuario logueado (crea el mensaje)
-                    message : msg_user,     // Mensaje
-                    status : new_status     // Nuevo estado del ticket
+                    ticketId : ticketId,  // ID del ticket al que corresponde
+                    user : userIdLogin,   // ID usuario logueado (crea el mensaje)
+                    message : msgUser,     // Mensaje
+                    status : newStatus     // Nuevo estado del ticket
                 };
                 
                 // Mandamos los datos necesarios y nos devolverán el mensaje con los datos necesarios
                 var message = {
                     0 : {
-                        user_name : "Juanito",                                      // Nombre del usuario del mensaje
-                        user_id : "425",                                            // ID del usuario que crea el ticket
-                        user_avatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
-                        message_date : "23-09-2020 14:36",                          // Hora y fecha de la creación del mensaje
-                        message : msg_user,                                         // Mensaje
-                        ticket_status : new_status                                  // Nuevo estado del ticket
+                        userName : "Juanito",                                      // Nombre del usuario del mensaje
+                        userId : "425",                                            // ID del usuario que crea el ticket
+                        userAvatar: "http://placehold.it/50/55C1E7/fff&text=U",    // URL del avatar del usuario
+                        messageDate : "23-09-2020 14:36",                          // Hora y fecha de la creación del mensaje
+                        message : msgUser,                                         // Mensaje
+                        ticketStatus : newStatus                                  // Nuevo estado del ticket
                     }
                 };
                 
                 // Formateamos el mesaje
-                var msg = messages(message, user_id_login);
+                var msg = messages(message, userIdLogin);
                 
                 // Cambiamos el estado del ticket
-                $('#ticket-status').html(status_array[message[0].ticket_status]);
+                $('#ticket-status').html(statusArray[message[0].ticketStatus]);
                 
                 // Limpiamos el editor
                 theEditor.setData('');
@@ -261,25 +261,25 @@
             });
             
             // Formatea el json de mensajes para mostrarlos
-            function messages(messages, user_login){
+            function messages(messages, userLogin){
                 var msg = "";
                 
                 for (const prop in messages) {
                     var message = messages[prop];
                     
-                    if(message.user_id == user_login){ // El mensaje es del usuario logueado
+                    if(message.userId == userLogin){ // El mensaje es del usuario logueado
                         msg += "<li class='right clearfix'>";
                             msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
                                 msg += "<div class='row clearfix'>";
                                     msg += "<div class='col-11 border-from'>";
                                         msg += "<div class='header'>";
-                                            msg += "<strong class='primary-font'>"+message.user_name+"</strong>";
-                                            msg += "<small class='ml-2 text-muted'>"+message.message_date+"</small>";
+                                            msg += "<strong class='primary-font'>"+message.userName+"</strong>";
+                                            msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
                                         msg += "</div>";
                                         msg += "<p>"+message.message+"</p>";
                                     msg += "</div>";
                                     msg += "<div class='col-1'>";
-                                        msg += "<span class='ticket-img float-right'><img src='"+message.user_avatar+"' alt='User Avatar'/></span>";
+                                        msg += "<span class='ticket-img float-right'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
                                     msg += "</div>";
                                 msg += "</div>";
                             msg += "</div>";
@@ -289,12 +289,12 @@
                             msg += "<div class='col-12 pt-2 pb-2 pr-5'>";
                                 msg += "<div class='row clearfix'>";
                                     msg += "<div class='col-1'>";
-                                        msg += "<span class='ticket-img float-left'><img src='"+message.user_avatar+"' alt='User Avatar'/></span>";
+                                        msg += "<span class='ticket-img float-left'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
                                     msg += "</div>";
                                     msg += "<div class='col-11 border-to'>";
                                         msg += "<div class='header'>";
-                                            msg += "<strong class='primary-font'>"+message.user_name+"</strong>";
-                                            msg += "<small class='ml-2 text-muted'>"+message.message_date+"</small>";
+                                            msg += "<strong class='primary-font'>"+message.userName+"</strong>";
+                                            msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
                                         msg += "</div>";
                                         msg += "<p>"+message.message+"</p>";
                                     msg += "</div>";
