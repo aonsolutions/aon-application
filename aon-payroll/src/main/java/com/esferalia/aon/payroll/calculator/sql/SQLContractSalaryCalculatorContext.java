@@ -3479,6 +3479,11 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		if ( ctxMonthDays == naturalMonthDays )
 			return availableDays * factor;
 		
+		Date ctxEndDate = getEndDate();
+		if ( getLastDayOfMonth(ctxEndDate).after(ctxEndDate))
+			return availableDays * factor;
+			
+		
 		Period adjust = p;
 		try {
 			adjust = getPeriod4Adjust(others);
