@@ -165,11 +165,11 @@
         </div>
         <!-- end menu izquierda -->
         <!-- start contenido centro -->
-        <div class="col" id="atp_contenido_centro">
-          <div class="container-fluid">
-            <div class="row justify-content-center">
+        <div class="col" id="atp_contenido_centro" >
+          <div class="container-fluid" style="width:100%;height:100%;border:none;">
+            <div class="row justify-content-center" style="width:100%;height:100%;border:none;">
               <!-- INICIO VISTA -->
-
+	      <iframe id="view"  src="ticket/index.html" style="width:100%;height:100%;border:none;"></iframe>
               <!-- FIN VISTA -->
             </div>
           </div>
@@ -189,25 +189,17 @@
 
           <div class="atp_opciones_derecha_aplicacion">
             <div class="atp_titulo_opciones_derecha_aplicacion">
-              <h3>CONTABILIDAD</h3>
+              <h3>Portal</h3>
             </div>
             <div class="atp_contenido_opciones_derecha_aplicacion">
               <ul>
-                <li class="active">Mantenimiento de apuntes</li>
-                <li>Extracto de cuentas</li>
-                <li>Cuenta de explotación</li>
-                <li>Balance de sumas y saldos</li>
-                <li>Listado diario de movimientos</li>
-                <li>Listado mayor de cuentas</li>
-                <li>Balance de cuentas</li>
-                <li>Panel de control de IVA</li>
-                <li>Panel de control de IRPF</li>
-                <li>Panel de compras y gastos</li>
-                <li>Deposito de cuentas</li>
-                <li>Fichas de amortización</li>
-                <li>Tabla de tipos de amortización</li>
-                <li>Bienes Afectos o de inversión</li>
-                <li>Extractos bancarios</li>
+                <li onclick="javascript:view.src='ticket/index.html'">Messenger</li>
+                <li onclick="javascript:view.src='documental/index.html'" >Documental</li>
+                <li onclick="javascript:view.src='marcaje/empleado.html'" >Control Horario</li>
+                <li onclick="javascript:view.src='blank.html'" >Facturas</li>
+                <li onclick="javascript:view.src='blank.html'" >Contable</li>
+                <li onclick="javascript:view.src='blank.html'" >Fiscal</li>
+                <li onclick="javascript:view.src='blank.html'" >Laboral</li>
               </ul>
             </div>
           </div>
