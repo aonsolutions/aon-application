@@ -10,9 +10,7 @@ class AonExample extends HTMLElement {
 			<aon-toolbar id="aonExample" title="EXAMPLE"></aon-toolbar>
 			<!-- AON EXAMPLE MENU (SIDENAV) -->
 			<div id="aonExampleSidenav" class="sidenav">
-				<ul class="aonClip">
-
-				</ul>
+				
 			</div>
 
 			<!-- AON CONTRAT@ CONTENT -->

@@ -19,14 +19,17 @@ class AonHome extends HTMLElement {
 
 		let aonShowMenu = document.getElementById('aonShowMenu');
 		aonShowMenu.addEventListener('mouseover', () => {
-			let aonMenuSidenav = document.getElementById('aonMenuSidenav');
-			aonMenuSidenav.style.width = '150px';
-			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
-				item.style.display = 'inline-block';
-				item.style.fontSize = '12px';
-				item.style.fontFamily = 'Roboto,sans-serif';
-				item.style.color = 'black';
-			});
+			if(localStorage.getItem('aon_domain_id')){
+				let aonMenuSidenav = document.getElementById('aonMenuSidenav');
+				aonMenuSidenav.style.transitionDuration = '0ms';
+				aonMenuSidenav.style.width = '150px';
+				document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+					item.style.display = 'inline-block';
+					item.style.fontSize = '12px';
+					item.style.fontFamily = 'Roboto,sans-serif';
+					item.style.color = 'black';
+				});
+			}
 		});
   }
 }

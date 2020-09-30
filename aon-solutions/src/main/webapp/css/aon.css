@@ -325,7 +325,7 @@
 	}
 
 	.aonSidenavTitle {
-		font-size: 14px;
+		font-size: 12px;
 		margin-top: 15px;
 		margin-bottom: 10px;
 		color: gray;
@@ -341,7 +341,12 @@
 		left: 0;
 		background-color: #fff;
 		border-right: 1px solid #ddd;
+    transition-duration: 500ms;
 		overflow-x: hidden;
+	}
+
+	.sidenav::-webkit-scrollbar {
+		display: none;
 	}
 
 	.aonContent {
@@ -351,13 +356,17 @@
 		overflow-y: auto;
 	}
 
+	.aonContent::-webkit-scrollbar {
+    display: none;
+	}
+
 	.aonScroll {
 		overflow: auto;
 	}
 
 	.aonAppMenuSidenavList {
-		height: 40px;
-  	line-height: 40px;
+		height: 30px;
+  	line-height: 30px;
 		margin: 0;
     padding: 0 16px;
     cursor: pointer;
@@ -365,6 +374,7 @@
 
 	.aonVerticalMiddle {
 		vertical-align: middle;
+		font-size: 18px;
 	}
 
 	.aonVerticalCenter {
@@ -393,7 +403,7 @@
 		position: absolute;
 		margin-left: 10px;
 		margin-top: 2px;
-		font-size: 14px;
+		font-size: 12px;
 	}
 
   .aonDivButton {
@@ -414,4 +424,14 @@
 	.aonFormCenter {
 		display: flex;
 		justify-content: center;
+	}
+
+	.aonConnected {
+		position: absolute;
+		right: 4px;
+		bottom: 6px;
+		background: #35ac19;
+		width: 8px;
+		height: 8px;
+		border-radius: 10px;
 	}
