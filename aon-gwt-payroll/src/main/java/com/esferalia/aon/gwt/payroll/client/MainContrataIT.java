@@ -195,14 +195,48 @@ public class MainContrataIT extends MainEntryPoint {
 	    
 	    TextColumn<ITEmployee> statusColumn = new TextColumn<ITEmployee>() {
 	      @Override
-	      public String getValue(ITEmployee employeeContractInfo) {
-	        return employeeContractInfo.getStatus() == (byte)0 ? "ALTA" : "BAJA";
+	      public String getValue(ITEmployee itEmployee) {
+	    	IT it = checkIfIsOpenIt(itEmployee);
+	        return null != it ? parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" : "ALTA";
 	      }
+	     
+	      private IT checkIfIsOpenIt(ITEmployee itEmployee) {
+	  		for(IT it : itEmployee.getIts()) {
+	  			if(null == it.getEndDate())
+	  				return it;
+	  		}
+	  		return null;
+	  	  }
+	      
+	      private String parseShortLowCauseByte(Byte typeLowPart) {
+	  		switch (typeLowPart) {
+	  			case (byte)0:
+	  				return "ECC";
+	  			case (byte)1:
+	  				return "ATT";
+	  			case (byte)2:
+	  				return "MAT";
+	  			case (byte)3:
+	  				return "PAT";
+	  			case (byte)4:
+	  				return "REM";
+	  			case (byte)5:
+	  				return "RLA";
+	  			case (byte)6:
+	  				return "ANL";
+	  			case (byte)7:
+	  				return "ECC";
+	  			case (byte)8:
+	  				return "COV";
+	  			default:
+	  				return "-";
+	  		}
+	  	 }
 	    };
 
 	    statusColumn.setSortable(true);
 	    statusColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    employeeDataGrid.setColumnWidth(statusColumn, 10, Unit.PCT);
+	    employeeDataGrid.setColumnWidth(statusColumn, 15, Unit.PCT);
 	     
 	    TextColumn<ITEmployee> documentColumn = new TextColumn<ITEmployee>() {
 	      @Override
@@ -268,7 +302,7 @@ public class MainContrataIT extends MainEntryPoint {
 		employeeDataGrid.setColumnWidth(endDateColumn, 10, Unit.PCT);
 	    
 	    // Add the columns.
-	    employeeDataGrid.addColumn(employeeNameColumn, "Nobre Completo");
+	    employeeDataGrid.addColumn(employeeNameColumn, "Trabajador");
 	    employeeDataGrid.addColumn(statusColumn, "Estado SS");
 	    employeeDataGrid.addColumn(documentColumn, "Documento");
 	    employeeDataGrid.addColumn(ssNumberColumn, "N" + String.valueOf("\u00B0") + " SS");
