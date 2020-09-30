@@ -20,68 +20,57 @@ class AonDocumental extends HTMLElement {
 			{
 				name: 'Recientes',
 				icon: 'access_time',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'A Contabilizar',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Banco',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Contable',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Fiscal',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Jurídico',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Seguros',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Enviados',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Nóminas Empleados',
 				icon: 'folder',
-				fn: () => {
-
-				}
+				fn: () => this.loadIndex()
 			}
 		];
 		aonDocumental.addSidenavOptions('OPCIONES', options);
+
+		this.loadIndex();
+	}
+
+	loadIndex() {
+		let aonDocumental = document.getElementById('aonDocumental');
+		aonDocumental.setContentHTML('<iframe src="../../aon-suite/public/documental/index.html" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-documental', AonDocumental);

@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet" type='text/css'>
+
+    <!-- MATERIAL ICONS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+
+    <!-- MATERIAL COMPONENTS -->
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <!-- Styles -->
+    <link href="../css/app.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+
+                <!-- Main-->
+                <div class="container-fluid pt-5">
+                    <form id="form" name="form" action="#" method="post">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h3 class="">Marcaje de empleado</h3>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid pt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5 class="">Datos de marcaje</h5>
+                                </div>
+                            </div>
+
+                            <div class="row ">
+                                <div class="col-lg-6 col-md-12">
+
+
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="nombreApellido">Nombre y apellidos:</label>
+                                                <input class="form-control" type="text" readonly="readonly"
+                                                    id="nombreApellido" name="nombreApellido">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-6">
+                                            <div class="form-group">
+                                                <label for="dni">DNI:</label>
+                                                <input class="form-control" type="text" readonly="readonly" id="dni"
+                                                    name="dni">
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-3 col-sm-3 col-6">
+                                            <div class="form-group">
+                                                <label for="fecha">Fecha:</label>
+                                                <input class="form-control" type="text" readonly="readonly" id="fecha"
+                                                    name="fecha">
+                                            </div>
+
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-sm-3 col-6">
+                                            <div class="form-group">
+                                                <label for="reloj">Hora:</label>
+                                                <input class="form-control" type="text" readonly="readonly" id="reloj"
+                                                    name="reloj">
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                                            <div class="form-group">
+                                                <label for="tipoEntrada">Tipo de marcaje:</label>
+                                                <select class="form-control tipoMarcaje" id="tipoMarcaje"
+                                                    name="tipoMarcaje">
+                                                    <option value='1'>Marcaje sin incidencia</option>
+                                                    <option value='2'>Ausencia justificada</option>
+                                                    <option value='3'>Baja médica</option>
+                                                    <option value='4'>Compensación horas extras</option>
+                                                    <option value='5'>Permiso empresa</option>
+                                                    <option value='6'>Permiso Maternidad/Paternidad</option>
+                                                    <option value='7'>Permiso matrimonial</option>
+                                                    <option value='8'>Teletrabajo</option>
+                                                    <option value='11'>Vacaciones</option>
+                                                    <option value='12'>Visita médico</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="notaEntrada">Nota:</label>
+                                                <textarea class="form-control" id="notaEntrada" name="notaEntrada"
+                                                    rows="5"></textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="container-fluid pt-3">
+                            <div class="row">
+                                <div class="col-6 text-right">
+                                    <button type="submit" form="form" id="botonEntrada" class="btn btn-info"
+                                        data-boton="entrada">Marcar
+                                        Entrada</button>
+
+
+                                </div>
+
+                                <div class="col-6 text-left">
+
+
+                                    <button type="submit" form="form" id="botonSalida" class="btn btn-dark"
+                                        data-boton="salida">Marcar
+                                        Salida</button>
+                                </div>
+                                <input id="marcaje" name="marcaje" type="hidden">
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+
+            </div><!-- end contenido centro -->
+    
+
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script>
+
+        var datosEmpleado = {
+            empleado: {
+                id: '1',                            // id
+                documento: '12345678A',             // dni
+                nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
+            }
+
+        };
+
+
+        jQuery(function () {
+            cargarEmpleado();
+            mueveReloj();
+            getFecha();
+        });
+
+
+
+        function cargarEmpleado() {
+            var empleado = datosEmpleado['empleado'];
+            // $('#nombreApellido').val(empleado['nombre'])
+            // $('#dni').val(empleado['documento'])
+            $('#nombreApellido').attr('value', empleado['nombre']);
+            $('#dni').attr('value', empleado['documento']);
+        }
+
+        function mueveReloj() {
+            var momentoActual = new Date();
+            var hora = momentoActual.getHours();
+            var minuto = momentoActual.getMinutes();
+            var segundo = momentoActual.getSeconds();
+
+            var str_segundo = new String(segundo)
+            if (str_segundo.length == 1) {
+                segundo = "0" + segundo
+            }
+
+
+            var str_minuto = new String(minuto)
+            if (str_minuto.length == 1) {
+                minuto = "0" + minuto;
+            }
+
+            var str_hora = new String(hora)
+            if (str_hora.length == 1) {
+                hora = "0" + hora;
+            }
+
+            var horaImprimible = hora + ":" + minuto + ":" + segundo;
+
+            $('#reloj').val(horaImprimible);
+
+            setTimeout("mueveReloj()", 1000);
+        }
+
+        function getFecha() {
+            var fechaActual = new Date();
+            var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = dia + "/" + mes + "/" + annio;
+
+            $('#fecha').val(fechaImprimible);
+
+        }
+
+        (function ($) {
+            $.fn.serializeFormJSON = function () {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+        })(jQuery);
+
+        $('#botonEntrada').on('click', function (e) {
+            $('#marcaje').val('entrada');
+            e.preventDefault();
+            var data = $('form').serializeFormJSON();
+            console.log(data['tipoEntrada']);
+            alert(JSON.stringify(data));
+        })
+
+        $('#botonSalida').on('click', function (e) {
+            $('#marcaje').val('salida');
+            e.preventDefault();
+            var data = $('form').serializeFormJSON();
+            console.log(data);
+            alert(JSON.stringify(data));
+        })
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+
+    <!-- MATERIAL ICONS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+
+    <!-- MATERIAL COMPONENTS -->
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <link href="../css/app.css" rel="stylesheet" id="linkcss">
+
+</head>
+
+<body>
+
+            <!-- start contenido centro -->
+            <div class="col" id="atp_contenido_centro">
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <!-- INICIO VISTA -->
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-8">
+                                    <nav aria-label="breadcrumb">
+                                        <ol class="breadcrumb">
+                                            <li class="breadcrumb-item ">
+                                                <a href="../index.html" class="d-flex justify-content-center align-content-between">
+                                                    <i class="material-icons">house</i>
+                                                </a>
+                                            </li>
+                                            <li class="breadcrumb-item active" aria-current="page">Library</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                                <div class="col-4">
+                                    <div class="float-right mt-2">
+                                        <a class="btn btn-primary d-flex justify-content-center align-content-between" href="create.html">
+                                            <i class="material-icons fon-size-20">add_comment</i> &nbsp; Crear
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#Ticket</th>
+                                                <th scope="col">Última modificación</th>
+                                                <th scope="col">Título</th>
+                                                <th scope="col">De</th>
+                                                <th scope="col">Prioridad</th>
+                                                <th scope="col">Asigando</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot></tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end contenido centro -->
+      
+
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script>
+        //
+        // Cargamos las funciones
+        //
+        $(document).ready(function () {
+            // Cogemos el listado de datos para mostrar
+            var list = getList();
+
+            createTable(list);
+
+            //
+            // Creamos la tabla con los datos a listar
+            //
+            function createTable(data) {
+                // recorremos los datos a mostrar
+                var tbody = '';
+                var a_href = 'show.html';
+                $.each(data.list, function (i, item) {
+                    // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
+                    tbody += item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
+                    // Recorremos los <td>
+                    $.each(item, function (key, val) {
+                        switch (key) {
+                            case 'subject':
+                                tbody +=
+                                    '<td>' +
+                                    '<a class="text-dark" href="' + a_href + '?ticket=' + item.id + '">' +
+                                    '<div class="row">' +
+                                    '<div class="col-md-8">' +
+                                    val +
+                                    '</div>' +
+                                    '<div class="col-md-4 text-right">' +
+                                    '<small class="form-inline">' +
+                                    '<i class="material-icons">comment</i> ' +
+                                    '<span class="pl-1">' + item.comments_quantity + '</span>' +
+                                    '</small>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</a>' +
+                                    '</td>';
+                                break;
+                            case 'comments_quantity':
+                                // No metemos nada por que este valor lo metemos en el subject
+                                break;
+                            case 'answer':
+                                // No metemos el valor si tiene que responder o no
+                                break;
+
+                            default:
+                                tbody +=
+                                    '<td>' +
+                                    '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
+                                    val +
+                                    '</a>' +
+                                    '</td>';
+                                break;
+                        }
+                    });
+                    // Agregamos opciones que tenga
+                    tbody +=
+                        '<td>' +
+                        '<a class="text-dark text-decoration-none">' +
+                        '<i id="ticket-eliminar" class="material-icons pointer text-danger" title="Eliminar ticket"' +
+                        ' data-uid="' + data.user_id + '" ' +
+                        ' data-page="' + data.page + '" ' +
+                        ' data-id="' + item.id + '" ' +
+                        ' >delete_forever</i>' +
+                        '<i id="ticket-prioridad" class="material-icons pointer text-primary" title="Editar prioridad"' +
+                        ' data-uid="' + data.user_id + '" ' +
+                        ' data-id="' + item.id + '" ' +
+                        ' data-priority="' + item.priority + '" ' +
+                        '>low_priority</i>' +
+                        '</a>' +
+                        '</td>';
+                    // Cerramos el <tr>
+                    tbody += '</tr>';
+                });
+
+                // Agregamos el cuerpo de la tabla
+                $('.table tbody').html(tbody);
+
+                // Cogemos el paginado que tendía la tabla
+                var pagination = createPaginate(data.user_id, data.page, data.total_page)
+
+                // Agregamos el paginado en el footer de la tabla
+                var tfoot =
+                    '<tr>' +
+                    '<td colspan="7">' +
+                    '<div class="row">' +
+                    '<div class="col-md-6">' +
+                    'Mostrando del ' + data.shown_page + ' de un total de ' + data.total_date + ' elementos' +
+                    '</div>' +
+                    '<div class="col-md-6">' +
+                    pagination +
+                    '</div>' +
+                    '</div>' +
+                    '</td>'
+                '</tr>';
+
+                // Agregamos el cuerpo de la tabla
+                $('.table tfoot').html(tfoot);
+
+                // console.log(tbody);
+            }
+
+            //
+            // Eliminar ticket
+            //
+            $(document).on('click', '#ticket-eliminar', function () {
+                var user_id = $(this).data('uid');
+                var ticket_id = $(this).data('id');
+
+                var opcion = confirm("Eliminar el #Ticket " + ticket_id);
+                if (opcion == true) {
+                    var list = getList($(this).data('page'));
+                    createTable(list);
+                    alert('Eliminado el #Ticket ' + ticket_id + ' correctamente');
+                    // Json que mandamos
+                    var ticket_delete = {
+                        method: 'ticket_delete',
+                        id: ticket_id,
+                        uid: user_id,
+                    };
+                    console.log('Eliminar ticket Json que mandamos:');
+                    console.log(ticket_delete);
+                }
+
+            });
+
+            //
+            // Abrir el editar prioridad ticket
+            //
+            $(document).on('click', '#ticket-prioridad', function () {
+                // Cogemos los valores
+                var user_id = $(this).data('uid');
+                var ticket_id = $(this).data('id');
+                var ticket_priority = $(this).data('priority');
+                // Ponemos el titulo del modal
+                $('#modal-header-ticket').html('Editar el estado del #Ticket ' + ticket_id);
+                // Metemos el UID del que vamos a editar
+                $('#ticket-uid').val(user_id);
+                // Metemos el ID del que vamos a editar
+                $('#ticket-id').val(ticket_id);
+                // Seleccionamos el valor que se tiene marcado
+                $('#ticket-select-priority').val(ticket_priority);
+                // Mostramos el modal
+                $("#ticket-edit").modal();
+
+            });
+
+            //
+            // Editar prioridad ticket
+            //
+            $(document).on('click', '#ticket-prioridad-actualizar', function () {
+                var user_id = $('#ticket-uid').val();
+                var ticket_id = $('#ticket-id').val();
+                var ticket_priority = $('#ticket-select-priority').val();
+                $("#ticket-edit").modal('hide')
+                alert('Actualizado el estado del #Ticket ' + ticket_id + ' correctamente a la prioridad ' + ticket_priority);
+                // Json que mandamos
+                var ticket_edit_priority = {
+                    method: 'ticket_edit_priority',
+                    id: ticket_id,
+                    uid: user_id,
+                    priority: ticket_priority,
+                };
+                console.log('Editar prioridad Json que mandamos:');
+                console.log(ticket_edit_priority);
+            });
+
+            //
+            // Crear el paginado
+            //
+            function createPaginate(uid, page, page_total) {
+                var paginate = '<ul class="pagination display-block float-right">';
+                // Agregamos el usuario que estamos paginando
+                paginate += '<input id="paginate-uid" type="hidden" value="' + uid + '">';
+
+                // Si tenemos paginas
+                if (page > 1) {
+                    paginate +=
+                        '<li class="pointer">' +
+                        '<a class="go_page" data-page="1">' +
+                        '<i class="material-icons" title="Principio">fast_rewind</i>' +
+                        '</a>' +
+                        '</li>' +
+
+                        '<li class="pointer">' +
+                        '<a class="go_page" data-page="' + (page - 1) + '">' +
+                        '<i class="material-icons" title="Volver">arrow_left</i>' +
+                        '</a>' +
+                        '</li>';
+                }
+
+                if (page_total > 0) {
+                    paginate += '<li class="ml-2 mr-2">' + page + '/' + page_total + '</li>';
+                }
+
+                if (page < page_total) {
+                    paginate +=
+                        '<li class="pointer">' +
+                        '<a class="go_page" data-page="' + (page + 1) + '">' +
+                        '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>' +
+                        '</a>' +
+                        '</li>' +
+
+                        '<li class="pointer">' +
+                        '<a class="go_page" data-page="' + page_total + '">' +
+                        '<i class="material-icons" title="Final">fast_forward</i>' +
+                        '</a>' +
+                        '</li>';
+                }
+                paginate += '</ul>';
+
+                return paginate;
+            }
+
+            //
+            // Pasar de pagina
+            //
+            $(document).on('click', '.go_page', function () {
+                var user_id = $('#paginate-uid').val();
+                var page = $(this).data('page');
+                var list = getList(user_id, page);
+                createTable(list);
+                // Json que mandamos
+                var ticket_page = {
+                    method: 'ticket_page',
+                    uid: user_id,
+                    id: page,
+                };
+                console.log('Pasar paginas de ticket Json que mandamos:');
+                console.log(ticket_page);
+            });
+
+            //
+            // Listado para probar
+            //
+            function getList(uid = 'a5sa645-sa14', page_this = 1) {
+                // nombre
+                var name_a = ['', 'Manolo', 'Ambrosio', 'Abelardo', 'Fulgensio', 'Alejandro', 'Jesús', 'Julio', 'David', 'Alberto', 'Juan'];
+                var name_b = ['', 'Carmen', 'Angela', 'Manuela', 'Margarita', 'Maribel', 'Desi', 'Inma', 'Jessica', 'Estefanía', 'Nieves'];
+                // prioridades
+                var priority_array = ['Baja', 'Media', 'Alta']
+                // Donde meteremos los valores de los tickets
+                var tickets_list = {};
+                // Crear cantidades aletorias dependiendo de la pagina en la que estemos
+                page_this_element = page_this == 1 ? page_this : ((page_this - 1) * 10) + 1;
+                page_total = page_this_element + 10;
+                // Metemos los valores de los tickets aleatoriamente
+                for (var i = page_this_element; i < page_total; i++) {
+                    tickets_list[i] = {
+                        id: i,                                                // campo ticket
+                        last_update: '15-8-2020 15:30',                                // ultima modificacion
+                        subject: 'titulo del ticket',                              // titulo del ticket
+                        comments_quantity: Math.floor((Math.random() * 10) + 1),             // cantidad de comentarios
+                        from: name_a[Math.floor((Math.random() * 10) + 1)],     // creador del ticket
+                        priority: priority_array[Math.floor((Math.random() * 3))],  // prioridad del ticket Baja, Media, Alta
+                        assignaed_to: name_b[Math.floor((Math.random() * 10) + 1)],     // asigando a
+                        answer: Math.floor((Math.random() * 2)),                  // tienes que responder = 0 : respondido | 1 : responder
+                    };
+                };
+
+                // Json de lo que nos llegaria
+                var date = {
+                    user_id: uid,                                      // Al usuario que le pertenece los tickets
+                    total_date: 100,                                      // cantidad total de elementos
+                    total_page: 10,                                       // total de paginas
+                    page: page_this,                                // pagina en la que estamos
+                    shown_page: page_this_element + ' - ' + (page_total - 1),   // cantidad mostrada por paginas 1 - 10
+                    list: tickets_list,                             // listado de tickets
+                };
+
+                console.log('Json que recibimos:');
+                console.log(date);
+
+                // Devolver los datos
+                return date;
+            }
+        });
+    </script>
+    <!-- FIN Scripts -->
+</body>
+
+<!-- Modales -->
+<div class="modal fade" id="ticket-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="modal-header-ticket" class="modal-header font-weight-bold">
+                ...
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <input id="ticket-uid" type="hidden" value="">
+                        <input id="ticket-id" type="hidden" value="">
+                        <label for="priority">Prioridad</label>
+                        <select class="form-control" id="ticket-select-priority">
+                            <option disabled value="">Elija prioridad</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Media">Media</option>
+                            <option value="Baja">Baja</option>
+                        </select>
+                        <label class="d-none errores error-priority text-ayudat font-weight-bold">Debe elegir la
+                            prioridad del ticket</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button id="ticket-prioridad-actualizar" type="button" class="btn btn-primary">Actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- FIN Modales -->
+
+</html>

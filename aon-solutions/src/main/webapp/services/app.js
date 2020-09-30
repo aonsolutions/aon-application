@@ -290,7 +290,7 @@ export const PortalMenu =
         title: 'Laboral.',
         content: '<aon-example></aon-example>'
       },{
-        title: 'Fichaje.',
+        title: 'Control de Horario.',
         content: '<aon-signin></aon-signin>'
       },{
         title: 'Messenger.',
