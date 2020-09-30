@@ -335,7 +335,7 @@ public class JooqIT {
 					.set(CONTRACT_LEAVE.DESCRIPTION, it.getDescription())
 					.set(CONTRACT_LEAVE.START_DATE, startDate)
 					.set(CONTRACT_LEAVE.END_DATE, endDate)
-					.set(CONTRACT_LEAVE.PARENT, it.getParent())
+					.set(CONTRACT_LEAVE.PARENT, it.getParent() == (byte)0 ? null : it.getParent())
 					.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, it.getTypeHighPart())
 					.returning(CONTRACT_LEAVE.ID)
 					.fetchOne();
@@ -374,7 +374,7 @@ public class JooqIT {
 					.set(CONTRACT_LEAVE.DESCRIPTION, it.getDescription())
 					.set(CONTRACT_LEAVE.START_DATE, startDate)
 					.set(CONTRACT_LEAVE.END_DATE, endDate)
-					.set(CONTRACT_LEAVE.PARENT, it.getParent())
+					.set(CONTRACT_LEAVE.PARENT, it.getParent() == (byte)0 ? null : it.getParent())
 					.set(CONTRACT_LEAVE.DISCHARGE_CAUSE, it.getTypeHighPart())
 					.where(CONTRACT_LEAVE.ID.eq(it.getId()))
 					.execute();
