@@ -62,6 +62,7 @@ function sync(done) {
 function includeHTML(){
     return gulp.src([
         'vistas/**/*.html',
+        '!vistas/**/_*/**/*',
         '!vistas/template/*.html',
         '!vistas/BASE.html'
       ])

@@ -137,29 +137,10 @@
     <path class="st1" d="M22.9,25.2l-5.8-5.8l5.8-5.8l-1.8-1.8l-7.5,7.5l7.5,7.5L22.9,25.2z"/>
 </svg>
 <div class="atp_opciones_izquierda" id="atp_software_izquierda">
-    <h3>SOFTWARE CONTRATADOS</h3>
+    <h3>TICKETS</h3>
     <ul>
-        <li class="active">Portal</li>
-        <li>Facturación</li>
-        <li>Laboral</li>
-        <li>Fiscal</li>
-        <li>Contable</li>
-    </ul>
-</div>
-<div class="atp_opciones_izquierda" id="atp_descubrir_izquierda">
-    <h3>DESCUBRIR</h3>
-    <ul>
-        <li>Ocr</li>
-        <li>Altas /bajas</li>
-        <li>Virtual</li>
-    </ul>
-</div>
-<div class="atp_opciones_izquierda" id="atp_otros_izquierda">
-    <h3>OTROS SERVICIOS</h3>
-    <ul>
-        <li>Acelera</li>
-        <li>Máster</li>
-        <li>Outsorcing</li>
+        <li>Tickets</li>
+        <li>Crear ticket</li>
     </ul>
 </div>
                 </div>
@@ -376,12 +357,12 @@
             } );
             
             // Array de estados del ticket
-            var status_array = ['Cerrado', 'Abierto', 'Resuelto'];
+            var statusArray = ['Cerrado', 'Abierto', 'Resuelto'];
                 
             $(document).ready(function(){
                 // Datos del ticket en JSON
-                var nuevo_ticket = {
-                    user_id_login : "425",              // ID del usuario logueado
+                var nuevoTicket = {
+                    userIdLogin : "425",              // ID del usuario logueado
                     postings : {                        // destinos posibles
                         0 : {
                             id : 1,
@@ -399,8 +380,8 @@
                 };
                 
                 // Leemos los datos del ticket y rellenamos los datos necesarios
-                for (const prop in nuevo_ticket.postings) {
-                    var posting = nuevo_ticket.postings[prop];
+                for (const prop in nuevoTicket.postings) {
+                    var posting = nuevoTicket.postings[prop];
                     
                     $('#select-postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
                 }
@@ -426,12 +407,12 @@
                 }
                 
                 // Añadimos el resto de datos del formulario
-                var msg_user = theEditor.getData();
-                if(msg_user == ''){
+                var msgUser = theEditor.getData();
+                if(msgUser == ''){
                     $('.error-msg').removeClass('d-none');
                     envio = false;
                 }
-                formData.append("message", msg_user);
+                formData.append("message", msgUser);
                 
                 var subject = $("#subject").val();
                 if(subject == ''){
@@ -465,11 +446,11 @@
                     // Enviamos los datos del nuevo ticket por AJAX
                     // TO-DO
                     var respuesta = {
-                        ticket_id : '245673'
+                        ticketId : '245673'
                     };
 
                     // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
-                    document.location.href = "show.html?id="+respuesta.ticket_id;
+                    document.location.href = "show.html?id="+respuesta.ticketId;
                 } else {
                     return 0;
                 }
