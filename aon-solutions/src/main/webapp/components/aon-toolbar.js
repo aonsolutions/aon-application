@@ -5,7 +5,7 @@ import './aon-icon-button.js';
 	class AonToolbar extends HTMLElement {
 
 		static get observedAttributes() {
-			return [];
+			return ['title', 'option'];
 		}
 
 		get id() {
@@ -24,16 +24,33 @@ import './aon-icon-button.js';
 			this.setAttribute('title', title);
 		}
 
-		attributeChangedCallback(name, oldValue, newValue) {
+		get option() {
+			return this.getAttribute('option');
+		}
 
+		set option(option) {
+			this.setAttribute('option', option);
+		}
+
+		attributeChangedCallback(name, oldValue, newValue) {
+			if('title' === name) {
+				let title = document.getElementById('aon-toolbar-title');
+				if(title) title.innerHTML = newValue;
+			}
+			if('option' === name) {
+				let option = document.getElementById('aonToolbarTitleOption');
+				if(option) option.innerHTML = ' / ' + newValue;
+			}
 		}
 
 		constructor () {
 			super();
 			this.appendChild(this.build());
+		}
 
+		toogleSidenav(fn) {
 			let button = document.getElementById( this.getAttribute('id') + 'aon-toolbar-menu');
-			button.addEventListener('click', () => this.toogleNav());
+			button.addEventListener('click', fn);
 		}
 
 		connectedCallback () {
@@ -42,7 +59,7 @@ import './aon-icon-button.js';
 
 		build() {
 			let header = document.createElement('header');
-			header.setAttribute('id', this.getAttribute('id') + 'Toolbar');
+			header.setAttribute('id', this.getAttribute('id') + '	Header');
 			header.className = "aonToolbar";
 
 			let section = document.createElement('section');
@@ -55,8 +72,15 @@ import './aon-icon-button.js';
 
 			let title = document.createElement('span');
 			title.setAttribute('id', 'aon-toolbar-title');
-			title.innerHTML = this.getAttribute('title');
-			section.appendChild(title)
+			title.innerHTML = this.getTitle().toUpperCase();
+			section.appendChild(title);
+
+			let option = document.createElement('span');
+			option.style.color = 'gray';
+			option.style.fontSize = '14px';
+			option.setAttribute('id', 'aonToolbarTitleOption');
+			option.innerHTML = this.option ? '/ ' + this.option : '';
+			section.appendChild(option);
 
 			header.appendChild(section);
 
@@ -69,19 +93,23 @@ import './aon-icon-button.js';
 		 	return header;
 		}
 
-		addButton(id, icon) {
+		addButton(name, icon, fn) {
+			const id = this.getId() + name + 'Button';
 			let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
 			let span = document.createElement('span');
 			span.innerHTML= button;
 
 			let aonMenu = document.getElementById('aonMenu');
-			let toolSection = document.getElementById(this.getAttribute('id') + 'aon-toolbar-tool-section');
+			let toolSection = document.getElementById(this.getId() + 'aon-toolbar-tool-section');
 			toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
 			toolSection.appendChild(span);
+
+			let b = document.getElementById(id);
+			b.addEventListener('click', fn);
 		}
 
 		removeButtons() {
-			let toolSection = document.getElementById(this.getAttribute('id') + 'aon-toolbar-tool-section');
+			let toolSection = document.getElementById(this.getId() + 'aon-toolbar-tool-section');
 			toolSection.innerHTML = '';
 		}
 
@@ -95,6 +123,15 @@ import './aon-icon-button.js';
 				document.getElementById(sidenav).style.width = "250px";
 				document.getElementById(content).style['margin-left'] = "250px";
 			}
+		}
+
+
+		getId() {
+			return this.getAttribute('id');
+		}
+
+		getTitle() {
+			return this.getAttribute('title');
 		}
 	}
 

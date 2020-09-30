@@ -88,7 +88,6 @@ import '../aon-checkbox.js';
 					<form action="#" class="aon-margin-0">
 						<aon-input-text class="aonWidth25" id="serie" description="Serie"></aon-input-text>
 						<aon-input-text class="aonWidth25" id="number" description="Número"></aon-input-text>
-						<aon-input-text class="aonWidth25" id="reference" visible="false" description="Nº Factura"></aon-input-text>
 						<aon-input-text class="aonWidth25" id="date" type="date" description="Fecha"></aon-input-text>
 						<aon-input-text class="aonWidth25" id="total" description="Total"></aon-input-text>
 					</form>
@@ -171,7 +170,7 @@ import '../aon-checkbox.js';
 				</div>
 			</div>
 		</div>
-
+						<aon-input-text class="aonWidth25" id="reference" visible="false" description="Nº Factura"></aon-input-text>
 		`;
 
 	class AonInvoice extends HTMLElement {

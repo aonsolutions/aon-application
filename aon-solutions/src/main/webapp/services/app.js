@@ -276,7 +276,7 @@ export const PayrollMenu =
 export const PortalMenu =
       [{
         title:'Documental.',
-        content: '<aon-example></aon-example>'
+        content: '<aon-documental></aon-documental>'
       },{
         title:'Facturas.',
         content: '<aon-invoice-panel></aon-invoice-panel>'

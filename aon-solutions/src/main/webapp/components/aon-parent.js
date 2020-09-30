@@ -15,86 +15,59 @@ class AonParent extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<!-- AON CONFIGURATION MENU (SIDENAV) -->
-			<div id="aonParentSidenav" class="sidenav" style="top:60px !important;height: calc(100vh - 61px) !important;">
-				<div class="aonSidenavTitle"> FILTROS </div>
-				<ul class="aonClip">
-					<li id="aonParentSidenavActive" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">domain</i>
-						<span class="aonMenuItemSpan"> Activas </span>
-					</li>
-
-					<li id="aonParentSidenavInactive" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">domain_disabled</i>
-						<span class="aonMenuItemSpan"> Inactivas </span>
-					</li>
-
-					<li id="aonParentSidenavShared" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">share</i>
-						<span class="aonMenuItemSpan"> Compartidas </span>
-					</li>
-
-					<li id="aonParentSidenavEntorno" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">apartment</i>
-						<span class="aonMenuItemSpan"> Entorno </span>
-					</li>
-				</ul>
-
-				<div class="aonSidenavTitle"> TAREAS PENDIENTOS </div>
-				<ul class="aonClip">
-					<li id="aonParentSidenavInvoiceInbox" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">inbox</i>
-						<span class="aonMenuItemSpan" style="font-weight:bold;"> Facturas Pendientes (22) </span>
-					</li>
-
-					<li id="aonParentSidenavInvoiceReport" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">report</i>
-						<span class="aonMenuItemSpan"> Incidencias </span>
-					</li>
-
-					<li id="aonParentSidenavNotification" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">notifications</i>
-						<span class="aonMenuItemSpan"> Notificaciones </span>
-					</li>
-
-					<li id="aonParentSidenavTicket" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">article</i>
-						<span class="aonMenuItemSpan" style="font-weight:bold;"> Tickets (7)</span>
-					</li>
-				</ul>
-			</div>
-
-			<!-- AON CONFIGURATION CONTENT -->
-			<div id="aonParentContent" class="aonContent" style="height: calc(100vh - 61px) !important;">
-
-			</div>
+			<aon-application id="aonParentMain" title="Parent" main="true"></aon-application>
 		`;
+		let aonParent = document.getElementById('aonParentMain');
+
+		let filterOptions = [
+			{
+				name: 'Activas',
+				icon: 'domain',
+				fn: () => {}
+			},
+			{
+				name: 'Inactivas',
+				icon: 'domain_disabled',
+				fn: () => {}
+			},
+			{
+				name: 'Compartidas',
+				icon: 'share',
+				fn: () => {}
+			},
+			{
+				name: 'Entorno',
+				icon: 'apartment',
+				fn: () => {}
+			}
+		];
+		aonParent.addSidenavOptions('FILTROS', filterOptions);
+
+		let taskOptions = [
+			{
+				name: 'Facturas Pendientes',
+				icon: 'inbox',
+				fn: () => {}
+			},
+			{
+				name: 'Incidencias',
+				icon: 'report',
+				fn: () => {}
+			},
+			{
+				name: 'Notificaciones',
+				icon: 'notifications',
+				fn: () => {}
+			},
+			{
+				name: 'Tickets',
+				icon: 'article',
+				fn: () => {}
+			}
+		];
+		aonParent.addSidenavOptions('TAREAS PENDIENTOS', taskOptions);
+
 		this.init();
-		this.toogleNav();
-
-		let listIds = ['aonParentSidenavActive', 'aonParentSidenavInactive', 'aonParentSidenavShared', 'aonParentSidenavEntorno',
-		 	'aonParentSidenavInvoiceInbox', 'aonParentSidenavInvoiceReport', 'aonParentSidenavNotification', 'aonParentSidenavTicket'];
-
-		listIds.forEach((id, i) => {
-				let el = document.getElementById(id);
-
-				el.addEventListener('mouseover', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = '#f1f1f1';
-				});
-				el.addEventListener('mouseleave', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = 'transparent';
-				});
-				el.addEventListener('click', () => {
-					listIds.forEach((id, i) => {
-						let el1 = document.getElementById(id);
-						el1.style.backgroundColor = 'transparent';
-					});
-					this.selected = id;
-					el.style.backgroundColor = '#ddd';
-				});
-		});
 	}
 
 	init(filter) {
@@ -107,18 +80,6 @@ class AonParent extends HTMLElement {
       }, () => closeSession()
     );
   }
-
-	toogleNav() {
-		let sidenav = 'aonParentSidenav';
-		let content = 'aonParentContent';
-		if(document.getElementById(sidenav).style.width === "250px"){
-			document.getElementById(sidenav).style.width = "0px";
-			document.getElementById(content).style.marginLeft = "0px";
-		} else {
-			document.getElementById(sidenav).style.width = "250px";
-			document.getElementById(content).style['margin-left'] = "250px";
-		}
-	}
 
 	companyFilter(f, q) {
 		if(!q) {
@@ -151,8 +112,8 @@ class AonParent extends HTMLElement {
 	}
 
  	build(companies) {
-		let content = document.getElementById('aonParentContent');
-		content.innerHTML = '';
+		let aonParent = document.getElementById('aonParentMain');
+		let content = document.createElement('div');
 		let div = document.createElement('div');
 		div.style.borderBottom = '1px solid #5f6368';
 		div.style.marginTop = '15px';
@@ -172,6 +133,7 @@ class AonParent extends HTMLElement {
 			ul.appendChild(this.buildLi(companies[i], 'transparent'));
 		}
 		content.appendChild(ul);
+		aonParent.setContent(content);
 	}
 
 	buildLi(company, color) {
