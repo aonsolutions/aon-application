@@ -1,0 +1,438 @@
+	body {
+		padding: 0px !important;
+		margin: 0px !important;
+		font-family: "Roboto","Helvetica","Arial",sans-serif !important;
+    font-weight: 400 !important;
+		font-size: 14px !important;
+		line-height: normal !important;
+	}
+
+	a{
+		color: #12CCD1;
+		cursor: pointer;
+	}
+
+	a:hover{
+		color: #12CCD1;
+		text-decoration: underline;
+	}
+	button {
+    display: inline-block;
+    border: none;
+    padding: 1rem 2rem;
+    margin: 0;
+    text-decoration: none;
+    background: #002469;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background 250ms ease-in-out,
+                transform 150ms ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+		outline: none !important;
+	}
+
+	button:active {
+    transform: scale(0.99);
+	}
+
+	.aonColorIcon {
+		color: #5f6368;
+	}
+
+	.aonColorGray {
+		color: #A2A8B6;
+	}
+
+	.aonColorPrimary {
+		color: #002469;
+	}
+
+	.aonColorSecondary {
+		color: #12CCD1;
+	}
+
+	.aonTitle {
+			font-size: 20px;
+			font-weight:400;
+			line-height: normal;
+			margin: 0;
+	}
+
+	.aonMarketplaceTitle {
+		color: #5f6368;
+		font-weight: bold;
+		padding-left: 40px;
+	}
+
+	.aonAppTitle {
+		color: #5f6368;
+		font-weight: bold;
+		padding-left: 20px;
+	}
+
+	.aonMenu {
+		position: relative;
+		height:calc(100vh - 61px);
+	}
+
+	.rootPanel {
+		position: relative;
+    margin-right: 100px;
+		height:calc(100vh - 61px);
+  	overflow-y: auto;
+		margin: 0;
+	}
+
+	.aonIconButton {
+		border-radius: 50%;
+    font-size: 24px;
+    height: 40px;
+		margin: 0;
+    min-width: 40px;
+    width: 40px;
+    padding: 0;
+    overflow: hidden;
+    color: inherit;
+    line-height: normal;
+		background: 0 0;
+    border: none;
+		position: relative;
+		display: inline-block;
+		outline: none !important;
+		cursor: pointer;
+	}
+
+  .aonCard {
+    margin: 20px;
+    padding-bottom:50px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 16px;
+    background: #fff;
+    border-radius: 2px;
+    box-sizing: border-box;
+  }
+
+	.aonLogo {
+		position: absolute;
+		margin-left: 10px;
+		top: 15px;
+		cursor: pointer;
+	}
+
+	.aonParentLogo {
+	  position: absolute;
+	  left: 140px;
+	  top: 0;
+	  margin: 10px;
+	  height: 60px;
+	  cursor: pointer;
+	}
+
+  .aonWidth25{
+      width: 24%;
+      display: inline-block !important;
+  }
+
+  .aonWidth50{
+      width: 49%;
+      display: inline-block !important;
+  }
+
+  .aonWidth75{
+      width: 73.5%;
+      display: inline-block !important;
+  }
+
+	.aonWidth300{
+      width: 300px;
+  }
+
+	.aonRight0 {
+		position: absolute;
+		right:0px;
+	}
+
+	.aonRight20 {
+		position: absolute;
+		right:20px;
+	}
+
+	.aonRight40 {
+		position: absolute;
+		right:40px;
+	}
+
+  .aonRight60 {
+		position: absolute;
+		right:60px;
+	}
+
+	.aonRight100 {
+		position: absolute;
+		right:100px;
+	}
+
+	.aonRight140 {
+		position: absolute;
+		right:140px;
+	}
+
+	.aonRight160 {
+		position: absolute;
+		right:160px;
+	}
+
+	.aonRight180 {
+		position: absolute;
+		right:180px;
+	}
+
+	.aonRight220 {
+		position: absolute;
+		right:220px;
+	}
+
+	.aonLeft250 {
+		position: absolute;
+		left:250px;
+	}
+
+	.aonMenuIcon {
+		position: relative;
+		top: 7px;
+	}
+
+	.aonMenuSidenavSubAppListItem {
+		height: 30px;
+    padding: 0px 16px;
+    background-color: transparent;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
+	}
+
+	.aonMenuLink {
+		height: 30px;
+		color: #000;
+    white-space: nowrap;
+	}
+
+	.aonHeader {
+	    background-color: #fff;
+	    padding: 0!important;
+	    margin: 0!important;
+	    border-bottom: 1px solid #ddd;
+	    color: #5f6368;
+	    height: 60px;
+	}
+
+	.aonHeaderButton {
+			top: 10px;
+	}
+
+	.aonAvatar {
+		color: #5f6368;
+		margin-top: 5px;
+		font-size: 24px;
+		margin-right: 20px;
+		float: left;
+		box-sizing: border-box;
+		border-radius: 50%;
+	}
+
+	.aonLi {
+	    border-bottom: 1px solid #ddd;
+			cursor:pointer;
+	}
+
+	.aonToolbar {
+    display:flex;
+		height:40px;
+		padding-left:16px;
+		border-top: 0px none;
+		border-bottom: 1px solid rgb(221, 221, 221);
+    font-size: 16px;
+	}
+
+  .aonToolbarSection {
+    display: inline-flex;
+    flex: 1 1 auto;
+    align-items: center;
+    min-width: 0;
+    z-index: 1;
+  }
+
+  .aonToolbarSectionEnd {
+    justify-content: flex-end;
+  }
+
+	.aonTable {
+		width: 100%;
+		border: 0px;
+	}
+
+	.aonTableTh {
+		text-align: center !important;
+	}
+
+	.aonMenuSidenav {
+		height: calc(100vh - 61px);
+		width: 60px;
+		position: fixed;
+		top: 61px;
+		right: 0;
+		background-color: #fff;
+		border-left: 1px solid #ddd;
+		overflow-x: hidden;
+		z-index: 2;
+	}
+
+	.aonMenuSidenavAppToolbar {
+		height: 64px;
+		color: white;
+		display: flex;
+    box-sizing: border-box;
+    padding: 0 16px;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+	}
+
+	.aonMenuSidenavSubAppList {
+		margin: 0px;
+    padding: 0px;
+    list-style: none;
+    height: calc(100vh - 126px);
+    overflow: auto;
+	}
+
+	.aonCompanyList {
+		margin: 0px;
+		padding: 0px;
+		height: 100%;
+		overflow-y: auto;
+	}
+
+	.aonSidenavDiv {
+		padding-left: 25px;
+	}
+
+	.aonSidenavTitle {
+		font-size: 12px;
+		margin-top: 15px;
+		margin-bottom: 10px;
+		color: gray;
+		margin-left: 15px;
+	}
+
+	.sidenav {
+		height: 100%;
+		width: 0px;
+		position: fixed;
+		z-index: 1;
+		top: 100px;
+		left: 0;
+		background-color: #fff;
+		border-right: 1px solid #ddd;
+    transition-duration: 500ms;
+		overflow-x: hidden;
+	}
+
+	.sidenav::-webkit-scrollbar {
+		display: none;
+	}
+
+	.aonContent {
+		display: block;
+		transition: 0.5s;
+		height: calc(100vh - 102px);
+		overflow-y: auto;
+	}
+
+	.aonContent::-webkit-scrollbar {
+    display: none;
+	}
+
+	.aonScroll {
+		overflow: auto;
+	}
+
+	.aonAppMenuSidenavList {
+		height: 30px;
+  	line-height: 30px;
+		margin: 0;
+    padding: 0 16px;
+    cursor: pointer;
+		margin-left: 10px;
+	}
+
+	.aonVerticalMiddle {
+		vertical-align: middle;
+		font-size: 18px;
+	}
+
+	.aonVerticalCenter {
+		margin: 0;
+	  position: absolute;
+	  top: 50%;
+	  -ms-transform: translateY(-50%);
+	  transform: translateY(-50%);
+	}
+
+	.aonClip {
+		clip: rect(0px, 250px, 112px, 0px) !important;
+		opacity: 1;
+		z-index: 1;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+	}
+
+	.aonOpacity {
+		opacity: 1 !important;
+		width: 100%;
+	}
+
+	.aonMenuItemSpan {
+		position: absolute;
+		margin-left: 10px;
+		margin-top: 2px;
+		font-size: 12px;
+	}
+
+  .aonDivButton {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
+
+	.aonSearchBox {
+		position: absolute;
+	  height: 40px;
+	  border: none;
+	  -webkit-appearance: none;
+	  outline: 0px;
+		font-size: 14px;
+	}
+
+	.aonFormCenter {
+		display: flex;
+		justify-content: center;
+	}
+
+	.aonConnected {
+		position: absolute;
+		right: 4px;
+		bottom: 6px;
+		background: #35ac19;
+		width: 8px;
+		height: 8px;
+		border-radius: 10px;
+	}

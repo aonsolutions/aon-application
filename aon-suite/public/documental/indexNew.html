@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="AYUDA T">
+        <meta name="generator" content="">
+        <title>aon Suite</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="../css/app.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container mb-5">
+            <div class="row mt-3">
+                <div class="col-9">
+                    <ul class="list-inline">
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=5" data-folder="5" class="btn btn-light btn-sm pointer">A contabilizar</a>
+                        </li>
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=13" data-folder="13" class="btn btn-light btn-sm pointer">Banco</a>
+                        </li>
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=15" data-folder="15" class="btn btn-light btn-sm pointer">Contable</a>
+                        </li>
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=8" data-folder="8" class="btn btn-light btn-sm pointer">Fiscal</a>
+                        </li>
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=6" data-folder="6" class="btn btn-light btn-sm pointer">Jurídico</a>
+                        </li>
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=17" data-folder="17" class="btn btn-light btn-sm pointer">Seguros</a>
+                        </li>
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=1" data-folder="1" class="btn btn-light btn-sm pointer">Enviados</a>
+                        </li>
+                        <li class="list-inline-item mt-2">
+                            <a href="?folder=nominas" data-folder="nominas" class="btn btn-light btn-sm pointer">Nóminas empleados</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-3 mt-2">
+                    <button id="upload_button" class="btn btn-primary btn-sm float-right d-flex">
+                        <i class="material-icons upload_file mr-1"></i>
+                        <span class="d-flex align-items-center">Subir</span>
+                    </button>
+                    <form class="d-none" enctype="multipart/form-data">
+                        <input id="upload" class="form-control-file" type="file" name="">
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-middle">
+                                    <button id="descargar-docs-seleccionados" class="d-none btn btn-primary btn-sm" title="Descargar documentos seleccionados">
+                                        <i class="material-icons align-middle file_download"></i>
+                                    </button>
+                                </th>
+                                <th scope="col" class="align-middle">Tags</th>
+                                <th scope="col" class="align-middle">Fecha</th>
+                                <th scope="col" class="align-middle">Nombre</th>
+                                <th scope="col" class="align-middle">Tipo</th>
+                                <th scope="col" class="align-middle">Leído</th>
+                                <th scope="col" class="align-middle">Subcarpeta</th>
+                                <th scope="col" class="align-middle">Subido por</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modales -->
+        <div class="modal fade" id="edit_doc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header font-weight-bold">
+                        Editar documento
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <input id="edit_doc_id" type="hidden" value="">
+                                <div class="form-group">
+                                    <label for="file_name_doc">Nombre</label>
+                                    <input type="text" class="form-control" id="file_name_doc">
+                                </div>
+                                <div class="form-group">
+                                    <label for="tags_doc">Tags</label>
+                                    <select multiple class="form-control" id="tags_doc">
+                                        <option value="#Intracomunitarias">#Intracomunitarias</option>
+                                        <option value="#ISP">#ISP</option>
+                                        <option value="#Rectificativas">#Rectificativas</option>
+                                    </select>
+                                </div>
+                                <label class="d-none error-empty-file-name-doc text-danger font-weight-bold">El nombre no puede estar vacío</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button id="confirm_edit_doc" type="button" class="btn btn-primary">Editar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="new_note_doc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header font-weight-bold">
+                        Añadir nota al documento
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <input id="note_doc_id" type="hidden" value="">
+                                <div class="form-group">
+                                    <label for="note_doc">Nota</label>
+                                    <textarea class="form-control" id="note_doc" rows="3"></textarea>
+                                </div>
+                                <label class="d-none error-empty-note-doc text-danger font-weight-bold">La nota no puede estar vacía</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button id="confirm_new_note_doc" type="button" class="btn btn-primary">Crear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="../js/app.js"></script>
+        <script>
+            var CARPETA_A_CONTABILIZAR = 5;
+            var data = {
+                "list": [
+                    {
+                        "id": 1,
+                        "tags": [
+                            "#Intracomunitarias"
+                        ],
+                        "date": "23-09-2020 14:41",
+                        "file_name": "Nombre de archivo.png",
+                        "type": "sent",
+                        "read": 0,
+                        "subfolder": null,
+                        "uploaded_by": "Cliente de prueba"
+                    },
+                    {
+                        "id": 2,
+                        "tags": [
+                            "#ISP",
+                            "#Rectificativas"
+                        ],
+                        "date": "23-09-2020 14:41",
+                        "file_name": "Test.pdf",
+                        "type": "sent",
+                        "read": 0,
+                        "subfolder": "Subcarpeta de A contabilizar",
+                        "uploaded_by": "Cliente de prueba"
+                    },
+                    {
+                        "id": 3,
+                        "tags": [],
+                        "date": "23-09-2020 14:41",
+                        "file_name": "Nombre de archivo.png",
+                        "type": "received",
+                        "read": 1,
+                        "subfolder": null,
+                        "uploaded_by": "Asesor de prueba"
+                    },
+                    {
+                        "id": 4,
+                        "tags": [],
+                        "date": "23-09-2020 14:41",
+                        "file_name": "Nombre de archivo.png",
+                        "type": "sent",
+                        "read": 0,
+                        "subfolder": null,
+                        "uploaded_by": "Cliente de prueba"
+                    },
+                    {
+                        "id": 5,
+                        "tags": [
+                            "#ISP"
+                        ],
+                        "date": "23-09-2020 14:41",
+                        "file_name": "Nombre de archivo.png",
+                        "type": "received",
+                        "read": 0,
+                        "subfolder": "Subcarpeta de A contabilizar",
+                        "uploaded_by": "Asesor de prueba"
+                    }
+                ],
+                "total_data": 5,
+                "total_page": 1,
+                "page": 1,
+                "shown_page": "1-5"
+            };
+
+            $(document).ready(function(){
+                // Obtenemos la carpeta seleccionada a partir del parametro folder de la url, si no existe el parametro le damos el valor de la carpeta con id 5 (A contabilizar)
+                var selectedFolder = new URLSearchParams(window.location.search).get('folder') || CARPETA_A_CONTABILIZAR;
+
+                // Añadimos los estilos de carpeta actual a la carpeta seleccionada
+                $('a[data-folder="' + selectedFolder + '"]').addClass('active').attr('aria-pressed', 'true');
+
+                createTable(data);
+
+                //
+                // Creamos la tabla con los datos a listar
+                //
+                function createTable(data){
+                    var list = (selectedFolder == CARPETA_A_CONTABILIZAR) ? data.list : [];
+
+                    // Recorremos los datos a mostrar
+                    var tbody = '';
+
+                    if (list.length) {
+                        $.each(list, function(i, item) {
+                            tbody+= '<tr data-id="' + item.id + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.join(',') + '">';
+
+                                // Columna con las acciones que se pueden realizar sobre un documento
+                                tbody+= '' +
+                                    '<td class="col-2">' +
+                                        '<div class="form-check form-check-inline mr-0 d-inline-block align-top">' +
+                                            '<input class="checkbox-descargar-doc form-check-input position-static" type="checkbox" aria-label="Seleccionar documento">' +
+                                        '</div>' +
+                                        '<a href="showNew.html?document=' + item.file_name + '" title="Ver documento" class=""><i class="material-icons pointer text-primary">image</i></a>' +
+                                        '<i title="Descargar documento" class="material-icons pointer text-primary">file_download</i>' +
+                                        '<i class="edit-doc material-icons pointer text-primary" title="Editar documento">edit</i>';
+
+                                        // Si el usuario ha enviado el documento, permitimos acciones adicionales
+                                        if (item.type === 'sent') {
+                                            tbody+= '<i class="new-note-doc material-icons pointer text-primary" title="Crear nota">note_add</i>';
+
+                                            // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
+                                            if (selectedFolder == CARPETA_A_CONTABILIZAR) {
+                                                tbody += '<i class="delete-doc material-icons pointer text-danger" title="Eliminar documento">delete_forever</i>';
+                                            }
+                                        }
+
+                                tbody+= '</td>';
+
+                                // Recorremos los <td>
+                                $.each(item, function(key, val) {
+                                    switch (key) {
+                                        case 'id': // No mostramos el ID en la tabla
+                                            break;
+                                        case 'tags':
+                                            tbody+=
+                                            '<td class="col-1">' +
+                                                '<span>';
+                                                    if ($.isArray(val)) {
+                                                        var tags = val.join(', ');
+
+                                                        tbody += tags;
+                                                    }
+                                                tbody += '</span>' +
+                                            '</td>';
+                                            break;
+                                        case 'subfolder':
+                                            var subfolder = (val !== null) ? val : '';
+
+                                            tbody+= '<td class="col-1"><span>'+subfolder+'</span></td>';
+
+                                            break;
+                                        case 'read':
+                                            var read = (val === 0) ? '' : '<i class="material-icons">check</i>';
+
+                                            tbody+= '<td class="col-1"><span>'+read+'</span></td>';
+                                            break;
+                                        case 'type':
+                                            var types = {
+                                                'sent': 'Enviado',
+                                                'received': 'Recibido'
+                                            };
+                                            var type = types[item.type];
+
+                                            tbody+= '<td class="col-1"><span>'+type+'</span></td>';
+                                            break;
+                                        default:
+                                            tbody+= '<td class="col-1"><span>'+val+'</span></td>';
+                                            break;
+                                    }
+                                });
+                            // Cerramos el <tr>
+                            tbody+= '</tr>';
+                        });
+                    } else {
+                        tbody+= '' +
+                            '<tr>'+
+                                '<td colspan="8">'+
+                                    '<div class="row">'+
+                                        '<div class="col-12 text-center">'+
+                                            'No existen datos para mostrar'
+                                        '</div>'+
+                                    '</div>'+
+                                '</td>'
+                            '</tr>';
+                    }
+
+                    // Agregamos el cuerpo de la tabla
+                    $('.table tbody').append(tbody);
+
+                    // Cogemos el paginado que tendía la tabla
+                    var pagination = createPaginate(data.page, data.total_page)
+
+                    // Agregamos el paginado en el footer de la tabla
+                    var tfoot =
+                    '<tr>'+
+                        '<td colspan="8">'+
+                            '<div class="row">'+
+                                '<div class="col-md-6">'+
+                                    'Mostrando del '+data.shown_page+' de un total de '+data.total_data+' elementos'+
+                                '</div>'+
+                                '<div class="col-md-6">'+
+                                    pagination+
+                                '</div>'+
+                            '</div>'+
+                        '</td>'
+                    '</tr>';
+
+                    // Agregamos el pie de la tabla
+                    $('.table tfoot').html(tfoot);
+                }
+
+                //
+                // Crear el paginado
+                //
+                function createPaginate(page, page_total){
+                    var paginate = '<ul class="pagination display-block float-right">';
+
+                    // Si tenemos paginas
+                    if (page > 1){
+                        paginate+=
+                            '<li class="pointer">'+
+                                '<a class="go_page" data-page="1">'+
+                                    '<i class="material-icons" title="Principio">fast_rewind</i>'+
+                                '</a>'+
+                            '</li>'+
+
+                            '<li class="pointer">'+
+                                '<a class="go_page" data-page="'+(page-1)+'">'+
+                                    '<i class="material-icons" title="Volver">arrow_left</i>'+
+                                '</a>'+
+                            '</li>';
+                    }
+
+                    if(page_total > 0){
+                        paginate+= '<li class="ml-2 mr-2">'+page+'/'+page_total+'</li>';
+                    }
+
+                    if (page < page_total) {
+                        paginate+=
+                            '<li class="pointer">'+
+                                '<a class="go_page" data-page="'+(page+1)+'">'+
+                                    '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
+                                '</a>'+
+                            '</li>'+
+
+                            '<li class="pointer">'+
+                                '<a class="go_page" data-page="'+page_total+'">'+
+                                    '<i class="material-icons" title="Final">fast_forward</i>'+
+                                '</a>'+
+                            '</li>';
+                    }
+                    paginate+= '</ul>';
+
+                    return paginate;
+                }
+            });
+
+            //
+            // Eventos
+            //
+                // Seleccionar uno o más documentos para descargar
+                $(document).on('change', '.checkbox-descargar-doc', function() {
+                    if ($('.checkbox-descargar-doc:checked').length) {
+                        if ($('#descargar-docs-seleccionados').hasClass('d-none')) {
+                            $('#descargar-docs-seleccionados').removeClass('d-none')
+                        }
+                    } else if (!$('#descargar-docs-seleccionados').hasClass('d-none')) {
+                        $('#descargar-docs-seleccionados').addClass('d-none');
+                    }
+                });
+
+                // Icono de editar documento
+                $(document).on('click', '.edit-doc', function() {
+                    var row = $(this).closest('tr');
+                    var id = row.data('id');
+                    var file_name = row.data('file_name');
+                    var tags = (row.data('tags').length) ? row.data('tags').split(',') : [];
+
+                    // Insertamos en el modal el ID del documento que vamos a editar
+                    $('#edit_doc_id').val(id);
+
+                    // Ocultamos los errores si están visibles
+                    if (!$('.error-empty-file-name-doc').hasClass('d-none')) {
+                        $('.error-empty-file-name-doc').addClass('d-none');
+                    }
+
+                    // Insertamos el nombre del documento en el campo correspondiente del modal
+                    $('#file_name_doc').val(file_name);
+
+                    // Desmarcamos todos los option
+                    $('#tags_doc option').attr('selected', false);
+
+                    // Marcamos en el select los tags que tiene el documento
+                    $('#tags_doc option').each(function() {
+                        if ($.inArray($(this).val(), tags) !== -1) {
+                            $(this).attr('selected', true);
+                        }
+                    });
+
+                    // Mostramos el modal
+                    $("#edit_doc").modal();
+                });
+
+                // Al pulsar el boton de editar documento desde el modal
+                $(document).on('click', '#confirm_edit_doc', function() {
+                    // Recuperamos el ID del documento al que vamos a añadir la nota
+                    var id = $('#edit_doc_id').val();
+                    var file_name = $('#file_name_doc').val();
+                    var tags = $('#tags_doc').val();
+
+                    if (file_name.length) {
+                        // JSON a enviar
+                        var edit_doc = {
+                            id: id,
+                            file_name: file_name,
+                            tags: tags
+                        }
+
+                        // Ocultamos los errores si están visibles
+                        if (!$('.error-empty-file-name-doc').hasClass('d-none')) {
+                            $('.error-empty-file-name-doc').addClass('d-none');
+                        }
+
+                        alert('Documento editado con éxito');
+
+                        // Ocultamos el modal
+                        $("#edit_doc").modal('hide')
+                    } else {
+                        $('.error-empty-file-name-doc').removeClass('d-none');
+                    }
+                });
+
+                // Icono de añadir nota al documento
+                $(document).on('click', '.new-note-doc', function() {
+                    var row = $(this).closest('tr');
+                    var id = row.data('id');
+
+                    // Insertamos en el modal el ID del documento al que vamos a añadir la nota
+                    $('#note_doc_id').val(id);
+
+                    // Ocultamos los errores si están visibles
+                    if (!$('.error-empty-note-doc').hasClass('d-none')) {
+                        $('.error-empty-note-doc').addClass('d-none');
+                    }
+
+                    // Vaciamos el contenido del campo si existe
+                    if ($('#note_doc').length) {
+                        $('#note_doc').val('');
+                    }
+
+                    // Mostramos el modal
+                    $("#new_note_doc").modal();
+                });
+
+                // Al pulsar el boton de crear nota desde el modal
+                $(document).on('click', '#confirm_new_note_doc', function() {
+                    // Recuperamos el ID del documento al que vamos a añadir la nota
+                    var id = $('#note_doc_id').val();
+                    var note = $('#note_doc').val();
+
+                    if (note.length) {
+                        // JSON a enviar
+                        var new_note_doc = {
+                            id: id,
+                            note: note
+                        }
+
+                        // Ocultamos los errores si están visibles
+                        if (!$('.error-empty-note-doc').hasClass('d-none')) {
+                            $('.error-empty-note-doc').addClass('d-none');
+                        }
+
+                        alert('Nota: ' + note + ' creada con éxito');
+
+                        // Ocultamos el modal
+                        $("#new_note_doc").modal('hide')
+                    } else {
+                        $('.error-empty-note-doc').removeClass('d-none');
+                    }
+                });
+
+                // Icono de eliminar documento
+                $(document).on('click', '.delete-doc', function() {
+                    var row = $(this).closest('tr');
+                    var file_name = row.data('file_name');
+                    var confirmed = confirm("¿Estás seguro de que deseas eliminar el documento: " + file_name + '?');
+
+                    if (confirmed) {
+                        var id = row.data('id');
+
+                        // JSON a enviar
+                        var delete_doc = {
+                            id: id
+                        }
+
+                        alert('Documento eliminado con éxito');
+
+                        row.remove();
+                    }
+                });
+
+                $(document).on('click', '#upload_button', function() {
+                    $('#upload').trigger('click');
+                });
+
+                $(document).on('change', '#upload', function() {
+                    alert('Documento subido con éxito');
+                });
+        </script>
+    </body>
+</html>
