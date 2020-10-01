@@ -256,6 +256,8 @@ public class Cra {
 											.where(CONTRACT.ID.eq(salary.get(SALARY.CONTRACT)))
 											.fetchOne(CONTRACT.PERSON)
 								)).fetchOne(PERSON.SOCIAL_SECURITY_NUM);
+						if(null == ss || StringUtils.isBlank(ss))
+							continue;
 						trb.put("numAfilicion", ss);
 					}
 					
