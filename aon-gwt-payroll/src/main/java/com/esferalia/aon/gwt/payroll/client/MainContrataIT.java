@@ -11,11 +11,15 @@ import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -23,7 +27,9 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -49,6 +55,15 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 	
 	@UiField
+	Button backContractButton;
+	
+	@UiField
+	Button listITsButton;
+	
+	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
 	SuggestBox employeeSB;
 	
 	@UiField
@@ -63,26 +78,49 @@ public class MainContrataIT extends MainEntryPoint {
 	@UiField(provided = true)
 	DataGrid<ITEmployee> employeeDataGrid;
 	
+	@UiField
+	SuggestBox itSB;
+	
+	@UiField
+	CheckBox inactiveITsCB;
+	
+	@UiField
+	HTMLPanel mainITTablePanel;
+	
+	@UiField
+	HTMLPanel mainITContainer;
+	
+	@UiField(provided = true)
+	DataGrid<IT> itDataGrid;
+	
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
 	// --------------------------------------------------------------------------------------------
 		
 	private MainContrataITObject mainContrataITObject;
 	private NoSelectionModel<ITEmployee> selectionCCCInfoModel;
-	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private List<ITEmployee> employeesList = Collections.emptyList();
+	private NoSelectionModel<IT> selectionITModel;
+	private List<IT> itsList = Collections.emptyList();
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	public MainContrataIT() {
 		provideEmployeesDataGrid();
+		provideITsDataGrid();
 		
 		// Add style to table header
 	    addStyleToHeader();
+	    addStyleToITHeader();
 		
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
 	
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get("rootPanel").add(ui);
+		
+		deckPanel.showWidget(0);
+		inactiveITsCB.setValue(true);
+		backContractButton.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -194,45 +232,22 @@ public class MainContrataIT extends MainEntryPoint {
 	    employeeNameColumn.setSortable(true);
 	    
 	    TextColumn<ITEmployee> statusColumn = new TextColumn<ITEmployee>() {
-	      @Override
-	      public String getValue(ITEmployee itEmployee) {
-	    	IT it = checkIfIsOpenIt(itEmployee);
-	        return null != it ? parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" : "ALTA";
-	      }
-	     
-	      private IT checkIfIsOpenIt(ITEmployee itEmployee) {
-	  		for(IT it : itEmployee.getIts()) {
-	  			if(null == it.getEndDate())
-	  				return it;
-	  		}
-	  		return null;
-	  	  }
-	      
-	      private String parseShortLowCauseByte(Byte typeLowPart) {
-	  		switch (typeLowPart) {
-	  			case (byte)0:
-	  				return "ECC";
-	  			case (byte)1:
-	  				return "ATT";
-	  			case (byte)2:
-	  				return "MAT";
-	  			case (byte)3:
-	  				return "PAT";
-	  			case (byte)4:
-	  				return "REM";
-	  			case (byte)5:
-	  				return "RLA";
-	  			case (byte)6:
-	  				return "ANL";
-	  			case (byte)7:
-	  				return "ECC";
-	  			case (byte)8:
-	  				return "COV";
-	  			default:
-	  				return "-";
-	  		}
-	  	 }
-	    };
+
+			@Override
+			public String getValue(ITEmployee itEmployee) {
+				IT it = checkIfIsOpenIt(itEmployee);
+		        return null != it ? parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" : "ALTA";
+			}
+			
+			@Override
+			public void render(Context context, ITEmployee itEmployee, SafeHtmlBuilder sb) {
+				if(null != itEmployee) {
+					IT it = checkIfIsOpenIt(itEmployee);
+			        String description = null != it ? parseShortLowCauseByte(it.getTypeLowPart()) + " (" + formatFullDate.format(it.getStartDate()) + ")" : "ALTA";
+					sb.appendHtmlConstant("<span title=\"" + (null != it ? parseLowCauseByte(it.getTypeLowPart()) : "") + "\">" + description + "</span>");
+				}
+			}
+		};
 
 	    statusColumn.setSortable(true);
 	    statusColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -313,6 +328,193 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 
 	// --------------------------------------------------------------------------------------------
+	// 									PROVIDE SALARY DATA GRID
+	// --------------------------------------------------------------------------------------------
+
+	private void provideITsDataGrid() {
+		itsList  = Collections.emptyList();
+		
+		// Resource Style CellTable
+		itDataGrid = new CustomDataGrid<IT>(Integer.MAX_VALUE, IT.KEY_PROVIDER);
+		itDataGrid.setWidth("100%");
+		
+		//Do not refresh the headers every time the dataGrid is updated.
+		itDataGrid.setAutoHeaderRefreshDisabled(true);
+		
+		// Set the message to display when the table is empty.
+		itDataGrid.setEmptyTableWidget(new Label("No existen ITs activos".toUpperCase()));
+		
+		// Add a selection model so we can select cells.
+	    this.selectionITModel = new NoSelectionModel<IT>(IT.KEY_PROVIDER);
+	    itDataGrid.setSelectionModel(this.selectionITModel);
+		
+	    // Initialize the columns.
+	    addITInfoColumns(this.selectionITModel);
+	    
+	    new ListDataProvider<IT>(Collections.emptyList()).addDataDisplay(itDataGrid);
+
+	}
+	
+	private void addITInfoColumns(NoSelectionModel<IT> selectionITModel) {
+		selectionITModel.addSelectionChangeHandler(new Handler() {
+	        
+	        @Override
+	        public void onSelectionChange(SelectionChangeEvent event) {
+	        	IT itInfo = selectionITModel.getLastSelectedObject();
+	        	String fullName = itInfo.getFullName();
+	        	
+	        	ITEmployee itEmployee = mainContrataITObject.getEmployeeITInfo(itInfo.getId());
+	        	
+	        	ITDialog itDialog = new ITDialog(fullName, false) {
+
+					@Override
+					protected void onDelete(IT it) {
+						mainContrataITObject.deleteIT(it,
+								s -> {
+									WarningDialog dialog = new WarningDialog("AVISO", "El parte IT ha sido borrado correctamente.");
+									dialog.setModal(true);
+									dialog.setAnimationEnabled(true);
+									dialog.show();
+									dialog.center();
+									
+									mainContrataITObject.getEmployeesInfo(false,
+											t -> {
+												initContractTable();
+												initITTable();
+												setTableHeights();
+												inactiveITsCB.setValue(true);
+											},
+											f -> {}
+									);
+								},
+								f -> {});
+					}
+
+					@Override
+					protected void onAccept() {
+						mainContrataITObject.createUpdateITEmployee(itEmployee,
+								s -> {
+									WarningDialog dialog = new WarningDialog("AVISO", s);
+									dialog.setModal(true);
+									dialog.setAnimationEnabled(true);
+									dialog.show();
+									dialog.center();
+									
+									mainContrataITObject.getEmployeesInfo(false,
+											t -> {
+												initContractTable();
+												initITTable();
+												setTableHeights();
+												inactiveITsCB.setValue(true);
+											},
+											f -> {}
+									);
+								},
+								f -> {});
+					}
+	        		
+	        	};
+	        	
+	        	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
+	        	itDialog.setITDialogObject(itDialogObject, itInfo, true);
+	        	
+	        	itDialog.setModal(true);
+	        	itDialog.setAnimationEnabled(true);
+	        	itDialog.show();
+	        	itDialog.center();
+	        }
+	    });
+	    
+	    // Add Selection Column to table
+	    itDataGrid.setSelectionModel(selectionITModel);
+		
+		//----------------------------------------------------------------------
+	    //							CREATE COLUMNS
+	    //----------------------------------------------------------------------
+		
+		TextColumn<IT> employeeNameColumn = new TextColumn<IT>() {
+	      @Override
+	      public String getValue(IT itInfo) {
+	        return itInfo.getFullName();
+	      }
+	    };
+
+	    employeeNameColumn.setSortable(true);
+	    
+	    TextColumn<IT> lowDateColumn = new TextColumn<IT>() {
+		      @Override
+		      public String getValue(IT it) {
+		        return formatFullDate.format(it.getStartDate());
+		      }
+		    };
+
+	    lowDateColumn.setSortable(true);
+	    lowDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    itDataGrid.setColumnWidth(lowDateColumn, 100, Unit.PX);
+	    
+	    TextColumn<IT> lowCauseColumn = new TextColumn<IT>() {
+
+			@Override
+			public String getValue(IT it) {
+				return parseShortLowCauseByte(it.getTypeLowPart());
+			}
+			
+			@Override
+			public void render(Context context, IT it, SafeHtmlBuilder sb) {
+				if(null != it) {
+					sb.appendHtmlConstant("<span title=\"" + parseLowCauseByte(it.getTypeLowPart()) + "\">" + parseShortLowCauseByte(it.getTypeLowPart()) + "</span>");
+				}
+			}
+		};
+	    
+	    lowCauseColumn.setSortable(true);
+	    lowCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    itDataGrid.setColumnWidth(lowCauseColumn, 100, Unit.PX);
+	    
+	    TextColumn<IT> highDateColumn = new TextColumn<IT>() {
+	      @Override
+	      public String getValue(IT it) {
+	        return null == it.getEndDate() ? "-" : formatFullDate.format(it.getEndDate());
+	      }
+	    };
+
+	    highDateColumn.setSortable(true);
+	    highDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    itDataGrid.setColumnWidth(highDateColumn, 100, Unit.PX);
+		    
+	    TextColumn<IT> highCauseColumn = new TextColumn<IT>() {
+	      @Override
+	      public String getValue(IT it) {
+	        return parseHighCauseByte(it.getTypeHighPart());
+	      }
+	    };
+
+	    highCauseColumn.setSortable(true);
+	    highCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    
+	   TextColumn<IT> rechargeColumn = new TextColumn<IT>() {
+	      @Override
+	      public String getValue(IT it) {
+	    	  return it.getParent() == 0 ? "NO" : "SI";
+	      }
+
+	    };
+
+	    rechargeColumn.setSortable(true);
+	    rechargeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+	    itDataGrid.setColumnWidth(rechargeColumn, 70, Unit.PX);
+	    
+	    // Add the columns.
+	    itDataGrid.addColumn(employeeNameColumn, "Trabajador");
+	    itDataGrid.addColumn(lowDateColumn, "F. Baja");
+	    itDataGrid.addColumn(lowCauseColumn, "Causa Baja");
+	    itDataGrid.addColumn(highDateColumn, "F. Alta");
+	    itDataGrid.addColumn(highCauseColumn, "Causa Alta");
+	    itDataGrid.addColumn(rechargeColumn, "Recaida");
+	      
+	}
+	
+	// --------------------------------------------------------------------------------------------
 	// 									HEADER STYLES
 	// --------------------------------------------------------------------------------------------
 	
@@ -324,6 +526,15 @@ public class MainContrataIT extends MainEntryPoint {
 		employeeDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 		employeeDataGrid.getHeader(6).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+	}
+	
+	public void addStyleToITHeader() {
+		itDataGrid.getHeader(0).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		itDataGrid.getHeader(1).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		itDataGrid.getHeader(2).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		itDataGrid.getHeader(3).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		itDataGrid.getHeader(4).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
+		itDataGrid.getHeader(5).setHeaderStyleNames("rich-table-thead rich-table-subheader rich-table-subheadercell aon-dataTable-header");
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -377,14 +588,50 @@ public class MainContrataIT extends MainEntryPoint {
 			employeeDataGrid.redraw();
 		});
 	}
+	
+	private void initITSB() {
+		List<String> its = new ArrayList<>(mainContrataITObject.getITsMap().keySet());
+		
+		List<String> itsSuggest = new ArrayList<String>();
+		for(String enterprise : its)
+			itsSuggest.add(enterprise+"");
+		
+		MultiWordSuggestOracle orclIT = (MultiWordSuggestOracle) itSB.getSuggestOracle();
+		orclIT.addAll(itsSuggest);
+		itSB.setAutoSelectEnabled(false);
+		
+		itSB.addKeyUpHandler(e-> {
+			String value = itSB.getValue();
+			if(StringUtils.isBlank(value) || value.length() < 3) {
+				mainContrataITObject.resetITsList();
+			} else {
+				List<Integer> itIds = mainContrataITObject.getITsContractIds(value);
+				mainContrataITObject.filterITsList(itIds);
+			}
+			
+			initContractTable();
+		});
+		
+		itSB.addSelectionHandler(e -> {
+			String value = itSB.getValue();
+			List<Integer> itIds = mainContrataITObject.getITsContractIds(value);
+			mainContrataITObject.filterEmployeesList(itIds);
+			
+			initITTable();
+			itDataGrid.redraw();
+		});
+	}
 
 	private void setTableHeights() {
 		employeeDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
 		mainTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
+		
+		itDataGrid.getElement().getStyle().setHeight(100, Unit.PCT);
+		mainITTablePanel.getElement().getStyle().setHeight((Window.getClientHeight() - 255), Unit.PX);
 	}
 
 	// --------------------------------------------------------------------------------------------
-	// 										INIT CCCs TABLE
+	// 										INIT CONTRACTs TABLE
 	// --------------------------------------------------------------------------------------------
 
 	private void initContractTable() {		
@@ -524,6 +771,135 @@ public class MainContrataIT extends MainEntryPoint {
 	    employeeDataGrid.getColumn(0).setDefaultSortAscending(false);
 	    employeeDataGrid.getColumnSortList().push(employeeDataGrid.getColumn(0));   
 	}
+
+	// --------------------------------------------------------------------------------------------
+	// 										INIT ITs TABLE
+	// --------------------------------------------------------------------------------------------
+
+	private void initITTable() {		
+		// Create a data provider.
+	    ListDataProvider<IT> dataProvider = new ListDataProvider<IT>();
+
+	    // Connect the table to the data provider.
+	    dataProvider.addDataDisplay(itDataGrid);
+	    
+	    // Add the data to the data provider, which automatically pushes it to the
+	    // widget.
+	    List<IT> itInfoList = dataProvider.getList();
+	    itInfoList.clear();
+	    
+	    this.itsList = mainContrataITObject.getITsList();
+	    
+	    for (IT itInfo : this.itsList) {
+	    	itInfoList.add(itInfo);
+	    } 
+	    
+	    // Set page size
+	    employeeDataGrid.setPageSize(employeesList.size());
+	    
+	    // Add style to table header
+	    addStyleToHeader();
+	    
+	    addSortITColums(itInfoList); 
+		
+	}
+	
+	private void addSortITColums(List<IT> itInfoList) {
+		ListHandler<IT> columnSortHandler = new ListHandler<IT>(itInfoList);
+		
+	    columnSortHandler.setComparator(itDataGrid.getColumn(0), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getFullName().compareTo(o2.getFullName()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    columnSortHandler.setComparator(itDataGrid.getColumn(1), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getStartDate().compareTo(o2.getStartDate()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+		
+	    columnSortHandler.setComparator(itDataGrid.getColumn(2), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getTypeLowPart().compareTo(o2.getTypeLowPart()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    columnSortHandler.setComparator(itDataGrid.getColumn(3), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getEndDate().compareTo(o2.getEndDate()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    columnSortHandler.setComparator(itDataGrid.getColumn(4), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getTypeHighPart().compareTo(o2.getTypeHighPart()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    
+	    columnSortHandler.setComparator(itDataGrid.getColumn(5), new Comparator<IT>() {
+	          public int compare(IT o1, IT o2) {
+		            if (o1 == o2) {
+		              return 0;
+		            }
+	
+		            if (o1 != null) {
+		              return (o2 != null) ? o1.getParent().compareTo(o2.getParent()) : 1;
+		            }
+		            
+		            return -1;
+	          }
+	    });
+	    
+	    
+	    itDataGrid.addColumnSortHandler(columnSortHandler);
+
+	    // We know that the data is sorted alphabetically by default.
+	    itDataGrid.getColumn(1).setDefaultSortAscending(false);
+	    itDataGrid.getColumnSortList().push(itDataGrid.getColumn(1));    
+	}
+
 	
 	// --------------------------------------------------------------------------------------------
 	// 										UI HANDLERS
@@ -534,11 +910,130 @@ public class MainContrataIT extends MainEntryPoint {
 		this.mainContrataITObject.getEmployeesInfo(event.getValue(),
 				s -> {
 					initEnterpriseSB();
+					initITSB();
 					initContractTable();
 					setTableHeights();
 				},
 				f -> {}
 		);
+	}
+	
+	@UiHandler("inactiveITsCB")
+	public void onInactiveITsCBValueChange(ValueChangeEvent<Boolean> event) {
+		mainContrataITObject.setITsList(!event.getValue());
+		initEnterpriseSB();
+		initITSB();
+		initITTable();
+		setTableHeights();
+	}
+	
+	@UiHandler("backContractButton")
+	public void onBackContractButtonClick(ClickEvent event) {
+		deckPanel.showWidget(0);
+		backContractButton.getElement().getStyle().setDisplay(Display.NONE);
+		listITsButton.getElement().getStyle().clearDisplay();
+		initContractTable();
+	}
+	
+	@UiHandler("listITsButton")
+	public void onListITsButtonClick(ClickEvent event) {
+		deckPanel.showWidget(1);
+		inactiveITsCB.setValue(true);
+		listITsButton.getElement().getStyle().setDisplay(Display.NONE);
+		backContractButton.getElement().getStyle().clearDisplay();
+		initITTable();
+	}
+	
+	// --------------------------------------------------------------------------------------------
+	// 										AUXILIAR METHODS
+	// --------------------------------------------------------------------------------------------
+	
+	private IT checkIfIsOpenIt(ITEmployee itEmployee) {
+  		for(IT it : itEmployee.getIts()) {
+  			if(null == it.getEndDate())
+  				return it;
+  		}
+  		return null;
+  	  }
+      
+	private String parseLowCauseByte(Byte typeLowPart) {
+		switch (typeLowPart) {
+			case (byte)0:
+				return "Enfermedad Com" + String.valueOf("\u00FA") + "n";
+			case (byte)1:
+				return "Accidente de trabajo";
+			case (byte)2:
+				return "Maternidad";
+			case (byte)3:
+				return "Paternidad";
+			case (byte)4:
+				return "Riesgo para el embarazo";
+			case (byte)5:
+				return "Riesgo durante la lactancia";
+			case (byte)6:
+				return "Accidente no laboral";
+			case (byte)7:
+				return "Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia";
+			case (byte)8:
+				return "Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)";
+			default:
+				return "-";
+		}
+	}
+	
+	private String parseShortLowCauseByte(Byte typeLowPart) {
+		switch (typeLowPart) {
+			case (byte)0:
+				return "ECC";
+			case (byte)1:
+				return "ATT";
+			case (byte)2:
+				return "MAT";
+			case (byte)3:
+				return "PAT";
+			case (byte)4:
+				return "REM";
+			case (byte)5:
+				return "RLA";
+			case (byte)6:
+				return "ANL";
+			case (byte)7:
+				return "ECC";
+			case (byte)8:
+				return "COV";
+			default:
+				return "-";
+		}
+	}
+	
+	private String parseHighCauseByte(Byte typeHighPart) {
+		if(null == typeHighPart)
+			return "-";
+		
+		switch (typeHighPart) {
+			case (byte)0:
+				return "Curaci" + String.valueOf("\u00F3") + "n";
+			case (byte)1:
+				return "Fallecimiento";
+			case (byte)2:
+				return "Inspecci" + String.valueOf("\u00F3") + "n m" + String.valueOf("\u00E9") + "dica";
+			case (byte)3:
+				return "Propuesta incapacidad";
+			case (byte)4:
+				return "Agotamiento de plazo";
+			case (byte)5:
+				return "Mejor" + String.valueOf("\u00ED") + "a que permite realizar el trabajo habitual";
+			case (byte)6:
+				return "Incomparecencia";
+			case (byte)7:
+				return "Control INSS duraci" + String.valueOf("\u00F3") + "n 12 meses";
+			case (byte)8:
+				return "Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional";
+			case (byte)9:
+				return "Incomparecencia contratos de formaci" + String.valueOf("\u00F3") + "n";
+			default:
+				return "-";
+		}
 	}
 	
 }
