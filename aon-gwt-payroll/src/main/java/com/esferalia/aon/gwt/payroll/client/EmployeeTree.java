@@ -55,7 +55,9 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFact
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
@@ -2214,10 +2216,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-		EnterpriseDraftObject activityDraftObject = new EnterpriseDraftObject(enterprise, domainEnterprisesServiceAsync);
+		EnterpriseDraftObject enterpriseDraftObject = new EnterpriseDraftObject(enterprise, domainEnterprisesServiceAsync);
 		
 		employeeDetail.setWidget(getEnterpriseDraft());
-		getEnterpriseDraft().setEnterpriseDraftObject(activityDraftObject);
+		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
+		
+		checkStatus(enterpriseDraftObject);
 		
 //		int pos = employees.getVerticalScrollPosition();
 //		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
@@ -2459,73 +2463,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
 		
-		employeeDraftObject.checkStatus(
-		employeeStatus -> {
-			SaltraResults saltraResults = new SaltraResults() {
-				
-				@Override
-				public void run() {
-					employeeDraftObject.checkStatus(
-							employeeStatus -> {
-								removeAll();
-								employeeStatus.visit(this);
-							}, 
-							throwable -> {}
-					);					
-				}
-				
-				@Override
-				protected void saltraCredentialsFound(){
-					employeeDraftObject.checkStatus(
-							employeeStatus -> {
-								removeAll();
-								employeeStatus.visit(this);
-								selectResultsPanel();
-								ifSaltraEnabled(employeeStatus, 
-								() -> {
-									showFootPanel();
-									getEmployeeDraft().idcButton.setVisible(true);
-									getEmployeeDraft().setOnSaved(e-> run());
-								},
-								() -> {
-									closeFootPanel();
-									getEmployeeDraft().idcButton.setVisible(false);
-
-								});
-							}, 
-							throwable -> {
-								closeFootPanel();
-								getEmployeeDraft().idcButton.setVisible(false);
-							}
-					);					
-				}
-			};
-			
-			employeeStatus.visit(saltraResults);
-			resultsPanel.setWidget(saltraResults);
-			selectResultsPanel();
-			
-			ifSaltraEnabled(
-			employeeStatus, 
-			() -> {
-				showFootPanel();
-				getEmployeeDraft().idcButton.setVisible(true);
-				getEmployeeDraft().setOnSaved(e-> saltraResults.run());
-			},
-			() -> {
-				closeFootPanel();
-				getEmployeeDraft().idcButton.setVisible(false);
-			}
-			);
-			
-		}, 
-		throwable -> {
-			closeFootPanel();
-			getEmployeeDraft().idcButton.setVisible(false);
-
-		});
+		checkStatus(employeeDraftObject);
 	}
-	
+
 	@Override
 	public void onEmployeeNewDraftSelected(EmployeeNewDraftObject employeeNewDraftObject) {
 		employeeDetail.setWidget(getEmployeeNewDraft());
@@ -2894,6 +2834,140 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			ccs.addAll(cccs);
 		}
 		return ccs;
+	}
+
+	private void checkStatus(EmployeeDraftObject employeeDraftObject) {
+		employeeDraftObject.checkStatus(
+		employeeStatus -> {
+			SaltraResults saltraResults = new SaltraResults() {
+				
+				@Override
+				public void run() {
+					employeeDraftObject.checkStatus(
+							employeeStatus -> {
+								removeAll();
+								employeeStatus.visit(this);
+							}, 
+							throwable -> {}
+					);					
+				}
+				
+				@Override
+				protected void saltraCredentialsFound(){
+					employeeDraftObject.checkStatus(
+							employeeStatus -> {
+								removeAll();
+								employeeStatus.visit(this);
+								selectResultsPanel();
+								ifSaltraEnabled(employeeStatus, 
+								() -> {
+									showFootPanel();
+									getEmployeeDraft().idcButton.setVisible(true);
+									getEmployeeDraft().setOnSaved(e-> run());
+								},
+								() -> {
+									closeFootPanel();
+									getEmployeeDraft().idcButton.setVisible(false);
+
+								});
+							}, 
+							throwable -> {
+								closeFootPanel();
+								getEmployeeDraft().idcButton.setVisible(false);
+							}
+					);					
+				}
+			};
+			
+			employeeStatus.visit(saltraResults);
+			resultsPanel.setWidget(saltraResults);
+			selectResultsPanel();
+			
+			ifSaltraEnabled(
+			employeeStatus, 
+			() -> {
+				showFootPanel();
+				getEmployeeDraft().idcButton.setVisible(true);
+				getEmployeeDraft().setOnSaved(e-> saltraResults.run());
+			},
+			() -> {
+				closeFootPanel();
+				getEmployeeDraft().idcButton.setVisible(false);
+			}
+			);
+			
+		}, 
+		throwable -> {
+			closeFootPanel();
+			getEmployeeDraft().idcButton.setVisible(false);
+
+		});
+	}
+	
+	private void checkStatus(EnterpriseDraftObject enterpriseDraftObject) {
+		enterpriseDraftObject.checkStatus(
+		enterpiseStatus -> {
+			SaltraResults saltraResults = new SaltraResults() {
+				
+				@Override
+				public void run() {
+					enterpriseDraftObject.checkStatus(
+							enterpiseStatus -> {
+								removeAll();
+								enterpiseStatus.visit(this);
+							}, 
+							throwable -> {}
+					);					
+				}
+				
+				@Override
+				public void up2Date() {
+				}
+				
+				@Override
+				protected void saltraCredentialsFound(){
+					enterpriseDraftObject.checkStatus(
+							enterpiseStatus -> {
+								removeAll();
+								enterpiseStatus.visit(this);
+								selectResultsPanel();
+								ifSaltraEnabled(enterpiseStatus, 
+								() -> {
+									showFootPanel();
+								},
+								() -> {
+									closeFootPanel();
+
+								});
+							}, 
+							throwable -> {
+								closeFootPanel();
+							}
+					);					
+				}
+				
+				
+			};
+			
+			enterpiseStatus.visit(saltraResults);
+			resultsPanel.setWidget(saltraResults);
+			selectResultsPanel();
+			
+			ifSaltraEnabled(
+			enterpiseStatus, 
+			() -> {
+				showFootPanel();
+			},
+			() -> {
+				closeFootPanel();
+			}
+			);
+			
+		}, 
+		throwable -> {
+			closeFootPanel();
+
+		});
 	}
 	// ------------------------------------------------------ Protected methods
 	
@@ -3528,7 +3602,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	
 
 	private static void ifSaltraEnabled(EmployeeStatus employeeStatus, Runnable saltraEnable, Runnable saltraDisabled ) {
-		employeeStatus.visit(new Visitor() {
+		employeeStatus.visit(new EmployeeStatus.Visitor() {
 			
 			@Override
 			public void up2Date() {
@@ -3593,6 +3667,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		});
 	}
+
+	private static void ifSaltraEnabled(EnterpriseStatus enterpriseStatus, Runnable saltraEnable, Runnable saltraDisabled ) {
+		enterpriseStatus.visit(new EnterpriseStatus.Visitor() {
+			
+			@Override
+			public void up2Date() {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void saltraCredentialsNotFound() {
+				saltraDisabled.run();
+			}
+			
+			@Override
+			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
+				saltraEnable.run();
+
+			}
+		});
+	}
+
 
 	private static  String getDescription(CCC ccc, Workplace workplace) {
 		String province = ccc.getGeozone();

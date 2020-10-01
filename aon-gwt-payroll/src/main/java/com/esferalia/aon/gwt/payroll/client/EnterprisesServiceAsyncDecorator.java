@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -455,6 +456,13 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.getEmployeesInfo(currentDomainName, allEmployees, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
 	}
+	
+	@Override
+	public void getEnterpriseStatus(String domain, String user, Integer enterpriseId,
+			AsyncCallback<EnterpriseStatus> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEnterpriseStatus(domain, user, enterpriseId, new AsyncCallbackWrapper<EnterpriseStatus>(callback));
+	}
 
 	@Override
 	public void getEmployeesITInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<ITEmployee>> callback) {
@@ -473,5 +481,7 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.createUpdateITEmployee(currentDomainName, employeeITInfo, new AsyncCallbackWrapper<String>(callback));
 	}
+	
+	
 
 }

@@ -4,13 +4,14 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
-import com.esferalia.aon.gwt.payroll.shared.SaltraService;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedCCC;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedContractType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
@@ -28,21 +29,23 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
-import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.visualization.client.formatters.DateFormat;
 
-public class SaltraResults extends Composite implements RequiresResize, EmployeeStatus.Visitor{
+public class SaltraResults extends Composite implements RequiresResize, EmployeeStatus.Visitor, EnterpriseStatus.Visitor {
 
 
 	static interface Binder extends UiBinder<Widget, SaltraResults> {
@@ -127,6 +130,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	
+	// Certificate 
 	@UiField
 	FormPanel certificateFormPanel;
 
@@ -141,6 +145,22 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	
 	@UiField
 	Hidden certificatePasswordHidden;
+	
+	
+	@UiField
+	FormPanel employeeFormPanel;
+	@UiField
+	Hidden cccHidden;
+	@UiField
+	Hidden nifHidden;
+	@UiField
+	Hidden dateHidden;
+	@UiField
+	Hidden regimeHidden;
+	@UiField
+	Hidden userHidden;
+	@UiField
+	Hidden domainHidden;
 
 	private Images images;
 
@@ -179,6 +199,9 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		userNameHidden.setValue(Wnd.getCurrentUser());
 		domainNameHidden.setValue(Wnd.getCurrentDomainNameURL());
 		certificateFileUpload.getElement().setPropertyString("accept", ".pfx,.p12");
+		
+		userHidden.setValue(Wnd.getCurrentUser());
+		domainHidden.setValue(Wnd.getCurrentDomainNameURL());
 		
 	}
 
@@ -372,8 +395,44 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		
 		syncErrors();
 		}
-
+	// ------------------------------------------------------ EnterprisesStatus
+	
+	@Override
+	public void affiliatedNotFound(AffiliatedNotFound status) {
+		
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(
+		new Label(
+			"Afiliado '"
+			+status.getName()
+			+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
+			+" ) no encontrado en aon Solutions."
+			+" Pulse"
+			)
+		);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("aqu\u00ed");
+		anchor.addClickHandler(e -> newEmployee(status));
+		
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("para a\u00f1adirlo en aon Solutions."));
+		
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
+		
+		addWarning(horizontalPanel);
+		syncWarnings();
+	}
+	
 	// ------------------------------------------------------------------------
+	
+	protected void newAffiliated() {
+		
+	}
 	
 	protected void saltraCredentialsFound() {
 		
@@ -391,34 +450,49 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	}
 	
 
+
 	protected void importCertificate() {
 		certificateFileUpload.click(); 
 	}
 	
+	protected void newEmployee(AffiliatedNotFound affiliatedNotFound) {
+		
+		cccHidden.setValue(affiliatedNotFound.getCcc());
+		nifHidden.setValue(affiliatedNotFound.getDni());
+		regimeHidden.setValue(affiliatedNotFound.getRegime());
+		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedNotFound.getDate()) );
+		
+		employeeFormPanel.addSubmitCompleteHandler((e) -> {
+			newAffiliated();
+		});
+		employeeFormPanel.submit(); 
+
+	}
+
 	// ------------------------------------------------------------------------
 
-	private void syncErrors() {
+	protected void syncErrors() {
 		errorsItem.setHTML(imageItemHTML(images._error(),
 				"ERRORES (" + errorsItem.getChildCount() + ")"));
 		errorsItem.setVisible(errorsItem.getChildCount() > 0);
 		errorsItem.setState(errorsItem.getChildCount() > 0);
 	}
 
-	private void syncWarnings() {
+	protected void syncWarnings() {
 		warningsItem.setHTML(imageItemHTML(images.warn(),
 				"AVISOS (" + warningsItem.getChildCount() + ")"));
 		warningsItem.setVisible(warningsItem.getChildCount() > 0);
 		warningsItem.setState(warningsItem.getChildCount() > 0);
 	}
 
-	private void syncMessages() {
+	protected void syncMessages() {
 		messagesItem.setHTML(imageItemHTML(images.info(),
 				"AVISOS (" + messagesItem.getChildCount() + ")"));
 		messagesItem.setVisible(messagesItem.getChildCount() > 0);
 		messagesItem.setState(messagesItem.getChildCount() > 0);
 	}
 
-	private TreeItem addError(SaltraEvent error) {
+	protected TreeItem addError(SaltraEvent error) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images._error(), error));
 		errorsItem.addItem(treeItem);
@@ -426,7 +500,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		return treeItem;
 	}
 
-	private TreeItem addWarning(SaltraEvent warning) {
+	protected TreeItem addWarning(SaltraEvent warning) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images.warn(), warning.getMessage()));
 		warningsItem.addItem(treeItem);
@@ -434,7 +508,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		return treeItem;
 	}
 	
-	private TreeItem addWarning(String  message) {
+	protected TreeItem addWarning(String  message) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images.warn(), message));
 		warningsItem.addItem(treeItem);
@@ -442,7 +516,14 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		return treeItem;
 	}
 
-	private TreeItem addInfo(SaltraEvent info) {
+	protected TreeItem addWarning(Widget  widget) {
+		TreeItem treeItem = new TreeItem(
+				imageItemWidget(images.warn(), widget));
+		warningsItem.addItem(treeItem);
+		return treeItem;
+	}
+
+	protected TreeItem addInfo(SaltraEvent info) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images.info(), info.getMessage()));
 
@@ -451,7 +532,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		return treeItem;
 	}
 
-	private TreeItem addInfo(String  message) {
+	protected TreeItem addInfo(String  message) {
 		TreeItem treeItem = new TreeItem(
 				imageItemHTML(images.info(), message));
 		messagesItem.addItem(treeItem);
@@ -459,13 +540,13 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		return treeItem;
 	}	
 	
-	private void expandAll() {
+	protected void expandAll() {
 		errorsItem.setState(true);
 		warningsItem.setState(true);
 	}
 
 
-	private void collapseAll() {
+	protected void collapseAll() {
 		errorsItem.setState(false);
 		warningsItem.setState(false);
 	}
@@ -503,6 +584,29 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		return builder.toSafeHtml();
 	}
 
+	private static Widget imageItemWidget(ImageResource imageProto,
+			String title) {
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new Image(imageProto));
+		horizontalPanel.add(new Label(" "));
+		Label titleLabel = new Label(title);
+		titleLabel.getElement().getStyle().setFontSize(12, Unit.PX);
+		
+		horizontalPanel.add(titleLabel);
+
+		return horizontalPanel;
+	}
+
+	private static Widget imageItemWidget(ImageResource imageProto,
+			Widget widget) {
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new Image(imageProto));
+		horizontalPanel.add(new Label(" "));		
+		horizontalPanel.add(widget);
+
+		return horizontalPanel;
+	}
+
 	/**
 	 * Generates HTML for a tree item with an attached icon.
 	 */
@@ -534,6 +638,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	private static native void export2JS(SaltraResults saltraResults) /*-{
 		$wnd.importCertificate = $entry(function() {
 			saltraResults.@com.esferalia.aon.gwt.payroll.client.SaltraResults::importCertificate()();
-		});
+		});		
+			
 	}-*/;
 }

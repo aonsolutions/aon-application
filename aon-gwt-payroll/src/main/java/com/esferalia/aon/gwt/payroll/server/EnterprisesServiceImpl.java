@@ -3,13 +3,18 @@ package com.esferalia.aon.gwt.payroll.server;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
+import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -17,10 +22,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
 import org.jooq.tools.json.JSONObject;
+import org.json.JSONArray;
 
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
@@ -59,13 +66,17 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SaltraCredentialsNotFoundException;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
@@ -95,6 +106,11 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+import solutions.aon.saltra.api.Saltra;
+import solutions.aon.saltra.api.SaltraException;
 
 /**
  * The server side implementation of the RPC service.
@@ -2128,5 +2144,77 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	@Override
+	public EnterpriseStatus getEnterpriseStatus(String domainName, String userLogin, Integer enterpriseId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName);
+			Saltra saltra = EmployeesServiceHelper.getSaltra(connection, domainName, userLogin)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
+			.filter(e -> e.getId().equals(enterpriseId))
+			.flatMap(e -> e.getActivities().stream() )
+			.flatMap(a -> a.getCccs().stream())
+			.collect(Collectors.toList());
+			
+			List<Integer> cccIds = cccs.stream().map( ccc-> ccc.getId() ).collect(Collectors.toList());
+			
+			Date today = new Date(System.currentTimeMillis()); //TODO:  TimeoOne ????
+			List<Employee> employees = getCCCEmployees(connection, today, cccIds);
+			employees.forEach(e -> System.out.println(e.getName() + " : " + e.getStartDate() + "..." + e.getEndDate() ));
+
+			AndEnterpriseStatus enterpriseStatus = new AndEnterpriseStatus();
+			
+			for ( CCC ccc: cccs ) {
+				
+				org.json.JSONObject active = saltra.getActiveEmployees(ccc.getRegime(), ccc.getCode());
+				org.json.JSONArray empleados = active.getJSONArray(Saltra.EMPLEADOS);
+				for ( int i = 0; i< empleados.length(); i++ ) {
+					org.json.JSONObject empleado = empleados.getJSONObject(i);
+					
+					String dni = empleado.getString(Saltra.DNI);
+					String naf = empleado.getString(Saltra.NAF);
+					String fecha = empleado.getString(Saltra.FECHA_REAL);
+					java.util.Date date = new SimpleDateFormat("dd-MM-yyyy").parse(fecha);
+					String name = empleado.getString(Saltra.NOMBRES);
+					
+					List<Employee> found  = employees.stream()
+					.filter(e -> equalsIgnoreCase(e.getDocument(), dni) || equalsIgnoreCase(e.getSocialSecurity(), naf))
+					.collect(Collectors.toList());
+					
+					if ( found.isEmpty() ) {
+						enterpriseStatus.and(
+						new EnterpriseStatus.AffiliatedNotFound()
+						.setDni(dni)
+						.setNaf(naf)
+						.setDate(date)
+						.setName(name)
+						.setCcc(ccc.getCode())
+						.setRegime(ccc.getRegime())
+						
+						);
+					}
+				}
+			}
+			
+			
+			try {
+				EnterpriseStatus.isUp2Date(enterpriseStatus); 
+				enterpriseStatus.and(new EnterpriseStatus.Up2Date());
+			} catch ( OutOfDateException e ) {	
+			}
+			
+			EnterpriseStatus.trace(enterpriseStatus);
+			
+			return enterpriseStatus;				
+			
+		} catch ( SaltraCredentialsNotFoundException e) {
+			return new EnterpriseStatus.CredentialsNotFound();
+		} catch (  ParseException | IOException | SQLException  | SaltraException e ) {
+			throw new RuntimeException(e);
+		} 
+	}
 	
 }

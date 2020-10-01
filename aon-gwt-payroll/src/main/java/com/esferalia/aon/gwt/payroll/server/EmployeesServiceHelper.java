@@ -36,16 +36,10 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft.SalaryTable;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedCCC;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedContractType;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedOccupation;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFactor;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.Event;
 import com.esferalia.aon.gwt.payroll.shared.Event.Type;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
+import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.PaymentEvent;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
@@ -117,10 +111,6 @@ public class EmployeesServiceHelper {
 
 	public static final String REMOVE = "REMOVE()";
 	
-	private static class OutOfDateException extends RuntimeException {
-
-	}
-
 	private static class TC2NotFoundException extends SaltraException {
 		String tipoContrato ;
 
@@ -281,12 +271,12 @@ public class EmployeesServiceHelper {
 			}
 
 			try {
-				isUp2Date(employeeStatus); 
+				EmployeeStatus.isUp2Date(employeeStatus); 
 				employeeStatus.and(new EmployeeStatus.Up2Date());
 			} catch ( OutOfDateException e ) {	
 			}
 			
-			trace(employeeStatus);
+			EmployeeStatus.trace(employeeStatus);
 			
 			return employeeStatus;	
 			
@@ -309,139 +299,6 @@ public class EmployeesServiceHelper {
 		.orElse(def)
 		;		
 	}
-
-	private static EmployeeStatus.AndEmployeeStatus isUp2Date(EmployeeStatus.AndEmployeeStatus employeeStatus) {
-		employeeStatus.visit( new Visitor() {
-	
-			@Override
-			public void up2Date() {
-			}
-	
-			@Override
-			public void invalidData() {
-				throw new OutOfDateException();
-			}
-	
-			@Override
-			public void endDateNotFound() {
-				throw new OutOfDateException();
-			}
-	
-			@Override
-			public void employeeNotFound() {
-				throw new OutOfDateException();
-			}
-	
-			@Override
-			public void saltraCredentialsNotFound() {
-				throw new OutOfDateException();
-			}
-	
-			@Override
-			public void mismatchedCCC(MismatchedCCC status) {
-				throw new OutOfDateException();
-			}
-	
-			@Override
-			public void mismatchedStartDate(MismatchedStartDate status) {
-				throw new OutOfDateException();
-			}
-	
-			@Override
-			public void mismatchedContractType(MismatchedContractType status) {
-				throw new OutOfDateException();
-			}
-
-			@Override
-			public void occupationNotFound() {
-				throw new OutOfDateException();				
-			}
-
-			@Override
-			public void mismatchedOccupation(MismatchedOccupation status) {
-				throw new OutOfDateException();
-			}
-
-			@Override
-			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
-				throw new OutOfDateException();
-			}
-			
-			@Override
-			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
-				throw new OutOfDateException();
-			}
-			
-		});
-		return employeeStatus;
-	}
-
-	private static void trace(EmployeeStatus.AndEmployeeStatus employeeStatus) {
-		employeeStatus.visit(new Visitor() {
-			
-			@Override
-			public void up2Date() {
-				System.out.println("up2Date");					
-			}
-			
-			@Override
-			public void saltraCredentialsNotFound() {
-				System.out.println("saltraCredentialsNotFound");
-			}
-			
-
-			@Override
-			public void invalidData() {
-				System.out.println("invalidData");
-			}
-			
-			@Override
-			public void employeeNotFound() {
-				System.out.println("employeeNotFound");
-			}
-
-			@Override
-			public void endDateNotFound() {
-				System.out.println("endDateNotFound");
-			}
-
-			@Override
-			public void mismatchedCCC(MismatchedCCC status) {
-				System.out.println("mismatchedCCC");
-			}
-
-			@Override
-			public void mismatchedStartDate(MismatchedStartDate status) {
-				System.out.println("mismatchedStartDate");
-			}
-
-			@Override
-			public void mismatchedContractType(MismatchedContractType status) {
-				System.out.println("mismatchedContractType");
-			}
-
-			@Override
-			public void occupationNotFound() {
-				System.out.println("occupationNotFound");
-			}
-
-			@Override
-			public void mismatchedOccupation(MismatchedOccupation status) {
-				System.out.println("mismatchedOccupation");				
-			}
-
-			@Override
-			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
-				System.out.println("mismatchedPartialFactor");	
-			}
-			
-			@Override
-			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
-				System.out.println("mismatchedQuoteGroup");	
-			}			
-		});
-	}
-	
 
 	/**
 	 * 

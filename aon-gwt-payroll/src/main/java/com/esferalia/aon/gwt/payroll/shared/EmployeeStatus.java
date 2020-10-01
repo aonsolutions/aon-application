@@ -288,6 +288,138 @@ public abstract class EmployeeStatus implements Serializable {
 	}
 	
 	public abstract void visit(Visitor visitor);
+
+	public static void trace(AndEmployeeStatus employeeStatus) {
+		employeeStatus.visit(new Visitor() {
+			
+			@Override
+			public void up2Date() {
+				System.out.println("up2Date");					
+			}
+			
+			@Override
+			public void saltraCredentialsNotFound() {
+				System.out.println("saltraCredentialsNotFound");
+			}
+			
+	
+			@Override
+			public void invalidData() {
+				System.out.println("invalidData");
+			}
+			
+			@Override
+			public void employeeNotFound() {
+				System.out.println("employeeNotFound");
+			}
+	
+			@Override
+			public void endDateNotFound() {
+				System.out.println("endDateNotFound");
+			}
+	
+			@Override
+			public void mismatchedCCC(MismatchedCCC status) {
+				System.out.println("mismatchedCCC");
+			}
+	
+			@Override
+			public void mismatchedStartDate(MismatchedStartDate status) {
+				System.out.println("mismatchedStartDate");
+			}
+	
+			@Override
+			public void mismatchedContractType(MismatchedContractType status) {
+				System.out.println("mismatchedContractType");
+			}
+	
+			@Override
+			public void occupationNotFound() {
+				System.out.println("occupationNotFound");
+			}
+	
+			@Override
+			public void mismatchedOccupation(MismatchedOccupation status) {
+				System.out.println("mismatchedOccupation");				
+			}
+	
+			@Override
+			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				System.out.println("mismatchedPartialFactor");	
+			}
+			
+			@Override
+			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				System.out.println("mismatchedQuoteGroup");	
+			}			
+		});
+	}
+
+	public static AndEmployeeStatus isUp2Date(AndEmployeeStatus employeeStatus) {
+		employeeStatus.visit( new Visitor() {
+	
+			@Override
+			public void up2Date() {
+			}
+	
+			@Override
+			public void invalidData() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void endDateNotFound() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void employeeNotFound() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void saltraCredentialsNotFound() {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void mismatchedCCC(MismatchedCCC status) {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void mismatchedStartDate(MismatchedStartDate status) {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void mismatchedContractType(MismatchedContractType status) {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void occupationNotFound() {
+				throw new OutOfDateException();				
+			}
+	
+			@Override
+			public void mismatchedOccupation(MismatchedOccupation status) {
+				throw new OutOfDateException();
+			}
+	
+			@Override
+			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				throw new OutOfDateException();
+			}
+			
+			@Override
+			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				throw new OutOfDateException();
+			}
+			
+		});
+		return employeeStatus;
+	}
 	
 
 }

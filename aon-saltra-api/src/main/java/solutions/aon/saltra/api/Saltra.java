@@ -29,6 +29,7 @@ public class Saltra implements AutoCloseable{
 	public static final String DNI = "dni";
 	public static final String CCC2 = "ccc2";
 	public static final String CCC1 = "ccc1";
+	public static final String NAF = "naf";
 	public static final String NAF2 = "naf2";
 	public static final String NAF1 = "naf1";
 	public static final String REGIMEN = "regimen";
@@ -39,13 +40,14 @@ public class Saltra implements AutoCloseable{
 	public static final String CERT_SECRET = "cert_secret";
 	public static final String FECHA_ALTA = "fecha_alta";
 	public static final String FECHA_BAJA = "fecha_baja";
+	public static final String FECHA_REAL = "fecha_real";
 	public static final String COEF = "coef";
 	public static final String OCUPACION = "ocupacion";
-
-	
+	public static final String EMPLEADOS = "empleados";
 	public static final String SUCCESS = "success";
 	public static final String MESSAGE = "message";
-	
+	public static final String NOMBRES = "nombres";
+	public static final String EMPRESA = "empressa";
 	
 	private static Map<String, Supplier<? extends SaltraException>> EXCEPTIONS = 
 	new HashMap<String, Supplier<? extends SaltraException>>(){
@@ -153,27 +155,49 @@ public class Saltra implements AutoCloseable{
 		return null;
 	}
 
-	public OutputStream getITA(String regime, String ccc) {
-		return null;
+	public String getITA(String regime, String ccc) throws IOException, SaltraException {
+		URL itaURL = getURL("movimientos/informes-afiliado-ccc");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put(CERT_KEY, getCertKey())
+		.put(CERT_SECRET, getCertSecret())
+		.put(CCC1, ccc.substring(0,2))
+		.put(CCC2, ccc.substring(2))
+		.put(REGIMEN, regime)
+		;
+		JSONObject responseJsonObject = post(itaURL, requestJsonObject);
+		return responseJsonObject.getString("pdf");
 	}
 	
 	public OutputStream getHistory(String naf, String regime, String ccc) {
 		return null;
 	}
 
-	public OutputStream getHistory(String regime, String ccc, Date from, Date to) {
-		return null;
-	}
+	public String getHistory(String regime, String ccc, String from, String to) throws IOException, SaltraException {
+		URL historyURL = getURL("movimientos/informe-laboral");
+		JSONObject requestJsonObject = 
+		new JSONObject()
+		.put(CERT_KEY, getCertKey())
+		.put(CERT_SECRET, getCertSecret())
+		.put(CCC1, ccc.substring(0,2))
+		.put(CCC2, ccc.substring(2))
+		.put("fechaini", from)
+		.put("fechafin", to)
+		.put(REGIMEN, regime)
+		;
+		JSONObject responseJsonObject = post(historyURL, requestJsonObject);
+		return responseJsonObject.getString("pdf");	}
 	
 	public String getIDC(String naf, String regime, String ccc, Date date) throws IOException, SaltraException {
 		return getIDC(naf, regime, ccc, new SimpleDateFormat("dd-MM-yyyy").format(date));
 	}
 
+
+	
 	public String getIDC(String naf, String regime, String ccc, String date) throws IOException, SaltraException {
 		URL idcURL = getURL("movimientos/duplicado-idc");
 		JSONObject requestJsonObject = 
 		new JSONObject()
-		.put(DEV, dev)
 		.put(CERT_KEY, getCertKey())
 		.put(CERT_SECRET, getCertSecret())
 		.put(NAF1, naf.substring(0, 2))
@@ -196,7 +220,6 @@ public class Saltra implements AutoCloseable{
 		URL statusURL = getURL("movimientos/situacion");
 		JSONObject requestJsonObject = 
 		new JSONObject()
-		.put(DEV, dev)
 		.put(CERT_KEY, getCertKey())
 		.put(CERT_SECRET, getCertSecret())
 		.put(CCC1, ccc.substring(0,2))
@@ -516,7 +539,7 @@ public class Saltra implements AutoCloseable{
 	}
 	
 	private static int getIdentificacion(String cif) {
-		if ( cif.matches("[0-9]{8}[A-Z]") ) 
+		if ( cif.matches("0?[0-9]{8}[A-Z]") ) 
 			return 1; // DNI
 		if ( cif.matches("[KL][0-9]{7}[A-Z]") )
 			return 1; // K,L DNI

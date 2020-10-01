@@ -1,0 +1,167 @@
+package com.esferalia.aon.gwt.payroll.shared;
+
+import java.io.Serializable;
+import java.util.Date;
+
+public abstract class EnterpriseStatus implements Serializable {
+
+	public static interface Visitor  {
+		void up2Date();
+		void saltraCredentialsNotFound();
+		void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound);
+	}
+	
+	public static class CredentialsNotFound extends EnterpriseStatus{
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.saltraCredentialsNotFound();
+		}
+	}	
+	
+	public static class AndEnterpriseStatus extends EnterpriseStatus {
+		
+		private AndEnterpriseStatus next;
+		
+		@Override
+		public void visit(Visitor visitor) {
+			if ( next != null ) {
+				next.visit(visitor);
+			}
+		}
+		
+		public AndEnterpriseStatus and(AndEnterpriseStatus status) {
+
+			AndEnterpriseStatus last = this;
+			while ( last.next != null ) 
+				last = last.next;
+			
+			last.next = status;
+			
+			return this;
+		}
+	}
+	
+	public static class Up2Date extends AndEnterpriseStatus{
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.up2Date();
+			super.visit(visitor);
+		}
+	}		
+	
+	public static class AffiliatedNotFound extends AndEnterpriseStatus{
+		
+		Date date ;
+		String naf;
+		String dni;
+		String ccc;
+		String name;
+		String regime;
+		
+		public String getDni() {
+			return dni;
+		}
+		
+		public String getNaf() {
+			return naf;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public Date getDate() {
+			return date;
+		}
+		
+		public String getCcc() {
+			return ccc;
+		}
+		
+		public String getRegime() {
+			return regime;
+		}
+		
+		public AffiliatedNotFound setDate(Date date) {
+			this.date = date;
+			return this;
+		}
+		
+		public AffiliatedNotFound setNaf(String naf) {
+			this.naf = naf;
+			return this;
+		}
+		
+		public AffiliatedNotFound setDni(String dni) {
+			this.dni = dni;
+			return this;
+		}
+		
+		public AffiliatedNotFound setCcc(String ccc) {
+			this.ccc = ccc;
+			return this;
+		}
+		
+		public AffiliatedNotFound setName(String name) {
+			this.name = name;
+			return this;
+		}
+		
+		public AffiliatedNotFound setRegime(String regime) {
+			this.regime = regime;
+			return this;
+		}
+		
+		
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.affiliatedNotFound(this);
+			super.visit(visitor);
+		}
+	}		
+
+	public abstract void visit(Visitor visitor);
+	
+	
+	public static <T extends EnterpriseStatus> T trace( T status ) {
+		status.visit(new Visitor() {
+			
+			@Override
+			public void up2Date() {
+				System.out.println("up2Date");
+			}
+			
+			@Override
+			public void saltraCredentialsNotFound() {
+				System.out.println("saltraCredentialsNotFound");
+			}
+			
+			@Override
+			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
+				System.out.println("affiliatedNotFound " + affiliatedNotFound.name + "[" + affiliatedNotFound.date + "]");
+			}
+			
+		});
+		return status;
+	}
+
+	public static <T extends EnterpriseStatus> T isUp2Date( T status ) {
+		status.visit(new Visitor() {
+			
+			@Override
+			public void up2Date() {
+			}
+			
+			@Override
+			public void saltraCredentialsNotFound() {
+				throw new OutOfDateException();
+			}
+
+			@Override
+			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
+				throw new OutOfDateException();
+			}
+		});
+		return status;
+	}
+}

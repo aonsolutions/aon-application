@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqSaltra;
+import com.esferalia.aon.gwt.payroll.jooq.JooqSaltra.SaltraCredentials;
 import com.esferalia.aon.gwt.payroll.shared.SaltraService;
 
 import solutions.aon.saltra.api.Saltra;
@@ -48,6 +49,9 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 			String uri = req.getRequestURI();
 			String fileName = AonServletUtils.getFileName(uri);
 			switch (fileName) {
+			case EMPLOYEE:
+				doEmployeePost(req, resp);
+				break;
 			case CERTIFICATE:
 				doCertificatePost(req, resp);
 				break;
@@ -85,6 +89,47 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 		}
 		
 	}
+	
+	private void doEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SaltraException, SQLException {
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		
+		try (Connection connection = getConnection(req);
+			OutputStream os = resp.getOutputStream();){	
+			
+			SaltraCredentials credentials = JooqSaltra.getCredentials(connection, domainName, userLogin);
+			Saltra saltra = new Saltra(getSaltraURL(), credentials.getCertKey(), credentials.getCertSecret());
+			
+			String regime = req.getParameter(Parameter.REGIME.name());
+			String ccc = req.getParameter(Parameter.CCC.name());
+			String nif = req.getParameter(Parameter.NIF.name());
+			String date = req.getParameter(Parameter.DATE.name());
+			JSONObject statusJSONObject = saltra.getStatus(regime, ccc, nif, date);
+			System.out.println(statusJSONObject.toString(1));
+
+			//			resp.setStatus(HttpServletResponse.SC_OK);
+//			byte content [] = jsonObject.toString().getBytes();
+//			resp.setContentLength(content.length);
+//			os.write(content);		
+		} 
+		
+	}	
+
+	private void doRegister(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SaltraException, SQLException {
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		Saltra saltra = new Saltra(getSaltraURL());
+		Connection connection = getConnection(req);
+		try (OutputStream os = resp.getOutputStream()){			
+//			resp.setStatus(HttpServletResponse.SC_OK);
+//			byte content [] = jsonObject.toString().getBytes();
+//			resp.setContentLength(content.length);
+//			os.write(content);		
+		}
+		
+	}	
 	
 	protected String getDomain(HttpServletRequest req) {
 		return req.getServerName();

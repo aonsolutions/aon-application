@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -28,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -164,4 +166,6 @@ public interface EnterprisesService extends RemoteService {
 
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
+	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
+
 }

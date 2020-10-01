@@ -8,8 +8,10 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -36,6 +38,20 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	// ---------------------------------------------- DATABASE METHODS SYNC  ---------------------------------------------
 	
+	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
+		enterprisesService.getEnterpriseStatus(enterprise.getId(), new AsyncCallback<EnterpriseStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EnterpriseStatus result) {
+				 success.accept(result);
+			}
+		});
+	}
+
 	public void initializeEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
 	
 		enterprisesService.getEnterpriseInfo(this.enterprise.getId() , new AsyncCallback<EnterpriseInfo>() {

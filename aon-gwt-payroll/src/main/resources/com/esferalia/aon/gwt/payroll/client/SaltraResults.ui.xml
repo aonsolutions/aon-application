@@ -46,6 +46,16 @@
 						<g:Hidden visible="false" ui:field="certificatePasswordHidden" name="{PASSWORD.name}" />
 					</g:VerticalPanel>
 				</g:FormPanel>
+				<g:FormPanel visible="false" ui:field="employeeFormPanel" method="{METHOD_POST}" action="{SALTRA_URL}/{EMPLOYEE}"  >
+					<g:VerticalPanel visible="false" >
+ 						<g:Hidden ui:field="regimeHidden" name="{REGIME.name}" />
+						<g:Hidden ui:field="cccHidden" name="{CCC.name}" />
+						<g:Hidden ui:field="nifHidden" name="{NIF.name}" />
+						<g:Hidden ui:field="dateHidden" name="{DATE.name}" />
+						<g:Hidden ui:field="userHidden" name="{USER.name}" />
+						<g:Hidden ui:field="domainHidden" name="{DOMAIN.name}" />
+					</g:VerticalPanel>
+				</g:FormPanel>
 
 			</g:FlowPanel>
 		</g:north>
