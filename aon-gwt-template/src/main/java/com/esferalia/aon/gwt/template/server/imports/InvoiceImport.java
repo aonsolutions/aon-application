@@ -766,7 +766,7 @@ public class InvoiceImport {
 					.setId(supplier.getId())
 					.setName(supplier.getName())
 					.setAccountId(supplier.getAccount());
-		} else if(InvoiceType.EXPENSES.equals(type)) {
+		} else if(InvoiceType.EXPENSES.equals(type) || InvoiceType.UNDEDUCTIBLE.equals(type)) {
 			Creditor creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f -> 
 				f.getDomainProperty().eq(domain.getId())
 				.and(f.getDocumentProperty().eq(nif))).orElse(new Creditor());
