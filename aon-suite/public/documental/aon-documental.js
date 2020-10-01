@@ -20,77 +20,55 @@ class AonDocumental extends HTMLElement {
 			{
 				name: 'Recientes',
 				icon: 'access_time',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Recientes');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'A Contabilizar',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / A Contabilizar');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Banco',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Banco');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Contable',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Contable');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Fiscal',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Fiscal');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Jurídico',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Jurídico');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Seguros',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Seguros');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Enviados',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Enviados');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			},
       {
 				name: 'Nóminas Empleados',
 				icon: 'folder',
-				fn: () => {
-					aonDocumental.setAttribute('title', 'DOCUMENTAL / Nóminas Empleados');
-					aonDocumental.setContentHTML('<iframe src="./indexNew.html" style="width:100%;height:100%;border:none;"></iframe>');
-				}
+				fn: () => this.loadIndex()
 			}
 		];
 		aonDocumental.addSidenavOptions('OPCIONES', options);
+	}
+
+	loadIndex() {
+		let aonDocumental = document.getElementById('aonDocumental');
+		aonDocumental.setContentHTML('<iframe src="./index.html" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-documental', AonDocumental);
