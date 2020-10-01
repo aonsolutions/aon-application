@@ -200,13 +200,11 @@ class AonConfiguration extends HTMLElement {
 		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "flex";
 		content.innerHTML = `
-			<aon-card id="aonConfigurationGeneralCard" title="Información General"></aon-card>
-			<aon-card id="aonConfigurationGeneral2Card" title="Información Adicional"></aon-card>
+			<aon-card id="aonConfigurationGeneralCard" style="width:50%;" title="Información General"></aon-card>
+			<aon-card id="aonConfigurationGeneral2Card" style="width:50%;" title="Información Adicional"></aon-card>
 		`;
 		let card = document.getElementById('aonConfigurationGeneralCard');
-		let cardDiv = document.getElementById('aonConfigurationGeneralCard-div');
-		cardDiv.style.width = '500px';
-		card.addContent(`
+		card.setContentHTML(`
 			<form action="#" class="aon-margin-0">
 				<aon-input-text class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input-text>
 				<aon-input-text class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input-text>
@@ -217,9 +215,7 @@ class AonConfiguration extends HTMLElement {
 		`);
 
 		let card2 = document.getElementById('aonConfigurationGeneral2Card');
-		let cardDiv2 = document.getElementById('aonConfigurationGeneral2Card-div');
-		cardDiv2.style.width = '500px';
-		card2.addContent(`
+		card2.setContentHTML(`
 			<form action="#" class="aon-margin-0">
 				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input-text>
 				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input-text>

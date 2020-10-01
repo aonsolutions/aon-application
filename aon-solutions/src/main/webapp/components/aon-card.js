@@ -45,36 +45,45 @@
 		}
 
 		connectedCallback () {
-			this.appendChild(this.build());
-		}s
+			this.innerHTML = `
+				<div class="aonCard">
+					<div id="${this.getId() + 'Title'}">
 
-		build() {
-			let div = document.createElement('div');
-			div.setAttribute('id', this.getAttribute('id') + '-div');
-			div.className = "demo-card-wide mdl-card mdl-shadow--2dp aonCard";
+					</div>
+					<div id="${this.getId() + 'Content'}">
 
-			let div1 = document.createElement('div');
-			div1.className = "mdl-card__title";
+					</div>
 
-			let h2 = document.createElement('h2');
-			h2.className = "mdl-card__title-text";
-			h2.innerHTML = this.getAttribute('title');
-
-			div1.appendChild(h2);
-			div.appendChild(div1);
-
-			return div;
+				</div>
+			`;
+			this.build();
 		}
 
-		addContent(content) {
-			let div = document.getElementById(this.getAttribute('id') + '-div');
-			let div2 = document.createElement('div');
-			div2.innerHTML = content;
-			div.appendChild(div2);
+		build() {
+			let title = document.getElementById(this.getId() + 'Title')
+			title.innerHTML = this.getTitle();
+		}
+
+		setContent(el) {
+			let content = document.getElementById(this.getId() + 'Content');
+			content.appendChild(el);
+		}
+
+		setContentHTML(html) {
+			let content = document.getElementById(this.getId() + 'Content');
+			content.innerHTML = html;
 		}
 
 		setVisible(visible) {
 			this.setAttribute('visible', visible)
+		}
+
+		getId() {
+			return this.getAttribute('id');
+		}
+
+		getTitle() {
+			return this.getAttribute('title');
 		}
 	}
 

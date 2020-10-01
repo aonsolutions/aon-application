@@ -2,6 +2,7 @@ import {Apps} from  '../services/app.js';
 import {getDomainApps, setUserAppRole, setUser} from  '../services/service.js';
 
 import './aon-select.js';
+import './aon-card.js';
 
 class AonUser extends HTMLElement {
 
@@ -66,8 +67,8 @@ class AonUser extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-card id="aonConfigurationUserCard" title="USUARIO"></aon-card>
-			<aon-card id="aonConfigurationUserSecurityCard" title="PERMISOS"></aon-card>
+			<aon-card id="aonConfigurationUserCard" style="width:50%;" title="USUARIO"></aon-card>
+			<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="PERMISOS"></aon-card>
 		`;
 		this.build();
   }
@@ -103,9 +104,7 @@ class AonUser extends HTMLElement {
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 
 		let card = document.getElementById('aonConfigurationUserCard');
-		let cardDiv = document.getElementById('aonConfigurationUserCard-div');
-		cardDiv.style.width = '500px';
-		card.addContent(`
+		card.setContentHTML(`
 			<form action="#" class="aon-margin-0">
 				<aon-input-text class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input-text>
 			</form>

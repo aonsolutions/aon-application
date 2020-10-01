@@ -106,18 +106,6 @@
 		cursor: pointer;
 	}
 
-  .aonCard {
-    margin: 20px;
-    padding-bottom:50px;
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
-    font-size: 16px;
-    background: #fff;
-    border-radius: 2px;
-    box-sizing: border-box;
-  }
-
 	.aonLogo {
 		position: absolute;
 		margin-left: 10px;
@@ -477,4 +465,12 @@
 	.aonTable td {
 		padding-left: 8px;
 		border-bottom: 1px solid #ddd;
+	}
+
+	.aonCard {
+    border: 1px solid #ebebeb;
+    border-radius: 5px;
+    margin: 10px;
+    min-width: 250px;
+    padding: 15px 22px;
 	}

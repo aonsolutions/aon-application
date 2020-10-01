@@ -36,9 +36,6 @@
 		addColumn(name, type, id) {
 			let header = document.getElementById(this.getId() + 'TableHeader');
 			let th = document.createElement('th');
-			// if('number' !== type ){
-			// 	//th.className = 'mdl-data-table__cell--non-numeric';
-			// }
 			th.innerHTML = name;
 			this.columns.push({
 				name,
@@ -56,9 +53,6 @@
 
 			this.columns.forEach((item, i) => {
 				let td = document.createElement('td');
-				// if('number' !== item.type ){
-				// 	//td.className = 'mdl-data-table__cell--non-numeric';
-				// }
 				td.innerHTML = value[item.id];
 				tr.appendChild(td);
 			});
