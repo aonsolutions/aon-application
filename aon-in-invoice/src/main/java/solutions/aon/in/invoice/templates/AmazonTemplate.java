@@ -3,7 +3,6 @@ package solutions.aon.in.invoice.templates;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,19 +74,6 @@ public class AmazonTemplate extends AbstractTemplate {
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			
 			Matcher matcher = find(reader, IVA_W0184081H);		
-			
-			builder.setSenderCountry(string(matcher, "country"));
-			builder.setSenderDocument(string(matcher, "document"));
-			builder.setSenderCity("MADRID");
-			builder.setSenderProvince("MADRID");
-			builder.setSenderPostalCode("28045");
-			builder.setSenderAddress("CALLE DE RAMÍREZ DE PRADO 5");
-			builder.setSenderName("AMAZON EU S.À R.L., SUCURSAL EN ESPAÑA");
-			
-			matcher = find(reader, dd_MMM_yyyy);
-			builder.setDate(date(matcher, "date", "dd MMM yyyy"));
-			
-			
 			
 		}
 		// TODO Auto-generated method stub

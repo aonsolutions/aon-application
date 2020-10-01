@@ -1,186 +1,112 @@
 package solutions.aon.in.invoice.pdf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Locale.IsoCountryCode;
 
-import org.junit.Assert;
 import org.junit.Test;
-
-import com.esferalia.aon.watson.util.AonDateUtils;
 
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.UnknownInvoiceException;
+import solutions.aon.in.invoice.templates.Document;
 
 public class InvoicePDFParserTestCase {
 	
-	static class InvoiceAssertBuilder {
-		
-		private InvoiceAssert invoiceAssert = new InvoiceAssert();
-		
-		public InvoiceAssertBuilder setDate(Date date) {
-			invoiceAssert.date = date;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setDate(int day, int month, int year) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.set(Calendar.DAY_OF_MONTH, day);
-			calendar.set(Calendar.MONTH, month);
-			calendar.set(Calendar.YEAR, year);
-			calendar.set(Calendar.HOUR, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.set(Calendar.SECOND, 0);
-			calendar.set(Calendar.MILLISECOND, 0);
-			invoiceAssert.date = calendar.getTime();
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderName(String name) {
-			invoiceAssert.senderName = name;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderCity(String city) {
-			invoiceAssert.senderCity = city;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderAddress(String address) {
-			invoiceAssert.senderAddress = address;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderProvince(String province) {
-			invoiceAssert.senderProvince = province;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderPostalCode(String postalCode) {
-			invoiceAssert.senderPostalCode = postalCode;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderCountry(String isoCountryCode) {
-			invoiceAssert.senderCountry = isoCountryCode;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderDocument(String document) {
-			invoiceAssert.senderDocument = document;
-			return this;
-		}
-
-		public InvoiceAssertBuilder setSenderDocumentCountry(String isoCountryCode) {
-			invoiceAssert.senderDocumentCountry = isoCountryCode;
-			return this;
-		}
- 
-		
-		public InvoiceAssert getInvoiceAssert() {
-			return invoiceAssert;
-		}
-
-	}
-	
 	static class InvoiceAssert implements InvoiceBuilder<Object> {
 		
-		private Date date;
-		private String senderName;
-		private String senderCity;
-		private String senderAddress;
-		private String senderProvince;
-		private String senderPostalCode;
-		private String senderCountry;
-		private String senderDocument;
-		private String senderDocumentCountry;		
+		private Collection<Document> nifs;
+		private Collection<Date> dates;
+		private Collection<Double> amounts;
 
 		@Override
-		public void setDate(Date date) {
-			if ( this.date != null )
-				Assert.assertEquals(this.date, date);
+		public void setInsightNifs(Collection<Document> nifs) {
+			if (this.nifs == null) {
+				this.nifs = nifs;
+			} else {
+				this.nifs.addAll(nifs);
+			}
 		}
 
 		@Override
-		public void setSenderName(String name) {
-			if ( this.senderName != null )
-				Assert.assertEquals(this.senderName, name);
+		public void setInsightDates(Collection<Date> dates) {
+			if (this.dates == null) {
+				this.dates = dates;
+			} else {
+				this.dates.addAll(dates);
+			}
 		}
 
 		@Override
-		public void setSenderCity(String city) {
-			if ( this.senderCity != null )
-			Assert.assertEquals(this.senderCity, city);
+		public void setInsightAmounts(Collection<Double> amounts) {
+			if (this.amounts == null) {
+				this.amounts = amounts;
+			} else {
+				this.amounts.addAll(amounts);
+			}
 		}
 
-		@Override
-		public void setSenderAddress(String address) {
-			if ( this.senderAddress != null )
-				Assert.assertEquals(this.senderAddress, address);	
+		public Collection<Document> getNifs() {
+			return nifs;
 		}
 
-		@Override
-		public void setSenderProvince(String province) {
-			if ( this.senderProvince != null )
-				Assert.assertEquals(this.senderProvince, province);
+		public Collection<Date> getDates() {
+			return dates;
 		}
 
-		@Override
-		public void setSenderPostalCode(String postalCode) {
-			if ( this.senderPostalCode != null )
-				Assert.assertEquals(this.senderPostalCode, postalCode);
+		public Collection<Double> getAmounts() {
+			return amounts;
 		}
-
-		@Override
-		public void setSenderCountry(String isoCountryCode) {
-			if ( this.senderCountry != null )
-				Assert.assertEquals(this.senderCountry, isoCountryCode);			
-		}
-
-		@Override
-		public void setSenderDocument(String document) {
-			if ( this.senderDocument != null )
-				Assert.assertEquals(this.senderDocument, document);						
-		}
-
-		@Override
-		public void setSenderDocumentCountry(String isoCountryCode) {
-			if ( this.senderDocumentCountry != null )
-				Assert.assertEquals(this.senderDocumentCountry, isoCountryCode);						
-		}
-
-		@Override
-		public void setTotal(double total) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setIVA(double base, double iva, double precentage) {
-			// TODO Auto-generated method stub
-			
-		}
-		
 	}
 
+	private enum TestTemplates {
+		AMAZON_1 ("AMAZON_1.pdf", 3, 2 ),
+		AMAZON_2 ("AMAZON_2.pdf", 4, 2 ),
+		AMAZON_3 ("AMAZON_3.pdf", 4, 2 ),
+		AMAZON_4 ("AMAZON_4.pdf", 6, 2 ),
+		AMAZON_5 ("AMAZON_5.pdf", 6, 2 ),
+		AMAZON_6 ("AMAZON_6.pdf", 6, 2 ),
+		AMAZON_7 ("AMAZON_7.pdf", 5, 2 ),
+		;
+
+		private String file;
+		private int documentsNumber;
+		private int datesNumber;
+		
+		private TestTemplates(String file, int documentsNumber, int datesNumber) {
+			this.file = file;
+			this.documentsNumber = documentsNumber;
+			this.datesNumber = datesNumber;
+		}
+		
+		public String getFile() {
+			return file;
+		}
+		public int getDocumentsNumber() {
+			return documentsNumber;
+		}
+		public int getDatesNumber() {
+			return datesNumber;
+		}
+	}
+	
 	@Test
-	public void testAMAZON_1() throws IOException, UnknownInvoiceException {
-		try (InputStream is = InvoicePDFParserTestCase.class.getResourceAsStream("AMAZON_1.pdf")) {
-			InvoicePDFParser.parse(is, 
-			new InvoiceAssertBuilder()
-			.setSenderCountry("ES")
-			.setSenderCity("MADRID")
-			.setSenderProvince("MADRID")
-			.setSenderPostalCode("28045")
-			.setSenderAddress("CALLE DE RAMÍREZ DE PRADO 5")
-			.setSenderDocument("W0184081H")
-			.setSenderDocumentCountry("ES")
-			.setDate(10, Calendar.JANUARY, 2019)
-			.getInvoiceAssert()
-			);
+	public void testTemplates() throws IOException, UnknownInvoiceException {
+		for (TestTemplates template : TestTemplates.values()) {
+			try (InputStream is = InvoicePDFParserTestCase.class.getResourceAsStream(template.getFile())) {
+				InvoiceAssert invoiceAssert = new InvoiceAssert();
+				InvoicePDFParser.parse(is,invoiceAssert);
+				assertNotNull(template.getFile() + " Not parsed!",invoiceAssert);
+				assertNotNull(template.getFile() + " has no documents!",invoiceAssert.getNifs());
+				assertEquals(template.getFile() + " must parse " + template.getDocumentsNumber() + " documents!"
+						,template.getDocumentsNumber(),invoiceAssert.getNifs().size());
+				assertNotNull(template.getFile() + " has no dates!",invoiceAssert.getDates());
+				assertEquals(template.getFile() + " must parse " + template.getDocumentsNumber() + " dates!"
+						,template.getDatesNumber(),invoiceAssert.getDates().size());
+			}
 		}
 	}
 

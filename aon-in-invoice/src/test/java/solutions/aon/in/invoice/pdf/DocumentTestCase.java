@@ -1,0 +1,113 @@
+package solutions.aon.in.invoice.pdf;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+
+import org.junit.Test;
+
+import solutions.aon.in.invoice.UnknownInvoiceException;
+import solutions.aon.in.invoice.templates.Document.DocumentType;
+
+public class DocumentTestCase {
+	
+	private static final String[] VALID_DNIS = {"73742960S"
+		,"10597868C","68362309F","32748386C","59177614V","76329213X"
+		,"23049210J","52335130X","39960275Y","38162094B","61149985T"
+		,"53431615Q","55478315S","04442166S","36866225P","00636000G"
+		,"59700453C","92342848X","88948983W","10131903N","06578360S"
+		,"79261218K","01022629A","52038541Y","00503975E","74760064J"
+		,"16581506R","40330394D","68046015D","55316635W","39198976F"
+		,"12516280W","81522249Z","01053411B","48841174F","37085391F"
+		,"75002847P","15308794V","17129441F","83109150F","40114518B"
+	};
+	private static final String[] WRONG_DNIS = {"73742d60S"
+		,"10597368C","68362209F","31748386C","59177714V","76529213X"
+		,"23049310J","52335230X","39160275Y","38162096B","61149985D"
+		,"53431315Q","55478215S","04412166S","36866265P","00656000G"
+		,"59700353C","92342828X","88941983W","10131603N","06575360S"
+		,"79261318K","01022629C","52038141Y","00506975E","74760564J"
+		,"16581306R","40322394D","68046115D","55366635W","39198976D"
+		,"12516380W","81222249Z","01051411C","48641174F","37085351F"
+		,"75002347P","15208794V","17121441F","86109150F","4011451DB"
+	};
+	
+	private static final String[] VALID_NIES = {"X3068391F"
+		,"Y5920403X","X1291539C","Y4769124L","Y6497764W","Y9135113X"
+		,"Z4119001M","X1057886R","Z8457881G","Z4976959V","X7921573M"
+		,"X8375740Z","Z6708069D","Z3089945S","Y9041672H","Y5930224X"
+		,"Z2557267V","X1372262J","Y3824163J","X7385653P","Z4664537G"
+		,"Z3112129G","Z1919598T","X2083582N","Y3951793Q","Y9894414N"
+		,"Z8755900N","Z1822146E","X8796564F","X0721784K","X9526593Q"
+		,"Z7466881M","Y8097589Q","Z2694959P","Y2357610D","Y9818511D"
+		,"X1225007G","Y6494703T","Y3618784R","Z0754236W","Z4582602H"
+		,"Y0519561M","Y9009781M","X0404139Y","Y4652355K","X6198594W"
+	};
+	
+	private static final String[] WRONG_NIES = {"X3068391F45"
+		,"Y5940403X","X13291539C","Y4763124L","Y649d764W","Y91351453X"
+		,"Z4311900M","X13057886R","Z8452881G","Z34976959V","X79451573M"
+		,"X837f740Z","Z6f708069D","Z3089c45S","Y90c1672H","Y59345224X"
+		,"Z255f267V","X1xc372262J","Y38c4163J","X7v85653P","Z46645537G"
+		,"Z311s2129G","Z19 19598T","X2082582N","Y39451793Q","Y98454414N"
+		,"Z875c900N","Z182b2146E","X87923564F","X07521784K","X9545593Q"
+		,"Z746v881M","Y8097s589Q","Z26d4959P","Y23516223D","Y98184511D"
+		,"X122b007G","Y6494s703T","Y3638784R","Z0754h36W","Z4582652H"
+		,"Y051x561M","Y90097w81M","X03404139Y","Y46545355K","X61458594W"
+	};
+
+	private static final String[] VALID_LEGAL_PERSON_NIFS = {"D08078115"
+		,"H67497461","Q9600737B","U26557876","P5228761B","F97677819"
+		,"E31067804","C21032594","W8868398B","V61059770","R0636875G"
+		,"A52718566","B22296081","E20617486","W4205433H","W8593385A"
+		,"J85835049","C55339683","N2023855F","N6723945I","H06227375"
+		,"P2328719F","J92624105","N0925641C","A80934011","C67608943"
+		,"V53398624","G89857882","H99335887","S3366554H","G41523325"
+		,"U37464856","F78804218","F10446714","J49881758","P9699955B"
+		,"U23519374","P3328857B","J43444728","R2336797B","E59043943"
+		,"V88619424","A28099901","U66098419"
+	};
+	
+	@Test
+	public void testValidDNIS() throws IOException, UnknownInvoiceException {
+		System.out.println("- test VALID DNIS ---------");
+		for (String dni : VALID_DNIS) {
+			assertTrue(dni + " is not a valid DNI", DocumentType.DNI.accept(dni));
+		}
+	}
+	
+	@Test
+	public void testWrongDNIS() throws IOException, UnknownInvoiceException {
+		System.out.println("- test WRONG DNIS ---------");
+		for (String dni : WRONG_DNIS) {
+			assertFalse(dni + " is a valid DNI", DocumentType.DNI.accept(dni));
+		}
+	}
+
+	@Test
+	public void testValidNIES() throws IOException, UnknownInvoiceException {
+		System.out.println("- test VALID NIES ---------");
+		for (String nie : VALID_NIES) {
+			assertTrue(nie + " is not a valid NIE", DocumentType.NIE.accept(nie));
+		}
+	}
+
+	@Test
+	public void testWrongNIES() throws IOException, UnknownInvoiceException {
+		System.out.println("- test WRONG NIES ---------");
+		for (String dni : WRONG_NIES) {
+			assertFalse(dni + " is a valid NIE", DocumentType.NIE.accept(dni));
+		}
+	}
+
+	@Test
+	public void testValidLegalPersonNIFS() throws IOException, UnknownInvoiceException {
+		System.out.println("- test VALID LEGAL PERSON NIFS ---------");
+		for (String nie : VALID_LEGAL_PERSON_NIFS) {
+			assertTrue(nie + " is not a valid LEGAL PERSON NIF", DocumentType.LEGAL_PERSON_NIF.accept(nie));
+		}
+	}
+}
+
+
