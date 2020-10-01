@@ -28,7 +28,7 @@
 		
 		.styleBorder{
 			border-style: solid; 
-			width: 650px; 
+			width: 595px; 
 			border-width: 1px; 
 			margin-top: 20px;
 		}
@@ -58,13 +58,12 @@
 		
 		.scrollStyle {
 			margin-left: 10px;
-			width: 600px;
 			margin-bottom: 10px;
 		}
 		
 		.gridStyle{
 			margin-left: 10px;
-			width: 600px;
+			width: 580px;
 		}
 		
 		.columnWidth{
@@ -94,7 +93,7 @@
 		
 		.footerElement{
 			margin-left: 10px;
-			width: 615px;
+			/*width: 615px;*/
 			border: none;
 		}
 		
@@ -168,6 +167,9 @@
 			width: 80px;
 		}
 		
+		.w232{
+			width: 232px;
+		}
 	</ui:Style>
 
 
@@ -203,10 +205,9 @@
 									    <g:VerticalPanel ui:field="itDataTable" styleName="{style.styleBorder}">
 									    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Parte IT</g:Label>
 									    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-									    		<table style="margin-left: 10px; margin-bottom: 10px; width: 630px;">
+									    		<table style="margin-left: 10px; margin-bottom: 10px;">
 													<tbody>
 													    <tr>
-													        <td></td>
 													        <td></td>
 													        <td></td>
 													        <td></td>
@@ -216,11 +217,8 @@
 													    	<td  style="background-color: #eaeaea; width: 100px;">
 													    		<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Fecha Baja</g:Label>
 													    	</td>
-													    	<td style="width: 80px;">
+													    	<td style="width: 105px;">
 													    		<c:DateBoxEx ui:field="itStartDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
-													    	</td>
-													    	<td  style="width: 100px;">
-													    		<g:Label styleName="{style.w100}" ui:field="realStartDate"></g:Label>
 													    	</td>
 													    	<td  style="background-color: #eaeaea; width: 110px;">
 													    		<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Causa de baja</g:Label>
@@ -233,7 +231,7 @@
 													    	<td  style="background-color: #eaeaea; width: 100px;">
 													    		<g:Label styleName='{style.firstColumnTextStyle}'>Fecha Alta</g:Label>
 													    	</td>
-													    	<td colspan="2">
+													    	<td style="width: 105px;">
 													    		<c:DateBoxEx ui:field="itEndDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
 													    	</td>
 													    	<td  style="background-color: #eaeaea; width: 110px;">
@@ -250,7 +248,7 @@
 									    <g:VerticalPanel ui:field="informationDataTable" styleName="{style.styleBorder}">
 									    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Información parte</g:Label>
 									    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-									    		<table style="margin-left: 10px; margin-bottom: 10px; width: 630px;">
+									    		<table style="margin-left: 10px; margin-bottom: 10px;">
 													<tbody>
 													    <tr>
 													        <td></td>
@@ -260,13 +258,10 @@
 													    </tr>
 													    <tr>
 													    	<td  style="background-color: #eaeaea; width: 100px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Nº colegiado</g:Label>
+													    		<g:Label  styleName='{style.firstColumnTextStyle}'>F. Inicio</g:Label>
 													    	</td>
-													    	<td style="width: 220px;">
-													    		<g:HorizontalPanel>
-													    			<g:TextBox ui:field="collegiateNumberITPart" styleName='aon-inputText {style.w80}'></g:TextBox>
-													    			<g:Label ui:field="collegiateNumberError"></g:Label>
-													    		</g:HorizontalPanel>
+													    	<td  style="width: 105px;">
+													    		<g:Label styleName="{style.w100}" ui:field="realStartDate"></g:Label>
 													    	</td>
 													    	<td  style="background-color: #eaeaea; width: 110px;">
 													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Recaída</g:Label>
@@ -277,9 +272,26 @@
 													    </tr>
 													    <tr>
 													    	<td  style="background-color: #eaeaea; width: 100px;">
+													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Nº colegiado</g:Label>
+													    	</td>
+													    	<td style="width: 105px;">
+													    		<g:HorizontalPanel>
+													    			<g:TextBox ui:field="collegiateNumberITPart" styleName='aon-inputText {style.w80}'></g:TextBox>
+													    			<g:Label ui:field="collegiateNumberError"></g:Label>
+													    		</g:HorizontalPanel>
+													    	</td>
+													    	<td  style="background-color: #eaeaea; width: 110px;">
+													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Observaciones</g:Label>
+													    	</td>
+													    	<td style="width: 240px;">
+													    		<g:TextBox ui:field="observationTB" styleName='aon-inputText  {style.w232}'></g:TextBox>
+													    	</td>
+													    </tr>
+													    <tr>
+													    	<td  style="background-color: #eaeaea; width: 100px;">
 													    		<g:Label  styleName='{style.firstColumnTextStyle}'>CIAS</g:Label>
 													    	</td>
-													    	<td style="width: 220px;">
+													    	<td style="width: 105px;">
 													    		<g:HorizontalPanel>
 													    			<g:TextBox ui:field="ciasITPart" styleName='aon-inputText {style.w80}'></g:TextBox>
 													    			<g:Label ui:field="ciasError"></g:Label>

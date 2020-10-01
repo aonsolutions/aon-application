@@ -107,6 +107,9 @@ public abstract class ITDialog extends CustomDialog {
 	TextBox collegiateNumberITPart;
 	
 	@UiField
+	TextBox observationTB;
+	
+	@UiField
 	ListBox raggedList;
 	
 	@UiField
@@ -187,6 +190,50 @@ public abstract class ITDialog extends CustomDialog {
 			showConfirmationParts();
 	}
 	
+	public void setITDialogObject(ITDialogObject itDialogObject, IT it) {
+		this.itDialogObject = itDialogObject;
+		
+		initRaggedListBox();
+		initConfirmationsTable();
+		
+		// Check if exist IT
+		this.it = it;
+		
+		if(null != this.it) {
+			paintSelectedIT(this.it, false);
+			showDeleteOption();
+		} else
+			hideDeleteOption();
+		
+		// Check type of part
+		if(this.itDialogObject.getEmployeeStatus()) {
+			hideConfirmationParts();
+		} else
+			showConfirmationParts();
+	}
+	
+	public void setITDialogObject(ITDialogObject itDialogObject, IT it, boolean showAll) {
+		this.itDialogObject = itDialogObject;
+		
+		initRaggedListBox();
+		initConfirmationsTable();
+		
+		// Check if exist IT
+		this.it = it;
+		
+		if(null != this.it) {
+			paintSelectedIT(this.it, false);
+			showDeleteOption();
+		} else
+			hideDeleteOption();
+		
+		// Check type of part
+		if(!showAll) {
+			hideConfirmationParts();
+		} else
+			showConfirmationParts();
+	}
+	
 	// --------------------------------------------------------------------------------------------
 	// 									PROVIDE SALARY DATA GRID
 	// --------------------------------------------------------------------------------------------
@@ -242,7 +289,7 @@ public abstract class ITDialog extends CustomDialog {
 
 	    lowDateColumn.setSortable(true);
 	    lowDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    itDataGrid.setColumnWidth(lowDateColumn, 100, Unit.PX);
+	    itDataGrid.setColumnWidth(lowDateColumn, 90, Unit.PX);
 	    
 	    TextColumn<IT> lowCauseColumn = new TextColumn<IT>() {
 
@@ -261,7 +308,7 @@ public abstract class ITDialog extends CustomDialog {
 	    
 	    lowCauseColumn.setSortable(true);
 	    lowCauseColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    itDataGrid.setColumnWidth(lowCauseColumn, 100, Unit.PX);
+	    itDataGrid.setColumnWidth(lowCauseColumn, 90, Unit.PX);
 	    
 	    TextColumn<IT> highDateColumn = new TextColumn<IT>() {
 	      @Override
@@ -272,7 +319,7 @@ public abstract class ITDialog extends CustomDialog {
 
 	    highDateColumn.setSortable(true);
 	    highDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    itDataGrid.setColumnWidth(highDateColumn, 100, Unit.PX);
+	    itDataGrid.setColumnWidth(highDateColumn, 90, Unit.PX);
 		    
 	    TextColumn<IT> highCauseColumn = new TextColumn<IT>() {
 	      @Override
@@ -287,21 +334,21 @@ public abstract class ITDialog extends CustomDialog {
 	   TextColumn<IT> rechargeColumn = new TextColumn<IT>() {
 	      @Override
 	      public String getValue(IT it) {
-	    	  return it.getParent() == null ? "NO" : "SI";
+	    	  return it.getParent() == null || it.getParent() == 0 ? "NO" : "SI";
 	      }
 
 	    };
 
 	    rechargeColumn.setSortable(true);
 	    rechargeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-	    itDataGrid.setColumnWidth(rechargeColumn, 70, Unit.PX);
+	    itDataGrid.setColumnWidth(rechargeColumn, 50, Unit.PX);
 	    
 	    // Add the columns.
 	    itDataGrid.addColumn(lowDateColumn, "F. Baja");
 	    itDataGrid.addColumn(lowCauseColumn, "Causa Baja");
 	    itDataGrid.addColumn(highDateColumn, "F. Alta");
 	    itDataGrid.addColumn(highCauseColumn, "Causa Alta");
-	    itDataGrid.addColumn(rechargeColumn, "Recaida");
+	    itDataGrid.addColumn(rechargeColumn, "Rec.");
 	      
 	}
 
@@ -327,7 +374,7 @@ public abstract class ITDialog extends CustomDialog {
 	@UiHandler("acceptButton")
 	public void onSaveClick(ClickEvent event) {
 		if(checkIfSaveIsPossible()) {
-			if(null == this.it.getId())
+			if(null == this.it.getId() || -1 == this.it.getId())
 				itDialogObject.addIT(this.it);
 			onAccept();
 			hide();
@@ -378,7 +425,7 @@ public abstract class ITDialog extends CustomDialog {
 		}
 		
 		deckPanel.showWidget(1);
-		deckPanel.setWidth("675px");
+		deckPanel.setWidth("620px");
 		initITTable();
 		setTableHeights();
 	}
@@ -386,22 +433,24 @@ public abstract class ITDialog extends CustomDialog {
 	@UiHandler("backButton")
 	public void onBackButtonClick(ClickEvent event) {
 		deckPanel.showWidget(0);
-		deckPanel.setWidth("675px");
+		deckPanel.setWidth("620px");
 	}
 	
 	@UiHandler("newITButton")
 	public void onNewITButtonClick(ClickEvent event) {
 		clearITPage();
 		this.it = new IT();
+		this.it.setId(-1);
 		hideConfirmationParts();
 		deckPanel.showWidget(0);
-		deckPanel.setWidth("675px");
+		deckPanel.setWidth("620px");
 	}
 	
 	@UiHandler("itStartDate")
 	public void onItStartDateChange(ValueChangeEvent<Date> event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		this.it.setStartDate(event.getValue());
@@ -417,6 +466,7 @@ public abstract class ITDialog extends CustomDialog {
 	public void onCauseLowPartChange(ChangeEvent event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		this.it.setTypeLowPart(Byte.parseByte(causeLowPart.getSelectedValue()));
@@ -431,6 +481,7 @@ public abstract class ITDialog extends CustomDialog {
 	public void onItEndDateChange(ValueChangeEvent<Date> event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		this.it.setEndDate(event.getValue());
@@ -442,6 +493,7 @@ public abstract class ITDialog extends CustomDialog {
 	public void onCauseHighPartChange(ChangeEvent event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		this.it.setTypeHighPart(Byte.parseByte(causeHighPart.getSelectedValue()));
@@ -453,6 +505,7 @@ public abstract class ITDialog extends CustomDialog {
 	public void onCollegiateNumberLowPartChange(ValueChangeEvent<String> event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		setCollegiateNumberITPart(event.getValue());
@@ -462,15 +515,27 @@ public abstract class ITDialog extends CustomDialog {
 	public void onCiasLowPartChange(ValueChangeEvent<String> event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		setCiasITPart(event.getValue());
+	}
+	
+	@UiHandler("observationTB")
+	public void onObservationTBChange(ValueChangeEvent<String> event) {
+		if(this.it == null) {
+			this.it = new IT();
+			this.it.setId(-1);
+		}
+		
+		this.it.setDescription(observationTB.getValue());
 	}
 	
 	@UiHandler("raggedList")
 	public void onRaggedListChange(ChangeEvent event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		this.it.setParent(Integer.parseInt(raggedList.getSelectedValue()));
@@ -478,10 +543,12 @@ public abstract class ITDialog extends CustomDialog {
 		Date raggedDate = this.itDialogObject.getRaggedDate(raggedList.getSelectedValue());
 		
 		if(null != raggedDate)
-			realStartDate.setText("F. Ini. : " + formatFullDate.format(raggedDate));
+			realStartDate.setText(formatFullDate.format(raggedDate));
 		else {
 			if(null == itStartDate.getValue())
 				realStartDate.setText("");
+			else
+				createRealStartDate();
 		}
 			
 	}
@@ -490,18 +557,20 @@ public abstract class ITDialog extends CustomDialog {
 	public void onNewConfirmationPartClick(ClickEvent event) {
 		if(this.it == null) {
 			this.it = new IT();
+			this.it.setId(-1);
 		}
 		
 		ITPart newITPart = new ITPart();
 		newITPart.setType((byte)1);
-		newITPart.setConfirmOrderNumber((byte)(this.it.getITParts().size() + 1));
+		newITPart.setIt(this.it.getId());
+		newITPart.setConfirmOrderNumber(getDefaultConfirmOrder());
 		newITPart.setCollegeNumber(collegiateNumberITPart.getValue());
 		newITPart.setCias(ciasITPart.getValue());
 		this.itDialogObject.addITPart(this.it, newITPart);
 		addRowITPart(newITPart);
 		calculateScrollPanelHeight();
 	}
-	
+
 	// ----------------------------------------------- METODOS ABSTRACTOS -------------------------------------------------
 	
 	protected abstract void onDelete(IT it);
@@ -519,7 +588,7 @@ public abstract class ITDialog extends CustomDialog {
 		
 		initListBox();
 		deckPanel.showWidget(0);
-		deckPanel.setWidth("675px");
+		deckPanel.setWidth("620px");
 	}
 	
 	private void initConfirmationsTable() {
@@ -545,6 +614,10 @@ public abstract class ITDialog extends CustomDialog {
 		
 		this.itEndDate.setValue(null);
 		this.causeHighPart.setSelectedIndex(0);
+		
+		this.realStartDate.setText("");
+		this.directPayDate.setValue(null);
+		this.observationTB.setText("");
 		
 		this.confirmationPartDataTable.clear();
 	}
@@ -579,6 +652,8 @@ public abstract class ITDialog extends CustomDialog {
 		
 		setSelectedValueLB(raggedList, it.getParent().toString());
 		
+		observationTB.setValue(it.getDescription());
+		
 		initConfirmationsTable();
 		
 		for(ITPart itPart : it.getITParts()) {
@@ -608,7 +683,7 @@ public abstract class ITDialog extends CustomDialog {
 		}
 		
 		deckPanel.showWidget(0);
-		deckPanel.setWidth("675px");
+		deckPanel.setWidth("620px");
 	}
 	
 	private void addRowITPart(ITPart itPart) {
@@ -670,8 +745,10 @@ public abstract class ITDialog extends CustomDialog {
 		deleteBTN.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				itDialogObject.deleteConfirmationPart(itPart.getIt(), itPart);
-				redrawConfirmationPartTable(itPart.getIt());
+				if(itPart.getIt() != null && null != dateBox.getValue()) {
+					itDialogObject.deleteConfirmationPart(itPart.getIt(), itPart);
+					redrawConfirmationPartTable(itPart.getIt());
+				}
 			}
 		});
 		
@@ -907,15 +984,15 @@ public abstract class ITDialog extends CustomDialog {
 		if(null != date) {
 			if(null != this.it.getParent() && 0 != this.it.getParent()) {
 				Date oldStartDate = itDialogObject.getRaggedDate(this.it.getParent().toString());
-				realStartDate.setText("F. Ini. : " + formatFullDate.format(oldStartDate));
+				realStartDate.setText(formatFullDate.format(oldStartDate));
 				return;
 			} else {
 			
 				if((byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue())) {
 					date = DateUtils.addDays2Date(date, 1);
-					realStartDate.setText("F. Ini. : " + formatFullDate.format(date));
+					realStartDate.setText(formatFullDate.format(date));
 				} else
-					realStartDate.setText("F. Ini. : " + formatFullDate.format(date));
+					realStartDate.setText(formatFullDate.format(date));
 				
 			}
 		}
@@ -1071,6 +1148,18 @@ public abstract class ITDialog extends CustomDialog {
 	        }
 	    }
 	    lBox.setSelectedIndex(indexToFind);
+	}
+	
+	private Byte getDefaultConfirmOrder() {
+		int newConfirmOrder = 1;
+		
+		for(ITPart itPart : this.it.getITParts()) {
+			if(itPart.getType() == (byte)0 || itPart.getType() == (byte)2)
+				continue;
+			
+			newConfirmOrder++;
+		}
+		return (byte) newConfirmOrder;
 	}
 	
 	// --------------------------------------------------------------------------------------------

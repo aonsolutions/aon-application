@@ -25,6 +25,8 @@ public class IT implements Serializable {
 	private Byte typeHighPart;
 	private Boolean isParent;
 	
+	private String fullName;
+	
 	private List<ITPart> itParts;
 	
 	/**
@@ -156,6 +158,14 @@ public class IT implements Serializable {
 
 	public void setIsParent(Boolean isParent) {
 		this.isParent = isParent;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 	
 }

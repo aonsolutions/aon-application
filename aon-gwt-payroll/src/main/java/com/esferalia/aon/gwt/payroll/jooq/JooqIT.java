@@ -319,7 +319,7 @@ public class JooqIT {
 		
 		for(IT it : itEmployee.getIts()) {
 			
-			if(null == it.getId()) {	// NUEVO PARTE IT
+			if(null == it.getId() || -1 == it.getId()) {	// NUEVO PARTE IT
 				
 				Date startDate = null == it.getStartDate() ? null : new Date(it.getStartDate().getTime());
 				Date endDate = null == it.getEndDate() ? null : new Date(it.getEndDate().getTime());
