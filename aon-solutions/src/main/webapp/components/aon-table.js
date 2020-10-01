@@ -1,50 +1,77 @@
+
 (function() {
-
-	const template = document.createElement('template');
-	template.innerHTML = `
-	 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-		<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
-		<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-			<thead>
-				<tr id="aon-table-header" >
-
-				</tr>
-			</thead>
-			<tbody id="aon-table-body">
-
-			</tbody>
-		</table>
-  `;
-
 	class AonTable extends HTMLElement {
 
-		get header() {
-			return this._user;
+		columns = [];
+
+		get id() {
+			return this.getAttribute('id');
 		}
 
-		set header(val) {
-			this._user = val;
+		set id(id) {
+			this.setAttribute('id', id);
 		}
 
-		get values() {
-			return this._user;
-		}
-
-		set values(val) {
-			this._user = val;
-		}
 
 		constructor () {
 			super();
-			this._user = {};
-			this.attachShadow({mode: 'open'});
-		  this.shadowRoot.appendChild(template.content.cloneNode(true));
 		}
 
-		connectedCallback () {
 
+		connectedCallback () {
+			this.innerHTML = `
+				<table class="aonTable">
+					<thead>
+						<tr id="${this.getId() + 'TableHeader'}" >
+
+						</tr>
+					</thead>
+					<tbody id="${this.getId() + 'TableBody'}">
+
+					</tbody>
+				</table>
+			`;
+		}
+
+		addColumn(name, type, id) {
+			let header = document.getElementById(this.getId() + 'TableHeader');
+			let th = document.createElement('th');
+			// if('number' !== type ){
+			// 	//th.className = 'mdl-data-table__cell--non-numeric';
+			// }
+			th.innerHTML = name;
+			this.columns.push({
+				name,
+				type,
+				id
+			});
+			header.appendChild(th);
+		}
+
+		addRow(value, fn) {
+			let body = document.getElementById(this.getId() + 'TableBody');
+			let tr = document.createElement('tr');
+			tr.style.cursor = 'pointer';
+			tr.addEventListener('click', fn);
+
+			this.columns.forEach((item, i) => {
+				let td = document.createElement('td');
+				// if('number' !== item.type ){
+				// 	//td.className = 'mdl-data-table__cell--non-numeric';
+				// }
+				td.innerHTML = value[item.id];
+				tr.appendChild(td);
+			});
+			body.appendChild(tr);
+		}
+
+		removeRows() {
+			let body = document.getElementById(this.getId() + 'TableBody');
+			body.innerHTML = '';
+		}
+
+		getId(){
+			return this.getAttribute('id');
 		}
 	}
 

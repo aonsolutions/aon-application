@@ -19,23 +19,23 @@ class AonInvoicePanel extends HTMLElement {
   build(){
 		let aonInvoice = document.getElementById('aonInvoice');
 
-		aonInvoice.addToolbarOption('Add', 'add', () => {});
+		aonInvoice.addToolbarOption('Add', 'add', () => this.aonInvoice());
 
 		let pendingOptions = [
 			{
 				name: 'Inbox',
 				icon: 'inbox',
-				fn: () => {}
+				fn: () => this.aonInvoiceList({status:'inbox'})
 			},
 			{
 				name: 'Rechazadas',
 				icon: 'report',
-				fn: () => {}
+				fn: () => this.aonInvoiceList({status:'refused'})
 			},
 			{
 				name: 'Papelera',
 				icon: 'delete',
-				fn: () => {}
+				fn: () => this.aonInvoiceList({status:'trash'})
 			}
 		];
 		aonInvoice.addSidenavOptions('PENDIENTES', pendingOptions);
@@ -68,46 +68,26 @@ class AonInvoicePanel extends HTMLElement {
 		];
 		aonInvoice.addSidenavOptions('CONFIGURACIÓN', settingOptions);
 
-		aonInvoice.setContentHTML('<aon-invoice-list id="aonInvoiceList" ></aon-invoice-list>');
+		this.aonInvoiceList();
+	}
 
+	aonInvoiceList(filter) {
 		let invoiceList = document.getElementById('aonInvoiceList');
-		invoiceList.addEventListener('select', (e) => this.aonInvoice(e.detail));
-		var d = new Date();
-		var month = d.getMonth() + 1;
-		var day = d.getDate();
-		let curDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
-		invoiceList.setAttribute('invoices', JSON.stringify( [
-			{
-        type: "Emitida",
-        serie: 'A',
-        number: 2,
-        reference: 'A-2',
-        date: curDate,
-        total: 100,
-        nif: '12345678G',
-        name: 'AON SOLUTIONS SL.',
-        address: {
-            country: 'ES',
-            address: '',
-            zip: '',
-            city: '',
-            province: ''
-        },
-        category: '',
-				transaction: 'NAC',
-        taxes: [],
-        details: [],
-        finances: [],
-        irpf: undefined,
-        suplidos: false,
-        totalSuplidos: 0
-      }
-		]));
+		if(invoiceList) {
+			invoiceList.setFilter(filter);
+		} else {
+			let aonInvoice = document.getElementById('aonInvoice');
+			aonInvoice.setContentHTML(filter
+				? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
+				: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
+		}
 	}
 
 	aonInvoice(invoice) {
 		let aonInvoice = document.getElementById('aonInvoice');
-		aonInvoice.setContentHTML(`<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`);
+		aonInvoice.setContentHTML(invoice
+			? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`
+			: `<aon-invoice> </aon-invoice>`);
 	}
 }
 

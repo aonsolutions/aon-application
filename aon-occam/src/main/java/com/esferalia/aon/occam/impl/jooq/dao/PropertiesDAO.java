@@ -1017,13 +1017,13 @@ public class PropertiesDAO {
 		@Override public Property<String> getScopeDescriptionProperty() {return new FilterDAO.PropertyDAO<>(SCOPE.DESCRIPTION);}
 	}
 	
-	protected static class DataResponsePropertiesDAO implements DataResponseProperties{
-		protected Select<Record> build(SelectJoinStep<Record> select, DataResponseFilter filter) {
+	public static class DataResponsePropertiesDAO implements DataResponseProperties{
+		public Select<Record> build(SelectJoinStep<Record> select, DataResponseFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);
 		}
 		
-		protected Condition[] getConditions(DataResponseFilter filter) {
+		public Condition[] getConditions(DataResponseFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null){
 				return new Condition[0];
@@ -1048,7 +1048,7 @@ public class PropertiesDAO {
 		@Override public Property<String> getDetailValueProperty() {return new FilterDAO.PropertyDAO<>(DATA_RESPONSE_DETAIL.DATA_VALUE);}
 	}
 	
-	protected static class DataResponseDetailPropertiesDAO implements DataResponseDetailProperties{
+	public static class DataResponseDetailPropertiesDAO implements DataResponseDetailProperties{
 		protected Select<Record> build(SelectJoinStep<Record> select, DataResponseDetailFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			return filterDAO.build(select);

@@ -20,7 +20,6 @@ import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -36,24 +35,23 @@ import net.aonsolutions.aon.api.json.AonInvoiceJSON;
 public class InvoiceServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
-
+	private static final String INBOX = "inbox";
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON API INVOICE SERVLET - GET METHOD");
 		String token = req.getHeader("session_id");
 		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id"));
 		String domainName = req.getHeader("domain_name");
-		JSONArray jsArray = new JSONArray();
+		Domain domain = AON.getDomain(domainName, domainId, "");
 		
 		String status = req.getParameter(IConstants.STATUS);
-		String[] type = req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null;
+		String[] types = req.getParameter(IConstants.TYPE) != null ? req.getParameter(IConstants.TYPE).split(","): null;
 		
 		System.out.println(status);
-		System.out.println(type);
-		Company company = AON.getCompany(domainName, domainId, "api", f -> f.getDomainProperty().eq(domainId));
-		AON_SOLUTIONS.getInvoices(domainName, domainId, "api", f -> invoiceFilter(f, domainId, status, type))
-		.forEach(invoice -> jsArray.put(AonInvoiceJSON.toJSON(invoice, company)));
+		System.out.println(types);
 		
+		JSONArray jsArray = getInvoices(domain, "api", status, types);
 
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, jsArray, new JSONObject());	
@@ -68,18 +66,12 @@ public class InvoiceServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, domainId, "");
 		User user = AON_SOLUTIONS.getUser(domain, token);
 		JSONObject json = Utils.getRequestJSON(req);
-		Company company = AON.getCompany(domainName, domainId, user.getLogin(), f -> f.getDomainProperty().eq(domainId));
-		Invoice invoice = new Invoice().setDomain(domain.getId());
-		if(json.opt(IConstants.ID) != null) {
-			Integer invoiceId = json.optInt(IConstants.ID);
-			invoice = AON_SOLUTIONS.getInvoices(domainName, domainId, user.getLogin(), f -> f.getIdProperty().eq(invoiceId)).findFirst().orElse(new Invoice());
-			invoice = AonInvoiceJSON.fromJSON(json, invoice);
-		} else {
-			invoice = AonInvoiceJSON.fromJSON(json);
-		}
-		invoice = AON_SOLUTIONS.insertInvoices(domainName, domainId, user.getLogin(), invoice);
+//		Company company = AON.getCompany(domainName, domainId, user.getLogin(), f -> f.getDomainProperty().eq(domainId));
+		
+		setInvoice(domain, user.getLogin(), json);
+		
 		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, AonInvoiceJSON.toJSON(invoice, company), new JSONObject());	
+		Utils.giveBack(req, resp, json, new JSONObject());	
 	}
 	
 	@Override
@@ -126,20 +118,48 @@ public class InvoiceServlet extends HttpServlet{
     	
 		return filter;
     }
+
+	private static JSONArray getInvoices(Domain domain, String login, String status, String[] types) {
+		JSONArray jsArray = new JSONArray();
+		if(isContabilizada(status)) {
+			Company company = AON.getCompany(domain.getName(), domain.getId(), "api", f -> f.getDomainProperty().eq(domain.getId()));
+			AON_SOLUTIONS.getInvoices(domain.getName(), domain.getId(), "api", f -> invoiceFilter(f, domain.getId(), status, types))
+				.forEach(invoice -> jsArray.put(AonInvoiceJSON.toJSON(invoice, company)));
+		} else {
+			AON_SOLUTIONS.getDataResponseInvoices(domain.getName(), domain.getId(), login,
+				f -> f.getSourceProperty().eq(DataResponseSource.INVOICE.value())
+				.and(f.getCodeProperty().eq(status))
+				.and(f.getDetailVariableProperty().eq("json")))
+				.forEach(json -> jsArray.put(json));
+		}
+		return jsArray;
+	}
 	
 	private static void setInvoice(Domain domain, String login, JSONObject json) {
+		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
+		String status = json.opt("status") != null ? json.optString("status") : INBOX;
+
 		DataResponse dr = new DataResponse()
 				.setDomain(domain.getId())
+				.setCode(status)
 				.setSource(DataResponseSource.INVOICE)
 				.setResponseDate(new Date());
-		dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);		
+		
+		if(id != null) {
+			dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.INVOICE, f -> f.getIdProperty().eq(id));
+			dr.setCode(status);
+			AON.updateDataResponse(domain.getName(), domain.getId(), login, dr, f -> f.getIdProperty().eq(id));
+		} else {
+			dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
+			json.put("id", dr.getId());
+		}
+		
 		DataResponseDetail drd = new DataResponseDetail()
 				.setDomain(domain.getId())
 				.setDataResponse(dr.getId())
 				.setDataVariable("json")
 				.setDataValue(json.toString());
 		drd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
-
 	}
 	
 	private static InvoiceStatus getInvoiceStatus(String status) {
@@ -157,6 +177,10 @@ public class InvoiceServlet extends HttpServlet{
 			}
 		}
 		return st;
+	}
+	
+	private static Boolean isContabilizada(String status) {
+		return "accounting".equalsIgnoreCase(status);
 	}
 
 }

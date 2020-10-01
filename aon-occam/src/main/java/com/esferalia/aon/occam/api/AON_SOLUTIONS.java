@@ -4,8 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Filter.DataResponseFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserAppRoleFilter;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -227,6 +230,12 @@ public class AON_SOLUTIONS {
 	}
 	
 	// INVOICE
+	
+	public static Stream<JSONObject> getDataResponseInvoices(String domainName, Integer domainId, String login, DataResponseFilter filter) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getApi().getDataResponseInvoices(ctx, filter);
+		} 
+	}
 	
 	public static Stream<Invoice> getInvoices(String domainName, Integer domainId, String login, InvoiceFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){

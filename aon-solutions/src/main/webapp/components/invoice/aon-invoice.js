@@ -1,6 +1,7 @@
 import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
+import {insertInvoice} from '../../services/service.js';
 
 import '../aon-card.js';
 import '../aon-input-text.js';
@@ -240,6 +241,10 @@ import '../aon-checkbox.js';
 	  	this.build();
 	  }
 
+		save(invoice) {
+			insertInvoice(invoice ? invoice : this._invoice).then(() => alert('ok'));
+		}
+
 		build() {
 			let series = document.getElementById('serie');
 			series.value = this._invoice.serie;
@@ -309,6 +314,7 @@ import '../aon-checkbox.js';
 				value = document.getElementById(param).value;
 			}
 		 	this._invoice[param] = value;
+			this.save();
 		}
 
 		updateAddress() {

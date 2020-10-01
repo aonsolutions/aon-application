@@ -435,3 +435,46 @@
 		height: 8px;
 		border-radius: 10px;
 	}
+
+	.aonTable {
+	  width: 100%;
+	  border: 0px;
+	  border-bottom: 1px solid #ddd;
+	}
+
+	.aonTable th {
+	  position: relative;
+	  vertical-align: bottom;
+	  text-overflow: ellipsis;
+	  font-weight: 500;
+	  line-height: 24px;
+	  letter-spacing: 0;
+	  height: 48px;
+	  font-size: 12px;
+	  color: rgb(95, 99, 104);
+	  padding-bottom: 8px;
+	  border-bottom: 1px solid #ddd;
+		padding-left: 8px;
+	}
+
+	.aonTable tbody tr {
+		position: relative;
+		height: 48px;
+	  font-size: 12px;
+		transition-duration: .18s;
+		transition-timing-function: cubic-bezier(.4,0,.2,1);
+		transition-property: background-color;
+	}
+
+	.aonTable tbody tr:hover {
+		background-color: #f1f1f1;
+	}
+
+	.aonTable tbody tr:active {
+		background-color: #bbb;
+	}
+
+	.aonTable td {
+		padding-left: 8px;
+		border-bottom: 1px solid #ddd;
+	}
