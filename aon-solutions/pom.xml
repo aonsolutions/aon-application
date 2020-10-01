@@ -65,6 +65,17 @@
                 <include>com/code/aon/ui/finance/pdfjs/**</include>
               </includes>
             </resource>
+ 
+            <resource>
+              <directory>../aon-suite/public</directory>
+              <targetPath>aon-suite/public</targetPath>
+              <!-- the list has a default value of ** 
+              <includes>
+                <include>**</include>
+              </includes>
+              -->
+            </resource>
+ 
           </webResources>
         </configuration>
         <executions>

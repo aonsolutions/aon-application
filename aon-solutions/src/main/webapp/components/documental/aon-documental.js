@@ -64,11 +64,13 @@ class AonDocumental extends HTMLElement {
 			}
 		];
 		aonDocumental.addSidenavOptions('OPCIONES', options);
+
+		this.loadIndex();
 	}
 
 	loadIndex() {
 		let aonDocumental = document.getElementById('aonDocumental');
-		aonDocumental.setContentHTML('<iframe src="./index.html" style="width:100%;height:100%;border:none;"></iframe>');
+		aonDocumental.setContentHTML('<iframe src="../../aon-suite/public/documental/index.html" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-documental', AonDocumental);

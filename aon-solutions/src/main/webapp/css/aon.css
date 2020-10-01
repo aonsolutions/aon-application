@@ -285,7 +285,7 @@
 		height: calc(100vh - 61px);
 		width: 60px;
 		position: fixed;
-		top: 61px;
+		top: 60px;
 		right: 0;
 		background-color: #fff;
 		border-left: 1px solid #ddd;
@@ -337,7 +337,7 @@
 		width: 0px;
 		position: fixed;
 		z-index: 1;
-		top: 102px;
+		top: 100px;
 		left: 0;
 		background-color: #fff;
 		border-right: 1px solid #ddd;
@@ -368,7 +368,7 @@
 		height: 30px;
   	line-height: 30px;
 		margin: 0;
-    padding: 0 16px;
+    padding: 0 26px;
     cursor: pointer;
 	}
 

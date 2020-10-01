@@ -6,56 +6,48 @@ class AonMessenger extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<!-- AON MESSENGER TOOLBAR -->
-			<aon-toolbar id="aonMessenger" title="MESSENGER"></aon-toolbar>
-			<!-- AON MESSENGER MENU (SIDENAV) -->
-			<div id="aonMessengerSidenav" class="sidenav">
-				<ul class="aonClip">
-					<li id="aonMessengerIndex" class="aonAppMenuSidenavList aonOpacity" >
-						<span class="aonMenuItemSpan"> Index </span>
-						</li>
-
-					<li id="aonMessengerCreate" class="aonAppMenuSidenavList aonOpacity" >
-						<span class="aonMenuItemSpan"> Create	</span>
-					</li>
-
-					<li id="aonMessengerShow" class="aonAppMenuSidenavList aonOpacity" >
-						<span class="aonMenuItemSpan"> Show	</span>
-					</li>
-				</ul>
-			</div>
-
-			<!-- AON MESSENGER CONTENT -->
-			<div id="aonMessengerContent" class="aonContent">
-
-			</div>
-
+			<aon-application id="aonMessenger" title="MESSENGER"></aon-application>
 		`;
-    this.build();
+		this.build();
  	}
 
  	build() {
-		let listIds = ['aonMessengerIndex', 'aonMessengerCreate', 'aonMessengerShow'];
-		listIds.forEach((id, i) => {
-				let el = document.getElementById(id);
+		let aonMessenger = document.getElementById('aonMessenger');
 
-				el.addEventListener('mouseover', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = '#f1f1f1';
-				});
-				el.addEventListener('mouseleave', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = 'transparent';
-				});
-				el.addEventListener('click', () => {
-					listIds.forEach((id, i) => {
-						let el1 = document.getElementById(id);
-						el1.style.backgroundColor = 'transparent';
-					});
-					this.selected = id;
-					el.style.backgroundColor = '#ddd';
-				});
-		});
+		let options = [
+			{
+				name: 'Index',
+				icon: 'message',
+				fn: () => this.loadIndex()
+			},
+			{
+				name: 'Create',
+				icon: 'message',
+				fn: () => this.loadCreate()
+			},
+			{
+				name: 'Show',
+				icon: 'message',
+				fn: () => this.loadShow()
+			}
+		];
+		aonMessenger.addSidenavOptions('OPCIONES', options);
+		this.loadIndex();
+	}
+
+	loadIndex() {
+		let aonMessenger = document.getElementById('aonMessenger');
+		aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/index.html" style="width:100%;height:100%;border:none;"></iframe>');
+	}
+
+	loadCreate() {
+		let aonMessenger = document.getElementById('aonMessenger');
+		aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/create.html" style="width:100%;height:100%;border:none;"></iframe>');
+	}
+
+	loadShow() {
+		let aonMessenger = document.getElementById('aonMessenger');
+		aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/show.html" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-messenger', AonMessenger);

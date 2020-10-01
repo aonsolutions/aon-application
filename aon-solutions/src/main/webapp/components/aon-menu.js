@@ -7,6 +7,7 @@ import './contrat@/aon-contrata.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';
 import './example/aon-example.js';
+import './documental/aon-documental.js';
 
 const ID = 'id';
 const OPENED = 'opened';
@@ -213,9 +214,6 @@ class AonMenu extends HTMLElement {
 			}
 
 			for (let item in MenuApps){
-				console.log(MenuApps[item]);
-				console.log(userApps);
-
 				if(userApps.includes(MenuApps[item].toUpperCase())){
 					ul.appendChild(this.buildApp(this.getApp(MenuApps[item])));
 				}
@@ -368,8 +366,8 @@ class AonMenu extends HTMLElement {
 				return AeatFiscalMenu;
 			case Apps.PAYROLL.app:
 				return PayrollMenu;
-			case Apps.TOOLS.app:
-				return ToolsMenu;
+			// case Apps.TOOLS.app:
+			// 	return ToolsMenu;
 			case Apps.PORTAL.app:
 				return PortalMenu;
 		}
@@ -401,7 +399,16 @@ class AonMenu extends HTMLElement {
 			} else if(subapp.initAction) {
 				open('https://' + localStorage.getItem('aon_domain_name') + '/login?initAction='+subapp.initAction+'&token=' + localStorage.getItem('aon_session_id'));
 			} else startModule(subapp.module, subapp.entryPoint);
-			document.getElementById('aonMenuSidenav').style.width = '60px';
+
+			let aonMenuSidenav = document.getElementById('aonMenuSidenav');
+			let rp = document.getElementById('rootPanel');
+			if(this.getAttribute('opened')) {
+				aonMenuSidenav.style.width = '60px';
+				rp.style.marginRight = '60px';
+			} else {
+				aonMenuSidenav.style.width = '0px';
+				rp.style.marginRight = '0px';
+			}
 			this.buildMenu();
 		});
 		return li
@@ -427,8 +434,8 @@ class AonMenu extends HTMLElement {
 				} else return '#3a85c3';
 			case Apps.PAYROLL.app:
 				return '#90BD75';
-			case Apps.TOOLS.app:
-				return 'gray';
+			// case Apps.TOOLS.app:
+			// 	return 'gray';
 			default: return app.color ? app.color : '#f1f1f1';
 		}
 	}

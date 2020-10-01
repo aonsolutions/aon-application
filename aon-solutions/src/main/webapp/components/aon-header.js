@@ -68,7 +68,7 @@ class AonHeader extends HTMLElement {
 					<ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect" for="aonHeaderUserButton">
 						<li id="aonHeaderFichar" class="mdl-menu__item">
 							<i class="material-icons mdl-list__item-icon aonMenuIcon">alarm</i>
-							Fichar
+							<span id="aonHeaderFicharText"> Marcar Entrada </span>
 						</li>
 						<li id="aonHeaderConfiguration" class="mdl-menu__item">
 							<i class="material-icons mdl-list__item-icon aonMenuIcon">settings</i>
@@ -158,10 +158,13 @@ class AonHeader extends HTMLElement {
 
 		let aonHeaderFichar = document.getElementById(BASE_ID + 'Fichar');
 		aonHeaderFichar.addEventListener('click', () => {
+			let text = document.getElementById(BASE_ID + 'FicharText');
 			if(aonUserConnected.style.backgroundColor === 'red'){
 				aonUserConnected.style.backgroundColor = '#35ac19';
+				text.innerHTML = 'Marcar Salida';
 			} else {
 				aonUserConnected.style.backgroundColor = 'red';
+				text.innerHTML = 'Marcar Entrada';
 			}
 
 		});

@@ -352,11 +352,11 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
-		record.setCalificadorReferencia1(null);
-		record.setReferencia1(null);
+		record.setCalificadorReferencia1("API");
+		record.setReferencia1(department);
 		record.setFuncionDeContacto(null);
-		record.setDepartamentoOIdentificacionDelEmpleado(department);
-		record.setDepartamentoOEmpleado(department);
+		record.setDepartamentoOIdentificacionDelEmpleado(null);
+		record.setDepartamentoOEmpleado(null);
 		record.setCalificadorReferencia2(null);
 		record.setReferencia2(null);
 		return record;

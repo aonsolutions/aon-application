@@ -241,16 +241,11 @@ class AonConfiguration extends HTMLElement {
 
 	buildUser() {
 		let toolbar = document.getElementById('aonConfiguration');
-		toolbar.addButton('aonConfigurationUserShareButton', 'share');
-		toolbar.addButton('aonConfigurationUserAddButton', 'add');
-
-		let shareButton = document.getElementById('aonConfigurationUserShareButton');
-		shareButton.addEventListener('click', () => {
+		toolbar.addButton('UserShare', 'share', () => {
 			this.buildCreateUser(true);
 		});
 
-		let addButton = document.getElementById('aonConfigurationUserAddButton');
-		addButton.addEventListener('click', () => {
+		toolbar.addButton('UserAdd', 'add', () => {
 			this.buildCreateUser(false);
 		});
 
@@ -261,12 +256,7 @@ class AonConfiguration extends HTMLElement {
 
 	buildCompany() {
 		let toolbar = document.getElementById('aonConfiguration');
-		toolbar.addButton('aonConfigurationCompanyAddButton', 'add');
-
-		let addButton = document.getElementById('aonConfigurationCompanyAddButton');
-		addButton.addEventListener('click', () => {
-
-		});
+		toolbar.addButton('CompanyAdd', 'add', () => {});
 
 		let content = document.getElementById('aonConfigurationContent');
 		content.style.display = "block";

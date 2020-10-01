@@ -6,52 +6,48 @@ class AonSignin extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<!-- AON SIGNIN TOOLBAR -->
-			<aon-toolbar id="aonSignin" title="FICHAJE"></aon-toolbar>
-			<!-- AON SIGNIN MENU (SIDENAV) -->
-			<div id="aonSigninSidenav" class="sidenav">
-				<ul class="aonClip">
-					<li id="aonMessengerAdmin" class="aonAppMenuSidenavList aonOpacity" >
-						<span class="aonMenuItemSpan"> Administradores </span>
-					</li>
-
-					<li id="aonSigninEmployee" class="aonAppMenuSidenavList aonOpacity" >
-						<span class="aonMenuItemSpan"> Empleados	</span>
-					</li>
-				</ul>
-			</div>
-
-			<!-- AON SIGNIN CONTENT -->
-			<div id="aonSigninContent" class="aonContent">
-
-			</div>
-
+			<aon-application id="aonSignin" title="CONTROL DE HORARIO"></aon-application>
 		`;
     this.build();
  	}
 
  	build() {
-		let listIds = ['aonMessengerAdmin', 'aonSigninEmployee'];
-		listIds.forEach((id, i) => {
-				let el = document.getElementById(id);
+		let aonSignin = document.getElementById('aonSignin');
 
-				el.addEventListener('mouseover', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = '#f1f1f1';
-				});
-				el.addEventListener('mouseleave', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = 'transparent';
-				});
-				el.addEventListener('click', () => {
-					listIds.forEach((id, i) => {
-						let el1 = document.getElementById(id);
-						el1.style.backgroundColor = 'transparent';
-					});
-					this.selected = id;
-					el.style.backgroundColor = '#ddd';
-				});
-		});
+		let options = [
+			{
+				name: 'Administradores',
+				icon: 'admin_panel_settings',
+				fn: () => this.loadAdmin()
+			},
+			{
+				name: 'Empleados',
+				icon: 'people',
+				fn: () => this.loadEmployee()
+			},
+			{
+				name: 'Historial',
+				icon: 'history',
+				fn: () => this.loadHistory()
+			}
+		];
+		aonSignin.addSidenavOptions('OPCIONES', options);
+		this.loadAdmin();
+	}
+
+	loadAdmin() {
+		let aonSignin = document.getElementById('aonSignin');
+		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/administrador.html" style="width:100%;height:100%;border:none;"></iframe>');
+	}
+
+	loadEmployee() {
+		let aonSignin = document.getElementById('aonSignin');
+		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/empleado.html" style="width:100%;height:100%;border:none;"></iframe>');
+	}
+
+	loadHistory() {
+		let aonSignin = document.getElementById('aonSignin');
+		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/historial.html" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-signin', AonSignin);

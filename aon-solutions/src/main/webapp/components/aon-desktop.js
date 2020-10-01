@@ -5,6 +5,7 @@ import {getDomainApps, setDomainApp} from  '../services/service.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import './aon-icon.js';
 import './aon-marketplace.js';
+import './aon-application.js';
 
 class AonDesktop extends HTMLElement {
 
@@ -44,7 +45,7 @@ class AonDesktop extends HTMLElement {
 					if(isMobile()) {
 						this.buildMobile(r);
 					} else this.build(r);
-					componentHandler.upgradeAllRegistered();
+				//	componentHandler.upgradeAllRegistered();
 				});
 			}
 		}
@@ -55,13 +56,15 @@ class AonDesktop extends HTMLElement {
 	}
 
 	connectedCallback () {
+
+
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
 			getDomainApps(company.domain).then(r => {
 				if(isMobile()){
 					this.buildMobile(r);
 				} else this.build(r);
-				componentHandler.upgradeAllRegistered();
+			//	componentHandler.upgradeAllRegistered();
 			});
 		}
   }
@@ -295,45 +298,56 @@ class AonDesktop extends HTMLElement {
 
 
 	build(r) {
-
 		this.innerHTML = `
-			<!-- AON CONFIGURATION MENU (SIDENAV) -->
-			<div id="aonDesktopSidenav" class="sidenav" style="top:60px !important;height: calc(100vh - 61px) !important;">
-				<div class="aonSidenavTitle"> APLICACIONES CONTRATADAS </div>
-				<ul id="aonDesktopContratados" class="aonClip">
-
-				</ul>
-
-				<div class="aonSidenavTitle"> SERVICIOS CONTRATADOS </div>
-				<ul id="aonDesktopServiceContratados" class="aonClip">
-
-				</ul>
-
-				<div class="aonSidenavTitle"> VISTA CLÁSICA</div>
-				<ul class="aonClip">
-					<li id="aonDesktopSidenavAio" class="aonAppMenuSidenavList aonOpacity" >
-						<img src="../assets/apps/aon.png" style="width: 18px;">
-						<span class="aonMenuItemSpan"> Aon Solutions </span>
-					</li>
-
-					<li id="aonDesktopSidenavBidoq" class="aonAppMenuSidenavList aonOpacity" >
-						<img src="../assets/apps/bidoq.png" style="width: 18px;">
-						<span class="aonMenuItemSpan"> Bidoq </span>
-					</li>
-				</ul>
-			</div>
-
-			<!-- AON CONFIGURATION CONTENT -->
-			<div id="aonDesktopContent" class="aonContent" style="height: calc(100vh - 61px) !important;">
-
-			</div>
+			<aon-application id="aonDesktopMain" title="Desktop" main="true"></aon-application>
 		`;
-		document.getElementById('aonDesktopSidenav').style.width = "250px";
-		document.getElementById('aonDesktopContent').style['margin-left'] = "250px";
+		let aonDesktop = document.getElementById('aonDesktopMain');
 
-		this.buildClassic('aonDesktopSidenavAio', () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id')));
-		this.buildClassic('aonDesktopSidenavBidoq', () => open('https://mispapeles.es/'));
+		let appOptions = [];
+		for (let key in Apps){
+			if(r[Apps[key].app] ? r[Apps[key].app] : false) {
+				let option = {
+					name: Apps[key].title,
+					// aonIcon: {
+					// 	icon: Apps[key].icon,
+					// 	color: Apps[key].color
+					// },
+					fn: () => alert('Panel ' + Apps[key].title)
+				}
+				appOptions.push(option);
+			}
+		}
+		aonDesktop.addSidenavOptions('APLICACIONES CONTRATADAS', appOptions);
 
+		let serviceOptions = [];
+		for (let key in Services){
+			if(r[Services[key].app] ? r[Services[key].app] : false) {
+				let option = {
+					name: Services[key].title,
+					// aonIcon: {
+					// 	icon: Services[key].icon,
+					// 	color: Services[key].color
+					// },
+					fn: () => alert('Panel ' + Services[key].title)
+				}
+				serviceOptions.push(option);
+			}
+		}
+		aonDesktop.addSidenavOptions('SERVICIOS CONTRATADOS', serviceOptions);
+
+		let classicOptions = [
+			{
+				name: 'aonSolutions',
+				img: '../assets/apps/aon.png',
+				fn: () => open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'))
+			},
+			{
+				name: 'Bidoq',
+				img: '../assets/apps/bidoq.png',
+				fn: () =>  open('https://mispapeles.es/')
+			}
+		];
+		aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
 
 		let div = document.createElement('div');
 		div.style.marginLeft = '100px';
@@ -357,42 +371,9 @@ class AonDesktop extends HTMLElement {
 		let contratados = document.getElementById('aonDesktopContratados');
 		let services = document.getElementById('aonDesktopServiceContratados');
 
-		for (let key in Services){
-			if(r[Services[key].app] ? r[Services[key].app] : false) {
-				let contratadosLi = document.createElement('li');
-				contratadosLi.className = 'aonAppMenuSidenavList aonOpacity';
-				contratadosLi.id = 'aonDesktopSidenav' + Services[key].app;
 
-				//contratadosLi.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="18px"></aon-icon>`;
-
-				let contratadosSpan = document.createElement('span');
-				contratadosSpan.className = 'aonMenuItemSpan';
-				contratadosSpan.style.marginLeft = '0px';
-				contratadosSpan.innerHTML = Services[key].title;
-
-				contratadosLi.appendChild(contratadosSpan);
-				services.appendChild(contratadosLi);
-				this.buildClassic(contratadosLi.id, () => alert('Panel ' + Apps[key].title));
-			}
-		}
 		for (let key in Apps){
 			if(r[Apps[key].app] ? r[Apps[key].app] : false) {
-				let contratadosLi = document.createElement('li');
-				contratadosLi.className = 'aonAppMenuSidenavList aonOpacity';
-				contratadosLi.id = 'aonDesktopSidenav' + Apps[key].app;
-
-				//contratadosLi.innerHTML = `<aon-icon icon="${Apps[key].icon}" color="${Apps[key].color}" size="18px"></aon-icon>`;
-
-				let contratadosSpan = document.createElement('span');
-				contratadosSpan.className = 'aonMenuItemSpan';
-				contratadosSpan.style.marginLeft = '0px';
-				contratadosSpan.innerHTML = Apps[key].title;
-
-				contratadosLi.appendChild(contratadosSpan);
-				contratados.appendChild(contratadosLi);
-
-				this.buildClassic(contratadosLi.id, () => alert('Panel ' + Apps[key].title));
-
 				let li = document.createElement('li');
 				li.className = 'list-group-item';
 				let span = document.createElement('span');
@@ -445,8 +426,7 @@ class AonDesktop extends HTMLElement {
 		div.appendChild(this.buildTitle('OTROS SERVICIOS'));
 		// TODO
 
-		let content = document.getElementById('aonDesktopContent');
-		content.appendChild(div);
+		aonDesktop.setContent(div);
 	}
 
 	buildTitle(title) {
@@ -533,18 +513,6 @@ class AonDesktop extends HTMLElement {
 		return ul;
 	}
 
-	buildClassic(id, fn) {
-		let el = document.getElementById(id);
-
-		el.addEventListener('mouseover', () => {
-			el.style.backgroundColor = '#f1f1f1';
-		});
-		el.addEventListener('mouseleave', () => {
-			el.style.backgroundColor = 'transparent';
-		});
-
-		el.addEventListener('click', fn);
-	}
 }
 
 window.customElements.define('aon-desktop', AonDesktop);

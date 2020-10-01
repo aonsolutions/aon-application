@@ -106,10 +106,10 @@ class AonMarketplace extends HTMLElement {
 				input.checked = r[apps[key].app] ? r[apps[key].app] : false;
 			 	let a = apps[key];
 				input.addEventListener('change', () => {
-					let  aonMenu = document.getElementById('aonMenu');
-					if(input.checked) {
-						aonMenu.addApp(a);
-					} else aonMenu.removeApp(a);
+					// let  aonMenu = document.getElementById('aonMenu');
+					// if(input.checked) {
+					// 	aonMenu.addApp(a);
+					// } else aonMenu.removeApp(a);
 
 					let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 					setDomainApp({
