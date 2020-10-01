@@ -16,12 +16,21 @@ class AonDocumental extends HTMLElement {
 
 		aonDocumental.addToolbarOption('Add', 'add', () => {alert('Add Example')});
 
-		let options = [
+		let documentOptions = [
 			{
 				name: 'Recientes',
 				icon: 'access_time',
 				fn: () => this.loadIndex()
 			},
+			{
+				name: 'Pendientes',
+				icon: 'inbox',
+				fn: () => this.loadIndex()
+			}
+		];
+		aonDocumental.addSidenavOptions('DOCUMENTOS', documentOptions);
+
+		let categoryOptions = [
       {
 				name: 'A Contabilizar',
 				icon: 'folder',
@@ -63,7 +72,7 @@ class AonDocumental extends HTMLElement {
 				fn: () => this.loadIndex()
 			}
 		];
-		aonDocumental.addSidenavOptions('OPCIONES', options);
+		aonDocumental.addSidenavOptions('CATEGORIAS', categoryOptions);
 	}
 
 	loadIndex() {
