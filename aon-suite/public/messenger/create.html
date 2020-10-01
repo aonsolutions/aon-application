@@ -22,7 +22,6 @@
     <link href="../css/app.css" rel="stylesheet" id="linkcss">
 
     </head>
-
     <body>
         <!-- start cabecera -->
         <div class="container-fluid" id="atp_cabecera">
@@ -123,7 +122,7 @@
 </div>
         </div>
         <!-- end cabecera -->
-
+        
         <!-- start cuerpo -->
         <div class="container-fluid atp_cuerpo">
             <div class="row">
@@ -133,36 +132,13 @@
     <path class="st0" d="M19.4,38.9c10.7,0,19.4-8.7,19.4-19.4S30.2,0,19.4,0S0,8.7,0,19.4S8.7,38.9,19.4,38.9"/>
     <path class="st1" d="M22.9,25.2l-5.8-5.8l5.8-5.8l-1.8-1.8l-7.5,7.5l7.5,7.5L22.9,25.2z"/>
 </svg>
-
-<div id="atp_menu_izquierda_contenido">
-    <div class="atp_opciones_izquierda" id="atp_software_izquierda">
-        <h3>SOFTWARE CONTRATADOS</h3>
-        <ul>
-            <li class="active">Portal</li>
-            <li>Facturación</li>
-            <li>Laboral</li>
-            <li>Fiscal</li>
-            <li>Contable</li>
-        </ul>
-    </div>
-    <div class="atp_opciones_izquierda" id="atp_descubrir_izquierda">
-        <h3>DESCUBRIR</h3>
-        <ul>
-            <li>Ocr</li>
-            <li>Altas /bajas</li>
-            <li>Virtual</li>
-        </ul>
-    </div>
-    <div class="atp_opciones_izquierda" id="atp_otros_izquierda">
-        <h3>OTROS SERVICIOS</h3>
-        <ul>
-            <li>Acelera</li>
-            <li>Máster</li>
-            <li>Outsorcing</li>
-        </ul>
-    </div>
+<div class="atp_opciones_izquierda" id="atp_software_izquierda">
+    <h3>TICKETS</h3>
+    <ul>
+        <li>Tickets</li>
+        <li>Crear ticket</li> 
+    </ul>
 </div>
-
                 </div>
                 <!-- end menu izquierda -->
 
@@ -171,48 +147,70 @@
                     <div class="container-fluid">
                         <div class="row justify-content-center">
                             <!-- INICIO VISTA -->
-
-                            <div class="col-10">
-                                <div class="row mb-2">
-                                    <div class="col-9">
-                                        <p class="h3"><strong id="doc-file_name"></strong></p>
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-primary btn-sm float-right d-flex">
-                                            <i class="material-icons file_download mr-1"></i>
-                                            <span class="d-flex align-items-center">Descargar</span>
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="col-12 border pb-2">
                                 <div class="row">
-                                    <div class="col-6">
-                                        <strong>Detalles</strong>
+                                    <div class="col-12 mt-2">
+                                        <h3>Nuevo ticket</h3>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <span class="text-muted">Fecha:</span> <span id="doc-date"></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <span class="text-muted">Tamaño:</span> <span id="doc-size"></span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12 text-center pt-3 pb-2">
-                                        <img id="doc-src" src="" alt="">
-                                        <!-- <embed id="doc-src" src="" class="w-100 vh-100" type="application/pdf"> -->
-                                    </div>
+                                    <form method="post" id="formulario" enctype="multipart/form-data">
+                                        <div class="col-12 mt-2">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <label class="font-weight-bold" for="subject">Asunto:</label>
+                                                    <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
+                                                    <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <div class="row">
+                                                        <div class="col-4">
+                                                            <label class="font-weight-bold" for="subject">Tema:</label>
+                                                            <select class="form-control" id="select-theme" name="select-theme">
+                                                                <option value="">Elija un tema</option>
+                                                                <option value="1">Error</option>
+                                                                <option value="2">Sugerencia</option>
+                                                                <option value="3">Consulta</option>
+                                                            </select>
+                                                            <label class="d-none errores error-theme text-ayudat font-weight-bold">Debe seleccionar el tema del ticket</label>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <label class="font-weight-bold" for="subject">Destinatario:</label>
+                                                            <select class="form-control" id="select-postings" name="select-postings">
+                                                                <option value="">Elija un destinatario</option>
+                                                            </select>
+                                                            <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <label class="font-weight-bold" for="priority">Prioridad:</label>
+                                                            <select class="form-control" id="select-priority">
+                                                                <option value="">Elija prioridad</option>
+                                                                <option value="Alta">Alta</option>
+                                                                <option value="Media">Media</option>
+                                                                <option value="Baja">Baja</option>
+                                                            </select>
+                                                            <label class="d-none errores error-priority text-ayudat font-weight-bold">Debe elegir la prioridad del ticket</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <label class="font-weight-bold">Mensaje:</label>
+                                                    <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
+                                                    <div id="editor"></div>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
+                                                    <input type="file" id="attached" name="attached[]" class="form-control" multiple/>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-
-                            <!-- FIN VISTA -->
                         </div>
                     </div>
-                </div>
-                <!-- end contenido centro -->
-                
+                </div><!-- end contenido centro -->
                 <!-- start menu derecha -->
                 <div class="col atp_abierto" id="atp_menu_derecha">
                     <svg version="1.1" id="atp_cerrar_menu_derecha" xmlns="http://www.w3.org/2000/svg"
@@ -336,29 +334,124 @@
                 </div>
                 <!-- end menu derecha -->
             </div>
-        </div><!-- end cuerpo -->
-
+        </div>
+        
         <!-- Scripts -->
         <script src="../js/app.js"></script>
         <script>
+            let theEditor;
+            // Inicializamos CKEditor
+            ClassicEditor.create( document.querySelector('#editor'),{
+                language: 'es'
+            })
+            .then(editor => {
+                theEditor = editor;
+                $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 200px !important;}</style>').insertAfter('#editor');
+            })
+            .catch( error => {
+                console.error( error );
+            } );
+            
+            // Array de estados del ticket
+            var statusArray = ['Cerrado', 'Abierto', 'Resuelto'];
+                
             $(document).ready(function(){
-                // Datos del documento
-                var fileName = new URLSearchParams(window.location.search).get('document');
-
-                var doc = {
-                    file_name : fileName, // Nombre del archivo
-                    date: '23-09-2020 14:41',
-                    size: '0,50 MB',
-                    url: "https://via.placeholder.com/768/" // URL de prueba para el documento
-                    // url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" // URL de prueba para el documento
+                // Datos del ticket en JSON
+                var nuevoTicket = {
+                    userIdLogin : "425",              // ID del usuario logueado
+                    postings : {                        // destinos posibles
+                        0 : {
+                            id : 1,
+                            name : "Programación"
+                        },
+                        1 : {
+                            id : 2,
+                            name : "Calidad"
+                        },
+                        2 : {
+                            id : 3,
+                            name : "Administración"
+                        }
+                    }
                 };
+                
+                // Leemos los datos del ticket y rellenamos los datos necesarios
+                for (const prop in nuevoTicket.postings) {
+                    var posting = nuevoTicket.postings[prop];
+                    
+                    $('#select-postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
+                }
+            });
+            
+            // Enviar mensage nuevo
+            $('#btn-send').click(function(){
+                var envio = true;
+                
+                // Quitamos todos los errores
+                $('.errores').each(function(){
+                    $(this).addClass('d-none');
+                });
+                
+                // Creamos el formData para enviar
+                var formData = new FormData();
+                
+                // Añadimos los adjuntos
+                var files = $("#attached")[0].files;
+                
+                for (const prop in files) {
+                    formData.append('file', files[prop]);
+                }
+                
+                // Añadimos el resto de datos del formulario
+                var msgUser = theEditor.getData();
+                if(msgUser == ''){
+                    $('.error-msg').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append("message", msgUser);
+                
+                var subject = $("#subject").val();
+                if(subject == ''){
+                    $('.error-subject').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append('subject', subject);
+                
+                var theme = $("#select-theme").val();
+                if(theme == ''){
+                    $('.error-theme').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append('theme', theme);
+                
+                var postings = $("#select-postings").val();
+                if(postings == ''){
+                    $('.error-postings').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append('postings', postings);
+                
+                var priority = $("#select-priority").val();
+                if(priority == ''){
+                    $('.error-priority').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append('priority', priority);
+                
+                if(envio){
+                    // Enviamos los datos del nuevo ticket por AJAX
+                    // TO-DO
+                    var respuesta = {
+                        ticketId : '245673'
+                    };
 
-                // Leemos los datos del documento y montamos la estructura
-                $('#doc-file_name').html(doc.file_name);
-                $('#doc-src').attr('src', doc.url).attr('alt', 'Documento ' + fileName);
-                $('#doc-date').html(doc.date);
-                $('#doc-size').html(doc.size);
+                    // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
+                    document.location.href = "show.html?id="+respuesta.ticketId;
+                } else {
+                    return 0;
+                }
             });
         </script>
-    </body >
+        <!-- FIN Scripts -->
+    </body>
 </html>
