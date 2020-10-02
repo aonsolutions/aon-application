@@ -17,22 +17,33 @@ class AonContrata extends HTMLElement {
 		let options = [
 			{
 				name: 'Empleados',
+				icon: 'people',
 				fn: () => alert('Empleados!!')
 			},
 			{
 				name: 'Contratos',
+				aonIcon: {
+					icon: 'contract',
+					color: 'black'
+				},
 				fn: () => aonContrata.setContentHTML('<div> Contratos!! </div>')
 			},
 			{
 				name: 'Movimientos',
+				icon: 'repeat',
 				fn: () => alert('Movimientos!!')
 			},
 			{
 				name: 'Partes IT',
+				icon: 'table_chart',
 				fn: () => alert('Partes IT!!')
 			},
 			{
 				name: 'Informes y Certificados',
+				aonIcon: {
+					icon: 'cert',
+					color: 'black'
+				},
 				fn: () => alert('Informes y Certificados!!')
 			}
 		];
