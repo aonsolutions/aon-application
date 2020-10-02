@@ -185,10 +185,12 @@ import '../aon-checkbox.js';
 
 		buildTaxes(){
 			let card = document.getElementById('aonInvoiceItemTaxesCard');
+			let div = document.createElement('div');
+			card.setContent(div);
 
 			let table = document.createElement('table');
 			table.style.width = '100%';
-			card.setContent(table);
+			div.appendChild(table);
 
 			let tr1 = document.createElement('tr');
 			table.appendChild(tr1);
@@ -203,8 +205,15 @@ import '../aon-checkbox.js';
 			transaction.value = this._invoice.transaction;
 			transaction.addEventListener('select', () => this.update('transaction'));
 
+			let addDiv = document.createElement('div');
+			div.appendChild(addDiv);
 
+			addDiv.innerHTML = `<aon-icon-button id="aonInvoiceItemTaxesCardAddButton" icon="add"> </aon-icon-button>`;
 
+			let addButton = document.getElementById('aonInvoiceItemTaxesCardAddButton');
+			addButton.addEventListener('click', () => {
+				alert('ADD TAX');
+			});
 		}
 
 		buildIRPF(){
@@ -212,36 +221,73 @@ import '../aon-checkbox.js';
 
 			let table = document.createElement('table');
 			table.style.width = '100%';
+			card.setContent(table);
 
 			let tr1 = document.createElement('tr');
-
 			table.appendChild(tr1);
-			card.setContent(table);
+
+			// IRPF
+			let tdIRPF = document.createElement('td');
+			tdIRPF.setAttribute('colspan', '2');
+			tdIRPF.innerHTML = `<aon-checkbox id="irpfCheckbox" description="IRPF"></aon-checkbox>`;
+			tr1.appendChild(tdIRPF);
+
+			// SUPLIDOS
+			let tdSuplidos = document.createElement('td');
+			tdSuplidos.innerHTML = `<aon-checkbox id="suplidosCheckbox" description="Suplidos"></aon-checkbox>`;
+			tr1.appendChild(tdSuplidos);
+
+			// TOTAL SUPLIDOS
+			let tdTotalSuplidos = document.createElement('td');
+			tdTotalSuplidos.innerHTML = `<aon-input-text id="t-suplidos" description="Total Suplidos" visible="false"></aon-input-text>`;
+			tr1.appendChild(tdTotalSuplidos);
+
 		}
 
 		buildDetail(){
 			let card = document.getElementById('aonInvoiceItemDetailCard');
+			let div = document.createElement('div');
+			card.setContent(div);
 
 			let table = document.createElement('table');
 			table.style.width = '100%';
+			div.appendChild(table);
 
 			let tr1 = document.createElement('tr');
-
 			table.appendChild(tr1);
-			card.setContent(table);
+
+			let addDiv = document.createElement('div');
+			div.appendChild(addDiv);
+
+			addDiv.innerHTML = `<aon-icon-button id="aonInvoiceItemDetailCardAddButton" icon="add"> </aon-icon-button>`;
+
+			let addButton = document.getElementById('aonInvoiceItemDetailCardAddButton');
+			addButton.addEventListener('click', () => {
+				alert('ADD DETAIL');
+			});
 		}
 
 		buildFinance(){
 			let card = document.getElementById('aonInvoiceItemFinanceCard');
+			let div = document.createElement('div');
+			card.setContent(div);
 
 			let table = document.createElement('table');
 			table.style.width = '100%';
+			div.appendChild(table);
 
 			let tr1 = document.createElement('tr');
-
-
 			table.appendChild(tr1);
-			card.setContent(table);
+
+			let addDiv = document.createElement('div');
+			div.appendChild(addDiv);
+
+			addDiv.innerHTML = `<aon-icon-button id="aonInvoiceItemFinanceCardAddButton" icon="add"> </aon-icon-button>`;
+
+			let addButton = document.getElementById('aonInvoiceItemFinanceCardAddButton');
+			addButton.addEventListener('click', () => {
+				alert('ADD FINANCE');
+			});
 		}
 
 		newInvoice() {
