@@ -406,7 +406,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	@Override
 	public T calculate(C ctx) throws SalaryException {
 		IContractSalaryCalculatorContext contractSalaryCalculatorContext = (IContractSalaryCalculatorContext) ctx;
-
+		
 		Date start = ctx.getStartDate();
 		Date end = ctx.getEndDate();
 
@@ -1451,11 +1451,20 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	private static boolean isExtra(ExpressionContext expressionContext) {
-		return 
-		expressionContext.getVariables(ContextVariable.EXTRA_PAY)
-		.stream().map(v -> (Boolean) v.getValue(v.getPeriod()))
-		.findAny().orElse(Boolean.FALSE)
-		;
+		try {
+			return 
+			expressionContext.getVariables(ContextVariable.EXTRA_PAY)
+			.stream().map(v -> (Boolean) v.getValue(v.getPeriod()))
+			.findAny().orElse(Boolean.FALSE)
+			;
+		} catch ( Exception e ) {
+			return expressionContext.getVariables(ContextVariable.SELF)
+					.stream()
+					.map(v -> (IContractSalaryCalculatorContext) v.getValue(v.getPeriod()))
+					.map(c -> c.getSalaryType() == SalaryType.EXTRA )
+					.findAny().orElse(Boolean.FALSE)
+					;
+		}
 	}
 
 	private static void addResult(ExpressionContext expressionContext, String name, Date resultStart, Date resultEnd,
