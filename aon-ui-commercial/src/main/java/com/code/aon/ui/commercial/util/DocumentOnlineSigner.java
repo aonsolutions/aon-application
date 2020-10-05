@@ -23,6 +23,7 @@ import java.util.Optional;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -594,6 +595,10 @@ public class DocumentOnlineSigner implements Serializable {
 			conn.setRequestProperty("Content-Type", "application/json");
 			String encoding = new String(Base64.getEncoder().encode((getUsername() + ":" + getPassword()).getBytes())); 
 			conn.setRequestProperty("Authorization", "Basic " + encoding);
+
+			SSLContext context = SSLContext.getInstance("TLSv1.2");
+			context.init(null, null, null);
+			conn.setSSLSocketFactory(context.getSocketFactory());
 			
 			OutputStream os = conn.getOutputStream();
 			os.write(requestData.getBytes());
