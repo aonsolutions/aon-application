@@ -75,12 +75,10 @@ public class DocumentParser  {
 				String prefix = substr(text,i-preffixOffset, preffixOffset).toUpperCase();
 				boolean fake = i >= 4 && prefix.matches("[A-Z0-9]{"+preffixOffset+"}"); 
 				if ( !fake ) {
-					int end = matcher.end();
-					int suffixOffset =  text.length() - end;
-					suffixOffset = suffixOffset >=4?4:suffixOffset;
-					if ( suffixOffset>0 && (end + suffixOffset) <= text.length() ) {
-						String suffix = substr(text,end, suffixOffset).toUpperCase();
-						fake = suffix.matches("[A-Z0-9]{"+suffixOffset+"}");
+					if ( (text.length() - matcher.end()) > 0 )  {
+						String suffix = substr(text,matcher.end(), 1).toUpperCase();
+						boolean match = suffix.matches("[\\s|.|,|:]");
+						fake = !match;
 					}
 				}
 				if ( !fake ) {
@@ -108,42 +106,42 @@ public class DocumentParser  {
 	public static void main(String[] args) {
 		Collection<Document> documents = DocumentParser.getNifs(
 //				"Pagado "
-//				+"\nVendido por Amazon EU S.à r.l., Sucursal en España "
+//				+"\nVendido por Amazon EU S.ï¿½ r.l., Sucursal en Espaï¿½a "
 //				+"\nIVA ESW0184081H"
-//				+"\nFecha de envío 10 enero 2019"
-//				+"\nNúmero del documento AEU-SIM-INV-ES-2019-2524414"
-//				+"\nALEJANDRA JIMENEZ GONZÁLEZ "
+//				+"\nFecha de envï¿½o 10 enero 2019"
+//				+"\nNï¿½mero del documento AEU-SIM-INV-ES-2019-2524414"
+//				+"\nALEJANDRA JIMENEZ GONZï¿½LEZ "
 //				+"\nTotal a pagar 14,00 ?"
-//				+"\nC/SANTÍSIMA TRINIDAD, 30, PLANTA 7,PUERTA 8 "
+//				+"\nC/SANTï¿½SIMA TRINIDAD, 30, PLANTA 7,PUERTA 8 "
 //				+"\nMADRID, MADRID, 28010 "
 //				+"\nES"
 //				+"\nSi tienes preguntas sobre tus pedidos, visita https://www.amazon.es/contacto"
-//				+"\nDirección de facturación Dirección de envío Vendido por "
-//				+"\nAlejandra Jimenez González Jonatan García Bellés Amazon EU S.à r.l., Sucursal en España "
-//				+"\nC/Santísima Trinidad, 30, planta 7,puerta 8 C/Donantes de Sangre 1 7ºd Calle de Ramírez de Prado 5 "
+//				+"\nDirecciï¿½n de facturaciï¿½n Direcciï¿½n de envï¿½o Vendido por "
+//				+"\nAlejandra Jimenez Gonzï¿½lez Jonatan Garcï¿½a Bellï¿½s Amazon EU S.ï¿½ r.l., Sucursal en Espaï¿½a "
+//				+"\nC/Santï¿½sima Trinidad, 30, planta 7,puerta 8 C/Donantes de Sangre 1 7ï¿½d Calle de Ramï¿½rez de Prado 5 "
 //				+"\nMadrid, Madrid, 28010 Madrid, Madrid, 28041 28045 Madrid "
-//				+"\nES ES España "
+//				+"\nES ES Espaï¿½a "
 //				+"\nIVA ESW0184081H "
-//				+"\nInformación del pedido"
+//				+"\nInformaciï¿½n del pedido"
 //				+"\nFecha del pedido 10 enero 2019"
-//				+"\nNúmero del pedido 402-0296095-1463555"
+//				+"\nNï¿½mero del pedido 402-0296095-1463555"
 //				+"\nDetalles del documento"
-//				+"\nDescripción Cant. P. Unitario IVA % P. Unitario Precio total" 
+//				+"\nDescripciï¿½n Cant. P. Unitario IVA % P. Unitario Precio total" 
 //				+"\n(IVA excluido) (IVA incluido) (IVA incluido)"
-//				+"\nAgenda 2019 semana vista apaisada español 1 11,57 ? 21% 14,00 ? 14,00 ?"
+//				+"\nAgenda 2019 semana vista apaisada espaï¿½ol 1 11,57 ? 21% 14,00 ? 14,00 ?"
 //				+"\nASIN: B07HJ8B5V1"
 //				+"\nTotal 14,00 ?"
 //				+"\nIVA % Precio total IVA"
 //				+"\n(IVA excluido)"
 //				+"\n21% 11,57 ? 2,43 ?"
 //				+"\nTotal 11,57 ? 2,43 ?"
-//				+"\nNº Registro Integrado Industrial: 3725 (AEE) / 990 (Pilas y Acumuladores)" 
+//				+"\nNï¿½ Registro Integrado Industrial: 3725 (AEE) / 990 (Pilas y Acumuladores)" 
 //				+"\nLU-BIO-04 "
-//				+"\nAmazon EU S.à r.l. - 38 avenue John F. Kennedy, L-1855 Luxemburgo" 
+//				+"\nAmazon EU S.ï¿½ r.l. - 38 avenue John F. Kennedy, L-1855 Luxemburgo" 
 //				+"\nR.C.S. Luxemburgo: B 101818 "
-//				+"\nAmazon EU S.à r.l., Sucursal en España ? Calle de Ramírez de Prado 5, 28045 Madrid, España "
+//				+"\nAmazon EU S.ï¿½ r.l., Sucursal en Espaï¿½a ? Calle de Ramï¿½rez de Prado 5, 28045 Madrid, Espaï¿½a "
 //				+"\nRegistro Mercantil de Madrid ? Tomo 33.166, Libro 0, Folio 105, Seccion 8, Hoja M-596.819 ? NIF W-0184081H"
-//				+"\nPágina 1 de 1"
+//				+"\nPï¿½gina 1 de 1"
 //				
 //				+"\n44671367P"
 //				+"\n44671367-P"
@@ -151,7 +149,7 @@ public class DocumentParser  {
 //				+"\n44671367/P"
 //				+"\n44.671.367/P"
 //				"7o8Cw6BtfN9l4hgFlfad197PQXNt25PCLvoE0Sqk 73742960S S0DCDY9dfLdi1V08i43q8KybGI0pNFU"
-				"4442166S" 
+				"73742960S:	eee" 
 		);
 		for (Document doc : documents) {
 			System.out.println( doc.getType() + " --- " + doc.getData() );

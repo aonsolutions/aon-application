@@ -21,6 +21,7 @@ public class DateParserTestCase {
 	private static Faker FAKER = Faker.instance();
 	
 	private static final Date JANUARY_10_2019 = Date.from(LocalDateTime.of(2019, 1, 10, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
+	private static final Date JUNE_15_2017    = Date.from(LocalDateTime.of(2017, 6, 15, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
 	
 	public DateParserTestCase() {
 		super();
@@ -175,24 +176,57 @@ public class DateParserTestCase {
 	@Test
 	public void testDate_014() throws IOException, UnknownInvoiceException {
 		System.out.print("- testDate_014 ----");
-		Collection<Date> dates = DateParser.getDates( getLorem("10 de enero del 19") );
+		String text = " 10 enero 2019 "; 
+		System.out.println("[" + text + "]");
+		Collection<Date> dates = DateParser.getDates( getLorem(text) );
 		assertNotNull(dates);
 		assertEquals(1,dates.size());
 		assertEquals(JANUARY_10_2019,dates.stream().findFirst().get());
 	}
 
 	@Test
-	public void testDate_XXX() throws IOException, UnknownInvoiceException {
-		System.out.print("- test XXX ----");
+	public void testDate_015() throws IOException, UnknownInvoiceException {
+		System.out.print("- testDate 015 ----");
 		String txt = "9sj2e49j5l78wnnQ1cJlZecZINbR598F 10 de enero de 2019 DbC111IzSQvwZQb47T25ikeXK7wswb081ON";
-		System.out.println("- test XXX ----");
+		System.out.println("[" + txt + "]");
 		Collection<Date> dates = DateParser.getDates( txt );
 		assertNotNull(dates);
 		assertEquals(1,dates.size());
 		assertEquals(JANUARY_10_2019,dates.stream().findFirst().get());
 	}
-	
 
+	
+	@Test
+	public void testDate_016() throws IOException, UnknownInvoiceException {
+		System.out.print("- testDate 016 ----");
+		String txt = "Desde 15-06-17 el precio del tráfico móvil en UE/EEE";
+		System.out.println("[" + txt + "]");
+		Collection<Date> dates = DateParser.getDates( txt );
+		assertNotNull(dates);
+		assertEquals(1,dates.size());
+		assertEquals(JUNE_15_2017,dates.stream().findFirst().get());
+	}
+	
+	@Test
+	public void testDate_017() throws IOException, UnknownInvoiceException {
+		System.out.print("- testDate 017 ----");
+		String txt = "3 Ago 14:25:59 B 606390017 M.Orange Love Negocio Total 27s 0,0000";
+		System.out.println("[" + txt + "]");
+		Collection<Date> dates = DateParser.getDates( txt );
+		assertNotNull(dates);
+		assertEquals(0,dates.size());
+	}
+
+	@Test
+	public void testDate_018() throws IOException, UnknownInvoiceException {
+		System.out.print("- testDate 018 ----");
+		String txt = "Período de 09.08.2018 a 31.08.2018 167 kWh 0,106218 €/kWh 17,74 €";
+		System.out.println("[" + txt + "]");
+		Collection<Date> dates = DateParser.getDates( txt );
+		assertNotNull(dates);
+		assertEquals(2,dates.size());
+	}
+	
 }
 
 

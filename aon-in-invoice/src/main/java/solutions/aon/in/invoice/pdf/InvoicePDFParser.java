@@ -58,9 +58,9 @@ public class InvoicePDFParser {
 			stripper.setEndPage(p);
 			
 			String text = stripper.getText(doc);
+//System.out.println(text);
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
-						
 			template = parse(template, text, invoiceBuilder);
 			
 		}
@@ -74,9 +74,10 @@ public class InvoicePDFParser {
 				} catch ( InvoicePDFException e ) {
 					return pdfTemplate;
 				} catch ( Exception e ) {
+					e.printStackTrace();
 				}
 			}
-			throw new UnknownInvoiceException("Formato de nómina desconocido");
+			throw new UnknownInvoiceException("Formato de factura desconocido");
 		
 		} else {
 			try {

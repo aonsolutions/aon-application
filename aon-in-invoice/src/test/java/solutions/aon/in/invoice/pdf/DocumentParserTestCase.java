@@ -107,7 +107,8 @@ public class DocumentParserTestCase {
 		System.out.println("- testLegalPersonNIF ---------");
 		System.out.println("------------------------------");
 		for (String text : VALID_LEGAL_PERSON_NIFS) {
-			Collection<Document> nifs = DocumentParser.getNifs( getLorem( text ) );
+			System.out.println( "\t["+ text +"]");
+			Collection<Document> nifs = DocumentParser.getNifs( text  );
 			assertNotNull(text,nifs);
 			assertEquals(text,1,nifs.size());
 			Document nif = nifs.stream().findFirst().get();
@@ -122,7 +123,9 @@ public class DocumentParserTestCase {
 		System.out.println("- testDNI ---------");
 		System.out.println("-------------------");
 		for (String text : VALID_DNIS) {
-			Collection<Document> nifs = DocumentParser.getNifs( getLorem( text ) );
+			text = getLorem( text );
+			System.out.println( "\t["+ text +"]");	
+			Collection<Document> nifs = DocumentParser.getNifs( text );
 			assertNotNull(text,nifs);
 			assertEquals(text,1,nifs.size());
 			Document nif = nifs.stream().findFirst().get();
@@ -137,14 +140,30 @@ public class DocumentParserTestCase {
 		System.out.println("- testNIE ---------");
 		System.out.println("-------------------");
 		for (String text : VALID_NIES) {
-			Collection<Document> nifs = DocumentParser.getNifs( getLorem( text ) );
+			System.out.println( "\t["+ text +"]");
+			Collection<Document> nifs = DocumentParser.getNifs( text  );
 			assertNotNull(text,nifs);
 			assertEquals(text,1,nifs.size());
 			Document nif = nifs.stream().findFirst().get();
 			assertEquals(text,DocumentType.NIE, nif.getType());
 		}
 	}
-		
+
+	
+	@Test
+	public void testXXX() throws IOException, UnknownInvoiceException {
+		System.out.println();
+		System.out.println("-------------------");
+		System.out.println("- testXXX ---------");
+		System.out.println("-------------------");
+		String text = "* Orange Espagne, S.A.U. Con sede social en Pque. Emp. La Finca, Pº del Club Deportivo, 1, Edif.8, 28223 Pozuelo de Alarcón, Madrid. Inscrita en el Registro Mercantil de Madrid, tomo 13.183, folio 129, hoja M-213468, CIF A-82009812 *";
+		Collection<Document> nifs = DocumentParser.getNifs( text  );
+		assertNotNull(text,nifs);
+		assertEquals(text,1,nifs.size());
+		Document nif = nifs.stream().findFirst().get();
+		assertEquals(text,DocumentType.LEGAL_PERSON_NIF, nif.getType());
+	}
+	
 }
 
 

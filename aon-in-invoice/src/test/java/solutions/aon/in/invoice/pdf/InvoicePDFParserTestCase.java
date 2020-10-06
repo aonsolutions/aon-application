@@ -70,6 +70,28 @@ public class InvoicePDFParserTestCase {
 		AMAZON_5 ("AMAZON_5.pdf", 6, 2 ),
 		AMAZON_6 ("AMAZON_6.pdf", 6, 2 ),
 		AMAZON_7 ("AMAZON_7.pdf", 5, 2 ),
+		
+		MOVISTAR_1 ("MOVISTAR_1.pdf", 1, 6 ),
+		MOVISTAR_2 ("MOVISTAR_2.pdf", 1, 5 ),
+		MOVISTAR_3 ("MOVISTAR_3.pdf", 1, 6 ),
+		MOVISTAR_4 ("MOVISTAR_4.pdf", 1, 5 ),
+		MOVISTAR_5 ("MOVISTAR_5.pdf", 1, 4 ),
+		MOVISTAR_6 ("MOVISTAR_6.pdf", 1, 5 ),
+		MOVISTAR_7 ("MOVISTAR_7.pdf", 1, 6 ),
+		
+		ORANGE_1 ("ORANGE_1.pdf", 5, 5 ),
+		ORANGE_2 ("ORANGE_2.pdf", 6, 5 ),
+		ORANGE_3 ("ORANGE_3.pdf", 5, 5 ),
+
+		NATURGY_1 ("NATURGY_1.pdf", 2, 34 ),
+		NATURGY_2 ("NATURGY_2.pdf", 2, 10 ),
+		NATURGY_3 ("NATURGY_3.pdf", 2, 9 ),
+	
+		IBERDROLA_1 ("IBERDROLA_1.pdf", 5, 45 ),
+		IBERDROLA_2 ("IBERDROLA_2.pdf", 5, 45 ),
+		
+		AYSER_1 ("AYSER_1.pdf", 3, 5 ),
+		
 		;
 
 		private String file;
@@ -97,14 +119,25 @@ public class InvoicePDFParserTestCase {
 	public void testTemplates() throws IOException, UnknownInvoiceException {
 		for (TestTemplates template : TestTemplates.values()) {
 			try (InputStream is = InvoicePDFParserTestCase.class.getResourceAsStream(template.getFile())) {
+				System.out.println("\t Parsing " + template.getFile() + " ....");
 				InvoiceAssert invoiceAssert = new InvoiceAssert();
 				InvoicePDFParser.parse(is,invoiceAssert);
 				assertNotNull(template.getFile() + " Not parsed!",invoiceAssert);
 				assertNotNull(template.getFile() + " has no documents!",invoiceAssert.getNifs());
+				System.out.println( "\tDocuments: (expected: " + template.getDocumentsNumber() + ")" );
+				int i = 1;
+				for (Document doc : invoiceAssert.getNifs()) {
+					System.out.println( "\t\t"+i+++".-\t"+doc.getData() );
+				}
 				assertEquals(template.getFile() + " must parse " + template.getDocumentsNumber() + " documents!"
 						,template.getDocumentsNumber(),invoiceAssert.getNifs().size());
 				assertNotNull(template.getFile() + " has no dates!",invoiceAssert.getDates());
-				assertEquals(template.getFile() + " must parse " + template.getDocumentsNumber() + " dates!"
+				System.out.println( "\tDates: (expected: " + template.getDatesNumber() + ")" );
+				i = 1;
+				for (Date date : invoiceAssert.getDates()) {
+					System.out.println( "\t\t"+i+++".-\t"+date);
+				}
+				assertEquals(template.getFile() + " must parse " + template.getDatesNumber() + " dates!"
 						,template.getDatesNumber(),invoiceAssert.getDates().size());
 			}
 		}
