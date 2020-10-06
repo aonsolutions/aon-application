@@ -246,8 +246,8 @@ public class CompanyDAO {
 					.or(domain.PARENT.in(domains)
 						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
 			.orderBy(REGISTRY.NAME)
-			.limit(perPage)
-			.offset(perPage * (page -1))
+//			.limit(perPage)
+//			.offset(perPage * (page -1))
 			.fetch().stream().map(new AonCompanyFiller());
 	}
 

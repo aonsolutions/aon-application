@@ -6,11 +6,6 @@ let company;
 let invoices;
 let invoice;
 
-let schema = 'first';
-let page = 1;
-let per_page = 50;
-let end = false;
-
 export const closeSession = () => {
 	localStorage.removeItem('aon_session_id');
 	localStorage.removeItem('aon_domain_id');
@@ -36,7 +31,7 @@ export const login = (data) => {
 }
 
 export const rememberPassword = (email) => {
-	request('POST', '/ms/api/remember', undefined, {email}, undefined, () => {});
+	request('POST', '/ms/api/remember', undefined, {email}, () => {});
 }
 
 export const getManifest = () => {
@@ -49,44 +44,18 @@ export const getManifest = () => {
 
 export const getCompanies = () => {
   return new Promise( (resolve, reject) => {
-		if(end) {
-			resolve({companies:companies, end:true});
+		if(companies) {
+			resolve(companies);
 		} else {
-			let headers = {
-				schema: schema,
-				page: page,
-				per_page: per_page
-			};
-      request('GET', '/ms/api/company', localStorage.getItem('aon_session_id'),  undefined, headers, (r, error) => {
+      request('GET', '/ms/api/company', localStorage.getItem('aon_session_id'),  undefined, (r, error) => {
 			  if(error) {
           reject(error);
         } else {
 					let result = JSON.parse(r);
-					if(result && result.companies) {
-            if(companies){
-              companies = companies.concat(result.companies);
-            } else {
-              companies = result.companies;
-            }
-        		companies.sort((a, b) => {
-              if (a.name.toUpperCase() > b.name.toUpperCase()) {
-                return 1;
-              }
-              if (a.name.toUpperCase() < b.name.toUpperCase()) {
-                return -1;
-              }
-              // a must be equal to b
-              return 0;
-            });
-            schema = result.schema;
-            page = result.page;
-            per_page = result.per_page;
-            end = result.end;
-						result.companies = companies;
-						resolve(result);
-          } else {
-            resolve({companies:[], end: false});
+					if(result) {
+						companies = result;
           }
+					resolve(companies ? companies : []);
         }
    	  });
 	 	}
@@ -101,7 +70,7 @@ export const getDomainApps = (domain) => {
 	}
 
 	return new Promise((resolve, reject) => {
-			request('GET', '/ms/api/company/app', localStorage.getItem('aon_session_id'),  undefined, undefined, (result, error) => {
+			request('GET', '/ms/api/company/app', localStorage.getItem('aon_session_id'),  undefined, (result, error) => {
 				if(!d) {
 					localStorage.removeItem('aon_domain_name');
 				}
@@ -116,7 +85,7 @@ export const getDomainApps = (domain) => {
 
 export const setDomainApp = (domainApp) => {
 	return new Promise((resolve, reject) => {
-			request('POST', '/ms/api/company/app', localStorage.getItem('aon_session_id'),  domainApp, undefined, (result, error) => {
+			request('POST', '/ms/api/company/app', localStorage.getItem('aon_session_id'),  domainApp, (result, error) => {
 				if(error) {
 					reject(error);
 				} else {
@@ -128,7 +97,7 @@ export const setDomainApp = (domainApp) => {
 
 export const getUserAppRole = () => {
 	return new Promise((resolve, reject) => {
-			request('GET', '/ms/api/user/app', localStorage.getItem('aon_session_id'),  undefined, undefined, (result, error) => {
+			request('GET', '/ms/api/user/app', localStorage.getItem('aon_session_id'),  undefined, (result, error) => {
 				if(error) {
 					reject(error);
 				} else {
@@ -140,7 +109,7 @@ export const getUserAppRole = () => {
 
 export const setUserAppRole = (userAppRole) => {
 	return new Promise((resolve, reject) => {
-			request('POST', '/ms/api/user/app', localStorage.getItem('aon_session_id'),  userAppRole, undefined, (result, error) => {
+			request('POST', '/ms/api/user/app', localStorage.getItem('aon_session_id'),  userAppRole, (result, error) => {
 				if(error) {
 					reject(error);
 				} else {
@@ -152,7 +121,7 @@ export const setUserAppRole = (userAppRole) => {
 
 export const getAuth = () => {
   return new Promise((resolve, reject) => {
-      request('GET', '/ms/api/auth', localStorage.getItem('aon_session_id'),  undefined, undefined, (result, error) => {
+      request('GET', '/ms/api/auth', localStorage.getItem('aon_session_id'),  undefined, (result, error) => {
         if(error) {
           reject(error);
         } else {
@@ -164,7 +133,7 @@ export const getAuth = () => {
 
 export const getUsers = () => {
   return new Promise((resolve, reject) => {
-      request('GET', '/ms/api/user', localStorage.getItem('aon_session_id'),  undefined, undefined, (result, error) => {
+      request('GET', '/ms/api/user', localStorage.getItem('aon_session_id'),  undefined, (result, error) => {
         if(error) {
           reject(error);
         } else {
@@ -176,7 +145,7 @@ export const getUsers = () => {
 
 export const setUser = (user) => {
   return new Promise((resolve, reject) => {
-      request('POST', '/ms/api/user', localStorage.getItem('aon_session_id'), user, undefined, (result, error) => {
+      request('POST', '/ms/api/user', localStorage.getItem('aon_session_id'), user, (result, error) => {
         if(error) {
           reject(error);
         } else {
@@ -209,7 +178,7 @@ export const invoiceSelection = (inv) => {
 
 export const getInvoice = (id) => {
 	return new Promise((resolve, reject) => {
-		request('GET', '/ms/api/invoice'  + getInvoiceQuery({id}), localStorage.getItem('aon_session_id'), undefined,  undefined, (result, error) => {
+		request('GET', '/ms/api/invoice'  + getInvoiceQuery({id}), localStorage.getItem('aon_session_id'), undefined,  (result, error) => {
 			if(error) {
 				reject(error);
 			} else {
@@ -221,7 +190,7 @@ export const getInvoice = (id) => {
 
 export const getInvoices = (data) => {
   return new Promise((resolve, reject) => {
-    request('GET', '/ms/api/invoice'  + getInvoiceQuery(data), localStorage.getItem('aon_session_id'), undefined,  undefined, (result, error) => {
+    request('GET', '/ms/api/invoice'  + getInvoiceQuery(data), localStorage.getItem('aon_session_id'), undefined, (result, error) => {
       if(error) {
         reject(error);
       } else {
@@ -233,7 +202,7 @@ export const getInvoices = (data) => {
 
 export const insertInvoice = (invoice) => {
 	return new Promise((resolve, reject) => {
-  	request('POST', '/ms/api/invoice', localStorage.getItem('aon_session_id'), invoice,  undefined, (result, error) => {
+  	request('POST', '/ms/api/invoice', localStorage.getItem('aon_session_id'), invoice, (result, error) => {
 			if(error) {
 				reject(error);
 			} else {
@@ -245,7 +214,7 @@ export const insertInvoice = (invoice) => {
 
 export const deleteInvoices = (invoiceIds) => {
 	return new Promise((resolve, reject) => {
-  	request('DELETE', '/ms/api/invoice', localStorage.getItem('aon_session_id'), {id: invoiceIds}, undefined, (result, error) => {
+  	request('DELETE', '/ms/api/invoice', localStorage.getItem('aon_session_id'), {id: invoiceIds}, (result, error) => {
 			if(error) {
 				reject(error);
 			} else {

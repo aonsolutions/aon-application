@@ -19,7 +19,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCompanyServlet", urlPatterns = {"/ms/api/company/*"})
@@ -31,49 +30,30 @@ public class CompanyServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("AON COMPANY SERVLET - GET METHOD");
 		String token = req.getHeader("session_id");
-		String sch = req.getHeader("schema");
-		String rsch = "";
-		Integer page = AonNumberUtils.toInteger(req.getHeader("page"));
-		Integer perPage = AonNumberUtils.toInteger(req.getHeader("per_page"));
+
 		JSONArray jsArray = new JSONArray();
-		Boolean bool = sch == null;
-		Boolean next = false;
+
 		List<String> schemas = AONContext.getSchemas();
 		String domainName = req.getHeader("domain_name");
 		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
 		JSONObject json = new JSONObject();
+		Object object = new Object();
 		if(pathInfo  != null) {
 			if("app".equalsIgnoreCase(pathInfo[1])) {
 				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
 				json = getDomainApps(domain);
+				object = json;
 			}
 		} else {
 			for(String schema : schemas) {
-				if(next) {
-					rsch = schema;
-					page = 1;
-					next = false;
-				}
-				if(bool || (sch != null && (sch.equalsIgnoreCase(schema) || sch.equalsIgnoreCase("first")))) {
-					AON_SOLUTIONS.getCompanyStream(token, schema, page, perPage)
-						//.filter(f -> f.isActive())
-						.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
-								ac -> jsArray.put(ac.toJSON()));
-					next = jsArray.length() >= 0 && jsArray.length() < perPage;
-					page = page + 1;
-					rsch = schema;
-					sch = sch.equalsIgnoreCase("first") ? "" : sch;
-				}
+				AON_SOLUTIONS.getCompanyStream(token, schema, null, null)
+					.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName())).forEach(
+							ac -> jsArray.put(ac.toJSON()));
 			}
-		
-			json.put("companies", jsArray);
-			json.put("page", page);
-			json.put("per_page", perPage);
-			json.put("schema", rsch);
-			json.put("end", next);
+			object = jsArray;
 		}
 		Utils.addCorsHeader(resp);
-		Utils.giveBack(req, resp, json, new JSONObject());
+		Utils.giveBack(req, resp, object, new JSONObject());
 	}
 
 	@Override

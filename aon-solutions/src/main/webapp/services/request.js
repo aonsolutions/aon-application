@@ -8,7 +8,7 @@
 		xhr.send(formData);
 	}
 
-	export const request = (method, url, token, sendData, headers, fn) => {
+	export const request = (method, url, token, sendData, fn) => {
 		let xhr = new XMLHttpRequest();
 		xhr.open(method, url);
 		xhr.setRequestHeader('session_id', token);
@@ -18,13 +18,7 @@
 		xhr.setRequestHeader('domain_name', domainName);
 		xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 		xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-
-		if(headers) {
-			xhr.setRequestHeader("schema", headers.schema);
-			xhr.setRequestHeader("page", headers.page);
-			xhr.setRequestHeader("per_page", headers.per_page);
-		}
-
+		
 		xhr.send(JSON.stringify(sendData));
 
 		xhr.onload = () => {

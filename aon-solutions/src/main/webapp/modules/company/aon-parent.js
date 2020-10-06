@@ -72,11 +72,8 @@ class AonParent extends HTMLElement {
 
 	init(filter) {
 		getCompanies()
-		.then( r => {
-			  if(!r.end){
-          this.init(filter);
-        }
-        this.build(r.companies.filter(f => this.companyFilter(f, filter)))
+		.then( companies => {
+        this.build(companies.filter(f => this.companyFilter(f, filter)))
       }, () => closeSession()
     );
   }
