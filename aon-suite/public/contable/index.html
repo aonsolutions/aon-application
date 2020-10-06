@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="es">
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="AYUDA T">
+        <meta name="generator" content="">
+        <title>aon Suite</title>
+
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+
+        <!-- MATERIAL ICONS -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+
+        <!-- MATERIAL COMPONENTS -->
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+
+        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+        <link href="../css/app.css" rel="stylesheet" id="linkcss">
+
+    </head>
+
+    <body>
+
+                <!-- start contenido centro -->
+                <div class="col" id="atp_contenido_centro">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <!-- INICIO VISTA -->
+                            <div class="col-8">
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <ul class="list-inline mb-4">
+                                            <li class="list-inline-item mb-2">
+                                                <a href="#" class="btn btn-light btn-sm pointer active">Recientes</a>
+                                            </li>
+                                            <li class="list-inline-item mb-2">
+                                                <a href="#" class="btn btn-light btn-sm pointer">Ver todas</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-12">
+                                        <table class="table" id="table_invoice">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Factura</th>
+                                                    <th scope="col">Fecha</th>
+                                                    <th scope="col">Tipo</th>
+                                                    <th scope="col">Importe</th>
+                                                    <th scope="col">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            <tfoot></tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Pérdidas y ganancias</h5>
+                                                <table class="table" id="table_ppygg">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">Compras:</th>
+                                                            <td id="total-compras"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Ventas:</th>
+                                                            <td id="total-ventas"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Beneficios:</th>
+                                                            <td id="total-beneficios"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-12">
+                                                <p class="text-right"><a href="ppygg.html">Más detalles</a></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end contenido centro -->
+
+
+        <!-- Scripts -->
+        <script src="../js/app.js"></script>
+        <script>
+            //
+            // Cargamos las funciones
+            //
+            $(document).ready(function () {
+                // Cogemos el listado de datos para mostrar
+                var list = getList();
+
+                createTable(list);
+                
+                ppygg();
+
+                //
+                // Creamos la tabla con los datos a listar
+                //
+                function createTable(data) {
+                    // recorremos los datos a mostrar
+                    var tbody = '';
+                    $.each(data.list, function (i, item) {
+                        // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
+                        tbody += item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
+                        // Recorremos los <td>
+                        $.each(item, function (key, val) {
+                            if(key != 'id'){
+                                tbody += '<td>' + val + '</td>';
+                            }  
+                        });
+                        // Agregamos opciones que tenga
+                        tbody +=
+                            '<td>' +
+                            '<a class="text-dark text-decoration-none">' +
+                            '<i class="material-icons pointer text-danger invoice-eliminar" title="Eliminar invoice"' +
+                            ' data-uid="' + data.userId + '" ' +
+                            ' data-page="' + data.page + '" ' +
+                            ' data-id="' + item.id + '" ' +
+                            ' >delete_forever</i>' +
+                            '<i class="material-icons pointer text-primary invoice-download" title="Descargar factura"' +
+                            ' data-uid="' + data.userId + '" ' +
+                            ' data-id="' + item.id + '" ' +
+                            '>file_download</i>' +
+                            '</a>' +
+                            '</td>';
+                        // Cerramos el <tr>
+                        tbody += '</tr>';
+                    });
+
+                    // Agregamos el cuerpo de la tabla
+                    $('#table_invoice tbody').html(tbody);
+
+                    // Cogemos el paginado que tendía la tabla
+                    var pagination = createPaginate(data.userId, data.page, data.total_page)
+
+                    // Agregamos el paginado en el footer de la tabla
+                    var tfoot =
+                        '<tr>' +
+                        '<td colspan="7">' +
+                        '<div class="row">' +
+                        '<div class="col-md-6">' +
+                        'Mostrando del ' + data.shown_page + ' de un total de ' + data.total_date + ' elementos' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        pagination +
+                        '</div>' +
+                        '</div>' +
+                        '</td>'
+                    '</tr>';
+
+                    // Agregamos el cuerpo de la tabla
+                    $('#table_invoice tfoot').html(tfoot);
+
+                    // console.log(tbody);
+                }
+
+                /*
+                 * Eliminar factura
+                 */
+                $(document).on('click', '.invoice-eliminar', function () {
+                    var userId = $(this).data('uid');
+                    var invoiceId = $(this).data('id');
+
+                    var opcion = confirm("Eliminar el #Ticket " + invoiceId);
+                    if (opcion == true) {
+                        var list = getList($(this).data('page'));
+                        createTable(list);
+                        alert('Eliminado el #Ticket ' + invoiceId + ' correctamente');
+                        // Json que mandamos
+                        var invoice_delete = {
+                            method: 'invoice_delete',
+                            id: invoiceId,
+                            uid: userId,
+                        };
+                        console.log('Eliminar invoice Json que mandamos:');
+                        console.log(invoice_delete);
+                    }
+
+                });
+                
+                /*
+                 * Descargar factura
+                 */
+                $(document).on('click', '.invoice-download', function(){
+                    var userId = $(this).data('uid');
+                    var invoiceId = $(this).data('id');
+                    
+                    alert('Descarga factura con id ' + invoiceId);
+                });
+                
+
+                //
+                // Crear el paginado
+                //
+                function createPaginate(uid, page, page_total) {
+                    var paginate = '<ul class="pagination display-block float-right">';
+                    // Agregamos el usuario que estamos paginando
+                    paginate += '<input id="paginate-uid" type="hidden" value="' + uid + '">';
+
+                    // Si tenemos paginas
+                    if (page > 1) {
+                        paginate +=
+                            '<li class="pointer">' +
+                            '<a class="go_page" data-page="1">' +
+                            '<i class="material-icons" title="Principio">fast_rewind</i>' +
+                            '</a>' +
+                            '</li>' +
+
+                            '<li class="pointer">' +
+                            '<a class="go_page" data-page="' + (page - 1) + '">' +
+                            '<i class="material-icons" title="Volver">arrow_left</i>' +
+                            '</a>' +
+                            '</li>';
+                    }
+
+                    if (page_total > 0) {
+                        paginate += '<li class="ml-2 mr-2">' + page + '/' + page_total + '</li>';
+                    }
+
+                    if (page < page_total) {
+                        paginate +=
+                            '<li class="pointer">' +
+                            '<a class="go_page" data-page="' + (page + 1) + '">' +
+                            '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>' +
+                            '</a>' +
+                            '</li>' +
+
+                            '<li class="pointer">' +
+                            '<a class="go_page" data-page="' + page_total + '">' +
+                            '<i class="material-icons" title="Final">fast_forward</i>' +
+                            '</a>' +
+                            '</li>';
+                    }
+                    paginate += '</ul>';
+
+                    return paginate;
+                }
+
+                //
+                // Pasar de pagina
+                //
+                $(document).on('click', '.go_page', function () {
+                    var userId = $('#paginate-uid').val();
+                    var page = $(this).data('page');
+                    var list = getList(userId, page);
+                    createTable(list);
+                    // Json que mandamos
+                    var invoicePage = {
+                        method: 'invoicePage',
+                        uid: userId,
+                        id: page,
+                    };
+                    console.log('Pasar paginas de invoice Json que mandamos:');
+                    console.log(invoicePage);
+                });
+
+                //
+                // Listado para probar
+                //
+                function getList(uid = 'a5sa645-sa14', page_this = 1) {
+                    // Donde meteremos los valores de los invoices
+                    var invoiceList = {};
+                    // Crear cantidades aletorias dependiendo de la pagina en la que estemos
+                    page_this_element = page_this == 1 ? page_this : ((page_this - 1) * 10) + 1;
+                    page_total = page_this_element + 10;
+
+                    // Metemos los valores de los invoices aleatoriamente
+                    for (var i = page_this_element; i < page_total; i++) {
+                        invoiceList[i] = {
+                            id: i,
+                            invoice: "#" + Math.floor(Math.random() * (5248963 - 7856)),                                                // campo invoice
+                            date: (Math.floor(Math.random() * (28 - 1)) + 1) + '-09-2020 12:47',                                // ultima modificacion
+                            type: 'Factura',                              // titulo del invoice
+                            total: Math.floor(Math.random() * (100 - 25)) + 25 + '€'                // tienes que responder = 0 : respondido | 1 : responder
+                        };
+                    };
+
+                    // Json de lo que nos llegaria
+                    var json = {
+                        userId: uid,                                      // Al usuario que le pertenece los invoices
+                        total_date: 100,                                      // cantidad total de elementos
+                        total_page: 10,                                       // total de paginas
+                        page: page_this,                                // pagina en la que estamos
+                        shown_page: page_this_element + ' - ' + (page_total - 1),   // cantidad mostrada por paginas 1 - 10
+                        list: invoiceList                             // listado de facturas
+                    };
+
+                    console.log('Json que recibimos:');
+                    console.log(json);
+
+                    // Devolver los datos
+                    return json;
+                }
+            });
+            
+            function ppygg(){
+                var json = {
+                    compras : "12356,99€",
+                    ventas : "250880,50€",
+                    beneficios : 250880.50 - 12356.99
+                };
+                
+                $('#total-compras').html(json.compras);
+                $('#total-ventas').html(json.ventas);
+                $('#total-beneficios').html(json.beneficios + "€");
+                
+                if(json.beneficios > 0){
+                    $('#total-beneficios').css('color', 'green');
+                } else if (json.beneficios < 0){
+                    $('#total-beneficios').css('color', 'red');
+                }
+            }
+        </script>
+        <!-- FIN Scripts -->
+    </body>
+</html>

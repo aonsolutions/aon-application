@@ -27,6 +27,17 @@
 <body>
 
 
+    <!-- start cuerpo -->
+    <div class="container-fluid atp_cuerpo">
+        <div class="row">
+            <!-- start contenido centro -->
+            <div class="col" id="atp_contenido_centro">
+                <!-- <div class="container-fluid">
+      <div class="row justify-content-center">
+        
+      </div>
+    </div> -->
+
                 <!-- Main-->
                 <div class="container-fluid pt-5">
                     <form id="form" name="form" action="#" method="post">
@@ -151,38 +162,156 @@
 
                 </div>
 
+                <br>
+                <div class="border-top my-3"></div>
+                <div class="container-fluid pt-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <h5 class="">Historial</h5>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-12 text-right">
+                                    <!-- <label for="mes">Día:</label> -->
+                                    <input type="date" id="mes" name="mes" step="1" min="" max="" value="">
+                                    <button type="button" form="form" id="actualizar" class="btn btn-info btn-sm"
+                                        data-boton="salida">Actualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Tipo de marcaje</th>
+                                            <th>Nota</th>
+                                            <th>Marcaje</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaMarcajes">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- The Modal -->
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Marcaje</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
             </div><!-- end contenido centro -->
-    
+
+        </div>
+    </div><!-- end cuerpo -->
 
     <!-- Scripts -->
     <script src="../js/app.js"></script>
     <script>
 
-        var datosEmpleado = {
-            empleado: {
-                id: '1',                            // id
-                documento: '12345678A',             // dni
-                nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
-            }
+        //simulamos los datos, realmente los obtendremos mediante llamada a api
 
-        };
+
+        var idEmpleado = getDatosSession('idEmpleado');
+
+        function getDatosSession(nombreDato) {
+            var idUsuario;
+            if (sessionStorage.getItem(nombreDato)) {
+                // Restaura el contenido al campo de texto
+                idUsuario = sessionStorage.getItem(nombreDato);
+            } else {
+                idUsuario = 0;
+            }
+            // console.log(idUsuario);
+            return idUsuario;
+        }
+
 
 
         jQuery(function () {
-            cargarEmpleado();
+            var datosEmpleado = {
+                empleado: {
+                    id: '1',                            // id
+                    documento: '12345678A',             // dni
+                    nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
+                }
+
+            };
+            // cargarEmpleadoAjax(idEmpleado);
+            // una vez usemos el ajax, comentar siguiente linea
+            cargarEmpleado(datosEmpleado);
             mueveReloj();
             getFecha();
+
+            var fechaActual = getFechaActualDB();
+            // alert(fechaActual);
+            var datos = "";
+            datosHistorial = obtenerHistorialAjax(datos);
+            cargarHistorial(datosHistorial, fechaActual);
+            
+            $('#mes').val(fechaActual);
+
         });
 
+        function cargarEmpleadoAjax(idEmpleado) {
+            var dato = { id: idEmpleado }
+            $.ajax({
+                url: '',
+                data: dato,
+                type: 'POST',
+                dataType: 'json',
+
+                success: function (respuesta) {
+                    console.log(respuesta);
+                    cargarEmpleado(respuesta);
+                },
+                error: function () {
+                    console.log("No se ha podido obtener la información");
+                },
+                complete: function (xhr, status) {
+                    console.log("Petición realizada");
+                }
+
+            });
+
+        }
 
 
-        function cargarEmpleado() {
+        function cargarEmpleado(datosEmpleado) {
             var empleado = datosEmpleado['empleado'];
             // $('#nombreApellido').val(empleado['nombre'])
             // $('#dni').val(empleado['documento'])
             $('#nombreApellido').attr('value', empleado['nombre']);
             $('#dni').attr('value', empleado['documento']);
         }
+
 
         function mueveReloj() {
             var momentoActual = new Date();
@@ -212,6 +341,7 @@
 
             setTimeout("mueveReloj()", 1000);
         }
+
 
         function getFecha() {
             var fechaActual = new Date();
@@ -262,7 +392,12 @@
             e.preventDefault();
             var data = $('form').serializeFormJSON();
             console.log(data['tipoEntrada']);
-            alert(JSON.stringify(data));
+            var cadena = JSON.stringify(data);
+            var empleado = cadena.replace(/,/g, ", ");
+            $(".modal-body").empty();
+            $("<p>" + empleado + "</p>").appendTo(".modal-body");
+            $('#myModal').modal('show');
+            // alert(JSON.stringify(data));
         })
 
         $('#botonSalida').on('click', function (e) {
@@ -270,7 +405,218 @@
             e.preventDefault();
             var data = $('form').serializeFormJSON();
             console.log(data);
-            alert(JSON.stringify(data));
+            var cadena = JSON.stringify(data);
+            var empleado = cadena.replace(/,/g, ", ");
+            $(".modal-body").empty();
+            $("<p>" + empleado + "</p>").appendTo(".modal-body");
+            $('#myModal').modal('show');
+            // alert(JSON.stringify(data));
+        })
+
+        function enviarDatosAjax(datos) {
+
+            $.ajax({
+                url: '',
+                data: datos,
+                type: 'POST',
+                dataType: 'json',
+
+                success: function (respuesta) {
+                    console.log(respuesta);
+                },
+                error: function () {
+                    console.log("No se ha podido obtener la información");
+                },
+                complete: function (xhr, status) {
+                    console.log("Petición realizada");
+                }
+
+            });
+
+        }
+
+        function obtenerHistorialAjax(datos) {
+            var fechaActual = getFechaActual();
+            var fechaActualDB = getFechaActualDB();
+
+            var datosHistorial = {
+                historial: [
+                    {
+                        id: '1',
+                        fecha: '2020-09-30',
+                        fechaFormateada: '30/09/2020',
+                        hora: '08:01:02',
+                        tipoMarcaje: 'Marcaje sin incidencia',
+                        nota: 'Todo correcto',
+                        marcaje: 'Entrada',
+                    },
+                    {
+                        id: '2',
+                        fecha: '2020-09-30',
+                        fechaFormateada: '30/09/2020',
+                        hora: '14:01:02',
+                        tipoMarcaje: 'Marcaje sin incidencia',
+                        nota: 'Todo correcto',
+                        marcaje: 'Salida',
+                    },
+                    {
+                        id: '3',
+                        fecha: fechaActualDB,
+                        fechaFormateada: fechaActual,
+                        hora: '08:01:02',
+                        tipoMarcaje: 'Marcaje sin incidencia',
+                        nota: 'Todo correcto',
+                        marcaje: 'Entrada',
+                    },
+                    {
+                        id: '4',
+                        fecha: fechaActualDB,
+                        fechaFormateada: fechaActual,
+                        hora: '14:01:02',
+                        tipoMarcaje: 'Marcaje sin incidencia',
+                        nota: 'Todo correcto',
+                        marcaje: 'Salida',
+                    },
+                ],
+            };
+
+            // console.log(datosHistorial);
+
+            // $.ajax({
+            //     url: '',
+            //     data: datos,
+            //     type: 'POST',
+            //     dataType: 'json',
+
+            //     success: function (respuesta) {
+            //         console.log(respuesta);
+            //     },
+            //     error: function () {
+            //         console.log("No se ha podido obtener la información");
+            //     },
+            //     complete: function (xhr, status) {
+            //         console.log("Petición realizada");
+            //     }
+
+            // });
+
+            return datosHistorial;
+
+        }
+
+        function cargarHistorial(datosHistorial, fecha) {
+            var historial = datosHistorial['historial'];
+            var hijo = "";
+            var mostrado = false;
+
+            // var value;
+            for (i in historial) {
+                // value = Number.parseInt(i) + 1;
+                if (fecha == historial[i]['fecha']) {
+                    hijo = hijo + "<tr>";
+                    hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['fechaFormateada'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['hora'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['tipoMarcaje'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['marcaje'] + "</td>";
+                    hijo = hijo + "</tr>";
+                    mostrado = true;
+                }
+
+            }
+
+            $("#tablaMarcajes").empty();
+            if (mostrado) {
+                
+            } else {
+                hijo = "<tr><td colspan='6'>No hay datos para mostrar</td></tr>";
+            }
+
+            $(hijo).appendTo("#tablaMarcajes");
+            
+        }
+
+        function getFechaActual() {
+            var fechaActual = new Date();
+            var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = dia + "/" + mes + "/" + annio;
+
+            return fechaImprimible;
+            // alert(fechaImprimible);
+        }
+
+        function getFechaActualDB() {
+            var fechaActual = new Date();
+            var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = annio + "-" + mes + "-" + dia;
+
+            return fechaImprimible;
+            // alert(fechaImprimible);
+        }
+
+
+
+        (function ($) {
+            $.fn.serializeFormJSON = function () {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+        })(jQuery);
+
+
+        $('#actualizar').on('click', function (e) {
+            var fecha = $('#mes').val();
+            console.log(fecha);
+            // alert(mes);
+            var datosHistorial = obtenerHistorialAjax(fecha);
+            fecha = fecha
+            cargarHistorial(datosHistorial, fecha);
         })
 
 

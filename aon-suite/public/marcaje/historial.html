@@ -26,16 +26,26 @@
 
 <body>
 
+    <!-- start cuerpo -->
+    <div class="container-fluid atp_cuerpo">
+        <div class="row">
+
+            <!-- start contenido centro -->
+            <div class="col" id="atp_contenido_centro">
 
                 <!-- Main-->
                 <div class="container-fluid pt-5">
-
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h3 class="">Historial mensual</h3>
+                        </div>
+                    </div>
                     <div class="container-fluid pt-3">
                         <div class="row">
                             <div class="col-12">
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                        <h5 class="">Historial</h5>
+                                        <!-- <h5 class="">Marcajes</h5> -->
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-sm-12 col-12 text-right">
                                         <label for="mes">Mes:</label>
@@ -70,38 +80,40 @@
                 </div>
 
             </div><!-- end contenido centro -->
-        
+        </div>
+    </div><!-- end cuerpo -->
 
     <!-- Scripts -->
     <script src="../js/app.js"></script>
     <script>
 
-        var datosHistorial = {
-            historial: [
-                {
-                    id: '1',
-                    fecha: '25/09/2020',
-                    hora: '08:01:02',
-                    tipoMarcaje: 'Marcaje sin incidencia',
-                    nota: 'Todo correcto',
-                    marcaje: 'Entrada',
-                },
-                {
-                    id: '2',
-                    fecha: '25/09/2020',
-                    hora: '14:01:02',
-                    tipoMarcaje: 'Marcaje sin incidencia',
-                    nota: 'Todo correcto',
-                    marcaje: 'Salida',
-                },
-            ],
-        };
 
         jQuery(function () {
-            cargarHistorial();
+            var datosHistorial = {
+                historial: [
+                    {
+                        id: '1',
+                        fecha: '25/09/2020',
+                        hora: '08:01:02',
+                        tipoMarcaje: 'Marcaje sin incidencia',
+                        nota: 'Todo correcto',
+                        marcaje: 'Entrada',
+                    },
+                    {
+                        id: '2',
+                        fecha: '25/09/2020',
+                        hora: '14:01:02',
+                        tipoMarcaje: 'Marcaje sin incidencia',
+                        nota: 'Todo correcto',
+                        marcaje: 'Salida',
+                    },
+                ],
+            };
+
+            cargarHistorial(datosHistorial);
         });
 
-        function cargarHistorial() {
+        function cargarHistorial(datosHistorial) {
             var historial = datosHistorial['historial'];
             var hijo = "";
 
@@ -120,6 +132,28 @@
 
             $("#tablaMarcajes").empty()
             $(hijo).appendTo("#tablaMarcajes");
+        }
+
+        function getFechaActual(){
+            var fechaActual = new Date();       
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = annio + "-" + mes + "-" + dia;
         }
 
 

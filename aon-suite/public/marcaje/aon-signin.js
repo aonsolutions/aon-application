@@ -14,6 +14,8 @@ class AonSignin extends HTMLElement {
  	build() {
 		let aonSignin = document.getElementById('aonSignin');
 
+		aonSignin.addToolbarOption('Add', 'add', () => {alert('Add Example')});
+
 		let options = [
 			{
 				name: 'Administradores',

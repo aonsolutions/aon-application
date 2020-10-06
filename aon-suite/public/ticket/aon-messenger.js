@@ -14,6 +14,8 @@ class AonMessenger extends HTMLElement {
  	build() {
 		let aonMessenger = document.getElementById('aonMessenger');
 
+		aonMessenger.addToolbarOption('Add', 'add', () => {this.loadCreate()});
+
 		let options = [
 			{
 				name: 'Index',
@@ -21,7 +23,7 @@ class AonMessenger extends HTMLElement {
 				fn: () => this.loadIndex()
 			},
 			{
-				name: 'Create',
+				name: 'Crear',
 				icon: 'message',
 				fn: () => this.loadCreate()
 			},
