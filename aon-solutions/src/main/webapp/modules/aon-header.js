@@ -2,14 +2,13 @@ import {closeSession} from  '../services/service.js';
 import {isMobile} from  '../services/utils.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
-import './aon-configuration.js';
+import '../components/aon-icon-button.js';
+import '../components/aon-search-box.js';
+
+import './configuration/aon-configuration.js';
 import './invoice/aon-invoice-panel.js';
 import './invoice/aon-invoice.js';
-import './aon-user.js';
-import './aon-icon-button.js';
-import './aon-search-box.js';
-
-
+import './user/aon-user.js';
 
 class AonHeader extends HTMLElement {
 

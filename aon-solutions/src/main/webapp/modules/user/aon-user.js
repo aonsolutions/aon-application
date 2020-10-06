@@ -1,8 +1,8 @@
-import {Apps} from  '../services/app.js';
-import {getDomainApps, setUserAppRole, setUser} from  '../services/service.js';
+import {Apps} from  '../../services/app.js';
+import {getDomainApps, setUserAppRole, setUser} from  '../../services/service.js';
 
-import './aon-select.js';
-import './aon-card.js';
+import '../../components/aon-select.js';
+import '../../components/aon-card.js';
 
 class AonUser extends HTMLElement {
 

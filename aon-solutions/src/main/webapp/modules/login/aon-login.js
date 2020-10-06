@@ -1,7 +1,7 @@
-import {login, getManifest, rememberPassword} from  '../services/service.js';
-import {rootPanel} from '../services/gwtLoader.js';
-import './aon-input-text.js';
-import './aon-parent.js';
+import {login, getManifest, rememberPassword} from  '../../services/service.js';
+import {rootPanel} from '../../services/gwtLoader.js';
+import '../../components/aon-input-text.js';
+import '../company/aon-parent.js';
 
 
 class AonLogin extends HTMLElement {

@@ -1,13 +1,13 @@
-import {getAuth} from '../services/service.js';
+import {getAuth} from '../../services/service.js';
 
-import './aon-user.js';
-import './aon-toolbar.js';
-import './aon-card.js';
-import './aon-address.js';
-import './aon-input-text.js';
-import './aon-marketplace.js';
-import './aon-user-list.js';
-import './company/aon-company-list.js';
+import '../../components/aon-toolbar.js';
+import '../../components/aon-card.js';
+import '../../components/aon-address.js';
+import '../../components/aon-input-text.js';
+import '../marketplace/aon-marketplace.js';
+import '../user/aon-user-list.js';
+import '../user/aon-user.js';
+import '../company/aon-company-list.js';
 
 class AonConfiguration extends HTMLElement {
 

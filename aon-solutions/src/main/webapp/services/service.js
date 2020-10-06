@@ -1,7 +1,5 @@
 import {request} from   './request.js';
 
-import '../components/aon-desktop.js'
-
 let companies;
 let company;
 

@@ -1,5 +1,5 @@
 import {getInvoices} from '../../services/service.js';
-import '../aon-table.js';
+import '../../components/aon-table.js';
 
 (function() {
 

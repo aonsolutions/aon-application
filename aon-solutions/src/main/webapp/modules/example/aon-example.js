@@ -1,4 +1,4 @@
-import '../aon-application.js';
+import '../../components/aon-application.js';
 
 class AonExample extends HTMLElement {
 
@@ -15,7 +15,7 @@ class AonExample extends HTMLElement {
 
  	build() {
 		let aonExample = document.getElementById('aonExample');
-		
+
 		aonExample.addToolbarOption('Add', 'add', () => {alert('Add Example')});
 
 

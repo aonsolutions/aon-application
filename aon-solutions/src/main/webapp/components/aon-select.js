@@ -55,7 +55,6 @@
 		}
 
 		attributeChangedCallback(name, oldValue, newValue) {
-			console.log(`attribute ${name} change!! ${newValue}`);
 			if('options' === name) {
 				let span = document.getElementById(this.getAttribute('id') + 'Span');
 				if(span){
@@ -133,7 +132,6 @@
 
 			let span = document.createElement('span');
 			span.setAttribute('id', this.getAttribute('id') + 'Span');
-			console.log('AAAA-' + this.offsetWidth);
 			span.style.position = "absolute";
 			span.style.left = -(this.offsetWidth-32) + "px";
 			span.style.top = "0px";

@@ -1,6 +1,6 @@
-import {Apps, Services} from  '../services/app.js';
-import {getDomainApps, setDomainApp} from  '../services/service.js';
-import './aon-icon.js';
+import {Apps, Services} from  '../../services/app.js';
+import {getDomainApps, setDomainApp} from  '../../services/service.js';
+import '../../components/aon-icon.js';
 
 class AonMarketplace extends HTMLElement {
 

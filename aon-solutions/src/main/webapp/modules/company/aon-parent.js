@@ -1,6 +1,6 @@
-import {isMobile} from  '../services/utils.js';
-import {closeSession, getUserAppRole, getCompanies} from  '../services/service.js';
-import {rootPanel} from '../services/gwtLoader.js';
+import {isMobile} from  '../../services/utils.js';
+import {closeSession, getUserAppRole, getCompanies} from  '../../services/service.js';
+import {rootPanel} from '../../services/gwtLoader.js';
 
 import './aon-desktop.js';
 

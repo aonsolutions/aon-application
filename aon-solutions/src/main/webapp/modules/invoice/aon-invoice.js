@@ -3,14 +3,13 @@ import {Paymethods} from '../../services/paymethod.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
 import {insertInvoice} from '../../services/service.js';
 
-import '../aon-card.js';
-import '../aon-input-text.js';
-import '../aon-select.js';
-import '../aon-address.js';
-import '../aon-checkbox.js';
+import '../../components/aon-card.js';
+import '../../components/aon-input-text.js';
+import '../../components/aon-select.js';
+import '../../components/aon-address.js';
+import '../../components/aon-checkbox.js';
 
 (function() {
-
 
 	class AonInvoice extends HTMLElement {
 
@@ -290,6 +289,10 @@ import '../aon-checkbox.js';
 			});
 		}
 
+		getRegistry() {
+			return _invoice.type !== 'Emitida' ? this._invoice.receiver : this._invoice.sender;
+		}
+
 		newInvoice() {
 			var d = new Date();
 			var month = d.getMonth() + 1;
@@ -302,14 +305,27 @@ import '../aon-checkbox.js';
 				reference: '',
 				date: curDate,
 				total: 0,
-				nif: '',
-				name: '',
-				address: {
+				sender: {
+					nif: '',
+					name: '',
+					address: {
 						country: 'ES',
 						address: '',
 						zip: '',
 						city: '',
 						province: ''
+					}
+				},
+				receiver: {
+					nif: '',
+					name: '',
+					address: {
+						country: 'ES',
+						address: '',
+						zip: '',
+						city: '',
+						province: ''
+					}
 				},
 				category: '',
 				transaction: 'NAC',
@@ -319,7 +335,6 @@ import '../aon-checkbox.js';
 				irpf: undefined,
 				suplidos: false,
 				totalSuplidos: 0
-
 			};
 			return inv;
 		}

@@ -18,88 +18,74 @@ class AonDialog extends HTMLElement {
 		this.setAttribute('title', title);
 	}
 
+	get type() {
+		return this.getAttribute('type');
+	}
+
+	set type(type) {
+		this.setAttribute('type', type);
+	}
+
 	constructor () {
 		super();
 	}
 
 	connectedCallback () {
-		// this.innerHTML = `
-		// 	<dialog class="mdl-dialog">
-		// 		<h4 class="mdl-dialog__title">Allow data collection?</h4>
-		//     <div class="mdl-dialog__content">
-		//
-		//     </div>
-		//     <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
-		//       <button type="button" class="mdl-button">Agree</button>
-		//       <button type="button" class="mdl-button close">Disagree</button>
-		//     </div>
-		//   </dialog>
-		// 	`;
 
-			let dialog = document.createElement('dialog');
-			dialog.setAttribute('id', 'aonDialog');
-			dialog.className = 'mdl-dialog';
+		this.innerHTML = `
+		<div id="${this.getAttribute('id') + 'Dialog'}" class="aonDialog">
+		<!-- Modal content -->
+			<div id="${this.getAttribute('id') + 'DialogContent'}" class="aonDialogContent">
 
-			let title = document.createElement('h4');
-			title.setAttribute('id', this.getAttribute('id') + 'Title');
-			title.className = 'mdl-dialog__title';
-			title.innerHTML = this.getAttribute('title');
+			</div>
+			<!-- <div id="${this.getAttribute('id') + 'DialogAction'}">
 
-			let content = document.createElement('div');
-			content.setAttribute('id', this.getAttribute('id') + 'Content');
-			content.className = 'mdl-dialog__content';
 
-			let actions = document.createElement('div');
-			actions.setAttribute('id', this.getAttribute('id') + 'Actions');
-			actions.className = 'mdl-dialog__actions mdl-dialog__actions--full-width';
-
-			let cancel = document.createElement('button');
-			cancel.className = 'mdl-button';
-			cancel.setAttribute('id', this.getAttribute('id') + 'ActionsCancelButton');
-			cancel.addEventListener('click', () => dialog.close());
-			cancel.innerHTML = 'Cancelar';
-
-			let accept = document.createElement('button');
-			accept.className = 'mdl-button';
-			accept.setAttribute('id', this.getAttribute('id') + 'ActionsAcceptButton');
-			accept.addEventListener('click', () => dialog.close());
-			accept.innerHTML = 'Aceptar';
-
-			actions.appendChild(accept)
-			actions.appendChild(cancel);
-
-			dialog.appendChild(title);
-			dialog.appendChild(content);
-			dialog.appendChild(actions);
-
-			this.appendChild(dialog);
-			//dialogPolyfill.registerDialog(dialog);
+			</div> -->
+		</div>
+		`;
+		this.build();
   }
 
+	build() {
+		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
+		window.onclick = (event) => {
+  		if (event.target == dialog) {
+				this.close();
+  		}
+		}
+	}
+
 	open(){
-		let dialog = document.createElement('dialog');
-		dialog.showModal();
+		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog')
+		dialog.style.display = 'block';
 	}
 
-	addContent(widget) {
-		let content = document.getElementById(this.getAttribute('id') + 'Content');
-		content.appendChild(widget)
+	close() {
+		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog')
+		dialog.style.display = 'none';
 	}
 
-	addContentHtml(html) {
-		let content = document.getElementById(this.getAttribute('id') + 'Content');
+	setContent(widget) {
+		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
+		content.innerHTML = '';
+		content.appendChild(widget);
+	}
+
+	setContentHtml(html) {
+		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
 		content.innerHTML = html;
 	}
 
-	addCancelAction(fn) {
-		let cancel = document.getElementById(this.getAttribute('id') + 'ActionsCancelButton');
-		cancel.addEventListener('click', fn);
-	}
-
-	addAcceptAction(fn) {
-		let accept = document.getElementById(this.getAttribute('id') + 'ActionsAcceptButton');
-		accept.addEventListener('click', fn);
-	}
+	// addCancelAction(fn) {
+	// 	let cancel = document.getElementById(this.getAttribute('id') + 'ActionsCancelButton');
+	// 	cancel.addEventListener('click', fn);
+	// }
+	//
+	// addAcceptAction(fn) {
+	// 	let accept = document.getElementById(this.getAttribute('id') + 'ActionsAcceptButton');
+	// 	accept.addEventListener('click', fn);
+	// }
 }
 
 window.customElements.define('aon-dialog', AonDialog);

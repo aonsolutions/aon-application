@@ -2,7 +2,7 @@ import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
 import {bidoq} from '../services/bidoq.js';
-import './aon-icon.js';
+import '../components/aon-icon.js';
 import './contrat@/aon-contrata.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';

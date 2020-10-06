@@ -1,11 +1,13 @@
-import {isMobile} from  '../services/utils.js';
+import {isMobile} from  '../../services/utils.js';
 import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
-	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../services/app.js';
-import {getDomainApps, setDomainApp} from  '../services/service.js';
-import {startModule, rootPanel} from '../services/gwtLoader.js';
-import './aon-icon.js';
-import './aon-marketplace.js';
-import './aon-application.js';
+	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
+import {getDomainApps, setDomainApp} from  '../../services/service.js';
+import {startModule, rootPanel} from '../../services/gwtLoader.js';
+
+import '../../components/aon-icon.js';
+import '../../components/aon-application.js';
+
+import '../marketplace/aon-marketplace.js';
 
 class AonDesktop extends HTMLElement {
 

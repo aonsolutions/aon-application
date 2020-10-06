@@ -1,9 +1,9 @@
 import {rootPanel} from '../services/gwtLoader.js';
 
-import './aon-login.js';
+import './login/aon-login.js';
 import './aon-home.js';
-import './aon-parent.js';
-import './aon-desktop.js';
+import './company/aon-parent.js';
+import './company/aon-desktop.js';
 
 (function() {
 

@@ -1,5 +1,5 @@
 import './aon-user.js'
-import {getUsers} from  '../services/service.js';
+import {getUsers} from  '../../services/service.js';
 
 (function() {
 
