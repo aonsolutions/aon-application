@@ -204,10 +204,12 @@ public class Certifica2 {
 				.and(CONTRACT_DATA.NAME.eq("CNO"))
 				.fetchOne(CONTRACT_DATA.EXPRESSION);
 		
-		if(checkIfNotExist(cnoType))
-			return "No existe CNO para este contrato";
+		String cno = "";
 		
-		String cno = normalizeString(cnoType);
+		if(!checkIfNotExist(cnoType)) {
+			cno = normalizeString(cnoType);
+//			return "No existe CNO para este contrato";
+		}
 		
 		// ---------------------------------------------------- Enterprise Data
 		
@@ -347,7 +349,10 @@ public class Certifica2 {
 		trabajadorType.setGrupoCotizacion(quoteGroup);
 		trabajadorType.setTipoContrato(tc2);
 		trabajadorType.setDuracionContrato(StringUtils.leftPad(contractDuration.toString(), 5, '0'));
-		trabajadorType.setCodProfesion(StringUtils.rightPad(cno, 7, '0'));
+		
+		if(!StringUtils.isBlank(cno))
+			trabajadorType.setCodProfesion(StringUtils.rightPad(cno, 7, '0'));
+		
 		trabajadorType.setFechaAltaEmpresa(fullDateFormat.format(startDate));
 		trabajadorType.setCodCausaSuspension(suspensionReasonCode);
 		trabajadorType.setFechaSuspensionExtincion(fullDateFormat.format(endDate));

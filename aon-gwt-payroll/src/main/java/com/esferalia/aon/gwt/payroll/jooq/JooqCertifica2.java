@@ -63,7 +63,10 @@ public class JooqCertifica2 {
 				.and(SALARY_DATA.NAME.eq("FIN").or(SALARY_DATA.NAME.eq("CAUSA_INDEMNIZACION")))
 				.fetch();
 		
-		String suspensionReasonCode = getSuspensionReasonCode(suspensionCodeRecords.get(0).get(SALARY_DATA.EXPRESSION));
+		String suspensionReasonCode = "00";
+		
+		if(suspensionCodeRecords.isNotEmpty())
+			suspensionReasonCode = getSuspensionReasonCode(suspensionCodeRecords.get(0).get(SALARY_DATA.EXPRESSION));
 		
 		// --------------------------- GENERATE CERTIFIC@2
 		String certifica2Message = Certifica2.getCertifica2(dslContext, contractId, suspensionReasonCode, out);
