@@ -691,8 +691,15 @@ public class CertificadosWriter implements Serializable {
 		
 		List<SalaryData> cgcBases;
 		try {
+			
+			List<String> bases =  new ArrayList<String>();
+			bases.add(ContextVariable.CGC_BASE.getName());
+			for (ContextVariable var : ContextVariable.ERE_BASES)
+				bases.add(var.getName());			
+			
 			cgcBases = SEPEUtils.getInstance()
-					.getSalaryDataList(detail.getContract(), startDate, endDate, ContextVariable.CGC_BASE.getName() );
+					.getSalaryDataList(detail.getContract(), startDate, endDate, bases.toArray(String[]::new) );
+			
 		} catch (ManagerBeanException e) {
 			String msg = "Ha ocurrido un error al obtener datos de las nominas.";
 			AonUtil.addErrorMessage(msg);
