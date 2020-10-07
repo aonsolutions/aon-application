@@ -1,73 +1,71 @@
 package solutions.aon.in.invoice.templates;
 
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import solutions.aon.in.invoice.InvoiceBuilder;
 
 public class AmountParser {
 	
 	public static Collection<Double> getAmounts(String text) {
-		// const re: RegExp = /((-\s*)?\d+\s*([\.|,]\s*(\d)+){1,2}-?)/gim;
-		Pattern pattern = Pattern.compile("((-\\s*)?\\d+\\s*([\\.|,]\\s*(\\d)+){1,2}-?)", Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
-		Collection<String> found = find(text, pattern);
+		char decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+		char groupingSeparator = DecimalFormatSymbols.getInstance().getGroupingSeparator();
+		
+		Pattern pattern = Pattern.compile(
+				 "(?<integ>-?\\+?(\\d+\\"+ groupingSeparator +")*\\d+)"
+				+"\\" + decimalSeparator
+				+"(?<fract>\\d+)"
+				+"\\b"
+				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
 		List<Double> amounts = new ArrayList<Double>();
-		for ( String str : found ) {
-			// XXX XX,XX => XXXXX,XX
-			// let str: string = match[0].replace(/\s/g, '').replace(/(.*)-$/, '-$1'); // postfix
-			str = str.replaceAll("\\s", "").replaceAll("(.*)-$", "-$1");
+		
+		Matcher matcher = pattern.matcher(text);
+		int index = 0;
+		while ( index <= text.length() && matcher.find(index) ) {
+			String integ = matcher.group("integ");
+			integ = integ
+					.replaceAll("O", "0")
+					.replaceAll(",", "");
 
-			// XXX.XXX,XX => XXXXXX.XX
-			// if (str.match(/,/)) {
-			//	str = str.replace(/\./g, '').replace(/,/g, '.');
-			// }
-			if ( str.contains(",")) {
-				str = str.replaceAll("\\.", "").replaceAll(",", ".");
-			}
-				
-			// clean mismatched
-		    // if (/\d+\.\d+\.\d+/g.test(str)) {
-		    //    continue;
-		    // }
-			if ( str.matches("\\d+\\.\\d+\\.\\d+") ) {
-				continue;
-			}
-			
-			// if (/\d+\.\d{3}/g.test(str)) {
-			//   continue;
-			// }
-			if ( str.matches("\\d+\\.\\d{3}") ) {
-				continue;
-			}
-			
+			String fract = matcher.group("fract");
+			System.out.print( "Parte Entera ..: {" + integ + "}" + "\t Parte Decimal .: {" + fract + "}"); 
+			String str = integ + "." + fract;
+			Double amount = null;
 			try {
-				double amount = Double.parseDouble(str);
-				amounts.add(amount);
+				amount = Double.parseDouble(str);
 			} catch (NullPointerException | NumberFormatException  e ) {
-				
 			}
+			
+			if (amount != null) {
+				int i = matcher.start();
+				String prefix = substr(text,i-1, 1).toUpperCase();
+				boolean fake = prefix.matches("[-,\\+\\.0-9]") || prefix.matches("[\\w]");
+				System.out.print( fake ?" (FAKE 1!)":"" );
+				if ( !fake ) {
+					if ( (text.length() - matcher.end()) > 0 )  {
+						String suffix = substr(text,matcher.end(), 1).toUpperCase();
+						fake = suffix.matches("[-,\\+\\.0-9]") || suffix.matches("[\\w]");
+						fake = fake || suffix.matches("[\\w]");
+						System.out.print( fake ?" (FAKE 2!)":"" );
+					}
+				}
+				if ( !fake ) {
+					System.out.print( " (ADDED!)" );
+					amounts.add(amount); 
+				} 
+				index = matcher.end() + 1 ;
+			} else {
+				index = matcher.start() + 1 ;
+			}
+			System.out.println();
 		}
 		return amounts;
 	}
-
-	private static Collection<String> find(String text, Pattern pattern ) {
-		List<String> found = new ArrayList<String>();
 		
-		Matcher matcher = pattern.matcher(text);
-		while ( matcher.find() ) {
-			found.add(matcher.group());
-		}
-		
-		return found;
-	}
-	
+/*
 	private static void insightAmounts(Collection<Double> collection, InvoiceBuilder<?> handler) {
 		double percentages [] = {21.0, 10.0, 4.0};
 		
@@ -109,15 +107,12 @@ public class AmountParser {
 			}
 		}
 		
-		// ¿?
+		// ï¿½?
 		// if (invoice.sender && invoice.sender.document_country && invoice.sender.document_country !== 'ES' && amounts.length > 0) {
 		// 	invoice.total = Array.from(map.entries()).sort((e1: [number, number], e2: [number, number]) => e2[1] - e1[1] || e2[0] - e1[0])[0][0];
 		// }
 
 		// 'total = base + iva' not found try 'total - base'
-		
-		
-		
 	}
 	
 	private static int indexOf(Double amounts [], double amount, int start ) {
@@ -137,6 +132,20 @@ public class AmountParser {
 		}
 		return indexOf;
 	}
-	
+*/	
+	private static String substr(String str, int start, int length) {
+		int beginIndex = Math.max(start, 0);
+		int endIndex = Math.min(str.length()+1, start+length);
+		return str.substring(beginIndex, endIndex);
+	}
 
+	public static void main(String[] args) {
+		Collection<Double> amounts = AmountParser.getAmounts(
+			"1000.25"
+		);
+		for (Double amount : amounts) {
+			System.out.println( amount );
+		}
+		System.out.println( "END" );
+	}
 }
