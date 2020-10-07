@@ -67,7 +67,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                           <a href="" class="d-inline-block">Más Info</a>
-                          <a href="ticket/index.html" class="d-inline-block atp_btn_abrir" >Abrir</a>
+                          <a href="ticket/messenger.html" class="d-inline-block atp_btn_abrir" >Abrir</a>
                         </div>
                       </div>
                       <!-- end single opcion contratada -->
@@ -94,9 +94,9 @@
                           </svg>
                           <p class="d-inline-block">Documental</p>
                         </div>
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center" onclick="javascript:view.src='ticket/messenger.html'">
                           <a href="" class="d-inline-block">Más Info</a>
-                          <a href="documental/index.html" class="d-inline-block atp_btn_abrir">Abrir</a>
+                          <a href="documental/documental.html" class="d-inline-block atp_btn_abrir">Abrir</a>
                         </div>
                       </div>
                       <!-- end single opcion contratada -->
@@ -125,7 +125,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                           <a href="" class="d-inline-block">Más Info</a>
-                          <a href="marcaje/historial.html" class="d-inline-block atp_btn_abrir">Abrir</a>
+                          <a href="marcaje/signin.html" class="d-inline-block atp_btn_abrir">Abrir</a>
                         </div>
                       </div>
                       <!-- end single opcion contratada -->
@@ -154,7 +154,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                           <a href="" class="d-inline-block">Más Info</a>
-                          <a href="blank.html" class="d-inline-block atp_btn_abrir">Abrir</a>
+                          <a href="contable/contable.html" class="d-inline-block atp_btn_abrir">Abrir</a>
                         </div>
                       </div>
                       <!-- end single opcion contratada -->
@@ -241,7 +241,7 @@
                         </div>
                         <div class="d-flex align-items-center">
                           <a href="" class="d-inline-block">Más Info</a>
-                          <a href="blank.html" class="d-inline-block atp_btn_abrir">Abrir</a>
+                          <a href="home.html" class="d-inline-block atp_btn_abrir">Abrir</a>
                         </div>
                       </div>
                       <!-- end single opcion contratada -->
@@ -465,6 +465,17 @@
  
     <!-- Scripts -->
     <script src="js/app.js"></script>
+    <script>
+        $(document).on('click', '.atp_btn_abrir, .atp_btn_contratar', function(e){
+            e.preventDefault();
+            
+            var link = $(this).attr('href');
+            
+            // Cogemos el iframe padre y cambiamos su src
+            var parentBody = window.parent.document.body;
+            $("#view", parentBody).attr('src', link);
+        });
+    </script>
     <!-- FIN Scripts -->
   </body >
 </html >
