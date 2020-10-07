@@ -1,4 +1,4 @@
-      class AonInputText extends HTMLElement {
+      class AonInput extends HTMLElement {
 
         static get observedAttributes() {
           return ['value', 'disabled', 'readonly', 'visible'];
@@ -68,6 +68,14 @@
           this.setAttribute('filled', filled);
         }
 
+        get options() {
+    			return this.getAttribute('options');
+    		}
+
+    		set options(options) {
+    			this.setAttribute('options', options);
+    		}
+
         attributeChangedCallback(name, oldValue, newValue) {
           //console.log(`attribute ${name} change!! ${newValue}`);
           if('value' === name) {
@@ -122,13 +130,13 @@
           input.required = true;
           input.id = this.getAttribute('id') + 'Input';
           input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
-          input.type = this.getAttribute('type') ? this.getAttribute('type') : 'text';
+          input.type = this.getAttribute('type') && !this.isTypeList() ? this.getAttribute('type') : 'text';
           if('date' === this.getAttribute('type')){
             this.style.minWidth = '150px';
           }
           if(this.isDisabled())
             input.disabled = true;
-          if(this.isReadonly())
+          if(this.isReadonly() || this.isTypeList())
             input.readonly = true;
 
           input.addEventListener('change', () => {
@@ -158,12 +166,28 @@
           }
 
           div.appendChild(label);
+
+          if(this.isTypeList()) {
+            let iconLabel = document.createElement('label');
+            iconLabel.style.position = 'absolute';
+            iconLabel.style.top = '5px';
+      			iconLabel.style.right = '0px';
+      			iconLabel.setAttribute('id', this.getAttribute('id') + 'Icon');
+      			iconLabel.setAttribute('for', input.getAttribute('id'));
+            iconLabel.innerHTML = `<aon-icon-button id="${this.getAttribute('id') + 'IconLabel'}" icon="arrow_drop_down" noHover="true"></aon-icon-button>`;
+            div.appendChild(iconLabel);
+          }
+
           return div;
         }
 
         onChange(fn){
           let input = document.getElementById(this.getAttribute('id') + 'Input');
           input.addEventListener('change', fn);
+        }
+
+        isTypeList() {
+          return this.hasAttribute('type') && this.getAttribute('type') === 'list';
         }
 
         isVisible(){
@@ -200,4 +224,4 @@
         }
       }
 
-      window.customElements.define('aon-input-text',  AonInputText);
+      window.customElements.define('aon-input',  AonInput);

@@ -77,6 +77,20 @@
 	margin-bottom: 32px;;
 }
 
+input:disabled + .omrs-input-label,
+input:read-only + .omrs-input-label {
+	top: 0;
+	font-size: 0.9375rem;
+	margin-bottom: 32px;;
+}
+
+.omrs-input-filled > input:read-only + .omrs-input-label,
+.omrs-input-filled > input:disabled + .omrs-input-label {
+	top: 0;
+	font-size: 0.9375rem;
+	margin-bottom: 32px;;
+}
+
 .omrs-input-underlined:not(.omrs-input-danger) > input:focus + .omrs-input-label,
 .omrs-input-filled:not(.omrs-input-danger) > input:focus + .omrs-input-label {
 	color: var(--omrs-color-interaction);
