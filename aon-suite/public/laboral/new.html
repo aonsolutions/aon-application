@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet" type='text/css'>
+
+    <!-- MATERIAL ICONS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+
+    <!-- MATERIAL COMPONENTS -->
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <link href="../css/app.css" rel="stylesheet" id="linkcss">
+
+</head>
+
+<body>
+    <!-- start cabecera -->
+    
+    <!-- end cabecera -->
+
+    <!-- start cuerpo -->
+    <div class="container-fluid atp_cuerpo">
+        <div class="row">
+            <!-- start menu izquierda -->
+            <!-- end menu izquierda -->
+
+            <!-- start contenido centro -->
+            <div class="col" id="atp_contenido_centro">
+                <div class="container-fluid">
+                    <div class="row justify-content-center align-items-center">
+                        <!-- INICIO VISTA -->
+                        <div class="col-12">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <h3>Crear nueva alta</h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="float-right">
+                                        <button class="btn btn-primary almacenar-datos" type="button">Almancenar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form id="formulario-alta">
+                                <input type="hidden" name="empleadoID" id='empleadoID' value="" />
+                            
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Nombre y apellidos
+                                            </label>
+                                            <input type="text" name="nombre" id="nombre" value="" class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                DNI o NIE
+                                            </label>
+                                            <input type="text" name="dni" id="dni" value="" class="form-control numero-letras" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Número seguridad social (NAF)
+                                            </label>
+                                            <input type="text" name="naf" id="naf" value="" class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Fecha de Nacimiento 
+                                            </label>
+                                            <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="" class="form-control text-center pointer <?=(!isset($empleadoID)) ? 'fondo-blanco' : '' ?>" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Nacionalidad
+                                            </label>
+                                            <input type="text" name="nacionalidad" id="nacionalidad" value=""   class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check pl-0 popover_noResidente"  data-trigger="hover" data-html="true" data-content='<p>• No permanece más de 183 días durante el año natural en España</p>
+                                            <p>• No radica en España la base de sus actividades</p>
+                                            <p>• No residan en España el cónyuge e hijos menores</p>'>
+                                            <input type="checkbox" id="noResidente" name="noResidente" value="1">
+                                            <label class="form-check-label" for="noResidente">No residente</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Domicilio en España
+                                            </label>
+                                            <input type="text" name="domicilio" id="domicilio" value="" class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                C.P.
+                                            </label>
+                                            <input type="number" name="cp" id="cp" value="" class="form-control" placeholder="" maxlength="5" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Nivel de estudios
+                                            </label>
+                                            <select id="estudios" name="estudios" class="form-control">
+                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                                <option value="0">Educación primaria o equivalente</option>
+                                                <option value="1">Educación secundaria o equivalente</option>
+                                                <option value="2">bachillerato o equivalente</option>
+                                                <option value="3">FP medio o equivalente</option>
+                                                <option value="4">FP superior o equivalente</option>
+                                                <option value="5">Diplomado, Ingenierias técnicas o 1er ciclo universidad</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Tipo de contrato
+                                            </label>
+                                            <select id="contrato" name="contrato" class="form-control">
+                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                                <option value="0">Indefinido ordinario (sin bonificaciones)</option>
+                                                <option value="1">Indefinido bonificado (consultar al asesor)</option>
+                                                <option value="2">Temporal. Eventual*</option>
+                                                <option value="3">Temporal. Obra y servicio*</option>
+                                                <option value="4">Contrato en prácticas (consultar al asesor)</option>
+                                                <option value="5">Contrato de formación (consultar al asesor)</option>
+                                                <option value="6">Otros*</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4"></div>
+                                    <div class="col-4"></div>
+                                </div>
+                                
+                                <!-- solo se mostrara si indica otros -->
+                                <div id="otros" class="row hidden">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                *Si eligió "Otros", indique el tipo de contrato
+                                            </label>
+                                            <textarea class="form-control" rows="2" name="otroContrato" id="otroContrato" maxlength="5000" placeholder="" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- solo se mostrará si indica "Temporal. Obra y servicio" -->
+                                <div id="temporalObra" class="row hidden">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label contrato-tipo-temporal-obra">
+                                                <!-- Relleno por JS -->
+                                                Detalles del contrato temporal
+                                            </label>
+                                            <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder="" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- // solo se mostrará si indica "Temporal. Eventual" -->
+                                <div id="temporalEventual" class="row hidden">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label contrato-tipo-temporal-eventual">
+                                                <!-- Relleno por JS -->
+                                                Detalles del contrato temporal
+                                            </label>
+                                            <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder=""eadoID)) ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-4" id="paro">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                ¿Está inscrito como demandante de empleo? 
+                                                <p><small>(Necesario para contratos bonificados)</small></p>
+                                            </label>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="paro" id="paro" class="paro" value="1" >
+                                                    Sí
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="paro" id="paro" class="paro" value="2" checked>
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4" id="horas">
+                                        <div class="row">
+                                            <div class="col-7 col-xs-7 padding-0">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Duración de la jornada 
+                                                        <p><small>(horas semanales)</small></p>
+                                                    </label>
+                                                    <div class="radio">                                                                                                       
+                                                        <label>
+                                                            <input type="radio" name="horas" id="horas" class="horas" value="1">
+                                                            Jornada Parcial
+                                                        </label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label>
+                                                            <input type="radio" name="horas" id="horas" class="horas" value="2" checked>
+                                                            Jornada Completa
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-5 col-xs-5 padding-left-15 padding-right-0">
+                                                <div id="horaSemanales"  class="form-group hidden">
+                                                    <label>Horas: </label>
+                                                    <input type="number" name="hsemanales" id="hsemanales" value="" class="form-control numero" max="100" min="00" >
+                                                    <label>Minutos: </label>
+                                                    <input type="number" name="msemanales" id="msemanales" value="" class="form-control numero" max="59" min="00" >
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4" id="salario">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Salario mensual
+                                            </label>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="salario" id="salario" class="salario" value="1" >
+                                                    Pactado
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="salario" id="salario" class="salario" value="2" checked>
+                                                    Según convenio
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div id="importbilletes" class="col-4 hidden">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Importe del salario
+                                            </label>
+                                            <input type="number" name="importe" id="importe" value="" class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                    </div>
+                                    <div class="col-4">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6" >
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Distribución de la jornada
+                                            </label>
+                                            <input type="text" name="horasSemana" id="horasSemana" value="" class="form-control" placeholder="(Por ejemplo. Lunes a Jueves 09.00-14.00 y 16.00-19.00 y Viernes 09.00-14.00)" >
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Pagas extraordinarias
+                                            </label>
+                                            <select id="pagas" name="pagas" class="form-control">
+                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                                <option value="0">Prorrateadas mes a mes</option>
+                                                <option value="1">Al vencimiento (si lo permite el convenio)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Grupo profesional o puesto de trabajo
+                                            </label>
+                                            <input type="text" name="catProfesional" id="catProfesional" value="" class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Centro de trabajo <small>(Si hay más de uno)</small>
+                                            </label>
+                                            <input type="text" name="centTrabajo" id="centTrabajo" value="" class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Fecha de inicio del contrato
+                                            </label>
+                                            <input type="date" name="fechaInicio" id="fechaInicio" value="" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Fecha efectiva de la baja
+                                            </label>
+                                            <input type="date" name="fechaFin" id="fechaFin" value="" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div id="fechaEnd" class="form-check hidden">
+                                            <input type="checkbox" value="1" id="sinFecha" name="sinFecha" class="margin-left-5">
+                                            <label class="form-check-label" for="sinFecha">Sin fecha de fin</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Cláusulas adicionales a incluir en el contrato
+                                            </label>
+                                            <textarea class="form-control" rows="2" id="Clausulas" name="Clausulas" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group form-group-alto">
+                                            <label class="control-label">
+                                                Sugerencias
+                                            </label>
+                                            <textarea class="form-control" rows="2" id="empleadoSugerencias" name="sugerencias"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                                
+                            <!-- 
+                                //
+                                // Datos de BAJA
+                                //
+                            -->
+                            <form id="formulario-baja">
+                                <div class="row">
+                                    <div class="col-12 naranja extrabold">
+                                        DATOS DE BAJA
+                                    </div>
+                                </div>
+                                <div class="row padding-top-15">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Motivo de la baja
+                                            </label>
+                                            <input type="text" name="motivoBaja" id="motivoBaja" value="" class="form-control" placeholder="" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Nº de dias de vacaciones pendientes
+                                            </label>
+                                            <input type="text" name="vacPend" id="vacPend" value="" class="form-control" placeholder="" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Aclaración dias de vacaciones pendientes
+                                            </label>
+                                            <input type="text" name="aclVacPend" id="aclVacPend" value="" class="form-control" placeholder="" readonly>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Importe de indemnización
+                                            </label>
+                                            <input type="text" name="importeImnd" id="importeImnd" value="" class="form-control" placeholder="" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- 
+                                //
+                                // FIN BAJA
+                                //
+                            -->
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="float-right">
+                                        <button class="btn btn-primary almacenar-datos" type="button">Almancenar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end contenido centro -->
+            <!-- start menu derecha -->
+            
+            <!-- end menu derecha -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script>
+        $(document).ready(function () {
+            //
+            //POPOVER con el previo
+            //
+                $(".popover_noResidente").popover({
+                    trigger: 'hover',
+                });
+            //
+            // Fin POPOVER
+            //
+        
+            //
+            // Escoger campos correctos por si recarga
+            //
+                // Ocultar o mostrar campos de contrato
+                    // Ocultar campos si es necesario
+                    if (!$("#temporalEventual").hasClass("hidden")){
+                        $("#temporalEventual").addClass('hidden');
+                    }
+                    if (!$("#temporalObra").hasClass("hidden")){
+                        $("#temporalObra").addClass('hidden');
+                    }
+                    if (!$("#otros").hasClass("hidden")){
+                        $("#otros").addClass('hidden');
+                    }
+                    if (!$("#fechaEnd").hasClass("hidden")){
+                        $("#fechaEnd").addClass('hidden');
+                    }
+                    if($('#fechaFin').prop("readonly")){
+                        $('#fechaFin').prop("readonly", false);
+                    }
+                    // Mostrar si es alguno de los señalados
+                    switch ($('#contrato').val()) {
+                        case '0':
+                            $('#fechaFin').val("");
+                            $('#fechaFin').prop("readonly", true);
+                            $('#sinFecha').prop("checked", false);
+                            break;
+                        case '1':
+                            $('#fechaFin').val("");
+                            $('#fechaFin').prop("readonly", true);
+                            $('#sinFecha').prop("checked", false);
+                            break;
+                        case '2':
+                            $("#temporalEventual").removeClass('hidden');
+                            $("#fechaEnd").removeClass('hidden');
+                            break;
+                        case '3':
+                            $("#temporalObra").removeClass('hidden');
+                            $("#fechaEnd").removeClass('hidden');
+                            break;
+                        case '6':
+                            $("#otros").removeClass('hidden');
+                            $('#sinFecha').prop("checked", false);
+                            break;
+                    
+                        default:
+                            $('#sinFecha').prop("checked", false);
+                            break;
+                    }
+
+                // Ocultar o mostrar horas y minutos dependiendo del tipo de jornada
+                    if($("input[name='horas']:checked").val() == '1')
+                        $("#horaSemanales").removeClass('hidden');  //mostrar
+                    else if($("input[name='horas']:checked").val() == '2')
+                        $("#horaSemanales").addClass('hidden');     //ocultar
+
+                // Mostrar el input al dar en pactado - mostrar Importe del salario
+                    if($("input[name='salario']:checked").val() == '1')
+                        $("#importbilletes").removeClass('hidden');  //mostrar
+                    else if($("input[name='salario']:checked").val() == '2')
+                        $("#importbilletes").addClass('hidden');     //ocultar
+
+                // Si marca sin fecha fin - no se mete fecha fin
+                    if( $('#sinFecha').prop('checked') ) {
+                        $('#fechaFin').val('');
+                        $( "#fechaFin" ).prop( "disabled", true );
+                        $("#fechaFin").siblings(".Zebra_DatePicker_Icon").addClass("Zebra_DatePicker_Icon_Disabled"); //Cambiamos el color del icono
+                        $("#fechaFin").removeClass("fondo-blanco"); // Cambiamos el color del fondo
+                    } else {
+                        $("#fechaFin" ).prop( "disabled", false );
+                        $("#fechaFin").siblings(".Zebra_DatePicker_Icon").removeClass("Zebra_DatePicker_Icon_Disabled"); //Cambiamos el color del icono
+                        $("#fechaFin").addClass("fondo-blanco"); // Cambiamos el color del fondo
+                    }
+
+            //
+            // Mostrar un formulario o otro
+            //
+                let params = getAllGetParams();
+                for(var i in params){     
+                    switch (params[i][0]) {
+                        case 'id':
+                            switch (params[i][1]) {
+                                case 'alta':
+                                    console.log('crear una ALTA de la nada');
+                                    // Eliminamos el formulario de baja
+                                    $('#formulario-baja').html('');
+                                    break;
+                                case 'baja':
+                                    console.log('crear una BAJ de la nada');
+                                    // Eliminamos el formulario de alta
+                                    $('#formulario-alta').html('');
+                                    break;
+                            
+                                default:
+                                    console.log('seria EDITAR o PASAR a alta o baja ');
+                                    // Dejamos los dos formularios
+                                    break;
+                            }
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                }
+        });
+    
+        //
+        // Ocultar o mostrar campos de contrato
+        //
+            $(document).on('change', '#contrato', function () {
+                let selectData = $(this).val();
+
+                // Ocultar campos si es necesario
+                if (!$("#temporalEventual").hasClass("hidden")){
+                    $("#temporalEventual").addClass('hidden');
+                }
+                if (!$("#temporalObra").hasClass("hidden")){
+                    $("#temporalObra").addClass('hidden');
+                }
+                if (!$("#otros").hasClass("hidden")){
+                    $("#otros").addClass('hidden');
+                }
+                if (!$("#fechaEnd").hasClass("hidden")){
+                    $("#fechaEnd").addClass('hidden');
+                }
+                if($('#fechaFin').prop("readonly")){
+                    $('#fechaFin').prop("readonly", false);
+                }
+
+                // Mostrar si es alguno de los señalados
+                switch (selectData) {
+                    case '0':
+                        $('#fechaFin').val("");
+                        $('#fechaFin').prop("readonly", true);
+                        $('#sinFecha').prop("checked", false);
+                        break;
+                    case '1':
+                        $('#fechaFin').val("");
+                        $('#fechaFin').prop("readonly", true);
+                        $('#sinFecha').prop("checked", false);
+                        break;
+                    case '2':
+                        $("#temporalEventual").removeClass('hidden');
+                        $("#fechaEnd").removeClass('hidden');
+                        break;
+                    case '3':
+                        $("#temporalObra").removeClass('hidden');
+                        $("#fechaEnd").removeClass('hidden');
+                        break;
+                    case '6':
+                        $("#otros").removeClass('hidden');
+                        $('#sinFecha').prop("checked", false);
+                        break;
+                
+                    default:
+                        $('#sinFecha').prop("checked", false);
+                        break;
+                }
+            });
+
+        //
+        // Ocultar o mostrar horas y minutos dependiendo del tipo de jornada
+        //
+            $(document).on('change', 'input[name="horas"]', function () {
+                if($("input[name='horas']:checked").val() == '1')
+                    $("#horaSemanales").removeClass('hidden');  //mostrar
+                else if($("input[name='horas']:checked").val() == '2')
+                    $("#horaSemanales").addClass('hidden');     //ocultar
+            });
+
+        //
+        // Mostrar el input al dar en pactado - mostrar Importe del salario
+        //
+            $(document).on('change', 'input[name="salario"]', function () {
+                if($("input[name='salario']:checked").val() == '1')
+                    $("#importbilletes").removeClass('hidden');  //mostrar
+                else if($("input[name='salario']:checked").val() == '2')
+                    $("#importbilletes").addClass('hidden');     //ocultar
+            });
+
+        //
+        // Si marca sin fecha fin - no se mete fecha fin    
+        //
+            $(document).on('change', '#sinFecha', function () {
+                if( $('#sinFecha').prop('checked') ) {
+                    $('#fechaFin').val('');
+                    $("#fechaFin").prop( "disabled", true );
+                    $("#fechaFin").siblings(".Zebra_DatePicker_Icon").addClass("Zebra_DatePicker_Icon_Disabled"); //Cambiamos el color del icono
+                    $("#fechaFin").removeClass("fondo-blanco"); // Cambiamos el color del fondo
+                } else {
+                    $("#fechaFin").prop( "disabled", false );
+                    $("#fechaFin").siblings(".Zebra_DatePicker_Icon").removeClass("Zebra_DatePicker_Icon_Disabled"); //Cambiamos el color del icono
+                    $("#fechaFin").addClass("fondo-blanco"); // Cambiamos el color del fondo
+                }
+            });
+
+        //
+        // Almacenar
+        //
+            $(document).on('click', '.almacenar-datos', function () {
+                let params = getAllGetParams();
+                for(var i in params){     
+                    switch (params[i][0]) {
+                        case 'id':
+                            switch (params[i][1]) {
+                                case 'alta':
+                                    alert('crear una ALTA de la nada');
+                                    break;
+                                case 'baja':
+                                    alert('crear una BAJ de la nada');
+                                    break;
+                            
+                                default:
+                                    alert('seria EDITAR o PASAR a alta o baja ');
+                                    break;
+                            }
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                }
+            });
+
+        //
+        // Coger parametros por get
+        //
+            function getAllGetParams() {
+                let result  = [];
+                let parts   = [];
+
+                location.search
+                    .substr(1)
+                    .split("&")
+                    .forEach(function (item) {
+                        parts = item.split("=");
+                        if(parts[0]!=""){     
+                            result.push(parts);
+                        }
+                });
+
+                return result;
+            }
+    </script>
+    <!-- FIN Scripts -->
+</body>
+
+</html>
