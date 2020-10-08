@@ -45,7 +45,7 @@
                     <form id="form" name="form" action="#" method="post">
                         <div class="row">
                             <div class="col-12 text-center">
-                                <h3 class="">Marcaje de empleados</h3>
+                                <h3 class="">Marcaje desde administrador</h3>
                             </div>
                         </div>
 
@@ -397,7 +397,7 @@
             $(hijo).appendTo("#tablaMarcajes");
         }
 
-        function obtenerHistorialAjax(datos) {
+        function obtenerHistorialAjax(fecha, idEmpleado) {
             var fechaActual = getFechaActual();
             var fechaActualDB = getFechaActualDB();
 
@@ -411,6 +411,7 @@
                         tipoMarcaje: 'Marcaje sin incidencia',
                         nota: 'Todo correcto',
                         marcaje: 'Entrada',
+                        idEmpleado: '1'
                     },
                     {
                         id: '2',
@@ -420,6 +421,7 @@
                         tipoMarcaje: 'Marcaje sin incidencia',
                         nota: 'Todo correcto',
                         marcaje: 'Salida',
+                        idEmpleado: '1'
                     },
                     {
                         id: '3',
@@ -429,6 +431,7 @@
                         tipoMarcaje: 'Marcaje sin incidencia',
                         nota: 'Todo correcto',
                         marcaje: 'Entrada',
+                        idEmpleado: '1'
                     },
                     {
                         id: '4',
@@ -438,6 +441,7 @@
                         tipoMarcaje: 'Marcaje sin incidencia',
                         nota: 'Todo correcto',
                         marcaje: 'Salida',
+                        idEmpleado: '1'
                     },
                 ],
             };
@@ -641,11 +645,11 @@
         }
 
         $('#actualizar').on('click', function (e) {
+            var idEmpleado = $('select[id=empleado]').val();
             var fecha = $('#mes').val();
-            console.log(fecha);
+            // console.log(idEmpleado);
             // alert(mes);
-            var datosHistorial = obtenerHistorialAjax(fecha);
-            fecha = fecha
+            var datosHistorial = obtenerHistorialAjax(fecha, idEmpleado);
             cargarHistorial(datosHistorial, fecha);
         })
 

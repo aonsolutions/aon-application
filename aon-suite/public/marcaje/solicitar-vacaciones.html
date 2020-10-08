@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet" type='text/css'>
+
+    <!-- MATERIAL ICONS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+
+    <!-- MATERIAL COMPONENTS -->
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <!-- Styles -->
+    <link href="../css/app.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+
+    <!-- start cuerpo -->
+    <div class="container-fluid atp_cuerpo">
+        <div class="row">
+            <!-- start contenido centro -->
+            <div class="col" id="atp_contenido_centro">
+                <!-- <div class="container-fluid">
+      <div class="row justify-content-center">
+        
+      </div>
+    </div> -->
+
+                <!-- Main-->
+                <div class="container-fluid pt-5">
+                    <form id="form" name="form" action="#" method="post">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h3 class="">Realizar una solicitud</h3>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid pt-3">
+                            <!-- <div class="row">
+                                <div class="col-12">
+                                    <h5 class="">Datos de marcaje</h5>
+                                </div>
+                            </div> -->
+
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="tipoSolicitud">Tipo de solicitud:</label>
+                                        <select class="form-control tipoMarcaje" id="tipoSolicitud"
+                                            name="tipoSolicitud">
+                                            <option value="" class="">- Seleccione -</option>
+                                            <option value="0">AUSENCIA JUSTIFICADA (AJ)</option>
+                                            <option value="1">BAJA MÉDICA (BAJA)</option>
+                                            <option value="2">EXCEDENCIA CUIDADO HIJOS (EXCD)</option>
+                                            <option value="3">HORAS EXTRAS (HORAS)</option>
+                                            <option value="4">PERMISO EMPRESA (PE)</option>
+                                            <option value="5">PERMISO MATERNIDAD/PATERNIDAD (MA-PA)</option>
+                                            <option value="6">PERMISO MATRIMONIAL (BODA)</option>
+                                            <option value="7">TELETRABAJO (TTRAB)</option>
+                                            <option value="8">TRABAJO EXTRA IN (TR_EXTRA-I)</option>
+                                            <option value="9">TRABAJO EXTRA OUT (TR-EXTRA-O)</option>
+                                            <option value="10">Vacaciones (VAC)</option>
+                                            <option value="11">Visita médico (MED)</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row ">
+                                <div class="col-lg-6 col-md-12">
+
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-3 col-sm-3 col-6">
+                                            <div class="form-group">
+                                                <label for="horaComienzo">Hora comienzo de la solicitud:</label>
+                                                <input class="form-control" type="time" id="horaComienzo"
+                                                    name="horaComienzo">
+                                            </div>
+
+                                        </div>
+                                        <div class="col-lg-6 col-md-3 col-sm-3 col-6">
+                                            <div class="form-group">
+                                                <label for="horaFin">Hora de fin de la solicitud:</label>
+                                                <input class="form-control" type="time" id="horaFin" name="horaFin">
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-lg-6 col-md-3 col-sm-3 col-6">
+                                            <div class="form-group">
+                                                <label for="fechaComienzo">Fecha comienzo de la solicitud:</label>
+                                                <input class="form-control" type="date" id="fechaComienzo"
+                                                    name="fechaComienzo">
+                                            </div>
+
+                                        </div>
+                                        <div class="col-lg-6 col-md-3 col-sm-3 col-6">
+                                            <div class="form-group">
+                                                <label for="fechaFin">Fecha de fin de la solicitud:</label>
+                                                <input class="form-control" type="date" id="fechaFin" name="fechaFin">
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="notaEntrada">Nota:</label>
+                                                <textarea class="form-control" id="notaEntrada" name="notaEntrada"
+                                                    rows="5"></textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="container-fluid pt-3">
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <button type="submit" form="form" id="botonEntrada" class="btn btn-info"
+                                        data-boton="entrada">Solicitar</button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <input id="fechaActual" name="fechaActual" type="hidden">
+                    </form>
+
+
+                </div>
+
+                <br>
+                <div class="border-top my-3"></div>
+                <div class="container-fluid pt-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                                    <h5 class="">Solicitudes realizas hoy</h5>
+                                </div>
+
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Fecha comienzo</th>
+                                            <th>Fecha fin</th>
+                                            <th>Hora comienzo</th>
+                                            <th>Hora fin</th>
+                                            <th>Tipo de solicitud</th>
+                                            <th>Nota</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaMarcajes">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- The Modal -->
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Marcaje</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- end contenido centro -->
+
+        </div>
+    </div><!-- end cuerpo -->
+
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script>
+
+        //simulamos los datos, realmente los obtendremos mediante llamada a api
+
+
+        var idEmpleado = getDatosSession('idEmpleado');
+
+        function getDatosSession(nombreDato) {
+            var idUsuario;
+            if (sessionStorage.getItem(nombreDato)) {
+                // Restaura el contenido al campo de texto
+                idUsuario = sessionStorage.getItem(nombreDato);
+            } else {
+                idUsuario = 0;
+            }
+            // console.log(idUsuario);
+            return idUsuario;
+        }
+
+
+        jQuery(function () {
+            var datosEmpleado = {
+                empleado: {
+                    id: '1',                            // id
+                    documento: '12345678A',             // dni
+                    nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
+                }
+
+            };
+
+            var fechaActual = getFechaActualDB();
+            // alert(fechaActual);
+            var datos = "";
+            datosHistorial = obtenerHistorialAjax(datos);
+            cargarHistorial(datosHistorial, fechaActual);
+
+            $('#fechaActual').val(fechaActual);
+
+        });
+
+        function cargarEmpleadoAjax(idEmpleado) {
+            var dato = { id: idEmpleado }
+            $.ajax({
+                url: '',
+                data: dato,
+                type: 'POST',
+                dataType: 'json',
+
+                success: function (respuesta) {
+                    console.log(respuesta);
+                    cargarEmpleado(respuesta);
+                },
+                error: function () {
+                    console.log("No se ha podido obtener la información");
+                },
+                complete: function (xhr, status) {
+                    console.log("Petición realizada");
+                }
+
+            });
+
+        }
+
+
+        (function ($) {
+            $.fn.serializeFormJSON = function () {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+        })(jQuery);
+
+
+        function enviarDatosAjax(datos) {
+
+            $.ajax({
+                url: '',
+                data: datos,
+                type: 'POST',
+                dataType: 'json',
+
+                success: function (respuesta) {
+                    console.log(respuesta);
+                },
+                error: function () {
+                    console.log("No se ha podido obtener la información");
+                },
+                complete: function (xhr, status) {
+                    console.log("Petición realizada");
+                }
+
+            });
+
+        }
+
+        function obtenerHistorialAjax(datos) {
+            var fechaActual = getFechaActual();
+            var fechaActualDB = getFechaActualDB();
+
+            var datosHistorial = {
+                historial: [
+                    {
+                        id: '1',
+                        fechaComienzo: '2020-09-30',
+                        fechaFin: '2020-09-30',
+                        horaComienzo: '08:00:00',
+                        horaFin: '14:00:00',
+                        nota: 'Todo correcto',
+                        tipoSolicitud: 'Horas extras',
+                        fechaSolicitud: '2020-09-30'
+                    },
+                    {
+                        id: '1',
+                        fechaComienzo: '2020-09-30',
+                        fechaFin: '2020-09-30',
+                        horaComienzo: '08:00:00',
+                        horaFin: '14:00:00',
+                        nota: 'Todo correcto',
+                        tipoSolicitud: 'Horas extras',
+                        fechaSolicitud: '2020-09-30'
+                    },
+                    {
+                        id: '1',
+                        fechaComienzo: '2020-09-30',
+                        fechaFin: '2020-09-30',
+                        horaComienzo: '08:00:00',
+                        horaFin: '14:00:00',
+                        nota: 'Todo correcto',
+                        tipoSolicitud: 'Horas extras',
+                        fechaSolicitud: '2020-09-30'
+                    },
+                    {
+                        id: '1',
+                        fechaComienzo: '2020-09-30',
+                        fechaFin: '2020-09-30',
+                        horaComienzo: '08:00:00',
+                        horaFin: '14:00:00',
+                        nota: 'Todo correcto',
+                        tipoSolicitud: 'Horas extras',
+                        fechaSolicitud: '2020-09-30'
+                    },
+                ],
+            };
+
+            return datosHistorial;
+
+        }
+
+        function cargarHistorial(datosHistorial, fecha) {
+            var historial = datosHistorial['historial'];
+            var hijo = "";
+            var mostrado = false;
+
+            // var value;
+            for (i in historial) {
+                // value = Number.parseInt(i) + 1;
+                if (fecha == historial[i]['fechaSolicitud']) {
+                    hijo = hijo + "<tr>";
+                    hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['fechaComienzo'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['fechaFin'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['horaComienzo'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['horaFin'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['tipoSolicitud'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
+                    hijo = hijo + "</tr>";
+                    mostrado = true;
+                }
+
+            }
+
+            $("#tablaMarcajes").empty();
+            if (mostrado) {
+
+            } else {
+                hijo = "<tr><td colspan='7'>No hay datos para mostrar</td></tr>";
+            }
+
+            $(hijo).appendTo("#tablaMarcajes");
+
+        }
+
+        function getFechaActual() {
+            var fechaActual = new Date();
+            var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = dia + "/" + mes + "/" + annio;
+
+            return fechaImprimible;
+            // alert(fechaImprimible);
+        }
+
+        function getFechaActualDB() {
+            var fechaActual = new Date();
+            var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = annio + "-" + mes + "-" + dia;
+
+            return fechaImprimible;
+            // alert(fechaImprimible);
+        }
+
+
+
+        (function ($) {
+            $.fn.serializeFormJSON = function () {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+        })(jQuery);
+
+
+
+
+
+    </script>
+</body>
+
+</html>
