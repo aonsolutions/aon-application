@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ContrataEmployeeObject {
@@ -578,7 +577,7 @@ public class ContrataEmployeeObject {
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfo) {
 		employeeContractData = employeeContractInfo;
 		employeeData = employeeContractInfo.getEmployeeInfo();
-		contractData = employeeContractInfo.getContractInfo();	
+		contractData = employeeContractInfo.getContractInfo();
 	}
 
 	public void updateEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){	
@@ -597,6 +596,19 @@ public class ContrataEmployeeObject {
 				failure.accept(caught);
 			}
 		});
+	}
+
+	public void addContractOtherData(String name, String value) {
+		this.employeeContractData.addContractOtherData(name, value);
+	}
+
+	public String getContractOtherData(String name) {
+		return this.employeeContractData.getContractOtherData().get(name);
+	}
+
+	public Boolean getContractOtherDataCB(String name) {
+		String value = this.employeeContractData.getContractOtherData().get(name);
+		return null == value ? false : true;
 	}
 		
 }

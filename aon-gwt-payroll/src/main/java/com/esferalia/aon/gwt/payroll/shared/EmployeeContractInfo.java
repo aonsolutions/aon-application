@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -8,6 +10,8 @@ public class EmployeeContractInfo implements Serializable{
 	
 	private EmployeeInfo employeeInfo;
 	private ContractInfo contractInfo;
+	
+	private Map<String, String> contractOtherData;
 	
 	/**
      * The key provider that provides the unique ID of a contact.
@@ -21,6 +25,7 @@ public class EmployeeContractInfo implements Serializable{
 	
 	public EmployeeContractInfo(){
 		super();
+		this.contractOtherData = new HashMap<String, String>();
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -39,6 +44,18 @@ public class EmployeeContractInfo implements Serializable{
 
 	public void setContractInfo(ContractInfo contractInfo) {
 		this.contractInfo = contractInfo;
+	}
+
+	public Map<String, String> getContractOtherData() {
+		return contractOtherData;
+	}
+
+	public void setContractOtherData(Map<String, String> contractOtherData) {
+		this.contractOtherData = contractOtherData;
+	}
+	
+	public void addContractOtherData(String name, String value) {
+		this.contractOtherData.put(name, value);
 	}
 
 }
