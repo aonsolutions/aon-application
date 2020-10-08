@@ -37,7 +37,7 @@
                 <div class="container-fluid pt-5">
                     <div class="row">
                         <div class="col-12 text-center">
-                            <h3 class="">Historial de marcajes</h3>
+                            <h3 class="">Historial de solicitudes</h3>
                         </div>
                     </div>
                     <div class="container-fluid pt-3">
@@ -60,11 +60,13 @@
                                         <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>Fecha</th>
-                                                <th>Hora</th>
-                                                <th>Tipo de marcaje</th>
+                                                <th>Fecha comienzo</th>
+                                                <th>Fecha fin</th>
+                                                <th>Hora comienzo</th>
+                                                <th>Hora fin</th>
+                                                <th>Tipo de solicitud</th>
                                                 <th>Nota</th>
-                                                <th>Marcaje</th>
+                                                <th>Fecha solicitud</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tablaMarcajes">
@@ -93,19 +95,43 @@
                 historial: [
                     {
                         id: '1',
-                        fecha: '25/09/2020',
-                        hora: '08:01:02',
-                        tipoMarcaje: 'Marcaje sin incidencia',
+                        fechaComienzo: '2020-09-30',
+                        fechaFin: '2020-09-30',
+                        horaComienzo: '08:00:00',
+                        horaFin: '14:00:00',
                         nota: 'Todo correcto',
-                        marcaje: 'Entrada',
+                        tipoSolicitud: 'Horas extras',
+                        fechaSolicitud: '2020-09-30'
                     },
                     {
                         id: '2',
-                        fecha: '25/09/2020',
-                        hora: '14:01:02',
-                        tipoMarcaje: 'Marcaje sin incidencia',
+                        fechaComienzo: '2020-09-30',
+                        fechaFin: '2020-09-30',
+                        horaComienzo: 'Dia completo',
+                        horaFin: 'Dia completo',
                         nota: 'Todo correcto',
-                        marcaje: 'Salida',
+                        tipoSolicitud: 'Vacaciones',
+                        fechaSolicitud: '2020-09-30'
+                    },
+                    {
+                        id: '3',
+                        fechaComienzo: '2020-10-01',
+                        fechaFin: '2020-10-01',
+                        horaComienzo: 'Dia completo',
+                        horaFin: 'Dia completo',
+                        nota: 'Todo correcto',
+                        tipoSolicitud: 'Vacaciones',
+                        fechaSolicitud: '2020-09-30'
+                    },
+                    {
+                        id: '4',
+                        fechaComienzo: '2020-10-02',
+                        fechaFin: '2020-10-02',
+                        horaComienzo: 'Dia completo',
+                        horaFin: 'Dia completo',
+                        nota: 'Todo correcto',
+                        tipoSolicitud: 'Vacaciones',
+                        fechaSolicitud: '2020-09-30'
                     },
                 ],
             };
@@ -122,11 +148,13 @@
                 // value = Number.parseInt(i) + 1;
                 hijo = hijo + "<tr>";
                 hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['fecha'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['hora'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['tipoMarcaje'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['fechaComienzo'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['fechaFin'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['horaComienzo'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['horaFin'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['tipoSolicitud'] + "</td>";
                 hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['marcaje'] + "</td>";
+                hijo = hijo + "<td>" + historial[i]['fechaSolicitud'] + "</td>";
                 hijo = hijo + "</tr>";
             }
 
@@ -134,8 +162,8 @@
             $(hijo).appendTo("#tablaMarcajes");
         }
 
-        function getFechaActual(){
-            var fechaActual = new Date();       
+        function getFechaActual() {
+            var fechaActual = new Date();
             var mes = fechaActual.getMonth() + 1;
             var annio = fechaActual.getFullYear();
 
