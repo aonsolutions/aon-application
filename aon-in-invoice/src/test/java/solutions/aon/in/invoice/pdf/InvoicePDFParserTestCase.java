@@ -121,13 +121,20 @@ public class InvoicePDFParserTestCase {
 			public double getTotal(){ return 86.83; }
 			public int getVatsNumber(){ return 1; }
 		},
-		RETENCION_1 ("RETENCION_1.pdf") {
+		DOS_IVAS_1 ("DOS_IVAS_1.pdf") {
 			public int getDocumentsNumber(){ return 2; }
 			public int getDatesNumber(){ return 1; }
-			public int getAmountNumber(){ return 5; }
-			public double getTotal(){ return 867.00; }
+			public int getAmountNumber(){ return 13; }
+			public double getTotal(){ return 6549.72; }
 			public int getVatsNumber(){ return 2; }
-		}
+		},
+//		RETENCION_1 ("RETENCION_1.pdf") {
+//			public int getDocumentsNumber(){ return 2; }
+//			public int getDatesNumber(){ return 1; }
+//			public int getAmountNumber(){ return 5; }
+//			public double getTotal(){ return 867.00; }
+//			public int getVatsNumber(){ return 2; }
+//		}
 		;
 
 		private String file;
