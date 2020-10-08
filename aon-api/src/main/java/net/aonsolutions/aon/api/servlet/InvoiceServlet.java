@@ -2,6 +2,7 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -68,7 +69,7 @@ public class InvoiceServlet extends HttpServlet{
 		JSONObject json = Utils.getRequestJSON(req);
 //		Company company = AON.getCompany(domainName, domainId, user.getLogin(), f -> f.getDomainProperty().eq(domainId));
 		
-		setInvoice(domain, user.getLogin(), json);
+		json = setInvoice(domain, user.getLogin(), json);
 		
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, json, new JSONObject());	
@@ -135,7 +136,7 @@ public class InvoiceServlet extends HttpServlet{
 		return jsArray;
 	}
 	
-	private static void setInvoice(Domain domain, String login, JSONObject json) {
+	private static JSONObject setInvoice(Domain domain, String login, JSONObject json) {
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		String status = json.opt("status") != null ? json.optString("status") : INBOX;
 
@@ -153,13 +154,21 @@ public class InvoiceServlet extends HttpServlet{
 			dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
 			json.put("id", dr.getId());
 		}
-		
-		DataResponseDetail drd = new DataResponseDetail()
-				.setDomain(domain.getId())
-				.setDataResponse(dr.getId())
-				.setDataVariable("json")
-				.setDataValue(json.toString());
-		drd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
+		Integer drId = dr.getId();
+		Optional<DataResponseDetail> drdOpt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(drId).and(f.getDataVariableProperty().eq("json")));
+		if(drdOpt.isPresent()) {
+			DataResponseDetail drd = drdOpt.get();
+			drd.setDataValue(json.toString());
+			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drd, f -> f.getIdProperty().eq(drd.getId()));
+		} else {
+			DataResponseDetail drd = new DataResponseDetail()
+					.setDomain(domain.getId())
+					.setDataResponse(dr.getId())
+					.setDataVariable("json")
+					.setDataValue(json.toString());
+			drd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
+		}
+		return json;
 	}
 	
 	private static InvoiceStatus getInvoiceStatus(String status) {

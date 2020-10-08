@@ -10,7 +10,7 @@ import org.junit.Test;
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.templates.Document.DocumentType;
 
-public class DocumentTestCase {
+public class DocumentTypeParserTestCase {
 	
 	private static final String[] VALID_DNIS = {"73742960S"
 		,"10597868C","68362309F","32748386C","59177614V","76329213X"

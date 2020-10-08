@@ -17,7 +17,7 @@ export const closeSession = () => {
 export const login = (data) => {
 	console.log(JSON.stringify(data));
 	return new Promise((resolve, reject) => {
-		request('POST', '/ms/api/login', undefined, data, undefined,  (token, error) => {
+		request('POST', '/ms/api/login', undefined, data, (token, error) => {
 			if(error) {
 				reject(error);
 			} else {
