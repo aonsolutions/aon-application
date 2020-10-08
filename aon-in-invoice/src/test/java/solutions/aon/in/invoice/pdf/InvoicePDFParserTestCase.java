@@ -7,12 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
 
 import org.junit.Test;
 
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.templates.Document;
+import solutions.aon.in.invoice.templates.InvoiceTax;
 
 public class InvoicePDFParserTestCase {
 	
@@ -21,6 +23,9 @@ public class InvoicePDFParserTestCase {
 		private Collection<Document> nifs;
 		private Collection<Date> dates;
 		private Collection<Double> amounts;
+		
+		private Double total;
+		private Collection<InvoiceTax> taxes;
 
 		@Override
 		public void setInsightNifs(Collection<Document> nifs) {
@@ -48,6 +53,19 @@ public class InvoicePDFParserTestCase {
 				this.amounts.addAll(amounts);
 			}
 		}
+		
+		@Override
+		public void setTotal(double total) {
+			this.total = total;
+		}
+		
+		@Override
+		public void setTax(InvoiceTax tax) {
+			if (this.taxes == null) {
+				this.taxes = new LinkedList<InvoiceTax>();
+			} 
+			this.taxes.add(tax);
+		}
 
 		public Collection<Document> getNifs() {
 			return nifs;
@@ -59,6 +77,12 @@ public class InvoicePDFParserTestCase {
 
 		public Collection<Double> getAmounts() {
 			return amounts;
+		}
+		public Double getTotal() {
+			return total;
+		}
+		public Collection<InvoiceTax> getTaxes() {
+			return taxes;
 		}
 	}
 
@@ -90,34 +114,37 @@ public class InvoicePDFParserTestCase {
 //		IBERDROLA_1 ("IBERDROLA_1.pdf", 5, 45 ),
 //		IBERDROLA_2 ("IBERDROLA_2.pdf", 5, 45 ),
 		
-		AYSER_1 ("AYSER_1.pdf", 3, 5 , 5),
-		
+		AYSER_1 ("AYSER_1.pdf") {
+			public int getDocumentsNumber(){ return 3; }
+			public int getDatesNumber(){ return 5; }
+			public int getAmountNumber(){ return 5; }
+			public double getTotal(){ return 86.83; }
+			public int getVatsNumber(){ return 1; }
+		},
+		RETENCION_1 ("RETENCION_1.pdf") {
+			public int getDocumentsNumber(){ return 2; }
+			public int getDatesNumber(){ return 1; }
+			public int getAmountNumber(){ return 5; }
+			public double getTotal(){ return 867.00; }
+			public int getVatsNumber(){ return 2; }
+		}
 		;
 
 		private String file;
-		private int documentsNumber;
-		private int datesNumber;
-		private int amountNumber;
 		
-		private TestTemplates(String file, int documentsNumber, int datesNumber, int amountNumber) {
+		private TestTemplates(String file) {
 			this.file = file;
-			this.documentsNumber = documentsNumber;
-			this.datesNumber = datesNumber;
-			this.amountNumber = amountNumber;
 		}
 		
 		public String getFile() {
 			return file;
 		}
-		public int getDocumentsNumber() {
-			return documentsNumber;
-		}
-		public int getDatesNumber() {
-			return datesNumber;
-		}
-		public int getAmountNumber() {
-			return amountNumber;
-		}
+		
+		public abstract int getDocumentsNumber();
+		public abstract int getDatesNumber();
+		public abstract int getAmountNumber();
+		public abstract double getTotal();
+		public abstract int getVatsNumber();
 	}
 	
 	@Test
@@ -147,11 +174,29 @@ public class InvoicePDFParserTestCase {
 				assertEquals(template.getFile() + " must parse " + template.getDatesNumber() + " dates!"
 						,template.getDatesNumber(),invoiceAssert.getDates().size());
 				
-				System.out.println( "\tAmounts: (expected: " + template.getDatesNumber() + ")" );
+				assertNotNull(template.getFile() + " has no amounts!",invoiceAssert.getAmounts());
+				System.out.println( "\tAmounts: (expected: " + template.getAmountNumber() + ")" );
 				i = 1;
 				for (Double amount: invoiceAssert.getAmounts()) {
 					System.out.println( "\t\t"+i+++".-\t"+amount);
 				}
+				
+				System.out.println( "\tTAXES: (expected: " + template.getVatsNumber() + ")" );
+				assertNotNull(template.getFile() + " has no taxes!",invoiceAssert.getTaxes());
+				i = 1;
+				for (InvoiceTax vat: invoiceAssert.getTaxes()) {
+					System.out.println( "\t\t"+i+++".-\t"
+						+vat.getType() + " \t"
+						+vat.getBase() + " \t"
+						+vat.getPercent() +"% \t"
+						+vat.getQuota() + " \t"
+					);
+				}
+				
+				System.out.println( "\tTOTAL: (expected: " + template.getTotal() + ")" );
+				assertNotNull(template.getFile() + " has no total!",invoiceAssert.getTotal());
+				assertEquals(template.getFile() + " total not match: ",template.getTotal() , invoiceAssert.getTotal().doubleValue(),0);
+				System.out.println( "\t\tTOTAL ...: " +invoiceAssert.getTotal());
 			}
 		}
 	}

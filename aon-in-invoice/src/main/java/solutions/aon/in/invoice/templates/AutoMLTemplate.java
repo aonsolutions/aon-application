@@ -1,6 +1,7 @@
 package solutions.aon.in.invoice.templates;
 
 import java.io.IOException;
+import java.util.List;
 
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.InvoiceTemplate;
@@ -17,7 +18,9 @@ public class AutoMLTemplate extends AbstractTemplate {
 	public InvoiceTemplate parse(String text, InvoiceBuilder<?> handler) throws IOException, UnknownInvoiceException {
 		handler.setInsightNifs(DocumentParser.getNifs(text));
 		handler.setInsightDates(DateParser.getDates(text));
-		handler.setInsightAmounts(AmountParser.getAmounts(text));
+		List<Double> aomunts = AmountParser.getAmounts(text); 
+		handler.setInsightAmounts(aomunts);
+		InvoiceTaxParser.getTaxes(aomunts, handler);
 		return this;
 	}
 
