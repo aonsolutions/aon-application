@@ -1,0 +1,1256 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractOtherData.MyStyle">
+
+		.headerStyle{
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+
+		.maxWidthTB{
+			width: 99%;
+		}
+		
+		.maxWidthLB{
+			width: 100%;
+		}
+
+		.firstColumnTextStyle{
+			padding:5px !important;
+		}
+		
+		.styleBorder{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin: 20px 10px;
+		}
+		
+	</ui:style>
+
+   	<g:HTMLPanel> 
+        <g:VerticalPanel ui:field="indefiniteTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros datos del contrato</g:Label>
+	    	<g:HTMLPanel>
+				<table ui:field="contractOtherDataTable" debugId="contractOtherDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>NIF del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentNIFTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Cargo del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentPositionTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Nombre</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. NIF/NIE</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentNIFTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Calidad de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentQualityOfTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Funciones a realizar</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="doingFunctionsTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>A distancia</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="distanceCB"></g:CheckBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>En el domicilio ubicado en</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="distanceAddressTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajos discontinuos consistentes en</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="discontinuousWorkTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Actividad cíclica intermitente de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="intermittentCyclicalActivityTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Duración (FD)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="durationFDTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Duración estimada de la actividad (FD)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="activityStimationDurationFDTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas jornada (FD)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="journeyHoursFDTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Periodo jornada (FD)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="journeyPeriodFDTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Distribución horaria (FD)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="timeDistributionFDTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Se acoge a modalidad tiempo parcial</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="partialTimeLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="journeyHoursTCTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Comienzo de la jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="startJourneyTCTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Término de la jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="endJourneyTCTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas jornada (TP)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="journeyHoursTPTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas jornada por conv. colectivo</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="agreementJourneyHoursTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas complementarias</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="complementaryHoursLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período de prueba</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="trialPeriodTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Importe salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryAmountTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryPeriodTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Concepto salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryConceptTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Vacaciones</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="holidaysTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Municipio de la oficina SEPE</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="sepeOfficeTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>	
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Discapacidad acreditada por</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="accreditedDisabilityTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Sin discapacidad severa</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="withoutDisabilitySevereLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Discapacidad severa</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="disabilitySevereLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Subvención de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="subsidyTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>4 de la Ley 3/2012, de 6 de julio ( BOE de 7 de julio )</g:Label>
+							</td>
+							<td>
+							 	<g:ListBox ui:field="fourthLawLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Desempleados entre 16 y 30 años</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="unemploymentLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Desempleados mayores de 45 años</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="unemploymentOldLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Percerptor de prestaciones durante al menos 3 meses</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="benefitsPerceptorCB"></g:CheckBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Primer trabajador y menor de 30 años</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="firstEmployeeCB"></g:CheckBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>El trabajador/a es</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="employeeLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Convenio colectivo (linea 1)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="agreementLineOneTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Convenio colectivo (linea 2)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="agreementLineTwoTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo de horas presenciales</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="contactHoursLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="hoursTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Forma retribución</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="remunerationFormLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo de pernocta</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="overnightAgreementLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Régimen de pernoctas</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="overnightRegimeTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Reducción de cuotas (T. Completo)</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="quoteReductionTCLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Reducción de cuotas (Fijo/Discontinuo)</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="quoteReductionFDLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Municipio de la oficina SEPE (contrato origen)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="sepeOfficeCOTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="temporalTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros datos del contrato</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="contractOtherDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>NIF del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentNIFTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Cargo del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentPositionTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Nombre</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. NIF/NIE</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentNIFTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Calidad de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentQualityOfTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Funciones a realizar</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="doingFunctionsTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>A distancia</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="distanceTempCB"></g:CheckBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>En el domicilio ubicado en</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="distanceAddressTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="journeyHoursTCTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Comienzo de la jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="startJourneyTCTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Término de la jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="endJourneyTCTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Siendo esta jornada inferior a</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="lowJourneyTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Distribución del tiempo de trabajo (TP)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="timeDistributionTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Texto fin de contrato</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="endContractTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período de prueba</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="trialPeriodTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Duración mayor permitida por conv. coletivo</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="permitedHighDurationTempCB"></g:CheckBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Importe salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryAmountTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryPeriodTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Concepto salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryConceptTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Vacaciones</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="holidaysTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Municipio de la oficina SEPE</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="sepeOfficeTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>	
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Obra o servicio a realizar</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="workTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Obra o servicio a realizar (más)</g:Label>
+							</td>
+							<td>
+							     <g:TextBox ui:field="workMoreTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Tareas a realizar</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="taskTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Tareas a realizar (más)</g:Label>
+							</td>
+							<td>
+							     <g:TextBox ui:field="taskMoreTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajador a sustituir</g:Label>
+							</td>
+							<td>
+							     <g:TextBox ui:field="sustituteEmployeeTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Requisitos a cumplir</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="requirementsTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>La formación se</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="formationTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>La formación será</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="formationWillTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Oficina de Servicios Públicos de Empleo</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="officeSPEmployeeTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Formación en idiomas o tecnologías consistentes en</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="lenguageFormationTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo de horas de presencia del empleador</g:Label>
+							</td>
+							<td>
+							 	<g:ListBox ui:field="hoursDealTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas de presencia</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="presentHoursTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Distribución de las horas</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="distributionHoursTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Compensación del tiempo de presencia</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="timeCompensationTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Acuerdo para pernoctar en el servicio del empleador</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="dealOvernightLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Régimen de pernoctar</g:Label>
+							</td>
+							<td>
+							     <g:TextBox ui:field="overnightRegimeTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Organismo oficial que emite la certificación</g:Label>
+							</td>
+							<td>
+							     <g:TextBox ui:field="officialOrganismTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajadores sin discapacidad severa</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="withoutSevereDisTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajadores con discapacidad severa</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="severeDisTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período de adaptación al trabajo</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="adaptationPeriodTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Condiciones de adaptación</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="adaptationConditionsTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Adaptaciones al puesto de trabajo</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="adaptationWorkTempLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Ajuste de personal y social</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="socialPersonalAdjustTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Ajuste de personal y social (más)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="socialPersonalAdjustMoreTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Convenio colectivo</g:Label>
+							</td>
+							<td>
+								<g:TextBox ui:field="colectiveAgreementTempTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="formationTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros datos del contrato</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="contractOtherDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>NIF del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentNIFFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Cargo del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentPositionFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Nombre</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. NIF/NIE</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentNIFFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Calidad de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentQualityOfFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Reducción de cuotas S.S.</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="ssReductionFormLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>El trabajador/a es</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="employeeFormLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Ubicación centro de trabajo</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="workplaceFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Tutor de la formación</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="tutorFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horario del trabajo efectivo</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="efectiveWorkHoursFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horario de la actividad formativa</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="activityHoursFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período de prueba</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="trialPeriodFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período de prueba de mayor duración por convenio</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="agreementTrialFormCB"></g:CheckBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Importe salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryAmountFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryPeriodFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Vacaciones</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="holidaysFormTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Existe título de F.P., cert. de prof. y centro disponible (Anexo I)</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="degreeExistFormCB"></g:CheckBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Existe título de F.P., cert. de prof. y centro disponible (Anexo II)</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="degreeExist2FormCB"></g:CheckBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="practiceTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros datos del contrato</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="contractOtherDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante de la empresa</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>NIF del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentNIFPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Cargo del representante</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="enterpriseAgentPositionPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Nombre</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. NIF/NIE</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentNIFPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Representante del menor. Calidad de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="minorAgentQualityOfPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Cert. de profesional en posesión</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="profesionalCertPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>O fecha de obtención</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="obtainingDatePracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Cert. de discapacidad expedida por</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="disabilityCertPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Cert. de discapacidad expedida por (más)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="disabilityCertMorePracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Primer contrato en prácticas</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="firstContractPracLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas de jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="journeyHoursPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Comienzo de la jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="startJourneyPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Término de la jornada (TC)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="endJourneyPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Distribución de la jornada</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="distributionJourneyPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período de prueba</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="trialPeriodPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Importe salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryAmountPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryPeriodPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Concepto salario</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="salaryConceptPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Vacaciones</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="holidaysPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Comunicar al SEPE de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="sepeComunicationPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Comunicar fin dela relación laboral al SEPE de</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="endSepeComunicationPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Beneficiario de subsidio por desempleo</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="unemploymentSubsidyPracLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Período de adaptación al trabajo</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="adaptationPeriodPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Condiciones de adaptación</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="adaptationConditionsPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Adaptaciones al puesto de trabajo</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="adaptationWorkPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Ajustes de personal y social</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="personalSocialAdjustPracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Ajustes de personal y social (más)</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="personalSocialAdjustMorePracTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Motivación</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="motivationPracLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Empleador</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="employerPracLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+	</g:HTMLPanel> 
+</ui:UiBinder> 
+
