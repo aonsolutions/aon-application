@@ -699,8 +699,8 @@
                         const columns = modelLists[prop].columns.map((column) => `<th>${column.text}</th>`);
 
                         // Si la tabla tiene título lo mostramos
-                        if (typeof prop.title !== 'undefined') {
-                            const title = titleStructure.replace('##title##', list.title);
+                        if (typeof modelLists[prop].title !== 'undefined') {
+                            const title = titleStructure.replace('##title##', modelLists[prop].title);
                             $('#contenedor_tablas_modelo').append(title);
                         }
 
