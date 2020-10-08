@@ -14,18 +14,22 @@ class AonDocumental extends HTMLElement {
  	build() {
 		let aonDocumental = document.getElementById('aonDocumental');
 
-		aonDocumental.addToolbarOption('Add', 'add', () => {alert('Add Example')});
+		aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+			const contentIframe = document.querySelector('iframe');
+
+			contentIframe.contentWindow.document.getElementById('upload').click();
+		});
 
 		let documentOptions = [
 			{
 				name: 'Recientes',
 				icon: 'access_time',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex('recientes')
 			},
 			{
 				name: 'Pendientes',
 				icon: 'inbox',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex('pendientes')
 			}
 		];
 		aonDocumental.addSidenavOptions('DOCUMENTOS', documentOptions);
@@ -34,50 +38,51 @@ class AonDocumental extends HTMLElement {
       {
 				name: 'A Contabilizar',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex(5)
 			},
       {
 				name: 'Banco',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex(13)
 			},
       {
 				name: 'Contable',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex(15)
 			},
       {
 				name: 'Fiscal',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex(8)
 			},
       {
 				name: 'Jurídico',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex(6)
 			},
       {
 				name: 'Seguros',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex(17)
 			},
       {
 				name: 'Enviados',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex(1)
 			},
       {
 				name: 'Nóminas Empleados',
 				icon: 'folder',
-				fn: () => this.loadIndex()
+				fn: () => this.loadIndex('nominas')
 			}
 		];
 		aonDocumental.addSidenavOptions('CATEGORIAS', categoryOptions);
+		this.loadIndex();
 	}
 
-	loadIndex() {
+	loadIndex(folder = 5) {
 		let aonDocumental = document.getElementById('aonDocumental');
-		aonDocumental.setContentHTML('<iframe src="./index.html" style="width:100%;height:100%;border:none;"></iframe>');
+		aonDocumental.setContentHTML('<iframe src="./index.html?folder=' + folder + '" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-documental', AonDocumental);
