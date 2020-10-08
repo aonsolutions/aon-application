@@ -28,7 +28,7 @@
                 <div class="row justify-content-center">
                     <!-- INICIO VISTA -->
                     <div class="col-12">
-                        <table class="table">
+                        <table class="table" id="listado_modelos">
                             <thead>
                                 <tr>
                                     <th scope="col" class="align-middle text-center">Modelo</th>
@@ -62,7 +62,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-6 d-flex align-items-center">
-                                <button class="btn btn-outline-secondary d-flex" id="ver_listado_modelo">
+                                <button class="btn btn-outline-secondary d-flex" id="ver_listado_modelo" data-numero_modelo="">
                                     <i class="material-icons list mr-1"></i>
                                     <span class="d-flex align-items-center">Listado</span>
                                 </button>
@@ -74,8 +74,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-primary">Confirmar</button>
-                        <button type="button" class="btn btn-sm btn-danger">Rectificar</button>
+                        <button type="button" class="btn btn-sm btn-primary" id="ver_confirmar">Confirmar</button>
+                        <button type="button" class="btn btn-sm btn-danger" id="ver_rectificar">Rectificar</button>
                     </div>
                 </div>
             </div>
@@ -105,31 +105,377 @@
             </div>
         </div>
 
+        <!-- Listado de facturas de los distintos modelos -->
         <div class="modal fade" id="listado_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog" style="min-width: 80vw;">
                 <div class="modal-content">
                     <div class="modal-header font-weight-bold">
-                        <span>Listado</span>
+                        <span>Listado de facturas del modelo <span id="numero_modelo_modal_listado"></span></span>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-12 d-flex align-items-center">
-                            </div>
+                            <div class="col-12" id="contenedor_tablas_modelo"></div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <!-- Listado de facturas de los distintos modelos -->
+        <div class="modal fade" id="listado_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="min-width: 80vw;">
+                <div class="modal-content">
+                    <div class="modal-header font-weight-bold">
+                        <span>Listado de facturas del modelo <span id="numero_modelo_modal_listado"></span></span>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12" id="contenedor_tablas_modelo"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <!-- Modal de rectificar -->
+        <div class="modal fade" id="rectificar_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header font-weight-bold">
+                        <span>Rectificar</span>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="texto_rectificar">Explique los motivos por los que debe rectificarse el resultado:</label>
+                                <textarea class="form-control" id="texto_rectificar" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="enviar_rectificar">Enviar</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
         <!-- Scripts -->
         <script src="../js/app.js"></script>
         <script>
+            var modalsListsStructure = {
+                "303": {
+                    "income": {
+                        "title": "Facturas emitidas",
+                        "columns": [
+                            {
+                                "text": "Nombre Cliente"
+                            },
+                            {
+                                "text": "CIF Cliente"
+                            },
+                            {
+                                "text": "Fecha Factura"
+                            },
+                            {
+                                "text": "Nº Factura"
+                            },
+                            {
+                                "text": "Tipo de Operación"
+                            },
+                            {
+                                "text": "Base Imponible",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "%IVA"
+                            },
+                            {
+                                "text": "Cuota IVA",
+                                "foot": "sumatorio"
+                            }
+                        ]
+                    },
+                    "expenses": {
+                        "title": "Facturas recibidas",
+                        "columns": [
+                            {
+                                "text": "Nombre Proveedor"
+                            },
+                            {
+                                "text": "CIF Proveedor"
+                            },
+                            {
+                                "text": "Fecha Factura"
+                            },
+                            {
+                                "text": "Nº Factura"
+                            },
+                            {
+                                "text": "Tipo de Operación"
+                            },
+                            {
+                                "text": "Base Imponible",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "%IVA"
+                            },
+                            {
+                                "text": "Cuota IVA",
+                                "foot": "sumatorio"
+                            }
+                        ]
+                    }
+                },
+                "115": {
+                    "list": {
+                        "columns": [
+                            {
+                                "text": "Nombre Perceptor"
+                            },
+                            {
+                                "text": "CIF Perceptor"
+                            },
+                            {
+                                "text": "Fecha Factura"
+                            },
+                            {
+                                "text": "Nº Factura"
+                            },
+                            {
+                                "text": "Tipo de Operación"
+                            },
+                            {
+                                "text": "Base Imponible",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "%Retención"
+                            },
+                            {
+                                "text": "Retención",
+                                "foot": "sumatorio"
+                            }
+                        ]
+                    }
+                },
+                "111": {
+                    "list": {
+                        "columns": [
+                            {
+                                "text": "Nombre Perceptor"
+                            },
+                            {
+                                "text": "CIF Perceptor"
+                            },
+                            {
+                                "text": "Fecha Factura"
+                            },
+                            {
+                                "text": "Nº Factura"
+                            },
+                            {
+                                "text": "Tipo de Operación"
+                            },
+                            {
+                                "text": "Base Imponible",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "%Retención"
+                            },
+                            {
+                                "text": "Retención",
+                                "foot": "sumatorio"
+                            }
+                        ]
+                    }
+                },
+                "130": {
+                    "income": {
+                        "title": "Listado de Ingresos",
+                        "columns": [
+                            {
+                                "text": "Nombre Cliente"
+                            },
+                            {
+                                "text": "CIF Cliente"
+                            },
+                            {
+                                "text": "Fecha Factura"
+                            },
+                            {
+                                "text": "Nº Factura"
+                            },
+                            {
+                                "text": "Tipo de Operación"
+                            },
+                            {
+                                "text": "Ingresos",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "%Retención"
+                            },
+                            {
+                                "text": "Retención",
+                                "foot": "sumatorio"
+                            }
+                        ]
+                    },
+                    "expenses": {
+                        "title": "Listado de Gastos",
+                        "columns": [
+                            {
+                                "text": "Nombre Proveedor"
+                            },
+                            {
+                                "text": "CIF Proveedor"
+                            },
+                            {
+                                "text": "Fecha Factura"
+                            },
+                            {
+                                "text": "Nº Factura"
+                            },
+                            {
+                                "text": "Tipo de Operación",
+                                "foot": "amortizaciones"
+                            },
+                            {
+                                "text": "Gastos",
+                                "foot": "amortizaciones"
+                            }
+                        ]
+                    }
+                },
+                "347": {
+                    "list": {
+                        "columns": [
+                            {
+                                "text": "Clave operación"
+                            },
+                            {
+                                "text": "NIF Declarado"
+                            },
+                            {
+                                "text": "Apellido y Nombre"
+                            },
+                            {
+                                "text": "Cód. Prov."
+                            },
+                            {
+                                "text": "Cód. País"
+                            },
+                            {
+                                "text": "NIF Comunitario"
+                            },
+                            {
+                                "text": "Ejercicio"
+                            },
+                            {
+                                "text": "Importe Anual",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "Importe 1T",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "Importe 2T",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "Importe 3T",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "Importe 4T",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "*Retención IRPF"
+                            },
+                            {
+                                "text": "*Incluir en el modelo"
+                            }
+                        ]
+                    }
+                },
+                "349": {
+                    "list": {
+                        "columns": [
+                            {
+                                "text": "Razón social"
+                            },
+                            {
+                                "text": "CIF"
+                            },
+                            {
+                                "text": "Fecha Factura"
+                            },
+                            {
+                                "text": "Nº Factura"
+                            },
+                            {
+                                "text": "Tipo de Operación"
+                            },
+                            {
+                                "text": "Base Imponible",
+                                "foot": "sumatorio"
+                            },
+                            {
+                                "text": "Clave"
+                            }
+                        ]
+                    }
+                }
+            };
+            var modalsListsContent = {
+                "303": {
+                    "income": [{
+                        "name": "Cliente de prueba",
+                        "cif": "98600782N",
+                        "date": "23-09-2020",
+                        "number": "42",
+                        "operation_type": "Operaciones interiores sujeto a IGIC",
+                        "base": 100,
+                        "iva_pct": 21,
+                        "iva": 21
+                    }, {
+                        "name": "Cliente de prueba",
+                        "cif": "98600782N",
+                        "date": "27-09-2020",
+                        "number": "43",
+                        "operation_type": "Operaciones interiores sujeto a IGIC",
+                        "base": 200,
+                        "iva_pct": 21,
+                        "iva": 42
+                    }],
+                    "expenses": []
+                }
+            };
             var data = {
                 "list": [
                     {
@@ -137,13 +483,17 @@
                         "status": "Presentado",
                         "result": 5238.21,
                         "paymentMethod": {
-                            "text": "Aplazamiento / Fraccionamiento",
-                            "number": "ES3330622260951433920930",
-                            "installmentsInfo": {
-                                "firstInstallmentDate": "05-09-2020",
-                                "numberOfInstallments": 5
-                            }
+                            "text": "Domiciliado",
+                            "number": "ES3330622260951433920930"
                         },
+                        // "paymentMethod": {
+                        //     "text": "Aplazamiento / Fraccionamiento",
+                        //     "number": "ES3330622260951433920930",
+                        //     "installmentsInfo": {
+                        //         "firstInstallmentDate": "05-09-2020",
+                        //         "numberOfInstallments": 5
+                        //     }
+                        // },
                         "note": null,
                         "fileURL": "https://via.placeholder.com/768/" // URL de prueba
                     },
@@ -189,13 +539,16 @@
             };
 
             $(document).ready(function(){
+                var year = new URLSearchParams(window.location.search).get('year') || new Date().getFullYear();
+                var quarter = new URLSearchParams(window.location.search).get('quarter') || 3;
+
                 createTable(data);
 
                 //
                 // Creamos la tabla con los datos a listar
                 //
                 function createTable(data){
-                    var list = data.list;
+                    var list = (year == 2020 && quarter == 3) ? data.list : [];
 
                     // Recorremos los datos a mostrar
                     var tbody = '';
@@ -224,8 +577,8 @@
                                             tbody+= '' +
                                                 '<td class="col-4">' +
                                                     '<div class="row">' +
-                                                        '<div class="col-6">' + text + '</div>' +
-                                                        '<div class="col-6">';
+                                                        '<div class="col-6 text-center">' + text + '</div>' +
+                                                        '<div class="col-6 text-center text-break">';
 
                                                             if (text !== '' && text === 'Aplazamiento / Fraccionamiento') {
                                                                 var firstInstallmentDate = (val.installmentsInfo !== null && val.installmentsInfo.firstInstallmentDate !== null) ? val.installmentsInfo.firstInstallmentDate : '';
@@ -274,10 +627,7 @@
                     }
 
                     // Agregamos el cuerpo de la tabla
-                    $('.table tbody').append(tbody);
-
-                    // Cogemos el paginado que tenía la tabla
-                    var pagination = createPaginate(data.page, data.totalPage)
+                    $('#listado_modelos tbody').append(tbody);
 
                     // Agregamos el paginado en el footer de la tabla
                     var tfoot = 
@@ -287,60 +637,13 @@
                                 '<div class="col-md-6">'+
                                     'Mostrando del '+data.shownPage+' de un total de '+data.totalData+' elementos'+
                                 '</div>'+
-                                '<div class="col-md-6">'+
-                                    pagination+
-                                '</div>'+
+                                '<div class="col-md-6"></div>'+
                             '</div>'+
                         '</td>'
                     '</tr>';
 
                     // Agregamos el pie de la tabla
-                    $('.table tfoot').html(tfoot);
-                }
-
-                // 
-                // Crear el paginado
-                //
-                function createPaginate(page, pageTotal){
-                    var paginate = '<ul class="pagination display-block float-right">';
-
-                    // Si tenemos paginas
-                    if (page > 1){ 
-                        paginate+= 
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="1">'+
-                                    '<i class="material-icons" title="Principio">fast_rewind</i>'+
-                                '</a>'+
-                            '</li>'+
-        
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+(page-1)+'">'+
-                                    '<i class="material-icons" title="Volver">arrow_left</i>'+
-                                '</a>'+
-                            '</li>';
-                    }
-
-                    if(pageTotal > 0){
-                        paginate+= '<li class="ml-2 mr-2">'+page+'/'+pageTotal+'</li>';
-                    }
-
-                    if (page < pageTotal) {
-                        paginate+= 
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+(page+1)+'">'+
-                                    '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
-                                '</a>'+
-                            '</li>'+
-    
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+pageTotal+'">'+
-                                    '<i class="material-icons" title="Final">fast_forward</i>'+
-                                '</a>'+
-                            '</li>';
-                    }
-                    paginate+= '</ul>';
-
-                    return paginate;
+                    $('#listado_modelos tfoot').html(tfoot);
                 }
             });
 
@@ -352,6 +655,9 @@
                     var numeroModelo = $(this).data('numero_modelo');
                     var resultadoModelo = $(this).data('resultado_modelo');
 
+                    // Almacenamos el numero de modelo seleccionado en una variable global
+                    window.numeroModelo = numeroModelo;
+
                     // Insertamos en el título del modal el número del modelo
                     $('#numero_modelo_modal_info').text(numeroModelo);
 
@@ -362,10 +668,110 @@
                     $('#info_modelo').modal();
                 });
 
-                // Cuando se hace click en el botón de Listado
+                // Cuando se hace click en el botón que abre el listado
                 $(document).on('click', '#ver_listado_modelo', function() {
+                    $('#numero_modelo_modal_listado').text(window.numeroModelo);
+
+                    var numeroModelo = $(this).data('numero_modelo');
+                    var titleStructure = `<span class="font-weight-bold">
+                                            <span>##title##</span>
+                                        </span>`;
+                    var tableStructure = `<div class="table-responsive pt-2 mb-2 px-0">
+                                            <table class="table" id="##table_type##">
+                                                <thead>
+                                                    <tr>
+                                                        ##columns##
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                                <tfoot></tfoot>
+                                            </table>
+                                        </div>`;
+
+                    // Vaciamos el contenedor de las tablas antes de rellenarlo
+                    $('#contenedor_tablas_modelo').empty();
+
+                    // Obtenemos la estructura de los listados del modelo
+                    const modelLists = modalsListsStructure[window.numeroModelo];
+
+                    // Recorremos la estructura de los listados del modelo para obtener sus columnas y mostrarlas
+                    for (const prop in modelLists) {
+                        const columns = modelLists[prop].columns.map((column) => `<th>${column.text}</th>`);
+
+                        // Si la tabla tiene título lo mostramos
+                        if (typeof prop.title !== 'undefined') {
+                            const title = titleStructure.replace('##title##', list.title);
+                            $('#contenedor_tablas_modelo').append(title);
+                        }
+
+                        const table = tableStructure.replace('##columns##', columns.join(''))
+                            .replace('##table_type##', prop);
+                        
+                        $('#contenedor_tablas_modelo').append(table);
+                    }
+
+                    // Obtenemos los datos de las facturas del modelo
+                    const emptyModelList = (window.numeroModelo === 303 || window.numeroModelo === 130) ? {"income": [], "expenses": []} : {"list": []};
+                    const modelContent = (typeof modalsListsContent[window.numeroModelo] !== 'undefined') ? modalsListsContent[window.numeroModelo] : emptyModelList;
+
+                    // Recorremos los datos de las facturas del modelo para mostrarlas
+                    for (const prop in modelContent) {
+                        const content = modelContent[prop];
+                        let tbodyContent = '';
+
+                        if (content.length) {
+                            $.each(content, function(i, item) {
+                                tbodyContent += '<tr>';
+                                    $.each(item, function(key, val) {
+                                        switch (key) {
+                                            case 'base':
+                                                const base = formatearNumero(val);
+                                                tbodyContent+= '<td class="text-center"><span>'+base+'€</span></td>';
+                                                break;
+                                            case 'iva_pct':
+                                                const ivaPct = val + '%';
+                                                tbodyContent+= '<td class="text-center"><span>'+ivaPct+'</span></td>';
+                                                break;
+                                            case 'iva':
+                                                const iva = formatearNumero(val);
+                                                tbodyContent+= '<td class="text-center"><span>'+iva+'€</span></td>';
+                                                break;
+                                            default:
+                                                tbodyContent+= '<td class="text-center"><span>'+val+'</span></td>';
+                                                break;
+                                        }
+                                    });
+                                tbodyContent += '</tr>';
+                            });
+                        } else {
+                            const numberOfColumns = $('#' + prop + ' th').length;
+
+                            tbodyContent += `<tr>
+                                                <td colspan="${numberOfColumns}" class="text-center">
+                                                    No existen datos para mostrar
+                                                </td>
+                                            </tr>`;
+                        }
+
+                        $('#' + prop + ' tbody').append(tbodyContent);
+                    }
+
                     // Mostramos el modal
                     $('#listado_modelo').modal();
+                });
+
+                // Cuando se hace click en el botón de rectificar
+                $(document).on('click', '#ver_rectificar', function(e) {
+
+                    // Mostramos el modal
+                    $('#rectificar_modelo').modal()
+                });
+
+                $(document).on('click', '#enviar_rectificar', function(e) {
+                    alert('Modelo ' + window.numeroModelo + ' rectificado');
+
+                    // Recargamos la página
+                    document.location.reload();
                 });
 
                 // Cuando se hace click en el icono de ver la nota asociada al modelo
@@ -389,10 +795,14 @@
 
                 // Cuando se hace click en el icono de eliminar nota
                 $(document).on('click', '#eliminar_nota', function(e) {
-                    alert('Nota eliminada con éxito');
+                    var confirmed = confirm('¿Estás seguro de que deseas eliminar la nota?');
 
-                    // Ocultamos el modal
-                    $('#nota_modelo').modal('hide');
+                    if (confirmed) {
+                        alert('Nota eliminada con éxito');
+
+                        // Ocultamos el modal
+                        $('#nota_modelo').modal('hide');
+                    }
                 });
 
                 // Cuando se hace click en el icono de ver el documento asociado al modelo
