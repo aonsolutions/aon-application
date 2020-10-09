@@ -13,15 +13,11 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.InvoiceTemplate;
 import solutions.aon.in.invoice.UnknownInvoiceException;
-import solutions.aon.in.invoice.templates.AmazonTemplate;
 import solutions.aon.in.invoice.templates.AutoMLTemplate;
 
 public class InvoicePDFParser {
 	
-	private static final InvoiceTemplate PDF_TEMPLATES [] = {
-			AutoMLTemplate.AUTO_ML_TEMPLATE,
-			AmazonTemplate.AMAZON_PDF_TEMPLATE 
-			};
+	private static final InvoiceTemplate PDF_TEMPLATES [] = {AutoMLTemplate.AUTO_ML_TEMPLATE,};
 	
 	
 	public static void parse( File file , InvoiceBuilder<?> invoiceBuilder) throws IOException, UnknownInvoiceException {

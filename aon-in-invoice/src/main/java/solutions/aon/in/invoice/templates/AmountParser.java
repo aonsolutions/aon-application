@@ -8,8 +8,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 public class AmountParser {
 	
 	public static List<Double> getAmounts(String text) {
@@ -17,13 +15,13 @@ public class AmountParser {
 		String ds = Character.toString(DecimalFormatSymbols.getInstance( ES ).getDecimalSeparator());
 		String gs = Character.toString(DecimalFormatSymbols.getInstance( ES ).getGroupingSeparator());
 		
-		// System.out.println( "Using '"+ds+"' as Decimal Separator and '"+gs+"' as Grouping Separator");
+//		System.out.println( "Using '"+ds+"' as Decimal Separator and '"+gs+"' as Grouping Separator");
 		
 		String pat = "(?<integ>-?\\+?(\\d+\\"+gs+")*\\d+)"
 				+"\\"+ds
 				+"(?<fract>\\d+)"
 				+"\\b"; 
-		System.out.println( pat );
+//		System.out.println( pat );
 		
 		Pattern pattern = Pattern.compile( pat , Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 		
@@ -36,10 +34,10 @@ public class AmountParser {
 			integ = integ.replaceAll("O", "0")
 						 .replaceAll( "\\" + gs , "");
 			String fract = matcher.group("fract");
-			System.out.print( 
-				"("+ matcher.start() +", "+ matcher.end() +") Parte Entera ..: {" + integ + "}" + "  Parte Decimal .: {" + fract + "} --- ["
-				+ AonStringUtils.substring( text, matcher.start(), matcher.end()) + "]" 
-			); 
+//			System.out.print( 
+//				"("+ matcher.start() +", "+ matcher.end() +") Parte Entera ..: {" + integ + "}" + "  Parte Decimal .: {" + fract + "} --- ["
+//				+ AonStringUtils.substring( text, matcher.start(), matcher.end()) + "]" 
+//			); 
 			String str = integ + "." + fract;
 			Double amount = null;
 			try {
@@ -51,24 +49,24 @@ public class AmountParser {
 				int i = matcher.start();
 				String prefix = substr(text,i-1, 1).toUpperCase();
 				boolean fake = prefix.matches("[-\\"+gs+"\\+\\"+ds+"0-9]") || prefix.matches("[\\w]");
-				System.out.print( fake ?" (FAKE 1!)":"" );
+//				System.out.print( fake ?" (FAKE 1!)":"" );
 				if ( !fake ) {
 					if ( (text.length() - matcher.end()) > 0 )  {
 						String suffix = substr(text,matcher.end(), 1).toUpperCase();
 						fake = suffix.matches("[-\\"+gs+"\\+\\"+ds+"0-9]") || suffix.matches("[\\w]");
 						fake = fake || suffix.matches("[\\w]");
-						System.out.print( fake ?" (FAKE 2!)":"" );
+//						System.out.print( fake ?" (FAKE 2!)":"" );
 					}
 				}
 				if ( !fake ) {
-					System.out.print( " (ADDED!)" );
+//					System.out.print( " (ADDED!)" );
 					amounts.add(amount); 
 				} 
 				index = matcher.end() + 1 ;
 			} else {
 				index = matcher.start() + 1 ;
 			}
-			System.out.println();
+//			System.out.println();
 		}
 		return amounts;
 	}

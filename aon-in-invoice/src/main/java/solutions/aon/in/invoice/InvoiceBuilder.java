@@ -11,6 +11,7 @@ public interface InvoiceBuilder<T extends Object>  {
 	void setInsightNifs( Collection<Document> nifs);
 	void setInsightDates( Collection<Date> dates);
 	void setInsightAmounts( Collection<Double> amounts);
+	void setInsightTotals( Collection<Double> totals);
 	
 	void setTotal( double total);
 	void setTax( InvoiceTax tax);
