@@ -81,10 +81,11 @@ public class InvoiceServlet extends HttpServlet{
 		String token = req.getHeader("session_id");
 		Integer domainId = AonNumberUtils.toInteger(req.getHeader("domain_id"));
 		String domainName = req.getHeader("domain_name");	
+		Domain domain = AON.getDomain(domainName, domainId, "");
 		JSONObject json = Utils.getRequestJSON(req);
 		LinkedList<Integer> invoiceIds = toList(json.optJSONArray(IConstants.ID));
 		if(invoiceIds != null) {
-			AON_SOLUTIONS.deleteInvoices(domainName, domainId, "api", invoiceIds);
+			deleteInvoices(domain, "api", invoiceIds);
 		}
 		
 		Utils.addCorsHeader(resp);
@@ -96,7 +97,7 @@ public class InvoiceServlet extends HttpServlet{
 	        return new LinkedList<>();
 	    LinkedList<Integer> list = new LinkedList<>();
 	    for(int i=0; i<array.length(); i++) {
-	        list.add(array.optInt(i));
+	    	list.add(array.optInt(i));
 	    }
 	    return list;
 	}
@@ -134,6 +135,12 @@ public class InvoiceServlet extends HttpServlet{
 				.forEach(json -> jsArray.put(json));
 		}
 		return jsArray;
+	}
+	
+	private void deleteInvoices(Domain domain, String login, LinkedList<Integer> ids) {
+		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
+		AON.deleteDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().in(idsArray));
+		AON.deleteDataResponse(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(idsArray));
 	}
 	
 	private static JSONObject setInvoice(Domain domain, String login, JSONObject json) {
