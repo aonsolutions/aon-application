@@ -36,6 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.shared.Base64;
 import com.esferalia.aon.gwt.template.client.ITemplate;
 import com.esferalia.aon.gwt.template.jooq.DBCatalogue;
 import com.esferalia.aon.gwt.template.jooq.DBConsults;
@@ -212,17 +213,17 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 
 	//-------------------- IMPORTAR
-	LinkedList<ProjectCommercial> pcs;
-	LinkedList<CustomerIban> cis;
-	LinkedList<InvoiceImportClass> ivs;
-	LinkedList<RegistryImportClass> rvs;
-	LinkedList<AccountEntryImportClass> dvs;
-	LinkedList<AccountImportClass> accounts;
- 	DeliveryInfo di;
+	HashMap<String, LinkedList<ProjectCommercial>> pcs = new HashMap<String, LinkedList<ProjectCommercial>>();
+	HashMap<String,LinkedList<CustomerIban>> cis = new HashMap<String, LinkedList<CustomerIban>>();
+	HashMap<String,LinkedList<InvoiceImportClass>> ivs = new HashMap<String, LinkedList<InvoiceImportClass>>();
+	HashMap<String,LinkedList<RegistryImportClass>> rvs = new HashMap<String, LinkedList<RegistryImportClass>>();
+	HashMap<String,LinkedList<AccountEntryImportClass>> dvs = new HashMap<String, LinkedList<AccountEntryImportClass>>();
+	HashMap<String,LinkedList<AccountImportClass>> accounts;
+	HashMap<String, DeliveryInfo> di;
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
-
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		this.ti = ti;
 		error = new Error();
 		verror = new LinkedList<String>();
@@ -261,28 +262,28 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			else if(importType.equals(ImportType.STOCK))
 				executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 			else if(ImportType.DELIVERY.equals(importType)) {
-				di = DeliveryImport.getInstance().importation(data);
+				di.put(hashId, DeliveryImport.getInstance().importation(data));
 			}
 			else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
-				pcs = ProjectCommercialImport.getInstance().importation(domain, user.getLogin(), data);
+				pcs.put(hashId, ProjectCommercialImport.getInstance().importation(domain, user.getLogin(), data));
 			}
 			else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
-				cis = CustomerIbanImport.getInstance().importation(domain, user.getLogin(), data);
+				cis.put(hashId, CustomerIbanImport.getInstance().importation(domain, user.getLogin(), data));
 			}
 			else if(ImportType.INVOICE.equals(importType)) {
-				ivs = InvoiceImport.getInstance().importation(domain, user.getLogin(), data);
+				ivs.put(hashId, InvoiceImport.getInstance().importation(domain, user.getLogin(), data));
 				rowCount = ivs.size();
 			}
 			else if(ImportType.REGISTRY.equals(importType)) {
-				rvs = RegistryImport.getInstance().importation(domain, user.getLogin(), data);
+				rvs.put(hashId, RegistryImport.getInstance().importation(domain, user.getLogin(), data));
 				rowCount = rvs.size();
 			}
 			else if(ImportType.DIARY.equals(importType)) {
-				dvs = DiaryImport.getInstance().importation(domain, user.getLogin(), data);
+				dvs.put(hashId, DiaryImport.getInstance().importation(domain, user.getLogin(), data));
 				rowCount = dvs.size();
 			}
 			else if(ImportType.PGC.equals(importType)) {
-				accounts = PGCImport.getInstance().importation(domain, user.getLogin(), data);
+				accounts.put(hashId, PGCImport.getInstance().importation(domain, user.getLogin(), data));
 				rowCount = accounts.size();
 			}
 
@@ -316,37 +317,36 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				else if(importType.equals(ImportType.STOCK))
 					executeExcelStock(domain, user, rowIterator, error, inventory, warehouse1, warehouse2, series, comments, istransfer, number);
 				else if(ImportType.DELIVERY.equals(importType)) {
-					di = DeliveryImport.getInstance().importationX(data);
+					di.put(hashId, DeliveryImport.getInstance().importationX(data));
 				}
 				else if(ImportType.PROJECT_COMMERCIAL.equals(importType)) {
-					pcs = ProjectCommercialImport.getInstance().importationX(domain, user.getLogin(), data);
+					pcs.put(hashId, ProjectCommercialImport.getInstance().importationX(domain, user.getLogin(), data));
 				}
 				else if(ImportType.CUSTOMER_IBAN.equals(importType)) {
-					cis = CustomerIbanImport.getInstance().importationX(domain, user.getLogin(), data);
+					cis.put(hashId, CustomerIbanImport.getInstance().importationX(domain, user.getLogin(), data));
 				}
 				else if(ImportType.INVOICE.equals(importType)) {
-					ivs = InvoiceImport.getInstance().importationX(domain, user.getLogin(), data);
+					ivs.put(hashId, InvoiceImport.getInstance().importationX(domain, user.getLogin(), data));
 				}
 				else if(ImportType.REGISTRY.equals(importType)) {
-					rvs = RegistryImport.getInstance().importationX(domain, user.getLogin(), data);
+					rvs.put(hashId, RegistryImport.getInstance().importationX(domain, user.getLogin(), data));
 				}
 				else if(ImportType.DIARY.equals(importType)) {
-					dvs = DiaryImport.getInstance().importationX(domain, user.getLogin(), data);
+					dvs.put(hashId, DiaryImport.getInstance().importationX(domain, user.getLogin(), data));
 				}
 				else if(ImportType.PGC.equals(importType)) {
-					accounts = PGCImport.getInstance().importationX(domain, user.getLogin(), data);
-				}
-				
+					accounts.put(hashId, PGCImport.getInstance().importationX(domain, user.getLogin(), data));
+				}				
 				workbook.close();
 			} catch (IOException e1) {
-					//El archivo no es un fichero Excel.
-					error.setError(false);
-		 			textError =  textError + "*El archivo importado no es de tipo excel.\n";
-					verror.add("*El archivo importado no es de tipo excel.");
-					error.setTextError(verror);
-					this.error = error;
-					e.printStackTrace();
-					return -1;
+				//El archivo no es un fichero Excel.
+				error.setError(false);
+		 		textError =  textError + "*El archivo importado no es de tipo excel.\n";
+				verror.add("*El archivo importado no es de tipo excel.");
+				error.setTextError(verror);
+				this.error = error;
+				e.printStackTrace();
+				return -1;
 			}
 		}
 		return rowCount;
@@ -1357,11 +1357,13 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	public Error insertDelivery(Domain domain, User user) {
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		domain = AON.getDomain(domain.getName(), domain.getId(), user.getLogin());
-		if(di.getError().getTextError().isEmpty()) {
- 			di = DeliveryImport.getInstance().insertDelivery(domain, user, di, error);
+		DeliveryInfo aDi = di.get(hashId); 
+		if(aDi.getError().getTextError().isEmpty()) {
+			aDi = DeliveryImport.getInstance().insertDelivery(domain, user, aDi, error);
 		}
-		return di.getError();
+		return aDi.getError();
 	}
 
 	private ProductInfo check(Domain domain, User user, Integer row, String column, String template, Object value,ProductInfo product, CellType type
@@ -2638,8 +2640,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	@Override
 	public Error insertProjectCommercial(Domain domain, User user) {
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		try {
-			ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs);
+			ProjectCommercialImport.getInstance().insertProjectCommercial(domain, user, pcs.get(hashId));
 		} catch (Exception e) {
 			return new Error()
 				.setError(false)
@@ -2650,8 +2653,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 	@Override
 	public Error insertCustomerIban(Domain domain, User user) {
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		try {
-			CustomerIbanImport.getInstance().insertCustomerIban(domain, user, cis);
+			CustomerIbanImport.getInstance().insertCustomerIban(domain, user, cis.get(hashId));
 		} catch (Exception e) {
 			return new Error()
 				.setError(false)
@@ -2662,22 +2666,26 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	
 	@Override
 	public Error insertInvoices(Domain domain, User user, Integer index) {
-		return InvoiceImport.insertInvoices(domain, user, index, ivs);
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
+		return InvoiceImport.insertInvoices(domain, user, index, ivs.get(hashId));
 	}
 	
 	@Override
 	public Error insertRegistries(Domain domain, User user, Integer index) {
-		return RegistryImport.insertRegistries(domain, user, index, rvs);			
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
+		return RegistryImport.insertRegistries(domain, user, index, rvs.get(hashId));			
 	}
 	
 	@Override
 	public Error insertDiary(Domain domain, User user, Integer index) {
-		return DiaryImport.insertDiary(domain, user, index, dvs);
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
+		return DiaryImport.insertDiary(domain, user, index, dvs.get(hashId));
 	}
 
 	@Override
 	public Error insertPGC(Domain domain, User user, Integer index) {
-		return PGCImport.insertPGC(domain, user, index, accounts);			
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
+		return PGCImport.insertPGC(domain, user, index, accounts.get(hashId));			
 	}
 
 	@Override
