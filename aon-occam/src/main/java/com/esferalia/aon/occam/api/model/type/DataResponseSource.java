@@ -26,7 +26,8 @@ public enum DataResponseSource implements Serializable{
 	INGENET_SALES,
 	PATURPAT_QUALITY,
 	ANALYTIC_ACCOUNTING,
-	INVOICE
+	INVOICE,
+	IMPORTATION
 	;
 
 

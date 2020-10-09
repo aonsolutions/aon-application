@@ -73,10 +73,14 @@ import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.office.Tag;
@@ -90,6 +94,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonRole;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -98,6 +103,9 @@ import com.esferalia.aon.occam.api.model.warehouse.Department;
 import com.esferalia.aon.occam.api.model.warehouse.Series;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
+import com.google.api.services.drive.Drive;
+
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 
 
@@ -223,6 +231,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
+		
 		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		this.ti = ti;
 		error = new Error();
@@ -244,6 +253,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		Iterator<Row> rowIterator;
 		try {
 			byte[] data = getOut();
+			saveImportation(domain, user, importType, data);
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
 
 			HSSFWorkbook workbook = new HSSFWorkbook(bais);
@@ -352,6 +362,28 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return rowCount;
 	}
 
+	private void saveImportation(Domain domain, User user, ImportType type, byte[] data) {
+		DataResponse dr = new DataResponse()
+				.setDomain(domain.getId())
+				.setCode(type.toString())
+				.setResponseDate(new Date())
+				.setSource(DataResponseSource.IMPORTATION);
+		dr = AON.insertDataResponse(domain.getName(), domain.getId(), user.getLogin(), dr);
+		Attach attach = new Attach(AttachType.DATA)
+				.setDomain(domain)
+				.setSource(DataAttachSource.IMPORTATION.value()) 
+				.setType(DataAttachType.REQUEST.value())
+				.setDescription("Importacion " + type.getName())
+				.setMimeType(MimeType.get(getMimetype()))
+				.setData(data);
+		Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), user.getLogin(), attach);
+		attach.setId(attachId);
+		DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), user.getLogin());
+    	Drive drive = AonDrive.getInstace().serviceInitialize(d);
+    	AonDrive.getInstace().sync(drive, user, attach, false);
+
+	}
+	
 	//-------------------- IMPORTAR FEE
 	LinkedList<FeeInfo> fees;
 	FeeInfo fi;

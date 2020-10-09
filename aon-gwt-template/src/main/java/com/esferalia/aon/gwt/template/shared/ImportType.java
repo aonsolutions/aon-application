@@ -26,7 +26,7 @@ public enum ImportType {
 		case REGISTRY:
 			return "Clientes, Proveedores y Acreedores";
 		default:
-			return "";
+			return this.toString();
 		}
 	}
 }

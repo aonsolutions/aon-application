@@ -61,6 +61,7 @@ public interface IAttachment {
 	public void updateProjectAttachDriveId(AONContext ctx, Integer attachId, String driveId);
 	public void updateRegistryAttachDriveId(AONContext ctx, Integer attachId, String driveId);
 	public void updateSepeAttachDriveId(AONContext ctx, Integer attachId, String driveId);
+	public void updateDataAttachDriveId(AONContext ctx, Integer attachId, String driveId);
 	
 	public void deleteContractAttach(AONContext ctx, AttachFilter filter);
 	public void deleteItemAttach(AONContext ctx, AttachFilter filter);

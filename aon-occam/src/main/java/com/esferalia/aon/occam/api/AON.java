@@ -2653,6 +2653,8 @@ public class AON {
 				getAttachment().updateProjectAttachDriveId(ctx, attachId, driveId);
 			else if (attachType.equals(AttachType.SEPE))
 				getAttachment().updateSepeAttachDriveId(ctx, attachId, driveId);
+			else if (attachType.equals(AttachType.DATA))
+				getAttachment().updateDataAttachDriveId(ctx, attachId, driveId);
 		} finally {
 			if (ctx != null)
 				ctx.close();

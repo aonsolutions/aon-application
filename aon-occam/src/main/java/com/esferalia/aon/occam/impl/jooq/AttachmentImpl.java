@@ -279,6 +279,12 @@ public class AttachmentImpl implements IAttachment{
 			AttachmentDAO.updateSepeAttachDriveId(ctx, attach, driveId));
 	}
 	
+	@Override
+	public void updateDataAttachDriveId(AONContext ctx, Integer attach, String driveId) {
+		ctx.getDslContext().transaction(configuration -> 
+			AttachmentDAO.updateDataAttachDriveId(ctx, attach, driveId));
+	}
+	
 	//-------------------- DELETES
 	
 	@Override
