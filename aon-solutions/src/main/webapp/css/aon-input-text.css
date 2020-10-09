@@ -144,3 +144,41 @@ input:read-only + .omrs-input-label {
 .omrs-input-filled > input {
 	background: var(--omrs-color-bg-low-contrast);
 }
+
+
+.aonInputListOptions {
+	display: block;
+	background: #fff;
+	margin: 0;
+	padding: 0;
+	border: none;
+	position: absolute;
+	overflow: visible;
+	width: 0;
+	max-height: 200px;
+	visibility: hidden;
+	z-index: -1;
+}
+
+.aonInputListOptions.is-visible {
+	z-index: 999;
+	visibility: visible;
+	width: 100%;
+	padding: 1px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+}
+
+.aonInputListOptionsUl {
+	max-height: 200px;
+	width: 100%;
+}
+
+.aonInputListOptionsItem {
+	height: 30px;
+	line-height: 30px;
+	margin: 0;
+	padding: 0 26px;
+	cursor: pointer;
+	width: 100%;
+}

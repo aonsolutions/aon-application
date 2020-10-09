@@ -1,7 +1,7 @@
       class AonInput extends HTMLElement {
 
         static get observedAttributes() {
-          return ['value', 'disabled', 'readonly', 'visible'];
+          return ['value', 'disabled', 'readonly', 'visible', 'options'];
         }
 
         get id() {
@@ -80,7 +80,16 @@
           //console.log(`attribute ${name} change!! ${newValue}`);
           if('value' === name) {
             let input = document.getElementById(this.getAttribute('id') + 'Input');
-            if(newValue && 'undefined' !== newValue && input) input.value = newValue;
+            if(this.isTypeList()) {
+        			let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+              options.forEach((item, i) => {
+                if(item.value = newValue) {
+                  input.value = item.name;
+                }
+              });
+            } else {
+              if(newValue && 'undefined' !== newValue && input) input.value = newValue;
+            }
           }
 
           if('disabled' === name){
@@ -105,11 +114,16 @@
             let label = document.getElementById(this.getAttribute('id') + 'Label');
             label.className = this.isFilled() ? 'omrs-input-filled' : 'omrs-input-underlined';
           }
+
+          if('options' === name) {
+              this.buildOptions();
+          }
+
         }
 
         constructor () {
           super();
-          this.appendChild(this.build());
+          this.build();
         }
 
         connectedCallback () {
@@ -120,10 +134,12 @@
           let div = document.createElement('div');
           div.className = 'omrs-input-group';
           div.style.width = '100%';
+          this.appendChild(div);
 
           let label = document.createElement('label');
           label.id = this.getAttribute('id') + 'Label';
           label.className = this.isFilled() ? 'omrs-input-filled' : 'omrs-input-underlined';
+          label.style.marginBottom = '0px';
           label.style.width = '100%';
 
           let input = document.createElement('input');
@@ -172,14 +188,69 @@
             iconLabel.style.position = 'absolute';
             iconLabel.style.top = '5px';
       			iconLabel.style.right = '0px';
+            iconLabel.style.marginBottom = '0px';
       			iconLabel.setAttribute('id', this.getAttribute('id') + 'Icon');
       			iconLabel.setAttribute('for', input.getAttribute('id'));
             iconLabel.innerHTML = `<aon-icon-button id="${this.getAttribute('id') + 'IconLabel'}" icon="arrow_drop_down" noHover="true"></aon-icon-button>`;
             div.appendChild(iconLabel);
-          }
 
-          return div;
+            let span = document.createElement('span');
+            span.style.width = '100%';
+            span.setAttribute('id', this.getAttribute('id') + 'Span');
+            div.appendChild(span);
+          }
         }
+
+        buildOptions() {
+          let span = document.getElementById(this.getAttribute('id') + 'Span');
+          span.innerHTML = "";
+
+    			let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+          let div = document.createElement('div')
+          div.id = this.getAttribute('id') + 'Options';
+          div.className = 'aonInputListOptions';
+          span.appendChild(div);
+
+
+          if(options.length === 0) return div;
+
+    			let ul = document.createElement('ul');
+          ul.className = 'aonInputListOptionsUl';
+        	ul.setAttribute('for', this.getAttribute('id') + 'Icon');
+    			for(let i = 0; i < options.length; i++) {
+    				let li = document.createElement('li');
+            li.className = 'aonInputListOptionsItem'
+    				li.innerHTML = options[i].name;
+    				li.addEventListener('click', (e) => {
+              div.classList.remove('is-visible');
+    					this.value = options[i].value;
+              let input = document.getElementById(this.getAttribute('id') + 'Input');
+              input.value = options[i].name;
+    			    this.dispatchEvent(new Event('select'));
+    				});
+    				ul.appendChild(li);
+    			}
+          div.appendChild(ul)
+
+          let button = document.getElementById(this.getAttribute('id') + 'IconLabel');
+          button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            let el = document.getElementById(this.getAttribute('id') + 'Options');
+            if(el.classList.contains('is-visible')) {
+              el.classList.remove('is-visible');
+            } else el.classList.add('is-visible');
+          });
+
+          document.addEventListener('click', function(event) {
+            var isClickInside = div.contains(event.target);
+            if(!isClickInside){
+              if(div.classList.contains('is-visible')){
+                div.classList.remove('is-visible');
+              }
+            }
+          });
+        }
+
 
         onChange(fn){
           let input = document.getElementById(this.getAttribute('id') + 'Input');
