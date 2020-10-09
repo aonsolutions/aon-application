@@ -210,9 +210,19 @@ public class Cra {
 			salaryRecords = filterRETARecords(salaryRecords, dslContext);
 			
 			// EnterpriseCCCRecord
-			Result<Record> enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+			Result<Record> enterpriseCCCRecord = null;
+			
+			if(salaryRecords.isEmpty())
+				enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
 					.where(ENTERPRISE_CCC.CCC.eq(ccc))
 					.fetch();
+			else {
+				Integer domainCCC = salaryRecords.get(0).get(SALARY.DOMAIN);
+				enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+						.where(ENTERPRISE_CCC.CCC.eq(ccc))
+						.and(ENTERPRISE_CCC.DOMAIN.eq(domainCCC))
+						.fetch();
+			}
 			 
 			if(enterpriseCCCRecord.size() > 1) {
 				System.out.println("Mas de 1");
