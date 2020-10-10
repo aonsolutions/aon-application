@@ -46,13 +46,15 @@ public class Salary implements Serializable {
 		Double irpf;
 		Double quote;
 		Double amount;
+		String name;
 		String expression;
 		String description;
 
-		public Payment(Double amount, Double quote, String expression, String description) {
+		public Payment(Double amount, Double quote, String expression, String description, String name) {
 			super();
 			this.quote = quote;
 			this.amount = amount;
+			this.name = name;
 			this.description = description;
 			this.expression = expression;
 		}
@@ -71,6 +73,10 @@ public class Salary implements Serializable {
 		
 		public String getExpression() {
 			return expression;
+		}
+		
+		public String getName() {
+			return name;
 		}
 
 	}
@@ -624,9 +630,9 @@ public class Salary implements Serializable {
 		return Collections.unmodifiableList(payments);
 	}
 
-	public void addPayment(String expression, String description,
+	public void addPayment(String name, String expression, String description,
 			Double amount, Double quote) {
-		Payment payment = new Payment(amount, quote, expression, description);
+		Payment payment = new Payment(amount, quote, expression, description, name);
 		
 		payments.add(payment);
 	}
