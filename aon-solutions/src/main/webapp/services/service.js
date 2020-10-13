@@ -36,7 +36,7 @@ export const rememberPassword = (email) => {
 
 export const getManifest = () => {
 	return new Promise((resolve, reject) => {
-		request('GET', '/ms/api/manifest', undefined, undefined, undefined, (result, error) => error ? reject(error) : resolve(result));
+		request('GET', '/ms/api/manifest', undefined, undefined, (result, error) => error ? reject(error) : resolve(result));
 	});
 }
 

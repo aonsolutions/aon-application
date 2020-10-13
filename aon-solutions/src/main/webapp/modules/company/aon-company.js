@@ -1,8 +1,6 @@
 import {Apps} from  '../../services/app.js';
 import {getDomainApps, setUserAppRole, setUser} from  '../../services/service.js';
 
-import '../../components/aon-select.js';
-
 class AonCompany extends HTMLElement {
 
 	static get observedAttributes() {
@@ -41,33 +39,29 @@ class AonCompany extends HTMLElement {
 			<aon-card id="aonConfigurationGeneral2Card" title="Información Adicional"></aon-card>
 		`;
 		let card = document.getElementById('aonConfigurationGeneralCard');
-		let cardDiv = document.getElementById('aonConfigurationGeneralCard-div');
-		cardDiv.style.width = '500px';
 		card.addContent(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input-text>
-				<aon-input-text class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input-text>
+				<aon-input class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input>
+				<aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-address>
+				<aon-input type="address" class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-input>
 			</form>
 		`);
 
 		let card2 = document.getElementById('aonConfigurationGeneral2Card');
-		let cardDiv2 = document.getElementById('aonConfigurationGeneral2Card-div');
-		cardDiv2.style.width = '500px';
 		card2.addContent(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input-text>
-				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input-text>
+				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input>
+				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input>
 			</form>
 
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value=""></aon-input-text>
+				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value=""></aon-input>
 			</form>
 
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value=""></aon-input-text>
+				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value=""></aon-input>
 			</form>
 
 			<!-- LOGO -->

@@ -1,6 +1,6 @@
 import {login, getManifest, rememberPassword} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
-import '../../components/aon-input-text.js';
+import '../../components/aon-input.js';
 import '../company/aon-parent.js';
 
 
@@ -80,11 +80,11 @@ class AonLogin extends HTMLElement {
 			        </div>
 
 							<div>
-								<aon-input-text id="aonLoginUser" description="Usuario" filled="true"></aon-input-text>
+								<aon-input id="aonLoginUser" description="Usuario" filled="true"></aon-input>
 							</div>
 
 							<div>
-								<aon-input-text id="aonLoginPassword" description="Contraseña" type="password" filled="true"></aon-input-text>
+								<aon-input id="aonLoginPassword" description="Contraseña" type="password" filled="true"></aon-input>
 							</div>
 
 							<div style="padding-bottom: 20px;">
@@ -114,7 +114,7 @@ class AonLogin extends HTMLElement {
     				<h4> Recuperar Contraseña</h4>
     				<div>
 							<form action="#">
-								<aon-input-text id="aonLoginRememberEmail" description="Email"></aon-input-text>
+								<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
 							</form>
       			</div>
     				<div class="mdl-dialog__actions">

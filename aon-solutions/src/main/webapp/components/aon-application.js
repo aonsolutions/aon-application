@@ -174,6 +174,11 @@ class AonApplication extends HTMLElement {
     toolbar.addButton(name, icon, fn);
   }
 
+	removeToolbarOption(name) {
+		let toolbar = document.getElementById(this.getId() + 'Toolbar');
+		toolbar.removeButton(name);
+	}
+
   setContent(element){
     let content = document.getElementById(this.getId() + 'Content');
     content.innerHTML = '';

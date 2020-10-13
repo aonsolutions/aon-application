@@ -170,15 +170,17 @@ input:read-only + .omrs-input-label {
 }
 
 .aonInputListOptionsUl {
-	max-height: 200px;
+	max-height: 197px;
 	width: 100%;
+	overflow: hidden;
+	overflow-y: auto;
 }
 
 .aonInputListOptionsItem {
 	height: 30px;
 	line-height: 30px;
 	margin: 0;
-	padding: 0 26px;
+	padding: 0 20px;
 	cursor: pointer;
 	width: 100%;
 }
