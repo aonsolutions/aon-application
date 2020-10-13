@@ -1414,6 +1414,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	@UiField (provided = true)
 	ContractOtherData contractOtherData;
 	
+	@UiField (provided = true)
+	ContractClauseAndAttach contractClauseAndAttach;
+	
 	@UiField
 	Button saveContract;
 	
@@ -1429,6 +1432,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	@UiField
 	Button listEmployees;
 	
+	@UiField
+	ScrollPanel scrolledPanelClausesAndAttach;
+	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 
 	private ContrataEmployeeObject contrataEmployeeObject;
@@ -1440,6 +1446,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	public ContrataEmployee() {
 		employee = new EmployeeImplementation();
 		contractOtherData = new ContractOtherDataImplementation();
+		contractClauseAndAttach = new ContractClauseAndAttach();
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -1454,6 +1461,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		int height = Window.getClientHeight(); 
 		scrolledPanel.setHeight((height-200)+"px");
 		scrolledPanelContractOtherData.setHeight((height-200)+"px");
+		scrolledPanelClausesAndAttach.setHeight((height-200)+"px");
 		
 		tabLayOutPanel.selectTab(0);
 		tabLayOutPanel.setAnimationDuration(1000);
@@ -1576,6 +1584,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	        }
 	    }.run( 1000 );
 		
+	    tabLayOutPanel.selectTab(0);
 		employee.restartEmployee();
 		
 		this.contrataEmployeeObject.getAgreements(
@@ -1583,6 +1592,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
 					initLogicWindow();
 					initExistingEmployee(employeeContractInfo.getContractInfo().hasPayroll());
+					contractClauseAndAttach.setEmployeeContractInfo(employeeContractInfo);
 				}, 
 				t -> {}
 		);

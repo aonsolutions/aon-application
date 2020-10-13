@@ -79,6 +79,16 @@
 									</g:ScrollPanel>
 						    	</g:HTMLPanel>
 						  	</g:tab>
+						  	<g:tab>
+						    	<g:customHeader size='7'>
+						      		<g:Label>Clausulas / Adjuntos</g:Label>
+						    	</g:customHeader>
+						    	<g:HTMLPanel styleName="{style.mt10}">
+						    		<g:ScrollPanel ui:field="scrolledPanelClausesAndAttach" styleName="{style.p5} {style.center}">
+										<a:ContractClauseAndAttach ui:field="contractClauseAndAttach"/>
+									</g:ScrollPanel>
+						    	</g:HTMLPanel>
+						  	</g:tab>
 						 </g:TabLayoutPanel>
 					 </g:HTMLPanel>
 				</g:center>
