@@ -372,6 +372,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		Attach attach = new Attach(AttachType.DATA)
 				.setDomain(domain)
 				.setSource(DataAttachSource.IMPORTATION.value()) 
+				.setSourceId(dr.getId())
 				.setType(DataAttachType.REQUEST.value())
 				.setDescription("Importacion " + type.getName())
 				.setMimeType(MimeType.get(getMimetype()))
