@@ -67,6 +67,8 @@ public class SistemaRED {
 	}
 	
 	
+	
+	
 	public static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function) throws InterruptedException {
 		// try 20 times to wait .5 second each for filling the page.
 		for (int i = 0; i < 20; i++) {
