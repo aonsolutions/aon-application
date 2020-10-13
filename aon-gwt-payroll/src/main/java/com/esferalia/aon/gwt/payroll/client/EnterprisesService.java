@@ -14,6 +14,8 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -29,7 +31,6 @@ import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -167,5 +168,13 @@ public interface EnterprisesService extends RemoteService {
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);
 	
 	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
+
+	ContractAttach createContractAttach(String currentDomainName, ContractAttach contractAttach);
+
+	ContractAttach deleteContractAttach(String currentDomainName, ContractAttach contractAttach);
+
+	ContractClause createContractClause(String currentDomainName, ContractClause contractClause);
+
+	ContractClause deleteContractClause(String currentDomainName, ContractClause contractClause);
 
 }
