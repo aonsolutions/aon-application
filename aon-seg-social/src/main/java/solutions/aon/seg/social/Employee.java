@@ -71,133 +71,133 @@ public class Employee {
 		accept(new Visitor() {
 			@Override
 			public void visitNSS(String nss) {
-				stringBuffer.append(String.format("nss : \"%s\"", nss));
+				stringBuffer.append(String.format(" nss : \"%s\" ", nss));
 			}
 
 			@Override
 			public void visitName(String name) {
-				stringBuffer.append(String.format("name : \"%s\"", name));
+				stringBuffer.append(String.format(" name : \"%s\" ", name));
 			}
 
 			@Override
 			public void visitStartDate(Date startDate) {
-				stringBuffer.append(String.format("startDate : \"%s\"", startDate));
+				stringBuffer.append(String.format(" startDate : \"%s\" ", startDate));
 				
 			}
 
 			@Override
 			public void visitBirthDate(Date birthDate) {
-				stringBuffer.append(String.format("birthDate : \"%s\"", birthDate));				
+				stringBuffer.append(String.format(" birthDate : \"%s\" ", birthDate));				
 			}
 
 			@Override
 			public void visitIpf(String ipf) {
-				stringBuffer.append(String.format("ipf : \"%s\"", ipf));	
+				stringBuffer.append(String.format(" ipf : \"%s\" ", ipf));	
 			}
 
 			@Override
 			public void visitSex(String sex) {
-				stringBuffer.append(String.format("sex : \"%s\"", sex));	
+				stringBuffer.append(String.format(" sex : \"%s\" ", sex));	
 			}
 
 			@Override
 			public void visitCtaCti(String ctaCti) {
-				stringBuffer.append(String.format("ctaCti : \"%s\"", ctaCti));
+				stringBuffer.append(String.format(" ctaCti : \"%s\" ", ctaCti));
 			}
 
 			@Override
 			public void visitRegime(String regime) {
-				stringBuffer.append(String.format("regime : \"%s\"", regime));
+				stringBuffer.append(String.format(" regime : \"%s\" ", regime));
 			}
 
 			@Override
 			public void visitCompanyId(String companyId) {
-				stringBuffer.append(String.format("companyId : \"%s\"", companyId));
+				stringBuffer.append(String.format(" companyId : \"%s\" ", companyId));
 			}
 
 			@Override
 			public void visitCompanyName(String companyName) {
-				stringBuffer.append(String.format("companyName : \"%s\"", companyName));				
+				stringBuffer.append(String.format(" companyName : \"%s\" ", companyName));				
 			}
 
 			@Override
 			public void visitSituation(String situation) {
-				stringBuffer.append(String.format("situation : \"%s\"", situation));
+				stringBuffer.append(String.format(" situation : \"%s\" ", situation));
 			}
 
 			@Override
 			public void visitGc(String gc) {
-				stringBuffer.append(String.format("gc : \"%s\"", gc));
+				stringBuffer.append(String.format(" gc : \"%s\" ", gc));
 			}
 
 			@Override
 			public void visitAgricultPromo(String agriculturePromo) {
-				stringBuffer.append(String.format("agriculturePromo : \"%s\"", agriculturePromo));
+				stringBuffer.append(String.format(" agriculturePromo : \"%s\" ", agriculturePromo));
 			}
 
 			@Override
 			public void visitWorkTimeReduct(String workTimeReduct) {
-				stringBuffer.append(String.format("workTimeReduct : \"%s\"", workTimeReduct));				
+				stringBuffer.append(String.format(" workTimeReduct : \"%s\" ", workTimeReduct));				
 			}
 
 			@Override
 			public void visitrFra(Date fra) {
-				stringBuffer.append(String.format("fra : \"%s\"", fra));
+				stringBuffer.append(String.format(" fra : \"%s\" ", fra));
 			}
 
 			@Override
 			public void visitrFea(Date fea) {
-				stringBuffer.append(String.format("fea : \"%s\"", fea));
+				stringBuffer.append(String.format(" fea : \"%s\" ", fea));
 			}
 
 			@Override
 			public void visitrFrb(Date frb) {
-				stringBuffer.append(String.format("frb : \"%s\"", frb));
+				stringBuffer.append(String.format(" frb : \"%s\" ", frb));
 			}
 
 			@Override
 			public void visitrFeb(Date feb) {
-				stringBuffer.append(String.format("feb : \"%s\"", feb));	
+				stringBuffer.append(String.format(" feb : \"%s\" ", feb));	
 			}
 
 			@Override
 			public void visitContract(String contract) {
-				stringBuffer.append(String.format("contract : \"%s\"", contract));
+				stringBuffer.append(String.format(" contract : \"%s\" ", contract));
 			}
 
 			@Override
 			public void visitCoef(String coef) {
-				stringBuffer.append(String.format("coef : \"%s\"", coef));
+				stringBuffer.append(String.format(" coef : \"%s\" ", coef));
 			}
 
 			@Override
 			public void visitColec(String colec) {
-				stringBuffer.append(String.format("colec : \"%s\"", colec));
+				stringBuffer.append(String.format(" colec : \"%s\" ", colec));
 			}
 
 			@Override
 			public void visitEpig(String epig) {
-				stringBuffer.append(String.format("epig : \"%s\"", epig));
+				stringBuffer.append(String.format(" epig : \"%s\" ", epig));
 			}
 
 			@Override
 			public void visitOcup(String ocup) {
-				stringBuffer.append(String.format("ocup : \"%s\"", ocup));
+				stringBuffer.append(String.format(" ocup : \"%s\" ", ocup));
 			}
 
 			@Override
 			public void visitVinFam(String vimFam) {
-				stringBuffer.append(String.format("vinFam : \"%s\"", vimFam));
+				stringBuffer.append(String.format(" vinFam : \"%s\" ", vimFam));
 			}
 
 			@Override
 			public void visitProfesCat(String profesCat) {
-				stringBuffer.append(String.format("profesCat : \"%s\"", profesCat));		
+				stringBuffer.append(String.format(" profesCat : \"%s\" ", profesCat));		
 			}
 
 			@Override
 			public void visitReducingcoefic(String reducingCoefic) {
-				stringBuffer.append(String.format("reducingCoefic : \"%s\"", reducingCoefic));
+				stringBuffer.append(String.format(" reducingCoefic : \"%s\" ", reducingCoefic));
 			}
 
 		});
