@@ -560,7 +560,12 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	public void refresh(final Workplace workplace) {
 
-		final TreeItem workplaceItem = getWorkplacetItem(workplace.getId());
+		refreshWorkplace(workplace.getId());
+	}
+
+	public void refreshWorkplace(final Integer workplaceId) {
+
+		final TreeItem workplaceItem = getWorkplacetItem(workplaceId);
 		final Integer enterpriseId = ((Enterprise) workplaceItem.getParentItem().getUserObject()).getId();
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
@@ -574,7 +579,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 				for (Enterprise newEnterprise : enterprises) {
 					if (newEnterprise.getId().equals(enterpriseId)) {
 						for (Workplace newWorkplace : newEnterprise.getWorkplaces()) {
-							if (workplace.getId().equals(newWorkplace.getId())) {
+							if (workplaceId.equals(newWorkplace.getId())) {
 								boolean open = workplaceItem.getState();
 								workplaceItem.removeItems();
 								loadWorkplace(newEnterprise, workplaceItem, newWorkplace);
@@ -643,6 +648,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	public void selectEmployee(int employeeId, boolean fireEvents) {
 
 		TreeItem treeItem = getEmployeeItem(employeeId);
+		
+		tree.setSelectedItem(treeItem, fireEvents);
+	}
+
+	public void selectItem(Predicate<TreeItem> predicate, boolean fireEvents) {
+
+		TreeItem treeItem = getTreeItem(tree, predicate); //getEmployeeItem(employeeId);
 
 		tree.setSelectedItem(treeItem, fireEvents);
 	}
@@ -1891,6 +1903,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			}
 		});
 	}
+
 
 	private TreeItem getActivityItem(final int activityId) {
 		return getTreeItem(tree, new Predicate<TreeItem>() {
