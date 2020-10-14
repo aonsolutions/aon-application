@@ -12,9 +12,18 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
 
 public class PayrollImpl implements IPayroll {
+	
+	// -------------------- EMPLOYEE
+	
+	@Override
+	public Employee addEmployee(AONContext ctx, String domainName, Employee employee) {
+		return EmployeeDAO.addEmployee(ctx, domainName, employee);
+	}
 
 	// -------------------- CONTRACT
 	
@@ -45,5 +54,8 @@ public class PayrollImpl implements IPayroll {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ContractDAO.getAgreementLevelCategoryStream(ctx, filter));
 	}
+	
+	
+	
 
 }

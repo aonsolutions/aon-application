@@ -10,10 +10,15 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.payroll.Employee;
 
 
 public interface IPayroll {
 	
+	// -------------------- EMPLOYEE 
+	
+	public Employee addEmployee(AONContext ctx, String domainName, Employee employee);
+
 	// -------------------- CONTRACT
 	
 	public Stream<Contract> getContractStream(AONContext ctx, ContractFilter filter);
@@ -29,5 +34,7 @@ public interface IPayroll {
 	// -------------------- AgreementLevelCategory
 	
 	public Stream<AgreementLevelCategory> getAgreementLevelCategoryStream(AONContext ctx, AgreementLevelCategoryFilter filter);
+	
+	
 
 }

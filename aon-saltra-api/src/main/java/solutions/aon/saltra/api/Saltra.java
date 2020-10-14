@@ -59,7 +59,7 @@ public class Saltra implements AutoCloseable{
 	private static Map<String, Supplier<? extends SaltraException>> EXCEPTIONS = 
 	new HashMap<String, Supplier<? extends SaltraException>>(){
 		{
-			put("^403\\*.*", () -> new ForbiddenException()); // ACCESO NO AUTORIZADO
+			put("^403.*", () -> new ForbiddenException()); // ACCESO NO AUTORIZADO
 
 			put("^3543\\*.*", () -> new NoSuchDataException()); // NO EXISTEN DATOS PARA ESTA CONSULTA"
 			put("^3065\\*.*", () -> new NoSuchDataException()); // CLAVE INEXISTENTE EN BASE DE DATOS"
