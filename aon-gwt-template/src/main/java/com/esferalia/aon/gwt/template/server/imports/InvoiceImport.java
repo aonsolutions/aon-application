@@ -103,8 +103,7 @@ public class InvoiceImport {
 						check(domain, login, title, cell);			
 					}
 				});
-				if(row.getRowNum() != 0) {
-					
+				if(row.getRowNum() != 0 && !inv.isEmpty()) {	
 					list.add(inv);
 				}
 			});
