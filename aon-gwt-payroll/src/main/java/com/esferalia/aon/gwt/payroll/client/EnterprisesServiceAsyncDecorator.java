@@ -18,6 +18,8 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -481,7 +483,30 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.createUpdateITEmployee(currentDomainName, employeeITInfo, new AsyncCallbackWrapper<String>(callback));
 	}
+
+	@Override
+	public void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<ContractAttach> callback) {
+		AON.start();
+		enterprisesServiceAsync.createContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<ContractAttach>(callback));
+	}
+
+	@Override
+	public void deleteContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<ContractAttach> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<ContractAttach>(callback));
+	}
+
+	@Override
+	public void createContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<ContractClause> callback) {
+		AON.start();
+		enterprisesServiceAsync.createContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<ContractClause>(callback));
 	
-	
+	}
+
+	@Override
+	public void deleteContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<ContractClause> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<ContractClause>(callback));
+	}
 
 }

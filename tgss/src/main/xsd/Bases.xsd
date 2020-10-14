@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<xs:schema targetNamespace="http://www.seg-social.es/creta/esquemas/V100/Bases" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.seg-social.es/creta/esquemas/V100/Bases" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema targetNamespace="http://www.seg-social.es/creta/esquemas/V120/Bases" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.seg-social.es/creta/esquemas/V120/Bases" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="Bases">
 		<xs:complexType>
 			<xs:sequence>
@@ -32,9 +32,18 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+  <xs:element name="SolicitudRecepcionRNT">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="S"/>
+        <xs:enumeration value="N"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
 	<!--xs:element name="Liquidacion">
 		<xs:complexType>
 			<xs:sequence>
+        <xs:element ref="SolicitudRecepcionRNT" minOccurs="0" />
 				<xs:element ref="Ccc"/>
 				<xs:choice>
 					<xs:sequence>
@@ -67,6 +76,7 @@
 	<xs:element name="Liquidacion">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element ref="SolicitudRecepcionRNT" minOccurs="0" />
 				<xs:element ref="Ccc"/>
 				<xs:element ref="CccConcertado"/>
 				<xs:element ref="PeriodoDesde"/>

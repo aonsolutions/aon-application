@@ -18,9 +18,10 @@ public class AutoMLTemplate extends AbstractTemplate {
 	public InvoiceTemplate parse(String text, InvoiceBuilder<?> handler) throws IOException, UnknownInvoiceException {
 		handler.setInsightNifs(DocumentParser.getNifs(text));
 		handler.setInsightDates(DateParser.getDates(text));
-		List<Double> aomunts = AmountParser.getAmounts(text); 
-		handler.setInsightAmounts(aomunts);
-		InvoiceTaxParser.getTaxes(aomunts, handler);
+		List<Double> amounts = AmountParser.getAmounts(text); 
+		handler.setInsightAmounts(amounts);
+		InvoiceTaxParser.getTaxes(amounts, handler);
+		handler.setInsightTotals(TotalParser.getAmounts(text));
 		return this;
 	}
 

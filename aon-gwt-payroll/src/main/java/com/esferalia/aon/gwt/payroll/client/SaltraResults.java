@@ -12,7 +12,9 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
+import com.esferalia.aon.gwt.payroll.shared.SaltraService.JsSaltraResults;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -29,6 +31,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -71,6 +74,11 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 				+ "Alta de trabajador en un fecha diferente {2}."
 				+ " Pulse <a style=\"{1}\" onclick='javascript:updateStartDate();'  >aqu\u00ed</a> para modificar el alta en el SISTEMA RED.</span>")
 		SafeHtml startDateMismatched(SafeStyles mainStyle, SafeStyles anchorStyle, String date);
+
+		@Template("<span style=\"{0}\">"
+				+ "Acceso no autorizado. Certificado no aceptado por la Seguridad Social."
+				+ " Pulse <a style=\"{1}\" onclick='javascript:importCertificate();'  >aqu\u00ed</a> para importar un certificado.</span>")
+		SafeHtml forbiddenTreeItem(SafeStyles mainStyle, SafeStyles anchorStyle);
 
 		@Template("<span style=\"{0}\">"
 				+ "Para acceder al SISTEMA RED se requiere un certificado aceptado por la Seguridad Social."
@@ -259,6 +267,19 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	}
 	
 	@Override
+	public void forbidden() {
+		addError(new SaltraEvent() {
+			
+			@Override
+			public void append(SafeHtmlBuilder builder) {
+				builder.append(TEMPLATE.forbiddenTreeItem(getMainStyle(), getAnchorStyle()));
+			}
+		});
+		
+		syncErrors();
+	}
+	
+	@Override
 	public void invalidData() {
 		// TODO Auto-generated method stub
 		
@@ -430,14 +451,14 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	
 	// ------------------------------------------------------------------------
 	
-	protected void newAffiliated() {
-		
-	}
 	
 	protected void saltraCredentialsFound() {
 		
 	}
 
+	protected void newAffiliated(JsSaltraResults jsSaltraResults) {
+		
+	}
 	// ------------------------------------------------------------------------
 	
 	protected void removeAll() {
@@ -463,9 +484,10 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedNotFound.getDate()) );
 		
 		employeeFormPanel.addSubmitCompleteHandler((e) -> {
-			newAffiliated();
+			JsSaltraResults jsSaltraResults = eval("("+ e.getResults() +")");
+			newAffiliated(jsSaltraResults);
 		});
-		employeeFormPanel.submit(); 
+		employeeFormPanel.submit(); 	
 
 	}
 
@@ -641,4 +663,10 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		});		
 			
 	}-*/;
+	
+	private static native <T extends JavaScriptObject> T eval(String javascript)
+	/*-{
+		return eval(javascript);
+	}-*/;
+
 }

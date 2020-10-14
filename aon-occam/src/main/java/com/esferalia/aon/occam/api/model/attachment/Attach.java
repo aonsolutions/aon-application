@@ -263,10 +263,29 @@ public class Attach implements Serializable {
 		this.sourceBatch = sourceBatch;
 		return this;
 	}
+	
+	public Integer getSourceId() {
+		return sourceBatch;
+	}
+	
+	public Attach setSourceId(Integer sourceBatch) {
+		this.sourceBatch = sourceBatch;
+		return this;
+	}
+	
 	public Byte getSourceType() {
 		return sourceType;
 	}
 	public Attach setSourceType(Byte sourceType) {
+		this.sourceType = sourceType;
+		return this;
+	}
+	
+	public Byte getSource() {
+		return sourceType;
+	}
+	
+	public Attach setSource(Byte sourceType) {
 		this.sourceType = sourceType;
 		return this;
 	}

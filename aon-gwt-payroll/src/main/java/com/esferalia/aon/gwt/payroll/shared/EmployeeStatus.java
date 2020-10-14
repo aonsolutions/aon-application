@@ -9,6 +9,7 @@ public abstract class EmployeeStatus implements Serializable {
 	
 	public static interface Visitor  {
 		void up2Date();
+		void forbidden();
 		void invalidData();
 		void endDateNotFound();
 		void employeeNotFound();
@@ -37,13 +38,20 @@ public abstract class EmployeeStatus implements Serializable {
 		}
 	}
 	
+	public static class Forbidden extends EmployeeStatus{
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.forbidden();
+		}
+	}	
+	
 	public static class CredentialsNotFound extends EmployeeStatus{
 		@Override
 		public void visit(Visitor visitor) {
 			visitor.saltraCredentialsNotFound();
 		}
 	}	
-	
+
 	public static class AndEmployeeStatus extends EmployeeStatus {
 		
 		private AndEmployeeStatus next;
@@ -298,6 +306,11 @@ public abstract class EmployeeStatus implements Serializable {
 			}
 			
 			@Override
+			public void forbidden() {
+				System.out.println("forbidden");					
+			}
+			
+			@Override
 			public void saltraCredentialsNotFound() {
 				System.out.println("saltraCredentialsNotFound");
 			}
@@ -360,6 +373,11 @@ public abstract class EmployeeStatus implements Serializable {
 	
 			@Override
 			public void up2Date() {
+			}
+			
+			@Override
+			public void forbidden() {
+				throw new OutOfDateException();
 			}
 	
 			@Override

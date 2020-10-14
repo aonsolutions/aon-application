@@ -71,6 +71,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.jooq.tables.ContractPayment;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -81,6 +82,7 @@ import com.esferalia.aon.jooq.tables.records.CalendarRecord;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
+import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -1161,7 +1163,7 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-	public static final void addPayment(AONContext aonContext,
+	public static final ContractPaymentRecord addPayment(AONContext aonContext,
 			ContractRecord contract,
 			Date startDate,
 			Date endDate,
@@ -1172,6 +1174,7 @@ public abstract class AbstractSQLTestCase {
 			String quoteExpression,
 			PaymentType type,
 			Byte month) {
+		return 
 		aonContext.getDslContext().insertInto(CONTRACT_PAYMENT)
 				.set(CONTRACT_PAYMENT.DOMAIN, contract.getDomain())
 				.set(CONTRACT_PAYMENT.PAYMENT_CONCEPT, concept.getId())
@@ -1185,7 +1188,10 @@ public abstract class AbstractSQLTestCase {
 				.set(CONTRACT_PAYMENT.TYPE, type != null ? (byte) type.ordinal(): null)
 				.set(CONTRACT_PAYMENT.SALARY_TYPE, (byte) SalaryType.SALARY.ordinal())
 				.set(CONTRACT_PAYMENT.MONTH, month )
-				.execute();
+				.returning()
+				.fetchOne()
+//				.execute()
+				;
 
 	}
 

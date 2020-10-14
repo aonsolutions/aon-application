@@ -231,6 +231,19 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			getSalaryPaymentOf(salaryPayment, extraPayments)
 			.ifPresent( p -> payments.add(salary2ContractPayment(salary,salaryPayment, p)))
 			);
+
+			if ( payments.isEmpty() )  {
+				salary.getPayments().forEach( salaryPayment -> 
+				getSalaryPaymentOff(salaryPayment, extraPayments)
+				.ifPresent( p -> {
+					if ( payments.isEmpty() )
+						payments.add(salary2ContractPayment(salary,salaryPayment, p));
+				})
+				);
+				
+			}
+			
+				
 			payments.stream().findFirst()
 			.ifPresentOrElse(
 			(p) -> monthlyQuotedPayments.addAll(payments), 
@@ -326,6 +339,15 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 		return Optional.empty();
 	}
 
+	private Optional<IContractPayment> getSalaryPaymentOff(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, Collection<IContractPayment> contractPayments ) {
+		for (IContractPayment contractPayment : contractPayments) {
+			if ( AonStringUtils.equals(contractPayment.getName(), salaryPayment.getName()) ) {
+				return Optional.of(contractPayment);
+			}
+		}
+		
+		return Optional.empty();
+	}
 	
 	private void addSalaryContractPayments() throws ExpressionException, AonException {
 		ExpressionContext expressionContext = super.getExpressionContext();

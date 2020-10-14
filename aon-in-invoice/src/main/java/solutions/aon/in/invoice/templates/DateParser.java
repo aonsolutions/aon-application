@@ -36,6 +36,7 @@ public class DateParser {
 			try { 
 				month = Integer.parseInt(m); 
 			} catch (NumberFormatException e) {
+				m = m.replaceAll("\\W", "");
 				if (MONTHS.containsKey((m.toLowerCase()))) {
 					month = MONTHS.get(m.toLowerCase());
 				}
@@ -119,6 +120,7 @@ public class DateParser {
     	      put("septiemb", 9);
     	      put("septiembr", 9);
     	      put("septiembre", 9);
+    	      put("oct", 10);
     	      put("oct", 10);
     	      put("octu", 10);
     	      put("octub", 10);

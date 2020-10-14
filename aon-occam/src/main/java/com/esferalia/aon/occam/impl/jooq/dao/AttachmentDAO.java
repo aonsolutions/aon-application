@@ -594,6 +594,13 @@ public class AttachmentDAO {
 				.execute();
 			}
 	
+			public static void updateDataAttachDriveId(AONContext ctx, Integer attachId, String driveId){
+				ctx.getDslContext().update(DATA_ATTACH)
+					.set(DATA_ATTACH.DRIVE_ID, driveId)
+				.where(DATA_ATTACH.ID.eq(attachId))
+				.execute();
+			}
+	
 	//-------------------- DELETES
 	
 	public static void deleteContractAttach(AONContext ctx, AttachFilter filter){

@@ -14,6 +14,8 @@ import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -295,6 +297,21 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEnterpriseStatus(getCurrentDomainName(), getCurrentUser(), enterpriseId, asyncCallback);		
 	}
 
+	public void createContractAttach(ContractAttach contractAttach, AsyncCallback<ContractAttach> asyncCallback) {
+		enterprisesServiceAsync.createContractAttach(getCurrentDomainName(), contractAttach, asyncCallback);	
+	}
+	
+	public void deleteContractAttach(ContractAttach contractAttach, AsyncCallback<ContractAttach> asyncCallback) {
+		enterprisesServiceAsync.deleteContractAttach(getCurrentDomainName(), contractAttach, asyncCallback);
+	}
+	
+	public void createContractClause(ContractClause contractClause, AsyncCallback<ContractClause> asyncCallback) {
+		enterprisesServiceAsync.createContractClause(getCurrentDomainName(), contractClause, asyncCallback);
+	}
+
+	public void deleteContractClause(ContractClause contractClause, AsyncCallback<ContractClause> asyncCallback) {
+		enterprisesServiceAsync.deleteContractClause(getCurrentDomainName(), contractClause, asyncCallback);
+	}
 	
 	// ----------------------------------------------------------------- static
 	
@@ -305,5 +322,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }

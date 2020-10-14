@@ -285,6 +285,9 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			
 			Date extraStartDate  = getStartDate(extra, year);
 			
+			if (Period.compare(extra.getEndDate(), extraStartDate) < 0 )
+				continue;
+			
 //			if ( extraStartDate.after(settleEndDate))  
 //				continue;  // Nothing to calculate
 			while ( !extraStartDate.after(settleEndDate )) {
@@ -306,6 +309,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				}
 				
 	
+				if (Period.compare(extra.getEndDate(), extraStartDate) < 0 )
+					break;
 				
 				
 				// TODO: Extract to method ?
@@ -321,12 +326,20 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 				if ( !extraCtx.next() )
 					break;
 				
+				Period contractPaymentPeriod = new Period(extra.getStartDate(), extra.getEndDate());
+				
 				List<IContractPayment> extraPayments = new ArrayList<IContractPayment>(extras.size());
 				
 				Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder() {
 					@Override
 					public void addPayment(Double amount, Double quote, Double tax, String description, Date startDate,
 							Date endDate, IPayment payment, Map<String, ITimedVariable<?>> context) {
+						
+						Period salaryPaymentPeriod =  new Period(startDate, endDate);
+						
+						if ( !salaryPaymentPeriod.intersects(contractPaymentPeriod))
+							return;
+						
 						SystemPayment extraPayment = new SystemPayment();
 						
 						if ( payment instanceof IContractPayment )

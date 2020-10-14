@@ -30,11 +30,11 @@
                     <div class="container-fluid">
                         <!-- INICIO VISTA -->
                         <form class="d-none" enctype="multipart/form-data">
-                            <input id="upload" class="form-control-file" type="file" name="">
+                            <input id="upload" class="form-control-file" type="file" name="" multiple accept=".bmp, .jpg, .jpeg, .png, .gif, .tiff, .tif, .txt, .rtf, .odt, .doc, .docx, .ods, .xls, .pdf, .xlsx, .xlsb">
                         </form>
                         <div class="row justify-content-center">
                             <div class="col-12">
-                                <table class="table">
+                                <table class="table" data-folders="" id="tabla_documentos">
                                     <thead>
                                         <tr>
                                             <th class="align-middle">Tags</th>
@@ -123,248 +123,251 @@
 
         <!-- Scripts -->
         <script src="../js/app.js"></script>
-        <script>
-            var CARPETA_A_CONTABILIZAR = 5;
-            var data = {
-                "list": [
-                    {
-                        "id": 1,
-                        "tags": [
-                            "#Intracomunitarias"
-                        ],
-                        "date": "23-09-2020 14:41",
-                        "file_name": "Nombre de archivo.png",
-                        "type": "sent",
-                        "read": 0,
-                        "subfolder": null,
-                        "uploaded_by": "Cliente de prueba"
-                    },
-                    {
-                        "id": 2,
-                        "tags": [
-                            "#ISP",
-                            "#Rectificativas"
-                        ],
-                        "date": "23-09-2020 14:41",
-                        "file_name": "Test.pdf",
-                        "type": "sent",
-                        "read": 0,
-                        "subfolder": "Subcarpeta de A contabilizar",
-                        "uploaded_by": "Cliente de prueba"
-                    },
-                    {
-                        "id": 3,
-                        "tags": [],
-                        "date": "23-09-2020 14:41",
-                        "file_name": "Nombre de archivo.png",
-                        "type": "received",
-                        "read": 1,
-                        "subfolder": null,
-                        "uploaded_by": "Asesor de prueba"
-                    },
-                    {
-                        "id": 4,
-                        "tags": [],
-                        "date": "23-09-2020 14:41",
-                        "file_name": "Nombre de archivo.png",
-                        "type": "sent",
-                        "read": 0,
-                        "subfolder": null,
-                        "uploaded_by": "Cliente de prueba"
-                    },
-                    {
-                        "id": 5,
-                        "tags": [
-                            "#ISP"
-                        ],
-                        "date": "23-09-2020 14:41",
-                        "file_name": "Nombre de archivo.png",
-                        "type": "received",
-                        "read": 0,
-                        "subfolder": "Subcarpeta de A contabilizar",
-                        "uploaded_by": "Asesor de prueba"
-                    }
-                ],
-                "total_data": 5,
-                "total_page": 1,
-                "page": 1,
-                "shown_page": "1-5"
-            };
+        <script type="module">
+            import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
 
             $(document).ready(function(){
-                // Obtenemos la carpeta seleccionada a partir del parametro folder de la url
-                var selectedFolder = new URLSearchParams(window.location.search).get('folder');
+                // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
+                window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
 
                 // Añadimos los estilos de carpeta actual a la carpeta seleccionada
-                $('a[data-folder="' + selectedFolder + '"]').addClass('active').attr('aria-pressed', 'true');
+                $('a[data-folder="' + window.selectedFolder + '"]').addClass('active').attr('aria-pressed', 'true');
 
-                createTable(data);
+                // Obtenemos las carpetas del cliente
+                const aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+                const folders = $(aonDocumental).data('folders');
 
-                //
-                // Creamos la tabla con los datos a listar
-                //
-                function createTable(data){
-                    // Simulamos que solo tenga datos la carpeta "A contabilizar"
-                    var list = (selectedFolder == CARPETA_A_CONTABILIZAR) ? data.list : [];
+                if (typeof folders !== 'undefined') {
+                    const subfolders = {};
 
-                    // Recorremos los datos a mostrar
-                    var tbody = '';
+                    // Recorremos las carpetas para almacenar en una variable todas las subcarpetas del cliente
+                    for (let i = 0; i < folders.length; i++) {
+                        const folder = folders[i];
 
-                    if (list.length) {
-                        $.each(list, function(i, item) {
-                            tbody+= '<tr data-id="' + item.id + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.join(',') + '">';
+                        if (folder.subcarpetas.length) {
+                            for (let j = 0; j < folder.subcarpetas.length; j++) {
+                                const subfolder = folder.subcarpetas[j];
 
-                                // Recorremos los <td>
-                                $.each(item, function(key, val) {
-                                    switch (key) {
-                                        case 'id': // No mostramos el ID en la tabla
-                                            break;
-                                        case 'tags':
-                                            tbody+=
-                                            '<td>' +
-                                                '<span>';
-                                                    if ($.isArray(val)) {
-                                                        var tags = val.join(', ');
-
-                                                        tbody += tags;
-                                                    }
-                                                tbody += '</span>' +
-                                            '</td>';
-                                            break;
-                                        case 'subfolder':
-                                            var subfolder = (val !== null) ? val : '';
-
-                                            tbody+= '<td><span>'+subfolder+'</span></td>';
-
-                                            break;
-                                        case 'read':
-                                            var read = (val === 0) ? '' : '<i class="material-icons">check</i>';
-
-                                            tbody+= '<td><span>'+read+'</span></td>';
-                                            break;
-                                        case 'type':
-                                            var types = {
-                                                'sent': 'Enviado',
-                                                'received': 'Recibido'
-                                            };
-                                            var type = types[item.type];
-
-                                            tbody+= '<td><span>'+type+'</span></td>';
-                                            break;
-                                        default:
-                                            tbody+= '<td><span>'+val+'</span></td>';
-                                            break;
-                                    }
-                                });
-
-                                // Columna con las acciones que se pueden realizar sobre un documento
-                                tbody+= '' +
-                                    '<td>' +
-                                        '<div class="form-check form-check-inline mr-0 d-inline-block align-top">' +
-                                            '<input class="checkbox-descargar-doc form-check-input position-static" type="checkbox" aria-label="Seleccionar documento">' +
-                                        '</div>' +
-                                        '<a href="show.html?document=' + item.file_name + '" title="Ver documento" class=""><i class="material-icons image pointer text-primary"></i></a>' +
-                                        '<i title="Descargar documento" class="material-icons file_download pointer text-primary"></i>' +
-                                        '<i class="edit-doc material-icons edit pointer text-primary" title="Editar documento"></i>';
-
-                                        // Si el usuario ha enviado el documento, permitimos acciones adicionales
-                                        if (item.type === 'sent') {
-                                            tbody+= '<i class="new-note-doc material-icons note_add pointer text-primary" title="Crear nota"></i>';
-
-                                            // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
-                                            if (selectedFolder == CARPETA_A_CONTABILIZAR) {
-                                                tbody += '<i class="delete-doc material-icons delete_forever pointer text-danger" title="Eliminar documento"></i>';
-                                            }
-                                        }
-
-                                tbody+= '</td>';
-
-                            // Cerramos el <tr>
-                            tbody+= '</tr>';
-                        });
-                    } else {
-                        tbody+= '' +
-                            '<tr>'+
-                                '<td colspan="8">'+
-                                    '<div class="row">'+
-                                        '<div class="col-12 text-center">'+
-                                            'No existen datos para mostrar'
-                                        '</div>'+
-                                    '</div>'+
-                                '</td>'
-                            '</tr>';
+                                subfolders[subfolder.subcarpetaID] = subfolder.subcarpeta;
+                            }
+                        }
                     }
 
-                    // Agregamos el cuerpo de la tabla
-                    $('.table tbody').append(tbody);
+                    // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
+                    bidoq({
+                        "method": "list_docs",
+                        "carpeta": window.selectedFolder
+                    }).then((data) => {
+                        const documents = JSON.parse(data).datos;
 
-                    // Cogemos el paginado que tendía la tabla
-                    var pagination = createPaginate(data.page, data.total_page)
+                        console.log(documents);
 
-                    // Agregamos el paginado en el footer de la tabla
-                    var tfoot =
-                    '<tr>'+
-                        '<td colspan="8">'+
-                            '<div class="row">'+
-                                '<div class="col-md-6">'+
-                                    'Mostrando del '+data.shown_page+' de un total de '+data.total_data+' elementos'+
-                                '</div>'+
-                                '<div class="col-md-6">'+
-                                    pagination+
-                                '</div>'+
-                            '</div>'+
-                        '</td>'
-                    '</tr>';
+                        if (typeof documents !== 'undefined') {
+                            const list = documents.map(document => ({
+                                    "id": document.id,
+                                    "tags": ["X"],
+                                    "date": document.date,
+                                    "file_name": document.name,
+                                    "type": (document.type == 1) ? 'received' : 'sent',
+                                    "read": 0,
+                                    "subfolder": (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
+                                    "uploaded_by": "X"
+                            }));
+                            const paginationList = {
+                                "list": list,
+                                "total_data": 5,
+                                "total_page": 1,
+                                "page": 1,
+                                "shown_page": "1-5"
+                            }
 
-                    // Agregamos el pie de la tabla
-                    $('.table tfoot').html(tfoot);
-                }
-
-                //
-                // Crear el paginado
-                //
-                function createPaginate(page, page_total){
-                    var paginate = '<ul class="pagination display-block float-right">';
-
-                    // Si tenemos paginas
-                    if (page > 1){
-                        paginate+=
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="1">'+
-                                    '<i class="material-icons" title="Principio">fast_rewind</i>'+
-                                '</a>'+
-                            '</li>'+
-
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+(page-1)+'">'+
-                                    '<i class="material-icons" title="Volver">arrow_left</i>'+
-                                '</a>'+
-                            '</li>';
-                    }
-
-                    if(page_total > 0){
-                        paginate+= '<li class="ml-2 mr-2">'+page+'/'+page_total+'</li>';
-                    }
-
-                    if (page < page_total) {
-                        paginate+=
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+(page+1)+'">'+
-                                    '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
-                                '</a>'+
-                            '</li>'+
-
-                            '<li class="pointer">'+
-                                '<a class="go_page" data-page="'+page_total+'">'+
-                                    '<i class="material-icons" title="Final">fast_forward</i>'+
-                                '</a>'+
-                            '</li>';
-                    }
-                    paginate+= '</ul>';
-
-                    return paginate;
+                            createTable(paginationList);
+                        } else {
+                            console.error('Ocurrió un error al intentar obtener los documentos');
+                        }
+                    }).catch(function(error) {
+                        console.error('Ocurrió un error: ' + error.message);
+                    });
+                } else {
+                    console.error('Ocurrió un error al intentar obtener las carpetas');
                 }
             });
+
+            //
+            // Creamos la tabla con los datos a listar
+            //
+            function createTable(data){
+                // Simulamos que solo tenga datos la carpeta "A contabilizar"
+                var list = data.list;
+
+                // Recorremos los datos a mostrar
+                var tbody = '';
+
+                if (list.length) {
+                    $.each(list, function(i, item) {
+                        tbody+= '<tr data-id="' + item.id + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.join(',') + '">';
+
+                            // Recorremos los <td>
+                            $.each(item, function(key, val) {
+                                switch (key) {
+                                    case 'id': // No mostramos el ID en la tabla
+                                        break;
+                                    case 'tags':
+                                        tbody+=
+                                        '<td>' +
+                                            '<span>';
+                                                if ($.isArray(val)) {
+                                                    var tags = val.join(', ');
+
+                                                    tbody += tags;
+                                                }
+                                            tbody += '</span>' +
+                                        '</td>';
+                                        break;
+                                    case 'date':
+                                        // Formateamos la fecha
+                                        const date = new Date(val * 1000);
+                                        const year = date.getFullYear();
+                                        const month = "0" + (date.getMonth() + 1);
+                                        const day = "0" + date.getDate();
+                                        const formattedDate = day.substr(-2) + '-' + month.substr(-2) + '-' + year;
+
+                                        tbody+= '<td><span>'+formattedDate+'</span></td>';
+                                        break;
+                                    case 'subfolder':
+                                        var subfolder = (val !== null) ? val : '';
+
+                                        tbody+= '<td><span>'+subfolder+'</span></td>';
+
+                                        break;
+                                    case 'read':
+                                        var read = (val === 0) ? '' : '<i class="material-icons">check</i>';
+
+                                        tbody+= '<td><span>'+read+'</span></td>';
+                                        break;
+                                    case 'type':
+                                        var types = {
+                                            'sent': 'Enviado',
+                                            'received': 'Recibido'
+                                        };
+                                        var type = types[item.type];
+
+                                        tbody+= '<td><span>'+type+'</span></td>';
+                                        break;
+                                    default:
+                                        tbody+= '<td><span>'+val+'</span></td>';
+                                        break;
+                                }
+                            });
+
+                            // Columna con las acciones que se pueden realizar sobre un documento
+                            tbody+= '' +
+                                '<td>' +
+                                    '<div class="form-check form-check-inline mr-0 d-inline-block align-top">' +
+                                        '<input class="checkbox-descargar-doc form-check-input position-static" type="checkbox" aria-label="Seleccionar documento">' +
+                                    '</div>' +
+                                    '<a href="show.html?document=' + item.id + '" title="Ver documento" class=""><i class="material-icons image pointer text-primary"></i></a>' +
+                                    '<i title="Descargar documento" class="material-icons file_download pointer text-primary"></i>' +
+                                    '<i class="edit-doc material-icons edit pointer text-primary" title="Editar documento"></i>';
+
+                                    // Si el usuario ha enviado el documento, permitimos acciones adicionales
+                                    if (item.type === 'sent') {
+                                        tbody+= '<i class="new-note-doc material-icons note_add pointer text-primary" title="Crear nota"></i>';
+
+                                        // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
+                                        if (window.selectedFolder == CARPETA_A_CONTABILIZAR) {
+                                            tbody += '<i class="delete-doc material-icons delete_forever pointer text-danger" title="Eliminar documento"></i>';
+                                        }
+                                    }
+
+                            tbody+= '</td>';
+
+                        // Cerramos el <tr>
+                        tbody+= '</tr>';
+                    });
+                } else {
+                    tbody+= '' +
+                        '<tr>'+
+                            '<td colspan="8">'+
+                                '<div class="row">'+
+                                    '<div class="col-12 text-center">'+
+                                        'No existen datos para mostrar'
+                                    '</div>'+
+                                '</div>'+
+                            '</td>'
+                        '</tr>';
+                }
+
+                // Agregamos el cuerpo de la tabla
+                $('.table tbody').append(tbody);
+
+                // Cogemos el paginado que tendía la tabla
+                var pagination = createPaginate(data.page, data.total_page);
+
+                // Agregamos el paginado en el footer de la tabla
+                var tfoot =
+                '<tr>'+
+                    '<td colspan="8">'+
+                        '<div class="row">'+
+                            '<div class="col-md-6">'+
+                                'Mostrando del '+data.shown_page+' de un total de '+data.total_data+' elementos'+
+                            '</div>'+
+                            '<div class="col-md-6">'+
+                                pagination+
+                            '</div>'+
+                        '</div>'+
+                    '</td>'
+                '</tr>';
+
+                // Agregamos el pie de la tabla
+                $('.table tfoot').html(tfoot);
+            }
+
+            //
+            // Crear el paginado
+            //
+            function createPaginate(page, page_total){
+                var paginate = '<ul class="pagination display-block float-right">';
+
+                // Si tenemos paginas
+                if (page > 1){
+                    paginate+=
+                        '<li class="pointer">'+
+                            '<a class="go_page" data-page="1">'+
+                                '<i class="material-icons" title="Principio">fast_rewind</i>'+
+                            '</a>'+
+                        '</li>'+
+
+                        '<li class="pointer">'+
+                            '<a class="go_page" data-page="'+(page-1)+'">'+
+                                '<i class="material-icons" title="Volver">arrow_left</i>'+
+                            '</a>'+
+                        '</li>';
+                }
+
+                if(page_total > 0){
+                    paginate+= '<li class="ml-2 mr-2">'+page+'/'+page_total+'</li>';
+                }
+
+                if (page < page_total) {
+                    paginate+=
+                        '<li class="pointer">'+
+                            '<a class="go_page" data-page="'+(page+1)+'">'+
+                                '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
+                            '</a>'+
+                        '</li>'+
+
+                        '<li class="pointer">'+
+                            '<a class="go_page" data-page="'+page_total+'">'+
+                                '<i class="material-icons" title="Final">fast_forward</i>'+
+                            '</a>'+
+                        '</li>';
+                }
+                paginate+= '</ul>';
+
+                return paginate;
+            }
+
 
             //
             // Eventos
@@ -510,9 +513,77 @@
                     }
                 });
 
+                // TODO: Quitar la posibilidad de subir documentos a la carpeta "Contabilizados"
                 $(document).on('change', '#upload', function() {
-                    alert('Documento subido con éxito');
+                    const filesPromises = Array.from(this.files).map(async (file) => {
+                        // Le quitamos la extensión al fichero para quedarnos solo con el nombre
+                        let fileName = file.name.split('.');
+
+                        fileName.pop();
+
+                        fileName = fileName.join('.');
+
+                        return {
+                            "image_content": await readFile(file),
+                            "image_name": fileName,
+                            "image_type": file.type.split('/')[1],
+                            "image_size": file.size // TODO: No permitir archivos de más de 5MB
+                        };
+                    });
+
+                    Promise.all(filesPromises).then((files) => {
+                        // Hacemos una petición a bidoq para subir los archivos seleccionados
+                        bidoq({
+                            "method": "upload",
+                            "services": window.selectedFolder,
+                            "files": JSON.stringify(files)
+                        }).then((data) => {
+                            let response = JSON.parse(data);
+
+                            if (typeof response !== 'undefined') {
+                                let responseMessage = '';
+                                let error = false;
+
+                                for (let i = 0; i < response.length; i++) {
+                                    const documentResponse = response[i];
+
+                                    if (!error && documentResponse.code !== 0) {
+                                        error = true;
+
+                                        alert(`Ocurrió un error al intentar subir el documento: ${documentResponse.message}`);
+                                    }
+                                }
+
+                                if (!error) {
+                                    alert('Los documentos han sido subidos con éxito');
+
+                                    // Recargamos la página
+                                    document.location.reload();
+                                }
+                            } else {
+                                console.error('Ocurrió un error al intentar subir los documentos');
+                            }
+                        }).catch(function(error) {
+                            console.error('Ocurrió un error: ' + error.message);
+                        });
+                    });
                 });
+
+                function readFile(file) {
+                    return new Promise((resolve, reject) => {
+                        let reader = new FileReader();
+
+                        reader.readAsDataURL(file);
+
+                        reader.onload = function() {
+                            resolve(reader.result.split(',')[1]);
+                        };
+
+                        reader.onerror = function(error) {
+                            reject(error);
+                        };
+                    });
+                }
         </script>
     </body >
 </html>

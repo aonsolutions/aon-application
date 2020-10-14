@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class AccountingInvoiceValidation {
 
@@ -19,9 +20,11 @@ public class AccountingInvoiceValidation {
 			this.ctx = ctx;
 			this.config = config;
 		}
+		@SuppressWarnings("unused")
 		private AONContext getContext() {
 			return ctx;
 		}
+		@SuppressWarnings("unused")
 		private AonConfiguration getConfiguration() {
 			return config;
 		}
@@ -60,8 +63,9 @@ public class AccountingInvoiceValidation {
 	 * Si la factura es un DUA debe haber una información del DUA. Cuenta contable de aranceles.
 	 */
 	private static BiConsumer<AccountingInvoice,AonConfigurationContext> DUA_EMPTY_DUTY_ACCOUNT = (ai,ctx) -> {
-		if (ai.getDuaInvoice().getInfo().getDutyAccount() == null || ai.getDuaInvoice().getInfo().getDutyAccount().getId() == null) {
-			throw new AonCoreException(AonError.INVOICE_DUA_INFO_EMPTY.getMessage());
+		if (AonMathUtils.isNotZero( ai.getDuaInvoice().getInfo().getDutyTotal())  
+		 && (ai.getDuaInvoice().getInfo().getDutyAccount() == null || ai.getDuaInvoice().getInfo().getDutyAccount().getId() == null)) {
+			throw new AonCoreException(AonError.INVOICE_DUA_DUTY_ACCOUNT_EMPTY.getMessage());
 		}
 	};
 	/**

@@ -7,6 +7,16 @@
 		line-height: normal !important;
 	}
 
+	ul {
+		list-style: none;
+		padding: 0;
+    margin: 0;
+	}
+
+	li:hover {
+		background-color: #f1f1f1;
+	}
+
 	a{
 		color: #12CCD1;
 		cursor: pointer;

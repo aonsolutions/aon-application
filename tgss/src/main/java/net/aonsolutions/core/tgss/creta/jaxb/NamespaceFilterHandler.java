@@ -12,7 +12,9 @@ public class NamespaceFilterHandler implements ContentHandler {
 
 	private static final Map<String,String> MAPPINGS = new HashMap<String,String>() {
 		{
-			put("http://www.seg-social.es/creta/esquemas/V110/Respuesta", "http://www.seg-social.es/creta/esquemas/V120/Respuesta");
+			//put("http://www.seg-social.es/creta/esquemas/V110/Respuesta", "http://www.seg-social.es/creta/esquemas/V120/Respuesta");
+			put("http://www.seg-social.es/creta/esquemas/V110/Respuesta", "http://www.seg-social.es/creta/esquemas/V130/Respuesta");
+			put("http://www.seg-social.es/creta/esquemas/V120/Respuesta", "http://www.seg-social.es/creta/esquemas/V130/Respuesta");
 		}
 	};
 	

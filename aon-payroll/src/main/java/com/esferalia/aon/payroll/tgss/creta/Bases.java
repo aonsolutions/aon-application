@@ -161,17 +161,25 @@ public class Bases {
 
 	public static class CustomizeBasesCallback implements BasesCallback {
 		boolean reftificationMark = false;
+		boolean solicitudRecepcionRNT = false;
 		
 		public CustomizeBasesCallback setReftificationMark(boolean reftificationMark) {
 			this.reftificationMark = reftificationMark;
 			return this;
 		}
 		
+		public CustomizeBasesCallback setSolicitudRecepcionRNT(boolean solicitudRecepcionRNT) {
+			this.solicitudRecepcionRNT = solicitudRecepcionRNT;
+			return this;
+		}
+
 		// ------------------------------------------------------ BasesCallback
 		@Override
 		public void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
 			if ( reftificationMark)
 				bases.setIndicadorRectificacion("S");
+			if ( solicitudRecepcionRNT)
+				bases.getLiquidacion().forEach( l -> l.setSolicitudRecepcionRNT("S"));
 		}
 	}
 
@@ -1943,9 +1951,9 @@ public class Bases {
 			
 			put("603", new NonNegativeCompositeCCretaData()
 					.add(MATERNITY_BASE)
+					.add(ERE_BASES )
 					.add(DIRECT_BASE)		//   
 					.add(CGP_BASE)
-					.add(ERE_BASES )
 					.add(CGC_BASE_ENTERPRISE)	  
 					);
 			put("613", new NonNegativeCompositeCCretaData()

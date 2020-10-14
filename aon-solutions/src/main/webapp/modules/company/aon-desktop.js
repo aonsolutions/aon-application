@@ -2,6 +2,7 @@ import {isMobile} from  '../../services/utils.js';
 import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
 import {getDomainApps, setDomainApp} from  '../../services/service.js';
+import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
@@ -58,8 +59,6 @@ class AonDesktop extends HTMLElement {
 	}
 
 	connectedCallback () {
-
-
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
 			getDomainApps(company.domain).then(r => {
@@ -310,10 +309,10 @@ class AonDesktop extends HTMLElement {
 			if(r[Apps[key].app] ? r[Apps[key].app] : false) {
 				let option = {
 					name: Apps[key].title,
-					// aonIcon: {
-					// 	icon: Apps[key].icon,
-					// 	color: Apps[key].color
-					// },
+					aonIcon: {
+					 	icon: Apps[key].icon,
+					 	color: Apps[key].color
+					},
 					fn: () => alert('Panel ' + Apps[key].title)
 				}
 				appOptions.push(option);
@@ -326,10 +325,10 @@ class AonDesktop extends HTMLElement {
 			if(r[Services[key].app] ? r[Services[key].app] : false) {
 				let option = {
 					name: Services[key].title,
-					// aonIcon: {
-					// 	icon: Services[key].icon,
-					// 	color: Services[key].color
-					// },
+					aonIcon: {
+						icon: Services[key].icon,
+						color: Services[key].color
+					},
 					fn: () => alert('Panel ' + Services[key].title)
 				}
 				serviceOptions.push(option);
@@ -346,7 +345,16 @@ class AonDesktop extends HTMLElement {
 			{
 				name: 'Bidoq',
 				img: '../assets/apps/bidoq.png',
-				fn: () =>  open('https://mispapeles.es/')
+				fn: () =>{
+					bidoq().then(r => {
+						let data = JSON.parse(r);
+						if(data && data.datos && data.datos.ruta) {
+							open(data.datos.respuesta);
+						} else {
+							open('https://mispapeles.es/');
+						}
+					});
+				}
 			}
 		];
 		aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);

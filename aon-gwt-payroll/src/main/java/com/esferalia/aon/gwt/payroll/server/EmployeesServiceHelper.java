@@ -102,6 +102,7 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
+import solutions.aon.saltra.api.ForbiddenException;
 import solutions.aon.saltra.api.InvalidArgumentException;
 import solutions.aon.saltra.api.NoSuchDataException;
 import solutions.aon.saltra.api.Saltra;
@@ -280,6 +281,8 @@ public class EmployeesServiceHelper {
 			
 			return employeeStatus;	
 			
+		} catch ( ForbiddenException e ) {
+			return new EmployeeStatus.Forbidden();
 		} catch ( NoSuchDataException e ) {
 			return new EmployeeStatus.EmployeeNotFound();
 		} catch ( InvalidArgumentException e ) {

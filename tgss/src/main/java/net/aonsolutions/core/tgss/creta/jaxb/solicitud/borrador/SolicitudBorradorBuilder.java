@@ -24,6 +24,7 @@ public class SolicitudBorradorBuilder {
 	private Month mesHasta;
 	private int anhoControl;
 	private Month mesControl;
+	private boolean solicitudRecepcionRNT;
 	private boolean aceptarBasesAnteriores;
 	
 	private List<Liquidacion> liquidaciones ;
@@ -66,6 +67,10 @@ public class SolicitudBorradorBuilder {
 		periodoHasta.setMes(String.format("%02d",mesHasta.getValue()));
 		liquidacion.setPeriodoHasta(periodoHasta);
 
+
+		if ( solicitudRecepcionRNT ) {
+			liquidacion.setSolicitudRecepcionRNT("S");
+		}
 
 		if ( "L00".indexOf(tipo) >= 0 && aceptarBasesAnteriores ) {
 			liquidacion.setAceptarBasesAnteriores("S");
@@ -142,6 +147,11 @@ public class SolicitudBorradorBuilder {
 	
 	public SolicitudBorradorBuilder setAceptarBasesAnteriores(boolean aceptarBasesAnteriores) {
 		this.aceptarBasesAnteriores = aceptarBasesAnteriores;
+		return this;
+	}
+
+	public SolicitudBorradorBuilder setSolicitudRecepcionRNT(boolean solicitudRecepcionRNT) {
+		this.solicitudRecepcionRNT = solicitudRecepcionRNT;
 		return this;
 	}
 

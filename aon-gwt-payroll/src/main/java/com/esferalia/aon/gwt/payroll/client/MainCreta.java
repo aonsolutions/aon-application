@@ -345,6 +345,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		.orElse(false)
 		;
 	}
+
+	public void requestSendRNT(Void v) {
+		run(Collections.singletonMap(CretaService.Parameter.SOLICITUD_RECEPCION_RNT, isRequestSendRNT() ? "off" : "on"));
+	}
+
+	public boolean isRequestSendRNT() {
+		return 
+		(( CretaResults ) resultsPanel.getChild())
+		.getParameter(CretaService.Parameter.SOLICITUD_RECEPCION_RNT)
+		.map( s -> "on".equalsIgnoreCase(s))
+		.orElse(false)
+		;
+	}
 	// --------------------------------------------------- Enterprises.Listener
 
 	@Override
@@ -754,16 +767,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		private ResultsPanel resultsPanel;
 		private Consumer<Void> showResults;
 		private Consumer<Void> onReftificativa;
+		private Consumer<Void> onSolicitudRecepcionRNT;
 		
 		public AbstractBaseCretaDetail(
 				DetailPanel detailPanel, 
 				ResultsPanel resultsPanel,
 				Consumer<Void> onReftificativa,
+				Consumer<Void> onSolicitudRecepcionRNT,
 				Consumer<Void> showResults
 				) {
 			this.detailPanel = detailPanel;
 			this.resultsPanel = resultsPanel;
 			this.onReftificativa = onReftificativa;
+			this.onSolicitudRecepcionRNT = onSolicitudRecepcionRNT;
 			this.showResults = showResults;
 		}
 		
@@ -838,6 +854,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						reftification.setStyleName("aon-finding-toolbar-item");
 						reftification.addClickHandler(e-> onReftificativa.accept(null));
 						basesEditor.add(reftification);
+					
+						CheckBox solicitudRecepcionRNT = new CheckBox("Solicitud Recepci\u00f3n RNT");
+						solicitudRecepcionRNT.setValue(result.isRequestSendRNT());
+						solicitudRecepcionRNT.setStyleName("aon-finding-toolbar-item");
+						solicitudRecepcionRNT.addClickHandler(e-> onSolicitudRecepcionRNT.accept(null));
+						basesEditor.add(solicitudRecepcionRNT);
+
 					}
 				}
 			}
@@ -862,6 +885,13 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			reftification.setStyleName("aon-finding-toolbar-item");
 			reftification.addClickHandler(e-> onReftificativa.accept(null));
 			mergeEditor.add(reftification);
+
+			CheckBox solicitudRecepcionRNT = new CheckBox("Solicitud Recepci\u00f3n RNT");
+			solicitudRecepcionRNT.setValue(result.isRequestSendRNT());
+			solicitudRecepcionRNT.setStyleName("aon-finding-toolbar-item");
+			solicitudRecepcionRNT.addClickHandler(e-> onSolicitudRecepcionRNT.accept(null));
+			mergeEditor.add(solicitudRecepcionRNT);
+
 		}
 		
 		@Override
@@ -933,6 +963,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			super(detailPanel, 
 				resultsPanel, 
 				MainCreta.this::reftification,
+				MainCreta.this::requestSendRNT,
 				MainCreta.this::showResultsPanel);
 		}
 
@@ -1505,6 +1536,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			boolean calcsDetailed = dialog.calcsDetailed();
 			String i54 = dialog.getI54();
 			boolean reftificationMark = dialog.reftificationMark();
+			boolean solictudRecepcionRNT = dialog.solicitudRecepcionRNT();
 			
 	
 			CCC cccCopy  = new CCC();
@@ -1526,7 +1558,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				basesMesAnterior, 
 				calcsDetailed,
 				i54,
-				reftificationMark);
+				reftificationMark,
+				solictudRecepcionRNT);
 	
 			return true;
 		}

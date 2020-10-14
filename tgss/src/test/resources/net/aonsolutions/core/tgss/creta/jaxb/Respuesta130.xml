@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Respuesta xmlns="http://www.seg-social.es/creta/esquemas/V130/Respuesta">
+	<Autorizado>12345678</Autorizado>
+	<CodigoEnvio>9999999999</CodigoEnvio>
+	<ReferenciaExterna>SOLBOR04</ReferenciaExterna>
+	<Liquidacion>
+		<Ccc>
+			<Regimen>0111</Regimen>
+			<Provincia>28</Provincia>
+			<Numero>170951274</Numero>
+		</Ccc>
+		<PeriodoDesde>
+			<Mes>04</Mes>
+			<Anho>2013</Anho>
+		</PeriodoDesde>
+		<PeriodoHasta>
+			<Mes>04</Mes>
+			<Anho>2013</Anho>
+		</PeriodoHasta>
+		<Tipo>L00</Tipo>
+		<FechaHoraRecaudacion>
+			<FechaRecaudacion>
+				<Dia>20</Dia>
+				<Mes>05</Mes>
+				<Anho>2013</Anho>
+			</FechaRecaudacion>
+			<HoraRecaudacion>152514</HoraRecaudacion>
+		</FechaHoraRecaudacion>
+		<NumeroLiquidacion>28201312345678912</NumeroLiquidacion>
+		<Errores>
+			<Error>
+				<CodigoErr>R9529</CodigoErr>
+				<Descripcion>La liquidación está calculada</Descripcion>
+			</Error>
+		</Errores>
+	</Liquidacion>
+</Respuesta>

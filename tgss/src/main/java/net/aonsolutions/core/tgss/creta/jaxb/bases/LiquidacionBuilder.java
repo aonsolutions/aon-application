@@ -21,6 +21,7 @@ public class LiquidacionBuilder {
 	private int anhoControl;
 	private Month mesControl;
 	private String cccConcertado;
+	private boolean solicitudRecepcionRNT;
 	private boolean aceptarBasesAnteriores;
 
 	private List<Dato> datosLiquidacion;
@@ -55,6 +56,10 @@ public class LiquidacionBuilder {
 		
 		liquidacion.setTipo(tipo);
 		
+		if ( solicitudRecepcionRNT ) {
+			liquidacion.setSolicitudRecepcionRNT("S");
+		}
+
 		if ( "L00".indexOf(tipo) >= 0 && aceptarBasesAnteriores ) {
 			liquidacion.setAceptarBasesAnteriores("S");
 		}
@@ -194,6 +199,12 @@ public class LiquidacionBuilder {
 		this.aceptarBasesAnteriores = aceptarBasesAnteriores;
 		return this;
 	}
+
+	public LiquidacionBuilder setSolicitudRecepcionRNT(boolean solicitudRecepcionRNT) {
+		this.solicitudRecepcionRNT = solicitudRecepcionRNT;
+		return this;
+	}
+
 	// -------------------------------------------------------------------------
 
 	private static String createReferenciaExterna() {

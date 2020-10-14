@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.view.client.ProvidesKey;
@@ -12,6 +14,9 @@ public class EmployeeContractInfo implements Serializable{
 	private ContractInfo contractInfo;
 	
 	private Map<String, String> contractOtherData;
+	private List<ContractClause> contractClauses;
+	private List<ContractAttach> contractAttachments;
+	private Map<String, String> scopeMap;
 	
 	/**
      * The key provider that provides the unique ID of a contact.
@@ -26,6 +31,9 @@ public class EmployeeContractInfo implements Serializable{
 	public EmployeeContractInfo(){
 		super();
 		this.contractOtherData = new HashMap<String, String>();
+		this.contractClauses = new ArrayList<ContractClause>();
+		this.contractAttachments = new ArrayList<ContractAttach>();
+		this.scopeMap = new HashMap<String, String>();
 	}
 	
 	// ------------- GETTERS / SETTERS -------------
@@ -56,6 +64,38 @@ public class EmployeeContractInfo implements Serializable{
 	
 	public void addContractOtherData(String name, String value) {
 		this.contractOtherData.put(name, value);
+	}
+
+	public List<ContractClause> getContractClauses() {
+		return contractClauses;
+	}
+
+	public void setContractClauses(List<ContractClause> contractClauses) {
+		this.contractClauses = contractClauses;
+	}
+	
+	public void addContractClause(ContractClause contractClause) {
+		this.contractClauses.add(contractClause);
+	}
+
+	public List<ContractAttach> getContractAttachments() {
+		return contractAttachments;
+	}
+
+	public void setContractAttachments(List<ContractAttach> contractAttachments) {
+		this.contractAttachments = contractAttachments;
+	}
+	
+	public void addContractAttach(ContractAttach contractAttach) {
+		this.contractAttachments.add(contractAttach);
+	}
+
+	public Map<String, String> getScopeMap() {
+		return scopeMap;
+	}
+
+	public void setScopeMap(Map<String, String> scopeMap) {
+		this.scopeMap = scopeMap;
 	}
 
 }

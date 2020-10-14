@@ -6,7 +6,6 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 import javax.servlet.annotation.WebServlet;
 
 import org.jooq.tools.json.JSONObject;
-import org.json.JSONArray;
 
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
@@ -60,6 +58,8 @@ import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
+import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
+import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -106,9 +106,8 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
+import solutions.aon.saltra.api.ForbiddenException;
 import solutions.aon.saltra.api.Saltra;
 import solutions.aon.saltra.api.SaltraException;
 
@@ -2210,11 +2209,53 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return enterpriseStatus;				
 			
+		} catch ( ForbiddenException e) {
+			return new EnterpriseStatus.Forbidden();
 		} catch ( SaltraCredentialsNotFoundException e) {
 			return new EnterpriseStatus.CredentialsNotFound();
 		} catch (  ParseException | IOException | SQLException  | SaltraException e ) {
 			throw new RuntimeException(e);
 		} 
+	}
+
+	@Override
+	public ContractAttach createContractAttach(String domainName, ContractAttach contractAttach) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.createContractAttach(connection, domainId, contractAttach);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public ContractAttach deleteContractAttach(String domainName, ContractAttach contractAttach) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.deleteContractAttach(connection, domainId, contractAttach);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public ContractClause createContractClause(String domainName, ContractClause contractClause) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.createContractClause(connection, domainId, contractClause);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public ContractClause deleteContractClause(String domainName, ContractClause contractClause) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.deleteContractClause(connection, domainId, contractClause);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 }

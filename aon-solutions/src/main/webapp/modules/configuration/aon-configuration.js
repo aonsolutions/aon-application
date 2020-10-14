@@ -2,8 +2,7 @@ import {getAuth} from '../../services/service.js';
 
 import '../../components/aon-toolbar.js';
 import '../../components/aon-card.js';
-import '../../components/aon-address.js';
-import '../../components/aon-input-text.js';
+import '../../components/aon-input.js';
 import '../marketplace/aon-marketplace.js';
 import '../user/aon-user-list.js';
 import '../user/aon-user.js';
@@ -206,27 +205,27 @@ class AonConfiguration extends HTMLElement {
 		let card = document.getElementById('aonConfigurationGeneralCard');
 		card.setContentHTML(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input-text>
-				<aon-input-text class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input-text>
+				<aon-input class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input>
+				<aon-input class="aonWidth75" id="aonConfigurationGeneralName" description="Razón Social" value="${company.name}"></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-address class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-address>
+				<aon-input type="address" class="aon-width-100" id="aonConfigurationGeneralAddress" description="Dirección"></aon-input>
 			</form>
 		`);
 
 		let card2 = document.getElementById('aonConfigurationGeneral2Card');
 		card2.setContentHTML(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input-text>
-				<aon-input-text class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input-text>
+				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input>
+				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Fax" description="Fax" value=""></aon-input>
 			</form>
 
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value=""></aon-input-text>
+				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Email" description="Email" value=""></aon-input>
 			</form>
 
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value=""></aon-input-text>
+				<aon-input class="aon-width-100" id="aonConfigurationGeneral2Web" description="Web" value=""></aon-input>
 			</form>
 
 			<!-- LOGO -->

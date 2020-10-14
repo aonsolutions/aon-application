@@ -1,7 +1,6 @@
-import {Apps} from  '../../services/app.js';
+import {AllApps} from  '../../services/app.js';
 import {getDomainApps, setUserAppRole, setUser} from  '../../services/service.js';
 
-import '../../components/aon-select.js';
 import '../../components/aon-card.js';
 
 class AonUser extends HTMLElement {
@@ -106,15 +105,15 @@ class AonUser extends HTMLElement {
 		let card = document.getElementById('aonConfigurationUserCard');
 		card.setContentHTML(`
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input-text>
+				<aon-input class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth25" id="aonConfigurationUserCardName" description="Nombre" value=""></aon-input-text>
-				<aon-input-text class="aonWidth75" id="aonConfigurationUserCardSurname" description="Apellidos" value=""></aon-input-text>
+				<aon-input class="aonWidth25" id="aonConfigurationUserCardName" description="Nombre" value=""></aon-input>
+				<aon-input class="aonWidth75" id="aonConfigurationUserCardSurname" description="Apellidos" value=""></aon-input>
 			</form>
 			<form action="#" class="aon-margin-0">
-				<aon-input-text class="aonWidth50" id="aonConfigurationUserCardDocument" description="DNI/NIE" value=""></aon-input-text>
-				<aon-input-text class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input-text>
+				<aon-input class="aonWidth50" id="aonConfigurationUserCardDocument" description="DNI/NIE" value=""></aon-input>
+				<aon-input class="aonWidth50" id="aonConfigurationUserCardPhone" description="Teléfono Móvil" value=""></aon-input>
 			</form>
 
 		`);
@@ -172,14 +171,12 @@ class AonUser extends HTMLElement {
 
 		let card2 = document.getElementById('aonConfigurationUserSecurityCard');
 		card2.setVisible(!this.isNew());
-		let cardDiv2 = document.getElementById('aonConfigurationUserSecurityCard-div');
-		cardDiv2.style.width = '500px';
 
 		let table = document.createElement('table');
 		table.setAttribute('id', 'aonUserRoleTable')
 		table.style.width = '100%';
+		card2.setContent(table);
 
-		cardDiv2.appendChild(table);
 		componentHandler.upgradeAllRegistered();
 	}
 
@@ -238,7 +235,8 @@ class AonUser extends HTMLElement {
 			{value:'guest', name:'Invitado'}
 		];
 		if(app){
-			// span4.innerHTML = `<aon-select class="aon-width-25" id="aonSelectUserRol-${app.app}" description="Rol" options='${JSON.stringify(roleOptions)}' ></aon-select>`;
+			// TODO ROLE
+			// span4.innerHTML = ... <AON-INPUT> TYPE LIST.
 		}
 		let td2 = document.createElement('td');
 		td2.style.height = '40px';
@@ -266,32 +264,32 @@ class AonUser extends HTMLElement {
 
 	getApp(app) {
 		switch(app.toLowerCase()){
-			case Apps.INVOICE.app:
-				return Apps.INVOICE;
-			case Apps.DOCUMENTAL.app:
-				return Apps.DOCUMENTAL;
-			case Apps.MESSENGER.app:
-				return Apps.MESSENGER;
-			case Apps.ACCOUNTING.app:
-				return Apps.ACCOUNTING;
-			case Apps.FISCAL.app:
-				return Apps.FISCAL;
-			case Apps.PAYROLL.app:
-				return Apps.PAYROLL;
-			case Apps.OCR.app:
-				return Apps.OCR;
-			case Apps.AIO.app:
-				return Apps.AIO;
-			case Apps.TOOLS.app:
-				return Apps.TOOLS;
-			case Apps.CONTRATA.app:
-				return Apps.CONTRATA;
-			case Apps.PORTAL.app:
-				return Apps.PORTAL;
-			case Apps.CONVENIOS.app:
-				return Apps.CONVENIOS;
-			case Apps.BANK.app:
-				return Apps.BANK;
+			case AllApps.INVOICE.app:
+				return AllApps.INVOICE;
+			case AllApps.DOCUMENTAL.app:
+				return AllApps.DOCUMENTAL;
+			case AllApps.MESSENGER.app:
+				return AllApps.MESSENGER;
+			case AllApps.ACCOUNTING.app:
+				return AllApps.ACCOUNTING;
+			case AllApps.FISCAL.app:
+				return AllApps.FISCAL;
+			case AllApps.PAYROLL.app:
+				return AllApps.PAYROLL;
+			case AllApps.OCR.app:
+				return AllApps.OCR;
+			case AllApps.AIO.app:
+				return AllApps.AIO;
+			case AllApps.TOOLS.app:
+				return AllApps.TOOLS;
+			case AllApps.CONTRATA.app:
+				return AllApps.CONTRATA;
+			case AllApps.PORTAL.app:
+				return AllApps.PORTAL;
+			case AllApps.CONVENIOS.app:
+				return AllApps.CONVENIOS;
+			case AllApps.BANK.app:
+				return AllApps.BANK;
 		}
 	}
 

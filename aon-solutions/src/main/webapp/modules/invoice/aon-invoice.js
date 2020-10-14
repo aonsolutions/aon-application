@@ -2,13 +2,10 @@ import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
-import {insertInvoice} from '../../services/service.js';
+import {insertInvoice, deleteInvoices} from '../../services/service.js';
 
 import '../../components/aon-card.js';
-import '../../components/aon-input-text.js';
 import '../../components/aon-input.js';
-import '../../components/aon-select.js';
-import '../../components/aon-address.js';
 import '../../components/aon-checkbox.js';
 
 (function() {
@@ -71,6 +68,13 @@ import '../../components/aon-checkbox.js';
 			this.printTaxes();
 			this.printDetails();
 			this.printFinances();
+
+			let aonInvoice = document.getElementById('aonInvoice');
+			aonInvoice.addToolbarOption('Options', 'more_vert', () => alert('options'));
+
+			if(!this._invoice.file) {
+				aonInvoice.addToolbarOption('AddFile', 'attach_file', () => alert('add file'));
+			}
 		}
 
 		buildData(){
@@ -84,16 +88,15 @@ import '../../components/aon-checkbox.js';
 
 			// SERIE
 			let tdSerie = document.createElement('td');
-			tdSerie.innerHTML = `<aon-input-text id="serie" description="Serie"></aon-input-text>`;
+			tdSerie.innerHTML = `<aon-input id="serie" description="Serie"></aon-input>`;
 			tr.appendChild(tdSerie);
 			let series = document.getElementById('serie');
 			series.value = this._invoice.serie;
-			series.disabled = 'disabled';
 			series.addEventListener('change', () => this.update('serie'));
 
 			// NUMBER
 			let tdNumber = document.createElement('td');
-			tdNumber.innerHTML = `<aon-input-text id="number" description="Número"></aon-input-text>`;
+			tdNumber.innerHTML = `<aon-input id="number" description="Número"></aon-input>`;
 			tr.appendChild(tdNumber);
 			let number = document.getElementById('number');
 			number.value = this._invoice.number;
@@ -101,7 +104,7 @@ import '../../components/aon-checkbox.js';
 
 			// DATE
 			let tdDate = document.createElement('td');
-			tdDate.innerHTML = `<aon-input-text id="date" type="date" description="Fecha"></aon-input-text>`;
+			tdDate.innerHTML = `<aon-input id="date" type="date" description="Fecha"></aon-input>`;
 			tr.appendChild(tdDate);
 			let date = document.getElementById('date');
 			date.value = this._invoice.date;
@@ -109,7 +112,7 @@ import '../../components/aon-checkbox.js';
 
 			// TOTAL
 			let tdTotal = document.createElement('td');
-			tdTotal.innerHTML = `<aon-input-text id="total" description="Total"></aon-input-text>`;
+			tdTotal.innerHTML = `<aon-input id="total" description="Total"></aon-input>`;
 			tr.appendChild(tdTotal);
 			let total = document.getElementById('total');
 			total.value = this._invoice.total;
@@ -122,7 +125,7 @@ import '../../components/aon-checkbox.js';
 
 			// NIF
 			let tdNif = document.createElement('td');
-			tdNif.innerHTML = `<aon-input-text id="nif" description="NIF"></aon-input-text>`;
+			tdNif.innerHTML = `<aon-input id="nif" description="NIF"></aon-input>`;
 			tr2.appendChild(tdNif);
 			let nif = document.getElementById('nif');
 			nif.value = this.isEmitida()
@@ -133,7 +136,7 @@ import '../../components/aon-checkbox.js';
 			// NAME
 			let tdName = document.createElement('td');
 			tdName.setAttribute('colspan','3');
-			tdName.innerHTML = `<aon-input-text id="name" description="Razón Social"></aon-input-text>`;
+			tdName.innerHTML = `<aon-input id="name" description="Razón Social"></aon-input>`;
 			tr2.appendChild(tdName);
 			let name = document.getElementById('name');
 			name.value = this.isEmitida()
@@ -147,12 +150,12 @@ import '../../components/aon-checkbox.js';
 			// ADDRESS
 			let tdAddress = document.createElement('td');
 			tdAddress.setAttribute('colspan', '4');
-			tdAddress.innerHTML = `<aon-address id="address" description="Dirección"></aon-address>`;
+			tdAddress.innerHTML = `<aon-input id="address" type="address" description="Dirección"></aon-input>`;
 			tr3.appendChild(tdAddress);
 			let address = document.getElementById('address');
-			address.value = this.isEmitida()
+			address.buildAddressValue(this.isEmitida()
 				? JSON.stringify(this._invoice.receiver.address)
-				: JSON.stringify(this._invoice.sender.address);
+				: JSON.stringify(this._invoice.sender.address));
 			address.addEventListener('change', () => this.updateRegistry());
 
 
@@ -162,7 +165,6 @@ import '../../components/aon-checkbox.js';
 			// CATEGORY
 			let tdCategory = document.createElement('td');
 			tdCategory.setAttribute('colspan', '2');
-			// tdCategory.innerHTML = `<aon-select id="category" description="Categoría"></aon-select>`;
 			tdCategory.innerHTML = `<aon-input id="category" type="list" description="Categoría"></aon-input>`;
 			tr4.appendChild(tdCategory);
 			let category = document.getElementById('category');
@@ -173,7 +175,6 @@ import '../../components/aon-checkbox.js';
 			// PAYMETHOD
 			let tdPaymethod = document.createElement('td');
 			tdPaymethod.setAttribute('colspan', '2');
-			// tdPaymethod.innerHTML = `<aon-select id="pay_method" description="Forma de Pago"></aon-select>`;
 			tdPaymethod.innerHTML = `<aon-input id="pay_method" type="list" description="Forma de Pago"></aon-input>`;
 			tr4.appendChild(tdPaymethod);
 			let paymethod = document.getElementById('pay_method');
@@ -181,7 +182,10 @@ import '../../components/aon-checkbox.js';
 			if(this._invoice.finances.length === 1) {
 				paymethod.value = this._invoice.finances[0].paymethod;
 			}
-			paymethod.addEventListener('select', () => this.addFinance(document.getElementById('pay_method').value));
+			paymethod.addEventListener('select', () =>  {
+				if(this._invoice.finances.length < 1)
+					this.addFinance(document.getElementById('pay_method').value);
+			});
 		}
 
 		buildTaxes(){
@@ -199,7 +203,6 @@ import '../../components/aon-checkbox.js';
 			// TRANSACTION
 			let tdTransaction = document.createElement('td');
 			tdTransaction.setAttribute('colspan', '4');
-			// tdTransaction.innerHTML = `<aon-select id="transaction" description="Tipo Transacción"></aon-select>`;
 			tdTransaction.innerHTML = `<aon-input id="transaction" type="list" description="Tipo Transacción"></aon-input>`;
 			tr1.appendChild(tdTransaction);
 			let transaction = document.getElementById('transaction');
@@ -250,7 +253,7 @@ import '../../components/aon-checkbox.js';
 
 			// TOTAL SUPLIDOS
 			let tdTotalSuplidos = document.createElement('td');
-			tdTotalSuplidos.innerHTML = `<aon-input-text id="t-suplidos" description="Total Suplidos" visible="false"></aon-input-text>`;
+			tdTotalSuplidos.innerHTML = `<aon-input id="t-suplidos" description="Total Suplidos" visible="false"></aon-input>`;
 			tr1.appendChild(tdTotalSuplidos);
 
 			let irpfTable = document.createElement('table');
@@ -315,7 +318,7 @@ import '../../components/aon-checkbox.js';
 				name: document.getElementById('name').value,
 				address: JSON.parse(document.getElementById('address').value)
 			};
-			if(isEmitida()) {
+			if(this.isEmitida()) {
 				this._invoice.receiver = registry;
 			} else {
 				this._invoice.sender = registry;
@@ -374,7 +377,7 @@ import '../../components/aon-checkbox.js';
 			// DETAIL DESCRIPTION
 			let tdDetailDescription = document.createElement('td');
 			tdDetailDescription.setAttribute('colspan','3');
-			tdDetailDescription.innerHTML = `<aon-input-text id="detailDescription${i}" description="Concepto"></aon-input-text>`;
+			tdDetailDescription.innerHTML = `<aon-input id="detailDescription${i}" description="Concepto"></aon-input>`;
 			tr.appendChild(tdDetailDescription);
 			let detailDescription = document.getElementById('detailDescription' + i);
 			detailDescription.value = detail.description;
@@ -382,7 +385,7 @@ import '../../components/aon-checkbox.js';
 
 			// DETAIL QUANTITY
 			let tdDetailQuantity = document.createElement('td');
-			tdDetailQuantity.innerHTML = `<aon-input-text id="detailQuantity${i}" description="Cantidad"></aon-input-text>`;
+			tdDetailQuantity.innerHTML = `<aon-input id="detailQuantity${i}" description="Cantidad"></aon-input>`;
 			tr.appendChild(tdDetailQuantity);
 			let detailQuantity = document.getElementById('detailQuantity' + i);
 			detailQuantity.value = detail.quantity;
@@ -390,7 +393,7 @@ import '../../components/aon-checkbox.js';
 
 			// DETAIL PRICE
 			let tdDetailPrice = document.createElement('td');
-			tdDetailPrice.innerHTML = `<aon-input-text id="detailPrice${i}" description="Precio"></aon-input-text>`;
+			tdDetailPrice.innerHTML = `<aon-input id="detailPrice${i}" description="Precio"></aon-input>`;
 			tr.appendChild(tdDetailPrice);
 			let detailPrice = document.getElementById('detailPrice' + i);
 			detailPrice.value = detail.price;
@@ -398,7 +401,7 @@ import '../../components/aon-checkbox.js';
 
 			// DETAIL DISCOUNT
 			let tdDetailDiscount = document.createElement('td');
-			tdDetailDiscount.innerHTML = `<aon-input-text id="detailDiscount${i}" description="%Dto"></aon-input-text>`;
+			tdDetailDiscount.innerHTML = `<aon-input id="detailDiscount${i}" description="%Dto"></aon-input>`;
 			tr.appendChild(tdDetailDiscount);
 			let detailDiscount = document.getElementById('detailDiscount' + i);
 			detailDiscount.value = detail.discount;
@@ -406,7 +409,7 @@ import '../../components/aon-checkbox.js';
 
 			// DETAIL AMOUNT
 			let tdDetailAmount = document.createElement('td');
-			tdDetailAmount.innerHTML = `<aon-input-text id="detailAmount${i}" description="Importe"></aon-input-text>`;
+			tdDetailAmount.innerHTML = `<aon-input id="detailAmount${i}" description="Importe"></aon-input>`;
 			tr.appendChild(tdDetailAmount);
 			let detailAmount = document.getElementById('detailAmount' + i);
 			detailAmount.readonly = 'readonly';
@@ -414,11 +417,10 @@ import '../../components/aon-checkbox.js';
 
 			// DETAIL VAT
 			let tdDetailVat = document.createElement('td');
-			// tdDetailVat.innerHTML = `<aon-select id="detailVat${i}" description="%IVA"></aon-select>`;
 			tdDetailVat.innerHTML = `<aon-input id="detailVat${i}" type="list" description="%IVA"></aon-input>`;
 			tr.appendChild(tdDetailVat);
 			let detailVat = document.getElementById('detailVat' + i);
-			detailVat.options = TaxIVAPercentage;
+			detailVat.options = JSON.stringify(TaxIVAPercentage);
 			detailVat.value = detail.vat;
 			detailVat.addEventListener('select', () => this.changeVat(i));
 
@@ -572,7 +574,6 @@ import '../../components/aon-checkbox.js';
 
 			// TAXTYPE
 			let tdTaxType = document.createElement('td');
-			// tdTaxType.innerHTML = `<aon-select id="taxType${i}" description="Tipo"></aon-select>`;
 			tdTaxType.innerHTML = `<aon-input id="taxType${i}" type="list" description="Tipo"></aon-input>`;
 			tr.appendChild(tdTaxType);
 			let taxType = document.getElementById('taxType' + i);
@@ -581,7 +582,6 @@ import '../../components/aon-checkbox.js';
 
 			// TAXPERCENT
 			let tdTaxPercentage= document.createElement('td');
-			// tdTaxPercentage.innerHTML = `	<aon-select id='taxPercentage${i}' description="%"></aon-select>`;
 			tdTaxPercentage.innerHTML = `<aon-input id="taxPercentage${i}" type="list" description="%"></aon-input>`;
 			tr.appendChild(tdTaxPercentage);
 			let taxPercentage = document.getElementById('taxPercentage' + i);
@@ -591,7 +591,7 @@ import '../../components/aon-checkbox.js';
 
 			// TAXBASE
 			let tdTaxBase = document.createElement('td');
-			tdTaxBase.innerHTML = `<aon-input-text id="taxBase${i}" description="Base"></aon-input-text>`;
+			tdTaxBase.innerHTML = `<aon-input id="taxBase${i}" description="Base"></aon-input>`;
 			tr.appendChild(tdTaxBase);
 			let taxBase = document.getElementById('taxBase' + i);
 			taxBase.value = tax.base;
@@ -599,7 +599,7 @@ import '../../components/aon-checkbox.js';
 
 			// TAXQUOTA
 			let tdTaxQuota = document.createElement('td');
-			tdTaxQuota.innerHTML = `<aon-input-text id="taxQuota${i}" description="Cuota"></aon-input-text>`;
+			tdTaxQuota.innerHTML = `<aon-input id="taxQuota${i}" description="Cuota"></aon-input>`;
 			tr.appendChild(tdTaxQuota);
 			let taxQuota = document.getElementById('taxQuota' + i);
 			taxQuota.value = tax.quota;
@@ -809,7 +809,7 @@ import '../../components/aon-checkbox.js';
 
 			// FINANCE DUE DATE
 			let tdFinanceDueDate = document.createElement('td');
-			tdFinanceDueDate.innerHTML = `<aon-input-text id="financeDueDate${i}" description="Fecha Vencimiento" type="date"></aon-input-text>`;
+			tdFinanceDueDate.innerHTML = `<aon-input id="financeDueDate${i}" description="Fecha Vencimiento" type="date"></aon-input>`;
 			tr.appendChild(tdFinanceDueDate);
 			let financeDueDate = document.getElementById('financeDueDate' + i);
 			financeDueDate.value = finance.due_date;
@@ -817,17 +817,16 @@ import '../../components/aon-checkbox.js';
 
 			// FINANCE PAYMETHOD
 			let tdDetailPaymethod = document.createElement('td');
-			// tdDetailPaymethod.innerHTML = `<aon-select id="financePaymethod${i}" description="Forma de Pago"></aon-select>`;
 			tdDetailPaymethod.innerHTML = `<aon-input id="financePaymethod${i}" type="list" description="Forma de Pago"></aon-input>`;
 			tr.appendChild(tdDetailPaymethod);
 			let financePaymethod = document.getElementById('financePaymethod' + i);
-			financePaymethod.options = Paymethods;
+			financePaymethod.options = JSON.stringify(Paymethods);
 			financePaymethod.value = finance.paymethod;
 			financePaymethod.addEventListener('select', () => this.updateFinancePaymethod(i));
 
 			// FINANCE AMOUNT
 			let tdFinanceAmount = document.createElement('td');
-			tdFinanceAmount.innerHTML = `<aon-input-text id="financeAmount${i}" description="Importe"></aon-input-text>`;
+			tdFinanceAmount.innerHTML = `<aon-input id="financeAmount${i}" description="Importe"></aon-input>`;
 			tr.appendChild(tdFinanceAmount);
 			let financeAmount = document.getElementById('financeAmount' + i);
 			financeAmount.value = finance.amount;
@@ -835,7 +834,7 @@ import '../../components/aon-checkbox.js';
 
 			// FINANCE IBAN
 			let tdFinanceIban = document.createElement('td');
-			tdFinanceIban.innerHTML = `<aon-input-text id="financeIban${i}" description="IBAN"></aon-input-text>`;
+			tdFinanceIban.innerHTML = `<aon-input id="financeIban${i}" description="IBAN"></aon-input>`;
 			tr.appendChild(tdFinanceIban);
 			let financeIban = document.getElementById('financeIban' + i);
 			financeIban.value = finance.iban;
@@ -991,7 +990,7 @@ import '../../components/aon-checkbox.js';
 				date: curDate,
 				total: 0,
 				sender: {
-					nif: '',
+					document: '',
 					name: '',
 					address: {
 						country: 'ES',
@@ -1002,7 +1001,7 @@ import '../../components/aon-checkbox.js';
 					}
 				},
 				receiver: {
-					nif: '',
+					document: '',
 					name: '',
 					address: {
 						country: 'ES',

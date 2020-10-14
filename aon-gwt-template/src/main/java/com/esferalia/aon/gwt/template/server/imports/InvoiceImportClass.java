@@ -321,7 +321,20 @@ public class InvoiceImportClass {
 		this.investment = investment;
 		return this;
 	}
-
+	
+	public Boolean isEmpty() {
+		return getType() == null && getDate() == null && getRef() == null
+			&& getSerie() == null && getNumber() == null && getName() == null
+			&& getNif() == null && getThird() == null && getConcept() == null
+			&& getAddress() == null && getCity() == null && getProvince() == null
+			&& getZip() == null && getCountry() == null && getAccount() == null
+			&& getAccountDescription() == null && getBase() == null && getPercentage() == null
+			&& getQuota() == null && getRePercentage() == null && getReQuota() == null
+			&& getRetentionPercentage() == null && getRetentionQuota() == null
+			&& getTotal() == null && getRetentionKey() == null && getRetentionSubKey() == null
+			&& getFinanceDate() == null && getFinanceAccount() == null;
+	}
+	
 	public enum InvoiceOpType {
 		EX,
 		PIS,

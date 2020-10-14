@@ -32,10 +32,12 @@ public class Saltra implements AutoCloseable{
 	public static final String NAF = "naf";
 	public static final String NAF2 = "naf2";
 	public static final String NAF1 = "naf1";
+	public static final String SEXO = "sexo";
 	public static final String REGIMEN = "regimen";
 	public static final String TIPO_CONTRATO = "tipo_contrato";
 	public static final String IDENTIFICACION = "identificacion";
 	public static final String GRUPO_COTIZACION = "grupo_cotizacion";
+	public static final String GRUPO_COTIZACION_TEXT = "grupo_cotizacion_text";
 	public static final String CERT_KEY = "cert_key";
 	public static final String CERT_SECRET = "cert_secret";
 	public static final String FECHA_ALTA = "fecha_alta";
@@ -49,13 +51,20 @@ public class Saltra implements AutoCloseable{
 	public static final String NOMBRES = "nombres";
 	public static final String EMPRESA = "empressa";
 	
+	public static final String ANACIMIENTO = "anacimiento";
+	public static final String MNACIMIENTO = "mnacimiento";
+	public static final String DNACIMIENTO = "dnacimiento";
+	
+	
 	private static Map<String, Supplier<? extends SaltraException>> EXCEPTIONS = 
 	new HashMap<String, Supplier<? extends SaltraException>>(){
 		{
+			put("^403\\*.*", () -> new ForbiddenException()); // ACCESO NO AUTORIZADO
+
 			put("^3543\\*.*", () -> new NoSuchDataException()); // NO EXISTEN DATOS PARA ESTA CONSULTA"
 			put("^3065\\*.*", () -> new NoSuchDataException()); // CLAVE INEXISTENTE EN BASE DE DATOS"
 			put("^3001\\*.*", () -> new InvalidArgumentException()); // ERROR DE VALIDACION U OBLIGATORIEDAD NO CUMPLIDA
-
+			
 
 		}
 	};
@@ -537,6 +546,11 @@ public class Saltra implements AutoCloseable{
 				String.format("%s/%s", url.getFile(), path)
 				);
 	}
+	
+	
+	// ------------------------------------------------------------------------
+
+	// ------------------------------------------------------------------------
 	
 	private static int getIdentificacion(String cif) {
 		if ( cif.matches("0?[0-9]{8}[A-Z]") ) 

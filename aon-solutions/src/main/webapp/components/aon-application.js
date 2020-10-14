@@ -101,6 +101,7 @@ class AonApplication extends HTMLElement {
 			let div = document.createElement('div');
 			div.style.paddingBottom = '25px';
 			div.style.borderBottom = '1px solid #ebebeb';
+    	sidenav.appendChild(div);
 
     	let sidenavTitle = document.createElement('div');
     	sidenavTitle.className = 'aonSidenavTitle';
@@ -109,12 +110,13 @@ class AonApplication extends HTMLElement {
 
     	let ul = document.createElement('ul');
     	ul.className = 'aonClip';
-
+    	div.appendChild(ul);
     	options.forEach((option, i) => {
       	let id = sidenav.id + option.name;
       	let li = document.createElement('li');
       	li.id = id;
       	li.className = 'aonAppMenuSidenavList aonOpacity';
+				ul.appendChild(li);
 
 				let span = document.createElement('span');
 				span.className = 'aonMenuItemSpan';
@@ -126,7 +128,15 @@ class AonApplication extends HTMLElement {
         	i.innerHTML = option.icon;
         	li.appendChild(i);
       	} else if(option.aonIcon) {
-        	li.innerHTML = `<aon-icon icon="${option.aonIcon.icon}" color="${option.aonIcon.color}" size="18px"></aon-icon>`;
+        	li.innerHTML = `<aon-icon id="${id + 'AonIcon' }" icon="${option.aonIcon.icon}" size="18px"></aon-icon>`;
+
+					li.addEventListener('mouseover', () => {
+						document.getElementById(id + 'AonIcon').color = option.aonIcon.color;
+					});
+
+					li.addEventListener('mouseleave', () => {
+						document.getElementById(id + 'AonIcon').color = '#5f6368';
+					});
       	} else if(option.img) {
         	let img = document.createElement('img');
         	img.style.width = '18px';
@@ -158,10 +168,8 @@ class AonApplication extends HTMLElement {
         	option.fn();
       	});
 
-      	ul.appendChild(li);
+
     	});
-    	div.appendChild(ul);
-    	sidenav.appendChild(div);
 		}
   }
 
@@ -173,6 +181,11 @@ class AonApplication extends HTMLElement {
     let toolbar = document.getElementById(this.getId() + 'Toolbar');
     toolbar.addButton(name, icon, fn);
   }
+
+	removeToolbarOption(name) {
+		let toolbar = document.getElementById(this.getId() + 'Toolbar');
+		toolbar.removeButton(name);
+	}
 
   setContent(element){
     let content = document.getElementById(this.getId() + 'Content');

@@ -164,6 +164,8 @@ public class CretaServlet extends HttpServlet
 	
 			boolean indicadorReftificacion = AonStringUtils.equalsIgnoreCase("on",
 					req.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION.name()));
+			boolean solicitudRecepcionRNT = AonStringUtils.equalsIgnoreCase("on",
+					req.getParameter(CretaService.Parameter.SOLICITUD_RECEPCION_RNT.name()));
 	
 			String nafs[] = req.getParameterValues(CretaService.Parameter.NAFS.name());
 	
@@ -179,6 +181,7 @@ public class CretaServlet extends HttpServlet
 			
 			CustomizeBasesCallback customBasesCb = new CustomizeBasesCallback()
 					.setReftificationMark(indicadorReftificacion)
+					.setSolicitudRecepcionRNT(solicitudRecepcionRNT)
 					;
 			
 			String i54 = req.getParameter(CretaService.Parameter.I54.name() );
@@ -304,8 +307,10 @@ public class CretaServlet extends HttpServlet
 	
 			os.printf("\"messages\":[],\r\n");
 	
-			os.printf("\"rectifying\":%b\r\n", indicadorReftificacion );
+			os.printf("\"rectifying\":%b,\r\n", indicadorReftificacion );
 	
+			os.printf("\"requestSendRNT\":%b\r\n", solicitudRecepcionRNT );
+
 			os.println("}");
 	
 			os.flush();
@@ -329,7 +334,9 @@ public class CretaServlet extends HttpServlet
 		String autorizado = req.getParameter(CretaService.Parameter.AUTORIZADO.name());
 		boolean aceptarBasesAnteriores = AonStringUtils.equalsIgnoreCase("on",
 				req.getParameter(CretaService.Parameter.ACEPTAR_BASES_ANTERIORES.name()));
-		Borrador.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, cccs, resp.getOutputStream());
+		boolean solicitudRecepcionRNT = AonStringUtils.equalsIgnoreCase("on",
+				req.getParameter(CretaService.Parameter.SOLICITUD_RECEPCION_RNT.name()));
+		Borrador.generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs, resp.getOutputStream());
 	}
 
 	@Override

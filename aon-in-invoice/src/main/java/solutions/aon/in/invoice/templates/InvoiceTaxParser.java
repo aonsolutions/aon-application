@@ -14,7 +14,8 @@ public class InvoiceTaxParser {
 		@SuppressWarnings("unused")
 		boolean something = 
 				simpleVATInvoice(amounts,handler)
-			|| complexVATInvoice(amounts,handler);
+			|| complexVATInvoice(amounts,handler)
+			;
 		
 	}
 	
@@ -39,62 +40,80 @@ public class InvoiceTaxParser {
 	
 	/**
 	 * Intento de parseo de una factura con una sola base de IVA, siendo el  
-	 * total factura el número más alto de la factura.  
+	 * total factura el número más alto de la factura.
 	 */
 	private static boolean simpleVATInvoice(Double[] amounts, InvoiceBuilder<?> handler) {
-		boolean retValue = false;
-		for (int i = 0; i < amounts.length; i++) {
-			double total = amounts[i];
-			for (double percentage : IVA_PERCENTS ) {
-				double base = total / (1 + percentage / 100.0);
-				int indexOfBase = indexOf(amounts, base, i + 1);
-				if ( indexOfBase >= 0 ) {
-					double quota = total - base;
-					int indexOfQuota = indexOf(amounts, quota, i+1);
-					if ( indexOfQuota >= 0 ) {
-						retValue = true;
-						handler.setTotal(total);
-						handler.setTax(
-								new InvoiceTax()
-								.setType( TaxType.IVA )
-								.setBase(amounts[indexOfBase])
-								.setPercent(percentage )
-								.setQuota(amounts[indexOfQuota])
-							);
+		boolean matched = false;
+		iva: {
+			for (int i = 0; i < amounts.length; i++) {
+				double total = amounts[i];
+				if (amounts[i] != 0.0) {
+					for (double percentage : IVA_PERCENTS ) {
+						double base = total / (1 + percentage / 100.0);
+						if (base != 0.0) {
+							int indexOfBase = indexOf(amounts, base, i + 1);
+							if ( indexOfBase >= 0 ) {
+								double quota = total - base;
+								int indexOfQuota = indexOf(amounts, quota, i+1);
+								if ( indexOfQuota >= 0 ) {
+									matched = true;
+									handler.setTotal(total);
+									handler.setTax(
+											new InvoiceTax()
+											.setType( TaxType.IVA )
+											.setBase(amounts[indexOfBase])
+											.setPercent(percentage )
+											.setQuota(amounts[indexOfQuota])
+											);
+									break iva;
+								}
+							}
+						}
 					}
 				}
 			}
 		}
-		return retValue;
+		return matched;
 	}
 	
 	private static boolean complexVATInvoice(Double[] amounts, InvoiceBuilder<?> handler) {
-		boolean retValue = false;
+		boolean taxAdded = false;
+		boolean matched = false;
 		double total = 0.0;
 		for (int i = 0; i < amounts.length; i++) {
-			double base = amounts[i];
-			for (double percentage : IVA_PERCENTS ) {
-				double quota = base * percentage / 100.0;
-				int indexOfQuota = indexOf(amounts, quota, i+1);
-				if ( indexOfQuota >= 0 ) {
-					retValue = true;
-					total = total + amounts[i] + amounts[indexOfQuota];  
-					handler.setTax(
-							new InvoiceTax()
-							.setType( TaxType.IVA )
-							.setBase(amounts[i])
-							.setPercent(percentage )
-							.setQuota(amounts[indexOfQuota])
-						);
+			if (amounts[i] != 0.0) {
+				double base = amounts[i];
+				for (double percentage : IVA_PERCENTS ) {
+					double quota = base * percentage / 100.0;
+					int indexOfQuota = indexOf(amounts, quota, i+1);
+					if ( indexOfQuota >= 0 ) {
+						taxAdded = true;
+						total = total + amounts[i] + amounts[indexOfQuota];  
+						handler.setTax(
+								new InvoiceTax()
+								.setType( TaxType.IVA )
+								.setBase(amounts[i])
+								.setPercent(percentage )
+								.setQuota(amounts[indexOfQuota])
+								);
+					}
 				}
 			}
 		}
-		if (retValue) {
+		if (taxAdded) {
 			int indexOfTotal = indexOf(amounts, total, 0);
 			if ( indexOfTotal >= 0 ) {
+				matched = true;
 				handler.setTotal( amounts[indexOfTotal]);
+			} else {
+
+				//TODO
+				// Identificarcar aquellas lineas de IVA, únicas por porcentaje, que, sumadas 
+				// entre si den un numero (total) que exista en la factura
+				
+				
 			}
 		}
-		return retValue;
+		return matched;
 	}
 }

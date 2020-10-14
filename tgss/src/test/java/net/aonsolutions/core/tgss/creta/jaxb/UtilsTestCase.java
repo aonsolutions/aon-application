@@ -10,10 +10,12 @@ class UtilsTestCase {
 
 	@Test
 	void testUnmarshalClassOfTInputStream() throws JAXBException {
+		//Respuesta respuesta130 = Utils.unmarshal(Respuesta.class, UtilsTestCase.class.getResourceAsStream("Respuesta130.xml"));
+		//System.out.println(respuesta130.getAutorizado());
 		Respuesta respuesta120 = Utils.unmarshal(Respuesta.class, UtilsTestCase.class.getResourceAsStream("Respuesta120.xml"));
-		System.out.println(respuesta120.getAutorizado());
+		//System.out.println(respuesta120.getAutorizado());
 		Respuesta respuesta110 = Utils.unmarshal(Respuesta.class, UtilsTestCase.class.getResourceAsStream("Respuesta110.xml"));
-		System.out.println(respuesta110.getAutorizado());
+		//System.out.println(respuesta110.getAutorizado());
 	}
 	
 	

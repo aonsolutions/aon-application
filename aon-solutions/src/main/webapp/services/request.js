@@ -18,7 +18,7 @@
 		xhr.setRequestHeader('domain_name', domainName);
 		xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 		xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-		
+
 		xhr.send(JSON.stringify(sendData));
 
 		xhr.onload = () => {
@@ -44,14 +44,12 @@
 		};
 	}
 
+
 	export const requestBidoq = (method, url, sendData, fn) => {
 	  let xhr = new XMLHttpRequest();
 	  xhr.open(method, url);
-		//xhr.setRequestHeader('api_key', 'K7>})(xQw~px_wgs#0=97..QGkBSxw*=.uatCfw[D.T{,fy.nrt?ok8jB@9}2}I');
 	  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	  //xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-
-	  xhr.send(JSON.stringify(sendData));
+	  xhr.send(sendData);
 
 	  xhr.onload = () => {
 	    if (xhr.status != 200) { // analyze HTTP status of the response

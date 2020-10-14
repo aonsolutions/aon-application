@@ -295,6 +295,7 @@ public class SalaryDAO {
 				r -> r.getValue(SALARY_PAYMENT.SALARY) == salaryId )
 				.forEachOrdered(paymentRecord->{
 					salary.addPayment(
+							paymentRecord.getValue(SALARY_PAYMENT.PAYMENT_CONCEPT), 
 							paymentRecord.getValue(SALARY_PAYMENT.EXPRESSION), 
 							paymentRecord.getValue(SALARY_PAYMENT.DESCRIPTION), 
 							paymentRecord.getValue(SALARY_PAYMENT.AMOUNT),

@@ -305,7 +305,9 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 					salesStatus.put(response.getSourceId(), response.getId());
 				});
 		AON.getLastDataResponseDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
-				f -> f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()).and(f.getSourceIdProperty().in(salesIds)))
+				f -> f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value())
+					.and(f.getSourceIdProperty().in(salesIds))))
 			.forEach(detail -> {
 				for(Integer sales: salesStatus.keySet())
 					if(salesStatus.get(sales).equals(detail.getDataResponse()))
@@ -618,7 +620,9 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 								.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
 								.and(f.getIssueDateProperty().between(start, end));
 					} else {
-						return f.getIssueDateProperty().isNotNull();
+						return f.getDomainProperty().eq(ctx.getDomainId())
+								.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
+								.and(f.getIssueDateProperty().isNotNull());
 					}
 				})
 				.filter(detail-> ArrayUtils.contains(statuses, detail.getDataValue())

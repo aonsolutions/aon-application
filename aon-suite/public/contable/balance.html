@@ -64,9 +64,9 @@
                                 </div>
                             </div>
                             
-                            <div class="col-6">
+                            <div class="col-8">
                                 <div class="row mt-4">
-                                    <div class="col-12">
+                                    <div class="col-8">
                                         <table class="table" id="table_balance_totales">
                                             <thead>
                                                 <tr>
@@ -90,6 +90,9 @@
                                             <tfoot></tfoot>
                                         </table>
                                     </div>
+                                    <div class="col-4">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -100,6 +103,8 @@
 
         <!-- Scripts -->
         <script src="../js/app.js"></script>
+        <!-- ChartJS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" crossorigin="anonymous"></script>
         <script>
             //
             // Cargamos las funciones
@@ -220,6 +225,22 @@
                     var totales = balance.totales;
                     $('.total_activos').html(totales.total_activos);
                     $('.total_pasivos_patrimonio').html(totales.total_pasivos_patrimonio);
+                    
+                    // Montamos la gráfica
+                    var ctx = $('#myChart');
+                    var myChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Activos', 'Pasivos'],
+                            datasets: [{
+                                data: [parseFloat(totales.total_activos), parseFloat(totales.total_pasivos_patrimonio)],
+                                backgroundColor: [
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 99, 132, 1)'
+                                ]
+                            }]
+                        }
+                    });
                 }
 
                 //

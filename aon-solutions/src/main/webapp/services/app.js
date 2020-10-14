@@ -6,21 +6,21 @@ export const Apps = {
     title: 'Contabilidad',
     description: 'Gestor de Contabilidad.',
     icon: 'aon_app',
-    color: '#D8B03D'
+    color: '#1FD8B9'
   },
   FISCAL: {
     app: 'fiscal',
     title: 'Fiscal',
     description: 'Gestor Fiscal.',
     icon: 'aon_app',
-    color: '#3A85C3'
+    color: '#1FBCE5'
   },
   PAYROLL: {
     app: 'payroll',
     title: 'Laboral',
     description: 'Gestor Laboral.',
     icon: 'aon_app',
-    color: '#90BD75'
+    color: '#1F8CFF'
   },
   CONTRATA: {
     app: 'contrata',
@@ -41,7 +41,7 @@ export const Apps = {
     title: 'Portal',
     description: 'Portal',
     icon: 'aon_app',
-    color: '#002469'
+    color: '#B50061'
   }
 }
 
@@ -103,21 +103,21 @@ export const AllApps = {
       title: 'Contabilidad',
       description: 'Gestor de Contabilidad.',
       icon: 'aon_app',
-      color: '#D8B03D'
+      color: '#1FD8B9'
     },
     FISCAL: {
       app: 'fiscal',
       title: 'Fiscal',
       description: 'Gestor Fiscal.',
       icon: 'aon_app',
-      color: '#3A85C3'
+      color: '#1FBCE5'
     },
     PAYROLL: {
       app: 'payroll',
       title: 'Laboral',
       description: 'Gestor Laboral.',
       icon: 'aon_app',
-      color: '#90BD75'
+      color: '#1F8CFF'
     },
     OCR: {
       app: 'ocr',
@@ -145,7 +145,7 @@ export const AllApps = {
       title: 'Portal',
       description: 'Portal',
       icon: 'aon_app',
-      color: '#002469'
+      color: '#B50061'
     },
     CONVENIOS: {
       app: 'convenios',

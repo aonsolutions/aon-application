@@ -85,7 +85,7 @@ import './aon-icon-button.js';
 			header.appendChild(section);
 
 			let toolSection = document.createElement('section');
-			toolSection.setAttribute('id', this.getAttribute('id') + 'aon-toolbar-tool-section');
+			toolSection.setAttribute('id', this.getAttribute('id') + 'aonToolbarToolSection');
 			toolSection.className = "aonToolbarSection aonToolbarSectionEnd";
 
 			header.appendChild(toolSection);
@@ -100,16 +100,23 @@ import './aon-icon-button.js';
 			span.innerHTML= button;
 
 			let aonMenu = document.getElementById('aonMenu');
-			let toolSection = document.getElementById(this.getId() + 'aon-toolbar-tool-section');
+			let toolSection = document.getElementById(this.getId() + 'aonToolbarToolSection');
 			toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
-			toolSection.appendChild(span);
+			if(toolSection.children.length > 0) {
+				toolSection.insertBefore(span, toolSection.children[0]);
+			} else toolSection.appendChild(span);
 
 			let b = document.getElementById(id);
 			b.addEventListener('click', fn);
 		}
 
+		removeButton(name) {
+			const id = this.getId() + name + 'Button';
+			document.getElementById(id).remove();
+		}
+
 		removeButtons() {
-			let toolSection = document.getElementById(this.getId() + 'aon-toolbar-tool-section');
+			let toolSection = document.getElementById(this.getId() + 'aonToolbarToolSection');
 			toolSection.innerHTML = '';
 		}
 
