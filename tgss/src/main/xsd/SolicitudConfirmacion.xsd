@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.seg-social.es/creta/esquemas/V100/SolicitudConfirmacion" targetNamespace="http://www.seg-social.es/creta/esquemas/V100/SolicitudConfirmacion" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.seg-social.es/creta/esquemas/V120/SolicitudConfirmacion" targetNamespace="http://www.seg-social.es/creta/esquemas/V120/SolicitudConfirmacion" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="SolicitudConfirmacion">
 		<xs:complexType>
 			<xs:sequence>
@@ -24,9 +24,18 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+  <xs:element name="SolicitudRecepcionRNT">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="S"/>
+        <xs:enumeration value="N"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
 	<xs:element name="Liquidacion">
 		<xs:complexType>
 			<xs:sequence>
+        <xs:element ref="SolicitudRecepcionRNT" minOccurs="0" />
 				<xs:element ref="Ccc"/>
 				<xs:element ref="CccConcertado" minOccurs="0"/>
 				<xs:element ref="PeriodoDesde"/>

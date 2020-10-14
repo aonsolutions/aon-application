@@ -188,6 +188,9 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	Element reftificationMarkTR;
 
 	@UiField
+	Element solicitudRecepcionRNTTR;
+
+	@UiField
 	ListBox typeListBox;
 	
 	@UiField
@@ -198,6 +201,9 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 	@UiField
 	CheckBox reftificationMarkCheckBox;
+
+	@UiField
+	CheckBox solicitudRecepcionRNTCheckBox;
 
 	@UiField
 	Element i54TR;
@@ -222,6 +228,8 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 		setVisibleCalcsDetailed(false);
 		
 		setVisibleReftificationMark(false);
+		
+		setVisibleSolicitudRecepcionRNT(false);
 
 		Date prevMonth = DateUtils.addMonths2Date(DateUtils.getFirstDayOfMonth(), -1); 
 		monthListBox.setLastMonth(prevMonth);
@@ -238,6 +246,8 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 
 		typeListBox.setSelectedIndex(0);//L00
 		setVisibleToFromCtrlMonth(false);
+		
+		
 		
 		acceptButton.setEnabled(enableAccept());
 	}
@@ -439,6 +449,11 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	public boolean reftificationMark(){
 		return reftificationMarkCheckBox.getValue();
 	}
+	
+	public boolean solicitudRecepcionRNT(){
+		return solicitudRecepcionRNTCheckBox.getValue();
+	}
+
 
 	public String getI54(){
 		return i54ListBox.getSelectedValue();
@@ -477,6 +492,10 @@ public abstract class CretaRequestDialog<T extends HasId<?>> extends SelectDialo
 	
 	protected void setVisibleReftificationMark(boolean visible){
 		setVisible(visible, reftificationMarkTR);
+	}
+
+	protected void setVisibleSolicitudRecepcionRNT(boolean visible){
+		setVisible(visible, solicitudRecepcionRNTTR);
 	}
 
 	protected void setVisible(boolean visible, Element el){

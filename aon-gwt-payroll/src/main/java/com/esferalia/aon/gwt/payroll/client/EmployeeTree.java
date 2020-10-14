@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
+import com.esferalia.aon.gwt.payroll.shared.SaltraService.JsSaltraResults;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -109,24 +110,21 @@ import net.aonsolutions.gwt.pdfjs.client.Viewer;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 
-public class EmployeeTree implements EntryPoint, Employees.Listener,
-		MetaData.Listener, Cost.Listener, Salary.Listener, EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener {
-	
-	
+public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener, Cost.Listener, Salary.Listener,
+		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener {
 
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
-	static class EmployeeCalcDialog extends CalcDialog<Employee> {
-		
-		DomainEmployeesServiceAsync employeesService ;
-		
-		public EmployeeCalcDialog() {
 
+	static class EmployeeCalcDialog extends CalcDialog<Employee> {
+
+		DomainEmployeesServiceAsync employeesService;
+
+		public EmployeeCalcDialog() {
 
 			employeesService = DomainEmployeesServiceAsync.newInstance();
 
 			// Full name.
-			Column<Employee, String> fullNameColumn = new Column<Employee, String>(
-					new TextCell()) {
+			Column<Employee, String> fullNameColumn = new Column<Employee, String>(new TextCell()) {
 				@Override
 				public String getValue(Employee employee) {
 					return employee.getFullname();
@@ -135,13 +133,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			addColumn(fullNameColumn, "Empleado");
 		}
-		
+
 		@Override
 		protected void getExtras(Set<Employee> employeesSet, AsyncCallback<List<Extra>> callback) {
 			List<Employee> employeesList = new ArrayList<Employee>(employeesSet);
 			employeesService.getExtras(employeesList, callback);
 		}
-		
+
 	}
 
 	static class WorkPlaceCalcDialog extends CalcDialog<Workplace> {
@@ -153,8 +151,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			enterpriseService = DomainEnterprisesServiceAsync.newInstance();
 
 			// Full name.
-			Column<Workplace, String> descriptionColumn = new Column<Workplace, String>(
-					new TextCell()) {
+			Column<Workplace, String> descriptionColumn = new Column<Workplace, String>(new TextCell()) {
 				@Override
 				public String getValue(Workplace workplace) {
 					return workplace.getDescription();
@@ -163,11 +160,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			addColumn(descriptionColumn, "Centro");
 		}
-		
+
 		@Override
 		protected void getExtras(Set<Workplace> workplaces, AsyncCallback<List<Extra>> callback) {
 			List<Integer> workplaceIds = new ArrayList<Integer>(workplaces.size());
-			for ( Workplace workplace: workplaces )
+			for (Workplace workplace : workplaces)
 				workplaceIds.add(workplace.getId());
 			enterpriseService.getWorkplacesExtras(workplaceIds, callback);
 		}
@@ -185,19 +182,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	class NewEmployeeCommand implements ScheduledCommand {
 		private DomainEmployeesServiceAsync employeesService;
 		private DomainEnterprisesServiceAsync enterprisesService;
-		
+
 		@Override
 		public void execute() {
 			// Create a remote service proxy to talk to the server-side Employees
 			// service.
 			employeesService = DomainEmployeesServiceAsync.newInstance();
 			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-			
+
 			EmployeeDialog employeeDialog = new EmployeeDialog() {
 				@Override
-				protected void onAccept() {}
+				protected void onAccept() {
+				}
 			};
-			EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace, employeesService, enterprisesService);
+			EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace, employeesService,
+					enterprisesService);
 			employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 			workplaceContextMenu.hide();
 			employeeDialog.center();
@@ -205,16 +204,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 //			EmployeeTree.this.employees.refresh(workplace);
 		}
 	}
-	
+
 	class NewActivityCommand implements ScheduledCommand {
 		private DomainEnterprisesServiceAsync enterprisesService;
-		
+
 		@Override
 		public void execute() {
 			// Create a remote service proxy to talk to the server-side Employees
 			// service.
 			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-			
+
 			ActivityDialog activityDialog = new ActivityDialog();
 			ActivityDialogObject activityDialogObject = new ActivityDialogObject(enterprise, enterprisesService);
 			activityDialog.setActivityDialogObject(activityDialogObject);
@@ -223,16 +222,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			activityDialog.show();
 		}
 	}
-	
+
 	class NewWorkplaceCommand implements ScheduledCommand {
 		private DomainEnterprisesServiceAsync enterprisesService;
-		
+
 		@Override
 		public void execute() {
 			// Create a remote service proxy to talk to the server-side Employees
 			// service.
 			enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-			
+
 			WorkplaceDialog workplaceDialog = new WorkplaceDialog();
 			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise, enterprisesService);
 			workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
@@ -267,17 +266,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 	}
 
-	class PasteEmployeeCommand
-			implements ScheduledCommand, EmployeePopupCopy.Listener {
+	class PasteEmployeeCommand implements ScheduledCommand, EmployeePopupCopy.Listener {
 
 		@Override
 		public void execute() {
 			paste = new EmployeePopupCopy();
 			paste.addListener(this);
 			Employee aux = singlenton.getEmployeeContextMenu().getEmployeeCopy();
-			
-			if (singlenton.avaiableEmployees
-					.containsKey(aux.getDocument()) == false)
+
+			if (singlenton.avaiableEmployees.containsKey(aux.getDocument()) == false)
 				existPerson(aux);
 			else
 				showPopUpPanel();
@@ -285,24 +282,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		private void showPopUpPanel() {
 			setEmployeePaste(singlenton.getEmployeeContextMenu().getEmployeeCopy());
-			
+
 			setMapAvaiableEmployees(singlenton.avaiableEmployees);
-			//TODO: FIX FIRST THIS, DONT KNOW HOW REALLY WORKS
+			// TODO: FIX FIRST THIS, DONT KNOW HOW REALLY WORKS
 			paste.showPopUpPanel();
 		}
 
 		@Override
 		public void onAcceptClick(Employee pasteEmployee, boolean value) {
 			int workplaceId = workplace.getId();
-			int contractId = singlenton.getEmployeeContextMenu()
-					.getEmployeeCopy().getId();
+			int contractId = singlenton.getEmployeeContextMenu().getEmployeeCopy().getId();
 			String document = pasteEmployee.getDocument();
 			Date startDate = pasteEmployee.getStartDate();
-			Date endDate = (pasteEmployee.getEndDate() != null)
-					? pasteEmployee.getEndDate() : null;
+			Date endDate = (pasteEmployee.getEndDate() != null) ? pasteEmployee.getEndDate() : null;
 
-			pasteContract(workplaceId, contractId, document, startDate, endDate,
-					value, null);
+			pasteContract(workplaceId, contractId, document, startDate, endDate, value, null);
 			paste.hide();
 		}
 
@@ -314,12 +308,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			paste.setMapAvaiableEmployees(map);
 		}
 
-		private void pasteContract(int workplaceId, int contractId,
-				String document, Date startDate, Date endDate, boolean check,
-				final AsyncCallback<Employee> callback) {
+		private void pasteContract(int workplaceId, int contractId, String document, Date startDate, Date endDate,
+				boolean check, final AsyncCallback<Employee> callback) {
 
-			employees.getEmployeesService().pasteContract(workplaceId,
-					contractId, document, startDate, endDate, check,
+			employees.getEmployeesService().pasteContract(workplaceId, contractId, document, startDate, endDate, check,
 					new AsyncCallback<Employee>() {
 
 						@Override
@@ -337,26 +329,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		private void existPerson(final Employee employee) {
 
-			if (Window.confirm(employee.getFullname()
-					+ " no se encuentra en el dominio. \u00BFDesea insertar "
+			if (Window.confirm(employee.getFullname() + " no se encuentra en el dominio. \u00BFDesea insertar "
 					+ "el registro\u003F")) {
 
-				singlenton.employees.getEmployeesService()
-						.insertPerson(employee, new AsyncCallback<Void>() {
+				singlenton.employees.getEmployeesService().insertPerson(employee, new AsyncCallback<Void>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
+					@Override
+					public void onFailure(Throwable caught) {
 
-							}
+					}
 
-							@Override
-							public void onSuccess(Void result) {
-								singlenton.avaiableEmployees.put(
-										employee.getDocument(),
-										employee.getFullname());
-								PasteEmployeeCommand.this.showPopUpPanel();
-							}
-						});
+					@Override
+					public void onSuccess(Void result) {
+						singlenton.avaiableEmployees.put(employee.getDocument(), employee.getFullname());
+						PasteEmployeeCommand.this.showPopUpPanel();
+					}
+				});
 			}
 		}
 	}
@@ -368,35 +356,33 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			deleteContract(singlenton.employee, null);
 		}
 
-		private void deleteContract(Employee employee,
-				final AsyncCallback<Void> callback) {
+		private void deleteContract(Employee employee, final AsyncCallback<Void> callback) {
 
-			if(employee.hasSalries()) {
+			if (employee.hasSalries()) {
 				Window.alert("No se puede borrar un empleado con nominas.");
 				callback.onSuccess(null);
-			}else {
-				employees.getEmployeesService().moveContractId(employee,
-						new AsyncCallback<Void>() {
+			} else {
+				employees.getEmployeesService().moveContractId(employee, new AsyncCallback<Void>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-								callback.onFailure(caught);
-							}
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
 
-							@Override
-							public void onSuccess(Void result) {
-								employees.onEnterprise(enterprise);
-								callback.onSuccess(result);
-							}
-						});
+					@Override
+					public void onSuccess(Void result) {
+						employees.onEnterprise(enterprise);
+						callback.onSuccess(result);
+					}
+				});
 			}
-			
+
 		}
 
 	}
 
-	class CalcEnterpriseCommand implements ScheduledCommand, AcceptHandler,
-			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult> {
+	class CalcEnterpriseCommand implements ScheduledCommand, AcceptHandler, AsyncCallback<JsSalaryResult>,
+			SelectionHandler<JsSalaryResult> {
 
 		SalaryResults results;
 		WorkPlaceCalcDialog calcDialog;
@@ -430,8 +416,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		@Override
 		public void onAccept(AcceptEvent event) {
 			Date startDate = calcDialog.getStartDate();
-			Date endDate = calcDialog.getEndDate(); 
-			Date issueDate = calcDialog.getIssueDate(); 
+			Date endDate = calcDialog.getEndDate();
+			Date issueDate = calcDialog.getIssueDate();
 
 			Set<Workplace> workplaces = calcDialog.getSelectedData();
 
@@ -448,8 +434,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			Integer extra = calcDialog.getExtra();
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
 
-			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, WORKPLACES, workplaces,
-					extra, optionsBits, this);
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, WORKPLACES, workplaces, extra,
+					optionsBits, this);
 
 			clear();
 
@@ -482,39 +468,34 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
-			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(),
-					salaryResult.getWorkplaceId(), salaryResult.getStartDate(),
-					salaryResult.getEndDate());
+			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(), salaryResult.getWorkplaceId(),
+					salaryResult.getStartDate(), salaryResult.getEndDate());
 		}
 
 	}
-	
+
 	interface EmployeeCommand extends ScheduledCommand {
 		void setEmployee(Employee employee);
 	}
-	
-	
-	class RefreshEmployeeCommand implements EmployeeCommand{
-		
+
+	class RefreshEmployeeCommand implements EmployeeCommand {
+
 		private Employee employee;
-		
+
 		@Override
 		public void execute() {
 			EmployeeTree.this.employees.refresh(employee);
 		}
-		
-		
+
 		// --------------------------------------------------------------------
-		
+
 		@Override
 		public void setEmployee(Employee employee) {
 			this.employee = employee;
 		}
 	}
-	
 
-	class CalcEmployeeCommand
-			implements EmployeeCommand, AcceptHandler, CalculateService,
+	class CalcEmployeeCommand implements EmployeeCommand, AcceptHandler, CalculateService,
 			SelectionHandler<JsSalaryResult>, AsyncCallback<JsSalaryResult> {
 
 		private SalaryResults results;
@@ -544,8 +525,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void setEmployee(Employee employee) {
 			calcDialog.setData(Collections.singletonList(employee));
 
-			Date actualDate = DateUtils.after(new Date(),
-					employee.getStartDate());
+			Date actualDate = DateUtils.after(new Date(), employee.getStartDate());
 			actualDate = DateUtils.before(actualDate, employee.getEndDate());
 
 			calcDialog.setStartMonth(employee.getStartDate());
@@ -557,7 +537,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		@Override
 		public void onAccept(AcceptEvent event) {
 
-			Date startDate = calcDialog.getStartDate(); 
+			Date startDate = calcDialog.getStartDate();
 			Date endDate = calcDialog.getEndDate();
 			Date issueDate = calcDialog.getIssueDate();
 
@@ -572,12 +552,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				optionsBits |= MainCalculator.OVERWRITE_OPTION;
 			if (calcDialog.isDuplicateSelected())
 				optionsBits |= MainCalculator.DUPLICATE_OPTION;
-			
+
 			Integer extra = calcDialog.getExtra();
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
-			
-			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees,
-					extra, optionsBits, this);
+
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees, extra,
+					optionsBits, this);
 			clear();
 
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
@@ -611,14 +591,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
-			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(),
-					salaryResult.getWorkplaceId(), salaryResult.getStartDate(),
-					salaryResult.getEndDate());
+			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(), salaryResult.getWorkplaceId(),
+					salaryResult.getStartDate(), salaryResult.getEndDate());
 		}
 	}
 
-	public static abstract class CretaCommand
-			implements ScheduledCommand, CretaService {
+	public static abstract class CretaCommand implements ScheduledCommand, CretaService {
 
 		protected File file;
 		protected FileEditor fileEditor;
@@ -628,23 +606,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			this(file, detailPanel, new FileEditor());
 		}
 
-		public CretaCommand(File file, DetailPanel detailPanel,
-				FileEditor fileEditor) {
+		public CretaCommand(File file, DetailPanel detailPanel, FileEditor fileEditor) {
 			this.file = file;
 			this.fileEditor = fileEditor;
 			this.detailPanel = detailPanel;
 		}
 
-		protected void send(long autorizado, 
-				final int fromMonth, final int fromYear,
-				final int toMonth, final int toYear,
-				final int ctrlMonth, final int ctrlYear,
-				final String tipo, 
-				final Collection<CCC> cccs,
-				final boolean basesMesAnterior,
-				final boolean calcsDetailed,
-				final String i54, 
-				final boolean reftificativa) {
+		protected void send(long autorizado, final int fromMonth, final int fromYear, final int toMonth,
+				final int toYear, final int ctrlMonth, final int ctrlYear, final String tipo,
+				final Collection<CCC> cccs, final boolean basesMesAnterior, final boolean calcsDetailed,
+				final String i54, final boolean reftificativa, final boolean solicitudRecepcionRNT) {
 			StringBuffer requestDataBuffer = new StringBuffer();
 
 			requestDataBuffer.append("&" + Parameter.TIPO + "=" + tipo);
@@ -654,38 +625,34 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			requestDataBuffer.append("&" + Parameter.HASTA_ANHO + "=" + toYear);
 			requestDataBuffer.append("&" + Parameter.CTRL_MES + "=" + ctrlMonth);
 			requestDataBuffer.append("&" + Parameter.CTRL_ANHO + "=" + ctrlYear);
-			requestDataBuffer
-					.append("&" + Parameter.AUTORIZADO + "=" + autorizado);
+			requestDataBuffer.append("&" + Parameter.AUTORIZADO + "=" + autorizado);
 
 			for (CCC ccc : cccs)
-				requestDataBuffer
-						.append("&" + Parameter.CCC + "=" + ccc.getRegime() + ccc.getCode());
+				requestDataBuffer.append("&" + Parameter.CCC + "=" + ccc.getRegime() + ccc.getCode());
 
 			if (basesMesAnterior)
-				requestDataBuffer.append(
-						"&" + Parameter.ACEPTAR_BASES_ANTERIORES + "=on");
+				requestDataBuffer.append("&" + Parameter.ACEPTAR_BASES_ANTERIORES + "=on");
 
 			if (calcsDetailed)
-				requestDataBuffer.append(
-						"&" + Parameter.CALCULOS_DESGLOSADOS + "=on");
+				requestDataBuffer.append("&" + Parameter.CALCULOS_DESGLOSADOS + "=on");
 
 			if (reftificativa)
-				requestDataBuffer.append(
-						"&" + Parameter.INDICADOR_RECTIFICACION + "=on");
+				requestDataBuffer.append("&" + Parameter.INDICADOR_RECTIFICACION + "=on");
+
+			if (solicitudRecepcionRNT)
+				requestDataBuffer.append("&" + Parameter.SOLICITUD_RECEPCION_RNT + "=on");
 
 			requestDataBuffer.append("&" + Parameter.I54 + "=" + i54);
 
 			for (CCC ccc : cccs)
 				for (Employee employee : ccc.getEmployees())
-					requestDataBuffer
-						.append("&" + Parameter.NAFS + "=" + employee.getSocialSecurity());
-			
+					requestDataBuffer.append("&" + Parameter.NAFS + "=" + employee.getSocialSecurity());
+
 			// Send request to server and catch any errors.
 
 			XMLHttpRequest xhr = XMLHttpRequest.create();
 			xhr.open("POST", CretaService.CRETA_URL + "/" + file.name());
-			xhr.setRequestHeader("Content-type",
-					"application/x-www-form-urlencoded");
+			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
 
 				private int loaded = 0;
@@ -697,8 +664,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					if (state != XMLHttpRequest.DONE)
 						return;
 
-					onRequestDone(xhr.getResponseText(), fromMonth, fromYear, toMonth, toYear, tipo,
-							cccs);
+					onRequestDone(xhr.getResponseText(), fromMonth, fromYear, toMonth, toYear, tipo, cccs);
 				}
 
 			});
@@ -707,14 +673,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		}
 
-		protected void onRequestDone(String response, int fromMonth, int fromYear, int toMonth, int toYear,
-				String tipo, Collection<CCC> cccs) {
+		protected void onRequestDone(String response, int fromMonth, int fromYear, int toMonth, int toYear, String tipo,
+				Collection<CCC> cccs) {
 			fileEditor.setMode("xml");
 			fileEditor.setText(response);
 			fileEditor.setFoldGutter(true);
 			fileEditor.setLineNumbers(true);
 			fileEditor.setTitle(file.getFilename());
-			// TODO: from ? 
+			// TODO: from ?
 			fileEditor.setFilename(getFileName(toMonth, toYear, tipo, cccs));
 			detailPanel.setWidget(fileEditor);
 			fileEditor.autoRefresh();
@@ -722,16 +688,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		// --------------------------------------------------------------------
 
+		private String getFileName(int month, int year, String tipo, Collection<CCC> cccs) {
 
-		private String getFileName(int month, int year, String tipo,
-				Collection<CCC> cccs) {
-			
-			
-		     StringBuffer buffer = new StringBuffer();
-			
-		     
-		     buffer.append(cleanDiacritics(file.getFilename()));
-			
+			StringBuffer buffer = new StringBuffer();
+
+			buffer.append(cleanDiacritics(file.getFilename()));
+
 			for (CCC ccc : cccs) {
 				buffer.append('-');
 				buffer.append(ccc.getRegime());
@@ -754,14 +716,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	public static abstract class CreateResponseCommand extends CretaCommand
-			implements CretaResponseDialog.Handler {
+	public static abstract class CreateResponseCommand extends CretaCommand implements CretaResponseDialog.Handler {
 
 		ResultsPanel resultsPanel;
 		CretaResponseDialog dialog;
 
-		public CreateResponseCommand(File outFile, File inFile,
-				DetailPanel detailPanel, ResultsPanel resultsPanel) {
+		public CreateResponseCommand(File outFile, File inFile, DetailPanel detailPanel, ResultsPanel resultsPanel) {
 			super(outFile, detailPanel);
 			this.resultsPanel = resultsPanel;
 			dialog = new CretaResponseDialog(outFile, inFile, this) {
@@ -793,12 +753,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			dialog.hide();
 
 			showBases(result, detailPanel);
-			
-			showResults(result, 
-					dialog.getSelectedData(), 
-					resultsPanel, 
-					CreateResponseCommand.this::onBases, 
-					r -> showResultsPanel() );
+
+			showResults(result, dialog.getSelectedData(), resultsPanel, CreateResponseCommand.this::onBases,
+					r -> showResultsPanel());
 
 //			CretaResults cretaResults = new CretaResults() {
 //				@Override
@@ -824,28 +781,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		protected abstract boolean accept(String ccc);
 
 		protected abstract String getDescription(String ccc);
-		
+
 		// --------------------------------------------------------------------
-		
+
 		private void sync() {
 			MainCreta.sync(new AsyncCallback<Void>() {
 				@Override
 				public void onSuccess(Void result) {
 					CreateResponseCommand.this.dialog.onTrabajadoresYTramos();
 				}
+
 				public void onFailure(Throwable caught) {
 					// TODO Auto-generated method stub
 				};
 			});
 		}
-		
+
 	}
 
-	public static abstract class WorkplaceCreateResponseCommand
-			extends CreateResponseCommand {
+	public static abstract class WorkplaceCreateResponseCommand extends CreateResponseCommand {
 
-		public WorkplaceCreateResponseCommand(File outFile, File inFile,
-				DetailPanel detailPanel, ResultsPanel resultsPanel) {
+		public WorkplaceCreateResponseCommand(File outFile, File inFile, DetailPanel detailPanel,
+				ResultsPanel resultsPanel) {
 			super(outFile, inFile, detailPanel, resultsPanel);
 		}
 
@@ -874,8 +831,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	public static abstract class CreateRequestCommand extends CretaCommand
-			implements CretaRequestDialog.Callback<CCC> {
+	public static abstract class CreateRequestCommand extends CretaCommand implements CretaRequestDialog.Callback<CCC> {
 
 		CretaRequestDialog<CCC> dialog;
 
@@ -890,8 +846,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			setUpDialog(file, dialog);
 		}
 
-		public CreateRequestCommand(File file, DetailPanel detailPanel,
-				FileEditor fileEditor) {
+		public CreateRequestCommand(File file, DetailPanel detailPanel, FileEditor fileEditor) {
 			super(file, detailPanel, fileEditor);
 			dialog = new CretaRequestDialog.CretaCCCRequestDialog(this) {
 				@Override
@@ -929,153 +884,145 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			boolean calcsDetailed = dialog.calcsDetailed();
 			String i54 = dialog.getI54();
 			boolean reftificationMark = dialog.reftificationMark();
+			boolean solicitudRecepcionRNT = dialog.solicitudRecepcionRNT();
 
-			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, checkCCCs(ccs), basesMesAnterior, calcsDetailed, i54, reftificationMark);
+			send(autorizado, desdeMes, desdeAnyo, hastaMes, hastaAnyo, ctrlMes, ctrlAnyo, tipo, checkCCCs(ccs),
+					basesMesAnterior, calcsDetailed, i54, reftificationMark, solicitudRecepcionRNT);
 
 			return true;
 		}
 
 		// --------------------------------------------------------------------
-		
+
 		public void reexecute(Consumer<CretaRequestDialog<CCC>> consumer) {
 			consumer.accept(dialog);
 			onAccept(dialog);
 		}
 
 		// --------------------------------------------------------------------
-		protected void setSelected(Collection<CCC> cccs ) {
+		protected void setSelected(Collection<CCC> cccs) {
 			dialog.setSelectedData(cccs);
-			
+
 		}
 		// --------------------------------------------------------------------
 
 		protected abstract String getDescription(CCC ccc);
-		
+
 		protected abstract void onCCCError(CCC ccc, String message);
 
 		// --------------------------------------------------------------------
-		
-		private Set<CCC> checkCCCs(Set<CCC> cccs ) {
-			return 
-			cccs.stream()
-			.filter(ccc -> {
+
+		private Set<CCC> checkCCCs(Set<CCC> cccs) {
+			return cccs.stream().filter(ccc -> {
 				String code = ccc.getCode();
-				if ( AonStringUtils.isBlank(code)) {
+				if (AonStringUtils.isBlank(code)) {
 					onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n vac\u00EDo");
 					return false;
 				}
-				if ( AonStringUtils.trim(code).length() < 11 ) {
-					onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '"+ code +"'. Recuerde dos d\u00EDgitos para la provincia y nueve d\u00EDgitos para el n\u00FAmero de cotizaci\u00F3n");
+				if (AonStringUtils.trim(code).length() < 11) {
+					onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '" + code
+							+ "'. Recuerde dos d\u00EDgitos para la provincia y nueve d\u00EDgitos para el n\u00FAmero de cotizaci\u00F3n");
 					return false;
 				}
 				try {
-					int provincia  = Integer.parseInt(AonStringUtils.substring(code, 0, 2));
-					if ( provincia < 1  || provincia > 52 ) {
-						onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '"+ code +"'. C\u00F3digo de provincia '"+ AonStringUtils.substring(code, 0, 2) +"' desconocido. Recuerde debe estar entre ( 01 y 52 )");
+					int provincia = Integer.parseInt(AonStringUtils.substring(code, 0, 2));
+					if (provincia < 1 || provincia > 52) {
+						onCCCError(ccc,
+								"C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '" + code
+										+ "'. C\u00F3digo de provincia '" + AonStringUtils.substring(code, 0, 2)
+										+ "' desconocido. Recuerde debe estar entre ( 01 y 52 )");
 						return false;
 					}
-					
-				} catch ( Exception e ) {
-					onCCCError(ccc, "C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '"+ code +"'. C\u00F3digo de provincia '"+ AonStringUtils.substring(code, 0, 2) +"' desconocido. Recuerde debe estar entre ( 01 y 52 )");	
+
+				} catch (Exception e) {
+					onCCCError(ccc,
+							"C\u00F3digo Cuenta de Cotizaci\u00F3n inv\u00E1lido '" + code
+									+ "'. C\u00F3digo de provincia '" + AonStringUtils.substring(code, 0, 2)
+									+ "' desconocido. Recuerde debe estar entre ( 01 y 52 )");
 					return false;
-				} 
-				
-				
-				
+				}
+
 				String numero = AonStringUtils.substring(code, 2);
 				String control = AonStringUtils.substring(code, -2);
-				
-				
-				
-				
-				
+
 				return true;
 			}).collect(Collectors.toSet());
 		}
 
-		private static void setUpDialog(File file,
-				final CretaRequestDialog dialog) {
+		private static void setUpDialog(File file, final CretaRequestDialog dialog) {
 			file.accept(new File.Visitor<Void, Void, RuntimeException>() {
 
 				@Override
 				public void visitBases(Void t, Void l) throws RuntimeException {
-					// TODO: add TypeChangeHadler to CretaRequestDialog? 
+					// TODO: add TypeChangeHadler to CretaRequestDialog?
 					dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
 					dialog.setVisibleReftificationMark(true);
+					dialog.setVisibleSolicitudRecepcionRNT(true);
 				}
 
 				@Override
-				public void visitRespuesta(Void t, Void l)
-						throws RuntimeException {
+				public void visitRespuesta(Void t, Void l) throws RuntimeException {
 				}
 
 				@Override
-				public void visitTrabajadoresTramos(Void t, Void l)
-						throws RuntimeException {
+				public void visitTrabajadoresTramos(Void t, Void l) throws RuntimeException {
 				}
 
 				@Override
-				public void visitSolicitudBorrador(Void t, Void l)
-						throws RuntimeException {
+				public void visitSolicitudBorrador(Void t, Void l) throws RuntimeException {
 					dialog.setVisiblePreviousBases(true);
-
+					dialog.setVisibleSolicitudRecepcionRNT(true);
 				}
 
 				@Override
-				public void visitSolicitudCalculos(Void t, Void l)
-						throws RuntimeException {
+				public void visitSolicitudCalculos(Void t, Void l) throws RuntimeException {
 					dialog.setVisibleCalcsDetailed(true);
 				}
 
 				@Override
-				public void visitSolicitudConfirmacion(Void t, Void l)
-						throws RuntimeException {
+				public void visitSolicitudConfirmacion(Void t, Void l) throws RuntimeException {
 				}
 
 				@Override
-				public void visitSolicitudTrabajadoresTramos(Void t, Void l)
-						throws RuntimeException {
+				public void visitSolicitudTrabajadoresTramos(Void t, Void l) throws RuntimeException {
 				}
-				
+
 				@Override
-				public void visitComunicacionDatosBancarios(Void t, Void l)
-						throws RuntimeException {
+				public void visitComunicacionDatosBancarios(Void t, Void l) throws RuntimeException {
 					// TODO Auto-generated method stub
 				}
-				
+
 				@Override
 				public void visitDocumentoCalculoLiquidacion(Void t, Void l) throws RuntimeException {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 			}, null, null);
-			
+
 			dialog.setAuthorized(MainCreta.getAuthorized());
 
 		}
-		
 
 	}
-	
+
 	interface WorkplaceCommand extends ScheduledCommand {
 		void setWorkplace(Workplace workplace);
 	}
 
 	class WorkplaceCreateRequestCommand extends CreateRequestCommand implements WorkplaceCommand {
-		
-		private Workplace workplace; 
+
+		private Workplace workplace;
 		private CretaResults cretaResults;
 
-		public WorkplaceCreateRequestCommand(File file, DetailPanel detailPanel,
-				FileEditor fileEditor) {
+		public WorkplaceCreateRequestCommand(File file, DetailPanel detailPanel, FileEditor fileEditor) {
 			super(file, detailPanel, fileEditor);
 		}
 
 		// --------------------------------------------------------------------
 		@Override
 		protected void onCCCError(CCC ccc, String message) {
-			if ( cretaResults == null ) {
+			if (cretaResults == null) {
 				cretaResults = new CretaResults();
 				resultsPanel.setWidget(cretaResults);
 				showResultsPanel();
@@ -1097,8 +1044,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	class CCCCretaRequestCommand extends CreateRequestCommand implements CCCCommand{
-		
+	class CCCCretaRequestCommand extends CreateRequestCommand implements CCCCommand {
+
 		private CretaResults cretaResults;
 
 		public CCCCretaRequestCommand(File file) {
@@ -1110,7 +1057,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		@Override
 		protected void onCCCError(CCC ccc, String message) {
-			if ( cretaResults == null ) {
+			if (cretaResults == null) {
 				cretaResults = new CretaResults();
 				resultsPanel.setWidget(cretaResults);
 				showResultsPanel();
@@ -1122,7 +1069,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		protected String getDescription(CCC ccc) {
 			return Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 		}
-		
+
 		@Override
 		public void setCCC(CCC ccc) {
 			dialog.setData(Collections.singletonList(ccc));
@@ -1130,12 +1077,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 	}
-	class WorkplaceDBACommand extends DBACommand implements WorkplaceCommand  {
-		
+
+	class WorkplaceDBACommand extends DBACommand implements WorkplaceCommand {
+
 		protected Workplace workplace;
-		
-		public WorkplaceDBACommand(DetailPanel detailPanel,
-				FileEditor fileEditor) {
+
+		public WorkplaceDBACommand(DetailPanel detailPanel, FileEditor fileEditor) {
 			super(detailPanel, fileEditor);
 		}
 
@@ -1147,23 +1094,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			setData(getCCs(workplace));
 			setBankAccounts(enterprise.getBankAccounts());
 
-			if ( AonStringUtils.isBlank(getHolder())) 
+			if (AonStringUtils.isBlank(getHolder()))
 				setHolder(enterprise.getName());
-			
+
 		}
 
-		
 		// --------------------------------------------------------------------
-		
-		
+
 		@Override
 		protected String getDescription(CCC ccc) {
 			return EmployeeTree.getDescription(ccc, workplace);
 		}
 
 	}
-	
-	private class CCCDBACommand extends EmployeeTree.DBACommand implements CCCCommand{
+
+	private class CCCDBACommand extends EmployeeTree.DBACommand implements CCCCommand {
 
 		public CCCDBACommand() {
 			super(employeeDetail);
@@ -1174,7 +1119,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		protected String getDescription(CCC ccc) {
 			return Province.getName(ccc.getGeozone()) + " " + ccc.getCode();
 		}
-		
+
 		@Override
 		public void setCCC(CCC ccc) {
 			setData(Collections.singletonList(ccc));
@@ -1187,23 +1132,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	public interface EnterpriseCommand extends ScheduledCommand{
+	public interface EnterpriseCommand extends ScheduledCommand {
 		void setEnterprise(Enterprise enterprise);
 	}
 
-	public class EnterpriseCretaRequestCommand
-			extends CreateRequestCommand implements EnterpriseCommand{
+	public class EnterpriseCretaRequestCommand extends CreateRequestCommand implements EnterpriseCommand {
 
 		protected Enterprise enterprise;
 		private CretaResults cretaResults;
 
-		public EnterpriseCretaRequestCommand(File file,
-				DetailPanel detailPanel) {
+		public EnterpriseCretaRequestCommand(File file, DetailPanel detailPanel) {
 			super(file, detailPanel);
 		}
 
-		public EnterpriseCretaRequestCommand(File file, DetailPanel detailPanel,
-				FileEditor fileEditor) {
+		public EnterpriseCretaRequestCommand(File file, DetailPanel detailPanel, FileEditor fileEditor) {
 			super(file, detailPanel, fileEditor);
 		}
 
@@ -1212,13 +1154,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			this.enterprise = enterprise;
 			dialog.setData(getCCs(enterprise));
 		}
-		
 
 		// --------------------------------------------------
 
 		@Override
 		protected void onCCCError(CCC ccc, String message) {
-			if ( cretaResults == null ) {
+			if (cretaResults == null) {
 				cretaResults = new CretaResults();
 				resultsPanel.setWidget(cretaResults);
 				showResultsPanel();
@@ -1236,20 +1177,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public static class DBACommand extends CretaDBACommand {
 		private FileEditor fileEditor;
 		private DetailPanel detailPanel;
-		
+
 		public DBACommand(DetailPanel detailPanel) {
 			this(detailPanel, new FileEditor());
 		}
 
-
-		public DBACommand(DetailPanel detailPanel,
-				FileEditor fileEditor) {
+		public DBACommand(DetailPanel detailPanel, FileEditor fileEditor) {
 			this.fileEditor = fileEditor;
 			this.detailPanel = detailPanel;
 		}
 
 		// --------------------------------------------------------------------
-		
+
 		@Override
 		protected void onSucces(String response) {
 			fileEditor.setMode("xml");
@@ -1261,7 +1200,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			detailPanel.setWidget(fileEditor);
 			fileEditor.autoRefresh();
 		}
-		
+
 		@Override
 		protected void onFailure(Throwable caugth) {
 			// TODO Auto-generated method stub
@@ -1269,17 +1208,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 	}
 
-	public static class EnterpriseDBACommand extends DBACommand implements EnterpriseCommand  {
-		
-		protected Enterprise enterpr1se; 
-		
+	public static class EnterpriseDBACommand extends DBACommand implements EnterpriseCommand {
+
+		protected Enterprise enterpr1se;
+
 		public EnterpriseDBACommand(DetailPanel detailPanel) {
 			super(detailPanel, new FileEditor());
 		}
 
-
-		public EnterpriseDBACommand(DetailPanel detailPanel,
-				FileEditor fileEditor) {
+		public EnterpriseDBACommand(DetailPanel detailPanel, FileEditor fileEditor) {
 			super(detailPanel, fileEditor);
 		}
 
@@ -1290,14 +1227,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			this.enterpr1se = enterprise;
 			setData(getCCs(enterprise));
 			setBankAccounts(enterprise.getBankAccounts());
-			
-			if ( AonStringUtils.isBlank(getHolder())) 
+
+			if (AonStringUtils.isBlank(getHolder()))
 				setHolder(enterprise.getName());
 		}
 
-		
 		// --------------------------------------------------------------------
-		
+
 		@Override
 		protected String getDescription(CCC ccc) {
 			return EmployeeTree.getDescription(ccc, this.enterpr1se);
@@ -1305,26 +1241,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-	class RefreshWorkplaceCommand implements WorkplaceCommand{
-		
+	class RefreshWorkplaceCommand implements WorkplaceCommand {
+
 		private Workplace workplace;
-		
+
 		@Override
 		public void execute() {
 			EmployeeTree.this.employees.refresh(workplace);
 		}
-		
-		
+
 		// --------------------------------------------------------------------
-		
+
 		@Override
 		public void setWorkplace(Workplace workplace) {
 			this.workplace = workplace;
 		}
 	}
 
-	class CalcWorkplaceCommand
-			implements ScheduledCommand, AcceptHandler, CalculateService,
+	class CalcWorkplaceCommand implements ScheduledCommand, AcceptHandler, CalculateService,
 			AsyncCallback<JsSalaryResult>, SelectionHandler<JsSalaryResult> {
 
 		private SalaryResults results;
@@ -1355,7 +1289,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		public void setWorkplace(final Workplace workplace) {
 			AsyncEmployeeProvider employeeProvider = new AsyncEmployeeProvider() {
 
-				
 				@Override
 				Date getStartDate() {
 					return calcDialog.getStartDate();
@@ -1368,14 +1301,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			};
 
 			calcDialog.setDataProvider(employeeProvider);
-			
+
 		}
 
 		// ------------------------------------------------------ AcceptHandler
 		@Override
 		public void onAccept(AcceptEvent event) {
 			Date startDate = calcDialog.getStartDate();
-			Date endDate = calcDialog.getEndDate(); 
+			Date endDate = calcDialog.getEndDate();
 			Date issueDate = calcDialog.getIssueDate();
 
 			Set<Employee> employees = calcDialog.getSelectedData();
@@ -1389,12 +1322,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 				optionsBits |= MainCalculator.OVERWRITE_OPTION;
 			if (calcDialog.isDuplicateSelected())
 				optionsBits |= MainCalculator.DUPLICATE_OPTION;
-			
+
 			Integer extra = calcDialog.getExtra();
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
 
-			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees,
-					extra, optionsBits, this);
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees, extra,
+					optionsBits, this);
 			clear();
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'
 		}
@@ -1426,30 +1359,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		private void onSalaryResultSelected(JsSalaryResult salaryResult) {
-			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(),
-					salaryResult.getWorkplaceId(), salaryResult.getStartDate(),
-					salaryResult.getEndDate());
+			EmployeeTree.showSalaryDraft(salaryResult.getEmployeeId(), salaryResult.getWorkplaceId(),
+					salaryResult.getStartDate(), salaryResult.getEndDate());
 		}
 	}
 
 	private static interface CCCCommand extends ScheduledCommand {
 		void setCCC(CCC ccc);
 	}
-	
+
 	protected class BasesCCCCretaRequestCommand extends MainCreta.AbstractCCCCretaRequestCommand
-	implements CretaRequestDialog.Callback<Employee>, CCCCommand {
+			implements CretaRequestDialog.Callback<Employee>, CCCCommand {
 
 		public BasesCCCCretaRequestCommand(File file) {
 			super(file, EmployeeTree.this.employeeDetail);
 		}
-		
+
 		@Override
 		protected void onMonthChanged(Date month) {
-			
-			DomainEnterprisesServiceAsync.newInstance().getCCCEmployees(month, 
-					Collections.singletonList(getCCC().getId()), 
-					new AsyncCallback<List<Employee>>() {
-						
+
+			DomainEnterprisesServiceAsync.newInstance().getCCCEmployees(month,
+					Collections.singletonList(getCCC().getId()), new AsyncCallback<List<Employee>>() {
+
 						@Override
 						public void onFailure(Throwable caught) {
 						}
@@ -1458,10 +1389,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 						public void onSuccess(List<Employee> result) {
 							setData(result);
 						}
-					} );
+					});
 		}
 	}
-	
+
 	private class CCCContextMenu extends ContextMenu {
 
 		CCCCommand cccCommands[] = new CCCCommand[7];
@@ -1480,24 +1411,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
 					cccCommands[3] = new CCCCretaRequestCommand(CretaService.File.SOLICITUD_CALCULOS),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", 
-					cccCommands[4] = new CCCDBACommand(),
+			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios", cccCommands[4] = new CCCDBACommand(),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
-					cccCommands[5] = new BasesCCCCretaRequestCommand(File.BASES) { // new MainCCCCretaRequestCommand(File.BASES){
+					cccCommands[5] = new BasesCCCCretaRequestCommand(File.BASES) { // new
+																					// MainCCCCretaRequestCommand(File.BASES){
 						@Override
-						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth,
-								int toYear, String tipo, Collection<CCC> cccs) {
+						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth, int toYear,
+								String tipo, Collection<CCC> cccs) {
 							JsBasesResult result = showBases(json, detailPanel, this);
-							showResults(result, 
-									resultsPanel, 
-									r -> { /*TODO: */},  
-									r -> showResultsPanel() );
-						}				
-						
-					},
-					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+							showResults(result, resultsPanel, r -> {
+								/* TODO: */}, r -> showResultsPanel());
+						}
+
+					}, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 //			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
 //					cccCommands[6] = new CCCCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
 //					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
@@ -1512,7 +1440,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 	}
-	
 
 	class WorkplaceContextMenu extends ContextMenu {
 
@@ -1526,83 +1453,68 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			MenuBar newPopup = new MenuBar(true);
 			MenuItem newEmployeeItem = newPopup.addItem(
-					getHTML("Contrato", AON.AON_ICON_EMPLOYEE,
-							AON.AON_ICON_CMD_BUTTON),
-					true, new NewEmployeeCommand());
+					getHTML("Contrato", AON.AON_ICON_EMPLOYEE, AON.AON_ICON_CMD_BUTTON), true,
+					new NewEmployeeCommand());
 			newEmployeeItem.setEnabled(true);
 
-			MenuItem newItem = addItem("Nuevo", newPopup, AON.AON_ICON_RESET,
-					AON.AON_ICON_CMD_BUTTON);
+			MenuItem newItem = addItem("Nuevo", newPopup, AON.AON_ICON_RESET, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
-			pasteItem = addItem("Pegar", pasteCmd = new PasteEmployeeCommand(),
-					AON.AON_CSS.aonIconPaste(), AON.AON_ICON_CMD_BUTTON);
+			pasteItem = addItem("Pegar", pasteCmd = new PasteEmployeeCommand(), AON.AON_CSS.aonIconPaste(),
+					AON.AON_ICON_CMD_BUTTON);
 			pasteItem.setVisible(false);
-			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(),
-					AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
+			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(), AON.AON_ICON_ACCEPT,
+					AON.AON_ICON_CMD_BUTTON);
 			saveItem.setEnabled(false);
 			addSeparator();
-			MenuItem runItem = addItem("Calcular",
-					calcCmd = new CalcWorkplaceCommand(),
-					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
-			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
+			MenuItem runItem = addItem("Calcular", calcCmd = new CalcWorkplaceCommand(), AON.AON_ICON_TASK_START,
 					AON.AON_ICON_CMD_BUTTON);
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos",
 					workplaceCmds[0] = new WorkplaceCreateRequestCommand(
-							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS,
-							employeeDetail, fileEditor),
+							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS, employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					workplaceCmds[2] = new WorkplaceCreateRequestCommand(
-							CretaService.File.SOLICITUD_BORRADOR,
+					workplaceCmds[2] = new WorkplaceCreateRequestCommand(CretaService.File.SOLICITUD_BORRADOR,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					workplaceCmds[3] = new WorkplaceCreateRequestCommand(
-							CretaService.File.SOLICITUD_CONFIRMACION,
+					workplaceCmds[3] = new WorkplaceCreateRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de C\u00FE1alculos",
-					workplaceCmds[4] = new WorkplaceCreateRequestCommand(
-							CretaService.File.SOLICITUD_CALCULOS,
+					workplaceCmds[4] = new WorkplaceCreateRequestCommand(CretaService.File.SOLICITUD_CALCULOS,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			
+
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					workplaceCmds[5] = new WorkplaceDBACommand(
-							employeeDetail, fileEditor),
+					workplaceCmds[5] = new WorkplaceDBACommand(employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)",
-					workplaceCmds[6] = new WorkplaceCreateRequestCommand(
-							CretaService.File.BASES,
-							employeeDetail, fileEditor){
-				
-				protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth, int toYear, String tipo, java.util.Collection<CCC> cccs) {
-					JsBasesResult result = showBases(json, detailPanel, this);
-					showResults(result, 
-							resultsPanel, 
-							r -> { /*TODO: */},  
-							r -> showResultsPanel() );
+					workplaceCmds[6] = new WorkplaceCreateRequestCommand(CretaService.File.BASES, employeeDetail,
+							fileEditor) {
 
-				};
-			}
-					, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
+						protected void onRequestDone(String json, int fromMonth, int fromYear, int toMonth, int toYear,
+								String tipo, java.util.Collection<CCC> cccs) {
+							JsBasesResult result = showBases(json, detailPanel, this);
+							showResults(result, resultsPanel, r -> {
+								/* TODO: */}, r -> showResultsPanel());
+
+						};
+					}, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
-					cretaResponseCmds[0] = new WorkplaceCreateResponseCommand(
-							CretaService.File.BASES,
-							CretaService.File.TRABAJADORES_TRAMOS,
-							employeeDetail, resultsPanel) {
+					cretaResponseCmds[0] = new WorkplaceCreateResponseCommand(CretaService.File.BASES,
+							CretaService.File.TRABAJADORES_TRAMOS, employeeDetail, resultsPanel) {
 						@Override
 						protected void showResultsPanel() {
 							EmployeeTree.this.showResultsPanel();
 						}
 					}, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-			
+
 			addSeparator();
-			addItem("Refrescar",
-					workplaceCmds[7] = new RefreshWorkplaceCommand(),
-					AON.AON_ICON_REFRESH, AON.AON_ICON_CMD_BUTTON);
+			addItem("Refrescar", workplaceCmds[7] = new RefreshWorkplaceCommand(), AON.AON_ICON_REFRESH,
+					AON.AON_ICON_CMD_BUTTON);
 		}
 
 		public void setWorkplace(Workplace workplace) {
@@ -1632,52 +1544,42 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 			MenuBar newPopup = new MenuBar(true);
 			MenuItem newWorkPlaceItem = newPopup.addItem(
-					getHTML("Centro", AON.AON_ICON_WORKPLACE,
-							AON.AON_ICON_CMD_BUTTON),
-					true, new NewWorkplaceCommand());
+					getHTML("Centro", AON.AON_ICON_WORKPLACE, AON.AON_ICON_CMD_BUTTON), true,
+					new NewWorkplaceCommand());
 			newWorkPlaceItem.setEnabled(true);
 
-			MenuItem newActivityItem = newPopup.addItem(
-					getHTML("Actividad", AON.AON_ICON_INE,
-							AON.AON_ICON_CMD_BUTTON),
+			MenuItem newActivityItem = newPopup.addItem(getHTML("Actividad", AON.AON_ICON_INE, AON.AON_ICON_CMD_BUTTON),
 					true, new NewActivityCommand());
 			newActivityItem.setEnabled(true);
 
-			addItem("Nuevo", newPopup, AON.AON_ICON_RESET,
-					AON.AON_ICON_CMD_BUTTON);
+			addItem("Nuevo", newPopup, AON.AON_ICON_RESET, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
-			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(),
-					AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
+			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(), AON.AON_ICON_ACCEPT,
+					AON.AON_ICON_CMD_BUTTON);
 			saveItem.setEnabled(false);
 			addSeparator();
-			addItem("Calcular", calcCmd = new CalcEnterpriseCommand(),
-					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
-			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
+			addItem("Calcular", calcCmd = new CalcEnterpriseCommand(), AON.AON_ICON_TASK_START,
 					AON.AON_ICON_CMD_BUTTON);
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("SLD-Fichero de Solicitud de Trabajadores y Tramos",
 					enterpriseCommands[0] = new EnterpriseCretaRequestCommand(
-							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS,
-							employeeDetail, fileEditor),
+							CretaService.File.SOLICITUD_TRABAJADORES_TRAMOS, employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Borrador",
-					enterpriseCommands[1] = new EnterpriseCretaRequestCommand(
-							CretaService.File.SOLICITUD_BORRADOR,
+					enterpriseCommands[1] = new EnterpriseCretaRequestCommand(CretaService.File.SOLICITUD_BORRADOR,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de Confirmaci\u00F3n",
-					enterpriseCommands[2] = new EnterpriseCretaRequestCommand(
-							CretaService.File.SOLICITUD_CONFIRMACION,
+					enterpriseCommands[2] = new EnterpriseCretaRequestCommand(CretaService.File.SOLICITUD_CONFIRMACION,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Solicitud de C\u00E1lculos",
-					enterpriseCommands[3] = new EnterpriseCretaRequestCommand(
-							CretaService.File.SOLICITUD_CALCULOS,
+					enterpriseCommands[3] = new EnterpriseCretaRequestCommand(CretaService.File.SOLICITUD_CALCULOS,
 							employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addItem("SLD-Fichero de Comunicaci\u00F3n de Datos Bancarios",
-					enterpriseCommands[4] = new EnterpriseDBACommand(
-							employeeDetail, fileEditor),
+					enterpriseCommands[4] = new EnterpriseDBACommand(employeeDetail, fileEditor),
 					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 		}
 
@@ -1689,8 +1591,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 	}
-	
-	
+
 	class EmployeeContextMenu extends ContextMenu {
 
 		private CalcEmployeeCommand calcCmd;
@@ -1700,20 +1601,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		public EmployeeContextMenu() {
 
-			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(),
-					AON.AON_ICON_ACCEPT, AON.AON_ICON_CMD_BUTTON);
+			MenuItem saveItem = addItem("Guardar", new NewEmployeeCommand(), AON.AON_ICON_ACCEPT,
+					AON.AON_ICON_CMD_BUTTON);
 			saveItem.setEnabled(false);
 			addSeparator();
-			addItem("Copiar", copyCmd = new CopyEmployeeCommand(),
-					AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
-			addItem("Eliminar", deleteCmd = new DeleteEmployeeCommand(),
-					AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
+			addItem("Copiar", copyCmd = new CopyEmployeeCommand(), AON.AON_ICON_COPY, AON.AON_ICON_CMD_BUTTON);
+			addItem("Eliminar", deleteCmd = new DeleteEmployeeCommand(), AON.AON_ICON_DELETE, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
-			MenuItem runItem = addItem("Calcular",
-					calcCmd = new CalcEmployeeCommand(),
-					AON.AON_ICON_TASK_START, AON.AON_ICON_CMD_BUTTON);
-			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME,
+			MenuItem runItem = addItem("Calcular", calcCmd = new CalcEmployeeCommand(), AON.AON_ICON_TASK_START,
 					AON.AON_ICON_CMD_BUTTON);
+			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Refrescar", refreshCmd = new RefreshEmployeeCommand(), AON.AON_ICON_REFRESH,
 					AON.AON_ICON_CMD_BUTTON);
@@ -1743,11 +1640,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		abstract Date getStartDate();
 
 		abstract Workplace getWorkplace();
-		
 
 		/**
-		 * {@link #onRangeChanged(HasData)} is called when the table requests a
-		 * new range of data. You can push data back to the displays using
+		 * {@link #onRangeChanged(HasData)} is called when the table requests a new
+		 * range of data. You can push data back to the displays using
 		 * {@link #updateRowData(int, List)}.
 		 */
 		@Override
@@ -1755,12 +1651,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			// Get the new range.
 			final Range range = display.getVisibleRange();
 			// Query the data asynchronously (RPC call).
-			getServiceAsync().getEmployees(
-					getWorkplace().getId(), 
-					getStartDate(),
-					EmployeeTree.this.employees.getNamePattern(),
-					range.getStart(), 
-					range.getLength(),
+			getServiceAsync().getEmployees(getWorkplace().getId(), getStartDate(),
+					EmployeeTree.this.employees.getNamePattern(), range.getStart(), range.getLength(),
 					new AsyncCallback<List<Employee>>() {
 
 						@Override
@@ -1784,12 +1676,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	private class BaseCretaDetail extends AbstractBaseCretaDetail {
-		
+
 		public BaseCretaDetail() {
-			super(EmployeeTree.this.employeeDetail, 
-				EmployeeTree.this.resultsPanel, 
-				EmployeeTree.this::reftification,
-				EmployeeTree.this::showResultsPanel);
+			super(EmployeeTree.this.employeeDetail, EmployeeTree.this.resultsPanel, EmployeeTree.this::reftification,EmployeeTree.this::requestSendRNT,
+					EmployeeTree.this::showResultsPanel);
 		}
 
 		@Override
@@ -1802,11 +1692,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			return null;
 		}
 	}
-	
+
 	private class CCCCretaDetail extends BaseCretaDetail {
 
 		private CCC ccc;
-		
+
 		public void setCCC(CCC ccc) {
 			this.ccc = ccc;
 		}
@@ -1818,7 +1708,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			for (T jsFile : jsFiles)
 				if (MainCreta.accept(ccc, jsFile.getCCC()))
 					filtered.add(jsFile);
-			
+
 			return filtered;
 		}
 
@@ -1857,57 +1747,54 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		@Override
 		String getEmployeeFullName(JsEmployee jsEmployee) {
-			for ( Employee e : ccc.getEmployees() )
-				if ( jsEmployee.getNaf().equals(e.getSocialSecurity())) 
+			for (Employee e : ccc.getEmployees())
+				if (jsEmployee.getNaf().equals(e.getSocialSecurity()))
 					return e.getFullname();
-			
+
 			return super.getEmployeeFullName(jsEmployee);
 		}
 	}
 
-	
-	
 	private class EmployeeTreeSyncCallback implements SyncCallback {
 
-		private IndeterminateTask syncTask ;
+		private IndeterminateTask syncTask;
 		private List<JsBases> jsBasess;
 		private List<JsRespuesta> jsRespuestas;
-		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss ;
-		
+		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss;
+
 		public EmployeeTreeSyncCallback(IndeterminateTask syncTask) {
 			this.syncTask = syncTask;
 			this.jsBasess = new ArrayList<JsBases>(5);
 			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
 			this.jsTrabajadoresYTramoss = new ArrayList<JsTrabajadoresYTramos>(5);
 		}
-		
+
 		@Override
 		public void onEnd() {
 			syncTask.messageChanged("Sincronizaci\u00F3n completada");
 			syncTask.finished();
 			closeFootPanel();
-			//MainCreta.this.enterprises.refresh();
-			
-			if ( !jsTrabajadoresYTramoss.isEmpty() )
-				MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[jsTrabajadoresYTramoss.size()]));
-			if ( !jsRespuestas.isEmpty() )
+			// MainCreta.this.enterprises.refresh();
+
+			if (!jsTrabajadoresYTramoss.isEmpty())
+				MainCreta.add(File.TRABAJADORES_TRAMOS,
+						jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[jsTrabajadoresYTramoss.size()]));
+			if (!jsRespuestas.isEmpty())
 				MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[jsRespuestas.size()]));
 			try {
-				if ( !jsBasess.isEmpty() )
+				if (!jsBasess.isEmpty())
 					MainCreta.add(File.BASES, jsBasess.toArray(new JsBases[jsBasess.size()]));
-			} catch ( Throwable t ) {
+			} catch (Throwable t) {
 			}
-			
-			//MainCreta.this.enterprises.refresh();
-			
+
+			// MainCreta.this.enterprises.refresh();
+
 			jsBasess.clear();
 			jsRespuestas.clear();
 			jsTrabajadoresYTramoss.clear();
-			
-			EmployeeTree.this.cccCretaDetail.onTrabajadoresYTramos();
-			
 
-			
+			EmployeeTree.this.cccCretaDetail.onTrabajadoresYTramos();
+
 		}
 
 		@Override
@@ -1926,57 +1813,44 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 
 		@Override
-		public void onBases(JsBases jsBases ){
-			syncTask.messageChanged(
-					File.BASES.getFilename()
-					+ " " + Province.getName(jsBases.getCCC().substring(4, 6))
-					+ " (" + jsBases.getCCC().substring(6) + ")"
-					+ " Sincronizado"
-					) ;
+		public void onBases(JsBases jsBases) {
+			syncTask.messageChanged(File.BASES.getFilename() + " " + Province.getName(jsBases.getCCC().substring(4, 6))
+					+ " (" + jsBases.getCCC().substring(6) + ")" + " Sincronizado");
 			// TODO:
 			jsBasess.add(jsBases);
-			if ( jsBasess.size() < 5) 
+			if (jsBasess.size() < 5)
 				return;
-			
+
 			MainCreta.add(File.BASES, jsBasess.toArray(new JsBases[5]));
 			jsBasess.clear();
 		}
-		
+
 		@Override
-		public void onRespuesta(JsRespuesta jsRespuesta ){
-			syncTask.messageChanged(
-					File.RESPUESTA.getFilename()
-					+ " " + jsRespuesta.getDate()
-					+ " " + jsRespuesta.getType() 
-					+ " " + Province.getName(jsRespuesta.getCCC().substring(4, 6))
-					+ " (" + jsRespuesta.getCCC().substring(6) + ")"
-					+ " Sincronizado"
-					) ;
+		public void onRespuesta(JsRespuesta jsRespuesta) {
+			syncTask.messageChanged(File.RESPUESTA.getFilename() + " " + jsRespuesta.getDate() + " "
+					+ jsRespuesta.getType() + " " + Province.getName(jsRespuesta.getCCC().substring(4, 6)) + " ("
+					+ jsRespuesta.getCCC().substring(6) + ")" + " Sincronizado");
 
 			jsRespuestas.add(jsRespuesta);
-			if ( jsRespuestas.size() < 5) 
+			if (jsRespuestas.size() < 5)
 				return;
-			
+
 			MainCreta.add(File.RESPUESTA, jsRespuestas.toArray(new JsRespuesta[5]));
 			jsRespuestas.clear();
-		
+
 		}
 
 		@Override
 		public void onTrabajadoresYTramos(JsTrabajadoresYTramos jsTrabajadoresYTramos) {
-			syncTask.messageChanged(
-					File.TRABAJADORES_TRAMOS.getFilename()
-					+ " " + jsTrabajadoresYTramos.getDate()
-					+ " " + jsTrabajadoresYTramos.getType() 
-					+ " " + Province.getName(jsTrabajadoresYTramos.getCCC().substring(4, 6))
-					+ " (" + jsTrabajadoresYTramos.getCCC().substring(6) + ")"
-					+ " Sincronizado"
-					) ;
+			syncTask.messageChanged(File.TRABAJADORES_TRAMOS.getFilename() + " " + jsTrabajadoresYTramos.getDate() + " "
+					+ jsTrabajadoresYTramos.getType() + " "
+					+ Province.getName(jsTrabajadoresYTramos.getCCC().substring(4, 6)) + " ("
+					+ jsTrabajadoresYTramos.getCCC().substring(6) + ")" + " Sincronizado");
 			jsTrabajadoresYTramoss.add(jsTrabajadoresYTramos);
-			if ( jsTrabajadoresYTramoss.size() < 5) 
+			if (jsTrabajadoresYTramoss.size() < 5)
 				return;
 			MainCreta.add(File.TRABAJADORES_TRAMOS, jsTrabajadoresYTramoss.toArray(new JsTrabajadoresYTramos[5]));
-			
+
 			jsTrabajadoresYTramoss.clear();
 		}
 	}
@@ -1990,7 +1864,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	private static final String EMPLOYEE = "C-EMPLOYEE";
 
-	@UiField(provided=true)
+	@UiField(provided = true)
 	Employees employees;
 	@UiField
 	DetailPanel employeeDetail;
@@ -2054,7 +1928,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private MenuItem pasteItem;
 
 	private Storage storage;
-	
+
 	// Cret@
 	private CCCCretaDetail cccCretaDetail;
 
@@ -2063,17 +1937,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	 * controls and hooking up event handler.
 	 */
 	public void onModuleLoad() {
-		
+
 		logEvent("start");
 		// Inject rich styles.
-		GWT.<GWTResources> create(GWTResources.class).css().ensureInjected();
-		GWT.<AonResources> create(AonResources.class).css().ensureInjected();
-		GWT.<MainEntryPoint
-				.CodeMirrorResources> create(
-						MainEntryPoint.CodeMirrorResources.class)
-				.css().ensureInjected();
+		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
 		logEvent("richStylesInjected");
-		
+
 		employees = new Employees(true, true);
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
@@ -2093,7 +1964,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		// LocalStorage Items
 		storage = Storage.getLocalStorageIfSupported();
-		
+
 		employees.addListener(this);
 
 		fileEditor = new FileEditor();
@@ -2110,19 +1981,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		try {
 			jsf = new JSF();
 			logEvent("jsfWidgetCreated");
-		} catch ( Throwable t){
-			//TODO:
+		} catch (Throwable t) {
+			// TODO:
 		}
-		
+
 		try {
 			new Viewer();
-		} catch ( Throwable t ) {
-			
+		} catch (Throwable t) {
+
 		}
 		try {
 			new com.esferalia.aon.js.payroll.client.Reports();
-		} catch ( Throwable t ) {
-			
+		} catch (Throwable t) {
+
 		}
 	}
 
@@ -2146,8 +2017,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		shareResultsProvider.getList().clear();
 		resultsPanel.setWidget(shareResultsGrid);
 
-		com.esferalia.aon.gwt.payroll.shared.Cost cost = documents.getCosts()
-				.get(documents.getCurrentIndex());
+		com.esferalia.aon.gwt.payroll.shared.Cost cost = documents.getCosts().get(documents.getCurrentIndex());
 		share(cost, type, new Callback());
 
 		showResultsPanel();
@@ -2173,38 +2043,37 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 		shareResultsProvider.getList().clear();
 		resultsPanel.setWidget(shareResultsGrid);
-		
+
 		shareSalary(salary, type, new Callback());
 		showResultsPanel();
 
 	}
-	
+
 	// ------------------------------------------------- Salary.Listener methods
 
-		@Override
-		public void onPublis(SalaryDocuments documents, String type) {
-			class Callback implements AsyncCallback<JsShareResult> {
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
+	@Override
+	public void onPublis(SalaryDocuments documents, String type) {
+		class Callback implements AsyncCallback<JsShareResult> {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
 
-				}
-
-				@Override
-				public void onSuccess(JsShareResult result) {
-					shareResultsProvider.getList().add(result);
-				}
 			}
 
-			shareResultsProvider.getList().clear();
-			resultsPanel.setWidget(shareResultsGrid);
-
-			com.esferalia.aon.gwt.payroll.shared.Salary salary = documents
-					.getSalaries().get(documents.getCurrentIndex());
-			share(salary, type, new Callback());
-			showResultsPanel();
-
+			@Override
+			public void onSuccess(JsShareResult result) {
+				shareResultsProvider.getList().add(result);
+			}
 		}
+
+		shareResultsProvider.getList().clear();
+		resultsPanel.setWidget(shareResultsGrid);
+
+		com.esferalia.aon.gwt.payroll.shared.Salary salary = documents.getSalaries().get(documents.getCurrentIndex());
+		share(salary, type, new Callback());
+		showResultsPanel();
+
+	}
 
 	// ---------------------------------------------- Employees.Listener methods
 
@@ -2216,13 +2085,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	@Override
 	public void onEnterpriseSelected(Enterprise enterprise) {
 		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
-		EnterpriseDraftObject enterpriseDraftObject = new EnterpriseDraftObject(enterprise, domainEnterprisesServiceAsync);
-		
+		EnterpriseDraftObject enterpriseDraftObject = new EnterpriseDraftObject(enterprise,
+				domainEnterprisesServiceAsync);
+
 		employeeDetail.setWidget(getEnterpriseDraft());
 		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
-		
+
 		checkStatus(enterpriseDraftObject);
-		
+
 //		int pos = employees.getVerticalScrollPosition();
 //		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
 //
@@ -2233,15 +2103,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	@Override
 	public void onWorkplaceSelected(Workplace workplace) {
-		
+
 		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
 		DomainEmployeesServiceAsync domainEmployeeServiceAsync = DomainEmployeesServiceAsync.newInstance();
-		
-		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace, domainEnterprisesServiceAsync, domainEmployeeServiceAsync);
-		
+
+		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace,
+				domainEnterprisesServiceAsync, domainEmployeeServiceAsync);
+
 		employeeDetail.setWidget(getWorkplaceDraft());
 		getWorkplaceDraft().setWorkplaceDraftObject(employeeNewDraftObject);
-		
+
 //		int pos = employees.getVerticalScrollPosition();
 //		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
 //
@@ -2258,9 +2129,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 //		EmployeeDraftObject employeeDraftObject = new EmployeeDraftObject(getEmployeeTree().workplace, employee, employeesService, domainEnterprisesServiceAsync);
 //		employeeDetail.setWidget(getEmployeeDraft());
 //		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
-		
+
 		int pos = employees.getVerticalScrollPosition();
-		jsf.setRerenderHandler( () -> employees.setVerticalScrollPosition(pos) );
+		jsf.setRerenderHandler(() -> employees.setVerticalScrollPosition(pos));
 
 		employeeDetail.setWidget(jsf);
 		jsf.employeeSelected(employee.getId());
@@ -2271,7 +2142,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	public void onActivitySelected(Activity activity) {
 		DomainEnterprisesServiceAsync domainEnterprisesServiceAsync = DomainEnterprisesServiceAsync.newInstance();
 		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity, domainEnterprisesServiceAsync);
-		
+
 		employeeDetail.setWidget(getActivityDraft());
 		getActivityDraft().setActivityDraftObject(activityDraftObject);
 
@@ -2282,7 +2153,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 //		jsf.activitySelected(activity.getId());
 		this.activity = activity;
 	}
-	
+
 	@Override
 	public void onCCCSelected(CCC ccc) {
 
@@ -2312,12 +2183,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	@Override
-	public void onStatisticsSelected(
-			com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
+	public void onStatisticsSelected(com.esferalia.aon.gwt.payroll.shared.Statistics statistics) {
 		employeeDetail.setWidget(getStats());
 		getStats().setStatistics(statistics);
 	}
-	
+
 	@Override
 	public void onEnterpriseSalariesSelected(EnterpriseSalaryObject enterpriseSalaryObject) {
 		employeeDetail.setWidget(getEnterpriseSalary());
@@ -2329,7 +2199,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(getIt());
 		getIt().setITEditor(dataObject);
 	}
-	
+
 	@Override
 	public void onWorkplaceSalarySelected(WorkplaceSalaryObject dataObject) {
 		employeeDetail.setWidget(getWorkplceSalary());
@@ -2337,11 +2207,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	@Override
-	public void onCalendarSelected(
-			CalendarDraftObjectData calendarDraftObjectData) {
+	public void onCalendarSelected(CalendarDraftObjectData calendarDraftObjectData) {
 		employeeDetail.setWidget(getCalendarDraft());
-		getCalendarDraft().setCalendarDraftObject(null,
-				calendarDraftObjectData);
+		getCalendarDraft().setCalendarDraftObject(null, calendarDraftObjectData);
 	}
 
 	@Override
@@ -2349,19 +2217,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(getEmployeeCalendarDraft());
 		getEmployeeCalendarDraft().setEmployeeCalendarDraftObject(calendar);
 	}
-	
+
 	@Override
 	public void onEmployeeNewCalendarSelected(EmployeeCalendarDraftObject calendar) {
 		employeeDetail.setWidget(getEmployeeCalendarDraftNew());
 		getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
 	}
-	
+
 	@Override
 	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalary) {
 		employeeDetail.setWidget(getEmployeeSalary());
 		getEmployeeSalary().setEmployeeSalaryObject(employeeSalary);
 	}
-	
+
 	@Override
 	public void onSalariesSelected(SalariesDocuments docs) {
 		getCost().setTitle("N\u00F3minas");
@@ -2382,64 +2250,53 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	@Override
-	public void onSalaryPreviewSelected(
-			SalaryPreviewDocument salaryPreviewDocument) {
+	public void onSalaryPreviewSelected(SalaryPreviewDocument salaryPreviewDocument) {
 		employeeDetail.setWidget(getSalaryPreview());
 		getSalaryPreview().setSalaryPreviewDocument(salaryPreviewDocument);
 	}
 
 	@Override
-	public void onCCCContextMenu(CCC ccc,
-			ContextMenuEvent event) {
+	public void onCCCContextMenu(CCC ccc, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		getCCCContextMenu().setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		getCCCContextMenu().setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		getCCCContextMenu().setCCC(ccc);
 		getCCCContextMenu().show();
 	}
 
 	@Override
-	public void onWorkplaceContextMenu(Workplace workplace,
-			ContextMenuEvent event) {
+	public void onWorkplaceContextMenu(Workplace workplace, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		getWorkplaceContextMenu().setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		getWorkplaceContextMenu().setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		getWorkplaceContextMenu().setWorkplace(workplace);
 		getWorkplaceContextMenu().show();
 	}
 
 	@Override
-	public void onEnterpriseContextMenu(Enterprise enterprise,
-			ContextMenuEvent event) {
+	public void onEnterpriseContextMenu(Enterprise enterprise, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		getEnterpriseContextMenu().setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		getEnterpriseContextMenu().setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		getEnterpriseContextMenu().setEnterprise(enterprise);
 		getEnterpriseContextMenu().show();
 
 	}
 
 	@Override
-	public void onEmployeeContextMenu(Employee employee,
-			ContextMenuEvent event) {
+	public void onEmployeeContextMenu(Employee employee, ContextMenuEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		getEmployeeContextMenu().setPopupPosition(nativeEvent.getClientX(),
-				nativeEvent.getClientY());
+		getEmployeeContextMenu().setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		getEmployeeContextMenu().setEmployee(employee);
 		getEmployeeContextMenu().show();
 	}
 
 	@Override
-	public void onCategoryDraftSelected(
-			CategoryDraftObject categoryDraftObject) {
+	public void onCategoryDraftSelected(CategoryDraftObject categoryDraftObject) {
 		employeeDetail.setWidget(getCategoryDraft());
 		getCategoryDraft().setCategoryDraftObject(categoryDraftObject);
 
 	}
 
 	@Override
-	public void onAgreementDraftSelected(
-			AgreementDraftObject agreementDraftObject) {
+	public void onAgreementDraftSelected(AgreementDraftObject agreementDraftObject) {
 		employeeDetail.setWidget(getAgreementDraft());
 		getAgreementDraft().setAgreementDraftObject(agreementDraftObject);
 	}
@@ -2455,14 +2312,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		employeeDetail.setWidget(getEmployeeEventsDraft());
 		getEmployeeEventsDraft().setEmployeeEventsDraftObject(employeeEventsDraft);
 	}
-	
+
 	@Override
 	public void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
-		getEmployeeDraft().setOnSaved(e->{});
+		getEmployeeDraft().setOnSaved(e -> {
+		});
 		employeeDetail.setWidget(getEmployeeDraft());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
-		
+
 		checkStatus(employeeDraftObject);
 	}
 
@@ -2529,7 +2387,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	// --------------------------------------------------------- Private methods
 
-
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
@@ -2538,11 +2395,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		splitLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
-	private void showFootPanel() {	
-		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
-			EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+	private void showFootPanel() {
+		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 	}
-	
+
 	private void showResultsPanel() {
 
 		InlineLabel tab = new InlineLabel("Resultados");
@@ -2550,8 +2406,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
 		footTabPanel.selectTab(resultsPanel);
-		EmployeeTree.this.splitLayoutPanel.setWidgetSize(
-				EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 
 	}
 
@@ -2563,9 +2418,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
 		footTabPanel.selectTab(resultsPanel);
 
-
 	}
-	
+
 	private void showProgressPanel() {
 		InlineLabel tab = new InlineLabel("Progreso");
 		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
@@ -2580,7 +2434,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			it = new ITEditor();
 		return it;
 	}
-	
+
 	private WorkplaceSalary getWorkplceSalary() {
 		if (workplaceSalary == null)
 			(workplaceSalary = new WorkplaceSalary()).addListener(this);
@@ -2605,7 +2459,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			stats = new Statistics();
 		return stats;
 	}
-	
+
 	private EnterpriseSalary getEnterpriseSalary() {
 		if (enterpriseSalary == null)
 			(enterpriseSalary = new EnterpriseSalary()).addListener(this);
@@ -2665,42 +2519,39 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			eventsDraft = new EventsDraft();
 		return eventsDraft;
 	}
-	
+
 	private EnterpriseDraft getEnterpriseDraft() {
 		if (enterpriseDraft == null)
-			enterpriseDraft = new EnterpriseDraft()
-									.setOnSaved(w -> refreshEnterprise());
+			enterpriseDraft = new EnterpriseDraft().setOnSaved(w -> refreshEnterprise());
 		return enterpriseDraft;
 	}
-	
+
 	private WorkplaceDraft getWorkplaceDraft() {
 		if (workplaceDraft == null)
-			workplaceDraft = new WorkplaceDraft()
-							.setOnSaved(w -> refreshWorkplace() );
+			workplaceDraft = new WorkplaceDraft().setOnSaved(w -> refreshWorkplace());
 		return workplaceDraft;
 	}
-	
+
 	private ActivityDraft getActivityDraft() {
 		if (activityDraft == null)
 			activityDraft = new ActivityDraft();
 		return activityDraft;
 	}
-	
+
 	private CCCCretaDetail getCCCCretaDetail() {
-		if ( cccCretaDetail == null ) {
+		if (cccCretaDetail == null) {
 			cccCretaDetail = new CCCCretaDetail();
-			
+
 			progressPanel = new ProgressPanel();
-			
-			progressPanel.addAttachHandler(e ->  {
-				// Synchronize cret@ messages. 
+
+			progressPanel.addAttachHandler(e -> {
+				// Synchronize cret@ messages.
 				IndeterminateTask syncTask = new IndeterminateTask();
 				syncTask.setDescription("Sincronizando mensajes");
 				progressPanel.showIndeterminateTask(syncTask);
-				MainCreta.sync( new EmployeeTreeSyncCallback(syncTask), getCCs() );
+				MainCreta.sync(new EmployeeTreeSyncCallback(syncTask), getCCs());
 			});
 			showProgressPanel();
-
 
 		}
 		return cccCretaDetail;
@@ -2711,13 +2562,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			employeeEventsDraft = new EmployeeEventsDraft();
 		return employeeEventsDraft;
 	}
-	
+
 	private EmployeeDraft getEmployeeDraft() {
 		if (employeeDraft == null)
-			employeeDraft = new EmployeeDraft();//.setOnSaved(w -> refreshWorkplace() );
+			employeeDraft = new EmployeeDraft();// .setOnSaved(w -> refreshWorkplace() );
 		return employeeDraft;
 	}
-	
+
 	private EmployeeNewDraft getEmployeeNewDraft() {
 		if (employeeNewDraft == null)
 			employeeNewDraft = new EmployeeNewDraft();
@@ -2741,13 +2592,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			employeeCalendarDraft = new EmployeeCalendarDraft();
 		return employeeCalendarDraft;
 	}
-	
+
 	private EmployeeCalendarDraftNew getEmployeeCalendarDraftNew() {
 		if (employeeCalendarDraftNew == null)
 			employeeCalendarDraftNew = new EmployeeCalendarDraftNew();
 		return employeeCalendarDraftNew;
 	}
-	
+
 	private EmployeeSalary getEmployeeSalary() {
 		if (employeeSalary == null)
 			(employeeSalary = new EmployeeSalary()).addListener(this);
@@ -2801,25 +2652,34 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return null;
 
 	}
-	
+
 	public boolean isReftification() {
+		return ((CretaResults) resultsPanel.getChild()).getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION)
+				.map(s -> "on".equalsIgnoreCase(s)).orElse(false);
+	}
+
+	private void reftification(Void v) {
+		MainCreta.run(Collections.singletonMap(CretaService.Parameter.INDICADOR_RECTIFICACION,
+				isReftification() ? "off" : "on"), resultsPanel);
+	}
+
+	private void requestSendRNT(Void v) {
+		MainCreta.run(Collections.singletonMap(CretaService.Parameter.SOLICITUD_RECEPCION_RNT, 
+				isRequestSendRNT() ? "off" : "on"), resultsPanel);
+	}
+
+	public boolean isRequestSendRNT() {
 		return 
 		(( CretaResults ) resultsPanel.getChild())
-		.getParameter(CretaService.Parameter.INDICADOR_RECTIFICACION)
+		.getParameter(CretaService.Parameter.SOLICITUD_RECEPCION_RNT)
 		.map( s -> "on".equalsIgnoreCase(s))
 		.orElse(false)
 		;
-	}
-
-	private void reftification(Void v) { 
-		MainCreta.run(Collections.singletonMap(CretaService.Parameter.INDICADOR_RECTIFICACION, isReftification() ? "off" : "on"), resultsPanel);
-	}
-
+	}	
 	private void showResultsPanel(Void v) {
 		showResultsPanel();
 	}
-	
-	
+
 	private List<CCC> getCCs() {
 
 		List<CCC> ccs = new LinkedList<CCC>();
@@ -2837,153 +2697,135 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	}
 
 	private void checkStatus(EmployeeDraftObject employeeDraftObject) {
-		employeeDraftObject.checkStatus(
-		employeeStatus -> {
+		employeeDraftObject.checkStatus(employeeStatus -> {
 			SaltraResults saltraResults = new SaltraResults() {
-				
+
 				@Override
 				public void run() {
-					employeeDraftObject.checkStatus(
-							employeeStatus -> {
-								removeAll();
-								employeeStatus.visit(this);
-							}, 
-							throwable -> {}
-					);					
+					employeeDraftObject.checkStatus(employeeStatus -> {
+						removeAll();
+						employeeStatus.visit(this);
+					}, throwable -> {
+					});
 				}
 				
+				
+				
+				
 				@Override
-				protected void saltraCredentialsFound(){
-					employeeDraftObject.checkStatus(
-							employeeStatus -> {
-								removeAll();
-								employeeStatus.visit(this);
-								selectResultsPanel();
-								ifSaltraEnabled(employeeStatus, 
-								() -> {
-									showFootPanel();
-									getEmployeeDraft().idcButton.setVisible(true);
-									getEmployeeDraft().setOnSaved(e-> run());
-								},
-								() -> {
-									closeFootPanel();
-									getEmployeeDraft().idcButton.setVisible(false);
+				protected void saltraCredentialsFound() {
+					employeeDraftObject.checkStatus(employeeStatus -> {
+						removeAll();
+						employeeStatus.visit(this);
+						selectResultsPanel();
+						ifSaltraEnabled(employeeStatus, () -> {
+							showFootPanel();
+							getEmployeeDraft().idcButton.setVisible(true);
+							getEmployeeDraft().setOnSaved(e -> run());
+						}, () -> {
+							closeFootPanel();
+							getEmployeeDraft().idcButton.setVisible(false);
 
-								});
-							}, 
-							throwable -> {
-								closeFootPanel();
-								getEmployeeDraft().idcButton.setVisible(false);
-							}
-					);					
+						});
+					}, throwable -> {
+						closeFootPanel();
+						getEmployeeDraft().idcButton.setVisible(false);
+					});
 				}
 			};
-			
+
 			employeeStatus.visit(saltraResults);
 			resultsPanel.setWidget(saltraResults);
 			selectResultsPanel();
-			
-			ifSaltraEnabled(
-			employeeStatus, 
-			() -> {
+
+			ifSaltraEnabled(employeeStatus, () -> {
 				showFootPanel();
 				getEmployeeDraft().idcButton.setVisible(true);
-				getEmployeeDraft().setOnSaved(e-> saltraResults.run());
-			},
-			() -> {
+				getEmployeeDraft().setOnSaved(e -> saltraResults.run());
+			}, () -> {
 				closeFootPanel();
 				getEmployeeDraft().idcButton.setVisible(false);
-			}
-			);
-			
-		}, 
-		throwable -> {
+			});
+
+		}, throwable -> {
 			closeFootPanel();
 			getEmployeeDraft().idcButton.setVisible(false);
 
 		});
 	}
-	
+
 	private void checkStatus(EnterpriseDraftObject enterpriseDraftObject) {
-		enterpriseDraftObject.checkStatus(
-		enterpiseStatus -> {
+		enterpriseDraftObject.checkStatus(enterpiseStatus -> {
 			SaltraResults saltraResults = new SaltraResults() {
-				
+
 				@Override
 				public void run() {
-					enterpriseDraftObject.checkStatus(
-							enterpiseStatus -> {
-								removeAll();
-								enterpiseStatus.visit(this);
-							}, 
-							throwable -> {}
-					);					
+					enterpriseDraftObject.checkStatus(enterpiseStatus -> {
+						removeAll();
+						enterpiseStatus.visit(this);
+					}, throwable -> {
+					});
 				}
-				
+
 				@Override
 				public void up2Date() {
 				}
-				
-				@Override
-				protected void saltraCredentialsFound(){
-					enterpriseDraftObject.checkStatus(
-							enterpiseStatus -> {
-								removeAll();
-								enterpiseStatus.visit(this);
-								selectResultsPanel();
-								ifSaltraEnabled(enterpiseStatus, 
-								() -> {
-									showFootPanel();
-								},
-								() -> {
-									closeFootPanel();
 
-								});
-							}, 
-							throwable -> {
-								closeFootPanel();
-							}
-					);					
+				@Override
+				protected void newAffiliated(JsSaltraResults jsSaltraResults) {
+					run();
+					getEmployeeTree().employees.refreshWorkplace(jsSaltraResults.getWorkplaceId());
+					getEmployeeTree().employees.selectEmployee(jsSaltraResults.getEmployeeId(), true);
 				}
-				
-				
+
+				@Override
+				protected void saltraCredentialsFound() {
+					enterpriseDraftObject.checkStatus(enterpiseStatus -> {
+						removeAll();
+						enterpiseStatus.visit(this);
+						selectResultsPanel();
+						ifSaltraEnabled(enterpiseStatus, () -> {
+							showFootPanel();
+						}, () -> {
+							closeFootPanel();
+
+						});
+					}, throwable -> {
+						closeFootPanel();
+					});
+				}
+
 			};
-			
+
 			enterpiseStatus.visit(saltraResults);
 			resultsPanel.setWidget(saltraResults);
 			selectResultsPanel();
-			
-			ifSaltraEnabled(
-			enterpiseStatus, 
-			() -> {
+
+			ifSaltraEnabled(enterpiseStatus, () -> {
 				showFootPanel();
-			},
-			() -> {
+			}, () -> {
 				closeFootPanel();
-			}
-			);
-			
-		}, 
-		throwable -> {
+			});
+
+		}, throwable -> {
 			closeFootPanel();
 
 		});
 	}
 	// ------------------------------------------------------ Protected methods
-	
+
 	protected static String getDescription(CCC ccc, Enterprise enterprise) {
 		String province = ccc.getGeozone();
 
 		for (Activity activity : enterprise.getActivities())
 			for (CCC cc : activity.getCccs())
 				if (ccc.getCode().equals(cc.getCode()))
-					return activity.getDescription() + ", "
-							+ ccc.getCode();
+					return activity.getDescription() + ", " + ccc.getCode();
 
 		return ccc.getCode();
 	}
-	
-	protected static JsBasesResult showBases(String json , DetailPanel detailPanel) {
+
+	protected static JsBasesResult showBases(String json, DetailPanel detailPanel) {
 		JsBasesResult result = eval("(" + json + ")");
 		showBases(result, detailPanel);
 		return result;
@@ -2998,22 +2840,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		mergeEditor.setOrig(result.getBasesFile());
 
 		try {
-			
+
 			mergeEditor.setText(result.getSalaryBasesFile());
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
 			mergeEditor.autoRefresh();
-			
-		} catch ( NoSuchElementException e0 ) {
+
+		} catch (NoSuchElementException e0) {
 			try {
-				
+
 				mergeEditor.setText(result.getChangedBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
-	
+
 			} catch (NoSuchElementException e1) {
 				try {
 					mergeEditor.setShowDifferences(false);
@@ -3022,7 +2864,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
-				} catch ( NoSuchElementException e2 ){
+				} catch (NoSuchElementException e2) {
 					FileEditor basesEditor = new MainCreta.BasesFileEditor();
 					basesEditor.setMode("text/xml");
 					basesEditor.setFoldGutter(true);
@@ -3033,31 +2875,33 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					detailPanel.setWidget(basesEditor);
 					basesEditor.autoRefresh();
 				}
-			}	
+			}
 		}
 
-		
 	}
-	
-	protected static JsBasesResult showBases(String json , DetailPanel detailPanel, CreateRequestCommand cretaCommand) {
+
+	protected static JsBasesResult showBases(String json, DetailPanel detailPanel, CreateRequestCommand cretaCommand) {
 		JsBasesResult result = eval("(" + json + ")");
 		showBases(result, detailPanel, cretaCommand);
 		return result;
 	}
 
-	protected static JsBasesResult showBases(String json , DetailPanel detailPanel, BasesCCCCretaRequestCommand cretaCommand) {
+	protected static JsBasesResult showBases(String json, DetailPanel detailPanel,
+			BasesCCCCretaRequestCommand cretaCommand) {
 		JsBasesResult result = eval("(" + json + ")");
 		showBases(result, detailPanel, cretaCommand);
 		return result;
 	}
 
-	protected static JsBasesResult showBases(String json , DetailPanel detailPanel, AbstractCCCCretaRequestCommand cretaCommand) {
+	protected static JsBasesResult showBases(String json, DetailPanel detailPanel,
+			AbstractCCCCretaRequestCommand cretaCommand) {
 		JsBasesResult result = eval("(" + json + ")");
 		showBases(result, detailPanel, cretaCommand);
 		return result;
 	}
 
-	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, ClickHandler clickHandler) {
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
+			ClickHandler clickHandler) {
 		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
 		mergeEditor.setOrig(result.getBasesFile());
 		mergeEditor.setMode("text/xml");
@@ -3066,22 +2910,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		mergeEditor.setOrig(result.getBasesFile());
 
 		try {
-			
+
 			mergeEditor.setText(result.getSalaryBasesFile());
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 			detailPanel.setWidget(mergeEditor);
 			mergeEditor.autoRefresh();
-			
-		} catch ( NoSuchElementException e0 ) {
+
+		} catch (NoSuchElementException e0) {
 			try {
-				
+
 				mergeEditor.setText(result.getChangedBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
 				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
-	
+
 			} catch (NoSuchElementException e1) {
 				try {
 					mergeEditor.setShowDifferences(false);
@@ -3090,7 +2934,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
-				} catch ( NoSuchElementException e2 ){
+				} catch (NoSuchElementException e2) {
 					FileEditor basesEditor = new MainCreta.BasesFileEditor();
 					basesEditor.setMode("text/xml");
 					basesEditor.setFoldGutter(true);
@@ -3100,37 +2944,51 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 					basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
 					detailPanel.setWidget(basesEditor);
 					basesEditor.autoRefresh();
-	
+
 					CheckBox reftification = new CheckBox("Reftificativa");
 					reftification.setValue(result.isRectifying());
 					reftification.setStyleName("aon-finding-toolbar-item");
-					reftification.addClickHandler(clickHandler );
+					reftification.addClickHandler(clickHandler);
 					basesEditor.add(reftification);
+
+					CheckBox solicitudRecepcionRNT = new CheckBox("Solicitud Recepci\u00f3n RNT");
+					solicitudRecepcionRNT.setValue(result.isRequestSendRNT());
+					solicitudRecepcionRNT.setStyleName("aon-finding-toolbar-item");
+					solicitudRecepcionRNT.addClickHandler(clickHandler);
+					basesEditor.add(solicitudRecepcionRNT);
 				}
-			}	
+			}
 		}
 	}
 
-	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, CreateRequestCommand cretaCommand) {
-		showBases(result, detailPanel, e->cretaCommand.reexecute(d-> {d.reftificationMarkCheckBox.setValue(!result.isRectifying());}));
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
+			CreateRequestCommand cretaCommand) {
+		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
+			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
+			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
+		}));
 	}
 
-	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, BasesCCCCretaRequestCommand cretaCommand) {
-		showBases(result, detailPanel, e->cretaCommand.reexecute(d-> {d.reftificationMarkCheckBox.setValue(!result.isRectifying());}));
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
+			BasesCCCCretaRequestCommand cretaCommand) {
+		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
+			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
+			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
+		}));
 	}
 
-	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel, AbstractCCCCretaRequestCommand cretaCommand) {
-		showBases(result, detailPanel, e->cretaCommand.reexecute(d-> {d.reftificationMarkCheckBox.setValue(!result.isRectifying());}));
+	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
+			AbstractCCCCretaRequestCommand cretaCommand) {
+		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
+			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
+			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
+
+		}));
 	}
 
-	protected static void showResults(
-			JsBasesResult result, 
-			Set<JsFile> jsFiles, 
-			ResultsPanel resultsPanel, 
-			Consumer<JsBasesResult> onBases,
-			Consumer<ResultsPanel> showResultsPanel
-			) {
-		
+	protected static void showResults(JsBasesResult result, Set<JsFile> jsFiles, ResultsPanel resultsPanel,
+			Consumer<JsBasesResult> onBases, Consumer<ResultsPanel> showResultsPanel) {
+
 		CretaResults cretaResults = new CretaResults() {
 			@Override
 			protected void onBases(JsBasesResult result) {
@@ -3143,62 +3001,59 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		cretaResults.setJsFiles(jsFiles);
 		resultsPanel.setWidget(cretaResults);
 
-		if (result.getErrors().length > 0
-				|| result.getWarnings().length > 0)
+		if (result.getErrors().length > 0 || result.getWarnings().length > 0)
 			showResultsPanel.accept(resultsPanel);
-		
+
 	}
-	
-	protected static void showResults(
-			JsBasesResult result, 
-			ResultsPanel resultsPanel, 
-			Consumer<JsBasesResult> onBases,
-			Consumer<ResultsPanel> showResultsPanel
-			) {
+
+	protected static void showResults(JsBasesResult result, ResultsPanel resultsPanel, Consumer<JsBasesResult> onBases,
+			Consumer<ResultsPanel> showResultsPanel) {
 		showResults(result, Collections.emptySet(), resultsPanel, onBases, showResultsPanel);
 	}
 
 	// --------------------------------------------------------- Private methods
-	
+
 	protected static void showSaltraOptions(EmployeeStatus employeeStatus) {
-		
+
 	}
 
 	protected static void showEmployeeCalendar() {
 		EmployeeTree employeeTree = getEmployeeTree();
-		EmployeeCalendarDraftObject calendar = employeeTree.getSalaryDraft().getSalaryDraftObject().getEmployeeCalendarDraftObject();
+		EmployeeCalendarDraftObject calendar = employeeTree.getSalaryDraft().getSalaryDraftObject()
+				.getEmployeeCalendarDraftObject();
 		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraftNew());
 		employeeTree.getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(calendar);
 	}
-	
+
 	protected static void showEmployeeCalendar(EmployeeCalendarDraftObject employeeCalendarDraftobject) {
 		EmployeeTree employeeTree = getEmployeeTree();
 		employeeTree.employeeDetail.setWidget(employeeTree.getEmployeeCalendarDraftNew());
 		employeeTree.getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(employeeCalendarDraftobject);
 	}
-	
+
 	protected static void showWorkplaceCalendar(CalendarDraftObjectData calendarDraftObjectData) {
 		EmployeeTree employeeTree = getEmployeeTree();
 		employeeTree.employeeDetail.setWidget(employeeTree.getCalendarDraft());
 		employeeTree.getCalendarDraft().setCalendarDraftObject(null, calendarDraftObjectData);
 	}
-	
+
 	protected static void showNewWorkplace() {
 		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-		
-		WorkplaceDialog workplaceDialog = new WorkplaceDialog()
-												.setOnSaved(w -> refreshEnterprise());
-		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise, enterprisesService);
+
+		WorkplaceDialog workplaceDialog = new WorkplaceDialog().setOnSaved(w -> refreshEnterprise());
+		WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(getEmployeeTree().enterprise,
+				enterprisesService);
 		workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 		workplaceDialog.center();
 		workplaceDialog.show();
 	}
-	
+
 	protected static void showNewActivity() {
 		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-		
+
 		ActivityDialog activityDialog = new ActivityDialog();
-		ActivityDialogObject activityDialogObject = new ActivityDialogObject(getEmployeeTree().enterprise, enterprisesService);
+		ActivityDialogObject activityDialogObject = new ActivityDialogObject(getEmployeeTree().enterprise,
+				enterprisesService);
 		activityDialog.setActivityDialogObject(activityDialogObject);
 		activityDialog.center();
 		activityDialog.show();
@@ -3207,29 +3062,30 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	protected static void showNewContract() {
 		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-		
+
 		EmployeeDialog employeeDialog = new EmployeeDialog() {
 			@Override
-			protected void onAccept() {}
+			protected void onAccept() {
+			}
 		};
-		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace, employeesService, enterprisesService);
+		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace,
+				employeesService, enterprisesService);
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 		employeeDialog.center();
 		employeeDialog.show();
 	}
-	
+
 	protected static void invokeRefreshWorkplace() {
 		getEmployeeTree().employees.refresh(getEmployeeTree().workplace);
 	}
-	
+
 	protected static void invokeRefreshEnterprise() {
 //		Window.alert("Refresh Enterprise : " + singlenton.enterprise + ", Employees : " + singlenton.employees);
 		getEmployeeTree().employees.refresh(getEmployeeTree().enterprise);
 //		singlenton.employees.refresh(singlenton.enterprise);
 	}
-	
-	protected static void showSalaryDraft(int employeeId, int workplaceId,
-			Date startDate, Date endDate) {
+
+	protected static void showSalaryDraft(int employeeId, int workplaceId, Date startDate, Date endDate) {
 		EmployeeTree employeeTree = getEmployeeTree();
 		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, true);
 	}
@@ -3238,69 +3094,53 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		return singlenton;
 	}
 
-	private static <T extends HasId<?>> void share(
-			com.esferalia.aon.gwt.payroll.shared.Salary salary,
-			String type,
+	private static <T extends HasId<?>> void share(com.esferalia.aon.gwt.payroll.shared.Salary salary, String type,
 			final AsyncCallback<JsShareResult> callback) {
 
 		StringBuffer requestDataBuffer = new StringBuffer();
 
-		requestDataBuffer
-				.append("&" + ShareService.SALARY + "=" + salary.getId())
-				.append("&type=" + type);
-
-		// Send request to server and catch any errors.
-		share(requestDataBuffer.toString(), callback);
-
-	}
-	
-	private static <T extends HasId<?>> void shareSalary(
-			SalaryInfo salary,
-			String type,
-			final AsyncCallback<JsShareResult> callback) {
-
-		StringBuffer requestDataBuffer = new StringBuffer();
-
-		requestDataBuffer
-				.append("&" + ShareService.SALARY + "=" + salary.getId())
-				.append("&type=" + type);
+		requestDataBuffer.append("&" + ShareService.SALARY + "=" + salary.getId()).append("&type=" + type);
 
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString(), callback);
 
 	}
 
-	private static <T extends HasId<?>> void share(
-			com.esferalia.aon.gwt.payroll.shared.Cost cost,
-			String type,
+	private static <T extends HasId<?>> void shareSalary(SalaryInfo salary, String type,
 			final AsyncCallback<JsShareResult> callback) {
 
 		StringBuffer requestDataBuffer = new StringBuffer();
 
-		requestDataBuffer
-				.append("&" + ShareService.MONTH + "=" + cost.getMonth());
-		requestDataBuffer
-				.append("&" + ShareService.YEAR + "=" + cost.getYear());
+		requestDataBuffer.append("&" + ShareService.SALARY + "=" + salary.getId()).append("&type=" + type);
+
+		// Send request to server and catch any errors.
+		share(requestDataBuffer.toString(), callback);
+
+	}
+
+	private static <T extends HasId<?>> void share(com.esferalia.aon.gwt.payroll.shared.Cost cost, String type,
+			final AsyncCallback<JsShareResult> callback) {
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer.append("&" + ShareService.MONTH + "=" + cost.getMonth());
+		requestDataBuffer.append("&" + ShareService.YEAR + "=" + cost.getYear());
 		int workplaceId = cost.getWorkplaceId();
 		if (workplaceId != 0)
-			requestDataBuffer
-					.append("&" + ShareService.WORKPLACE + "=" + workplaceId);
+			requestDataBuffer.append("&" + ShareService.WORKPLACE + "=" + workplaceId);
 		else
-			requestDataBuffer.append("&" + ShareService.ENTERPRISE + "="
-					+ cost.getEnterpriseId());
+			requestDataBuffer.append("&" + ShareService.ENTERPRISE + "=" + cost.getEnterpriseId());
 		requestDataBuffer.append("&type=" + type);
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString(), callback);
 	}
 
-	private static void share(String requestData,
-			final AsyncCallback<JsShareResult> callback) {
+	private static void share(String requestData, final AsyncCallback<JsShareResult> callback) {
 		// Send request to server and catch any errors.
 
 		XMLHttpRequest xhr = XMLHttpRequest.create();
 		xhr.open("POST", SHARE_URL);
-		xhr.setRequestHeader("Content-type",
-				"application/x-www-form-urlencoded");
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
 
 			private int loaded = 0;
@@ -3309,14 +3149,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			public void onReadyStateChange(XMLHttpRequest xhr) {
 				int state = xhr.getReadyState();
 
-				if (state == XMLHttpRequest.LOADING
-						|| state == XMLHttpRequest.DONE) {
+				if (state == XMLHttpRequest.LOADING || state == XMLHttpRequest.DONE) {
 
 					String text = xhr.getResponseText();
 
 					try {
-						for (JsShareResult result = read(
-								text); text != null; result = read(text))
+						for (JsShareResult result = read(text); text != null; result = read(text))
 							callback.onSuccess(result);
 					} catch (IndexOutOfBoundsException e) {
 					}
@@ -3353,14 +3191,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 
 	}
 
-
 	private static void viewResults() {
 		singlenton.showResultsPanel();
 	}
 
 	private static void enterpriseCalc() {
-		singlenton.getEnterpriseContextMenu()
-				.setEnterprise(singlenton.enterprise);
+		singlenton.getEnterpriseContextMenu().setEnterprise(singlenton.enterprise);
 		singlenton.getEnterpriseContextMenu().calcCmd.execute();
 	}
 
@@ -3381,7 +3217,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private static void refreshWorkplace() {
 		singlenton.employees.refresh(singlenton.workplace);
 	}
-	
+
 	private static void refreshActivity() {
 		singlenton.employees.refresh(singlenton.activity);
 	}
@@ -3411,15 +3247,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			json.put("name", new JSONString(employee.getName()));
 			json.put("first", new JSONString(employee.getFirstSurname()));
 
-			json.put("startDate",
-					new JSONString(employee.getStartDate().toString()));
+			json.put("startDate", new JSONString(employee.getStartDate().toString()));
 
 			if (employee.getSecondSurName() != null)
 				json.put("second", new JSONString(employee.getSecondSurName()));
 
 			if (employee.getEndDate() != null)
-				json.put("endDate",
-						new JSONString(employee.getEndDate().toString()));
+				json.put("endDate", new JSONString(employee.getEndDate().toString()));
 
 			// Si Document es nulo se va a la BD a por el campo
 			if (employee.getDocument() != null)
@@ -3445,22 +3279,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			String id = json.get("id").toString();
 			String person = json.get("person").toString().replaceAll("\"", "");
 			String name = json.get("name").toString().replaceAll("\"", "");
-			String firstSurname = json.get("first").toString().replaceAll("\"",
-					"");
+			String firstSurname = json.get("first").toString().replaceAll("\"", "");
 
 			String secondSurname = null;
 			if (json.get("second") != null)
-				secondSurname = json.get("second").toString().replaceAll("\"",
-						"");
+				secondSurname = json.get("second").toString().replaceAll("\"", "");
 
-			String start = json.get("startDate").toString().replaceAll("\"",
-					"");
+			String start = json.get("startDate").toString().replaceAll("\"", "");
 			Date startDate = getDate(start);
 
 			Date endDate = null;
 			if (json.get("endDate") != null) {
-				String end = json.get("endDate").toString().replaceAll("\"",
-						"");
+				String end = json.get("endDate").toString().replaceAll("\"", "");
 				endDate = getDate(end);
 			}
 
@@ -3507,7 +3337,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 	private static void logEvent(String type) {
 		StatsEventLogger.logEvent("aon", "EmployeeTree", type);
 	}
-	
+
 	private static List<CCC> getCCs(Workplace workplace) {
 
 		Activity activity = workplace.getActivity();
@@ -3518,7 +3348,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 			return Collections.emptyList();
 		return ccs;
 	}
-	
 
 	private static List<CCC> getCCs(Enterprise enterprise) {
 
@@ -3540,125 +3369,135 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		}
 		return ccs;
 	}
-	
-	private static boolean isSaltraEnabled(EmployeeStatus employeeStatus ) {
+
+	private static boolean isSaltraEnabled(EmployeeStatus employeeStatus) {
 		try {
 			employeeStatus.visit(new Visitor() {
-				
+
 				@Override
 				public void up2Date() {
 				}
 				
+				
+				@Override
+				public void forbidden() {
+					throw new RuntimeException();
+				}
+
 				@Override
 				public void saltraCredentialsNotFound() {
 					throw new RuntimeException();
 				}
-				
+
 				@Override
 				public void occupationNotFound() {
 				}
-				
+
 				@Override
 				public void mismatchedStartDate(MismatchedStartDate status) {
 				}
-				
+
 				@Override
 				public void mismatchedPartialFactor(MismatchedPartialFactor status) {
 				}
-				
+
 				@Override
 				public void mismatchedOccupation(MismatchedOccupation status) {
 				}
-				
+
 				@Override
 				public void mismatchedContractType(MismatchedContractType status) {
 				}
-				
+
 				@Override
 				public void mismatchedCCC(MismatchedCCC status) {
 				}
-				
+
 				@Override
 				public void invalidData() {
 				}
-				
+
 				@Override
 				public void endDateNotFound() {
 				}
-				
+
 				@Override
 				public void employeeNotFound() {
 				}
-				
+
 				@Override
 				public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
 				}
 			});
 			return true;
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
-	
 
-	private static void ifSaltraEnabled(EmployeeStatus employeeStatus, Runnable saltraEnable, Runnable saltraDisabled ) {
+	private static void ifSaltraEnabled(EmployeeStatus employeeStatus, Runnable saltraEnable, Runnable saltraDisabled) {
 		employeeStatus.visit(new EmployeeStatus.Visitor() {
-			
+
 			@Override
 			public void up2Date() {
 				saltraEnable.run();
 			}
 			
+			@Override
+			public void forbidden() {
+				saltraDisabled.run();
+			}
 
 			@Override
 			public void invalidData() {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void endDateNotFound() {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void employeeNotFound() {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void occupationNotFound() {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void saltraCredentialsNotFound() {
 				saltraDisabled.run();
 			}
-						@Override
+
+			@Override
 			public void mismatchedStartDate(MismatchedStartDate status) {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void mismatchedOccupation(MismatchedOccupation status) {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void mismatchedContractType(MismatchedContractType status) {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void mismatchedCCC(MismatchedCCC status) {
 				saltraEnable.run();
 			}
-			
+
 			@Override
 			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
 				saltraEnable.run();
@@ -3668,19 +3507,25 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		});
 	}
 
-	private static void ifSaltraEnabled(EnterpriseStatus enterpriseStatus, Runnable saltraEnable, Runnable saltraDisabled ) {
+	private static void ifSaltraEnabled(EnterpriseStatus enterpriseStatus, Runnable saltraEnable,
+			Runnable saltraDisabled) {
 		enterpriseStatus.visit(new EnterpriseStatus.Visitor() {
-			
+
 			@Override
 			public void up2Date() {
 				saltraEnable.run();
 			}
-			
+
+			@Override
+			public void forbidden() {
+				saltraDisabled.run();
+			}
+
 			@Override
 			public void saltraCredentialsNotFound() {
 				saltraDisabled.run();
 			}
-			
+
 			@Override
 			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
 				saltraEnable.run();
@@ -3689,18 +3534,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener,
 		});
 	}
 
-
-	private static  String getDescription(CCC ccc, Workplace workplace) {
+	private static String getDescription(CCC ccc, Workplace workplace) {
 		String province = ccc.getGeozone();
 		Activity activity = workplace.getActivity();
 		return activity.getDescription() + "," + ccc.getCode();
 	}
-	
+
 	private static native String cleanDiacritics(String str) /*-{
-		return str.normalize('NFD').replace(/[\u0300-\u036f]/g,"");
+		return str.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 	}-*/;
-	
-	
+
 	private static native <T extends JavaScriptObject> T eval(String javascript)
 	/*-{
 		return eval(javascript);

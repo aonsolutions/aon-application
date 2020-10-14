@@ -161,17 +161,25 @@ public class Bases {
 
 	public static class CustomizeBasesCallback implements BasesCallback {
 		boolean reftificationMark = false;
+		boolean solicitudRecepcionRNT = false;
 		
 		public CustomizeBasesCallback setReftificationMark(boolean reftificationMark) {
 			this.reftificationMark = reftificationMark;
 			return this;
 		}
 		
+		public CustomizeBasesCallback setSolicitudRecepcionRNT(boolean solicitudRecepcionRNT) {
+			this.solicitudRecepcionRNT = solicitudRecepcionRNT;
+			return this;
+		}
+
 		// ------------------------------------------------------ BasesCallback
 		@Override
 		public void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
 			if ( reftificationMark)
 				bases.setIndicadorRectificacion("S");
+			if ( solicitudRecepcionRNT)
+				bases.getLiquidacion().forEach( l -> l.setSolicitudRecepcionRNT("S"));
 		}
 	}
 

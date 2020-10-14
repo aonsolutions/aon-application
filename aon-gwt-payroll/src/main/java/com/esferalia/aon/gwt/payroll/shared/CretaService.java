@@ -33,7 +33,8 @@ public interface CretaService {
 		TIPO_DOCUMENTO,
 		CALCULOS_DESGLOSADOS,
 		INDICADOR_RECTIFICACION,
-		I54
+		I54,
+		SOLICITUD_RECEPCION_RNT
 	}
 
 	public static enum File {
@@ -319,6 +320,10 @@ public interface CretaService {
 
 		public final native boolean isRectifying() /*-{
 			return this.rectifying;
+		}-*/;
+
+		public final native boolean isRequestSendRNT() /*-{
+			return this.requestSendRNT;
 		}-*/;
 	}
 

@@ -110,6 +110,11 @@ public class SolicitudBorrador {
 				.withDescription("Skip previous bases.").create("b");
 	}
 
+	@SuppressWarnings("static-access")
+	public static Option getRNTOption() {
+		return OptionBuilder.withLongOpt("rnt")
+				.withDescription("Solicitud RNT.").create("r");
+	}
 	public static void main(String[] args)
 			throws JAXBException, DatatypeConfigurationException {
 		String tipo = "L00";
@@ -131,6 +136,7 @@ public class SolicitudBorrador {
 		Option authorized =  getAuthorizedOption();
 		Option type =  getTypeOption(tipo);
 		Option skipPrevBases =  getSkipPrevBasesOption();
+		Option rNT =  getRNTOption();
 		
 		Options options = new Options()
 		.addOption(authorized)
@@ -163,7 +169,10 @@ public class SolicitudBorrador {
 			boolean aceptarBasesAnteriores = !cmd
 					.hasOption(skipPrevBases.getLongOpt());
 
-			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, cccs,
+			boolean solicitudRecepcionRNT = !cmd
+					.hasOption(rNT.getLongOpt());
+
+			generate(autorizado, desdeMes, desdeAnho, hastaMes, hastaAnho, tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs,
 					System.out);
 
 		} catch (ParseException e) {
@@ -177,10 +186,9 @@ public class SolicitudBorrador {
 
 	}
 
-	public static void generate(String autorizado, String desdeMes, String desdeAnho,
-			String hastaMes, String hastaAnho,
-			String tipo, boolean aceptarBasesAnteriores, String cccs[],
-			OutputStream os) throws JAXBException {
+	public static void generate(String autorizado, String desdeMes, String desdeAnho, String hastaMes, 
+			String hastaAnho, String tipo, boolean aceptarBasesAnteriores, boolean solicitudRecepcionRNT, 
+			String cccs[], OutputStream os) throws JAXBException {
 
 		int authorized = Integer.parseInt(autorizado);
 		Month fromMonth = Month.of(Integer.parseInt(desdeMes));
@@ -188,12 +196,11 @@ public class SolicitudBorrador {
 		Month toMonth = Month.of(Integer.parseInt(hastaMes));
 		int toYear = Integer.parseInt(hastaAnho);
 
-		generate(authorized, fromMonth, fromYear, toMonth, toYear,tipo, aceptarBasesAnteriores, cccs,
-				os);
+		generate(authorized, fromMonth, fromYear, toMonth, toYear,tipo, aceptarBasesAnteriores, solicitudRecepcionRNT, cccs,os);
 	}
 
 	public static void generate(int autorizado, Month desdeMes, int desdeAnho, Month hastaMes, int hastaAnho,
-			String tipo, boolean aceptarBasesAnteriores, String cccs[],
+			String tipo, boolean aceptarBasesAnteriores , boolean solicitudRecepcionRNT, String cccs[],
 			OutputStream os) throws JAXBException {
 
 		SolicitudBorradorBuilder builder = new SolicitudBorradorBuilder()
@@ -205,6 +212,7 @@ public class SolicitudBorrador {
 			.setCCC(cCC)
 			.setTipo(tipo)
 			.setAceptarBasesAnteriores(aceptarBasesAnteriores)
+			.setSolicitudRecepcionRNT(solicitudRecepcionRNT)
 			.setMesDesde(desdeMes)
 			.setAnhoDesde(desdeAnho)
 			.setMesHasta(hastaMes)
@@ -219,8 +227,8 @@ public class SolicitudBorrador {
 		Utils.marshal(solicitudBorrador, os);
 	}
 
-	public static void generate(String autorizado, String meses[],
-			String anhos[], String tipos[], Boolean aceptarBasesAnteriores[],
+	public static void generate(String autorizado, String meses[], String anhos[], 
+			String tipos[], Boolean aceptarBasesAnteriores[], Boolean solicitudRecepcionRNT [],
 			String cccs[], OutputStream os, Listener ...listeners) throws JAXBException {
 
 		int authorized = Integer.parseInt(autorizado);
@@ -236,6 +244,7 @@ public class SolicitudBorrador {
 				years, 
 				tipos, 
 				aceptarBasesAnteriores, 
+				solicitudRecepcionRNT,
 				cccs,
 				os,
 				listeners);
@@ -244,7 +253,7 @@ public class SolicitudBorrador {
 	}
 
 	public static void generate(String autorizado, String meses[],
-			String anhos[], String tipos[], Boolean aceptarBasesAnteriores[],
+			String anhos[], String tipos[], Boolean aceptarBasesAnteriores[],Boolean solicitudRecepcionRNT [],
 			String cccs[], XMLStreamWriter writer, Listener ...listeners) throws JAXBException {
 
 		int authorized = Integer.parseInt(autorizado);
@@ -260,6 +269,7 @@ public class SolicitudBorrador {
 				years, 
 				tipos, 
 				aceptarBasesAnteriores, 
+				solicitudRecepcionRNT,
 				cccs,
 				writer,
 				listeners);
@@ -268,8 +278,8 @@ public class SolicitudBorrador {
 	}
 
 	public static void generate(int autorizado, Month meses[], Integer anhos[],
-			String tipos[], Boolean aceptarBasesAnteriores[], String cccs[],
-			OutputStream os, Listener ...listeners) throws JAXBException {
+			String tipos[], Boolean aceptarBasesAnteriores[], Boolean solicitudRecepcionRNT [], 
+			String cccs[], OutputStream os, Listener ...listeners) throws JAXBException {
 
 		SolicitudBorradorBuilder builder = new SolicitudBorradorBuilder()
 				.setAutorizado(autorizado);
@@ -279,6 +289,7 @@ public class SolicitudBorrador {
 			builder
 			.setCCC(cccs[i])
 			.setTipo(tipos[i])
+			.setSolicitudRecepcionRNT(solicitudRecepcionRNT[i])
 			.setAceptarBasesAnteriores(aceptarBasesAnteriores[i])
 			.setMesDesde(meses[i])
 			.setAnhoDesde(anhos[i])
@@ -296,8 +307,8 @@ public class SolicitudBorrador {
 	}
 
 	public static void generate(int autorizado, Month meses[], Integer anhos[],
-			String tipos[], Boolean aceptarBasesAnteriores[], String cccs[],
-			XMLStreamWriter writer, Listener ...listeners) throws JAXBException {
+			String tipos[], Boolean aceptarBasesAnteriores[], Boolean solicitudRecepcionRNT [],
+			String cccs[], XMLStreamWriter writer, Listener ...listeners) throws JAXBException {
 
 		SolicitudBorradorBuilder builder = new SolicitudBorradorBuilder()
 				.setAutorizado(autorizado);
@@ -307,6 +318,7 @@ public class SolicitudBorrador {
 			builder
 			.setCCC(cccs[i])
 			.setTipo(tipos[i])
+			.setSolicitudRecepcionRNT(solicitudRecepcionRNT[i])
 			.setAceptarBasesAnteriores(aceptarBasesAnteriores[i])
 			.setMesDesde(meses[i])
 			.setAnhoDesde(anhos[i])
