@@ -45,6 +45,11 @@ class AonIcon extends HTMLElement {
         svg.style.width = newValue;
         svg.style.height = newValue;
       }
+    } if('color' === name){
+      let path = this.querySelector('path');
+      if(path) {
+        path.style.fill = newValue;
+      }
     }
   }
 

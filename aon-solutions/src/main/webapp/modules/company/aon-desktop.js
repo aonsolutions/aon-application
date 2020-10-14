@@ -309,10 +309,10 @@ class AonDesktop extends HTMLElement {
 			if(r[Apps[key].app] ? r[Apps[key].app] : false) {
 				let option = {
 					name: Apps[key].title,
-					// aonIcon: {
-					// 	icon: Apps[key].icon,
-					// 	color: Apps[key].color
-					// },
+					aonIcon: {
+					 	icon: Apps[key].icon,
+					 	color: Apps[key].color
+					},
 					fn: () => alert('Panel ' + Apps[key].title)
 				}
 				appOptions.push(option);
@@ -325,10 +325,10 @@ class AonDesktop extends HTMLElement {
 			if(r[Services[key].app] ? r[Services[key].app] : false) {
 				let option = {
 					name: Services[key].title,
-					// aonIcon: {
-					// 	icon: Services[key].icon,
-					// 	color: Services[key].color
-					// },
+					aonIcon: {
+						icon: Services[key].icon,
+						color: Services[key].color
+					},
 					fn: () => alert('Panel ' + Services[key].title)
 				}
 				serviceOptions.push(option);
