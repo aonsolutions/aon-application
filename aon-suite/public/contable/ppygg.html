@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-12">
                                 <div class="row mt-4">
-                                    <div class="col-12">
+                                    <div class="col-8">
                                         <table class="table" id="table_ppygg_desglose">
                                             <thead>
                                                 <tr>
@@ -48,6 +48,9 @@
                                             <tfoot></tfoot>
                                         </table>
                                     </div>
+                                    <div class="col-4">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -58,6 +61,8 @@
 
         <!-- Scripts -->
         <script src="../js/app.js"></script>
+        <!-- ChartJS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" crossorigin="anonymous"></script>
         <script>
             //
             // Cargamos las funciones
@@ -75,6 +80,8 @@
                     // recorremos los datos a mostrar
                     var tbody = '';
                     var contador = 0; // Contador de cuantos elementos hay
+                    var arrayBases = [];
+                    var arrayNames = [];
                     
                     // Indicamos el año al que corresponde el desglose
                     $('.anio_ppyg').html(data.year);
@@ -103,12 +110,32 @@
                             });
                         }
                         
+                        if(!item.result){
+                            arrayNames[contador] = item.name;
+                            arrayBases[contador] = parseFloat(item.base);
+                        }
+                            
                         // Sumamos 1 al contador
                         contador++;
                     });
                     
                     // Agregamos el cuerpo de la tabla
                     $('#table_ppygg_desglose tbody').html(tbody);
+                    
+                    var ctx = $('#myChart');
+                    var myChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: arrayNames,
+                            datasets: [{
+                                data: arrayBases,
+                                backgroundColor: [
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 99, 132, 1)'
+                                ]
+                            }]
+                        }
+                    });
                 }
 
                 //
@@ -122,6 +149,7 @@
                             name : "Ventas e ingresos",
                             base : 3255,
                             account : 7,
+                            result: false, // Para saber si es el resultado final o no para no incluirlo en la gráfica
                             breakdown : { // Desglose
                                 0 : {
                                     name : "Ventas",
@@ -149,6 +177,7 @@
                             name : "Compras y gastos",
                             base : 861,
                             account : 6,
+                            result: false,
                             breakdown : {
                                 0 : {
                                     name : "Servicios exteriores",
@@ -180,7 +209,8 @@
                         2 : {
                             name : "Resultado de explotación",
                             base : 2394,
-                            account : ""
+                            account : "",
+                            result: true
                         }
                     };
 
