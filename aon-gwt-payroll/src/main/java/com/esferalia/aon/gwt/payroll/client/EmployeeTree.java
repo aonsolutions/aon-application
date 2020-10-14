@@ -2901,7 +2901,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
-			ClickHandler clickHandler) {
+			ClickHandler reftificationClickHandler, ClickHandler rntClickHandler ) {
 		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
 		mergeEditor.setOrig(result.getBasesFile());
 		mergeEditor.setMode("text/xml");
@@ -2948,13 +2948,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					CheckBox reftification = new CheckBox("Reftificativa");
 					reftification.setValue(result.isRectifying());
 					reftification.setStyleName("aon-finding-toolbar-item");
-					reftification.addClickHandler(clickHandler);
+					reftification.addClickHandler(reftificationClickHandler);
 					basesEditor.add(reftification);
 
 					CheckBox solicitudRecepcionRNT = new CheckBox("Solicitud Recepci\u00f3n RNT");
 					solicitudRecepcionRNT.setValue(result.isRequestSendRNT());
 					solicitudRecepcionRNT.setStyleName("aon-finding-toolbar-item");
-					solicitudRecepcionRNT.addClickHandler(clickHandler);
+					solicitudRecepcionRNT.addClickHandler(rntClickHandler);
 					basesEditor.add(solicitudRecepcionRNT);
 				}
 			}
@@ -2963,27 +2963,42 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
 			CreateRequestCommand cretaCommand) {
-		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
+		showBases(
+		result, 
+		detailPanel, 
+		e -> cretaCommand.reexecute(d -> {
 			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
+		}),
+		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
 		}));
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
 			BasesCCCCretaRequestCommand cretaCommand) {
-		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
+		showBases(
+		result, 
+		detailPanel, 
+		e -> cretaCommand.reexecute(d -> {
 			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
+		}),
+		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
 		}));
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
 			AbstractCCCCretaRequestCommand cretaCommand) {
-		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
+		showBases(
+		result, 
+		detailPanel, 
+		e -> cretaCommand.reexecute(d -> {
 			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
+		}),
+		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
-
 		}));
+
 	}
 
 	protected static void showResults(JsBasesResult result, Set<JsFile> jsFiles, ResultsPanel resultsPanel,
