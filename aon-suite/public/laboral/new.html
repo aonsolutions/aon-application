@@ -45,16 +45,29 @@
                         <div class="col-12">
                             <div class="row mb-3">
                                 <div class="col-6">
-                                    <h3>Crear nueva alta</h3>
+                                    <h3 id="tipoEdita">Crear nueva <span id="tipoCreas">alta</span></h3>
                                 </div>
 
                                 <div class="col-6">
                                     <div class="float-right">
                                         <button class="btn btn-primary almacenar-datos" type="button">Almancenar</button>
                                     </div>
+
+                                    <div id="dar-de-alta" class="float-right pr-2 hidden">
+                                        <button class="btn btn-primary dar-alta" type="button">Rellenar alta</button>
+                                    </div>
+
+                                    <div id="dar-de-baja" class="float-right pr-2 hidden">
+                                        <button class="btn btn-primary dar-baja" type="button">Rellenar baja</button>
+                                    </div>
                                 </div>
                             </div>
                             
+                            <!-- 
+                                //
+                                // Datos de ALTA
+                                //
+                            -->
                             <form id="formulario-alta">
                                 <input type="hidden" name="empleadoID" id='empleadoID' value="" />
                             
@@ -91,7 +104,7 @@
                                             <label class="control-label">
                                                 Fecha de Nacimiento 
                                             </label>
-                                            <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="" class="form-control text-center pointer <?=(!isset($empleadoID)) ? 'fondo-blanco' : '' ?>" placeholder="" >
+                                            <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="" class="form-control text-center pointer" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -186,10 +199,9 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label class="control-label contrato-tipo-temporal-obra">
-                                                <!-- Relleno por JS -->
                                                 Detalles del contrato temporal
                                             </label>
-                                            <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder="" ></textarea>
+                                            <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder="(Por ejemplo.:  Reforma local C. Juan XXIII, 2 Barcelona 08003)" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -199,10 +211,9 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label class="control-label contrato-tipo-temporal-eventual">
-                                                <!-- Relleno por JS -->
                                                 Detalles del contrato temporal
                                             </label>
-                                            <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder=""eadoID)) ></textarea>
+                                            <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder="(Por ejemplo.:  Aumento de la producción por temporada de verano)" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -386,7 +397,12 @@
                                     </div>
                                 </div>
                             </form>
-                                
+                            <!-- 
+                                //
+                                // FIN ALTA
+                                //
+                            -->
+                            
                             <!-- 
                                 //
                                 // Datos de BAJA
@@ -394,47 +410,178 @@
                             -->
                             <form id="formulario-baja">
                                 <div class="row">
-                                    <div class="col-12 naranja extrabold">
-                                        DATOS DE BAJA
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                DNI o NIE
+                                            </label>
+                                            <input type="text" name="dni" id="dni" value="" class="form-control numero-letras" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Número seguridad social (NAF)
+                                            </label>
+                                            <input type="text" name="naf" id="naf" value="" class="form-control" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Tipo de contrato
+                                            </label>
+                                            <select id="contrato" name="contrato" class="form-control">
+                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                                <option value="0">Indefinido ordinario (sin bonificaciones)</option>
+                                                <option value="1">Indefinido bonificado (consultar al asesor)</option>
+                                                <option value="2">Temporal. Eventual*</option>
+                                                <option value="3">Temporal. Obra y servicio*</option>
+                                                <option value="4">Contrato en prácticas (consultar al asesor)</option>
+                                                <option value="5">Contrato de formación (consultar al asesor)</option>
+                                                <option value="6">Otros*</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row padding-top-15">
-                                    <div class="col-6">
+
+                                <!-- solo se mostrara si indica otros -->
+                                <div id="otros" class="row hidden">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                *Si eligió "Otros", indique el tipo de contrato
+                                            </label>
+                                            <textarea class="form-control" rows="2" name="otroContrato" id="otroContrato" maxlength="5000" placeholder="" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- solo se mostrará si indica "Temporal. Obra y servicio" -->
+                                <div id="temporalObra" class="row hidden">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label contrato-tipo-temporal-obra">
+                                                Detalles del contrato temporal
+                                            </label>
+                                            <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder="(Por ejemplo.:  Reforma local C. Juan XXIII, 2 Barcelona 08003)" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- // solo se mostrará si indica "Temporal. Eventual" -->
+                                <div id="temporalEventual" class="row hidden">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label contrato-tipo-temporal-eventual">
+                                                Detalles del contrato temporal
+                                            </label>
+                                            <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder="(Por ejemplo.:  Aumento de la producción por temporada de verano)" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Nombre y apellidos
+                                            </label>
+                                            <input type="text" name="nombre" id="nombre" value="" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
                                         <div class="form-group">
                                             <label class="control-label">
                                                 Motivo de la baja
                                             </label>
-                                            <input type="text" name="motivoBaja" id="motivoBaja" value="" class="form-control" placeholder="" readonly>
+                                            <select id="baja" name="baja" class="form-control">
+                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                                <option value="0">Baja voluntaria</option>
+                                                <option value="1">Baja en periodo de prueba a instancia del trabajador</option>
+                                                <option value="2">Baja en periodo de prueba a instancia del empresario</option>
+                                                <option value="3">Fin de obra y servicio</option>
+                                                <option value="4">Fin del contrato</option>
+                                                <option value="5">Despido disciplinario</option>
+                                                <option value="6">Despido por causas objetivas*</option>
+                                                <option value="7">Otras (consultar al asesor)</option>
+                                                <option value="8">Fin de contrato temporal a instancia del trabajador (rechazo de prórroga)</option>
+                                            </select>
                                         </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                Nº de dias de vacaciones pendientes
+                                                Fecha efectiva de la baja
                                             </label>
-                                            <input type="text" name="vacPend" id="vacPend" value="" class="form-control" placeholder="" readonly>
+                                            <input type="date" name="fechaFin" id="fechaFin" class="form-control" value="" placeholder="">
                                         </div>
                                     </div>
                                 </div>
+
+                                <div id="motivoBaja" class="row hidden">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                *En caso de despido por causas objetivas ¿Preavisó con 15 días de antelación?
+                                            </label>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="despido" id="despido" value="1" checked>
+                                                    Sí
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="despido" id="despido" value="2">
+                                                    No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                Aclaración dias de vacaciones pendientes
+                                                Nº de días de vacaciones pendientes de disfrute
                                             </label>
-                                            <input type="text" name="aclVacPend" id="aclVacPend" value="" class="form-control" placeholder="" readonly>
+                                            <input type="number" name="vacaciones" id="vacaciones" value="" class="form-control numero" placeholder="">
                                         </div>
                                     </div>
-                                    
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                Importe de indemnización
+                                                Aclaraciones sobre el Nº de días
                                             </label>
-                                            <input type="text" name="importeImnd" id="importeImnd" value="" class="form-control" placeholder="" readonly>
+                                            <input type="text" name="vacAclaracion" id="vacAclaracion" value="" class="form-control" placeholder="">
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                *Importe indemnización si es pactada
+                                            </label>
+                                            <input type="number" name="importe" id="importe" value="" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row motivoBaja">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Aclaraciones del caso de despido por causas objetivas
+                                            </label>
+                                            <input type="text" name="desAclaracion" id="desAclaracion" rows="2" value="" class="form-control" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+                                
                             </form>
                             <!-- 
                                 //
@@ -494,6 +641,12 @@
                     if($('#fechaFin').prop("readonly")){
                         $('#fechaFin').prop("readonly", false);
                     }
+
+                    // en las bajas
+                    if (!$("#motivoBaja").hasClass("hidden")){
+                        $("#motivoBaja").addClass('hidden');
+                    }
+                    
                     // Mostrar si es alguno de los señalados
                     switch ($('#contrato').val()) {
                         case '0':
@@ -552,24 +705,65 @@
             // Mostrar un formulario o otro
             //
                 let params = getAllGetParams();
+
+                //console.log(params);
+                console.log();
+                
                 for(var i in params){     
                     switch (params[i][0]) {
                         case 'id':
                             switch (params[i][1]) {
                                 case 'alta':
                                     console.log('crear una ALTA de la nada');
+                                    //
                                     // Eliminamos el formulario de baja
+                                    //
                                     $('#formulario-baja').html('');
+                                    $('#tipoCreas').html('alta');
                                     break;
+
                                 case 'baja':
-                                    console.log('crear una BAJ de la nada');
+                                    console.log('crear una BAJA de la nada');
+                                    //
                                     // Eliminamos el formulario de alta
+                                    //
                                     $('#formulario-alta').html('');
-                                    break;
+                                    $('#tipoCreas').html('baja');
+                                break;
                             
                                 default:
-                                    console.log('seria EDITAR o PASAR a alta o baja ');
-                                    // Dejamos los dos formularios
+                                    //
+                                    // Agregamos el usuario que editamos
+                                    //
+                                    $('#empleadoID').val(params[i][1]);
+
+                                    // Nombre de quien vemos
+                                    $('#tipoEdita').html('Manolo');
+                                    // Cogemos si es Alta o Baja
+                                    let type = params[1][1].toLowerCase();
+                                    switch (type) {
+                                        case 'alta':
+                                            console.log('EDITAR una ALTA');
+                                            // descomentamos el boton de dar de baja
+                                            $('#dar-de-baja').removeClass('hidden');
+                                            // Eliminamos el formulario de baja
+                                            $('#formulario-baja').html('');
+                                            $('#tipoCreas').html('alta');
+                                            // Rellenar formulario con los datos
+                                            fillForm('#formulario-alta');
+                                        break;
+
+                                        case 'baja':
+                                            console.log('EDITAR una BAJA');
+                                            // descomentamos el boton de dar de alta
+                                            $('#dar-de-alta').removeClass('hidden');
+                                            // Eliminamos el formulario de alta
+                                            $('#formulario-alta').html('');
+                                            $('#tipoCreas').html('baja');
+                                            // Rellenar formulario con los datos
+                                            fillForm('#formulario-baja');
+                                        break;
+                                    }
                                     break;
                             }
                             break;
@@ -671,23 +865,54 @@
             });
 
         //
+        // Ocultar o mostrar campos de Baja (motivo de baja)
+        //
+            $(document).on('change', '#baja', function () {
+                let selectData = $(this).val();
+
+                // Ocultar campos si es necesario
+                if (!$("#motivoBaja").hasClass("hidden")){
+                    $("#motivoBaja").addClass('hidden');
+                }
+
+                // Mostrar si es alguno de los señalados
+                switch (selectData) {
+                    case '6':
+                        $("#motivoBaja").removeClass('hidden');
+                        break;
+                
+                    default:
+                        break;
+                }
+            });
+
+        //
         // Almacenar
         //
             $(document).on('click', '.almacenar-datos', function () {
-                let params = getAllGetParams();
+                let params      = getAllGetParams();
+                let formData    = {};                   // Metemos los datos del formulario
+                let mensaje     = '';                   // mensaje en alert de mientras
+
                 for(var i in params){     
                     switch (params[i][0]) {
                         case 'id':
                             switch (params[i][1]) {
                                 case 'alta':
-                                    alert('crear una ALTA de la nada');
+                                    formData['method']  = 'laboral_alta';
+                                    formData['data']    = dataForm('#formulario-alta');
+                                    mensaje             = 'crear una ALTA de la nada';
                                     break;
                                 case 'baja':
-                                    alert('crear una BAJ de la nada');
+                                    formData['method']  = 'laboral_baja';
+                                    formData['data']    = dataForm('#formulario-baja');
+                                    mensaje             = 'crear una BAJA de la nada';
                                     break;
                             
                                 default:
-                                    alert('seria EDITAR o PASAR a alta o baja ');
+                                    formData['method']  = 'laboral_editar';
+                                    formData['data']    = dataForm('#formulario-alta');
+                                    mensaje             = 'seria EDITAR o PASAR a alta o baja';
                                     break;
                             }
                             break;
@@ -696,6 +921,31 @@
                             break;
                     }
                 }
+
+                console.log(formData);
+                alert(mensaje);
+            });
+
+        //
+        // Quiere es dar de baja (para rellenar los datos)
+        //
+            $(document).on('click', '.dar-baja', function () {
+                let id      = $('#empleadoID').val();
+                let type    = 'baja';
+        
+                // recargamos la pagina
+                location.href = 'new.html?id=' + id + '&tipo=' + type;
+            });
+
+        //
+        // Quiere es dar de alta (para rellenar los datos)
+        //
+            $(document).on('click', '.dar-alta', function () {
+                let id      = $('#empleadoID').val();
+                let type    = 'alta';
+
+                // recargamos la pagina
+                location.href = 'new.html?id=' + id + '&tipo=' + type;
             });
 
         //
@@ -717,6 +967,90 @@
 
                 return result;
             }
+
+        //
+        // Coger valores del formulario
+        //
+            function dataForm(formID){
+                let fields   = 'input, select, textarea'
+                let formData = {};
+
+                $(formID).find(fields).each(function () {
+                    if( this.type == 'radio' || this.type == 'checkbox'){
+                        // Coger solo el valor con checked
+                        if(this.checked){
+                            formData[this.name] = this.value;
+                        }
+                    } else {
+                        formData[this.name] = this.value;
+                    }
+                });
+
+                return formData;
+            }
+
+        //
+        // Rellenar formulario
+        //
+            function fillForm(formID){
+                let fields   = 'input, select, textarea'
+                
+                $(formID).find(fields).each(function () {
+                    switch (this.type) {
+                        // Texto
+                        case 'text':
+                            switch (this.name) {
+                                case 'nombre':
+                                    $( "input[name*='"+this.name+"']" ).val("Manolo");
+                                    break;
+                                case 'dni':
+                                    $( "input[name*='"+this.name+"']" ).val("91556716H");
+                                    break;
+                                case 'naf':
+                                    $( "input[name*='"+this.name+"']" ).val("016896821030");
+                                    break;
+                                case 'nacionalidad':
+                                    $( "input[name*='"+this.name+"']" ).val("España");
+                                    break;
+                                case 'domicilio':
+                                    $( "input[name*='"+this.name+"']" ).val("calle de manolo");
+                                    break;
+                                    
+                                default:
+                                    $( "input[name*='"+this.name+"']" ).val("texto que ponemos en los input text...");
+                                    break;
+                            }
+                        break;
+                        // Numerico
+                        case 'number':
+                            switch (this.name) {
+                                case 'cp':
+                                    $( "input[name*='"+this.name+"']" ).val(11405);
+                                    break;
+                                
+                                default:
+                                    break;
+                            }
+                        break;
+                        // Fecha
+                        case 'date':
+                            let now = new Date();
+                            let day = ("0" + now.getDate()).slice(-2);
+                            let month = ("0" + (now.getMonth() + 1)).slice(-2);
+                            let today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+                            $( "input[name*='"+this.name+"']" ).val(today);
+                        break;
+
+                        default:
+                            // Select
+                            $( "select[name*='"+this.name+"']" ).val(1);
+                            // Texto
+                            $( "textarea[name*='"+this.name+"']" ).val("texto que ponemos en los textarea...");
+                            break;
+                    }
+                });
+            }
+
     </script>
     <!-- FIN Scripts -->
 </body>
