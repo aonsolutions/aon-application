@@ -282,19 +282,19 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			}
 			else if(ImportType.INVOICE.equals(importType)) {
 				ivs.put(hashId, InvoiceImport.getInstance().importation(domain, user.getLogin(), data));
-				rowCount = ivs.size();
+				rowCount = ivs.get(hashId).size();
 			}
 			else if(ImportType.REGISTRY.equals(importType)) {
 				rvs.put(hashId, RegistryImport.getInstance().importation(domain, user.getLogin(), data));
-				rowCount = rvs.size();
+				rowCount = rvs.get(hashId).size();
 			}
 			else if(ImportType.DIARY.equals(importType)) {
 				dvs.put(hashId, DiaryImport.getInstance().importation(domain, user.getLogin(), data));
-				rowCount = dvs.size();
+				rowCount = dvs.get(hashId).size();
 			}
 			else if(ImportType.PGC.equals(importType)) {
 				accounts.put(hashId, PGCImport.getInstance().importation(domain, user.getLogin(), data));
-				rowCount = accounts.size();
+				rowCount = accounts.get(hashId).size();
 			}
 
 			workbook.close();
@@ -337,15 +337,19 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				}
 				else if(ImportType.INVOICE.equals(importType)) {
 					ivs.put(hashId, InvoiceImport.getInstance().importationX(domain, user.getLogin(), data));
+					rowCount = ivs.get(hashId).size();
 				}
 				else if(ImportType.REGISTRY.equals(importType)) {
 					rvs.put(hashId, RegistryImport.getInstance().importationX(domain, user.getLogin(), data));
+					rowCount = rvs.get(hashId).size();
 				}
 				else if(ImportType.DIARY.equals(importType)) {
 					dvs.put(hashId, DiaryImport.getInstance().importationX(domain, user.getLogin(), data));
+					rowCount = dvs.get(hashId).size();
 				}
 				else if(ImportType.PGC.equals(importType)) {
 					accounts.put(hashId, PGCImport.getInstance().importationX(domain, user.getLogin(), data));
+					rowCount = accounts.get(hashId).size();
 				}				
 				workbook.close();
 			} catch (IOException e1) {
