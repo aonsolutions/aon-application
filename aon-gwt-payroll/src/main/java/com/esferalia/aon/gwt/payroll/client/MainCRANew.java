@@ -572,7 +572,7 @@ public class MainCRANew extends MainEntryPoint {
 			@Override
 			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
 				if(null != object) {
-					if(object.getDomain() == mainCRAObjectNew.getDomainId() || object.getDomain().equals(mainCRAObjectNew.getDomainId()))
+//					if(object.getDomain() == mainCRAObjectNew.getDomainId() || object.getDomain().equals(mainCRAObjectNew.getDomainId()))
 						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-delete\" style=\"border: none !important; height: 20px;\"></button>");
 				}
 			}
