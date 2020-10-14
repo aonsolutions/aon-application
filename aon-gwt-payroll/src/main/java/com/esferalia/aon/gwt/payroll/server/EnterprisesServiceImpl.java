@@ -107,6 +107,7 @@ import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
+import solutions.aon.saltra.api.ForbiddenException;
 import solutions.aon.saltra.api.Saltra;
 import solutions.aon.saltra.api.SaltraException;
 
@@ -2208,6 +2209,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			return enterpriseStatus;				
 			
+		} catch ( ForbiddenException e) {
+			return new EnterpriseStatus.Forbidden();
 		} catch ( SaltraCredentialsNotFoundException e) {
 			return new EnterpriseStatus.CredentialsNotFound();
 		} catch (  ParseException | IOException | SQLException  | SaltraException e ) {

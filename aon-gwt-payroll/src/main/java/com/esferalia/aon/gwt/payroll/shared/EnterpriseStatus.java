@@ -7,8 +7,16 @@ public abstract class EnterpriseStatus implements Serializable {
 
 	public static interface Visitor  {
 		void up2Date();
+		void forbidden();
 		void saltraCredentialsNotFound();
 		void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound);
+	}
+	
+	public static class Forbidden extends EnterpriseStatus{
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.forbidden();
+		}
 	}
 	
 	public static class CredentialsNotFound extends EnterpriseStatus{
@@ -132,6 +140,11 @@ public abstract class EnterpriseStatus implements Serializable {
 			}
 			
 			@Override
+			public void forbidden() {
+				System.out.println("forbidden");
+			}
+			
+			@Override
 			public void saltraCredentialsNotFound() {
 				System.out.println("saltraCredentialsNotFound");
 			}
@@ -150,6 +163,11 @@ public abstract class EnterpriseStatus implements Serializable {
 			
 			@Override
 			public void up2Date() {
+			}
+			
+			@Override
+			public void forbidden() {
+				throw new OutOfDateException();
 			}
 			
 			@Override
