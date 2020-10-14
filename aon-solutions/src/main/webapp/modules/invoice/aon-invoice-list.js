@@ -49,12 +49,14 @@ class AonInvoiceList extends HTMLElement {
 
 	init() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-		getInvoices(this.getFilter()).then(invoices => {
-			aonInvoiceTable.removeRows();
-			invoices.forEach((invoice, i) => {
-				aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice));
+		if(aonInvoiceTable) {
+			getInvoices(this.getFilter()).then(invoices => {
+				aonInvoiceTable.removeRows();
+				invoices.forEach((invoice, i) => {
+					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice));
+				});
 			});
-		});
+		}
 	}
 
 	aonInvoice(invoice) {
