@@ -2,6 +2,7 @@ import {isMobile} from  '../../services/utils.js';
 import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
 import {getDomainApps, setDomainApp} from  '../../services/service.js';
+import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
@@ -58,8 +59,6 @@ class AonDesktop extends HTMLElement {
 	}
 
 	connectedCallback () {
-
-
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
 			getDomainApps(company.domain).then(r => {
@@ -346,7 +345,16 @@ class AonDesktop extends HTMLElement {
 			{
 				name: 'Bidoq',
 				img: '../assets/apps/bidoq.png',
-				fn: () =>  open('https://mispapeles.es/')
+				fn: () =>{
+					bidoq().then(r => {
+						let data = JSON.parse(r);
+						if(data && data.datos && data.datos.ruta) {
+							open(data.datos.respuesta);
+						} else {
+							open('https://mispapeles.es/');
+						}
+					});
+				}
 			}
 		];
 		aonDesktop.addSidenavOptions('VISTA CLÁSICA', classicOptions);
