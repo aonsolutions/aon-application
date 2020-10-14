@@ -32,62 +32,29 @@
                             <div class="col-12 border pb-2">
                                 <div class="row">
                                     <div class="col-12 mt-2">
-                                        <h3>Nuevo ticket</h3>
+                                        <h3>Nueva FAQ</h3>
                                     </div>
+                                    <div class="col-12 mt-2">
                                     <form method="post" id="formulario" enctype="multipart/form-data">
                                         <div class="col-12 mt-2">
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <label class="font-weight-bold" for="subject">Asunto:</label>
-                                                    <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
-                                                    <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
+                                                    <label class="font-weight-bold" for="question">Pregunta</label>
+                                                    <input type="text" id="question" name="question" class="form-control" value="" placeholder="" />
+                                                    <label class="d-none errores error-question text-ayudat font-weight-bold">Introduce la pregunta.</label>
                                                 </div>
                                                 <div class="col-12 mt-2">
-                                                    <div class="row">
-                                                        <div class="col-4">
-                                                            <label class="font-weight-bold" for="subject">Tema:</label>
-                                                            <select class="form-control" id="select-theme" name="select-theme">
-                                                                <option value="">Elija un tema</option>
-                                                                <option value="1">Error</option>
-                                                                <option value="2">Sugerencia</option>
-                                                                <option value="3">Consulta</option>
-                                                            </select>
-                                                            <label class="d-none errores error-theme text-ayudat font-weight-bold">Debe seleccionar el tema del ticket</label>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <label class="font-weight-bold" for="subject">Destinatario:</label>
-                                                            <select class="form-control" id="select-postings" name="select-postings">
-                                                                <option value="">Elija un destinatario</option>
-                                                            </select>
-                                                            <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <label class="font-weight-bold" for="priority">Prioridad:</label>
-                                                            <select class="form-control" id="select-priority">
-                                                                <option value="">Elija prioridad</option>
-                                                                <option value="Alta">Alta</option>
-                                                                <option value="Media">Media</option>
-                                                                <option value="Baja">Baja</option>
-                                                            </select>
-                                                            <label class="d-none errores error-priority text-ayudat font-weight-bold">Debe elegir la prioridad del ticket</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12 mt-2">
-                                                    <label class="font-weight-bold">Mensaje:</label>
-                                                    <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
+                                                    <label class="font-weight-bold">Respuesta:</label>
+                                                    <label class="d-none errores error-editor text-ayudat font-weight-bold">Introduce la respuesta.</label>
                                                     <div id="editor"></div>
                                                 </div>
                                                 <div class="col-12 mt-2">
-                                                    <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
-                                                    <input type="file" id="attached" name="attached[]" class="form-control" multiple/>
-                                                </div>
-                                                <div class="col-12 mt-2">
-                                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
+                                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Guardar</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -98,117 +65,69 @@
         <!-- Scripts -->
         <script src="../js/app.js"></script>
         <script>
-            let theEditor;
-            // Inicializamos CKEditor
-            ClassicEditor.create( document.querySelector('#editor'),{
-                language: 'es'
-            })
-            .then(editor => {
-                theEditor = editor;
-                $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 200px !important;}</style>').insertAfter('#editor');
-            })
-            .catch( error => {
-                console.error( error );
-            } );
 
-            // Array de estados del ticket
-            var statusArray = ['Cerrado', 'Abierto', 'Resuelto'];
-
-            $(document).ready(function(){
+            $(function() {
                 // Datos del ticket en JSON
-                var nuevoTicket = {
+                let nuevoFaq = {
                     userIdLogin : "425",              // ID del usuario logueado
-                    postings : {                        // destinos posibles
-                        0 : {
-                            id : 1,
-                            name : "Programación"
-                        },
-                        1 : {
-                            id : 2,
-                            name : "Calidad"
-                        },
-                        2 : {
-                            id : 3,
-                            name : "Administración"
-                        }
-                    }
+                    faqCategoria : "",
+                    faqQuestion : "",
+                    faqAnswer : "",
                 };
+                let theEditor;
 
-                // Leemos los datos del ticket y rellenamos los datos necesarios
-                for (const prop in nuevoTicket.postings) {
-                    var posting = nuevoTicket.postings[prop];
+                // Inicializamos CKEditor
+                ClassicEditor.create( document.querySelector('#editor'), {
+                    language: 'es'
+                })
+                    .then(editor => {
+                        theEditor = editor;
+                        $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 200px !important;}</style>').insertAfter('#editor');
+                    })
+                    .catch( error => {
+                        console.error( error );
+                    } );
 
-                    $('#select-postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
-                }
-            });
+                // Enviar FAQ
+                $('#btn-send').click(function() {
+                    let envio = true;
 
-            // Enviar mensage nuevo
-            $('#btn-send').click(function(){
-                var envio = true;
+                    // Quitamos todos los errores
+                    $('.errores').each(function() {
+                        $(this).addClass('d-none');
+                    });
 
-                // Quitamos todos los errores
-                $('.errores').each(function(){
-                    $(this).addClass('d-none');
+                    // Creamos el formData para enviar
+                    let formData = new FormData();
+
+                    // Añadimos el resto de datos del formulario
+                    let respuesta = theEditor.getData();
+                    if(respuesta == '') {
+                        $('.error-respuesta').removeClass('d-none');
+                        envio = false;
+                    }
+                    formData.append("answer", respuesta);
+
+                    let pregunta = $("#question").val();
+                    if(pregunta == '') {
+                        $('.error-question').removeClass('d-none');
+                        envio = false;
+                    }
+                    formData.append('question', pregunta);
+
+                    if(envio) {
+                        // Enviamos los datos del nuevo ticket por AJAX
+                        // TO-DO
+                        let response = {
+                            faqId : '1'
+                        };
+
+                        // Al recibir que se ha creado, recibiremos el FAQ ID, devolvemos a la pantalla de detalle del FAQ
+                        document.location.href = "show.html?id=" + response.faqId;
+                    } else {
+                        return 0;
+                    }
                 });
-
-                // Creamos el formData para enviar
-                var formData = new FormData();
-
-                // Añadimos los adjuntos
-                var files = $("#attached")[0].files;
-
-                for (const prop in files) {
-                    formData.append('file', files[prop]);
-                }
-
-                // Añadimos el resto de datos del formulario
-                var msgUser = theEditor.getData();
-                if(msgUser == ''){
-                    $('.error-msg').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append("message", msgUser);
-
-                var subject = $("#subject").val();
-                if(subject == ''){
-                    $('.error-subject').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append('subject', subject);
-
-                var theme = $("#select-theme").val();
-                if(theme == ''){
-                    $('.error-theme').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append('theme', theme);
-
-                var postings = $("#select-postings").val();
-                if(postings == ''){
-                    $('.error-postings').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append('postings', postings);
-
-                var priority = $("#select-priority").val();
-                if(priority == ''){
-                    $('.error-priority').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append('priority', priority);
-
-                if(envio){
-                    // Enviamos los datos del nuevo ticket por AJAX
-                    // TO-DO
-                    var respuesta = {
-                        ticketId : '245673'
-                    };
-
-                    // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
-                    document.location.href = "show.html?id="+respuesta.ticketId;
-                } else {
-                    return 0;
-                }
             });
         </script>
         <!-- FIN Scripts -->

@@ -18,22 +18,17 @@ class AonFaqs extends HTMLElement {
 
 		let options = [
 			{
-				name: 'Index',
-				icon: 'message',
+				name: 'Listar FAQs',
+				icon: 'view_list',
 				fn: () => this.loadIndex()
 			},
 			{
-				name: 'Crear',
-				icon: 'message',
+				name: 'Crear FAQ',
+				icon: 'add_box',
 				fn: () => this.loadCreate()
-			},
-			{
-				name: 'Show',
-				icon: 'message',
-				fn: () => this.loadShow()
 			}
 		];
-		aonFaqs.addSidenavOptions('OPCIONES', options);
+		aonFaqs.addSidenavOptions('Acciones', options);
 		this.loadIndex();
 	}
 
