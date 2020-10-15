@@ -601,7 +601,7 @@ public class SituacionEmpresa {
 
 			@Override
 			public void visit_dir_emp_piso(String dir_emp_piso) {
-				stringBuffer.append(String.format("\tDir. emp. piso: \"%S\"\n", dir_emp_es));				
+				stringBuffer.append(String.format("\tDir. emp. piso: \"%S\"\n", dir_emp_piso));				
 			}
 
 			@Override
