@@ -126,6 +126,8 @@
         <script type="module">
             import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
 
+            const MAX_FILE_SIZE = 5;
+
             $(document).ready(function(){
                 // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
                 window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
@@ -159,8 +161,6 @@
                         "carpeta": window.selectedFolder
                     }).then((data) => {
                         const documents = JSON.parse(data).datos;
-
-                        console.log(documents);
 
                         if (typeof documents !== 'undefined') {
                             const list = documents.map(document => ({
@@ -513,9 +513,21 @@
                     }
                 });
 
-                // TODO: Quitar la posibilidad de subir documentos a la carpeta "Contabilizados"
                 $(document).on('change', '#upload', function() {
-                    const filesPromises = Array.from(this.files).map(async (file) => {
+                    let uploadError = false;
+
+                    // No permitimos subir archivos que superen el peso máximo permitido
+                    const filesPromises = Array.from(this.files).filter((file) => {
+                        if ((file.size / 1024 / 1024) < MAX_FILE_SIZE) {
+                            return true;
+                        } else {
+                            uploadError = true;
+
+                            alert(`El documento ${file.name} excede el peso máximo`);
+
+                            return false;
+                        }
+                    }).map(async (file) => {
                         // Le quitamos la extensión al fichero para quedarnos solo con el nombre
                         let fileName = file.name.split('.');
 
@@ -527,7 +539,7 @@
                             "image_content": await readFile(file),
                             "image_name": fileName,
                             "image_type": file.type.split('/')[1],
-                            "image_size": file.size // TODO: No permitir archivos de más de 5MB
+                            "image_size": file.size
                         };
                     });
 
@@ -542,19 +554,18 @@
 
                             if (typeof response !== 'undefined') {
                                 let responseMessage = '';
-                                let error = false;
 
                                 for (let i = 0; i < response.length; i++) {
                                     const documentResponse = response[i];
 
-                                    if (!error && documentResponse.code !== 0) {
-                                        error = true;
+                                    if (!uploadError && documentResponse.code !== 0) {
+                                        uploadError = true;
 
                                         alert(`Ocurrió un error al intentar subir el documento: ${documentResponse.message}`);
                                     }
                                 }
 
-                                if (!error) {
+                                if (!uploadError) {
                                     alert('Los documentos han sido subidos con éxito');
 
                                     // Recargamos la página

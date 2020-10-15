@@ -6,6 +6,7 @@ const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
 const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
 
 export const CARPETA_A_CONTABILIZAR = 5;
+const CARPETA_CONTABILIZADOS = 14;
 
 export const bidoq = (additionalData) => {
     // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
@@ -67,6 +68,14 @@ class AonDocumental extends HTMLElement {
 
     loadIndex(folder = CARPETA_A_CONTABILIZAR) {
         let aonDocumental = document.getElementById('aonDocumental');
+
+        // No permitimos subir documentos a la carpeta "Contabilizados"
+        const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
+
+        if (parseInt(folder) === CARPETA_CONTABILIZADOS) {
+            uploadButton.style.display = 'none';
+        }
+
         aonDocumental.setContentHTML('<iframe src="./index.html?folder=' + folder + '" style="width:100%;height:100%;border:none;"></iframe>');
     }
 
