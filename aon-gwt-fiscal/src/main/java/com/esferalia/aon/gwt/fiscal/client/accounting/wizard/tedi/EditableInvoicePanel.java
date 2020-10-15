@@ -1563,7 +1563,13 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 
 	protected void duaInvoiceChanged(IInvoicePanelCallback invoiceCallback) {
-		InvoiceCalculator.calculateDUAInfo( invoiceCallback.getInvoice() );
+		AccountingInvoice ai = invoiceCallback.getInvoice();
+		if ( ai.getDuaInvoice() != null 
+			&& ai.getDuaInvoice().getInfo() != null 
+			&& ai.getDuaInvoice().getInfo().isAuthCalcEnabled()) {
+			
+			InvoiceCalculator.calculateDUAInfo( invoiceCallback.getInvoice() );
+		}
 		InvoiceCalculator.calculateViaDUA(invoiceCallback.getInvoice());
 		duaPanel.populate(invoiceCallback);
 		invoiceCallback.getInvoice().setPrepayments(invoiceCallback.getInvoice().getDuaInvoice() != null);

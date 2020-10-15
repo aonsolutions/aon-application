@@ -1294,7 +1294,7 @@ public class InvoiceDAO {
 								.set(INVOICE_TAX.QUOTA, quota )
 								.set(INVOICE_TAX.SURCHARGE_QUOTA, surchargeQuota)
 								.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
-								.set(INVOICE_TAX.QUOTA, quota)
+								.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, quota)
 								.where(INVOICE_TAX.ID.equal( taxId ))
 								.execute();
 						ctx.log().info("\tUPDATE INVOICE_TAX (RESTORE PREVIOUS INFO): " + id + " ("+count+" filas)");	

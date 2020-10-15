@@ -24,7 +24,7 @@ public class AccountingDUAInfo implements Serializable {
 	private Account vatAccount;
 	private LinkedList<InvoiceVAT> duaVats;
 	
-	private boolean dutyTotalEdited;
+	private boolean authCalcEnabled;
 	
 	public Integer getId() {
 		return id;
@@ -115,11 +115,11 @@ public class AccountingDUAInfo implements Serializable {
 		return this;
 	}
 
-	public boolean isDutyTotalEdited() {
-		return dutyTotalEdited;
+	public boolean isAuthCalcEnabled() {
+		return authCalcEnabled;
 	}
-	public AccountingDUAInfo setDutyTotalEdited(boolean dutyTotalEdited) {
-		this.dutyTotalEdited = dutyTotalEdited;
+	public AccountingDUAInfo setAuthCalcEnabled(boolean authCalcEnabled) {
+		this.authCalcEnabled = authCalcEnabled;
 		return this;
 	}
 	public LinkedList<InvoiceVAT> getDuaVats() {

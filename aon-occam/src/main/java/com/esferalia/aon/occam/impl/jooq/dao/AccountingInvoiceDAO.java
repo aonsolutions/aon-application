@@ -881,6 +881,9 @@ public class AccountingInvoiceDAO {
 				accountingDUAInvoice.getInfo().setDuaVats(duaVats);
 			}
 			ai.setDuaInvoice(accountingDUAInvoice);
+			
+			// TODO
+			accountingDUAInvoice.getInfo().setAuthCalcEnabled(false);
 		}
 	}
 
@@ -911,7 +914,7 @@ public class AccountingInvoiceDAO {
 				.set(INVOICE_TAX.SURCHARGE, vat.getSurcharge())
 				.set(INVOICE_TAX.SURCHARGE_QUOTA, vat.getSurchargeQuota())
 				.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
-				.set(INVOICE_TAX.QUOTA, vat.getQuota())
+				.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, vat.getQuota())
 				.where(INVOICE_TAX.ID.equal( vat.getId()))
 				.and(INVOICE_TAX.DOMAIN.equal( accInvoice.getInvoice().getDomain()))
 				.execute();
@@ -948,7 +951,7 @@ public class AccountingInvoiceDAO {
 				.set(INVOICE_TAX.SURCHARGE, vat.getSurcharge())
 				.set(INVOICE_TAX.SURCHARGE_QUOTA, vat.getSurchargeQuota())
 				.set(INVOICE_TAX.DEDUCTIBLE_PERCENT, 100.0)
-				.set(INVOICE_TAX.QUOTA, vat.getQuota())
+				.set(INVOICE_TAX.DEDUCTIBLE_QUOTA, vat.getQuota())
 				.where(INVOICE_TAX.ID.equal( vat.getId()))
 				.and(INVOICE_TAX.DOMAIN.equal( accInvoice.getInvoice().getDomain()))
 				.execute();

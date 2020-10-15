@@ -9,17 +9,19 @@ import com.esferalia.aon.gwt.fiscal.client.widget.AccountingInvoiceBox;
 import com.esferalia.aon.occam.api.model.AccountingDUAInfo;
 import com.esferalia.aon.occam.api.model.AccountingDUAInvoice;
 import com.esferalia.aon.occam.api.model.AccountingInvoice;
-import com.esferalia.aon.occam.api.model.InvoiceCalculator;
 import com.esferalia.aon.occam.api.model.finance.InvoiceVAT;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.InlineLabel;
@@ -39,6 +41,7 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 	private DoubleBox dutyBase;
 	private DoubleBox dutyPercent;
 	private DoubleBox dutyTotal;
+	private CheckBox authCalc;
 	
 	public InvoiceDUAPanel(IInvoicePanelCallback callback) {
 		code = new TextBox();
@@ -48,6 +51,7 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 		dutyBase = new DoubleBox(10);
 		dutyPercent = new DoubleBox(5);
 		dutyTotal = new DoubleBox(10);
+		authCalc = new CheckBox( AON.MSG.authomaticCalculation() );
 
 		tab = new FlexTable();
 		tab.setStyleName(AON.AON_CSS.aonAccountTable());
@@ -149,7 +153,20 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 			}
 		});
 		tab.setWidget(row, col, code);
-		tab.getFlexCellFormatter().setColSpan(row, col, 3);
+		tab.getFlexCellFormatter().setColSpan(row, col, 2);
+		col++;
+		
+		authCalc.addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				AccountingDUAInfo info = callback.getInvoice().getDuaInvoice().getInfo();
+				info.setAuthCalcEnabled(authCalc.getValue());
+				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
+			}
+		});
+
+		
+		tab.setWidget(row, col, authCalc);
 		
 		row++;
 		col=0;
@@ -199,6 +216,9 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 				double sv = statisticalValue.getValue()==null?0.0:statisticalValue.getValue();
 				double a = AonMathUtils.round(sv - p);
 				callback.getInvoice().getDuaInvoice().getInfo().setAdjust(a);
+				if ( !authCalc.isAttached() ) {
+					callback.getInvoice().getDuaInvoice().getInfo().setStatisticalValue(sv);	
+				}
 				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			}
 		});
@@ -287,13 +307,6 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				double q = event.getValue() == null? 0 : event.getValue();
 				callback.getInvoice().getDuaInvoice().getInfo().setDutyTotal(q);
-				AccountingDUAInfo info = callback.getInvoice().getDuaInvoice().getInfo();
-				info.setDutyTotalEdited( AonMathUtils.isNotZero(InvoiceCalculator.getDutyTotalGap(info, q)) );
-				if (info.isDutyTotalEdited()) {
-					dutyTotal.setTitle("Importe aranceles modificada. Deber\u00EDa ser: " + InvoiceCalculator.getDutyTotal(info));
-				} else {
-					dutyTotal.setTitle(null);
-				}
 				SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 			}
 		});
@@ -351,13 +364,6 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					vat.setQuota(vatTotal.getValue() == null? 0 : vatTotal.getValue());
-					//				AccountingDUAInfo info = callback.getInvoice().getDuaInvoice().getInfo();
-					//				info.setVatTotalEdited( AonMathUtils.isNotZero(InvoiceCalculator.getVatTotalGap(info, q)) );
-					//				if (info.isVatTotalEdited()) {
-					//					vatTotal.setTitle("Importe aranceles modificada. Deber\u00EDa ser: " + InvoiceCalculator.getVatTotal(info));
-					//				} else {
-					//					vatTotal.setTitle(null);
-					//				}
 					SelectionEvent.fire(InvoiceDUAPanel.this, callback);
 				}
 			});
@@ -427,6 +433,7 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 					.setVatAccount(callback.getConfiguration().getDefaultDUAVatAccount() )
 					.setDutyAccount(callback.getConfiguration().getDefaultDUADutyAccount() )
 					.setDutyBase(duaInvoice.getAccountingInvoice().getTotalInvoice())
+					.setAuthCalcEnabled(true)
 			);
 			LinkedList<InvoiceVAT> duaVats = new LinkedList<InvoiceVAT>();
 			for (InvoiceVAT ori : duaInvoice.getAccountingInvoice().getVats()) {
@@ -453,6 +460,7 @@ public class InvoiceDUAPanel extends SimplePanel implements HasSelectionHandlers
 		duaInvoice.setValue(extInvoice,false);
 		duaInvoice.setEnabled(info.getId() == null);
 		code.setValue( info.getCode() );
+		authCalc.setValue(info.isAuthCalcEnabled());
 		price.setValue( info.getPrice(),false, AonNumberUtils.notEquals(price.getValue(), info.getPrice()));
 		adjust.setValue( info.getAdjust(),false, AonNumberUtils.notEquals(adjust.getValue(), info.getAdjust()));
 		statisticalValue.setValue( info.getStatisticalValue(),false , AonNumberUtils.notEquals(statisticalValue.getValue(), info.getStatisticalValue()));
