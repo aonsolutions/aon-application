@@ -1,0 +1,562 @@
+package com.esferalia.aon.occam.impl.jooq.dao;
+
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jooq.DSLContext;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
+import com.esferalia.aon.jooq.tables.records.EnterpriseRecord;
+import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
+import com.esferalia.aon.jooq.tables.records.RegistryRecord;
+import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.type.ContractModel;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.Gender;
+import com.esferalia.aon.occam.api.model.type.SSRegimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class EmployeeDAO {
+
+	public  static Employee addEmployee(AONContext aonContext, String domainName, Employee employee ) {
+		DSLContext dslContext = aonContext.getDslContext();
+		Integer domainId = 
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.where(DOMAIN.NAME.eq(domainName))
+		.fetchOptional(DOMAIN.ID)
+		.orElseThrow(IllegalStateException::new);
+		dslContext.transaction((config) -> { 
+			ContractRecord contractRecord = addEmployee(dslContext, domainId, employee);
+			employee.setEmployeeId(contractRecord.getId());
+			employee.setWorkplaceId(contractRecord.getWorkplace());
+		});
+		
+		return employee;
+	}
+
+	public static  ContractRecord addEmployee(DSLContext dslContext, Integer domainId, Employee employee ) {
+		
+		
+		EnterpriseCccRecord enterpriseCccRecord =
+		getEnterpriseCCC(dslContext, domainId, employee );
+		
+		RegistryRecord personRecord = 
+		getPerson(dslContext, domainId, employee);
+		
+		WorkplaceRecord workplaceRecord = 
+		getWorpPlace(dslContext, domainId, enterpriseCccRecord.getEnterpriseActivity(), employee);
+		
+		InsertSetMoreStep<ContractRecord> insertContract = 
+		dslContext
+		.insertInto(CONTRACT)
+		.set(CONTRACT.DOMAIN, domainId)
+		.set(CONTRACT.PERSON, personRecord.getId())
+		.set(CONTRACT.SS_REGIME, getSSRegime(employee))
+		.set(CONTRACT.WORKPLACE, workplaceRecord.getId())
+		.set(CONTRACT.ENTERPRISE_CCC, enterpriseCccRecord.getId())
+		.set(CONTRACT.ENTERPRISE_ACTIVITY, enterpriseCccRecord.getEnterpriseActivity())
+		.set(CONTRACT.START_DATE, toSql(employee.getStartDate()))
+		.set(CONTRACT.SENIORITY_DATE, toSql(employee.getStartDate()));
+		employee.getEndDate().ifPresent(endDate -> insertContract.set(CONTRACT.END_DATE, toSql(endDate)));
+		employee.getCategory().ifPresent(category -> insertContract.set(CONTRACT.CATEGORY_DESCRIPTION, category));
+		
+		ContractRecord contractRecord = insertContract.returning().fetchOne();
+		
+		InsertSetMoreStep<ContractDataRecord> insertContractData = 
+		dslContext
+		.insertInto(CONTRACT_DATA)
+		.set(CONTRACT_DATA.DOMAIN, domainId)
+		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+		.set(CONTRACT_DATA.NAME, "TC2" )
+		.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", employee.getContractType()))
+		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+		.newRecord()
+		.set(CONTRACT_DATA.DOMAIN, domainId)
+		.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+		.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION" )
+		.set(CONTRACT_DATA.EXPRESSION, String.format("\"%s\"", employee.getQuoteGroup()))
+		.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+		;
+		
+		employee.getFactor().ifPresent(factor -> {
+			insertContractData.newRecord()
+			.set(CONTRACT_DATA.DOMAIN, domainId)
+			.set(CONTRACT_DATA.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_DATA.NAME, "COEFICIENTE_PARCIALIDAD" )
+			.set(CONTRACT_DATA.EXPRESSION, Double.toString(factor))
+			.set(CONTRACT_DATA.START_DATE, toSql(employee.getStartDate()))
+			;
+		});
+		
+		insertContractData.execute();
+		
+		return contractRecord;
+	}
+
+	private static  EnterpriseCccRecord getEnterpriseCCC(DSLContext dslContext, Integer domainId, Employee employee) {
+		return dslContext
+		.select()
+		.from(ENTERPRISE_CCC)
+		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
+		.and(ENTERPRISE_CCC.CCC.eq(employee.getCcc()))
+		.and(ENTERPRISE_CCC.TYPE.eq(getCCCType(employee)))
+		.fetchOptionalInto(ENTERPRISE_CCC)
+		.orElseGet(() -> {
+			
+			EnterpriseActivityRecord enterpriseActivityRecord = 
+			getEnterpriseActivity(dslContext, domainId, employee);
+
+			InsertSetMoreStep<EnterpriseCccRecord> insertEnterpriseCCCRecord = 
+			dslContext
+			.insertInto(ENTERPRISE_CCC)
+			.set(ENTERPRISE_CCC.DOMAIN, domainId)
+			.set(ENTERPRISE_CCC.CCC, employee.getCcc())
+			.set(ENTERPRISE_CCC.TYPE, getCCCType(employee))
+			.set(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY, enterpriseActivityRecord.getId());
+			
+			getGeozone(dslContext, domainId, employee.getCcc())
+			.ifPresent( geozoneRecord ->  insertEnterpriseCCCRecord.set(ENTERPRISE_CCC.GEOZONE, geozoneRecord.getId()));
+			
+			return insertEnterpriseCCCRecord.returning().fetchOne();
+		});
+		
+		
+	}
+	
+	private static  WorkplaceRecord getWorpPlace(DSLContext dslContext, Integer domainId, Integer enterpriseActivityId, Employee employee) {
+		return 
+		dslContext
+		.select()
+		.from(WORKPLACE)
+		.innerJoin(PAYROLL_WORKPLACE).onKey()
+		.innerJoin(RADDRESS).onKey()
+		.innerJoin(GEOZONE).onKey()
+		.where(WORKPLACE.DOMAIN.eq(domainId))
+		.and(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseActivityId))
+		.and(GEOZONE.CODE.eq(employee.getCcc().substring(0,2)))
+		.fetchOptionalInto(WORKPLACE)
+		.orElseGet(() ->
+			dslContext
+			.select()
+			.from(WORKPLACE)
+			.innerJoin(PAYROLL_WORKPLACE).onKey()
+			.where(WORKPLACE.DOMAIN.eq(domainId))
+			.and(PAYROLL_WORKPLACE.ENTERPRISE_ACTIVITY.eq(enterpriseActivityId))
+			.fetchOptionalInto(WORKPLACE)
+			.orElseGet(() ->
+				dslContext
+				.select()
+				.from(WORKPLACE)
+				.innerJoin(PAYROLL_WORKPLACE).onKey()
+				.where(WORKPLACE.DOMAIN.eq(domainId))
+				.fetchAnyInto(WORKPLACE)
+			)
+		);
+		
+		
+	}
+
+	private static Optional<GeozoneRecord> getGeozone(DSLContext dslContext, Integer domainId, String ccc) {
+		String code = AonStringUtils.substring(ccc, 0, 2);
+		return 
+		dslContext
+		.select()
+		.from(GEOZONE)
+		.where(GEOZONE.DOMAIN.eq(domainId))
+		.and(GEOZONE.CODE.eq(code))
+		.fetchOptionalInto(GEOZONE)
+		;
+	}
+	
+
+	private static EnterpriseRecord getEnterprise(DSLContext dslContext, Integer domainId) {
+		return 
+		dslContext
+		.select()
+		.from(ENTERPRISE)
+		.where(ENTERPRISE.DOMAIN.eq(domainId))
+		.fetchOptionalInto(ENTERPRISE)
+		.orElseThrow(IllegalArgumentException::new)
+		;
+	}
+
+	private static EnterpriseActivityRecord getEnterpriseActivity(DSLContext dslContext, Integer domainId, Employee employee) {
+		return 
+		dslContext
+		.select()
+		.from(ENTERPRISE_ACTIVITY)
+		.innerJoin(ENTERPRISE_CCC).onKey()
+		.where(ENTERPRISE_ACTIVITY.DOMAIN.eq(domainId))
+		.and(ENTERPRISE_CCC.CCC.eq(employee.getCcc()))
+		.fetchOptionalInto(ENTERPRISE_ACTIVITY)
+		.orElseGet(() ->
+			// No enterprise activity for ccc, return any 
+			dslContext
+			.select()
+			.from(ENTERPRISE_ACTIVITY)
+			.innerJoin(ENTERPRISE_CCC).onKey()
+			.where(ENTERPRISE_ACTIVITY.DOMAIN.eq(domainId))
+			.limit(1)
+			.fetchOptionalInto(ENTERPRISE_ACTIVITY)
+			.orElseGet(() -> 
+				// No enterprise activity, return new one
+				dslContext
+				.insertInto(ENTERPRISE_ACTIVITY)
+				.set(ENTERPRISE_ACTIVITY.DOMAIN, domainId)
+				.set(ENTERPRISE_ACTIVITY.PRINCIPAL, (byte) 1)
+				.set(ENTERPRISE_ACTIVITY.ENTERPRISE, getEnterprise(dslContext, domainId).getRegistry())
+				.returning()
+				.fetchOne()
+			)
+		);
+	}
+
+
+	private static RegistryRecord getPerson(DSLContext dslContext, Integer domainId, Employee employee) {
+		return dslContext
+		.select()
+		.from(DOMAIN)
+		.innerJoin(PERSON).onKey()
+		.innerJoin(REGISTRY).onKey()
+		.where(PERSON.SOCIAL_SECURITY_NUM.eq(employee.getNaf()))
+		.and(DOMAIN.ID.eq(domainId))
+		.fetchOptionalInto(REGISTRY)
+		.orElseGet( () -> {
+		
+			InsertSetMoreStep<RegistryRecord> insertRegistry = 
+			dslContext
+			.insertInto(REGISTRY)
+			.set(REGISTRY.TYPE,  (byte) 0 )
+			.set(REGISTRY.DOMAIN, domainId)
+			.set(REGISTRY.DOCUMENT, trim(employee.getDni()))
+			.set(REGISTRY.DOCUMENT_TYPE, getDniType(employee.getDni()))
+			.set(REGISTRY.DOCUMENT_COUNTRY, getDniCountry(employee.getDni()))
+			.set(REGISTRY.NATIONALITY,  getDniCountry(employee.getDni()));
+			employee.getName().ifPresent(name -> insertRegistry.set(REGISTRY.NAME, name));
+		
+			RegistryRecord registryRecord = insertRegistry.returning().fetchOne();
+			
+			SelectConditionStep<Record1<Integer>> geozoneId = 
+			DSL
+			.select(GEOZONE.ID)
+			.from(GEOZONE)
+			.where(GEOZONE.DOMAIN.eq(domainId))
+			.and(GEOZONE.CODE.eq(AonStringUtils.substring(employee.getCcc(),0,2)))
+			;
+			
+			dslContext
+			.insertInto(RADDRESS)
+			.set(RADDRESS.DOMAIN, domainId)
+			.set(RADDRESS.REGISTRY, registryRecord.getId())
+			.set(RADDRESS.GEOZONE, geozoneId )
+			.execute();
+			;
+			
+			
+			employee.getPhone().ifPresent(phone ->{
+//				dslContext
+//				.insertInto(RMEDIA)
+//				.set(RMEDIA.DOMAIN, domainId)
+//				.set(RMEDIA.REGISTRY, registryRecord.getId())
+//				.set(RMEDIA.MEDIA, MediaType.CELLULAR.value())
+//				.set(RMEDIA.VALUE, phone )
+//				.execute();
+//				;
+			});
+			
+			InsertSetMoreStep<PersonRecord> insertPerson = 
+			dslContext
+			.insertInto(PERSON)
+			.set(PERSON.DOMAIN, domainId)
+			.set(PERSON.REGISTRY, registryRecord.getId())
+			.set(PERSON.SOCIAL_SECURITY_NUM, employee.getNaf());
+			
+			employee.getName().ifPresent(name -> {
+				getName(name).ifPresent(s -> insertPerson.set(PERSON.NAME,s));
+				getFirstSurname(name).ifPresent( s -> insertPerson.set(PERSON.FIRST_SURNAME, s));
+				getSecondSurname(name).ifPresent( s -> insertPerson.set(PERSON.SECOND_SURNAME, s));
+			});
+			
+			employee.getBirthDate().ifPresent(birthDate -> insertPerson.set(PERSON.BIRTH_DATE, toSql(birthDate)));
+			employee.getSex().map( sex -> getGender(sex)).ifPresent(gender -> insertPerson.set(PERSON.GENDER, gender.value()));
+
+			insertPerson.execute();
+
+			
+			return registryRecord;
+
+		});
+	}
+	
+	private static Gender getGender( String sex ) {
+		sex = AonStringUtils.trimToEmpty(sex);
+		sex = AonStringUtils.upperCase(sex);
+		switch (sex) {
+		case "F":
+			return Gender.FEMALE;
+		case "M":
+			return Gender.MALE;
+		default:
+			return Gender.UNKNOWN;
+		}
+	}
+	
+	private static Optional<String> getName(String name) {
+		String names [] = name.split("\\s+");
+		switch (names.length) {
+		case 3:
+			return Optional.of(names[2]);
+		case 4:
+			return Optional.of(String.format("%s %s", names[2], names[3]) );
+		default:
+			return Optional.of(name);
+		}
+	}
+	
+	private static Optional<String> getFirstSurname(String name) {
+		String names [] = name.split("\\s+");
+		switch (names.length) {
+		case 3:
+		case 4:
+			return Optional.of(names[0]);
+		default:
+			return Optional.empty();
+		}
+	}
+
+	private static Optional<String> getSecondSurname(String name) {
+		String names [] = name.split("\\s+");
+		switch (names.length) {
+		case 3:
+		case 4:
+			return Optional.of(names[1]);
+		default:
+			return Optional.empty();
+		}
+	}
+
+	private static String getDniCountry(String document) {
+		return "ES";
+	}
+
+	private static String trim(String document) {
+		return Document.trim(document);
+	}
+
+	private static byte getDniType(String document) {
+		return Document.parse(document).value();
+	}
+	
+	private static java.sql.Date toSql(Date date) {
+		return new java.sql.Date(date.getTime());
+	}
+	
+	private static byte getCCCType(Employee employee) {
+		
+		if ( "000".equals(employee.getContractType()))
+			return 5; // FELLOWS
+		
+		switch (getSSRegimeType(employee)) {
+		case GENERAL:
+			return 0; // PRINCIPAL
+//		case :
+//			return 1; // TRAINING
+//		case :
+//			return 2; // LEARNING
+//		case :
+//			return 3; // TRADE_REPRESENTATIVE
+//		case :
+//			return 4; // ASSIMILATEDS
+//		case :
+//			return 5; // FELLOWS
+		case DOMESTIC_EMPLOYEES:
+			return 6; // HOME_EMPLOYEES
+		case AGRICULTURAL:
+			return 7; // AGRICULTURAL
+		case ARTIST:
+			return 8; // ARTIST
+		default :
+			return 0; // PRINCIPAL
+
+		}
+	}
+	
+	private static byte getSSRegime(Employee employee) {
+		return getSSRegimeType(employee).getValue();
+	}
+	private static SSRegimeType getSSRegimeType(Employee employee) {
+		for (SSRegimeType type : SSRegimeType.values()) {
+			if ( type.getCode().equals(employee.getRegime())) 
+				return type;
+		}
+		return SSRegimeType.GENERAL;
+	}
+	
+	
+	
+	private static class Document {
+
+
+
+		private static DocumentType parse(String str) {
+			if (isCif(str)) {
+				return DocumentType.CIF;
+			}
+			else if (isDni(str)) {
+				return DocumentType.CIF;
+			}
+			else if (isNie(str)) {
+				return DocumentType.NIE;
+			}
+			else if (isNif(str)) {
+				return DocumentType.NIF;
+			}
+			return DocumentType.OTHER;
+		}
+		
+		private static String trim(String str) {
+			return str.length() > 9 ? str.replaceAll("^0+", ""): str;
+		}
+
+		private static boolean isDni(String str) {
+			// Nif.is(str, /^(\d{8})([A-HJ-NP-TV-Z])$/)
+			return is(str,"^(\\d{8})([A-HJ-NP-TV-Z])$");
+		}
+
+
+		private static boolean isNif(String str) {
+			// Nif.is(str, /^[KLM](\d{7})([A-HJ-NP-TV-Z])$/)
+			return is(str,"^[KLM](\\d{7})([A-HJ-NP-TV-Z])$");
+		}
+
+		private static boolean isNie(String str) {
+			// const match: RegExpMatchArray | null = str.toUpperCase().match(/^([XYZ])(\d{7})([A-HJ-NP-TV-Z])$/);
+			Matcher matcher = Pattern.compile("^([XYZ])(\\d{7})([A-HJ-NP-TV-Z])$").matcher(str.toUpperCase());
+			if ( matcher.matches() ) {
+				// const xyz = { X: 0, Y: 1, Z: 2 };
+				Map<Character,Integer> xyz = new HashMap<Character, Integer>(){
+					{
+						put('X',0);
+						put('Y',1);
+						put('Z',2);
+					}
+				};
+		        // return 'TRWAGMYFPDXBNJZSQVHLCKE'[+(xyz[match[1]] + match[2]) % 23] === match[3];
+				char match1 = matcher.group(1).charAt(0);
+				int match2 = Integer.parseInt(matcher.group(2));
+				char match3 = matcher.group(3).charAt(0);
+				return "TRWAGMYFPDXBNJZSQVHLCKE".charAt(xyz.get(match1) % 23 ) == match3;
+			}
+			return false;
+		}
+
+		private static boolean isCif(String str) {
+			// let match: RegExpMatchArray | null = str.toUpperCase().match(/^[A-JUV](\d{7})([0-9])$/);
+			Matcher matcher = Pattern.compile("^[A-JUV](\\d{7})([0-9])$").matcher(str.toUpperCase());
+			if ( matcher.matches() ) {
+				// return Nif.cifCtrlDigit(match[1]) === +match[2];
+				return getCifCtrlDigit(matcher.group(1)) == Integer.parseInt(matcher.group(2));
+			}
+			matcher = Pattern.compile("^[N-SW](\\d{7})([A-J])$").matcher(str.toUpperCase());
+			if ( matcher.matches() ) {
+				// return 'JABCDEFGHI'[Nif.cifCtrlDigit(match[1])] === match[2];
+				return "JABCDEFGHI".charAt(getCifCtrlDigit(matcher.group(1))) == matcher.group(2).charAt(0);
+			}
+			return false;
+		}	
+
+		private static boolean is(String str, String regex ) {
+			Matcher matcher = Pattern.compile(regex).matcher(str.toUpperCase());
+			if ( matcher.matches() ) {
+		        // return 'TRWAGMYFPDXBNJZSQVHLCKE'[+match[1] % 23] === match[2];
+				int match1 = Integer.parseInt(matcher.group(1));
+				char match2 = matcher.group(2).charAt(0);
+				return "TRWAGMYFPDXBNJZSQVHLCKE".charAt(match1 % 23 ) == match2;
+			}
+			return false;
+		}
+
+		private static int getCifCtrlDigit(String  str) {
+			int digits [] = new int [str.length()];		
+			for (int i = 0; i < str.length(); i++) {
+				digits[i] = Integer.parseInt(String.valueOf(str.charAt(i)));
+			}
+			return getCifCtrlDigit(digits);
+		}
+
+		private static int getCifCtrlDigit(int  digits []) {
+		    // const a = +digits[1] + +digits[3] + +digits[5];
+			int a = digits[1] + digits[3] + digits[5];
+			// const b1 = +digits[0] * 2;
+			int b1 = digits[0] * 2;
+			// const b3 = +digits[2] * 2;
+			int b3 = digits[2] * 2;
+			// const b5 = +digits[4] * 2;
+			int b5 = digits[4] * 2;
+			// const b7 = +digits[6] * 2;
+			int b7 = digits[6] * 2;
+
+			// const u1 = b1 % 10;
+			int u1 = b1 % 10;
+			// const d1 = (b1 - u1) / 10;
+			int d1 = (b1 - u1) / 10;
+			// const u3 = b3 % 10;
+			int u3 = b3 % 10;
+			// const d3 = (b3 - u3) / 10;
+			int d3 = (b3 - u3) / 10;
+			// const u5 = b5 % 10;
+			int u5 = b5 % 10;
+			// const d5 = (b5 - u5) / 10;
+			int d5 = (b5 - u5) / 10;
+			// const u7 = b7 % 10;
+			int u7 = b7 % 10;
+			// const d7 = (b7 - u7) / 10;
+			int d7 = (b7 - u7) / 10;
+			// const b = u1 + d1 + u3 + d3 + u5 + d5 + u7 + d7;
+			int b = u1 + d1 + u3 + d3 + u5 + d5 + u7 + d7;
+
+			// const c = a + b;
+			int c = a + b;
+			// const e = c % 10;
+			int e = c % 10;
+
+			// const d = e ? 10 - e : 0;
+			int d = e != 0 ? 10 - e : 0;
+
+			// return d;
+			return d;
+
+		}		
+	}	
+
+
+}

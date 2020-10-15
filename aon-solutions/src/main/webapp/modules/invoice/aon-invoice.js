@@ -119,7 +119,7 @@ import '../../components/aon-checkbox.js';
 			if(this._invoice.taxes.length > 1) {
 				total.readonly = 'readonly';
 			}
-			total.addEventListener('change', () => this.updateTotal());
+			total.addEventListener('change', () => this.updateTotal(total.value));
 			let tr2 = document.createElement('tr');
 			table.appendChild(tr2);
 
@@ -327,24 +327,27 @@ import '../../components/aon-checkbox.js';
 		}
 
 		updateTotal(value) {
-			this._invoice['total'] = value;
+			this._invoice.total = Number(value);
 			this.createTaxeFromTotal();
 			this.save();
 		}
 
 		createTaxeFromTotal() {
 			if (this._invoice.taxes.length === 0) {
+				alert(this._invoice.total);
 				let tax = {
 					type: 'IVA',
 					percentage: 21.0,
-					base: this.round(this._invoice.total / 1.21),
-					quota: this.round((this._invoice.total / 1.21) * 0.21)
+					base: this.round(Number(this._invoice.total) / 1.21),
+					quota: this.round(Number(this._invoice.total / 1.21) * 0.21)
 			 	};
+				alert(tax.base);
+				alert(tax.quota);
 				this._invoice.taxes.push(tax);
 				this.printTax(tax, 0);
 			} else if(this._invoice.taxes.length === 1){
-				this._invoice.taxes[0].quota = this.round(this._invoice.total * this._invoice.taxes[0].percentage / 100);
-				this._invoice.taxes[0].base = this.round(this._invoice.total - this._invoice.taxes[0].quota);
+				this._invoice.taxes[0].base = this.round(this._invoice.total / (1 + this._invoice.taxes[0].percentage / 100));
+				this._invoice.taxes[0].quota = this.round(this._invoice.total - this._invoice.taxes[0].base);
 				document.getElementById('taxBase0').value = this._invoice.taxes[0].base;
 				document.getElementById('taxQuota0').value = this._invoice.taxes[0].quota;
 			}
@@ -623,6 +626,7 @@ import '../../components/aon-checkbox.js';
 			if(!value) {
 				value = document.getElementById('taxPercentage' + index).value;
 			}
+			alert(value + ' - '+ this._invoice.taxes[index].base  )
 			this._invoice.taxes[index].percentage = Number(value);
 			this._invoice.taxes[index].quota = this.round(this._invoice.taxes[index].base / 100 * Number(value));
 			document.getElementById('taxQuota' + index).value = this._invoice.taxes[index].quota;

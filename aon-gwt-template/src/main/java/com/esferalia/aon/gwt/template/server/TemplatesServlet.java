@@ -130,7 +130,8 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	static final String YEARLY = "Anual";//BillingPeriod.YEARLY.getName();
 
 	HashMap<String, ProductInfo> map = new HashMap<String, ProductInfo>();
-	public static byte[] out;
+	
+	public static HashMap<String, byte[]> out;
 	static Integer size;
 	private static String mimetype;
 
@@ -138,14 +139,17 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return new TemplatesServlet();
 	}
 
-	public static byte[] getOut() {
+	public static HashMap<String, byte[]> getOut() {
 		return out;
 	}
-
-	public static void setOut(byte[] out2) {
-		out = out2;
+	
+	public static void addOut(String hashId, byte[] data) {
+		if(out == null) {
+			out = new HashMap<String, byte[]>();
+		}
+		out.put(hashId, data);
 	}
-
+	
 	public static String getMimetype() {
 		return mimetype;
 	}
@@ -231,8 +235,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
-		
-		String hashId = Base64.encode(domain.getName() + user.getLogin());
 		this.ti = ti;
 		error = new Error();
 		verror = new LinkedList<String>();
@@ -241,7 +243,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 		com.esferalia.aon.gwt.template.shared.Error error = new Error();
 
-		if(getOut() == null){
+		String hashId = Base64.encode(domain.getName() + user.getLogin());		
+		byte[] data = getOut().get(hashId);
+		
+		if(data == null){
 			error.setError(false);
  			textError =  textError + "*No ha importado ning�n archivo.\n";
 			verror.add("*No ha importado ning�n archivo.");
@@ -250,10 +255,9 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			return -1;
 		}
 
+		saveImportation(domain, user, importType, data);
 		Iterator<Row> rowIterator;
 		try {
-			byte[] data = getOut();
-			saveImportation(domain, user, importType, data);
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
 
 			HSSFWorkbook workbook = new HSSFWorkbook(bais);
@@ -306,10 +310,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			error.setTextError(verror);
 			this.error = error;
 			e.printStackTrace();
+			getOut().remove(hashId);
 			return -1;
 		} catch (OfficeXmlFileException e){
 			try {
-				byte[] data = getOut();
 				ByteArrayInputStream bais = new ByteArrayInputStream(data);
 
 				XSSFWorkbook workbook = new XSSFWorkbook(bais);
@@ -360,9 +364,11 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				error.setTextError(verror);
 				this.error = error;
 				e.printStackTrace();
+				getOut().remove(hashId);
 				return -1;
 			}
 		}
+		getOut().remove(hashId);
 		return rowCount;
 	}
 
@@ -485,7 +491,8 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 		this.fees = fees;
 		if(rowCount != -1) rowCount = fees.size();
-		setOut(null);
+		String hashId = Base64.encode(domain.getName() + user.getLogin());
+		getOut().remove(hashId);
 		setMimetype(null);
 
 	}
@@ -862,7 +869,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		});
 		this.stock = stock;
 		if(rowCount != -1) rowCount = stock.size();
-		setOut(null);setMimetype(null);
 		return rowCount;
 	}
 
@@ -1048,7 +1054,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		this.stock = stock;
 		this.stockMap = stockMap;
 		if(rowCount != -1) rowCount = stock.size();
-		setOut(null);setMimetype(null);
 
 		return rowCount;
 	}
@@ -1360,7 +1365,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			rowCount = -1;
 		}
 		if(rowCount != -1) rowCount = products.size();
-		setOut(null);setMimetype(null);
 	}
 
 	public Boolean esta(com.esferalia.aon.occam.api.model.product.ProductTag pt, LinkedList<com.esferalia.aon.occam.api.model.product.ProductTag> pts){
@@ -2012,7 +2016,10 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 			error.setTextError(verror);
 			return error;
 		}
-    	byte[] data = getOut();
+    	
+    	String hashId = Base64.encode(domain.getName() + user.getLogin());		
+		byte[] data = getOut().get(hashId);
+		
 		byte[] xml = null;
 
     	if(getMimetype().equals(MimeType.CSV.getName()) && (ecommerce.equals(Ecommerce.EBAY) || ecommerce.equals(Ecommerce.GENERIC))){
@@ -2566,10 +2573,12 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return saveFile(domain, file);
 	}
 
-	public Integer excelRowNumber(){
-		if(getOut() != null){
+	public Integer excelRowNumber(Domain domain, User user){
+		String hashId = Base64.encode(domain.getName() + user.getLogin());		
+		byte[] data = getOut().get(hashId);
+		if(data != null){
 			try{
-				byte[] data = getOut();
+				
 				ByteArrayInputStream bais = new ByteArrayInputStream(data);
 
 				HSSFWorkbook workbook = new HSSFWorkbook(bais);
@@ -2582,7 +2591,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 				return 1;
 			} catch (OfficeXmlFileException e){
 				try {
-					byte[] data = getOut();
 					ByteArrayInputStream bais = new ByteArrayInputStream(data);
 
 					XSSFWorkbook workbook = new XSSFWorkbook(bais);

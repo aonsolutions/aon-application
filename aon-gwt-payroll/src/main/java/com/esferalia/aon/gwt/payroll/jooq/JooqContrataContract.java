@@ -557,9 +557,6 @@ public class JooqContrataContract {
 			}
 			
 			contractData.setContractJourneyDuration(journies);
-				
-//			System.out.println(employeeData.toString());
-//			System.out.println(contractData.toString());
 			
 			employeeContractInfo.setEmployeeInfo(employeeData);
 			employeeContractInfo.setContractInfo(contractData);
@@ -611,6 +608,9 @@ public class JooqContrataContract {
 				.fetch();
 			
 			for(Record record : contractClauseRecords) {
+				if(record.get(CONTRACT_CLAUSE.GENERAL) == (byte) 1)
+					continue;
+				
 				ContractClause contractClause =  new ContractClause();
 				contractClause.setId(record.get(CONTRACT_CLAUSE.ID));
 				contractClause.setDomain(record.get(CONTRACT_CLAUSE.DOMAIN));
@@ -745,72 +745,6 @@ public class JooqContrataContract {
 				result.add(journey);
 		
 		return result;
-	}
-
-	// ---------------------------------------------------------------------------------------------------------------------------
-	// -----------------------------------------------------    AFI CHANGES   ----------------------------------------------------
-	// ---------------------------------------------------------------------------------------------------------------------------	
-	
-	private static String setEmployeeAFIChangesDB(DSLContext dslContext, Integer contractId, java.util.Date newDate,
-			boolean isChangeContract, String tc2, boolean isQuoteContract, Integer quoteGroup,
-			boolean isOcupationContract, String ocupation) {
-		
-		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
-		Integer domain = contractRecord.get(CONTRACT.DOMAIN);
-		Date newEndDate = contractRecord.get(CONTRACT.END_DATE);
-		
-		
-		if(null != newDate) {
-			java.util.Date previusDate = DateUtils.copyDateOnly(newDate);
-			previusDate = DateUtils.addDays2Date(previusDate, -1);
-			
-			if(isChangeContract) {
-				Result<Record> tc2Records = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("TC2")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
-				if(!tc2Records.isEmpty()) {
-					dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, new Date(previusDate.getTime())).where(CONTRACT_DATA.ID.eq(tc2Records.get(0).get(CONTRACT_DATA.ID))).execute();
-				}
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domain)
-					.set(CONTRACT_DATA.NAME, "TC2")
-					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, (tc2 == null) ? (String) null : "\""+tc2+"\"")
-					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
-					.set(CONTRACT_DATA.END_DATE, newEndDate)
-					.execute();
-			}
-			
-			if(isQuoteContract) {
-				Result<Record> quoteRecords = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("GRUPO_COTIZACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
-				if(!quoteRecords.isEmpty()) {
-					dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, new Date(previusDate.getTime())).where(CONTRACT_DATA.ID.eq(quoteRecords.get(0).get(CONTRACT_DATA.ID))).execute();
-				}
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domain)
-					.set(CONTRACT_DATA.NAME, "GRUPO_COTIZACION")
-					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, (quoteGroup == null) ? (String) null : "\""+quoteGroup.toString()+"\"")
-					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
-					.set(CONTRACT_DATA.END_DATE, newEndDate)
-					.execute();
-			}
-			
-			if(isOcupationContract) {
-				Result<Record> ocupationRecords = dslContext.select().from(CONTRACT_DATA).where(CONTRACT_DATA.CONTRACT.eq(contractId)).and(CONTRACT_DATA.NAME.eq("OCUPACION")).orderBy(CONTRACT_DATA.ID.desc()).fetch();
-				if(!ocupationRecords.isEmpty()) {
-					dslContext.update(CONTRACT_DATA).set(CONTRACT_DATA.END_DATE, new Date(previusDate.getTime())).where(CONTRACT_DATA.ID.eq(ocupationRecords.get(0).get(CONTRACT_DATA.ID))).execute();
-				}
-				dslContext.insertInto(CONTRACT_DATA)
-					.set(CONTRACT_DATA.DOMAIN, domain)
-					.set(CONTRACT_DATA.NAME, "OCUPACION")
-					.set(CONTRACT_DATA.CONTRACT, contractId)
-					.set(CONTRACT_DATA.EXPRESSION, ocupation)
-					.set(CONTRACT_DATA.START_DATE, new Date(newDate.getTime()))
-					.set(CONTRACT_DATA.END_DATE, newEndDate)
-					.execute();
-			}
-		}
-		
-		return "";
 	}
 	
 	// ---------------------------------------------------------------------------------------------------------------------------
@@ -1008,11 +942,5 @@ public class JooqContrataContract {
 		
 		return contractOtherDataNames;
 	}
-
-	
-
-	
-
-	
 
 }

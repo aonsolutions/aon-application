@@ -2148,6 +2148,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName);
 			Saltra saltra = EmployeesServiceHelper.getSaltra(connection, domainName, userLogin)) {
 			
+			try {
+				// Hack for skip Saltr@ TypeError: null is not an object (evaluating 'datos')
+				saltra
+				.getNaf("0000", "0000000000", "000000000", "------", "-----");
+			} catch ( ForbiddenException e) {
+				throw e;
+			} catch ( Throwable e ) {
+				;
+			}
+			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
@@ -2192,8 +2202,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						.setName(name)
 						.setCcc(ccc.getCode())
 						.setRegime(ccc.getRegime())
-						
 						);
+					} else if ( found.stream().allMatch( e -> e.getId() < 0 )){
+						found.stream().map( e -> e.getId() ).findAny().ifPresent( id ->
+						enterpriseStatus.and(
+						new EnterpriseStatus.AffiliatedAtTrash()
+						.setId(id)
+						.setDni(dni)
+						.setNaf(naf)
+						.setDate(date)
+						.setName(name)
+						.setCcc(ccc.getCode())
+						.setRegime(ccc.getRegime())
+						));
 					}
 				}
 			}
