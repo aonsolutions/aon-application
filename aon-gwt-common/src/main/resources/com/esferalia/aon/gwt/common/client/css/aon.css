@@ -1643,10 +1643,6 @@ input:disabled+label {
 	padding-right: 1px;
 }
 
-.aon-finding-toolbar-item input {
-	vertical-align : middle;
-}
-
 .aon-iCon {
 	padding: 1px 0px 1px 18px;
 }

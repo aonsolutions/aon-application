@@ -24,13 +24,16 @@ public class JooqContractAttach {
 		return SETTINGS;
 	}
 	
-	public static void setContractAttachAttachment(String domainName, Integer attachId, String fileName, byte[] data, byte mimeType) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			
+	public static void setContractAttachAttachment(String domainName, Integer attachId, byte[] data, byte mimeType) {
+		Connection connection = null;
+		
+		try {
+			connection = AonServletUtils.getConnection(domainName);
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 			
+			System.out.println("attachId attach : " + attachId);
+			
 			dslContext.update(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DESCRIPTION, fileName)
 				.set(CONTRACT_ATTACH.DATA, data)
 				.set(CONTRACT_ATTACH.MIMETYPE, mimeType)
 				.where(CONTRACT_ATTACH.ID.eq(attachId))
@@ -42,9 +45,13 @@ public class JooqContractAttach {
 	}
 
 	public static byte[] getContractAttachAttachment(String domainName, Integer attachId) {
-		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			
+		Connection connection = null;
+		
+		try {
+			connection = AonServletUtils.getConnection(domainName);
 			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			System.out.println("attachId attach : " + attachId);
 			
 			Record contractAttachRecord = dslContext.select().from(CONTRACT_ATTACH)
 				.where(CONTRACT_ATTACH.ID.eq(attachId))

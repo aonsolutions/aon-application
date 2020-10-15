@@ -1392,10 +1392,7 @@ public abstract class TemplatesDialog extends CustomDialogB {
        		 upload = up;
        	}
        	upload.setAutoSubmit(true);
-        upload.setServletPath(url + "/gwt_upload" 
-        		+ "?domain_name="+ aonData.getDomain().getName() 
-				+ "&domain_id="+ aonData.getDomain().getId()
-				+ "&login="+ getAonData().getUser().getLogin());
+        upload.setServletPath(url + "/gwt_upload");
         
         upload.getForm().getWidget().getElement().getChild(1).removeFromParent();
         upload.getForm().setAction(url + "/gwt_upload");

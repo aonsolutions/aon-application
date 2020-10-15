@@ -86,7 +86,7 @@ public interface ITemplateAsync {
 	void generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative,
 			Boolean detail, Integer size, Boolean packaged, Boolean withoutInv, Integer category, Boolean dif, AsyncCallback<String> callback);
 	
-	void excelRowNumber(Domain domain, User user, AsyncCallback<Integer> callback);
+	void excelRowNumber(AsyncCallback<Integer> callback);
 
 	void executeExcelEcommerce(Domain domain, User user, Ecommerce ecommerce, Seller seller, String type, Tag tag, AsyncCallback<Error> callback);
 

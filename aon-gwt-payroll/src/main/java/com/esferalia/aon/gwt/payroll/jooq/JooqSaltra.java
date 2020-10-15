@@ -122,14 +122,7 @@ public class JooqSaltra {
 			;
 			user.setRegistry(registryId);
 			user.update(USER.REGISTRY);
-		} else {		
-			dslContext
-			.delete(RADDINFO)
-			.where(RADDINFO.REGISTRY.eq(user.getRegistry()))
-			.and(RADDINFO.ATTRIBUTE.in(SALTRA_CERT_KEY, SALTRA_CERT_SECRET))
-			.execute()
-			;
-		}
+		}		
 		
 		dslContext
 		.insertInto(RADDINFO)

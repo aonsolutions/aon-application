@@ -7,7 +7,6 @@ import './contrat@/aon-contrata.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';
 import './example/aon-example.js';
-import './imports/aon-imports.js';
 import './documental/aon-documental.js';
 
 const ID = 'id';
@@ -102,9 +101,9 @@ class AonMenu extends HTMLElement {
 			// case Apps.AIO.app:
 	    //   open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
 			// 	break;
-			case Apps.TOOLS.app:
-				this.buildAppMenu(Apps.TOOLS);
-				break;
+			// case Apps.TOOLS.app:
+			// 	this.buildAppMenu(Apps.TOOLS);
+			// 	break;
 			case Apps.CONTRATA.app:
 				rootPanel('<aon-contrata></aon-contrata>');
 				break;
@@ -138,8 +137,8 @@ class AonMenu extends HTMLElement {
 			// 	return Apps.OCR;
 			// case Apps.AIO.app:
 			// 	return Apps.AIO;
-			case Apps.TOOLS.app:
-				return Apps.TOOLS;
+			// case Apps.TOOLS.app:
+			// 	return Apps.TOOLS;
 			case Apps.CONTRATA.app:
 				return Apps.CONTRATA;
 			case Apps.PORTAL.app:
@@ -203,7 +202,6 @@ class AonMenu extends HTMLElement {
 		let li = document.createElement('li');
 		li.style.textAlign =  'right';
 		li.style.paddingRight = '12px';
-		li.style.backgroundColor = 'transparent';
 		const icon = this.getAttribute('opened') ? 'keyboard_arrow_right' : 'keyboard_arrow_left';
 		li.innerHTML =`<aon-icon-button id="aonMenuShowButton" icon="${icon}"></aon-icon-button>`;
 		ul.appendChild(li);
@@ -224,7 +222,6 @@ class AonMenu extends HTMLElement {
 		let liAdd = document.createElement('li');
 		liAdd.style.textAlign =  'right';
 		liAdd.style.paddingRight = '10px';
-		liAdd.style.backgroundColor = 'transparent';
 		liAdd.innerHTML =`<aon-icon-button id="aonMenuAddButton" icon="add"></aon-icon-button>`;
 		ul.appendChild(liAdd);
 
@@ -369,8 +366,8 @@ class AonMenu extends HTMLElement {
 				return AeatFiscalMenu;
 			case Apps.PAYROLL.app:
 				return PayrollMenu;
-			case Apps.TOOLS.app:
-				return ToolsMenu;
+			// case Apps.TOOLS.app:
+			// 	return ToolsMenu;
 			case Apps.PORTAL.app:
 				return PortalMenu;
 		}
@@ -437,8 +434,8 @@ class AonMenu extends HTMLElement {
 				} else return '#3a85c3';
 			case Apps.PAYROLL.app:
 				return '#90BD75';
-			case Apps.TOOLS.app:
-				return 'gray';
+			// case Apps.TOOLS.app:
+			// 	return 'gray';
 			default: return app.color ? app.color : '#f1f1f1';
 		}
 	}

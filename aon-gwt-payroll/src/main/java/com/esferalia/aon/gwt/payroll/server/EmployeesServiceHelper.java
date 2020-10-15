@@ -227,8 +227,8 @@ public class EmployeesServiceHelper {
 			
 			{
 				// check tipo_contrato == tc2 
+				String ssContractType = statusJsonObject.getString(Saltra.TIPO_CONTRATO);			
 				String aonContractType = getString(dataList, ContextVariable.TC2, "");
-				String ssContractType = AonStringUtils.defaultIfBlank(statusJsonObject.getString(Saltra.TIPO_CONTRATO), "000");			
 				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedContractType()

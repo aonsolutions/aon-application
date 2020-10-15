@@ -92,7 +92,7 @@ public interface ITemplate extends RemoteService{
 	public String generateConsumptionExcel(Domain domain, User user, LinkedList<Warehouse> warehouses, String type, Boolean onlyNegative, Boolean detail, 
 			Integer size, Date startDate, Date endDate, Boolean packaged, Integer category, Boolean dif);
 	
-	public Integer excelRowNumber(Domain domain, User user);
+	public Integer excelRowNumber();
 	
 	public LinkedList<Seller> getSellerList(Domain domain, User user);
 	

@@ -55,7 +55,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFact
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.SaltraService.JsSaltraResults;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -2775,12 +2774,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				@Override
 				protected void newAffiliated(JsSaltraResults jsSaltraResults) {
 					run();
-					getEmployeeTree().employees.refreshWorkplace(
-					jsSaltraResults.getWorkplaceId(),
-					(treeItem) -> {
-						treeItem.setState(true);
-						//getEmployeeTree().employees.selectEmployee(jsSaltraResults.getEmployeeId(), true);
-					});
+					getEmployeeTree().employees.refreshWorkplace(jsSaltraResults.getWorkplaceId());
+					getEmployeeTree().employees.selectEmployee(jsSaltraResults.getEmployeeId(), true);
 				}
 
 				@Override
@@ -2906,7 +2901,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
-			ClickHandler reftificationClickHandler, ClickHandler rntClickHandler ) {
+			ClickHandler clickHandler) {
 		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
 		mergeEditor.setOrig(result.getBasesFile());
 		mergeEditor.setMode("text/xml");
@@ -2953,13 +2948,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					CheckBox reftification = new CheckBox("Reftificativa");
 					reftification.setValue(result.isRectifying());
 					reftification.setStyleName("aon-finding-toolbar-item");
-					reftification.addClickHandler(reftificationClickHandler);
+					reftification.addClickHandler(clickHandler);
 					basesEditor.add(reftification);
 
 					CheckBox solicitudRecepcionRNT = new CheckBox("Solicitud Recepci\u00f3n RNT");
 					solicitudRecepcionRNT.setValue(result.isRequestSendRNT());
 					solicitudRecepcionRNT.setStyleName("aon-finding-toolbar-item");
-					solicitudRecepcionRNT.addClickHandler(rntClickHandler);
+					solicitudRecepcionRNT.addClickHandler(clickHandler);
 					basesEditor.add(solicitudRecepcionRNT);
 				}
 			}
@@ -2968,42 +2963,27 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
 			CreateRequestCommand cretaCommand) {
-		showBases(
-		result, 
-		detailPanel, 
-		e -> cretaCommand.reexecute(d -> {
+		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
 			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
-		}),
-		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
 		}));
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
 			BasesCCCCretaRequestCommand cretaCommand) {
-		showBases(
-		result, 
-		detailPanel, 
-		e -> cretaCommand.reexecute(d -> {
+		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
 			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
-		}),
-		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
 		}));
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
 			AbstractCCCCretaRequestCommand cretaCommand) {
-		showBases(
-		result, 
-		detailPanel, 
-		e -> cretaCommand.reexecute(d -> {
+		showBases(result, detailPanel, e -> cretaCommand.reexecute(d -> {
 			d.reftificationMarkCheckBox.setValue(!result.isRectifying());
-		}),
-		e -> cretaCommand.reexecute(d -> {
 			d.solicitudRecepcionRNTCheckBox.setValue(!result.isRequestSendRNT());
-		}));
 
+		}));
 	}
 
 	protected static void showResults(JsBasesResult result, Set<JsFile> jsFiles, ResultsPanel resultsPanel,
@@ -3546,18 +3526,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				saltraDisabled.run();
 			}
 
-			
-			@Override
-			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
-				saltraEnable.run();
-			}
-			
 			@Override
 			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
 				saltraEnable.run();
+
 			}
-			
-			
 		});
 	}
 

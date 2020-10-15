@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
@@ -33,10 +32,10 @@ import com.esferalia.aon.gwt.payroll.shared.Irpf;
 import com.esferalia.aon.gwt.payroll.shared.Predicate;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.Statistics;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -559,12 +558,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		});
 	}
 
-	public TreeItem refresh(final Workplace workplace) {
+	public void refresh(final Workplace workplace) {
 
-		return refreshWorkplace(workplace.getId(), ( treeItem ) -> {} );
+		refreshWorkplace(workplace.getId());
 	}
 
-	public TreeItem refreshWorkplace(final Integer workplaceId, Consumer<TreeItem> callback ) {
+	public void refreshWorkplace(final Integer workplaceId) {
+
 		final TreeItem workplaceItem = getWorkplacetItem(workplaceId);
 		final Integer enterpriseId = ((Enterprise) workplaceItem.getParentItem().getUserObject()).getId();
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
@@ -585,17 +585,16 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 								loadWorkplace(newEnterprise, workplaceItem, newWorkplace);
 								if (open)
 									onWorkplaceOpen(workplaceItem);
-								
+
 							}
 						}
 
 					}
 				} // TODO: Only this workplace...
-				callback.accept(workplaceItem);
+
 			}
 
 		});
-		return workplaceItem;
 	}
 
 	public void refresh(final Activity activity) {
@@ -649,9 +648,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	public void selectEmployee(int employeeId, boolean fireEvents) {
 
 		TreeItem treeItem = getEmployeeItem(employeeId);
-		
-		for ( TreeItem item = treeItem.getParentItem(); item != null; item = item.getParentItem() )
-			item.setState(true);
 		
 		tree.setSelectedItem(treeItem, fireEvents);
 	}
@@ -1889,19 +1885,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	private TreeItem getWorkplacetItem(final int workplaceId) {
-
 		return getTreeItem(tree, new Predicate<TreeItem>() {
 			@Override
 			public boolean test(TreeItem t) {
-				
 				Object object = t.getUserObject();
-				
-				if ( !(object instanceof Workplace) )
-					return false;
-				
-				Workplace workplace = (Workplace) object;
-				int itemId = (int) workplace.getId();
-				return (workplaceId == itemId );
+				return (object instanceof Workplace) && (((Workplace) object).getId() == workplaceId);
 			}
 		});
 	}
@@ -1911,13 +1899,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			@Override
 			public boolean test(TreeItem t) {
 				Object object = t.getUserObject();
-				
-				if ( !(object instanceof EmployeeDraftObject) )
-					return false;	
-				
-				EmployeeDraftObject employeeDraftObject = (EmployeeDraftObject) object;
-				int itemId = (int) employeeDraftObject.getEmployee().getId() ;				
-				return (employeeId == itemId );
+				return (object instanceof EmployeeDraftObject) && (((EmployeeDraftObject) object).getEmployee().getId() == employeeId);
 			}
 		});
 	}

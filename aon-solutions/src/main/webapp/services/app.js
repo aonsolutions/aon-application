@@ -1,4 +1,4 @@
-export const MenuApps = ['accounting', 'fiscal', 'payroll', 'contrata', 'documental', 'portal', 'tools'];
+export const MenuApps = ['accounting', 'fiscal', 'payroll', 'contrata', 'documental', 'portal'];
 
 export const Apps = {
   ACCOUNTING: {
@@ -42,13 +42,6 @@ export const Apps = {
     description: 'Portal',
     icon: 'aon_app',
     color: '#B50061'
-  },
-  TOOLS: {
-    app: 'tools',
-    title: 'Herramientas',
-    description: 'Utilidades Generales de Aon Solutions.',
-    icon: 'aon_app',
-    color: 'gray'
   }
 }
 
@@ -279,11 +272,8 @@ export const PayrollMenu =
       title: 'Gestión Plantillas para carga de datos',
       module: 'aon_gwt_aio',
       entryPoint:'templates',
-    },{
-      title: 'Carga de datos',
-      content:'<aon-imports></aon-imports>',
     }];
-    export const PortalMenu =
+export const PortalMenu =
       [{
         title:'Documental.',
         content: '<aon-documental></aon-documental>'

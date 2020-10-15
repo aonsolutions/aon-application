@@ -217,7 +217,7 @@ public class Templates extends Composite implements EntryPoint {
 				hide();
 				tiAux = ti;
 				ignoreInactiveClientAux = ignoreInactiveClient;
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					TemplateInfo ti = tiAux;
 					Boolean ignoreInactiveClient = ignoreInactiveClientAux;
 					@Override
@@ -293,7 +293,7 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					@Override
 					public void onSuccess(Integer result) {
 						hide();
@@ -374,7 +374,7 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					@Override
 					public void onSuccess(Integer result) {
 						hide();
@@ -456,7 +456,7 @@ public class Templates extends Composite implements EntryPoint {
 			
 			@Override
 			protected void onAccept() {
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					@Override
 					public void onSuccess(Integer result) {
 						hide();
@@ -552,7 +552,7 @@ public class Templates extends Composite implements EntryPoint {
 				final String value = lb2.getSelectedValue();
 				
 				tiAux = ti;
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					TemplateInfo ti = tiAux;
 					@Override
 					public void onSuccess(Integer result) {
@@ -726,7 +726,7 @@ public class Templates extends Composite implements EntryPoint {
 					}
 				}
 				tiAux = ti;warehouseAux = warehouse;
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					TemplateInfo ti = tiAux;
 					String warehouse = warehouseAux;
 					@Override
@@ -831,7 +831,7 @@ public class Templates extends Composite implements EntryPoint {
 				}
 				tiAux = ti;warehouseAux = warehouse;warehouse2Aux = warehouse2;seriesAux= series;
 				commentsAux = comments;
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					TemplateInfo ti= tiAux;String warehouse = warehouseAux;String warehouse2 = warehouse2Aux;
 					String series = seriesAux;String comments = commentsAux;
 					@Override
@@ -1098,7 +1098,7 @@ public class Templates extends Composite implements EntryPoint {
 					}
 				}
 				tiAux = ti;
-				item.excelRowNumber(getDomain(), getUser(), new AsyncCallback<Integer>() {
+				item.excelRowNumber(new AsyncCallback<Integer>() {
 					
 					@Override
 					public void onSuccess(Integer result) {

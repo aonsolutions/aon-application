@@ -63,7 +63,6 @@ class AonMarketplace extends HTMLElement {
 		for (let key in apps){
 				let li = document.createElement('li');
 				li.style.display = 'inline-block';
-				li.style.backgroundColor = 'transparent';
 
 				let div = document.createElement('div');
 				div.style.margin = '20px';

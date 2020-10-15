@@ -180,7 +180,7 @@
 			</tr>
 			<tr ui:field="solicitudRecepcionRNTTR"  >
 				<td class="{style.label}">
-					<g:Label text="Solicitud Recepci&oacute;n RNT" />
+					<g:Label text="Solictud recepci&oacute;n RNT" />
 				</td>
 				<td class="{style.field}" >
 					<g:CheckBox  name="{SOLICITUD_RECEPCION_RNT.name}" ui:field="solicitudRecepcionRNTCheckBox" checked="false"/>

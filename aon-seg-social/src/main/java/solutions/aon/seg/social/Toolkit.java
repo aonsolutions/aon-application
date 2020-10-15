@@ -35,24 +35,4 @@ public class Toolkit {
 			return formattedDate;
 		} catch (ParseException e){return null;}		
 	}
-	
-	//REMOVE NBFP CHARACTER FROMA A STRING
-	public static String removeNBSP(String cadena) {
-		String nbe=""+(char)160;
-		cadena=cadena.replace(nbe, "");
-		return cadena;
-	}
-	
-	//RETURNS BOOLEAN FROM A STRING
-	public static Boolean toBoolean(String bool) {
-		if((bool.equalsIgnoreCase("SI"))||(bool.equalsIgnoreCase("SÍ"))) {
-			return true;
-		}
-		else if(bool.equalsIgnoreCase("NO")) {
-			return false;
-		}
-		return null;
-	}
-	
-	
 }

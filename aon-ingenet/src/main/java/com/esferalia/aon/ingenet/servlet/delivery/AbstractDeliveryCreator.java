@@ -395,10 +395,9 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 					? (series.length()<=3?series:series.substring(0, 2))+"*"+(deliveryCount>1?deliveryCount:"")
 					: "IGN"+new SimpleDateFormat("yy").format(new Date());
 			String errorMsg = "El albaran " + albaran.getSERIE()
-					+ "/" + albaran.getNUMERO() + " ya existe";
-			// + ". Se guarda con " + series + "/" + number;
-			addError(albaran, errorMsg);
-			// warningList.add(errorMsg);			
+					+ "/" + albaran.getNUMERO() + " ya existe: "
+					+ ". Se guarda con " + series + "/" + number;
+			warningList.add(errorMsg);			
 		}
 		delivery.setSeries(series);
 		delivery.setNumber(number);

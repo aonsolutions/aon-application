@@ -13,7 +13,6 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.impl.jooq.PayrollImpl;
 
 public class PAYROLL {
@@ -26,14 +25,6 @@ public class PAYROLL {
 	// ********************************* PAYROLL **
 	// ********************************************
 
-	// -------------------- EMPLOYEE
-	
-	public static Employee addEmployee(String domainName, Integer domainId, String login, Employee employee) {
-		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
-			return getPayroll().addEmployee(ctx, domainName, employee);
-		}
-	}
-	
 	
 	// -------------------- CONTRACT
 	

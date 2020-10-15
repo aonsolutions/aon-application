@@ -85,7 +85,7 @@ import {Countries} from '../services/country.js';
             if(this.isTypeList()) {
         			let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
               options.forEach((item, i) => {
-                if(item.value == newValue) {
+                if(item.value = newValue) {
                   input.value = item.name;
                 }
               });

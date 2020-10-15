@@ -11,7 +11,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFact
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.SaltraService.JsSaltraResults;
 import com.google.gwt.core.client.GWT;
@@ -158,8 +157,6 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	
 	@UiField
 	FormPanel employeeFormPanel;
-	@UiField
-	Hidden idHidden;
 	@UiField
 	Hidden cccHidden;
 	@UiField
@@ -452,38 +449,6 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		syncWarnings();
 	}
 	
-	@Override
-	public void affiliatedAtTrash(AffiliatedAtTrash status) {
-		
-		HorizontalPanel horizontalPanel = new HorizontalPanel();
-		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(
-		new Label(
-			"Afiliado '"
-			+status.getName()
-			+"' ( "+ DateTimeFormat.getFormat("dd-MM-yyy").format(status.getDate()) 
-			+" ) en la papelera."
-			+" Pulse"
-			)
-		);
-		horizontalPanel.add(new HTML("&nbsp;"));
-		Anchor anchor = new Anchor("aqu\u00ed");
-		anchor.addClickHandler(e -> restoreEmployee(status));
-		
-		anchor.getElement().getStyle().setColor("blue");
-		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
-		
-		horizontalPanel.add(anchor);
-		horizontalPanel.add(new HTML("&nbsp;"));
-		horizontalPanel.add(new Label("para resturarlo."));
-		
-		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
-		
-		addWarning(horizontalPanel);
-		syncWarnings();
-	}
-	
-	
 	// ------------------------------------------------------------------------
 	
 	
@@ -525,21 +490,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		employeeFormPanel.submit(); 	
 
 	}
-	
-	protected void restoreEmployee(AffiliatedAtTrash affiliatedAtTrash) {
-		idHidden.setValue(affiliatedAtTrash.getId().toString());
-		cccHidden.setValue(affiliatedAtTrash.getCcc());
-		nifHidden.setValue(affiliatedAtTrash.getDni());
-		regimeHidden.setValue(affiliatedAtTrash.getRegime());
-		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedAtTrash.getDate()) );
-		
-		employeeFormPanel.addSubmitCompleteHandler((e) -> {
-			JsSaltraResults jsSaltraResults = eval("("+ e.getResults() +")");
-			newAffiliated(jsSaltraResults);
-		});
-		employeeFormPanel.submit(); 	
 
-	}
 	// ------------------------------------------------------------------------
 
 	protected void syncErrors() {
