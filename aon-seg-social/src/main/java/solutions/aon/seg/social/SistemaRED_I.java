@@ -27,11 +27,6 @@ public class SistemaRED_I {
 			
 			htmlPage = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR69&E=I&AP=AFIR")).orElseThrow().click();
 			HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementsById("SDFREGCTA_ayuda"));
-<<<<<<< HEAD
-			
-			//System.out.println(htmlPage.asXml());
-=======
->>>>>>> 6ce77462b38a43b77b4d69a81d4a305b9c90cfe9
 			HtmlForm jacadaform = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			
 			//Separando el ccc
