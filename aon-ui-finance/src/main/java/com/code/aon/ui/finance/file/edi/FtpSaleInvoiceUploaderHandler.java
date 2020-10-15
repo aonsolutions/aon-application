@@ -248,7 +248,7 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 				String customerEdiFacturaCode = ediCodes.get(IEdiSupport.FACTURA);
 				
 				
-				Tag packingTag = ediSupport.obtainPackingTag(
+				Tag packingTag = ediSupport.obtainPackingTagInvoice(
 						invoice.getRegistry(),
 						invoice.getRegistryAddress());
 				if(packingTag==null || packingTag.getId()==null){

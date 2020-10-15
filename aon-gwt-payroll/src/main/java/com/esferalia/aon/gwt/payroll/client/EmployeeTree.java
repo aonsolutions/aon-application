@@ -55,6 +55,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFact
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.SaltraService.JsSaltraResults;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -2774,8 +2775,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				@Override
 				protected void newAffiliated(JsSaltraResults jsSaltraResults) {
 					run();
-					getEmployeeTree().employees.refreshWorkplace(jsSaltraResults.getWorkplaceId());
-					getEmployeeTree().employees.selectEmployee(jsSaltraResults.getEmployeeId(), true);
+					getEmployeeTree().employees.refreshWorkplace(
+					jsSaltraResults.getWorkplaceId(),
+					(treeItem) -> {
+						treeItem.setState(true);
+						//getEmployeeTree().employees.selectEmployee(jsSaltraResults.getEmployeeId(), true);
+					});
 				}
 
 				@Override
@@ -3541,11 +3546,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				saltraDisabled.run();
 			}
 
+			
+			@Override
+			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
+				saltraEnable.run();
+			}
+			
 			@Override
 			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
 				saltraEnable.run();
-
 			}
+			
+			
 		});
 	}
 

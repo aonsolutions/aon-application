@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -44,6 +45,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -1408,6 +1410,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {}
 	
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
+	
 	@UiField (provided = true)
 	Employee employee;
 	
@@ -1435,6 +1440,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	@UiField
 	ScrollPanel scrolledPanelClausesAndAttach;
 	
+	@UiField
+	MinimizePanel footPanel;
+	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 
 	private ContrataEmployeeObject contrataEmployeeObject;
@@ -1459,13 +1467,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		
 		int height = Window.getClientHeight(); 
-		scrolledPanel.setHeight((height-200)+"px");
-		scrolledPanelContractOtherData.setHeight((height-200)+"px");
-		scrolledPanelClausesAndAttach.setHeight((height-200)+"px");
+		scrolledPanel.setHeight((height-220)+"px");
+		scrolledPanelContractOtherData.setHeight((height-220)+"px");
+		scrolledPanelClausesAndAttach.setHeight((height-220)+"px");
 		
 		tabLayOutPanel.selectTab(0);
 		tabLayOutPanel.setAnimationDuration(1000);
 //		hideEmployeeTable();
+		
+		footPanel.addMaximizeHandler((e) -> {
+			splitLayoutPanel.setWidgetSize(footPanel, 200);
+		});
+		
+		footPanel.addMinimizeHandler((e) -> {
+			splitLayoutPanel.setWidgetSize(footPanel, 10);
+		});
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------

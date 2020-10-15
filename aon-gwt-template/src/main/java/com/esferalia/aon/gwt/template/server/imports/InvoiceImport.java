@@ -487,6 +487,7 @@ public class InvoiceImport {
 			String serie = ivs.get(i).getSerie();
 			Integer number = ivs.get(i).getNumber();
 			Double total = 0.0;
+			Double base = 0.0;
 			Double retBase = 0.0;
 			Double retQuota = 0.0;
 			Double retPercentage = 0.0;
@@ -550,6 +551,7 @@ public class InvoiceImport {
 					.setAdjAccountId(adjAccount != null ? adjAccount.getId() : null);
 				ai.addVat(vat);
 				total = total + (invoice.mustApplyISP() ? ivs.get(j).getBase() : ivs.get(j).getTotal());
+				base = base + ivs.get(j).getBase();
 				j++;
 			}
 			Integer cci = i;
@@ -558,6 +560,8 @@ public class InvoiceImport {
 				checkCuotas(domain, ivs.get(k));
 			}
 			ai.getInvoice().setTotal(total);
+			ai.getInvoice().setTaxableBase(base);
+			ai.getInvoice().setVatQuota(total - base);
 		
 			if(ai.getInvoice().isWithholding()) {
 				Account retentionAccount = (invoice.isSales() )

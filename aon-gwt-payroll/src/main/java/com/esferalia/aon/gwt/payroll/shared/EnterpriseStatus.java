@@ -9,6 +9,7 @@ public abstract class EnterpriseStatus implements Serializable {
 		void up2Date();
 		void forbidden();
 		void saltraCredentialsNotFound();
+		void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash);
 		void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound);
 	}
 	
@@ -126,7 +127,32 @@ public abstract class EnterpriseStatus implements Serializable {
 			visitor.affiliatedNotFound(this);
 			super.visit(visitor);
 		}
+		
+		protected void super_visit( Visitor visitor) {
+			super.visit(visitor);
+		}
 	}		
+	
+	public static class AffiliatedAtTrash extends AffiliatedNotFound {
+		
+		Integer id; 
+		
+		@Override
+		public void visit(Visitor visitor) {
+			visitor.affiliatedAtTrash(this);
+			super_visit(visitor);
+		}	
+		
+		public Integer getId() {
+			return id;
+		}
+		
+		public AffiliatedAtTrash setId(Integer id) {
+			this.id = id;
+			return this;
+		}
+		
+	}
 
 	public abstract void visit(Visitor visitor);
 	
@@ -149,6 +175,11 @@ public abstract class EnterpriseStatus implements Serializable {
 				System.out.println("saltraCredentialsNotFound");
 			}
 			
+			@Override
+			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
+				System.out.println("affiliatedAtTrash " + affiliatedAtTrash.name + "[" + affiliatedAtTrash.date + "]");
+			}
+
 			@Override
 			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
 				System.out.println("affiliatedNotFound " + affiliatedNotFound.name + "[" + affiliatedNotFound.date + "]");
@@ -176,9 +207,15 @@ public abstract class EnterpriseStatus implements Serializable {
 			}
 
 			@Override
+			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
+				throw new OutOfDateException();
+			}
+
+			@Override
 			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
 				throw new OutOfDateException();
 			}
+			
 		});
 		return status;
 	}
