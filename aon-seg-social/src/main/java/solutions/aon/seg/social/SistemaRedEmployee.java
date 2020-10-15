@@ -1,12 +1,10 @@
 	package solutions.aon.seg.social;
-
-
+import java.io.File;
 import java.io.FileInputStream;
-	import java.io.IOException;
+import java.io.FileWriter;
+import java.io.IOException;
 	import java.io.InputStream;
 	import java.net.MalformedURLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -16,41 +14,27 @@ import java.util.Optional;
 	import com.gargoylesoftware.htmlunit.BrowserVersion;
 	import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 	import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 	import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.host.html.Option;
 
 import solutions.aon.seg.social.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.exceptions.ForbiddenException;
+import solutions.aon.seg.social.exceptions.SegSocialException;
 	
-public class SistemaRedAketza {
-	
+public class SistemaRedEmployee {
 		public static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function) throws InterruptedException {
 			// try 20 times to wait .5 second each for filling the page.
 			for (int i = 0; i < 20; i++) {
 				R r = function.apply(htmlPage);
-				if (r != null) {
-					return Optional.of(r);
-				}
-				synchronized (htmlPage) {
-					htmlPage.wait(500);
-				}
+				if (r != null) {return Optional.of(r);}
+				synchronized (htmlPage) {htmlPage.wait(500);}
 			}
 			return Optional.empty();
 		}
+
 		
-		private static WebClient getWebClient(final InputStream certificateInputStream, final String certificatePassword,
-				final String certificateType) {
-				WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
-				webClient.getOptions().setCssEnabled(false);
-				webClient.setJavaScriptTimeout(10000);
-				webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-				webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
-						certificateType);
-				return webClient;		
-		}
 		public static Collection<Employee> getEmployees(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc) throws SegSocialException 
 		{
@@ -63,13 +47,10 @@ public class SistemaRedAketza {
 				default:
 					throw new SegSocialException(e);
 				}
-			} catch (MalformedURLException e) {
-				throw new SegSocialException(e);
-			} catch (IOException e) {
-				throw new SegSocialException(e);
-			} catch (InterruptedException e) {
-				throw new SegSocialException(e);
-			}
+			} 
+			catch (MalformedURLException e) {throw new SegSocialException(e);} 
+			catch (IOException e) {throw new SegSocialException(e);} 
+			catch (InterruptedException e) {throw new SegSocialException(e);}
 		}
 		
 		//RETURNS ALL THE EMPLOYEES OF A COMPANY 
@@ -77,7 +58,7 @@ public class SistemaRedAketza {
 				final String certificateType, String regimen, String ccc) 
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, FailingHttpStatusCodeException {
 			
-			try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 				
 				ArrayList<Employee> employees = new ArrayList<Employee>();
 				HtmlPage Origen = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
@@ -218,10 +199,12 @@ public class SistemaRedAketza {
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
-				for(Employee e : employees) System.out.println(e.toString());
+				File file = new File("Log.txt");
+				FileWriter fw = new FileWriter(file);
+				for(Employee e : employees) fw.write(e.toString()+"\n");
+				fw.close();
 			}
 		}
-
 	}
 
 

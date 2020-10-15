@@ -1,5 +1,5 @@
 
-package solutions.aon.seg.social;
+package solutions.aon.seg.social.exceptions;
 
 import java.util.HashMap;
 import java.util.Map;

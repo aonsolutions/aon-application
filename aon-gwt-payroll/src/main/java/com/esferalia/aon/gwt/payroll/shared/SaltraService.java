@@ -7,6 +7,7 @@ import com.google.gwt.http.client.URL;
 public interface SaltraService {
 
 	public static enum Parameter {
+		ID, 
 		CIF,
 		NIF,
 //		NAF,
@@ -24,11 +25,11 @@ public interface SaltraService {
 		protected JsSaltraResults() {
 		}
 		
-		public final native Integer getEmployeeId() /*-{
+		public final native int getEmployeeId() /*-{
 			return this.employeeId;
 		}-*/;
 		
-		public final native Integer getWorkplaceId() /*-{
+		public final native int getWorkplaceId() /*-{
 			return this.workplaceId;
 		}-*/;
 	}

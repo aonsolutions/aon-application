@@ -5,14 +5,14 @@ export const TaxType = [
 ];
 
 export const TaxIVAPercentage = [
-  {value:'21', name:'21%'},
-  {value:'10', name:'10%'},
-  {value:'4', name:'4%'},
-  {value:'0', name:'0%'}
+  {value:21.0, name:'21%'},
+  {value:10.0, name:'10%'},
+  {value:4.0, name:'4%'},
+  {value:0.0, name:'0%'}
 ];
 
 export const TaxIRPFPercentage = [
-  {value:'19', name:'19%'},
-  {value:'15', name:'15%'},
-  {value:'7', name:'7%'}
+  {value:19, name:'19%'},
+  {value:15.0, name:'15%'},
+  {value:7.0, name:'7%'}
 ];

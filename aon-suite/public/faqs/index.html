@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+
+    <!-- MATERIAL ICONS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+
+    <!-- MATERIAL COMPONENTS -->
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <link href="../css/app.css" rel="stylesheet" id="linkcss">
+
+</head>
+
+<body>
+            <!-- start contenido centro -->
+            <div class="col" id="atp_contenido_centro">
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <!-- INICIO VISTA -->
+                        <div class="col-12">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#FAQ</th>
+                                            <th scope="col">Fecha Creación</th>
+                                            <th scope="col">Pregunta</th>
+                                            <th scope="col">Creada por</th>
+                                            <th scope="col">Opciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot></tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end contenido centro -->
+      
+
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script>
+
+        // FUNCIONES
+
+        /**
+         * Crear paginado
+         */
+        function createPaginate(uid, page, page_total) {
+            var paginate = '<ul class="pagination display-block float-right">';
+            // Agregamos el usuario que estamos paginando
+            paginate += '<input id="paginate-uid" type="hidden" value="' + uid + '">';
+
+            // Si tenemos paginas
+            if (page > 1) {
+                paginate +=
+                    '<li class="pointer">' +
+                    '<a class="go_page" data-page="1">' +
+                    '<i class="material-icons" title="Principio">fast_rewind</i>' +
+                    '</a>' +
+                    '</li>' +
+
+                    '<li class="pointer">' +
+                    '<a class="go_page" data-page="' + (page - 1) + '">' +
+                    '<i class="material-icons" title="Volver">arrow_left</i>' +
+                    '</a>' +
+                    '</li>';
+            }
+
+            if (page_total > 0) {
+                paginate += '<li class="ml-2 mr-2">' + page + '/' + page_total + '</li>';
+            }
+
+            if (page < page_total) {
+                paginate +=
+                    '<li class="pointer">' +
+                    '<a class="go_page" data-page="' + (page + 1) + '">' +
+                    '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>' +
+                    '</a>' +
+                    '</li>' +
+
+                    '<li class="pointer">' +
+                    '<a class="go_page" data-page="' + page_total + '">' +
+                    '<i class="material-icons" title="Final">fast_forward</i>' +
+                    '</a>' +
+                    '</li>';
+            }
+            paginate += '</ul>';
+
+            return paginate;
+        }
+
+        /**
+         * Genera una fecha aleatoria dentro del intervalo proporcionado
+         */
+        function randomDate(start, end) {
+            let f = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            return f.getDate() + "."+ f.getMonth()+ "." +f.getFullYear();
+        }
+
+        /**
+         * Obtiene los registros
+         */
+        function getList(uid = 'a5sa645-sa14', page_this = 1) {
+            // nombre
+            let name_a = ['', 'Manolo', 'Ambrosio', 'Abelardo', 'Fulgensio', 'Alejandro', 'Jesús', 'Julio', 'David', 'Alberto', 'Juan', 'Carmen', 'Angela', 'Manuela', 'Margarita', 'Maribel', 'Desi', 'Inma', 'Jessica', 'Estefanía', 'Nieves'];
+
+            // Donde meteremos los valores de los tickets
+            let faq_list = {};
+            // Crear cantidades aletorias dependiendo de la pagina en la que estemos
+            page_this_element = page_this == 1 ? page_this : ((page_this - 1) * 10) + 1;
+            page_total = page_this_element + 10;
+
+            // Metemos los valores de los faq aleatoriamente
+            for (var i = page_this_element; i < page_total; i++) {
+                faq_list[i] = {
+                    id: i,
+                    created_at: randomDate(new Date(2020, 0, 1), new Date()),
+                    question: '¿Se introduce aquí la pregunta?',
+                    reply: 'Teskiya, aquí no. Vayan a la ventanilla 1 por el pasillo de la izquierda. La última puerta a la derecha',
+                    from: name_a[Math.floor((Math.random() * 20) + 1)],     // creador del ticket
+                };
+            }
+
+            // Json de lo que nos llegaria
+            let date = {
+                user_id: uid,                                      // Al usuario que le pertenece los tickets
+                total_date: 100,                                      // cantidad total de elementos
+                total_page: 10,                                       // total de paginas
+                page: page_this,                                // pagina en la que estamos
+                shown_page: page_this_element + ' - ' + (page_total - 1),   // cantidad mostrada por paginas 1 - 10
+                list: faq_list,                             // listado de tickets
+            };
+
+            console.log('Json que recibimos:');
+            console.log(date);
+
+            // Devolver los datos
+            return date;
+        }
+
+        /**
+         * Generamos la tabla
+         * @param data
+         */
+        function createTable(data) {
+            // recorremos los datos a mostrar
+            let tbody = '';
+            let a_href = 'show.html';
+            $.each(data.list, function (i, item) {
+                // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
+                tbody += item.answer == 1 ? '<tr class="font-weight-bold" data-toggle="collapse" data-target="#collapseme' + item.id + '">' : '<tr data-toggle="collapse" data-target="#collapseme' + item.id + '">';
+                // Recorremos los <td>
+                $.each(item, function (key, val) {
+                    switch (key) {
+                        case 'subject':
+                            tbody +=
+                                '<td>' +
+                                '<div class="row">' +
+                                '<div class="col-md-8">' +
+                                val +
+                                '</div>' +
+                                '<div class="col-md-4 text-right">' +
+                                '<small class="form-inline">' +
+                                '<i class="material-icons">comment</i> ' +
+                                '<span class="pl-1">' + item.comments_quantity + '</span>' +
+                                '</small>' +
+                                '</div>' +
+                                '</div>' +
+                                '</td>';
+                            break;
+                        case 'reply':
+                            // No metemos el valor si tiene que responder o no
+                            break;
+
+                        default:
+                            tbody += '<td>' + val + '</td>';
+                            break;
+                    }
+                });
+
+                // Agregamos opciones que tenga
+                tbody +=
+                    '<td>' +
+                    '<a class="text-dark text-decoration-none">' +
+                    '<i id="faq-eliminar" class="material-icons pointer text-danger" title="Eliminar FAQ"' +
+                    ' data-uid="' + data.user_id + '" ' +
+                    ' data-page="' + data.page + '" ' +
+                    ' data-id="' + item.id + '" ' +
+                    '>delete_forever</i>' +
+                    '</a>' +
+                    '<a class="text-dark" href="' + a_href + '?faq=' + item.id + '">' +
+                    '<i id="faq-editar" class="material-icons pointer text-primary" title="Editar FAQ"' +
+                    ' data-uid="' + data.user_id + '" ' +
+                    ' data-id="' + item.id + '" ' +
+                    '>edit</i>' +
+                    '</a>' +
+                    '</td>';
+                // Cerramos el <tr>
+                tbody += '</tr>';
+
+                // Añadimos colapsable
+                tbody += '<tr id="collapseme' + item.id + '" class="collapse out"><td></td><td colspan="3"><div>' + item.reply + '</div></td></tr>';
+            });
+
+            // Agregamos el cuerpo de la tabla
+            $('.table tbody').html(tbody);
+
+            // Cogemos el paginado que tendía la tabla
+            let pagination = createPaginate(data.user_id, data.page, data.total_page)
+
+            // Agregamos el paginado en el footer de la tabla
+            let tfoot =
+                '<tr>' +
+                '<td colspan="7">' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                'Mostrando del ' + data.shown_page + ' de un total de ' + data.total_date + ' elementos' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                pagination +
+                '</div>' +
+                '</div>' +
+                '</td>'
+            '</tr>';
+
+            // Agregamos el cuerpo de la tabla
+            $('.table tfoot').html(tfoot);
+
+            // console.log(tbody);
+        }
+
+        // EVENTOS
+
+        $(function() {
+            // Cogemos el listado de datos para mostrar
+            let list = getList();
+            createTable(list);
+
+            //
+            // Eliminar FAQ
+            //
+            $(document).on('click', '#faq-eliminar', function () {
+                var user_id = $(this).data('uid');
+                var faq_id = $(this).data('id');
+
+                var opcion = confirm("Eliminar #FAQ " + faq_id);
+                if (opcion == true) {
+                    var list = getList($(this).data('page'));
+                    createTable(list);
+                    alert('Eliminado #FAQ ' + faq_id + ' correctamente');
+                    // Json que mandamos
+                    var faq_delete = {
+                        method: 'faq_delete',
+                        id: faq_id,
+                        uid: user_id,
+                    };
+                    console.log('Eliminar FAQ Json que mandamos:');
+                    console.log(faq_delete);
+                }
+
+            });
+
+            //
+            // Pasar de pagina
+            //
+            $(document).on('click', '.go_page', function () {
+                var user_id = $('#paginate-uid').val();
+                var page = $(this).data('page');
+                var list = getList(user_id, page);
+                createTable(list);
+                // Json que mandamos
+                var ticket_page = {
+                    method: 'ticket_page',
+                    uid: user_id,
+                    id: page,
+                };
+                console.log('Pasar paginas de ticket Json que mandamos:');
+                console.log(ticket_page);
+            });
+
+
+        });
+    </script>
+    <!-- FIN Scripts -->
+</body>
+
+</html>

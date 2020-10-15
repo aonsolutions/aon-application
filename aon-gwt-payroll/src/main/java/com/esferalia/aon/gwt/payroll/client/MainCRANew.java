@@ -572,7 +572,7 @@ public class MainCRANew extends MainEntryPoint {
 			@Override
 			public void render(Context context, CRA object, SafeHtmlBuilder sb) {
 				if(null != object) {
-					if(object.getDomain() == mainCRAObjectNew.getDomainId() || object.getDomain().equals(mainCRAObjectNew.getDomainId()))
+//					if(object.getDomain() == mainCRAObjectNew.getDomainId() || object.getDomain().equals(mainCRAObjectNew.getDomainId()))
 						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-finding-toolbar-item aon-icon-delete\" style=\"border: none !important; height: 20px;\"></button>");
 				}
 			}
@@ -746,8 +746,8 @@ public class MainCRANew extends MainEntryPoint {
 	    
 	    // Add the data to the data provider, which automatically pushes it to the
 	    // widget.
+	    dataProvider.getList().clear();
 	    List<CCCInfo> cccList = dataProvider.getList();
-	    cccList.clear();
 	    
 	    this.cccs = this.mainCRAObjectNew.getEnterpriseCCCs();
 	    
@@ -1097,7 +1097,7 @@ public class MainCRANew extends MainEntryPoint {
 	
 	@UiHandler("newCRAButton")
 	public void onNewCRAButton(ClickEvent event) {
-		this.mainCRAObjectNew.resetEnterpriseCCCList();
+//		this.mainCRAObjectNew.resetEnterpriseCCCList();
 		
 		showCCCs();
 		clearSelectionModel();

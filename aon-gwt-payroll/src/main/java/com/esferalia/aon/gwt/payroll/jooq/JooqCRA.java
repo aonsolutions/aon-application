@@ -128,7 +128,7 @@ public class JooqCRA {
 		// Get CRAs
 		Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH)
 				.where(CRA_BATCH.DOMAIN.eq(domainId)
-						.or(CRA_BATCH.DOMAIN.eq(parentDomainId))
+//						.or(CRA_BATCH.DOMAIN.eq(parentDomainId))
 						.or(CRA_BATCH.DOMAIN.in(domainChilds)))
 				.fetch();
 		
@@ -162,6 +162,9 @@ public class JooqCRA {
 				
 				if(null == enterpriseCCCId)
 					continue;
+				
+//				if(!ownCCCs.contains(enterpriseCCCId))
+//					continue;
 				
 				Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
 						.where(ENTERPRISE_CCC.ID.eq(enterpriseCCCId))

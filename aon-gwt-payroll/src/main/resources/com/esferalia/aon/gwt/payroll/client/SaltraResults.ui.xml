@@ -48,6 +48,7 @@
 				</g:FormPanel>
 				<g:FormPanel visible="false" ui:field="employeeFormPanel" method="{METHOD_POST}" action="{SALTRA_URL}/{EMPLOYEE}"  >
 					<g:VerticalPanel visible="false" >
+ 						<g:Hidden ui:field="idHidden" name="{ID.name}" />
  						<g:Hidden ui:field="regimeHidden" name="{REGIME.name}" />
 						<g:Hidden ui:field="cccHidden" name="{CCC.name}" />
 						<g:Hidden ui:field="nifHidden" name="{NIF.name}" />
