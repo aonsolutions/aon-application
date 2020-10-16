@@ -127,6 +127,10 @@
             import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
 
             const MAX_FILE_SIZE = 5;
+            const types = {
+                'sent': 'Enviado',
+                'received': 'Recibido'
+            };
 
             $(document).ready(function(){
                 // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
@@ -169,6 +173,7 @@
                                     "date": document.date,
                                     "file_name": document.name,
                                     "type": (document.type == 1) ? 'received' : 'sent',
+                                    "url": document.image,
                                     "read": 0,
                                     "subfolder": (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
                                     "uploaded_by": "X"
@@ -205,12 +210,14 @@
 
                 if (list.length) {
                     $.each(list, function(i, item) {
-                        tbody+= '<tr data-id="' + item.id + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.join(',') + '">';
+                        tbody+= '<tr data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.join(',') + '">';
 
                             // Recorremos los <td>
                             $.each(item, function(key, val) {
                                 switch (key) {
                                     case 'id': // No mostramos el ID en la tabla
+                                        break;
+                                    case 'url': // No mostramos la URL en la tabla
                                         break;
                                     case 'tags':
                                         tbody+=
@@ -246,10 +253,6 @@
                                         tbody+= '<td><span>'+read+'</span></td>';
                                         break;
                                     case 'type':
-                                        var types = {
-                                            'sent': 'Enviado',
-                                            'received': 'Recibido'
-                                        };
                                         var type = types[item.type];
 
                                         tbody+= '<td><span>'+type+'</span></td>';
@@ -260,6 +263,7 @@
                                 }
                             });
 
+                            // TODO: Posibilidad de subir documentos a subcarpetas
                             // Columna con las acciones que se pueden realizar sobre un documento
                             tbody+= '' +
                                 '<td>' +
@@ -267,7 +271,7 @@
                                         '<input class="checkbox-descargar-doc form-check-input position-static" type="checkbox" aria-label="Seleccionar documento">' +
                                     '</div>' +
                                     '<a href="show.html?document=' + item.id + '" title="Ver documento" class=""><i class="material-icons image pointer text-primary"></i></a>' +
-                                    '<i title="Descargar documento" class="material-icons file_download pointer text-primary"></i>' +
+                                    '<a href="' + item.url + '"><i title="Descargar documento" class="material-icons file_download pointer text-primary"></i></a>' +
                                     '<i class="edit-doc material-icons edit pointer text-primary" title="Editar documento"></i>';
 
                                     // Si el usuario ha enviado el documento, permitimos acciones adicionales
@@ -368,20 +372,48 @@
                 return paginate;
             }
 
-
             //
             // Eventos
             //
                 // Seleccionar uno o más documentos para descargar
                 $(document).on('change', '.checkbox-descargar-doc', function() {
+                    const downloadButton = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbarDescargarButton');
+
+                    // Si hay algún documento seleccionado
                     if ($('.checkbox-descargar-doc:checked').length) {
-                        if ($('#descargar-docs-seleccionados').hasClass('d-none')) {
-                            $('#descargar-docs-seleccionados').removeClass('d-none')
+                        // Si no existe el botón de descargar, lo creamos
+                        if (downloadButton === null) {
+                            addDocumentalToolbarButton('Descargar', 'file_download', () => {
+
+                            });
+                        } else {
+                            // Si existe el botón de descargar, lo mostramos
+                            downloadButton.style.display = '';
                         }
-                    } else if (!$('#descargar-docs-seleccionados').hasClass('d-none')) {
-                        $('#descargar-docs-seleccionados').addClass('d-none');
+                    } else if (downloadButton !== null) {
+                        // Si no hay ningún documento seleccionado y existe el botón de descargar, lo ocultamos
+                        downloadButton.style.display = 'none';
                     }
                 });
+
+                function addDocumentalToolbarButton(name, icon, fn) {
+                    const documentalToolbar = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbar');
+                    const id = `aonDocumentalToolbar${name}Button`;
+                    const button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
+                    const span = window.frameElement.ownerDocument.createElement('span');
+
+                    span.innerHTML= button;
+
+                    const aonMenu = window.frameElement.ownerDocument.getElementById('aonMenu');
+                    const toolSection = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbaraon-toolbar-tool-section');
+
+                    toolSection.style.paddingRight = documentalToolbar.getAttribute('opened') ? '0px' : '40px';
+                    toolSection.appendChild(span);
+
+                    const b = window.frameElement.ownerDocument.getElementById(id);
+
+                    b.addEventListener('click', fn);
+                }
 
                 // Icono de editar documento
                 $(document).on('click', '.edit-doc', function() {
@@ -500,16 +532,33 @@
                     var confirmed = confirm("¿Estás seguro de que deseas eliminar el documento: " + file_name + '?');
 
                     if (confirmed) {
-                        var id = row.data('id');
+                        const id = row.data('id');
+                        const type = (row.data('type') === 'sent') ? 2 : 1;
+                        const service = window.selectedFolder;
 
-                        // JSON a enviar
-                        var delete_doc = {
-                            id: id
-                        }
+                        // Hacemos una petición a bidoq para eliminar el documento seleccionado
+                        bidoq({
+                            "method": "delete",
+                            id,
+                            type,
+                            service
+                        }).then((data) => {
+                            let response = JSON.parse(data);
 
-                        alert('Documento eliminado con éxito');
+                            if (typeof response !== 'undefined') {
+                                if (response.code === 0) {
+                                    alert('Documento eliminado con éxito');
 
-                        row.remove();
+                                    row.remove();
+                                } else {
+                                    alert(`Ocurrió un error al intentar eliminar el documento`);
+                                }
+                            } else {
+                                console.error('Ocurrió un error al intentar eliminar el documento');
+                            }
+                        }).catch(function(error) {
+                            console.error('Ocurrió un error: ' + error.message);
+                        });
                     }
                 });
 
@@ -553,15 +602,13 @@
                             let response = JSON.parse(data);
 
                             if (typeof response !== 'undefined') {
-                                let responseMessage = '';
-
                                 for (let i = 0; i < response.length; i++) {
                                     const documentResponse = response[i];
 
                                     if (!uploadError && documentResponse.code !== 0) {
                                         uploadError = true;
 
-                                        alert(`Ocurrió un error al intentar subir el documento: ${documentResponse.message}`);
+                                        alert(`Ocurrió un error al intentar subir el documento: ${documentResponse.message.toLowerCase()}`);
                                     }
                                 }
 
