@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>xml-security</groupId>
+  <artifactId>xmlsec-adsi</artifactId>
+  <versioning>
+    <release>1.4.2b</release>
+    <versions>
+      <version>1.4.2</version>
+      <version>1.4.2b</version>
+    </versions>
+    <lastUpdated>20150604143021</lastUpdated>
+  </versioning>
+</metadata>
