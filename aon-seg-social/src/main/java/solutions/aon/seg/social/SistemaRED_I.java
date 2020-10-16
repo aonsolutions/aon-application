@@ -215,7 +215,9 @@ public class SistemaRED_I {
 			
 			List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
 			InputStream is=labels.get(0).dblClick().getWebResponse().getContentAsStream();
-			return is.readAllBytes();
+			byte[] ret=is.readAllBytes();
+			is.close();
+			return ret;
 			//return null;
 			//return htmlPage.getWebResponse().getContentAsStream();
 			//System.out.println(htmlPage.getUrl());
