@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>es.mityc</groupId>
+  <artifactId>lib-xades</artifactId>
+  <versioning>
+    <release>1.1.8b</release>
+    <versions>
+      <version>1.1.8</version>
+      <version>1.1.8b</version>
+    </versions>
+    <lastUpdated>20150604154633</lastUpdated>
+  </versioning>
+</metadata>
