@@ -53,6 +53,14 @@ public class Toolkit {
 		}
 		return null;
 	}
-	
+	//DIVIDES AFFILIATION NUMBER IN 2 STRING ARRAY, IF INTRODUCED SSN STRING CONTAINS LESS THAN 3 CHARACTERS IT RETURNS NULL IN BOTH POSSITIONS
+	public static String[] splitSSN(String ssn) {
+		String[] divided=new String[2];
+		if(ssn.length()>2) {
+			divided[0]=ssn.substring(0, 2);
+			divided[1]=ssn.substring(2);
+		}
+		return divided;
+	}
 	
 }

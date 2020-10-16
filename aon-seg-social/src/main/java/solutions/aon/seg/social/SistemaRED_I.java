@@ -1,18 +1,35 @@
 package solutions.aon.seg.social;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
+import javax.print.attribute.standard.DateTimeAtCompleted;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 
 import solutions.aon.seg.social.SituacionEmpresa.SituacionEmpresaBuilder;
+import solutions.aon.seg.social.exceptions.ForbiddenException;
+import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class SistemaRED_I {
 	
@@ -20,6 +37,9 @@ public class SistemaRED_I {
 			final String certificateType, String regime, String ccc) 
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, FailingHttpStatusCodeException {
 						
+		
+		
+		
 		
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 
@@ -158,10 +178,119 @@ public class SistemaRED_I {
 		}
 		
 	}
+	
+	public static byte[] getContributionInformation (final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException, InterruptedException {
+	
+//		
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType);) {
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
+			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR").click();
+//			htmlPage=wait4(htmlPage, (p) -> p.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR"))
+//			.orElseThrow(SegSocialException::new).click();
+			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
+
+			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.splitSSN(affiliationNumber)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.splitSSN(affiliationNumber)[1]);
+			jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.splitSSN(contributionAccount)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.splitSSN(contributionAccount)[1]);
+			GregorianCalendar calendar=new GregorianCalendar();
+			calendar.setTime(fecha);
+			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute(""+calendar.get(Calendar.DAY_OF_MONTH));
+			jacadaform.getInputByName("txt_SDFMES").setValueAttribute(""+(calendar.get(Calendar.MONTH)+1));
+			jacadaform.getInputByName("txt_SDFAO").setValueAttribute(""+calendar.get(Calendar.YEAR));
+			Iterable<DomElement> it=jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
+			//jacadaform.getSelectByName("cbo_ListaTipoImpresion").getFirstElementChild().setAttribute("selected", "false");
+			
+			for(DomElement de : it) {
+				if(de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
+					htmlPage=de.click();
+					//de.setAttribute("selected", "true");
+					break;
+				}
+			}
+			
+			htmlPage=jacadaform.getInputByValue("Continuar").click();
+			
+			List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
+			InputStream is=labels.get(0).dblClick().getWebResponse().getContentAsStream();
+			return is.readAllBytes();
+			//return null;
+			//return htmlPage.getWebResponse().getContentAsStream();
+			//System.out.println(htmlPage.getUrl());
+//			
+//			HtmlTable htmlTable=htmlPage.getHtmlElementById("Sub0900112078");
+//			HtmlTableCell celda=htmlTable.getCellAt(1, 1);
+			
+			//htmlPage=celda.getFirstElementChild().getFirstElementChild().dblClick();
+			//InputStream is=celda.getFirstElementChild().getFirstElementChild().dblClick().getWebResponse().getContentAsStream();
+			//System.out.println(celda.getFirstElementChild().getFirstElementChild().asText());
+			
+			
+			
+			
+			//System.out.println(htmlPage.asText());
+			//System.out.println(htmlPage.getElementById("Sub0900112078_1_0").getTextContent());
+			//HtmlTable htmlTable=htmlPage.getHtmlElementById("Sub0900112078");
+			//System.out.println(htmlTable.getCellAt(2, 1));
+			//System.out.println(htmlPage.asText());
+			
+//			System.out.println(calendar.get(Calendar.MONTH));
+			//System.out.println(htmlPage.asText());
+//			InputStream is = htmlPage.getWebResponse().getContentAsStream();
+//			is.re
+		} catch (FailingHttpStatusCodeException e) {
+			switch (e.getStatusCode()) {
+				case 403:
+					throw new ForbiddenException();
+				default:
+					throw new SegSocialException();
+			}
+			
+		} catch (IOException e) {
+				throw new SegSocialException(e);
+		}
+	} 
+	
+	
+	/*static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function)
+			throws InterruptedException {
+		// try 20 times to wait .5 second each for filling the page.
+		for (int i = 0; i < 20; i++) {
+			R r = function.apply(htmlPage);
+			if (r != null) {
+				return Optional.of(r);
+			}
+			synchronized (htmlPage) {
+				htmlPage.wait(500);
+			}
+		}
+		return Optional.empty();
+	}*/
+	public static void construirPdf (byte[] arr_bytes) {
+		File f=new File("document.pdf");
+		try {
+			FileOutputStream fos=new FileOutputStream(f);
+			fos.write(arr_bytes);
+		} catch (FileNotFoundException e) {
+			System.err.println("Archivo no encontrado");
+		} catch (IOException e) {
+			System.err.println("Error al escribir");
+		}
+		
+	}
+	
+	
+	
 	public static void main(String[] args)
-			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, ParseException {
+			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, ParseException, SegSocialException {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062"));
+			//System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062"));
+			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+			byte[] pdf=getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062", d);
+			System.out.println(pdf.length);
+			construirPdf(pdf);
 		}
 		
 		
