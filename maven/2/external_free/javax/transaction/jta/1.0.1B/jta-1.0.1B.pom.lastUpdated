@@ -1,0 +1,9 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri Oct 16 07:44:02 CEST 2020
+http\://download.java.net/maven/2/.error=
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1602827042900
+http\://download.java.net/maven/2/.lastUpdated=1602827041585
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
+http\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1602827039109
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1602827041762
+http\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
