@@ -16,14 +16,11 @@ public class SistemaRED {
 	public static Collection<Employee> getEmployees(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException 
 	{
-		try { return SistemaRedEmployee.getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc); } 
-		catch (FailingHttpStatusCodeException e) { evalSwitch(e); } 
-		catch (MalformedURLException e) { throw new SegSocialException(e); } 
-		catch (IOException e) { throw new SegSocialException(e); } 
-		catch (InterruptedException e) { throw new SegSocialException(e); }
-		return null;
+		return SistemaRedEmployee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 	}
 
+	
+	
 	private static void evalSwitch(FailingHttpStatusCodeException e) throws ForbiddenException, SegSocialException {
 		switch (e.getStatusCode()) {
 		case 403:

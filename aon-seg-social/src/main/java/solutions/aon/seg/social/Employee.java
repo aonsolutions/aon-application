@@ -6,18 +6,18 @@ public class Employee {
 
 	private String nss;
 	private String name;
-	private Date startDate;
 	private Date birthDate;
 	private String ipf;
 	private String sex;
-	private String ctaCti;
+	private String tlf;
+	private String ctaCti; 
 	private String regime;
 	private String companyId;
 	private String companyName;
 	private String situation;
 	private String gc;
-	private String agricultPromo;
-	private String workTimeReduct;
+	private Boolean agricultPromo;
+	private Boolean workTimeReduct;
 	private Date fra;
 	private Date fea;
 	private Date frb;
@@ -36,10 +36,10 @@ public class Employee {
 		
 		if (nss != null)			visitor.visitNSS(nss);
 		if (name != null)			visitor.visitName(name);
-		if(startDate != null)		visitor.visitStartDate(startDate);
 		if(birthDate != null)		visitor.visitBirthDate(birthDate);
 		if(ipf !=  null)			visitor.visitIpf(ipf);
 		if(sex != null)				visitor.visitSex(sex);
+		if(tlf != null)				visitor.visitTlf(tlf);
 		if(ctaCti != null)			visitor.visitCtaCti(ctaCti);
 		if(regime != null)			visitor.visitRegime(regime);
 		if(companyId != null)		visitor.visitCompanyId(companyId);
@@ -80,12 +80,6 @@ public class Employee {
 			}
 
 			@Override
-			public void visitStartDate(Date startDate) {
-				stringBuffer.append(String.format(" startDate : \"%s\" ", startDate));
-				
-			}
-
-			@Override
 			public void visitBirthDate(Date birthDate) {
 				stringBuffer.append(String.format(" birthDate : \"%s\" ", birthDate));				
 			}
@@ -99,7 +93,12 @@ public class Employee {
 			public void visitSex(String sex) {
 				stringBuffer.append(String.format(" sex : \"%s\" ", sex));	
 			}
-
+			
+			@Override
+			public void visitTlf(String tlf) {
+				stringBuffer.append(String.format(" movil : \"%s\" ", tlf));	
+			}
+			
 			@Override
 			public void visitCtaCti(String ctaCti) {
 				stringBuffer.append(String.format(" ctaCti : \"%s\" ", ctaCti));
@@ -131,12 +130,12 @@ public class Employee {
 			}
 
 			@Override
-			public void visitAgricultPromo(String agriculturePromo) {
+			public void visitAgricultPromo(Boolean agriculturePromo) {
 				stringBuffer.append(String.format(" agriculturePromo : \"%s\" ", agriculturePromo));
 			}
 
 			@Override
-			public void visitWorkTimeReduct(String workTimeReduct) {
+			public void visitWorkTimeReduct(Boolean workTimeReduct) {
 				stringBuffer.append(String.format(" workTimeReduct : \"%s\" ", workTimeReduct));				
 			}
 
@@ -200,6 +199,7 @@ public class Employee {
 				stringBuffer.append(String.format(" reducingCoefic : \"%s\" ", reducingCoefic));
 			}
 
+
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -209,18 +209,18 @@ public class Employee {
 		
 		private String nss;
 		private String name;
-		private Date startDate;
 		private Date birthDate;
 		private String ipf;
 		private String sex;
+		private String tlf;
 		private String ctaCti;
 		private String regime;
 		private String companyId;
 		private String companyName;
 		private String situation;
 		private String gc;
-		private String agricultPromo;
-		private String workTimeReduct;
+		private Boolean agricultPromo;
+		private Boolean workTimeReduct;
 		private Date fra;
 		private Date fea;
 		private Date frb;
@@ -250,11 +250,6 @@ public class Employee {
 			return this;
 		}
 		
-		public EmployeeBuilder setStartDate(Date startDate) {
-			this.startDate = startDate;
-			return this;
-		}
-
 		public EmployeeBuilder setBirthDate(Date birthDate) {
 			this.birthDate = birthDate;
 			return this;
@@ -273,7 +268,12 @@ public class Employee {
 			else this.sex = null;
 			return this;
 		}
-
+		
+		public EmployeeBuilder setTlf(String tlf) {
+			if(tlf != null && !tlf.trim().equals("")) this.tlf = tlf.trim();
+			else this.tlf = null;
+			return this;
+		}
 
 		public EmployeeBuilder setCtaCti(String ctaCti) {
 			if(ctaCti != null && !ctaCti.trim().equals("")) this.ctaCti = ctaCti.trim();
@@ -317,16 +317,14 @@ public class Employee {
 		}
 
 
-		public EmployeeBuilder setAgricultPromo(String agricultPromo) {
-			if(agricultPromo != null && !agricultPromo.trim().equals("")) this.agricultPromo = agricultPromo.trim();
-			else this.agricultPromo = null;
+		public EmployeeBuilder setAgricultPromo(Boolean agricultPromo) {
+			this.agricultPromo = agricultPromo;
 			return this;
 		}
 
 
-		public EmployeeBuilder setWorkTimeReduct(String workTimeReduct) {
-			if(workTimeReduct != null && !workTimeReduct.trim().equals("")) this.workTimeReduct = workTimeReduct.trim();
-			else this.workTimeReduct = null;
+		public EmployeeBuilder setWorkTimeReduct(Boolean workTimeReduct) {
+			this.workTimeReduct = workTimeReduct;
 			return this;
 		}
 		
@@ -414,10 +412,10 @@ public class Employee {
 			
 			employee.nss = this.nss;
 			employee.name = this.name;
-			employee.startDate = this.startDate;
 			employee.birthDate = this.birthDate;
 			employee.ipf = this.ipf;
 			employee.sex = this.sex;
+			employee.tlf = this.tlf;
 			employee.ctaCti = this.ctaCti;
 			employee.regime = this.regime;
 			employee.companyId = this.companyId;
@@ -446,18 +444,18 @@ public class Employee {
 	public static interface Visitor{
 		void visitNSS(String nss);
 		void visitName(String name);
-		void visitStartDate(Date startDate);
 		void visitBirthDate(Date birthDate);
 		void visitIpf(String ipf);
 		void visitSex(String sex);
+		void visitTlf(String tlf);
 		void visitCtaCti(String ctaCti);
 		void visitRegime(String regime);
 		void visitCompanyId(String companyId);
 		void visitCompanyName(String companyName);
 		void visitSituation(String situaction);
 		void visitGc(String gc);
-		void visitAgricultPromo(String agriculturePromo);
-		void visitWorkTimeReduct(String workTimeReduct);
+		void visitAgricultPromo(Boolean agriculturePromo);
+		void visitWorkTimeReduct(Boolean workTimeReduct);
 		void visitrFra(Date fra);
 		void visitrFea(Date fea);
 		void visitrFrb(Date frb);
