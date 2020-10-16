@@ -32,6 +32,7 @@ public class HtmlUnitToolkit {
 			final String certificateType) {
 			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setDownloadImages(false);
 			webClient.setJavaScriptTimeout(10000);
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,

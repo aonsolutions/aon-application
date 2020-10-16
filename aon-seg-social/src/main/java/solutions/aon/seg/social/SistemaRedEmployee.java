@@ -8,13 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
-	import java.util.function.Function;
-
-	import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-	import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -51,6 +46,7 @@ public class SistemaRedEmployee {
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, FailingHttpStatusCodeException {
 			
 			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+				webClient.getOptions().setJavaScriptEnabled(false);
 				
 				ArrayList<Employee> employees = new ArrayList<Employee>();
 				HtmlPage Origen = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
@@ -93,9 +89,8 @@ public class SistemaRedEmployee {
 		
 		//CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIES
 		private static Employee employeeFullInfo(String nss ,WebClient webClient) throws IOException, InterruptedException {
-			HtmlPage _htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
 			
-			_htmlPage = HtmlUnitToolkit.wait4(_htmlPage, p -> p.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR")).orElseThrow().click();
+			HtmlPage _htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
 			HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(_htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 
 			buscaPartesForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0,2));
@@ -206,9 +201,8 @@ public class SistemaRedEmployee {
 				final String certificateType, String regimen, String ccc) throws ElementNotFoundException, IOException, InterruptedException
 		{
 				try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-				HtmlPage Origen = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-	
-				HtmlPage htmlPage = HtmlUnitToolkit.wait4(Origen, p -> p.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR")).orElseThrow().click();
+				webClient.getOptions().setJavaScriptEnabled(false);
+				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 				HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 							
 				buscaPartesForm.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
@@ -289,6 +283,7 @@ public class SistemaRedEmployee {
 		private static Employee getEmployeeImpl(InputStream certificateInputStream, String certificatePassword,
 				String certificateType, String nss) throws IOException, InterruptedException {
 			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+				webClient.getOptions().setJavaScriptEnabled(false);
 				return employeeFullInfo(nss, webClient);
 			}
 		}
@@ -296,11 +291,12 @@ public class SistemaRedEmployee {
 		public static void main(String[] args)
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-
-				Employee e = getEmployee(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062", "010019805355");
 				File f = new File("logEmployee.txt");
 				FileWriter fw = new FileWriter(f);
-				fw.write(e.toString());
+//				Employee e = getEmployee(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062", "010019805355");
+				
+				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
+				for(Employee e : employees) fw.append(e.toString());
 				fw.close();
 ;				
 			}
