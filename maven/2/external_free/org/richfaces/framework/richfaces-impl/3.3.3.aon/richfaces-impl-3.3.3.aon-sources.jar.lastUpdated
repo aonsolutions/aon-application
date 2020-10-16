@@ -1,0 +1,14 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Jul 01 19:21:46 CEST 2020
+http\://jasperreports.sourceforge.net/maven2/.lastUpdated=1593624106777
+http\://jasperreports.sourceforge.net/maven2/.error=
+http\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+http\://download.java.net/maven/2/.error=
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1593624106928
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1593624106355
+http\://download.java.net/maven/2/.lastUpdated=1593624104443
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
+https\://repo.maven.apache.org/maven2/.error=
+http\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1593624102802
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1593624105603
