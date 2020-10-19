@@ -22,6 +22,8 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.Messages;
+import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -42,12 +44,14 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ContrataEmployee extends ResizeComposite {
@@ -498,912 +502,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 	}	
 
-	private class ContractOtherDataImplementation extends ContractOtherData{
-
-		// ------------------------------------------------------- Indefinite Table
-		
-		@Override
-		protected void onEnterpriseAgentTBChange() {
-			String value = contractOtherData.enterpriseAgentTB.getValue();
-			setContractOtherData("ENTERPRISE_DIR_STAFF_NAME", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentNIFTBChange() {
-			String value = contractOtherData.enterpriseAgentNIFTB.getValue();
-			setContractOtherData("ENTERPRISE_DIR_STAFF_NIF", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentPositionTBChange() {
-			String value = contractOtherData.enterpriseAgentPositionTB.getValue();
-			setContractOtherData("ENTERPRISE_DIR_STAFF_CHARGE", value);
-		}
-
-		@Override
-		protected void onMinorAgentTBChange() {
-			String value = contractOtherData.minorAgentTB.getValue();
-			setContractOtherData("LEGAL_REPRESENTATIVE_NAME", value);
-		}
-
-		@Override
-		protected void onMinorAgentNIFTBChange() {
-			String value = contractOtherData.minorAgentNIFTB.getValue();
-			setContractOtherData("LEGAL_REPRESENTATIVE_NIF", value);
-		}
-
-		@Override
-		protected void onMinorAgentQualityOfTBChange() {
-			String value = contractOtherData.minorAgentQualityOfTB.getValue();
-			setContractOtherData("LEGAL_REPRESENTATIVE_CHARGE", value);
-		}
-
-		@Override
-		protected void onDoingFunctionsTBChange() {
-			String value = contractOtherData.doingFunctionsTB.getValue();
-			setContractOtherData("FUNCTIONS", value);
-		}
-
-		@Override
-		protected void onDistanceCBChange() {
-			Boolean value = contractOtherData.distanceCB.getValue();
-			if(value)
-				setContractOtherData("EMPLOYEE_CONTRACT_DISTANCE", "true");
-			else
-				setContractOtherData("EMPLOYEE_CONTRACT_DISTANCE", "");
-		}
-
-		@Override
-		protected void onDistanceAddressTBChange() {
-			String value = contractOtherData.distanceAddressTB.getValue();
-			setContractOtherData("EMPLOYEE_CONTRACT_DIST_ADDR", value);
-		}
-
-		@Override
-		protected void onDiscontinuousWorkTBChange() {
-			String value = contractOtherData.discontinuousWorkTB.getValue();
-			setContractOtherData("DISC_WORK_DESCRIPTION", value);
-		}
-
-		@Override
-		protected void onIntermittentCyclicalActivityTBChange() {
-			String value = contractOtherData.intermittentCyclicalActivityTB.getValue();
-			setContractOtherData("DISC_WORK_ACTIVITY", value);
-		}
-
-		@Override
-		protected void onDurationFDTBChange() {
-			String value = contractOtherData.durationFDTB.getValue();
-			setContractOtherData("DISC_WORK_DURATION", value);
-		}
-
-		@Override
-		protected void onActivityStimationDurationFDTBChange() {
-			String value = contractOtherData.activityStimationDurationFDTB.getValue();
-			setContractOtherData("DISC_WORK_ESTIMATED_DURATION", value);
-		}
-
-		@Override
-		protected void onJourneyHoursFDTBChange() {
-			String value = contractOtherData.journeyHoursFDTB.getValue();
-			setContractOtherData("DISC_WORK_ESTIM_JOURNAL_HOURS", value);
-		}
-
-		@Override
-		protected void onJourneyPeriodFDTBChange() {
-			String value = contractOtherData.journeyPeriodFDTB.getValue();
-			setContractOtherData("DISC_WORK_ESTIM_JOURNAL_PERIOD", value);
-		}
-
-		@Override
-		protected void onTimeDistributionFDTBChange() {
-			String value = contractOtherData.timeDistributionFDTB.getValue();
-			setContractOtherData("DISC_WORK_ESTIM_SCHEDULE", value);
-		}
-
-		@Override
-		protected void onPartialTimeLBChange() {
-			String selectedValue = contractOtherData.partialTimeLB.getSelectedValue();
-			setContractOtherData("DISC_AGREEMENT_COLLECTIVE", selectedValue);
-		}
-
-		@Override
-		protected void onJourneyHoursTCTBChange() {
-			String value = contractOtherData.journeyHoursTCTB.getValue();
-			setContractOtherData("FULL_TIME_WEEK_HOURS", value);
-		}
-
-		@Override
-		protected void onStartJourneyTCTBChange() {
-			String value = contractOtherData.startJourneyTCTB.getValue();
-			setContractOtherData("FULL_TIME_START_TIME", value);
-		}
-
-		@Override
-		protected void onEndJourneyTCTBChange() {
-			String value = contractOtherData.endJourneyTCTB.getValue();
-			setContractOtherData("FULL_TIME_END_TIME", value);
-		}
-
-		@Override
-		protected void onJourneyHoursTPTBChange() {
-			String value = contractOtherData.journeyHoursTPTB.getValue();
-			setContractOtherData("PARTIALLY_TIME_HOURS", value);
-		}
-
-		@Override
-		protected void onAgreementJourneyHoursTBChange() {
-			String value = contractOtherData.agreementJourneyHoursTB.getValue();
-			setContractOtherData("DEFAULT_JOURNAL_HOURS", value);
-		}
-
-		@Override
-		protected void onComplementaryHoursLBChange() {
-			String selectedValue = contractOtherData.complementaryHoursLB.getSelectedValue();
-			setContractOtherData("COMPLEMENTARY_HOURS", selectedValue);
-		}
-
-		@Override
-		protected void onTrialPeriodTBChange() {
-			String value = contractOtherData.trialPeriodTB.getValue();
-			setContractOtherData("TRIAL_DURATION", value);
-		}
-
-		@Override
-		protected void onSalaryAmountTBChange() {
-			String value = contractOtherData.salaryAmountTB.getValue();
-			setContractOtherData("SALARY_AMOUNT", value);
-		}
-
-		@Override
-		protected void onSalaryPeriodTBChange() {
-			String value = contractOtherData.salaryPeriodTB.getValue();
-			setContractOtherData("SALARY_PERIOD", value);
-		}
-
-		@Override
-		protected void onSalaryConceptTBChange() {
-			String value = contractOtherData.salaryConceptTB.getValue();
-			setContractOtherData("SALARY_CONCEPT", value);
-		}
-
-		@Override
-		protected void onHolidaysTBChange() {
-			String value = contractOtherData.holidaysTB.getValue();
-			setContractOtherData("HOLIDAYS", value);
-		}
-
-		@Override
-		protected void onSepeOfficeTBChange() {
-			String value = contractOtherData.sepeOfficeTB.getValue();
-			setContractOtherData("SEPE_MUNICIPALITY", value);
-		}
-
-		@Override
-		protected void onAccreditedDisabilityTBChange() {
-			String value = contractOtherData.accreditedDisabilityTB.getValue();
-			setContractOtherData("I_OPT2_SEPE_MUNICIPALITY", value);
-		}
-
-		@Override
-		protected void onWithoutDisabilitySevereLBChange() {
-			String selectedValue = contractOtherData.withoutDisabilitySevereLB.getSelectedValue();
-			setContractOtherData("I_OPT2_DISABILITY_NO_SEVERE", selectedValue);
-		}
-
-		@Override
-		protected void onDisabilitySevereLBChange() {
-			String selectedValue = contractOtherData.disabilitySevereLB.getSelectedValue();
-			setContractOtherData("I_OPT2_DISABILITY_SEVERE", selectedValue);
-		}
-
-		@Override
-		protected void onSubsidyTBChange() {
-			String value = contractOtherData.subsidyTB.getValue();
-			setContractOtherData("I_OPT2_REDUCTION", value);
-		}
-
-		@Override
-		protected void onFourthLawLBChange() {
-			String selectedValue = contractOtherData.fourthLawLB.getSelectedValue();
-			setContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012", selectedValue);
-		}
-
-		@Override
-		protected void onUnemploymentLBChange() {
-			String selectedValue = contractOtherData.unemploymentLB.getSelectedValue();
-			setContractOtherData("I_OPT5_UNEMPLOYED_BT_16_30", selectedValue);
-		}
-
-		@Override
-		protected void onUnemploymentOldLBChange() {
-			String selectedValue = contractOtherData.unemploymentOldLB.getSelectedValue();
-			setContractOtherData("I_OPT5_UNEMPLOYED_GT_45", selectedValue);
-		}
-
-		@Override
-		protected void onBenefitsPerceptorCBChange() {
-			Boolean value = contractOtherData.benefitsPerceptorCB.getValue();
-			if(value)
-				setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "true");
-			else
-				setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "");
-		}
-
-		@Override
-		protected void onFirstEmployeeCBChange() {
-			Boolean value = contractOtherData.firstEmployeeCB.getValue();
-			if(value)
-				setContractOtherData("I_OPT5_FIRST_EMPLOYEE_AND_LT_30", "true");
-			else
-				setContractOtherData("I_OPT5_FIRST_EMPLOYEE_AND_LT_30", "");
-		}
-
-		@Override
-		protected void onEmployeeLBChange() {
-			String selectedValue = contractOtherData.employeeLB.getSelectedValue();
-			setContractOtherData("I_OPT6_AGE", selectedValue);
-		}
-
-		@Override
-		protected void onAgreementLineOneTBChange() {
-			String value = contractOtherData.agreementLineOneTB.getValue();
-			setContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE1", value);
-		}
-
-		@Override
-		protected void onAgreementLineTwoTBChange() {
-			String value = contractOtherData.agreementLineTwoTB.getValue();
-			setContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE2", value);
-		}
-
-		@Override
-		protected void onContactHoursLBChange() {
-			String selectedValue = contractOtherData.contactHoursLB.getSelectedValue();
-			setContractOtherData("I_OPT15_ONSITE_HOURS", selectedValue);
-		}
-
-		@Override
-		protected void onHoursTBChange() {
-			String value = contractOtherData.hoursTB.getValue();
-			setContractOtherData("I_OPT15_ONSITE_WEEK_HOURS", value);
-		}
-
-		@Override
-		protected void onRemunerationFormLBChange() {
-			String selectedValue = contractOtherData.remunerationFormLB.getSelectedValue();
-			setContractOtherData("I_OPT15_SALARY", selectedValue);
-		}
-
-		@Override
-		protected void onOvernightAgreementLBChange() {
-			String selectedValue = contractOtherData.overnightAgreementLB.getSelectedValue();
-			setContractOtherData("I_OPT15_OVERNIGHT", selectedValue);
-		}
-
-		@Override
-		protected void onOvernightRegimeTBChange() {
-			String value = contractOtherData.overnightRegimeTB.getValue();
-			setContractOtherData("I_OPT15_OVERNIGHT_WEEK_DAYS", value);
-		}
-
-		@Override
-		protected void onQuoteReductionTCLBChange() {
-			String selectedValue = contractOtherData.quoteReductionTCLB.getSelectedValue();
-			setContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS", selectedValue);
-		}
-
-		@Override
-		protected void onQuoteReductionFDLBChange() {
-			String selectedValue = contractOtherData.quoteReductionFDLB.getSelectedValue();
-			setContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS", selectedValue);
-		}
-
-		@Override
-		protected void onSepeOfficeCOTBChange() {
-			String value = contractOtherData.sepeOfficeCOTB.getValue();
-			setContractOtherData("I_OPT17_SRC_CONTRACT_SEPE_MUNIC", value);
-		}
-		
-		// ------------------------------------------------------- Temporal Table
-
-		@Override
-		protected void onEnterpriseAgentTempTBChange() {
-			String value = contractOtherData.enterpriseAgentTempTB.getValue();
-			setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentNIFTempTBChange() {
-			String value = contractOtherData.enterpriseAgentNIFTempTB.getValue();
-			setContractOtherData("T_ENTERPRISE_DIR_STAFF_NIF", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentPositionTempTBChange() {
-			String value = contractOtherData.enterpriseAgentPositionTempTB.getValue();
-			setContractOtherData("T_ENTERPRISE_DIR_STAFF_CHARGE", value);
-		}
-
-		@Override
-		protected void onMinorAgentTempTBChange() {
-			String value = contractOtherData.minorAgentTempTB.getValue();
-			setContractOtherData("T_LEGAL_REPRESENTATIVE_NAME", value);
-		}
-
-		@Override
-		protected void onMinorAgentNIFTempTBChange() {
-			String value = contractOtherData.minorAgentNIFTempTB.getValue();
-			setContractOtherData("T_LEGAL_REPRESENTATIVE_NIF", value);
-		}
-
-		@Override
-		protected void onMinorAgentQualityOfTempTBChange() {
-			String value = contractOtherData.minorAgentQualityOfTempTB.getValue();
-			setContractOtherData("T_LEGAL_REPRESENTATIVE_CHARGE", value);
-		}
-
-		@Override
-		protected void onDoingFunctionsTempTBChange() {
-			String value = contractOtherData.doingFunctionsTempTB.getValue();
-			setContractOtherData("T_FUNCTIONS", value);
-		}
-
-		@Override
-		protected void onDistanceTempCBChange() {
-			Boolean value = contractOtherData.distanceTempCB.getValue();
-			if(value)
-				setContractOtherData("T_EMPLOYEE_CONTRACT_DISTANCE", "true");
-			else
-				setContractOtherData("T_EMPLOYEE_CONTRACT_DISTANCE", "");
-		}
-
-		@Override
-		protected void onDistanceAddressTempTBChange() {
-			String value = contractOtherData.distanceAddressTempTB.getValue();
-			setContractOtherData("T_EMPLOYEE_CONTRACT_DIST_ADDR", value);
-		}
-
-		@Override
-		protected void onJourneyHoursTCTempTBChange() {
-			String value = contractOtherData.journeyHoursTCTempTB.getValue();
-			setContractOtherData("T_FULL_TIME_WEEK_HOURS", value);
-		}
-
-		@Override
-		protected void onStartJourneyTCTempTBChange() {
-			String value = contractOtherData.startJourneyTCTempTB.getValue();
-			setContractOtherData("T_FULL_TIME_START_TIME", value);
-		}
-
-		@Override
-		protected void onEndJourneyTCTempTBChange() {
-			String value = contractOtherData.endJourneyTCTempTB.getValue();
-			setContractOtherData("T_FULL_TIME_END_TIME", value);
-		}
-
-		@Override
-		protected void onLowJourneyTempTBChange() {
-			String value = contractOtherData.lowJourneyTempTB.getValue();
-			setContractOtherData("T_PARTIALLY_TIME_JOB_LOWER_THAN", value);
-		}
-
-		@Override
-		protected void onTimeDistributionTempTBChange() {
-			String value = contractOtherData.timeDistributionTempTB.getValue();
-			setContractOtherData("T_PARTIALLY_TIME_JOB_DISTRIB", value);
-		}
-
-		@Override
-		protected void onEndContractTempTBChange() {
-			String value = contractOtherData.endContractTempTB.getValue();
-			setContractOtherData("T_END_DATE_TEXT", value);
-		}
-
-		@Override
-		protected void onTrialPeriodTempTBChange() {
-			String value = contractOtherData.trialPeriodTempTB.getValue();
-			setContractOtherData("T_TRIAL_DURATION", value);
-		}
-
-		@Override
-		protected void onPermitedHighDurationTempCBChange() {
-			Boolean value = contractOtherData.permitedHighDurationTempCB.getValue();
-			if(value)
-				setContractOtherData("T_GREATER_DURATION_AGREEMENT_COL", "true");
-			else
-				setContractOtherData("T_GREATER_DURATION_AGREEMENT_COL", "");
-		}
-
-		@Override
-		protected void onSalaryAmountTempTBChange() {
-			String value = contractOtherData.salaryAmountTempTB.getValue();
-			setContractOtherData("T_SALARY_AMOUNT", value);
-		}
-
-		@Override
-		protected void onSalaryPeriodTempTBChange() {
-			String value = contractOtherData.salaryPeriodTempTB.getValue();
-			setContractOtherData("T_SALARY_PERIOD", value);
-		}
-
-		@Override
-		protected void onSalaryConceptTempTBChange() {
-			String value = contractOtherData.salaryConceptTempTB.getValue();
-			setContractOtherData("T_SALARY_CONCEPT", value);
-		}
-
-		@Override
-		protected void onHolidaysTempTBChange() {
-			String value = contractOtherData.holidaysTempTB.getValue();
-			setContractOtherData("T_HOLIDAYS", value);
-		}
-
-		@Override
-		protected void onSepeOfficeTempTBChange() {
-			String value = contractOtherData.sepeOfficeTempTB.getValue();
-			setContractOtherData("T_SEPE_MUNICIPALITY", value);
-		}
-
-		@Override
-		protected void onWorkTempTBChange() {
-			String value = contractOtherData.workTempTB.getValue();
-			setContractOtherData("T_OPT1_WORK_DESCRIPTION1", value);
-		}
-
-		@Override
-		protected void onWorkMoreTempTBChange() {
-			String value = contractOtherData.workMoreTempTB.getValue();
-			setContractOtherData("T_OPT1_WORK_DESCRIPTION2", value);
-		}
-
-		@Override
-		protected void onTaskTempTBChange() {
-			String value = contractOtherData.taskTempTB.getValue();
-			setContractOtherData("T_OPT2_WORK_DESCRIPTION1", value);
-		}
-
-		@Override
-		protected void onTaskMoreTempTBChange() {
-			String value = contractOtherData.taskMoreTempTB.getValue();
-			setContractOtherData("T_OPT2_WORK_DESCRIPTION2", value);
-		}
-
-		@Override
-		protected void onSustituteEmployeeTempTBChange() {
-			String value = contractOtherData.sustituteEmployeeTempTB.getValue();
-			setContractOtherData("T_OPT3_REPLACED_WORKER_NAME", value);
-		}
-
-		@Override
-		protected void onRequirementsTempLBChange() {
-			String selectedValue = contractOtherData.requirementsTempLB.getSelectedValue();
-			setContractOtherData("T_OPT10_REQUIREMENTS_OPT", selectedValue);
-		}
-
-		@Override
-		protected void onFormationTempLBChange() {
-			String selectedValue = contractOtherData.formationTempLB.getSelectedValue();
-			setContractOtherData("T_OPT10_FORMATION_OPT", selectedValue);
-		}
-
-		@Override
-		protected void onFormationWillTempLBChange() {
-			String selectedValue = contractOtherData.formationWillTempLB.getSelectedValue();
-			setContractOtherData("T_OPT10_FORMATION_TYPE_OPT", selectedValue);
-		}
-
-		@Override
-		protected void onOfficeSPEmployeeTempTBChange() {
-			String value = contractOtherData.officeSPEmployeeTempTB.getValue();
-			setContractOtherData("T_OPT10_FORMATION_TYPE_OPT1_TEXT", value);
-		}
-
-		@Override
-		protected void onLenguageFormationTempTBChange() {
-			String value = contractOtherData.lenguageFormationTempTB.getValue();
-			setContractOtherData("T_OPT10_FORMATION_TYPE_OPT2_TEXT", value);
-		}
-
-		@Override
-		protected void onHoursDealTempLBChange() {
-			String selectedValue = contractOtherData.hoursDealTempLB.getSelectedValue();
-			setContractOtherData("T_OPT12_ONSITE_HOURS", selectedValue);
-		}
-
-		@Override
-		protected void onPresentHoursTempTBChange() {
-			String value = contractOtherData.presentHoursTempTB.getValue();
-			setContractOtherData("T_OPT12_ONSITE_WEEK_HOURS", value);
-		}
-
-		@Override
-		protected void onDistributionHoursTempTBChange() {
-			String value = contractOtherData.distributionHoursTempTB.getValue();
-			setContractOtherData("T_OPT12_ONSITE_HOURS_DISTRIB", value);
-		}
-
-		@Override
-		protected void onTimeCompensationTempLBChange() {
-			String selectedValue = contractOtherData.timeCompensationTempLB.getSelectedValue();
-			setContractOtherData("T_OPT12_SALARY_OPT", selectedValue);
-		}
-
-		@Override
-		protected void onDealOvernightLBChange() {
-			String selectedValue = contractOtherData.dealOvernightLB.getSelectedValue();
-			setContractOtherData("T_OPT12_OVERNIGHT", selectedValue);
-		}
-
-		@Override
-		protected void onOvernightRegimeTempTBChange() {
-			String value = contractOtherData.overnightRegimeTempTB.getValue();
-			setContractOtherData("T_OPT12_OVERNIGHT_WEEK_DAYS", value);
-		}
-
-		@Override
-		protected void onOfficialOrganismTempTBChange() {
-			String value = contractOtherData.officialOrganismTempTB.getValue();
-			setContractOtherData("T_OPT13_DISABILITY_ISSUED_BY", value);
-		}
-
-		@Override
-		protected void onWithoutSevereDisTempLBChange() {
-			String selectedValue = contractOtherData.withoutSevereDisTempLB.getSelectedValue();
-			setContractOtherData("T_OPT13_DISABILITY", selectedValue);
-		}
-
-		@Override
-		protected void onSevereDisTempLBChange() {
-			String selectedValue = contractOtherData.severeDisTempLB.getSelectedValue();
-			setContractOtherData("T_OPT13_SEVERE_DISABILITY", selectedValue);
-		}
-
-		@Override
-		protected void onAdaptationPeriodTempTBChange() {
-			String value = contractOtherData.adaptationPeriodTempTB.getValue();
-			setContractOtherData("T_OPT14_TRIAL_PERIOD", value);
-		}
-
-		@Override
-		protected void onAdaptationConditionsTempTBChange() {
-			String value = contractOtherData.adaptationConditionsTempTB.getValue();
-			setContractOtherData("T_OPT14_TRIAL_TERMS", value);
-		}
-
-		@Override
-		protected void onAdaptationWorkTempLBChange() {
-			String selectedValue = contractOtherData.adaptationWorkTempLB.getSelectedValue();
-			setContractOtherData("T_OPT14_PROFESSION", selectedValue);
-		}
-
-		@Override
-		protected void onSocialPersonalAdjustTempTBChange() {
-			String value = contractOtherData.socialPersonalAdjustTempTB.getValue();
-			setContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT", value);
-		}
-
-		@Override
-		protected void onSocialPersonalAdjustMoreTempTBChange() {
-			String value = contractOtherData.socialPersonalAdjustMoreTempTB.getValue();
-			setContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT_MORE", value);
-		}
-
-		@Override
-		protected void onColectiveAgreementTempTBChange() {
-			String value = contractOtherData.colectiveAgreementTempTB.getValue();
-			setContractOtherData("T_OPT14_COLLECTIVE_AGREEMENT", value);
-		}
-		
-		// ------------------------------------------------------- Formation Table
-
-		@Override
-		protected void onEnterpriseAgentFormTBChange() {
-			String value = contractOtherData.enterpriseAgentFormTB.getValue();
-			setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentNIFFormTBChange() {
-			String value = contractOtherData.enterpriseAgentNIFFormTB.getValue();
-			setContractOtherData("L_ENTERPRISE_DIR_STAFF_NIF", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentPositionFormTBChange() {
-			String value = contractOtherData.enterpriseAgentPositionFormTB.getValue();
-			setContractOtherData("L_ENTERPRISE_DIR_STAFF_CHARGE", value);
-		}
-
-		@Override
-		protected void onMinorAgentFormTBChange() {
-			String value = contractOtherData.minorAgentFormTB.getValue();
-			setContractOtherData("L_LEGAL_REPRESENTATIVE_NAME", value);
-		}
-
-		@Override
-		protected void onMinorAgentNIFFormTBChange() {
-			String value = contractOtherData.minorAgentNIFFormTB.getValue();
-			setContractOtherData("L_LEGAL_REPRESENTATIVE_NIF", value);
-		}
-
-		@Override
-		protected void onMinorAgentQualityOfFormTBChange() {
-			String value = contractOtherData.minorAgentQualityOfFormTB.getValue();
-			setContractOtherData("L_LEGAL_REPRESENTATIVE_CHARGE", value);
-		}
-
-		@Override
-		protected void onSsReductionFormLBChange() {
-			String selectedValue = contractOtherData.ssReductionFormLB.getSelectedValue();
-			setContractOtherData("L_QUOTE_BONUS", selectedValue);
-		}
-
-		@Override
-		protected void onEmployeeFormLBChange() {
-			String selectedValue = contractOtherData.employeeFormLB.getSelectedValue();
-			setContractOtherData("L_EMPLOYEE_OPT", selectedValue);
-		}
-
-		@Override
-		protected void onWorkplaceFormTBChange() {
-			String value = contractOtherData.workplaceFormTB.getValue();
-			setContractOtherData("L_CONTRACT_WORKPLACE_ADDRESS", value);
-		}
-
-		@Override
-		protected void onTutorFormTBChange() {
-			String value = contractOtherData.tutorFormTB.getValue();
-			setContractOtherData("L_FORMATION_TEACHER", value);
-		}
-
-		@Override
-		protected void onEfectiveWorkHoursFormTBChange() {
-			String value = contractOtherData.efectiveWorkHoursFormTB.getValue();
-			setContractOtherData("L_HORARIO_LABORAL", value);
-		}
-
-		@Override
-		protected void onActivityHoursFormTBChange() {
-			String value = contractOtherData.activityHoursFormTB.getValue();
-			setContractOtherData("L_HORARIO_LECTIVO", value);
-		}
-
-		@Override
-		protected void onTrialPeriodFormTBChange() {
-			String value = contractOtherData.trialPeriodFormTB.getValue();
-			setContractOtherData("L_TRIAL_DURATION", value);
-		}
-
-		@Override
-		protected void onAgreementTrialFormCBChange() {
-			Boolean value = contractOtherData.agreementTrialFormCB.getValue();
-			if(value)
-				setContractOtherData("L_TRIAL_DURATION_INCREASE", "true");
-			else
-				setContractOtherData("L_TRIAL_DURATION_INCREASE", "");
-		}
-
-		@Override
-		protected void onSalaryAmountFormTBChange() {
-			String value = contractOtherData.salaryAmountFormTB.getValue();
-			setContractOtherData("L_SALARY_AMOUNT", value);
-		}
-
-		@Override
-		protected void onSalaryPeriodFormTBChange() {
-			String value = contractOtherData.salaryPeriodFormTB.getValue();
-			setContractOtherData("L_SALARY_PERIOD", value);
-		}
-
-		@Override
-		protected void onHolidaysFormTBChange() {
-			String value = contractOtherData.holidaysFormTB.getValue();
-			setContractOtherData("L_HOLIDAYS", value);
-		}
-
-		@Override
-		protected void onDegreeExistFormCBChange() {
-			Boolean value = contractOtherData.degreeExistFormCB.getValue();
-			if(value)
-				setContractOtherData("L_ANNEX_I_CHECK", "true");
-			else
-				setContractOtherData("L_ANNEX_I_CHECK", "");
-		}
-
-		@Override
-		protected void onDegreeExist2FormCBChange() {
-			Boolean value = contractOtherData.degreeExist2FormCB.getValue();
-			if(value)
-				setContractOtherData("L_ANNEX_II_CHECK", "true");
-			else
-				setContractOtherData("L_ANNEX_II_CHECK", "");
-		}
-		
-		// ------------------------------------------------------- Practice Table
-
-		@Override
-		protected void onEnterpriseAgentPracTBChange() {
-			String value = contractOtherData.enterpriseAgentPracTB.getValue();
-			setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentNIFPracTBChange() {
-			String value = contractOtherData.enterpriseAgentNIFPracTB.getValue();
-			setContractOtherData("P_ENTERPRISE_DIR_STAFF_NIF", value);
-		}
-
-		@Override
-		protected void onEnterpriseAgentPositionPracTBChange() {
-			String value = contractOtherData.enterpriseAgentPositionPracTB.getValue();
-			setContractOtherData("P_ENTERPRISE_DIR_STAFF_CHARGE", value);
-		}
-
-		@Override
-		protected void onMinorAgentPracTBChange() {
-			String value = contractOtherData.minorAgentPracTB.getValue();
-			setContractOtherData("P_LEGAL_REPRESENTATIVE_NAME", value);
-		}
-
-		@Override
-		protected void onMinorAgentNIFPracTBChange() {
-			String value = contractOtherData.minorAgentNIFPracTB.getValue();
-			setContractOtherData("P_LEGAL_REPRESENTATIVE_NIF", value);
-		}
-
-		@Override
-		protected void onMinorAgentQualityOfPracTBChange() {
-			String value = contractOtherData.minorAgentQualityOfPracTB.getValue();
-			setContractOtherData("P_LEGAL_REPRESENTATIVE_CHARGE", value);
-		}
-
-		@Override
-		protected void onProfesionalCertPracTBChange() {
-			String value = contractOtherData.profesionalCertPracTB.getValue();
-			setContractOtherData("P_PROFESSIONAL_CERT", value);
-		}
-
-		@Override
-		protected void onObtainingDatePracTBChange() {
-			String value = contractOtherData.obtainingDatePracTB.getValue();
-			setContractOtherData("P_PROFESSIONAL_CERT_OBTAIN_DATE", value);
-		}
-
-		@Override
-		protected void onDisabilityCertPracTBChange() {
-			String value = contractOtherData.disabilityCertPracTB.getValue();
-			setContractOtherData("P_DISABILITY_ISSUE_ENTITY", value);
-		}
-
-		@Override
-		protected void onDisabilityCertMorePracTBChange() {
-			String value = contractOtherData.disabilityCertMorePracTB.getValue();
-			setContractOtherData("P_DISABILITY_ISSUE_ENTITY_MORE", value);
-		}
-
-		@Override
-		protected void onFirstContractPracLBChange() {
-			String selectedValue = contractOtherData.firstContractPracLB.getSelectedValue();
-			setContractOtherData("P_FIRST_CONTRACT", selectedValue);
-		}
-
-		@Override
-		protected void onJourneyHoursPracTBChange() {
-			String value = contractOtherData.journeyHoursPracTB.getValue();
-			setContractOtherData("P_FULL_TIME_WEEK_HOURS", value);
-		}
-
-		@Override
-		protected void onStartJourneyPracTBChange() {
-			String value = contractOtherData.startJourneyPracTB.getValue();
-			setContractOtherData("P_FULL_TIME_START_TIME", value);
-		}
-
-		@Override
-		protected void onEndJourneyPracTBChange() {
-			String value = contractOtherData.endJourneyPracTB.getValue();
-			setContractOtherData("P_FULL_TIME_END_TIME", value);
-		}
-
-		@Override
-		protected void onDistributionJourneyPracTBChange() {
-			String value = contractOtherData.distributionJourneyPracTB.getValue();
-			setContractOtherData("P_JOB_TIME_DISTRIBUTION2", value);
-		}
-
-		@Override
-		protected void onTrialPeriodPracTBChange() {
-			String value = contractOtherData.trialPeriodPracTB.getValue();
-			setContractOtherData("P_TRIAL_DURATION", value);
-		}
-
-		@Override
-		protected void onSalaryAmountPracTBChange() {
-			String value = contractOtherData.salaryAmountPracTB.getValue();
-			setContractOtherData("P_SALARY_AMOUNT", value);
-		}
-
-		@Override
-		protected void onSalaryPeriodPracTBChange() {
-			String value = contractOtherData.salaryPeriodPracTB.getValue();
-			setContractOtherData("P_SALARY_PERIOD", value);
-		}
-
-		@Override
-		protected void onSalaryConceptPracTBChange() {
-			String value = contractOtherData.salaryConceptPracTB.getValue();
-			setContractOtherData("P_SALARY_CONCEPT", value);
-		}
-
-		@Override
-		protected void onHolidaysPracTBChange() {
-			String value = contractOtherData.holidaysPracTB.getValue();
-			setContractOtherData("P_HOLIDAYS", value);
-		}
-
-		@Override
-		protected void onSepeComunicationPracTBChange() {
-			String value = contractOtherData.sepeComunicationPracTB.getValue();
-			setContractOtherData("P_SEPE_START_COMMUNICATION", value);
-		}
-
-		@Override
-		protected void onEndSepeComunicationPracTBChange() {
-			String value = contractOtherData.endSepeComunicationPracTB.getValue();
-			setContractOtherData("P_SEPE_END_COMMUNICATION", value);
-		}
-
-		@Override
-		protected void onUnemploymentSubsidyPracLBChange() {
-			String selectedValue = contractOtherData.unemploymentSubsidyPracLB.getSelectedValue();
-			setContractOtherData("P_OPT3_UNEMPLOYMENT", selectedValue);
-		}
-
-		@Override
-		protected void onAdaptationPeriodPracTBChange() {
-			String value = contractOtherData.adaptationPeriodPracTB.getValue();
-			setContractOtherData("P_OPT4_TRIAL_DURATION", value);
-		}
-
-		@Override
-		protected void onAdaptationConditionsPracTBChange() {
-			String value = contractOtherData.adaptationConditionsPracTB.getValue();
-			setContractOtherData("P_OPT4_TRIAL_DURATION_CONDITIONS", value);
-		}
-
-		@Override
-		protected void onAdaptationWorkPracTBChange() {
-			String value = contractOtherData.adaptationWorkPracTB.getValue();
-			setContractOtherData("P_OPT4_WORK_PLACE_ADAPTATIONS", value);
-		}
-
-		@Override
-		protected void onPersonalSocialAdjustPracTBChange() {
-			String value = contractOtherData.personalSocialAdjustPracTB.getValue();
-			setContractOtherData("P_OPT4_STAFF_ADJUSTMENT", value);
-		}
-
-		@Override
-		protected void onPersonalSocialAdjustMorePracTBChange() {
-			String value = contractOtherData.personalSocialAdjustMorePracTB.getValue();
-			setContractOtherData("P_OPT4_STAFF_ADJUSTMENT_MORE", value);
-		}
-
-		@Override
-		protected void onMotivationPracLBChange() {
-			String selectedValue = contractOtherData.motivationPracLB.getSelectedValue();
-			setContractOtherData("P_OPT5_MOTIVATION", selectedValue);
-		}
-
-		@Override
-		protected void onEmployerPracLBChange() {
-			String selectedValue = contractOtherData.employerPracLB.getSelectedValue();
-			setContractOtherData("P_OPT5_EMPLOYER", selectedValue);
-		}
-		
-	}
-	
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
@@ -1417,10 +515,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	Employee employee;
 	
 	@UiField (provided = true)
+	ContractSpecificData contractSpecificData;
+	
+	@UiField (provided = true)
 	ContractOtherData contractOtherData;
 	
 	@UiField (provided = true)
-	ContractClauseAndAttach contractClauseAndAttach;
+	ContractClauseUI contractClauseUI;
+	
+	@UiField (provided = true)
+	ContractAttachUI contractAttachUI;
 	
 	@UiField
 	Button saveContract;
@@ -1435,14 +539,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ScrollPanel scrolledPanelContractOtherData;
 	
 	@UiField
+	ScrollPanel scrolledPanelContractSpecificData;
+	
+	@UiField
 	Button listEmployees;
 	
 	@UiField
-	ScrollPanel scrolledPanelClausesAndAttach;
+	ScrollPanel scrolledPanelClauses;
+	
+	@UiField
+	ScrollPanel scrolledPanelAttach;
 	
 	@UiField
 	MinimizePanel footPanel;
 	
+	@UiField
+	TabLayoutPanel footTabPanel;
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 
 	private ContrataEmployeeObject contrataEmployeeObject;
@@ -1453,8 +565,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	public ContrataEmployee() {
 		employee = new EmployeeImplementation();
-		contractOtherData = new ContractOtherDataImplementation();
-		contractClauseAndAttach = new ContractClauseAndAttach();
+		contractSpecificData = new ContractSpecificData();
+		contractOtherData = new ContractOtherData();
+		contractClauseUI = new ContractClauseUI();
+		contractAttachUI = new ContractAttachUI() {
+			@Override
+			protected void fireMessagesResults(Messages messages) {
+				paintMessagesResult(messages);
+			}
+		};
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -1468,20 +587,62 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		int height = Window.getClientHeight(); 
 		scrolledPanel.setHeight((height-220)+"px");
-		scrolledPanelContractOtherData.setHeight((height-220)+"px");
-		scrolledPanelClausesAndAttach.setHeight((height-220)+"px");
+		scrolledPanelContractOtherData.setHeight((height-240)+"px");
+		scrolledPanelClauses.setHeight((height-240)+"px");
+		scrolledPanelAttach.setHeight((height-240)+"px");
+		scrolledPanelContractSpecificData.setHeight((height-240)+"px");
 		
-		tabLayOutPanel.selectTab(0);
+		tabLayOutPanel.selectTab(0, false);
 		tabLayOutPanel.setAnimationDuration(1000);
-//		hideEmployeeTable();
+		
+		tabLayOutPanel.addBeforeSelectionHandler(e -> {
+			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
+			switch (itemIdx) {
+			case 2:
+				contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
+				break;
+			case 3:
+				contrataEmployeeObject.setContractClauses(s -> {}, f -> {});
+				break;
+			case 4:
+				contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
+				break;
+			default:
+				break;
+			}
+		});
+		
+		tabLayOutPanel.addSelectionHandler(e -> {
+			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
+			switch (itemIdx) {
+			case 2:
+				contrataEmployeeObject.getContractOtherInfo(s -> {
+					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				}, f -> {});
+				break;
+			case 3:
+				contrataEmployeeObject.getContractClauses(s -> {
+					contractClauseUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				}, f -> {});
+				break;
+			case 4:
+				contrataEmployeeObject.getContractAttachments(s -> {
+					contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				}, f -> {});
+				break;
+			default:
+				break;
+			}
+		});
 		
 		footPanel.addMaximizeHandler((e) -> {
-			splitLayoutPanel.setWidgetSize(footPanel, 200);
+			splitLayoutPanel.setWidgetSize(footPanel, 150);
 		});
 		
 		footPanel.addMinimizeHandler((e) -> {
-			splitLayoutPanel.setWidgetSize(footPanel, 10);
+			splitLayoutPanel.setWidgetSize(footPanel, 25);
 		});
+		
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -1600,15 +761,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	        }
 	    }.run( 1000 );
 		
-	    tabLayOutPanel.selectTab(0);
+	    tabLayOutPanel.selectTab(0, false);
 		employee.restartEmployee();
+		
+		footTabPanel.clear();
+		splitLayoutPanel.setWidgetSize(footPanel, 25);
 		
 		this.contrataEmployeeObject.getAgreements(
 				r -> {
 					contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
 					initLogicWindow();
 					initExistingEmployee(employeeContractInfo.getContractInfo().hasPayroll());
-					contractClauseAndAttach.setEmployeeContractInfo(employeeContractInfo);
+					contractSpecificData.setEmployeeContractInfo(employeeContractInfo);
 				}, 
 				t -> {}
 		);
@@ -1759,6 +923,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			fillContractOtherData(contrataEmployeeObject.getContractType());
 		}
 	}
+	
+	private void fillContractOtherData(Integer contractType) {
+		if(-1 == contractType)
+			tabLayOutPanel.getTabWidget(1).setVisible(false);
+		else
+			tabLayOutPanel.getTabWidget(1).setVisible(true);
+	}
 
 	private void fillContractFreelancerTable() {
 		ContractInfo contractData = contrataEmployeeObject.getContractData();
@@ -1879,184 +1050,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employee.payMethod.setEnabled(true);
 		employee.bic.setEnabled(true);
 		employee.account.setEnabled(true);
-	}
-	
-	private void fillContractOtherData(Integer contractType) {
-		if(-1 == contractType)
-			tabLayOutPanel.getTabWidget(1).setVisible(false);
-		else
-			tabLayOutPanel.getTabWidget(1).setVisible(true);
-		
-		if(contractType >= 100 && contractType <= 400) {
-			contractOtherData.showIndefiniteTable();
-			fillContractOtherData();
-		} else if (contractType == 421) {
-			contractOtherData.showFormationTable();
-			fillContractOtherDataFormation();
-		} else if (contractType == 420 || contractType == 520) {
-			contractOtherData.showPracticeTable();
-			fillContractOtherDataPractice();
-		} else {
-			contractOtherData.showTemporalTable();
-			fillContractOtherDataTemp();
-		}
-	}
-
-	private void fillContractOtherData() {
-		contractOtherData.enterpriseAgentTB.setValue(contrataEmployeeObject.getContractOtherData("ENTERPRISE_DIR_STAFF_NAME"));
-		contractOtherData.enterpriseAgentNIFTB.setValue(contrataEmployeeObject.getContractOtherData("ENTERPRISE_DIR_STAFF_NIF"));
-		contractOtherData.enterpriseAgentPositionTB.setValue(contrataEmployeeObject.getContractOtherData("ENTERPRISE_DIR_STAFF_CHARGE"));
-		contractOtherData.minorAgentTB.setValue(contrataEmployeeObject.getContractOtherData("LEGAL_REPRESENTATIVE_NAME"));
-		contractOtherData.minorAgentNIFTB.setValue(contrataEmployeeObject.getContractOtherData("LEGAL_REPRESENTATIVE_NIF"));
-		contractOtherData.minorAgentQualityOfTB.setValue(contrataEmployeeObject.getContractOtherData("LEGAL_REPRESENTATIVE_CHARGE"));
-		contractOtherData.doingFunctionsTB.setValue(contrataEmployeeObject.getContractOtherData("FUNCTIONS"));
-		contractOtherData.distanceCB.setValue(contrataEmployeeObject.getContractOtherDataCB("EMPLOYEE_CONTRACT_DISTANCE"));
-		contractOtherData.distanceAddressTB.setValue(contrataEmployeeObject.getContractOtherData("EMPLOYEE_CONTRACT_DIST_ADDR"));
-		contractOtherData.discontinuousWorkTB.setValue(contrataEmployeeObject.getContractOtherData("DISC_WORK_DESCRIPTION"));
-		contractOtherData.intermittentCyclicalActivityTB.setValue(contrataEmployeeObject.getContractOtherData("DISC_WORK_ACTIVITY"));
-		contractOtherData.durationFDTB.setValue(contrataEmployeeObject.getContractOtherData("DISC_WORK_DURATION"));
-		contractOtherData.activityStimationDurationFDTB.setValue(contrataEmployeeObject.getContractOtherData("DISC_WORK_ESTIMATED_DURATION"));
-		contractOtherData.journeyHoursFDTB.setValue(contrataEmployeeObject.getContractOtherData("DISC_WORK_ESTIM_JOURNAL_HOURS"));
-		contractOtherData.journeyPeriodFDTB.setValue(contrataEmployeeObject.getContractOtherData("DISC_WORK_ESTIM_JOURNAL_PERIOD"));
-		contractOtherData.timeDistributionFDTB.setValue(contrataEmployeeObject.getContractOtherData("DISC_WORK_ESTIM_SCHEDULE"));
-		setSelectedValueLB(contractOtherData.partialTimeLB, contrataEmployeeObject.getContractOtherData("DISC_AGREEMENT_COLLECTIVE"));
-		contractOtherData.journeyHoursTCTB.setValue(contrataEmployeeObject.getContractOtherData("FULL_TIME_WEEK_HOURS"));
-		contractOtherData.startJourneyTCTB.setValue(contrataEmployeeObject.getContractOtherData("FULL_TIME_START_TIME"));
-		contractOtherData.endJourneyTCTB.setValue(contrataEmployeeObject.getContractOtherData("FULL_TIME_END_TIME"));
-		contractOtherData.journeyHoursTPTB.setValue(contrataEmployeeObject.getContractOtherData("PARTIALLY_TIME_HOURS"));
-		contractOtherData.agreementJourneyHoursTB.setValue(contrataEmployeeObject.getContractOtherData("DEFAULT_JOURNAL_HOURS"));
-		setSelectedValueLB(contractOtherData.complementaryHoursLB, contrataEmployeeObject.getContractOtherData("COMPLEMENTARY_HOURS"));
-		contractOtherData.trialPeriodTB.setValue(contrataEmployeeObject.getContractOtherData("TRIAL_DURATION"));
-		contractOtherData.salaryAmountTB.setValue(contrataEmployeeObject.getContractOtherData("SALARY_AMOUNT"));
-		contractOtherData.salaryPeriodTB.setValue(contrataEmployeeObject.getContractOtherData("SALARY_PERIOD"));
-		contractOtherData.salaryConceptTB.setValue(contrataEmployeeObject.getContractOtherData("SALARY_CONCEPT"));
-		contractOtherData.holidaysTB.setValue(contrataEmployeeObject.getContractOtherData("HOLIDAYS"));
-		contractOtherData.sepeOfficeTB.setValue(contrataEmployeeObject.getContractOtherData("SEPE_MUNICIPALITY"));
-		contractOtherData.accreditedDisabilityTB.setValue(contrataEmployeeObject.getContractOtherData("I_OPT2_SEPE_MUNICIPALITY"));
-		setSelectedValueLB(contractOtherData.withoutDisabilitySevereLB, contrataEmployeeObject.getContractOtherData("I_OPT2_DISABILITY_NO_SEVERE"));
-		setSelectedValueLB(contractOtherData.disabilitySevereLB, contrataEmployeeObject.getContractOtherData("I_OPT2_DISABILITY_SEVERE"));
-		contractOtherData.subsidyTB.setValue(contrataEmployeeObject.getContractOtherData("I_OPT2_REDUCTION"));
-		setSelectedValueLB(contractOtherData.fourthLawLB, contrataEmployeeObject.getContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012"));
-		setSelectedValueLB(contractOtherData.unemploymentLB, contrataEmployeeObject.getContractOtherData("I_OPT5_UNEMPLOYED_BT_16_30"));
-		setSelectedValueLB(contractOtherData.unemploymentOldLB, contrataEmployeeObject.getContractOtherData("I_OPT5_UNEMPLOYED_GT_45"));
-		contractOtherData.benefitsPerceptorCB.setValue(contrataEmployeeObject.getContractOtherDataCB("I_OPT5_UNEMPL_3_MONTH_BENEFIT"));
-		contractOtherData.firstEmployeeCB.setValue(contrataEmployeeObject.getContractOtherDataCB("I_OPT5_FIRST_EMPLOYEE_AND_LT_30"));
-		setSelectedValueLB(contractOtherData.employeeLB, contrataEmployeeObject.getContractOtherData("I_OPT6_AGE"));
-		contractOtherData.agreementLineOneTB.setValue(contrataEmployeeObject.getContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE1"));
-		contractOtherData.agreementLineTwoTB.setValue(contrataEmployeeObject.getContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE2"));
-		setSelectedValueLB(contractOtherData.contactHoursLB, contrataEmployeeObject.getContractOtherData("I_OPT15_ONSITE_HOURS"));
-		contractOtherData.hoursTB.setValue(contrataEmployeeObject.getContractOtherData("I_OPT15_ONSITE_WEEK_HOURS"));
-		setSelectedValueLB(contractOtherData.remunerationFormLB, contrataEmployeeObject.getContractOtherData("I_OPT15_SALARY"));
-		setSelectedValueLB(contractOtherData.overnightAgreementLB, contrataEmployeeObject.getContractOtherData("I_OPT15_OVERNIGHT"));
-		contractOtherData.overnightRegimeTB.setValue(contrataEmployeeObject.getContractOtherData("I_OPT15_OVERNIGHT_WEEK_DAYS"));
-		setSelectedValueLB(contractOtherData.quoteReductionTCLB, contrataEmployeeObject.getContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS"));
-		setSelectedValueLB(contractOtherData.quoteReductionFDLB, contrataEmployeeObject.getContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS"));
-		contractOtherData.sepeOfficeCOTB.setValue(contrataEmployeeObject.getContractOtherData("I_OPT17_SRC_CONTRACT_SEPE_MUNIC"));
-	}
-	
-	private void fillContractOtherDataTemp() {
-		contractOtherData.enterpriseAgentTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME"));
-		contractOtherData.enterpriseAgentNIFTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_ENTERPRISE_DIR_STAFF_NIF"));
-		contractOtherData.enterpriseAgentPositionTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_ENTERPRISE_DIR_STAFF_CHARGE"));
-		contractOtherData.minorAgentTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_LEGAL_REPRESENTATIVE_NAME"));
-		contractOtherData.minorAgentNIFTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_LEGAL_REPRESENTATIVE_NIF"));
-		contractOtherData.minorAgentQualityOfTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_LEGAL_REPRESENTATIVE_CHARGE"));
-		contractOtherData.doingFunctionsTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_FUNCTIONS"));
-		contractOtherData.distanceTempCB.setValue(contrataEmployeeObject.getContractOtherDataCB("T_EMPLOYEE_CONTRACT_DISTANCE"));
-		contractOtherData.distanceAddressTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_EMPLOYEE_CONTRACT_DIST_ADDR"));
-		contractOtherData.journeyHoursTCTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_FULL_TIME_WEEK_HOURS"));
-		contractOtherData.startJourneyTCTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_FULL_TIME_START_TIME"));
-		contractOtherData.endJourneyTCTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_FULL_TIME_END_TIME"));
-		contractOtherData.lowJourneyTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_PARTIALLY_TIME_JOB_LOWER_THAN"));
-		contractOtherData.timeDistributionTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_PARTIALLY_TIME_JOB_DISTRIB"));
-		contractOtherData.endContractTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_END_DATE_TEXT"));
-		contractOtherData.trialPeriodTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_TRIAL_DURATION"));
-		contractOtherData.permitedHighDurationTempCB.setValue(contrataEmployeeObject.getContractOtherDataCB("T_GREATER_DURATION_AGREEMENT_COL"));
-		contractOtherData.salaryAmountTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_SALARY_AMOUNT"));
-		contractOtherData.salaryPeriodTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_SALARY_PERIOD"));
-		contractOtherData.salaryConceptTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_SALARY_CONCEPT"));
-		contractOtherData.holidaysTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_HOLIDAYS"));
-		contractOtherData.sepeOfficeTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_SEPE_MUNICIPALITY"));
-		contractOtherData.workTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT1_WORK_DESCRIPTION1"));
-		contractOtherData.workMoreTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT1_WORK_DESCRIPTION2"));
-		contractOtherData.taskTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT2_WORK_DESCRIPTION1"));
-		contractOtherData.taskMoreTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT2_WORK_DESCRIPTION2"));
-		contractOtherData.sustituteEmployeeTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT3_REPLACED_WORKER_NAME"));
-		setSelectedValueLB(contractOtherData.requirementsTempLB, contrataEmployeeObject.getContractOtherData("T_OPT10_REQUIREMENTS_OPT"));
-		setSelectedValueLB(contractOtherData.formationTempLB, contrataEmployeeObject.getContractOtherData("T_OPT10_FORMATION_OPT"));
-		setSelectedValueLB(contractOtherData.formationWillTempLB, contrataEmployeeObject.getContractOtherData("T_OPT10_FORMATION_TYPE_OPT"));
-		contractOtherData.officeSPEmployeeTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT10_FORMATION_TYPE_OPT1_TEXT"));
-		contractOtherData.lenguageFormationTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT10_FORMATION_TYPE_OPT2_TEXT"));
-		setSelectedValueLB(contractOtherData.hoursDealTempLB, contrataEmployeeObject.getContractOtherData("T_OPT12_ONSITE_HOURS"));
-		contractOtherData.presentHoursTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT12_ONSITE_WEEK_HOURS"));
-		contractOtherData.distributionHoursTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT12_ONSITE_HOURS_DISTRIB"));
-		setSelectedValueLB(contractOtherData.timeCompensationTempLB, contrataEmployeeObject.getContractOtherData("T_OPT12_SALARY_OPT"));
-		setSelectedValueLB(contractOtherData.dealOvernightLB, contrataEmployeeObject.getContractOtherData("T_OPT12_OVERNIGHT"));
-		contractOtherData.overnightRegimeTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT12_OVERNIGHT_WEEK_DAYS"));
-		contractOtherData.officialOrganismTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT13_DISABILITY_ISSUED_BY"));
-		setSelectedValueLB(contractOtherData.withoutSevereDisTempLB, contrataEmployeeObject.getContractOtherData("T_OPT13_DISABILITY"));
-		setSelectedValueLB(contractOtherData.severeDisTempLB, contrataEmployeeObject.getContractOtherData("T_OPT13_SEVERE_DISABILITY"));
-		contractOtherData.adaptationPeriodTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT14_TRIAL_PERIOD"));
-		contractOtherData.adaptationConditionsTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT14_TRIAL_TERMS"));
-		setSelectedValueLB(contractOtherData.adaptationWorkTempLB, contrataEmployeeObject.getContractOtherData("T_OPT14_PROFESSION"));
-		contractOtherData.socialPersonalAdjustTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT"));
-		contractOtherData.socialPersonalAdjustMoreTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT_MORE"));
-		contractOtherData.colectiveAgreementTempTB.setValue(contrataEmployeeObject.getContractOtherData("T_OPT14_COLLECTIVE_AGREEMENT"));
-	}
-	
-	private void fillContractOtherDataFormation() {
-		contractOtherData.enterpriseAgentFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME"));
-		contractOtherData.enterpriseAgentNIFFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_ENTERPRISE_DIR_STAFF_NIF"));
-		contractOtherData.enterpriseAgentPositionFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_ENTERPRISE_DIR_STAFF_CHARGE"));
-		contractOtherData.minorAgentFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_LEGAL_REPRESENTATIVE_NAME"));
-		contractOtherData.minorAgentNIFFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_LEGAL_REPRESENTATIVE_NIF"));
-		contractOtherData.minorAgentQualityOfFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_LEGAL_REPRESENTATIVE_CHARGE"));
-		setSelectedValueLB(contractOtherData.ssReductionFormLB, contrataEmployeeObject.getContractOtherData("L_QUOTE_BONUS"));
-		setSelectedValueLB(contractOtherData.employeeFormLB, contrataEmployeeObject.getContractOtherData("L_EMPLOYEE_OPT"));
-		contractOtherData.workplaceFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_CONTRACT_WORKPLACE_ADDRESS"));
-		contractOtherData.tutorFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_FORMATION_TEACHER"));
-		contractOtherData.efectiveWorkHoursFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_HORARIO_LABORAL"));
-		contractOtherData.activityHoursFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_HORARIO_LECTIVO"));
-		contractOtherData.trialPeriodFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_TRIAL_DURATION"));
-		contractOtherData.agreementTrialFormCB.setValue(contrataEmployeeObject.getContractOtherDataCB("L_TRIAL_DURATION_INCREASE"));
-		contractOtherData.salaryAmountFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_SALARY_AMOUNT"));
-		contractOtherData.salaryPeriodFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_SALARY_PERIOD"));
-		contractOtherData.holidaysFormTB.setValue(contrataEmployeeObject.getContractOtherData("L_HOLIDAYS"));
-		contractOtherData.degreeExistFormCB.setValue(contrataEmployeeObject.getContractOtherDataCB("L_ANNEX_I_CHECK"));
-		contractOtherData.degreeExist2FormCB.setValue(contrataEmployeeObject.getContractOtherDataCB("L_ANNEX_II_CHECK"));
-	}
-	
-	private void fillContractOtherDataPractice() {
-		contractOtherData.enterpriseAgentPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME"));
-		contractOtherData.enterpriseAgentNIFPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_ENTERPRISE_DIR_STAFF_NIF"));
-		contractOtherData.enterpriseAgentPositionPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_ENTERPRISE_DIR_STAFF_CHARGE"));
-		contractOtherData.minorAgentPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_LEGAL_REPRESENTATIVE_NAME"));
-		contractOtherData.minorAgentNIFPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_LEGAL_REPRESENTATIVE_NIF"));
-		contractOtherData.minorAgentQualityOfPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_LEGAL_REPRESENTATIVE_CHARGE"));
-		contractOtherData.profesionalCertPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_PROFESSIONAL_CERT"));
-		contractOtherData.obtainingDatePracTB.setValue(contrataEmployeeObject.getContractOtherData("P_PROFESSIONAL_CERT_OBTAIN_DATE"));
-		contractOtherData.disabilityCertPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_DISABILITY_ISSUE_ENTITY"));
-		contractOtherData.disabilityCertMorePracTB.setValue(contrataEmployeeObject.getContractOtherData("P_DISABILITY_ISSUE_ENTITY_MORE"));
-		setSelectedValueLB(contractOtherData.firstContractPracLB, contrataEmployeeObject.getContractOtherData("P_FIRST_CONTRACT"));
-		contractOtherData.journeyHoursPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_FULL_TIME_WEEK_HOURS"));
-		contractOtherData.startJourneyPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_FULL_TIME_START_TIME"));
-		contractOtherData.endJourneyPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_FULL_TIME_END_TIME"));
-		contractOtherData.distributionJourneyPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_JOB_TIME_DISTRIBUTION2"));
-		contractOtherData.trialPeriodPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_TRIAL_DURATION"));
-		contractOtherData.salaryAmountPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_SALARY_AMOUNT"));
-		contractOtherData.salaryPeriodPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_SALARY_PERIOD"));
-		contractOtherData.salaryConceptPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_SALARY_CONCEPT"));
-		contractOtherData.holidaysPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_HOLIDAYS"));
-		contractOtherData.sepeComunicationPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_SEPE_START_COMMUNICATION"));
-		contractOtherData.endSepeComunicationPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_SEPE_END_COMMUNICATION"));
-		setSelectedValueLB(contractOtherData.unemploymentSubsidyPracLB, contrataEmployeeObject.getContractOtherData("P_OPT3_UNEMPLOYMENT"));
-		contractOtherData.adaptationPeriodPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_OPT4_TRIAL_DURATION"));
-		contractOtherData.adaptationConditionsPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_OPT4_TRIAL_DURATION_CONDITIONS"));
-		contractOtherData.adaptationWorkPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_OPT4_WORK_PLACE_ADAPTATIONS"));
-		contractOtherData.personalSocialAdjustPracTB.setValue(contrataEmployeeObject.getContractOtherData("P_OPT4_STAFF_ADJUSTMENT"));
-		contractOtherData.personalSocialAdjustMorePracTB.setValue(contrataEmployeeObject.getContractOtherData("P_OPT4_STAFF_ADJUSTMENT_MORE"));
-		setSelectedValueLB(contractOtherData.motivationPracLB, contrataEmployeeObject.getContractOtherData("P_OPT5_MOTIVATION"));
-		setSelectedValueLB(contractOtherData.employerPracLB, contrataEmployeeObject.getContractOtherData("P_OPT5_EMPLOYER"));
 	}
 
 	public void updateMunicipalities() {
@@ -2247,16 +1240,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.contrataEmployeeObject.addContractOtherData(name, value);
 	}
 	
-	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
+	// ----------------------------------------------- MESSAGES RESULT ------------------------------------------------
 	
-//	public void show(Callback cb) {
-//		this.cb = cb;
-//		super.show();
-//	}
-//	
-//	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
-//		this.cb = callback;
-//		super.setPopupPositionAndShow(positionCallback);
-//	}
+	private void paintMessagesResult(Messages messages) {
+		Tree treeErrorMessages = new Tree();
+		treeErrorMessages.setAnimationEnabled(true);
+		
+		//Errors
+		for(Message errorMessage : messages.getErrorMessages()) {
+			Label errorLabel =  new Label();
+			errorLabel.setText(errorMessage.getDescription() + " -> " + errorMessage.getMessage());
+			treeErrorMessages.add(errorLabel);
+		}
+		
+		footTabPanel.add(treeErrorMessages, "Errores");
+		splitLayoutPanel.setWidgetSize(footPanel, 200);
+	}
 	
 }

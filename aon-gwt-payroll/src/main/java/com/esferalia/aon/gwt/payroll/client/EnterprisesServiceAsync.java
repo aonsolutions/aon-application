@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -108,14 +109,19 @@ public interface EnterprisesServiceAsync {
 	void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo,
 			AsyncCallback<String> asyncCallback);
 	void getEnterpriseStatus(String domain, String user, Integer enterpriseId , AsyncCallback<EnterpriseStatus> callback);
-	void createContractAttach(String currentDomainName, ContractAttach contractAttach,
-			AsyncCallback<ContractAttach> asyncCallback);
-	void deleteContractAttach(String currentDomainName, ContractAttach contractAttach,
-			AsyncCallback<ContractAttach> asyncCallback);
-	void createContractClause(String currentDomainName, ContractClause contractClause,
-			AsyncCallback<ContractClause> asyncCallback);
-	void deleteContractClause(String currentDomainName, ContractClause contractClause,
-			AsyncCallback<ContractClause> asyncCallback);
-
-
+	void getContractAttachments(String currentDomainName, Integer contractId, AsyncCallback<List<ContractAttach>> asyncCallback);
+	void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments,
+			AsyncCallback<List<ContractAttach>> asyncCallback);
+	void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> asyncCallback);
+	void deleteContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> asyncCallback);
+	void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> asyncCallback);
+	void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses,
+			AsyncCallback<List<ContractClause>> asyncCallback);
+	void createContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> asyncCallback);
+	void deleteContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> asyncCallback);
+	void getContractOtherInfo(String currentDomainName, Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback);
+	void setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
+			Map<String, String> contractOtherData, AsyncCallback<Map<String, String>> asyncCallback);
+	void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> asyncCallback);
+	
 }

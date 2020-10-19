@@ -5,7 +5,7 @@
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
 
-	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractClauseAndAttach.MyStyle">
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractAttachUI.MyStyle">
 
 		.headerStyle{
 			top: -0.5em;
@@ -87,24 +87,7 @@
 	</ui:style>
 
    	<g:HTMLPanel> 
-        <g:VerticalPanel ui:field="clausesTable" styleName="{style.styleBorder}"> 
-	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Cláusulas</g:Label>
-	    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-	    		<g:VerticalPanel>
-	    			<g:Grid ui:field="clausesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-	    			<g:HTMLPanel>
-	    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-	    			</g:HTMLPanel>
-		    		<g:ScrollPanel ui:field="clausesScrollPanel" styleName="{style.scrollStyle}">
-		    			<g:Grid ui:field="clausesDataTable"></g:Grid>
-		    		</g:ScrollPanel>
-		    		<g:HTMLPanel styleName="{style.footerStyle}">
-	    				<g:Label ui:field="newClause" styleName="aon-finding-toolbar-item aon-icon-reset {style.footerElement}">NUEVO</g:Label>
-	    			</g:HTMLPanel>
-	    		</g:VerticalPanel>
-	    	</g:HTMLPanel>
-		</g:VerticalPanel>
-		<g:VerticalPanel ui:field="attachmentsTable" styleName="{style.styleBorder}"> 
+        <g:VerticalPanel ui:field="attachmentsTable" styleName="{style.styleBorder}"> 
 	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Documentos</g:Label>
 	    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
 	    		<g:VerticalPanel>

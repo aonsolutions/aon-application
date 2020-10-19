@@ -1,16 +1,17 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
-import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.Messages;
+import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -25,24 +26,24 @@ import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ContractClauseAndAttach extends ResizeComposite {
+public abstract class ContractAttachUI extends ResizeComposite {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
-	private static ContractOtherDataUiBinder uiBinder = GWT.create(ContractOtherDataUiBinder.class);
+	private static ContractAttachUIBinder uiBinder = GWT.create(ContractAttachUIBinder.class);
 
-	interface ContractOtherDataUiBinder extends UiBinder<Widget, ContractClauseAndAttach> {}
+	interface ContractAttachUIBinder extends UiBinder<Widget, ContractAttachUI> {}
 
 	// -------------------------------------------------- UiFields --------------------------------------------------
 
@@ -55,21 +56,6 @@ public class ContractClauseAndAttach extends ResizeComposite {
 		String maxWidthLB();
 		String clauseTD();
 	}
-	
-	@UiField
-	VerticalPanel clausesTable;
-
-	@UiField
-	Grid clausesDataTableHeader;
-	
-	@UiField
-	ScrollPanel clausesScrollPanel;
-	
-	@UiField
-	Grid clausesDataTable;
-
-	@UiField
-	Label newClause;
 
 	@UiField
 	VerticalPanel attachmentsTable;
@@ -90,17 +76,16 @@ public class ContractClauseAndAttach extends ResizeComposite {
 
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	private EmployeeContractInfo employeeContractInfo;
+	private Messages messages;
 	
-	public ContractClauseAndAttach() {
+	public ContractAttachUI() {
 		initWidget(uiBinder.createAndBindUi(this));
+		messages = new Messages();
 	}
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
 		this.employeeContractInfo = employeeContractInfoIn;
 		initializeView();
-		
-		for(ContractClause contractClause : employeeContractInfo.getContractClauses())
-			paintContractClause(contractClause);
 		
 		for(ContractAttach contractAttach : employeeContractInfo.getContractAttachments())
 			paintContractAttach(contractAttach);
@@ -108,25 +93,6 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
 	
-	@UiHandler("newClause")
-	public void onNewClauseClick(ClickEvent event) {
-		ContractClause contractClause = new ContractClause();
-		contractClause.setDomain(employeeContractInfo.getEmployeeInfo().getDomain());
-		contractClause.setContract(employeeContractInfo.getContractInfo().getContractId());
-		contractClause.setLineNumber((short)(employeeContractInfo.getContractClauses().size()+1));
-		contractClause.setDescription("");
-		
-		createContractClause(contractClause,
-				s -> {
-					
-					resetClauseDataTableStructure();
-					
-					for(ContractClause contractClauseIn : employeeContractInfo.getContractClauses())
-						paintContractClause(contractClauseIn);
-					
-				}, f -> {});
-	}
-
 	@UiHandler("newAttachment")
 	public void onNewAttachmentPartClick(ClickEvent event) {
 		ContractAttach contractAttach = new ContractAttach();
@@ -146,14 +112,6 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	
 	// --------------------------------------------------- UiHandlers (Aux Methods) -------------------------------------------------
 	
-	private void resetClauseDataTableStructure() {
-		clausesDataTable.clear();
-		clausesDataTable.resize(0, 0);
-		clausesDataTable.resizeColumns(4);
-		
-		setColumnsWidth();
-	}
-	
 	private void resetAttachDataTableStructure() {
 		attachmentsDataTable.clear();
 		attachmentsDataTable.resize(0, 0);
@@ -163,25 +121,6 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	}
 	
 	// -------------------------------------------------- Paint Table Header Methods --------------------------------------------------
-
-	private void paintHeaderClausesTable() {
-		int row = clausesDataTableHeader.insertRow(clausesDataTableHeader.getRowCount());
-		
-		Label line = new Label("L" + String.valueOf("\u00CD") + "NEA");
-		Label name = new Label("NOMBRE");
-		Label description = new Label("DESCRIPCI" + String.valueOf("\u00D3") + "N");
-		Label action = new Label("");
-		
-		line.addStyleName(style.headerLabelStyle());
-		name.addStyleName(style.headerLabelStyle());
-		description.addStyleName(style.headerLabelStyle());
-		action.addStyleName(style.headerLabelStyle());
-		
-		clausesDataTableHeader.setWidget(row, 0, line);
-		clausesDataTableHeader.setWidget(row, 1, name);
-		clausesDataTableHeader.setWidget(row, 2, description);
-		clausesDataTableHeader.setWidget(row, 3, action);
-	}
 	
 	private void paintHeaderAttachmentsTable() {
 		int row = attachmentsDataTableHeader.insertRow(attachmentsDataTableHeader.getRowCount());
@@ -299,73 +238,6 @@ public class ContractClauseAndAttach extends ResizeComposite {
 			attachmentsDataTable.setWidget(row, 6, deleteBTN);
 		else
 			attachmentsDataTable.setWidget(row, 6, new Label());
-	}
-
-	private void paintContractClause(ContractClause contractClause) {
-		// Insert new row
-		int row = this.clausesDataTable.insertRow(clausesDataTable.getRowCount());
-		
-		// Line TextBox
-		TextBox lineTB = new TextBox();
-		lineTB.addValueChangeHandler((e) -> {
-			contractClause.setLineNumber(Short.parseShort(e.getValue()));
-		});
-		
-		// Name TextBox
-		TextBox nameTB = new TextBox();
-		nameTB.addValueChangeHandler((e) -> {
-			contractClause.setName(e.getValue());
-		});
-		
-		// Description TextBox
-		TextArea descriptionTA = new TextArea();
-		descriptionTA.addValueChangeHandler((e) -> {
-			contractClause.setDescription(e.getValue());
-		});
-		
-		// Delete Button
-		Button deleteBTN = new Button();
-		deleteBTN.addClickHandler((e) -> {
-			deleteContractClause(contractClause, 
-					s -> {
-						resetClauseDataTableStructure();
-						for(ContractClause contractClauseIn : employeeContractInfo.getContractClauses())
-							paintContractClause(contractClauseIn);
-					}, f -> {});
-		});
-		
-		// Add Styles
-		lineTB.addStyleName(style.maxWidthTB());
-		nameTB.addStyleName(style.maxWidthTB());
-		descriptionTA.addStyleName(style.maxWidthTB());
-		descriptionTA.setHeight("50px");
-		deleteBTN.setStyleName("aon-editDataTable-button aon-icon-delete");
-		
-		// If id != null exists then fill the fields
-		if(null != contractClause.getId()) {
-			lineTB.setText(contractClause.getLineNumber() + "");
-			nameTB.setText(contractClause.getName());
-			descriptionTA.setValue(contractClause.getDescription());
-		}
-		
-		// It null == contract ? global_attachs cant be deleted
-		if(null == contractClause.getContract()) {
-			lineTB.setReadOnly(true);
-			nameTB.setReadOnly(true);
-			descriptionTA.setReadOnly(true);
-		}
-		
-		clausesDataTable.setWidget(row, 0, lineTB);
-		clausesDataTable.setWidget(row, 1, nameTB);
-		clausesDataTable.setWidget(row, 2, descriptionTA);
-		if(null != contractClause.getContract())
-			clausesDataTable.setWidget(row, 3, deleteBTN);
-		else
-			clausesDataTable.setWidget(row, 3, new Label());
-		
-		clausesDataTable.getCellFormatter().addStyleName(row, 0, style.clauseTD());
-		clausesDataTable.getCellFormatter().addStyleName(row, 1, style.clauseTD());
-		clausesDataTable.getCellFormatter().addStyleName(row, 3, style.clauseTD());
 	}	
 	
 	// -------------------------------------------------- Paint Table Auxiliar Methods ---------------------------------------------------
@@ -373,9 +245,13 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	private Widget createFormPanel(ContractAttach contractAttach) {
 		HorizontalPanel mainFlowPanel = new HorizontalPanel();
 		mainFlowPanel.getElement().getStyle().setPaddingLeft(10, Unit.PX);
+		mainFlowPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		Label fileNameL = new Label();
 		
 		if(null != contractAttach.getData()) {
 			mainFlowPanel.add(getDownloadButton(contractAttach));
+			fileNameL.setText(contractAttach.getDescription());
 		}
 		
 		//Create formPanel to UploadFiles
@@ -394,22 +270,35 @@ public class ContractClauseAndAttach extends ResizeComposite {
 		fileU.setName("uploader");
 		fileU.getElement().setPropertyString("multiple", "multiple");
 		fileU.getElement().setPropertyString("accept", ".pdf|image/*");
+		fileU.getElement().getStyle().setDisplay(Display.NONE);
 		fileU.addChangeHandler((e) -> {
 			String filename = getFileName(fileU.getFilename().toString());
 			String fileExt = getFileExtension(fileU.getFilename());
 
             if(filename.length() == 0) {
-                Window.alert("File Upload failed");
+            	Message errorMessage = messages.new Message();
+            	errorMessage.setDescription("Error subir archivo");
+            	errorMessage.setMessage("El archivo seleccionado no se ha podido subir");
+            	messages.addErrorMessage(errorMessage);
+            	fireMessagesResults(messages);
             } else {
-//            	Window.alert("Name : " + filename + ", Ext : " + fileExt);
             	contractAttach.setMimeType(getMimeTypeToByte(fileExt));
             	contractAttach.setDescription(filename);
             	extension.setValue(fileExt);
             	fileName.setValue(filename);
+            	fileNameL.setText(filename);
             	
             	final int size = getFileSize(fileU.getElement());
             	if(size < 15000000)
             		formPanel.submit();
+            	else {
+            		fileNameL.setText("");
+            		Message errorMessage = messages.new Message();
+                	errorMessage.setDescription("Error tama" + String.valueOf("\u00F1") + "o archivo");
+                	errorMessage.setMessage("El tama" + String.valueOf("\u00F1") + "o soportado es de 10 MB");
+                	messages.addErrorMessage(errorMessage);
+                	fireMessagesResults(messages);
+            	}
             }
 		});
 		
@@ -417,24 +306,38 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	        if(e.getResults().length() == 0) {
                 Window.alert("Something went wrong - Try again");
             } else {
-            	contractAttach.setData("".getBytes());
-            	mainFlowPanel.clear();
-            	mainFlowPanel.add(getDownloadButton(contractAttach));
-            	mainFlowPanel.add(formPanel);
+            	getContractAttachments( 
+    					s -> {
+    						resetAttachDataTableStructure();
+    						for(ContractAttach contractAttachIn : employeeContractInfo.getContractAttachments())
+    							paintContractAttach(contractAttachIn);
+    					}, f -> {});
             }
 	    });
+		
+		Button fileButton = new Button();
+		fileButton.setStyleName("aon-editDataTable-button aon-icon-attach-file");
+		fileButton.addClickHandler(e -> {
+			fileU.click();
+		});
+		
 	
 		flowPanel.add(attachId);
 		flowPanel.add(extension);
 		flowPanel.add(fileName);
+		flowPanel.add(fileButton);
 		flowPanel.add(fileU);
+		flowPanel.add(fileNameL);
 		
 		formPanel.add(flowPanel);
 			
 		mainFlowPanel.add(formPanel);	
+		mainFlowPanel.add(fileNameL);
 		return mainFlowPanel;
 	}
 	
+	protected abstract void fireMessagesResults(Messages messages2);
+
 	private Button getDownloadButton(ContractAttach contractAttach) {
 		// Create download button
 		Button downloadBtn = new Button();
@@ -454,23 +357,11 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	// ------------------------------------------------------ Auxiliar Methods ----------------------------------------------------
 	
 	private void initializeView() {
-		initClausesTable();
-		paintHeaderClausesTable();
-		
 		initAttachmentsTable();
 		paintHeaderAttachmentsTable();
 		
 		setScrollPanelsHeight();
 		setColumnsWidth();
-	}
-
-	private void initClausesTable() {
-		clausesDataTableHeader.clear();
-		clausesDataTableHeader.resize(0, 0);
-		clausesDataTableHeader.resizeColumns(4);
-		clausesDataTable.clear();
-		clausesDataTable.resize(0, 0);
-		clausesDataTable.resizeColumns(4);
 	}
 	
 	private void initAttachmentsTable() {
@@ -483,40 +374,25 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	}
 	
 	private void setScrollPanelsHeight() {
-		clausesScrollPanel.setHeight((Window.getClientHeight()/2 - 150) + "px");
-		attachmentsScrollPanel.setHeight((Window.getClientHeight()/2 - 150) + "px");
+		attachmentsScrollPanel.setHeight((Window.getClientHeight() - 360) + "px");
 	}
 	
 	private void setColumnsWidth() {
-		clausesDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(100, Unit.PX);
-		clausesDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(200, Unit.PX);
-		clausesDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(585, Unit.PX);
-		clausesDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(50, Unit.PX);
-		
-		clausesDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(100, Unit.PX);
-		clausesDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(200, Unit.PX);
-		clausesDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(585, Unit.PX);
-		clausesDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
-		
-		clausesDataTable.getColumnFormatter().addStyleName(0, style.clauseTD());
-		clausesDataTable.getColumnFormatter().addStyleName(1, style.clauseTD());
-		clausesDataTable.getColumnFormatter().addStyleName(3, style.clauseTD());
-		
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(170, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(280, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(190, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(30, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(25, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(95, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setWidth(320, Unit.PX);
-		attachmentsDataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setWidth(30, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 5).getStyle().setWidth(225, Unit.PX);
+		attachmentsDataTableHeader.getCellFormatter().getElement(0, 6).getStyle().setWidth(20, Unit.PX);
 		
-		attachmentsDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(170, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(280, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(190, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(30, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(25, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(95, Unit.PX);
 		attachmentsDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(95, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(320, Unit.PX);
-		attachmentsDataTable.getColumnFormatter().getElement(6).getStyle().setWidth(30, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(225, Unit.PX);
+		attachmentsDataTable.getColumnFormatter().getElement(6).getStyle().setWidth(20, Unit.PX);
 	}
 	
 	private void initScopeListBox(ListBox scopeLB) {
@@ -542,9 +418,7 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	}
 	
 	private String getFileName(String filename) {
-//		Window.alert("Complete file path : " + filename);
 		String[] splits = filename.split("\\\\");
-//		Window.alert("File path" + splits[splits.length-1]);
 		return splits[splits.length-1].contains("\\.") ? splits[splits.length-1].split("\\.")[0] : splits[splits.length-1];
 	}
 	
@@ -596,13 +470,13 @@ public class ContractClauseAndAttach extends ResizeComposite {
 	
 	// --------------------------------------------------------------------------------------------------------
 	
-	private void createContractAttach(ContractAttach contractAttach, Consumer<ContractAttach> success, Consumer<Throwable> failure) {
-		impl.createContractAttach(contractAttach, new AsyncCallback<ContractAttach>() {
+	private void createContractAttach(ContractAttach contractAttach, Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+		impl.createContractAttach(contractAttach, new AsyncCallback<List<ContractAttach>>() {
 			
 			@Override
-			public void onSuccess(ContractAttach result) {
-				employeeContractInfo.addContractAttach(result);
-				success.accept(result);
+			public void onSuccess(List<ContractAttach> contractAttachments) {
+				employeeContractInfo.setContractAttachments(contractAttachments);
+				success.accept(contractAttachments);
 			}
 
 			@Override
@@ -613,21 +487,13 @@ public class ContractClauseAndAttach extends ResizeComposite {
 		
 	}
 
-	private void deleteContractAttach(ContractAttach contractAttach, Consumer<ContractAttach> success, Consumer<Throwable> failure) {
-		impl.deleteContractAttach(contractAttach, new AsyncCallback<ContractAttach>() {
+	private void deleteContractAttach(ContractAttach contractAttach, Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+		impl.deleteContractAttach(contractAttach, new AsyncCallback<List<ContractAttach>>() {
 			
 			@Override
-			public void onSuccess(ContractAttach result) {
-				List<ContractAttach> newContractAttachs = new ArrayList<ContractAttach>();
-				
-				for(ContractAttach contractAttachAux : employeeContractInfo.getContractAttachments()) {
-					if(result.getId() == contractAttachAux.getId() || result.getId().equals(contractAttachAux.getId()))
-						continue;
-					newContractAttachs.add(contractAttachAux);
-				}
-				
-				employeeContractInfo.setContractAttachments(newContractAttachs);
-				success.accept(result);
+			public void onSuccess(List<ContractAttach> contractAttachments) {
+				employeeContractInfo.setContractAttachments(contractAttachments);
+				success.accept(contractAttachments);
 			}
 
 			@Override
@@ -635,16 +501,16 @@ public class ContractClauseAndAttach extends ResizeComposite {
 				failure.accept(caught);
 			}
 		});
-		
 	}
 	
-	private void createContractClause(ContractClause contractClause, Consumer<ContractClause> success, Consumer<Throwable> failure) {
-		impl.createContractClause(contractClause, new AsyncCallback<ContractClause>() {
+	private void getContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
+		Integer contractId = employeeContractInfo.getContractInfo().getContractId();
+		impl.getContractAttachments(contractId, new AsyncCallback<List<ContractAttach>>() {
 			
 			@Override
-			public void onSuccess(ContractClause result) {
-				employeeContractInfo.addContractClause(result);
-				success.accept(result);
+			public void onSuccess(List<ContractAttach> contractAttachments) {
+				employeeContractInfo.setContractAttachments(contractAttachments);
+				success.accept(contractAttachments);
 			}
 
 			@Override
@@ -652,33 +518,6 @@ public class ContractClauseAndAttach extends ResizeComposite {
 				failure.accept(caught);
 			}
 		});
-		
-	}
-
-	private void deleteContractClause(ContractClause contractClause, Consumer<ContractClause> success, Consumer<Throwable> failure) {
-		impl.deleteContractClause(contractClause, new AsyncCallback<ContractClause>() {
-			
-			@Override
-			public void onSuccess(ContractClause result) {
-				List<ContractClause> newContractClauses = new ArrayList<ContractClause>();
-				
-				for(ContractClause contractClauseAux : employeeContractInfo.getContractClauses()) {
-					if(result.getId() == contractClauseAux.getId() || result.getId().equals(contractClauseAux.getId()))
-						continue;
-					newContractClauses.add(contractClauseAux);
-				}
-				
-				employeeContractInfo.setContractClauses(newContractClauses);
-				
-				success.accept(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-		});
-		
 	}
 
 }

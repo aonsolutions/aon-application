@@ -13,6 +13,7 @@ public class EmployeeContractInfo implements Serializable{
 	private EmployeeInfo employeeInfo;
 	private ContractInfo contractInfo;
 	
+	private ContractSpecificData contractSpecificData;
 	private Map<String, String> contractOtherData;
 	private List<ContractClause> contractClauses;
 	private List<ContractAttach> contractAttachments;
@@ -30,6 +31,7 @@ public class EmployeeContractInfo implements Serializable{
 	
 	public EmployeeContractInfo(){
 		super();
+		this.contractSpecificData = new ContractSpecificData();
 		this.contractOtherData = new HashMap<String, String>();
 		this.contractClauses = new ArrayList<ContractClause>();
 		this.contractAttachments = new ArrayList<ContractAttach>();
@@ -96,6 +98,14 @@ public class EmployeeContractInfo implements Serializable{
 
 	public void setScopeMap(Map<String, String> scopeMap) {
 		this.scopeMap = scopeMap;
+	}
+
+	public ContractSpecificData getContractSpecificData() {
+		return contractSpecificData;
+	}
+
+	public void setContractSpecificData(ContractSpecificData contractSpecificData) {
+		this.contractSpecificData = contractSpecificData;
 	}
 
 }
