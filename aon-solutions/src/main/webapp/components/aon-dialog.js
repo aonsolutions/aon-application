@@ -59,8 +59,6 @@ class AonDialog extends HTMLElement {
 			content.style.position = 'absolute';
 			content.style.width = '200px';
 			content.style.padding = '0px';
-			content.style.right = '100px';
-			content.style.top = '90px';
 		}
 
 		window.onclick = (event) => {
@@ -76,12 +74,12 @@ class AonDialog extends HTMLElement {
 	}
 
 	open(){
-		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog')
+		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
 		dialog.style.display = 'block';
 	}
 
 	close() {
-		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog')
+		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
 		dialog.style.display = 'none';
 	}
 
@@ -100,8 +98,12 @@ class AonDialog extends HTMLElement {
 		content.innerHTML = html;
 	}
 
-	setMenuOptions(options) {
+	setMenuOptions(options, top, left) {
+		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog')
+
 		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
+		content.style.top = top || '90px';
+		content.style.left = left > (dialog.offsetWidth/2) ? left - 180 : left;
 		content.innerHTML = '';
 		let ul = document.createElement('ul');
 		content.appendChild(ul);

@@ -47,15 +47,21 @@ import '../../components/aon-dialog.js';
 		connectedCallback () {
 			this.innerHTML = `
 				<div style="display:flex;">
-					<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%;"> </aon-card>
-					<div style="width:50%;">
-						<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
-						<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
+				<div id="aonInvoiceData">
+					<div style="display:flex;">
+						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%;"> </aon-card>
+						<div style="width:50%;">
+							<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
+							<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
+						</div>
 					</div>
+					<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
+					<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
 				</div>
-				<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
-				<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
+				<div id="aonInvoiceFile">
 
+				</div>
+				</div>
 				<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
 			`;
 
@@ -74,15 +80,83 @@ import '../../components/aon-dialog.js';
 
 			let aonInvoice = document.getElementById('aonInvoice');
 			aonInvoice.addToolbarOption('Options', 'more_vert', () => {
+				let button = document.getElementById('aonInvoiceToolbarOptionsButton');
+
+				const top  = button.getBoundingClientRect().top;
+				const left = button.getBoundingClientRect().left;
 				let d = document.getElementById('aonDialogInvoiceOption');
-				d.setMenuOptions(this.getOptions());
+				d.setMenuOptions(this.getOptions(), top, left);
 				d.open();
 			});
 
 			if(!this._invoice.file) {
-				aonInvoice.addToolbarOption('AddFile', 'attach_file', () => alert('add file'));
+				let fileDiv = document.getElementById('aonInvoiceFile');
+				fileDiv.style.display = 'none';
+				aonInvoice.addToolbarOption('AddFile', 'attach_file', () => {
+					let el = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
+					el.click();
+				});
+				let button = document.getElementById('aonInvoiceToolbarAddFileButton');
+
+				let input = document.createElement('input');
+				input.id = 'aonInvoiceToolbarAddFileButtonInput'
+				input.style.display = 'none';
+				input.type = 'file';
+				input.addEventListener('change', () => this.preview());
+				button.appendChild(input);
 			}
 		}
+
+		preview() {
+			let fileDiv = document.getElementById('aonInvoiceFile');
+			let dataDiv = document.getElementById('aonInvoiceData');
+
+			let fileInput = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
+			const file = fileInput.files[0];
+			const READER = new FileReader();
+			READER.readAsDataURL(file);
+			READER.onload = (_event) => {
+				fileDiv.style.display = 'block';
+				fileDiv.style.width = '50%';
+				dataDiv.style.width = '50%';
+				if (file.type.match(/image\/*/) == null) {
+					// this.attach(READER.result as string, file.type)
+				} else {
+					let img = document.createElement('img');
+					img.src = READER.result;// as string;
+
+					fileDiv.innerHTML = '';
+					fileDiv.appendChild(img);
+				}
+			};
+		}
+
+		// attach(fileDataUri: string,  mimetype: string): void {
+			// if (fileDataUri.length > 0) {
+			// 	const base64File = fileDataUri.split(',')[1];
+			// 	const cp = this.service.getActualCompany();
+			// 	const data = {
+			// 		company: cp ,
+			// 		content: base64File,
+			// 		contentType: mimetype,
+			// 		contentEncoding: 'base64',
+			// 		invoice: undefined,
+			// 		status: undefined
+			// 	};
+			// 	if (this.invoiceService.isNew) { data.invoice = this.invoiceService.invoice; }
+			// 	this.service.loading = true;
+			// 	this.aonService.createInvoice(data)
+			// 	.subscribe((r: Invoice) => {
+			// 		if (!this.invoiceService.invoice.id) {
+			// 			this.invoiceService.setInvoice(r);
+			// 		}
+			// 		this.invoiceService.invoiceFile = undefined;
+			// 		this.invoiceService.getFile().subscribe();
+			// 		this.invoiceService.expandFile(true);
+			// 		this.service.loading = false;
+			// 	});
+			// }
+		// }
 
 		getOptions() {
 			const status = this._invoice.status;
@@ -168,7 +242,6 @@ import '../../components/aon-dialog.js';
 
 		}
 
-
 		buildData(){
 			let card = document.getElementById('aonInvoiceItemDataCard');
 			let table = document.createElement('table');
@@ -221,8 +294,8 @@ import '../../components/aon-dialog.js';
 			tr2.appendChild(tdNif);
 			let nif = document.getElementById('nif');
 			nif.value = this.isEmitida()
-				? this._invoice.receiver.document
-				: this._invoice.sender.document;
+				? (this._invoice.receiver ? this._invoice.receiver.document : '')
+				: (this._invoice.sender ? this._invoice.sender.document : '');
 			nif.addEventListener('change', () => this.updateRegistry());
 
 			// NAME
@@ -232,8 +305,8 @@ import '../../components/aon-dialog.js';
 			tr2.appendChild(tdName);
 			let name = document.getElementById('name');
 			name.value = this.isEmitida()
-				? this._invoice.receiver.name
-				: this._invoice.sender.name;
+				? (this._invoice.receiver ? this._invoice.receiver.name : '')
+				: (this._invoice.sender ? this._invoice.sender.name : '');
 			name.addEventListener('change', () => this.updateRegistry());
 
 			let tr3 = document.createElement('tr');
@@ -246,8 +319,8 @@ import '../../components/aon-dialog.js';
 			tr3.appendChild(tdAddress);
 			let address = document.getElementById('address');
 			address.buildAddressValue(this.isEmitida()
-				? JSON.stringify(this._invoice.receiver.address)
-				: JSON.stringify(this._invoice.sender.address));
+				? JSON.stringify(this._invoice.receiver ? this._invoice.receiver.address : {})
+				: JSON.stringify(this._invoice.sender ? this._invoice.sender.address : {}));
 			address.addEventListener('change', () => this.updateRegistry());
 
 
