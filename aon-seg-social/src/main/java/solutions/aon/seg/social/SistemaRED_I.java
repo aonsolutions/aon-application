@@ -1,9 +1,6 @@
 package solutions.aon.seg.social;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -13,23 +10,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
-import javax.print.attribute.standard.DateTimeAtCompleted;
-
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-
 import solutions.aon.seg.social.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -202,23 +189,7 @@ public class SistemaRED_I {
 		
 		return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	public static byte[] getPdfInfo (final String href, final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String affiliationNumber, final String regime, final String contributionAccount, final Date fecha) throws SegSocialException, InterruptedException {
 		
@@ -272,8 +243,7 @@ public class SistemaRED_I {
 				throw new SegSocialException(e);
 		}
 	}
-	
-	
+		
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String contributionAccount) throws SegSocialException {
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
@@ -307,20 +277,7 @@ public class SistemaRED_I {
 				throw new SegSocialException(e);
 		}	
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, ParseException, SegSocialException {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
