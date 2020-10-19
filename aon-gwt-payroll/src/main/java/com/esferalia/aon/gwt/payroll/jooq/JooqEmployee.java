@@ -3,9 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
-import static com.esferalia.aon.jooq.tables.ContractClause.CONTRACT_CLAUSE;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
@@ -48,8 +46,6 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.BankEntities;
-import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
-import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -1545,73 +1541,6 @@ public class JooqEmployee {
 //				.execute();
 //		 }
 		
-		// ------------------------------------------------------------------------------------------------------------------------
-		// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
-		// ------------------------------------------------------------------------------------------------------------------------
-
-		List<String> contractOtherDataNames = getContractOtherDataListNames();
-		
-		dslContext.delete(CONTRACT_INFO)
-			.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
-			.and(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId()))
-			.execute();
-		
-		for(Entry<String, String> entry : employeeContractInfo.getContractOtherData().entrySet()) {
-			if(StringUtils.isNotBlank(entry.getValue())) {
-				dslContext.insertInto(CONTRACT_INFO)
-					.set(CONTRACT_INFO.DOMAIN, employeeData.getDomain())
-					.set(CONTRACT_INFO.CONTRACT, contractData.getContractId())
-					.set(CONTRACT_INFO.NAME, entry.getKey())
-					.set(CONTRACT_INFO.EXPRESSION, entry.getValue())
-					.set(CONTRACT_INFO.START_DATE, startDate)
-					.set(CONTRACT_INFO.END_DATE, endDate)
-					.execute();
-			}
-		}
-		
-		// ------------------------------------------------------------------------------------------------------------------------
-		// ------------------------------------------------ CONTRACT CLAUSE -------------------------------------------------------
-		// ------------------------------------------------------------------------------------------------------------------------
-
-		List<ContractClause> contractClauses = employeeContractInfo.getContractClauses();
-		
-		for(ContractClause contractClause : contractClauses) {
-			if(null == contractClause.getContract())
-				continue;
-			
-			dslContext.update(CONTRACT_CLAUSE)
-				.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
-				.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
-				.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
-				.where(CONTRACT_CLAUSE.ID.eq(contractClause.getId()))
-				.execute();
-			
-		}
-
-		// ------------------------------------------------------------------------------------------------------------------------
-		// ------------------------------------------------ CONTRACT ATTACH -------------------------------------------------------
-		// ------------------------------------------------------------------------------------------------------------------------
-
-		List<ContractAttach> contractAttachs = employeeContractInfo.getContractAttachments();
-		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-		
-		for(ContractAttach contractAttach : contractAttachs) {
-			if(null == contractAttach.getContract())
-				continue;
-			
-			dslContext.update(CONTRACT_ATTACH)
-				.set(CONTRACT_ATTACH.DESCRIPTION, contractAttach.getDescription())
-				.set(CONTRACT_ATTACH.TYPE, contractAttach.getType() == (byte) -1 ? null : contractAttach.getType())
-				.set(CONTRACT_ATTACH.SCOPE, contractAttach.getScope() == (byte) -1 ? null : contractAttach.getScope())
-				.set(CONTRACT_ATTACH.SECURITY_LEVEL, contractAttach.getSecurityLevel())
-				.set(CONTRACT_ATTACH.ATTACH_DATE, contractAttach.getAttachDate() == null ? null : new Timestamp(contractAttach.getAttachDate().getTime()))
-				.where(CONTRACT_ATTACH.ID.eq(contractAttach.getId()))
-				.execute();
-			
-		}
-		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 
 		//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,
 		// contract_leave, contract_payment

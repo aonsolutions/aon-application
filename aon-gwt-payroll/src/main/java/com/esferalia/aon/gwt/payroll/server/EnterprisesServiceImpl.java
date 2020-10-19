@@ -56,6 +56,7 @@ import com.esferalia.aon.gwt.payroll.shared.BankAccount;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -2238,9 +2239,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		} 
 	}
+	
+	@Override
+	public List<ContractAttach> getContractAttachments(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getContractAttachments(connection, domainId, contractId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public List<ContractAttach> setContractAttachments(String domainName, Integer contractId, List<ContractAttach> contractAttachments) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.setContractAttachments(connection, domainId, contractId, contractAttachments);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
-	public ContractAttach createContractAttach(String domainName, ContractAttach contractAttach) {
+	public List<ContractAttach> createContractAttach(String domainName, ContractAttach contractAttach) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqContrataContract.createContractAttach(connection, domainId, contractAttach);
@@ -2250,7 +2271,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ContractAttach deleteContractAttach(String domainName, ContractAttach contractAttach) {
+	public List<ContractAttach> deleteContractAttach(String domainName, ContractAttach contractAttach) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqContrataContract.deleteContractAttach(connection, domainId, contractAttach);
@@ -2258,9 +2279,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public List<ContractClause> getContractClauses(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getContractClauses(connection, domainId, contractId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public List<ContractClause> setContractClauses(String domainName, Integer contractId, List<ContractClause> contractClauses) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.setContractClauses(connection, domainId, contractId, contractClauses);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
-	public ContractClause createContractClause(String domainName, ContractClause contractClause) {
+	public List<ContractClause> createContractClause(String domainName, ContractClause contractClause) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqContrataContract.createContractClause(connection, domainId, contractClause);
@@ -2270,7 +2311,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ContractClause deleteContractClause(String domainName, ContractClause contractClause) {
+	public List<ContractClause> deleteContractClause(String domainName, ContractClause contractClause) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqContrataContract.deleteContractClause(connection, domainId, contractClause);
@@ -2278,5 +2319,35 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public Map<String, String> getContractOtherInfo(String domainName, Integer contractId, String contractType) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getContractOtherInfo(connection, domainId, contractId, contractType);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public Map<String, CNO> getCNOs(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqContrataContract.getCNOs(connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public Map<String, String> setContractOtherInfo(String domainName, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.setContractOtherInfo(connection, domainId, contractId, contractType, contractOtherInfo);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	
 }

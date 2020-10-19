@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 
 import static com.esferalia.aon.jooq.tables.Agreement.AGREEMENT;
 import static com.esferalia.aon.jooq.tables.AgreementLevel.AGREEMENT_LEVEL;
+import static com.esferalia.aon.jooq.tables.Cno.CNO;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractClause.CONTRACT_CLAUSE;
@@ -22,27 +23,32 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record10;
+import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.esferalia.aon.jooq.tables.records.ContractAttachRecord;
-import com.esferalia.aon.jooq.tables.records.ContractClauseRecord;
 import com.ibm.icu.util.Calendar;
 
 public class JooqContrataContract {
@@ -57,84 +63,286 @@ public class JooqContrataContract {
 		return SETTINGS;
 	}
 	
-	public static ContractAttach createContractAttach(Connection conn, Integer domainId,ContractAttach contractAttach) {
+	// ------------------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------ CONTRACT ATTACH -------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------------------
+	
+	public static List<ContractAttach> getContractAttachments(Connection conn, Integer domainId, Integer contractId) {
+		return getContractAttachmentsDB(DSL.using(conn, getDefaultSettings()), domainId, contractId);
+	}
+	
+	private static List<ContractAttach> getContractAttachmentsDB(DSLContext dslContext, Integer domainId, Integer contractId) {
+		List<ContractAttach> contractAttachs = new ArrayList<ContractAttach>();
+		
+		 Result<Record10<Integer, Integer, Integer, Byte, String, Byte, Integer, Byte, Timestamp, String>> contractAttachRecords = dslContext.select(
+				CONTRACT_ATTACH.ID, CONTRACT_ATTACH.DOMAIN, CONTRACT_ATTACH.CONTRACT, CONTRACT_ATTACH.MIMETYPE,
+				CONTRACT_ATTACH.DESCRIPTION, CONTRACT_ATTACH.TYPE, CONTRACT_ATTACH.SCOPE, CONTRACT_ATTACH.SECURITY_LEVEL,
+				CONTRACT_ATTACH.ATTACH_DATE, CONTRACT_ATTACH.DRIVEID).from(CONTRACT_ATTACH)
+			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId)
+					.or(CONTRACT_ATTACH.CONTRACT.isNull()))
+			.and(CONTRACT_ATTACH.DOMAIN.eq(domainId))
+			.fetch();
+		
+		for(Record record : contractAttachRecords) {
+			if(null != record.get(CONTRACT_ATTACH.TYPE) && record.get(CONTRACT_ATTACH.TYPE) == (byte)4)
+				continue;
+			
+			ContractAttach contractAttach = new ContractAttach();
+			contractAttach.setId(record.get(CONTRACT_ATTACH.ID));
+			contractAttach.setDomain(record.get(CONTRACT_ATTACH.DOMAIN));
+			contractAttach.setContract(record.get(CONTRACT_ATTACH.CONTRACT));
+			contractAttach.setMimeType(record.get(CONTRACT_ATTACH.MIMETYPE));
+			contractAttach.setDescription(record.get(CONTRACT_ATTACH.DESCRIPTION));
+			contractAttach.setData("".getBytes()); //record.get(CONTRACT_ATTACH.DATA));
+			contractAttach.setType(record.get(CONTRACT_ATTACH.TYPE));
+			contractAttach.setScope(record.get(CONTRACT_ATTACH.SCOPE));
+			contractAttach.setSecurityLevel(record.get(CONTRACT_ATTACH.SECURITY_LEVEL));
+			contractAttach.setAttachDate(record.get(CONTRACT_ATTACH.ATTACH_DATE));
+			contractAttach.setDriveId(record.get(CONTRACT_ATTACH.DRIVEID));
+			
+			contractAttachs.add(contractAttach);
+		}
+		
+		return contractAttachs;
+	}
+
+	public static List<ContractAttach> createContractAttach(Connection conn, Integer domainId,ContractAttach contractAttach) {
 		return createContractAttachDB(DSL.using(conn, getDefaultSettings()), domainId, contractAttach);
 	}
 
-	private static ContractAttach createContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
-		 ContractAttachRecord contractAttachRecord = dslContext.insertInto(CONTRACT_ATTACH)
+	private static List<ContractAttach> createContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
+		 dslContext.insertInto(CONTRACT_ATTACH)
 			.set(CONTRACT_ATTACH.DOMAIN, contractAttach.getDomain())
 			.set(CONTRACT_ATTACH.CONTRACT, contractAttach.getContract())
-			.returning()
-			.fetchOne();
+			.execute();
 		 
-		 ContractAttach contractAttachNew = new ContractAttach();
-			contractAttachNew.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
-			contractAttachNew.setDomain(contractAttachRecord.get(CONTRACT_ATTACH.DOMAIN));
-			contractAttachNew.setContract(contractAttachRecord.get(CONTRACT_ATTACH.CONTRACT));
-			contractAttachNew.setMimeType(contractAttachRecord.get(CONTRACT_ATTACH.MIMETYPE));
-			contractAttachNew.setDescription(contractAttachRecord.get(CONTRACT_ATTACH.DESCRIPTION));
-			contractAttachNew.setData(contractAttachRecord.get(CONTRACT_ATTACH.DATA));
-			contractAttachNew.setType(contractAttachRecord.get(CONTRACT_ATTACH.TYPE));
-			contractAttachNew.setScope(contractAttachRecord.get(CONTRACT_ATTACH.SCOPE));
-			contractAttachNew.setSecurityLevel(contractAttachRecord.get(CONTRACT_ATTACH.SECURITY_LEVEL));
-			contractAttachNew.setAttachDate(contractAttachRecord.get(CONTRACT_ATTACH.ATTACH_DATE));
-			contractAttachNew.setDriveId(contractAttachRecord.get(CONTRACT_ATTACH.DRIVEID));
-		
-		
-		
-		return contractAttachNew;
+		 return getContractAttachmentsDB(dslContext, domainId, contractAttach.getContract());
 	}
 	
-	public static ContractAttach deleteContractAttach(Connection conn, Integer domainId, ContractAttach contractAttach) {
+	public static List<ContractAttach> deleteContractAttach(Connection conn, Integer domainId, ContractAttach contractAttach) {
 		return deleteContractAttachDB(DSL.using(conn, getDefaultSettings()), domainId, contractAttach);
 	}
 	
-	private static ContractAttach deleteContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
+	private static List<ContractAttach> deleteContractAttachDB(DSLContext dslContext, Integer domainId, ContractAttach contractAttach) {
 		
 		// Delete contract_attach
 		dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.ID.eq(contractAttach.getId())).execute();
 		
-		return contractAttach;
+		return getContractAttachmentsDB(dslContext, domainId, contractAttach.getContract());
 	}
 	
-	public static ContractClause createContractClause(Connection conn, Integer domainId, ContractClause contractClause) {
+	public static List<ContractAttach> setContractAttachments(Connection conn, Integer domainId, Integer contractId, List<ContractAttach> contractAttachments) {
+		return setContractAttachmentsDB(DSL.using(conn, getDefaultSettings()), domainId, contractId, contractAttachments);
+	}
+	
+	private static List<ContractAttach> setContractAttachmentsDB(DSLContext dslContext, Integer domainId, Integer contractId, List<ContractAttach> contractAttachments) {
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+		
+		for(ContractAttach contractAttach : contractAttachments) {
+			if(null == contractAttach.getContract())
+				continue;
+			
+			dslContext.update(CONTRACT_ATTACH)
+				.set(CONTRACT_ATTACH.DESCRIPTION, contractAttach.getDescription())
+				.set(CONTRACT_ATTACH.TYPE, contractAttach.getType() == (byte) -1 ? null : contractAttach.getType())
+				.set(CONTRACT_ATTACH.SCOPE, contractAttach.getScope() == (byte) -1 ? null : contractAttach.getScope())
+				.set(CONTRACT_ATTACH.SECURITY_LEVEL, contractAttach.getSecurityLevel())
+				.set(CONTRACT_ATTACH.ATTACH_DATE, contractAttach.getAttachDate() == null ? null : new Timestamp(contractAttach.getAttachDate().getTime()))
+				.where(CONTRACT_ATTACH.ID.eq(contractAttach.getId()))
+				.execute();
+			
+		}
+		
+		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
+		
+		return contractAttachments;
+	}
+	
+	// ------------------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------ CONTRACT CLAUSE -------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------------------
+
+	public static List<ContractClause> getContractClauses(Connection conn, Integer domainId, Integer contractId) {
+		return getContractClausesDB(DSL.using(conn, getDefaultSettings()), domainId, contractId);
+	}
+	
+	private static List<ContractClause> getContractClausesDB(DSLContext dslContext, Integer domainId, Integer contractId) {
+		List<ContractClause> contractClauses = new ArrayList<ContractClause>();
+		
+		Result<Record> contractClauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
+			.where(CONTRACT_CLAUSE.CONTRACT.eq(contractId)
+					.or(CONTRACT_CLAUSE.CONTRACT.isNull()))
+			.and(CONTRACT_CLAUSE.DOMAIN.eq(domainId))
+			.fetch();
+		
+		for(Record record : contractClauseRecords) {
+			if(record.get(CONTRACT_CLAUSE.GENERAL) == (byte) 1)
+				continue;
+			
+			ContractClause contractClause =  new ContractClause();
+			contractClause.setId(record.get(CONTRACT_CLAUSE.ID));
+			contractClause.setDomain(record.get(CONTRACT_CLAUSE.DOMAIN));
+			contractClause.setContract(record.get(CONTRACT_CLAUSE.CONTRACT));
+			contractClause.setLineNumber(record.get(CONTRACT_CLAUSE.LINE));
+			contractClause.setName(record.get(CONTRACT_CLAUSE.NAME));
+			contractClause.setDescription(record.get(CONTRACT_CLAUSE.DESCRIPTION));
+			contractClause.setGeneral(record.get(CONTRACT_CLAUSE.GENERAL));
+			
+			contractClauses.add(contractClause);
+		}
+		
+		return contractClauses;
+	}
+
+	public static List<ContractClause> createContractClause(Connection conn, Integer domainId, ContractClause contractClause) {
 		return createContractClauseDB(DSL.using(conn, getDefaultSettings()), domainId, contractClause);
 	}
 	
-	private static ContractClause createContractClauseDB(DSLContext dslContext, Integer domainId, ContractClause contractClause) {
-		 ContractClauseRecord contractClauseRecord = dslContext.insertInto(CONTRACT_CLAUSE)
+	private static List<ContractClause> createContractClauseDB(DSLContext dslContext, Integer domainId, ContractClause contractClause) {
+		 dslContext.insertInto(CONTRACT_CLAUSE)
 			.set(CONTRACT_CLAUSE.DOMAIN, contractClause.getDomain())
 			.set(CONTRACT_CLAUSE.CONTRACT, contractClause.getContract())
 			.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
 			.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
-			.returning()
-			.fetchOne();
+			.execute();
 		 
-		ContractClause contractClauseNew =  new ContractClause();
-			contractClauseNew.setId(contractClauseRecord.get(CONTRACT_CLAUSE.ID));
-			contractClauseNew.setDomain(contractClauseRecord.get(CONTRACT_CLAUSE.DOMAIN));
-			contractClauseNew.setContract(contractClauseRecord.get(CONTRACT_CLAUSE.CONTRACT));
-			contractClauseNew.setLineNumber(contractClauseRecord.get(CONTRACT_CLAUSE.LINE));
-			contractClauseNew.setName(contractClauseRecord.get(CONTRACT_CLAUSE.NAME));
-			contractClauseNew.setDescription(contractClauseRecord.get(CONTRACT_CLAUSE.DESCRIPTION));
-			contractClauseNew.setGeneral(contractClauseRecord.get(CONTRACT_CLAUSE.GENERAL));
-			
-		
-		return contractClauseNew;
+		return getContractClausesDB(dslContext, domainId, contractClause.getContract());
 	}
 
-	
-	public static ContractClause deleteContractClause(Connection conn, Integer domainId, ContractClause contractClause) {
+	public static List<ContractClause> deleteContractClause(Connection conn, Integer domainId, ContractClause contractClause) {
 		return deleteContractClauseDB(DSL.using(conn, getDefaultSettings()), domainId, contractClause);
 	}
 	
-	private static ContractClause deleteContractClauseDB(DSLContext dslContext, Integer domainId, ContractClause contractClause) {
+	private static List<ContractClause> deleteContractClauseDB(DSLContext dslContext, Integer domainId, ContractClause contractClause) {
 		// Delete contract_attach
 		dslContext.delete(CONTRACT_CLAUSE).where(CONTRACT_CLAUSE.ID.eq(contractClause.getId())).execute();
 		
-		return contractClause;
+		return getContractClausesDB(dslContext, domainId, contractClause.getContract());
 	}
+	
+	public static List<ContractClause> setContractClauses(Connection conn, Integer domainId, Integer contractId, List<ContractClause> contractClauses) {
+		return setContractClausesDB(DSL.using(conn, getDefaultSettings()), domainId, contractId, contractClauses);
+	}
+	
+	private static List<ContractClause> setContractClausesDB(DSLContext dslContext, Integer domainId, Integer contractId, List<ContractClause> contractClauses) {
+		
+		for(ContractClause contractClause : contractClauses) {
+			if(null == contractClause.getContract())
+				continue;
+			
+			dslContext.update(CONTRACT_CLAUSE)
+				.set(CONTRACT_CLAUSE.LINE, contractClause.getLineNumber())
+				.set(CONTRACT_CLAUSE.NAME, contractClause.getName())
+				.set(CONTRACT_CLAUSE.DESCRIPTION, contractClause.getDescription())
+				.where(CONTRACT_CLAUSE.ID.eq(contractClause.getId()))
+				.execute();
+			
+		}
+
+		return contractClauses;
+	}
+	
+	// ------------------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------------------
+
+	public static  Map<String, String> getContractOtherInfo(Connection conn, Integer domainId, Integer contractId, String contractType) {
+		return getContractOtherInfoDB(DSL.using(conn, getDefaultSettings()), domainId, contractId, contractType);
+	}
+	
+	private static Map<String, String> getContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer contractId, String contractType) {
+		Map<String, String> contractOtherInfoMap = new HashMap<String, String>();
+		List<String> contractOtherDataNames = getContractOtherDataListNames(contractType);
+		
+		// Variables globales
+		
+		Result<Record> contractOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
+				.and(CONTRACT_INFO.CONTRACT.isNull())
+				.orderBy(CONTRACT_INFO.START_DATE.desc())
+				.fetch();
+		
+		for(Record contractOtherDataRecord : contractOtherDataRecords) {
+			String name = contractOtherDataRecord.get(CONTRACT_INFO.NAME);
+			String value = contractOtherDataRecord.get(CONTRACT_INFO.EXPRESSION);
+			contractOtherInfoMap.put(name, value);
+		}
+		
+		// Variables contrato
+		
+		contractOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
+				.and(CONTRACT_INFO.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_INFO.START_DATE.desc())
+				.fetch();
+		
+		for(Record contractOtherDataRecord : contractOtherDataRecords) {
+			String name = contractOtherDataRecord.get(CONTRACT_INFO.NAME);
+			String value = contractOtherDataRecord.get(CONTRACT_INFO.EXPRESSION);
+			contractOtherInfoMap.put(name, value);
+		}
+		
+		return contractOtherInfoMap;
+	}
+	
+	public static  Map<String, String> setContractOtherInfo(Connection conn, Integer domainId, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
+		return setContractOtherInfoDB(DSL.using(conn, getDefaultSettings()), domainId, contractId, contractType, contractOtherInfo);
+	}
+	
+	private static Map<String, String> setContractOtherInfoDB(DSLContext dslContext, Integer domainId, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
+		Record2<Date, Date> contractRecord = dslContext.select(CONTRACT.START_DATE, CONTRACT.END_DATE).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+		Date startDate = contractRecord.get(CONTRACT.START_DATE);
+		Date endDate = contractRecord.get(CONTRACT.END_DATE);
+		
+		List<String> contractOtherDataNames = getContractOtherDataListNames();
+		
+		dslContext.delete(CONTRACT_INFO)
+			.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
+			.and(CONTRACT_INFO.CONTRACT.eq(contractId))
+			.execute();
+		
+		for(Entry<String, String> entry : contractOtherInfo.entrySet()) {
+			if(StringUtils.isNotBlank(entry.getValue())) {
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domainId)
+					.set(CONTRACT_INFO.CONTRACT, contractId)
+					.set(CONTRACT_INFO.NAME, entry.getKey())
+					.set(CONTRACT_INFO.EXPRESSION, entry.getValue())
+					.set(CONTRACT_INFO.START_DATE, startDate)
+					.set(CONTRACT_INFO.END_DATE, endDate)
+					.execute();
+			}
+		}
+		
+		return contractOtherInfo;
+	}
+	
+	// ------------------------------------------------------------------------------------------------------------------------
+	// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------------------
+
+	public static ContractSpecificData getContractSpecificData(Connection conn, Integer domainId, Integer contractId) {
+		return getContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), domainId, contractId);
+	}
+	
+	private static ContractSpecificData getContractSpecificDataDB(DSLContext dslContext, Integer domainId, Integer contractId) {
+		ContractSpecificData contractSpecificData = new ContractSpecificData();
+		
+		return contractSpecificData;
+	}
+	
+	public static  EmployeeContractInfo setContractSpecificData(Connection conn, EmployeeContractInfo employeeContractInfo) {
+		return setContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), employeeContractInfo);
+	}
+	
+	private static EmployeeContractInfo setContractSpecificDataDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
+		return employeeContractInfo;
+	}
+	
+	// ------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------- CONTRACT -----------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------------------
 	
 	public static List<EmployeeContractInfo> getEmployeesInfo(Connection conn, Integer domainId, Boolean allEmployees) {
 		return getEmployeesInfoDB(DSL.using(conn, getDefaultSettings()), domainId, allEmployees);
@@ -561,102 +769,47 @@ public class JooqContrataContract {
 			employeeContractInfo.setEmployeeInfo(employeeData);
 			employeeContractInfo.setContractInfo(contractData);
 			
-			// ------------------------------------------------------------------------------------------------------------------------
-			// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
-			// ------------------------------------------------------------------------------------------------------------------------
-
-			List<String> contractOtherDataNames = getContractOtherDataListNames(contractData.getContractType());
+			// ------------------------------------------- CONTRACT SPECIFIC DATA -----------------------------------------------------
 			
-			// Variables globales
+			ContractSpecificData contractSpecificData = new ContractSpecificData();
 			
-			Result<Record> contractOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
-					.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
-					.and(CONTRACT_INFO.CONTRACT.isNull())
-					.orderBy(CONTRACT_INFO.START_DATE.desc())
-					.fetch();
-			
-			for(Record contractOtherDataRecord : contractOtherDataRecords) {
-				String name = contractOtherDataRecord.get(CONTRACT_INFO.NAME);
-				String value = contractOtherDataRecord.get(CONTRACT_INFO.EXPRESSION);
-				employeeContractInfo.addContractOtherData(name, value);
-			}
-			
-			// Variables contrato
-			
-			contractOtherDataRecords = dslContext.select().from(CONTRACT_INFO)
-					.where(CONTRACT_INFO.NAME.in(contractOtherDataNames))
-					.and(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId()))
-					.orderBy(CONTRACT_INFO.START_DATE.desc())
-					.fetch();
-			
-			for(Record contractOtherDataRecord : contractOtherDataRecords) {
-				String name = contractOtherDataRecord.get(CONTRACT_INFO.NAME);
-				String value = contractOtherDataRecord.get(CONTRACT_INFO.EXPRESSION);
-				employeeContractInfo.addContractOtherData(name, value);
-			}
-			
-			// ------------------------------------------------------------------------------------------------------------------------
-			// ------------------------------------------------ CONTRACT CLAUSE -------------------------------------------------------
-			// ------------------------------------------------------------------------------------------------------------------------
-
-			List<ContractClause> contractClauses = new ArrayList<ContractClause>();
-			
-			Result<Record> contractClauseRecords = dslContext.select().from(CONTRACT_CLAUSE)
-				.where(CONTRACT_CLAUSE.CONTRACT.eq(contractData.getContractId())
-						.or(CONTRACT_CLAUSE.CONTRACT.isNull()))
-				.and(CONTRACT_CLAUSE.DOMAIN.eq(employeeData.getDomain()))
+			// Get CNO
+			Result<Record> cnoRecords = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.NAME.eq("CNO"))
+				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
 				.fetch();
 			
-			for(Record record : contractClauseRecords) {
-				if(record.get(CONTRACT_CLAUSE.GENERAL) == (byte) 1)
-					continue;
+			if(cnoRecords.isNotEmpty())
+				contractSpecificData.setCno(parseContractTable(cnoRecords.get(0).get(CONTRACT_DATA.EXPRESSION)));
+			
+			Result<Record> contractSpecificDataRecords = dslContext.select().from(CONTRACT_ATTACH)
+					.where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())
+							.or(CONTRACT_ATTACH.CONTRACT.isNull()))
+					.and(CONTRACT_ATTACH.DOMAIN.eq(employeeData.getDomain()))
+					.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
+					.fetch();
+			
+			if(contractSpecificDataRecords.isNotEmpty()) {
+				byte[] data = contractSpecificDataRecords.get(0).get(CONTRACT_ATTACH.DATA);
 				
-				ContractClause contractClause =  new ContractClause();
-				contractClause.setId(record.get(CONTRACT_CLAUSE.ID));
-				contractClause.setDomain(record.get(CONTRACT_CLAUSE.DOMAIN));
-				contractClause.setContract(record.get(CONTRACT_CLAUSE.CONTRACT));
-				contractClause.setLineNumber(record.get(CONTRACT_CLAUSE.LINE));
-				contractClause.setName(record.get(CONTRACT_CLAUSE.NAME));
-				contractClause.setDescription(record.get(CONTRACT_CLAUSE.DESCRIPTION));
-				contractClause.setGeneral(record.get(CONTRACT_CLAUSE.GENERAL));
-				
-				contractClauses.add(contractClause);
+				//TODO: Read XML?¿?¿
 			}
 			
+			employeeContractInfo.setContractSpecificData(contractSpecificData);
+			
+			// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
+			
+			Map<String, String> contractOtherInfoMap = new HashMap<String, String>();
+			employeeContractInfo.setContractOtherData(contractOtherInfoMap);
+			
+			// ------------------------------------------------ CONTRACT CLAUSE -------------------------------------------------------
+			
+			List<ContractClause> contractClauses = new ArrayList<ContractClause>();
 			employeeContractInfo.setContractClauses(contractClauses);
 
-			// ------------------------------------------------------------------------------------------------------------------------
 			// ------------------------------------------------ CONTRACT ATTACH -------------------------------------------------------
-			// ------------------------------------------------------------------------------------------------------------------------
-
+			
 			List<ContractAttach> contractAttachs = new ArrayList<ContractAttach>();
-			
-			Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
-				.where(CONTRACT_ATTACH.CONTRACT.eq(contractData.getContractId())
-						.or(CONTRACT_ATTACH.CONTRACT.isNull()))
-				.and(CONTRACT_ATTACH.DOMAIN.eq(employeeData.getDomain()))
-				.fetch();
-			
-			for(Record record : contractAttachRecords) {
-				if(null != record.get(CONTRACT_ATTACH.TYPE) && record.get(CONTRACT_ATTACH.TYPE) == (byte)4)
-					continue;
-				
-				ContractAttach contractAttach = new ContractAttach();
-				contractAttach.setId(record.get(CONTRACT_ATTACH.ID));
-				contractAttach.setDomain(record.get(CONTRACT_ATTACH.DOMAIN));
-				contractAttach.setContract(record.get(CONTRACT_ATTACH.CONTRACT));
-				contractAttach.setMimeType(record.get(CONTRACT_ATTACH.MIMETYPE));
-				contractAttach.setDescription(record.get(CONTRACT_ATTACH.DESCRIPTION));
-				contractAttach.setData(record.get(CONTRACT_ATTACH.DATA));
-				contractAttach.setType(record.get(CONTRACT_ATTACH.TYPE));
-				contractAttach.setScope(record.get(CONTRACT_ATTACH.SCOPE));
-				contractAttach.setSecurityLevel(record.get(CONTRACT_ATTACH.SECURITY_LEVEL));
-				contractAttach.setAttachDate(record.get(CONTRACT_ATTACH.ATTACH_DATE));
-				contractAttach.setDriveId(record.get(CONTRACT_ATTACH.DRIVEID));
-				
-				contractAttachs.add(contractAttach);
-			}
-			
 			employeeContractInfo.setContractAttachments(contractAttachs);
 			
 			// ------------------------------------------------------------------------------------------------------------------------
@@ -908,6 +1061,187 @@ public class JooqContrataContract {
 	
 	private static List<String> getContractOtherDataPracticeListNames(){
 		List<String> contractOtherDataNames = new ArrayList<String>();
+		
+		contractOtherDataNames.add("P_ENTERPRISE_DIR_STAFF_NAME");
+		contractOtherDataNames.add("P_ENTERPRISE_DIR_STAFF_NIF");
+		contractOtherDataNames.add("P_ENTERPRISE_DIR_STAFF_CHARGE");
+		contractOtherDataNames.add("P_LEGAL_REPRESENTATIVE_NAME");
+		contractOtherDataNames.add("P_LEGAL_REPRESENTATIVE_NIF");
+		contractOtherDataNames.add("P_LEGAL_REPRESENTATIVE_CHARGE");
+		contractOtherDataNames.add("P_PROFESSIONAL_CERT");
+		contractOtherDataNames.add("P_PROFESSIONAL_CERT_OBTAIN_DATE");
+		contractOtherDataNames.add("P_DISABILITY_ISSUE_ENTITY");
+		contractOtherDataNames.add("P_DISABILITY_ISSUE_ENTITY_MORE");
+		contractOtherDataNames.add("P_FIRST_CONTRACT");
+		contractOtherDataNames.add("P_FULL_TIME_WEEK_HOURS");
+		contractOtherDataNames.add("P_FULL_TIME_START_TIME");
+		contractOtherDataNames.add("P_FULL_TIME_END_TIME");
+		contractOtherDataNames.add("P_JOB_TIME_DISTRIBUTION2");
+		contractOtherDataNames.add("P_TRIAL_DURATION");
+		contractOtherDataNames.add("P_SALARY_AMOUNT");
+		contractOtherDataNames.add("P_SALARY_PERIOD");
+		contractOtherDataNames.add("P_SALARY_CONCEPT");
+		contractOtherDataNames.add("P_HOLIDAYS");
+		contractOtherDataNames.add("P_SEPE_START_COMMUNICATION");
+		contractOtherDataNames.add("P_SEPE_END_COMMUNICATION");
+		contractOtherDataNames.add("P_OPT3_UNEMPLOYMENT");
+		contractOtherDataNames.add("P_OPT4_TRIAL_DURATION");
+		contractOtherDataNames.add("P_OPT4_TRIAL_DURATION_CONDITIONS");
+		contractOtherDataNames.add("P_OPT4_WORK_PLACE_ADAPTATIONS");
+		contractOtherDataNames.add("P_OPT4_STAFF_ADJUSTMENT");
+		contractOtherDataNames.add("P_OPT4_STAFF_ADJUSTMENT_MORE");
+		contractOtherDataNames.add("P_OPT5_MOTIVATION");
+		contractOtherDataNames.add("P_OPT5_EMPLOYER");
+		
+		return contractOtherDataNames;
+	}
+
+	public static Map<String, CNO> getCNOs(Connection conn) {
+		return getCNOsDB(DSL.using(conn, getDefaultSettings()));
+	}
+
+	private static Map<String, CNO> getCNOsDB(DSLContext dslContext) {
+		Map<String, CNO> cnoMap = new HashMap<String, CNO>();
+		Result<Record> cnoRecords = dslContext.select().from(CNO).fetch();
+		for(Record cnoRecord : cnoRecords) {
+			CNO cno = new CNO();
+			cno.setId(cnoRecord.get(CNO.ID));
+			cno.setCode(cnoRecord.get(CNO.CODE));
+			cno.setTitle(cnoRecord.get(CNO.TITLE));
+					
+			cnoMap.put(cnoRecord.get(CNO.CODE), cno);
+		}
+		return cnoMap;
+	}
+	
+	private static List<String> getContractOtherDataListNames(){
+		List<String> contractOtherDataNames = new ArrayList<String>();
+		
+		// ------------------------------------------------------- Indefinite Table
+		
+		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_NAME");
+		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_NIF");
+		contractOtherDataNames.add("ENTERPRISE_DIR_STAFF_CHARGE");
+		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_NAME");
+		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_NIF");
+		contractOtherDataNames.add("LEGAL_REPRESENTATIVE_CHARGE");
+		contractOtherDataNames.add("FUNCTIONS");
+		contractOtherDataNames.add("EMPLOYEE_CONTRACT_DISTANCE");
+		contractOtherDataNames.add("EMPLOYEE_CONTRACT_DIST_ADDR");
+		contractOtherDataNames.add("DISC_WORK_DESCRIPTION");
+		contractOtherDataNames.add("DISC_WORK_ACTIVITY");
+		contractOtherDataNames.add("DISC_WORK_DURATION");
+		contractOtherDataNames.add("DISC_WORK_ESTIMATED_DURATION");
+		contractOtherDataNames.add("DISC_WORK_ESTIM_JOURNAL_HOURS");
+		contractOtherDataNames.add("DISC_WORK_ESTIM_JOURNAL_PERIOD");
+		contractOtherDataNames.add("DISC_WORK_ESTIM_SCHEDULE");
+		contractOtherDataNames.add("DISC_AGREEMENT_COLLECTIVE");
+		contractOtherDataNames.add("FULL_TIME_WEEK_HOURS");
+		contractOtherDataNames.add("FULL_TIME_START_TIME");
+		contractOtherDataNames.add("FULL_TIME_END_TIME");
+		contractOtherDataNames.add("PARTIALLY_TIME_HOURS");
+		contractOtherDataNames.add("DEFAULT_JOURNAL_HOURS");
+		contractOtherDataNames.add("COMPLEMENTARY_HOURS");
+		contractOtherDataNames.add("TRIAL_DURATION");
+		contractOtherDataNames.add("SALARY_AMOUNT");
+		contractOtherDataNames.add("SALARY_PERIOD");
+		contractOtherDataNames.add("SALARY_CONCEPT");
+		contractOtherDataNames.add("HOLIDAYS");
+		contractOtherDataNames.add("SEPE_MUNICIPALITY");
+		contractOtherDataNames.add("I_OPT2_SEPE_MUNICIPALITY");
+		contractOtherDataNames.add("I_OPT2_DISABILITY_NO_SEVERE");
+		contractOtherDataNames.add("I_OPT2_DISABILITY_SEVERE");
+		contractOtherDataNames.add("I_OPT2_REDUCTION");
+		contractOtherDataNames.add("I_OPT5_BONUS_ART4_RDL3_2012");
+		contractOtherDataNames.add("I_OPT5_UNEMPLOYED_BT_16_30");
+		contractOtherDataNames.add("I_OPT5_UNEMPLOYED_GT_45");
+		contractOtherDataNames.add("I_OPT5_UNEMPL_3_MONTH_BENEFIT");
+		contractOtherDataNames.add("I_OPT5_FIRST_EMPLOYEE_AND_LT_30");
+		contractOtherDataNames.add("I_OPT6_AGE");
+		contractOtherDataNames.add("I_OPT6_AGREEMENT_COLLECTIVE1");
+		contractOtherDataNames.add("I_OPT6_AGREEMENT_COLLECTIVE2");
+		contractOtherDataNames.add("I_OPT15_ONSITE_HOURS");
+		contractOtherDataNames.add("I_OPT15_ONSITE_WEEK_HOURS");
+		contractOtherDataNames.add("I_OPT15_SALARY");
+		contractOtherDataNames.add("I_OPT15_OVERNIGHT");
+		contractOtherDataNames.add("I_OPT15_OVERNIGHT_WEEK_DAYS");
+		contractOtherDataNames.add("I_OPT17_FULL_TIME_QUOTE_BONUS");
+		contractOtherDataNames.add("I_OPT17_DISCONT_TIME_QUOTE_BONUS");
+		contractOtherDataNames.add("I_OPT17_SRC_CONTRACT_SEPE_MUNIC");
+		
+		// ------------------------------------------------------- Temporal Table
+		
+		contractOtherDataNames.add("T_ENTERPRISE_DIR_STAFF_NAME");
+		contractOtherDataNames.add("T_ENTERPRISE_DIR_STAFF_NIF");
+		contractOtherDataNames.add("T_ENTERPRISE_DIR_STAFF_CHARGE");
+		contractOtherDataNames.add("T_LEGAL_REPRESENTATIVE_NAME");
+		contractOtherDataNames.add("T_LEGAL_REPRESENTATIVE_NIF");
+		contractOtherDataNames.add("T_LEGAL_REPRESENTATIVE_CHARGE");
+		contractOtherDataNames.add("T_FUNCTIONS");
+		contractOtherDataNames.add("T_EMPLOYEE_CONTRACT_DISTANCE");
+		contractOtherDataNames.add("T_EMPLOYEE_CONTRACT_DIST_ADDR");
+		contractOtherDataNames.add("T_FULL_TIME_WEEK_HOURS");
+		contractOtherDataNames.add("T_FULL_TIME_START_TIME");
+		contractOtherDataNames.add("T_FULL_TIME_END_TIME");
+		contractOtherDataNames.add("T_PARTIALLY_TIME_JOB_LOWER_THAN");
+		contractOtherDataNames.add("T_PARTIALLY_TIME_JOB_DISTRIB");
+		contractOtherDataNames.add("T_END_DATE_TEXT");
+		contractOtherDataNames.add("T_TRIAL_DURATION");
+		contractOtherDataNames.add("T_GREATER_DURATION_AGREEMENT_COL");
+		contractOtherDataNames.add("T_SALARY_AMOUNT");
+		contractOtherDataNames.add("T_SALARY_PERIOD");
+		contractOtherDataNames.add("T_SALARY_CONCEPT");
+		contractOtherDataNames.add("T_HOLIDAYS");
+		contractOtherDataNames.add("T_SEPE_MUNICIPALITY");
+		contractOtherDataNames.add("T_OPT1_WORK_DESCRIPTION1");
+		contractOtherDataNames.add("T_OPT1_WORK_DESCRIPTION2");
+		contractOtherDataNames.add("T_OPT2_WORK_DESCRIPTION1");
+		contractOtherDataNames.add("T_OPT2_WORK_DESCRIPTION2");
+		contractOtherDataNames.add("T_OPT3_REPLACED_WORKER_NAME");
+		contractOtherDataNames.add("T_OPT10_REQUIREMENTS_OPT");
+		contractOtherDataNames.add("T_OPT10_FORMATION_OPT");
+		contractOtherDataNames.add("T_OPT10_FORMATION_TYPE_OPT");
+		contractOtherDataNames.add("T_OPT10_FORMATION_TYPE_OPT1_TEXT");
+		contractOtherDataNames.add("T_OPT10_FORMATION_TYPE_OPT2_TEXT");
+		contractOtherDataNames.add("T_OPT12_ONSITE_HOURS");
+		contractOtherDataNames.add("T_OPT12_ONSITE_WEEK_HOURS");
+		contractOtherDataNames.add("T_OPT12_ONSITE_HOURS_DISTRIB");
+		contractOtherDataNames.add("T_OPT12_SALARY_OPT");
+		contractOtherDataNames.add("T_OPT12_OVERNIGHT");
+		contractOtherDataNames.add("T_OPT12_OVERNIGHT_WEEK_DAYS");
+		contractOtherDataNames.add("T_OPT13_DISABILITY_ISSUED_BY");
+		contractOtherDataNames.add("T_OPT13_DISABILITY");
+		contractOtherDataNames.add("T_OPT13_SEVERE_DISABILITY");
+		contractOtherDataNames.add("T_OPT14_TRIAL_PERIOD");
+		contractOtherDataNames.add("T_OPT14_TRIAL_TERMS");
+		contractOtherDataNames.add("T_OPT14_PROFESSION");
+		contractOtherDataNames.add("T_OPT14_DISTANCE_ADJUSTMENT");
+		contractOtherDataNames.add("T_OPT14_DISTANCE_ADJUSTMENT_MORE");
+		contractOtherDataNames.add("T_OPT14_COLLECTIVE_AGREEMENT");
+		
+		// ------------------------------------------------------- Formation Table
+		
+		contractOtherDataNames.add("L_ENTERPRISE_DIR_STAFF_NAME");
+		contractOtherDataNames.add("L_ENTERPRISE_DIR_STAFF_NIF");
+		contractOtherDataNames.add("L_ENTERPRISE_DIR_STAFF_CHARGE");
+		contractOtherDataNames.add("L_LEGAL_REPRESENTATIVE_NAME");
+		contractOtherDataNames.add("L_LEGAL_REPRESENTATIVE_NIF");
+		contractOtherDataNames.add("L_LEGAL_REPRESENTATIVE_CHARGE");
+		contractOtherDataNames.add("L_QUOTE_BONUS");
+		contractOtherDataNames.add("L_EMPLOYEE_OPT");
+		contractOtherDataNames.add("L_CONTRACT_WORKPLACE_ADDRESS");
+		contractOtherDataNames.add("L_FORMATION_TEACHER");
+		contractOtherDataNames.add("L_HORARIO_LABORAL");
+		contractOtherDataNames.add("L_HORARIO_LECTIVO");
+		contractOtherDataNames.add("L_TRIAL_DURATION");
+		contractOtherDataNames.add("L_TRIAL_DURATION_INCREASE");
+		contractOtherDataNames.add("L_SALARY_AMOUNT");
+		contractOtherDataNames.add("L_SALARY_PERIOD");
+		contractOtherDataNames.add("L_HOLIDAYS");
+		contractOtherDataNames.add("L_ANNEX_I_CHECK");
+		contractOtherDataNames.add("L_ANNEX_II_CHECK");
+		
+		// ------------------------------------------------------- Practice Table
 		
 		contractOtherDataNames.add("P_ENTERPRISE_DIR_STAFF_NAME");
 		contractOtherDataNames.add("P_ENTERPRISE_DIR_STAFF_NIF");

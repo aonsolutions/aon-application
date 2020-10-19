@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -169,12 +170,29 @@ public interface EnterprisesService extends RemoteService {
 	
 	EnterpriseStatus getEnterpriseStatus(String domain, String user, Integer enterpriseId );
 
-	ContractAttach createContractAttach(String currentDomainName, ContractAttach contractAttach);
+	List<ContractAttach> getContractAttachments(String currentDomainName, Integer contractId);
+	
+	List<ContractAttach> setContractAttachments(String currentDomainName, Integer contractId,
+			List<ContractAttach> contractAttachments);
 
-	ContractAttach deleteContractAttach(String currentDomainName, ContractAttach contractAttach);
+	List<ContractAttach> createContractAttach(String currentDomainName, ContractAttach contractAttach);
 
-	ContractClause createContractClause(String currentDomainName, ContractClause contractClause);
+	List<ContractAttach> deleteContractAttach(String currentDomainName, ContractAttach contractAttach);
 
-	ContractClause deleteContractClause(String currentDomainName, ContractClause contractClause);
+	List<ContractClause> getContractClauses(String currentDomainName, Integer contractId);
 
+	List<ContractClause> setContractClauses(String currentDomainName, Integer contractId,
+			List<ContractClause> contractClauses);
+	
+	List<ContractClause> createContractClause(String currentDomainName, ContractClause contractClause);
+
+	List<ContractClause> deleteContractClause(String currentDomainName, ContractClause contractClause);
+
+	Map<String, String> getContractOtherInfo(String currentDomainName, Integer contractId, String contractType);
+	
+	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
+			Map<String, String> contractOtherData);
+	
+	Map<String, CNO> getCNOs(String currentDomainName);	
+	
 }

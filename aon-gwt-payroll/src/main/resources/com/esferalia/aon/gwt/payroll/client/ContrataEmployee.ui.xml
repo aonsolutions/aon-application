@@ -62,7 +62,7 @@
 					<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
 						<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 							<g:tab>
-						    	<g:header size='7'>Contrato/Persona</g:header>
+						    	<g:header size='7'>Datos Afiliación</g:header>
 						    	<g:HTMLPanel styleName="{style.mt10}">
 						    		<g:ScrollPanel ui:field="scrolledPanel" styleName="{style.p5} {style.center}">
 										<a:Employee ui:field="employee"/>
@@ -72,7 +72,17 @@
 						  	</g:tab>
 						  	<g:tab>
 						    	<g:customHeader size='7'>
-						      		<g:Label>Otros Datos Contrato</g:Label>
+						      		<g:Label>Datos SEPE</g:Label>
+						    	</g:customHeader>
+						    	<g:HTMLPanel styleName="{style.mt10}">
+						    		<g:ScrollPanel ui:field="scrolledPanelContractSpecificData" styleName="{style.p5} {style.center}">
+										<a:ContractSpecificData ui:field="contractSpecificData"/>
+									</g:ScrollPanel>
+						    	</g:HTMLPanel>
+						  	</g:tab>
+						  	<g:tab>
+						    	<g:customHeader size='7'>
+						      		<g:Label>Datos Contrato</g:Label>
 						    	</g:customHeader>
 						    	<g:HTMLPanel styleName="{style.mt10}">
 						    		<g:ScrollPanel ui:field="scrolledPanelContractOtherData" styleName="{style.p5} {style.center}">
@@ -82,11 +92,21 @@
 						  	</g:tab>
 						  	<g:tab>
 						    	<g:customHeader size='7'>
-						      		<g:Label>Clausulas / Adjuntos</g:Label>
+						      		<g:Label>Clausulas</g:Label>
 						    	</g:customHeader>
 						    	<g:HTMLPanel styleName="{style.mt10}">
-						    		<g:ScrollPanel ui:field="scrolledPanelClausesAndAttach" styleName="{style.p5} {style.center}">
-										<a:ContractClauseAndAttach ui:field="contractClauseAndAttach"/>
+						    		<g:ScrollPanel ui:field="scrolledPanelClauses" styleName="{style.p5} {style.center}">
+										<a:ContractClauseUI ui:field="contractClauseUI"/>
+									</g:ScrollPanel>
+						    	</g:HTMLPanel>
+						  	</g:tab>
+						  	<g:tab>
+						    	<g:customHeader size='7'>
+						      		<g:Label>Documentos</g:Label>
+						    	</g:customHeader>
+						    	<g:HTMLPanel styleName="{style.mt10}">
+						    		<g:ScrollPanel ui:field="scrolledPanelAttach" styleName="{style.p5} {style.center}">
+										<a:ContractAttachUI ui:field="contractAttachUI"/>
 									</g:ScrollPanel>
 						    	</g:HTMLPanel>
 						  	</g:tab>

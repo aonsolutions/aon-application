@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -15,7 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ContractOtherData extends ResizeComposite {
+public class ContractOtherData extends ResizeComposite {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 
@@ -485,6 +486,8 @@ public abstract class ContractOtherData extends ResizeComposite {
 	@UiField
 	ListBox employerPracLB;
 	
+	private EmployeeContractInfo contractEmployeeInfo;
+	
 	// ------------------------------------------------------ Constructor ---------------------------------------------------------
 
 	public ContractOtherData() {
@@ -498,893 +501,903 @@ public abstract class ContractOtherData extends ResizeComposite {
 	
 	@UiHandler("enterpriseAgentTB")
 	void onEnterpriseAgentTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentTBChange();
+		String value = enterpriseAgentTB.getValue();
+		setContractOtherData("ENTERPRISE_DIR_STAFF_NAME", value);
 	}
 	
 	@UiHandler("enterpriseAgentNIFTB")
 	void onEnterpriseAgentNIFTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentNIFTBChange();
+		String value = enterpriseAgentNIFTB.getValue();
+		setContractOtherData("ENTERPRISE_DIR_STAFF_NIF", value);
 	}
 	
 	@UiHandler("enterpriseAgentPositionTB")
 	void onEnterpriseAgentPositionTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentPositionTBChange();
+		String value = enterpriseAgentPositionTB.getValue();
+		setContractOtherData("ENTERPRISE_DIR_STAFF_CHARGE", value);
 	}
 	
 	@UiHandler("minorAgentTB")
 	void onMinorAgentTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentTBChange();
+		String value = minorAgentTB.getValue();
+		setContractOtherData("LEGAL_REPRESENTATIVE_NAME", value);
 	}
 	
 	@UiHandler("minorAgentNIFTB")
 	void onMinorAgentNIFTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentNIFTBChange();
+		String value = minorAgentNIFTB.getValue();
+		setContractOtherData("LEGAL_REPRESENTATIVE_NIF", value);
 	}
 	
 	@UiHandler("minorAgentQualityOfTB")
 	void onMinorAgentQualityOfTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentQualityOfTBChange();
+		String value = minorAgentQualityOfTB.getValue();
+		setContractOtherData("LEGAL_REPRESENTATIVE_CHARGE", value);
 	}
 	
 	@UiHandler("doingFunctionsTB")
 	void onDoingFunctionsTBChange(ValueChangeEvent<String> event) {
-		onDoingFunctionsTBChange();
+		String value = doingFunctionsTB.getValue();
+		setContractOtherData("FUNCTIONS", value);
 	}
 	
 	@UiHandler("distanceCB")
 	void onDistanceCBChange(ValueChangeEvent<Boolean> event) {
-		onDistanceCBChange();
+		Boolean value = distanceCB.getValue();
+		if(value)
+			setContractOtherData("EMPLOYEE_CONTRACT_DISTANCE", "true");
+		else
+			setContractOtherData("EMPLOYEE_CONTRACT_DISTANCE", "");
 	}
 	
 	@UiHandler("distanceAddressTB")
 	void onDistanceAddressTBChange(ValueChangeEvent<String> event) {
-		onDistanceAddressTBChange();
+		String value = distanceAddressTB.getValue();
+		setContractOtherData("EMPLOYEE_CONTRACT_DIST_ADDR", value);
 	}
 	
 	@UiHandler("discontinuousWorkTB")
 	void onDiscontinuousWorkTBChange(ValueChangeEvent<String> event) {
-		onDiscontinuousWorkTBChange();
+		String value = discontinuousWorkTB.getValue();
+		setContractOtherData("DISC_WORK_DESCRIPTION", value);
 	}
 	
 	@UiHandler("intermittentCyclicalActivityTB")
 	void onIntermittentCyclicalActivityTBChange(ValueChangeEvent<String> event) {
-		onIntermittentCyclicalActivityTBChange();
+		String value = intermittentCyclicalActivityTB.getValue();
+		setContractOtherData("DISC_WORK_ACTIVITY", value);
 	}
 	
 	@UiHandler("durationFDTB")
 	void onDurationFDTBChange(ValueChangeEvent<String> event) {
-		onDurationFDTBChange();
+		String value = durationFDTB.getValue();
+		setContractOtherData("DISC_WORK_DURATION", value);
 	}
 
 	@UiHandler("activityStimationDurationFDTB")
 	void onActivityStimationDurationFDTBChange(ValueChangeEvent<String> event) {
-		onActivityStimationDurationFDTBChange();
+		String value = activityStimationDurationFDTB.getValue();
+		setContractOtherData("DISC_WORK_ESTIMATED_DURATION", value);
 	}
 	
 	@UiHandler("journeyHoursFDTB")
 	void onJourneyHoursFDTBChange(ValueChangeEvent<String> event) {
-		onJourneyHoursFDTBChange();
+		String value = journeyHoursFDTB.getValue();
+		setContractOtherData("DISC_WORK_ESTIM_JOURNAL_HOURS", value);
 	}
 	
 	@UiHandler("journeyPeriodFDTB")
 	void onJourneyPeriodFDTBChange(ValueChangeEvent<String> event) {
-		onJourneyPeriodFDTBChange();
+		String value = journeyPeriodFDTB.getValue();
+		setContractOtherData("DISC_WORK_ESTIM_JOURNAL_PERIOD", value);
 	}
 
 	@UiHandler("timeDistributionFDTB")
 	void onTimeDistributionFDTBChange(ValueChangeEvent<String> event) {
-		onTimeDistributionFDTBChange();
+		String value = timeDistributionFDTB.getValue();
+		setContractOtherData("DISC_WORK_ESTIM_SCHEDULE", value);
 	}
 	
 	@UiHandler("partialTimeLB")
 	void onPartialTimeLBChange(ChangeEvent event) {
-		onPartialTimeLBChange();
+		String selectedValue = partialTimeLB.getSelectedValue();
+		setContractOtherData("DISC_AGREEMENT_COLLECTIVE", selectedValue);
 	}
 	
 	@UiHandler("journeyHoursTCTB")
 	void onJourneyHoursTCTBChange(ValueChangeEvent<String> event) {
-		onJourneyHoursTCTBChange();
+		String value = journeyHoursTCTB.getValue();
+		setContractOtherData("FULL_TIME_WEEK_HOURS", value);
 	}
 	
 	@UiHandler("startJourneyTCTB")
 	void onStartJourneyTCTBChange(ValueChangeEvent<String> event) {
-		onStartJourneyTCTBChange();
+		String value = startJourneyTCTB.getValue();
+		setContractOtherData("FULL_TIME_START_TIME", value);
 	}
 	
 	@UiHandler("endJourneyTCTB")
 	void onEndJourneyTCTBChange(ValueChangeEvent<String> event) {
-		onEndJourneyTCTBChange();
+		String value = endJourneyTCTB.getValue();
+		setContractOtherData("FULL_TIME_END_TIME", value);
 	}
 	
 	@UiHandler("journeyHoursTPTB")
 	void onJourneyHoursTPTBChange(ValueChangeEvent<String> event) {
-		onJourneyHoursTPTBChange();
+		String value = journeyHoursTPTB.getValue();
+		setContractOtherData("PARTIALLY_TIME_HOURS", value);
 	}
 	
 	@UiHandler("agreementJourneyHoursTB")
 	void onAgreementJourneyHoursTBChange(ValueChangeEvent<String> event) {
-		onAgreementJourneyHoursTBChange();
+		String value = agreementJourneyHoursTB.getValue();
+		setContractOtherData("DEFAULT_JOURNAL_HOURS", value);
 	}
 	
 	@UiHandler("complementaryHoursLB")
 	void onComplementaryHoursLBChange(ChangeEvent event) {
-		onComplementaryHoursLBChange();
+		String selectedValue = complementaryHoursLB.getSelectedValue();
+		setContractOtherData("COMPLEMENTARY_HOURS", selectedValue);
 	}
 	
 	@UiHandler("trialPeriodTB")
 	void onTrialPeriodTBChange(ValueChangeEvent<String> event) {
-		onTrialPeriodTBChange();
+		String value = trialPeriodTB.getValue();
+		setContractOtherData("TRIAL_DURATION", value);
 	}
 	
 	@UiHandler("salaryAmountTB")
 	void onSalaryAmountTBChange(ValueChangeEvent<String> event) {
-		onSalaryAmountTBChange();
+		String value = salaryAmountTB.getValue();
+		setContractOtherData("SALARY_AMOUNT", value);
 	}
 	
 	@UiHandler("salaryPeriodTB")
 	void onSalaryPeriodTBChange(ValueChangeEvent<String> event) {
-		onSalaryPeriodTBChange();
+		String value = salaryPeriodTB.getValue();
+		setContractOtherData("SALARY_PERIOD", value);
 	}
 	
 	@UiHandler("salaryConceptTB")
 	void onSalaryConceptTBChange(ValueChangeEvent<String> event) {
-		onSalaryConceptTBChange();
+		String value = salaryConceptTB.getValue();
+		setContractOtherData("SALARY_CONCEPT", value);
 	}
 	
 	@UiHandler("holidaysTB")
 	void onHolidaysTBChange(ValueChangeEvent<String> event) {
-		onHolidaysTBChange();
+		String value = holidaysTB.getValue();
+		setContractOtherData("HOLIDAYS", value);
 	}
 	
 	@UiHandler("sepeOfficeTB")
 	void onSepeOfficeTBChange(ValueChangeEvent<String> event) {
-		onSepeOfficeTBChange();
+		String value = sepeOfficeTB.getValue();
+		setContractOtherData("SEPE_MUNICIPALITY", value);
 	}
 	
 	@UiHandler("accreditedDisabilityTB")
 	void onAccreditedDisabilityTBChange(ValueChangeEvent<String> event) {
-		onAccreditedDisabilityTBChange();
+		String value = accreditedDisabilityTB.getValue();
+		setContractOtherData("I_OPT2_SEPE_MUNICIPALITY", value);
 	}
 	
 	@UiHandler("withoutDisabilitySevereLB")
 	void onWithoutDisabilitySevereLBChange(ChangeEvent event) {
-		onWithoutDisabilitySevereLBChange();
+		String selectedValue = withoutDisabilitySevereLB.getSelectedValue();
+		setContractOtherData("I_OPT2_DISABILITY_NO_SEVERE", selectedValue);
 	}
 
 	@UiHandler("disabilitySevereLB")
 	void onDisabilitySevereLBChange(ChangeEvent event) {
-		onDisabilitySevereLBChange();
+		String selectedValue = disabilitySevereLB.getSelectedValue();
+		setContractOtherData("I_OPT2_DISABILITY_SEVERE", selectedValue);
 	}
 
 	@UiHandler("subsidyTB")
 	void onSubsidyTBChange(ValueChangeEvent<String> event) {
-		onSubsidyTBChange();
+		String value = subsidyTB.getValue();
+		setContractOtherData("I_OPT2_REDUCTION", value);
 	}
 	
 	@UiHandler("fourthLawLB")
 	void onFourthLawLBChange(ChangeEvent event) {
-		onFourthLawLBChange();
+		String selectedValue = fourthLawLB.getSelectedValue();
+		setContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012", selectedValue);
 	}
 	
 	@UiHandler("unemploymentLB")
 	void onUnemploymentLBChange(ChangeEvent event) {
-		onUnemploymentLBChange();
+		String selectedValue = unemploymentLB.getSelectedValue();
+		setContractOtherData("I_OPT5_UNEMPLOYED_BT_16_30", selectedValue);
 	}
 
 	@UiHandler("unemploymentOldLB")
 	void onUnemploymentOldLBChange(ChangeEvent event) {
-		onUnemploymentOldLBChange();
+		String selectedValue = unemploymentOldLB.getSelectedValue();
+		setContractOtherData("I_OPT5_UNEMPLOYED_GT_45", selectedValue);
 	}
 	
 	@UiHandler("benefitsPerceptorCB")
 	void onBenefitsPerceptorCBChange(ValueChangeEvent<Boolean> event) {
-		onBenefitsPerceptorCBChange();
+		Boolean value = benefitsPerceptorCB.getValue();
+		if(value)
+			setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "true");
+		else
+			setContractOtherData("I_OPT5_UNEMPL_3_MONTH_BENEFIT", "");
 	}
 	
 	@UiHandler("firstEmployeeCB")
 	void onFirstEmployeeCBChange(ValueChangeEvent<Boolean> event) {
-		onFirstEmployeeCBChange();
+		Boolean value = firstEmployeeCB.getValue();
+		if(value)
+			setContractOtherData("I_OPT5_FIRST_EMPLOYEE_AND_LT_30", "true");
+		else
+			setContractOtherData("I_OPT5_FIRST_EMPLOYEE_AND_LT_30", "");
 	}
 	
 	@UiHandler("employeeLB")
 	void onEmployeeLBChange(ChangeEvent event) {
-		onEmployeeLBChange();
+		String selectedValue = employeeLB.getSelectedValue();
+		setContractOtherData("I_OPT6_AGE", selectedValue);
 	}
 	
 	@UiHandler("agreementLineOneTB")
 	void onAgreementLineOneTBChange(ValueChangeEvent<String> event) {
-		onAgreementLineOneTBChange();
+		String value = agreementLineOneTB.getValue();
+		setContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE1", value);
 	}
 	
 	@UiHandler("agreementLineTwoTB")
 	void onAgreementLineTwoTBChange(ValueChangeEvent<String> event) {
-		onAgreementLineTwoTBChange();
+		String value = agreementLineTwoTB.getValue();
+		setContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE2", value);
 	}
 	
 	@UiHandler("contactHoursLB")
 	void onContactHoursLBChange(ChangeEvent event) {
-		onContactHoursLBChange();
+		String selectedValue = contactHoursLB.getSelectedValue();
+		setContractOtherData("I_OPT15_ONSITE_HOURS", selectedValue);
 	}
 
 	@UiHandler("hoursTB")
 	void onHoursTBChange(ValueChangeEvent<String> event) {
-		onHoursTBChange();
+		String value = hoursTB.getValue();
+		setContractOtherData("I_OPT15_ONSITE_WEEK_HOURS", value);
 	}
 
 	@UiHandler("remunerationFormLB")
 	void onRemunerationFormLBChange(ChangeEvent event) {
-		onRemunerationFormLBChange();
+		String selectedValue = remunerationFormLB.getSelectedValue();
+		setContractOtherData("I_OPT15_SALARY", selectedValue);
 	}
 	
 	@UiHandler("overnightAgreementLB")
 	void onOvernightAgreementLBChange(ChangeEvent event) {
-		onOvernightAgreementLBChange();
+		String selectedValue = overnightAgreementLB.getSelectedValue();
+		setContractOtherData("I_OPT15_OVERNIGHT", selectedValue);
 	}
 	
 	@UiHandler("overnightRegimeTB")
 	void onOvernightRegimeTBChange(ValueChangeEvent<String> event) {
-		onOvernightRegimeTBChange();
+		String value = overnightRegimeTB.getValue();
+		setContractOtherData("I_OPT15_OVERNIGHT_WEEK_DAYS", value);
 	}
 	
 	@UiHandler("quoteReductionTCLB")
 	void onQuoteReductionTCLBChange(ChangeEvent event) {
-		onQuoteReductionTCLBChange();
+		String selectedValue = quoteReductionTCLB.getSelectedValue();
+		setContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS", selectedValue);
 	}
 	
 	@UiHandler("quoteReductionFDLB")
 	void onQuoteReductionFDLBChange(ChangeEvent event) {
-		onQuoteReductionFDLBChange();
+		String selectedValue = quoteReductionFDLB.getSelectedValue();
+		setContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS", selectedValue);
 	}
 	
 	@UiHandler("sepeOfficeCOTB")
 	void onSepeOfficeCOTBChange(ValueChangeEvent<String> event) {
-		onSepeOfficeCOTBChange();
+		String value = sepeOfficeCOTB.getValue();
+		setContractOtherData("I_OPT17_SRC_CONTRACT_SEPE_MUNIC", value);
 	}
 	
 	// ------------------------------------------------------- Temporal Table
 	
 	@UiHandler("enterpriseAgentTempTB")
 	void onEnterpriseAgentTempTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentTempTBChange();
+		String value = enterpriseAgentTempTB.getValue();
+		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME", value);
 	}
 	
 	@UiHandler("enterpriseAgentNIFTempTB")
 	void onEnterpriseAgentNIFTempTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentNIFTempTBChange();
+		String value = enterpriseAgentNIFTempTB.getValue();
+		setContractOtherData("T_ENTERPRISE_DIR_STAFF_NIF", value);
 	}
 	
 	@UiHandler("enterpriseAgentPositionTempTB")
 	void onEnterpriseAgentPositionTempTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentPositionTempTBChange();
+		String value = enterpriseAgentPositionTempTB.getValue();
+		setContractOtherData("T_ENTERPRISE_DIR_STAFF_CHARGE", value);
 	}
 	
 	@UiHandler("minorAgentTempTB")
 	void onMinorAgentTempTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentTempTBChange();
+		String value = minorAgentTempTB.getValue();
+		setContractOtherData("T_LEGAL_REPRESENTATIVE_NAME", value);
 	}
 	
 	@UiHandler("minorAgentNIFTempTB")
 	void onMinorAgentNIFTempTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentNIFTempTBChange();
+		String value = minorAgentNIFTempTB.getValue();
+		setContractOtherData("T_LEGAL_REPRESENTATIVE_NIF", value);
 	}
 	
 	@UiHandler("minorAgentQualityOfTempTB")
 	void onMinorAgentQualityOfTempTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentQualityOfTempTBChange();
+		String value = minorAgentQualityOfTempTB.getValue();
+		setContractOtherData("T_LEGAL_REPRESENTATIVE_CHARGE", value);
 	}
 	
 	@UiHandler("doingFunctionsTempTB")
 	void onDoingFunctionsTempTBChange(ValueChangeEvent<String> event) {
-		onDoingFunctionsTempTBChange();
+		String value = doingFunctionsTempTB.getValue();
+		setContractOtherData("T_FUNCTIONS", value);
 	}
 	
 	@UiHandler("distanceTempCB")
 	void onDistanceTempCBChange(ValueChangeEvent<Boolean> event) {
-		onDistanceTempCBChange();
+		Boolean value = distanceTempCB.getValue();
+		if(value)
+			setContractOtherData("T_EMPLOYEE_CONTRACT_DISTANCE", "true");
+		else
+			setContractOtherData("T_EMPLOYEE_CONTRACT_DISTANCE", "");
 	}
 	
 	@UiHandler("distanceAddressTempTB")
 	void onDistanceAddressTempTBChange(ValueChangeEvent<String> event) {
-		onDistanceAddressTempTBChange();
+		String value = distanceAddressTempTB.getValue();
+		setContractOtherData("T_EMPLOYEE_CONTRACT_DIST_ADDR", value);
 	}
 	
 	@UiHandler("journeyHoursTCTempTB")
 	void onJourneyHoursTCTempTBChange(ValueChangeEvent<String> event) {
-		onJourneyHoursTCTempTBChange();
+		String value = journeyHoursTCTempTB.getValue();
+		setContractOtherData("T_FULL_TIME_WEEK_HOURS", value);
 	}
 	
 	@UiHandler("startJourneyTCTempTB")
 	void onStartJourneyTCTempTBChange(ValueChangeEvent<String> event) {
-		onStartJourneyTCTempTBChange();
+		String value = startJourneyTCTempTB.getValue();
+		setContractOtherData("T_FULL_TIME_START_TIME", value);
 	}
 	
 	@UiHandler("endJourneyTCTempTB")
 	void onEndJourneyTCTempTBChange(ValueChangeEvent<String> event) {
-		onEndJourneyTCTempTBChange();
+		String value = endJourneyTCTempTB.getValue();
+		setContractOtherData("T_FULL_TIME_END_TIME", value);
 	}
 	
 	@UiHandler("lowJourneyTempTB")
 	void onLowJourneyTempTBChange(ValueChangeEvent<String> event) {
-		onLowJourneyTempTBChange();
+		String value = lowJourneyTempTB.getValue();
+		setContractOtherData("T_PARTIALLY_TIME_JOB_LOWER_THAN", value);
 	}
 	
 	@UiHandler("timeDistributionTempTB")
 	void onTimeDistributionTempTBChange(ValueChangeEvent<String> event) {
-		onTimeDistributionTempTBChange();
+		String value = timeDistributionTempTB.getValue();
+		setContractOtherData("T_PARTIALLY_TIME_JOB_DISTRIB", value);
 	}
 	
 	@UiHandler("endContractTempTB")
 	void onEndContractTempTBChange(ValueChangeEvent<String> event) {
-		onEndContractTempTBChange();
+		String value = endContractTempTB.getValue();
+		setContractOtherData("T_END_DATE_TEXT", value);
 	}
 	
 	@UiHandler("trialPeriodTempTB")
 	void onTrialPeriodTempTBChange(ValueChangeEvent<String> event) {
-		onTrialPeriodTempTBChange();
+		String value = trialPeriodTempTB.getValue();
+		setContractOtherData("T_TRIAL_DURATION", value);
 	}
 	
 	@UiHandler("permitedHighDurationTempCB")
 	void onPermitedHighDurationTempCBChange(ValueChangeEvent<Boolean> event) {
-		onPermitedHighDurationTempCBChange();
+		Boolean value = permitedHighDurationTempCB.getValue();
+		if(value)
+			setContractOtherData("T_GREATER_DURATION_AGREEMENT_COL", "true");
+		else
+			setContractOtherData("T_GREATER_DURATION_AGREEMENT_COL", "");
 	}
 	
 	@UiHandler("salaryAmountTempTB")
 	void onSalaryAmountTempTBChange(ValueChangeEvent<String> event) {
-		onSalaryAmountTempTBChange();
+		String value = salaryAmountTempTB.getValue();
+		setContractOtherData("T_SALARY_AMOUNT", value);
 	}
 	
 	@UiHandler("salaryPeriodTempTB")
 	void onSalaryPeriodTempTBChange(ValueChangeEvent<String> event) {
-		onSalaryPeriodTempTBChange();
+		String value = salaryPeriodTempTB.getValue();
+		setContractOtherData("T_SALARY_PERIOD", value);
 	}
 	
 	@UiHandler("salaryConceptTempTB")
 	void onSalaryConceptTempTBChange(ValueChangeEvent<String> event) {
-		onSalaryConceptTempTBChange();
+		String value = salaryConceptTempTB.getValue();
+		setContractOtherData("T_SALARY_CONCEPT", value);
 	}
 	
 	@UiHandler("holidaysTempTB")
 	void onHolidaysTempTBChange(ValueChangeEvent<String> event) {
-		onHolidaysTempTBChange();
+		String value = holidaysTempTB.getValue();
+		setContractOtherData("T_HOLIDAYS", value);
 	}
 	
 	@UiHandler("sepeOfficeTempTB")
 	void onSepeOfficeTempTBChange(ValueChangeEvent<String> event) {
-		onSepeOfficeTempTBChange();
+		String value = sepeOfficeTempTB.getValue();
+		setContractOtherData("T_SEPE_MUNICIPALITY", value);
 	}
 	
 	@UiHandler("workTempTB")
 	void onWorkTempTBChange(ValueChangeEvent<String> event) {
-		onWorkTempTBChange();
+		String value = workTempTB.getValue();
+		setContractOtherData("T_OPT1_WORK_DESCRIPTION1", value);
 	}
 	
 	@UiHandler("workMoreTempTB")
 	void onWorkMoreTempTBChange(ValueChangeEvent<String> event) {
-		onWorkMoreTempTBChange();
+		String value = workMoreTempTB.getValue();
+		setContractOtherData("T_OPT1_WORK_DESCRIPTION2", value);
 	}
 	
 	@UiHandler("taskTempTB")
 	void onTaskTempTBChange(ValueChangeEvent<String> event) {
-		onTaskTempTBChange();
+		String value = taskTempTB.getValue();
+		setContractOtherData("T_OPT2_WORK_DESCRIPTION1", value);
 	}
 	
 	@UiHandler("taskMoreTempTB")
 	void onTaskMoreTempTBChange(ValueChangeEvent<String> event) {
-		onTaskMoreTempTBChange();
+		String value = taskMoreTempTB.getValue();
+		setContractOtherData("T_OPT2_WORK_DESCRIPTION2", value);
 	}
 	
 	@UiHandler("sustituteEmployeeTempTB")
 	void onSustituteEmployeeTempTBChange(ValueChangeEvent<String> event) {
-		onSustituteEmployeeTempTBChange();
+		String value = sustituteEmployeeTempTB.getValue();
+		setContractOtherData("T_OPT3_REPLACED_WORKER_NAME", value);
 	}
 	
 	@UiHandler("requirementsTempLB")
 	void onRequirementsTempLBChange(ChangeEvent event) {
-		onRequirementsTempLBChange();
+		String selectedValue = requirementsTempLB.getSelectedValue();
+		setContractOtherData("T_OPT10_REQUIREMENTS_OPT", selectedValue);
 	}
 	
 	@UiHandler("formationTempLB")
 	void onFormationTempLBChange(ChangeEvent event) {
-		onFormationTempLBChange();
+		String selectedValue = formationTempLB.getSelectedValue();
+		setContractOtherData("T_OPT10_FORMATION_OPT", selectedValue);
 	}
 	
 	@UiHandler("formationWillTempLB")
 	void onFormationWillTempLBChange(ChangeEvent event) {
-		onFormationWillTempLBChange();
+		String selectedValue = formationWillTempLB.getSelectedValue();
+		setContractOtherData("T_OPT10_FORMATION_TYPE_OPT", selectedValue);
 	}
 	
 	@UiHandler("officeSPEmployeeTempTB")
 	void onOfficeSPEmployeeTempTBChange(ValueChangeEvent<String> event) {
-		onOfficeSPEmployeeTempTBChange();
+		String value = officeSPEmployeeTempTB.getValue();
+		setContractOtherData("T_OPT10_FORMATION_TYPE_OPT1_TEXT", value);
 	}
 	
 	@UiHandler("lenguageFormationTempTB")
 	void onLenguageFormationTempTBChange(ValueChangeEvent<String> event) {
-		onLenguageFormationTempTBChange();
+		String value = lenguageFormationTempTB.getValue();
+		setContractOtherData("T_OPT10_FORMATION_TYPE_OPT2_TEXT", value);
 	}
 	
 	@UiHandler("hoursDealTempLB")
 	void onHoursDealTempLBChange(ChangeEvent event) {
-		onHoursDealTempLBChange();
+		String selectedValue = hoursDealTempLB.getSelectedValue();
+		setContractOtherData("T_OPT12_ONSITE_HOURS", selectedValue);
 	}
 	
 	@UiHandler("presentHoursTempTB")
 	void onPresentHoursTempTBChange(ValueChangeEvent<String> event) {
-		onPresentHoursTempTBChange();
+		String value = presentHoursTempTB.getValue();
+		setContractOtherData("T_OPT12_ONSITE_WEEK_HOURS", value);
 	}
 	
 	@UiHandler("distributionHoursTempTB")
 	void onDistributionHoursTempTBChange(ValueChangeEvent<String> event) {
-		onDistributionHoursTempTBChange();
+		String value = distributionHoursTempTB.getValue();
+		setContractOtherData("T_OPT12_ONSITE_HOURS_DISTRIB", value);
 	}
 	
 	@UiHandler("timeCompensationTempLB")
 	void onTimeCompensationTempLBChange(ChangeEvent event) {
-		onTimeCompensationTempLBChange();
+		String selectedValue = timeCompensationTempLB.getSelectedValue();
+		setContractOtherData("T_OPT12_SALARY_OPT", selectedValue);
 	}
 	
 	@UiHandler("dealOvernightLB")
 	void onDealOvernightLBChange(ChangeEvent event) {
-		onDealOvernightLBChange();
+		String selectedValue = dealOvernightLB.getSelectedValue();
+		setContractOtherData("T_OPT12_OVERNIGHT", selectedValue);
 	}
 	
 	@UiHandler("overnightRegimeTempTB")
 	void onOvernightRegimeTempTBChange(ValueChangeEvent<String> event) {
-		onOvernightRegimeTempTBChange();
+		String value = overnightRegimeTempTB.getValue();
+		setContractOtherData("T_OPT12_OVERNIGHT_WEEK_DAYS", value);
 	}
 	
 	@UiHandler("officialOrganismTempTB")
 	void onOfficialOrganismTempTBChange(ValueChangeEvent<String> event) {
-		onOfficialOrganismTempTBChange();
+		String value = officialOrganismTempTB.getValue();
+		setContractOtherData("T_OPT13_DISABILITY_ISSUED_BY", value);
 	}
 	
 	@UiHandler("withoutSevereDisTempLB")
 	void onWithoutSevereDisTempLBChange(ChangeEvent event) {
-		onWithoutSevereDisTempLBChange();
+		String selectedValue = withoutSevereDisTempLB.getSelectedValue();
+		setContractOtherData("T_OPT13_DISABILITY", selectedValue);
 	}
 	
 	@UiHandler("severeDisTempLB")
 	void onSevereDisTempLBChange(ChangeEvent event) {
-		onSevereDisTempLBChange();
+		String selectedValue = severeDisTempLB.getSelectedValue();
+		setContractOtherData("T_OPT13_SEVERE_DISABILITY", selectedValue);
 	}
 	
 	@UiHandler("adaptationPeriodTempTB")
 	void onAdaptationPeriodTempTBChange(ValueChangeEvent<String> event) {
-		onAdaptationPeriodTempTBChange();
+		String value = adaptationPeriodTempTB.getValue();
+		setContractOtherData("T_OPT14_TRIAL_PERIOD", value);
 	}
 	
 	@UiHandler("adaptationConditionsTempTB")
 	void onAdaptationConditionsTempTBChange(ValueChangeEvent<String> event) {
-		onAdaptationConditionsTempTBChange();
+		String value = adaptationConditionsTempTB.getValue();
+		setContractOtherData("T_OPT14_TRIAL_TERMS", value);
 	}
 	
 	@UiHandler("adaptationWorkTempLB")
 	void onAdaptationWorkTempLBChange(ChangeEvent event) {
-		onAdaptationWorkTempLBChange();
+		String selectedValue = adaptationWorkTempLB.getSelectedValue();
+		setContractOtherData("T_OPT14_PROFESSION", selectedValue);
 	}
 	
 	@UiHandler("socialPersonalAdjustTempTB")
 	void onSocialPersonalAdjustTempTBChange(ValueChangeEvent<String> event) {
-		onSocialPersonalAdjustTempTBChange();
+		String value = socialPersonalAdjustTempTB.getValue();
+		setContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT", value);
 	}
 	
 	@UiHandler("socialPersonalAdjustMoreTempTB")
 	void onSocialPersonalAdjustMoreTempTBChange(ValueChangeEvent<String> event) {
-		onSocialPersonalAdjustMoreTempTBChange();
+		String value = socialPersonalAdjustMoreTempTB.getValue();
+		setContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT_MORE", value);
 	}
 	
 	@UiHandler("colectiveAgreementTempTB")
 	void onColectiveAgreementTempTBChange(ValueChangeEvent<String> event) {
-		onColectiveAgreementTempTBChange();
+		String value = colectiveAgreementTempTB.getValue();
+		setContractOtherData("T_OPT14_COLLECTIVE_AGREEMENT", value);
 	}
 	
 	// ------------------------------------------------------- Formation Table
 	
 	@UiHandler("enterpriseAgentFormTB")
 	void onEnterpriseAgentFormTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentFormTBChange();
+		String value = enterpriseAgentFormTB.getValue();
+		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME", value);
 	}
 	
 	@UiHandler("enterpriseAgentNIFFormTB")
 	void onEnterpriseAgentNIFFormTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentNIFFormTBChange();
+		String value = enterpriseAgentNIFFormTB.getValue();
+		setContractOtherData("L_ENTERPRISE_DIR_STAFF_NIF", value);
 	}
 	
 	@UiHandler("enterpriseAgentPositionFormTB")
 	void onEnterpriseAgentPositionFormTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentPositionFormTBChange();
+		String value = enterpriseAgentPositionFormTB.getValue();
+		setContractOtherData("L_ENTERPRISE_DIR_STAFF_CHARGE", value);
 	}
 	
 	@UiHandler("minorAgentFormTB")
 	void onMinorAgentFormTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentFormTBChange();
+		String value = minorAgentFormTB.getValue();
+		setContractOtherData("L_LEGAL_REPRESENTATIVE_NAME", value);
 	}
 	
 	@UiHandler("minorAgentNIFFormTB")
 	void onMinorAgentNIFFormTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentNIFFormTBChange();
+		String value = minorAgentNIFFormTB.getValue();
+		setContractOtherData("L_LEGAL_REPRESENTATIVE_NIF", value);
 	}
 	
 	@UiHandler("minorAgentQualityOfFormTB")
 	void onMinorAgentQualityOfFormTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentQualityOfFormTBChange();
+		String value = minorAgentQualityOfFormTB.getValue();
+		setContractOtherData("L_LEGAL_REPRESENTATIVE_CHARGE", value);
 	}
 	
 	@UiHandler("ssReductionFormLB")
 	void onSsReductionFormLBChange(ChangeEvent event) {
-		onSsReductionFormLBChange();
+		String selectedValue = ssReductionFormLB.getSelectedValue();
+		setContractOtherData("L_QUOTE_BONUS", selectedValue);
 	}
 	
 	@UiHandler("employeeFormLB")
 	void onEmployeeFormLBChange(ChangeEvent event) {
-		onEmployeeFormLBChange();
+		String selectedValue = employeeFormLB.getSelectedValue();
+		setContractOtherData("L_EMPLOYEE_OPT", selectedValue);
 	}
 	
 	@UiHandler("workplaceFormTB")
 	void onWorkplaceFormTBChange(ValueChangeEvent<String> event) {
-		onWorkplaceFormTBChange();
+		String value = workplaceFormTB.getValue();
+		setContractOtherData("L_CONTRACT_WORKPLACE_ADDRESS", value);
 	}
 	
 	@UiHandler("tutorFormTB")
 	void onTutorFormTBChange(ValueChangeEvent<String> event) {
-		onTutorFormTBChange();
+		String value = tutorFormTB.getValue();
+		setContractOtherData("L_FORMATION_TEACHER", value);
 	}
 	
 	@UiHandler("efectiveWorkHoursFormTB")
 	void onEfectiveWorkHoursFormTBChange(ValueChangeEvent<String> event) {
-		onEfectiveWorkHoursFormTBChange();
+		String value = efectiveWorkHoursFormTB.getValue();
+		setContractOtherData("L_HORARIO_LABORAL", value);
 	}
 	
 	@UiHandler("activityHoursFormTB")
 	void onActivityHoursFormTBChange(ValueChangeEvent<String> event) {
-		onActivityHoursFormTBChange();
+		String value = activityHoursFormTB.getValue();
+		setContractOtherData("L_HORARIO_LECTIVO", value);
 	}
 	
 	@UiHandler("trialPeriodFormTB")
 	void onTrialPeriodFormTBChange(ValueChangeEvent<String> event) {
-		onTrialPeriodFormTBChange();
+		String value = trialPeriodFormTB.getValue();
+		setContractOtherData("L_TRIAL_DURATION", value);
 	}
 	
 	@UiHandler("agreementTrialFormCB")
 	void onAgreementTrialFormCBChange(ValueChangeEvent<Boolean> event) {
-		onAgreementTrialFormCBChange();
+		Boolean value = agreementTrialFormCB.getValue();
+		if(value)
+			setContractOtherData("L_TRIAL_DURATION_INCREASE", "true");
+		else
+			setContractOtherData("L_TRIAL_DURATION_INCREASE", "");
 	}
 	
 	@UiHandler("salaryAmountFormTB")
 	void onSalaryAmountFormTBChange(ValueChangeEvent<String> event) {
-		onSalaryAmountFormTBChange();
+		String value = salaryAmountFormTB.getValue();
+		setContractOtherData("L_SALARY_AMOUNT", value);
 	}
 	
 	@UiHandler("salaryPeriodFormTB")
 	void onSalaryPeriodFormTBChange(ValueChangeEvent<String> event) {
-		onSalaryPeriodFormTBChange();
+		String value = salaryPeriodFormTB.getValue();
+		setContractOtherData("L_SALARY_PERIOD", value);
 	}
 	
 	@UiHandler("holidaysFormTB")
 	void onHolidaysFormTBChange(ValueChangeEvent<String> event) {
-		onHolidaysFormTBChange();
+		String value = holidaysFormTB.getValue();
+		setContractOtherData("L_HOLIDAYS", value);
 	}
 	
 	@UiHandler("degreeExistFormCB")
 	void onDegreeExistFormCBChange(ValueChangeEvent<Boolean> event) {
-		onDegreeExistFormCBChange();
+		Boolean value = degreeExistFormCB.getValue();
+		if(value)
+			setContractOtherData("L_ANNEX_I_CHECK", "true");
+		else
+			setContractOtherData("L_ANNEX_I_CHECK", "");
 	}
 	
 	@UiHandler("degreeExist2FormCB")
 	void onDegreeExist2FormCBChange(ValueChangeEvent<Boolean> event) {
-		onDegreeExist2FormCBChange();
+		Boolean value = degreeExist2FormCB.getValue();
+		if(value)
+			setContractOtherData("L_ANNEX_II_CHECK", "true");
+		else
+			setContractOtherData("L_ANNEX_II_CHECK", "");
 	}
 	
 	// ------------------------------------------------------- Practice Table
 	
 	@UiHandler("enterpriseAgentPracTB")
 	void onEnterpriseAgentPracTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentPracTBChange();
+		String value = enterpriseAgentPracTB.getValue();
+		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME", value);
 	}
 	
 	@UiHandler("enterpriseAgentNIFPracTB")
 	void onEnterpriseAgentNIFPracTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentNIFPracTBChange();
+		String value = enterpriseAgentNIFPracTB.getValue();
+		setContractOtherData("P_ENTERPRISE_DIR_STAFF_NIF", value);
 	}
 	
 	@UiHandler("enterpriseAgentPositionPracTB")
 	void onEnterpriseAgentPositionPracTBChange(ValueChangeEvent<String> event) {
-		onEnterpriseAgentPositionPracTBChange();
+		String value = enterpriseAgentPositionPracTB.getValue();
+		setContractOtherData("P_ENTERPRISE_DIR_STAFF_CHARGE", value);
 	}
 	
 	@UiHandler("minorAgentPracTB")
 	void onMinorAgentPracTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentPracTBChange();
+		String value = minorAgentPracTB.getValue();
+		setContractOtherData("P_LEGAL_REPRESENTATIVE_NAME", value);
 	}
 	
 	@UiHandler("minorAgentNIFPracTB")
 	void onMinorAgentNIFPracTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentNIFPracTBChange();
+		String value = minorAgentNIFPracTB.getValue();
+		setContractOtherData("P_LEGAL_REPRESENTATIVE_NIF", value);
 	}
 	
 	@UiHandler("minorAgentQualityOfPracTB")
 	void onMinorAgentQualityOfPracTBChange(ValueChangeEvent<String> event) {
-		onMinorAgentQualityOfPracTBChange();
+		String value = minorAgentQualityOfPracTB.getValue();
+		setContractOtherData("P_LEGAL_REPRESENTATIVE_CHARGE", value);
 	}
 	
 	@UiHandler("profesionalCertPracTB")
 	void onProfesionalCertPracTBChange(ValueChangeEvent<String> event) {
-		onProfesionalCertPracTBChange();
+		String value = profesionalCertPracTB.getValue();
+		setContractOtherData("P_PROFESSIONAL_CERT", value);
 	}
 	
 	@UiHandler("obtainingDatePracTB")
 	void onObtainingDatePracTBChange(ValueChangeEvent<String> event) {
-		onObtainingDatePracTBChange();
+		String value = obtainingDatePracTB.getValue();
+		setContractOtherData("P_PROFESSIONAL_CERT_OBTAIN_DATE", value);
 	}
 	
 	@UiHandler("disabilityCertPracTB")
 	void onDisabilityCertPracTBChange(ValueChangeEvent<String> event) {
-		onDisabilityCertPracTBChange();
+		String value = disabilityCertPracTB.getValue();
+		setContractOtherData("P_DISABILITY_ISSUE_ENTITY", value);
 	}
 	
 	@UiHandler("disabilityCertMorePracTB")
 	void onDisabilityCertMorePracTBChange(ValueChangeEvent<String> event) {
-		onDisabilityCertMorePracTBChange();
+		String value = disabilityCertMorePracTB.getValue();
+		setContractOtherData("P_DISABILITY_ISSUE_ENTITY_MORE", value);
 	}
 	
 	@UiHandler("firstContractPracLB")
 	void onFirstContractPracLBChange(ChangeEvent event) {
-		onFirstContractPracLBChange();
+		String selectedValue = firstContractPracLB.getSelectedValue();
+		setContractOtherData("P_FIRST_CONTRACT", selectedValue);
 	}
 	
 	@UiHandler("journeyHoursPracTB")
 	void onJourneyHoursPracTBChange(ValueChangeEvent<String> event) {
-		onJourneyHoursPracTBChange();
+		String value = journeyHoursPracTB.getValue();
+		setContractOtherData("P_FULL_TIME_WEEK_HOURS", value);
 	}
 	
 	@UiHandler("startJourneyPracTB")
 	void onStartJourneyPracTBChange(ValueChangeEvent<String> event) {
-		onStartJourneyPracTBChange();
+		String value = startJourneyPracTB.getValue();
+		setContractOtherData("P_FULL_TIME_START_TIME", value);
 	}
 	
 	@UiHandler("endJourneyPracTB")
 	void onEndJourneyPracTBChange(ValueChangeEvent<String> event) {
-		onEndJourneyPracTBChange();
+		String value = endJourneyPracTB.getValue();
+		setContractOtherData("P_FULL_TIME_END_TIME", value);
 	}
 	
 	@UiHandler("distributionJourneyPracTB")
 	void onDistributionJourneyPracTBChange(ValueChangeEvent<String> event) {
-		onDistributionJourneyPracTBChange();
+		String value = distributionJourneyPracTB.getValue();
+		setContractOtherData("P_JOB_TIME_DISTRIBUTION2", value);
 	}
 	
 	@UiHandler("trialPeriodPracTB")
 	void onTrialPeriodPracTBChange(ValueChangeEvent<String> event) {
-		onTrialPeriodPracTBChange();
+		String value = trialPeriodPracTB.getValue();
+		setContractOtherData("P_TRIAL_DURATION", value);
 	}
 	
 	@UiHandler("salaryAmountPracTB")
 	void onSalaryAmountPracTBChange(ValueChangeEvent<String> event) {
-		onSalaryAmountPracTBChange();
+		String value = salaryAmountPracTB.getValue();
+		setContractOtherData("P_SALARY_AMOUNT", value);
 	}
 	
 	@UiHandler("salaryPeriodPracTB")
 	void onSalaryPeriodPracTBChange(ValueChangeEvent<String> event) {
-		onSalaryPeriodPracTBChange();
+		String value = salaryPeriodPracTB.getValue();
+		setContractOtherData("P_SALARY_PERIOD", value);
 	}
 	
 	@UiHandler("salaryConceptPracTB")
 	void onSalaryConceptPracTBChange(ValueChangeEvent<String> event) {
-		onSalaryConceptPracTBChange();
+		String value = salaryConceptPracTB.getValue();
+		setContractOtherData("P_SALARY_CONCEPT", value);
 	}
 	
 	@UiHandler("holidaysPracTB")
 	void onHolidaysPracTBChange(ValueChangeEvent<String> event) {
-		onHolidaysPracTBChange();
+		String value = holidaysPracTB.getValue();
+		setContractOtherData("P_HOLIDAYS", value);
 	}
 	
 	@UiHandler("sepeComunicationPracTB")
 	void onSepeComunicationPracTBChange(ValueChangeEvent<String> event) {
-		onSepeComunicationPracTBChange();
+		String value = sepeComunicationPracTB.getValue();
+		setContractOtherData("P_SEPE_START_COMMUNICATION", value);
 	}
 	
 	@UiHandler("endSepeComunicationPracTB")
 	void onEndSepeComunicationPracTBChange(ValueChangeEvent<String> event) {
-		onEndSepeComunicationPracTBChange();
+		String value = endSepeComunicationPracTB.getValue();
+		setContractOtherData("P_SEPE_END_COMMUNICATION", value);
 	}
 	
 	@UiHandler("unemploymentSubsidyPracLB")
 	void onUnemploymentSubsidyPracLBChange(ChangeEvent event) {
-		onUnemploymentSubsidyPracLBChange();
+		String selectedValue = unemploymentSubsidyPracLB.getSelectedValue();
+		setContractOtherData("P_OPT3_UNEMPLOYMENT", selectedValue);
 	}
 	
 	@UiHandler("adaptationPeriodPracTB")
 	void onAdaptationPeriodPracTBChange(ValueChangeEvent<String> event) {
-		onAdaptationPeriodPracTBChange();
+		String value = adaptationPeriodPracTB.getValue();
+		setContractOtherData("P_OPT4_TRIAL_DURATION", value);
 	}
 	
 	@UiHandler("adaptationConditionsPracTB")
 	void onAdaptationConditionsPracTBChange(ValueChangeEvent<String> event) {
-		onAdaptationConditionsPracTBChange();
+		String value = adaptationConditionsPracTB.getValue();
+		setContractOtherData("P_OPT4_TRIAL_DURATION_CONDITIONS", value);
 	}
 	
 	@UiHandler("adaptationWorkPracTB")
 	void onAdaptationWorkPracTBChange(ValueChangeEvent<String> event) {
-		onAdaptationWorkPracTBChange();
+		String value = adaptationWorkPracTB.getValue();
+		setContractOtherData("P_OPT4_WORK_PLACE_ADAPTATIONS", value);
 	}
 	
 	@UiHandler("personalSocialAdjustPracTB")
 	void onPersonalSocialAdjustPracTBChange(ValueChangeEvent<String> event) {
-		onPersonalSocialAdjustPracTBChange();
+		String value = personalSocialAdjustPracTB.getValue();
+		setContractOtherData("P_OPT4_STAFF_ADJUSTMENT", value);
 	}
 	
 	@UiHandler("personalSocialAdjustMorePracTB")
 	void onPersonalSocialAdjustMorePracTBChange(ValueChangeEvent<String> event) {
-		onPersonalSocialAdjustMorePracTBChange();
+		String value = personalSocialAdjustMorePracTB.getValue();
+		setContractOtherData("P_OPT4_STAFF_ADJUSTMENT_MORE", value);
 	}
 	
 	@UiHandler("motivationPracLB")
 	void onMotivationPracLBChange(ChangeEvent event) {
-		onMotivationPracLBChange();
+		String selectedValue = motivationPracLB.getSelectedValue();
+		setContractOtherData("P_OPT5_MOTIVATION", selectedValue);
 	}
 	
 	@UiHandler("employerPracLB")
 	void onEmployerPracLBChange(ChangeEvent event) {
-		onEmployerPracLBChange();
+		String selectedValue = employerPracLB.getSelectedValue();
+		setContractOtherData("P_OPT5_EMPLOYER", selectedValue);
 	}
-
-	// ------------------------------------------------------ Abstract Methods ---------------------------------------------------------
-	
-	// ------------------------------------------------------- Indefinite Table
-	
-	protected abstract void onEnterpriseAgentTBChange();
-	protected abstract void onEnterpriseAgentNIFTBChange();
-	protected abstract void onEnterpriseAgentPositionTBChange();
-	protected abstract void onMinorAgentTBChange();
-	protected abstract void onMinorAgentNIFTBChange();
-	protected abstract void onMinorAgentQualityOfTBChange();
-	protected abstract void onDoingFunctionsTBChange();
-	protected abstract void onDistanceCBChange();
-	protected abstract void onDistanceAddressTBChange();
-	protected abstract void onDiscontinuousWorkTBChange();
-	protected abstract void onIntermittentCyclicalActivityTBChange();
-	protected abstract void onDurationFDTBChange();
-	protected abstract void onActivityStimationDurationFDTBChange();
-	protected abstract void onJourneyHoursFDTBChange();
-	protected abstract void onJourneyPeriodFDTBChange();
-	protected abstract void onTimeDistributionFDTBChange();
-	protected abstract void onPartialTimeLBChange();
-	protected abstract void onJourneyHoursTCTBChange();
-	protected abstract void onStartJourneyTCTBChange();
-	protected abstract void onEndJourneyTCTBChange();
-	protected abstract void onJourneyHoursTPTBChange();
-	protected abstract void onAgreementJourneyHoursTBChange();
-	protected abstract void onComplementaryHoursLBChange();
-	protected abstract void onTrialPeriodTBChange();
-	protected abstract void onSalaryAmountTBChange();
-	protected abstract void onSalaryPeriodTBChange();
-	protected abstract void onSalaryConceptTBChange();
-	protected abstract void onHolidaysTBChange();
-	protected abstract void onSepeOfficeTBChange();
-	protected abstract void onAccreditedDisabilityTBChange();
-	protected abstract void onWithoutDisabilitySevereLBChange();
-	protected abstract void onDisabilitySevereLBChange();
-	protected abstract void onSubsidyTBChange();
-	protected abstract void onFourthLawLBChange();
-	protected abstract void onUnemploymentLBChange();
-	protected abstract void onUnemploymentOldLBChange();
-	protected abstract void onBenefitsPerceptorCBChange();
-	protected abstract void onFirstEmployeeCBChange();
-	protected abstract void onEmployeeLBChange();
-	protected abstract void onAgreementLineOneTBChange();
-	protected abstract void onAgreementLineTwoTBChange();
-	protected abstract void onContactHoursLBChange();
-	protected abstract void onHoursTBChange();
-	protected abstract void onRemunerationFormLBChange();
-	protected abstract void onOvernightAgreementLBChange();
-	protected abstract void onOvernightRegimeTBChange();
-	protected abstract void onQuoteReductionTCLBChange();
-	protected abstract void onQuoteReductionFDLBChange();
-	protected abstract void onSepeOfficeCOTBChange();
-	
-	// ------------------------------------------------------- Temporal Table
-	
-	protected abstract void onEnterpriseAgentTempTBChange();
-	protected abstract void onEnterpriseAgentNIFTempTBChange();
-	protected abstract void onEnterpriseAgentPositionTempTBChange();
-	protected abstract void onMinorAgentTempTBChange();
-	protected abstract void onMinorAgentNIFTempTBChange();
-	protected abstract void onMinorAgentQualityOfTempTBChange();
-	protected abstract void onDoingFunctionsTempTBChange();
-	protected abstract void onDistanceTempCBChange();
-	protected abstract void onDistanceAddressTempTBChange();
-	protected abstract void onJourneyHoursTCTempTBChange();
-	protected abstract void onStartJourneyTCTempTBChange();
-	protected abstract void onEndJourneyTCTempTBChange();
-	protected abstract void onLowJourneyTempTBChange();
-	protected abstract void onTimeDistributionTempTBChange();
-	protected abstract void onEndContractTempTBChange();
-	protected abstract void onTrialPeriodTempTBChange();
-	protected abstract void onPermitedHighDurationTempCBChange();
-	protected abstract void onSalaryAmountTempTBChange();
-	protected abstract void onSalaryPeriodTempTBChange();
-	protected abstract void onSalaryConceptTempTBChange();
-	protected abstract void onHolidaysTempTBChange();
-	protected abstract void onSepeOfficeTempTBChange();
-	protected abstract void onWorkTempTBChange();
-	protected abstract void onWorkMoreTempTBChange();
-	protected abstract void onTaskTempTBChange();
-	protected abstract void onTaskMoreTempTBChange();
-	protected abstract void onSustituteEmployeeTempTBChange();
-	protected abstract void onRequirementsTempLBChange();
-	protected abstract void onFormationTempLBChange();
-	protected abstract void onFormationWillTempLBChange();
-	protected abstract void onOfficeSPEmployeeTempTBChange();
-	protected abstract void onLenguageFormationTempTBChange();
-	protected abstract void onHoursDealTempLBChange();
-	protected abstract void onPresentHoursTempTBChange();
-	protected abstract void onDistributionHoursTempTBChange();
-	protected abstract void onTimeCompensationTempLBChange();
-	protected abstract void onDealOvernightLBChange();
-	protected abstract void onOvernightRegimeTempTBChange();
-	protected abstract void onOfficialOrganismTempTBChange();
-	protected abstract void onWithoutSevereDisTempLBChange();
-	protected abstract void onSevereDisTempLBChange();
-	protected abstract void onAdaptationPeriodTempTBChange();
-	protected abstract void onAdaptationConditionsTempTBChange();
-	protected abstract void onAdaptationWorkTempLBChange();
-	protected abstract void onSocialPersonalAdjustTempTBChange();
-	protected abstract void onSocialPersonalAdjustMoreTempTBChange();
-	protected abstract void onColectiveAgreementTempTBChange();
-	
-	// ------------------------------------------------------- Formation Table
-	
-	protected abstract void onEnterpriseAgentFormTBChange();
-	protected abstract void onEnterpriseAgentNIFFormTBChange();
-	protected abstract void onEnterpriseAgentPositionFormTBChange();
-	protected abstract void onMinorAgentFormTBChange();
-	protected abstract void onMinorAgentNIFFormTBChange();
-	protected abstract void onMinorAgentQualityOfFormTBChange();
-	protected abstract void onSsReductionFormLBChange();
-	protected abstract void onEmployeeFormLBChange();
-	protected abstract void onWorkplaceFormTBChange();
-	protected abstract void onTutorFormTBChange();
-	protected abstract void onEfectiveWorkHoursFormTBChange();
-	protected abstract void onActivityHoursFormTBChange();
-	protected abstract void onTrialPeriodFormTBChange();
-	protected abstract void onAgreementTrialFormCBChange();
-	protected abstract void onSalaryAmountFormTBChange();
-	protected abstract void onSalaryPeriodFormTBChange();
-	protected abstract void onHolidaysFormTBChange();
-	protected abstract void onDegreeExistFormCBChange();
-	protected abstract void onDegreeExist2FormCBChange();
-	
-	// ------------------------------------------------------- Practice Table
-	
-	protected abstract void onEnterpriseAgentPracTBChange();
-	protected abstract void onEnterpriseAgentNIFPracTBChange();
-	protected abstract void onEnterpriseAgentPositionPracTBChange();
-	protected abstract void onMinorAgentPracTBChange();
-	protected abstract void onMinorAgentNIFPracTBChange();
-	protected abstract void onMinorAgentQualityOfPracTBChange();
-	protected abstract void onProfesionalCertPracTBChange();
-	protected abstract void onObtainingDatePracTBChange();
-	protected abstract void onDisabilityCertPracTBChange();
-	protected abstract void onDisabilityCertMorePracTBChange();
-	protected abstract void onFirstContractPracLBChange();
-	protected abstract void onJourneyHoursPracTBChange();
-	protected abstract void onStartJourneyPracTBChange();
-	protected abstract void onEndJourneyPracTBChange();
-	protected abstract void onDistributionJourneyPracTBChange();
-	protected abstract void onTrialPeriodPracTBChange();
-	protected abstract void onSalaryAmountPracTBChange();
-	protected abstract void onSalaryPeriodPracTBChange();
-	protected abstract void onSalaryConceptPracTBChange();
-	protected abstract void onHolidaysPracTBChange();
-	protected abstract void onSepeComunicationPracTBChange();
-	protected abstract void onEndSepeComunicationPracTBChange();
-	protected abstract void onUnemploymentSubsidyPracLBChange();
-	protected abstract void onAdaptationPeriodPracTBChange();
-	protected abstract void onAdaptationConditionsPracTBChange();
-	protected abstract void onAdaptationWorkPracTBChange();
-	protected abstract void onPersonalSocialAdjustPracTBChange();
-	protected abstract void onPersonalSocialAdjustMorePracTBChange();
-	protected abstract void onMotivationPracLBChange();
-	protected abstract void onEmployerPracLBChange();
 
 	// ------------------------------------------------------------------------
 	//							Class Methods
@@ -1720,5 +1733,217 @@ public abstract class ContractOtherData extends ResizeComposite {
 		temporalTable.getElement().getStyle().setDisplay(Display.NONE);
 		formationTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
+	
+	private void setContractOtherData(String name, String value) {
+		this.contractEmployeeInfo.addContractOtherData(name, value);
+	}
+	
+	public String getContractOtherData(String name) {
+		return this.contractEmployeeInfo.getContractOtherData().get(name);
+	}
+	
+	public Boolean getContractOtherDataCB(String name) {
+		String value = this.contractEmployeeInfo.getContractOtherData().get(name);
+		return null == value ? false : true;
+	}
+
+	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo) {
+		this.contractEmployeeInfo = contractEmployeeInfo;
+		Integer contractType = getContractType(contractEmployeeInfo.getContractInfo().getContractType());
+		fillContractOtherData(contractType);
+	}
+	
+	public Integer getContractType(String contractTypeStr) {
+		if(null == contractTypeStr)
+			return -1;
+		else
+			return Integer.parseInt(contractTypeStr);
+	}
+	
+	private void fillContractOtherData(Integer contractType) {
+		if(contractType >= 100 && contractType <= 400) {
+			showIndefiniteTable();
+			fillContractOtherData();
+		} else if (contractType == 421) {
+			showFormationTable();
+			fillContractOtherDataFormation();
+		} else if (contractType == 420 || contractType == 520) {
+			showPracticeTable();
+			fillContractOtherDataPractice();
+		} else {
+			showTemporalTable();
+			fillContractOtherDataTemp();
+		}
+	}
+
+	private void fillContractOtherData() {
+		enterpriseAgentTB.setValue(getContractOtherData("ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNIFTB.setValue(getContractOtherData("ENTERPRISE_DIR_STAFF_NIF"));
+		enterpriseAgentPositionTB.setValue(getContractOtherData("ENTERPRISE_DIR_STAFF_CHARGE"));
+		minorAgentTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_NAME"));
+		minorAgentNIFTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_NIF"));
+		minorAgentQualityOfTB.setValue(getContractOtherData("LEGAL_REPRESENTATIVE_CHARGE"));
+		doingFunctionsTB.setValue(getContractOtherData("FUNCTIONS"));
+		distanceCB.setValue(getContractOtherDataCB("EMPLOYEE_CONTRACT_DISTANCE"));
+		distanceAddressTB.setValue(getContractOtherData("EMPLOYEE_CONTRACT_DIST_ADDR"));
+		discontinuousWorkTB.setValue(getContractOtherData("DISC_WORK_DESCRIPTION"));
+		intermittentCyclicalActivityTB.setValue(getContractOtherData("DISC_WORK_ACTIVITY"));
+		durationFDTB.setValue(getContractOtherData("DISC_WORK_DURATION"));
+		activityStimationDurationFDTB.setValue(getContractOtherData("DISC_WORK_ESTIMATED_DURATION"));
+		journeyHoursFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_JOURNAL_HOURS"));
+		journeyPeriodFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_JOURNAL_PERIOD"));
+		timeDistributionFDTB.setValue(getContractOtherData("DISC_WORK_ESTIM_SCHEDULE"));
+		setSelectedValueLB(partialTimeLB, getContractOtherData("DISC_AGREEMENT_COLLECTIVE"));
+		journeyHoursTCTB.setValue(getContractOtherData("FULL_TIME_WEEK_HOURS"));
+		startJourneyTCTB.setValue(getContractOtherData("FULL_TIME_START_TIME"));
+		endJourneyTCTB.setValue(getContractOtherData("FULL_TIME_END_TIME"));
+		journeyHoursTPTB.setValue(getContractOtherData("PARTIALLY_TIME_HOURS"));
+		agreementJourneyHoursTB.setValue(getContractOtherData("DEFAULT_JOURNAL_HOURS"));
+		setSelectedValueLB(complementaryHoursLB, getContractOtherData("COMPLEMENTARY_HOURS"));
+		trialPeriodTB.setValue(getContractOtherData("TRIAL_DURATION"));
+		salaryAmountTB.setValue(getContractOtherData("SALARY_AMOUNT"));
+		salaryPeriodTB.setValue(getContractOtherData("SALARY_PERIOD"));
+		salaryConceptTB.setValue(getContractOtherData("SALARY_CONCEPT"));
+		holidaysTB.setValue(getContractOtherData("HOLIDAYS"));
+		sepeOfficeTB.setValue(getContractOtherData("SEPE_MUNICIPALITY"));
+		accreditedDisabilityTB.setValue(getContractOtherData("I_OPT2_SEPE_MUNICIPALITY"));
+		setSelectedValueLB(withoutDisabilitySevereLB, getContractOtherData("I_OPT2_DISABILITY_NO_SEVERE"));
+		setSelectedValueLB(disabilitySevereLB, getContractOtherData("I_OPT2_DISABILITY_SEVERE"));
+		subsidyTB.setValue(getContractOtherData("I_OPT2_REDUCTION"));
+		setSelectedValueLB(fourthLawLB, getContractOtherData("I_OPT5_BONUS_ART4_RDL3_2012"));
+		setSelectedValueLB(unemploymentLB, getContractOtherData("I_OPT5_UNEMPLOYED_BT_16_30"));
+		setSelectedValueLB(unemploymentOldLB, getContractOtherData("I_OPT5_UNEMPLOYED_GT_45"));
+		benefitsPerceptorCB.setValue(getContractOtherDataCB("I_OPT5_UNEMPL_3_MONTH_BENEFIT"));
+		firstEmployeeCB.setValue(getContractOtherDataCB("I_OPT5_FIRST_EMPLOYEE_AND_LT_30"));
+		setSelectedValueLB(employeeLB, getContractOtherData("I_OPT6_AGE"));
+		agreementLineOneTB.setValue(getContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE1"));
+		agreementLineTwoTB.setValue(getContractOtherData("I_OPT6_AGREEMENT_COLLECTIVE2"));
+		setSelectedValueLB(contactHoursLB, getContractOtherData("I_OPT15_ONSITE_HOURS"));
+		hoursTB.setValue(getContractOtherData("I_OPT15_ONSITE_WEEK_HOURS"));
+		setSelectedValueLB(remunerationFormLB, getContractOtherData("I_OPT15_SALARY"));
+		setSelectedValueLB(overnightAgreementLB, getContractOtherData("I_OPT15_OVERNIGHT"));
+		overnightRegimeTB.setValue(getContractOtherData("I_OPT15_OVERNIGHT_WEEK_DAYS"));
+		setSelectedValueLB(quoteReductionTCLB, getContractOtherData("I_OPT17_FULL_TIME_QUOTE_BONUS"));
+		setSelectedValueLB(quoteReductionFDLB, getContractOtherData("I_OPT17_DISCONT_TIME_QUOTE_BONUS"));
+		sepeOfficeCOTB.setValue(getContractOtherData("I_OPT17_SRC_CONTRACT_SEPE_MUNIC"));
+	}
+	
+	private void fillContractOtherDataTemp() {
+		enterpriseAgentTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNIFTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_NIF"));
+		enterpriseAgentPositionTempTB.setValue(getContractOtherData("T_ENTERPRISE_DIR_STAFF_CHARGE"));
+		minorAgentTempTB.setValue(getContractOtherData("T_LEGAL_REPRESENTATIVE_NAME"));
+		minorAgentNIFTempTB.setValue(getContractOtherData("T_LEGAL_REPRESENTATIVE_NIF"));
+		minorAgentQualityOfTempTB.setValue(getContractOtherData("T_LEGAL_REPRESENTATIVE_CHARGE"));
+		doingFunctionsTempTB.setValue(getContractOtherData("T_FUNCTIONS"));
+		distanceTempCB.setValue(getContractOtherDataCB("T_EMPLOYEE_CONTRACT_DISTANCE"));
+		distanceAddressTempTB.setValue(getContractOtherData("T_EMPLOYEE_CONTRACT_DIST_ADDR"));
+		journeyHoursTCTempTB.setValue(getContractOtherData("T_FULL_TIME_WEEK_HOURS"));
+		startJourneyTCTempTB.setValue(getContractOtherData("T_FULL_TIME_START_TIME"));
+		endJourneyTCTempTB.setValue(getContractOtherData("T_FULL_TIME_END_TIME"));
+		lowJourneyTempTB.setValue(getContractOtherData("T_PARTIALLY_TIME_JOB_LOWER_THAN"));
+		timeDistributionTempTB.setValue(getContractOtherData("T_PARTIALLY_TIME_JOB_DISTRIB"));
+		endContractTempTB.setValue(getContractOtherData("T_END_DATE_TEXT"));
+		trialPeriodTempTB.setValue(getContractOtherData("T_TRIAL_DURATION"));
+		permitedHighDurationTempCB.setValue(getContractOtherDataCB("T_GREATER_DURATION_AGREEMENT_COL"));
+		salaryAmountTempTB.setValue(getContractOtherData("T_SALARY_AMOUNT"));
+		salaryPeriodTempTB.setValue(getContractOtherData("T_SALARY_PERIOD"));
+		salaryConceptTempTB.setValue(getContractOtherData("T_SALARY_CONCEPT"));
+		holidaysTempTB.setValue(getContractOtherData("T_HOLIDAYS"));
+		sepeOfficeTempTB.setValue(getContractOtherData("T_SEPE_MUNICIPALITY"));
+		workTempTB.setValue(getContractOtherData("T_OPT1_WORK_DESCRIPTION1"));
+		workMoreTempTB.setValue(getContractOtherData("T_OPT1_WORK_DESCRIPTION2"));
+		taskTempTB.setValue(getContractOtherData("T_OPT2_WORK_DESCRIPTION1"));
+		taskMoreTempTB.setValue(getContractOtherData("T_OPT2_WORK_DESCRIPTION2"));
+		sustituteEmployeeTempTB.setValue(getContractOtherData("T_OPT3_REPLACED_WORKER_NAME"));
+		setSelectedValueLB(requirementsTempLB, getContractOtherData("T_OPT10_REQUIREMENTS_OPT"));
+		setSelectedValueLB(formationTempLB, getContractOtherData("T_OPT10_FORMATION_OPT"));
+		setSelectedValueLB(formationWillTempLB, getContractOtherData("T_OPT10_FORMATION_TYPE_OPT"));
+		officeSPEmployeeTempTB.setValue(getContractOtherData("T_OPT10_FORMATION_TYPE_OPT1_TEXT"));
+		lenguageFormationTempTB.setValue(getContractOtherData("T_OPT10_FORMATION_TYPE_OPT2_TEXT"));
+		setSelectedValueLB(hoursDealTempLB, getContractOtherData("T_OPT12_ONSITE_HOURS"));
+		presentHoursTempTB.setValue(getContractOtherData("T_OPT12_ONSITE_WEEK_HOURS"));
+		distributionHoursTempTB.setValue(getContractOtherData("T_OPT12_ONSITE_HOURS_DISTRIB"));
+		setSelectedValueLB(timeCompensationTempLB, getContractOtherData("T_OPT12_SALARY_OPT"));
+		setSelectedValueLB(dealOvernightLB, getContractOtherData("T_OPT12_OVERNIGHT"));
+		overnightRegimeTempTB.setValue(getContractOtherData("T_OPT12_OVERNIGHT_WEEK_DAYS"));
+		officialOrganismTempTB.setValue(getContractOtherData("T_OPT13_DISABILITY_ISSUED_BY"));
+		setSelectedValueLB(withoutSevereDisTempLB, getContractOtherData("T_OPT13_DISABILITY"));
+		setSelectedValueLB(severeDisTempLB, getContractOtherData("T_OPT13_SEVERE_DISABILITY"));
+		adaptationPeriodTempTB.setValue(getContractOtherData("T_OPT14_TRIAL_PERIOD"));
+		adaptationConditionsTempTB.setValue(getContractOtherData("T_OPT14_TRIAL_TERMS"));
+		setSelectedValueLB(adaptationWorkTempLB, getContractOtherData("T_OPT14_PROFESSION"));
+		socialPersonalAdjustTempTB.setValue(getContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT"));
+		socialPersonalAdjustMoreTempTB.setValue(getContractOtherData("T_OPT14_DISTANCE_ADJUSTMENT_MORE"));
+		colectiveAgreementTempTB.setValue(getContractOtherData("T_OPT14_COLLECTIVE_AGREEMENT"));
+	}
+	
+	private void fillContractOtherDataFormation() {
+		enterpriseAgentFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNIFFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_NIF"));
+		enterpriseAgentPositionFormTB.setValue(getContractOtherData("L_ENTERPRISE_DIR_STAFF_CHARGE"));
+		minorAgentFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_NAME"));
+		minorAgentNIFFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_NIF"));
+		minorAgentQualityOfFormTB.setValue(getContractOtherData("L_LEGAL_REPRESENTATIVE_CHARGE"));
+		setSelectedValueLB(ssReductionFormLB, getContractOtherData("L_QUOTE_BONUS"));
+		setSelectedValueLB(employeeFormLB, getContractOtherData("L_EMPLOYEE_OPT"));
+		workplaceFormTB.setValue(getContractOtherData("L_CONTRACT_WORKPLACE_ADDRESS"));
+		tutorFormTB.setValue(getContractOtherData("L_FORMATION_TEACHER"));
+		efectiveWorkHoursFormTB.setValue(getContractOtherData("L_HORARIO_LABORAL"));
+		activityHoursFormTB.setValue(getContractOtherData("L_HORARIO_LECTIVO"));
+		trialPeriodFormTB.setValue(getContractOtherData("L_TRIAL_DURATION"));
+		agreementTrialFormCB.setValue(getContractOtherDataCB("L_TRIAL_DURATION_INCREASE"));
+		salaryAmountFormTB.setValue(getContractOtherData("L_SALARY_AMOUNT"));
+		salaryPeriodFormTB.setValue(getContractOtherData("L_SALARY_PERIOD"));
+		holidaysFormTB.setValue(getContractOtherData("L_HOLIDAYS"));
+		degreeExistFormCB.setValue(getContractOtherDataCB("L_ANNEX_I_CHECK"));
+		degreeExist2FormCB.setValue(getContractOtherDataCB("L_ANNEX_II_CHECK"));
+	}
+	
+	private void fillContractOtherDataPractice() {
+		enterpriseAgentPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NAME"));
+		enterpriseAgentNIFPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_NIF"));
+		enterpriseAgentPositionPracTB.setValue(getContractOtherData("P_ENTERPRISE_DIR_STAFF_CHARGE"));
+		minorAgentPracTB.setValue(getContractOtherData("P_LEGAL_REPRESENTATIVE_NAME"));
+		minorAgentNIFPracTB.setValue(getContractOtherData("P_LEGAL_REPRESENTATIVE_NIF"));
+		minorAgentQualityOfPracTB.setValue(getContractOtherData("P_LEGAL_REPRESENTATIVE_CHARGE"));
+		profesionalCertPracTB.setValue(getContractOtherData("P_PROFESSIONAL_CERT"));
+		obtainingDatePracTB.setValue(getContractOtherData("P_PROFESSIONAL_CERT_OBTAIN_DATE"));
+		disabilityCertPracTB.setValue(getContractOtherData("P_DISABILITY_ISSUE_ENTITY"));
+		disabilityCertMorePracTB.setValue(getContractOtherData("P_DISABILITY_ISSUE_ENTITY_MORE"));
+		setSelectedValueLB(firstContractPracLB, getContractOtherData("P_FIRST_CONTRACT"));
+		journeyHoursPracTB.setValue(getContractOtherData("P_FULL_TIME_WEEK_HOURS"));
+		startJourneyPracTB.setValue(getContractOtherData("P_FULL_TIME_START_TIME"));
+		endJourneyPracTB.setValue(getContractOtherData("P_FULL_TIME_END_TIME"));
+		distributionJourneyPracTB.setValue(getContractOtherData("P_JOB_TIME_DISTRIBUTION2"));
+		trialPeriodPracTB.setValue(getContractOtherData("P_TRIAL_DURATION"));
+		salaryAmountPracTB.setValue(getContractOtherData("P_SALARY_AMOUNT"));
+		salaryPeriodPracTB.setValue(getContractOtherData("P_SALARY_PERIOD"));
+		salaryConceptPracTB.setValue(getContractOtherData("P_SALARY_CONCEPT"));
+		holidaysPracTB.setValue(getContractOtherData("P_HOLIDAYS"));
+		sepeComunicationPracTB.setValue(getContractOtherData("P_SEPE_START_COMMUNICATION"));
+		endSepeComunicationPracTB.setValue(getContractOtherData("P_SEPE_END_COMMUNICATION"));
+		setSelectedValueLB(unemploymentSubsidyPracLB, getContractOtherData("P_OPT3_UNEMPLOYMENT"));
+		adaptationPeriodPracTB.setValue(getContractOtherData("P_OPT4_TRIAL_DURATION"));
+		adaptationConditionsPracTB.setValue(getContractOtherData("P_OPT4_TRIAL_DURATION_CONDITIONS"));
+		adaptationWorkPracTB.setValue(getContractOtherData("P_OPT4_WORK_PLACE_ADAPTATIONS"));
+		personalSocialAdjustPracTB.setValue(getContractOtherData("P_OPT4_STAFF_ADJUSTMENT"));
+		personalSocialAdjustMorePracTB.setValue(getContractOtherData("P_OPT4_STAFF_ADJUSTMENT_MORE"));
+		setSelectedValueLB(motivationPracLB, getContractOtherData("P_OPT5_MOTIVATION"));
+		setSelectedValueLB(employerPracLB, getContractOtherData("P_OPT5_EMPLOYER"));
+	}
+	
+	private void setSelectedValueLB(ListBox lBox, String str) {
+	    String text = str;
+	    int indexToFind = 0;
+	    for (int i = 0; i < lBox.getItemCount(); i++) {
+	        if (lBox.getValue(i).equals(text)) {
+	            indexToFind = i;
+	            break;
+	        }
+	    }
+	    lBox.setSelectedIndex(indexToFind);
+	}
+	
 
 }

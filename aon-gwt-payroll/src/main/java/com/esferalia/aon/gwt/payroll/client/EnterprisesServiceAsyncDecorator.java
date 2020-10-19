@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -483,30 +484,71 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.createUpdateITEmployee(currentDomainName, employeeITInfo, new AsyncCallbackWrapper<String>(callback));
 	}
-
-	@Override
-	public void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<ContractAttach> callback) {
-		AON.start();
-		enterprisesServiceAsync.createContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<ContractAttach>(callback));
-	}
-
-	@Override
-	public void deleteContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<ContractAttach> callback) {
-		AON.start();
-		enterprisesServiceAsync.deleteContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<ContractAttach>(callback));
-	}
-
-	@Override
-	public void createContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<ContractClause> callback) {
-		AON.start();
-		enterprisesServiceAsync.createContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<ContractClause>(callback));
 	
+	@Override
+	public void getContractAttachments(String currentDomainName, Integer contractId, AsyncCallback<List<ContractAttach>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getContractAttachments(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+	}
+	
+	@Override
+	public void setContractAttachments(String currentDomainName, Integer contractId, List<ContractAttach> contractAttachments, AsyncCallback<List<ContractAttach>> callback) {
+		AON.start();
+		enterprisesServiceAsync.setContractAttachments(currentDomainName, contractId, contractAttachments, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
 	}
 
 	@Override
-	public void deleteContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<ContractClause> callback) {
+	public void createContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> callback) {
 		AON.start();
-		enterprisesServiceAsync.deleteContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<ContractClause>(callback));
+		enterprisesServiceAsync.createContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+	}
+
+	@Override
+	public void deleteContractAttach(String currentDomainName, ContractAttach contractAttach, AsyncCallback<List<ContractAttach>> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteContractAttach(currentDomainName, contractAttach, new AsyncCallbackWrapper<List<ContractAttach>>(callback));
+	}
+	
+	@Override
+	public void getContractClauses(String currentDomainName, Integer contractId, AsyncCallback<List<ContractClause>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getContractClauses(currentDomainName, contractId, new AsyncCallbackWrapper<List<ContractClause>>(callback));
+	}
+	
+	@Override
+	public void setContractClauses(String currentDomainName, Integer contractId, List<ContractClause> contractClauses, AsyncCallback<List<ContractClause>> callback) {
+		AON.start();
+		enterprisesServiceAsync.setContractClauses(currentDomainName, contractId, contractClauses, new AsyncCallbackWrapper<List<ContractClause>>(callback));
+	}
+
+	@Override
+	public void createContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> callback) {
+		AON.start();
+		enterprisesServiceAsync.createContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<List<ContractClause>>(callback));
+	}
+
+	@Override
+	public void deleteContractClause(String currentDomainName, ContractClause contractClause, AsyncCallback<List<ContractClause>> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteContractClause(currentDomainName, contractClause, new AsyncCallbackWrapper<List<ContractClause>>(callback));
+	}
+	
+	@Override
+	public void getContractOtherInfo(String currentDomainName, Integer contractId, String contractType, AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getContractOtherInfo(currentDomainName, contractId, contractType, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+	
+	@Override
+	public void setContractOtherInfo(String currentDomainName, Integer contractId, String contractType, Map<String, String> contractOtherData, AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.setContractOtherInfo(currentDomainName, contractId, contractType, contractOtherData, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+
+	@Override
+	public void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getCNOs(currentDomainName, new AsyncCallbackWrapper<Map<String, CNO>>(callback));
 	}
 
 }
