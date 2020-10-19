@@ -68,8 +68,8 @@ public class Toolkit {
 	}
 	
 	//CONVERTS A BYTE ARRAY INTO A PDF FILE ON THE PROJECT FOLDER PATH
-	public static void buildPdf (byte[] arr_bytes) {
-		File f=new File("document.pdf");
+	public static void buildPdf (byte[] arr_bytes, String docName) {
+		File f=new File(docName+".pdf");
 		try {
 			FileOutputStream fos=new FileOutputStream(f);
 			fos.write(arr_bytes);

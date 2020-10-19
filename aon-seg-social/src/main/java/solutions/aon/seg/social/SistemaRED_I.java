@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 import javax.print.attribute.standard.DateTimeAtCompleted;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -35,7 +36,7 @@ public class SistemaRED_I {
 	
 	private static SituacionEmpresa getSituacionEmpresa(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc) 
-			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, FailingHttpStatusCodeException {
+			throws MalformedURLException, IOException, InterruptedException, SegSocialException {
 						
 		
 		
@@ -175,6 +176,13 @@ public class SistemaRED_I {
 			.setDir_act_tlf(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNUM9TELEFONO4"));
 			
 			return seb1.build();
+		}catch (FailingHttpStatusCodeException fhsce) {
+			switch (fhsce.getStatusCode()) {
+			case 403:
+				throw new ForbiddenException();
+			default:
+				throw new SegSocialException();
+			}
 		}
 		
 	}
@@ -182,15 +190,49 @@ public class SistemaRED_I {
 	public static byte[] getContributionInformation (final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException, InterruptedException {
 		
+		return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+	}
+	
+	
+	
+	public static byte[] getTADuplicate (final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException, InterruptedException {
+		
+		return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static byte[] getPdfInfo (final String href, final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String affiliationNumber, final String regime, final String contributionAccount, final Date fecha) throws SegSocialException, InterruptedException {
+		
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType);) {
 			
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR").click();
+			htmlPage=htmlPage.getAnchorByHref(href).click();
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
 			//Filling the fields
 			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.splitSSN(affiliationNumber)[0]);
 			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.splitSSN(affiliationNumber)[1]);
-			jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+			try {
+					jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
+				}catch (ElementNotFoundException enfe){
+					jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+				}
 			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.splitSSN(contributionAccount)[0]);
 			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.splitSSN(contributionAccount)[1]);
 			GregorianCalendar calendar=new GregorianCalendar();
@@ -227,18 +269,42 @@ public class SistemaRED_I {
 		} catch (IOException e) {
 				throw new SegSocialException(e);
 		}
-	} 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, ParseException, SegSocialException {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			//System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062"));
+			System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062"));
+
+		}
+		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+			byte[] pdf=getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062", d);
+			System.out.println(pdf.length+" Bytes descargados");
+			Toolkit.buildPdf(pdf, "DuplicadoTA");
+		}
+		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			byte[] pdf=getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062", d);
-			System.out.println(pdf.length);
-			Toolkit.buildPdf(pdf);
+			System.out.println(pdf.length+" Bytes descargados");
+			Toolkit.buildPdf(pdf, "InfoCotizacion");
 		}
-		
-		
 		
 	}
 	
