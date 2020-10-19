@@ -24,7 +24,9 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 
@@ -272,7 +274,39 @@ public class SistemaRED_I {
 	}
 	
 	
-	
+	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String contributionAccount) throws SegSocialException {
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuDEUDA.html");
+			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR").click();
+			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
+			jacadaform.getInputByName("txt_SDFWMIDENT").setValueAttribute(contributionAccount);
+			jacadaform.getInputByName("txt_SDFWMRESU").setValueAttribute(regime);
+			Iterable<DomElement> itOptions=jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
+			for(DomElement option:itOptions) {
+				if(option.getTextContent().equalsIgnoreCase("OnLine")) {
+					htmlPage=option.click();
+					break;
+				}
+			}
+			htmlPage=jacadaform.getInputByValue("Continuar").click();
+			InputStream is=htmlPage.getElementById("Sub2204801005_7").click().getWebResponse().getContentAsStream();
+			byte[] ret=is.readAllBytes();
+			is.close();
+			return ret;
+		}catch (FailingHttpStatusCodeException e) {
+			switch (e.getStatusCode()) {
+			case 403:
+				throw new ForbiddenException();
+			default:
+				throw new SegSocialException();
+		}
+		
+		} catch (IOException e) {
+				throw new SegSocialException(e);
+		}	
+	}
 	
 	
 	
@@ -296,14 +330,19 @@ public class SistemaRED_I {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			byte[] pdf=getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062", d);
-			System.out.println(pdf.length+" Bytes descargados");
+			System.out.println(pdf.length+" Bytes downloaded");
 			Toolkit.buildPdf(pdf, "DuplicadoTA");
 		}
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			byte[] pdf=getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062", d);
-			System.out.println(pdf.length+" Bytes descargados");
+			System.out.println(pdf.length+" Bytes downloaded");
 			Toolkit.buildPdf(pdf, "InfoCotizacion");
+		}
+		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+			byte[] pdf=getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
+			System.out.println(pdf.length+" Bytes downloaded");
+			Toolkit.buildPdf(pdf, "ObligationAwarenessCertificate");
 		}
 		
 	}
