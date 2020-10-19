@@ -96,6 +96,11 @@ class AonApplication extends HTMLElement {
       li.id = id;
       li.className = 'aonAppMenuSidenavList aonOpacity';
 
+      if(!this.selected && option.default) {
+        this.selected = id;
+        li.style.backgroundColor = '#ddd';
+      }
+
       if(option.icon) {
         let i = document.createElement('i');
         i.className = 'material-icons aonVerticalMiddle';
