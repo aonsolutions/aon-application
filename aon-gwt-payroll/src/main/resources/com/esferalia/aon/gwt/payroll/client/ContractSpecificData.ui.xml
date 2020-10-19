@@ -1,0 +1,743 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.ContractSpecificData.MyStyle">
+
+		.headerStyle{
+			top: -0.5em;
+			font-size: 12px;
+			margin-left: 10px;
+		}
+
+		.maxWidthTB{
+			width: 99%;
+		}
+		
+		.maxWidthLB{
+			width: 100%;
+		}
+
+		.firstColumnTextStyle{
+			padding:5px !important;
+		}
+		
+		.styleBorder{
+			border-style: solid; 
+			width: 975px; 
+			border-width: 1px; 
+			margin: 20px 10px;
+		}
+		
+		.labelStyle{
+			padding: 4px;
+			margin-left: 6px;
+			margin-right: 6px;
+		}
+		
+		.dateLabelStyle{
+			margin-left: 6px;
+			margin-right: 6px;
+		}
+		
+	</ui:style>
+
+   	<g:HTMLPanel> 
+        <g:VerticalPanel ui:field="cnoTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>CNO</g:Label>
+	    	<g:HTMLPanel>
+				<table ui:field="contractCNOTable" debugId="contractCNOTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>CNO</g:Label>
+							</td>
+							<td>
+							    <g:SuggestBox ui:field="cnoSB" styleName='{style.maxWidthTB}'></g:SuggestBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="otherDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Otros datos del contrato</g:Label>
+	    	<g:HTMLPanel>
+				<table ui:field="otherDataTableElement"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Calendario formativo</g:Label>
+							</td>
+							<td>
+							    <g:HorizontalPanel>
+							    	<g:Label>Fecha inicio: </g:Label>
+							    	<a:DateBoxEx ui:field="calendarFormativeStartDate"></a:DateBoxEx>
+							    	<g:Label styleName="{style.dateLabelStyle}">Fecha fin: </g:Label>
+							    	<a:DateBoxEx ui:field="calendarFormativeEndDate"></a:DateBoxEx>
+							    </g:HorizontalPanel>
+							</td>
+						</tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Nivel formativo</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="formativeLevelLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Titulación académica</g:Label>
+							</td>
+							<td>
+							     <g:ListBox ui:field="academicTitulationLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Certificado de profesionalidad</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="profesionalityCB"/>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Tipo firma copia básica</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="signBasicCopyLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px; vertical-align: top;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Texto copia básica</g:Label>
+							</td>
+							<td>
+							    <g:TextArea ui:field="basicCopyTA" styleName='{style.maxWidthTB}'></g:TextArea>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Uso libre empresa</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="useEnterpriseFreeTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas de convenio</g:Label>
+							</td>
+							<td>
+								<g:HorizontalPanel>
+									<g:Label styleName="{style.labelStyle}">Horas: </g:Label>
+									<g:TextBox ui:field="agreementHoursTB" styleName='{style.maxWidthTB}'></g:TextBox>
+									<g:Label styleName="{style.labelStyle}">Minutos: </g:Label>
+									<g:TextBox ui:field="agreementMinutesTB" styleName='{style.maxWidthTB}'></g:TextBox>
+								</g:HorizontalPanel>
+							    
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>¿Realiza trabajos fijos discontinuos o periódicos que se repiten en fechas ciertas?</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="repeatFDCB"/>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Tipo de jornada</g:Label>
+							</td>
+							<td>
+								<g:ListBox ui:field="journeyTypeLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Duración de la jornada</g:Label>
+							</td>
+							<td>
+								<g:HorizontalPanel>
+									<g:Label styleName="{style.labelStyle}">Horas: </g:Label>
+									<g:TextBox ui:field="journeyDurationHoursTB" styleName='{style.maxWidthTB}'></g:TextBox>
+									<g:Label styleName="{style.labelStyle}">Minutos: </g:Label>
+									<g:TextBox ui:field="journeyDurationMinutesTB" styleName='{style.maxWidthTB}'></g:TextBox>
+								</g:HorizontalPanel>    
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Formación teórica recibida</g:Label>
+							</td>
+							<td>
+								<g:HorizontalPanel>
+							    	<g:RadioButton ui:field="teoricFormationYesRB" name="annexedRB">Si</g:RadioButton>
+							    	<g:RadioButton ui:field="teoricFormationNoRB" name="annexedRB">No temporada</g:RadioButton>
+							    </g:HorizontalPanel>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Horas formación</g:Label>
+							</td>
+							<td>
+								<g:HorizontalPanel>
+									<g:Label styleName="{style.labelStyle}">Horas: </g:Label>
+									<g:TextBox ui:field="formationHoursTB" styleName='{style.maxWidthTB}'></g:TextBox>
+									<g:Label styleName="{style.labelStyle}">Minutos: </g:Label>
+									<g:TextBox ui:field="formationMinutesTB" styleName='{style.maxWidthTB}'></g:TextBox>
+								</g:HorizontalPanel>    
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Porcentaje jubilación</g:Label>
+							</td>
+							<td>
+								<g:HorizontalPanel>
+									<g:TextBox ui:field="retirementPercentTB" styleName='{style.maxWidthTB}'></g:TextBox>
+									<g:Label styleName="{style.labelStyle}"> %</g:Label>
+								</g:HorizontalPanel>    
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="specificDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos específicos</g:Label>
+	    	<g:HTMLPanel>
+				<table ui:field="specificDataTableElement"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					        <td></td>
+					        <td></td>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+					    	<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="workProgramDataCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 300px;">
+								<g:Label>Datos de Programa de Empleo</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="temporalWorkEnterpriseCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Empresa de Trabajo Temporal</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="contractReliefCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Contrato Relevo</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="offerWorkDataCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Datos de la oferta de Trabajo</g:Label>
+							</td>	
+						</tr>
+						<tr>
+					    	<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="workshopSchoolCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 300px;">
+								<g:Label>Escuelas Taller</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="disabilityCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Discapacidad</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="older52CB"  styleName='{style.firstColumnTextStyle}' enabled="false"/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Mayores de 52 años (Ley 45/2002)</g:Label>
+							</td>	
+						</tr>
+						<tr>
+					    	<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="annexedCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 300px;">
+								<g:Label>Anexo gestión colectiva de contrataciones en origen</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="campaignsCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Campañas</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="investCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Investigación</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="interimCauseCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Causa de interinidad</g:Label>
+							</td>	
+						</tr>
+						<tr>
+					    	<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="entrepreneurSupportCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 300px;">
+								<g:Label>Apoyo emprendedores</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="promotionMeasuresCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Medidas fomento</g:Label>
+							</td>
+							<td style="background-color: #eaeaea; width: 35px;">
+								<g:CheckBox ui:field="quoteReductionsCB"  styleName='{style.firstColumnTextStyle}'/>
+							</td>
+							<td style="width: 280px;">
+								<g:Label>Reducción de cuotas</g:Label>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="workProgramDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos de Programa de Empleo</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="workProgramDataDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Programa empleo</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="workProgramLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="temporalWorkEnterpriseDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Empresa de Trabajo Temporal</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="temporalWorkEnterpriseDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>N.I.F.</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="nifTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Nombre/Razón Social</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="socialReasonTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Contrato plantilla</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="contractTemplateCB"/>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Empresa extranjera</g:Label>
+							</td>
+							<td>
+							    <g:CheckBox ui:field="foreignEnterpriseCB"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="contractReliefDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Contrato Relevo</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="contractReliefDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					   	<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Tipo de trabajador relevo</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="reliefEmployeeLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajador jubilación parcial. Nombre</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="retirementNameTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajador jubilación parcial. Primer apellido</g:Label>
+							</td>
+							<td>
+							     <g:TextBox ui:field="retirementSurnameTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajador jubilación parcial. Segundo apellido</g:Label>
+							</td>
+							<td>
+							     <g:TextBox ui:field="retirementSurname2TB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="offerWorkDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos de la oferta de Trabajo</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="offerWorkDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Oferta</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="offerTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="workshopSchoolDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Escuelas Taller</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="workshopSchoolDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Escuelas taller</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="workshopSchoolLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="disabilityDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Discapacidad</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="disabilityDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Indicador de discapacidad</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="disabilityLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="annexedDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Anexo gestión colectiva de contrataciones en origen</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="annexedDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+					    <tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Oferta de empleo de carácter</g:Label>
+							</td>
+							<td>
+							    <g:HorizontalPanel>
+							    	<g:RadioButton ui:field="annexedRB" name="annexedRB">Estable</g:RadioButton>
+							    	<g:RadioButton ui:field="annexed2RB" name="annexedRB">De temporada</g:RadioButton>
+							    </g:HorizontalPanel>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Año de la contratación en origen</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="sourceYearTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="campaignsDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Campañas</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="campaignsDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Comunidad autónoma</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="cpCampaignTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Código campaña</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="codeCampaignTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Año</g:Label>
+							</td>
+							<td>
+							    <g:TextBox ui:field="yearCampaignTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="investDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Investigación</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="investDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Empleador Contratante</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="employerLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Trabajador Contratado</g:Label>
+							</td>
+							<td>
+							     <g:ListBox ui:field="employeeLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Contrato de Investigador en Formación (Real Decreto 63/2006)</g:Label>
+							</td>
+							<td>
+							     <g:CheckBox ui:field="researcherCB"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="interimCauseDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Causa de interinidad</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="interimCauseDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Causa de interinidad</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="interimCauseLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="entrepreneurSupportDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Apoyo emprendedores</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="entrepreneurSupportDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Colectivo bonificación</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="bonusColectiveLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>El empleador que contrata es autónomo</g:Label>
+							</td>
+							<td>
+							     <g:CheckBox ui:field="freelanceEmployeerCB"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="promotionMeasuresDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Apoyo emprendedores</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="promotionMeasuresDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Acogida a la ley de fomento de la contratación indefinida</g:Label>
+							</td>
+							<td>
+							     <g:CheckBox ui:field="promotionPermanentHiringCB"/>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel ui:field="quoteReductionsDataTable" styleName="{style.styleBorder}"> 
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Reducción de cuotas</g:Label>
+	    	<g:HTMLPanel>
+				<table debugId="quoteReductionsDataTable"
+					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
+					<tbody>
+					    <tr>
+					        <td></td>
+					        <td></td>
+					    </tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Colectivo de reducción</g:Label>
+							</td>
+							<td>
+							    <g:ListBox ui:field="reductionColectiveLB" styleName='{style.maxWidthLB}'></g:ListBox>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Porcentaje de reducción de cuotas</g:Label>
+							</td>
+							<td>
+							    <g:HorizontalPanel>
+							    	<g:RadioButton ui:field="quoteReductionRB" name="quoteReductionRB">75%, empresas con 250 o más trabajadores</g:RadioButton>
+							    	<g:RadioButton ui:field="quoteReduction2RB" name="quoteReductionRB">100%, empresas con menos de 250 trabajadores</g:RadioButton>
+							    </g:HorizontalPanel>
+							</td>
+						</tr>
+						<tr>
+							<td style="background-color: #eaeaea; width: 400px;">
+								<g:Label styleName='{style.firstColumnTextStyle}'>Porcentaje de jornada</g:Label>
+							</td>
+							<td>
+							    <g:HorizontalPanel>
+							    	<g:TextBox ui:field="journeyPercentTB" styleName='{style.maxWidthTB}'></g:TextBox>
+							    	<g:Label styleName="{style.labelStyle}"> % (Min:50.00 - Max:75.00)</g:Label>
+							    </g:HorizontalPanel>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+	</g:HTMLPanel> 
+</ui:UiBinder> 
+
