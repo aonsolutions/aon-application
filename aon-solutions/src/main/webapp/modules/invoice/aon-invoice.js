@@ -7,6 +7,7 @@ import {insertInvoice, deleteInvoices} from '../../services/service.js';
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-checkbox.js';
+import '../../components/aon-dialog.js';
 
 (function() {
 
@@ -54,6 +55,8 @@ import '../../components/aon-checkbox.js';
 				</div>
 				<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
 				<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
+
+				<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
 			`;
 
 			this.build();
@@ -70,12 +73,101 @@ import '../../components/aon-checkbox.js';
 			this.printFinances();
 
 			let aonInvoice = document.getElementById('aonInvoice');
-			aonInvoice.addToolbarOption('Options', 'more_vert', () => alert('options'));
+			aonInvoice.addToolbarOption('Options', 'more_vert', () => {
+				let d = document.getElementById('aonDialogInvoiceOption');
+				d.setMenuOptions(this.getOptions());
+				d.open();
+			});
 
 			if(!this._invoice.file) {
 				aonInvoice.addToolbarOption('AddFile', 'attach_file', () => alert('add file'));
 			}
 		}
+
+		getOptions() {
+			const status = this._invoice.status;
+			if('refused' === status) {
+				return [{
+						name: 'Restaurar Factura',
+						icon: '360',
+						fn: () => this.restoreInvoice()
+					}, {
+						name: 'Enviar a la Papelera',
+						icon: 'delete',
+						fn: () => this.trashInvoice()
+					}];
+			} else if('trash' === status) {
+				return [{
+						name: 'Restaurar Factura',
+						icon: '360',
+						fn: () => this.restoreInvoice()
+					}, {
+						name: 'Borrar Definitivamente',
+						icon: 'delete_sweep',
+						fn: () => this.removeInvoice()
+					}];
+			} else return [{
+					name: 'Rechazar Factura',
+					icon: 'reply',
+					fn: () => this.refuseInvoice()
+				}, {
+					name: 'Adjuntar Fichero',
+					icon: 'attach_file',
+					fn: () => this.addInvoiceFile()
+				}, {
+					name: 'Imprimir Factura',
+					icon: 'print',
+					fn: () => this.printInvoice()
+				}, {
+					name: 'Enviar Factura',
+					icon: 'mail',
+					fn: () => this.sendInvoice()
+				}, {
+					name: 'Añadir Comentario',
+					icon: 'comment',
+					fn: () => this.addInvoiceComment()
+				}, {
+					name: 'Enviar a la Papelera',
+					icon: 'delete',
+					fn: () => this.trashInvoice()
+				}];
+		}
+
+		refuseInvoice() {
+			this._invoice.status = 'refused';
+			this.save();
+		}
+
+		trashInvoice() {
+			this._invoice.status = 'trash';
+			this.save();
+		}
+
+		restoreInvoice() {
+			this._invoice.status = 'inbox';
+			this.save();
+		}
+
+		removeInvoice() {
+
+		}
+
+		addInvoiceFile() {
+
+		}
+
+		printInvoice() {
+
+		}
+
+		sendInvoice() {
+
+		}
+
+		addInvoiceComment() {
+
+		}
+
 
 		buildData(){
 			let card = document.getElementById('aonInvoiceItemDataCard');
