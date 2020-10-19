@@ -152,6 +152,8 @@
 		<module>aon-common-resources</module>
 		<module>aon-db-up2date</module>
 		<module>aon-saltra-api</module>
+		<module>aon-seg-social</module>
+		<!--module>aon-in-invoice</module-->
 
 		
 		<module>aon-jasper-report</module>
@@ -202,7 +204,7 @@
 		
 		<!-- WEB MODULES -->
 		<module>aon-web-aio</module>
-		<module>aon-micro-services</module>
+		<!--module>aon-micro-services</module-->
 		<module>aon-solutions</module>
 
 

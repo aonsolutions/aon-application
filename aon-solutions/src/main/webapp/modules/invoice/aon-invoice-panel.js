@@ -77,6 +77,8 @@ class AonInvoicePanel extends HTMLElement {
 			invoiceList.setFilter(filter);
 		} else {
 			let aonInvoice = document.getElementById('aonInvoice');
+			aonInvoice.removeToolbarOptions();
+			aonInvoice.addToolbarOption('Add', 'add', () => this.aonInvoice());
 			aonInvoice.setContentHTML(filter
 				? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
 				: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
