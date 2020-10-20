@@ -36,6 +36,7 @@ public class SistemaRED_I {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
 			
 			htmlPage = HtmlUnitToolkit.wait4(htmlPage, p -> p.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR69&E=I&AP=AFIR")).orElseThrow().click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementsById("SDFREGCTA_ayuda"));
 			HtmlForm jacadaform = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			
@@ -49,7 +50,7 @@ public class SistemaRED_I {
 			
 			//click en 'Continuar'
 			htmlPage = jacadaform.getInputByValue("Continuar").click();
-			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			//control de campos
 			String nif = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFEMPRESARIO3");
 			String cadFecha = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFECHASIT");
@@ -284,10 +285,10 @@ public class SistemaRED_I {
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, ParseException, SegSocialException {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062"));
+			System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "011", "01105360062"));
 
 		}
-		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+		/*try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			byte[] pdf=getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062", d);
 			System.out.println(pdf.length+" Bytes downloaded");
@@ -303,7 +304,7 @@ public class SistemaRED_I {
 			byte[] pdf=getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
 			System.out.println(pdf.length+" Bytes downloaded");
 			Toolkit.buildPdf(pdf, "ObligationAwarenessCertificate");
-		}
+		}*/
 		
 	}
 	

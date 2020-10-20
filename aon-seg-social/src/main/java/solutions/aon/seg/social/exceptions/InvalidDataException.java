@@ -9,6 +9,8 @@ public class InvalidDataException extends SegSocialException{
 			throw new NotAllFilledException();
 		case 3030:
 			throw new WrongRegimeException();
+		case 3260:
+			throw new WrongRegimeException();
 		case 3066:
 			throw new SyntaxException();
 		case 3820:
@@ -19,6 +21,8 @@ public class InvalidDataException extends SegSocialException{
 			throw new InvalidPrintingMethod();
 		case 3001:
 			throw new UnfilledMandatory();
+		case 3543:
+			throw new NoQueryData();
 		default:
 			throw new InvalidDataException();
 		}
