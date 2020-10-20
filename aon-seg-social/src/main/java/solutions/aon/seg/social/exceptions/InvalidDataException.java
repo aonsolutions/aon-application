@@ -4,6 +4,7 @@ public class InvalidDataException extends SegSocialException{
 	public static void checkCode(Integer statusCode) throws SegSocialException {
 		switch (statusCode) {
 		case 3083:
+		case 3252:
 			break;	
 		case 4860:
 			throw new NotAllFilledException();
@@ -22,6 +23,8 @@ public class InvalidDataException extends SegSocialException{
 		case 3001:
 			throw new UnfilledMandatory();
 		case 3543:
+			throw new NoQueryData();
+		case 3823:
 			throw new NoQueryData();
 		default:
 			throw new InvalidDataException();

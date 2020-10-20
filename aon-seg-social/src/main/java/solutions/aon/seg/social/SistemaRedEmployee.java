@@ -43,13 +43,16 @@ public class SistemaRedEmployee {
 		//RETURNS ALL THE EMPLOYEES OF A COMPANY 
 		private static Collection<Employee> getEmployeesFullImpl(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc) 
-				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, FailingHttpStatusCodeException {
+				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, FailingHttpStatusCodeException, SegSocialException {
 			
 			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 				webClient.getOptions().setJavaScriptEnabled(false);
 				
 				ArrayList<Employee> employees = new ArrayList<Employee>();
 				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+				
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+				
 				HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 
 				buscaPartesForm.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
@@ -57,6 +60,8 @@ public class SistemaRedEmployee {
 				buscaPartesForm.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
 				buscaPartesForm.getInputByName("chk_chkgrupo1_1").setChecked(true);
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
+				
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
 				
 				Iterable<DomElement> tableContent = htmlPage.getElementById("Sub1000112079").getLastElementChild().getChildElements();
 				ArrayList<ArrayList<String>> totalData = new ArrayList<ArrayList<String>>();
@@ -198,11 +203,14 @@ public class SistemaRedEmployee {
 		
 		//RETURN ALL THE EMPLOYEES
 		private static Collection<Employee> getEmployeesImpl(final InputStream certificateInputStream, final String certificatePassword,
-				final String certificateType, String regimen, String ccc) throws ElementNotFoundException, IOException, InterruptedException
+				final String certificateType, String regimen, String ccc) throws ElementNotFoundException, IOException, InterruptedException, SegSocialException
 		{
 				try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 				webClient.getOptions().setJavaScriptEnabled(false);
 				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+				
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+				
 				HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 							
 				buscaPartesForm.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
@@ -210,6 +218,8 @@ public class SistemaRedEmployee {
 				buscaPartesForm.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
 				buscaPartesForm.getInputByName("chk_chkgrupo1_1").setChecked(true);
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
+				
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
 				
 				Iterable<DomElement> tableContent = htmlPage.getElementById("Sub1000112079").getLastElementChild().getChildElements();
 				ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();	
@@ -295,7 +305,7 @@ public class SistemaRedEmployee {
 				FileWriter fw = new FileWriter(f);
 //				Employee e = getEmployee(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062", "010019805355");
 				
-				ArrayList<Employee> employees = (ArrayList<Employee>) getFullEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
+				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
 				for(Employee e : employees) fw.append(e.toString());
 				fw.close();
 ;				
