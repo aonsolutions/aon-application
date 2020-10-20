@@ -87,6 +87,7 @@ import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -3836,6 +3837,82 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
 		assertDato(tramo1.getDatosTramo().getDato(), "C", "509", Integer.toString((int)Math.round(1750.00 * 20.00 /30.00 * 100)));
 		assertDato(tramo1.getDatosTramo().getDato(), "C", "603", Integer.toString((int)Math.round(1750.00 * 20.00 /30.00 * 100)));
+		
+	}
+
+	@Test
+	public void testCretaERETotalWithZeroBaseCgp()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+
+
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext, ccc);
+		
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "0.00";
+						this.month = Month.DECEMBER;
+						this.start = "01/07";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "0.00";
+						this.month = Month.JULY;
+						this.start = "01/01";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "0.00";
+						this.month = Month.MARCH;
+						this.start = "01/01 -1";
+						this.end = "31/12 -1";
+						this.issue = "01/3";
+					}
+				}
+				});		
+		
+		contract.setAgreementLevel(category.getAgreementLevel());
+		contract.update();
+//		PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+//		addPayment(aonContext, contract, pagaExtra, "ROUND(INPUT(\"/*user*/P_0 + P_1/**/\",\"...\"),2)");
+		
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startERE = add(startDate, DAY_OF_MONTH, 0);
+		
+		addData(aonContext, contract, startERE, null, ContextVariable.ERE_FACTOR, 1.00);	
+		
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = 
+		getBases(connection, startDate, endDate, ccc, contract);
+		
+		Assert.assertEquals(1, tramos.size());
+		
+
+		
+		String diaHasta = Integer.toString(get(endDate, Calendar.DAY_OF_MONTH));
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(0); 
+		Assert.assertEquals("01", tramo1.getFechaDesde().getDia());
+		Assert.assertEquals(diaHasta, tramo1.getFechaHasta().getDia());
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "509", Integer.toString((int)Math.round(1750.00 * 100)));
+		assertDato(tramo1.getDatosTramo().getDato(), "C", "603", Integer.toString((int)Math.round(1750.00 * 100)));
 		
 	}
 

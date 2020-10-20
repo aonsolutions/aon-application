@@ -1872,7 +1872,31 @@ public class Bases {
 		}
 	}
 
+	private static class FirstGreaterThanZeroCompositeCCretaData extends  NonNegativeCompositeCCretaData {
 
+		@Override
+		public Double get(Salary salary, Fecha desde, Fecha hasta)
+				throws NoSuchVariableException,
+				UnMatchedVariableException {
+			Period p = new Period(toDate(desde), toDate(hasta));
+			for (String variable : variables) {
+				try {
+					Double value = CCretaData.get(variable,
+							salary, p);
+					if (value <= 0.00)
+						continue;
+					return value;
+				} catch (NoSuchVariableException e) {
+					// Try next variable
+				}
+			}
+			throw new NoSuchVariablesException(variables.toArray(String[]::new));
+		}
+		
+
+	}
+
+	
 	private static Map<String, CretaData> CONTEXT_VARIABLE_MAP = new HashMap<String, CretaData>() {
 		{
 			put("500", new NonNegativeCCretaData(CGC_BASE.getName()));
@@ -1949,7 +1973,7 @@ public class Bases {
 					.add(CGC_BASE_ENTERPRISE)
 					);
 			
-			put("603", new NonNegativeCompositeCCretaData()
+			put("603", new FirstGreaterThanZeroCompositeCCretaData()
 					.add(MATERNITY_BASE)
 					.add(DIRECT_BASE)		//   
 					.add(CGP_BASE)
