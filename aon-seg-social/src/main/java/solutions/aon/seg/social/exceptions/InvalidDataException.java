@@ -3,6 +3,8 @@ package solutions.aon.seg.social.exceptions;
 public class InvalidDataException extends SegSocialException{
 	public static void checkCode(Integer statusCode) throws SegSocialException {
 		switch (statusCode) {
+		case 3083:
+			break;	
 		case 4860:
 			throw new NotAllFilledException();
 		case 3030:
@@ -17,8 +19,6 @@ public class InvalidDataException extends SegSocialException{
 			throw new InvalidPrintingMethod();
 		case 3001:
 			throw new UnfilledMandatory();
-		case 3083:
-			break;
 		default:
 			throw new InvalidDataException();
 		}

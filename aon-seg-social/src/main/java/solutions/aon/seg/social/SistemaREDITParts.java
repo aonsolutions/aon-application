@@ -123,6 +123,7 @@ public class SistemaREDITParts {
 				
 				try {
 					htmlPage = next.click();	
+					System.out.println(htmlPage.asText());
 					next = htmlPage.getAnchorByText("(2) Siguiente >>");
 					
 				}

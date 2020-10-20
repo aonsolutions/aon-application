@@ -6,11 +6,12 @@ import java.util.function.Function;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.sun.org.apache.xerces.internal.util.Status;
 
+import solutions.aon.seg.social.exceptions.InvalidDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class HtmlUnitToolkit {
@@ -41,6 +42,7 @@ public class HtmlUnitToolkit {
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
 					certificateType);
+			
 			return webClient;		
 	}
 	
@@ -49,6 +51,7 @@ public class HtmlUnitToolkit {
 		return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent()).trim();
 	}
 	
+	//GETS THE SS STATUS CODE
 	public static Integer getSSCode(HtmlPage htmlPage) throws SegSocialException {
 		try {
 			String status=HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
@@ -63,5 +66,10 @@ public class HtmlUnitToolkit {
 		
 	}
 
+	//MANAGES THE EXCEPTIONS
+	public static void manageStatusCode(HtmlPage htmlPage) throws SegSocialException {
+		Integer code = getSSCode(htmlPage);
+		InvalidDataException.checkCode(code);
+	}
 
 }
