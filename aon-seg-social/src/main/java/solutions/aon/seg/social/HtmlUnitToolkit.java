@@ -5,9 +5,13 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.sun.org.apache.xerces.internal.util.Status;
+
+import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class HtmlUnitToolkit {
 
@@ -45,8 +49,17 @@ public class HtmlUnitToolkit {
 		return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent()).trim();
 	}
 	
-	public static Integer getSSCode(HtmlPage htmlPage) {
-		return null;
+	public static Integer getSSCode(HtmlPage htmlPage) throws SegSocialException {
+		try {
+			String status=HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
+			return Integer.parseInt(status.substring(0, status.indexOf("*")));
+			
+		}catch (ElementNotFoundException e) {
+			return 3083;
+		}
+		catch(NumberFormatException nfe) {
+			throw new SegSocialException ();
+		}
 		
 	}
 
