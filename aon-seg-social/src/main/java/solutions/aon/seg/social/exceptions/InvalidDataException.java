@@ -1,0 +1,26 @@
+package solutions.aon.seg.social.exceptions;
+
+public class InvalidDataException extends SegSocialException{
+	public static void checkCode(Integer statusCode) throws SegSocialException {
+		switch (statusCode) {
+		case 4860:
+			throw new NotAllFilledException();
+		case 3030:
+			throw new WrongRegimeException();
+		case 3066:
+			throw new SyntaxException();
+		case 3820:
+			throw new WrongAffNumber();
+		case 3462:
+			throw new NotAllowedContributionAccount();
+		case 4879:
+			throw new InvalidPrintingMethod();
+		case 3001:
+			throw new UnfilledMandatory();
+		case 3083:
+			break;
+		default:
+			throw new InvalidDataException();
+		}
+	}
+}

@@ -44,6 +44,11 @@ public class HtmlUnitToolkit {
 	public static String getTrimmedById(HtmlPage htmlPage, String id) {
 		return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent()).trim();
 	}
+	
+	public static Integer getSSCode(HtmlPage htmlPage) {
+		return null;
+		
+	}
 
 
 }
