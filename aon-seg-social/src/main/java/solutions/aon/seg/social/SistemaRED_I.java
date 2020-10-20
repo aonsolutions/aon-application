@@ -206,14 +206,14 @@ public class SistemaRED_I {
 				}catch (ElementNotFoundException enfe){
 					jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
 				}
-			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,1)[0]);
-			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,1)[1]);
+			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,2)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,2)[1]);
 			GregorianCalendar calendar=new GregorianCalendar();
 			calendar.setTime(fecha);
 			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute(""+calendar.get(Calendar.DAY_OF_MONTH));
 			jacadaform.getInputByName("txt_SDFMES").setValueAttribute(""+(calendar.get(Calendar.MONTH)+1));
 			jacadaform.getInputByName("txt_SDFAO").setValueAttribute(""+calendar.get(Calendar.YEAR));
-			//Seleccionando el método de impresión del documento
+			//Selecting document's printing method
 			Iterable<DomElement> it=jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for(DomElement de : it) {
 				if(de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
@@ -251,8 +251,10 @@ public class SistemaRED_I {
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuDEUDA.html");
 			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR").click();
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
+			//Inputting contribution account and regime
 			jacadaform.getInputByName("txt_SDFWMIDENT").setValueAttribute(contributionAccount);
 			jacadaform.getInputByName("txt_SDFWMRESU").setValueAttribute(regime);
+			//Selecting document's printing method
 			Iterable<DomElement> itOptions=jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			for(DomElement option:itOptions) {
 				if(option.getTextContent().equalsIgnoreCase("OnLine")) {
@@ -260,6 +262,7 @@ public class SistemaRED_I {
 					break;
 				}
 			}
+			//Doing click, first on Continuar button and, then, on confirm button
 			htmlPage=jacadaform.getInputByValue("Continuar").click();
 			InputStream is=htmlPage.getElementById("Sub2204801005_7").click().getWebResponse().getContentAsStream();
 			byte[] ret=is.readAllBytes();
