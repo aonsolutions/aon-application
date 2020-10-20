@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>net.aonsolutions</groupId>
+  <artifactId>aon.sii</artifactId>
+  <version>9.23-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20201019060952</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <classifier>sources</classifier>
+        <extension>jar</extension>
+        <value>9.23-SNAPSHOT</value>
+        <updated>20201019060952</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>9.23-SNAPSHOT</value>
+        <updated>20201019060952</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>9.23-SNAPSHOT</value>
+        <updated>20201019060952</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

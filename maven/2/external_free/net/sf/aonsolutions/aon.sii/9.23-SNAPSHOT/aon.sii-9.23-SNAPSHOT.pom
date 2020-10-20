@@ -1,0 +1,159 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.23-SNAPSHOT</version>
+	</parent>
+	<groupId>net.aonsolutions</groupId>
+	<artifactId>aon.sii</artifactId>
+	<name>AON SII</name>
+	<description>AON SII</description>
+
+	<dependencies>
+		<dependency>
+    		<groupId>javax.xml.ws</groupId>
+    		<artifactId>jaxws-api</artifactId>
+		    <version>2.3.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.wsdl/com.springsource.javax.wsdl -->
+
+		<dependency>
+    		<groupId>javax.servlet</groupId>
+    		<artifactId>javax.servlet-api</artifactId>
+    		<version>4.0.1</version>
+    		<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+   		 	<groupId>org.json</groupId>
+    		<artifactId>json</artifactId>
+    		<version>20180130</version>
+		</dependency>
+   		
+   		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+		<dependency>
+   			 <groupId>log4j</groupId>
+    		<artifactId>log4j</artifactId>
+		    <version>1.2.17</version>
+		</dependency>
+
+       <!-- AON DEPENDENCIES -->
+
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.google.apis.v2</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.occam</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+               <!--
+                Migrating From Java 8 To Java 11.
+                Instead of using the deprecated JAXB (java.xml.bind) module, use the following artifacts.
+                -->
+                <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.1</version>
+                </dependency>
+								<dependency>
+					 		  				<groupId>com.sun.xml.bind</groupId>
+					 		     			<artifactId>jaxb-core</artifactId>
+					 		     			<version>2.3.0.1</version>
+					 		  </dependency>
+                <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                        <version>2.3.2</version>
+                </dependency>
+
+								<!--
+								Migrating From Java 8 To Java 11.
+								Instead of using the deprecated JAX-WS (java.xml.ws) module, use the following artifacts.
+								-->
+								<dependency>
+											  <groupId>com.sun.xml.ws</groupId>
+											  <artifactId>jaxws-ri</artifactId>
+											  <version>2.3.1</version>
+											  <type>pom</type>
+								</dependency>
+
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            
+            <plugin>
+ 				<groupId>com.helger.maven</groupId>
+        		<artifactId>jaxws-maven-plugin</artifactId>
+        		<version>2.6.2</version>				
+				<executions>
+          			<execution>
+          				<id>V1_1</id>
+            			<goals>
+              				<goal>wsimport</goal>
+            			</goals>
+            			<configuration>
+							<wsdlUrls>
+
+								<!-- AEAT WSDL URLS VERSION 1.1 -->
+
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroFactEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroFactRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroBienesInversion.wsdl</wsdlUrl>
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroOpIntracomunitarias.wsdl</wsdlUrl>
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroCobrosEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroOpTrascendTribu.wsdl</wsdlUrl>
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroPagosRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://www.agenciatributaria.es/static_files/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Modelos_y_formularios/Suministro_inmediato_informacion/FicherosSuministros/V_1_1/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
+
+								<!-- ALAVA/ARABA WSDL URLS VERSION 1.1 -->
+
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroFactEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroFactRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroBienesInversion.wsdl</wsdlUrl>
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroOpIntracomunitarias.wsdl</wsdlUrl>
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroCobrosEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroOpTrascendTribu.wsdl</wsdlUrl>
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroPagosRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://sii.araba.eus/documentos/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
+
+								<!-- GUIPUZCOA/GIPUZKOA WSDL URLS VERSION 1.1 -->
+
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroFactEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroFactRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroBienesInversion.wsdl</wsdlUrl>
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroOpIntracomunitarias.wsdl</wsdlUrl>
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroCobrosEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroOpTrascendTribu.wsdl</wsdlUrl>
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroPagosRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>https://egoitza.gipuzkoa.eus/ogasuna/sii/ficheros/v1.1/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
+
+								<!-- VIZCAYA/BIZKAIA WSDL URLS VERSION 1.1 -->
+
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroFactEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroFactRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroBienesInversion.wsdl</wsdlUrl>
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroOpIntracomunitarias.wsdl</wsdlUrl>
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroCobrosEmitidas.wsdl</wsdlUrl>
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroOpTrascendTribu.wsdl</wsdlUrl>
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroPagosRecibidas.wsdl</wsdlUrl>
+								<wsdlUrl>http://www.bizkaia.eus/ogasuna/sii/documentos/SuministroInmueblesAdicionales.wsdl</wsdlUrl>
+
+							</wsdlUrls>
+							<sourceDestDir>src/main/generated-sources</sourceDestDir>
+						</configuration>
+					</execution>
+		        </executions>
+			</plugin>
+		</plugins>
+    </build>
+
+</project>
