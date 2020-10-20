@@ -16,6 +16,7 @@ public class Employee {
 	private String companyName;
 	private String situation;
 	private String gc;
+	private String gcDesc;
 	private Boolean agricultPromo;
 	private Boolean workTimeReduct;
 	private Date fra;
@@ -46,6 +47,7 @@ public class Employee {
 		if(companyName != null)		visitor.visitCompanyName(companyName);
 		if(situation != null)		visitor.visitSituation(situation);
 		if(gc != null)				visitor.visitGc(gc);
+		if(gcDesc != null)			visitor.visitGcDesc(gcDesc);
 		if(agricultPromo != null)	visitor.visitAgricultPromo(agricultPromo);
 		if(workTimeReduct != null)	visitor.visitWorkTimeReduct(workTimeReduct);
 		if(fra != null)				visitor.visitrFra(fra);
@@ -127,6 +129,11 @@ public class Employee {
 			@Override
 			public void visitGc(String gc) {
 				stringBuffer.append(String.format(" gc : \"%s\" ", gc));
+			}
+			
+			@Override
+			public void visitGcDesc(String gcDesc) {
+				stringBuffer.append(String.format(" gcDesc : \"%s\" ", gcDesc));
 			}
 
 			@Override
@@ -219,6 +226,7 @@ public class Employee {
 		private String companyName;
 		private String situation;
 		private String gc;
+		private String gcDesc;
 		private Boolean agricultPromo;
 		private Boolean workTimeReduct;
 		private Date fra;
@@ -313,6 +321,12 @@ public class Employee {
 		public EmployeeBuilder setGc(String gc) {
 			if(gc != null && !gc.trim().equals("")) this.gc = gc.trim();
 			else this.gc = null;
+			return this;
+		}
+		
+		public EmployeeBuilder setGcDesc(String gcDesc) {
+			if(gcDesc != null && !gcDesc.trim().equals("")) this.gcDesc = gcDesc.trim();
+			else this.gcDesc = null;
 			return this;
 		}
 
@@ -422,6 +436,7 @@ public class Employee {
 			employee.companyName = this.companyName;
 			employee.situation = this.situation;
 			employee.gc = this.gc;
+			employee.gcDesc = this.gcDesc;
 			employee.agricultPromo = this.agricultPromo;
 			employee.workTimeReduct = this.workTimeReduct;
 			employee.fra = this.fra;
@@ -454,6 +469,7 @@ public class Employee {
 		void visitCompanyName(String companyName);
 		void visitSituation(String situaction);
 		void visitGc(String gc);
+		void visitGcDesc(String gcDesc);
 		void visitAgricultPromo(Boolean agriculturePromo);
 		void visitWorkTimeReduct(Boolean workTimeReduct);
 		void visitrFra(Date fra);

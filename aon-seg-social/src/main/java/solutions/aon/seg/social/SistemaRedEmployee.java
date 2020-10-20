@@ -49,11 +49,9 @@ public class SistemaRedEmployee {
 				webClient.getOptions().setJavaScriptEnabled(false);
 				
 				ArrayList<Employee> employees = new ArrayList<Employee>();
-				HtmlPage Origen = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-
-				HtmlPage htmlPage = HtmlUnitToolkit.wait4(Origen, p -> p.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR")).orElseThrow().click();
+				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 				HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-							
+
 				buscaPartesForm.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
 				buscaPartesForm.getInputByName("txt_SDFTESO62").setValueAttribute(ccc.substring(0, 2));
 				buscaPartesForm.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
@@ -94,7 +92,7 @@ public class SistemaRedEmployee {
 			HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(_htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 
 			buscaPartesForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0,2));
-			buscaPartesForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
+			buscaPartesForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(3));
 			buscaPartesForm.getInputByName("btn_Sub2207601004").focus();
 			_htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 			
@@ -111,7 +109,8 @@ public class SistemaRedEmployee {
 			String companyId = _htmlPage.getElementById("SDFEMPRESARIO3").getTextContent();
 			String companyName = _htmlPage.getElementById("SDFNOMBRE3").getTextContent();
 			String situation = _htmlPage.getElementById("SDFTSITUACAFI").getTextContent();
-			String gc = _htmlPage.getElementById("SDFTGRUPOAFI").getTextContent();
+			String gc = _htmlPage.getElementById("SDFCGRUPOAFI").getTextContent();
+			String gcDesc = _htmlPage.getElementById("SDFTGRUPOAFI").getTextContent();
 			Boolean agricultPromo = Toolkit.toBoolean(_htmlPage.getElementById("SDFPFEA").getTextContent());
 			Boolean workTimeReduct = Toolkit.toBoolean(_htmlPage.getElementById("SDFLITRJ").getTextContent());
 			String fraStr = _htmlPage.getElementById("SDFFRAAFI").getTextContent();
@@ -157,6 +156,7 @@ public class SistemaRedEmployee {
 			.setCompanyName(companyName)
 			.setSituation(situation)
 			.setGc(gc)
+			.setGcDesc(gcDesc)
 			.setAgricultPromo(agricultPromo)
 			.setWorkTimeReduct(workTimeReduct)
 			.setFra(fra)
@@ -295,7 +295,7 @@ public class SistemaRedEmployee {
 				FileWriter fw = new FileWriter(f);
 //				Employee e = getEmployee(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062", "010019805355");
 				
-				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
+				ArrayList<Employee> employees = (ArrayList<Employee>) getFullEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
 				for(Employee e : employees) fw.append(e.toString());
 				fw.close();
 ;				
