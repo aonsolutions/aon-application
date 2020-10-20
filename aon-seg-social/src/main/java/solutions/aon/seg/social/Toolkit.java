@@ -1,12 +1,10 @@
 package solutions.aon.seg.social;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 public class Toolkit {
 	
@@ -40,6 +38,21 @@ public class Toolkit {
 		} catch (ParseException e){return null;}		
 	}
 	
+	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT
+	public static Optional<String> formatDate(Date date, String format) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);	
+		Optional<String> formattedDate = Optional.empty();		
+		formattedDate = Optional.of(dateFormatter.format(date));
+		return formattedDate;	
+	}
+	
+	//GET DATE ARRAY [DD,MM,YYYY]
+	public static Integer[] getDateArray(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return new Integer[] {calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.YEAR)};
+	}
+	
 	//REMOVE NBFP CHARACTER FROMA A STRING
 	public static String removeNBSP(String cadena) {
 		String nbe=""+(char)160;
@@ -57,15 +70,6 @@ public class Toolkit {
 		}
 		return null;
 	}
-	//DIVIDES AFFILIATION NUMBER IN 2 STRING ARRAY, IF INTRODUCED SSN STRING CONTAINS LESS THAN 3 CHARACTERS IT RETURNS NULL IN BOTH POSSITIONS
-	public static String[] splitSSN(String ssn) {
-		String[] divided=new String[2];
-		if(ssn.length()>2) {
-			divided[0]=ssn.substring(0, 2);
-			divided[1]=ssn.substring(2);
-		}
-		return divided;
-	}
 	
 	//CONVERTS A BYTE ARRAY INTO A PDF FILE ON THE PROJECT FOLDER PATH
 	public static void buildPdf (byte[] arr_bytes, String docName) {
@@ -81,5 +85,6 @@ public class Toolkit {
 		}
 		
 	}
+	
 	
 }
