@@ -1,9 +1,13 @@
 import { requestBidoq } from  '../components/request.js';
 
-const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
-// const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
 const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+
+// Local
+// const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
 // const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
+
+// DEV
+const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
 const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
 
 export const CARPETA_A_CONTABILIZAR = 5;

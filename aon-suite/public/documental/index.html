@@ -42,8 +42,11 @@
                                             <th class="align-middle">Fecha</th>
                                             <th class="align-middle">Nombre</th>
                                             <th class="align-middle">Tipo</th>
+                                            <th class="align-middle d-none" id="model_column">Modelo</th>
+                                            <th class="align-middle d-none" id="year_column">Año</th>
+                                            <th class="align-middle d-none" id="period_column">Período</th>
                                             <th class="text-center align-middle">Leído</th>
-                                            <th class="align-middle">Subcarpeta</th>
+                                            <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
                                             <th class="align-middle">Subido por</th>
                                             <th class="align-middle"></th>
                                         </tr>
@@ -127,12 +130,17 @@
         <script type="module">
             import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
 
+            const CARPETA_FISCAL = 8;
             const MAX_FILE_SIZE = 5;
             const ITEMS_PER_PAGE = 10;
-            const types = {
+            const TYPES = {
                 'sent': 'Enviado',
                 'received': 'Recibido'
             };
+
+            // Obtenemos las carpetas del cliente
+            const aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+            window.folders = $(aonDocumental).data('folders');
 
             $(document).ready(function() {
                 // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
@@ -154,16 +162,12 @@
                 // Actualizamos la variable global que almacena el número de página actual
                 window.page = page_this;
 
-                // Obtenemos las carpetas del cliente
-                const aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
-                const folders = $(aonDocumental).data('folders');
-
-                if (typeof folders !== 'undefined') {
+                if (typeof window.folders !== 'undefined') {
                     const subfolders = {};
 
                     // Recorremos las carpetas para almacenar en una variable todas las subcarpetas del cliente
-                    for (let i = 0; i < folders.length; i++) {
-                        const folder = folders[i];
+                    for (let i = 0; i < window.folders.length; i++) {
+                        const folder = window.folders[i];
 
                         if (folder.subcarpetas.length) {
                             for (let j = 0; j < folder.subcarpetas.length; j++) {
@@ -195,6 +199,9 @@
                                         "file_name": document.name,
                                         "type": (document.type == 1) ? 'received' : 'sent',
                                         "url": document.image,
+                                        "model": document.model,
+                                        "year": document.year,
+                                        "period": document.period,
                                         "read": document.read,
                                         "subfolder": (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
                                         "uploaded_by": document.uploaded_by
@@ -226,12 +233,32 @@
             //
             function createTable(data){
                 // Simulamos que solo tenga datos la carpeta "A contabilizar"
-                var list = data.list;
+                const list = data.list;
 
                 // Recorremos los datos a mostrar
-                var tbody = '';
+                let tbody = '';
+
+                // Número de columnas base para la tabla, dependiendo de la carpeta seleccionada, etc. puede tener más o menos columnas
+                let numberOfColumns = 8;
 
                 if (list.length) {
+                    const selectedFolderObject = window.folders.find((folder) => {
+                        return parseInt(folder.carpetaID) === parseInt(window.selectedFolder);
+                    });
+                    const hasSubfolders = (typeof selectedFolder !== 'undefined' && selectedFolderObject.subcarpetas.length);
+
+                    if (hasSubfolders) {
+                        $('#subfolder_column').removeClass('d-none');
+
+                        numberOfColumns += 1;
+                    }
+
+                    if (parseInt(window.selectedFolder) === CARPETA_FISCAL) {
+                        $('#model_column, #year_column, #period_column').removeClass('d-none');
+
+                        numberOfColumns += 3;
+                    }
+
                     $.each(list, function(i, item) {
                         tbody+= '<tr data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.join(',') + '">';
 
@@ -256,7 +283,7 @@
                                                 if ($.isArray(val) && val.length) {
                                                     const tags = val.map((tag) => {
                                                         return `#${tag.name}`;
-                                                    }).join(', ');
+                                                    }).join('<br>');
 
                                                     tbody += tags;
                                                 }
@@ -273,21 +300,35 @@
 
                                         tbody+= '<td><span>'+formattedDate+'</span></td>';
                                         break;
-                                    case 'subfolder':
-                                        var subfolder = (val !== null) ? val : '';
+                                    case 'type':
+                                        const type = TYPES[item.type];
 
-                                        tbody+= '<td><span>'+subfolder+'</span></td>';
+                                        tbody+= '<td><span>'+type+'</span></td>';
+                                        break;
+                                    case 'model':
+                                    case 'year':
+                                    case 'period':
+                                        if (parseInt(window.selectedFolder) === CARPETA_FISCAL) {
+                                            let value = '';
 
+                                            if (val !== null) {
+                                                value = (key === 'period') ? `${val}T` : val;
+                                            }
+
+                                            tbody+= '<td><span>'+value+'</span></td>';
+                                        }
                                         break;
                                     case 'read':
-                                        var read = (item.type === 'received' && parseInt(val) !== 0) ? '<i class="material-icons">check</i>' : '';
+                                        const read = (item.type === 'received' && parseInt(val) !== 0) ? '<i class="material-icons">check</i>' : '';
 
                                         tbody+= '<td class="text-center"><span>'+read+'</span></td>';
                                         break;
-                                    case 'type':
-                                        var type = types[item.type];
+                                    case 'subfolder':
+                                        if (hasSubfolders) {
+                                            const subfolder = (val !== null) ? val : '';
 
-                                        tbody+= '<td><span>'+type+'</span></td>';
+                                            tbody+= '<td><span>'+subfolder+'</span></td>';
+                                        }
                                         break;
                                     default:
                                         tbody+= '<td><span>'+val+'</span></td>';
@@ -307,7 +348,7 @@
                                         tbody+= '<i class="new-note-doc material-icons note_add pointer text-primary" title="Crear nota"></i>';
 
                                         // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
-                                        if (window.selectedFolder == CARPETA_A_CONTABILIZAR) {
+                                        if (parseInt(window.selectedFolder) === CARPETA_A_CONTABILIZAR) {
                                             tbody += '<i class="delete-doc material-icons delete_forever pointer text-danger" title="Eliminar documento"></i>';
                                         }
                                     }
@@ -319,7 +360,7 @@
                 } else {
                     tbody+= '' +
                         '<tr>'+
-                            '<td colspan="9">'+
+                            '<td colspan="' + numberOfColumns + '">'+
                                 '<div class="row">'+
                                     '<div class="col-12 text-center">'+
                                         'No existen datos para mostrar'
@@ -333,12 +374,12 @@
                 $('.table tbody').html(tbody);
 
                 // Cogemos el paginado que tendía la tabla
-                var pagination = createPaginate(data.page, data.total_page);
+                const pagination = createPaginate(data.page, data.total_page);
 
                 // Agregamos el paginado en el footer de la tabla
-                var tfoot =
+                const tfoot =
                 '<tr>'+
-                    '<td colspan="9">'+
+                    '<td colspan="' + numberOfColumns + '">'+
                         '<div class="row">'+
                             '<div class="col-md-6">'+
                                 'Mostrando del '+data.shown_page+' de un total de '+data.total_data+' elementos'+
@@ -358,7 +399,7 @@
             // Crear el paginado
             //
             function createPaginate(page, page_total){
-                var paginate = '<ul class="pagination display-block float-right">';
+                let paginate = '<ul class="pagination display-block float-right">';
 
                 // Si tenemos paginas
                 if (page > 1){
@@ -404,7 +445,7 @@
             //
                 // Pasar de pagina
                 $(document).on('click', '.go_page', function () {
-                    var page = $(this).data('page');
+                    const page = $(this).data('page');
 
                     getList(page).then((list) => {
                         createTable(list);
@@ -455,10 +496,10 @@
 
                 // Icono de editar documento
                 $(document).on('click', '.edit-doc', function() {
-                    var row = $(this).closest('tr');
-                    var id = row.data('id');
-                    var file_name = row.data('file_name');
-                    var tags = (row.data('tags').length) ? row.data('tags').split(',') : [];
+                    const row = $(this).closest('tr');
+                    const id = row.data('id');
+                    const file_name = row.data('file_name');
+                    const tags = (row.data('tags').length) ? row.data('tags').split(',') : [];
 
                     // Insertamos en el modal el ID del documento que vamos a editar
                     $('#edit_doc_id').val(id);
@@ -488,13 +529,13 @@
                 // Al pulsar el boton de editar documento desde el modal
                 $(document).on('click', '#confirm_edit_doc', function() {
                     // Recuperamos el ID del documento al que vamos a añadir la nota
-                    var id = $('#edit_doc_id').val();
-                    var file_name = $('#file_name_doc').val();
-                    var tags = $('#tags_doc').val();
+                    const id = $('#edit_doc_id').val();
+                    const file_name = $('#file_name_doc').val();
+                    const tags = $('#tags_doc').val();
 
                     if (file_name.length) {
                         // JSON a enviar
-                        var edit_doc = {
+                        const edit_doc = {
                             id: id,
                             file_name: file_name,
                             tags: tags
@@ -516,8 +557,8 @@
 
                 // Icono de añadir nota al documento
                 $(document).on('click', '.new-note-doc', function() {
-                    var row = $(this).closest('tr');
-                    var id = row.data('id');
+                    const row = $(this).closest('tr');
+                    const id = row.data('id');
 
                     // Insertamos en el modal el ID del documento al que vamos a añadir la nota
                     $('#note_doc_id').val(id);
@@ -539,12 +580,12 @@
                 // Al pulsar el boton de crear nota desde el modal
                 $(document).on('click', '#confirm_new_note_doc', function() {
                     // Recuperamos el ID del documento al que vamos a añadir la nota
-                    var id = $('#note_doc_id').val();
-                    var note = $('#note_doc').val();
+                    const id = $('#note_doc_id').val();
+                    const note = $('#note_doc').val();
 
                     if (note.length) {
                         // JSON a enviar
-                        var new_note_doc = {
+                        const new_note_doc = {
                             id: id,
                             note: note
                         }
@@ -565,9 +606,9 @@
 
                 // Icono de eliminar documento
                 $(document).on('click', '.delete-doc', function() {
-                    var row = $(this).closest('tr');
-                    var file_name = row.data('file_name');
-                    var confirmed = confirm("¿Estás seguro de que deseas eliminar el documento: " + file_name + '?');
+                    const row = $(this).closest('tr');
+                    const file_name = row.data('file_name');
+                    const confirmed = confirm("¿Estás seguro de que deseas eliminar el documento: " + file_name + '?');
 
                     if (confirmed) {
                         const id = row.data('id');
