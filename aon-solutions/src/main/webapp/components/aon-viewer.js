@@ -1,0 +1,93 @@
+class AonViewer extends HTMLElement {
+
+	get id() {
+		return this.getAttribute('id');
+	}
+
+	set id(id) {
+		this.setAttribute('id', id);
+	}
+
+	get type() {
+		return this.getAttribute('type');
+	}
+
+	set type(type) {
+		this.setAttribute('type', type);
+	}
+
+	get file() {
+		return this.getAttribute('file');
+	}
+
+	set file(file) {
+		this.setAttribute('file', file);
+	}
+
+	constructor () {
+		super();
+	}
+
+	connectedCallback () {
+		if(this.type.includes('pdf')){
+			this.printPdf();
+		} else if(this.type.includes('image')){
+			this.printImage();
+		}
+	}
+
+	printImage() {
+		let img = document.createElement('img');
+		img.style.width = '100%';
+		img.src = this.file;
+
+		this.appendChild(img);
+	}
+	printPdf() {
+		// this.innerHTML = `<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>`;
+		let canvas = document.createElement('canvas');
+		this.appendChild(canvas);
+
+		var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+		// The workerSrc property shall be specified.
+		pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+		// Asynchronous download of PDF
+		//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
+		var loadingTask = pdfjsLib.getDocument(this.file);
+		loadingTask.promise.then(function(pdf) {
+  		console.log('PDF loaded');
+
+  		// Fetch the first page
+  		var pageNumber = 1;
+  		pdf.getPage(pageNumber).then(function(page) {
+    		console.log('Page loaded');
+
+    		var scale = 1.5;
+    		var viewport = page.getViewport({scale: scale});
+
+    		// Prepare canvas using PDF page dimensions
+    		//var canvas = document.getElementById('the-canvas');
+    		var context = canvas.getContext('2d');
+    		canvas.height = viewport.height;
+    		canvas.width = viewport.width;
+
+    		// Render PDF page into canvas context
+    		var renderContext = {
+      		canvasContext: context,
+      		viewport: viewport
+    		};
+    		var renderTask = page.render(renderContext);
+    		renderTask.promise.then(function () {
+      		console.log('Page rendered');
+    		});
+  		});
+		}, function (reason) {
+  		// PDF loading error
+  		console.error(reason);
+		});
+	}
+}
+
+window.customElements.define('aon-viewer', AonViewer);

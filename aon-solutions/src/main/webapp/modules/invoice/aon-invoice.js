@@ -8,6 +8,7 @@ import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-checkbox.js';
 import '../../components/aon-dialog.js';
+import '../../components/aon-viewer.js';
 
 (function() {
 
@@ -48,9 +49,9 @@ import '../../components/aon-dialog.js';
 			this.innerHTML = `
 				<div style="display:flex;">
 				<div id="aonInvoiceData">
-					<div style="display:flex;">
-						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%;"> </aon-card>
-						<div style="width:50%;">
+					<div id="aonInvoiceDiv" style="display:flex;">
+						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura"> </aon-card>
+						<div>
 							<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
 							<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
 						</div>
@@ -113,21 +114,20 @@ import '../../components/aon-dialog.js';
 
 			let fileInput = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
 			const file = fileInput.files[0];
+			fileDiv.style.display = 'block';
+			fileDiv.style.width = '50%';
+			dataDiv.style.width = '50%';
+
+			fileDiv.innerHTML = `<aon-viewer type="${file.type}"><aon-viewer>`;
+
 			const READER = new FileReader();
 			READER.readAsDataURL(file);
 			READER.onload = (_event) => {
 				fileDiv.style.display = 'block';
 				fileDiv.style.width = '50%';
 				dataDiv.style.width = '50%';
-				if (file.type.match(/image\/*/) == null) {
-					// this.attach(READER.result as string, file.type)
-				} else {
-					let img = document.createElement('img');
-					img.src = READER.result;// as string;
-
-					fileDiv.innerHTML = '';
-					fileDiv.appendChild(img);
-				}
+				document.getElementById('aonInvoiceDiv').style.display = 'block';
+				fileDiv.innerHTML = `<aon-viewer type="${file.type}" file="${READER.result}"><aon-viewer>`;
 			};
 		}
 
@@ -499,15 +499,12 @@ import '../../components/aon-dialog.js';
 
 		createTaxeFromTotal() {
 			if (this._invoice.taxes.length === 0) {
-				alert(this._invoice.total);
 				let tax = {
 					type: 'IVA',
 					percentage: 21.0,
 					base: this.round(Number(this._invoice.total) / 1.21),
 					quota: this.round(Number(this._invoice.total / 1.21) * 0.21)
 			 	};
-				alert(tax.base);
-				alert(tax.quota);
 				this._invoice.taxes.push(tax);
 				this.printTax(tax, 0);
 			} else if(this._invoice.taxes.length === 1){
@@ -626,7 +623,7 @@ import '../../components/aon-dialog.js';
 
 		changeDescription(index, value) {
 			if(!value) {
-				value = document.getElementById('detail_description' + index).value;
+				value = document.getElementById('detailDescription' + index).value;
 			}
 			this._invoice.details[index].description = value;
 			this.save();
@@ -791,7 +788,6 @@ import '../../components/aon-dialog.js';
 			if(!value) {
 				value = document.getElementById('taxPercentage' + index).value;
 			}
-			alert(value + ' - '+ this._invoice.taxes[index].base  )
 			this._invoice.taxes[index].percentage = Number(value);
 			this._invoice.taxes[index].quota = this.round(this._invoice.taxes[index].base / 100 * Number(value));
 			document.getElementById('taxQuota' + index).value = this._invoice.taxes[index].quota;
