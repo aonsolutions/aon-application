@@ -1,5 +1,9 @@
 package solutions.aon.seg.social;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -70,6 +74,12 @@ public class Toolkit {
 		}
 		return null;
 	}
+	
+	//SPLITS AN STRING AND RETURNS AN ARRAY
+	public static String[] SplitString(String str, int i) {
+		return new String[] {str.substring(0,i),str.substring(i)};
+	}
+	
 	
 	//CONVERTS A BYTE ARRAY INTO A PDF FILE ON THE PROJECT FOLDER PATH
 	public static void buildPdf (byte[] arr_bytes, String docName) {

@@ -199,15 +199,15 @@ public class SistemaRED_I {
 			htmlPage=htmlPage.getAnchorByHref(href).click();
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
 			//Filling the fields
-			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.splitSSN(affiliationNumber)[0]);
-			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.splitSSN(affiliationNumber)[1]);
+			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber,2)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber,2)[1]);
 			try {
 					jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
 				}catch (ElementNotFoundException enfe){
 					jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
 				}
-			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.splitSSN(contributionAccount)[0]);
-			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.splitSSN(contributionAccount)[1]);
+			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,1)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,1)[1]);
 			GregorianCalendar calendar=new GregorianCalendar();
 			calendar.setTime(fecha);
 			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute(""+calendar.get(Calendar.DAY_OF_MONTH));
