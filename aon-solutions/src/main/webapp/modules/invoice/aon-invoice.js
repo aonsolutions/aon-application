@@ -3,6 +3,7 @@ import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
 import {insertInvoice, deleteInvoices} from '../../services/service.js';
+import {clearElement} from '../../services/utils.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
@@ -407,6 +408,7 @@ import '../../components/aon-viewer.js';
 			tdIRPF.innerHTML = `<aon-checkbox id="irpfCheckbox" description="IRPF"></aon-checkbox>`;
 			tr1.appendChild(tdIRPF);
 			let irpf = document.getElementById('irpfCheckbox');
+			irpf.value = this._invoice.irpf;
 			irpf.addEventListener('change', () => this.changeIRPF());
 
 			// SUPLIDOS
@@ -414,6 +416,7 @@ import '../../components/aon-viewer.js';
 			tdSuplidos.innerHTML = `<aon-checkbox id="suplidosCheckbox" description="Suplidos"></aon-checkbox>`;
 			tr1.appendChild(tdSuplidos);
 			let suplidos = document.getElementById('suplidosCheckbox');
+			irpf.value = this._invoice.suplidos;
 			suplidos.addEventListener('change', () => this.changeSuplidos());
 
 			// TOTAL SUPLIDOS
@@ -635,7 +638,7 @@ import '../../components/aon-viewer.js';
 			}
 			this._invoice.details[index].quantity = Number(value);
 			this.calculatePrice(index);
-			this.updateDetail(index);
+			this.updateTaxes();
 			this.save();
 		}
 
@@ -645,7 +648,7 @@ import '../../components/aon-viewer.js';
 			}
 			this._invoice.details[index].price = Number(value);
 			this.calculatePrice(index);
-			this.updateDetail(index);
+			this.updateTaxes();
 			this.save();
 		}
 
@@ -655,19 +658,8 @@ import '../../components/aon-viewer.js';
 			}
 		 	this._invoice.details[index].discount = Number(value);
 		 	this.calculatePrice(index);
-			this.updateDetail(index);
+			this.updateTaxes();
 			this.save();
-		}
-
-		updateDetail(index) {
-			if (this._invoice.details[index].suplidos) {
-				this.updateSuplidos();
-			} else {
-				if(this._invoice.details[index].irpf) {
-					this.updateIRPF();
-				}
-				this.updateTaxes();
-			}
 		}
 
 		changeVat(index, value) {
@@ -681,10 +673,10 @@ import '../../components/aon-viewer.js';
 
 		updateDetailIRPF(index, value) {
 			if(!value) {
-				value = document.getElementById('detailIrpf' + index).value;
+				value = document.getElementById('detailIrpf' + index).getValue();
 			}
 			this._invoice.details[index].irpf = value;
-			this.updateIRPF();
+			this.updateTaxes();
 			this.save();
 		}
 
@@ -708,7 +700,7 @@ import '../../components/aon-viewer.js';
 		removeDetail(index) {
 			document.getElementById('detail' + index).remove();
 			this._invoice.details.splice(index, 1);
-			this.updateDetail(index);
+			this.updateTaxes();
 			this.save();
 		}
 
@@ -779,6 +771,8 @@ import '../../components/aon-viewer.js';
 		}
 
 		printTaxes() {
+			clearElement('aonInvoiceItemTaxesCardTable');
+			clearElement('aonInvoiceItemIRPFCardTable');
 			for(let i = 0; i < this._invoice.taxes.length; i++) {
 				this.printTax(this._invoice.taxes[i], i);
 			}
@@ -829,9 +823,8 @@ import '../../components/aon-viewer.js';
 		// IRPF FUNCTIONS
 		changeIRPF(val) {
 			if(!val) {
-				val = document.getElementById('irpfCheckbox').value;
+				val = document.getElementById('irpfCheckbox').getValue();
 			}
-
 			this._invoice.irpf = val;
 			if (val) {
 				let i = this._invoice.taxes.length;
@@ -845,6 +838,7 @@ import '../../components/aon-viewer.js';
 				this.printTax(tax, i);
 			} else {
 				for(let i = 0; i < this._invoice.taxes.length; i++) {
+					let tax = this._invoice.taxes[i];
 					if(tax.type === 'IRPF') {
 						this.removeTax(i);
 					}
@@ -867,27 +861,35 @@ import '../../components/aon-viewer.js';
 				if(tax.type === 'IRPF') {
 					this._invoice.taxes[i].base = this.totalBaseIRPF();
 					this._invoice.taxes[i].quota = this.round(this._invoice.taxes[i].base / 100 * this._invoice.taxes[i].percentage);
-					let base = document.getElementById('taxBase' + i);
-					base.value = this._invoice.taxes[i].base;
-					let quota = document.getElementById('taxQuota' + i);
-					quota.value = this._invoice.taxes[i].quota;
 				}
 			}
-			this.updateTaxesTotal();
 		}
 
-		updateTaxes(vat) {
-			for(let i = 0; i < this._invoice.taxes.length; i++) {
-				let tax = this._invoice.taxes[i];
-				if(tax.type === 'IVA' && (!vat || tax.percentage === vat)) {
-					this._invoice.taxes[i].base = this.totalBase(tax.percentage);
-					this._invoice.taxes[i].quota = this.round(this._invoice.taxes[i].base / 100 * this._invoice.taxes[i].percentage);
-					let base = document.getElementById('taxBase' + i);
-					base.value = this._invoice.taxes[i].base;
-					let quota = document.getElementById('taxQuota' + i);
-					quota.value = this._invoice.taxes[i].quota;
+		updateVat() {
+			this._invoice.taxes.forEach((item, i) => {
+				if(item.type === 'IVA'){
+					this._invoice.taxes.splice(i, 1);
 				}
-			}
+			});
+			TaxIVAPercentage.forEach((item, i) => {
+				let base = this.totalBase(item.value);
+				if(base != 0) {
+					let tax = {
+						type: 'IVA',
+						percentage: item.value,
+						base: base,
+						quota:  this.round(base / 100 * item.value)
+					}
+					this._invoice.taxes.push(tax);
+				}
+			});
+		}
+
+		updateTaxes() {
+			this.updateIRPF();
+			this.updateVat();
+			this.printTaxes();
+			this.updateSuplidos();
 			this.updateTaxesTotal();
 		}
 
@@ -907,7 +909,7 @@ import '../../components/aon-viewer.js';
 
 		changeSuplidos(value) {
 			if(!value) {
-				value = document.getElementById('suplidosCheckbox').value;
+				value = document.getElementById('suplidosCheckbox').getValue();
 			}
 			this._invoice.suplidos = value;
 			document.getElementById('t-suplidos').visible = value;
@@ -924,7 +926,7 @@ import '../../components/aon-viewer.js';
 
 		updateDetailSuplidos(index, value) {
 			if(!value) {
-				value = document.getElementById('detailSuplidos' + index).value;
+				value = document.getElementById('detailSuplidos' + index).getValue();
 			}
 			this._invoice.details[index].suplidos = value;
 			let vat = document.getElementById('detailVat' + index);
@@ -939,9 +941,7 @@ import '../../components/aon-viewer.js';
 			}
 			vat.value = this._invoice.details[index].vat;
 
-			this.updateIRPF();
 			this.updateTaxes();
-			this.updateSuplidos();
 		}
 
 		updateSuplidos() {
@@ -1089,11 +1089,9 @@ import '../../components/aon-viewer.js';
 
 		totalBase(vat) {
 			let total = 0;
-			if(vat) {
-				for (let i = 0; i < this._invoice.details.length; i++) {
-					if (this._invoice.details[i].vat === vat) {
-						total += this._invoice.details[i].amount;
-					}
+			for (let i = 0; i < this._invoice.details.length; i++) {
+				if (this._invoice.details[i].vat == vat) {
+					total += this._invoice.details[i].amount;
 				}
 			}
 			return total;

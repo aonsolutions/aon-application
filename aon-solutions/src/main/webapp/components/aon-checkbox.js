@@ -2,6 +2,10 @@
 
 	class AonCheckbox extends HTMLElement {
 
+		static get observedAttributes() {
+			return ['value'];
+		}
+
 		get id() {
 			return this.getAttribute('id');
 		}
@@ -42,6 +46,13 @@
 			this.setAttribute('disabled', disabled);
 		}
 
+		attributeChangedCallback(name, oldValue, newValue) {
+			if('value' === name){
+				let input = document.getElementById(this.getAttribute('id') + 'Input');
+				if(this.getValue())	input.setAttribute('checked', 'checked');
+			}
+		}
+
 		constructor () {
 			super();
 		}
@@ -58,7 +69,7 @@
 			}
 
 			let input = document.createElement('input');
-			input.className = "mdl-checkbox__input";
+		//	input.className = "mdl-checkbox__input";
 			input.setAttribute('id', this.getAttribute('id') + 'Input');
 			input.setAttribute('type', 'checkbox');
 			if(this.hasAttribute('value') && "true" === this.getAttribute('value')){
@@ -72,17 +83,21 @@
 			});
 
 			let label = document.createElement('label');
-			label.className = "mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect";
+			//label.className = "mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect";
 			label.setAttribute('for', input.getAttribute('id'));
 
 			let span = document.createElement('span');
-			span.className = "mdl-checkbox__label";
+			//span.className = "mdl-checkbox__label";
 			span.innerHTML = this.getAttribute('description');
 
 			label.appendChild(input);
 			label.appendChild(span);
 
 			return label;
+		}
+
+		getValue() {
+			return this.value && this.value === 'true';
 		}
 	}
 
