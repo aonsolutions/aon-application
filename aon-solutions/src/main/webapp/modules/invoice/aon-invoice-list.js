@@ -61,7 +61,7 @@ class AonInvoiceList extends HTMLElement {
 
 	aonInvoice(invoice) {
 		let aonInvoice = document.getElementById('aonInvoice');
-		aonInvoice.setContentHTML(`<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`);
+		aonInvoice.setContentHTML(`<aon-invoice invoice='${JSON.stringify(invoice)}' type='${invoice.type}'> </aon-invoice>`);
 	}
 
 	getFilter() {

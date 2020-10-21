@@ -21,6 +21,14 @@ import '../../components/aon-viewer.js';
       return ['invoice'];
    	}
 
+		get type() {
+   	  return this.getAttriute('type');
+   	}
+
+	  set type(type) {
+	     this.setAttribute('type', type);
+    }
+
     get invoice() {
    	  return JSON.parse(this.getAttribute('invoice'));
    	}
@@ -72,13 +80,20 @@ import '../../components/aon-viewer.js';
 
 		build() {
 			this.buildData();
-			this.buildTaxes();
-			this.buildIRPF();
-			this.buildDetail();
-			this.buildFinance();
-			this.printTaxes();
-			this.printDetails();
-			this.printFinances();
+			if(!this.isTicket()){
+				this.buildTaxes();
+				this.buildIRPF();
+				this.buildDetail();
+				this.buildFinance();
+				this.printTaxes();
+				this.printDetails();
+				this.printFinances();
+			} else {
+				document.getElementById('aonInvoiceItemTaxesCard').style.display = 'none';
+				document.getElementById('aonInvoiceItemIRPFCard').style.display = 'none';
+				document.getElementById('aonInvoiceItemDetailCard').style.display = 'none';
+				document.getElementById('aonInvoiceItemFinanceCard').style.display = 'none';
+			}
 
 			let aonInvoice = document.getElementById('aonInvoice');
 			aonInvoice.addToolbarOption('Options', 'more_vert', () => {
@@ -133,30 +148,30 @@ import '../../components/aon-viewer.js';
 		}
 
 		// attach(fileDataUri: string,  mimetype: string): void {
-			// if (fileDataUri.length > 0) {
-			// 	const base64File = fileDataUri.split(',')[1];
-			// 	const cp = this.service.getActualCompany();
-			// 	const data = {
-			// 		company: cp ,
-			// 		content: base64File,
-			// 		contentType: mimetype,
-			// 		contentEncoding: 'base64',
-			// 		invoice: undefined,
-			// 		status: undefined
-			// 	};
-			// 	if (this.invoiceService.isNew) { data.invoice = this.invoiceService.invoice; }
-			// 	this.service.loading = true;
-			// 	this.aonService.createInvoice(data)
-			// 	.subscribe((r: Invoice) => {
-			// 		if (!this.invoiceService.invoice.id) {
-			// 			this.invoiceService.setInvoice(r);
-			// 		}
-			// 		this.invoiceService.invoiceFile = undefined;
-			// 		this.invoiceService.getFile().subscribe();
-			// 		this.invoiceService.expandFile(true);
-			// 		this.service.loading = false;
-			// 	});
-			// }
+		// 	if (fileDataUri.length > 0) {
+		// 		const base64File = fileDataUri.split(',')[1];
+		// 		const cp = this.service.getActualCompany();
+		// 		const data = {
+		// 			company: cp ,
+		// 			content: base64File,
+		// 			contentType: mimetype,
+		// 			contentEncoding: 'base64',
+		// 			invoice: undefined,
+		// 			status: undefined
+		// 		};
+		// 		if (this.invoiceService.isNew) { data.invoice = this.invoiceService.invoice; }
+		// 		this.service.loading = true;
+		// 		this.aonService.createInvoice(data)
+		// 		.subscribe((r: Invoice) => {
+		// 			if (!this.invoiceService.invoice.id) {
+		// 				this.invoiceService.setInvoice(r);
+		// 			}
+		// 			this.invoiceService.invoiceFile = undefined;
+		// 			this.invoiceService.getFile().subscribe();
+		// 			this.invoiceService.expandFile(true);
+		// 			this.service.loading = false;
+		// 		});
+		// 	}
 		// }
 
 		getOptions() {
@@ -224,7 +239,11 @@ import '../../components/aon-viewer.js';
 		}
 
 		removeInvoice() {
-
+			deleteInvoices([this._invoice.id]).then(() => {
+				alert('La Factura se ha borrado Definitivamente.')
+				let aip = document.querySelector('aon-invoice-panel');
+				aip.aonInvoiceList({status:'trash'});
+			});
 		}
 
 		addInvoiceFile() {
@@ -252,22 +271,32 @@ import '../../components/aon-viewer.js';
 			let tr = document.createElement('tr');
 			table.appendChild(tr);
 
-			// SERIE
-			let tdSerie = document.createElement('td');
-			tdSerie.innerHTML = `<aon-input id="serie" description="Serie"></aon-input>`;
-			tr.appendChild(tdSerie);
-			let series = document.getElementById('serie');
-			series.value = this._invoice.serie;
-			series.addEventListener('change', () => this.update('serie'));
+			if(this.isEmitida()) {
+				// SERIE
+				let tdSerie = document.createElement('td');
+				tdSerie.innerHTML = `<aon-input id="serie" description="Serie"></aon-input>`;
+				tr.appendChild(tdSerie);
+				let series = document.getElementById('serie');
+				series.value = this._invoice.serie;
+				series.addEventListener('change', () => this.update('serie'));
 
-			// NUMBER
-			let tdNumber = document.createElement('td');
-			tdNumber.innerHTML = `<aon-input id="number" description="Número"></aon-input>`;
-			tr.appendChild(tdNumber);
-			let number = document.getElementById('number');
-			number.value = this._invoice.number;
-			number.addEventListener('change', () => this.update('number'));
-
+				// NUMBER
+				let tdNumber = document.createElement('td');
+				tdNumber.innerHTML = `<aon-input id="number" description="Número"></aon-input>`;
+				tr.appendChild(tdNumber);
+				let number = document.getElementById('number');
+				number.value = this._invoice.number;
+				number.addEventListener('change', () => this.update('number'));
+			} else {
+				// REFERENCE CODE
+				let tdReference = document.createElement('td');
+				tdReference.setAttribute('colspan', '2');
+				tdReference.innerHTML = `<aon-input id="reference" description="Nº Factura"></aon-input>`;
+				tr.appendChild(tdReference);
+				let reference = document.getElementById('reference');
+				reference.value = this._invoice.reference;
+				reference.addEventListener('change', () => this.update('reference'));
+			}
 			// DATE
 			let tdDate = document.createElement('td');
 			tdDate.innerHTML = `<aon-input id="date" type="date" description="Fecha"></aon-input>`;
@@ -496,7 +525,7 @@ import '../../components/aon-viewer.js';
 
 		updateTotal(value) {
 			this._invoice.total = Number(value);
-			this.createTaxeFromTotal();
+			if(!this.isTicket()) this.createTaxeFromTotal();
 			this.save();
 		}
 
@@ -1146,7 +1175,7 @@ import '../../components/aon-viewer.js';
 			var day = d.getDate();
 			let curDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
 			let inv = {
-				type: "Emitida",
+				type: this.getAttribute('type')|| 'emitida',
 				serie: '',
 				number: 0,
 				reference: '',
@@ -1184,6 +1213,18 @@ import '../../components/aon-viewer.js';
 				totalSuplidos: 0
 			};
 			return inv;
+		}
+
+		isEmitida() {
+			return this.hasAttribute('type') && 'emitida' === this.getAttribute('type');
+		}
+
+		isRecibida() {
+			return this.hasAttribute('type') && 'recibida' === this.getAttribute('type');
+		}
+
+		isTicket() {
+			return this.hasAttribute('type') && 'ticket' === this.getAttribute('type');
 		}
 	}
 

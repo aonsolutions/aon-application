@@ -61,8 +61,8 @@ class AonDialog extends HTMLElement {
 			content.style.padding = '0px';
 		}
 
-		window.onclick = (event) => {
-  		if (event.target == dialog) {
+		dialog.onclick = (event) => {
+			if (event.target === dialog) {
 				this.close();
   		}
 		}

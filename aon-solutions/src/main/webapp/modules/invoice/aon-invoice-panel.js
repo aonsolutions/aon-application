@@ -1,5 +1,8 @@
+import {isMobile} from  '../../services/utils.js';
+
 import './aon-invoice.js';
 import './aon-invoice-list.js';
+
 
 class AonInvoicePanel extends HTMLElement {
 
@@ -12,6 +15,7 @@ class AonInvoicePanel extends HTMLElement {
 	connectedCallback () {
 		this.innerHTML = `
 			<aon-application id="aonInvoice" title="Facturas"></aon-application>
+			<aon-dialog id="aonDialogAddOption" type="menu" > </aon-dialog>
 		`;
 		this.build();
 	}
@@ -19,7 +23,7 @@ class AonInvoicePanel extends HTMLElement {
   build(){
 		let aonInvoice = document.getElementById('aonInvoice');
 
-		aonInvoice.addToolbarOption('Add', 'add', () => this.aonInvoice());
+		aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 
 		let pendingOptions = [
 			{
@@ -78,18 +82,48 @@ class AonInvoicePanel extends HTMLElement {
 		} else {
 			let aonInvoice = document.getElementById('aonInvoice');
 			aonInvoice.removeToolbarOptions();
-			aonInvoice.addToolbarOption('Add', 'add', () => this.aonInvoice());
+			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 			aonInvoice.setContentHTML(filter
 				? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
 				: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
 		}
 	}
 
-	aonInvoice(invoice) {
+	addInvoice() {
+		let button = document.getElementById('aonInvoiceToolbarAddButton');
+
+		const top  = button.getBoundingClientRect().top;
+		const left = button.getBoundingClientRect().left;
+		let d = document.getElementById('aonDialogAddOption');
+
+		let options = [{
+				name: 'Emitidas',
+				icon: 'unarchive',
+				fn: () => this.aonInvoice('emitida')
+			}, {
+				name: 'Recibidas',
+				icon: 'archive',
+				fn: () => this.aonInvoice('recibida')
+			}, {
+				name: 'Tickets/Justificantes',
+				icon: 'receipt',
+				fn: () => this.aonInvoice('ticket')
+			}];
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	aonInvoice(type, invoice) {
 		let aonInvoice = document.getElementById('aonInvoice');
-		aonInvoice.setContentHTML(invoice
-			? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`
-			: `<aon-invoice> </aon-invoice>`);
+		if(isMobile()) {
+			aonInvoice.setContentHTML(invoice
+				? `<aon-invoice-mobile invoice='${JSON.stringify(invoice)}'> </aon-invoice-mobile>`
+				: `<aon-invoice-mobile type="${type}"> </maon-invoice-mobile>`);
+		} else {
+			aonInvoice.setContentHTML(invoice
+				? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`
+				: `<aon-invoice type="${type}"> </aon-invoice>`);
+		}
 	}
 }
 
