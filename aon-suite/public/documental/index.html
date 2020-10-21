@@ -34,7 +34,7 @@
                         </form>
                         <div class="row justify-content-center">
                             <div class="col-12">
-                                <table class="table" data-folders="" id="tabla_documentos">
+                                <table class="table" id="tabla_documentos">
                                     <thead>
                                         <tr>
                                             <th class="align-middle"></th>
@@ -62,7 +62,6 @@
                     </div>
                 </div>
                 <!-- end contenido centro -->
-        
 
         <!-- Modales -->
         <div class="modal fade" id="edit_doc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -75,17 +74,14 @@
                         <div class="row">
                             <div class="col-12">
                                 <input id="edit_doc_id" type="hidden" value="">
+                                <input id="edit_doc_type" type="hidden" value="">
                                 <div class="form-group">
                                     <label for="file_name_doc">Nombre</label>
                                     <input type="text" class="form-control" id="file_name_doc">
                                 </div>
                                 <div class="form-group">
                                     <label for="tags_doc">Tags</label>
-                                    <select multiple class="form-control" id="tags_doc">
-                                        <option value="#Intracomunitarias">#Intracomunitarias</option>
-                                        <option value="#ISP">#ISP</option>
-                                        <option value="#Rectificativas">#Rectificativas</option>
-                                    </select>
+                                    <select multiple class="form-control" id="tags_doc"></select>
                                 </div>
                                 <label class="d-none error-empty-file-name-doc text-danger font-weight-bold">El nombre no puede estar vacío</label>
                             </div>
@@ -138,11 +134,14 @@
                 'received': 'Recibido'
             };
 
-            // Obtenemos las carpetas del cliente
             const aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
-            window.folders = $(aonDocumental).data('folders');
 
-            $(document).ready(function() {
+            // Obtenemos las carpetas del cliente
+            window.folders = $(aonDocumental).data('folders');
+            // Obtenemos los tags del despacho del cliente
+            window.tags = $(aonDocumental).data('tags');
+
+            $(document).ready(async function() {
                 // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
                 window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
                 // Almacenamos el número de la página actual en una variable global
@@ -151,14 +150,16 @@
                 // Añadimos los estilos de carpeta actual a la carpeta seleccionada
                 $('a[data-folder="' + window.selectedFolder + '"]').addClass('active').attr('aria-pressed', 'true');
 
-                getList().then((list) => {
+                try {
+                    const list = await getList();
+
                     createTable(list);
-                }).catch((error) => {
-                    console.error(error);
-                });
+                } catch (error) {
+                    console.error(error.message);
+                }
             });
 
-            function getList(page_this = 1) {
+            async function getList(page_this = 1) {
                 // Actualizamos la variable global que almacena el número de página actual
                 window.page = page_this;
 
@@ -178,12 +179,14 @@
                         }
                     }
 
-                    // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
-                    return bidoq({
-                        "method": "list_docs",
-                        "carpeta": window.selectedFolder,
-                        "pagina": page_this - 1
-                    }).then((data) => {
+                    try {
+                        // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
+                        const data = await bidoq({
+                            "method": "list_docs",
+                            "carpeta": window.selectedFolder,
+                            "pagina": page_this - 1
+                        });
+
                         const jsonData = JSON.parse(data).datos;
                         const documents = jsonData.documentos;
 
@@ -220,9 +223,9 @@
                                 reject('Ocurrió un error al intentar obtener los documentos');
                             }
                         });
-                    }).catch(function(error) {
+                    } catch (error) {
                         console.error('Ocurrió un error: ' + error.message);
-                    });
+                    }
                 } else {
                     console.error('Ocurrió un error al intentar obtener las carpetas');
                 }
@@ -260,7 +263,7 @@
                     }
 
                     $.each(list, function(i, item) {
-                        tbody+= '<tr data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.join(',') + '">';
+                        tbody+= '<tr data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.map((tag) => tag.id).join(',') + '">';
 
                             // Columna con las acciones que se pueden realizar sobre un documento
                             tbody+= `<td>
@@ -281,9 +284,7 @@
                                         '<td>' +
                                             '<span>';
                                                 if ($.isArray(val) && val.length) {
-                                                    const tags = val.map((tag) => {
-                                                        return `#${tag.name}`;
-                                                    }).join('<br>');
+                                                    const tags = val.map((tag) => `#${tag.name}`).join('<br>');
 
                                                     tbody += tags;
                                                 }
@@ -444,14 +445,16 @@
             // Eventos
             //
                 // Pasar de pagina
-                $(document).on('click', '.go_page', function () {
+                $(document).on('click', '.go_page', async function () {
                     const page = $(this).data('page');
 
-                    getList(page).then((list) => {
+                    try {
+                        const list = await getList(page);
+
                         createTable(list);
-                    }).catch((error) => {
-                        console.error(error);
-                    });
+                    } catch (error) {
+                        console.error(error.message);
+                    }
                 });
 
                 // Seleccionar uno o más documentos para descargar
@@ -463,7 +466,7 @@
                         // Si no existe el botón de descargar, lo creamos
                         if (downloadButton === null) {
                             addDocumentalToolbarButton('Descargar', 'file_download', () => {
-
+                                alert('Descargar documentos seleccionados');
                             });
                         } else {
                             // Si existe el botón de descargar, lo mostramos
@@ -498,11 +501,18 @@
                 $(document).on('click', '.edit-doc', function() {
                     const row = $(this).closest('tr');
                     const id = row.data('id');
+                    const type = row.data('type');
                     const file_name = row.data('file_name');
-                    const tags = (row.data('tags').length) ? row.data('tags').split(',') : [];
+                    // Tags que tiene el documento
+                    const tags = row.data('tags').toString();
+                    // Convertimos a array el listado de tags que tiene el documento
+                    const tagsArray = (tags.length) ? tags.split(',') : [];
 
                     // Insertamos en el modal el ID del documento que vamos a editar
                     $('#edit_doc_id').val(id);
+
+                    // Insertamos en el modal el tipo de documento que vamos a editar ("Enviado" o "Recibido")
+                    $('#edit_doc_type').val(type);
 
                     // Ocultamos los errores si están visibles
                     if (!$('.error-empty-file-name-doc').hasClass('d-none')) {
@@ -513,12 +523,22 @@
                     $('#file_name_doc').val(file_name);
 
                     // Desmarcamos todos los option
-                    $('#tags_doc option').attr('selected', false);
+                    $('#tags_doc option').prop('selected', false);
+
+                    // La primera vez que abrimos el modal renderizamos los option del select con los tags
+                    if (!$('#tags_doc option').length) {
+                        window.tags.map((tag) => {
+                            $('#tags_doc').append(`
+                                <option value="${tag.tagsID}">${tag.tag}</option>
+                            `);
+                        });
+                    }
 
                     // Marcamos en el select los tags que tiene el documento
                     $('#tags_doc option').each(function() {
-                        if ($.inArray($(this).val(), tags) !== -1) {
-                            $(this).attr('selected', true);
+                        // Comprobamos si el tag que estamos recorriendo se encuentra entre los tags del documento
+                        if ($.inArray($(this).val(), tagsArray) !== -1) {
+                            $(this).prop('selected', true);
                         }
                     });
 
@@ -527,26 +547,43 @@
                 });
 
                 // Al pulsar el boton de editar documento desde el modal
-                $(document).on('click', '#confirm_edit_doc', function() {
-                    // Recuperamos el ID del documento al que vamos a añadir la nota
+                $(document).on('click', '#confirm_edit_doc', async function() {
+                    // Recuperamos el ID del documento que vamos a editar
                     const id = $('#edit_doc_id').val();
-                    const file_name = $('#file_name_doc').val();
+                    // Recuperamos el tipo del documento que vamos a editar
+                    const type = ($('#edit_doc_type').val() === 'sent') ? 2 : 1;
+                    const fileName = $('#file_name_doc').val();
                     const tags = $('#tags_doc').val();
 
-                    if (file_name.length) {
-                        // JSON a enviar
-                        const edit_doc = {
-                            id: id,
-                            file_name: file_name,
-                            tags: tags
+                    if (fileName.length) {
+                        const data = await bidoq({
+                            "method": "editar_documento",
+                            id,
+                            "tipo": type,
+                            "nombre": fileName,
+                            tags
+                        });
+
+                        let response = JSON.parse(data);
+
+                        if (typeof response !== 'undefined') {
+                            if (response.code === 0) {
+                                alert('Documento editado con éxito');
+
+                                try {
+                                    const list = await getList(window.page);
+
+                                    createTable(list);
+                                } catch (error) {
+                                    console.error(error.message);
+                                }
+                            }
                         }
 
                         // Ocultamos los errores si están visibles
                         if (!$('.error-empty-file-name-doc').hasClass('d-none')) {
                             $('.error-empty-file-name-doc').addClass('d-none');
                         }
-
-                        alert('Documento editado con éxito');
 
                         // Ocultamos el modal
                         $("#edit_doc").modal('hide')
@@ -605,7 +642,7 @@
                 });
 
                 // Icono de eliminar documento
-                $(document).on('click', '.delete-doc', function() {
+                $(document).on('click', '.delete-doc', async function() {
                     const row = $(this).closest('tr');
                     const file_name = row.data('file_name');
                     const confirmed = confirm("¿Estás seguro de que deseas eliminar el documento: " + file_name + '?');
@@ -615,33 +652,37 @@
                         const type = (row.data('type') === 'sent') ? 2 : 1;
                         const service = window.selectedFolder;
 
-                        // Hacemos una petición a bidoq para eliminar el documento seleccionado
-                        bidoq({
-                            "method": "delete",
-                            id,
-                            type,
-                            service
-                        }).then((data) => {
-                            let response = JSON.parse(data);
+                        try {
+                            // Hacemos una petición a bidoq para eliminar el documento seleccionado
+                            const data = await bidoq({
+                                "method": "delete",
+                                id,
+                                type,
+                                service
+                            });
+
+                            const response = JSON.parse(data);
 
                             if (typeof response !== 'undefined') {
                                 if (response.code === 0) {
                                     alert('Documento eliminado con éxito');
 
-                                    getList(window.page).then((list) => {
+                                    try {
+                                        const list = await getList(window.page);
+
                                         createTable(list);
-                                    }).catch((error) => {
-                                        console.error(error);
-                                    });
+                                    } catch (error) {
+                                        console.error(error.message);
+                                    }
                                 } else {
                                     alert(`Ocurrió un error al intentar eliminar el documento`);
                                 }
                             } else {
                                 console.error('Ocurrió un error al intentar eliminar el documento');
                             }
-                        }).catch(function(error) {
+                        } catch (error) {
                             console.error('Ocurrió un error: ' + error.message);
-                        });
+                        }
                     }
                 });
 
@@ -675,13 +716,15 @@
                         };
                     });
 
-                    Promise.all(filesPromises).then((files) => {
-                        // Hacemos una petición a bidoq para subir los archivos seleccionados
-                        bidoq({
-                            "method": "upload",
-                            "services": window.selectedFolder,
-                            "files": JSON.stringify(files)
-                        }).then((data) => {
+                    Promise.all(filesPromises).then(async (files) => {
+                        try {
+                            // Hacemos una petición a bidoq para subir los archivos seleccionados
+                            const data = await bidoq({
+                                "method": "upload",
+                                "services": window.selectedFolder,
+                                "files": JSON.stringify(files)
+                            });
+
                             let response = JSON.parse(data);
 
                             if (typeof response !== 'undefined') {
@@ -704,9 +747,9 @@
                             } else {
                                 console.error('Ocurrió un error al intentar subir los documentos');
                             }
-                        }).catch(function(error) {
+                        } catch (error) {
                             console.error('Ocurrió un error: ' + error.message);
-                        });
+                        }
                     });
                 });
 
