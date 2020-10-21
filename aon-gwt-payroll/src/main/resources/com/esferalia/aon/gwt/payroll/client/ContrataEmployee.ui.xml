@@ -28,6 +28,24 @@
 			margin-top: 10px;
 		}
 		
+		.titlePanel{
+			padding: 5px 0 5px 15px;
+			font-size: 13px;
+			background-color: #f4f4f4;
+			width: 100%;
+			display:flex;
+		}
+		
+		.bold{
+			font-weight: bold;
+		}
+		
+		.title{
+			font-size: 12px;
+			margin-left: 5px;
+    		padding-top: 2px;
+		}
+		
 	</ui:Style>
 
 	<g:SimpleLayoutPanel>
@@ -51,6 +69,9 @@
 									<g:Button ui:field='saveContract' styleName='aon-finding-toolbar-item aon-icon-save {style.pl20}' text=" GUARDAR"/>
 								</g:HTMLPanel>
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+									<g:Button ui:field='deleteContract' styleName='aon-finding-toolbar-item aon-icon-reset {style.pl20}' text=" BORRAR"/>
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 									<g:Button ui:field='listEmployees' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTA"/>
 								</g:HTMLPanel>
 							</g:HorizontalPanel>
@@ -60,6 +81,11 @@
 				<!-- END HEADER MENU -->
 				<g:center>
 					<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
+						<g:HTMLPanel styleName="{style.titlePanel}">
+							<g:Label styleName="{style.bold}">Contrato : </g:Label>
+							<g:Label styleName="{style.title}" ui:field="title"></g:Label>
+						</g:HTMLPanel>
+						
 						<g:TabLayoutPanel ui:field="tabLayOutPanel" barUnit='EM' barHeight='3'>
 							<g:tab>
 						    	<g:header size='7'>Datos Afiliación</g:header>

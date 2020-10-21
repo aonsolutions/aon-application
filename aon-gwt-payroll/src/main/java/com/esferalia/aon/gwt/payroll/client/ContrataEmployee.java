@@ -511,6 +511,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 	
+	@UiField
+	Label title;
+	
 	@UiField (provided = true)
 	Employee employee;
 	
@@ -528,6 +531,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField
 	Button saveContract;
+	
+	@UiField
+	Button deleteContract;
 	
 	@UiField
 	TabLayoutPanel tabLayOutPanel;
@@ -586,11 +592,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 		
 		int height = Window.getClientHeight(); 
-		scrolledPanel.setHeight((height-220)+"px");
-		scrolledPanelContractOtherData.setHeight((height-240)+"px");
-		scrolledPanelClauses.setHeight((height-240)+"px");
-		scrolledPanelAttach.setHeight((height-240)+"px");
-		scrolledPanelContractSpecificData.setHeight((height-240)+"px");
+		scrolledPanel.setHeight((height-260)+"px");
+		scrolledPanelContractOtherData.setHeight((height-260)+"px");
+		scrolledPanelClauses.setHeight((height-260)+"px");
+		scrolledPanelAttach.setHeight((height-260)+"px");
+		scrolledPanelContractSpecificData.setHeight((height-260)+"px");
 		
 		tabLayOutPanel.selectTab(0, false);
 		tabLayOutPanel.setAnimationDuration(1000);
@@ -650,6 +656,21 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	@UiHandler("listEmployees")
 	void onListButtonClick(ClickEvent clickEvent) {
 		onListShow(true);
+	}
+	
+	@UiHandler("deleteContract")
+	void onDeleteContractButtonClick(ClickEvent clickEvent) {
+		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF") + "Realmente desea eliminar este contrato?") {
+			@Override
+			protected void onAccept() {
+				contrataEmployeeObject.deleteContract(s -> {
+					onListShow(true);
+				}, f-> {});
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
 	}
 	
 	protected abstract void onListShow(boolean reloadEmployees);
@@ -767,6 +788,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		footTabPanel.clear();
 		splitLayoutPanel.setWidgetSize(footPanel, 25);
 		
+		title.setText(employeeContractInfo.getEmployeeInfo().getFullName());
+		
 		this.contrataEmployeeObject.getAgreements(
 				r -> {
 					contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
@@ -876,7 +899,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		ContractInfo contractData = contrataEmployeeObject.getContractData();
 		
 		employee.document.setValue(employeeData.getDocument());
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), employee.document);
+		String document_type = checkDocumentType(employeeData.getDocument());
+		employee.document_type.setText(document_type);
 		
 		employee.nationality.setValue(employeeData.getNationality());
 		

@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
@@ -296,6 +297,23 @@ public class ContrataEmployeeObject {
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void deleteContract(Consumer<Void> success, Consumer<Throwable> failure) {
+		Employee employeeAux = new Employee();
+		employeeAux.setId(getContractData().getContractId());
+		employeesService.moveContractId(employeeAux, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
 			}
 		});
 	}
