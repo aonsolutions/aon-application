@@ -2,8 +2,6 @@
 .classpath
 .settings
 logEmployee.txt
-DuplicadoTA.pdf
-InfoCotizacion.pdf
-ObligationAwarenessCertificate.pdf
+*.pdf
 /target/
 /bin/
