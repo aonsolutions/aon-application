@@ -9,8 +9,8 @@ public interface SaltraService {
 	public static enum Parameter {
 		ID, 
 		CIF,
-		NIF,
-//		NAF,
+//		NIF,
+		NAF,
 		CCC,
 		DATE,
 		FILE, 

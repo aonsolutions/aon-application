@@ -220,6 +220,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 //	
 //	EmployeeStatus unregister(String domain, Integer contractId);
 	
+	String getEmployeeTa(String domain, String user, Integer contractId, Date date);
+
 	String getEmployeeIdc(String domain, String user, Integer contractId, Date date);
 	
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);

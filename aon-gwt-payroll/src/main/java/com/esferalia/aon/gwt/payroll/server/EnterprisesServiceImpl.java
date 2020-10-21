@@ -5,17 +5,15 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.ENTERPRISE;
 import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY;
 import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -77,11 +75,13 @@ import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
-import com.esferalia.aon.gwt.payroll.shared.SaltraCredentialsNotFoundException;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.MailAccount;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -108,9 +108,9 @@ import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-import solutions.aon.saltra.api.ForbiddenException;
-import solutions.aon.saltra.api.Saltra;
-import solutions.aon.saltra.api.SaltraException;
+import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.exceptions.ForbiddenException;
+import solutions.aon.seg.social.exceptions.SegSocialException;
 
 /**
  * The server side implementation of the RPC service.
@@ -2146,22 +2146,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public EnterpriseStatus getEnterpriseStatus(String domainName, String userLogin, Integer enterpriseId) {
-		try(Connection connection = AonServletUtils.getConnection(domainName);
-			Saltra saltra = EmployeesServiceHelper.getSaltra(connection, domainName, userLogin)) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			
-			try {
-				// Hack for skip Saltr@ TypeError: null is not an object (evaluating 'datos')
-				saltra
-				.getNaf("0000", "0000000000", "000000000", "------", "-----");
-			} catch ( ForbiddenException e) {
-				throw e;
-			} catch ( Throwable e ) {
-				;
-			}
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId );
 			
 			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
 			.filter(e -> e.getId().equals(enterpriseId))
@@ -2172,25 +2164,25 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			List<Integer> cccIds = cccs.stream().map( ccc-> ccc.getId() ).collect(Collectors.toList());
 			
 			Date today = new Date(System.currentTimeMillis()); //TODO:  TimeoOne ????
-			List<Employee> employees = getCCCEmployees(connection, today, cccIds);
-			employees.forEach(e -> System.out.println(e.getName() + " : " + e.getStartDate() + "..." + e.getEndDate() ));
+			List<Employee> aonEmployees = getCCCEmployees(connection, today, cccIds);
+			aonEmployees.forEach(e -> System.out.println(e.getName() + " : " + e.getStartDate() + "..." + e.getEndDate() ));
 
 			AndEnterpriseStatus enterpriseStatus = new AndEnterpriseStatus();
 			
 			for ( CCC ccc: cccs ) {
+				Collection<solutions.aon.seg.social.Employee> ssEmployees = 
+				SistemaRED.getEmployees(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				
-				org.json.JSONObject active = saltra.getActiveEmployees(ccc.getRegime(), ccc.getCode());
-				org.json.JSONArray empleados = active.getJSONArray(Saltra.EMPLEADOS);
-				for ( int i = 0; i< empleados.length(); i++ ) {
-					org.json.JSONObject empleado = empleados.getJSONObject(i);
+				for ( solutions.aon.seg.social.Employee ssEmployee :  ssEmployees) {
 					
-					String dni = empleado.getString(Saltra.DNI);
-					String naf = empleado.getString(Saltra.NAF);
-					String fecha = empleado.getString(Saltra.FECHA_REAL);
-					java.util.Date date = new SimpleDateFormat("dd-MM-yyyy").parse(fecha);
-					String name = empleado.getString(Saltra.NOMBRES);
 					
-					List<Employee> found  = employees.stream()
+					String dni = ssEmployee.getIpf();
+					String naf = ssEmployee.getNss();
+					java.util.Date date = ssEmployee.getFra();
+					String name = ssEmployee.getName().orElse(null); // TODO
+					
+					
+					List<Employee> found  = aonEmployees.stream()
 					.filter(e -> equalsIgnoreCase(e.getDocument(), dni) || equalsIgnoreCase(e.getSocialSecurity(), naf))
 					.collect(Collectors.toList());
 					
@@ -2233,9 +2225,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 		} catch ( ForbiddenException e) {
 			return new EnterpriseStatus.Forbidden();
-		} catch ( SaltraCredentialsNotFoundException e) {
+		} catch ( CertificateNotFoundException e) {
 			return new EnterpriseStatus.CredentialsNotFound();
-		} catch (  ParseException | IOException | SQLException  | SaltraException e ) {
+		} catch (  SQLException | SegSocialException e ) {
 			throw new RuntimeException(e);
 		} 
 	}

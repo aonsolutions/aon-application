@@ -163,7 +163,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	@UiField
 	Hidden cccHidden;
 	@UiField
-	Hidden nifHidden;
+	Hidden nafHidden;
 	@UiField
 	Hidden dateHidden;
 	@UiField
@@ -514,7 +514,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	protected void newEmployee(AffiliatedNotFound affiliatedNotFound) {
 		
 		cccHidden.setValue(affiliatedNotFound.getCcc());
-		nifHidden.setValue(affiliatedNotFound.getDni());
+		nafHidden.setValue(affiliatedNotFound.getNaf());
 		regimeHidden.setValue(affiliatedNotFound.getRegime());
 		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedNotFound.getDate()) );
 		
@@ -529,7 +529,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	protected void restoreEmployee(AffiliatedAtTrash affiliatedAtTrash) {
 		idHidden.setValue(affiliatedAtTrash.getId().toString());
 		cccHidden.setValue(affiliatedAtTrash.getCcc());
-		nifHidden.setValue(affiliatedAtTrash.getDni());
+		nafHidden.setValue(affiliatedAtTrash.getNaf());
 		regimeHidden.setValue(affiliatedAtTrash.getRegime());
 		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedAtTrash.getDate()) );
 		

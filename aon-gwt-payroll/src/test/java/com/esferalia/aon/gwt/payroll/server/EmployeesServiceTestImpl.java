@@ -695,6 +695,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String getEmployeeTa(String domain, String user, Integer contractId, Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public String getEmployeeIdc(String domain, String user,Integer contractId, Date date) {

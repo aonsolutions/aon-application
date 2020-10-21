@@ -470,6 +470,11 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.generateCertifaca2(getCurrentDomainName(), salaryDraft, callback);
 	}
 	
+	public void getEmployeeTa(Integer contractId, Date date, AsyncCallback<String> callback) {
+		employeesServiceAsync.getEmployeeTa(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
+
+	}
+	
 	public void getEmployeeIdc(Integer contractId, Date date, AsyncCallback<String> callback) {
 		employeesServiceAsync.getEmployeeIdc(getCurrentDomainName(), getCurrentUser(), contractId, date, callback);;
 

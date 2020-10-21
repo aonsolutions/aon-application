@@ -22,6 +22,8 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -265,6 +267,19 @@ public class SecurityImpl implements ISecurity {
 	public Stream<Module> getDomainModules(AONContext ctx) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getDomainModules(ctx));
+	}
+	
+	@Override
+	public Certificate getCertificate(AONContext ctx, UserFilter userFilter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SecurityDAO.getCertificate(ctx, userFilter))
+		.orElseThrow(CertificateNotFoundException::new);
+	}
+	
+	@Override
+	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter, Certificate certificate) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> SecurityDAO.insertCertificate(ctx, userFilter, certificate));
 	}
 
 }

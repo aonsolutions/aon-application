@@ -1,6 +1,7 @@
 package solutions.aon.seg.social;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class Employee {
 
@@ -63,6 +64,56 @@ public class Employee {
 		if(profesCat != null)		visitor.visitProfesCat(profesCat);
 		if(reducingCoefic != null)	visitor.visitReducingcoefic(reducingCoefic);
 	
+	}
+	
+	
+	public String getIpf() {
+		return ipf;
+	}
+	
+	public String getNss() {
+		return nss;
+	}
+	
+	public Date getFra() {
+		return fra;
+	}
+	
+	public Optional<String> getName() {
+		return Optional.ofNullable(name);
+	}
+	
+	public Optional<String> getGc() {
+		return Optional.ofNullable(gc);
+	}
+	
+	public Optional<Date> getFrb() {
+		return Optional.ofNullable(frb);
+	}
+	
+	public Optional<String>  getCtaCti() {
+		return Optional.ofNullable(ctaCti);
+	}
+	
+	public Optional<String> getContract(){
+		return Optional.ofNullable(contract);
+	}
+	
+	public Optional<Date> getBirthDate() {
+		return Optional.ofNullable(birthDate);
+	}
+
+	public Optional<Double> getCoef() {
+		try {
+			return Optional.of(Double.parseDouble(coef));
+		} catch ( Exception e) {
+			return Optional.empty();
+		}
+	}
+	
+	
+	public Optional<String> getSex() {
+		return Optional.of(sex);
 	}
 	
 	//TO_DO Generate getters y toString
@@ -485,6 +536,115 @@ public class Employee {
 		void visitProfesCat(String profesCat);
 		void visitReducingcoefic(String reducingCoefic);	
 	}
+	
+	public static abstract class AbstractVisitor implements Visitor {
+
+		@Override
+		public void visitNSS(String nss) {
+		}
+
+		@Override
+		public void visitName(String name) {
+		}
+
+		@Override
+		public void visitBirthDate(Date birthDate) {
+		}
+
+		@Override
+		public void visitIpf(String ipf) {
+		}
+
+		@Override
+		public void visitSex(String sex) {
+		}
+
+		@Override
+		public void visitTlf(String tlf) {
+		}
+
+		@Override
+		public void visitCtaCti(String ctaCti) {
+		}
+
+		@Override
+		public void visitRegime(String regime) {
+		}
+
+		@Override
+		public void visitCompanyId(String companyId) {
+		}
+
+		@Override
+		public void visitCompanyName(String companyName) {
+		}
+
+		@Override
+		public void visitSituation(String situaction) {
+		}
+
+		@Override
+		public void visitGc(String gc) {
+		}
+
+		@Override
+		public void visitAgricultPromo(Boolean agriculturePromo) {
+		}
+
+		@Override
+		public void visitWorkTimeReduct(Boolean workTimeReduct) {
+		}
+
+		@Override
+		public void visitrFra(Date fra) {
+		}
+
+		@Override
+		public void visitrFea(Date fea) {
+		}
+
+		@Override
+		public void visitrFrb(Date frb) {
+		}
+
+		@Override
+		public void visitrFeb(Date feb) {
+		}
+
+		@Override
+		public void visitContract(String contract) {
+		}
+
+		@Override
+		public void visitCoef(String coef) {
+		}
+
+		@Override
+		public void visitColec(String colec) {
+		}
+
+		@Override
+		public void visitEpig(String epig) {
+		}
+
+		@Override
+		public void visitOcup(String ocup) {
+		}
+
+		@Override
+		public void visitVinFam(String vimFam) {
+		}
+
+		@Override
+		public void visitProfesCat(String profesCat) {
+		}
+
+		@Override
+		public void visitReducingcoefic(String reducingCoefic) {
+		}
+		
+	}
+	
 }
 
 

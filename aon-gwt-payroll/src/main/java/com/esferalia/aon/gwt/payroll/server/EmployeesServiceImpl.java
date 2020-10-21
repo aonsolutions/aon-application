@@ -7,7 +7,6 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoComm
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
 import static com.esferalia.aon.gwt.payroll.server.EnterprisesServiceImpl.getSSRegime;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
@@ -63,7 +62,6 @@ import javax.servlet.annotation.WebServlet;
 import org.apache.commons.lang.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.SortField;
 import org.mvel2.CompileException;
 import org.mvel2.ast.Function;
@@ -159,7 +157,6 @@ import com.esferalia.aon.gwt.payroll.sql.SQLEvents;
 import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
-import com.esferalia.aon.jooq.tables.EnterpriseCcc;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -245,7 +242,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import solutions.aon.saltra.api.SaltraException;
+import solutions.aon.seg.social.exceptions.SegSocialException;
 
 /**
  * The server side implementation of the RPC service.
@@ -5098,15 +5095,15 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 
 	
 	@Override
-	public String getEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date) {
+	public String getEmployeeTa(String domainName, String userLogin, Integer contractId, Date date) {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
 			String base64Pdf =
-//			EmployeesServiceHelper.getSaltra(connection, userLogin ).getIDC(naf, regime, ccc, startDate)
-			EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, contractId)
+			EmployeesServiceHelper.getTA(connection, domainName, domainId, userLogin, userId, contractId)
 			;
 			
 			Writer stringWriter = new StringWriter();
@@ -5117,7 +5114,32 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			stringWriter.close();
 			
 			return dataUri;
-		} catch (SQLException | IOException | SaltraException e) {
+		} catch (SQLException | IOException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public String getEmployeeIdc(String domainName, String userLogin, Integer contractId, Date date) {
+		
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);			
+			String base64Pdf =
+			EmployeesServiceHelper.getIDC(connection, domainName, domainId, userLogin, userId, contractId)
+			;
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+			
+			stringWriter.flush();		
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+			
+			return dataUri;
+		} catch (SQLException | IOException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -5126,9 +5148,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	public EmployeeStatus getEmployeeStatus(String domainName, String userLogin, Integer contractId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)){
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			return EmployeesServiceHelper.getStatus(connection, domainName, domainId, userLogin, contractId);			
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			return EmployeesServiceHelper.getStatus(connection, domainName, domainId, userLogin, userId, contractId);			
 		} 
-		catch (SQLException | IOException | SaltraException e) {
+		catch (SQLException | IOException | SegSocialException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

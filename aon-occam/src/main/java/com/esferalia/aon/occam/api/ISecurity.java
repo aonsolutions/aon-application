@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -84,4 +85,10 @@ public interface ISecurity {
 	
 	// DOMAIN MODULES
 	public Stream<com.esferalia.aon.occam.api.model.Module> getDomainModules(AONContext ctx);
+	
+	
+	// CERTIFICATE
+	public Certificate getCertificate(AONContext ctx, UserFilter userFilter ) ; 
+	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ; 
+	
 }

@@ -61,7 +61,10 @@
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 								<g:Button ui:field='idcButton'
-									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Informe de Cotizaci&oacute;n (IDC)"
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Informe de Cotizaci&oacute;n IDC"
+									enabled="true" />
+								<g:Button ui:field='taButton'
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Duplicados de Documentos TA"
 									enabled="true" />
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">

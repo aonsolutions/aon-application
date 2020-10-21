@@ -187,6 +187,7 @@ import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.Target;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
@@ -506,6 +507,30 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, login);
 			return getSecurity().deleteScope(ctx, scopeId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	
+	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().getCertificate(ctx, p -> p.getIdProperty().eq(userId));
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+
+	public static Certificate insertCertificate(String domainName, Integer domainId, String login, Integer userId, Certificate certificate) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domainId, login);
+			return getSecurity().insertCertificate(ctx, p -> p.getIdProperty().eq(userId), certificate);
 		} finally {
 			if (ctx != null)
 				ctx.close();

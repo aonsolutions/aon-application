@@ -684,8 +684,11 @@ public class EmployeeDraft extends Composite {
 	DeckPanel deckPanel;
 
 	@UiField
-	Button idcButton;
+	Button taButton;
 	
+	@UiField
+	Button idcButton;
+
 	@UiField
 	Button closePdfButton;
 	
@@ -795,6 +798,11 @@ public class EmployeeDraft extends Composite {
 		showEmployee();
 	}
 	
+	@UiHandler("taButton")
+	void onTaButtonClick(ClickEvent event) {
+		showTa();
+	}
+
 	@UiHandler("idcButton")
 	void onIdcButtonClick(ClickEvent event) {
 		showIdc();
@@ -1015,6 +1023,14 @@ public class EmployeeDraft extends Composite {
 	}
 		
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
+	
+	public void setTaVisible(boolean visible ) {
+		taButton.setVisible(visible);
+	}
+
+	public void setIdcVisible(boolean visible ) {
+		idcButton.setVisible(visible);
+	}
 
 	public void setEmployeeDraftObject(EmployeeDraftObject employeeDraftObject) {
 		showEmployee();
@@ -1588,6 +1604,19 @@ public class EmployeeDraft extends Composite {
 		onSaved.accept(employeeDraftObject.getEmployeeContractInfo());
 	}
 	
+	private void showTa() {
+
+		employeeDraftObject.downloadTa(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+
 	private void showIdc() {
 
 		employeeDraftObject.downloadIdc(
@@ -1606,6 +1635,7 @@ public class EmployeeDraft extends Composite {
 		afiButton.setVisible(false);
 		peculiaritiesButton.setVisible(false);
 		bonificationsButton.setVisible(false);
+		taButton.setVisible(false);
 		idcButton.setVisible(false);
 		undoButton.setVisible(false);
 		redoButton.setVisible(false);
@@ -1622,10 +1652,10 @@ public class EmployeeDraft extends Composite {
 		afiButton.setVisible(true);
 		peculiaritiesButton.setVisible(true);
 		bonificationsButton.setVisible(true);
-		idcButton.setVisible(true);
 		undoButton.setVisible(true);
 		redoButton.setVisible(true);
 		undoAllButton.setVisible(true);
+		taButton.setVisible(true);
 		idcButton.setVisible(true);
 		zoomListBox.setVisible(false);
 		closePdfButton.setVisible(false);

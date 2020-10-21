@@ -15,6 +15,9 @@ import static com.esferalia.aon.jooq.tables.DomainApplicationModule.DOMAIN_APPLI
 import static com.esferalia.aon.jooq.tables.MailAccount.MAIL_ACCOUNT;
 import static com.esferalia.aon.jooq.tables.Profile.PROFILE;
 import static com.esferalia.aon.jooq.tables.ProfileRole.PROFILE_ROLE;
+import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
+import static com.esferalia.aon.jooq.tables.Rattach.RATTACH;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Role.ROLE;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Signature.SIGNATURE;
@@ -24,26 +27,31 @@ import static com.esferalia.aon.jooq.tables.UserAppRole.USER_APP_ROLE;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.UserWorkgroup.USER_WORKGROUP;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType.DIGITAL_CERTIFICATE;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record6;
 import org.jooq.Record8;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.extension.DSLExtensions;
 import com.esferalia.aon.jooq.tables.records.ContactRecord;
 import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
+import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -66,12 +74,16 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
+import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DomainAppPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
@@ -84,6 +96,7 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
+	private static final String DIGITAL_CERTIFICATE_PASSWORD = "DIGITAL_CERTIFICATE_PASSWORD";
 	private static final UserPropertiesDAO USER_PROPERTIES = new UserPropertiesDAO();
 	private static final UserScopePropertiesDAO USER_SCOPE_PROPERTIES = new UserScopePropertiesDAO();
 	private static final UserWorkgroupPropertiesDAO USER_WORKGROUP_PROPERTIES = new UserWorkgroupPropertiesDAO();
@@ -934,6 +947,103 @@ public class SecurityDAO {
 		return ctx.getDslContext().select().from(DOMAIN_APPLICATION_MODULE)
 				.where(DOMAIN_APPLICATION_MODULE.DOMAIN.eq(ctx.getDomainId())).fetchInto(DOMAIN_APPLICATION_MODULE)
 				.stream().map(r -> Module.safeValueOf(r.getValue(DOMAIN_APPLICATION_MODULE.MODULE).intValue()));
+	}
+	
+	public static Optional<Certificate> getCertificate(AONContext aonContext, UserFilter userFilter ) {
+		return getCertificate(aonContext.getDslContext(), userFilter);
+	}
+	
+	
+	public static Optional<Certificate> getCertificate(DSLContext dslContext, UserFilter userFilter ) {
+		
+		SelectOnConditionStep<Record> select = 
+		dslContext
+		.select()
+		.from(USER)
+		.innerJoin(REGISTRY).onKey()
+		.innerJoin(RATTACH).on(REGISTRY.ID.eq(RATTACH.REGISTRY), RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()) )
+		.innerJoin(RADDINFO).on(REGISTRY.ID.eq(RADDINFO.REGISTRY), RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
+		;
+				
+		return 
+		USER_PROPERTIES
+		.build(select, userFilter)
+		.fetchOptional()
+		.map(r -> new Certificate()
+		.setType(MimeType.PKCS12.name())
+		.setPassword(r.get(RADDINFO.VALUE))
+		.setCertificate(r.get(RATTACH.DATA))
+		)
+		;
+	}
+	
+	public static Certificate insertCertificate(AONContext aonContext, UserFilter userFilter, Certificate certificate ) {
+		return insertCertificate(aonContext.getDslContext(), userFilter, certificate);
+	}
+	
+	public static Certificate insertCertificate(DSLContext dslContext, UserFilter userFilter, Certificate certificate ) {
+		UserRecord user = USER_PROPERTIES
+		.build(
+		dslContext
+		.select()
+		.from(USER)
+		, userFilter )
+		.fetchOneInto(USER)
+		;	
+		
+		if ( user.getRegistry() == null ) {
+			Integer registryId = 
+			dslContext
+			.insertInto(REGISTRY)
+			.set(REGISTRY.TYPE, (byte) 0)	
+			.set(REGISTRY.NAME, user.getName())	
+			.set(REGISTRY.DOMAIN, user.getDomain())
+			.returning(REGISTRY.ID)
+			.fetchOne()
+			.getId()
+			;
+			user.setRegistry(registryId);
+			user.update(USER.REGISTRY);
+		} else {		
+			dslContext
+			.delete(RADDINFO)
+			.where(RADDINFO.REGISTRY.eq(user.getRegistry()))
+			.and(RADDINFO.ATTRIBUTE.eq(DIGITAL_CERTIFICATE_PASSWORD))
+			.execute()
+			;
+			dslContext
+			.delete(RATTACH)
+			.where(RATTACH.REGISTRY.eq(user.getRegistry()))
+			.and(RATTACH.TYPE.eq(DIGITAL_CERTIFICATE.value()))
+			.execute()
+			;
+		}
+		
+		dslContext
+		.insertInto(RADDINFO)
+		.set(RADDINFO.DOMAIN, user.getDomain())
+		.set(RADDINFO.REGISTRY, user.getRegistry())
+		.set(RADDINFO.ATTRIBUTE, DIGITAL_CERTIFICATE_PASSWORD)
+		.set(RADDINFO.VALUE, certificate.getPassword())
+		.set(RADDINFO.VALUE_DATE, DSL.currentDate() )
+		.execute()
+		;
+
+		dslContext
+		.insertInto(RATTACH)
+		.set(RATTACH.DOMAIN, user.getDomain())
+		.set(RATTACH.REGISTRY, user.getRegistry())
+		.set(RATTACH.TYPE, DIGITAL_CERTIFICATE.value())
+		.set(RATTACH.MIMETYPE, MimeType.PKCS12.value())
+		.set(RATTACH.ATTACH_DATE, DSL.currentDate())
+		.set(RATTACH.DATA, certificate.getCertificate())
+		.set(RATTACH.CREATION_USER, user.getLogin())
+		.set(RATTACH.CREATION_DATE, DSL.currentTimestamp())
+		.set(RATTACH.MODIFICATION_DATE, DSL.currentTimestamp())
+		.execute()
+		;
+		
+		return certificate;
 	}
 	
 }

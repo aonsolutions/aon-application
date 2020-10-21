@@ -2721,16 +2721,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						selectResultsPanel();
 						ifSaltraEnabled(employeeStatus, () -> {
 							showFootPanel();
-							getEmployeeDraft().idcButton.setVisible(true);
+							getEmployeeDraft().setTaVisible(true);
+							getEmployeeDraft().setIdcVisible(true);
 							getEmployeeDraft().setOnSaved(e -> run());
 						}, () -> {
 							closeFootPanel();
-							getEmployeeDraft().idcButton.setVisible(false);
+							getEmployeeDraft().setTaVisible(false);
+							getEmployeeDraft().setIdcVisible(false);
 
 						});
 					}, throwable -> {
 						closeFootPanel();
-						getEmployeeDraft().idcButton.setVisible(false);
+						getEmployeeDraft().setTaVisible(false);
+						getEmployeeDraft().setIdcVisible(false);
 					});
 				}
 			};
@@ -2741,16 +2744,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 			ifSaltraEnabled(employeeStatus, () -> {
 				showFootPanel();
-				getEmployeeDraft().idcButton.setVisible(true);
+				getEmployeeDraft().setTaVisible(true);
+				getEmployeeDraft().setIdcVisible(true);
 				getEmployeeDraft().setOnSaved(e -> saltraResults.run());
 			}, () -> {
 				closeFootPanel();
-				getEmployeeDraft().idcButton.setVisible(false);
+				getEmployeeDraft().setTaVisible(false);
+				getEmployeeDraft().setIdcVisible(false);
 			});
 
 		}, throwable -> {
 			closeFootPanel();
-			getEmployeeDraft().idcButton.setVisible(false);
+			getEmployeeDraft().setTaVisible(false);
+			getEmployeeDraft().setIdcVisible(false);
 
 		});
 	}

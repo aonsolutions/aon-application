@@ -6,6 +6,7 @@ import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
+
 public enum MimeType implements Serializable {
 
     JPEG ("image/jpeg", "jpg", "image/pjpeg" ),
@@ -43,9 +44,10 @@ public enum MimeType implements Serializable {
     OCTECT_STREAM ("application/octet-stream",""),
     XSIG ("text/xml", "xsig"),
     SIGNED_FACTURAE ("text/xml", "xml"),
-    JSON("application/json","js")
+    JSON("application/json","js"),
+    PKCS12("application/x-pkcs12","p12"),
+    JKS("application/x-java-keystore","jks")
     ;
-    
     
 	private String name;
 	private String[] aliases;

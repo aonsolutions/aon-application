@@ -434,6 +434,12 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 	
 	@Override
+	public void getEmployeeTa(String domain, String user, Integer contractId, Date date,
+			AsyncCallback<String> callback) {
+		failure(callback);		
+	}
+	
+	@Override
 	public void getEmployeeIdc(String domain, String user, Integer contractId, Date date,
 			AsyncCallback<String> callback) {
 		failure(callback);		

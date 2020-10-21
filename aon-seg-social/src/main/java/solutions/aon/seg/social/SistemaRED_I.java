@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -17,6 +17,7 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
 import solutions.aon.seg.social.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -178,7 +179,7 @@ public class SistemaRED_I {
 	}
 	
 	public static byte[] getContributionInformation (final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException, InterruptedException {
+			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException {
 		
 		return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
 	}
@@ -186,13 +187,13 @@ public class SistemaRED_I {
 	
 	
 	public static byte[] getTADuplicate (final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException, InterruptedException {
+			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException {
 		
 		return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
 	}
 
 	public static byte[] getPdfInfo (final String href, final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime, final String contributionAccount, final Date fecha) throws SegSocialException, InterruptedException {
+			final String certificateType, final String affiliationNumber, final String regime, final String contributionAccount, final Date fecha) throws SegSocialException {
 		
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType);) {
 			
@@ -207,8 +208,8 @@ public class SistemaRED_I {
 				}catch (ElementNotFoundException enfe){
 					jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
 				}
-			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,2)[0]);
-			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(affiliationNumber,2)[1]);
+			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(contributionAccount,2)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(contributionAccount,2)[1]);
 			GregorianCalendar calendar=new GregorianCalendar();
 			calendar.setTime(fecha);
 			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute(""+calendar.get(Calendar.DAY_OF_MONTH));

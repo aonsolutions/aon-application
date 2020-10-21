@@ -1,19 +1,18 @@
 	package solutions.aon.seg.social;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-	import java.io.InputStream;
-	import java.net.MalformedURLException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
-	import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
@@ -97,7 +96,7 @@ public class SistemaRedEmployee {
 			HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(_htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 
 			buscaPartesForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0,2));
-			buscaPartesForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(3));
+			buscaPartesForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
 			buscaPartesForm.getInputByName("btn_Sub2207601004").focus();
 			_htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 			
@@ -246,16 +245,16 @@ public class SistemaRedEmployee {
 				
 				for(ArrayList<String> empdata : data) {
 					String nss = empdata.get(0);
-					if(nss != null) nss = Toolkit.removeExtraZeros(nss.replace(" ", ""));
+					if(nss != null) nss = nss.replace(" ", "");
 					String name = empdata.get(1);
-					Date birthDate = Toolkit.parseDate(empdata.get(2), "dd-MM-yyyy");
+					Date fra = Toolkit.parseDate(empdata.get(2), "dd-MM-yyyy");
 					String situation = empdata.get(3);
 					String ipf = empdata.get(4);
 					if(ipf != null) ipf = Toolkit.removeExtraZeros(ipf.replace(" ", ""));
 					
 					Employee employee = builder.setNss(nss)
 					.setName(name)
-					.setBirthDate(birthDate)
+					.setFra(fra)
 					.setSituation(situation)
 					.setIpf(ipf)
 					.build();
@@ -301,14 +300,10 @@ public class SistemaRedEmployee {
 		public static void main(String[] args)
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-				File f = new File("logEmployee.txt");
-				FileWriter fw = new FileWriter(f);
 //				Employee e = getEmployee(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062", "010019805355");
 				
 				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
-				for(Employee e : employees) fw.append(e.toString());
-				fw.close();
-;				
+				for(Employee e : employees) System.out.println(e.toString());				
 			}
 		}
 	}

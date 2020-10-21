@@ -51,7 +51,7 @@
  						<g:Hidden ui:field="idHidden" name="{ID.name}" />
  						<g:Hidden ui:field="regimeHidden" name="{REGIME.name}" />
 						<g:Hidden ui:field="cccHidden" name="{CCC.name}" />
-						<g:Hidden ui:field="nifHidden" name="{NIF.name}" />
+						<g:Hidden ui:field="nafHidden" name="{NAF.name}" />
 						<g:Hidden ui:field="dateHidden" name="{DATE.name}" />
 						<g:Hidden ui:field="userHidden" name="{USER.name}" />
 						<g:Hidden ui:field="domainHidden" name="{DOMAIN.name}" />

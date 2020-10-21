@@ -228,7 +228,7 @@
 
 		<dependency>
 			<groupId>solutions.aon</groupId>
-			<artifactId>aon.saltra.api</artifactId>
+			<artifactId>aon.seg.social</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -364,6 +364,8 @@
 	      <version>${project.version}</version>
 	      <scope>test</scope>
 	    </dependency>
+	    
+	    
   </dependencies>
   <profiles>
     <profile>

@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,23 +19,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.jooq.Record;
-import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
-import com.esferalia.aon.gwt.payroll.jooq.JooqSaltra;
-import com.esferalia.aon.gwt.payroll.jooq.JooqSaltra.SaltraCredentials;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.SaltraService;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
-import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import solutions.aon.saltra.api.Saltra;
-import solutions.aon.saltra.api.SaltraException;
+import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.exceptions.SegSocialException;
 
 
 @MultipartConfig
@@ -72,37 +70,46 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 				break;
 			}
 
-		} catch ( SaltraException | SQLException e) {
+		} catch ( SegSocialException | SQLException e) {
 			throw new ServletException(e);
 		}
 	}
 	
 	
-	private void doCertificatePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SaltraException, SQLException {
+	
+	private void doCertificatePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
 		Part filePart = req.getPart(Parameter.FILE.name());
 		String password = req.getParameter(Parameter.PASSWORD.name());
 		String userLogin = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
 		
 		try ( InputStream is = filePart.getInputStream();
-			Saltra saltra = new Saltra(getSaltraURL());
 			Connection connection = getConnection(req);
 			OutputStream os = resp.getOutputStream()){
-			saltra.login(getSaltraEmail(), getSaltraPassword());
-			JSONObject jsonObject = saltra.saveCertificado(CIF, password, is);
-			String certKey = jsonObject.getString(Saltra.CERT_KEY);
-			String certSecret = jsonObject.getString(Saltra.CERT_SECRET);
-			JooqSaltra.setCredentials(connection, domainName, userLogin, certKey, certSecret);
+			
+			
+			
+			Certificate certificate =
+			new Certificate()
+			.setPassword(password)
+			.setCertificate(readAllBytes(is))
+			.setType(MimeType.PKCS12.getName());
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			AON.insertCertificate(domainName, domainId, userLogin, userId, certificate);
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
-			byte content [] = jsonObject.toString().getBytes();
+			byte content [] = String.format("{}").getBytes();
 			resp.setContentLength(content.length);
 			os.write(content);			
 		}
 		
 	}
-	
-	private void doEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SaltraException, SQLException {
+
+	private void doEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SegSocialException, SQLException {
 		String id = req.getParameter(Parameter.ID.name());
 		if ( AonStringUtils.isBlank(id)) {
 			doNewEmployeePost(req, resp);
@@ -111,76 +118,51 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 		}
 	}
 	
-	private void doNewEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SaltraException, SQLException {
+	private void doNewEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SegSocialException, SQLException {
 		String userLogin = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
-		Integer domainId = AonServletUtils.getDomainID(domainName);
 		
 		
 		try (Connection connection = getConnection(req);
 			OutputStream os = resp.getOutputStream();){	
 			
-			SaltraCredentials credentials = JooqSaltra.getCredentials(connection, domainName, userLogin);
-			Saltra saltra = new Saltra(getSaltraURL(), credentials.getCertKey(), credentials.getCertSecret());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
 			String regime = req.getParameter(Parameter.REGIME.name());
 			String ccc = req.getParameter(Parameter.CCC.name());
-			String nif = req.getParameter(Parameter.NIF.name());
+			String naf = req.getParameter(Parameter.NAF.name());
 			String date = req.getParameter(Parameter.DATE.name());
-			JSONObject statusJSONObject = saltra.getStatus(regime, ccc, nif, date);
-			
-			//			{
-			//				 "fecha_alta_create": "2013-09-04",
-			//				 "identificacion": "1",
-			//				 "tlf": "",
-			//				 "situacion": "01",
-			//				 "fecha_baja_create": "-  -  ",
-			//				 "situacion_text": "ALTA NORMAL"
-			//				}
-			String naf = statusJSONObject.getString(Saltra.NAF1)+ statusJSONObject.getString(Saltra.NAF2);			
-			ccc = statusJSONObject.getString(Saltra.CCC1) + statusJSONObject.getString(Saltra.CCC2);								
-			Date startDate = AonDateUtils.parse(statusJSONObject.getString(Saltra.FECHA_ALTA), "yyyy-MM-dd");
 
-			Employee employee = new Employee()
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			solutions.aon.seg.social.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			
+			String nss = ssEmployee.getNss();			
+			Date startDate = ssEmployee.getFra();
+			ccc = ssEmployee.getCtaCti().orElse(ccc);								
+
+			Employee aonEmployee = new Employee()
 			.setNaf(naf)
 			.setCcc(ccc)
+			.setRegime(regime)
 			.setStartDate(startDate)
-			.setDni(statusJSONObject.getString(Saltra.DNI))
-			.setRegime(statusJSONObject.getString(Saltra.REGIMEN))
-			.setQuoteGroup(statusJSONObject.getString(Saltra.GRUPO_COTIZACION));
+			.setDni(ssEmployee.getIpf())
+			;
+
+			ssEmployee.getGc().ifPresent( gc -> aonEmployee.setQuoteGroup(gc));
+			ssEmployee.getName().ifPresent( name -> aonEmployee.setName(name));
+			aonEmployee.setContractType(ssEmployee.getContract().orElse("000"));
+			ssEmployee.getFrb().ifPresent( endDate -> aonEmployee.setEndDate(endDate));
+			ssEmployee.getCoef().ifPresent( coef -> aonEmployee.setFactor(coef));
+			ssEmployee.getBirthDate().ifPresent( birthDate -> aonEmployee.setBirthDate(birthDate));
+			ssEmployee.getSex().ifPresent( sex -> aonEmployee.setSex(sex));
 			
-			String contractType = statusJSONObject.getString(Saltra.TIPO_CONTRATO);
-			employee.setContractType(AonStringUtils.defaultIfBlank(contractType, "000"));
-
-			String name = statusJSONObject.getString(Saltra.NOMBRES);
-			employee.setName(AonStringUtils.defaultIfBlank(name, null));
-							
-			try {
-				employee.setEndDate(AonDateUtils.parse(statusJSONObject.getString(Saltra.FECHA_BAJA), "yyyy-MM-dd"));
-			} catch ( Exception e ) {
-				
-			}
+			//String category = statusJSONObject.getString(Saltra.GRUPO_COTIZACION_TEXT);
+			//aonEmployee.setCategory(AonStringUtils.defaultIfBlank(category, null));
 			
-			try {
-				employee.setFactor(statusJSONObject.getDouble(Saltra.COEF));
-			} catch ( Exception e ) {
-			}
-
-			try {
-				int day = Integer.parseInt(statusJSONObject.getString(Saltra.DNACIMIENTO));
-				int year = Integer.parseInt(statusJSONObject.getString(Saltra.ANACIMIENTO));
-				int month = Integer.parseInt(statusJSONObject.getString(Saltra.MNACIMIENTO));
-				employee.setBirthDate(AonDateUtils.getDate(year, month, day));
-			} catch ( Exception e ) {
-			}
-
-			String sexo = statusJSONObject.getString(Saltra.SEXO);
-			employee.setSex(AonStringUtils.defaultIfBlank(sexo, null));
-
-			String category = statusJSONObject.getString(Saltra.GRUPO_COTIZACION_TEXT);
-			employee.setCategory(AonStringUtils.defaultIfBlank(category, null));
-			
-			employee = PAYROLL.addEmployee(domainName, domainId, userLogin, employee);
+			Employee employee = PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
 
 			resp.setStatus(HttpServletResponse.SC_OK);
 			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
@@ -192,7 +174,7 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 		
 	}	
 	
-	private void doRestoreEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SaltraException, SQLException {
+	private void doRestoreEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
 		Connection connection = null;
 		
 		
@@ -224,20 +206,7 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 		}
 	}
 
-	private void doRegister(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SaltraException, SQLException {
-		String userLogin = req.getParameter(Parameter.USER.name());
-		String domainName = req.getParameter(Parameter.DOMAIN.name());
-		
-		Saltra saltra = new Saltra(getSaltraURL());
-		Connection connection = getConnection(req);
-		try (OutputStream os = resp.getOutputStream()){			
-//			resp.setStatus(HttpServletResponse.SC_OK);
-//			byte content [] = jsonObject.toString().getBytes();
-//			resp.setContentLength(content.length);
-//			os.write(content);		
-		}
-		
-	}	
+
 	
 	protected String getDomain(HttpServletRequest req) {
 		return req.getServerName();
@@ -248,19 +217,18 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 		return AonServletUtils.getConnection(domain);
 	}
 	
-	
-	protected String getSaltraEmail() {
-		return "cliente@cliente.es";
+	private byte []  readAllBytes ( InputStream is ) throws IOException {
+		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+		    int nRead;
+		    byte[] data = new byte[1024];
+		    while ((nRead = is.read(data, 0, data.length)) != -1) {
+		        buffer.write(data, 0, nRead);
+		    }
+		 
+		    buffer.flush();
+		    return buffer.toByteArray();
+		}
 	}
-	
-	protected String getSaltraPassword() {
-		return "qwerty";
-	}
-
-	protected  String getSaltraURL()  {
-		return "http://saltra.aon.solutions/api/v1";
-	}
-	
 
 
 	
