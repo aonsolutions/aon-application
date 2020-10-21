@@ -30,6 +30,19 @@ import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class SistemaREDITParts {
+	
+	//GET ITs
+	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String ccc, Date from, Date to)throws SegSocialException{
+		
+		ArrayList<It> its = new ArrayList<It>();
+		ArrayList<ITPart>  itParts = (ArrayList<ITPart>) getFullItParts(certificateInputStream, certificatePassword, certificateType, regime, ccc, from, to);
+		
+		
+		
+		return its;
+	}
+	
 
 	//HANDLE GETFULLITPARTS EXCEPTIONS
 	public static Collection<ITPart> getFullItParts(final InputStream certificateInputStream, final String certificatePassword,
