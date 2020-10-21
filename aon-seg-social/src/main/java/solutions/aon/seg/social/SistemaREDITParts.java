@@ -57,9 +57,9 @@ public class SistemaREDITParts {
 			
 			
 			ArrayList<ITPart> itParts = new ArrayList<ITPart>();
-			Date Last = null;
+			Boolean last = false;
 			
-			while(!from.equals(to)) {
+			while(!last) {
 				HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
 				HtmlPage htmlPage = HtmlUnitToolkit.wait4(origen, p -> p.getAnchorByHref("https://w2.seg-social.es/isincaA/inicio.do")).orElseThrow().click();
 				htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
@@ -117,10 +117,12 @@ public class SistemaREDITParts {
 					.setCanceled(cancelled)
 					.setWrong(wrong)
 					.build();
-					itParts.add(part);
+					
+					if(itParts.contains(part)) last = true;
+					else itParts.add(part);
 				}
 				
-				//to = itParts.get(itParts.size()-1).get
+				to = itParts.get(itParts.size()-1).getReceptionDate();
 			}
 			return itParts;
 			

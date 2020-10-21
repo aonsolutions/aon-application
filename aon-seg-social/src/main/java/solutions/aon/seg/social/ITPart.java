@@ -42,6 +42,10 @@ public class ITPart {
 		void visitWrong(Boolean wrong);
 	}
 	
+	public Date getReceptionDate() {
+		return receptionDate;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -99,6 +103,78 @@ public class ITPart {
 	
 	
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((canceled == null) ? 0 : canceled.hashCode());
+		result = prime * result + ((naf == null) ? 0 : naf.hashCode());
+		result = prime * result + ((partDate == null) ? 0 : partDate.hashCode());
+		result = prime * result + ((partNum == null) ? 0 : partNum.hashCode());
+		result = prime * result + ((partType == null) ? 0 : partType.hashCode());
+		result = prime * result + ((receptionDate == null) ? 0 : receptionDate.hashCode());
+		result = prime * result + ((workLeaveDate == null) ? 0 : workLeaveDate.hashCode());
+		result = prime * result + ((workRestartDate == null) ? 0 : workRestartDate.hashCode());
+		result = prime * result + ((wrong == null) ? 0 : wrong.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ITPart other = (ITPart) obj;
+		if (canceled == null) {
+			if (other.canceled != null)
+				return false;
+		} else if (!canceled.equals(other.canceled))
+			return false;
+		if (naf == null) {
+			if (other.naf != null)
+				return false;
+		} else if (!naf.equals(other.naf))
+			return false;
+		if (partDate == null) {
+			if (other.partDate != null)
+				return false;
+		} else if (!partDate.equals(other.partDate))
+			return false;
+		if (partNum == null) {
+			if (other.partNum != null)
+				return false;
+		} else if (!partNum.equals(other.partNum))
+			return false;
+		if (partType == null) {
+			if (other.partType != null)
+				return false;
+		} else if (!partType.equals(other.partType))
+			return false;
+		if (receptionDate == null) {
+			if (other.receptionDate != null)
+				return false;
+		} else if (!receptionDate.equals(other.receptionDate))
+			return false;
+		if (workLeaveDate == null) {
+			if (other.workLeaveDate != null)
+				return false;
+		} else if (!workLeaveDate.equals(other.workLeaveDate))
+			return false;
+		if (workRestartDate == null) {
+			if (other.workRestartDate != null)
+				return false;
+		} else if (!workRestartDate.equals(other.workRestartDate))
+			return false;
+		if (wrong == null) {
+			if (other.wrong != null)
+				return false;
+		} else if (!wrong.equals(other.wrong))
+			return false;
+		return true;
+	}
+
 	public static class ITPartBuilder {
 		
 		private Date receptionDate;
