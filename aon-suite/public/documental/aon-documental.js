@@ -13,7 +13,7 @@ const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
 export const CARPETA_A_CONTABILIZAR = 5;
 const CARPETA_CONTABILIZADOS = 14;
 
-export const bidoq = (additionalData) => {
+export const bidoq = async (additionalData) => {
     // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
     const data = Object.assign({
         "device_info": "phone",
@@ -51,24 +51,26 @@ class AonDocumental extends HTMLElement {
         this.build();
     }
 
-    build() {
-        this.getFolders((folders) => {
-            let aonDocumental = document.getElementById('aonDocumental');
+    async build() {
+        let aonDocumental = document.getElementById('aonDocumental');
 
-            aonDocumental.dataset['folders'] = JSON.stringify(folders);
+        const folders = await this.getFolders();
+        aonDocumental.dataset['folders'] = JSON.stringify(folders);
 
-            aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-                const contentIframe = document.querySelector('iframe');
-    
-                contentIframe.contentWindow.document.getElementById('upload').click();
-            });
+        const tags = await this.getTags();
+        aonDocumental.dataset['tags'] = JSON.stringify(tags);
 
-            this.addDocumentOptions(aonDocumental);
+        aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+            const contentIframe = document.querySelector('iframe');
 
-            this.addCategoryOptions(aonDocumental, folders);
-
-            this.loadIndex();
+            contentIframe.contentWindow.document.getElementById('upload').click();
         });
+
+        this.addDocumentOptions(aonDocumental);
+
+        this.addCategoryOptions(aonDocumental, folders);
+
+        this.loadIndex();
     }
 
     loadIndex(folder = CARPETA_A_CONTABILIZAR) {
@@ -85,20 +87,42 @@ class AonDocumental extends HTMLElement {
         aonDocumental.setContentHTML('<iframe src="./index.html?folder=' + folder + '" style="width:100%;height:100%;border:none;"></iframe>');
     }
 
-    getFolders(callback) {
-        bidoq({
-            "method": "carpetas"
-        }).then((data) => {
+    async getFolders() {
+        try {
+            const data = await bidoq({
+                "method": "carpetas"
+            });
             const folders = JSON.parse(data).datos;
 
-            if (typeof folders !== 'undefined') {
-                callback(folders);
-            } else {
-                console.error('Ocurrió un error al intentar obtener las carpetas');
-            }
-        }).catch(function(error) {
+            return new Promise((resolve, reject) => {
+                if (typeof folders !== 'undefined') {
+                    resolve(folders);
+                } else {
+                    reject('Ocurrió un error al intentar obtener las carpetas');
+                }
+            });
+        } catch (error) {
             console.error('Ocurrió un error: ' + error.message);
-        });
+        }
+    }
+
+    async getTags() {
+        try {
+            const data = await bidoq({
+                "method": "tags"
+            });
+            const tags = JSON.parse(data).datos;
+
+            return new Promise((resolve, reject) => {
+                if (typeof tags !== 'undefined') {
+                    resolve(tags);
+                } else {
+                    reject('Ocurrió un error al intentar obtener los tags');
+                }
+            });
+        } catch (error) {
+            console.error('Ocurrió un error: ' + error.message);
+        }
     }
 
     addDocumentOptions(aonDocumental) {
