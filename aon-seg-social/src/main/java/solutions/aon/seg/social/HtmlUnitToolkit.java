@@ -55,6 +55,9 @@ public class HtmlUnitToolkit {
 	public static Integer getSSCode(HtmlPage htmlPage) throws SegSocialException {
 		try {
 			String status=HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
+			status=Toolkit.removeNBSP(status).replace(" ", "");
+			if((status.length()>0)&&(status.charAt(0)=='*'))
+				status=status.substring(1);
 			if(status.equals("")){
 				return 3083;
 			}

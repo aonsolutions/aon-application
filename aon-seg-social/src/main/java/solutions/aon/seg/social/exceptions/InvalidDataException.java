@@ -3,6 +3,7 @@ package solutions.aon.seg.social.exceptions;
 public class InvalidDataException extends SegSocialException{
 	public static void checkCode(Integer statusCode) throws SegSocialException {
 		switch (statusCode) {
+		case 221:
 		case 3083:
 		case 3252:
 			break;	

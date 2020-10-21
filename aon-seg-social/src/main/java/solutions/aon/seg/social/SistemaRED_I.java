@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -17,7 +17,6 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import solutions.aon.seg.social.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -131,6 +130,7 @@ public class SistemaRED_I {
 			jacadaform = htmlPage.getFormByName("jacadaform");
 			
 			htmlPage=jacadaform.getInputByValue("Datos Iden.").click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("SDFLOCALIDAD4"));
 			
 			seb1.setAnagrama(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFANAGR3"))
@@ -180,25 +180,32 @@ public class SistemaRED_I {
 	
 	public static byte[] getContributionInformation (final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException {
-		
-		return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+		try {
+			return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+		}catch (InterruptedException ie) {
+			throw new SegSocialException();
+		}
 	}
 	
 	
 	
 	public static byte[] getTADuplicate (final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String affiliationNumber, String regime, String contributionAccount,Date fecha) throws SegSocialException {
-		
-		return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+		try {
+			return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+		}catch (InterruptedException ie) {
+			throw new SegSocialException();
+		}
 	}
 
 	public static byte[] getPdfInfo (final String href, final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String affiliationNumber, final String regime, final String contributionAccount, final Date fecha) throws SegSocialException {
+			final String certificateType, final String affiliationNumber, final String regime, final String contributionAccount, final Date fecha) throws SegSocialException, InterruptedException {
 		
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType);) {
 			
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
 			htmlPage=htmlPage.getAnchorByHref(href).click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
 			//Filling the fields
 			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber,2)[0]);
@@ -220,13 +227,13 @@ public class SistemaRED_I {
 			for(DomElement de : it) {
 				if(de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
 					htmlPage=de.click();
+					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					break;
 				}
 			}
-			
 			htmlPage=jacadaform.getInputByValue("Continuar").click();
-			
-			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			//REVISAR SPLIT
 			//Obtaining the first table registry's label to double-click on it so that it loads the pdf
 			List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
 			InputStream is=labels.get(0).dblClick().getWebResponse().getContentAsStream();
@@ -252,6 +259,7 @@ public class SistemaRED_I {
 			
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuDEUDA.html");
 			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=RCR92&E=I&AP=DEUR").click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
 			//Inputting contribution account and regime
 			jacadaform.getInputByName("txt_SDFWMIDENT").setValueAttribute(contributionAccount);
@@ -261,11 +269,13 @@ public class SistemaRED_I {
 			for(DomElement option:itOptions) {
 				if(option.getTextContent().equalsIgnoreCase("OnLine")) {
 					htmlPage=option.click();
+					HtmlUnitToolkit.manageStatusCode(htmlPage);
 					break;
 				}
 			}
 			//Doing click, first on Continuar button and, then, on confirm button
 			htmlPage=jacadaform.getInputByValue("Continuar").click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			InputStream is=htmlPage.getElementById("Sub2204801005_7").click().getWebResponse().getContentAsStream();
 			byte[] ret=is.readAllBytes();
 			is.close();
@@ -286,10 +296,10 @@ public class SistemaRED_I {
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, ParseException, SegSocialException {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "011", "01105360062"));
+			System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062"));
 
 		}
-		/*try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			byte[] pdf=getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111", "01105360062", d);
 			System.out.println(pdf.length+" Bytes downloaded");
@@ -305,7 +315,7 @@ public class SistemaRED_I {
 			byte[] pdf=getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
 			System.out.println(pdf.length+" Bytes downloaded");
 			Toolkit.buildPdf(pdf, "ObligationAwarenessCertificate");
-		}*/
+		}
 		
 	}
 	

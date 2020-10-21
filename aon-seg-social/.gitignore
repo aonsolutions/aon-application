@@ -1,5 +1,9 @@
 .project
 .classpath
 .settings
+logEmployee.txt
+DuplicadoTA.pdf
+InfoCotizacion.pdf
+ObligationAwarenessCertificate.pdf
 /target/
 /bin/
