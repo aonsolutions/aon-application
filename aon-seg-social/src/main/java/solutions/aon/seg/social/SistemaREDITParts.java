@@ -57,41 +57,40 @@ public class SistemaREDITParts {
 			
 			
 			ArrayList<ITPart> itParts = new ArrayList<ITPart>();
-			HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
-			HtmlPage htmlPage = HtmlUnitToolkit.wait4(origen, p -> p.getAnchorByHref("https://w2.seg-social.es/isincaA/inicio.do")).orElseThrow().click();
-			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
+			Date Last = null;
 			
-			HtmlForm formularioPartes = htmlPage.getFormByName("BuscaPartesForm");
-			formularioPartes.getInputByName("regimen").setValueAttribute(regime);
-			htmlPage.getElementById("ccc1").setAttribute("value", ccc.substring(0,2));
-			formularioPartes.getInputByName("ccc2").setValueAttribute(ccc.substring(2));
-			
-			Integer[] fromArray = Toolkit.getDateArray(from);
-			Integer[] toArray = Toolkit.getDateArray(to);
-			
-			formularioPartes.getInputByName("fechaDesde_dd").setValueAttribute(fromArray[0].toString());
-			formularioPartes.getInputByName("fechaDesde_mm").setValueAttribute(fromArray[1].toString());
-			formularioPartes.getInputByName("fechaDesde_aa").setValueAttribute(fromArray[2].toString());
-			
-			formularioPartes.getInputByName("fechaHasta_dd").setValueAttribute(toArray[0].toString());
-			formularioPartes.getInputByName("fechaHasta_mm").setValueAttribute(toArray[1].toString());
-			formularioPartes.getInputByName("fechaHasta_aa").setValueAttribute(toArray[2].toString());
-			
-			HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
-			htmlPage = show.click();
-
-			HtmlAnchor next = htmlPage.getAnchorByText("(2) Siguiente >>");
-			ITPartBuilder builder = new ITPartBuilder();
-			String format = "dd/MM/yyyy";
-			
-			
-			while(next != null) {
+			while(!from.equals(to)) {
+				HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
+				HtmlPage htmlPage = HtmlUnitToolkit.wait4(origen, p -> p.getAnchorByHref("https://w2.seg-social.es/isincaA/inicio.do")).orElseThrow().click();
+				htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
 				
+				HtmlForm formularioPartes = htmlPage.getFormByName("BuscaPartesForm");
+				formularioPartes.getInputByName("regimen").setValueAttribute(regime);
+				htmlPage.getElementById("ccc1").setAttribute("value", ccc.substring(0,2));
+				formularioPartes.getInputByName("ccc2").setValueAttribute(ccc.substring(2));
+				
+				Integer[] fromArray = Toolkit.getDateArray(from);
+				Integer[] toArray = Toolkit.getDateArray(to);
+				
+				formularioPartes.getInputByName("fechaDesde_dd").setValueAttribute(fromArray[0].toString());
+				formularioPartes.getInputByName("fechaDesde_mm").setValueAttribute(fromArray[1].toString());
+				formularioPartes.getInputByName("fechaDesde_aa").setValueAttribute(fromArray[2].toString());
+				
+				formularioPartes.getInputByName("fechaHasta_dd").setValueAttribute(toArray[0].toString());
+				formularioPartes.getInputByName("fechaHasta_mm").setValueAttribute(toArray[1].toString());
+				formularioPartes.getInputByName("fechaHasta_aa").setValueAttribute(toArray[2].toString());
+				
+				HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
+				htmlPage = show.click();
+	
+				ITPartBuilder builder = new ITPartBuilder();
+				String format = "dd/MM/yyyy";
+					
 				DomNodeList<DomNode> rows = htmlPage.querySelectorAll(".resultados>tbody>tr");
 				for (DomNode row : rows) {
 					ArrayList<String> data = new ArrayList<String>(); 
 					Iterable<DomNode> cells = row.getChildren();	
-					
+						
 					for(DomNode cell : cells) 				
 						data.add(cell.getVisibleText().trim());
 					
@@ -121,17 +120,10 @@ public class SistemaREDITParts {
 					itParts.add(part);
 				}
 				
-				try {
-					htmlPage = next.click();	
-					System.out.println(htmlPage.asText());
-					next = htmlPage.getAnchorByText("(2) Siguiente >>");
-					
-				}
-				catch (ElementNotFoundException e) {next = null;}
+				//to = itParts.get(itParts.size()-1).get
 			}
-			
-			
 			return itParts;
+			
 		}		
 	}
 	

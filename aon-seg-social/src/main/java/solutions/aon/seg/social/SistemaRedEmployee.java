@@ -90,15 +90,17 @@ public class SistemaRedEmployee {
 		}
 		
 		//CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIES
-		private static Employee employeeFullInfo(String nss ,WebClient webClient) throws IOException, InterruptedException {
+		private static Employee employeeFullInfo(String nss ,WebClient webClient) throws IOException, InterruptedException, SegSocialException {
 			
 			HtmlPage _htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
 			HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(_htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			HtmlUnitToolkit.manageStatusCode(_htmlPage);
 
 			buscaPartesForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0,2));
 			buscaPartesForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
 			buscaPartesForm.getInputByName("btn_Sub2207601004").focus();
 			_htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
+			HtmlUnitToolkit.manageStatusCode(_htmlPage);
 			
 			String ipf = _htmlPage.getElementById("SDFTIPIPF").getTextContent() +  _htmlPage.getElementById("SDFNUMIPF").getTextContent();
 			String birthDateStr = _htmlPage.getElementById("SDFDIANAC").getTextContent() + "-" 
@@ -290,7 +292,7 @@ public class SistemaRedEmployee {
 		
 		//RETURNS AN EMPLOYEE
 		private static Employee getEmployeeImpl(InputStream certificateInputStream, String certificatePassword,
-				String certificateType, String nss) throws IOException, InterruptedException {
+				String certificateType, String nss) throws IOException, InterruptedException, SegSocialException {
 			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 				webClient.getOptions().setJavaScriptEnabled(false);
 				return employeeFullInfo(nss, webClient);
