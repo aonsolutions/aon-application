@@ -230,7 +230,7 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	HashMap<String,LinkedList<InvoiceImportClass>> ivs = new HashMap<String, LinkedList<InvoiceImportClass>>();
 	HashMap<String,LinkedList<RegistryImportClass>> rvs = new HashMap<String, LinkedList<RegistryImportClass>>();
 	HashMap<String,LinkedList<AccountEntryImportClass>> dvs = new HashMap<String, LinkedList<AccountEntryImportClass>>();
-	HashMap<String,LinkedList<AccountImportClass>> accounts;
+	HashMap<String,LinkedList<AccountImportClass>> accounts = new HashMap<String, LinkedList<AccountImportClass>>();
 	HashMap<String, DeliveryInfo> di;
 	LinkedList<String> verror;
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
