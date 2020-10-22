@@ -123,6 +123,13 @@
 		cursor: pointer;
 	}
 
+	.aonMobileLogo {
+		position: absolute;
+		margin-left: 15%;
+		top: 15px;
+		cursor: pointer;
+	}
+
 	.aonParentLogo {
 	  position: absolute;
 	  left: 140px;
@@ -287,6 +294,17 @@
 		right: 0;
 		background-color: #fff;
 		border-left: 1px solid #ddd;
+		overflow-x: hidden;
+		z-index: 2;
+	}
+
+	.aonMobileMenuSidenav {
+		height: 40px;
+		width: 100%;
+		position: absolute;
+		bottom: 0px;
+		background-color: #fff;
+		border-top: 1px solid #ddd;
 		overflow-x: hidden;
 		z-index: 2;
 	}

@@ -1,6 +1,7 @@
 import {isMobile} from  '../../services/utils.js';
 
 import './aon-invoice.js';
+import './aon-invoice-mobile.js';
 import './aon-invoice-list.js';
 
 

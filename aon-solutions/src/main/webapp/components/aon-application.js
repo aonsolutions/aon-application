@@ -1,3 +1,5 @@
+import {isMobile} from '../../services/utils.js';
+
 import './aon-toolbar.js';
 import './aon-icon.js';
 
@@ -68,10 +70,10 @@ class AonApplication extends HTMLElement {
     toolbar.toogleSidenav(() => this.toogleSidenav());
 
     let sidenav = document.getElementById(this.getId() + 'Sidenav');
-    sidenav.style.width = '250px';
+    sidenav.style.width = isMobile() ? '0px' : '250px';
 
     let content = document.getElementById(this.getId() + 'Content');
-		content.style.marginLeft = "250px";
+		content.style.marginLeft = isMobile() ? '0px' : "250px";
 
 		if(this.hasAttribute('main')) {
 			toolbar.style.display = 'none';
@@ -93,6 +95,13 @@ class AonApplication extends HTMLElement {
 			content.style.marginLeft = "250px";
 		}
   }
+
+	closeSidenav() {
+		let sidenav = document.getElementById(this.getId() + 'Sidenav');
+		let content = document.getElementById(this.getId() + 'Content');
+		sidenav.style.width = "0px";
+		content.style.marginLeft = "0px";
+	}
 
   addSidenavOptions(title, options) {
 		if(options && options.length > 0) {

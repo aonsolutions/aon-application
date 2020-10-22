@@ -99,7 +99,6 @@ import './aon-icon-button.js';
 			let span = document.createElement('span');
 			span.innerHTML= button;
 
-			let aonMenu = document.getElementById('aonMenu');
 			let toolSection = document.getElementById(this.getId() + 'aonToolbarToolSection');
 			toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
 			if(toolSection.children.length > 0) {

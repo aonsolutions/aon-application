@@ -1,7 +1,6 @@
 import {isMobile} from  '../../services/utils.js';
 import {closeSession, getUserAppRole, getCompanies} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
-
 import './aon-desktop.js';
 
 class AonParent extends HTMLElement {
@@ -17,55 +16,59 @@ class AonParent extends HTMLElement {
 		this.innerHTML = `
 			<aon-application id="aonParentMain" title="Parent" main="true"></aon-application>
 		`;
+
 		let aonParent = document.getElementById('aonParentMain');
+		if(isMobile()){
+			aonParent.closeSidenav();
+		} else {
+			let filterOptions = [
+				{
+					name: 'Activas',
+					icon: 'domain',
+					fn: () => {}
+				},
+				{
+					name: 'Inactivas',
+					icon: 'domain_disabled',
+					fn: () => {}
+				},
+				{
+					name: 'Compartidas',
+					icon: 'share',
+					fn: () => {}
+				},
+				{
+					name: 'Entorno',
+					icon: 'apartment',
+					fn: () => {}
+				}
+			];
+			aonParent.addSidenavOptions('FILTROS', filterOptions);
 
-		let filterOptions = [
-			{
-				name: 'Activas',
-				icon: 'domain',
-				fn: () => {}
-			},
-			{
-				name: 'Inactivas',
-				icon: 'domain_disabled',
-				fn: () => {}
-			},
-			{
-				name: 'Compartidas',
-				icon: 'share',
-				fn: () => {}
-			},
-			{
-				name: 'Entorno',
-				icon: 'apartment',
-				fn: () => {}
-			}
-		];
-		aonParent.addSidenavOptions('FILTROS', filterOptions);
-
-		let taskOptions = [
-			{
-				name: 'Facturas Pendientes',
-				icon: 'inbox',
-				fn: () => {}
-			},
-			{
-				name: 'Incidencias',
-				icon: 'report',
-				fn: () => {}
-			},
-			{
-				name: 'Notificaciones',
-				icon: 'notifications',
-				fn: () => {}
-			},
-			{
-				name: 'Tickets',
-				icon: 'article',
-				fn: () => {}
-			}
-		];
-		aonParent.addSidenavOptions('TAREAS PENDIENTOS', taskOptions);
+			let taskOptions = [
+				{
+					name: 'Facturas Pendientes',
+					icon: 'inbox',
+					fn: () => {}
+				},
+				{
+					name: 'Incidencias',
+					icon: 'report',
+					fn: () => {}
+				},
+				{
+					name: 'Notificaciones',
+					icon: 'notifications',
+					fn: () => {}
+				},
+				{
+					name: 'Tickets',
+					icon: 'article',
+					fn: () => {}
+				}
+			];
+			aonParent.addSidenavOptions('TAREAS PENDIENTOS', taskOptions);
+		}
 
 		this.init();
 	}
@@ -187,12 +190,15 @@ class AonParent extends HTMLElement {
 	companySelection(company) {
 		const BASE_ID = 'aonHeader';
 
-		let aonShowMenu = document.getElementById('aonShowMenu');
-		aonShowMenu.style.display = 'block';
-		let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
-		aonHeaderCompanyList.style.display = 'block';
+
 
 		if(!isMobile()){
+			let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
+			aonHeaderCompanyList.style.display = 'block';
+			
+			let aonShowMenu = document.getElementById('aonShowMenu');
+			aonShowMenu.style.display = 'block';
+
 			let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
 			aonHeaderHelp.style.display = 'block';
 
@@ -209,6 +215,9 @@ class AonParent extends HTMLElement {
 			aonHeaderCompanyName.innerHTML = company.name;
 
 			let aonLogo = document.getElementById('aonLogo');
+		} else {
+			let aonMobileMenu = document.getElementById('aonMobileMenu');
+			aonMobileMenu.open();
 		}
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
