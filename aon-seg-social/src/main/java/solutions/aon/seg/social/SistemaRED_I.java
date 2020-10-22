@@ -17,9 +17,13 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import solutions.aon.seg.social.SituacionEmpresa.SituacionEmpresaBuilder;
+
+import solutions.aon.seg.social.Toolkit.HtmlUnitToolkit;
+import solutions.aon.seg.social.Toolkit.Toolkit;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.objects.SituacionEmpresa;
+import solutions.aon.seg.social.objects.SituacionEmpresa.SituacionEmpresaBuilder;
 
 public class SistemaRED_I {
 	

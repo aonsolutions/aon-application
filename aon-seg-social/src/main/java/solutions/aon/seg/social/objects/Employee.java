@@ -1,4 +1,4 @@
-package solutions.aon.seg.social;
+package solutions.aon.seg.social.objects;
 
 import java.util.Date;
 import java.util.Optional;

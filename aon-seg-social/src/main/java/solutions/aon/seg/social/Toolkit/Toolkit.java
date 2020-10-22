@@ -1,4 +1,4 @@
-package solutions.aon.seg.social;
+package solutions.aon.seg.social.Toolkit;
 
 import java.io.File;
 import java.io.FileNotFoundException;

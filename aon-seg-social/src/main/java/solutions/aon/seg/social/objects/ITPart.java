@@ -1,8 +1,8 @@
-package solutions.aon.seg.social;
+package solutions.aon.seg.social.objects;
 
 import java.util.Date;
 
-import solutions.aon.seg.social.Employee.Visitor;
+import solutions.aon.seg.social.objects.Employee.Visitor;
 
 public class ITPart {
 

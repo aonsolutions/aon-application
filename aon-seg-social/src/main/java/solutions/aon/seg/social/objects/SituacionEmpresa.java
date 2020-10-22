@@ -1,6 +1,5 @@
-package solutions.aon.seg.social;
+package solutions.aon.seg.social.objects;
 
-import java.util.Collections;
 import java.util.Date;
 
 public class SituacionEmpresa {

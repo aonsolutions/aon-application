@@ -1,4 +1,4 @@
-package solutions.aon.seg.social;
+package solutions.aon.seg.social.Toolkit;
 
 import java.io.InputStream;
 import java.util.Optional;
@@ -17,7 +17,7 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 public class HtmlUnitToolkit {
 
 	//WAIT FOR A SPECIFIC HTML ELEMENT
-	static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function)
+	public static <HtmlPage, R> Optional<R> wait4(HtmlPage htmlPage, Function<HtmlPage, R> function)
 			throws InterruptedException {
 		// try 20 times to wait .5 second each for filling the page.
 		for (int i = 0; i < 20; i++) {
@@ -33,7 +33,7 @@ public class HtmlUnitToolkit {
 	}
 
 	//GET THE WEB CLIENT OF HTMLUNIT
-	static WebClient getWebClient(final InputStream certificateInputStream, final String certificatePassword,
+	public static WebClient getWebClient(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) {
 			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 			webClient.getOptions().setCssEnabled(false);

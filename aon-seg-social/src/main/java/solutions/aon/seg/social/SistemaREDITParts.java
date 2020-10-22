@@ -7,32 +7,28 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
-
-import javax.tools.Tool;
-
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLAnchorElement;
 
-import solutions.aon.seg.social.ITPart.ITPartBuilder;
-import solutions.aon.seg.social.It.ItBuilder;
+import solutions.aon.seg.social.Toolkit.HtmlUnitToolkit;
+import solutions.aon.seg.social.Toolkit.Toolkit;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.objects.ITPart;
+import solutions.aon.seg.social.objects.It;
+import solutions.aon.seg.social.objects.ItPartId;
+import solutions.aon.seg.social.objects.ITPart.ITPartBuilder;
+import solutions.aon.seg.social.objects.It.ItBuilder;
 
 public class SistemaREDITParts {
 	
