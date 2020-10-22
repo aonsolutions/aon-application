@@ -1,7 +1,9 @@
 package solutions.aon.seg.social;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -9,6 +11,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Set;
 
 import javax.tools.Tool;
 
@@ -26,6 +30,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLAnchorElement;
 
 import solutions.aon.seg.social.ITPart.ITPartBuilder;
+import solutions.aon.seg.social.It.ItBuilder;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
@@ -37,8 +42,38 @@ public class SistemaREDITParts {
 		
 		ArrayList<It> its = new ArrayList<It>();
 		ArrayList<ITPart>  itParts = (ArrayList<ITPart>) getFullItParts(certificateInputStream, certificatePassword, certificateType, regime, ccc, from, to);
+		HashMap<ItPartId, Collection<ITPart>> orderedItParts = new HashMap<ItPartId, Collection<ITPart>>();
 		
+		for (ITPart itp : itParts) {
+			ItPartId id = new ItPartId(itp.getWorkLeaveDate(), itp.getNaf());
+			if(orderedItParts.containsKey(id)) orderedItParts.get(id).add(itp);
+			else {
+				ArrayList<ITPart> list = new ArrayList<ITPart>();
+				list.add(itp);
+				orderedItParts.put(id, list);
+			}
+		}
 		
+		ItBuilder builder = new ItBuilder();
+		Set<ItPartId> partIds = orderedItParts.keySet(); 
+		for(ItPartId id :partIds) {
+			itParts  = (ArrayList<ITPart>) orderedItParts.get(id);
+			
+			ITPart end = null;
+			ITPart start = null;
+			ArrayList<ITPart> confirmations = new ArrayList<ITPart>();
+			
+			for(ITPart itp : itParts) {
+				if(itp.getPartType().toLowerCase().equals("alta")) end = itp;
+				if(itp.getPartType().toLowerCase().equals("baja")) start = itp;
+				if(itp.getPartType().toLowerCase().equals("confirmación")) confirmations.add(itp);
+			}
+			
+			its.add(builder.setStart(start)
+			.setConfirmations(confirmations)
+			.setEnd(end)
+			.build());
+		}
 		
 		return its;
 	}
@@ -144,12 +179,16 @@ public class SistemaREDITParts {
 	
 	public static void main(String[] args) {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			ArrayList<ITPart> parts = (ArrayList<ITPart>) getFullItParts(
+			ArrayList<It> its = (ArrayList<It>) getIts(
 					certificateInputStream,"jg@FNMT", "pkcs12", "0111", "01105360062", 
 					Toolkit.parseDate("1/1/2015", "dd/MM/yyyy"), Toolkit.parseDate("1/1/2020", "dd/MM/yyyy")			
 			);
 			
-			Toolkit.log(parts.toArray());
+			File f = new File("Log_Its.ak");
+			FileWriter fw = new FileWriter(f);
+			for(It it : its) fw.write(it.toString());
+			fw.close();
+				
 		} 
 		catch (SegSocialException e) {e.printStackTrace();} 
 		catch (FileNotFoundException e1) {e1.printStackTrace();} 

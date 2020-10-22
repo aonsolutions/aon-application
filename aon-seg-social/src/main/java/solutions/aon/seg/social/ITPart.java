@@ -42,9 +42,10 @@ public class ITPart {
 		void visitWrong(Boolean wrong);
 	}
 	
-	public Date getReceptionDate() {
-		return receptionDate;
-	}
+	public Date getReceptionDate() {return receptionDate;}
+	public String getNaf() {return naf;}
+	public Date getWorkLeaveDate() {return workLeaveDate;}
+	public String getPartType() {return partType;}
 	
 	@Override
 	public String toString() {
@@ -253,4 +254,6 @@ public class ITPart {
 		}
 		
 	}
+
 }
+

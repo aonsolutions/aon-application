@@ -5,3 +5,4 @@ logEmployee.txt
 *.pdf
 /target/
 /bin/
+*.ak

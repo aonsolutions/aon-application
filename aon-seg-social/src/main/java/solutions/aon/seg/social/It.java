@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import solutions.aon.seg.social.ITPart.Visitor;
 public class It {
 	private ITPart start;
 	private ITPart end;
-	private ITPart[] confirmations;
+	private ArrayList<ITPart> confirmations;
 	private It() {}
 	
 	public void accept(Visitor visitor) {
@@ -22,10 +23,9 @@ public class It {
 	public static interface Visitor{		
 		void visitStart(ITPart start);
 		void visitEnd(ITPart end);
-		void visitConfirmations(ITPart[] confirmations);
+		void visitConfirmations(ArrayList<ITPart> confirmations);
 	}
-	
-	
+		
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append('{');
@@ -42,7 +42,7 @@ public class It {
 			}
 			
 			@Override
-			public void visitConfirmations(ITPart[] confirmations) {
+			public void visitConfirmations(ArrayList<ITPart> confirmations) {
 				stringBuffer.append('[');
 					for(ITPart part : confirmations) 
 						if(part != null) 
@@ -59,21 +59,21 @@ public class It {
 				
 		private ITPart start;
 		private ITPart end;
-		private ITPart[] confirmations;
+		private ArrayList<ITPart> confirmations;
 		
 		private void ItBuilder() {}
 		
-		private ItBuilder setStart(ITPart start) {
+		public ItBuilder setStart(ITPart start) {
 			this.start = start;
 			return this;
 		}
 		
-		private ItBuilder setEnd(ITPart end) {
+		public ItBuilder setEnd(ITPart end) {
 			this.end = end;
 			return this;
 		}
 		
-		private ItBuilder setConfirmations(ITPart[] confirmations) {
+		public ItBuilder setConfirmations(ArrayList<ITPart> confirmations) {
 			this.confirmations = confirmations;
 			return this;
 		}
@@ -89,17 +89,4 @@ public class It {
 		}
 		
 	}
-	
-	
-	public static void main(String[] args) {
-		
-		ItBuilder itB = new ItBuilder();
-		It it = itB.setStart(null)
-				.setEnd(null)
-				.setConfirmations(new ITPart[]{null,null,null})
-				.build();
-		System.out.println(it);
-	}
-	
-
 }
