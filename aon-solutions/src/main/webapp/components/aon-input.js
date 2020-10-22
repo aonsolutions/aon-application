@@ -113,12 +113,9 @@ import {Countries} from '../services/country.js';
           }
 
           if('visible' === name){
-            if(!this.isVisible()){
-              this.style.width = '0px';
-              this.style.display = 'none !important';
-            } else {
-              this.style.width = null;
-              this.style.display = 'block';
+            let label = document.getElementById(this.getAttribute('id') + 'Label');
+            if(label) {
+              label.style.display = this.isVisible() ? 'block' : 'none';
             }
           }
 
@@ -188,11 +185,8 @@ import {Countries} from '../services/country.js';
     			// 	label.appendChild(icon);
           // }
 
-          if(!this.isVisible()){
-            this.style.width = '0px';
-            this.style.display = 'none !important';
-          }
-
+          label.style.display = this.isVisible() ? 'block' : 'none';
+          
           div.appendChild(label);
 
           if(this.isTypeList()) {

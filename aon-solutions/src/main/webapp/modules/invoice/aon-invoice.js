@@ -3,7 +3,8 @@ import {Paymethods} from '../../services/paymethod.js';
 import {TaxType, TaxIVAPercentage, TaxIRPFPercentage} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
 import {insertInvoice, deleteInvoices} from '../../services/service.js';
-import {clearElement} from '../../services/utils.js';
+import {clearElement, isNumber, round} from '../../services/utils.js';
+import {Invoice} from './Invoice.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
@@ -29,13 +30,13 @@ import '../../components/aon-viewer.js';
 	     this.setAttribute('type', type);
     }
 
-    get invoice() {
-   	  return JSON.parse(this.getAttribute('invoice'));
-   	}
+		get invoice() {
+			return JSON.parse(this.getAttribute('invoice'));
+		}
 
-	  set invoice(value) {
-	     this.setAttribute('invoice', JSON.stringify(value));
-    }
+		set invoice(value) {
+			 this.setAttribute('invoice', JSON.stringify(value));
+		}
 
     attributeChangedCallback(name, oldValue, newValue) {
       // TODO GUARDAR INVOICE...
@@ -43,24 +44,27 @@ import '../../components/aon-viewer.js';
 
     constructor () {
       super();
-
-      if(!this.hasAttribute('invoice')) {
-				let inv = this.newInvoice();
-				this.setAttribute('invoice', JSON.stringify(inv));
-				this._invoice = inv;
-			} else {
-				let inv = JSON.parse(this.getAttribute('invoice'));
-				this._invoice = inv;
+			this._invoice = new Invoice(this.getAttribute('type'));
+			if(this.hasAttribute('invoice')){
+				this.setInvoice(JSON.parse(this.getAttribute('invoice')));
 			}
     }
+
+		getInvoice() {
+			return this._invoice;
+		}
+
+		setInvoice(invoice) {
+			this._invoice.createInvoice(invoice);
+		}
 
 		connectedCallback () {
 			this.innerHTML = `
 				<div style="display:flex;">
 				<div id="aonInvoiceData">
 					<div id="aonInvoiceDiv" style="display:flex;">
-						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura"> </aon-card>
-						<div>
+						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%"> </aon-card>
+						<div style="width:50%">
 							<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
 							<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
 						</div>
@@ -497,15 +501,13 @@ import '../../components/aon-viewer.js';
 			addButton.addEventListener('click', () => this.addFinance());
 		}
 
-		save(invoice) {
-			insertInvoice(invoice ? invoice : this._invoice).then((r) => this._invoice.id = r.id);
+		save() {
+			insertInvoice(this.getInvoice()).then((r) => this.getInvoice().id = r.id);
 		}
 
 		update(param, value) {
-			if(!value) {
-				value = document.getElementById(param).value;
-			}
-			this._invoice[param] = value;
+			value = value || document.getElementById(param).value;
+			this.getInvoice()[param] = value;
 			this.save();
 		}
 
@@ -534,14 +536,14 @@ import '../../components/aon-viewer.js';
 				let tax = {
 					type: 'IVA',
 					percentage: 21.0,
-					base: this.round(Number(this._invoice.total) / 1.21),
-					quota: this.round(Number(this._invoice.total / 1.21) * 0.21)
+					base: round(Number(this._invoice.total) / 1.21),
+					quota: round(Number(this._invoice.total / 1.21) * 0.21)
 			 	};
 				this._invoice.taxes.push(tax);
 				this.printTax(tax, 0);
 			} else if(this._invoice.taxes.length === 1){
-				this._invoice.taxes[0].base = this.round(this._invoice.total / (1 + this._invoice.taxes[0].percentage / 100));
-				this._invoice.taxes[0].quota = this.round(this._invoice.total - this._invoice.taxes[0].base);
+				this._invoice.taxes[0].base = round(this._invoice.total / (1 + this._invoice.taxes[0].percentage / 100));
+				this._invoice.taxes[0].quota = round(this._invoice.total - this._invoice.taxes[0].base);
 				document.getElementById('taxBase0').value = this._invoice.taxes[0].base;
 				document.getElementById('taxQuota0').value = this._invoice.taxes[0].quota;
 			}
@@ -712,16 +714,16 @@ import '../../components/aon-viewer.js';
 		calculatePrice(index) {
 			 if (this._invoice.details[index].price && this._invoice.details[index].quantity) {
 					 let price = this._invoice.details[index].price;
-					 if (!this.isNumber(price)) {
+					 if (!isNumber(price)) {
 							 price = price.replace(' ', '').replace(',', '.');
 					 }
 					 let quantity = this._invoice.details[index].quantity;
-					 if (!this.isNumber(quantity)) {
+					 if (!isNumber(quantity)) {
 							 quantity = quantity.replace(' ', '').replace(',', '.');
 					 }
-					 let amount = this.round(Number(quantity) * Number(price));
+					 let amount = round(Number(quantity) * Number(price));
 					 amount = amount - amount * (this._invoice.details[index].discount / 100);
-					 this._invoice.details[index].amount = this.round(amount);
+					 this._invoice.details[index].amount = round(amount);
 					 document.getElementById('detailAmount' + index).value = this._invoice.details[index].amount;
 				}
 		}
@@ -812,7 +814,7 @@ import '../../components/aon-viewer.js';
 				value = document.getElementById('taxPercentage' + index).value;
 			}
 			this._invoice.taxes[index].percentage = Number(value);
-			this._invoice.taxes[index].quota = this.round(this._invoice.taxes[index].base / 100 * Number(value));
+			this._invoice.taxes[index].quota = round(this._invoice.taxes[index].base / 100 * Number(value));
 			document.getElementById('taxQuota' + index).value = this._invoice.taxes[index].quota;
 
 			this.updateTaxesTotal();
@@ -824,7 +826,7 @@ import '../../components/aon-viewer.js';
 				value = document.getElementById('taxBase' + index).value;
 			}
 			this._invoice.taxes[index].base = Number(value);
-			this._invoice.taxes[index].quota = this.round(Number(value) / 100 * this._invoice.taxes[index].percentage);
+			this._invoice.taxes[index].quota = round(Number(value) / 100 * this._invoice.taxes[index].percentage);
 			document.getElementById('taxQuota' + index).value = this._invoice.taxes[index].quota;
 			this.updateTaxesTotal();
 			this.save();
@@ -835,7 +837,7 @@ import '../../components/aon-viewer.js';
 				value = document.getElementById('taxQuota' + index).value;
 			}
 			this._invoice.taxes[index].quota = Number(value);
-			this._invoice.taxes[index].base = this.round((value * 100) / this._invoice.taxes[index].percentage);
+			this._invoice.taxes[index].base = round((value * 100) / this._invoice.taxes[index].percentage);
 			document.getElementById('taxBase' + index).value = this._invoice.taxes[index].base;
 
 			this.updateTaxesTotal();
@@ -889,7 +891,7 @@ import '../../components/aon-viewer.js';
 				let tax = this._invoice.taxes[i];
 				if(tax.type === 'IRPF') {
 					this._invoice.taxes[i].base = this.totalBaseIRPF();
-					this._invoice.taxes[i].quota = this.round(this._invoice.taxes[i].base / 100 * this._invoice.taxes[i].percentage);
+					this._invoice.taxes[i].quota = round(this._invoice.taxes[i].base / 100 * this._invoice.taxes[i].percentage);
 				}
 			}
 		}
@@ -907,7 +909,7 @@ import '../../components/aon-viewer.js';
 						type: 'IVA',
 						percentage: item.value,
 						base: base,
-						quota:  this.round(base / 100 * item.value)
+						quota:  round(base / 100 * item.value)
 					}
 					this._invoice.taxes.push(tax);
 				}
@@ -923,7 +925,7 @@ import '../../components/aon-viewer.js';
 		}
 
 		updateTaxesTotal() {
-			this._invoice.total = this.round(this.totalImpuestos() + this.totalSuplidos());
+			this._invoice.total = round(this.totalImpuestos() + this.totalSuplidos());
 			let total = document.getElementById('total');
 			total.value = this._invoice.total;
 			if(this._invoice.taxes.length > 1) {
@@ -1100,7 +1102,7 @@ import '../../components/aon-viewer.js';
 					total += this._invoice.details[i].amount;
 				}
 			}
-			return this.round(total);
+			return round(total);
 		}
 
 		totalImpuestos() {
@@ -1112,7 +1114,7 @@ import '../../components/aon-viewer.js';
 					 total -= this._invoice.taxes[i].quota;
 				 }
 			 }
-			 return this.round(total);
+			 return round(total);
 		}
 
 
@@ -1136,95 +1138,16 @@ import '../../components/aon-viewer.js';
 			return total;
 		}
 
-		// UTILS
-
-		isNumber(n) {
-			return !isNaN(parseFloat(n)) && isFinite(n);
-		}
-
-		round(value) {
-			return this.decimalAdjust('round', value, -2);
-		}
-
-		decimalAdjust(type, value, exp) {
-			// Si el exp no está definido o es cero...
-			if (typeof exp === 'undefined' || +exp === 0) {
-				return Math[type](value);
-			}
-			value = +value;
-			exp = +exp;
-			// Si el valor no es un número o el exp no es un entero...
-			if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
-				return NaN;
-			}
-			// Shift
-			value = value.toString().split('e');
-			value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
-			// Shift back
-			value = value.toString().split('e');
-			return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
-		}
-
 		isEmitida() {
-			return this._invoice.type === 'Emitida';
-		}
-
-		newInvoice() {
-			var d = new Date();
-			var month = d.getMonth() + 1;
-			var day = d.getDate();
-			let curDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
-			let inv = {
-				type: this.getAttribute('type')|| 'emitida',
-				serie: '',
-				number: 0,
-				reference: '',
-				date: curDate,
-				total: 0,
-				sender: {
-					document: '',
-					name: '',
-					address: {
-						country: 'ES',
-						address: '',
-						zip: '',
-						city: '',
-						province: ''
-					}
-				},
-				receiver: {
-					document: '',
-					name: '',
-					address: {
-						country: 'ES',
-						address: '',
-						zip: '',
-						city: '',
-						province: ''
-					}
-				},
-				category: '',
-				transaction: 'NAC',
-				taxes: [],
-				details: [],
-				finances: [],
-				irpf: undefined,
-				suplidos: false,
-				totalSuplidos: 0
-			};
-			return inv;
-		}
-
-		isEmitida() {
-			return this.hasAttribute('type') && 'emitida' === this.getAttribute('type');
+			return this.getInvoice().isEmitida();
 		}
 
 		isRecibida() {
-			return this.hasAttribute('type') && 'recibida' === this.getAttribute('type');
+			return this.getInvoice().isRecibida();
 		}
 
 		isTicket() {
-			return this.hasAttribute('type') && 'ticket' === this.getAttribute('type');
+			return this.getInvoice().isTicket();
 		}
 	}
 
