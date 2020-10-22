@@ -27,6 +27,8 @@ public class InvalidDataException extends SegSocialException{
 			throw new NoQueryData();
 		case 3823:
 			throw new invalidCccException();
+		case 3037:
+			throw new NoMoreDataException();
 		default:
 			throw new InvalidDataException();
 		}
