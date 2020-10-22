@@ -2547,8 +2547,11 @@ public class Bases {
 			List<ContextData> hourDatas = salary.getContextData(var.getName(),
 					date, date);
 
-			for (ContextData hourData : hourDatas)
-				hours += MVEL.eval(hourData.getExpression(), Double.class);
+			for (ContextData hourData : hourDatas) {
+				if ( AonStringUtils.isNotBlank(hourData.getExpression())) {
+					hours += MVEL.eval(hourData.getExpression(), Double.class);
+				}
+			}
 
 			calendar.add(Calendar.DAY_OF_MONTH, 1);
 			date = calendar.getTime();
