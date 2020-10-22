@@ -21,9 +21,6 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.javascript.NamedNodeMap;
-
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.NoMoreDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
