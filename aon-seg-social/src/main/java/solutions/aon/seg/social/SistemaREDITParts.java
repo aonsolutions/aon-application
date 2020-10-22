@@ -20,8 +20,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import solutions.aon.seg.social.Toolkit.HtmlUnitToolkit;
-import solutions.aon.seg.social.Toolkit.Toolkit;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.objects.ITPart;
@@ -29,6 +27,8 @@ import solutions.aon.seg.social.objects.It;
 import solutions.aon.seg.social.objects.ItPartId;
 import solutions.aon.seg.social.objects.ITPart.ITPartBuilder;
 import solutions.aon.seg.social.objects.It.ItBuilder;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
+import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class SistemaREDITParts {
 	
