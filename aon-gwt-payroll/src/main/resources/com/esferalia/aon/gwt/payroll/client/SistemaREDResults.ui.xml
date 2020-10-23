@@ -22,8 +22,8 @@
 	</ui:Style>
 
 	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
-	<ui:import field="com.esferalia.aon.gwt.payroll.shared.SaltraService.*" />
-	<ui:import field="com.esferalia.aon.gwt.payroll.shared.SaltraService.Parameter.*" />
+	<ui:import field="com.esferalia.aon.gwt.payroll.shared.SistemaREDService.*" />
+	<ui:import field="com.esferalia.aon.gwt.payroll.shared.SistemaREDService.Parameter.*" />
 	
 	<g:DockLayoutPanel styleName="aon-width-all" ui:field="dockLayoutPanel">
 		<g:north size="26">
@@ -38,7 +38,7 @@
 				<g:Button styleName="aon-icon-delete gwt-MenuItem"
 					ui:field="clearButton" />
 
-				<g:FormPanel visible="false" ui:field="certificateFormPanel" method="{METHOD_POST}" action="{SALTRA_URL}/{CERTIFICATE}"  encoding="{ENCODING_MULTIPART}">
+				<g:FormPanel visible="false" ui:field="certificateFormPanel" method="{METHOD_POST}" action="{SISTEMA_RED_URL}/{CERTIFICATE}"  encoding="{ENCODING_MULTIPART}">
 					<g:VerticalPanel visible="false" >
 						<g:FileUpload visible="false"  title="Archivo de certificado para importar" ui:field="certificateFileUpload" name="{FILE.name}" />
 						<g:Hidden ui:field="userNameHidden" name="{USER.name}" />
@@ -46,7 +46,7 @@
 						<g:Hidden visible="false" ui:field="certificatePasswordHidden" name="{PASSWORD.name}" />
 					</g:VerticalPanel>
 				</g:FormPanel>
-				<g:FormPanel visible="false" ui:field="employeeFormPanel" method="{METHOD_POST}" action="{SALTRA_URL}/{EMPLOYEE}"  >
+				<g:FormPanel visible="false" ui:field="employeeFormPanel" method="{METHOD_POST}" action="{SISTEMA_RED_URL}/{EMPLOYEE}"  >
 					<g:VerticalPanel visible="false" >
  						<g:Hidden ui:field="idHidden" name="{ID.name}" />
  						<g:Hidden ui:field="regimeHidden" name="{REGIME.name}" />

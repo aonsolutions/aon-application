@@ -57,7 +57,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
-import com.esferalia.aon.gwt.payroll.shared.SaltraService.JsSaltraResults;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -2699,7 +2699,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private void checkStatus(EmployeeDraftObject employeeDraftObject) {
 		employeeDraftObject.checkStatus(employeeStatus -> {
-			SaltraResults saltraResults = new SaltraResults() {
+			SistemaREDResults saltraResults = new SistemaREDResults() {
 
 				@Override
 				public void run() {
@@ -2763,7 +2763,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private void checkStatus(EnterpriseDraftObject enterpriseDraftObject) {
 		enterpriseDraftObject.checkStatus(enterpiseStatus -> {
-			SaltraResults saltraResults = new SaltraResults() {
+			SistemaREDResults saltraResults = new SistemaREDResults() {
 
 				@Override
 				public void run() {
@@ -2779,7 +2779,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				}
 
 				@Override
-				protected void newAffiliated(JsSaltraResults jsSaltraResults) {
+				protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {
 					run();
 					getEmployeeTree().employees.refreshWorkplace(
 					jsSaltraResults.getWorkplaceId(),

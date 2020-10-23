@@ -2170,10 +2170,10 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			AndEnterpriseStatus enterpriseStatus = new AndEnterpriseStatus();
 			
 			for ( CCC ccc: cccs ) {
-				Collection<solutions.aon.seg.social.Employee> ssEmployees = 
+				Collection<solutions.aon.seg.social.objects.Employee> ssEmployees = 
 				SistemaRED.getEmployees(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				
-				for ( solutions.aon.seg.social.Employee ssEmployee :  ssEmployees) {
+				for ( solutions.aon.seg.social.objects.Employee ssEmployee :  ssEmployees) {
 					
 					
 					String dni = ssEmployee.getIpf();

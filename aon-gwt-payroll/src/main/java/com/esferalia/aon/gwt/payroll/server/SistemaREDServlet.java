@@ -23,7 +23,7 @@ import org.jooq.Record;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
-import com.esferalia.aon.gwt.payroll.shared.SaltraService;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
@@ -40,11 +40,11 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 @WebServlet(
 		name = "RED-Directo", 
 		urlPatterns = { 
-				"/aon_gwt_aio/saltra/*" ,
-				"/aon_gwt_payroll/saltra/*" 
+				"/aon_gwt_aio/seg-social/*" ,
+				"/aon_gwt_payroll/seg-social/*" 
 		}
 )
-public class SaltraServlet extends HttpServlet implements SaltraService {
+public class SistemaREDServlet extends HttpServlet implements SistemaREDService {
 	
 	private static final String CIF = "B01487271";
 
@@ -137,7 +137,7 @@ public class SaltraServlet extends HttpServlet implements SaltraService {
 
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			solutions.aon.seg.social.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			solutions.aon.seg.social.objects.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 			
 			String nss = ssEmployee.getNss();			
 			Date startDate = ssEmployee.getFra();

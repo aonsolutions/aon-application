@@ -13,7 +13,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
-import com.esferalia.aon.gwt.payroll.shared.SaltraService.JsSaltraResults;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Style.TextDecoration;
@@ -49,10 +49,10 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SaltraResults extends Composite implements RequiresResize, EmployeeStatus.Visitor, EnterpriseStatus.Visitor {
+public class SistemaREDResults extends Composite implements RequiresResize, EmployeeStatus.Visitor, EnterpriseStatus.Visitor {
 
 
-	static interface Binder extends UiBinder<Widget, SaltraResults> {
+	static interface Binder extends UiBinder<Widget, SistemaREDResults> {
 
 	}
 
@@ -181,7 +181,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 	private TreeItem messagesItem;
 	
 	
-	public SaltraResults() {
+	public SistemaREDResults() {
 		
 		images = GWT.create(Images.class);
 
@@ -491,7 +491,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		
 	}
 
-	protected void newAffiliated(JsSaltraResults jsSaltraResults) {
+	protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {
 		
 	}
 	// ------------------------------------------------------------------------
@@ -519,7 +519,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedNotFound.getDate()) );
 		
 		employeeFormPanel.addSubmitCompleteHandler((e) -> {
-			JsSaltraResults jsSaltraResults = eval("("+ e.getResults() +")");
+			JsSistemaREDResults jsSaltraResults = eval("("+ e.getResults() +")");
 			newAffiliated(jsSaltraResults);
 		});
 		employeeFormPanel.submit(); 	
@@ -534,7 +534,7 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedAtTrash.getDate()) );
 		
 		employeeFormPanel.addSubmitCompleteHandler((e) -> {
-			JsSaltraResults jsSaltraResults = eval("("+ e.getResults() +")");
+			JsSistemaREDResults jsSaltraResults = eval("("+ e.getResults() +")");
 			newAffiliated(jsSaltraResults);
 		});
 		employeeFormPanel.submit(); 	
@@ -706,9 +706,9 @@ public class SaltraResults extends Composite implements RequiresResize, Employee
 		inputDialog.show();
 	}
 
-	private static native void export2JS(SaltraResults saltraResults) /*-{
+	private static native void export2JS(SistemaREDResults saltraResults) /*-{
 		$wnd.importCertificate = $entry(function() {
-			saltraResults.@com.esferalia.aon.gwt.payroll.client.SaltraResults::importCertificate()();
+			saltraResults.@com.esferalia.aon.gwt.payroll.client.SistemaREDResults::importCertificate()();
 		});		
 			
 	}-*/;

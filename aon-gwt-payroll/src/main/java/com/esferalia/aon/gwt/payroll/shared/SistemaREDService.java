@@ -4,7 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.URL;
 
-public interface SaltraService {
+public interface SistemaREDService {
 
 	public static enum Parameter {
 		ID, 
@@ -21,8 +21,8 @@ public interface SaltraService {
 		PASSWORD,
 	}
 	
-	public static class JsSaltraResults extends JavaScriptObject {
-		protected JsSaltraResults() {
+	public static class JsSistemaREDResults extends JavaScriptObject {
+		protected JsSistemaREDResults() {
 		}
 		
 		public final native int getEmployeeId() /*-{
@@ -34,12 +34,13 @@ public interface SaltraService {
 		}-*/;
 	}
 
-	public static final String SALTRA_URL = URL
-			.encode(GWT.getModuleBaseURL() + "saltra");
+	public static final String SISTEMA_RED_URL = URL
+			.encode(GWT.getModuleBaseURL() + "seg-social");
 	
 	public static final String EMPLOYEE = "employee";
 	public static final String REGISTER = "register";
 	public static final String CERTIFICATE = "certificate";
+	public static final String UP2DATE_REPORT = "up2date_report";
 	
 	
 	
