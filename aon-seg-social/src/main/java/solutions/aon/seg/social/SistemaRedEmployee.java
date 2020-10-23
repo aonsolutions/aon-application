@@ -10,8 +10,13 @@ import java.util.Date;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebWindowEvent;
+import com.gargoylesoftware.htmlunit.WebWindowListener;
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exceptions.ForbiddenException;
@@ -301,15 +306,65 @@ public class SistemaRedEmployee {
 				return employeeFullInfo(nss, webClient);
 			}
 		}
+		
+		
+		//GETS A PDF CCC LIQUIDATION
+		public static byte[] getCccLiquidation(InputStream certificateInputStream, String certificatePassword,
+				String certificateType, String regime, String ccc,Date liquidationPeriod) {
+			try {
+				return getCccLiquidationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, liquidationPeriod);
+			}catch(Exception e) {
+				System.err.println(">> EXCEPTION:" + e.getMessage());
+			}
+			return null;
+			
+		}
+		
+		
+		//GET PDF INFO 
+		public static byte[] getCccLiquidationImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc, Date liquidationPeriod) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException {
+			
+			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+				
+				webClient.getOptions().setJavaScriptEnabled(false);
+				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR38&E=I&AP=AFIR");
+				
+				HtmlForm form = htmlPage.getFormByName("jacadaform");
+				String[] cccSplit = Toolkit.SplitString(ccc, 2);
+				
+				form.getInputByName("txt_SDFREGCTA").setAttribute("value", regime);
+				form.getInputByName("txt_SDFTESCTA").setAttribute("value", cccSplit[0]);
+				form.getInputByName("txt_SDFCUENTA").setAttribute("value", cccSplit[1]);
+				
+				HtmlOption option = (HtmlOption) form.querySelectorAll("select[name=cbo_ListaTipoImpresion]>option").get(1);				
+				option.click();
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+								
+				String[] splitDate = Toolkit.formatDate(liquidationPeriod, "MM-yyyy").get().split("-");
+				form.getInputByName("txt_SDFMES").setAttribute("value", splitDate[0]);
+				form.getInputByName("txt_SDFAO").setAttribute("value", splitDate[1]);
+									
+				HtmlInput submit = (HtmlInput)(form.querySelector("input[name=btn_Sub2207601004]"));
+				webClient.getOptions().setRedirectEnabled(true);
+				InputStream stream = submit.click().getWebResponse().getContentAsStream();
+
+				byte[] ret = stream.readAllBytes();
+				//for(byte b : ret) System.out.println(b);
+				stream.close();
+				
+				HtmlUnitToolkit.manageStatusCode(htmlPage);
+				return ret;
+			}			
+		}
+		
 
 		public static void main(String[] args)
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-//				Employee e = getEmployee(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062", "010019805355");
 				
-				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");
-				for(Employee e : employees) System.out.println(e.toString());				
-			}
+				Toolkit.buildPdf(getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy")),"log.html");
+								
+			}catch (NullPointerException e) {}
 		}
 	}
 
