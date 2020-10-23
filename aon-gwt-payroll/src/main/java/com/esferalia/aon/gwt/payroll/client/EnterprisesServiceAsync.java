@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -122,6 +123,8 @@ public interface EnterprisesServiceAsync {
 	void getContractOtherInfo(String currentDomainName, Integer contractId, String contractType, AsyncCallback<Map<String, String>> asyncCallback);
 	void setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData, AsyncCallback<Map<String, String>> asyncCallback);
+	void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback);
+	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> asyncCallback);
 	
 }

@@ -20,7 +20,10 @@ import static com.esferalia.aon.jooq.tables.Rmedia.RMEDIA;
 import static com.esferalia.aon.jooq.tables.Rpaymethod.RPAYMETHOD;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -29,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
 import org.jooq.DSLContext;
@@ -49,7 +54,12 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.payroll.sepe.contrata.Contrata;
+import com.esferalia.aon.sepe.api.contract.model.IContratoType;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
 import com.ibm.icu.util.Calendar;
+
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
 
 public class JooqContrataContract {
 
@@ -319,7 +329,7 @@ public class JooqContrataContract {
 	}
 	
 	// ------------------------------------------------------------------------------------------------------------------------
-	// ---------------------------------------------- CONTRACT OTHER INFO -----------------------------------------------------
+	// ------------------------------------------- CONTRACT SPECIFIC DATA -----------------------------------------------------
 	// ------------------------------------------------------------------------------------------------------------------------
 
 	public static ContractSpecificData getContractSpecificData(Connection conn, Integer domainId, Integer contractId) {
@@ -329,15 +339,83 @@ public class JooqContrataContract {
 	private static ContractSpecificData getContractSpecificDataDB(DSLContext dslContext, Integer domainId, Integer contractId) {
 		ContractSpecificData contractSpecificData = new ContractSpecificData();
 		
+		Record contractAttachRecord = dslContext.select().from(CONTRACT_ATTACH)
+			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
+			.fetchOne();
+		
+		Contrata contrata = new Contrata();
+		CONTRATOS contratos = contrata.getCONTRATOS(contractAttachRecord.get(CONTRACT_ATTACH.DATA));
+		Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
+		try {
+			JooqContrata.completeContratosParams(obj, contractSpecificData);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		contractSpecificData.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
+		
 		return contractSpecificData;
 	}
 	
-	public static  EmployeeContractInfo setContractSpecificData(Connection conn, EmployeeContractInfo employeeContractInfo) {
-		return setContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), employeeContractInfo);
+	public static void setContractSpecificData(Connection conn, EmployeeContractInfo employeeContractInfo) {
+		setContractSpecificDataDB(DSL.using(conn, getDefaultSettings()), employeeContractInfo);
 	}
 	
-	private static EmployeeContractInfo setContractSpecificDataDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
-		return employeeContractInfo;
+	private static void setContractSpecificDataDB(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
+		ContractSpecificData contractSpecificData = employeeContractInfo.getContractSpecificData();
+		Integer contractId = employeeContractInfo.getContractInfo().getContractId();
+		Integer domainId = employeeContractInfo.getEmployeeInfo().getDomain();
+		Date startDate = new Date(employeeContractInfo.getContractInfo().getStartDate().getTime());
+		Date endDate = null == employeeContractInfo.getContractInfo().getEndDate() ? null : new Date(employeeContractInfo.getContractInfo().getEndDate().getTime());
+		
+		String cno = contractSpecificData.getCno();
+		if(!StringUtils.isBlank(cno)) {
+			dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.NAME.eq("CNO")).and(CONTRACT_DATA.CONTRACT.eq(contractId)).execute();
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.NAME, "CNO")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, "\"" + cno + "\"")
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
+		}
+		
+		IContratoType contrato = (IContratoType) JooqContrata.createCONTRATOS(employeeContractInfo);
+		CONTRATOS contratos = new CONTRATOS();
+		contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().add(contrato);
+		
+		// ByteArrayOutputStream
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		try {
+			Utils.marshal(contratos, System.out);
+			Utils.marshal(contratos, out);
+			
+			Integer attachId = employeeContractInfo.getContractSpecificData().getId();
+			if(null == attachId) {
+				dslContext.insertInto(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DOMAIN, employeeContractInfo.getEmployeeInfo().getDomain())
+					.set(CONTRACT_ATTACH.CONTRACT, employeeContractInfo.getContractInfo().getContractId())
+					.set(CONTRACT_ATTACH.MIMETYPE, (byte)5)
+					.set(CONTRACT_ATTACH.DESCRIPTION, "CONTRACT - Contrat@")
+					.set(CONTRACT_ATTACH.DATA, out.toByteArray())
+					.set(CONTRACT_ATTACH.TYPE, (byte)4)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.execute();
+			} else {
+				dslContext.update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DATA, out.toByteArray())
+					.where(CONTRACT_ATTACH.ID.eq(attachId))
+					.execute();
+			}
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	// ------------------------------------------------------------------------------------------------------------------------
@@ -551,6 +629,16 @@ public class JooqContrataContract {
 			// WORKPLACE TABLE		
 			contractData.setWorkplaceId(employe_workplace_table_id);
 			
+			Record raddressRecord = dslContext.select().from(RADDRESS)
+					.where(RADDRESS.ID.eq(
+							dslContext.select(WORKPLACE.ADDRESS).from(WORKPLACE)
+								.where(WORKPLACE.ID.eq(employe_workplace_table_id))
+								.fetchOne(WORKPLACE.ADDRESS)
+					)).fetchOne();
+			
+			contractData.setWorkplaceZIP(raddressRecord.get(RADDRESS.MUNICIPALITY_CODE));
+			contractData.setWorkplaceFullAddress(raddressRecord.get(RADDRESS.STREET_TYPE)+". "+raddressRecord.get(RADDRESS.ADDRESS)+" "+raddressRecord.get(RADDRESS.NUMBER));
+			
 			if(contractData.getSsRegimen() != 3){ // NO ES RETA
 				// ENTERPRISE ACTIVITY TABLE
 				Integer enterpriseActivity = contractTable.get(CONTRACT.ENTERPRISE_ACTIVITY);
@@ -563,6 +651,12 @@ public class JooqContrataContract {
 							.fetchOne();
 					
 					contractData.setActivityId(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
+					
+					String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
+							.where(REGISTRY.ID.eq(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ENTERPRISE)))
+							.fetchOne(REGISTRY.DOCUMENT);
+					
+					contractData.setEnterpriseCIF(enterpriseDocument);
 				}
 				
 				//ENTERPRISE CCC TABLE
@@ -579,6 +673,8 @@ public class JooqContrataContract {
 					
 					contractData.setCccId(enterpriseCCCTable.get(ENTERPRISE_CCC.ID));
 					contractData.setCccType(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE));
+					
+					contractData.setCompleteCCC(getCCCRegimeCode(enterpriseCCCTable.get(ENTERPRISE_CCC.TYPE))+enterpriseCCCTable.get(ENTERPRISE_CCC.CCC));
 				}
 			}
 			
@@ -839,6 +935,31 @@ public class JooqContrataContract {
 	
 	// --------------------------------------- AUX METHODS -----------------------------
 
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
+	}
+	
 	public static Date parseDate(java.util.Date date) {
 		if(null == date)
 			return null;

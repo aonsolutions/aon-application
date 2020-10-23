@@ -43,6 +43,28 @@
 			margin-right: 6px;
 		}
 		
+		.checksPanel{
+			width: 948px;
+			display: flex;
+			flex-wrap: wrap;
+			padding-left: 10px;
+			padding-bottom: 10px;
+		}
+		
+		.checkPanel{
+			display:flex;
+		}
+		
+		.checks{
+			background-color: #eaeaea;
+			width: 35px;
+		}
+		
+		.checksLabel{
+			width: 270px;
+			padding: 4px;
+		}
+		
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -189,7 +211,7 @@
 							<td>
 								<g:HorizontalPanel>
 							    	<g:RadioButton ui:field="teoricFormationYesRB" name="annexedRB">Si</g:RadioButton>
-							    	<g:RadioButton ui:field="teoricFormationNoRB" name="annexedRB">No temporada</g:RadioButton>
+							    	<g:RadioButton ui:field="teoricFormationNoRB" name="annexedRB">No</g:RadioButton>
 							    </g:HorizontalPanel>
 							</td>
 						</tr>
@@ -224,111 +246,92 @@
 		<g:VerticalPanel ui:field="specificDataTable" styleName="{style.styleBorder}"> 
 	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Datos específicos</g:Label>
 	    	<g:HTMLPanel>
-				<table ui:field="specificDataTableElement"
-					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">
-					<tbody>
-					    <tr>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					    </tr>
-					    <tr>
-					    	<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="workProgramDataCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 300px;">
-								<g:Label>Datos de Programa de Empleo</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="temporalWorkEnterpriseCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Empresa de Trabajo Temporal</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="contractReliefCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Contrato Relevo</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="offerWorkDataCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Datos de la oferta de Trabajo</g:Label>
-							</td>	
-						</tr>
-						<tr>
-					    	<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="workshopSchoolCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 300px;">
-								<g:Label>Escuelas Taller</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="disabilityCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Discapacidad</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="older52CB"  styleName='{style.firstColumnTextStyle}' enabled="false"/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Mayores de 52 años (Ley 45/2002)</g:Label>
-							</td>	
-						</tr>
-						<tr>
-					    	<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="annexedCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 300px;">
-								<g:Label>Anexo gestión colectiva de contrataciones en origen</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="campaignsCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Campañas</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="investCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Investigación</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="interimCauseCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Causa de interinidad</g:Label>
-							</td>	
-						</tr>
-						<tr>
-					    	<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="entrepreneurSupportCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 300px;">
-								<g:Label>Apoyo emprendedores</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="promotionMeasuresCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Medidas fomento</g:Label>
-							</td>
-							<td style="background-color: #eaeaea; width: 35px;">
-								<g:CheckBox ui:field="quoteReductionsCB"  styleName='{style.firstColumnTextStyle}'/>
-							</td>
-							<td style="width: 280px;">
-								<g:Label>Reducción de cuotas</g:Label>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+	    		<g:HTMLPanel styleName="{style.checksPanel}">
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="workProgramDataCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="workProgramDataCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Datos de Programa de Empleo</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="temporalWorkEnterpriseCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="temporalWorkEnterpriseCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Empresa de Trabajo Temporal</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="contractReliefCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="contractReliefCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Contrato Relevo</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="offerWorkDataCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="offerWorkDataCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Datos de la oferta de Trabajo</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="workshopSchoolCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="workshopSchoolCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Escuelas Taller</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="disabilityCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="disabilityCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Discapacidad</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="older52CBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="older52CB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Mayores de 52 años (Ley 45/2002)</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="annexedCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="annexedCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Anexo gestión colect. de contrataciones en origen</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="campaignsCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="campaignsCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Campañas</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="investCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="investCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Investigación</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="interimCauseCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="interimCauseCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Causa de interinidad</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="entrepreneurSupportCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="entrepreneurSupportCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Apoyo emprendedores</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="promotionMeasuresCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="promotionMeasuresCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Medidas fomento</g:Label>
+	    			</g:HTMLPanel>
+	    			<g:HTMLPanel styleName="{style.checkPanel}" ui:field="quoteReductionsCBPanel">
+	    				<g:HTMLPanel styleName="{style.checks}">
+	    					<g:CheckBox ui:field="quoteReductionsCB"  styleName='{style.firstColumnTextStyle}'/>
+	    				</g:HTMLPanel>
+	    				<g:Label styleName="{style.checksLabel}">Reducción de cuotas</g:Label>
+	    			</g:HTMLPanel>
+	    		</g:HTMLPanel>
 			</g:HTMLPanel>
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="workProgramDataTable" styleName="{style.styleBorder}"> 
@@ -512,7 +515,7 @@
 			</g:HTMLPanel>
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="annexedDataTable" styleName="{style.styleBorder}"> 
-	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Anexo gestión colectiva de contrataciones en origen</g:Label>
+	    	<g:Label width="105px" styleName='aon-group-title {style.headerStyle}'>Anexo gestión colect. de contrataciones en origen</g:Label>
 	    	<g:HTMLPanel>
 				<table debugId="annexedDataTable"
 					style="margin-left: 10px; margin-bottom: 10px; width: 950px;">

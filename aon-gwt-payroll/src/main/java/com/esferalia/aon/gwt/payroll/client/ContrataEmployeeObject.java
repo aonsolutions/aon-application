@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -197,6 +198,23 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+//	public void getContractSpecificData(Consumer<ContractSpecificData> success, Consumer<Throwable> failure) {
+//		Integer contractId = employeeContractData.getContractInfo().getContractId();
+//		enterprisesService.getContractSpecificData(contractId, new AsyncCallback<ContractSpecificData>() {
+//			
+//			@Override
+//			public void onSuccess(ContractSpecificData contractSpecificData) {
+//				employeeContractData.setContractSpecificData(contractSpecificData);
+//				success.accept(contractSpecificData);
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				failure.accept(caught);
+//			}
+//		});
+//	}
+	
 	public void getContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		enterprisesService.getContractAttachments(contractId, new AsyncCallback<List<ContractAttach>>() {
@@ -292,6 +310,38 @@ public class ContrataEmployeeObject {
 			@Override
 			public void onSuccess(Map<String, String> contractOtherData) {
 				success.accept(contractOtherData);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void getContractSpecificData(Consumer<ContractSpecificData> success, Consumer<Throwable> failure) {
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		enterprisesService.getContractSpecificData(contractId, new AsyncCallback<ContractSpecificData>() {
+			
+			@Override
+			public void onSuccess(ContractSpecificData result) {
+				employeeContractData.setContractSpecificData(result);
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void setContractSpecificData(Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.setContractSpecificData(employeeContractData, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
 			}
 
 			@Override

@@ -10,11 +10,15 @@ public class ContractInfo implements Serializable{
 	//Contract Table
 	private Integer contractId;
 	private Integer workplaceId;
+	private String workplaceZIP;
+	private String workplaceFullAddress;
 	private Integer cccId;
+	private String completeCCC;
 	private Date startDate;
 	private Date endDate;
 	private Date seniorityDate;
 	private Integer activityId;
+	private String enterpriseCIF;
 	private Byte ssRegimen;
 	private String agreementCategory;
 	private Integer agreementLevelId;
@@ -52,11 +56,15 @@ public class ContractInfo implements Serializable{
 		super();
 		this.contractId = null;
 		this.workplaceId = null;
+		this.workplaceFullAddress = null;
+		this.workplaceZIP = null;
 		this.cccId = null;
+		this.completeCCC = null;
 		this.startDate = null;
 		this.endDate = null;
 		this.seniorityDate = null;
 		this.activityId = null;
+		this.enterpriseCIF = null;
 		this.ssRegimen = null;
 		this.agreementCategory = null;
 		this.agreementLevelId = null;
@@ -90,12 +98,28 @@ public class ContractInfo implements Serializable{
 		this.activityId = activityId;
 	}
 
+	public String getEnterpriseCIF() {
+		return enterpriseCIF;
+	}
+
+	public void setEnterpriseCIF(String enterpriseCIF) {
+		this.enterpriseCIF = enterpriseCIF;
+	}
+
 	public Integer getCccId() {
 		return cccId;
 	}
 
 	public void setCccId(Integer cccId) {
 		this.cccId = cccId;
+	}
+
+	public String getCompleteCCC() {
+		return completeCCC;
+	}
+
+	public void setCompleteCCC(String completeCCC) {
+		this.completeCCC = completeCCC;
 	}
 
 	public Byte getCccType() {
@@ -112,6 +136,22 @@ public class ContractInfo implements Serializable{
 
 	public void setWorkplaceId(Integer workplaceId) {
 		this.workplaceId = workplaceId;
+	}
+
+	public String getWorkplaceZIP() {
+		return workplaceZIP;
+	}
+
+	public void setWorkplaceZIP(String workplaceZIP) {
+		this.workplaceZIP = workplaceZIP;
+	}
+
+	public String getWorkplaceFullAddress() {
+		return workplaceFullAddress;
+	}
+
+	public void setWorkplaceFullAddress(String workplaceFullAddress) {
+		this.workplaceFullAddress = workplaceFullAddress;
 	}
 
 	public String getContractType() {

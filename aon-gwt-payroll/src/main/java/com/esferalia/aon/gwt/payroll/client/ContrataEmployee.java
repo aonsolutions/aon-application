@@ -594,8 +594,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		int height = Window.getClientHeight(); 
 		scrolledPanel.setHeight((height-260)+"px");
 		scrolledPanelContractOtherData.setHeight((height-260)+"px");
-		scrolledPanelClauses.setHeight((height-260)+"px");
-		scrolledPanelAttach.setHeight((height-260)+"px");
+		scrolledPanelClauses.setHeight((height-265)+"px");
+		scrolledPanelAttach.setHeight((height-265)+"px");
 		scrolledPanelContractSpecificData.setHeight((height-260)+"px");
 		
 		tabLayOutPanel.selectTab(0, false);
@@ -604,6 +604,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tabLayOutPanel.addBeforeSelectionHandler(e -> {
 			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
 			switch (itemIdx) {
+			case 1:
+				contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
+				break;
 			case 2:
 				contrataEmployeeObject.setContractOtherInfo(s -> {}, f -> {});
 				break;
@@ -621,6 +624,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		tabLayOutPanel.addSelectionHandler(e -> {
 			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
 			switch (itemIdx) {
+			case 1:
+				contrataEmployeeObject.getContractSpecificData(s -> {
+					contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				}, f -> {});
+				break;
 			case 2:
 				contrataEmployeeObject.getContractOtherInfo(s -> {
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
@@ -795,7 +803,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);
 					initLogicWindow();
 					initExistingEmployee(employeeContractInfo.getContractInfo().hasPayroll());
-					contractSpecificData.setEmployeeContractInfo(employeeContractInfo);
+//					contractSpecificData.setEmployeeContractInfo(employeeContractInfo);
 				}, 
 				t -> {}
 		);

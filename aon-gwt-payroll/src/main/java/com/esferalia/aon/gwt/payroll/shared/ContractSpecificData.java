@@ -45,7 +45,6 @@ public class ContractSpecificData implements Serializable {
 	private String disability;
 	private Boolean annexedB;
 	private Boolean annexed;
-	private Boolean annexed2;
 	private String sourceYear;
 	private Boolean campaigns;
 	private String cpCampaign;
@@ -65,7 +64,6 @@ public class ContractSpecificData implements Serializable {
 	private Boolean quoteReductions;
 	private String reductionColective;
 	private Boolean quoteReduction;
-	private Boolean quoteReduction2;
 	private String journeyPercent;
 	
 	public ContractSpecificData() {
@@ -105,7 +103,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getFormativeLevel() {
-		return formativeLevel;
+		return null == formativeLevel ? "" : formativeLevel;
 	}
 
 	public void setFormativeLevel(String formativeLevel) {
@@ -113,7 +111,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getAcademicTitulation() {
-		return academicTitulation;
+		return null == academicTitulation ? "" : academicTitulation;
 	}
 
 	public void setAcademicTitulation(String academicTitulation) {
@@ -129,7 +127,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getSignBasicCopy() {
-		return signBasicCopy;
+		return null == signBasicCopy ? "" : signBasicCopy;
 	}
 
 	public void setSignBasicCopy(String signBasicCopy) {
@@ -177,7 +175,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getJourneyType() {
-		return journeyType;
+		return null == journeyType ? "" : journeyType;
 	}
 
 	public void setJourneyType(String journeyType) {
@@ -233,7 +231,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getWorkProgramData() {
-		return workProgramData;
+		return null == workProgramData ? false : workProgramData;
 	}
 
 	public void setWorkProgramData(Boolean workProgramData) {
@@ -241,7 +239,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getWorkProgram() {
-		return workProgram;
+		return null == workProgram ? "" : workProgram;
 	}
 
 	public void setWorkProgram(String workProgram) {
@@ -249,7 +247,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getTemporalWorkEnterprise() {
-		return temporalWorkEnterprise;
+		return null == temporalWorkEnterprise ? false : temporalWorkEnterprise;
 	}
 
 	public void setTemporalWorkEnterprise(Boolean temporalWorkEnterprise) {
@@ -289,7 +287,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getContractRelief() {
-		return contractRelief;
+		return null == contractRelief ? false : contractRelief;
 	}
 
 	public void setContractRelief(Boolean contractRelief) {
@@ -297,7 +295,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getReliefEmployee() {
-		return reliefEmployee;
+		return null == reliefEmployee ? "" : reliefEmployee;
 	}
 
 	public void setReliefEmployee(String reliefEmployee) {
@@ -329,7 +327,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getOfferWorkData() {
-		return offerWorkData;
+		return null == offerWorkData ? false : offerWorkData;
 	}
 
 	public void setOfferWorkData(Boolean offerWorkData) {
@@ -345,7 +343,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getWorkshopSchoolB() {
-		return workshopSchoolB;
+		return null == workshopSchoolB ? false : workshopSchoolB;
 	}
 
 	public void setWorkshopSchoolB(Boolean workshopSchoolB) {
@@ -353,7 +351,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getWorkshopSchool() {
-		return workshopSchool;
+		return null == workshopSchool ? "" : workshopSchool;
 	}
 
 	public void setWorkshopSchool(String workshopSchool) {
@@ -361,7 +359,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getDisabilityB() {
-		return disabilityB;
+		return null == disabilityB ? false : disabilityB;
 	}
 
 	public void setDisabilityB(Boolean disabilityB) {
@@ -369,7 +367,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getDisability() {
-		return disability;
+		return null == disability ? "" : disability;
 	}
 
 	public void setDisability(String disability) {
@@ -377,7 +375,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getAnnexedB() {
-		return annexedB;
+		return null == annexedB ? false : annexedB;
 	}
 
 	public void setAnnexedB(Boolean annexedB) {
@@ -392,14 +390,6 @@ public class ContractSpecificData implements Serializable {
 		this.annexed = annexed;
 	}
 
-	public Boolean getAnnexed2() {
-		return annexed2;
-	}
-
-	public void setAnnexed2(Boolean annexed2) {
-		this.annexed2 = annexed2;
-	}
-
 	public String getSourceYear() {
 		return sourceYear;
 	}
@@ -409,7 +399,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getCampaigns() {
-		return campaigns;
+		return null == campaigns ? false : campaigns;
 	}
 
 	public void setCampaigns(Boolean campaigns) {
@@ -441,7 +431,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getInvest() {
-		return invest;
+		return null == invest ? false : invest;
 	}
 
 	public void setInvest(Boolean invest) {
@@ -449,7 +439,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getEmployer() {
-		return employer;
+		return null == employer ? "" : employer;
 	}
 
 	public void setEmployer(String employer) {
@@ -457,7 +447,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getEmployee() {
-		return employee;
+		return null == employee ? "" : employee;
 	}
 
 	public void setEmployee(String employee) {
@@ -473,7 +463,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getIsInterimCause() {
-		return interimCauseB;
+		return null == interimCauseB ? false : interimCauseB;
 	}
 
 	public void setIsInterimCause(Boolean interimCauseB) {
@@ -481,7 +471,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getInterimCause() {
-		return interimCause;
+		return null == interimCause ? "" : interimCause;
 	}
 
 	public void setInterimCause(String interimCause) {
@@ -489,7 +479,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getEntrepreneurSupport() {
-		return entrepreneurSupport;
+		return null == entrepreneurSupport ? false : entrepreneurSupport;
 	}
 
 	public void setEntrepreneurSupport(Boolean entrepreneurSupport) {
@@ -497,7 +487,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getBonusColective() {
-		return bonusColective;
+		return null == bonusColective ? "" : bonusColective;
 	}
 
 	public void setBonusColective(String bonusColective) {
@@ -513,7 +503,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getPromotionMeasures() {
-		return promotionMeasures;
+		return null == promotionMeasures ? false : promotionMeasures;
 	}
 
 	public void setPromotionMeasures(Boolean promotionMeasures) {
@@ -529,7 +519,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public Boolean getQuoteReductions() {
-		return quoteReductions;
+		return null == quoteReductions ? false : quoteReductions;
 	}
 
 	public void setQuoteReductions(Boolean quoteReductions) {
@@ -537,7 +527,7 @@ public class ContractSpecificData implements Serializable {
 	}
 
 	public String getReductionColective() {
-		return reductionColective;
+		return null == reductionColective ? "" : reductionColective;
 	}
 
 	public void setReductionColective(String reductionColective) {
@@ -550,14 +540,6 @@ public class ContractSpecificData implements Serializable {
 
 	public void setQuoteReduction(Boolean quoteReduction) {
 		this.quoteReduction = quoteReduction;
-	}
-
-	public Boolean getQuoteReduction2() {
-		return quoteReduction2;
-	}
-
-	public void setQuoteReduction2(Boolean quoteReduction2) {
-		this.quoteReduction2 = quoteReduction2;
 	}
 
 	public String getJourneyPercent() {

@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -338,6 +339,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setContractOtherInfo(getCurrentDomainName(), contractId, contractType, contractOtherData, asyncCallback);
 	}
 	
+	public void getContractSpecificData(Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback) {
+		enterprisesServiceAsync.getContractSpecificData(getCurrentDomainName(), contractId, asyncCallback);
+	}
+
+	public void setContractSpecificData(EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.setContractSpecificData(getCurrentDomainName(), employeeContractData, asyncCallback);
+	}
+	
 	public void getCNOs(AsyncCallback<Map<String, CNO>> asyncCallback) {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
@@ -351,5 +360,7 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
+
+	
 
 }

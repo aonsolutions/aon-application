@@ -59,6 +59,7 @@ import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -2321,16 +2322,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
-
-	@Override
-	public Map<String, CNO> getCNOs(String domainName) {
-		try(Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqContrataContract.getCNOs(connection);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
+	
 	@Override
 	public Map<String, String> setContractOtherInfo(String domainName, Integer contractId, String contractType, Map<String, String> contractOtherInfo) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -2340,6 +2332,33 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public ContractSpecificData getContractSpecificData(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getContractSpecificData(connection, domainId, contractId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
+	@Override
+	public void setContractSpecificData(String domainName, EmployeeContractInfo employeeContractData) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			JooqContrataContract.setContractSpecificData(connection, employeeContractData);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public Map<String, CNO> getCNOs(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqContrataContract.getCNOs(connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 }

@@ -1,31 +1,39 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -108,7 +116,46 @@ public class ContractSpecificData extends ResizeComposite {
 	TextBox retirementPercentTB;
 	
 	@UiField
-	TableElement specificDataTableElement;
+	HTMLPanel workProgramDataCBPanel;
+	
+	@UiField
+	HTMLPanel temporalWorkEnterpriseCBPanel;
+	
+	@UiField
+	HTMLPanel contractReliefCBPanel;
+	
+	@UiField
+	HTMLPanel offerWorkDataCBPanel;
+	
+	@UiField
+	HTMLPanel workshopSchoolCBPanel;
+	
+	@UiField
+	HTMLPanel disabilityCBPanel;
+	
+	@UiField
+	HTMLPanel older52CBPanel;
+	
+	@UiField
+	HTMLPanel annexedCBPanel;
+	
+	@UiField
+	HTMLPanel campaignsCBPanel;
+	
+	@UiField
+	HTMLPanel investCBPanel;
+	
+	@UiField
+	HTMLPanel interimCauseCBPanel;
+	
+	@UiField
+	HTMLPanel entrepreneurSupportCBPanel;
+	
+	@UiField
+	HTMLPanel promotionMeasuresCBPanel;
+	
+	@UiField
+	HTMLPanel quoteReductionsCBPanel;
 	
 	@UiField
 	CheckBox workProgramDataCB;
@@ -295,17 +342,131 @@ public class ContractSpecificData extends ResizeComposite {
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
 		this.employeeContractInfo = employeeContractInfoIn;
 		setDefaultView(this.employeeContractInfo.getContractInfo().getContractType());
+		fillSpecificData();
 	}
 
 	// --------------------------------------------------------- UiHandlers --------------------------------------------------------
+	
+	@UiHandler("cnoSB")
+	void onCNOSBChange(SelectionEvent<Suggestion> event) {
+		String cnoStr = cnoSB.getValue();
+		String cno = "";
+		if(!StringUtils.isBlank(cnoStr))
+			cno = cnoStr.split(" -")[0];
+		
+		this.employeeContractInfo.getContractSpecificData().setCno(cno);	
+	}
+	
+	@UiHandler("calendarFormativeStartDate")
+	void onCalendarFormativeStartDateChange(ValueChangeEvent<Date> event) {
+		this.employeeContractInfo.getContractSpecificData().setCalendarFormativeStartDate(event.getValue());	
+	}
+	
+	@UiHandler("calendarFormativeEndDate")
+	void onCalendarFormativeEndDateChange(ValueChangeEvent<Date> event) {
+		this.employeeContractInfo.getContractSpecificData().setCalendarFormativeEndDate(event.getValue());	
+	}
 	
 	@UiHandler("formativeLevelLB")
 	void onFormativeLevelLBChange(ChangeEvent event) {
 		String formativeLevelValue = formativeLevelLB.getSelectedValue();
 		Map<String, String> academicTitulations = AcademicTitulation.getAcademicTitulations(formativeLevelValue);
 		createAcademicTitulationLB(academicTitulations);
+		
+		String academicTitulationValue = academicTitulationLB.getSelectedValue();
+		
+		this.employeeContractInfo.getContractSpecificData().setFormativeLevel(formativeLevelValue);
+		this.employeeContractInfo.getContractSpecificData().setAcademicTitulation(academicTitulationValue);
 	}
-
+	
+	@UiHandler("academicTitulationLB")
+	void onAcademicTitulationLBChange(ChangeEvent event) {
+		String academicTitulationValue = academicTitulationLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setAcademicTitulation(academicTitulationValue);
+	}
+	
+	@UiHandler("profesionalityCB")
+	void onProfesionalityCBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setProfesionality(event.getValue());
+	}
+	
+	@UiHandler("signBasicCopyLB")
+	void onSignBasicCopyLBChange(ChangeEvent event) {
+		String signBasicCopyValue = signBasicCopyLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setSignBasicCopy(signBasicCopyValue);
+	}
+	
+	@UiHandler("basicCopyTA")
+	void onBasicCopyTAChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setBasicCopy(event.getValue());
+	}
+	
+	@UiHandler("useEnterpriseFreeTB")
+	void onUseEnterpriseFreeTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setUseEnterpriseFree(event.getValue());
+	}
+	
+	@UiHandler("agreementHoursTB")
+	void onAgreementHoursTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setAgreementHours(event.getValue());
+	}
+	
+	@UiHandler("agreementMinutesTB")
+	void onAgreementMinutesTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setAgreementMinutes(event.getValue());
+	}
+	
+	@UiHandler("repeatFDCB")
+	void onRepeatFDCBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setRepeatFD(event.getValue());
+	}
+	
+	@UiHandler("journeyTypeLB")
+	void onJourneyTypeLBChange(ChangeEvent event) {
+		String journeyTypeValue = journeyTypeLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setJourneyType(journeyTypeValue);
+	}
+	
+	@UiHandler("journeyDurationHoursTB")
+	void onJourneyDurationHoursTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setJourneyDurationHours(event.getValue());
+	}
+	
+	@UiHandler("journeyDurationMinutesTB")
+	void onJourneyDurationMinutesTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setJourneyDurationMinutes(event.getValue());
+	}
+	
+	@UiHandler("teoricFormationYesRB")
+	void onTeoricFormationRBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setTeoricFormation(event.getValue());
+	}
+	
+//	@UiHandler("teoricFormationYesRB")
+//	void onTeoricFormationYesRBChange(ValueChangeEvent<Boolean> event) {
+//		this.employeeContractInfo.getContractSpecificData().setTeoricFormationYes(event.getValue());
+//	}
+//	
+//	@UiHandler("teoricFormationNoRB")
+//	void onTeoricFormationNoRBChange(ValueChangeEvent<Boolean> event) {
+//		this.employeeContractInfo.getContractSpecificData().setTeoricFormationNo(event.getValue());
+//	}
+	
+	@UiHandler("formationHoursTB")
+	void onFormationHoursTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setFormationHours(event.getValue());
+	}
+	
+	@UiHandler("formationMinutesTB")
+	void onFormationMinutesTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setFormationMinutes(event.getValue());
+	}
+	
+	@UiHandler("retirementPercentTB")
+	void onRetirementPercentTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setRetirementPercent(event.getValue());
+	}
+	
 	@UiHandler("workProgramDataCB")
 	void onWorkProgramDataCBChange(ValueChangeEvent<Boolean> event) {
 		if(event.getValue())
@@ -314,6 +475,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetWorkProgramDataTable();
 			hideWorkProgramDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setWorkProgramData(event.getValue());
 	}
 	
 	@UiHandler("temporalWorkEnterpriseCB")
@@ -324,6 +487,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetTemporalWorkEnterpriseDataTable();
 			hideTemporalWorkEnterpriseDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setTemporalWorkEnterprise(event.getValue());
 	}
 	
 	@UiHandler("contractReliefCB")
@@ -334,6 +499,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetContractReliefDataTable();
 			hideContractReliefDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setContractRelief(event.getValue());
 	}
 	
 	@UiHandler("offerWorkDataCB")
@@ -344,6 +511,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetOfferWorkDataTable();
 			hideOfferWorkDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setOfferWorkData(event.getValue());
 	}
 	
 	@UiHandler("workshopSchoolCB")
@@ -354,6 +523,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetWorkshopSchoolDataTable();
 			hideWorkshopSchoolDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setWorkshopSchoolB(event.getValue());
 	}
 	
 	@UiHandler("disabilityCB")
@@ -364,6 +535,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetDisabilityDataTable();
 			hideDisabilityDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setDisabilityB(event.getValue());
 	}
 	
 	@UiHandler("annexedCB")
@@ -374,6 +547,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetAnnexedDataTable();
 			hideAnnexedDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setAnnexedB(event.getValue());
 	}
 	
 	@UiHandler("campaignsCB")
@@ -384,6 +559,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetCampaignsDataTable();
 			hideCampaignsDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setCampaigns(event.getValue());
 	}
 	
 	@UiHandler("investCB")
@@ -394,6 +571,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetInvestDataTable();
 			hideInvestDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setInvest(event.getValue());
 	}
 	
 	@UiHandler("interimCauseCB")
@@ -404,6 +583,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetInterimCauseDataTable();
 			hideInterimCauseDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setIsInterimCause(event.getValue());
 	}
 	
 	@UiHandler("entrepreneurSupportCB")
@@ -414,6 +595,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetEntrepreneurSupportDataTable();
 			hideEntrepreneurSupportDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setEntrepreneurSupport(event.getValue());
 	}
 	
 	@UiHandler("promotionMeasuresCB")
@@ -424,6 +607,8 @@ public class ContractSpecificData extends ResizeComposite {
 			resetPromotionMeasuresDataTable();
 			hidePromotionMeasuresDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setPromotionMeasures(event.getValue());
 	}
 	
 	@UiHandler("quoteReductionsCB")
@@ -434,6 +619,166 @@ public class ContractSpecificData extends ResizeComposite {
 			resetQuoteReductionsDataTable();
 			hideQuoteReductionsDataTable();
 		}
+		
+		this.employeeContractInfo.getContractSpecificData().setQuoteReductions(event.getValue());
+	}
+	
+	@UiHandler("workProgramLB")
+	void onWorkProgramLBChange(ChangeEvent event) {
+		String workProgramValue = workProgramLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setWorkProgram(workProgramValue);
+	}
+	
+	@UiHandler("nifTB")
+	void onNifTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setNif(event.getValue());
+	}
+	
+	@UiHandler("socialReasonTB")
+	void onSocialReasonTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setSocialReason(event.getValue());
+	}
+	
+	@UiHandler("contractTemplateCB")
+	void onContractTemplateCBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setContractTemplate(event.getValue());
+	}
+	
+	@UiHandler("foreignEnterpriseCB")
+	void onForeignEnterpriseCBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setForeignEnterprise(event.getValue());
+	}
+	
+	@UiHandler("reliefEmployeeLB")
+	void onReliefEmployeeLBChange(ChangeEvent event) {
+		String reliefEmployeeValue = reliefEmployeeLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setReliefEmployee(reliefEmployeeValue);
+	}
+	
+	@UiHandler("retirementNameTB")
+	void onRetirementNameTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setRetirementName(event.getValue());
+	}
+	
+	@UiHandler("retirementSurnameTB")
+	void onRetirementSurnameTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setRetirementSurname(event.getValue());
+	}
+	
+	@UiHandler("retirementSurname2TB")
+	void onRetirementSurname2TBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setRetirementSurname2(event.getValue());
+	}
+	
+	@UiHandler("offerTB")
+	void onOfferTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setOffer(event.getValue());
+	}
+	
+	@UiHandler("workshopSchoolLB")
+	void onWorkshopSchoolLBChange(ChangeEvent event) {
+		String workshopSchoolValue = workshopSchoolLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setWorkshopSchool(workshopSchoolValue);
+	}
+	
+	@UiHandler("disabilityLB")
+	void onDisabilityLBChange(ChangeEvent event) {
+		String disabilityValue = disabilityLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setDisability(disabilityValue);
+	}
+	
+	@UiHandler("annexedRB")
+	void onAnnexedRBChange(ValueChangeEvent<Boolean> event) {
+		if(event.getValue())
+			this.employeeContractInfo.getContractSpecificData().setAnnexed(true);
+	}
+	
+	@UiHandler("annexed2RB")
+	void onAnnexed2RBChange(ValueChangeEvent<Boolean> event) {
+		if(event.getValue())
+			this.employeeContractInfo.getContractSpecificData().setAnnexed(false);
+	}
+	
+	@UiHandler("sourceYearTB")
+	void onSourceYearTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setSourceYear(event.getValue());
+	}
+	
+	@UiHandler("cpCampaignTB")
+	void onCpCampaignTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setCpCampaign(event.getValue());
+	}
+	
+	@UiHandler("codeCampaignTB")
+	void onCodeCampaignTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setCodeCampaign(event.getValue());
+	}
+	
+	@UiHandler("yearCampaignTB")
+	void onYearCampaignTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setYearCampaign(event.getValue());
+	}
+	
+	@UiHandler("employerLB")
+	void onEmployerLBChange(ChangeEvent event) {
+		String employerValue = employerLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setEmployer(employerValue);
+	}
+	
+	@UiHandler("employeeLB")
+	void onEmployeeLBChange(ChangeEvent event) {
+		String employeeValue = employeeLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setEmployee(employeeValue);
+	}
+	
+	@UiHandler("researcherCB")
+	void onResearcherCBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setResearcher(event.getValue());
+	}
+	
+	@UiHandler("interimCauseLB")
+	void onInterimCauseLBChange(ChangeEvent event) {
+		String interimCauseValue = interimCauseLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setInterimCause(interimCauseValue);
+	}
+	
+	@UiHandler("bonusColectiveLB")
+	void onBonusColectiveLBChange(ChangeEvent event) {
+		String bonusColectiveValue = bonusColectiveLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setBonusColective(bonusColectiveValue);
+	}
+	
+	@UiHandler("freelanceEmployeerCB")
+	void onFreelanceEmployeerCBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setFreelanceEmployeer(event.getValue());
+	}
+	
+	@UiHandler("promotionPermanentHiringCB")
+	void onPromotionPermanentHiringCBChange(ValueChangeEvent<Boolean> event) {
+		this.employeeContractInfo.getContractSpecificData().setPromotionPermanentHiring(event.getValue());
+	}
+	
+	@UiHandler("reductionColectiveLB")
+	void onReductionColectiveLBChange(ChangeEvent event) {
+		String reductionColectiveValue = reductionColectiveLB.getSelectedValue();
+		this.employeeContractInfo.getContractSpecificData().setReductionColective(reductionColectiveValue);
+	}
+	
+	@UiHandler("quoteReductionRB")
+	void onQuoteReductionRBChange(ValueChangeEvent<Boolean> event) {
+		if(event.getValue())
+			this.employeeContractInfo.getContractSpecificData().setQuoteReduction(true);
+	}
+	
+	@UiHandler("quoteReduction2RB")
+	void onQuoteReduction2RBChange(ValueChangeEvent<Boolean> event) {
+		if(event.getValue())
+			this.employeeContractInfo.getContractSpecificData().setQuoteReduction(false);
+	}
+	
+	@UiHandler("journeyPercentTB")
+	void onJourneyPercentTBChange(ValueChangeEvent<String> event) {
+		this.employeeContractInfo.getContractSpecificData().setJourneyPercent(event.getValue());
 	}
 
 	// --------------------------------------------------- UiHandlers (Aux Methods) -------------------------------------------------
@@ -1045,7 +1390,98 @@ public class ContractSpecificData extends ResizeComposite {
 	
 	private void setDefaultView(String contractType) {
 		switch (contractType) {
-		case "":
+		case "130":
+			set130View();
+			break;
+		case "150":
+			set150View();
+			break;
+		case "200":
+			set200View();
+			break;
+		case "230":
+			set230and250View();
+			break;
+		case "250":
+			set230and250View();
+			break;
+		case "300":
+			set300View();
+			break;
+		case "330":
+			set330and350View();
+			break;
+		case "350":
+			set330and350View();
+			break;
+		case "401":
+			set401View();
+			break;
+		case "402":
+			set402View();
+			break;
+		case "403":
+			set403View();
+			break;
+		case "410":
+			set410View();
+			break;
+		case "420":
+			set420View();
+			break;
+		case "421":
+			set421View();
+			break;
+		case "430":
+			set430View();
+			break;	
+		case "441":
+			set441View();
+			break;
+		case "450":
+			set450View();
+			break;
+		case "452":
+			set452View();
+			break;
+		case "501":
+			set501View();
+			break;
+		case "502":
+			set502View();
+			break;
+		case "503":
+			set503View();
+			break;
+		case "510":
+			set510View();
+			break;
+		case "520":
+			set520View();
+			break;
+		case "530":
+			set530View();
+			break;	
+		case "540":
+			set540View();
+			break;	
+		case "541":
+			set541View();
+			break;
+		case "550":
+			set550View();
+			break;
+		case "552":
+			set552View();
+			break;
+		case "970":
+			set970and990View();
+			break;
+		case "980":
+			set980View();
+			break;
+		case "990":
+			set970and990View();
 			break;
 		default:
 			setDefaultView();
@@ -1065,18 +1501,706 @@ public class ContractSpecificData extends ResizeComposite {
 		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
 		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		
-		specificDataTableElement.getRows().getItem(1).getCells().getItem(4).getStyle().setDisplay(Display.NONE);
-		specificDataTableElement.getRows().getItem(1).getCells().getItem(5).getStyle().setDisplay(Display.NONE);
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set130View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		
-		specificDataTableElement.getRows().getItem(3).getCells().getItem(4).getStyle().setDisplay(Display.NONE);
-		specificDataTableElement.getRows().getItem(3).getCells().getItem(5).getStyle().setDisplay(Display.NONE);
-		specificDataTableElement.getRows().getItem(3).getCells().getItem(6).getStyle().setDisplay(Display.NONE);
-		specificDataTableElement.getRows().getItem(3).getCells().getItem(7).getStyle().setDisplay(Display.NONE);
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set150View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		
-		specificDataTableElement.getRows().getItem(4).getCells().getItem(0).getStyle().setDisplay(Display.NONE);
-		specificDataTableElement.getRows().getItem(4).getCells().getItem(1).getStyle().setDisplay(Display.NONE);
-		specificDataTableElement.getRows().getItem(4).getCells().getItem(4).getStyle().setDisplay(Display.NONE);
-		specificDataTableElement.getRows().getItem(4).getCells().getItem(5).getStyle().setDisplay(Display.NONE);
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set200View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set230and250View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set300View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set330and350View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set401View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set402View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		workshopSchoolCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set403View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		workshopSchoolCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set410View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set420View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set421View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCB.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set430View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set441View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set450View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCB.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set452View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set501View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set502View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set503View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		workshopSchoolCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set510View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set520View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+
+	private void set530View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set540View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set541View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set550View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set552View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		workshopSchoolCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set970and990View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		older52CBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void set980View() {
+		otherDataTableElement.getRows().getItem(1).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(3).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(9).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(10).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(11).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+		otherDataTableElement.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		
+		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		older52CBPanel.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void fillSpecificData() {
+		String codeCNO = this.employeeContractInfo.getContractSpecificData().getCno();
+		CNO cnoObj = cnoMap.get(codeCNO);
+		if(null != cnoObj)
+			cnoSB.setText(codeCNO + " - " + cnoObj.getTitle());
+		
+		calendarFormativeStartDate.setValue(this.employeeContractInfo.getContractSpecificData().getCalendarFormativeStartDate());
+		calendarFormativeEndDate.setValue(this.employeeContractInfo.getContractSpecificData().getCalendarFormativeEndDate());
+		setSelectedValueLB(formativeLevelLB, this.employeeContractInfo.getContractSpecificData().getFormativeLevel());
+		Map<String, String> academicTitulations = AcademicTitulation.getAcademicTitulations(this.employeeContractInfo.getContractSpecificData().getFormativeLevel());
+		createAcademicTitulationLB(academicTitulations);
+		setSelectedValueLB(academicTitulationLB, this.employeeContractInfo.getContractSpecificData().getAcademicTitulation());
+		profesionalityCB.setValue(this.employeeContractInfo.getContractSpecificData().getProfesionality());
+		setSelectedValueLB(signBasicCopyLB, this.employeeContractInfo.getContractSpecificData().getSignBasicCopy());
+		basicCopyTA.setValue(this.employeeContractInfo.getContractSpecificData().getBasicCopy());
+		useEnterpriseFreeTB.setText(this.employeeContractInfo.getContractSpecificData().getUseEnterpriseFree());
+		agreementHoursTB.setText(this.employeeContractInfo.getContractSpecificData().getAgreementHours());
+		agreementMinutesTB.setText(this.employeeContractInfo.getContractSpecificData().getAgreementMinutes());
+		repeatFDCB.setValue(this.employeeContractInfo.getContractSpecificData().getRepeatFD());
+		setSelectedValueLB(journeyTypeLB, this.employeeContractInfo.getContractSpecificData().getJourneyType());
+		journeyDurationHoursTB.setText(this.employeeContractInfo.getContractSpecificData().getJourneyDurationHours());
+		journeyDurationMinutesTB.setText(this.employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes());
+		teoricFormationYesRB.setValue(this.employeeContractInfo.getContractSpecificData().getTeoricFormation());
+//		teoricFormationYesRB.setValue(this.employeeContractInfo.getContractSpecificData().getTeoricFormationYes());
+//		teoricFormationNoRB.setValue(this.employeeContractInfo.getContractSpecificData().getTeoricFormationNo());
+		formationHoursTB.setText(this.employeeContractInfo.getContractSpecificData().getFormationHours());
+		formationMinutesTB.setText(this.employeeContractInfo.getContractSpecificData().getFormationMinutes());
+		retirementPercentTB.setText(this.employeeContractInfo.getContractSpecificData().getRetirementPercent());
+		
+		//WorkProgramDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getWorkProgramData()) {
+			showWorkProgramDataTable();
+			workProgramDataCB.setValue(true);
+			setSelectedValueLB(workProgramLB, this.employeeContractInfo.getContractSpecificData().getWorkProgram());	
+		}
+		
+		//TemporalWorkEnterpriseDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getTemporalWorkEnterprise()){
+			showTemporalWorkEnterpriseDataTable();
+			temporalWorkEnterpriseCB.setValue(true);
+			nifTB.setText(this.employeeContractInfo.getContractSpecificData().getNif());
+			socialReasonTB.setText(this.employeeContractInfo.getContractSpecificData().getSocialReason());
+			contractTemplateCB.setValue(this.employeeContractInfo.getContractSpecificData().getContractTemplate());
+			foreignEnterpriseCB.setValue(this.employeeContractInfo.getContractSpecificData().getForeignEnterprise());
+		}
+		
+		//ContractReliefDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getContractRelief()){
+			showContractReliefDataTable();
+			contractReliefCB.setValue(true);
+			setSelectedValueLB(reliefEmployeeLB, this.employeeContractInfo.getContractSpecificData().getReliefEmployee());	
+			retirementNameTB.setText(this.employeeContractInfo.getContractSpecificData().getRetirementName());
+			retirementSurnameTB.setText(this.employeeContractInfo.getContractSpecificData().getRetirementSurname());
+			retirementSurname2TB.setText(this.employeeContractInfo.getContractSpecificData().getRetirementSurname2());
+		}
+		
+		//OfferWorkDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getOfferWorkData()) {
+			showOfferWorkDataTable();
+			offerWorkDataCB.setValue(true);
+			offerTB.setText(this.employeeContractInfo.getContractSpecificData().getOffer());
+		}
+		
+		//WorkshopSchoolDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getWorkshopSchoolB()) {
+			showWorkshopSchoolDataTable();
+			workshopSchoolCB.setValue(true);
+			setSelectedValueLB(workshopSchoolLB, this.employeeContractInfo.getContractSpecificData().getWorkshopSchool());	
+		}
+		
+		//DisabilityDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getDisabilityB()) {
+			showDisabilityDataTable();
+			disabilityCB.setValue(true);
+			setSelectedValueLB(disabilityLB, this.employeeContractInfo.getContractSpecificData().getDisability());	
+		}
+		
+		//AnnexedDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getAnnexedB()) {
+			showAnnexedDataTable();
+			annexedCB.setValue(true);
+			if(this.employeeContractInfo.getContractSpecificData().getAnnexed())
+				annexedRB.setValue(true);
+			else
+				annexed2RB.setValue(true);
+			sourceYearTB.setValue(this.employeeContractInfo.getContractSpecificData().getSourceYear());
+		}
+
+		//CampaignsDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getCampaigns()) {
+			showCampaignsDataTable();
+			campaignsCB.setValue(true);
+			cpCampaignTB.setValue(this.employeeContractInfo.getContractSpecificData().getCpCampaign());
+			codeCampaignTB.setValue(this.employeeContractInfo.getContractSpecificData().getCodeCampaign());
+			yearCampaignTB.setValue(this.employeeContractInfo.getContractSpecificData().getYearCampaign());
+		}
+		
+		//InvestDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getInvest()) {
+			showInvestDataTable();
+			investCB.setValue(true);
+			setSelectedValueLB(employerLB, this.employeeContractInfo.getContractSpecificData().getEmployer());	
+			setSelectedValueLB(employeeLB, this.employeeContractInfo.getContractSpecificData().getEmployee());	
+			researcherCB.setValue(this.employeeContractInfo.getContractSpecificData().getResearcher());
+		}
+
+		//InterimCauseDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getIsInterimCause()) {
+			showInterimCauseDataTable();
+			interimCauseCB.setValue(true);
+			setSelectedValueLB(interimCauseLB, this.employeeContractInfo.getContractSpecificData().getInterimCause());	
+		}
+		
+		//EntrepreneurSupportDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getEntrepreneurSupport()) {
+			showEntrepreneurSupportDataTable();
+			entrepreneurSupportCB.setValue(true);
+			setSelectedValueLB(bonusColectiveLB, this.employeeContractInfo.getContractSpecificData().getBonusColective());
+			freelanceEmployeerCB.setValue(this.employeeContractInfo.getContractSpecificData().getFreelanceEmployeer());
+		}
+
+		//PromotionMeasuresDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getPromotionMeasures()) {
+			showPromotionMeasuresDataTable();
+			promotionMeasuresCB.setValue(true);
+			promotionPermanentHiringCB.setValue(this.employeeContractInfo.getContractSpecificData().getPromotionPermanentHiring());
+		}
+
+		//QuoteReductionsDataTable
+		if(this.employeeContractInfo.getContractSpecificData().getQuoteReductions()) {
+			showQuoteReductionsDataTable();
+			quoteReductionsCB.setValue(true);
+			setSelectedValueLB(reductionColectiveLB, this.employeeContractInfo.getContractSpecificData().getReductionColective());
+			if(null != this.employeeContractInfo.getContractSpecificData().getQuoteReduction() && this.employeeContractInfo.getContractSpecificData().getQuoteReduction())
+				quoteReductionRB.setValue(true);
+			else
+				quoteReduction2RB.setValue(true);
+			journeyPercentTB.setValue(this.employeeContractInfo.getContractSpecificData().getJourneyPercent());
+		}	
 	}
 
 }

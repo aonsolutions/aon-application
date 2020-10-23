@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -193,6 +194,10 @@ public interface EnterprisesService extends RemoteService {
 	Map<String, String> setContractOtherInfo(String currentDomainName, Integer contractId, String contractType,
 			Map<String, String> contractOtherData);
 	
-	Map<String, CNO> getCNOs(String currentDomainName);	
+	ContractSpecificData getContractSpecificData(String currentDomainName, Integer contractId);
+
+	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData);	
+	
+	Map<String, CNO> getCNOs(String currentDomainName);
 	
 }

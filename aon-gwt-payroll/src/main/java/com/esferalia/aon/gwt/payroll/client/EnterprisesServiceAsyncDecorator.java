@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
@@ -543,6 +544,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void setContractOtherInfo(String currentDomainName, Integer contractId, String contractType, Map<String, String> contractOtherData, AsyncCallback<Map<String, String>> callback) {
 		AON.start();
 		enterprisesServiceAsync.setContractOtherInfo(currentDomainName, contractId, contractType, contractOtherData, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+	
+	@Override
+	public void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> callback) {
+		AON.start();
+		enterprisesServiceAsync.getContractSpecificData(currentDomainName, contractId, new AsyncCallbackWrapper<ContractSpecificData>(callback));
+	}
+
+	@Override
+	public void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.setContractSpecificData(currentDomainName, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
