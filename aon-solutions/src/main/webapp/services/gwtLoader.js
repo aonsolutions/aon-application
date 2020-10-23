@@ -1,4 +1,4 @@
-	function removeRootPanel() {
+	export const removeRootPanel = () => {
 		const myNode = document.getElementById("rootPanel");
 		myNode.innerHTML = '';
 	}
@@ -10,22 +10,23 @@
 		componentHandler.upgradeDom();
 	}
 
-	function drawChartsCallback(){
+	export const drawChartsCallback = () => {
 
 	}
 
-	function getToken() {
+	export const getToken = () => {
 		return localStorage.getItem("aon_session_id");
 	}
 
-	function isTediSnapshot() {
+	export const isTediSnapshot = () => {
 	   	return false;
 	}
-	function isTediCenter() {
+
+	export const isTediCenter = () => {
 	  	return true;
 	}
 
-	function preStartModule(module) {
+	export const preStartModule = (module) => {
 		google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
 		var search = `/${module}.nocache.js`;
 		var scripts = window.document.getElementsByTagName("script");
@@ -65,7 +66,7 @@
 		}
 	}
 
-	function triggerModuleStart(module){
+	export const triggerModuleStart = (module) => {
 		try{
 			module.onInjectionDone(module);
 	        if ( !window.document.createEventObject ) {

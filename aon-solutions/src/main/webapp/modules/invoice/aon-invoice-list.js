@@ -29,7 +29,7 @@ class AonInvoiceList extends HTMLElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-table id='aonInvoiceTable'></aon-table>
+			<aon-table id='aonInvoiceTable' selectable='true'></aon-table>
 			`;
 		this.build();
  	}

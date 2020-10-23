@@ -1,8 +1,8 @@
+import '../../components/aon-checkbox.js';
 
-(function() {
-	class AonTable extends HTMLElement {
+class AonTable extends HTMLElement {
 
-		columns = [];
+		columns;
 
 		get id() {
 			return this.getAttribute('id');
@@ -12,9 +12,17 @@
 			this.setAttribute('id', id);
 		}
 
+		get selectable() {
+			return this.getAttribute('selectable');
+		}
+
+		set selectable(selectable) {
+			this.setAttribute('selectable', selectable);
+		}
 
 		constructor () {
 			super();
+			this.columns = [];
 		}
 
 
@@ -31,17 +39,20 @@
 					</tbody>
 				</table>
 			`;
+
+			if(this.hasAttribute('selectable')) {
+				let header = document.getElementById(this.getId() + 'TableHeader');
+				let th = document.createElement('th');
+				th.innerHTML = '<aon-checkbox> </aon-checkbox>';
+				header.appendChild(th);
+			}
 		}
 
 		addColumn(name, type, id) {
 			let header = document.getElementById(this.getId() + 'TableHeader');
 			let th = document.createElement('th');
 			th.innerHTML = name;
-			this.columns.push({
-				name,
-				type,
-				id
-			});
+			this.columns.push({name, type, id});
 			header.appendChild(th);
 		}
 
@@ -49,11 +60,18 @@
 			let body = document.getElementById(this.getId() + 'TableBody');
 			let tr = document.createElement('tr');
 			tr.style.cursor = 'pointer';
-			tr.addEventListener('click', fn);
+
+
+			if(this.hasAttribute('selectable')) {
+				let tdCheckBox = document.createElement('td');
+				tdCheckBox.innerHTML = '<aon-checkbox> </aon-checkbox>';
+				tr.appendChild(tdCheckBox);
+			}
 
 			this.columns.forEach((item, i) => {
 				let td = document.createElement('td');
 				td.innerHTML = value[item.id];
+				td.addEventListener('click', fn);
 				tr.appendChild(td);
 			});
 			body.appendChild(tr);
@@ -67,7 +85,6 @@
 		getId(){
 			return this.getAttribute('id');
 		}
-	}
+}
 
-	window.customElements.define('aon-table', AonTable);
-})();
+window.customElements.define('aon-table', AonTable);
