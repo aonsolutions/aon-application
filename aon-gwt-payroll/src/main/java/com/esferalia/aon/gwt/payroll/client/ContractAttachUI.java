@@ -374,7 +374,7 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	}
 	
 	private void setScrollPanelsHeight() {
-		attachmentsScrollPanel.setHeight((Window.getClientHeight() - 370) + "px");
+		attachmentsScrollPanel.setHeight((Window.getClientHeight() - 390) + "px");
 	}
 	
 	private void setColumnsWidth() {

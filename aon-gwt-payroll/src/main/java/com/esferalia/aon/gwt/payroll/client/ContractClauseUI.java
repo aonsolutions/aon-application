@@ -229,7 +229,7 @@ public class ContractClauseUI extends ResizeComposite {
 	}
 	
 	private void setScrollPanelsHeight() {
-		clausesScrollPanel.setHeight((Window.getClientHeight() - 370) + "px");
+		clausesScrollPanel.setHeight((Window.getClientHeight() - 390) + "px");
 	}
 	
 	private void setColumnsWidth() {
