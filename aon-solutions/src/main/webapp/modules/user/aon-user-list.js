@@ -37,7 +37,7 @@ class AonUserList extends HTMLElement {
 		let tbody = document.getElementById('user-tbody');
 		for(let i = 0; i < users.length; i++) {
 			let user = users[i];
-			var event = new CustomEvent('select', { 'detail': user });
+			let event = new CustomEvent('select', { 'detail': user });
 			let tr = document.createElement('tr');
 			tr.style.cursor = 'pointer';
 

@@ -28,22 +28,22 @@
 
 	export const preStartModule = (module) => {
 		google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table"], 'language': 'es'});
-		var search = `/${module}.nocache.js`;
-		var scripts = window.document.getElementsByTagName("script");
-		for (var i = 0; i < scripts.length; ++i) {
-			var script = scripts[i];
+		let search = `/${module}.nocache.js`;
+		let scripts = window.document.getElementsByTagName("script");
+		for (let i = 0; i < scripts.length; ++i) {
+			let script = scripts[i];
 			if (script.src != null && script.src.indexOf(search) != -1) {
-				var parent = script.parentNode;
+				let parent = script.parentNode;
 				parent.removeChild(script);
 				break;
 			}
 		}
 
-		var iframes = window.document.getElementsByTagName("iframe");
-		for (var i = 0; i < iframes.length; ++i) {
-			var iframe = iframes[i];
+		let iframes = window.document.getElementsByTagName("iframe");
+		for (let i = 0; i < iframes.length; ++i) {
+			let iframe = iframes[i];
 			if (iframe.src != null && iframe.id == module) {
-				var parent = iframe.parentNode;
+				let parent = iframe.parentNode;
 				parent.removeChild(iframe);
 				break;
 			}
@@ -54,11 +54,11 @@
 		removeRootPanel();
 		preStartModule(module);
 		if (window.document.createElement && window.document.getElementsByTagName) {
-			var script = window.document.createElement("script");
+			let script = window.document.createElement("script");
 			script.type = "text/javascript";
 			script.defer = "true";
 			script.src = `${module}/${module}.nocache.js?entryPoint=${entrypoint}`;
-			var heads = window.document.getElementsByTagName("head");
+			let heads = window.document.getElementsByTagName("head");
 			if (heads && heads[0]) {
 				heads[0].appendChild(script);
 				triggerModuleStart(module);
@@ -70,7 +70,7 @@
 		try{
 			module.onInjectionDone(module);
 	        if ( !window.document.createEventObject ) {
-	           	var evt = window.document.createEvent("HTMLEvents");
+	           	let evt = window.document.createEvent("HTMLEvents");
 	           	evt.initEvent("DOMContentLoaded", true, true);
 	           	window.document.dispatchEvent(evt);
 	        }

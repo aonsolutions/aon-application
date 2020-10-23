@@ -43,8 +43,15 @@ class AonTable extends HTMLElement {
 			if(this.hasAttribute('selectable')) {
 				let header = document.getElementById(this.getId() + 'TableHeader');
 				let th = document.createElement('th');
-				th.innerHTML = '<aon-checkbox> </aon-checkbox>';
+				th.innerHTML = '<aon-checkbox id="aonTableAllSelection"> </aon-checkbox>';
 				header.appendChild(th);
+				let ch = document.getElementById('aonTableAllSelection');
+				ch.addEventListener('change',() => {
+					document.querySelectorAll('aon-checkbox').forEach((item, i) => {
+						item.value = ch.value;
+					});
+				});
+
 			}
 		}
 
@@ -64,7 +71,7 @@ class AonTable extends HTMLElement {
 
 			if(this.hasAttribute('selectable')) {
 				let tdCheckBox = document.createElement('td');
-				tdCheckBox.innerHTML = '<aon-checkbox> </aon-checkbox>';
+				tdCheckBox.innerHTML = `<aon-checkbox id="aaa${body.children.length}"> </aon-checkbox>`;
 				tr.appendChild(tdCheckBox);
 			}
 

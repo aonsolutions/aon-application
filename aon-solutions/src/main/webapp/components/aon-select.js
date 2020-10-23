@@ -71,7 +71,7 @@
 
 				componentHandler.upgradeDom();
 
-				var textField = document.getElementById(this.getAttribute('id') + 'TextField');
+				let textField = document.getElementById(this.getAttribute('id') + 'TextField');
 				textField.MaterialTextfield.checkDirty();
 			}
 

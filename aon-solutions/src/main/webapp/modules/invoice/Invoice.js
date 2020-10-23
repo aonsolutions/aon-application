@@ -20,9 +20,9 @@ export class Invoice {
   totalSuplidos;
 
   constructor(type) {
-    var d = new Date();
-    var month = d.getMonth() + 1;
-    var day = d.getDate();
+    let d = new Date();
+    let month = d.getMonth() + 1;
+    let day = d.getDate();
     let curDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
 
     this.type = type || 'emitida';

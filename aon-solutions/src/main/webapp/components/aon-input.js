@@ -186,7 +186,7 @@ import {Countries} from '../services/country.js';
           // }
 
           label.style.display = this.isVisible() ? 'block' : 'none';
-          
+
           div.appendChild(label);
 
           if(this.isTypeList()) {
@@ -279,7 +279,7 @@ import {Countries} from '../services/country.js';
           });
 
           document.addEventListener('click', function(event) {
-            var isClickInside = div.contains(event.target);
+            let isClickInside = div.contains(event.target);
             if(!isClickInside){
               if(div.classList.contains('is-visible')){
                 div.classList.remove('is-visible');

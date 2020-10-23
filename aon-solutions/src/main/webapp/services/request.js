@@ -1,6 +1,6 @@
 
 	export const requestFile = (url, token, formData) => {
-		var xhr = new XMLHttpRequest();
+		let xhr = new XMLHttpRequest();
 		xhr.open('POST', url, true);
 		xhr.setRequestHeader('session_id', token);
 		const domainId = localStorage.getItem("aon_domain_id");

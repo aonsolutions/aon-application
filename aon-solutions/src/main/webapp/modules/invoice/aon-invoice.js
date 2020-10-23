@@ -1106,8 +1106,8 @@ import '../../components/aon-viewer.js';
 		}
 
 		totalImpuestos() {
-			 var total = 0;
-			 for (var i = 0; i < this._invoice.taxes.length; i++) {
+			 let total = 0;
+			 for (let i = 0; i < this._invoice.taxes.length; i++) {
 				 if(this._invoice.taxes[i].type === 'IVA'){
 					 total += (this._invoice.taxes[i].base + this._invoice.taxes[i].quota);
 				 } else {

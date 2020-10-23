@@ -46,7 +46,7 @@ class AonCompanyList extends HTMLElement {
 		let tbody = document.getElementById('company-tbody');
 		for(let i = 0; i < companies.length; i++) {
 			let company = companies[i];
-			var event = new CustomEvent('select', { 'detail': company });
+			let event = new CustomEvent('select', { 'detail': company });
 			let tr = document.createElement('tr');
 			tr.style.cursor = 'pointer';
 
