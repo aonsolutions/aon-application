@@ -55,16 +55,17 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedPartialFact
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
-import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
@@ -91,6 +92,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -1697,9 +1699,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private class CCCCretaDetail extends BaseCretaDetail {
 
 		private CCC ccc;
+		
+		private Button up2DateButton;
+		
+		public CCCCretaDetail() {			
+			up2DateButton = addSLDButton(new Button("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", (ClickHandler) e -> onClickUp2DateSSButton(e)));
+		}
 
 		public void setCCC(CCC ccc) {
 			this.ccc = ccc;
+		}
+		
+		protected void setUp2DateButtonVisible(boolean enabled) {
+			up2DateButton.setVisible(enabled);
 		}
 
 		@Override
@@ -1738,6 +1750,40 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			CCCDBACommand cmd = new CCCDBACommand();
 			cmd.setCCC(ccc);
 			cmd.execute();
+		}
+		
+		void onClickUp2DateSSButton(ClickEvent e) {
+			XMLHttpRequest xhr = XMLHttpRequest.create();
+			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_REPORT);
+			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+				@Override
+				public void onReadyStateChange(XMLHttpRequest xhr) {
+					int state = xhr.getReadyState();
+					if (state != XMLHttpRequest.DONE)
+						return;
+					try {
+						String dataURI = xhr.getResponseText();
+						showPFDF(dataURI, employeeDetail);
+						AON.stop();
+					} catch ( Throwable t ) {
+						AON.fail();
+					}
+				}
+			});
+
+			StringBuffer requestDataBuffer = new StringBuffer();
+
+			requestDataBuffer
+			.append(SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL())
+			.append("&" +SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser() )
+			.append("&" +SistemaREDService.Parameter.REGIME.name() + "=" + ccc.getRegime() )
+			.append("&" +SistemaREDService.Parameter.CCC.name() + "=" + ccc.getCode() )
+			;
+			
+			xhr.send(requestDataBuffer.toString());
+			AON.start();
+			
 		}
 
 		protected void onRequestCommand(File file) {
@@ -2757,7 +2803,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			closeFootPanel();
 			getEmployeeDraft().setTaVisible(false);
 			getEmployeeDraft().setIdcVisible(false);
-
 		});
 	}
 
@@ -2797,12 +2842,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						selectResultsPanel();
 						ifSaltraEnabled(enterpiseStatus, () -> {
 							showFootPanel();
+							getCCCCretaDetail().setUp2DateButtonVisible(true);
 						}, () -> {
 							closeFootPanel();
-
+							getCCCCretaDetail().setUp2DateButtonVisible(false);
 						});
 					}, throwable -> {
 						closeFootPanel();
+						getCCCCretaDetail().setUp2DateButtonVisible(false);
+
 					});
 				}
 
@@ -2814,13 +2862,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 			ifSaltraEnabled(enterpiseStatus, () -> {
 				showFootPanel();
+				getCCCCretaDetail().setUp2DateButtonVisible(true);
 			}, () -> {
 				closeFootPanel();
+				getCCCCretaDetail().setUp2DateButtonVisible(false);
 			});
 
 		}, throwable -> {
 			closeFootPanel();
-
+			getCCCCretaDetail().setUp2DateButtonVisible(false);
 		});
 	}
 	// ------------------------------------------------------ Protected methods
@@ -2889,6 +2939,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			}
 		}
 
+	}
+
+	protected static void showPFDF(String dataURI, DetailPanel detailPanel) {
+		PDFViewer viewer = new PDFViewer() {
+			String getFileName() {
+				return "CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.pdf";
+			};
+		};
+		viewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
+		viewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
+		detailPanel.setWidget(viewer);
 	}
 
 	protected static JsBasesResult showBases(String json, DetailPanel detailPanel, CreateRequestCommand cretaCommand) {

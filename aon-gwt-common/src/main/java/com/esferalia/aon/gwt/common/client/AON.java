@@ -192,6 +192,10 @@ public class AON {
 	public static final String AON_ICON_DISABLE = "aon-icon-disable";
 	public static final String AON_ICON_COST = "aon-icon-cost";
 	public static final String AON_NOWRAP = "aon-nowrap";
+	public static final String AON_UPPERCASE = "aon-uppercase";
+	public static final String AON_FINDING_TOOLBAR_ITEM = "aon-finding-toolbar-item";
+	
+	
 
 	public static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern(),MSG.currencyCode());
 	public static final NumberFormat ACCOUNT_FMT = NumberFormat.getFormat("#,##0.00;(#,##0.00)",MSG.currencyCode());

@@ -6,8 +6,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -65,6 +68,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			case CERTIFICATE:
 				doCertificatePost(req, resp);
 				break;
+			case UP2DATE_REPORT:
+				doUp2DateReportPost(req, resp);
+				break;
 
 			default:
 				break;
@@ -77,6 +83,35 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	
 	
 	
+	private void doUp2DateReportPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException ,SegSocialException{
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		try ( Connection connection = getConnection(req);
+			OutputStream os = resp.getOutputStream();
+			Writer writer = new OutputStreamWriter(os)){
+			
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			String regime = req.getParameter(Parameter.REGIME.name());
+			String ccc = req.getParameter(Parameter.CCC.name());
+
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+			byte data [] = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc);
+			
+			
+			resp.setStatus(HttpServletResponse.SC_OK);
+			String base64 = Base64.getEncoder().encodeToString(data);
+			encodeURIComponent("application/pdf", base64, writer);
+			
+		}
+		
+	}
+
 	private void doCertificatePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
 		Part filePart = req.getPart(Parameter.FILE.name());
 		String password = req.getParameter(Parameter.PASSWORD.name());
@@ -230,7 +265,16 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		}
 	}
 
-
+	protected static void encodeURIComponent(String mime, String base64, Writer writer ) 
+	throws IOException {
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		writer.write("data:");
+		writer.write(mime);
+		writer.write(";base64,");
+		base64 = base64.replace('$', '+');
+		base64 = base64.replace('_', '/');
+		writer.write(base64);
+	}
 	
 
 }

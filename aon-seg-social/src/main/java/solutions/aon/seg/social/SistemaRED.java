@@ -76,6 +76,20 @@ public class SistemaRED {
 			throw new SegSocialException(e);
 		}
 	}
+	
+	public static byte[] getUp2DateSS(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regimen, String ccc ) throws SegSocialException {
+		return SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+	}
+
+	public static byte[] getUp2DateSS(final byte certificateData [], final String certificatePassword,
+			final String certificateType, String regimen, String ccc ) throws SegSocialException {
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
+			return SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}		
+	}
 
 	private static void evalSwitch(FailingHttpStatusCodeException e) throws ForbiddenException, SegSocialException {
 		switch (e.getStatusCode()) {

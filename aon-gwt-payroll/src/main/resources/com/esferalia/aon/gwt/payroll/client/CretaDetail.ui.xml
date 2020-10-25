@@ -75,7 +75,7 @@
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="sldToolbarPanel">
 								<g:Button ui:field='msjRecButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="Mensajes Recibidos" /> 
 								<g:Button ui:field='dclButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="{DOCUMENTO_CALCULO_LIQUIDACION.getFilename}" /> 
 							</g:HTMLPanel>

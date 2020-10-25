@@ -72,6 +72,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ImageResourceRenderer;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -189,6 +190,9 @@ public abstract class CretaDetail extends Composite {
 	Button dclButton;
 	@UiField
 	MenuItem dclMenuItem;
+	
+	@UiField
+	HTMLPanel sldToolbarPanel;
 
 	@UiField
 	Button basesButton;
@@ -639,6 +643,15 @@ public abstract class CretaDetail extends Composite {
 	
 	String getEmployeeFullName(JsEmployee jsEmployee) {
 		return jsEmployee.getCaf();
+	}
+	
+	Button addSLDButton(Button button) {
+		button.setStylePrimaryName(AON.AON_FINDING_TOOLBAR_ITEM);
+		button.addStyleName(AON.AON_UPPERCASE);
+		button.addStyleName(AON.AON_ICON_SEGSOCIAL_SMALL);
+		
+		sldToolbarPanel.add(button);
+		return button;
 	}
 	
 	// ------------------------------------------------------------------------
