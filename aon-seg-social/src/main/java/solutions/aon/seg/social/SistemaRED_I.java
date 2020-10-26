@@ -299,7 +299,19 @@ public class SistemaRED_I {
 		}
 	}
 	
+	public static Collection<byte[]> getTACertificatePDFs (final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Date fecha)
+			throws SegSocialException, InterruptedException{
+		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+	}
 	
+	public static Collection<byte[]> getContributionPDFs (final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Date fecha)
+			throws SegSocialException, InterruptedException{
+		return getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, certificatePassword, certificateType, affiliationNumber, regime, contributionAccount, fecha);
+	}
 	
 	public static Collection<byte[]> getPdfsInfo(final String href, final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
@@ -347,7 +359,12 @@ public class SistemaRED_I {
 			// loads the pdf
 			
 			boolean found=false;
+			int indTab=2;
  			DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
+ 			if(iter.size()==0) {
+ 				iter=htmlPage.querySelectorAll("#Sub0900112078>tbody>tr");
+ 				indTab=1;
+ 			}
  			String dia="";
  			String mes="";
  			if(calendar.get(Calendar.DATE)<10) {
@@ -368,9 +385,9 @@ public class SistemaRED_I {
 			for (DomNode domNode : iter) {
 				DomNodeList<DomNode> dn2=domNode.querySelectorAll("td");
 				
-				if(dn2.get(2).getVisibleText().equalsIgnoreCase(strDate)){
+				if(dn2.get(indTab).getVisibleText().equalsIgnoreCase(strDate)){
 					found=true;
-					HtmlLabel htmlLabel=dn2.get(2).querySelector("label");
+					HtmlLabel htmlLabel=dn2.get(indTab).querySelector("label");
 					InputStream is=htmlLabel.dblClick().getWebResponse().getContentAsStream();
 					ret.add(is.readAllBytes());
 					is.close();
@@ -641,8 +658,18 @@ public class SistemaRED_I {
 		}*/
 		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			  Collection<byte[]> col=getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
+			  Collection<byte[]> col=getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 			  String nom="a";
+			  for (byte[] bs : col) {
+				Toolkit.buildPdf(bs, nom);
+				System.out.println(nom+".pdf CREATED");
+				nom+=1;
+			}
+		  }
+		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+			  Collection<byte[]> col=getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
+			  String nom="b";
 			  for (byte[] bs : col) {
 				Toolkit.buildPdf(bs, nom);
 				System.out.println(nom+".pdf CREATED");
