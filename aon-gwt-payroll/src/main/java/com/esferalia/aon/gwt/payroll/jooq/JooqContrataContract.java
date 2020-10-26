@@ -344,10 +344,16 @@ public class JooqContrataContract {
 			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
 			.fetchOne();
 		
+		if(null != contractAttachRecord)
+			contractSpecificData.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
+		
 		Contrata contrata = new Contrata();
 		CONTRATOS contratos = contrata.getCONTRATOS(contractAttachRecord.get(CONTRACT_ATTACH.DATA));
-		Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
+		if(null == contratos)
+			return contractSpecificData;
+		
 		try {
+			Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 			JooqContrata.completeContratosParams(obj, contractSpecificData);
 		} catch (JAXBException e) {
 			e.printStackTrace();

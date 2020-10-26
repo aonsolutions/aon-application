@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class MainContrataContractObject {
 		employeesList.clear();
 		allEmployeesList.addAll(employeesInfoList);
 		employeesList.addAll(employeesInfoList);
+		employeesFilterMap.clear();
 		
 		// Init map
 		for(EmployeeContractInfo employee : allEmployeesList) {
@@ -62,6 +64,13 @@ public class MainContrataContractObject {
 	}
 	
 	public List<EmployeeContractInfo> getEmployeesList(){
+		employeesList.sort(new Comparator<EmployeeContractInfo>() {
+			@Override
+			public int compare(EmployeeContractInfo e1, EmployeeContractInfo e2) {
+				return e1.getEmployeeInfo().getFullName().compareTo(e2.getEmployeeInfo().getFullName());
+			}
+		});
+		
 		return employeesList;
 	}
 	

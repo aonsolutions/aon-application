@@ -443,11 +443,12 @@ public class MainContrataContract extends MainEntryPoint {
 	   });
 	    
 	    
-	    employeeDataGrid.addColumnSortHandler(columnSortHandler);
-
 	    // We know that the data is sorted alphabetically by default.
 	    employeeDataGrid.getColumn(0).setDefaultSortAscending(false);
 	    employeeDataGrid.getColumnSortList().push(employeeDataGrid.getColumn(0));   
+	    
+	    employeeDataGrid.addColumnSortHandler(columnSortHandler);
+
 	}
 	
 	// --------------------------------------------------------------------------------------------

@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client" >
 	
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
@@ -46,6 +47,29 @@
     		padding-top: 2px;
 		}
 		
+		/* ------------------- Menu Bar ------------------- */
+		.menuBar{
+			cursor: pointer;
+			display: grid;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+		}
+		
+		.p5{
+			padding: 5px !important;
+		}
+		
+		.h17{
+			height: 17px;
+		}
+		
+		.nbr{
+			border-right: none !important;
+		}
+		
 	</ui:Style>
 
 	<g:SimpleLayoutPanel>
@@ -64,7 +88,7 @@
 									<g:Label styleName="aon-outputText" text=" "/> 
 								</g:HTMLPanel>
 							</g:HTMLPanel>
-							<g:HorizontalPanel styleName="aon-finding-toolbar">
+							<g:HTMLPanel styleName="aon-finding-toolbar {style.flex}">
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 									<g:Button ui:field='saveContract' styleName='aon-finding-toolbar-item aon-icon-save {style.pl20}' text=" GUARDAR"/>
 								</g:HTMLPanel>
@@ -74,7 +98,26 @@
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 									<g:Button ui:field='listEmployees' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTA"/>
 								</g:HTMLPanel>
-							</g:HorizontalPanel>
+								<g:MenuBar styleName="aon-finding-toolbar-item-group {style.h17}">
+									<g:MenuItem text="TGSS" ui:field="archivoMenuItem" styleName="aon-finding-toolbar-item aon-icon-segsocial-small {style.bold}">
+										<g:MenuBar vertical="true" styleName="{style.p5}">
+											<g:MenuItem ui:field='idcButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small {style.nbr}' text="Informe de Cotizaci&oacute;n IDC" enabled="true" />	
+											<g:MenuItem ui:field='taButton' styleName=' aon-finding-toolbar-item aon-icon-segsocial-small {style.nbr}' text="Duplicados de Documentos TA" enabled="true" />	
+										</g:MenuBar>
+									</g:MenuItem>
+								</g:MenuBar>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button debugId='closePdfButton' ui:field='closePdfButton'
+										styleName='aon-finding-toolbar-item aon-icon-cancel' text="Cerrar" />
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:ListBox debugId='zoomListBox' ui:field="zoomListBox" />
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button debugId='downloadButton' ui:field='downloadButton'
+										styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
+								</g:HTMLPanel>
+							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>
 				</g:north>
@@ -94,7 +137,6 @@
 										<a:Employee ui:field="employee"/>
 									</g:ScrollPanel>
 						    	</g:HTMLPanel>
-						    	
 						  	</g:tab>
 						  	<g:tab>
 						    	<g:customHeader size='7'>
@@ -137,6 +179,7 @@
 						    	</g:HTMLPanel>
 						  	</g:tab>
 						 </g:TabLayoutPanel>
+						 <p:Viewer styleName="reset" ui:field='pdfViewer' />
 					 </g:HTMLPanel>
 				</g:center>
 				<g:south size="15">

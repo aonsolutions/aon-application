@@ -368,6 +368,32 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void downloadTa(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeTa(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+
+	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.getEmployeeIdc(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	// ---------------------------------------------- GETTERS  -------------------------------------------------
 	
 	// TABLA DATOS CONTRATO
@@ -787,6 +813,10 @@ public class ContrataEmployeeObject {
 	
 	public EmployeeContractInfo getContractEmployeeInfo() {
 		return this.employeeContractData;
+	}
+
+	public String getEmployeeFullName() {
+		return employeeData.getFullName();
 	}
 		
 }

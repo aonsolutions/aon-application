@@ -33,6 +33,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -41,11 +42,13 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -53,6 +56,8 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
+
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public abstract class ContrataEmployee extends ResizeComposite {
 	
@@ -561,8 +566,26 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField
 	TabLayoutPanel footTabPanel;
-	// -------------------------------------------- Variables de la clase---------------------------------------------
 
+	@UiField
+	MenuItem taButton;
+	
+	@UiField
+	MenuItem idcButton;
+
+	@UiField
+	Button closePdfButton;
+	
+	@UiField
+	Viewer pdfViewer;
+	
+	@UiField
+	ListBox zoomListBox;
+	
+	@UiField
+	Button downloadButton;
+	// -------------------------------------------- Variables de la clase---------------------------------------------
+	private int zoom;
 	private ContrataEmployeeObject contrataEmployeeObject;
 	private ContractType contractType;
 	private Municipalities municipalities;
@@ -570,6 +593,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 	
 	public ContrataEmployee() {
+		this.zoom = Constants.DEFAULT_ZOOM;
 		employee = new EmployeeImplementation();
 		contractSpecificData = new ContractSpecificData();
 		contractOtherData = new ContractOtherData();
@@ -590,6 +614,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				reformatAccount(employee.account);
 			}
 		});
+		
+		showEmployee();		
+		initZoomList();
 		
 		int height = Window.getClientHeight(); 
 		scrolledPanel.setHeight((height-260)+"px");
@@ -657,6 +684,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			splitLayoutPanel.setWidgetSize(footPanel, 25);
 		});
 		
+		taButton.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				showTa();
+			}
+		});
+		
+		idcButton.setScheduledCommand(new Command() {
+			@Override
+			public void execute() {
+				showIdc();
+			}
+		});
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
@@ -714,6 +754,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			dialog.center();
 			dialog.show();
 		}
+	}
+	
+	@UiHandler("closePdfButton")
+	void onClosePdfButtonClick(ClickEvent event) {
+		showEmployee();
+	}
+	
+	@UiHandler("zoomListBox")
+	void onZoomListBoxChange(ChangeEvent event) {
+		int index =zoomListBox.getSelectedIndex();
+		String text = zoomListBox.getItemText(index);
+		zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
+		pdfViewer.scale(zoom / 100.00);
+	}	
+	
+	@UiHandler("downloadButton")
+	void onDownloadClick(ClickEvent event) {
+		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
+		pdfViewer.download(fileName);
 	}
 //	
 //	protected abstract void onAccept();
@@ -1287,6 +1346,75 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		footTabPanel.add(treeErrorMessages, "Errores");
 		splitLayoutPanel.setWidgetSize(footPanel, 200);
+	}
+	
+	// ------------------------------------------------ PDF -------------------------------------------------------------
+	private void showTa() {
+
+		contrataEmployeeObject.downloadTa(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+
+	private void showIdc() {
+
+		contrataEmployeeObject.downloadIdc(
+		(dataURI) -> {
+				showPdf();
+				pdfViewer.setDocument(dataURI, zoom / 100.00);
+		}, 
+		(trowable)-> {
+			
+		}
+		);
+	}
+	
+	
+	private void showPdf() {
+		taButton.setVisible(false);
+		idcButton.setVisible(false);
+		saveContract.setVisible(false);
+		deleteContract.setVisible(false);
+		listEmployees.setVisible(false);
+
+		zoomListBox.setVisible(true);
+		closePdfButton.setVisible(true);
+		downloadButton.setVisible(true);
+
+		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
+		pdfViewer.getElement().getStyle().clearDisplay();
+	}
+
+	private void showEmployee() {
+		saveContract.setVisible(true);
+		deleteContract.setVisible(true);
+		listEmployees.setVisible(true);
+		taButton.setVisible(true);
+		idcButton.setVisible(true);
+		zoomListBox.setVisible(false);
+		closePdfButton.setVisible(false);
+		downloadButton.setVisible(false);
+		
+		pdfViewer.getElement().getStyle().setDisplay(Display.NONE);
+		tabLayOutPanel.getElement().getStyle().clearDisplay();
+	}
+	
+	private void initZoomList() {
+
+		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+		int selectedIndex = zoomListBox.getItemCount();
+		for (int zoom = Constants.DEFAULT_ZOOM; zoom < Constants.MAX_ZOOM; zoom += Constants.ZOOM_STEP)
+			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
+		zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) Constants.MAX_ZOOM / 100));
+		zoomListBox.setSelectedIndex(selectedIndex);
+		
 	}
 	
 }
