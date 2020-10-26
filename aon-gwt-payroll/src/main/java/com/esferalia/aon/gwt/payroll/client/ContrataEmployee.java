@@ -734,7 +734,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					//TODO: UPDATE
 					contrataEmployeeObject.updateEmployee(
 							r -> { 
-								onListShow(true);
+//								onListShow(true);
 							}, 
 							t -> {}
 					);
@@ -900,7 +900,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		this.employee.contractType.clear();
 		this.employee.contractType.addItem("-", "-1");
 		for (Entry<Integer, ContractTypeRecord> entry : contractType.getContractTypes().entrySet())
-			this.employee.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), entry.getKey().toString());	
+			this.employee.contractType.addItem(entry.getKey() + " - " + entry.getValue().getContractTypeDescription(), StringUtils.leftPad(entry.getKey().toString(), 3, '0'));	
 	}
 	
 	private void initAgreements() {
