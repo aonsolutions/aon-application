@@ -216,62 +216,67 @@ public class SistemaRedEmployee {
 		{
 				try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 				webClient.getOptions().setJavaScriptEnabled(false);
-				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
+				ArrayList<Employee> employees = new ArrayList<Employee>();
 				
+				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 				
 				HtmlForm buscaPartesForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-							
 				buscaPartesForm.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
 				buscaPartesForm.getInputByName("txt_SDFTESO62").setValueAttribute(ccc.substring(0, 2));
 				buscaPartesForm.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
 				buscaPartesForm.getInputByName("chk_chkgrupo1_1").setChecked(true);
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
-				
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 				
 				Iterable<DomElement> tableContent = htmlPage.getElementById("Sub1000112079").getLastElementChild().getChildElements();
 				ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();	
 				ArrayList<String> empData = new ArrayList<String>();
 				int i = 1;
-
-				for(DomElement tr: tableContent) {
-					Iterable<DomElement> rowContent = tr.getChildElements();
-					for(DomElement td : rowContent) {				
-						if(i == 5) {
-							empData.add(td.getVisibleText());	
-							data.add(empData);
-							empData = new ArrayList<String>();
-							i=0;
-						}else 
-							if(i == 1 && td.getVisibleText().equals("")) break;
-							else empData.add(td.getVisibleText());				
-						i++;
+				boolean end = false;
+				
+				while(!end) {
+					for(DomElement tr: tableContent) {
+						Iterable<DomElement> rowContent = tr.getChildElements();
+						for(DomElement td : rowContent) {				
+							if(i == 5) {
+								empData.add(td.getVisibleText());	
+								data.add(empData);
+								empData = new ArrayList<String>();
+								i=0;
+							}else 
+								if(i == 1 && td.getVisibleText().equals("")) break;
+								else empData.add(td.getVisibleText());				
+							i++;
+						}
 					}
-				}
-				
-				EmployeeBuilder builder = new EmployeeBuilder();
-				ArrayList<Employee> employees = new ArrayList<Employee>();
-				
-				for(ArrayList<String> empdata : data) {
-					String nss = empdata.get(0);
-					if(nss != null) nss = nss.replace(" ", "");
-					String name = empdata.get(1);
-					Date fra = Toolkit.parseDate(empdata.get(2), "dd-MM-yyyy");
-					String situation = empdata.get(3);
-					String ipf = empdata.get(4);
-					if(ipf != null) ipf = Toolkit.removeExtraZeros(ipf.replace(" ", ""));
 					
-					Employee employee = builder.setNss(nss)
-					.setName(name)
-					.setFra(fra)
-					.setSituation(situation)
-					.setIpf(ipf)
-					.build();
+					EmployeeBuilder builder = new EmployeeBuilder();
 					
-					employees.add(employee);
+					
+					for(ArrayList<String> empdata : data) {
+						String nss = empdata.get(0);
+						if(nss != null) nss = nss.replace(" ", "");
+						String name = empdata.get(1);
+						Date fra = Toolkit.parseDate(empdata.get(2), "dd-MM-yyyy");
+						String situation = empdata.get(3);
+						String ipf = empdata.get(4);
+						
+						if(ipf != null) ipf = Toolkit.removeExtraZeros(ipf.replace(" ", ""));
+						
+						Employee employee = builder.setNss(nss)
+						.setName(name)
+						.setFra(fra)
+						.setSituation(situation)
+						.setIpf(ipf)
+						.build();
+						
+						employees.add(employee);
+					}
+					HtmlInput btn = htmlPage.querySelector("input[name=btn_Sub2207801001]");
+					htmlPage = btn.click();
+					if(HtmlUnitToolkit.getSSCode(htmlPage) == 3145) end = true;
 				}
-
 				return employees;
 			}
 			
@@ -361,8 +366,8 @@ public class SistemaRedEmployee {
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 				
-				Toolkit.buildPdf(getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy")),"log.html");
-								
+//				Toolkit.buildPdf(getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy")),"log.html");
+				Toolkit.log(getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062").toArray());		
 			}catch (NullPointerException e) {}
 		}
 	}
