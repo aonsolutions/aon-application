@@ -21,9 +21,12 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLLabelElement;
+
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.NoMoreDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.objects.Idc;
 import solutions.aon.seg.social.objects.SituacionEmpresa;
 import solutions.aon.seg.social.objects.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
@@ -31,7 +34,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class SistemaRED_I {
 
-	private static SituacionEmpresa getSituacionEmpresa(final InputStream certificateInputStream,
+	public static SituacionEmpresa getSituacionEmpresa(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String ccc)
 			throws MalformedURLException, IOException, InterruptedException, SegSocialException {
 
@@ -295,6 +298,93 @@ public class SistemaRED_I {
 			throw new SegSocialException(e);
 		}
 	}
+	
+	
+	
+	public static Collection<byte[]> getPdfsInfo(final String href, final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Date fecha)
+			throws SegSocialException, InterruptedException {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
+			htmlPage = htmlPage.getAnchorByHref(href).click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
+			// Filling the fields
+			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			try {
+				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
+			} catch (ElementNotFoundException enfe) {
+				jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
+			}
+			jacadaform.getInputByName("txt_SDFTESCTA")
+					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA")
+					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+			GregorianCalendar calendar = new GregorianCalendar();
+			calendar.setTime(fecha);
+			/*jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
+			jacadaform.getInputByName("txt_SDFMES").setValueAttribute("" + (calendar.get(Calendar.MONTH) + 1));
+			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));*/
+			// Selecting document's printing method
+			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
+			ArrayList<byte[]> ret=new ArrayList<byte[]>();
+			for (DomElement de : it) {
+				if (de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
+					htmlPage = de.click();
+					HtmlUnitToolkit.manageStatusCode(htmlPage);
+					break;
+				}
+			}
+			htmlPage = jacadaform.getInputByValue("Continuar").click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			// REVISAR SPLIT
+			// Obtaining the first table registry's label to double-click on it so that it
+			// loads the pdf
+			
+			boolean found=false;
+			DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
+			String strDate=""+calendar.get(Calendar.DATE)+" "+(calendar.get(Calendar.MONTH)+1)+" "+calendar.get(Calendar.YEAR);
+			for (DomNode domNode : iter) {
+				DomNodeList<DomNode> dn2=domNode.querySelectorAll("td");
+				
+				if(dn2.get(2).getVisibleText().equalsIgnoreCase(strDate)){
+					found=true;
+					HtmlLabel htmlLabel=dn2.get(2).querySelector("label");
+					InputStream is=htmlLabel.dblClick().getWebResponse().getContentAsStream();
+					ret.add(is.readAllBytes());
+					is.close();
+				}
+				else if(found==true) {
+					break;
+				}
+				
+			}
+			
+			
+			
+			//List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
+			/*InputStream is = labels.get(0).dblClick().getWebResponse().getContentAsStream();
+			byte[] ret = is.readAllBytes();
+			is.close();*/
+			return ret;
+		} catch (FailingHttpStatusCodeException e) {
+			switch (e.getStatusCode()) {
+			case 403:
+				throw new ForbiddenException();
+			default:
+				throw new SegSocialException();
+			}
+
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
 
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String contributionAccount)
@@ -473,7 +563,7 @@ public class SistemaRED_I {
 					}
 				}
 				htmlPage = htmlPage.getElementById("Sub2206301003").click();
-
+				//System.out.println(htmlPage.asText());
 				try {
 					HtmlUnitToolkit.getSSCode(htmlPage);
 				} catch (NoMoreDataException nmde) {
@@ -499,26 +589,30 @@ public class SistemaRED_I {
 
 	public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException,
 			InterruptedException, ParseException, SegSocialException {
-		
+		/*
 		  try (final InputStream certificateInputStream = new FileInputStream(args[0]))
 		  { System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT",
 		  "pkcs12", "0111", "01105360062"));
 		  
-		  } try (final InputStream certificateInputStream = new FileInputStream(args[0])){
+		  }*/
+		  /*try (final InputStream certificateInputStream = new FileInputStream(args[0])){
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			  byte[] pdf=getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  System.out.println(pdf.length+" Bytes downloaded");
 		  Toolkit.buildPdf(pdf,"DuplicadoTA");
-		  } try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+		  }*/
+		 /* try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			  byte[] pdf=getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
 		  System.out.println(pdf.length+" Bytes downloaded");
 		  Toolkit.buildPdf(pdf,"InfoCotizacion");
-		  } try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+		  }
+		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			  byte[] pdf=getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT","pkcs12", "0111", "01105360062");
 		  System.out.println(pdf.length+" Bytes downloaded");
 		  Toolkit.buildPdf(pdf,"ObligationAwarenessCertificate");
-		  } try (final InputStream certificateInputStream = new FileInputStream(args[0])) { 
+		  }
+		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) { 
 			  //Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			  Collection<Idc> r=getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924","0111", "01105360062"); Toolkit.log(r.toArray());
 		  }
@@ -528,7 +622,16 @@ public class SistemaRED_I {
 			Collection<Date> i = getDischargeDates(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111",
 					"01105360062");
 			Toolkit.log(i.toArray());
-		}
+		}*/
+		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+			  Collection<byte[]> col=getPdfsInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR65&E=I&AP=AFIR", certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
+			  String nom="a";
+			  for (byte[] bs : col) {
+				Toolkit.buildPdf(bs, nom);
+				nom+=1;
+			}
+		  }
 	}
 
 }
