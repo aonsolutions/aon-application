@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.watson.server.AonObjectUtils;
-import com.sun.tools.javac.util.StringUtils;
 
 /**
  * <p>
