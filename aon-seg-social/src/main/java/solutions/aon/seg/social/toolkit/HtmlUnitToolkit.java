@@ -11,6 +11,7 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.InvalidDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
@@ -34,7 +35,8 @@ public class HtmlUnitToolkit {
 
 	//GET THE WEB CLIENT OF HTMLUNIT
 	public static WebClient getWebClient(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType) {
+			final String certificateType) throws InvalidCertificateException {
+		try {
 			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setDownloadImages(false);
@@ -43,7 +45,8 @@ public class HtmlUnitToolkit {
 			webClient.getOptions().setSSLClientCertificate(certificateInputStream, certificatePassword,
 					certificateType);
 			
-			return webClient;		
+			return webClient;	
+		}catch(RuntimeException e) {throw new InvalidCertificateException();}
 	}
 	
 	//GET TRIMMED STRING FROM HTML ELEMENT
