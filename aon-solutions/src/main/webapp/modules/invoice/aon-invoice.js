@@ -64,7 +64,7 @@ import '../../components/aon-viewer.js';
 				<div id="aonInvoiceData">
 					<div id="aonInvoiceDiv" style="display:flex;">
 						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%"> </aon-card>
-						<div style="width:50%">
+						<div id="aonInvoiceTaxDiv" style="width:50%">
 							<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
 							<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
 						</div>
@@ -125,6 +125,16 @@ import '../../components/aon-viewer.js';
 				input.type = 'file';
 				input.addEventListener('change', () => this.preview());
 				button.appendChild(input);
+			} else {
+				let fileDiv = document.getElementById('aonInvoiceFile');
+				let dataDiv = document.getElementById('aonInvoiceData');
+
+				fileDiv.style.display = 'block';
+				fileDiv.style.width = '50%';
+				dataDiv.style.width = '50%';
+				document.getElementById('aonInvoiceDiv').style.display = 'block';
+				document.getElementById('aonInvoiceTaxDiv').style.width = '100%';
+				fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}"><aon-viewer>`;
 			}
 		}
 
@@ -134,11 +144,6 @@ import '../../components/aon-viewer.js';
 
 			let fileInput = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
 			const file = fileInput.files[0];
-			fileDiv.style.display = 'block';
-			fileDiv.style.width = '50%';
-			dataDiv.style.width = '50%';
-
-			fileDiv.innerHTML = `<aon-viewer type="${file.type}"><aon-viewer>`;
 
 			const READER = new FileReader();
 			READER.readAsDataURL(file);
@@ -147,36 +152,26 @@ import '../../components/aon-viewer.js';
 				fileDiv.style.width = '50%';
 				dataDiv.style.width = '50%';
 				document.getElementById('aonInvoiceDiv').style.display = 'block';
+				document.getElementById('aonInvoiceTaxDiv').style.width = '100%';
+				this.attach(READER.result, file.type);
 				fileDiv.innerHTML = `<aon-viewer type="${file.type}" file="${READER.result}"><aon-viewer>`;
 			};
 		}
 
-		// attach(fileDataUri: string,  mimetype: string): void {
-		// 	if (fileDataUri.length > 0) {
-		// 		const base64File = fileDataUri.split(',')[1];
-		// 		const cp = this.service.getActualCompany();
-		// 		const data = {
-		// 			company: cp ,
-		// 			content: base64File,
-		// 			contentType: mimetype,
-		// 			contentEncoding: 'base64',
-		// 			invoice: undefined,
-		// 			status: undefined
-		// 		};
-		// 		if (this.invoiceService.isNew) { data.invoice = this.invoiceService.invoice; }
-		// 		this.service.loading = true;
-		// 		this.aonService.createInvoice(data)
-		// 		.subscribe((r: Invoice) => {
-		// 			if (!this.invoiceService.invoice.id) {
-		// 				this.invoiceService.setInvoice(r);
-		// 			}
-		// 			this.invoiceService.invoiceFile = undefined;
-		// 			this.invoiceService.getFile().subscribe();
-		// 			this.invoiceService.expandFile(true);
-		// 			this.service.loading = false;
-		// 		});
-		// 	}
-		// }
+		attach(fileDataUri,  mimetype){
+			if (fileDataUri.length > 0) {
+				const base64File = fileDataUri.split(',')[1];
+				const data = {
+					file: {
+						content: base64File,
+						contentType: mimetype,
+						contentEncoding: 'base64'
+					},
+					invoice: this.getInvoice()
+				};
+				insertInvoice(data).then((r) => this.getInvoice().id = r.id);
+			}
+		}
 
 		getOptions() {
 			const status = this._invoice.status;
@@ -442,14 +437,16 @@ import '../../components/aon-viewer.js';
 			tr1.appendChild(tdIRPF);
 			let irpf = document.getElementById('irpfCheckbox');
 			irpf.value = this._invoice.irpf;
-			irpf.addEventListener('change', () => this.changeIRPF());
+			irpf.addEventListener('change', () => {
+				this.changeIRPF();
+			});
 
 			// SUPLIDOS
 			let tdSuplidos = document.createElement('td');
 			tdSuplidos.innerHTML = `<aon-checkbox id="suplidosCheckbox" description="Suplidos"></aon-checkbox>`;
 			tr1.appendChild(tdSuplidos);
 			let suplidos = document.getElementById('suplidosCheckbox');
-			irpf.value = this._invoice.suplidos;
+			suplidos.value = this._invoice.suplidos;
 			suplidos.addEventListener('change', () => this.changeSuplidos());
 
 			// TOTAL SUPLIDOS
@@ -845,8 +842,8 @@ import '../../components/aon-viewer.js';
 		}
 
 		removeTax(index) {
-			document.getElementById('tax' + index).remove();
 			this._invoice.taxes.splice(index, 1);
+			document.getElementById('tax' + index).remove();
 			this.updateTaxesTotal();
 			this.save();
 		}
@@ -871,7 +868,7 @@ import '../../components/aon-viewer.js';
 				for(let i = 0; i < this._invoice.taxes.length; i++) {
 					let tax = this._invoice.taxes[i];
 					if(tax.type === 'IRPF') {
-						this.removeTax(i);
+						this._invoice.taxes.splice(i, 1);
 					}
 				}
 			}
@@ -883,6 +880,7 @@ import '../../components/aon-viewer.js';
 				}
 				detailIrpf.disabled = !val ? 'disabled' : undefined;
 			}
+			this.updateTaxes();
 			this.save();
 		}
 
@@ -931,7 +929,6 @@ import '../../components/aon-viewer.js';
 			if(this._invoice.taxes.length > 1) {
 				total.readonly = 'readonly';
 			}
-
 		}
 		// END IRPF FUNCTIONS
 
@@ -973,12 +970,14 @@ import '../../components/aon-viewer.js';
 			vat.value = this._invoice.details[index].vat;
 
 			this.updateTaxes();
+			this.save();
 		}
 
 		updateSuplidos() {
 			this._invoice.totalSuplidos = this.totalSuplidos();
 			document.getElementById('t-suplidos').value = this._invoice.totalSuplidos;
 			this.updateTaxesTotal();
+			this.save();
 		}
 
 		// FINANCES

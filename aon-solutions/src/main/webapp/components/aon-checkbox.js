@@ -49,8 +49,8 @@
 		attributeChangedCallback(name, oldValue, newValue) {
 			if('value' === name){
 				let input = document.getElementById(this.getAttribute('id') + 'Input');
-				if('true' === newValue) {
-					input.setAttribute('checked', 'true' === newValue);
+				if(this.getValue()) {
+					input.setAttribute('checked', this.getValue());
 				} else input.removeAttribute('checked');
 			}
 		}
@@ -82,7 +82,6 @@
 			}
 			input.addEventListener('change', () => {
 				this.setAttribute('value', document.getElementById(input.getAttribute('id')).checked);
-				this.dispatchEvent(new Event('change'));
 			});
 
 			let label = document.createElement('label');

@@ -29,9 +29,9 @@ class AonViewer extends HTMLElement {
 	}
 
 	connectedCallback () {
-		if(this.type.includes('pdf')){
+		if(this.type && this.type.includes('pdf')){
 			this.printPdf();
-		} else if(this.type.includes('image')){
+		} else if(this.type && this.type.includes('image')){
 			this.printImage();
 		}
 	}

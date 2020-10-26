@@ -105,6 +105,7 @@ export class Invoice {
       this.irpf = invoice.irpf || false;
       this.suplidos = invoice.suplidos || false;
       this.totalSuplidos = invoice.totalSuplidos || 0;
+      this.file = invoice.file || undefined;
     }
   }
 

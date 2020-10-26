@@ -60,8 +60,8 @@ class AonInvoiceList extends HTMLElement {
 	}
 
 	aonInvoice(invoice) {
-		let aonInvoice = document.getElementById('aonInvoice');
-		aonInvoice.setContentHTML(`<aon-invoice-mobile invoice='${JSON.stringify(invoice)}' type='${invoice.type}'> </aon-invoice-mobile>`);
+		let aip = document.querySelector('aon-invoice-panel');
+		aip.aonInvoice(invoice.type, invoice);
 	}
 
 	getFilter() {

@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -20,16 +21,25 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.json.AonInvoiceJSON;
+import net.aonsolutions.aon.google.apis.drive.AonDrive;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
@@ -144,6 +154,11 @@ public class InvoiceServlet extends HttpServlet{
 	}
 	
 	private static JSONObject setInvoice(Domain domain, String login, JSONObject json) {
+		JSONObject file = null;
+		if(json.opt("file")!= null) { 
+			file = json.opt("invoice") != null ? json.optJSONObject("file") : null;
+			json = json.opt("invoice") != null ? json.optJSONObject("invoice"): json;
+		}
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
 		String status = json.opt("status") != null ? json.optString("status") : INBOX;
 
@@ -161,13 +176,40 @@ public class InvoiceServlet extends HttpServlet{
 			dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
 			json.put("id", dr.getId());
 		}
+
 		Integer drId = dr.getId();
+		if(file != null) {
+			String base64 = file.optString("content");
+			String type = file.optString("contentType");
+			
+			Attach attach = new Attach(AttachType.DATA)
+				.setDomain(domain)
+				.setSource(DataAttachSource.INVOICE.value()) 
+				.setSourceId(drId)
+				.setType(DataAttachType.REQUEST.value())
+				.setDescription("invoice")
+				.setMimeType(MimeType.get(type))
+				.setData(Base64.getDecoder().decode(base64));
+			Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
+			attach.setId(attachId);
+			DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
+		    Drive drive = AonDrive.getInstace().serviceInitialize(d);
+		    AonDrive.getInstace().sync(drive, new User().setLogin(login), attach, false);
+		    String driveId = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.DATA).getDriveId();
+		    AonDrive.getInstace().setPermission(drive, attach.getDriveId());
+		    JSONObject f = new JSONObject();
+		    f.put("url", getFile(drive, driveId).getWebContentLink());
+		    f.put("type", type);
+		    json.put("file", f);
+		}
+				
 		Optional<DataResponseDetail> drdOpt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(drId).and(f.getDataVariableProperty().eq("json")));
 		if(drdOpt.isPresent()) {
 			DataResponseDetail drd = drdOpt.get();
 			drd.setDataValue(json.toString());
 			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drd, f -> f.getIdProperty().eq(drd.getId()));
 		} else {
+			System.out.println("ZZZZ");
 			DataResponseDetail drd = new DataResponseDetail()
 					.setDomain(domain.getId())
 					.setDataResponse(dr.getId())
@@ -175,7 +217,19 @@ public class InvoiceServlet extends HttpServlet{
 					.setDataValue(json.toString());
 			drd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
 		}
+		
+		
 		return json;
+	}
+	
+	public static File getFile(Drive drive, String id){
+		File file  = new File();
+		try {
+			file = drive.files().get(id).setFields("webContentLink, webViewLink").execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return file;
 	}
 	
 	private static InvoiceStatus getInvoiceStatus(String status) {
