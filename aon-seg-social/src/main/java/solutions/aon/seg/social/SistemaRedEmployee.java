@@ -349,8 +349,8 @@ public class SistemaRedEmployee {
 				InputStream stream = submit.click().getWebResponse().getContentAsStream();
 
 				byte[] ret = stream.readAllBytes();
-				for(byte b : ret) System.out.println(b);
-				stream.close();
+				for(byte b : ret) System.out.println(b); 
+				stream.close();  
 				
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 				return ret;
