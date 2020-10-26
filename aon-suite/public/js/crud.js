@@ -6,8 +6,23 @@
         * - name -> será el nombre que se indicará para recoger el json (Ej.: messenger)
         * - json -> JSON que se guardará bajo el nombre indicado antes (Este Json lo convertimos en un string para poder almacenarlo)
         */
-        localStorage.setItem(data.name, JSON.stringify(data.json));
+
+        // Cogemos si tenemos ya datos almacenados
+        let dataLoad = readJsonApi(data.name);
         
+        if(!dataLoad){
+            // No tenemos es el primero, creamos el objeto con el primer dato
+            dataLoad = {
+                1 : data.json
+            }
+        } else {
+            // Tenemos datos, agregamos este dato al resto
+            dataLoad[returNextID('messenger')] = data.json;
+        }
+
+        // Almacenamos
+        localStorage.setItem(data.name, JSON.stringify(dataLoad));
+
         // Una vez creado, lo devolvemos
         return readJsonApi(data.name);
     }
@@ -24,124 +39,133 @@
     function updateJsonApi(data){
         /*
         * El data debe ser un Objeto con los siguientes datos:
-        * - name        -> nombre del JSON a editar
-        * - action      -> 3 opciones: 'add', 'remove', 'update'
-        * - keyLevel1   -> Key dentro donde modificamos tiene un nivel mas
-        * - keyLevel2   -> Key dentro donde modificamos tiene un nivel mas
-        * - keyUpdate   -> Key donde realizamos los cambios 3 opciones: 'add', 'remove', 'update'
-        * - json        -> en el caso de UPDATE o ADD, json para realizar la acción. En caso de REMOVE, enviar NULL
+        * - name    -> nombre del JSON a editar
+        * - json    -> Del campo que actualizamos, el JSON tendra que contener el campo id
         */
 
-        // Cogemos sobre cual vamos a realizar los cambios
-        let dataLocalStorage = readJsonApi(data.name);
+        // Cogemos si tenemos ya datos almacenados
+        let dataLoad = readJsonApi(data.name);
+                
+        if(dataLoad){
+            // Modificamos el valor que queremos
+            let key       = data.json.id
+            dataLoad[key] = data.json;
 
-        //
-        // Realizamos los cambios
-        //
-        if (data.action) {
-            if(data.keyLevel1){
-                if(data.keyLevel2){
-                    // Si tenemos 1 nivel en la KEY
-                    if(data.action == 'remove'){
-                        // Removemos
-                        delete dataLocalStorage[data.keyLevel1][data.keyUpdate];
-                    } else {
-                        // Si tenemos 2 nivel en la KEY
-                        dataLocalStorage[data.keyLevel1][data.keyLevel2][data.keyUpdate] = data.json;
-                    }
-                } else {
-                    // Si tenemos 1 nivel en la KEY
-                    if(data.action == 'remove'){
-                        // Removemos
-                        delete dataLocalStorage[data.keyLevel1][data.keyUpdate];
-                    } else {
-                        // Agregamos o modificamos
-                        dataLocalStorage[data.keyLevel1][data.keyUpdate] = data.json;
-                    }
-                }
-            } else {
-                // No tiene niveles
-                if(data.action == 'remove'){
-                    // Removemos
-                    delete dataLocalStorage[data.keyUpdate];
-                } else {
-                    // Agregamos o modificamos
-                    dataLocalStorage[data.keyUpdate] = data.json;
-                }
-            }
+            // Almacenamos
+            localStorage.setItem(data.name, JSON.stringify(dataLoad));
 
-            // Llamamos para hacer los cambios
-            return createJsonApi({
-                name: data.name,
-                json: dataLocalStorage
-            });
+            // Una vez creado, lo devolvemos
+            return readJsonApi(data.name);
         }
+
     }
 
     // Eliminamos elemento del json (LocalStorage en pruebas) - D
-    function deleteJsonApi(name){
+    function deleteJsonApi(data){
         /*
-        * Nombre del objeto que queramos leer
+        * Eliminamos el valor escogido de la variable
+        * - name    -> nombre del JSON a editar
+        * - id      -> ID del dato que removemos
+        */
+
+        // Cogemos si tenemos ya datos almacenados
+        let dataLoad = readJsonApi(data.name);
+                
+        if(dataLoad){
+            // Modificamos el valor que queremos
+            let key       = data.id
+            delete dataLoad[key];
+
+            // Almacenamos
+            localStorage.setItem(data.name, JSON.stringify(dataLoad));
+
+            // Una vez creado, lo devolvemos
+            return readJsonApi(data.name);
+        }
+    }
+
+    // Eliminamos varable almacenada en local
+    function deleteStorage(name){
+        /*
+        * Eliminamos este dato del localStorage
         */
         localStorage.removeItem(name);
     }
 
-    // Limpiar Datos almacenados
-    function clearJsonApi(){
+    // Limpiar toda las variables almacenadas
+    function clearStorage(){
         /*
         * Eliminamos todo los datos en el localStorage
         */
         localStorage.clear();
     }
 
-    /*
-    * Ejemplo de llamadas que irian en tickets/index.html
-    *
-        console.log('1 - listado');
-            // Mostramos
-            console.log(list);
-
-        console.log('2 - Creado');
-            // Creamos
-            var dataCreate = {
-                name : 'messenger', // tickets
-                json : list
-            };
-            respuesta1 = createJsonApi(dataCreate)
-            console.log(respuesta1);
-
-        console.log('3 - Leerlo');
-            // Leemos lo guardado a ver 
-            console.log(readJsonApi('messenger'));
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                                                                                                            //
+    // Funciones utiles                                                                                                           //
+    //                                                                                                                            //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
-        console.log('4 - Actualizamos');
-            // Actualizamos
-            var dataUpdate = {
-                name        : 'messenger', // tickets
-                action      : 'add',
-                //action      : 'update',
-                //keyLevel1   : 'list',
-                //keyLevel2   : 1,
-                keyUpdate   : 'agregado',
-                json        : 'Titulo cambiado',
-            };
+        //
+        // Retornar el ID por el que vamos
+        //
+        function returNextID(name){
+            if (name != ''){
+                // Cogemos los datos
+                let data = readJsonApi(name);
+                // Retornamos el id por el que vamos
+                if(!data){
+                    // No tenemos es el primero
+                    return 1;
+                } else {
+                    // Retornamos la siguiente key (que sería el siguiente ID)
+                    let myObj = data, key; 
+                    for (key in myObj);
+                    return Number(key) + 1;
+                }
+            }
+        }
+
+        //
+        // Coger parametros por get
+        //
+        function getAllGetParams() {
+            let result  = [];
+            let parts   = [];
+
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                    parts = item.split("=");
+                    if(parts[0]!=""){     
+                        result.push(parts);
+                    }
+            });
+
+            return result;
+        }
+
+        //
+        // Generar nombres aleatorios
+        //
+        function NameRandom(type = 1){
+            // nombre aleatorio.. que serían los UID
+            let name_a = ['Manolo', 'Ambrosio', 'Abelardo', 'Fulgensio', 'Alejandro', 'Jesús', 'Julio', 'David', 'Alberto', 'Juan'];
+            let name_b = ['Carmen', 'Angela', 'Manuela', 'Margarita', 'Maribel', 'Desi', 'Inma', 'Jessica', 'Estefanía', 'Nieves'];
             
-            console.log(updateJsonApi(dataUpdate));
+            return type == 1 ? name_a[Math.floor((Math.random() * 10))] : name_b [Math.floor((Math.random() * 10))];
+        }
 
-        console.log('5 - Actualizamos Eliminando');
-            // Actualizamos
-            var dataUpdate = {
-                name        : 'messenger', // tickets
-                action      : 'remove',
-                //keyLevel1   : 'list',
-                //keyLevel2   : 1,
-                keyUpdate   : 'agregado',
-                json        : 'Titulo cambiado',
-            };
-            
-            console.log(updateJsonApi(dataUpdate));
+        //
+        // Coger fecha actual
+        //
+        function Today(){
+            // Fecha de hoy
+            let date      = new Date();
+            let today     = date.getDate()+'-'+(date.getMonth()+1)+'-'+date.getFullYear();
+            let todayHour = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
+            return today+' '+todayHour;
+        }
 
-        console.log('6 - Eliminar');
-            deleteJsonApi('messenger');
-
-    */
+        
