@@ -513,12 +513,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {}
 	
-	@UiField
-	SplitLayoutPanel splitLayoutPanel;
-	
-	@UiField
-	Label title;
-	
 	@UiField (provided = true)
 	Employee employee;
 	
@@ -535,38 +529,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ContractAttachUI contractAttachUI;
 	
 	@UiField
-	Button saveContract;
-	
-	@UiField
-	Button deleteContract;
-	
-	@UiField
-	TabLayoutPanel tabLayOutPanel;
-	
-	@UiField
-	ScrollPanel scrolledPanel;
-	
-	@UiField
-	ScrollPanel scrolledPanelContractOtherData;
-	
-	@UiField
-	ScrollPanel scrolledPanelContractSpecificData;
+	SplitLayoutPanel splitLayoutPanel;
 	
 	@UiField
 	Button listEmployees;
 	
 	@UiField
-	ScrollPanel scrolledPanelClauses;
+	Button saveContract;
 	
 	@UiField
-	ScrollPanel scrolledPanelAttach;
+	Button deleteContract;
 	
-	@UiField
-	MinimizePanel footPanel;
-	
-	@UiField
-	TabLayoutPanel footTabPanel;
-
 	@UiField
 	MenuItem taButton;
 	
@@ -577,13 +550,47 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	Button closePdfButton;
 	
 	@UiField
-	Viewer pdfViewer;
-	
-	@UiField
 	ListBox zoomListBox;
 	
 	@UiField
 	Button downloadButton;
+	
+	@UiField
+	Button afiButton;
+	
+	@UiField
+	Label title;
+	
+	@UiField
+	TabLayoutPanel tabLayOutPanel;
+	
+	@UiField
+	ScrollPanel scrolledPanel;
+	
+	@UiField
+	ScrollPanel scrolledPanelContractSpecificData;
+	
+	@UiField
+	ScrollPanel scrolledPanelContractOtherData;
+	
+	@UiField
+	ScrollPanel scrolledPanelClauses;
+	
+	@UiField
+	ScrollPanel scrolledPanelAttach;
+	
+	@UiField
+	ScrollPanel scrolledPDFPanel;
+	
+	@UiField
+	Viewer pdfViewer;
+	
+	@UiField
+	MinimizePanel footPanel;
+	
+	@UiField
+	TabLayoutPanel footTabPanel;
+	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	private int zoom;
 	private ContrataEmployeeObject contrataEmployeeObject;
@@ -594,6 +601,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	public ContrataEmployee() {
 		this.zoom = Constants.DEFAULT_ZOOM;
+		
 		employee = new EmployeeImplementation();
 		contractSpecificData = new ContractSpecificData();
 		contractOtherData = new ContractOtherData();
@@ -607,6 +615,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		setDefaultEmployeeView();
+		showEmployee();		
+		initZoomList();
+		setScrollPanelsHeight();
+		initTabLayOutPanel();
+		initFootPanel();
+		initMenuItems();
+	}
+
+	private void setDefaultEmployeeView() {
 		employee.clear_employee.getElement().getStyle().setDisplay(Display.NONE);
 		employee.account.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -614,23 +632,28 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				reformatAccount(employee.account);
 			}
 		});
-		
-		showEmployee();		
-		initZoomList();
-		
+	}
+	
+	private void setScrollPanelsHeight() {
 		int height = Window.getClientHeight(); 
 		scrolledPanel.setHeight((height-260)+"px");
 		scrolledPanelContractOtherData.setHeight((height-260)+"px");
 		scrolledPanelClauses.setHeight((height-265)+"px");
 		scrolledPanelAttach.setHeight((height-265)+"px");
 		scrolledPanelContractSpecificData.setHeight((height-260)+"px");
-		
+		scrolledPDFPanel.setHeight((height-260)+"px");
+	}
+	
+	private void initTabLayOutPanel() {
 		tabLayOutPanel.selectTab(0, false);
 		tabLayOutPanel.setAnimationDuration(1000);
 		
 		tabLayOutPanel.addBeforeSelectionHandler(e -> {
 			Integer itemIdx = tabLayOutPanel.getSelectedIndex();
 			switch (itemIdx) {
+			case 0:
+				contrataEmployeeObject.setEmployeeContract(s -> {}, f -> {});
+				break;
 			case 1:
 				contrataEmployeeObject.setContractSpecificData(s -> {}, f -> {});
 				break;
@@ -675,7 +698,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			}
 		});
-		
+	}
+	
+	private void initFootPanel() {
 		footPanel.addMaximizeHandler((e) -> {
 			splitLayoutPanel.setWidgetSize(footPanel, 150);
 		});
@@ -683,7 +708,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		footPanel.addMinimizeHandler((e) -> {
 			splitLayoutPanel.setWidgetSize(footPanel, 25);
 		});
-		
+	}
+	
+	private void initMenuItems() {
 		taButton.setScheduledCommand(new Command() {
 			@Override
 			public void execute() {
@@ -698,7 +725,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			}
 		});
 	}
-	
+
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
 	@UiHandler("listEmployees")
@@ -754,6 +781,29 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			dialog.center();
 			dialog.show();
 		}
+	}
+	
+	@UiHandler("afiButton")
+	void onAFIButtonClick(ClickEvent event) {
+		
+		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
+				this.employee.start_date.getValue(),
+				this.employee.end_date.getValue(),
+				this.employee.contractType.getSelectedValue(),
+				this.employee.quote_group.getSelectedValue(),
+				this.employee.occupation.getSelectedValue(),
+				this.contrataEmployeeObject.getContractData().getPayrollDate(),
+				this.contrataEmployeeObject.getContractData().getContractId(),
+				this.contrataEmployeeObject.getEmployeeData().getDomain(),
+				this.contrataEmployeeObject.getContractData().getWorkplaceId()
+				){
+					@Override
+					protected void onAcceptCb() {}
+				};
+			
+		dialog.show();
+		dialog.center();
+		
 	}
 	
 	@UiHandler("closePdfButton")

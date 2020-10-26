@@ -117,6 +117,11 @@
 									<g:Button debugId='downloadButton' ui:field='downloadButton'
 										styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
 								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+								<g:Button ui:field='afiButton'
+									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Cambios AFI"
+									enabled="true" />
+							</g:HTMLPanel>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>
@@ -179,7 +184,9 @@
 						    	</g:HTMLPanel>
 						  	</g:tab>
 						 </g:TabLayoutPanel>
-						 <p:Viewer styleName="reset" ui:field='pdfViewer' />
+						 <g:ScrollPanel ui:field="scrolledPDFPanel" styleName="{style.p5} {style.center}">
+						 	<p:Viewer styleName="reset" ui:field='pdfViewer' />
+						 </g:ScrollPanel> 
 					 </g:HTMLPanel>
 				</g:center>
 				<g:south size="15">

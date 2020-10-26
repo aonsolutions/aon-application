@@ -180,6 +180,29 @@ public class ContrataEmployeeObject {
 		});	
 	}
 	
+	public void setEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
+		employeeContractData.setEmployeeInfo(employeeData);
+		employeeContractData.setContractInfo(contractData);
+		
+		employeesService.setEmployeeInfoDataBase(this.employeeContractData, new AsyncCallback<EmployeeContractInfo>() {
+			
+			@Override
+			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeData = result.getEmployeeInfo();
+				contractData = result.getContractInfo();
+				employeeContractData.setEmployeeInfo(employeeData);
+				employeeContractData.setContractInfo(contractData);
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void createEmployeeContract(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure){
 		employeeContractData.setEmployeeInfo(employeeData);
 		employeeContractData.setContractInfo(contractData);
@@ -197,23 +220,6 @@ public class ContrataEmployeeObject {
 			}
 		});
 	}
-	
-//	public void getContractSpecificData(Consumer<ContractSpecificData> success, Consumer<Throwable> failure) {
-//		Integer contractId = employeeContractData.getContractInfo().getContractId();
-//		enterprisesService.getContractSpecificData(contractId, new AsyncCallback<ContractSpecificData>() {
-//			
-//			@Override
-//			public void onSuccess(ContractSpecificData contractSpecificData) {
-//				employeeContractData.setContractSpecificData(contractSpecificData);
-//				success.accept(contractSpecificData);
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				failure.accept(caught);
-//			}
-//		});
-//	}
 	
 	public void getContractAttachments(Consumer<List<ContractAttach>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
