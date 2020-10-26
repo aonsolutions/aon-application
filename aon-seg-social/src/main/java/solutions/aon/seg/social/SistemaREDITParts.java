@@ -63,7 +63,7 @@ public class SistemaREDITParts {
 			for(ITPart itp : itParts) {
 				if(itp.getPartType().toLowerCase().equals("alta")) end = itp;
 				if(itp.getPartType().toLowerCase().equals("baja")) start = itp;
-				if(itp.getPartType().toLowerCase().equals("confirmación")) confirmations.add(itp);
+				if(itp.getPartType().toLowerCase().equals("confirmación") && !confirmations.contains(itp)) confirmations.add(itp);
 			}
 			
 			its.add(builder.setStart(start)
