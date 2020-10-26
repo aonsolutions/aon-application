@@ -327,9 +327,9 @@ public class SistemaRED_I {
 					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(fecha);
-			/*jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
+			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
 			jacadaform.getInputByName("txt_SDFMES").setValueAttribute("" + (calendar.get(Calendar.MONTH) + 1));
-			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));*/
+			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));
 			// Selecting document's printing method
 			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
 			ArrayList<byte[]> ret=new ArrayList<byte[]>();
@@ -347,8 +347,24 @@ public class SistemaRED_I {
 			// loads the pdf
 			
 			boolean found=false;
-			DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
-			String strDate=""+calendar.get(Calendar.DATE)+" "+(calendar.get(Calendar.MONTH)+1)+" "+calendar.get(Calendar.YEAR);
+ 			DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
+ 			String dia="";
+ 			String mes="";
+ 			if(calendar.get(Calendar.DATE)<10) {
+ 				dia="0"+calendar.get(Calendar.DATE);
+ 			}
+ 			else {
+ 				dia=""+calendar.get(Calendar.DATE);
+ 			}
+ 			
+ 			if((calendar.get(Calendar.MONTH)+1)<10) {
+ 				mes="0"+(calendar.get(Calendar.MONTH)+1);
+ 			}
+ 			else {
+ 				mes=""+(calendar.get(Calendar.MONTH)+1);
+ 			}
+ 			
+			String strDate=""+dia+" "+mes+" "+calendar.get(Calendar.YEAR);
 			for (DomNode domNode : iter) {
 				DomNodeList<DomNode> dn2=domNode.querySelectorAll("td");
 				
@@ -629,6 +645,7 @@ public class SistemaRED_I {
 			  String nom="a";
 			  for (byte[] bs : col) {
 				Toolkit.buildPdf(bs, nom);
+				System.out.println(nom+".pdf CREATED");
 				nom+=1;
 			}
 		  }
