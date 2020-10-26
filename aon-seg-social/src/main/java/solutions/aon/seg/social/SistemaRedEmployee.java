@@ -326,7 +326,6 @@ public class SistemaRedEmployee {
 			
 			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 				
-				webClient.getOptions().setJavaScriptEnabled(false);
 				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR38&E=I&AP=AFIR");
 				
 				HtmlForm form = htmlPage.getFormByName("jacadaform");
