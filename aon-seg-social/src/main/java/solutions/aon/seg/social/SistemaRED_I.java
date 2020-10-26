@@ -19,6 +19,7 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLLabelElement;
@@ -360,11 +361,7 @@ public class SistemaRED_I {
 			
 			boolean found=false;
 			int indTab=2;
- 			DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
- 			if(iter.size()==0) {
- 				iter=htmlPage.querySelectorAll("#Sub0900112078>tbody>tr");
- 				indTab=1;
- 			}
+ 			
  			String dia="";
  			String mes="";
  			if(calendar.get(Calendar.DATE)<10) {
@@ -382,22 +379,52 @@ public class SistemaRED_I {
  			}
  			
 			String strDate=""+dia+" "+mes+" "+calendar.get(Calendar.YEAR);
-			for (DomNode domNode : iter) {
-				DomNodeList<DomNode> dn2=domNode.querySelectorAll("td");
-				
-				if(dn2.get(indTab).getVisibleText().equalsIgnoreCase(strDate)){
-					found=true;
-					HtmlLabel htmlLabel=dn2.get(indTab).querySelector("label");
-					InputStream is=htmlLabel.dblClick().getWebResponse().getContentAsStream();
-					ret.add(is.readAllBytes());
-					is.close();
-				}
-				else if(found==true) {
-					break;
-				}
-				
-			}
 			
+			
+ 			boolean fin=false;
+ 			while(!fin) {
+ 				HtmlInput inp=htmlPage.querySelector("input[value='Pág. Sig.']");
+ 				HtmlPage html1=inp.click();
+ 				DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
+ 	 			if(iter.size()==0) {
+ 	 				iter=htmlPage.querySelectorAll("#Sub0900112078>tbody>tr");
+ 	 				indTab=1;
+ 	 			}
+				for (DomNode domNode : iter) {
+					DomNodeList<DomNode> dn2=domNode.querySelectorAll("td");
+					
+					if(dn2.get(indTab).getVisibleText().equalsIgnoreCase(strDate)){
+						found=true;
+						HtmlLabel htmlLabel=dn2.get(indTab).querySelector("label");
+						InputStream is=htmlLabel.dblClick().getWebResponse().getContentAsStream();
+						ret.add(is.readAllBytes());
+						is.close();
+					}
+					else if(found==true) {
+						fin=true;
+						break;
+					}
+					
+				}
+				/*try {
+					htmlPage=htmlPage.getElementById("Sub2206501003").click();
+				}
+				catch (ElementNotFoundException enfe) {
+					htmlPage=htmlPage.getElementById("Sub2206501001").click();
+				}
+				catch (NullPointerException npe) {
+					htmlPage=htmlPage.getElementById("Sub2206501001").click();
+				}*/
+				htmlPage=html1;
+				if(!fin) {
+					try {
+						HtmlUnitToolkit.manageStatusCode(htmlPage);	
+					}
+					catch(NoMoreDataException nmde) {
+						fin=true;
+					}
+				}
+ 			}
 			
 			
 			//List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");

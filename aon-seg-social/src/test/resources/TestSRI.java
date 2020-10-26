@@ -10,15 +10,15 @@ import org.junit.Test;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.invalidCccException;
-@RunWith(JUnit4.class)
+/*@RunWith(JUnit4.class)
 public class TestSRI {
 	@Test(expected=invalidCccException.class)
 	public void testGetSituacionEmpresaOk() {
 		InputStream certificateInputStream = new FileInputStream(args[0]));
-		/*SegSocialException thrown=assertThrows(invalidCccException.class, () -> SistemaRED_I.I.getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105370062"));*/
+		SegSocialException thrown=assertThrows(invalidCccException.class, () -> SistemaRED_I.I.getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105370062"));
 		SistemaRED_I.getSituacionEmpresa(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105370062");
 				
-	}
+	}*/
 	
 	
 	
@@ -30,8 +30,8 @@ public class TestSRI {
 	
 	
 	
-/*	@RunWith(Parameterized.class)
-	public class TestSistemaRED_I {
+	@RunWith(Parameterized.class)
+	public class TestSRI {
 		private SegSocialException excepcion;
 		private String certKey;
 		private String certType;
@@ -62,6 +62,6 @@ public class TestSRI {
 			public void testingWrongParameters() {
 				SistemaRED_I sri=new TestSistemaRED_I();
 					assertThrows(exception, sri.getSituacionEmpresa(new FileInputStream(args[0]), certificateInputStream, certKey, certType, regime, ccc), exception);
-			}*/
+			}
 
 }
