@@ -1,215 +1,360 @@
 <!doctype html>
 <html lang="es">
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="AYUDA T">
+        <meta name="generator" content="">
+        <title>aon Suite</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="AYUDA T">
-    <meta name="generator" content="">
-    <title>aon Suite</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+        <!-- MATERIAL ICONS -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
 
-    <!-- MATERIAL ICONS -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+        <!-- MATERIAL COMPONENTS -->
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
 
-    <!-- MATERIAL COMPONENTS -->
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
-    <link href="../css/app.css" rel="stylesheet" id="linkcss">
-
+        <link href="../css/app.css" rel="stylesheet" id="linkcss">
     </head>
     <body>
-
-                <!-- start contenido centro -->
-                <div class="col" id="atp_contenido_centro">
-                    <div class="container-fluid">
-                        <div class="row justify-content-center">
-                            <!-- INICIO VISTA -->
-                            <div class="col-12 border pb-2">
-                                <div class="row">
-                                    <div class="col-12 mt-2">
-                                        <h3>Nuevo ticket</h3>
-                                    </div>
-                                    <form method="post" id="formulario" enctype="multipart/form-data">
-                                        <div class="col-12 mt-2">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <label class="font-weight-bold" for="subject">Asunto:</label>
-                                                    <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
-                                                    <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
-                                                </div>
-                                                <div class="col-12 mt-2">
-                                                    <div class="row">
-                                                        <div class="col-4">
-                                                            <label class="font-weight-bold" for="subject">Tema:</label>
-                                                            <select class="form-control" id="select-theme" name="select-theme">
-                                                                <option value="">Elija un tema</option>
-                                                                <option value="1">Error</option>
-                                                                <option value="2">Sugerencia</option>
-                                                                <option value="3">Consulta</option>
-                                                            </select>
-                                                            <label class="d-none errores error-theme text-ayudat font-weight-bold">Debe seleccionar el tema del ticket</label>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <label class="font-weight-bold" for="subject">Destinatario:</label>
-                                                            <select class="form-control" id="select-postings" name="select-postings">
-                                                                <option value="">Elija un destinatario</option>
-                                                            </select>
-                                                            <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <label class="font-weight-bold" for="priority">Prioridad:</label>
-                                                            <select class="form-control" id="select-priority">
-                                                                <option value="">Elija prioridad</option>
-                                                                <option value="Alta">Alta</option>
-                                                                <option value="Media">Media</option>
-                                                                <option value="Baja">Baja</option>
-                                                            </select>
-                                                            <label class="d-none errores error-priority text-ayudat font-weight-bold">Debe elegir la prioridad del ticket</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12 mt-2">
-                                                    <label class="font-weight-bold">Mensaje:</label>
-                                                    <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
-                                                    <div id="editor"></div>
-                                                </div>
-                                                <div class="col-12 mt-2">
-                                                    <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
-                                                    <input type="file" id="attached" name="attached[]" class="form-control" multiple/>
-                                                </div>
-                                                <div class="col-12 mt-2">
-                                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
-                                                </div>
-                                            </div>
+        <!-- start contenido centro -->
+        <div class="col" id="atp_contenido_centro">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <!-- INICIO VISTA -->
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>Nuevo ticket</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-7">
+                                <form method="post" id="formulario" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label class="font-weight-bold" for="subject">Asunto:</label>
+                                            <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
+                                            <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
                                         </div>
-                                    </form>
+                                        <div class="col-12 mt-2">
+                                            <label class="font-weight-bold" for="subject">Destinatario:</label>
+                                            <select class="form-control" id="postings" name="postings">
+                                                <option value="">Elija un destinatario</option>
+                                            </select>
+                                            <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <label class="font-weight-bold">Mensaje:</label>
+                                            <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
+                                            <div id="editor"></div>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
+                                            <input type="file" id="attached" name="attached[]" class="form-control" multiple/>
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <button type="button" id="btn-send-alma" class="btn btn-sm btn-success float-right ml-1 d-none">Resuelto por ALMA</button>
+                                            <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Crear nuevo</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col-12" id="contentAlma">
+                                        <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
+                                        <!--<link href="https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">-->
+                                        <link href="https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <div class="row">
+                                    <div class="col-12 faqs"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div><!-- end contenido centro -->
+                </div>
+            </div><!-- end contenido centro -->
+        </div>
         
-
         <!-- Scripts -->
         <script src="../js/app.js"></script>
+        <script src="../js/crud.js"></script>
         <script>
-            let theEditor;
-            // Inicializamos CKEditor
-            ClassicEditor.create( document.querySelector('#editor'),{
-                language: 'es'
-            })
-            .then(editor => {
-                theEditor = editor;
-                $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 200px !important;}</style>').insertAfter('#editor');
-            })
-            .catch( error => {
-                console.error( error );
-            } );
+            //
+            // Cargamos el CKEditor
+            //
+                let theEditor;
+                // Inicializamos CKEditor
+                ClassicEditor.create( document.querySelector('#editor'),{
+                    language: 'es'
+                })
+                .then(editor => {
+                    theEditor = editor;
+                    $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 250px !important;}</style>').insertAfter('#editor');
+                })
+                .catch( error => {
+                    console.error( error );
+                } );
 
-            // Array de estados del ticket
-            var statusArray = ['Cerrado', 'Abierto', 'Resuelto'];
-
-            $(document).ready(function(){
-                // Datos del ticket en JSON
-                var nuevoTicket = {
-                    userIdLogin : "425",              // ID del usuario logueado
-                    postings : {                        // destinos posibles
-                        0 : {
-                            id : 1,
-                            name : "Programación"
+            //
+            // Agregamos los valores de los select
+            //
+                $(document).ready(function(){
+                    // Datos del ticket en JSON
+                    let nuevoTicket = {
+                        userIdLogin : "1dc7b94a-bc75-4c9d-f458-7c8ad73f5f57", // ID del usuario logueado
+                        postings : { // destinos posibles
+                            0 : {
+                                id : 1,
+                                name : "Programación"
+                            },
+                            1 : {
+                                id : 2,
+                                name : "Calidad"
+                            },
+                            2 : {
+                                id : 3,
+                                name : "Administración"
+                            }
                         },
-                        1 : {
-                            id : 2,
-                            name : "Calidad"
-                        },
-                        2 : {
-                            id : 3,
-                            name : "Administración"
+                        user : {
+                            ccaa : "desconocida",
+                            name : "Pepito",
+                            province : "desconocida",
+                            type : 0, // 0 o 1
+                            uid : "1dc7b94a-bc75-4c9d-f458-7c8ad73f5f57",
+                            companyType : "Autónomo", // Autónomo o Sociedad
+                            //uidChatbot : "599bb6e0-7318-11ea-bcf6-b310b0b3ad6d",
+                            uidChatbot : "4a638e00-1372-11eb-a604-c775ec150b03",
+                            uidEmpresa : "11b575c0-3b73-11ea-9b14-afbcefb5bb52"
                         }
+                    };
+
+                    // Leemos los datos del ticket y rellenamos los datos necesarios
+                    for (const prop in nuevoTicket.postings) {
+                        let posting = nuevoTicket.postings[prop];
+                        // Agregamos el valor
+                        $('#postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
                     }
-                };
+                });
 
-                // Leemos los datos del ticket y rellenamos los datos necesarios
-                for (const prop in nuevoTicket.postings) {
-                    var posting = nuevoTicket.postings[prop];
+            //    
+            // ALMA    
+            //    
+                // Coger asunto para enviar al chatbot
+                let asuntoChatbot = "";
+                // Cuando coge el foco el mensaje, vemos si tiene asunto
+                $(document).on('focus', '.ck.ck-content', function(){
+                    var asuntoActual = $('#subject').val();
+                    
+                    if(asuntoActual != "" && asuntoActual != asuntoChatbot){
+                        asuntoChatbot = asuntoActual;
+                        
+                        // Llamada para traernos las faqs
+                        // Recibiremos un json
+                        var faqs = {
+                            0 : {
+                                question : "Lorem ipsum dolor sit amet?",
+                                answer : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vitae nunc vulputate, porttitor est ut, congue erat. Etiam mollis commodo magna non efficitur. Suspendisse ultrices dui eget gravida varius."
+                            },
+                            1 : {
+                                question : "Aliquam rutrum sollicitudin quam?",
+                                answer : "Aliquam rutrum sollicitudin quam, at facilisis arcu pellentesque eu. Mauris dignissim bibendum justo, et imperdiet metus tincidunt in. In venenatis, ex ut dapibus porttitor, nisi quam feugiat lacus, id dictum leo justo in mi. Aliquam quis consequat neque. "
+                            },
+                            2 : {
+                                question : "Duis eleifend?",
+                                answer : "Duis eleifend, neque nec dapibus iaculis, risus felis volutpat eros, in fermentum arcu eros a massa. "
+                            }
+                        };
+                        
+                        var htmlFaqs = "<div class='col-12 mt-3'>";
+                                htmlFaqs += "<h3>FAQS</h3>";
+                            htmlFaqs += "</div>";
+                            htmlFaqs += "<div class='accordion' id='accordionFaqs'>";
+                        for (const prop in faqs) {
+                            var faq = faqs[prop];
+                            
+                            htmlFaqs += "<div class='card'>";
+                                htmlFaqs += "<div class='card-header' id='heading"+prop+"'>";
+                                    htmlFaqs += "<h2 class='mb-0'>";
+                                        htmlFaqs += "<button class='btn btn-block text-left button_faq' type='button' data-toggle='collapse' data-target='#collapse"+prop+"' aria-expanded='true' aria-controls='collapse"+prop+"' data-faq='"+prop+"'>";
+                                            htmlFaqs += faq.question;
+                                            htmlFaqs += "<span class='material-icons float-right expand_icon"+prop+"'>expand_more</span>";
+                                        htmlFaqs += "</button>";
+                                    htmlFaqs += "</h2>";
+                                htmlFaqs += "</div>";
+                                htmlFaqs += "<div id='collapse"+prop+"' class='collapse' aria-labelledby='heading"+prop+"' data-parent='#accordionFaqs'>";
+                                    htmlFaqs += "<div class='card-body'>";
+                                        htmlFaqs += faq.answer;
+                                    htmlFaqs += "</div>";
+                                htmlFaqs += "</div>";
+                            htmlFaqs += "</div>";
+                        }
+                        htmlFaqs += "</div>";
+                        
+                        // Lo ponemos en su div
+                        $('.faqs').html(htmlFaqs);
+                    }
+                    
+                    htmlFaqs += "</div>";
+                    
+                    // Lo ponemos en su div
+                    $('.faqs').html(htmlFaqs);
+                });
+                
+                $(document).on('click', '.button_faq', function(){
+                    var idFaq = $(this).data('faq');
+                    var iconFaqExpand = $('.expand_icon'+idFaq);
+                    
+                    if(iconFaqExpand.html() == "expand_more"){
+                        iconFaqExpand.html("expand_less");
+                        
+                        // Cuando abrimos uno, comprobamos que todos los demas tengan el abrir (expand_more)
+                        $('.button_faq').each(function(){
+                            var idFaqButton = $(this).data('faq');
+                            
+                            if(idFaqButton != idFaq){
+                                var iconFaqMore = $('.expand_icon'+idFaqButton);
+                                iconFaqMore.html("expand_more");
+                            }
+                        });
+                    } else {
+                        iconFaqExpand.html("expand_more");
+                    }
+                });
 
-                    $('#select-postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
-                }
-            });
-
-            // Enviar mensage nuevo
+            //
+            // Enviar o crear mensage nuevo
+            //
             $('#btn-send').click(function(){
+                newTicket(1); // Estado abierto
+            });
+            
+            // Función crear ticket
+            function newTicket(status){
                 var envio = true;
-
+                let formData = new FormData();
+                
                 // Quitamos todos los errores
                 $('.errores').each(function(){
                     $(this).addClass('d-none');
                 });
 
-                // Creamos el formData para enviar
-                var formData = new FormData();
-
-                // Añadimos los adjuntos
                 var files = $("#attached")[0].files;
-
                 for (const prop in files) {
                     formData.append('file', files[prop]);
                 }
 
-                // Añadimos el resto de datos del formulario
-                var msgUser = theEditor.getData();
+                // Añadimos textArea (CKEditor)
+                let msgUser = theEditor.getData();
                 if(msgUser == ''){
                     $('.error-msg').removeClass('d-none');
                     envio = false;
                 }
                 formData.append("message", msgUser);
 
-                var subject = $("#subject").val();
+                // Añadimos el asunto
+                let subject = $("#subject").val();
                 if(subject == ''){
                     $('.error-subject').removeClass('d-none');
                     envio = false;
                 }
                 formData.append('subject', subject);
 
-                var theme = $("#select-theme").val();
-                if(theme == ''){
-                    $('.error-theme').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append('theme', theme);
-
-                var postings = $("#select-postings").val();
+                // Añadimos el destinatario
+                let postings = $("#postings").val();
                 if(postings == ''){
                     $('.error-postings').removeClass('d-none');
                     envio = false;
                 }
                 formData.append('postings', postings);
 
-                var priority = $("#select-priority").val();
-                if(priority == ''){
-                    $('.error-priority').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append('priority', priority);
-
+                // Todo va correcto enviamos o creamos
                 if(envio){
-                    // Enviamos los datos del nuevo ticket por AJAX
-                    // TO-DO
-                    var respuesta = {
-                        ticketId : '245673'
+                    // Recogemos los valores del formulario para crear el el mensaje o ticket
+                    let formData = dataForm('#formulario');
+                    // Creamos el Json de alamacenamiento
+                    let from    = NameRandom();
+                    let ticket  = {
+                        id           : returnNextID('messenger'),        // campo ticket
+                        createDate   : Today(),                         // Creado
+                        subject      : formData.subject,                // titulo del ticket
+                        postings     : formData.postings,               // select del destinatario
+                        from         : from,                            // creador del ticket
+                        assignaedTo  : NameRandom(2),                   // asigando a
+                        answer       : Math.floor((Math.random() * 2)), // tienes que responder = 0 : respondido | 1 : responder
+                        status       : status,                          // 0: Cerrado; 1: Abierto
+                        message      : {
+                            1 : {
+                                userName     : from,                                        // Nombre del usuario del mensaje
+                                userId       : "425",                                       // ID del usuario que crea el ticket
+                                userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
+                                messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
+                                message      : formData.editor                              // Mensaje
+                            }
+                        }
                     };
+                    
+                    //
+                    // Almacenamos en el Storage
+                    //
+                    // No tenemos datos
+                    let dataCreate = {
+                        name : 'messenger', // tickets
+                        json : ticket
+                    };
+                    let data = createJsonApi(dataCreate);
 
                     // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
-                    document.location.href = "show.html?id="+respuesta.ticketId;
+                    document.location.href = "show.html?ticket="+ticket.id;
                 } else {
                     return 0;
                 }
-            });
+            };
+
+            //
+            // Coger valores del formulario
+            //
+            function dataForm(formID){
+                let fields   = 'input, select, textarea';
+                let formData = {};
+                var envio = true;
+
+                $(formID).find(fields).each(function () {
+                    if( this.type == 'radio' || this.type == 'checkbox'){
+                        // Coger solo el valor con checked
+                        if(this.checked){
+                            formData[this.name] = this.value;
+                        }
+                    } else {
+                        formData[this.name] = this.value;
+                    }
+                });
+
+                // Agregar datos del CKEditor
+                formData['editor'] = theEditor.getData();
+                var postings = $("#postings").val();
+                if(postings == ''){
+                    $('.error-postings').removeClass('d-none');
+                    envio = false;
+                }
+                //formData.append('postings', postings);
+                
+                // Añadimos el estado dependiendo de cómo lo crean:
+                // - 0 (Cerrado) - Si ha sido resuelto por ALMA
+                // - 1 (Abierto) - Si se crea normalmente
+                //formData.append('status', status);
+                return formData;
+            }
         </script>
         <!-- FIN Scripts -->
     </body>

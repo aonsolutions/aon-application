@@ -42,37 +42,29 @@
                                             <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
                                             <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-12 mt-2">
-                                            <label class="font-weight-bold" for="subject">Departamento:</label>
+                                            <label class="font-weight-bold" for="subject">Destinatario:</label>
                                             <select class="form-control" id="postings" name="postings">
-                                                <option value="">Elija un departamento</option>
+                                                <option value="">Elija un destinatario</option>
                                             </select>
                                             <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-12 mt-2">
                                             <label class="font-weight-bold">Mensaje:</label>
                                             <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
-                                            <textarea id="editor"></textarea>
+                                            <div id="editor"></div>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-12 mt-2">
                                             <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
                                             <input type="file" id="attached" name="attached[]" class="form-control" multiple/>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-12 mt-2">
-                                            <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
+                                            <button type="button" id="btn-send-alma" class="btn btn-sm btn-success float-right ml-1 d-none">Resuelto por ALMA</button>
+                                            <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Crear nuevo</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            
                             <div class="col-5">
                                 <div class="row">
                                     <div class="col-12" id="contentAlma">
@@ -82,8 +74,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-12 mt-2">
                                 <div class="row">
                                     <div class="col-12 faqs"></div>
@@ -92,8 +82,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div><!-- end contenido centro -->
+            </div><!-- end contenido centro -->
+        </div>
         
         <!-- Scripts -->
         <script src="../js/app.js"></script>
@@ -282,6 +272,13 @@
                         // Lo ponemos en su div
                         $('.faqs').html(htmlFaqs);
                     }
+                    
+                    htmlFaqs += "</div>";
+                    
+                    // Lo ponemos en su div
+                    $('.faqs').html(htmlFaqs);
+                    
+                    $('#btn-send-alma').removeClass('d-none');
                 });
                 
                 $(document).on('click', '.button_faq', function(){
@@ -308,113 +305,133 @@
             //
             // Enviar o crear mensage nuevo
             //
-                $('#btn-send').click(function(){
-                    let envio = true;
+            $('#btn-send').click(function(){
+                newTicket(1); // Estado abierto
+            });
 
-                    // Quitamos todos los errores
-                    $('.errores').each(function(){
-                        $(this).addClass('d-none');
-                    });
+            // Resuelto por ALMA
+            $('#btn-send-alma').click(function(){
+                newTicket(0); // Estado cerrado
+            });
+            
+            // Función crear ticket
+            function newTicket(status){
+                var envio = true;
+                let formData = new FormData();
+                
+                // Quitamos todos los errores
+                $('.errores').each(function(){
+                    $(this).addClass('d-none');
+                });
+                
+                var files = $("#attached")[0].files;
+                for (const prop in files) {
+                    formData.append('file', files[prop]);
+                }
 
-                    // Creamos el formData para enviar
-                    let formData = new FormData();
+                // Añadimos textArea (CKEditor)
+                let msgUser = theEditor.getData();
+                if(msgUser == ''){
+                    $('.error-msg').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append("message", msgUser);
 
-                    // Añadimos los adjuntos (archivos)
-                    let files = $("#attached")[0].files;
+                // Añadimos el asunto
+                let subject = $("#subject").val();
+                if(subject == ''){
+                    $('.error-subject').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append('subject', subject);
 
-                    for (const prop in files) {
-                        formData.append('file', files[prop]);
-                    }
+                // Añadimos el destinatario
+                let postings = $("#postings").val();
+                if(postings == ''){
+                    $('.error-postings').removeClass('d-none');
+                    envio = false;
+                }
+                formData.append('postings', postings);
 
-                    // Añadimos textArea (CKEditor)
-                    let msgUser = theEditor.getData();
-                    if(msgUser == ''){
-                        $('.error-msg').removeClass('d-none');
-                        envio = false;
-                    }
-                    formData.append("message", msgUser);
-
-                    // Añadimos el asunto
-                    let subject = $("#subject").val();
-                    if(subject == ''){
-                        $('.error-subject').removeClass('d-none');
-                        envio = false;
-                    }
-                    formData.append('subject', subject);
-
-                    // Añadimos el destinatario
-                    let postings = $("#postings").val();
-                    if(postings == ''){
-                        $('.error-postings').removeClass('d-none');
-                        envio = false;
-                    }
-                    formData.append('postings', postings);
-
-                    // Todo va correcto enviamos o creamos
-                    if(envio){
-                        // Recogemos los valores del formulario para crear el el mensaje o ticket
-                        let formData = dataForm('#formulario');
-
-                        // Creamos el Json de alamacenamiento
-                        let from    = NameRandom();
-                        let ticket  = {
-                            id           : returNextID('messenger'),        // campo ticket
-                            createDate   : Today(),                         // Creado
-                            subject      : formData.subject,                // titulo del ticket
-                            postings     : formData.postings,               // select del destinatario
-                            from         : from,                            // creador del ticket
-                            assignaedTo  : NameRandom(2),                   // asigando a
-                            answer       : Math.floor((Math.random() * 2)), // tienes que responder = 0 : respondido | 1 : responder
-                            message      : {
-                                1 : {
-                                    userName     : from,                                        // Nombre del usuario del mensaje
-                                    userId       : "425",                                       // ID del usuario que crea el ticket
-                                    userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
-                                    messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
-                                    message      : formData.editor,                             // Mensaje
-                                }
+                // Todo va correcto enviamos o creamos
+                if(envio){
+                    // Recogemos los valores del formulario para crear el el mensaje o ticket
+                    let formData = dataForm('#formulario');
+                    // Creamos el Json de alamacenamiento
+                    let from    = NameRandom();
+                    let ticket  = {
+                        id           : returnNextID('messenger'),        // campo ticket
+                        createDate   : Today(),                         // Creado
+                        subject      : formData.subject,                // titulo del ticket
+                        postings     : formData.postings,               // select del destinatario
+                        from         : from,                            // creador del ticket
+                        assignaedTo  : NameRandom(2),                   // asigando a
+                        answer       : Math.floor((Math.random() * 2)), // tienes que responder = 0 : respondido | 1 : responder
+                        status       : status,                          // 0: Cerrado; 1: Abierto
+                        message      : {
+                            1 : {
+                                userName     : from,                                        // Nombre del usuario del mensaje
+                                userId       : "425",                                       // ID del usuario que crea el ticket
+                                userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
+                                messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
+                                message      : formData.editor                              // Mensaje
                             }
                         }
-                        //
-                        // Almacenamos en el Storage
-                        //
-                            // No tenemos datos
-                            let dataCreate = {
-                                name : 'messenger', // tickets
-                                json : ticket
-                            };
-                            let data = createJsonApi(dataCreate);
-                        
-                        // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
-                        document.location.href = "show.html?ticket="+ticket.id;
-                    } else {
-                        return 0;
-                    }
-                });
+                    };
+                    
+                    //
+                    // Almacenamos en el Storage
+                    //
+                    // No tenemos datos
+                    let dataCreate = {
+                        name : 'messenger', // tickets
+                        json : ticket
+                    };
+                    let data = createJsonApi(dataCreate);
+
+                    // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
+                    document.location.href = "show.html?ticket="+ticket.id;
+                } else {
+                    return 0;
+                }
+            };
 
             //
             // Coger valores del formulario
             //
-                function dataForm(formID){
-                    let fields   = 'input, select, textarea'
-                    let formData = {};
+            function dataForm(formID){
+                let fields   = 'input, select, textarea';
+                let formData = {};
 
-                    $(formID).find(fields).each(function () {
-                        if( this.type == 'radio' || this.type == 'checkbox'){
-                            // Coger solo el valor con checked
-                            if(this.checked){
-                                formData[this.name] = this.value;
-                            }
-                        } else {
+                $(formID).find(fields).each(function () {
+                    if( this.type == 'radio' || this.type == 'checkbox'){
+                        // Coger solo el valor con checked
+                        if(this.checked){
                             formData[this.name] = this.value;
                         }
-                    });
+                    } else {
+                        formData[this.name] = this.value;
+                    }
+                });
 
-                    // Agregar datos del CKEditor
-                    formData['editor'] = theEditor.getData();
-
-                    return formData;
+                // Agregar datos del CKEditor
+                formData['editor'] = theEditor.getData();
+                var postings = $("#postings").val();
+                if(postings == ''){
+                    $('.error-postings').removeClass('d-none');
+                    envio = false;
                 }
+                //formData.append('postings', postings);
+                
+                // Añadimos el estado dependiendo de cómo lo crean:
+                // - 0 (Cerrado) - Si ha sido resuelto por ALMA
+                // - 1 (Abierto) - Si se crea normalmente
+                //formData.append('status', status);
+                // Enviamos los datos del nuevo ticket por AJAX
+                // Enviariamos el formData
+
+                return formData;
+            }
         </script>
         <!-- FIN Scripts -->
     </body>
