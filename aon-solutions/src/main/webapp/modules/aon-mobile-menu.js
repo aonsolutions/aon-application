@@ -73,9 +73,11 @@ class AonMobileMenu extends HTMLElement {
 		let aonMenuSidenav = document.getElementById('aonMobileMenuSidenav');
 
 		if(this.getAttribute('opened')) {
+			rp.className = 'rootMobilePanel';
 			aonMenuSidenav.style.height = '60px';
 			rp.style.marginBottom = '60px';
 		} else {
+			rp.className = 'rootPanel';
 			aonMenuSidenav.style.height = '0px';
 			rp.style.marginBottom = '0px';
 		}
@@ -90,6 +92,7 @@ class AonMobileMenu extends HTMLElement {
 	open() {
 		let aonMenuSidenav = document.getElementById('aonMobileMenuSidenav');
 		let rootPanel = document.getElementById('rootPanel');
+		rootPanel.className = 'rootMobilePanel';
 		aonMenuSidenav.style.height = '60px';
 		rootPanel.style.marginBottom = '60px';
 		this.setAttribute('opened', true);
@@ -98,8 +101,10 @@ class AonMobileMenu extends HTMLElement {
 	close() {
 		let aonMenuSidenav = document.getElementById('aonMobileMenuSidenav');
 		let rootPanel = document.getElementById('rootPanel');
+		rootPanel.className = 'rootPanel';
 		aonMenuSidenav.style.height = '0px';
 		rootPanel.style.marginBottom = '0px';
+
 		this.removeAttribute('opened');
 	}
 

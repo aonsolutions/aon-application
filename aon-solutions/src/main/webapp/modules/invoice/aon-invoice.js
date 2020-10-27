@@ -61,7 +61,7 @@ import '../../components/aon-viewer.js';
 		connectedCallback () {
 			this.innerHTML = `
 				<div style="display:flex;">
-				<div id="aonInvoiceData">
+				<div id="aonInvoiceData" style="width:100%">
 					<div id="aonInvoiceDiv" style="display:flex;">
 						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%"> </aon-card>
 						<div id="aonInvoiceTaxDiv" style="width:50%">
