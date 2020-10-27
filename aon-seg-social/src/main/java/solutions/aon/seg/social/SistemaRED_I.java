@@ -321,43 +321,6 @@ public class SistemaRED_I {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-
-			/*HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
-			htmlPage = htmlPage.getAnchorByHref(href).click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
-			// Filling the fields
-			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
-			try {
-				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
-			} catch (ElementNotFoundException enfe) {
-				jacadaform.getInputByName("txt_SDFREGCTA").setValueAttribute(regime);
-			}
-			jacadaform.getInputByName("txt_SDFTESCTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
-			jacadaform.getInputByName("txt_SDFCUENTA")
-					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
-			GregorianCalendar calendar = new GregorianCalendar();
-			calendar.setTime(fecha);
-			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
-			jacadaform.getInputByName("txt_SDFMES").setValueAttribute("" + (calendar.get(Calendar.MONTH) + 1));
-			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));
-			// Selecting document's printing method
-			Iterable<DomElement> it = jacadaform.getSelectByName("cbo_ListaTipoImpresion").getChildElements();
-			ArrayList<byte[]> ret=new ArrayList<byte[]>();
-			for (DomElement de : it) {
-				if (de.getTextContent().trim().equalsIgnoreCase("OnLine")) {
-					htmlPage = de.click();
-					HtmlUnitToolkit.manageStatusCode(htmlPage);
-					break;
-				}
-			}
-			htmlPage = jacadaform.getInputByValue("Continuar").click();
-			HtmlUnitToolkit.manageStatusCode(htmlPage);*/
-			// REVISAR SPLIT
-			// Obtaining the first table registry's label to double-click on it so that it
-			// loads the pdf
 			ArrayList<byte[]> ret=new ArrayList<byte[]>();
 			boolean found=false;
 			int indTab=2;
@@ -386,19 +349,7 @@ public class SistemaRED_I {
  			boolean fin=false;
  			int clicks=0;
  			HtmlPage htmlPage=getPageForPdfs(href, webClient, affiliationNumber, regime, contributionAccount, fecha, clicks);
- 			//HtmlPage auxPage=htmlPage;
  			while(!fin) {
-// 				Object o=null;
-//				if(indTab==2) {
-//					o =auxPage.getElementById("Sub2206501001").click();
-//				}
-//				else
-//					o=auxPage.getElementById("Sub2206301003").click();
-//				System.out.println(o.getClass().getName());
-				
-				
- 				//HtmlInput inp=htmlPage.querySelector("input[value='Pág. Sig.']");
- 				//HtmlPage html1=inp.click();
  				DomNodeList<DomNode> iter=htmlPage.querySelectorAll("#Sub0900112079>tbody>tr");
  	 			if(iter.size()==0) {
  	 				iter=htmlPage.querySelectorAll("#Sub0900112078>tbody>tr");
@@ -411,12 +362,9 @@ public class SistemaRED_I {
 					if(dn2.get(indTab).getVisibleText().equalsIgnoreCase(strDate)){
 						found=true;
 						HtmlLabel htmlLabel=dn2.get(indTab).querySelector("label");
-						//System.out.println(htmlLabel.asXml());
-						//HtmlPage clickedPage=htmlLabel.dblClick();
 						InputStream is=htmlLabel.dblClick().getWebResponse().getContentAsStream();
 						ret.add(is.readAllBytes());
 						is.close();
-						//System.out.println(clickedPage.getWebResponse().getContentType());
 					}
 					else if(found==true) {
 						fin=true;
@@ -425,33 +373,9 @@ public class SistemaRED_I {
 					
 				}
 				clicks++;
-				/*Object o=null;
-				if(indTab==2) {
-					o =auxPage.getElementById("Sub2206501001").click();
-				}
-				else
-					o=auxPage.getElementById("Sub2206301003").click();
-				System.out.println(o.getClass().getName());*/
-				/*try {
-					htmlPage=htmlPage.getElementById("Sub2206501003").click();
-				}
-				catch (ElementNotFoundException enfe) {
-					htmlPage=htmlPage.getElementById("Sub2206501001").click();
-				}
-				catch (NullPointerException npe) {
-					htmlPage=htmlPage.getElementById("Sub2206501001").click();
-				}*/
-				//htmlPage=html1;
 				if(!fin) {
 					try {
 						htmlPage=getPageForPdfs(href, webClient, affiliationNumber, regime, contributionAccount, fecha, clicks);
-						/*Object o=null;
-						if(indTab==2) {
-							o =auxPage.getElementById("Sub2206501001").click();
-						}
-						else
-							o=auxPage.getElementById("Sub2206301003").click();
-						System.out.println(o.getClass().getName());*/
 						HtmlUnitToolkit.manageStatusCode(htmlPage);
 					}
 					catch(NoMoreDataException nmde) {
@@ -459,12 +383,6 @@ public class SistemaRED_I {
 					}
 				}
  			}
-			
-			
-			//List<HtmlLabel> labels = htmlPage.getByXPath("//label[@name='_1_0']");
-			/*InputStream is = labels.get(0).dblClick().getWebResponse().getContentAsStream();
-			byte[] ret = is.readAllBytes();
-			is.close();*/
 			return ret;
 		} catch (FailingHttpStatusCodeException e) {
 			switch (e.getStatusCode()) {
