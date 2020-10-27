@@ -389,6 +389,9 @@
                         json : ticket
                     };
                     let data = createJsonApi(dataCreate);
+                    
+                    // Borramos la cookie de alma
+                    document.cookie = "cookiename=idSesionAlma; expires= Thu, 21 Aug 2014 20:00:00 UTC";
 
                     // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
                     document.location.href = "show.html?ticket="+ticket.id;
