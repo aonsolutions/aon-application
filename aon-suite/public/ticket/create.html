@@ -31,40 +31,64 @@
                             <div class="col-12">
                                 <h3>Nuevo ticket</h3>
                             </div>
-                            <form method="post" id="formulario" enctype="multipart/form-data">
-                                <div class="col-12 mt-2">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-7">
+                                <form method="post" id="formulario" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-12">
                                             <label class="font-weight-bold" for="subject">Asunto:</label>
                                             <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
                                             <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 mt-2">
-                                            <div class="row">
-                                                <div class="col-3">
-                                                    <label class="font-weight-bold" for="subject">Departamento:</label>
-                                                    <select class="form-control" id="postings" name="postings">
-                                                        <option value="">Elija un departamento</option>
-                                                    </select>
-                                                    <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
-                                                </div>
-                                            </div>
+                                            <label class="font-weight-bold" for="subject">Departamento:</label>
+                                            <select class="form-control" id="postings" name="postings">
+                                                <option value="">Elija un departamento</option>
+                                            </select>
+                                            <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 mt-2">
                                             <label class="font-weight-bold">Mensaje:</label>
                                             <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
                                             <textarea id="editor"></textarea>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 mt-2">
                                             <label class="font-weight-bold" for="subject">Adjuntar archivos:</label>
                                             <input type="file" id="attached" name="attached[]" class="form-control" multiple/>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-12 mt-2">
                                             <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
                                         </div>
                                     </div>
+                                </form>
+                            </div>
+                            
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col-12" id="contentAlma">
+                                        <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
+                                        <!--<link href="https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">-->
+                                        <link href="https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">
+                                    </div>
                                 </div>
-                            </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mt-2">
+                                <div class="row">
+                                    <div class="col-12 faqs"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,11 +109,30 @@
                 })
                 .then(editor => {
                     theEditor = editor;
-                    $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 200px !important;}</style>').insertAfter('#editor');
+                    $('<style type="text/css" scoped>.ck-editor .ck-editor__editable_inline {min-height: 250px !important;}</style>').insertAfter('#editor');
                 })
                 .catch( error => {
                     console.error( error );
                 } );
+
+            //
+            // ALMA
+            //
+                function readCookie(name) {
+                    var nameEQ = name + "=";
+                    var ca = document.cookie.split(';');
+
+                    for(var i=0;i < ca.length;i++) {
+                        var c = ca[i];
+                        while (c.charAt(0)==' '){ 
+                            c = c.substring(1,c.length);
+                            if (c.indexOf(nameEQ) == 0) {
+                                return decodeURIComponent( c.substring(nameEQ.length,c.length) );
+                            }
+                        }
+                    }
+                    return null;
+                }
 
             //
             // Agregamos los valores de los select
@@ -97,7 +140,8 @@
                 $(document).ready(function(){
                     // Datos del ticket en JSON
                     let nuevoTicket = {
-                        postings : {                      // destinos posibles
+                        userIdLogin : "1dc7b94a-bc75-4c9d-f458-7c8ad73f5f57", // ID del usuario logueado
+                        postings : { // destinos posibles
                             0 : {
                                 id : 1,
                                 name : "Programación"
@@ -110,6 +154,17 @@
                                 id : 3,
                                 name : "Administración"
                             }
+                        },
+                        user : {
+                            ccaa : "desconocida",
+                            name : "Pepito",
+                            province : "desconocida",
+                            type : 0, // 0 o 1
+                            uid : "1dc7b94a-bc75-4c9d-f458-7c8ad73f5f57",
+                            companyType : "Autónomo", // Autónomo o Sociedad
+                            //uidChatbot : "599bb6e0-7318-11ea-bcf6-b310b0b3ad6d",
+                            uidChatbot : "4a638e00-1372-11eb-a604-c775ec150b03",
+                            uidEmpresa : "11b575c0-3b73-11ea-9b14-afbcefb5bb52"
                         }
                     };
 
@@ -118,6 +173,135 @@
                         let posting = nuevoTicket.postings[prop];
                         // Agregamos el valor
                         $('#postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
+                    }
+
+                    //
+                    // ALMA
+                    //
+                        // Cogemos los datos del usuario logueado para el chat de alma
+                        var almaServer  = "dev.mispapeles.es";
+                        userName        = nuevoTicket.user.name;
+                        chatbot         = nuevoTicket.user.uidChatbot;
+                        empresa         = nuevoTicket.user.uidEmpresa;
+                        companyType     = nuevoTicket.user.companyType;
+                        var urlIframe   = "https://dev.almaintelligence.com:8888/suite/?idDespacho="+empresa+"&idChatbot="+chatbot+"&nombreUsuario="+userName+"&tipoEmpresa="+companyType;
+                        
+                        // Incrustamos todo el chatbot en el contenedor
+                        var s   = document.createElement("script");
+                        s.type  = "text/javascript";
+                        //s.src = "https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.js"; PRODUCCION
+                        s.src   = "https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.js";
+                        s.id    = "helper";
+                        s.dataset["idEmpresa"] = empresa;
+                        s.dataset["idChatbot"] = chatbot;
+
+                        $("#contentAlma").append(s);
+                        
+                        var divCb           = document.createElement("div");
+                        divCb.id            = "contenedorChatbot";
+                        divCb.style.width   = "100%";
+                        divCb.style.height  = "530px";
+                        
+                        var iframeCb            = document.createElement("iframe");
+                        iframeCb.src            = urlIframe;
+                        iframeCb.id             = "iframeContainerAlma";
+                        iframeCb.style.width    = "100%";
+                        iframeCb.style.height   = "100%";
+                        divCb.appendChild(iframeCb);
+                        $("#contentAlma").append(divCb);
+                });
+
+            //    
+            // ALMA    
+            //    
+                // Coger asunto para enviar al chatbot
+                let asuntoChatbot = "";
+                // Cuando coge el foco el mensaje, vemos si tiene asunto
+                $(document).on('focus', '.ck.ck-content', function(){
+                    var asuntoActual = $('#subject').val();
+                    
+                    if(asuntoActual != "" && asuntoActual != asuntoChatbot){
+                        asuntoChatbot = asuntoActual;
+                        
+                        var obj = {
+                            0 : readCookie( "idSesionAlma" ),
+                            1 : location.href,
+                            2 : location.hostname + location.pathname,
+                            3 : readCookie( "urlAlma" ),
+                            "asunto" : asuntoChatbot,
+                            "idDespacho" : empresa,
+                            "idChatbot" : chatbot,
+                            "userName" : userName
+                        };
+                        
+                        var iframeSelect= $('#iframeContainerAlma')[0].contentWindow;
+                        iframeSelect.postMessage(obj, '*');
+                        
+                        // Llamada para traernos las faqs
+                        // Recibiremos un json
+                        var faqs = {
+                            0 : {
+                                question : "Lorem ipsum dolor sit amet?",
+                                answer : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vitae nunc vulputate, porttitor est ut, congue erat. Etiam mollis commodo magna non efficitur. Suspendisse ultrices dui eget gravida varius."
+                            },
+                            1 : {
+                                question : "Aliquam rutrum sollicitudin quam?",
+                                answer : "Aliquam rutrum sollicitudin quam, at facilisis arcu pellentesque eu. Mauris dignissim bibendum justo, et imperdiet metus tincidunt in. In venenatis, ex ut dapibus porttitor, nisi quam feugiat lacus, id dictum leo justo in mi. Aliquam quis consequat neque. "
+                            },
+                            2 : {
+                                question : "Duis eleifend?",
+                                answer : "Duis eleifend, neque nec dapibus iaculis, risus felis volutpat eros, in fermentum arcu eros a massa. "
+                            }
+                        };
+                        
+                        var htmlFaqs = "<div class='col-12 mt-3'>";
+                                htmlFaqs += "<h3>FAQS</h3>";
+                            htmlFaqs += "</div>";
+                            htmlFaqs += "<div class='accordion' id='accordionFaqs'>";
+                        for (const prop in faqs) {
+                            var faq = faqs[prop];
+                            
+                            htmlFaqs += "<div class='card'>";
+                                htmlFaqs += "<div class='card-header' id='heading"+prop+"'>";
+                                    htmlFaqs += "<h2 class='mb-0'>";
+                                        htmlFaqs += "<button class='btn btn-block text-left button_faq' type='button' data-toggle='collapse' data-target='#collapse"+prop+"' aria-expanded='true' aria-controls='collapse"+prop+"' data-faq='"+prop+"'>";
+                                            htmlFaqs += faq.question;
+                                            htmlFaqs += "<span class='material-icons float-right expand_icon"+prop+"'>expand_more</span>";
+                                        htmlFaqs += "</button>";
+                                    htmlFaqs += "</h2>";
+                                htmlFaqs += "</div>";
+                                htmlFaqs += "<div id='collapse"+prop+"' class='collapse' aria-labelledby='heading"+prop+"' data-parent='#accordionFaqs'>";
+                                    htmlFaqs += "<div class='card-body'>";
+                                        htmlFaqs += faq.answer;
+                                    htmlFaqs += "</div>";
+                                htmlFaqs += "</div>";
+                            htmlFaqs += "</div>";
+                        }
+                        htmlFaqs += "</div>";
+                        
+                        // Lo ponemos en su div
+                        $('.faqs').html(htmlFaqs);
+                    }
+                });
+                
+                $(document).on('click', '.button_faq', function(){
+                    var idFaq = $(this).data('faq');
+                    var iconFaqExpand = $('.expand_icon'+idFaq);
+                    
+                    if(iconFaqExpand.html() == "expand_more"){
+                        iconFaqExpand.html("expand_less");
+                        
+                        // Cuando abrimos uno, comprobamos que todos los demas tengan el abrir (expand_more)
+                        $('.button_faq').each(function(){
+                            var idFaqButton = $(this).data('faq');
+                            
+                            if(idFaqButton != idFaq){
+                                var iconFaqMore = $('.expand_icon'+idFaqButton);
+                                iconFaqMore.html("expand_more");
+                            }
+                        });
+                    } else {
+                        iconFaqExpand.html("expand_more");
                     }
                 });
 
