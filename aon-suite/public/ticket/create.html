@@ -238,6 +238,12 @@
                         
                         // Lo ponemos en su div
                         $('.faqs').html(htmlFaqs);
+                        
+                        // Eliminamos la cookie de reiniciar la cookie de ALMA
+                        var reiniciaCookieAlma = readCookie('reiniciaCookie');
+                        if(reiniciaCookieAlma == 1){
+                            document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                        }
                     }
                     
                     htmlFaqs += "</div>";
@@ -402,13 +408,6 @@
 
                 return formData;
             }
-            
-            $(document).on("load", "#iframeContainerAlma", function(){
-                var reiniciaCookieAlma = readCookie('reiniciaCookie');
-                if(reiniciaCookieAlma == 1){
-                    document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                }
-            });
         </script>
         <!-- FIN Scripts -->
     </body>
