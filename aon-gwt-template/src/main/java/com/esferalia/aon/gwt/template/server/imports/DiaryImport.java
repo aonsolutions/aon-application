@@ -323,8 +323,6 @@ public class DiaryImport {
 		}
 		
 		if(IConstants.DEBE.equalsIgnoreCase(title)) {
-			if(CellType.FORMULA == cell.getCellTypeEnum())
-				return;
 			Double debit = Utils.parseDouble(o);
 			if(debit != null && debit < 0) {
 				diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(-debit);
@@ -333,8 +331,6 @@ public class DiaryImport {
 		}
 		
 		if(IConstants.HABER.equalsIgnoreCase(title)) {
-			if(CellType.FORMULA == cell.getCellTypeEnum())
-				return;
 			Double credit = Utils.parseDouble(o);
 			if(credit != null && credit < 0) {
 				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(-credit);
