@@ -88,7 +88,7 @@ class AonApplication extends HTMLElement {
 		div.appendChild(sidenavTitle);
 
     let ul = document.createElement('ul');
-    ul.className = 'aonClip';
+    ul.className = 'aonClip listUnstyled';
 
     options.forEach((option, i) => {
       let id = sidenav.id + option.name;
