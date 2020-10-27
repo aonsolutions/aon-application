@@ -174,7 +174,7 @@
                         chatbot         = nuevoTicket.user.uidChatbot;
                         empresa         = nuevoTicket.user.uidEmpresa;
                         companyType     = nuevoTicket.user.companyType;
-                        urlClient       = btoa(window.location.protocol + "://" +window.location.host);
+                        urlClient       = btoa(window.location.protocol + "//" +window.location.host);
                         var urlIframe   = "https://dev.almaintelligence.com:8888/suite/?idDespacho="+empresa+"&idChatbot="+chatbot+"&nombreUsuario="+userName+"&tipoEmpresa="+companyType+"&uc="+urlClient;
                         
                         // Incrustamos todo el chatbot en el contenedor
