@@ -17,7 +17,7 @@
             }
         } else {
             // Tenemos datos, agregamos este dato al resto
-            dataLoad[returNextID('messenger')] = data.json;
+            dataLoad[returnNextID('messenger')] = data.json;
         }
 
         // Almacenamos
@@ -109,7 +109,7 @@
         //
         // Retornar el ID por el que vamos
         //
-        function returNextID(name){
+        function returnNextID(name){
             if (name != ''){
                 // Cogemos los datos
                 let data = readJsonApi(name);
@@ -167,5 +167,3 @@
             let todayHour = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds();
             return today+' '+todayHour;
         }
-
-        

@@ -84,13 +84,14 @@
                             let assignaedTo = NameRandom(2);
 
                             let ticket      = {
-                                id           : returNextID('messenger'),                    // campo ticket
+                                id           : returnNextID('messenger'),                   // campo ticket
                                 createDate   : Today(),                                     // Creado
                                 subject      : subject[Math.floor((Math.random() * 5))],    // titulo del ticket
                                 postings     : postings[Math.floor((Math.random() * 3))],   // select del destinatario
                                 from         : from,                                        // creador del ticket
                                 assignaedTo  : assignaedTo,                                 // asigando a
                                 answer       : Math.floor((Math.random() * 2)),             // tienes que responder = 0 : respondido | 1 : responder
+                                status       : 1,                                           // 0: Cerrado; 1: Abierto
                                 message      : {
                                     1 : {
                                         userName     : from,                                        // Nombre del usuario del mensaje
