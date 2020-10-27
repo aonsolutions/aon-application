@@ -168,38 +168,43 @@
                     //
                     // ALMA
                     //
-                        // Cogemos los datos del usuario logueado para el chat de alma
-                        var almaServer  = "dev.mispapeles.es";
-                        userName        = nuevoTicket.user.name;
-                        chatbot         = nuevoTicket.user.uidChatbot;
-                        empresa         = nuevoTicket.user.uidEmpresa;
-                        companyType     = nuevoTicket.user.companyType;
-                        urlClient       = btoa(window.location.protocol + "//" +window.location.host);
-                        var urlIframe   = "https://dev.almaintelligence.com:8888/suite/?idDespacho="+empresa+"&idChatbot="+chatbot+"&nombreUsuario="+userName+"&tipoEmpresa="+companyType+"&uc="+urlClient;
-                        
-                        // Incrustamos todo el chatbot en el contenedor
-                        var s   = document.createElement("script");
-                        s.type  = "text/javascript";
-                        //s.src = "https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.js"; PRODUCCION
-                        s.src   = "https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.js";
-                        s.id    = "helper";
-                        s.dataset["idEmpresa"] = empresa;
-                        s.dataset["idChatbot"] = chatbot;
+                    // Cogemos los datos del usuario logueado para el chat de alma
+                    var almaServer  = "dev.mispapeles.es";
+                    userName        = nuevoTicket.user.name;
+                    chatbot         = nuevoTicket.user.uidChatbot;
+                    empresa         = nuevoTicket.user.uidEmpresa;
+                    companyType     = nuevoTicket.user.companyType;
+                    urlClient       = btoa(window.location.protocol + "//" +window.location.host);
+                    var urlIframe   = "https://dev.almaintelligence.com:8888/suite/?idDespacho="+empresa+"&idChatbot="+chatbot+"&nombreUsuario="+userName+"&tipoEmpresa="+companyType+"&uc="+urlClient;
 
-                        $("#contentAlma").append(s);
-                        
-                        var divCb           = document.createElement("div");
-                        divCb.id            = "contenedorChatbot";
-                        divCb.style.width   = "100%";
-                        divCb.style.height  = "530px";
-                        
-                        var iframeCb            = document.createElement("iframe");
-                        iframeCb.src            = urlIframe;
-                        iframeCb.id             = "iframeContainerAlma";
-                        iframeCb.style.width    = "100%";
-                        iframeCb.style.height   = "100%";
-                        divCb.appendChild(iframeCb);
-                        $("#contentAlma").append(divCb);
+                    // Incrustamos todo el chatbot en el contenedor
+                    var s   = document.createElement("script");
+                    s.type  = "text/javascript";
+                    //s.src = "https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.js"; PRODUCCION
+                    s.src   = "https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.js";
+                    s.id    = "helper";
+                    s.dataset["idEmpresa"] = empresa;
+                    s.dataset["idChatbot"] = chatbot;
+
+                    $("#contentAlma").append(s);
+
+                    var divCb           = document.createElement("div");
+                    divCb.id            = "contenedorChatbot";
+                    divCb.style.width   = "100%";
+                    divCb.style.height  = "530px";
+
+                    var iframeCb            = document.createElement("iframe");
+                    iframeCb.src            = urlIframe;
+                    iframeCb.id             = "iframeContainerAlma";
+                    iframeCb.style.width    = "100%";
+                    iframeCb.style.height   = "100%";
+                    divCb.appendChild(iframeCb);
+                    $("#contentAlma").append(divCb);
+                    
+                    var reiniciaCookieAlma = readCookie('reiniciaCookie');
+                    if(reiniciaCookieAlma == 1){
+                        document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                    }
                 });
 
             //    
@@ -391,10 +396,7 @@
                     let data = createJsonApi(dataCreate);
                     
                     // Borramos la cookie de alma desde el iframe
-                    var borraCookie = {"borraCookieAlma" : true};
-                        
-                    var iframeSelect= $('#iframeContainerAlma')[0].contentWindow;
-                    iframeSelect.postMessage(borraCookie, '*');
+                    document.cookie = "reiniciaCookie=1";
 
                     // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
                     document.location.href = "show.html?ticket="+ticket.id;
