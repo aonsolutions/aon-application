@@ -200,11 +200,6 @@
                     iframeCb.style.height   = "100%";
                     divCb.appendChild(iframeCb);
                     $("#contentAlma").append(divCb);
-                    
-                    var reiniciaCookieAlma = readCookie('reiniciaCookie');
-                    if(reiniciaCookieAlma == 1){
-                        document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                    }
                 });
 
             //    
@@ -441,6 +436,13 @@
 
                 return formData;
             }
+            
+            $(document).on("load", "#iframeContainerAlma", function(){
+                var reiniciaCookieAlma = readCookie('reiniciaCookie');
+                if(reiniciaCookieAlma == 1){
+                    document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                }
+            });
         </script>
         <!-- FIN Scripts -->
     </body>
