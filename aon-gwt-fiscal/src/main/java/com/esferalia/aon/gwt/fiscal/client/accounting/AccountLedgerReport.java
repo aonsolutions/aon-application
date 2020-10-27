@@ -188,7 +188,7 @@ public class AccountLedgerReport extends MainEntryPoint {
 			}
 		});
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayoutPanel);
 	}
 	

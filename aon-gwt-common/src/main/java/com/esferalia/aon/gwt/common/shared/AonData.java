@@ -15,6 +15,7 @@ public class AonData implements IsSerializable{
 	Boolean betaEnabled;
 	Boolean alphaEnabled;
 	Boolean aonSolutions;
+	String rootPanel;
 	
 	public User getUser() {
 		return user;
@@ -74,4 +75,13 @@ public class AonData implements IsSerializable{
 		this.aonSolutions = aonSolutions;
 		return this;
 	}
+	public String getRootPanel() {
+		return rootPanel;
+	}
+	public AonData setRootPanel(String rootPanel) {
+		this.rootPanel = rootPanel;
+		return this;
+	}
+	
+	
 }

@@ -167,7 +167,7 @@ public class Model200 extends MainEntryPoint {
 		
 		AON.ensureInjected();
 
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		deckPanel = new DeckLayoutPanel();
 
 		DockLayoutPanel tableDockLayout = new DockLayoutPanel(Unit.PX);

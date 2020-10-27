@@ -102,7 +102,7 @@ public class BOEImportForm extends Composite implements EntryPoint {
 		CONNECT_SERVICE = new ConnectServiceAsyncDecorator(connectServiceRaw);		
 		
 		Widget ui = uiBinder.createAndBindUi(this);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 		initFileUpload();
 	}
@@ -261,5 +261,10 @@ public class BOEImportForm extends Composite implements EntryPoint {
 	public static native int getCurrentDomain()
 	/*-{
 		return $wnd.getCurrentDomain();
+	}-*/;
+	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
 	}-*/;
 }

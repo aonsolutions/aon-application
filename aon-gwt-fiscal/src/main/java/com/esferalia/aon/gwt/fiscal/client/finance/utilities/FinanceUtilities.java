@@ -56,7 +56,7 @@ public class FinanceUtilities extends MainEntryPoint{
 		FinanceUtilitiesServiceAsync serviceRaw = GWT.create(FinanceUtilitiesService.class);
 		SERVICE = new FinanceUtilitiesServiceAsyncDecorator(serviceRaw);
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		
 
 		SERVICE.getDomain(domainName, user, domain, new AsyncCallback<Domain>() {

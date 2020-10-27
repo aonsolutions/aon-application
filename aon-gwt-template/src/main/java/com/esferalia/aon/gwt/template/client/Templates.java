@@ -176,7 +176,7 @@ public class Templates extends Composite implements EntryPoint {
 			}
 		
 			Widget ui = binder.createAndBindUi(this);
-			RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+			RootLayoutPanel root = RootLayoutPanel.get(getAonData().getRootPanel());
 			root.add(ui);	
 		}
 	}

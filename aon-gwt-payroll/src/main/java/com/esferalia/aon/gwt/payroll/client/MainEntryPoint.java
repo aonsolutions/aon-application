@@ -184,5 +184,10 @@ public class MainEntryPoint implements EntryPoint {
 			return false;
 		}
 	}-*/;
+	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
 
 }

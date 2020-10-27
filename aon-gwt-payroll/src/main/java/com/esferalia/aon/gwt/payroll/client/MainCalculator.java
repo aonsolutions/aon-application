@@ -243,7 +243,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		
 		Widget ui = binder.createAndBindUi(this);
 
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 		
 		

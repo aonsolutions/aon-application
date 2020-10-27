@@ -1979,6 +1979,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	// Cret@
 	private CCCCretaDetail cccCretaDetail;
 
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	/**
 	 * This method constructs the application user interface by instantiating
 	 * controls and hooking up event handler.
@@ -2004,7 +2009,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
 		logEvent("addedToRootPanel");

@@ -194,7 +194,7 @@ public class TemplatesPage extends Composite{
 		
 		Widget ui = pageBinder.createAndBindUi(this);
 	
-		RootLayoutPanel.get("rootPanel").add(ui);
+		RootLayoutPanel.get(getAonData().getRootPanel()).add(ui);
 		Load();
 	}
 	

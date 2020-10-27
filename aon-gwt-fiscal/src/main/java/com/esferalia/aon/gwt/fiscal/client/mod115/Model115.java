@@ -282,7 +282,7 @@ public class Model115 extends MainEntryPoint {
 		replacedNumber.setVisibleLength(13);
 		replacedNumber.setMaxLength(13);
 
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
 

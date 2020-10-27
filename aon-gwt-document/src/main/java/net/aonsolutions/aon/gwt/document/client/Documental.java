@@ -170,7 +170,7 @@ public class Documental implements EntryPoint {
 		GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css().ensureInjected();
 		GWT.<AonGwtDocumentResources> create(AonGwtDocumentResources.class).css().ensureInjected();
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getAonData().getRootPanel());
 		root.add(ui);
 		initializeFilterMap();
 		createAonToolbar();

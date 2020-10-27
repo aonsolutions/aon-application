@@ -1,5 +1,6 @@
-	export const removeRootPanel = () => {
-		const myNode = document.getElementById("rootPanel");
+	export const removeRootPanel = (panel) => {
+		panel = panel || 'rootPanel';
+		const myNode = document.getElementById(panel);
 		myNode.innerHTML = '';
 	}
 
@@ -50,8 +51,10 @@
 		}
 	}
 
-	export const startModule = (module, entrypoint) => {
-		removeRootPanel();
+	export const startModule = (module, entrypoint, rootPanel) => {
+		let panel = rootPanel || 'rootPanel';
+		localStorage.setItem('rootPanel', panel);
+		removeRootPanel(panel);
 		preStartModule(module);
 		if (window.document.createElement && window.document.getElementsByTagName) {
 			let script = window.document.createElement("script");

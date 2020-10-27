@@ -49,6 +49,11 @@ public abstract class StatPanel implements EntryPoint {
 		return $wnd.getCurrentDomain();
 	}-*/;
 	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	@UiField SimpleLayoutPanel content;	
 	@UiField HTMLPanel searchContent;
 	@UiField Button excel;
@@ -90,7 +95,7 @@ public abstract class StatPanel implements EntryPoint {
 		AON.ensureInjected();
 		
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
 	

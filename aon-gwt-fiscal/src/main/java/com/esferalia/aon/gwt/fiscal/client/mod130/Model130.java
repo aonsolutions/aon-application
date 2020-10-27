@@ -291,7 +291,7 @@ public class Model130 extends MainEntryPoint {
 		replacedNumber.setVisibleLength(13);
 		replacedNumber.setMaxLength(13);
 
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 		
 		// http://code.google.com/p/google-web-toolkit/issues/detail?id=6889

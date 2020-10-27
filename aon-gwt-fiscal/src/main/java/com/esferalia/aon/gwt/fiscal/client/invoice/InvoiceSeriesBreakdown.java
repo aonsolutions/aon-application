@@ -86,7 +86,7 @@ public class InvoiceSeriesBreakdown extends MainEntryPoint {
 		fromDate.setValue(new Date());
 		toDate.setValue(new Date());
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
 

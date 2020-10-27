@@ -119,7 +119,7 @@ public class FinanceModule extends MainEntryPoint {
 		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
 		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
 
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		root.add(dockLayoutPanel);
 

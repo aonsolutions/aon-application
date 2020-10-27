@@ -245,7 +245,7 @@ public class AccountEntryModule extends MainEntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		AccountEntryModuleOptions options = new AccountEntryModuleOptions();
 		options.setParentWidget(root);
 		options.setDomainName(getCurrentDomainName());

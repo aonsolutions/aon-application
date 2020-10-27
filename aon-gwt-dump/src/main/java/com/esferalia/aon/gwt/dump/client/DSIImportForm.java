@@ -223,6 +223,11 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 	private List<String> aviableDomain;
 	private int permissionDomain;
 
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	@Override
 	public void onModuleLoad() {
 
@@ -342,7 +347,7 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 
 		
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 			
 		this.nombreUsuario.getElement().setPropertyString("placeholder", "Nombre Usuario");
@@ -396,6 +401,8 @@ public class DSIImportForm implements EntryPoint, DSIImportService {
 		}, DoubleClickEvent.getType());
 
 	}
+	
+
 	
 	// ----------------------------- UiHandlers --------------------------------
 

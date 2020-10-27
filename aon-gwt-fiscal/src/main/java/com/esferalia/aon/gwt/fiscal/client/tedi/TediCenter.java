@@ -111,7 +111,7 @@ public class TediCenter extends MainEntryPoint {
 		TediServiceAsync serviceRaw = GWT.create(TediService.class);
 		SERVICE = new TediServiceAsyncDecorator(serviceRaw);
 
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		
 		SimpleLayoutPanel mainPanel = new SimpleLayoutPanel();
 		mainPanel.setStyleName(AON.AON_CSS.aonSelector());

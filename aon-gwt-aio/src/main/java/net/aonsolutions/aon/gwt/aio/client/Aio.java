@@ -54,6 +54,12 @@ public class Aio implements EntryPoint {
 		return $wnd.localStorage.getItem("aon_domain_name");
 	}-*/;
 	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
+	
 	public static native String getCurrentDomainName()
 	/*-{
 		return $wnd.getCurrentDomainName();
@@ -86,6 +92,7 @@ public class Aio implements EntryPoint {
 			impl.getAonDataToken(getDomainName(), getDomainId(), getToken(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {
+					result.setRootPanel(getRootPanel() != null ? getRootPanel() : "rootPanel");
 					selection(entryPoint, result);
 				}
 				
@@ -95,6 +102,7 @@ public class Aio implements EntryPoint {
 			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {
+					result.setRootPanel("rootPanel");
 					selection(entryPoint, result);
 				}
 				

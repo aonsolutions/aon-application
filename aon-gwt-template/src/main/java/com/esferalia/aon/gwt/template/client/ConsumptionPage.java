@@ -101,7 +101,7 @@ public class ConsumptionPage extends Composite{
 		categoryListBox = new ListBox();
 
 		Widget ui = pageBinder.createAndBindUi(this);
-		RootLayoutPanel.get("rootPanel").add(ui);
+		RootLayoutPanel.get(aonData.getRootPanel()).add(ui);
 		
 		init();
 	}

@@ -170,7 +170,7 @@ public class StatControlPanel extends MainEntryPoint {
 		statService = new StatServiceAsyncDecorator(serviceRaw);
 	
 		AON.ensureInjected();
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		Widget ui = INVOICE_STAT_BINDER.createAndBindUi(this);
 		
 		content.getElement().setId("content");

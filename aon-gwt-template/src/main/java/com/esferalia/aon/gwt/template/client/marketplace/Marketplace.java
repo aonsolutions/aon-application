@@ -75,7 +75,7 @@ public class Marketplace extends Composite {
 		epanel = new DisclosurePanel(di.getClosed(), di.getOpen(), "Etiquetas");
 		tagButton = new Button();
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel.get("rootPanel").add(ui);
+		RootLayoutPanel.get(aonData.getRootPanel()).add(ui);
 		load();
 	}
 	

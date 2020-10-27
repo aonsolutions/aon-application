@@ -103,6 +103,11 @@ public class MainEntryPoint implements EntryPoint {
 		return $wnd.getCurrentUser();
 	}-*/;
 	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	/**
 	 * Fetches a parameter passed to the module's nocache script.
 	 * 

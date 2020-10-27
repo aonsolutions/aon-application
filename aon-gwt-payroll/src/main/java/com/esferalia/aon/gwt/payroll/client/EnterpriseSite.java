@@ -57,7 +57,11 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	private Documents documents;
 	
 	
-
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -75,7 +79,7 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 		
 		jsf = new JSF();

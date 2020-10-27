@@ -156,7 +156,7 @@ public class MainCRANew extends MainEntryPoint {
 		AON.ensureInjected();
 	
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel.get("rootPanel").add(ui);
+		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		// Init view and listboxes
 		initPreView();

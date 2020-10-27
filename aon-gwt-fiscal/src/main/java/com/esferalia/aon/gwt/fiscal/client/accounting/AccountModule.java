@@ -98,7 +98,7 @@ public class AccountModule extends MainEntryPoint {
 		toolbarPanel.add(toolbar);
 		dockLayoutPanel.addNorth(toolbarPanel, 25);
 		dockLayoutPanel.add( accountPanel );
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayoutPanel);
 	}
  

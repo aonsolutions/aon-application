@@ -27,12 +27,17 @@ public class ContractMediaContent extends Composite {
 	@UiField CheckBox detailCheckBox;
 	@UiField Button downloadButton;
 	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	API API;
 	public ContractMediaContent(API API) {
 		this.API = API;
 		downloadButton = new Button();
 		Widget ui = pageBinder.createAndBindUi(this);
-		RootLayoutPanel.get("rootPanel").add(ui);
+		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		init(API);
 	}

@@ -192,7 +192,7 @@ public class Model303 extends MainEntryPoint {
 		declarationContainer.setWidget(model303Table);
 		model303Table.refresh();
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
 

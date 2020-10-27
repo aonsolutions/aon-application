@@ -41,6 +41,11 @@ public class AccountingUtilities extends MainEntryPoint{
 		return domain;
 	}
 	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	@Override
 	public void onModuleLoad() {
 		onModuleLoad(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
@@ -56,7 +61,7 @@ public class AccountingUtilities extends MainEntryPoint{
 		AccountingUtilitiesServiceAsync serviceRaw = GWT.create(AccountingUtilitiesService.class);
 		SERVICE = new AccountingUtilitiesServiceAsyncDecorator(serviceRaw);
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		
 
 		SERVICE.getDomain(domainName, user, domain, new AsyncCallback<Domain>() {

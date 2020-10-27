@@ -157,7 +157,7 @@ public class AccountOperatingReport extends MainEntryPoint {
 		dockLayoutPanel.addNorth(toolbarPanel, 25);
 		dockLayoutPanel.add( panel );
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayoutPanel);
 	}
 

@@ -1,3 +1,5 @@
+import {startModule} from '../../services/gwtLoader.js';
+
 class AonContrata extends HTMLElement {
 
 	constructor () {
@@ -26,7 +28,7 @@ class AonContrata extends HTMLElement {
 					icon: 'contract',
 					color: 'black'
 				},
-				fn: () => aonContrata.setContentHTML('<div> Contratos!! </div>')
+				fn: () => startModule('aon_gwt_payroll', 'MainContrata', 'aonContrataContent')
 			},
 			{
 				name: 'Movimientos',

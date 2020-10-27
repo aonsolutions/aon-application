@@ -715,6 +715,11 @@ public class MainEntryPoint implements EntryPoint {
 		return token ? $wnd.localStorage.getItem("aon_domain_id") :  $wnd.getCurrentDomain();
 	}-*/;
 	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	public static String getCurrentUser() {
 		return getToken() != null ? aonData.getUser().getLogin() : getCurrentUserJs();
 	};

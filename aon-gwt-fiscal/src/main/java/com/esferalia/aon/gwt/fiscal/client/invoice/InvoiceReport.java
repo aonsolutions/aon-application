@@ -195,7 +195,7 @@ public class InvoiceReport extends MainEntryPoint {
 		
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
 

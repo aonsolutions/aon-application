@@ -94,7 +94,7 @@ public class Issues implements EntryPoint {
 		GWT.<AonGwtIssuesResources> create(AonGwtIssuesResources.class).css().ensureInjected();
 		
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getAonData().getRootPanel());
 		root.add(ui);
 		me = this;
 		incidence = new Incidence(GWT.getModuleBaseURL(), aonData.getMd5(),

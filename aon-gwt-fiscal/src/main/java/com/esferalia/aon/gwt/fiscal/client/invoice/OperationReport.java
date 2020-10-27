@@ -120,7 +120,7 @@ public class OperationReport extends MainEntryPoint {
 		
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayoutPanel);
 		
 		formatter = NumberFormat.getDecimalFormat();

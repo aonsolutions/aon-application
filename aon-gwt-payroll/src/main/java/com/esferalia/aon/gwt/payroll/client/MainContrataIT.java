@@ -116,7 +116,7 @@ public class MainContrataIT extends MainEntryPoint {
 		AON.ensureInjected();
 	
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel.get("rootPanel").add(ui);
+		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		deckPanel.showWidget(0);
 		inactiveITsCB.setValue(true);

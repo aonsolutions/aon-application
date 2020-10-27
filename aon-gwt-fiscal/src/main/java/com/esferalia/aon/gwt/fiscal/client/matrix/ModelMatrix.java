@@ -324,7 +324,7 @@ public class ModelMatrix extends MainEntryPoint {
 			}
 		});
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(dockLayout);
 		
 		filterPanel.fireValueChangeEvent();

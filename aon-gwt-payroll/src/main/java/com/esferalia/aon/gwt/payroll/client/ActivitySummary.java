@@ -156,7 +156,7 @@ public class ActivitySummary extends MainEntryPoint {
 		Widget ui = binder.createAndBindUi(this);
 		
 
-		RootLayoutPanel.get("rootPanel").add(ui);
+		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		initSearchBox();
 		

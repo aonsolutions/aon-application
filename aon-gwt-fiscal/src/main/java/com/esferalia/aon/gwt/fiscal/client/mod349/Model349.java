@@ -166,7 +166,7 @@ public class Model349 extends MainEntryPoint {
 		declarationContainer.setWidget(model349Table);
 		model349Table.refresh();
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 
 	}

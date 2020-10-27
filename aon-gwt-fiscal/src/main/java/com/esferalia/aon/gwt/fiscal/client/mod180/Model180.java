@@ -142,7 +142,7 @@ public class Model180 extends MainEntryPoint {
 		declarationContainer.setWidget(model180Table);
 		model180Table.refresh();
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 
 	}

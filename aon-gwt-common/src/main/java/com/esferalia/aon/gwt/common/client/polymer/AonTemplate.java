@@ -36,6 +36,11 @@ public class AonTemplate implements EntryPoint {
 		return $wnd.getCurrentDomain();
 	}-*/;
 	
+	public static native String getRootPanel()
+	/*-{
+		return $wnd.localStorage.getItem("rootPanel");
+	}-*/;
+	
 	public AonTemplate() {
 
 	}
@@ -45,7 +50,7 @@ public class AonTemplate implements EntryPoint {
 		AON.ensureInjected();
 		Binder binder = GWT.create(Binder.class);
 		Widget ui = binder.createAndBindUi(this);
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
 	

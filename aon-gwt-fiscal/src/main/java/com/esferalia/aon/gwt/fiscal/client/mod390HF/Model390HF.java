@@ -135,7 +135,7 @@ public class Model390HF extends MainEntryPoint {
 		declarationContainer.setWidget(model390Table);
 		model390Table.refresh();
 		
-		RootLayoutPanel root = RootLayoutPanel.get("rootPanel");
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 	}
 
