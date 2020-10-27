@@ -390,8 +390,11 @@
                     };
                     let data = createJsonApi(dataCreate);
                     
-                    // Borramos la cookie de alma
-                    document.cookie = "cookiename=idSesionAlma; expires= Thu, 21 Aug 2014 20:00:00 UTC";
+                    // Borramos la cookie de alma desde el iframe
+                    var borraCookie = {"borraCookieAlma" : true};
+                        
+                    var iframeSelect= $('#iframeContainerAlma')[0].contentWindow;
+                    iframeSelect.postMessage(borraCookie, '*');
 
                     // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
                     document.location.href = "show.html?ticket="+ticket.id;
