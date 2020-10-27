@@ -22,6 +22,7 @@ public interface IAccUtilitiesItem extends Serializable {
 		void visitSupplierAccount(AccUtilitiesItemType type);
 		void visitCreditorAccount(AccUtilitiesItemType type);
 		void visitWrongRecordedInvoices(AccUtilitiesItemType type);
+		void visitDeleteEntries(AccUtilitiesItemType type);
 	}
 
 	public static enum AccUtilitiesItemType {
@@ -60,6 +61,12 @@ public interface IAccUtilitiesItem extends Serializable {
 			@Override
 			public void visit(IAccUtilitiesItemTypeVisitor visitor) {
 				visitor.visitEmptyEntry(this);		
+			}
+		}
+		,DELETE_ENTRY{
+			@Override
+			public void visit(IAccUtilitiesItemTypeVisitor visitor) {
+				visitor.visitDeleteEntries(this);		
 			}
 		}
 		,UNBALANCED_ENTRY{

@@ -189,6 +189,7 @@ class AccountIntegrityCheck extends OptionBase {
 		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
 		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
+		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {}
 		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
 		@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}

@@ -4,11 +4,12 @@ import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
+import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.accounting.utilities.AccountingUtilitiesService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
@@ -16,7 +17,7 @@ import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Accounting Utilities Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/AccountingUtilities" })
-public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet implements AccountingUtilitiesService {
+public class AccountingUtilitiesServiceImpl extends AonStatelessRemoteServiceServlet implements AccountingUtilitiesService {
 
 	private static final long serialVersionUID = -3045020929753519103L;
 
@@ -126,4 +127,8 @@ public class AccountingUtilitiesServiceImpl extends AonRemoteServiceServlet impl
 		return ACCOUNTING.regenerateInputVat(domainName,user,domain,year);
 	}
 
+	@Override
+	public AccUtilitiesResult removeEntries(String domainName, String user, Domain domain, AccountEntryParams params) {
+		return ACCOUNTING.removeEntries(domainName,user,domain,params);
+	}
 }

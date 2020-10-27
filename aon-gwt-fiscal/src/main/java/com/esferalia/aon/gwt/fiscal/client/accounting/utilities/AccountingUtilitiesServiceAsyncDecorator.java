@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
@@ -158,6 +159,11 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		fsa.regenerateInputVat(domainName, user, domain,year, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
 
-
+	// Borrado de apuntes
+	@Override
+	public void removeEntries(String domainName, String user, Domain domain, AccountEntryParams params, AsyncCallback<AccUtilitiesResult> callback) {
+		AON.start();
+		fsa.removeEntries(domainName, user, domain,params, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
 
 }

@@ -40,9 +40,11 @@ import org.jooq.Field;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountEntry;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountIntegritItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesAccountLinkItem;
@@ -54,6 +56,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowL
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateInputVatItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateJournalItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRemoveEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesWrongRecordedInvoicesItem;
@@ -90,6 +93,7 @@ public class AccountingUtilitiesDAO {
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static SimpleDateFormat DATETIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 	
 	public static AccUtilitiesResult checkParentLinker(AONContext ctx, Account account) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
@@ -1218,6 +1222,45 @@ public class AccountingUtilitiesDAO {
 				);
 		})
 		.forEach(item -> result.add(item) );
+	}
+	public static AccUtilitiesResult removeEntries(AONContext ctx, AccountEntryParams params) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		ACCOUNTING.getAccountEntriesStream(ctx,params, 0, Integer.MAX_VALUE)
+			.map( entry -> new AccUtilitiesRemoveEntryItem()
+					.setEntryId(entry.getId())
+					.setDomain(ctx.getDomainId())
+					.setDomainName(ctx.getDomainName())
+					.setMessage( toString(entry) )
+			)
+			.forEach(item -> result.add(item) );
+
+		return result;
+	}
+	
+	private static String toString(AccountEntry entry) {
+		StringBuffer buf = new StringBuffer();
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad(entry.getJournal()==null?"????":""+entry.getJournal(),10));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(DATE_FORMATTER.format(entry.getEntryDate()));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(entry.isConfidential()?"[C]":"   ");
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad(entry.getEntryType().getDescription(), 20));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(entry.getCreationDate() != null ? DATETIME_FORMATTER.format(entry.getCreationDate()) : AonStringUtils.repeat(AonStringUtils.SPACE,19));
+		buf.append(AonStringUtils.SPACE);
+		buf.append(AonStringUtils.rightPad(entry.getCreationUser()==null?"":entry.getCreationUser(),15));
+		buf.append(AonStringUtils.SPACE);
+		if (AonStringUtils.isNotBlank(entry.getComments())) {
+			buf.append("[");
+			buf.append(AonStringUtils.abbreviate(AonStringUtils.removeTabsAndNewLine(entry.getComments()), 38));
+			buf.append("]");
+		}
+		return buf.toString();
 	}
 	
 } 

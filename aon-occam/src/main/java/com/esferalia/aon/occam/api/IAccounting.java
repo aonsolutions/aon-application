@@ -125,11 +125,13 @@ public interface IAccounting {
 	public AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx);
 	public AccUtilitiesResult regenerateInputVat(AONContext ctx, Integer year);
 	public boolean isUndeductibleInvoice(AONContext ctx, Integer id);
+	public AccUtilitiesResult removeEntries(AONContext ctx, AccountEntryParams params);
 	
 	// ANALYTIC ACCOUNTING	
 	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params) throws AonCoreException;
 	public AccountingAnalyticalReport getAccountAnalyticalReport(AONContext ctx, AccountingReportParams params, Analytical analytical) throws AonCoreException;
 	public Analytical saveAnalyticConfiguration(AONContext ctx, Analytical analytical);
+	
 	
 	
 	

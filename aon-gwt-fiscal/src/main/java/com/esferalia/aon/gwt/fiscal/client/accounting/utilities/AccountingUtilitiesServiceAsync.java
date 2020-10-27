@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
@@ -53,5 +54,8 @@ public interface AccountingUtilitiesServiceAsync {
 	// Regeneracion del numero de diario
 	void getInputVatRegenerationInfo(String domainName, String user, Integer domain, AsyncCallback<AccUtilitiesResult> callback);
 	void regenerateInputVat(String domainName, String user, Integer domain, Integer year, AsyncCallback<AccUtilitiesResult> callback);
+
+	// Borrado de apuntes
+	void removeEntries(String domainName, String user, Domain domain, AccountEntryParams params, AsyncCallback<AccUtilitiesResult> asyncCallback);
 	
 }

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
@@ -55,4 +56,7 @@ public interface AccountingUtilitiesService extends RemoteService {
 	// Regeneracion del IVA soportado
 	AccUtilitiesResult getInputVatRegenerationInfo(String domainName, String user, Integer domain) throws AonCoreException;
 	AccUtilitiesResult regenerateInputVat(String domainName, String user, Integer domain, Integer year) throws AonCoreException;
+
+	// Borrado de apuntes
+	AccUtilitiesResult removeEntries(String domainName, String user, Domain domain, AccountEntryParams params);
 }

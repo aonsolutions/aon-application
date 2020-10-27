@@ -231,6 +231,9 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+	public static Stream<AccountEntry> getAccountEntriesStream(AONContext ctx, final AccountEntryParams params,int offset, int limit) throws AonCoreException {
+		return getAccounting().getAccountEntries(ctx, params, offset, limit);
+	}
 
 	public static LinkedList<AccountEntry> getAccountEntries(String domainName,
 			int domain, String user, final AccountEntryParams params,
@@ -716,6 +719,17 @@ public class ACCOUNTING {
 		}
 	}
 
+	public static AccUtilitiesResult removeEntries(String domainName, String user, Domain domain, AccountEntryParams params) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
+			return getAccounting().removeEntries(ctx,params);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
 	public static AccUtilitiesResult unbalancedEntries(String domainName, String user, Domain domain) {
 		AONContext ctx = null;
 		try {
@@ -912,5 +926,6 @@ public class ACCOUNTING {
 				ctx.close();
 		}
 	}
+
 		
 }

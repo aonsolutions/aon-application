@@ -197,6 +197,16 @@ public class AccountingUtilities extends MainEntryPoint{
 				}
 			});
 			
+			EntriesRemover entriesRemover = new EntriesRemover(getDomainName(),getUser(),domain);
+			utilitiesPanel.add(entriesRemover.getSidebarWidget());
+			entriesRemover.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {
+			  @Override
+			  public void onSelection(SelectionEvent<IOption> event) {
+			    content.setWidget( entriesRemover );
+			    entriesRemover.run();
+			  }
+			});
+
 			InputVatRegenerator inputVatRegenerator = new InputVatRegenerator(getDomainName(),getUser(),domain);
 			utilitiesPanel.add(inputVatRegenerator.getSidebarWidget());
 			inputVatRegenerator.addSelectionHandler( new SelectionHandler<AccountingUtilities.IOption>() {

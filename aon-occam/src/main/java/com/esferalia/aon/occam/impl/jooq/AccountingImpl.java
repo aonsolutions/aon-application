@@ -447,6 +447,13 @@ public class AccountingImpl implements IAccounting {
 			 );		
 	}
 	@Override
+	public AccUtilitiesResult removeEntries(AONContext ctx, AccountEntryParams params) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.removeEntries(ctx,params)
+			 );		
+	}
+	
+	@Override
 	public AccUtilitiesResult unbalancedEntries(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AccountingUtilitiesDAO.unbalancedEntries(ctx)
