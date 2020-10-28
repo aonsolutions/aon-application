@@ -98,6 +98,11 @@
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 									<g:Button ui:field='listEmployees' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTA"/>
 								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:Button ui:field='afiButton'
+										styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Cambios AFI"
+										enabled="true" />
+								</g:HTMLPanel>
 								<g:MenuBar styleName="aon-finding-toolbar-item-group {style.h17}">
 									<g:MenuItem text="TGSS" ui:field="archivoMenuItem" styleName="aon-finding-toolbar-item aon-icon-segsocial-small {style.bold}">
 										<g:MenuBar vertical="true" styleName="{style.p5}">
@@ -117,11 +122,6 @@
 									<g:Button debugId='downloadButton' ui:field='downloadButton'
 										styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
 								</g:HTMLPanel>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='afiButton'
-									styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Cambios AFI"
-									enabled="true" />
-							</g:HTMLPanel>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
 					</g:FlowPanel>
