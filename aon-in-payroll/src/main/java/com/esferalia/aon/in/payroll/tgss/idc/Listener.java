@@ -15,7 +15,7 @@ public interface Listener {
 	void onEmployeeQuoteGroup(String group);
 	void onEmployeeQuoteTypes(double it, double ims, double unemployment);
 	void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, String colectivo, String legislacion );
-	void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, Date start, Date end );
+	void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo, String quota, Date start, Date end );
 	
 	void onContractType(String contractType);
 	void onContractStart(Date start);

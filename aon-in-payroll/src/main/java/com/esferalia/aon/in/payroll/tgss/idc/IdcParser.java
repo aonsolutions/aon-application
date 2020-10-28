@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +15,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -74,6 +72,7 @@ public class IdcParser {
 			
 			matcher = find(reader, EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE);
 			
+			String ssNum = matcher.group("province")+ matcher.group("nss");
 			listener.onEmployee(matcher.group("province")+ matcher.group("nss"), fullName);
 			listener.onEmployeeOtherInfo(matcher.group("docType"), matcher.group("doc"), matcher.group("gender"), simpleDateFormat.parse(matcher.group("birthDate")));
 			
@@ -127,6 +126,8 @@ public class IdcParser {
 				for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
 					optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC))
 					listener.onEmployeeQuotePEC(
+							ssNum,
+							enterpriseCCC,
 							optional.get().group("code"), 
 							optional.get().group("description"),
 							optional.get().group("tipo"), 
@@ -271,112 +272,4 @@ public class IdcParser {
 	"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+).*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)$"
 	, Pattern.CASE_INSENSITIVE);
 			
-	
-	public static void main(String[] args) throws IOException, UnknownPDFException {
-		
-		parse(new File("/Users/sergio/Desktop/idc_josefa_lopez.pdf"), new Listener() {
-
-			@Override
-			public void onPeriod(Date date) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onAgreement(String code) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate) {
-				System.out.println("DOC.IDENTIFICATIVO : " + documentType + " NUM : " + document + " SEXO : " + gender + " NACIMIENTO : " + birthDate);
-			}
-
-			@Override
-			public void onEmployee(String nss, String name) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onEmployeePerido(Date startDate, Date endDate) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onEmployeeQuoteGroup(String group) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
-				System.out.println("IT : " + it + ", IMS : " + ims + ", UNEMPLOYMENT : " + unemployment);
-			}
-
-			@Override
-			public void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, String colectivo, String legislacion) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onContractType(String contractType) {
-				System.out.println("TIPO CONTRATO: " + contractType);
-			}
-
-			@Override
-			public void onContractStart(Date start) {
-				System.out.println("ALTA: " + start);
-			}
-
-			@Override
-			public void onContractEnd(Date end) {
-				System.out.println("BAJA: " + end);
-			}
-
-			@Override
-			public void onContractPartialCoeficient(String coeficient) {
-				System.out.println("COEF.TIEMPO PARCIAL: " + coeficient);
-			}
-
-			@Override
-			public void onContractQuoteGroup(String quoteGroup) {
-				System.out.println("GC/M*: " + quoteGroup);
-			}
-
-			@Override
-			public void onContractInactivityType(String inactivityType) {
-				System.out.println("TIPO DE INACTIVIDAD/COEFIC: " + inactivityType);
-			}
-
-			@Override
-			public void onContractOcupation(String ocupation) {
-				System.out.println("OCUPACION*: "+ ocupation);
-			}
-
-			@Override
-			public void onContractAgrarianQuoteModality(String quoteModality) {
-				System.out.println("MODALIDAD DE COTIZACIÓN: " + quoteModality);
-			}
-
-			@Override
-			public void onContractAgrarianRealJourney(String realJourney) {
-				System.out.println("JORNADAS REALES REALIZADAS: " + realJourney);
-			}
-
-			@Override
-			public void onContractAgrarianRealJourneyProvided(String realJourneyProvided) {
-				System.out.println("JORNADAS REALES PREVISTAS: " + realJourneyProvided);
-			}
-
-			@Override
-			public void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, Date start, Date end) {
-				System.out.println("TIPO DE PECULIARIDAD : " + code + " " + description + " PORCENTAJE/TIPO: " + portTipo + " FRACCION DE CUOTA: " + quota + " DESDE: " + start + " HASTA: " + end);
-			}
-
-			@Override
-			public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode, String economicActivityDescription, String regime, String fullCCC) {
-				System.out.println("ENTERPRISE -> " + socialReason + ", NIF : " + nif + ", Regimen : " + regime + ", CCC : " + ccc + ", Act. economica : " + economicActivityCode + " " + economicActivityDescription);
-			}
-			
-		});
-	}
-
 }

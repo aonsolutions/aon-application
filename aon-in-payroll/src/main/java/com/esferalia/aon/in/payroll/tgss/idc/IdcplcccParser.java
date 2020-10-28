@@ -97,6 +97,7 @@ public class IdcplcccParser {
 			while ( true ) {
 				try {
 					matcher = find(reader, EMPLOYEE_NSS_NAME);
+					String ssNum = matcher.group("nss");
 					listener.onEmployee(matcher.group("nss"), matcher.group("name"));
 					matcher = find(reader, EMPLOYEE_PERIOD_QUOTE);
 					listener.onEmployeePerido(
@@ -118,6 +119,8 @@ public class IdcplcccParser {
 								optional.get().group("law"));
 						
 						listener.onEmployeeQuotePEC(
+								ssNum,
+								enterpriseCCC,
 								optional.get().group("code"), 
 								optional.get().group("description"),
 								optional.get().group("tipo"), 
@@ -206,132 +209,5 @@ public class IdcplcccParser {
 	Pattern.compile(
 	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2}[^0-9]+)\\s+(?<colective>[0-9]{4}[^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
-
-
-	
-	public static void main(String[] args) throws IOException, UnknownPDFException {
-		
-		parse(new File("/Users/sergio/Documents/idcplccc.pdf"), new Listener() {
-
-			@Override
-			public void onPeriod(Date date) {
-				System.out.println(date);
-			}
-
-			@Override
-			public void onAgreement(String code) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onEmployee(String nss, String name) {
-				System.out.println(nss +" " + name );
-			}
-
-			@Override
-			public void onEmployeePerido(Date startDate, Date endDate) {
-				System.out.println(startDate + "..." + endDate );
-			}
-
-			@Override
-			public void onEmployeeQuoteTypes(double it, double ims, double unemployment) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onEmployeeQuotePEC(String code, String description, String tipo, String quota,
-					String colectivo, String legislacion) {
-				// TODO Auto-generated method stub
-				System.out.println(code + " : " + description + ", " + tipo + ", " + quota );
-			}
-			
-			@Override
-			public void onEmployeeQuoteGroup(String group) {
-				// TODO Auto-generated method stub
-				System.out.println(group);
-			}
-
-			@Override
-			public void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractType(String contractType) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractStart(Date start) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractEnd(Date end) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractPartialCoeficient(String coeficient) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractQuoteGroup(String quoteGroup) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractInactivityType(String inactivityType) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractOcupation(String ocupation) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractAgrarianQuoteModality(String quoteModality) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractAgrarianRealJourney(String realJourney) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onContractAgrarianRealJourneyProvided(String realJourneyProvided) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, Date start,
-					Date end) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode, String economicActivityDescription, String regime, String fullCCC) {
-				System.out.println("ENTERPRISE -> " + socialReason + ", NIF : " + nif + ", Regimen : " + regime + ", CCC : " + ccc + ", Act. economica : " + economicActivityCode + " " + economicActivityDescription);
-			}
-			
-		});
-	}
 
 }

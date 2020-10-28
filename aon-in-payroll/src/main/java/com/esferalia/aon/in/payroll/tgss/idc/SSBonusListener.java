@@ -11,6 +11,8 @@ final class SSBonusListener extends DefaultListener implements Listener {
 	
 	public static class SSBonus {
 
+		private String ssNum;
+		private String ccc;
 		private Date startDate;
 		private Date endDate;
 		private String description;
@@ -61,9 +63,25 @@ final class SSBonusListener extends DefaultListener implements Listener {
 			this.formula = formula;
 		}
 
+		public String getSsNum() {
+			return ssNum;
+		}
+
+		public void setSsNum(String ssNum) {
+			this.ssNum = ssNum;
+		}
+
+		public String getCcc() {
+			return ccc;
+		}
+
+		public void setCcc(String ccc) {
+			this.ccc = ccc;
+		}
+
 		@Override
 		public String toString() {
-			return "SSBonus -> Description : " + getDescription() + ", Formula : " + getFormula() + ", Start : "
+			return "SSBonus -> SS Number : " + getSsNum() + ", CCC : " + getCcc() + ", Description : " + getDescription() + ", Formula : " + getFormula() + ", Start : "
 					+ getStartDate() + ", End : " + getEndDate();
 		}
 	}
@@ -157,12 +175,13 @@ final class SSBonusListener extends DefaultListener implements Listener {
 	private List<SSBonus> ssBonuses = new ArrayList<SSBonus>();
 
 	@Override
-	public void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, Date start,
-			Date end) {
+	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo, String quota, Date start, Date end) {
 		Integer codeInt = Integer.parseInt(code);
 		if (IntStream.of(ssBonusCodes).anyMatch(x -> x == codeInt)) {
 //			System.out.println("TIPO DE PECULIARIDAD : " + code + " " + description + " PORCENTAJE/TIPO: " + portTipo + " FRACCION DE CUOTA: " + quota + " DESDE: " + start + " HASTA: " + end);
 			SSBonus ssBonus = new SSBonus();
+			ssBonus.setSsNum(ssNum);
+			ssBonus.setCcc(ccc);
 			ssBonus.setStartDate(start);
 			ssBonus.setEndDate(end);
 			ssBonus.setDescription(code + " " + description);

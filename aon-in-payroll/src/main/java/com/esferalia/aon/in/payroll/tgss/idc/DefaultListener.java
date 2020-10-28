@@ -56,13 +56,12 @@ public class DefaultListener implements Listener{
 	public void onContractAgrarianRealJourneyProvided(String realJourneyProvided) {}
 
 	@Override
-	public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode, String economicActivityDescription, String regime,
-			String fullCCC) {}
+	public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode, String economicActivityDescription, String regime, String fullCCC) {}
 
 	@Override
 	public void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate) {}
 
 	@Override
-	public void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, Date start, Date end) {}
+	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo, String quota, Date start, Date end) {}
 
 }
