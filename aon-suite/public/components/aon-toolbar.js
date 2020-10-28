@@ -72,9 +72,10 @@
 		 	return header;
 		}
 
-		addButton(name, icon, fn) {
+		addButton(name, icon, fn, title = null) {
+			const titleAttr = (title === null) ? '' : `title="${title}"`;
 			const id = this.getId() + name + 'Button';
-			let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
+			let button = `<aon-icon-button ${titleAttr} id="${id}" icon="${icon}"> </aon-icon-button>`;
 			let span = document.createElement('span');
 			span.innerHTML= button;
 
@@ -85,6 +86,14 @@
 
 			let b = document.getElementById(id);
 			b.addEventListener('click', fn);
+		}
+
+		removeButton(name) {
+			let button = document.getElementById(this.getId() + name + 'Button');
+
+			if (button !== null) {
+				button.closest('span').remove();
+			}
 		}
 
 		removeButtons() {
