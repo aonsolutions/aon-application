@@ -1052,36 +1052,36 @@ import '../../components/aon-viewer.js';
 		// Fecha Vencimiento
 		updateFinanceDate(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_date' + index).value;
+				value = document.getElementById('financeDueDate' + index).value;
 			}
-			this._invoice.vencimientos[index].due_date = value;
+			this._invoice.finances[index].due_date = value;
 			this.save();
 		}
 
 		// Forma Pago Vencimiento
 		updateFinancePaymethod(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_paymethod' + index).value;
+				value = document.getElementById('financePaymethod' + index).value;
 			}
-			this._invoice.vencimientos[index].paymethod = value;
+			this._invoice.finances[index].paymethod = value;
 			this.save();
 		}
 
 		// Importe Vencimiento
 		updateFinanceAmount(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_amount' + index).value;
+				value = document.getElementById('financeAmount' + index).value;
 			}
-			this._invoice.vencimientos[index].amount = Number(value);
+			this._invoice.finances[index].amount = Number(value);
 			this.save();
 		}
 
 		// Iban Vencimiento
 		updateFinanceIban(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_amount' + index).value;
+				value = document.getElementById('financeIban' + index).value;
 			}
-			this._invoice.vencimientos[index].iban = value;
+			this._invoice.finances[index].iban = value;
 			this.save();
 		}
 

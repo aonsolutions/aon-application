@@ -562,6 +562,7 @@ import '../../components/aon-viewer.js';
 			let detail = this._invoice.details[i];
 			this.dialogDetail(detail, i);
 		}
+
 		printDetails() {
 			clearElement('aonInvoiceItemDetailCardTable');
 			for(let i = 0; i < this._invoice.details.length; i++) {
@@ -906,8 +907,93 @@ import '../../components/aon-viewer.js';
 					iban: ''
 			};
 			this._invoice.finances.push(finance);
-			this.printFinance(finance, i);
-			this.save();
+			this.dialogFinance(finance, i);
+
+		}
+
+		dialogFinance(finance, i) {
+			let d = document.getElementById('aonDialogInvoiceFinance');
+
+			let t = document.createElement('table');
+			t.style.width = '100%';
+			d.setContent(t);
+
+			let tr = document.createElement('tr');
+			t.appendChild(tr);
+
+			let td = document.createElement('td');
+			td.setAttribute('colspan','2');
+			td.innerHTML =  'VENCIMIENTOS';
+			tr.appendChild(td);
+
+			let tr1 = document.createElement('tr');
+			t.appendChild(tr1);
+
+			// FINANCE DUE DATE
+			let tdFinanceDueDate = document.createElement('td');
+			tdFinanceDueDate.setAttribute('colspan','2');
+			tdFinanceDueDate.innerHTML = `<aon-input id="dialogFinanceDueDate${i}" description="Fecha Vencimiento" type="date"></aon-input>`;
+			tr1.appendChild(tdFinanceDueDate);
+			let financeDueDate = document.getElementById('dialogFinanceDueDate' + i);
+			financeDueDate.value = finance.due_date;
+			financeDueDate.addEventListener('change', () => this.updateFinanceDate(i));
+
+			let tr2 = document.createElement('tr');
+			t.appendChild(tr2);
+
+			// FINANCE PAYMETHOD
+			let tdDetailPaymethod = document.createElement('td');
+			tdDetailPaymethod.setAttribute('colspan','2');
+			tdDetailPaymethod.innerHTML = `<aon-input id="dialogFinancePaymethod${i}" type="list" description="Forma de Pago"></aon-input>`;
+			tr2.appendChild(tdDetailPaymethod);
+			let financePaymethod = document.getElementById('dialogFinancePaymethod' + i);
+			financePaymethod.options = JSON.stringify(Paymethods);
+			financePaymethod.value = finance.paymethod;
+			financePaymethod.addEventListener('select', () => this.updateFinancePaymethod(i));
+
+			let tr3 = document.createElement('tr');
+			t.appendChild(tr3);
+
+			// FINANCE AMOUNT
+			let tdFinanceAmount = document.createElement('td');
+			tdFinanceAmount.setAttribute('colspan','2');
+			tdFinanceAmount.innerHTML = `<aon-input id="dialogFinanceAmount${i}" description="Importe"></aon-input>`;
+			tr3.appendChild(tdFinanceAmount);
+			let financeAmount = document.getElementById('dialogFinanceAmount' + i);
+			financeAmount.value = finance.amount;
+			financeAmount.addEventListener('change', () => this.updateFinanceAmount(i));
+
+			let tr4 = document.createElement('tr');
+			t.appendChild(tr4);
+
+			// FINANCE IBAN
+			let tdFinanceIban = document.createElement('td');
+			tdFinanceIban.setAttribute('colspan','2');
+			tdFinanceIban.innerHTML = `<aon-input id="dialogFinanceIban${i}" description="IBAN"></aon-input>`;
+			tr4.appendChild(tdFinanceIban);
+			let financeIban = document.getElementById('dialogFinanceIban' + i);
+			financeIban.value = finance.iban;
+			financeIban.addEventListener('change', () => this.updateFinanceIban(i));
+
+			let tr5 = document.createElement('tr');
+			t.appendChild(tr5);
+
+			let tdBlank = document.createElement('td');
+			tr5.appendChild(tdBlank);
+
+			let tdButton = document.createElement('td');
+			tdButton.setAttribute('colspan','3');
+			let b = document.createElement('button');
+			b.innerHTML = 'Aceptar';
+			b.addEventListener('click', () => {
+				d.close();
+				this.printFinances();
+				this.save();
+			});
+			tdButton.appendChild(b);
+			tr5.appendChild(tdButton);
+
+			d.open();
 		}
 
 		printFinance(finance, i) {
@@ -925,15 +1011,6 @@ import '../../components/aon-viewer.js';
 			financeDueDate.value = finance.due_date;
 			financeDueDate.addEventListener('change', () => this.updateFinanceDate(i));
 
-			// FINANCE PAYMETHOD
-			let tdDetailPaymethod = document.createElement('td');
-			tdDetailPaymethod.innerHTML = `<aon-input id="financePaymethod${i}" type="list" description="Forma de Pago"></aon-input>`;
-			tr.appendChild(tdDetailPaymethod);
-			let financePaymethod = document.getElementById('financePaymethod' + i);
-			financePaymethod.options = JSON.stringify(Paymethods);
-			financePaymethod.value = finance.paymethod;
-			financePaymethod.addEventListener('select', () => this.updateFinancePaymethod(i));
-
 			// FINANCE AMOUNT
 			let tdFinanceAmount = document.createElement('td');
 			tdFinanceAmount.innerHTML = `<aon-input id="financeAmount${i}" description="Importe"></aon-input>`;
@@ -942,13 +1019,12 @@ import '../../components/aon-viewer.js';
 			financeAmount.value = finance.amount;
 			financeAmount.addEventListener('change', () => this.updateFinanceAmount(i));
 
-			// FINANCE IBAN
-			let tdFinanceIban = document.createElement('td');
-			tdFinanceIban.innerHTML = `<aon-input id="financeIban${i}" description="IBAN"></aon-input>`;
-			tr.appendChild(tdFinanceIban);
-			let financeIban = document.getElementById('financeIban' + i);
-			financeIban.value = finance.iban;
-			financeIban.addEventListener('change', () => this.updateFinanceIban(i));
+			// REMOVER DETAIL
+			let tdEditButton = document.createElement('td');
+			tdEditButton.innerHTML = `<aon-icon-button id="financeEdit${i}" icon="edit" ></aon-icon-button>`;
+			tr.appendChild(tdEditButton);
+			let editButton = document.getElementById('financeEdit' + i);
+			editButton.addEventListener('click', () => this.editFinance(i));
 
 			// REMOVE FINANCE
 			let tdRemoveButton = document.createElement('td');
@@ -958,7 +1034,13 @@ import '../../components/aon-viewer.js';
 			removeButton.addEventListener('click', () => this.removeFinance(i));
 		}
 
+		editFinance(i) {
+			let finance = this._invoice.finances[i];
+			this.dialogFinance(finance, i);
+		}
+
 		printFinances() {
+			clearElement('aonInvoiceItemFinanceCardTable');
 			for(let i = 0; i < this._invoice.finances.length; i++) {
 				this.printFinance(this._invoice.finances[i], i);
 			}
@@ -967,36 +1049,36 @@ import '../../components/aon-viewer.js';
 		// Fecha Vencimiento
 		updateFinanceDate(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_date' + index).value;
+				value = document.getElementById('dialogFinanceDueDate' + index).value;
 			}
-			this._invoice.vencimientos[index].due_date = value;
+			this._invoice.finances[index].due_date = value;
 			this.save();
 		}
 
 		// Forma Pago Vencimiento
 		updateFinancePaymethod(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_paymethod' + index).value;
+				value = document.getElementById('dialogFinancePaymethod' + index).value;
 			}
-			this._invoice.vencimientos[index].paymethod = value;
+			this._invoice.finances[index].paymethod = value;
 			this.save();
 		}
 
 		// Importe Vencimiento
 		updateFinanceAmount(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_amount' + index).value;
+				value = document.getElementById('dialogFinanceAmount' + index).value;
 			}
-			this._invoice.vencimientos[index].amount = Number(value);
+			this._invoice.finances[index].amount = Number(value);
 			this.save();
 		}
 
 		// Iban Vencimiento
 		updateFinanceIban(index, value) {
 			if(!value) {
-				value = document.getElementById('finance_amount' + index).value;
+				value = document.getElementById('dialogFinanceIban' + index).value;
 			}
-			this._invoice.vencimientos[index].iban = value;
+			this._invoice.finances[index].iban = value;
 			this.save();
 		}
 
