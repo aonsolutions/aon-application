@@ -73,7 +73,7 @@ class AonLogin extends HTMLElement {
 								INICIO DE SESIÓN
 							</div>
 
-							<div id="aonLoginLoading" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+							<aon-loader id="aonLoginLoader"></aon-loader>
 
 							<div id="aonLoginError" class="aonErrorPanel" style="display:none;">
 			          <span id="aonLoginErrorMessage">errorMsg</span>
@@ -139,14 +139,8 @@ class AonLogin extends HTMLElement {
 			let password = document.getElementById("aonLoginPassword");
 			password.addEventListener('keyup', event => this.onEnter(event));
 
-			let loading = document.getElementById('aonLoginLoading');
-			loading.style.marginBottom = '20px';
-			loading.style.display = 'none';
-
 			let signin = document.getElementById('aonLoginSignin');
 			signin.addEventListener('click', () => this.signin());
-
-
 
 			let dialog = document.querySelector('dialog');
 			if (! dialog.showModal) {
@@ -186,11 +180,10 @@ class AonLogin extends HTMLElement {
 				password: password
 		}
 
-		let loading = document.getElementById('aonLoginLoading');
-		loading.style.display = 'block';
+		let loader = document.getElementById('aonLoginLoader');
+		loader.start();
 		login(data).then(() => {
-			loading.style.display = 'none';
-
+			loader.stop();
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
 			rootPanel('<aon-parent id="aonParent"></aon-parent>');

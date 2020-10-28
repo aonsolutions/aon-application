@@ -1,6 +1,7 @@
 import {isMobile} from '../../services/utils.js';
 
 import './aon-toolbar.js';
+import './aon-loader.js';
 import './aon-icon.js';
 
 class AonApplication extends HTMLElement {
@@ -50,7 +51,7 @@ class AonApplication extends HTMLElement {
 		this.innerHTML = `
 			<!-- AON EXAMPLE TOOLBAR -->
 			<aon-toolbar id="${this.getId() + 'Toolbar'}" title="${this.getTitle()}"></aon-toolbar>
-
+			<aon-loader id="${this.getId() + 'Loader'}"> </aon-loader>
 			<!-- AON EXAMPLE MENU (SIDENAV) -->
 			<div id="${this.getId() + 'Sidenav'}" class="sidenav">
 
@@ -84,6 +85,14 @@ class AonApplication extends HTMLElement {
 			content.style.height = 'calc(100vh - 61px)';
 		}
 
+	}
+
+	startLoader() {
+		document.getElementById(this.getId() + 'Loader').start();
+	}
+
+	stopLoader() {
+		document.getElementById(this.getId() + 'Loader').stop();
 	}
 
   toogleSidenav() {

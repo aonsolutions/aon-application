@@ -74,9 +74,12 @@ class AonParent extends HTMLElement {
 	}
 
 	init(filter) {
+		let aonParent = document.getElementById('aonParentMain');
+		aonParent.startLoader();
 		getCompanies()
 		.then( companies => {
-        this.build(companies.filter(f => this.companyFilter(f, filter)))
+        this.build(companies.filter(f => this.companyFilter(f, filter)));
+				aonParent.stopLoader();
       }, () => closeSession()
     );
   }
@@ -195,7 +198,7 @@ class AonParent extends HTMLElement {
 		if(!isMobile()){
 			let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';
-			
+
 			let aonShowMenu = document.getElementById('aonShowMenu');
 			aonShowMenu.style.display = 'block';
 
