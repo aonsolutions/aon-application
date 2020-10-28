@@ -57,7 +57,7 @@ class AonApplication extends HTMLElement {
 			</div>
 
 			<!-- AON CONTRAT@ CONTENT -->
-			<div id="${this.getId() + 'Content'}" class="aonContent">
+			<div id="${this.getId() + 'Content'}">
 
 			</div>
 
@@ -73,7 +73,9 @@ class AonApplication extends HTMLElement {
     sidenav.style.width = isMobile() ? '0px' : '250px';
 
     let content = document.getElementById(this.getId() + 'Content');
+		content.className = isMobile() ? 'aonMobileContent' : 'aonContent';
 		content.style.marginLeft = isMobile() ? '0px' : "250px";
+
 
 		if(this.hasAttribute('main')) {
 			toolbar.style.display = 'none';
@@ -92,7 +94,7 @@ class AonApplication extends HTMLElement {
 			content.style.marginLeft = "0px";
 		} else {
 			sidenav.style.width = "250px";
-			content.style.marginLeft = "250px";
+			content.style.marginLeft = isMobile() ? '0px' : '250px';
 		}
   }
 
@@ -163,21 +165,22 @@ class AonApplication extends HTMLElement {
 
       	li.addEventListener('mouseleave', () => {
         	if(!this.selected || this.selected !== id)
-          	li.style.backgroundColor = 'transparent';
+          	li.style.backgroundColor = 'white';
       	});
 
       	li.addEventListener('click', () => {
       		document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
-          	el.style.backgroundColor = 'transparent';
+          	el.style.backgroundColor = 'white';
         	});
         	this.selected = id;
         	li.style.backgroundColor = '#ddd';
 			    let toolbar = document.getElementById(this.getId() + 'Toolbar');
 					toolbar.setAttribute('option', option.name);
         	option.fn();
+					if(isMobile()) {
+						this.closeSidenav();
+					}
       	});
-
-
     	});
 		}
   }

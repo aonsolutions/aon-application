@@ -1,3 +1,4 @@
+import {isMobile} from '../../services/utils.js';
 import './aon-icon-button.js';
 
 (function() {
@@ -100,7 +101,7 @@ import './aon-icon-button.js';
 			span.innerHTML= button;
 
 			let toolSection = document.getElementById(this.getId() + 'aonToolbarToolSection');
-			toolSection.style.paddingRight = this.getAttribute('opened') ? '0px' : '40px';
+			toolSection.style.paddingRight = this.getAttribute('opened') || isMobile() ? '0px' : '40px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(span, toolSection.children[0]);
 			} else toolSection.appendChild(span);
