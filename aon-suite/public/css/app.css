@@ -11031,3 +11031,9 @@ body::-webkit-scrollbar-thumb {
         margin-bottom: 10px;
         padding : 0 15px;
     }
+    
+    .atp_caja_form .atp_inputs input:disabled, .atp_caja_form .atp_inputs input:read-only,
+    .atp_caja_form .atp_inputs textarea:disabled, .atp_caja_form .atp_inputs textarea:read-only,
+    .atp_input:disabled {
+        background-color : #cfcfcf;
+    }
