@@ -102,7 +102,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label class="d-block atp_inputs">
-                                                <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="" class="form-control text-center pointer" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="" >
                                                 <span>Fecha de Nacimiento</span>
                                             </label>
                                         </div>
@@ -137,7 +137,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label class="d-block atp_inputs">
-                                                <input type="number" name="cp" id="cp" value="" class="form-control" placeholder="" maxlength="5" onchange="this.setAttribute('value', this.value);">
+                                                <input type="number" name="cp" id="cp" value="" maxlength="5" onchange="this.setAttribute('value', this.value);">
                                                 <span>C.P.</span>
                                             </label>
                                         </div>
@@ -257,10 +257,14 @@
                                             </div>
                                             <div class="col-5 col-xs-5 padding-left-15 padding-right-0">
                                                 <div id="horaSemanales"  class="form-group hidden">
-                                                    <label>Horas: </label>
-                                                    <input type="number" name="hsemanales" id="hsemanales" value="" class="form-control numero" max="100" min="00" >
-                                                    <label>Minutos: </label>
-                                                    <input type="number" name="msemanales" id="msemanales" value="" class="form-control numero" max="59" min="00" >
+                                                    <label class="d-block atp_inputs">
+                                                        <input type="number" name="hsemanales" id="hsemanales" value="" max="100" min="00" >
+                                                        <span>Horas:</span>
+                                                    </label>
+                                                    <label class="d-block atp_inputs">
+                                                        <input type="number" name="msemanales" id="msemanales" value="" max="59" min="00" >
+                                                        <span>Minutos:</span>
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -290,10 +294,10 @@
                                 <div class="row">
                                     <div id="importbilletes" class="col-4 hidden">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Importe del salario
+                                            <label class="d-block atp_inputs">
+                                                <input type="number" name="importe" id="importe" value="" >
+                                                <span>Importe del salario</span>
                                             </label>
-                                            <input type="number" name="importe" id="importe" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -346,7 +350,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label class="d-block atp_inputs">
-                                                <input type="date" name="fechaInicio" id="fechaInicio" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <input type="date" name="fechaInicio" id="fechaInicio" value="" >
                                                 <span>Fecha de inicio del contrato</span>
                                             </label>
                                         </div>
@@ -354,7 +358,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label class="d-block atp_inputs">
-                                                <input type="date" name="fechaFin" id="fechaFin" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <input type="date" name="fechaFin" id="fechaFin" value="" >
                                                 <span>Fecha efectiva de la baja</span>
                                             </label>
                                         </div>
@@ -497,7 +501,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label class="d-block atp_inputs">
-                                                <input type="date" name="fechaFin" id="fechaFin" class="form-control" value="" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <input type="date" name="fechaFin" id="fechaFin" value="" >
                                                 <span>Fecha efectiva de la baja</span>
                                             </label>
                                         </div>
@@ -530,7 +534,7 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="d-block atp_inputs">
-                                                <input type="number" name="vacaciones" id="vacaciones" value="" class="form-control numero" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <input type="number" name="vacaciones" id="vacaciones" value="" >
                                                 <span>Nº de días de vacaciones pendientes de disfrute</span>
                                             </label>
                                         </div>
@@ -549,7 +553,7 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label class="d-block atp_inputs">
-                                                <input type="number" name="importe" id="importe" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <input type="number" name="importe" id="importe" value="" >
                                                 <span>*Importe indemnización si es pactada</span>
                                             </label>
                                         </div>
@@ -983,23 +987,23 @@
                         case 'text':
                             switch (this.name) {
                                 case 'nombre':
-                                    $( "input[name*='"+this.name+"']" ).val("Manolo");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"Manolo");
                                     break;
                                 case 'dni':
-                                    $( "input[name*='"+this.name+"']" ).val("91556716H");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"91556716H");
                                     break;
                                 case 'naf':
-                                    $( "input[name*='"+this.name+"']" ).val("016896821030");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"016896821030");
                                     break;
                                 case 'nacionalidad':
-                                    $( "input[name*='"+this.name+"']" ).val("España");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"España");
                                     break;
                                 case 'domicilio':
-                                    $( "input[name*='"+this.name+"']" ).val("calle de manolo");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"calle de manolo");
                                     break;
                                     
                                 default:
-                                    $( "input[name*='"+this.name+"']" ).val("texto que ponemos en los input text...");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"texto que ponemos en los input text...");
                                     break;
                             }
                         break;
@@ -1007,7 +1011,7 @@
                         case 'number':
                             switch (this.name) {
                                 case 'cp':
-                                    $( "input[name*='"+this.name+"']" ).val(11405);
+                                    $( "input[name*='"+this.name+"']" ).attr('value',11405);
                                     break;
                                 
                                 default:
@@ -1020,14 +1024,14 @@
                             let day = ("0" + now.getDate()).slice(-2);
                             let month = ("0" + (now.getMonth() + 1)).slice(-2);
                             let today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-                            $( "input[name*='"+this.name+"']" ).val(today);
+                            $( "input[name*='"+this.name+"']" ).attr('value',today);
                         break;
 
                         default:
                             // Select
-                            $( "select[name*='"+this.name+"']" ).val(1);
+                            $( "select[name*='"+this.name+"']" ).attr('value',1);
                             // Texto
-                            $( "textarea[name*='"+this.name+"']" ).val("texto que ponemos en los textarea...");
+                            $( "textarea[name*='"+this.name+"']" ).attr('value',"texto que ponemos en los textarea...");
                             break;
                     }
                 });
