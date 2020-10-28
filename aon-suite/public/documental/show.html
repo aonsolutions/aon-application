@@ -26,21 +26,15 @@
     <body>
 
                 <!-- start contenido centro -->
-                <div class="col" id="atp_contenido_centro">
+                <div class="col pt-3" id="atp_contenido_centro">
                     <div class="container-fluid">
                         <div class="row justify-content-center">
                             <!-- INICIO VISTA -->
 
                             <div class="col-10">
                                 <div class="row mb-2">
-                                    <div class="col-9">
+                                    <div class="col-12">
                                         <p class="h3"><strong id="doc-file_name"></strong></p>
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-primary btn-sm float-right d-flex">
-                                            <i class="material-icons file_download mr-1"></i>
-                                            <span class="d-flex align-items-center">Descargar</span>
-                                        </button>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -59,10 +53,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12 text-center pt-3 pb-2">
-                                        <img class="img-fluid" id="doc-src" src="" alt="">
-                                        <!-- <embed id="doc-src" src="" class="w-100 vh-100" type="application/pdf"> -->
-                                    </div>
+                                    <div class="col-12 text-center pt-3 pb-2" id="doc_container"></div>
                                 </div>
                             </div>
 
@@ -72,28 +63,178 @@
                 </div>
                 <!-- end contenido centro -->
 
+        <!-- Modales -->
+        <div class="modal fade" id="edit_doc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header font-weight-bold">
+                        Editar documento
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="atp_caja_form">
+                                    <input id="edit_doc_id" type="hidden" value="">
+                                    <input id="edit_doc_type" type="hidden" value="">
+                                    <label class="d-block atp_inputs">
+                                        <input type="text" id="file_name_doc" name="subject" class="" value="" onchange="this.setAttribute('value', this.value);"/>
+                                        <span>Nombre</span>
+                                    </label>
+                                    <div class="form-group">
+                                        <label for="tags_doc">Tags</label>
+                                        <select multiple class="atp_input" id="tags_doc"></select>
+                                    </div>
+                                    <label class="d-none error-empty-file-name-doc text-danger font-weight-bold">El nombre no puede estar vacío</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button id="confirm_edit_doc" type="button" class="btn btn-primary">Editar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Scripts -->
         <script src="../js/app.js"></script>
-        <script>
-            $(document).ready(function(){
-                // Datos del documento
-                var fileName = new URLSearchParams(window.location.search).get('document');
+        <script type="module">
+            import { bidoq } from './aon-documental.js';
+            import { AVAILABLE_OPTIONS, SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, VIEW_NOTE_OPTION } from './toolbar_options.js';
 
-                var doc = {
-                    file_name : fileName, // Nombre del archivo
-                    date: '23-09-2020 14:41',
-                    size: '0,50 MB',
-                    url: "https://via.placeholder.com/768/" // URL de prueba para el documento
-                    // url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" // URL de prueba para el documento
-                };
+            const SHOW_OPTIONS = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, VIEW_NOTE_OPTION];
 
-                // Leemos los datos del documento y montamos la estructura
-                $('#doc-file_name').html(doc.file_name);
-                $('#doc-src').attr('src', doc.url).attr('alt', 'Documento ' + fileName);
-                $('#doc-date').html(doc.date);
-                $('#doc-size').html(doc.size);
+            $(document).ready(async function(){
+                // ID del documento
+                const id = new URLSearchParams(window.location.search).get('id');
+                // Tipo del documento
+                const type = new URLSearchParams(window.location.search).get('type');
+
+                const data = await bidoq({
+                    "method": "obtener_doc",
+                    id,
+                    type
+                });
+
+                const response = JSON.parse(data);
+
+                if (typeof response !== 'undefined') {
+                    if (response.code === 0) {
+                        const doc = response.datos;
+                        const storedFileNameSplitted = doc.stored_file_name.split('.');
+                        const extension = storedFileNameSplitted[storedFileNameSplitted.length - 1].toLowerCase();
+
+                        // Almacenamos en una variable global la información del documento que estamos viendo actualmente
+                        window.currentFile = {id, type, ...doc};
+
+                        let docTag = '';
+
+                        if (extension === 'pdf') {
+                            docTag = `<embed src="${doc.url}" class="w-100 vh-100" type="application/pdf">`;
+                        } else {
+                            // TODO: tener en cuenta otros tipos como .rar, .xlsx, etc.
+                            docTag = `<img class="img-fluid" src="${doc.url}" alt="Documento ${doc.file_name}">`;
+                        }
+
+                        // Insertamos un etiqueta u otra dependiendo del tipo de archivo
+                        $('#doc_container').html(docTag);
+
+                        // Leemos los datos del documento y montamos la estructura
+                        $('#doc-file_name').html(doc.file_name);
+                        $('#doc-date').html(doc.date);
+                        $('#doc-size').html(doc.size);
+                    } else {
+                        alert(`Ocurrió un error al intentar obtener los datos del documento`);
+
+                        window.history.back();
+                    }
+
+                    window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+                    // Obtenemos los tags del despacho del cliente
+                    window.tags = $(window.aonDocumental).data('tags');
+
+                    // Eliminamos todas las opciones de la barra de herramientas
+                    window.aonDocumental.removeToolbarOptions();
+
+                    // TODO: Comprobar si el documento es enviado o recibido para permitir o no ver notas
+                    // Filtramos de todas las opciones disponibles las opciones que necesitamos en esta vista
+                    AVAILABLE_OPTIONS.filter((option) => {
+                        return SHOW_OPTIONS.includes(option.name);
+                    }).map((option) => {
+                        // Añadimos la opción a la barra de herramientas
+                        window.aonDocumental.addToolbarOption(option.name, option.icon, option.fn, option.title);
+                    });
+                } else {
+                    console.error('Ocurrió un error al intentar obtener los datos del documento');
+                }
             });
+
+            //
+            // Eventos
+            //
+                // Al pulsar el boton de editar documento desde el modal
+                $(document).on('click', '#confirm_edit_doc', async function() {
+                    // Recuperamos el ID del documento que vamos a editar
+                    const id = $('#edit_doc_id').attr('value');
+                    // Recuperamos el tipo del documento que vamos a editar
+                    const type = ($('#edit_doc_type').attr('value') === 'sent') ? 2 : 1;
+                    const fileName = $('#file_name_doc').attr('value'); 
+                    const tags = $('#tags_doc option:selected').map(function(i, element) {
+                        return $(element).attr('value');
+                    }).toArray();
+                    const tagValues = tags.join(',');
+
+                    if (fileName.length) {
+                        const data = await bidoq({
+                            "method": "editar_doc",
+                            id,
+                            "tipo": type,
+                            "nombre": fileName,
+                            tags
+                        });
+
+                        let response = JSON.parse(data);
+
+                        if (typeof response !== 'undefined') {
+                            if (response.code === 0) {
+                                // Actualizamos el nombre en la vista
+                                $('#doc-file_name').html($('#file_name_doc').attr('value'));
+
+                                alert('Documento editado con éxito');
+                            }
+                        }
+
+                        // Ocultamos los errores si están visibles
+                        if (!$('.error-empty-file-name-doc').hasClass('d-none')) {
+                            $('.error-empty-file-name-doc').addClass('d-none');
+                        }
+
+                        // Ocultamos el modal
+                        $("#edit_doc").modal('hide')
+                    } else {
+                        $('.error-empty-file-name-doc').removeClass('d-none');
+                    }
+                });
+
+                // Crear / editar nota
+                // $('#confirm_new_note_doc').text('Crear');
+                // $('#title_new_note_doc').text('Añadir nota al documento');
+
+                // const data = await bidoq({
+                //     "method": "obtener_nota_doc",
+                //     id
+                // });
+
+                // const response = JSON.parse(data);
+
+                // if (typeof response !== 'undefined') {
+                //     if (response.code === 0 && response.datos.length) {
+                //         $('#note_doc').attr('value', response.datos);
+                //         $('#confirm_new_note_doc').text('Editar');
+                //         $('#title_new_note_doc').text('Editar la nota del documento');
+                //     }
+                // }
         </script>
     </body >
 </html>

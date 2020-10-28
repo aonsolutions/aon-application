@@ -11,7 +11,8 @@ const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
 const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
 
 export const CARPETA_A_CONTABILIZAR = 5;
-const CARPETA_CONTABILIZADOS = 14;
+export const CARPETA_CONTABILIZADOS = 14;
+export const CARPETA_FISCAL = 8;
 
 export const bidoq = async (additionalData) => {
     // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
@@ -60,12 +61,6 @@ class AonDocumental extends HTMLElement {
         const tags = await this.getTags();
         aonDocumental.dataset['tags'] = JSON.stringify(tags);
 
-        aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-            const contentIframe = document.querySelector('iframe');
-
-            contentIframe.contentWindow.document.getElementById('upload').click();
-        });
-
         this.addDocumentOptions(aonDocumental);
 
         this.addCategoryOptions(aonDocumental, folders);
@@ -77,14 +72,30 @@ class AonDocumental extends HTMLElement {
         let aonDocumental = document.getElementById('aonDocumental');
         const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
 
-        // Quitamos el botón de subir documentos si estamos en la carpeta "Contabilizados"
-        if (parseInt(folder) === CARPETA_CONTABILIZADOS) {
-            uploadButton.style.display = 'none';
-        } else if (uploadButton.style.display === 'none') {
-            uploadButton.style.display = '';
+        // Eliminamos todas las opciones de la barra de herramientas
+        aonDocumental.removeToolbarOptions();
+
+        // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
+        if (parseInt(folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) {
+            aonDocumental.removeToolbarOptions(['Subir']);
         }
 
-        aonDocumental.setContentHTML('<iframe src="./index.html?folder=' + folder + '" style="width:100%;height:100%;border:none;"></iframe>');
+        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
+        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null) {
+            aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+                const contentIframe = document.querySelector('iframe');
+    
+                contentIframe.contentWindow.document.getElementById('upload').click();
+            }, 'Subir documentos');
+        }
+
+        aonDocumental.setContentHTML(`<iframe src="./index.html?folder=${folder}" style="width:100%;height:100%;border:none;"></iframe>`);
+    }
+
+    loadShow(id, type) {
+        const contentIframe = document.querySelector('iframe');
+
+        contentIframe.src = `./show.html?id=${id}&type=${type}`;
     }
 
     async getFolders() {
