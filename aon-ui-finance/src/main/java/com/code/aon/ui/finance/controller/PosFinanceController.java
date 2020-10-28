@@ -35,8 +35,7 @@ import com.code.aon.ui.finance.event.PosFinanceSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.pms.Hotel;
-import com.esferalia.aon.pms.ProjectReservation;
+
 
 public class PosFinanceController extends FinanceListController implements IFinanceConstants {
 	
@@ -99,17 +98,6 @@ public class PosFinanceController extends FinanceListController implements IFina
 
 	private String obtainWorkPlaceDescription(WorkPlace workPlace) {
 		String description = workPlace.getDescription();
-		try {
-			Hotel hotel = null;
-			IManagerBean hotelBean = BeanManager.getManagerBean(Hotel.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(hotelBean.getFieldName(IEntityAlias.HOTEL_WORK_PLACE_ID), workPlace.getId());
-			for (ITransferObject ito : hotelBean.getList(criteria)) {
-				hotel = (Hotel)ito;
-			}
-			description = (hotel != null) ? hotel.getAlias() : description;
-		} catch(ManagerBeanException ex) {
-		}
 		return StringUtils.substring(description, 0, 14).trim();
 	}
 	
@@ -164,19 +152,6 @@ public class PosFinanceController extends FinanceListController implements IFina
 	}
 
 	public String getReservationCode() throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-			Finance finance = (Finance)getModel().getRowData();
-			if (finance.getInvoice() != null && finance.getInvoice().getProject() != null && finance.getInvoice().getProject().getId() != null) {
-				IManagerBean reservationBean = BeanManager.getManagerBean(ProjectReservation.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_ID), finance.getInvoice().getProject().getId());
-				Projection prjCode = Projection.property(reservationBean.getFieldName(IEntityAlias.PROJECT_RESERVATION_CODE));
-				List<?> resultList = reservationBean.getList(new ProjectionList(prjCode), criteria);
-				if (resultList.size() > 0 && resultList.get(0) != null) {
-					return (String)resultList.get(0);
-				}
-			}
-		}
 		return null;
 	}
 

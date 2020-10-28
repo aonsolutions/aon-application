@@ -121,8 +121,6 @@ public class FacturaeWriter {
 	
 	private List<TaxBreakDown> taxBreakDowns;
 	
-	private PmsUtil pmsUtil;
-	
 	private Locale locale;
 	
 	private int numberOfDecimals;
@@ -552,14 +550,6 @@ public class FacturaeWriter {
 		invoiceIssueData.setInvoiceCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setTaxCurrencyCode(CurrencyCodeType.EUR);
 		invoiceIssueData.setLanguageName(LanguageCodeType.ES);
-		if ( pmsUtil.isReservationAvailable() ) {
-			PeriodDates pd = new PeriodDates();
-			XMLGregorianCalendar startDate = Util.toXMLCalendar(pmsUtil.getReservation().getStartDate());
-			pd.setStartDate(startDate);
-			XMLGregorianCalendar endDate = Util.toXMLCalendar(pmsUtil.getReservation().getEndDate());
-			pd.setEndDate(endDate);;
-			invoiceIssueData.setInvoicingPeriod(pd);
-		}
 		return invoiceIssueData;
 	}	
 	
@@ -825,10 +815,6 @@ public class FacturaeWriter {
 			}
 		}
 		addLinesTaxes( invoiceType, invoiceLine, line );
-		if ( this.pmsUtil.isReservationAvailable() ) {
-			ExtensionsType extension = new ExtensionsType();
-			invoiceLine.setExtensions(extension);			
-		}
 		return invoiceLine;
 	}
 
@@ -917,7 +903,6 @@ public class FacturaeWriter {
 		this.priceStrategy = new InvoicePriceStrategy();
 		this.totalPrice = Util.getAmount(priceStrategy.getTotalPrice(invoice, invoice));
 		this.taxBreakDowns = priceStrategy.getTaxBreakDowns(invoice, invoice);
-		this.pmsUtil = new PmsUtil(invoice);
 		this.workPlace = getWorkPlace();
 		this.enterprise = getEnterprise();
 		this.numberOfDecimals = DecimalUtil.getNumberOfDecimals(invoice);
@@ -938,9 +923,6 @@ public class FacturaeWriter {
 			MarshallerUtil marshallerUtil32 = MarshallerUtil.getInstance(FacturaeVersion.FACTURAE_32);
 			marshallerUtil32.marshal( facturae, fileName );
 			String realName = fileName + FACTURAE_EXTENSION;
-	    	if ( pmsUtil.isReservationAvailable() ) {
-	    		pmsUtil.transform(realName);
-	    	}
 	    	if ( numberOfDecimals != DecimalUtil.DEFAULT_DECIMALS ) {
 	    		new DecimalUtil(numberOfDecimals).transform(facturae, realName);
 	    	}

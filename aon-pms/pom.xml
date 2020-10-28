@@ -47,11 +47,11 @@
       <artifactId>aon.finance.bridge</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>com.esferalia.aon</groupId>
       <artifactId>aon.pms.api</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>com.code.aon</groupId>
       <artifactId>aon.project</artifactId>
