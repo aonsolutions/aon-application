@@ -188,7 +188,7 @@ class AonLogin extends HTMLElement {
 			localStorage.removeItem('aon_domain_name');
 			rootPanel('<aon-parent id="aonParent"></aon-parent>');
 		}).catch(error => {
-			loading.style.display = 'none';
+			loader.stop();
 			let err = JSON.parse(error);
 
 			let aonLoginError = document.getElementById('aonLoginError');

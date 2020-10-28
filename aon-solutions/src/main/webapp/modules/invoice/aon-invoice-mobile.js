@@ -67,6 +67,8 @@ import '../../components/aon-viewer.js';
 				<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
 
 				<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
+				<aon-dialog id="aonDialogInvoiceDetail" > </aon-dialog>
+				<aon-dialog id="aonDialogInvoiceFinance" > </aon-dialog>
 			`;
 
 			this.build();
@@ -390,8 +392,130 @@ import '../../components/aon-viewer.js';
 				suplidos: false
 			};
 			this._invoice.details.push(detail);
-			this.printDetail(detail, i);
-			this.save();
+			this.dialogDetail(detail, i);
+		}
+
+		dialogDetail(detail, i) {
+			let d = document.getElementById('aonDialogInvoiceDetail');
+
+			let t = document.createElement('table');
+			t.style.width = '100%';
+			d.setContent(t);
+
+			let tr = document.createElement('tr');
+			t.appendChild(tr);
+
+			let td = document.createElement('td');
+			td.setAttribute('colspan','6');
+			td.innerHTML =  'CONCEPTOS FACTURA';
+			tr.appendChild(td);
+
+			let tr1 = document.createElement('tr');
+			t.appendChild(tr1);
+
+			let tdDetailDescription = document.createElement('td');
+			tdDetailDescription.setAttribute('colspan','6');
+			tdDetailDescription.innerHTML = `<aon-input id="dialogDetailDescription${i}" description="Concepto"></aon-input>`;
+			tr1.appendChild(tdDetailDescription);
+			let detailDescription = document.getElementById('dialogDetailDescription' + i);
+			detailDescription.value = detail.description;
+			detailDescription.addEventListener('change', () => this.changeDescription(i));
+
+			let tr2 = document.createElement('tr');
+			t.appendChild(tr2);
+
+			// DETAIL QUANTITY
+			let tdDetailQuantity = document.createElement('td');
+			tdDetailQuantity.setAttribute('colspan','2');
+			tdDetailQuantity.innerHTML = `<aon-input id="dialogDetailQuantity${i}" description="Cantidad"></aon-input>`;
+			tr2.appendChild(tdDetailQuantity);
+			let detailQuantity = document.getElementById('dialogDetailQuantity' + i);
+			detailQuantity.value = detail.quantity;
+			detailQuantity.addEventListener('change', () => this.changeQuantity(i));
+
+			// DETAIL PRICE
+			let tdDetailPrice = document.createElement('td');
+			tdDetailPrice.setAttribute('colspan','2');
+			tdDetailPrice.innerHTML = `<aon-input id="dialogDetailPrice${i}" description="Precio"></aon-input>`;
+			tr2.appendChild(tdDetailPrice);
+			let detailPrice = document.getElementById('dialogDetailPrice' + i);
+			detailPrice.value = detail.price;
+			detailPrice.addEventListener('change', () => this.changePrice(i));
+
+			// DETAIL DISCOUNT
+			let tdDetailDiscount = document.createElement('td');
+			tdDetailDiscount.setAttribute('colspan','2');
+			tdDetailDiscount.innerHTML = `<aon-input id="dialogDetailDiscount${i}" description="%Dto"></aon-input>`;
+			tr2.appendChild(tdDetailDiscount);
+			let detailDiscount = document.getElementById('dialogDetailDiscount' + i);
+			detailDiscount.value = detail.discount;
+			detailDiscount.addEventListener('change', () => this.changeDiscount(i));
+
+			let tr3 = document.createElement('tr');
+			t.appendChild(tr3);
+
+			// DETAIL AMOUNT
+			let tdDetailAmount = document.createElement('td');
+			tdDetailAmount.setAttribute('colspan','3');
+			tdDetailAmount.innerHTML = `<aon-input id="dialogDetailAmount${i}" description="Importe"></aon-input>`;
+			tr3.appendChild(tdDetailAmount);
+			let detailAmount = document.getElementById('dialogDetailAmount' + i);
+			detailAmount.readonly = 'readonly';
+			detailAmount.value = detail.amount;
+
+			// DETAIL VAT
+			let tdDetailVat = document.createElement('td');
+			tdDetailVat.setAttribute('colspan','3');
+			tdDetailVat.innerHTML = `<aon-input id="dialogDetailVat${i}" type="list" description="%IVA"></aon-input>`;
+			tr3.appendChild(tdDetailVat);
+			let detailVat = document.getElementById('dialogDetailVat' + i);
+			detailVat.options = JSON.stringify(TaxIVAPercentage);
+			detailVat.value = detail.vat;
+			detailVat.addEventListener('select', () => this.changeVat(i));
+
+			let tr4 = document.createElement('tr');
+			t.appendChild(tr4);
+
+			// DETAIL IRPF
+			let tdDetailIrpf = document.createElement('td');
+			tdDetailIrpf.setAttribute('colspan','3');
+			tdDetailIrpf.innerHTML = `<aon-checkbox id="dialogDetailIrpf${i}" description="IRPF"></aon-checkbox>`;
+			tr4.appendChild(tdDetailIrpf);
+			let detailIrpf = document.getElementById('dialogDetailIrpf' + i);
+			detailIrpf.value = detail.irpf;
+			detailIrpf.disabled = !this._invoice.irpf ? 'disabled' : undefined;
+			detailIrpf.addEventListener('change', () => this.updateDetailIRPF(i));
+
+			// DETAIL SUPLIDOS
+			let tdDetailSuplidos = document.createElement('td');
+			tdDetailSuplidos.setAttribute('colspan','3');
+			tdDetailSuplidos.innerHTML = `<aon-checkbox id="dialogDetailSuplidos${i}" description="Suplidos"></aon-checkbox>`;
+			tr4.appendChild(tdDetailSuplidos);
+			let detailSuplidos = document.getElementById('dialogDetailSuplidos' + i);
+			detailSuplidos.value = detail.suplidos;
+			detailSuplidos.disabled = !this._invoice.suplidos ? 'disabled' : undefined;
+			detailSuplidos.addEventListener('change', () => this.updateDetailSuplidos(i));
+
+			let tr5 = document.createElement('tr');
+			t.appendChild(tr5);
+
+			let tdBlank = document.createElement('td');
+			tdBlank.setAttribute('colspan','3');
+			tr5.appendChild(tdBlank);
+
+			let tdButton = document.createElement('td');
+			tdButton.setAttribute('colspan','3');
+			let b = document.createElement('button');
+			b.innerHTML = 'Aceptar';
+			b.addEventListener('click', () => {
+				d.close();
+				this.printDetails();
+				this.save();
+			});
+			tdButton.appendChild(b);
+			tr5.appendChild(tdButton);
+
+			d.open();
 		}
 
 		printDetail(detail, i) {
@@ -434,7 +558,12 @@ import '../../components/aon-viewer.js';
 			removeButton.addEventListener('click', () => this.removeDetail(i));
 		}
 
+		editDetail(i) {
+			let detail = this._invoice.details[i];
+			this.dialogDetail(detail, i);
+		}
 		printDetails() {
+			clearElement('aonInvoiceItemDetailCardTable');
 			for(let i = 0; i < this._invoice.details.length; i++) {
 				this.printDetail(this._invoice.details[i], i);
 			}
@@ -442,7 +571,7 @@ import '../../components/aon-viewer.js';
 
 		changeDescription(index, value) {
 			if(!value) {
-				value = document.getElementById('detailDescription' + index).value;
+				value = document.getElementById('dialogDetailDescription' + index).value;
 			}
 			this._invoice.details[index].description = value;
 			this.save();
@@ -450,7 +579,7 @@ import '../../components/aon-viewer.js';
 
 		changeQuantity(index, value) {
 			if(!value) {
-				value = document.getElementById('detailQuantity' + index).value;
+				value = document.getElementById('dialogDetailQuantity' + index).value;
 			}
 			this._invoice.details[index].quantity = Number(value);
 			this.calculatePrice(index);
@@ -460,7 +589,7 @@ import '../../components/aon-viewer.js';
 
 		changePrice(index, value) {
 			if(!value) {
-				value = document.getElementById('detailPrice' + index).value;
+				value = document.getElementById('dialogDetailPrice' + index).value;
 			}
 			this._invoice.details[index].price = Number(value);
 			this.calculatePrice(index);
@@ -470,7 +599,7 @@ import '../../components/aon-viewer.js';
 
 		changeDiscount(index, value) {
 			if(!value) {
-				value = document.getElementById('detailDiscount' + index).value;
+				value = document.getElementById('dialogDetailDiscount' + index).value;
 			}
 		 	this._invoice.details[index].discount = Number(value);
 		 	this.calculatePrice(index);
@@ -480,7 +609,7 @@ import '../../components/aon-viewer.js';
 
 		changeVat(index, value) {
 			if(!value) {
-				value = document.getElementById('detailVat' + index).value;
+				value = document.getElementById('dialogDetailVat' + index).value;
 			}
 		 	this._invoice.details[index].vat = Number(value);
 			this.updateTaxes();
@@ -489,7 +618,7 @@ import '../../components/aon-viewer.js';
 
 		updateDetailIRPF(index, value) {
 			if(!value) {
-				value = document.getElementById('detailIrpf' + index).getValue();
+				value = document.getElementById('dialogDetailIrpf' + index).getValue();
 			}
 			this._invoice.details[index].irpf = value;
 			this.updateTaxes();
@@ -509,7 +638,7 @@ import '../../components/aon-viewer.js';
 					 let amount = this.round(Number(quantity) * Number(price));
 					 amount = amount - amount * (this._invoice.details[index].discount / 100);
 					 this._invoice.details[index].amount = this.round(amount);
-					 document.getElementById('detailAmount' + index).value = this._invoice.details[index].amount;
+					 document.getElementById('dialogDetailAmount' + index).value = this._invoice.details[index].amount;
 				}
 		}
 
@@ -661,7 +790,7 @@ import '../../components/aon-viewer.js';
 				}
 			}
 			for(let j = 0; j < this._invoice.details.length; j++){
-				let detailIrpf = document.getElementById('detailIrpf' + j)
+				let detailIrpf = document.getElementById('dialogDetailIrpf' + j)
 				if(!val){
 					this._invoice.details[j].irpf = false;
 					detailIrpf.value = false;
@@ -730,7 +859,7 @@ import '../../components/aon-viewer.js';
 			this._invoice.suplidos = value;
 			document.getElementById('t-suplidos').visible = value;
 			for(let j = 0; j < this._invoice.details.length; j++){
-				let detailSuplidos = document.getElementById('detailSuplidos' + j);
+				let detailSuplidos = document.getElementById('dialogDetailSuplidos' + j);
 				if(!value) {
 					this._invoice.details[j].suplidos = false;
 					detailSuplidos.value = false;
@@ -742,11 +871,11 @@ import '../../components/aon-viewer.js';
 
 		updateDetailSuplidos(index, value) {
 			if(!value) {
-				value = document.getElementById('detailSuplidos' + index).getValue();
+				value = document.getElementById('dialogDetailSuplidos' + index).getValue();
 			}
 			this._invoice.details[index].suplidos = value;
-			let vat = document.getElementById('detailVat' + index);
-			let irpf = document.getElementById('detailIrpf' + index);
+			let vat = document.getElementById('dialogDetailVat' + index);
+			let irpf = document.getElementById('dialogDetailIrpf' + index);
 
 			this._invoice.details[index].irpf = value ? false : this._invoice.details[index].irpf;
 			this._invoice.details[index].vat = value ? undefined : 21;
