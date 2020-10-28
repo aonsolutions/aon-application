@@ -16,7 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.pms.reservation.ReservationUtils;
+
 
 public class PosUtils {
 
@@ -66,9 +66,7 @@ public class PosUtils {
 	}
 
 	public static boolean isHotelPosShiftDateValid(PosShift posShift, Date referenceDate) {
-		ReservationUtils reservationUtils = new ReservationUtils(posShift.getDomain());
-		Date openingDate = reservationUtils.obtainOpeningDate(referenceDate);
-		return !(!referenceDate.before(openingDate) && posShift.getStartTime().before(openingDate));
+		return false;
 	}
 
 }

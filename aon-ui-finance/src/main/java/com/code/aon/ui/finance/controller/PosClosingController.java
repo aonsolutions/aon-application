@@ -46,7 +46,7 @@ import com.code.aon.ui.finance.util.PosUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.pms.reservation.ReservationUtils;
+
 
 public class PosClosingController implements IFinanceConstants, Serializable {
 	
@@ -219,8 +219,7 @@ public class PosClosingController implements IFinanceConstants, Serializable {
 		RegistryBank rBank = obtainAutoRegistryBank();
 		if (rBank != null) {
 			PosFinanceController posFinanceController = (PosFinanceController)AonUtil.getRegisteredBean(IFinanceConstants.POS_FINANCE_CONTROLLER_NAME);
-			ReservationUtils reservationUtils = new ReservationUtils(getPosShift().getDomain());
-			Date issueDate = reservationUtils.obtainProductionDate(getPosShift().getEndTime());
+			Date issueDate = getPosShift().getEndTime();
 
 			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);

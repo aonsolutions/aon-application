@@ -74,7 +74,7 @@
 		<module>aon-ui-admin</module>
 		<module>aon-google-apis</module>
 		<module>aon-google-apis-v2</module>
-		<module>aon-conexflow</module>
+		<!--module>aon-conexflow</module-->
 		<module>aon-oauth2</module>
 		<module>aon-hhg-webservice</module>
 		<module>aon-webservice</module>
@@ -112,7 +112,7 @@
 		<module>aon-marketing</module>
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
-		<module>aon-pms</module>
+		<!--module>aon-pms</module-->
 		<module>aon-academy</module>
 
 		<!-- UI MODULES -->
@@ -188,7 +188,7 @@
 		<module>aon-api</module>
 
 		<!-- GENERATED -->
-		<module>aon-pms-api</module>
+		<!--module>aon-pms-api</module-->
 		<module>aon-sepe-api</module>
 		<module>aon-ingenet-api</module>
 

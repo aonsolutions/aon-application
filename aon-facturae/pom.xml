@@ -16,12 +16,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.pms</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>es.mityc</groupId>
 			<artifactId>facturae-api</artifactId>
