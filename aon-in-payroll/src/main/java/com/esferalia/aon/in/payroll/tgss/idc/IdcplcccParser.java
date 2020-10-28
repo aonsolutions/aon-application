@@ -19,32 +19,10 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class IdcplcccParser {
-	
-	public static interface Listener  {
-		void onPeriod(Date date);
-
-		void onEnterpriseCCC(String ccc);
-		void onEnterpriseCIF(String cif);
-		void onEnterpriseName(String name);
-		void onEnterpriseRegime(String regime);
-		void onEnterpriseActivity(String code, String description);
-		
-		void onAgreement(String code);
-		
-		
-		void onEmployee(String nss, String name);
-		void onEmployeePerido(Date startDate, Date endDate);
-		void onEmployeeQuoteGroup(String group);
-		void onEmployeeQuoteTypes(double it, double ims, double unemployment);
-		void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, String colectivo, String legislacion );
-
-
-	}
 
 	public static void parse( File file , Listener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file))
@@ -94,13 +72,16 @@ public class IdcplcccParser {
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			Matcher matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
 			
-			listener.onEnterpriseName(matcher.group("name"));
-			listener.onEnterpriseCCC( matcher.group("province") + matcher.group("ccc"));
-			listener.onEnterpriseCIF(matcher.group("cif"));
-			listener.onEnterpriseRegime(matcher.group("regime"));
+			String socialReason = matcher.group("name");
+			String enterpriseCCC = matcher.group("province") + matcher.group("ccc");
+			String enterpriseCIF = matcher.group("cif");
+			String enterpriseRegime = matcher.group("regime");
 			
 			matcher = find(reader, ENTERPRISE_ACTIVITY);
-			listener.onEnterpriseActivity(matcher.group("code"), matcher.group("description"));
+			String enterpriseActivityCode = matcher.group("code");
+			String enterpriseActivityDescription = matcher.group("description");
+			
+			listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, null);
 
 			matcher = find(reader, MAIN_PERIOD);
 			String month = matcher.group("month");
@@ -123,8 +104,11 @@ public class IdcplcccParser {
 							simpleDateFormat.parse(matcher.group("end")));
 					listener.onEmployeeQuoteGroup(matcher.group("group"));
 					
+					Date startDate = simpleDateFormat.parse(matcher.group("start"));
+					Date endDate = simpleDateFormat.parse(matcher.group("end"));
+					
 					for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
-						optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC))
+						optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC)) {
 						listener.onEmployeeQuotePEC(
 								optional.get().group("code"), 
 								optional.get().group("description"),
@@ -132,6 +116,15 @@ public class IdcplcccParser {
 								optional.get().group("quota"),
 								optional.get().group("colective"), 
 								optional.get().group("law"));
+						
+						listener.onEmployeeQuotePEC(
+								optional.get().group("code"), 
+								optional.get().group("description"),
+								optional.get().group("tipo"), 
+								optional.get().group("quota"),
+								startDate,
+								endDate);
+					}
 				
 				} catch ( UnknownPDFException e ) {
 					// No more Employees
@@ -218,36 +211,11 @@ public class IdcplcccParser {
 	
 	public static void main(String[] args) throws IOException, UnknownPDFException {
 		
-		parse(new File(args[0]), new Listener() {
+		parse(new File("/Users/sergio/Documents/idcplccc.pdf"), new Listener() {
 
 			@Override
 			public void onPeriod(Date date) {
 				System.out.println(date);
-			}
-
-			@Override
-			public void onEnterpriseCCC(String ccc) {
-				System.out.println(ccc);
-			}
-
-			@Override
-			public void onEnterpriseCIF(String cif) {
-				System.out.println(cif);
-			}
-
-			@Override
-			public void onEnterpriseName(String name) {
-				System.out.println(name);
-			}
-
-			@Override
-			public void onEnterpriseRegime(String regime) {
-				System.out.println(regime);
-			}
-
-			@Override
-			public void onEnterpriseActivity(String code, String description) {
-				System.out.println(code + ":" + description);
 			}
 
 			@Override
@@ -283,6 +251,84 @@ public class IdcplcccParser {
 			public void onEmployeeQuoteGroup(String group) {
 				// TODO Auto-generated method stub
 				System.out.println(group);
+			}
+
+			@Override
+			public void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractType(String contractType) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractStart(Date start) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractEnd(Date end) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractPartialCoeficient(String coeficient) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractQuoteGroup(String quoteGroup) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractInactivityType(String inactivityType) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractOcupation(String ocupation) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractAgrarianQuoteModality(String quoteModality) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractAgrarianRealJourney(String realJourney) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onContractAgrarianRealJourneyProvided(String realJourneyProvided) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, Date start,
+					Date end) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode, String economicActivityDescription, String regime, String fullCCC) {
+				System.out.println("ENTERPRISE -> " + socialReason + ", NIF : " + nif + ", Regimen : " + regime + ", CCC : " + ccc + ", Act. economica : " + economicActivityCode + " " + economicActivityDescription);
 			}
 			
 		});
