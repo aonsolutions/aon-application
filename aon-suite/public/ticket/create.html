@@ -37,12 +37,12 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <label class="font-weight-bold" for="subject">Asunto:</label>
-                                            <input type="text" id="subject" name="subject" class="form-control" value="" placeholder="Asunto" />
+                                            <input type="text" id="subject" name="subject" class="form-control atp_inputs" value="" placeholder="Asunto" />
                                             <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
                                         </div>
                                         <div class="col-12 mt-2">
                                             <label class="font-weight-bold" for="subject">Destinatario:</label>
-                                            <select class="form-control" id="postings" name="postings">
+                                            <select class="form-control atp_inputs" id="postings" name="postings">
                                                 <option value="">Elija un destinatario</option>
                                             </select>
                                             <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
@@ -261,14 +261,10 @@
                         if(reiniciaCookieAlma == 1){
                             document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                         }
+                        
+                        // Mostramos el botón de resuelto por ALMA
+                        $('#btn-send-alma').removeClass('d-none');
                     }
-                    
-                    htmlFaqs += "</div>";
-                    
-                    // Lo ponemos en su div
-                    $('.faqs').html(htmlFaqs);
-                    
-                    $('#btn-send-alma').removeClass('d-none');
                 });
                 
                 $(document).on('click', '.button_faq', function(){
@@ -361,20 +357,21 @@
                             }
                         };
                         
-                        console.log(formData);
-
                         //
                         // Almacenamos en el Storage
                         //
                         // No tenemos datos
-                            let dataCreate = {
-                                name : 'messenger', // tickets
-                                json : ticket
-                            };
-                            let data = createJsonApi(dataCreate);
+                        let dataCreate = {
+                            name : 'messenger', // tickets
+                            json : ticket
+                        };
+                        let data = createJsonApi(dataCreate);
+                        
+                        // Creamos un cookie para que se reinicie la sesión de Alma la próxima vez que vaya a abrir un ticket
+                        document.cookie = "reiniciaCookie=1";
 
-                            // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
-                            document.location.href = "show.html?ticket="+ticket.id;
+                        // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
+                        document.location.href = "show.html?ticket="+ticket.id;
                     } else {
                         return 0;
                     }
