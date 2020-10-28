@@ -723,31 +723,32 @@ public class SistemaRED_I {
 					"01105360062");
 			Toolkit.log(i.toArray());
 		}*/
-		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			  Collection<byte[]> col=getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
-			  String nom="a";
-			  for (byte[] bs : col) {
-				Toolkit.buildPdf(bs, nom);
-				System.out.println(nom+".pdf CREATED");
-				nom+=1;
-			}
-		  }
-		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			  Collection<byte[]> col=getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
-			  String nom="b";
-			  for (byte[] bs : col) {
-				Toolkit.buildPdf(bs, nom);
-				System.out.println(nom+".pdf CREATED");
-				nom+=1;
-			}
-		  }
+//		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+//			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+//			  Collection<byte[]> col=getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
+//			  String nom="a";
+//			  for (byte[] bs : col) {
+//				Toolkit.buildPdf(bs, nom);
+//				System.out.println(nom+".pdf CREATED");
+//				nom+=1;
+//			}
+//		  }
+//		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
+//			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
+//			  Collection<byte[]> col=getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
+//			  String nom="b";
+//			  for (byte[] bs : col) {
+//				Toolkit.buildPdf(bs, nom);
+//				System.out.println(nom+".pdf CREATED");
+//				nom+=1;
+//			}
+//		  }
 		/*try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 			  HtmlPage html=getPageForPdfs("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d, 1);
 			  System.out.println(html.asXml());
 		}*/
+		System.out.println(args[0]);
 	}
 
 }
