@@ -1,4 +1,5 @@
 import {startModule, rootPanel} from '../services/gwtLoader.js';
+import {closeSession} from  '../services/service.js';
 
 import {bidoq} from '../services/bidoq.js';
 import '../components/aon-icon.js'
@@ -67,6 +68,11 @@ class AonMobileMenu extends HTMLElement {
 				<span id="aonMobileMenuInvoice"  style="top: 10px; position: relative;">
 					<aon-icon-button id="aonMobileMenuInvoiceButton" icon="receipt"></aon-icon-button>
 				</span>
+
+				<span id="aonMobileMenuCloseSession"  style="top: 10px; position: relative;">
+					<aon-icon-button id="aonMobileMenuCloseSessionButton" icon="input"></aon-icon-button>
+				</span>
+
 			</div>
 		`;
 		let rp = document.getElementById('rootPanel');
@@ -81,11 +87,37 @@ class AonMobileMenu extends HTMLElement {
 			aonMenuSidenav.style.height = '0px';
 			rp.style.marginBottom = '0px';
 		}
+		let n = ((window.innerWidth / 6) - 40) / 2;
+
+		let aonMobileMenuHome = document.getElementById('aonMobileMenuHome');
+		aonMobileMenuHome.style.marginRight = n;
+
+		let aonMobileMenuDocumental = document.getElementById('aonMobileMenuDocumental');
+		aonMobileMenuDocumental.style.marginLeft = n;
+		aonMobileMenuDocumental.style.marginRight = n;
+
+		let aonMobileMenuAdd = document.getElementById('aonMobileMenuAdd');
+		aonMobileMenuAdd.style.marginLeft = n;
+		aonMobileMenuAdd.style.marginRight = n;
+
+		let aonMobileMenuTime = document.getElementById('aonMobileMenuTime');
+		aonMobileMenuTime.style.marginLeft = n;
+		aonMobileMenuTime.style.marginRight = n;
+
+		let aonMobileMenuInvoice = document.getElementById('aonMobileMenuInvoice');
+		aonMobileMenuInvoice.style.marginLeft = n;
+		aonMobileMenuInvoice.style.marginRight = n;
+
+		let aonMobileMenuCloseSession = document.getElementById('aonMobileMenuCloseSession');
+		aonMobileMenuCloseSession.style.marginLeft = n;
 
 		let aonMobileMenuInvoiceButton = document.getElementById('aonMobileMenuInvoiceButton');
 		aonMobileMenuInvoiceButton.addEventListener('click', () => {
 			rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 		});
+
+		let aonMobileMenuCloseSessionButton = document.getElementById('aonMobileMenuCloseSessionButton');
+		aonMobileMenuCloseSessionButton.addEventListener('click',() => closeSession());
 	}
 
 
