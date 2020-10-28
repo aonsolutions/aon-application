@@ -76,6 +76,14 @@
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/it.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Main CCC  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_ccc</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/ccc.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 			
 	<!-- =================== Main Agreement  ========================== -->
 	<navigation-rule>

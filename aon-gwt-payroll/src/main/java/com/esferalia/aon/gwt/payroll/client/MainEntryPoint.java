@@ -11,7 +11,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.NotStrict;
-import com.google.gwt.user.client.Window;
 import com.vaadin.polymer.Polymer;
 import com.vaadin.polymer.iron.IronIconsElement;
 import com.vaadin.polymer.iron.IronLabelElement;
@@ -123,12 +122,15 @@ public class MainEntryPoint implements EntryPoint {
 			mainContrataContract.onModuleLoad(mainContrataContractObject);
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_IT_ENTRY_POINT)) {
-			
-			//TODO: Call MAIN IT
 			MainContrataITObject mainContrataITObject = new MainContrataITObject();
 			MainContrataIT mainContrataIT = new MainContrataIT();
 			mainContrataIT.onModuleLoad(mainContrataITObject);
 		
+		} else if (entryPoint
+				.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
+			MainCCCObject mainCCCObject = new MainCCCObject();
+			MainCCC mainCCC = new MainCCC();
+			mainCCC.onModuleLoad(mainCCCObject);
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			ActivitySummary activitySummary = new ActivitySummary();
