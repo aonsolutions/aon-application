@@ -39,19 +39,16 @@
                                 <form method="post" id="formulario" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-12">
-                                            <label class="font-weight-bold" for="subject">Asunto:</label>
                                             <input type="text" id="subject" name="subject" class="form-control atp_inputs" value="" placeholder="Asunto" />
                                             <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
                                         </div>
                                         <div class="col-12 mt-2">
-                                            <label class="font-weight-bold" for="subject">Destinatario:</label>
                                             <select class="form-control atp_inputs" id="postings" name="postings">
                                                 <option value="">Elija un destinatario</option>
                                             </select>
                                             <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
                                         </div>
                                         <div class="col-12 mt-2">
-                                            <label class="font-weight-bold">Mensaje:</label>
                                             <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
                                             <div id="editor"></div>
                                             <div id="ticket-comentario-subir">
@@ -112,7 +109,8 @@
                 let theEditor;
                 // Inicializamos CKEditor
                 ClassicEditor.create( document.querySelector('#editor'),{
-                    language: 'es'
+                    language: 'es',
+                    placeholder : "Escriba aquí su mensaje..."
                 })
                 .then(editor => {
                     theEditor = editor;
