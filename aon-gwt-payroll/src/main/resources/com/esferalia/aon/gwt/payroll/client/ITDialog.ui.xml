@@ -135,6 +135,14 @@
 			width: 105px !important;
 		}
 		
+		.w160{
+			width: 160px !important;
+		}
+		
+		.w190{
+			width: 190px !important;
+		}
+		
 		.textCenter{
 			text-align: center;
 		}
@@ -323,6 +331,35 @@
 									    				<g:Label ui:field="newConfirmationPart" styleName="aon-finding-toolbar-item aon-icon-reset {style.footerElement}">NUEVO</g:Label>
 									    			</g:HTMLPanel>
 									    		</g:VerticalPanel>
+									    	</g:HTMLPanel>
+									    </g:VerticalPanel>
+									    <g:VerticalPanel ui:field="maternityDataTable" styleName="{style.styleBorder}">
+									    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Maternidad</g:Label>
+									    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+									    		<table style="margin-left: 10px; margin-bottom: 10px;">
+													<tbody>
+													    <tr>
+													        <td></td>
+													        <td></td>
+													        <td></td>
+													        <td></td>
+													    </tr>
+													    <tr>
+													    	<td  style="background-color: #eaeaea; width: 125px;">
+													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Tipo de solicitante</g:Label>
+													    	</td>
+													    	<td style="width: 160px;">
+													    		<g:ListBox ui:field="applicantTypeList" styleName='aon-selectOneMenu  {style.w160}'></g:ListBox>
+													    	</td>
+													    	<td  style="background-color: #eaeaea; width: 80px;">
+													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Motivo</g:Label>
+													    	</td>
+													    	<td style="width: 190px;">
+													    		<g:ListBox ui:field="applicantReasonList" styleName='aon-selectOneMenu  {style.w190}'></g:ListBox>
+													    	</td>
+													    </tr>
+													</tbody>
+												</table>
 									    	</g:HTMLPanel>
 									    </g:VerticalPanel>
 									</g:VerticalPanel>

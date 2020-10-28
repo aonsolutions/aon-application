@@ -14,11 +14,13 @@ import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -142,6 +144,15 @@ public abstract class ITDialog extends CustomDialog {
 	@UiField
 	HTMLPanel mainTablePanel;
 	
+	@UiField
+	VerticalPanel maternityDataTable;
+	
+	@UiField
+	ListBox applicantTypeList;
+	
+	@UiField
+	ListBox applicantReasonList;
+	
 	@UiField(provided = true)
 	DataGrid<IT> itDataGrid;
 	
@@ -186,8 +197,16 @@ public abstract class ITDialog extends CustomDialog {
 		// Check type of part
 		if(this.itDialogObject.getEmployeeStatus()) {
 			hideConfirmationParts();
-		} else
-			showConfirmationParts();
+			hideMaternityTable();
+		} else {
+			if(null != this.it && (this.it.getTypeLowPart() == (byte)2 || this.it.getTypeLowPart() == (byte)3)) {
+				showMaternityTable();
+				hideConfirmationParts();
+			} else {
+				hideMaternityTable();
+				showConfirmationParts();
+			}
+		}
 	}
 	
 	public void setITDialogObject(ITDialogObject itDialogObject, IT it) {
@@ -208,8 +227,16 @@ public abstract class ITDialog extends CustomDialog {
 		// Check type of part
 		if(this.itDialogObject.getEmployeeStatus()) {
 			hideConfirmationParts();
-		} else
-			showConfirmationParts();
+			hideMaternityTable();
+		} else {
+			if(null != this.it && (this.it.getTypeLowPart() == (byte)2 || this.it.getTypeLowPart() == (byte)3)) {
+				showMaternityTable();
+				hideConfirmationParts();
+			} else {
+				hideMaternityTable();
+				showConfirmationParts();
+			}
+		}
 	}
 	
 	public void setITDialogObject(ITDialogObject itDialogObject, IT it, boolean showAll) {
@@ -230,8 +257,16 @@ public abstract class ITDialog extends CustomDialog {
 		// Check type of part
 		if(!showAll) {
 			hideConfirmationParts();
-		} else
-			showConfirmationParts();
+			hideMaternityTable();
+		} else {
+			if(null != this.it && (this.it.getTypeLowPart() == (byte)2 || this.it.getTypeLowPart() == (byte)3)) {
+				showMaternityTable();
+				hideConfirmationParts();
+			} else {
+				hideMaternityTable();
+				showConfirmationParts();
+			}
+		}
 	}
 	
 	// --------------------------------------------------------------------------------------------
@@ -472,11 +507,33 @@ public abstract class ITDialog extends CustomDialog {
 		this.it.setTypeLowPart(Byte.parseByte(causeLowPart.getSelectedValue()));
 		
 		setCauseLowPart();
-		
 		createRealStartDate();
-		showConfirmationParts();
+		
+		Byte causeLowPartB = Byte.parseByte(causeLowPart.getSelectedValue());
+		if(causeLowPartB == (byte)2 || causeLowPartB == (byte)3) {
+			checkConfirmationParts();
+			showMaternityTable();
+			hideConfirmationParts();
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), applicantTypeList);
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), applicantReasonList);
+		}else {
+			hideMaternityTable();
+			showConfirmationParts();
+		}
 	}
-	
+
+	private void checkConfirmationParts() {
+		List<ITPart> newITParts = new ArrayList<ITPart>();
+		
+		for(ITPart itPart : this.it.getITParts()) {
+			if(itPart.getType() == (byte)1 || itPart.getType().equals((byte)1))
+				continue;
+			newITParts.add(itPart);
+		}
+		
+		this.it.setITParts(newITParts);
+	}
+
 	@UiHandler("itEndDate")
 	public void onItEndDateChange(ValueChangeEvent<Date> event) {
 		if(this.it == null) {
@@ -569,6 +626,41 @@ public abstract class ITDialog extends CustomDialog {
 		this.itDialogObject.addITPart(this.it, newITPart);
 		addRowITPart(newITPart);
 		calculateScrollPanelHeight();
+	}
+	
+	@UiHandler("applicantTypeList")
+	public void onApplicantTypeListChange(ChangeEvent event) {
+		createApplicantReasonList();
+		this.it.setMaternityType(Byte.parseByte(applicantTypeList.getSelectedValue()));
+	}
+	
+	@UiHandler("applicantReasonList")
+	public void onApplicantReasonListChange(ChangeEvent event) {
+		this.it.setMaternityReason(Byte.parseByte(applicantReasonList.getSelectedValue()));
+	}
+
+	private void createApplicantReasonList() {
+		Integer selectedIdx = applicantTypeList.getSelectedIndex();
+		applicantReasonList.clear();
+		switch (selectedIdx) {
+		case 1:
+			applicantReasonList.addItem("Nacimiento de hijo", "0");
+			applicantReasonList.addItem("Parto multiple", "3");
+			break;
+		case 2:
+			applicantReasonList.addItem("Adopcion/Tutela/Acogimiento", "5");
+			break;
+		case 3:
+			applicantReasonList.addItem("Adopcion/Tutela/Acogimiento", "5");
+			break;
+		default:
+			applicantReasonList.addItem("Nacimiento de hijo", "0");
+			applicantReasonList.addItem("Fallecimiento de la madre", "1");
+			applicantReasonList.addItem("Cesion/Opcion en favor del otro progenitor", "2");
+			applicantReasonList.addItem("Parto multiple", "3");
+			applicantReasonList.addItem("Inicio del descanso antes del parto (solo para madre biologica ET)", "4");
+			break;
+		}
 	}
 
 	// ----------------------------------------------- METODOS ABSTRACTOS -------------------------------------------------
@@ -675,11 +767,24 @@ public abstract class ITDialog extends CustomDialog {
 		setDirectPayDate();
 		createRealStartDate();
 		
+		if(it.getTypeLowPart() == (byte) 2 || it.getTypeLowPart() == (byte)3) {
+			showMaternityTable();
+			setSelectedValueLB(applicantTypeList, null == it.getMaternityType() ? "-1" : it.getMaternityType().toString());
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), applicantTypeList);
+			setSelectedValueLB(applicantReasonList, null == it.getMaternityReason() ? "-1" : it.getMaternityReason().toString());
+		}
+		
 		if(showAll) {
 			informationDataTable.getElement().getStyle().clearDisplay();
 			itDataTable.getElement().getStyle().clearDisplay();
-			confirmationsDataTable.getElement().getStyle().clearDisplay();
 			deleteITButton.getElement().getStyle().clearDisplay();
+			if(it.getTypeLowPart() == (byte) 2 || it.getTypeLowPart() == (byte)3) {
+				showMaternityTable();
+//				setSelectedValueLB(applicantTypeList, null == it.getMaternityType() ? "-1" : it.getMaternityType().toString());
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), applicantTypeList);
+//				setSelectedValueLB(applicantReasonList, null == it.getMaternityReason() ? "-1" : it.getMaternityReason().toString());
+			} else
+				showConfirmationParts();
 		}
 		
 		deckPanel.showWidget(0);
@@ -785,6 +890,14 @@ public abstract class ITDialog extends CustomDialog {
 		this.confirmationsDataTable.getElement().getStyle().clearDisplay();
 	}
 	
+	private void showMaternityTable() {
+		this.maternityDataTable.getElement().getStyle().clearDisplay();
+	}
+	
+	private void hideMaternityTable() {
+		this.maternityDataTable.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
 	// -------------------------------------------------- METODOS AUX --------------------------------------------------
 	
 	private void initListBox(){
@@ -816,6 +929,10 @@ public abstract class ITDialog extends CustomDialog {
 		causeHighPart.addItem("Recuperaci" + String.valueOf("\u00F3") + "n capacidad profesional", "8");
 		causeHighPart.addItem("Incomparecencia contratos de formaci" + String.valueOf("\u00F3") + "n", "9");
 		
+		applicantTypeList.addItem("Madre biologica", "0");
+		applicantTypeList.addItem("Otro progenitor", "1");
+		applicantTypeList.addItem("Primer adoptante", "2");
+		applicantTypeList.addItem("Segundo adoptante", "3");
 	}
 	
 	private void initRaggedListBox(){

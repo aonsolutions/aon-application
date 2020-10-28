@@ -24,6 +24,8 @@ public class IT implements Serializable {
 	private Double dailyREGBase;
 	private Byte typeHighPart;
 	private Boolean isParent;
+	private Byte maternityType;
+	private Byte maternityReason;
 	
 	private String fullName;
 	
@@ -166,6 +168,22 @@ public class IT implements Serializable {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public Byte getMaternityType() {
+		return maternityType;
+	}
+
+	public void setMaternityType(Byte maternityType) {
+		this.maternityType = maternityType;
+	}
+
+	public Byte getMaternityReason() {
+		return maternityReason;
+	}
+
+	public void setMaternityReason(Byte maternityReason) {
+		this.maternityReason = maternityReason;
 	}
 	
 }

@@ -112,6 +112,23 @@ public class JooqIT {
 					it.setDailyREGBase(contractLeaveRecord.get(CONTRACT_LEAVE.DAILY_REG_BASE));
 					it.setTypeHighPart(contractLeaveRecord.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
 					
+					// Matenity
+					if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {
+						Result<Record> contractDataMaternityRecords = dslContext.select().from(CONTRACT_DATA)
+							.where(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT").or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT")))
+							.and(CONTRACT_DATA.CONTRACT.eq(itEmployee.getContractInfo().getContractId()))
+							.and(CONTRACT_DATA.START_DATE.eq(contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE)))
+							.fetch();
+						
+						for(Record record : contractDataMaternityRecords) {
+							if(record.get(CONTRACT_DATA.NAME) == "TIPO_SOLICITANTE_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("TIPO_SOLICITANTE_MAT_PAT"))
+								it.setMaternityType(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+							if(record.get(CONTRACT_DATA.NAME) == "MOTIVO_MAT_PAT" || record.get(CONTRACT_DATA.NAME).equals("MOTIVO_MAT_PAT"))
+								it.setMaternityReason(Byte.parseByte(record.get(CONTRACT_DATA.EXPRESSION)));
+						}
+							
+					}
+					
 					// Is parent?
 					Result<Record> contractLeaveParentRecords = dslContext.select().from(CONTRACT_LEAVE)
 							.where(CONTRACT_LEAVE.PARENT.eq(contractLeaveId))
@@ -360,6 +377,24 @@ public class JooqIT {
 						.execute();
 				}
 				
+				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
+					dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "TIPO_SOLICITANTE_MAT_PAT")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, it.getMaternityType().toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.execute();
+					
+					dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "MOTIVO_MAT_PAT")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, it.getMaternityReason().toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.execute();
+				}
+				
 				anythingAdded = true;
 				
 			} else {					// ACTUALIZAR PARTE IT
@@ -401,6 +436,36 @@ public class JooqIT {
 						.execute();
 				}
 				
+				Integer contractId = itEmployee.getContractInfo().getContractId();
+				
+				// Remove if is all ready exists
+				dslContext.delete(CONTRACT_DATA)
+					.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+					.and(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT").or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT")))
+					.and(CONTRACT_DATA.START_DATE.eq(startDate))
+					.execute();
+				
+				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3) {	// MATERNIDAD || PATERNIDAD
+					
+					if(null != it.getMaternityType())
+						dslContext.insertInto(CONTRACT_DATA)
+							.set(CONTRACT_DATA.DOMAIN, domainId)
+							.set(CONTRACT_DATA.NAME, "TIPO_SOLICITANTE_MAT_PAT")
+							.set(CONTRACT_DATA.CONTRACT, contractId)
+							.set(CONTRACT_DATA.EXPRESSION, it.getMaternityType().toString())
+							.set(CONTRACT_DATA.START_DATE, startDate)
+							.execute();
+					
+					if(null != it.getMaternityReason())
+						dslContext.insertInto(CONTRACT_DATA)
+						.set(CONTRACT_DATA.DOMAIN, domainId)
+						.set(CONTRACT_DATA.NAME, "MOTIVO_MAT_PAT")
+						.set(CONTRACT_DATA.CONTRACT, contractId)
+						.set(CONTRACT_DATA.EXPRESSION, it.getMaternityReason().toString())
+						.set(CONTRACT_DATA.START_DATE, startDate)
+						.execute();
+				}
+				
 			}
 		}
 		
@@ -413,6 +478,18 @@ public class JooqIT {
 	private static String deleteITDB(DSLContext dslContext, Integer domainId, Integer itId) {
 		
 		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
+		
+		Record contractLeaveRecord = dslContext.select().from(CONTRACT_LEAVE).where(CONTRACT_LEAVE.ID.eq(itId)).fetchOne();
+		Byte type = contractLeaveRecord.get(CONTRACT_LEAVE.TYPE);
+		if(type == (byte)2 || type == (byte)3) {
+			Date startDate = contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE);
+			Integer contractId = contractLeaveRecord.get(CONTRACT_LEAVE.CONTRACT);
+			dslContext.delete(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq("TIPO_SOLICITANTE_MAT_PAT").or(CONTRACT_DATA.NAME.eq("MOTIVO_MAT_PAT")))
+				.and(CONTRACT_DATA.START_DATE.eq(startDate))
+				.execute();
+		}
 		
 		dslContext.delete(CONTRACT_LEAVE_DETAIL)
 			.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(itId))
