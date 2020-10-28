@@ -10994,7 +10994,13 @@ body::-webkit-scrollbar-thumb {
         transition: all .5s; 
     }
     
-    .atp_caja_form .atp_inputs input:not([value=""]) + span {
+    .atp_caja_form .atp_inputs input:not([value=""]):not([type="date"]) + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
+    .atp_caja_form .atp_inputs input[type="date"] + span {
         font-size: 10px;
         top: 5px;
         transition: all .5s; 
