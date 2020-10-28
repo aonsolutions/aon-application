@@ -10942,7 +10942,7 @@ body::-webkit-scrollbar-thumb {
 .fon-size-20 {
   font-size: 20px; }
 
-/* Inputs style */
+/* Inputs y textarea (sin CKEditor) style */
     .atp_caja_form {
         padding: 25px 10px 5px;
         background-color: #fff;
@@ -10964,7 +10964,21 @@ body::-webkit-scrollbar-thumb {
         padding: 0 15px; 
     }
     
+    .atp_caja_form .atp_inputs textarea {
+        min-height: 80px;
+        border: none;
+        background-color: #f5f5f5;
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px 0 0 15px; 
+    }
+    
     .atp_caja_form .atp_inputs input:focus {
+        outline: none; 
+    }
+    
+    .atp_caja_form .atp_inputs textarea:focus {
         outline: none; 
     }
     
@@ -10974,7 +10988,19 @@ body::-webkit-scrollbar-thumb {
         transition: all .5s; 
     }
     
+    .atp_caja_form .atp_inputs textarea:focus + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
     .atp_caja_form .atp_inputs input:not([value=""]) + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
+    .atp_caja_form .atp_inputs textarea:not(:placeholder-shown) + span {
         font-size: 10px;
         top: 5px;
         transition: all .5s; 
