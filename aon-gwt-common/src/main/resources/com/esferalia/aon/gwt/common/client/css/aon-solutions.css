@@ -24,6 +24,8 @@ input[type="checkbox"]:focus + label {
 .aon_icon_search { background-image: iconSearch;}
 @url iconBack aonIconBack;
 .aon_icon_back { background-image: iconBack;}
+@url iconRefresh aonIconRefresh;
+.aon_icon_refresh { background-image: iconRefresh;}
 @url iconCopy aonIconCopy;
 .aon_icon_copy { background-image: iconCopy;}
 @url iconAudit aonIconAudit;
@@ -107,6 +109,9 @@ input[type="checkbox"]:focus + label {
 .aon_height_all {
 	height: 100%;
 }
+.aon_fixed_font {
+	font-family: Fixed, monospace;
+}
 .aon_italic {
 	font-style: italic;
 }
@@ -115,6 +120,12 @@ input[type="checkbox"]:focus + label {
 }
 .aon_font_medium{
 	font-size: medium;
+}
+.aon_font_small{
+	font-size: small;
+}
+.aon_font_smaller{
+	font-size: smaller;
 }
 .aon_block_center {
 	margin-left: auto;
@@ -129,6 +140,12 @@ input[type="checkbox"]:focus + label {
 }
 .aon_text_right {
 	text-align: right;
+}
+.aon_text_underline {
+	text-decoration: underline;
+}
+.aon_text_line_through {
+	text-decoration: line-through;
 }
 .aon_clickable {
 	cursor: pointer;
@@ -277,9 +294,6 @@ input[type="checkbox"]:focus + label {
 	font-size: 0.8em;
 	text-transform: uppercase;
 	background-image: linear-gradient(#EEE, #DDD);
-}
-.aon_text_line_through {
-	text-decoration: line-through;
 }
 
 .aon_flex_block {
@@ -758,4 +772,20 @@ input[type="checkbox"]:focus + label {
 	width: auto;
 	height: auto;
 	padding-left: 15px !important;
+}
+
+.aon_search_panel {
+	background-color: #DDD;
+	margin-top: 0.5em;
+	padding-bottom: 1em;
+	border: #999 1px solid;
+}
+.aon_search_panel td{
+	border: none;
+	padding: 1px 0.5em 1px 0.5em;
+	vertical-align: top;
+}
+.aon_search_panel_label {
+	font-weight: bold;
+	white-space: nowrap;
 }

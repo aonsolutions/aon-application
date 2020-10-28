@@ -59,7 +59,7 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		this.domain = domain;
 		
 		mainPanel = new DockLayoutPanel(Unit.PX);
-		mainPanel.addNorth(getToolbarPanel(), 25);
+		mainPanel.addNorth(getToolbarPanel(), 50);
 		
 		splitLayoutPanel = new SplitLayoutPanel();
 		footPanel = new MinimizePanel();

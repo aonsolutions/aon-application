@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -228,6 +229,75 @@ public class FilterDAO implements Filter {
 
 		@Override
 		public Filter notIn(Date[] t) {
+			return new FilterDAO(field.notIn(Arrays.asList(t)));
+		}
+		
+	}
+
+	public static class TimestampPropertyDAO implements Property<Timestamp> {
+
+		private Field<java.sql.Timestamp> field;
+		
+		public TimestampPropertyDAO(Field<java.sql.Timestamp> field) {
+			this.field = field;
+		}
+
+		@Override
+		public FilterDAO eq(Timestamp date) {
+			return new FilterDAO(field.eq(date));
+		}
+
+		@Override
+		public FilterDAO ne(Timestamp date) {
+			return new FilterDAO(field.ne(date));
+		}
+
+		@Override
+		public FilterDAO le(Timestamp date) {
+			return new FilterDAO(field.le(date));
+		}
+
+		@Override
+		public FilterDAO lt(Timestamp date) {
+			return new FilterDAO(field.lt(date));
+		}
+
+		@Override
+		public FilterDAO gt(Timestamp date) {
+			return new FilterDAO(field.gt(date));
+		}
+
+		@Override
+		public FilterDAO ge(Timestamp date) {
+			return new FilterDAO(field.ge(date));
+		}
+
+		@Override
+		public Filter in(Timestamp[] t) {
+			return new FilterDAO(field.in( Arrays.asList(t)));
+		}
+
+		@Override
+		public Filter isNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+
+		@Override
+		public Filter isNotNull() {
+			return new FilterDAO(field.isNotNull());
+		}
+		@Override
+		public Filter like(Timestamp date) {
+			throw new UnsupportedOperationException();				
+		}
+		
+		@Override
+		public Filter between(Timestamp min, Timestamp max) {
+			return new FilterDAO(field.between(min, max));
+		}
+
+		@Override
+		public Filter notIn(Timestamp[] t) {
 			return new FilterDAO(field.notIn(Arrays.asList(t)));
 		}
 		

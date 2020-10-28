@@ -824,6 +824,10 @@ public class AccountEntryDAO {
 		@Override public Property<Byte> getEntryTypeProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.ENTRY_TYPE);}
 		@Override public Property<Byte> getConfidentialProperty() {return new FilterDAO.PropertyDAO<Byte>(ACCOUNT_ENTRY.SECURITY_LEVEL);}
 		@Override public Property<String> getCommentsProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.COMMENTS);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.TimestampPropertyDAO(ACCOUNT_ENTRY.CREATION_DATE);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.CREATION_USER);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.TimestampPropertyDAO(ACCOUNT_ENTRY.MODIFICATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ACCOUNT_ENTRY.MODIFICATION_USER);}
 	}
 
 	private static final AccountEntryDetailPropertiesDAO ACCOUNT_ENTRY_DETAIL_PROPERTIES = new AccountEntryDetailPropertiesDAO();

@@ -46,6 +46,28 @@ public class AccountEntryUtils {
 		if (AonStringUtils.isNotBlank(params.getComments())) {
 			prop = prop.and(p.getCommentsProperty().like(AonStringUtils.SQLlike(params.getComments())));
 		}
+		if (params.getFromCreationDate() != null) {
+			prop = prop.and(p.getCreationDateProperty().ge(new java.sql.Timestamp(params.getFromCreationDate().getTime())));
+		}
+		if (params.getToCreationDate() != null) {
+			prop = prop.and(p.getCreationDateProperty().le(new java.sql.Timestamp(params.getToCreationDate().getTime())));
+		}
+		if (AonStringUtils.isNotBlank(params.getCreationUser())) {
+			prop = prop.and(p.getCreationUserProperty().like(AonStringUtils.SQLlike(params.getCreationUser())));
+		}
+		if (params.getFromModificationDate() != null) {
+			prop = prop.and(p.getModificationDateProperty().ge(new java.sql.Timestamp(params.getFromModificationDate().getTime())));
+		}
+		if (params.getToModificationDate() != null) {
+			prop = prop.and(p.getModificationDateProperty().le(new java.sql.Timestamp(params.getToModificationDate().getTime())));
+		}
+		if (AonStringUtils.isNotBlank(params.getModificationUser())) {
+			prop = prop.and(p.getModificationUserProperty().like(AonStringUtils.SQLlike(params.getModificationUser())));
+		}
+		
+		if (params.getType() != null) {
+			prop = prop.and(p.getEntryTypeProperty().eq((byte) params.getType().ordinal()));
+		}
 		return prop;
 	}
 

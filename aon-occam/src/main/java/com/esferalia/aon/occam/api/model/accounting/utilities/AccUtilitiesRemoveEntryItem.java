@@ -3,11 +3,20 @@ package com.esferalia.aon.occam.api.model.accounting.utilities;
 public class AccUtilitiesRemoveEntryItem implements IAccUtilitiesItem {
 	
 	private static final long serialVersionUID = -8812702540651915368L;
+	private boolean selected;
 	private Integer domain;
 	private String domainName;
 	
 	private Integer entryId;
 	private String message;
+	
+	public boolean isSelected() {
+		return selected;
+	}
+	public AccUtilitiesRemoveEntryItem setSelected(boolean selected) {
+		this.selected = selected;
+		return this;
+	}
 	
 	@Override
 	public Integer getDomain() {

@@ -26,6 +26,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_height_all")
 	String aonHeightAll();
 
+	@ClassName("aon_fixed_font")
+	String aonFixedFont();
+
 	@ClassName("aon_italic")
 	String aonItalic();
 
@@ -34,10 +37,19 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_font_medium")
 	String aonFontMedium();
+	
+	@ClassName("aon_font_small")
+	String aonFontSmall();
+
+	@ClassName("aon_font_smaller")
+	String aonFontSmaller();
 
 	@ClassName("aon_nowrap")
 	String aonNowrap();
 
+	@ClassName("aon_text_underline")
+	String aonTextUnderline();
+	
 	@ClassName("aon_text_line_through")
 	String aonTextLineThrough();
 	
@@ -236,6 +248,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_search")
 	String aonIconSearch();
 	
+	@ClassName("aon_icon_refresh")
+	String aonIconRefresh();
+
 	@ClassName("aon_icon_back")
 	String aonIconBack();
 
@@ -344,5 +359,12 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_input_calc")
 	String aonInputCalc();
 
+	@ClassName("aon_search_panel")
+	String aonSearchPanel();
+	
+	@ClassName("aon_search_panel_label")
+	String aonSearchPanelLabel();
+
+	
 }
 

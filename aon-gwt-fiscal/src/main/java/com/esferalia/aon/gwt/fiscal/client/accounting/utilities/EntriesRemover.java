@@ -14,6 +14,9 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryService;
@@ -48,7 +51,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -96,8 +98,16 @@ class EntriesRemover extends OptionBase {
 	private TextBox comments;
 	private IntegerBox id;
 	private ListBox order;
-	private Button cleanButton;
-	private Button refreshButton;
+	private AonTableButton cleanButton;
+	private AonTableButton refreshButton;
+
+	private DateBoxEx fromCreationDate;
+	private DateBoxEx toCreationDate;
+	private TextBox creationUser;
+	
+	private DateBoxEx fromModificationDate;
+	private DateBoxEx toModificationDate;
+	private TextBox modificationUser;
 
 	private boolean activitiesListBoxEnabled;
 
@@ -133,11 +143,11 @@ class EntriesRemover extends OptionBase {
 	
 	private void fill(AonConfiguration config) {
 		activitiesListBoxEnabled = (config != null && config.hasActivities());
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());
 		northPanel = new SimpleLayoutPanel();
 		fillNorthPanel(config);
-		content.addNorth(northPanel, 120);
+		content.addNorth(northPanel, 160);
 		centerPanelContainer = new SimpleLayoutPanel();
 		centerPanel = new ScrollPanel();
 		centerPanelContainer.setWidget(centerPanel);
@@ -171,6 +181,7 @@ class EntriesRemover extends OptionBase {
 				run();
 			}
 		});
+		
 		confidential = new ListBox();
 		confidential.setWidth("100px");
 		confidential.addItem( "Asientos NO confidenciales" );
@@ -234,7 +245,7 @@ class EntriesRemover extends OptionBase {
 		});
 		concept = new TextBox();
 		concept.setVisibleLength(10);
-		concept.setStyleName(AON.AON_CSS.aonInputText());
+		concept.setStyleName(AON.CSS.aonInputText());
 		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
@@ -244,7 +255,7 @@ class EntriesRemover extends OptionBase {
 		});
 		document = new TextBox();
 		document.setVisibleLength(10);
-		document.setStyleName(AON.AON_CSS.aonInputText());
+		document.setStyleName(AON.CSS.aonInputText());
 		document.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
@@ -255,7 +266,7 @@ class EntriesRemover extends OptionBase {
 		
 		comments = new TextBox();
 		comments.setVisibleLength(30);
-		comments.setStyleName(AON.AON_CSS.aonInputText());
+		comments.setStyleName(AON.CSS.aonInputText());
 		comments.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
@@ -296,6 +307,60 @@ class EntriesRemover extends OptionBase {
 			}
 		});
 
+		fromCreationDate = new DateBoxEx();
+		fromCreationDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				run();
+			}
+		});
+		toCreationDate = new DateBoxEx();
+		toCreationDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				run();
+			}
+		});
+		creationUser = new TextBox();
+		creationUser.setVisibleLength(15);
+		creationUser.setStyleName(AON.CSS.aonInputText());
+		creationUser.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				run();
+			}
+		});
+		
+		fromModificationDate = new DateBoxEx();
+		fromModificationDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				run();
+			}
+		});
+		toModificationDate = new DateBoxEx();
+		toModificationDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				run();
+			}
+		});
+		modificationUser = new TextBox();
+		modificationUser.setVisibleLength(15);
+		modificationUser.setStyleName(AON.CSS.aonInputText());
+		modificationUser.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				run();
+			}
+		});
+
 		order = new ListBox();
 		order.setWidth("200px");
 		order.addItem("Ejerc., n\u00BA diario, fecha");
@@ -311,8 +376,9 @@ class EntriesRemover extends OptionBase {
 		});
 		
 		tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		tab.setWidth("95%");
+		tab.setStyleName(AON.CSS.aonSearchPanel());
+		tab.addStyleName(AON.CSS.aonBlockCenter());
 		
 		tab.getColumnFormatter().setWidth(0, "1%");
 		tab.getColumnFormatter().setWidth(1, "1%");
@@ -324,40 +390,37 @@ class EntriesRemover extends OptionBase {
 		tab.getColumnFormatter().setWidth(7, "auto");
 		
 		tab.setWidget(0, 0, new Label(AON.MSG.fiscalYear() +"/"+ AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0,0, AON.CSS.aonSearchPanelLabel());
 		
 		datePanel = new FlowPanel();
-		datePanel.setStyleName(AON.AON_CSS.aonNowrap());
+		datePanel.setStyleName(AON.CSS.aonNowrap());
 		datePanel.add(period);
-		period.addStyleName(AON.AON_CSS.aonMarginRight());
+		period.addStyleName(AON.CSS.aonMarginRight());
 		datePanel.add(fromDate);
 		InlineLabel to = new InlineLabel(AON.MSG.to());
-		to.setStyleName(AON.AON_CSS.aonItalic());
-		to.addStyleName(AON.AON_CSS.aonMarginRight());
-		to.addStyleName(AON.AON_CSS.aonMarginLeft());
+		to.setStyleName(AON.CSS.aonItalic());
+		to.addStyleName(AON.CSS.aonMarginRight());
+		to.addStyleName(AON.CSS.aonMarginLeft());
 		datePanel.add(to);
 		datePanel.add(toDate);
 		tab.setWidget(0, 1, datePanel);
-		tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonPanelGridEven());
 		
 		tab.setWidget(0, 2, new Label(AON.MSG.type()));
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0,2, AON.CSS.aonSearchPanelLabel());
 		
 		FlowPanel entryTypePanel = new FlowPanel();
 		entryTypePanel.add(entryListBox);
 		if (datePanel != null && config.getUser() != null && config.getUser().hasConfidentialityRole()) {
-			confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
+			confidential.addStyleName(AON.CSS.aonMarginLeft());
 			entryTypePanel.add(confidential);
-			entryTypePanel.addStyleName(AON.AON_CSS.aonNowrap());
+			entryTypePanel.addStyleName(AON.CSS.aonNowrap());
 		}
 		tab.setWidget(0, 3, entryTypePanel);
-		tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonPanelGridEven());
 		
 		tab.setWidget(0, 4, new Label(AON.MSG.journal()));
-		tab.getCellFormatter().setStyleName(0,4, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(0,4, AON.CSS.aonSearchPanelLabel());
 
 		tab.setWidget(0, 5, journal);
-		tab.getCellFormatter().setStyleName(0,5, AON.AON_CSS.aonPanelGridEven());
 		
 		if (activitiesListBoxEnabled) {
 			tab.setWidget(0, 6, new Label(AON.MSG.activity()));
@@ -366,15 +429,10 @@ class EntriesRemover extends OptionBase {
 			tab.setWidget(0, 6, new Label());
 			tab.setWidget(0, 7, new Label());
 		}
-		tab.getCellFormatter().setStyleName(0,6, AON.AON_CSS.aonPanelGridOdd());
-		tab.getCellFormatter().setStyleName(0,7, AON.AON_CSS.aonPanelGridEven());	
+		tab.getCellFormatter().setStyleName(0,6, AON.CSS.aonSearchPanelLabel());
 		
-		cleanButton = new Button();
-		cleanButton.setTitle(AON.MSG.clean());
-		cleanButton.setStyleName(AON.AON_CSS.aonIconDelete());
-		cleanButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		cleanButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		cleanButton = new AonTableButton(AON.MSG.clean(), AON.CSS.aonIconDelete());
+		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -397,12 +455,8 @@ class EntriesRemover extends OptionBase {
 			}
 		});
 
-		refreshButton = new Button();
-		refreshButton.setTitle(AON.MSG.refresh());
-		refreshButton.setStyleName(AON.AON_CSS.aonIconRefresh());
-		refreshButton.addStyleName(AON.AON_CSS.aonIconCommandButton());
-		refreshButton.addStyleName(AON.AON_CSS.aonMarginLeft());
-		refreshButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
+		refreshButton = new AonTableButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -411,68 +465,100 @@ class EntriesRemover extends OptionBase {
 		});
 
 		tab.setWidget(1, 0, new Label(AON.MSG.account()));
-		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(1,0, AON.CSS.aonSearchPanelLabel());
 
 		tab.setWidget(1, 1, account);
-		tab.getCellFormatter().setStyleName(1,1, AON.AON_CSS.aonPanelGridEven());
 		
 		
 		tab.setWidget(1, 2, new Label(AON.MSG.debit()));
-		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(1,2, AON.CSS.aonSearchPanelLabel());
 		
 		FlowPanel amountsPanel = new FlowPanel();
-		amountsPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		amountsPanel.setStyleName(AON.CSS.aonNowrap());
 		amountsPanel.add(debit);
 		InlineLabel cre= new InlineLabel(AON.MSG.credit());
-		cre.setStyleName(AON.AON_CSS.aonBold());
-		cre.addStyleName(AON.AON_CSS.aonMarginRight());
-		cre.addStyleName(AON.AON_CSS.aonMarginLeft());
+		cre.setStyleName(AON.CSS.aonBold());
+		cre.addStyleName(AON.CSS.aonMarginRight());
+		cre.addStyleName(AON.CSS.aonMarginLeft());
 		amountsPanel.add(cre);
 		amountsPanel.add(credit);
 		tab.setWidget(1, 3, amountsPanel);
-		tab.getCellFormatter().setStyleName(1,3, AON.AON_CSS.aonPanelGridEven());
 		
 		tab.setWidget(1, 4, new Label(AON.MSG.concept()));
-		tab.getCellFormatter().setStyleName(1,4, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(1,4, AON.CSS.aonSearchPanelLabel());
 
 		tab.setWidget(1, 5, concept);
-		tab.getCellFormatter().setStyleName(1,5, AON.AON_CSS.aonPanelGridEven());
 
 		tab.setWidget(2, 0, new Label(AON.MSG.comments()));
-		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.getCellFormatter().setStyleName(2,0, AON.CSS.aonSearchPanelLabel());
 		
 		tab.setWidget(2, 1, comments);
-		tab.getCellFormatter().setStyleName(2, 1, AON.AON_CSS.aonPanelGridEven());
 
 		tab.setWidget(2, 2, new Label("Id Interno"));
-		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonPanelGridOdd());
-		tab.getCellFormatter().addStyleName(2,2, AON.AON_CSS.aonTextRight());
+		tab.getCellFormatter().setStyleName(2,2, AON.CSS.aonSearchPanelLabel());
+		tab.getCellFormatter().addStyleName(2,2, AON.CSS.aonTextRight());
 		
 		tab.setWidget(2, 3, id);
-		tab.getCellFormatter().setStyleName(2,3, AON.AON_CSS.aonPanelGridEven());
 
-		tab.setWidget(3, 0, new Label(AON.MSG.document()));
-		tab.getCellFormatter().setStyleName(3,0, AON.AON_CSS.aonPanelGridOdd());
+		tab.setWidget(2, 4, new Label(AON.MSG.document()));
+		tab.getCellFormatter().setStyleName(2,4, AON.CSS.aonSearchPanelLabel());
 
-		tab.setWidget(3, 1, document);
-		tab.getCellFormatter().setStyleName(3,1, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(2, 5, document);
 
-		tab.setWidget(3, 2, new Label("Orden"));
-		tab.getCellFormatter().setStyleName(3,2, AON.AON_CSS.aonPanelGridOdd());
+
+		tab.setWidget(3, 0, new Label("Creado entre el "));
+		tab.getCellFormatter().setStyleName(3,0, AON.CSS.aonSearchPanelLabel());
 		
-		tab.setWidget(3, 3, order);
-		tab.getCellFormatter().setStyleName(3,3, AON.AON_CSS.aonPanelGridEven());
-		tab.getFlexCellFormatter().setColSpan(3, 3, 2);
+		FlowPanel creationDatePanel = new FlowPanel();
+		creationDatePanel.setStyleName(AON.CSS.aonNowrap());
+		creationDatePanel.add(fromCreationDate);
+		InlineLabel to1 = new InlineLabel("y el");
+		to1.setStyleName(AON.CSS.aonItalic());
+		to1.addStyleName(AON.CSS.aonMarginRight());
+		to1.addStyleName(AON.CSS.aonMarginLeft());
+		creationDatePanel.add(to1);
+		creationDatePanel.add(toCreationDate);
+		tab.setWidget(3, 1, creationDatePanel);
+
+		tab.setWidget(3, 2,  new Label("por"));
+		tab.getCellFormatter().setStyleName(3,2, AON.CSS.aonSearchPanelLabel());
+		
+		tab.setWidget(3, 3, creationUser);
+
+		tab.setWidget(4, 0, new Label("Modificado entre"));
+		tab.getCellFormatter().setStyleName(4,0, AON.CSS.aonSearchPanelLabel());
+
+		FlowPanel modificationDatePanel = new FlowPanel();
+		modificationDatePanel.setStyleName(AON.CSS.aonNowrap());
+		modificationDatePanel.add(fromModificationDate);
+		InlineLabel to2 = new InlineLabel("y el");
+		to2.setStyleName(AON.CSS.aonItalic());
+		to2.addStyleName(AON.CSS.aonMarginRight());
+		to2.addStyleName(AON.CSS.aonMarginLeft());
+		modificationDatePanel.add(to2);
+		modificationDatePanel.add(toModificationDate);
+		
+		tab.setWidget(4, 1, modificationDatePanel);
+
+		tab.setWidget(4, 2, new Label("por"));
+		tab.getCellFormatter().setStyleName(4,2, AON.CSS.aonSearchPanelLabel());
+		
+		tab.setWidget(4, 3, modificationUser);
+		
+		tab.setWidget(5, 2, new Label("Orden"));
+		tab.getCellFormatter().setStyleName(5,2, AON.CSS.aonSearchPanelLabel());
+		
+		tab.setWidget(5, 3, order);
+		tab.getFlexCellFormatter().setColSpan(5, 3, 2);
 		
 		FlowPanel buttonsPanel = new FlowPanel();
-		buttonsPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
 		buttonsPanel.add( cleanButton );
 		buttonsPanel.add( refreshButton );
-		tab.setWidget(3, 4, buttonsPanel);
-		tab.getCellFormatter().setStyleName(3,4, AON.AON_CSS.aonPanelGridEven());
+		tab.setWidget(5, 4, buttonsPanel);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
+		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
 		northPanel.setWidget(scrollPanel);
 	}
@@ -483,32 +569,9 @@ class EntriesRemover extends OptionBase {
 	}
 
 	protected Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(getOptionDescription()));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
+		AonToolbar toolbar = new AonToolbar(getOptionDescription());
 		
-		final Button refresh = new Button();
-		refresh.setText(AON.MSG.refresh());
-		refresh.setTitle(AON.MSG.refresh());
-		refresh.setStyleName(AON.AON_CSS.aonFindingToolbarItem());
-		refresh.addStyleName(AON.AON_CSS.aonIconRedo());
+		AonToolbarButton refresh  = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
 		refresh.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -516,9 +579,8 @@ class EntriesRemover extends OptionBase {
 				run();
 			}
 		});
-		buttonContainer.add(refresh);
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
+		toolbar.add(refresh);
+		return toolbar;
 	}
 	
 
@@ -552,16 +614,11 @@ class EntriesRemover extends OptionBase {
 	@Override
 	protected Widget paintResults(AccUtilitiesResult result) {
 		FlowPanel log = new FlowPanel( PreElement.TAG );
-		log.setStyleName(AON.AON_CSS.aonFixedFont());
-		log.addStyleName(AON.AON_CSS.aonMarginBottom());
-		log.addStyleName(AON.AON_CSS.aonFontSmall());
-		log.addStyleName(AON.AON_CSS.aonReport());
+		log.setStyleName(AON.CSS.aonFontSmaller());
+		log.addStyleName(AON.CSS.aonMarginBottom());
 		if (result != null && !result.isEmpty()) {
 			StringBuffer buf = new StringBuffer();
-			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE,26));
-			buf.append(AonStringUtils.SPACE);
-			buf.append(AonStringUtils.SPACE);
-			buf.append(AonStringUtils.SPACE);
+			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE,15));
 			buf.append(AonStringUtils.rightPad("Diario",10));
 			buf.append(AonStringUtils.SPACE);
 			buf.append(AonStringUtils.rightPad("Fecha",10));
@@ -570,14 +627,13 @@ class EntriesRemover extends OptionBase {
 			buf.append(AonStringUtils.SPACE);
 			buf.append(AonStringUtils.rightPad("Tipo apunte",20));
 			buf.append(AonStringUtils.SPACE);
-			buf.append(AonStringUtils.rightPad("Fecha creac.",19));
+			buf.append(AonStringUtils.rightPad("Fecha creaci\u00F3n",19));
 			buf.append(AonStringUtils.SPACE);
-			buf.append(AonStringUtils.rightPad("Usuario",15));
+			buf.append(AonStringUtils.rightPad("Usuario creac.",15));
 			buf.append(AonStringUtils.SPACE);
 			buf.append(AonStringUtils.rightPad("Comentarios",38));
 			InlineLabel headerLabel = new InlineLabel(buf.toString());
-			headerLabel.setStyleName(AON.AON_CSS.aonFixedFont());
-			headerLabel.addStyleName(AON.AON_CSS.aonTextUnderline());
+			headerLabel.setStyleName(AON.CSS.aonTextUnderline());
  			log.add(headerLabel);
 			for (IAccUtilitiesItem item : result.getItems()) {
 				item.getType().visit( new RemoverVisitor(log, (AccUtilitiesRemoveEntryItem) item) );
@@ -647,12 +703,8 @@ class EntriesRemover extends OptionBase {
 		
 		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
-			InlineLabel clickLabel = new InlineLabel("Ver/Editar");
-			clickLabel.setTitle("Click para Ver/Editar");
-			clickLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			clickLabel.addStyleName(AON.AON_CSS.aonIconLoupe());
-			clickLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			clickLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			AonTableButton clickLabel = new AonTableButton("Ver/Editar", AON.CSS.aonIconSearch());
+			clickLabel.addStyleName(AON.CSS.aonMarginLeft());
 			itemPanel.add(clickLabel);
 			clickLabel.addClickHandler( new ClickHandler() {
 				@Override
@@ -661,12 +713,8 @@ class EntriesRemover extends OptionBase {
 				}
 			});
 			
-			InlineLabel removeLabel = new InlineLabel(AON.MSG.deleteAction());
-			removeLabel.setTitle("Borrar asiento");
-			removeLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			removeLabel.addStyleName(AON.AON_CSS.aonIconDelete());
-			removeLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			removeLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
+			AonTableButton removeLabel = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+			removeLabel.addStyleName(AON.CSS.aonMarginLeft());
 			itemPanel.add(removeLabel);
 			removeLabel.addClickHandler( new ClickHandler() {
 				@Override
@@ -699,10 +747,7 @@ class EntriesRemover extends OptionBase {
 				}
 			});
 			
-			InlineLabel msgLabel = new InlineLabel(item.getMessage());
-			msgLabel.setStyleName(AON.AON_CSS.aonFixedFont());
-			itemPanel.add(msgLabel);
-
+			itemPanel.add(new InlineLabel(item.getMessage()));
 			logPanel.add(itemPanel);
 		}
 	}
@@ -731,6 +776,13 @@ class EntriesRemover extends OptionBase {
 			.setDocument(document.getValue())
 			.setComments(comments.getValue())
 			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
-			.setOrder(order.getSelectedIndex());
+			.setOrder(order.getSelectedIndex())
+			.setFromCreationDate(fromCreationDate.getValue())
+			.setToCreationDate(toCreationDate.getValue())
+			.setCreationUser(creationUser.getValue())
+			.setFromModificationDate(fromModificationDate.getValue())
+			.setToModificationDate(toModificationDate.getValue())
+			.setModificationUser(modificationUser.getValue())
+			;
 	}
 }

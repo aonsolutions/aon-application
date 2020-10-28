@@ -1204,7 +1204,10 @@ public interface Properties {
 		Property<Integer> getActivityProperty();
 		Property<Byte> getConfidentialProperty();
 		Property<String> getCommentsProperty();
-
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
 	}
 
 	public interface AccountEntryDetailProperties extends  AccountEntryProperties {

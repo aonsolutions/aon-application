@@ -31,6 +31,13 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	private String document;
 	private Integer balancingAccount;
 	
+	private Date fromCreationDate;
+	private Date toCreationDate;
+	private String creationUser;
+	private Date fromModificationDate;
+	private Date toModificationDate;
+	private String modificationUser;
+	
 	private String comments;
 	private int order;
 	
@@ -176,13 +183,54 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 		this.securityLevel = securityLevel;
 		return this;
 	}
-//	public boolean isConfidential() {
-//		return confidential;
-//	}
-//	public AccountEntryParams setConfidential(boolean confidential) {
-//		this.confidential = confidential;
-//		return this;
-//	}
+
+	public Date getFromCreationDate() {
+		return fromCreationDate;
+	}
+	public AccountEntryParams setFromCreationDate(Date fromCreationDate) {
+		this.fromCreationDate = fromCreationDate;
+		return this;
+	}
+
+	public Date getToCreationDate() {
+		return toCreationDate;
+	}
+	public AccountEntryParams setToCreationDate(Date toCreationDate) {
+		this.toCreationDate = toCreationDate;
+		return this;
+	}
+	
+	public String getCreationUser() {
+		return creationUser;
+	}
+	public AccountEntryParams setCreationUser(String creationUser) {
+		this.creationUser = creationUser;
+		return this;
+	}
+	
+	public Date getFromModificationDate() {
+		return fromModificationDate;
+	}
+	public AccountEntryParams setFromModificationDate(Date fromModificationDate) {
+		this.fromModificationDate = fromModificationDate;
+		return this;
+	}
+	
+	public Date getToModificationDate() {
+		return toModificationDate;
+	}
+	public AccountEntryParams setToModificationDate(Date toModificationDate) {
+		this.toModificationDate = toModificationDate;
+		return this;
+	}
+	
+	public String getModificationUser() {
+		return modificationUser;
+	}
+	public AccountEntryParams setModificationUser(String modificationUser) {
+		this.modificationUser = modificationUser;
+		return this;
+	}
 	
 	public int getOrder() {
 		return order;
@@ -217,8 +265,8 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 		return (account != null 
 			|| (debit != null  && debit != 0.0)
 			|| (credit != null && credit != 0.0)
-			|| AonStringUtils.isNotEmpty( concept ) 
-			|| AonStringUtils.isNotEmpty( document  ) );
+			|| AonStringUtils.isNotEmpty( concept) 
+			|| AonStringUtils.isNotEmpty( document) );
 	}
 	
 	public String getTitle() {
