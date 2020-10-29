@@ -1,10 +1,8 @@
 package solutions.aon.seg.social;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
