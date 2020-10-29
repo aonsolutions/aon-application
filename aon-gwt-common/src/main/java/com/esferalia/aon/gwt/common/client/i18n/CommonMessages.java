@@ -347,6 +347,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Borrar")
 	String deleteAction();
 	
+	@DefaultMessage("Borrar seleccionados")
+	String deleteSelected();
+
 	@DefaultMessage("Volver")
 	String backAction();
 
@@ -355,6 +358,13 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Seleccionar")
 	String selectAction();
+	
+	@DefaultMessage("Seleccionar todos")
+	String selectAll();
+	
+	@DefaultMessage("Deseleccionar todos")
+	String selectNone();
+
 	
 	@DefaultMessage("Auditor\u00eda")
 	String audit();
@@ -3846,6 +3856,6 @@ public interface CommonMessages extends Messages {
     
    	@DefaultMessage("Entidades menores dependientes de di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica integradas en la declaraci\u00F3n, previamente autorizadas")
    	String minorEntities();
-	
+
 }
 

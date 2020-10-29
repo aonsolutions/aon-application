@@ -203,7 +203,7 @@ public class AccountingUtilities extends MainEntryPoint{
 			  @Override
 			  public void onSelection(SelectionEvent<IOption> event) {
 			    content.setWidget( entriesRemover );
-			    entriesRemover.run();
+			    // entriesRemover.run();
 			  }
 			});
 
