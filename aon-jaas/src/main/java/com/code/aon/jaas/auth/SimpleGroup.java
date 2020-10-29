@@ -22,7 +22,7 @@
 package com.code.aon.jaas.auth;
 
 import java.security.Principal;
-import java.security.acl.Group;
+import com.code.aon.jaas.security.acl.Group;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;

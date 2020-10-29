@@ -22,7 +22,7 @@
 package com.code.aon.jaas.auth.spi;
 
 import java.security.Principal;
-import java.security.acl.Group;
+import com.code.aon.jaas.security.acl.Group;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
@@ -192,7 +192,7 @@ public abstract class AbstractServerLoginModule implements LoginModule
     to the subject getPrincipals() Set.
     
     @see javax.security.auth.Subject;
-    @see java.security.acl.Group;
+    @see com.code.aon.jaas.security.acl.Group;
     @return true always.
     */
    public boolean commit() throws LoginException

@@ -340,7 +340,7 @@
 		<hibernate names="id,address,chargeDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,domain,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
 	</bean>
 
-	<!-- ** AON PMS  **************************************************** -->
+	<!-- ** AON PMS  **************************************************** 
 	<bean class="com.esferalia.aon.pms.Allotment" sqlName="allotment">
 		<alias names="id,domain,hotel_id,hotel_scope_id,rateCode,agency,agency_id,agency_registry_name,agency_scope_id,agency_status,agencyGroup,agencyGroup_id,agencyGroup_description,agencyGroup_customer_status,agencyGroup_customer_scope_id,startDate,endDate,quantity,remarks,active,creationUser,creationDate,modificationUser,modificationDate"/>
 		<hibernate names="id,domain,hotel.id,hotel.scope.id,rateCode,agency,agency&lt;id,agency&lt;registry.name,agency&lt;scope.id,agency&lt;status,agencyGroup,agencyGroup&lt;id,agencyGroup&lt;description,agencyGroup&lt;customer.status,agencyGroup&lt;customer.scope.id,startDate,endDate,quantity,remarks,active,creationUser,creationDate,modificationUser,modificationDate"/>
@@ -409,6 +409,7 @@
 		<alias names="id,domain,stopSales_id,stopSales_hotel_id,stopSales_startDate,stopSales_endDate,tariff_id,tariff_code"/>
 		<hibernate names="id,domain,stopSales.id,stopSales.hotel.id,stopSales.startDate,stopSales.endDate,tariff.id,tariff.code"/>
 	</bean>
+	-->
 	
 	<!-- ** AON PRODUCT  **************************************************** -->
 	<bean class="com.code.aon.product.CatalogueCategory" sqlName="catalogue_category">
