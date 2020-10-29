@@ -38,17 +38,17 @@
                                     <thead>
                                         <tr>
                                             <th class="align-middle"></th>
-                                            <th class="align-middle">Tags</th>
                                             <th class="align-middle">Fecha</th>
                                             <th class="align-middle">Nombre</th>
-                                            <th class="align-middle">Tipo</th>
+                                            <th class="align-middle">Categoría</th>
+                                            <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
                                             <th class="align-middle d-none" id="model_column">Modelo</th>
                                             <th class="align-middle d-none" id="year_column">Año</th>
                                             <th class="align-middle d-none" id="period_column">Período</th>
-                                            <th class="text-center align-middle">Leído</th>
-                                            <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
+                                            <th class="align-middle">Tipo</th>
                                             <th class="align-middle">Subido por</th>
-                                            <th class="align-middle"></th>
+                                            <th class="align-middle">Etiquetas</th>
+                                            <th class="text-center align-middle">Leído</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -64,58 +64,28 @@
                 <!-- end contenido centro -->
 
         <!-- Modales -->
-        <div class="modal fade" id="edit_doc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header font-weight-bold">
-                        Editar documento
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <input id="edit_doc_id" type="hidden" value="">
-                                <input id="edit_doc_type" type="hidden" value="">
-                                <div class="form-group">
-                                    <label for="file_name_doc">Nombre</label>
-                                    <input type="text" class="form-control" id="file_name_doc">
-                                </div>
-                                <div class="form-group">
-                                    <label for="tags_doc">Tags</label>
-                                    <select multiple class="form-control" id="tags_doc"></select>
-                                </div>
-                                <label class="d-none error-empty-file-name-doc text-danger font-weight-bold">El nombre no puede estar vacío</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button id="confirm_edit_doc" type="button" class="btn btn-primary">Editar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="modal fade" id="new_note_doc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header font-weight-bold">
-                        Añadir nota al documento
+                    <div class="modal-header font-weight-bold" id="title_new_note_doc">
+                        Añadir nota a los documentos de tipo "Enviado" seleccionados
                     </div>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-12">
-                                <input id="note_doc_id" type="hidden" value="">
-                                <div class="form-group">
-                                    <label for="note_doc">Nota</label>
-                                    <textarea class="form-control" id="note_doc" rows="3"></textarea>
+                                <div class="atp_caja_form">
+                                    <label class="d-block atp_inputs">
+                                        <textarea id="note_doc" rows="3" class="" placeholder=" "></textarea>
+                                        <span>Escribe aquí tu nota</span>
+                                    </label>
+                                    <label class="d-none error-empty-note-doc text-danger font-weight-bold">La nota no puede estar vacía</label>
                                 </div>
-                                <label class="d-none error-empty-note-doc text-danger font-weight-bold">La nota no puede estar vacía</label>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button id="confirm_new_note_doc" type="button" class="btn btn-primary">Crear</button>
+                        <button id="confirm_new_note_doc" type="button" class="btn btn-primary">Añadir</button>
                     </div>
                 </div>
             </div>
@@ -125,321 +95,48 @@
         <script src="../js/app.js"></script>
         <script type="module">
             import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
+            import { createTable, getList } from './table.js';
+            import {
+                AVAILABLE_OPTIONS,
+                MULTIPLE_DOWNLOAD_OPTION,
+                ADD_NOTE_OPTION,
+                MULTIPLE_DELETE_OPTION,
+                getOptionButtons
+            } from './toolbar_options.js';
 
-            const CARPETA_FISCAL = 8;
             const MAX_FILE_SIZE = 5;
-            const ITEMS_PER_PAGE = 10;
-            const TYPES = {
-                'sent': 'Enviado',
-                'received': 'Recibido'
-            };
-
-            const aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
-
-            // Obtenemos las carpetas del cliente
-            window.folders = $(aonDocumental).data('folders');
-            // Obtenemos los tags del despacho del cliente
-            window.tags = $(aonDocumental).data('tags');
 
             $(document).ready(async function() {
+                window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+                window.aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+
+                // Obtenemos las carpetas del cliente
+                window.folders = $(window.aonDocumental).data('folders');
                 // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
                 window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
+                window.selectedFolder = (window.selectedFolder === 'pendientes') ? CARPETA_A_CONTABILIZAR : window.selectedFolder;
+
                 // Almacenamos el número de la página actual en una variable global
                 window.page = 0;
-
-                // Añadimos los estilos de carpeta actual a la carpeta seleccionada
-                $('a[data-folder="' + window.selectedFolder + '"]').addClass('active').attr('aria-pressed', 'true');
 
                 try {
                     const list = await getList();
 
                     createTable(list);
                 } catch (error) {
-                    console.error(error.message);
+                    const list = {
+                        "list": [],
+                        "total_data": 0, // cantidad total de elementos
+                        "total_page": 1, // total de paginas
+                        "page": 1, // pagina en la que estamos
+                        "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
+                    }
+
+                    createTable(list);
+
+                    console.error(error);
                 }
             });
-
-            async function getList(page_this = 1) {
-                // Actualizamos la variable global que almacena el número de página actual
-                window.page = page_this;
-
-                if (typeof window.folders !== 'undefined') {
-                    const subfolders = {};
-
-                    // Recorremos las carpetas para almacenar en una variable todas las subcarpetas del cliente
-                    for (let i = 0; i < window.folders.length; i++) {
-                        const folder = window.folders[i];
-
-                        if (folder.subcarpetas.length) {
-                            for (let j = 0; j < folder.subcarpetas.length; j++) {
-                                const subfolder = folder.subcarpetas[j];
-
-                                subfolders[subfolder.subcarpetaID] = subfolder.subcarpeta;
-                            }
-                        }
-                    }
-
-                    try {
-                        // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
-                        const data = await bidoq({
-                            "method": "list_docs",
-                            "carpeta": window.selectedFolder,
-                            "pagina": page_this - 1
-                        });
-
-                        const jsonData = JSON.parse(data).datos;
-                        const documents = jsonData.documentos;
-
-                        return new Promise((resolve, reject) => {
-                            if (typeof documents !== 'undefined') {
-                                const page_this_element = page_this == 1 ? page_this : ((page_this - 1) * ITEMS_PER_PAGE) + 1;
-                                const page_total = page_this_element + documents.length;
-
-                                const list = documents.map((document) => ({
-                                        "id": document.id,
-                                        "tags": document.tags,
-                                        "date": document.date,
-                                        "file_name": document.name,
-                                        "type": (document.type == 1) ? 'received' : 'sent',
-                                        "url": document.image,
-                                        "model": document.model,
-                                        "year": document.year,
-                                        "period": document.period,
-                                        "read": document.read,
-                                        "subfolder": (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
-                                        "uploaded_by": document.uploaded_by
-                                }));
-
-                                const paginationList = {
-                                    "list": list,
-                                    "total_data": jsonData.total_resultados, // cantidad total de elementos
-                                    "total_page": jsonData.total_paginas + 1, // total de paginas
-                                    "page": page_this, // pagina en la que estamos
-                                    "shown_page": page_this_element + ' - ' + (page_total - 1), // cantidad mostrada por paginas 1 - 10
-                                }
-
-                                resolve(paginationList);
-                            } else {
-                                reject('Ocurrió un error al intentar obtener los documentos');
-                            }
-                        });
-                    } catch (error) {
-                        console.error('Ocurrió un error: ' + error.message);
-                    }
-                } else {
-                    console.error('Ocurrió un error al intentar obtener las carpetas');
-                }
-            }
-
-            //
-            // Creamos la tabla con los datos a listar
-            //
-            function createTable(data){
-                // Simulamos que solo tenga datos la carpeta "A contabilizar"
-                const list = data.list;
-
-                // Recorremos los datos a mostrar
-                let tbody = '';
-
-                // Número de columnas base para la tabla, dependiendo de la carpeta seleccionada, etc. puede tener más o menos columnas
-                let numberOfColumns = 8;
-
-                if (list.length) {
-                    const selectedFolderObject = window.folders.find((folder) => {
-                        return parseInt(folder.carpetaID) === parseInt(window.selectedFolder);
-                    });
-                    const hasSubfolders = (typeof selectedFolder !== 'undefined' && selectedFolderObject.subcarpetas.length);
-
-                    if (hasSubfolders) {
-                        $('#subfolder_column').removeClass('d-none');
-
-                        numberOfColumns += 1;
-                    }
-
-                    if (parseInt(window.selectedFolder) === CARPETA_FISCAL) {
-                        $('#model_column, #year_column, #period_column').removeClass('d-none');
-
-                        numberOfColumns += 3;
-                    }
-
-                    $.each(list, function(i, item) {
-                        tbody+= '<tr data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.map((tag) => tag.id).join(',') + '">';
-
-                            // Columna con las acciones que se pueden realizar sobre un documento
-                            tbody+= `<td>
-                                        <div class="form-check form-check-inline mr-0 d-inline-block align-top">
-                                            <input class="checkbox-descargar-doc form-check-input position-static" type="checkbox" aria-label="Seleccionar documento">
-                                        </div>
-                                    </td>`;
-
-                            // Recorremos los <td>
-                            $.each(item, function(key, val) {
-                                switch (key) {
-                                    case 'id': // No mostramos el ID en la tabla
-                                        break;
-                                    case 'url': // No mostramos la URL en la tabla
-                                        break;
-                                    case 'tags':
-                                        tbody+=
-                                        '<td>' +
-                                            '<span>';
-                                                if ($.isArray(val) && val.length) {
-                                                    const tags = val.map((tag) => `#${tag.name}`).join('<br>');
-
-                                                    tbody += tags;
-                                                }
-                                            tbody += '</span>' +
-                                        '</td>';
-                                        break;
-                                    case 'date':
-                                        // Formateamos la fecha
-                                        const date = new Date(val * 1000);
-                                        const year = date.getFullYear();
-                                        const month = "0" + (date.getMonth() + 1);
-                                        const day = "0" + date.getDate();
-                                        const formattedDate = day.substr(-2) + '-' + month.substr(-2) + '-' + year;
-
-                                        tbody+= '<td><span>'+formattedDate+'</span></td>';
-                                        break;
-                                    case 'type':
-                                        const type = TYPES[item.type];
-
-                                        tbody+= '<td><span>'+type+'</span></td>';
-                                        break;
-                                    case 'model':
-                                    case 'year':
-                                    case 'period':
-                                        if (parseInt(window.selectedFolder) === CARPETA_FISCAL) {
-                                            let value = '';
-
-                                            if (val !== null) {
-                                                value = (key === 'period') ? `${val}T` : val;
-                                            }
-
-                                            tbody+= '<td><span>'+value+'</span></td>';
-                                        }
-                                        break;
-                                    case 'read':
-                                        const read = (item.type === 'received' && parseInt(val) !== 0) ? '<i class="material-icons">check</i>' : '';
-
-                                        tbody+= '<td class="text-center"><span>'+read+'</span></td>';
-                                        break;
-                                    case 'subfolder':
-                                        if (hasSubfolders) {
-                                            const subfolder = (val !== null) ? val : '';
-
-                                            tbody+= '<td><span>'+subfolder+'</span></td>';
-                                        }
-                                        break;
-                                    default:
-                                        tbody+= '<td><span>'+val+'</span></td>';
-                                        break;
-                                }
-                            });
-
-                            // Columna con las acciones que se pueden realizar sobre un documento
-                            tbody+= '' +
-                                '<td>' +
-                                    '<a href="show.html?document=' + item.id + '" title="Ver documento" class=""><i class="material-icons image pointer text-primary"></i></a>' +
-                                    '<a href="' + item.url + '"><i title="Descargar documento" class="material-icons file_download pointer text-primary"></i></a>' +
-                                    '<i class="edit-doc material-icons edit pointer text-primary" title="Editar documento"></i>';
-
-                                    // Si el usuario ha enviado el documento, permitimos acciones adicionales
-                                    if (item.type === 'sent') {
-                                        tbody+= '<i class="new-note-doc material-icons note_add pointer text-primary" title="Crear nota"></i>';
-
-                                        // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
-                                        if (parseInt(window.selectedFolder) === CARPETA_A_CONTABILIZAR) {
-                                            tbody += '<i class="delete-doc material-icons delete_forever pointer text-danger" title="Eliminar documento"></i>';
-                                        }
-                                    }
-                            tbody+= '</td>';
-
-                        // Cerramos el <tr>
-                        tbody+= '</tr>';
-                    });
-                } else {
-                    tbody+= '' +
-                        '<tr>'+
-                            '<td colspan="' + numberOfColumns + '">'+
-                                '<div class="row">'+
-                                    '<div class="col-12 text-center">'+
-                                        'No existen datos para mostrar'
-                                    '</div>'+
-                                '</div>'+
-                            '</td>'
-                        '</tr>';
-                }
-
-                // Agregamos el cuerpo de la tabla
-                $('.table tbody').html(tbody);
-
-                // Cogemos el paginado que tendía la tabla
-                const pagination = createPaginate(data.page, data.total_page);
-
-                // Agregamos el paginado en el footer de la tabla
-                const tfoot =
-                '<tr>'+
-                    '<td colspan="' + numberOfColumns + '">'+
-                        '<div class="row">'+
-                            '<div class="col-md-6">'+
-                                'Mostrando del '+data.shown_page+' de un total de '+data.total_data+' elementos'+
-                            '</div>'+
-                            '<div class="col-md-6">'+
-                                pagination+
-                            '</div>'+
-                        '</div>'+
-                    '</td>'
-                '</tr>';
-
-                // Agregamos el pie de la tabla
-                $('.table tfoot').html(tfoot);
-            }
-
-            //
-            // Crear el paginado
-            //
-            function createPaginate(page, page_total){
-                let paginate = '<ul class="pagination display-block float-right">';
-
-                // Si tenemos paginas
-                if (page > 1){
-                    paginate+=
-                        '<li class="pointer">'+
-                            '<a class="go_page" data-page="1">'+
-                                '<i class="material-icons" title="Principio">fast_rewind</i>'+
-                            '</a>'+
-                        '</li>'+
-
-                        '<li class="pointer">'+
-                            '<a class="go_page" data-page="'+(page-1)+'">'+
-                                '<i class="material-icons" title="Volver">arrow_left</i>'+
-                            '</a>'+
-                        '</li>';
-                }
-
-                if(page_total > 0){
-                    paginate+= '<li class="ml-2 mr-2">'+page+'/'+page_total+'</li>';
-                }
-
-                if (page < page_total) {
-                    paginate+=
-                        '<li class="pointer">'+
-                            '<a class="go_page" data-page="'+(page+1)+'">'+
-                                '<i class="material-icons .display-1" title="Siguiente">arrow_right</i>'+
-                            '</a>'+
-                        '</li>'+
-
-                        '<li class="pointer">'+
-                            '<a class="go_page" data-page="'+page_total+'">'+
-                                '<i class="material-icons" title="Final">fast_forward</i>'+
-                            '</a>'+
-                        '</li>';
-                }
-                paginate+= '</ul>';
-
-                return paginate;
-            }
 
             //
             // Eventos
@@ -453,236 +150,111 @@
 
                         createTable(list);
                     } catch (error) {
-                        console.error(error.message);
+                        console.error(error);
                     }
                 });
 
-                // Seleccionar uno o más documentos para descargar
-                $(document).on('change', '.checkbox-descargar-doc', function() {
-                    const downloadButton = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbarDescargarButton');
+                // Hacer click en un documento para ir a la vista de detalles de este
+                $(document).on('click', 'td.show_doc', function() {
+                    const id = $(this).closest('tr').data('id');
+                    const type = $(this).closest('tr').data('type');
+
+                    window.aonDocumentalContainer.loadShow(id, type);
+                });
+
+                // Seleccionar documentos
+                $(document).on('change', '.select_doc', function() {
+                    // Recuperamos del DOM los botones correspondientes a las opciones
+                    const optionButtons = getOptionButtons(window.frameElement.ownerDocument);
 
                     // Si hay algún documento seleccionado
-                    if ($('.checkbox-descargar-doc:checked').length) {
-                        // Si no existe el botón de descargar, lo creamos
-                        if (downloadButton === null) {
-                            addDocumentalToolbarButton('Descargar', 'file_download', () => {
-                                alert('Descargar documentos seleccionados');
-                            });
-                        } else {
-                            // Si existe el botón de descargar, lo mostramos
-                            downloadButton.style.display = '';
-                        }
-                    } else if (downloadButton !== null) {
-                        // Si no hay ningún documento seleccionado y existe el botón de descargar, lo ocultamos
-                        downloadButton.style.display = 'none';
-                    }
-                });
+                    if ($('.select_doc:checked').length) {
+                        const allowedOptionsText = [];
 
-                function addDocumentalToolbarButton(name, icon, fn) {
-                    const documentalToolbar = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbar');
-                    const id = `aonDocumentalToolbar${name}Button`;
-                    const button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
-                    const span = window.frameElement.ownerDocument.createElement('span');
+                        // Recorremos los documentos seleccionados
+                        $('.select_doc:checked').each(function() {
+                            const row = $(this).closest('tr');
+                            // Comprobamos cuáles son las opciones permitidas para el documento seleccionado
+                            const rowAllowedOptionsText = row.data('allowed_options').split(',');
 
-                    span.innerHTML= button;
+                            // Almacenamos en un array las opciones que debemos añadir a la barra de herramientas
+                            for (let i = 0; i < rowAllowedOptionsText.length; i++) {
+                                const option = rowAllowedOptionsText[i];
 
-                    const aonMenu = window.frameElement.ownerDocument.getElementById('aonMenu');
-                    const toolSection = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbaraon-toolbar-tool-section');
-
-                    toolSection.style.paddingRight = documentalToolbar.getAttribute('opened') ? '0px' : '40px';
-                    toolSection.appendChild(span);
-
-                    const b = window.frameElement.ownerDocument.getElementById(id);
-
-                    b.addEventListener('click', fn);
-                }
-
-                // Icono de editar documento
-                $(document).on('click', '.edit-doc', function() {
-                    const row = $(this).closest('tr');
-                    const id = row.data('id');
-                    const type = row.data('type');
-                    const file_name = row.data('file_name');
-                    // Tags que tiene el documento
-                    const tags = row.data('tags').toString();
-                    // Convertimos a array el listado de tags que tiene el documento
-                    const tagsArray = (tags.length) ? tags.split(',') : [];
-
-                    // Insertamos en el modal el ID del documento que vamos a editar
-                    $('#edit_doc_id').val(id);
-
-                    // Insertamos en el modal el tipo de documento que vamos a editar ("Enviado" o "Recibido")
-                    $('#edit_doc_type').val(type);
-
-                    // Ocultamos los errores si están visibles
-                    if (!$('.error-empty-file-name-doc').hasClass('d-none')) {
-                        $('.error-empty-file-name-doc').addClass('d-none');
-                    }
-
-                    // Insertamos el nombre del documento en el campo correspondiente del modal
-                    $('#file_name_doc').val(file_name);
-
-                    // Desmarcamos todos los option
-                    $('#tags_doc option').prop('selected', false);
-
-                    // La primera vez que abrimos el modal renderizamos los option del select con los tags
-                    if (!$('#tags_doc option').length) {
-                        window.tags.map((tag) => {
-                            $('#tags_doc').append(`
-                                <option value="${tag.tagsID}">${tag.tag}</option>
-                            `);
-                        });
-                    }
-
-                    // Marcamos en el select los tags que tiene el documento
-                    $('#tags_doc option').each(function() {
-                        // Comprobamos si el tag que estamos recorriendo se encuentra entre los tags del documento
-                        if ($.inArray($(this).val(), tagsArray) !== -1) {
-                            $(this).prop('selected', true);
-                        }
-                    });
-
-                    // Mostramos el modal
-                    $("#edit_doc").modal();
-                });
-
-                // Al pulsar el boton de editar documento desde el modal
-                $(document).on('click', '#confirm_edit_doc', async function() {
-                    // Recuperamos el ID del documento que vamos a editar
-                    const id = $('#edit_doc_id').val();
-                    // Recuperamos el tipo del documento que vamos a editar
-                    const type = ($('#edit_doc_type').val() === 'sent') ? 2 : 1;
-                    const fileName = $('#file_name_doc').val();
-                    const tags = $('#tags_doc').val();
-
-                    if (fileName.length) {
-                        const data = await bidoq({
-                            "method": "editar_documento",
-                            id,
-                            "tipo": type,
-                            "nombre": fileName,
-                            tags
-                        });
-
-                        let response = JSON.parse(data);
-
-                        if (typeof response !== 'undefined') {
-                            if (response.code === 0) {
-                                alert('Documento editado con éxito');
-
-                                try {
-                                    const list = await getList(window.page);
-
-                                    createTable(list);
-                                } catch (error) {
-                                    console.error(error.message);
+                                if ($.inArray(option, allowedOptionsText) === -1) {
+                                    allowedOptionsText.push(option);
                                 }
                             }
-                        }
 
-                        // Ocultamos los errores si están visibles
-                        if (!$('.error-empty-file-name-doc').hasClass('d-none')) {
-                            $('.error-empty-file-name-doc').addClass('d-none');
-                        }
+                            // Si ya estan todas las opciones disponibles en el array de opciones que vamos a añadir a la barra de herramientas, salimos del bucle
+                            if (allowedOptionsText.length === AVAILABLE_OPTIONS.length) {
+                                return false;
+                            }
+                        });
 
-                        // Ocultamos el modal
-                        $("#edit_doc").modal('hide')
+                        // Obtenemos las opciones permitidas a partir del texto de cada acción
+                        const allowedOptions = allowedOptionsText.map((optionName) =>
+                            AVAILABLE_OPTIONS.find((option) =>
+                                optionName === option.name
+                            )
+                        );
+
+                        for (let i = 0; i < optionButtons.length; i++) {
+                            const optionButton = optionButtons[i];
+                            // Buscamos la acción correspondiente al botón
+                            const option = allowedOptions.find((option) => optionButton.name === option.name);
+
+                            // Comprobamos si la acción que corresponde a este botón se encuentra entre las opciones permitidas
+                            if (typeof option !== 'undefined') {
+                                // Si el botón aún no existe en el DOM, lo creamos
+                                if (optionButton.element === null) {
+                                    window.aonDocumental.addToolbarOption(option.name, option.icon, option.fn, option.title);
+                                }
+                            } else if (optionButton.element !== null) {
+                                // Si la acción que corresponde a este botón no se encuentra entre las opciones permitidas, eliminamos dicho botón
+                                window.aonDocumental.removeToolbarOptions([optionButton.name]);
+                            }
+                        }
                     } else {
-                        $('.error-empty-file-name-doc').removeClass('d-none');
+                        // Si no hay documentos seleccionados, eliminamos los botones correspondientes a las opciones de la barra de herramientas
+                        window.aonDocumental.removeToolbarOptions([MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION]);
                     }
                 });
 
-                // Icono de añadir nota al documento
-                $(document).on('click', '.new-note-doc', function() {
-                    const row = $(this).closest('tr');
-                    const id = row.data('id');
+                // Al pulsar el boton de añadir nota desde el modal
+                $(document).on('click', '#confirm_new_note_doc', async function() {
+                    // Recuperamos el texto que vamos a añadir a los documentos como nota
+                    const text = $('#note_doc').val();
 
-                    // Insertamos en el modal el ID del documento al que vamos a añadir la nota
-                    $('#note_doc_id').val(id);
-
-                    // Ocultamos los errores si están visibles
-                    if (!$('.error-empty-note-doc').hasClass('d-none')) {
-                        $('.error-empty-note-doc').addClass('d-none');
-                    }
-
-                    // Vaciamos el contenido del campo si existe
-                    if ($('#note_doc').length) {
-                        $('#note_doc').val('');
-                    }
-
-                    // Mostramos el modal
-                    $("#new_note_doc").modal();
-                });
-
-                // Al pulsar el boton de crear nota desde el modal
-                $(document).on('click', '#confirm_new_note_doc', function() {
-                    // Recuperamos el ID del documento al que vamos a añadir la nota
-                    const id = $('#note_doc_id').val();
-                    const note = $('#note_doc').val();
-
-                    if (note.length) {
-                        // JSON a enviar
-                        const new_note_doc = {
-                            id: id,
-                            note: note
-                        }
-
+                    if (text.length) {
                         // Ocultamos los errores si están visibles
                         if (!$('.error-empty-note-doc').hasClass('d-none')) {
                             $('.error-empty-note-doc').addClass('d-none');
                         }
 
-                        alert('Nota: ' + note + ' creada con éxito');
+                        const data = await bidoq({
+                            "method": "crear_editar_nota_docs",
+                            "docs": JSON.stringify(window.docsCreateNote),
+                            "texto": text,
+                            "agregar": true
+                        });
+
+                        const response = JSON.parse(data);
+
+                        if (typeof response !== 'undefined') {
+                            if (typeof response.code !== 'undefined' && response.code === 0) {
+                                alert('Nota añadida con éxito en los documentos de tipo "Enviado" seleccionados');
+                            } else if (typeof response['1047'] !== 'undefined') {
+                                alert(`Ocurrió un error al intentar añadir la nota`);
+                            }
+                        } else {
+                            console.error('Ocurrió un error al intentar añadir la nota');
+                        }
 
                         // Ocultamos el modal
-                        $("#new_note_doc").modal('hide')
+                        $("#new_note_doc").modal('hide');
                     } else {
                         $('.error-empty-note-doc').removeClass('d-none');
-                    }
-                });
-
-                // Icono de eliminar documento
-                $(document).on('click', '.delete-doc', async function() {
-                    const row = $(this).closest('tr');
-                    const file_name = row.data('file_name');
-                    const confirmed = confirm("¿Estás seguro de que deseas eliminar el documento: " + file_name + '?');
-
-                    if (confirmed) {
-                        const id = row.data('id');
-                        const type = (row.data('type') === 'sent') ? 2 : 1;
-                        const service = window.selectedFolder;
-
-                        try {
-                            // Hacemos una petición a bidoq para eliminar el documento seleccionado
-                            const data = await bidoq({
-                                "method": "delete",
-                                id,
-                                type,
-                                service
-                            });
-
-                            const response = JSON.parse(data);
-
-                            if (typeof response !== 'undefined') {
-                                if (response.code === 0) {
-                                    alert('Documento eliminado con éxito');
-
-                                    try {
-                                        const list = await getList(window.page);
-
-                                        createTable(list);
-                                    } catch (error) {
-                                        console.error(error.message);
-                                    }
-                                } else {
-                                    alert(`Ocurrió un error al intentar eliminar el documento`);
-                                }
-                            } else {
-                                console.error('Ocurrió un error al intentar eliminar el documento');
-                            }
-                        } catch (error) {
-                            console.error('Ocurrió un error: ' + error.message);
-                        }
                     }
                 });
 
@@ -734,7 +306,7 @@
                                     if (!uploadError && documentResponse.code !== 0) {
                                         uploadError = true;
 
-                                        alert(`Ocurrió un error al intentar subir el documento: ${documentResponse.message.toLowerCase()}`);
+                                        alert('Ocurrió un error al intentar subir el documento');
                                     }
                                 }
 
