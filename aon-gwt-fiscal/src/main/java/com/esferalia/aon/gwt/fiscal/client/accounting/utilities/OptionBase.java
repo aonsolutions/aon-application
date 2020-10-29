@@ -49,7 +49,8 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 	private DockLayoutPanel mainPanel;
 	private SplitLayoutPanel splitLayoutPanel;
 	private MinimizePanel footPanel;
-	private TabLayoutPanel tabLayout; 
+	private TabLayoutPanel tabLayout;
+	private FlexTable infoPanelTab;
 	private SimpleLayoutPanel notificationsContent;
 	private SimpleLayoutPanel resultContent;
 	
@@ -132,58 +133,57 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		closeFootPanel();
 	}
 	protected void showErrorPanel(String msg) {
-		openFootPanelIfNeeded();
-		tabLayout.selectTab(NOTIFICATIONS_TAB);
-		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
-		
+		prepareInfoPanel();
+		addErrorPanel(msg);
+	}
+
+	protected void addErrorPanel(String msg) {
+		int row = infoPanelTab.getRowCount();
 		InlineLabel icon = new InlineLabel("");
 		icon.setStyleName(AON.AON_CSS.aonIconPointRed());
 		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		tab.setWidget(0, 0, icon);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
+		infoPanelTab.setWidget(row, 0, icon);
+		infoPanelTab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
 		
 		InlineLabel label = new InlineLabel(msg);
 		label.addStyleName(AON.AON_CSS.aonColorRed());
 		label.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, label);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
-		notificationsContent.setWidget(panel);
+		infoPanelTab.setWidget(row, 1, label);
+		infoPanelTab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
 	}
-	
-	protected void showInfoPanel(String msg) {
+
+	protected void prepareInfoPanel() {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(NOTIFICATIONS_TAB);
 		ScrollPanel panel = new ScrollPanel();
-		FlexTable tab = new FlexTable();
-		tab.setWidth("95%");
-		tab.setStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getColumnFormatter().setWidth(0, "20px");
-		tab.getColumnFormatter().setWidth(1, "auto");
+		infoPanelTab = new FlexTable();
+		infoPanelTab.setWidth("95%");
+		infoPanelTab.setStyleName(AON.AON_CSS.aonBlockCenter());
+		infoPanelTab.addStyleName(AON.AON_CSS.aonMarginBottom());
+		infoPanelTab.addStyleName(AON.AON_CSS.aonMarginTop());
+		infoPanelTab.getColumnFormatter().setWidth(0, "20px");
+		infoPanelTab.getColumnFormatter().setWidth(1, "auto");
 		
+		panel.add(infoPanelTab);
+		notificationsContent.setWidget(panel);
+	}
+	protected void addInfoPanel(String msg) {
+		int row = infoPanelTab.getRowCount();
 		InlineLabel icon = new InlineLabel("");
 		icon.setStyleName(AON.AON_CSS.aonIconPointLightGreen());
 		icon.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		tab.setWidget(0, 0, icon);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonPanelGridEven());
-		
+		infoPanelTab.setWidget(row, 0, icon);
+		infoPanelTab.getCellFormatter().setStyleName(row, 0, AON.AON_CSS.aonPanelGridEven());
+
 		InlineLabel label = new InlineLabel(msg);
 		label.addStyleName(AON.AON_CSS.aonBold());
-		tab.setWidget(0, 1, label);
-		tab.getCellFormatter().setStyleName(0, 1, AON.AON_CSS.aonPanelGridEven());
-		
-		panel.add(tab);
-		notificationsContent.setWidget(panel);
+		infoPanelTab.setWidget(row, 1, label);
+		infoPanelTab.getCellFormatter().setStyleName(row, 1, AON.AON_CSS.aonPanelGridEven());
+	}
+	
+	protected void showInfoPanel(String msg) {
+		prepareInfoPanel();
+		addInfoPanel( msg );
 	}
 
 	protected void setContent(Widget content) {

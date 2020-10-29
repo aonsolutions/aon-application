@@ -14,6 +14,9 @@ import com.esferalia.aon.gwt.common.client.widget.ConfirmDialog.ConfirmDialogCal
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.IntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -80,6 +83,10 @@ class EntriesRemover extends OptionBase {
 	private SimpleLayoutPanel centerPanelContainer;
 	private ScrollPanel centerPanel;
 	
+	private AonToolbarButton deleteAll;
+	private AonToolbarButton uncheckAll;
+	private AonToolbarButton checkAll;
+	private AccUtilitiesResult result;
 	
 	private FlexTable tab;
 	private AccountPeriodBox period;
@@ -98,8 +105,8 @@ class EntriesRemover extends OptionBase {
 	private TextBox comments;
 	private IntegerBox id;
 	private ListBox order;
-	private AonTableButton cleanButton;
-	private AonTableButton refreshButton;
+	private AonSearchPanelButton cleanButton;
+	private AonSearchPanelButton refreshButton;
 
 	private DateBoxEx fromCreationDate;
 	private DateBoxEx toCreationDate;
@@ -161,7 +168,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -170,7 +177,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				run();
+				run(false);
 			}
 		});
 		toDate = new DateBoxEx();
@@ -178,7 +185,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -191,7 +198,7 @@ class EntriesRemover extends OptionBase {
 		confidential.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -201,7 +208,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onSelection(SelectionEvent<Account> event) {
-				run();
+				run(false);
 			}
 		});
 		debit = new DoubleBox();
@@ -210,7 +217,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				run();
+				run(false);
 			}
 		});
 		credit = new DoubleBox();
@@ -219,7 +226,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				run();
+				run(false);
 			}
 		});
 		entryListBox = new AccountEntryListBox();
@@ -230,7 +237,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -240,7 +247,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				run();
+				run(false);
 			}
 		});
 		concept = new TextBox();
@@ -250,7 +257,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				run();
+				run(false);
 			}
 		});
 		document = new TextBox();
@@ -260,7 +267,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -271,7 +278,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -292,7 +299,7 @@ class EntriesRemover extends OptionBase {
 			activity.addChangeHandler(new ChangeHandler() {
 				@Override
 				public void onChange(ChangeEvent event) {
-					run();
+					run(false);
 				}
 			});
 		}
@@ -303,7 +310,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Integer> event) {
-				run();
+				run(false);
 			}
 		});
 
@@ -312,7 +319,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				run();
+				run(false);
 			}
 		});
 		toCreationDate = new DateBoxEx();
@@ -320,7 +327,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				run();
+				run(false);
 			}
 		});
 		creationUser = new TextBox();
@@ -330,7 +337,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -339,7 +346,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				run();
+				run(false);
 			}
 		});
 		toModificationDate = new DateBoxEx();
@@ -347,7 +354,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				run();
+				run(false);
 			}
 		});
 		modificationUser = new TextBox();
@@ -357,7 +364,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				run();
+				run(false);
 			}
 		});
 
@@ -371,7 +378,7 @@ class EntriesRemover extends OptionBase {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				run();
+				run(false);
 			}
 		});
 		
@@ -431,7 +438,7 @@ class EntriesRemover extends OptionBase {
 		}
 		tab.getCellFormatter().setStyleName(0,6, AON.CSS.aonSearchPanelLabel());
 		
-		cleanButton = new AonTableButton(AON.MSG.clean(), AON.CSS.aonIconDelete());
+		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
 		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
 		cleanButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -451,16 +458,16 @@ class EntriesRemover extends OptionBase {
 					activity.setSelectedIndex(0);
 				}
 				period.setFocus(true);
-				run();
+				run(false);
 			}
 		});
 
-		refreshButton = new AonTableButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
+		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
 		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
 		refreshButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				run();
+				run(false);
 			}
 		});
 
@@ -571,20 +578,103 @@ class EntriesRemover extends OptionBase {
 	protected Widget getToolbarPanel() {
 		AonToolbar toolbar = new AonToolbar(getOptionDescription());
 		
-		AonToolbarButton refresh  = new AonToolbarButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
-		refresh.addClickHandler(new ClickHandler() {
+		AonToolbarButton searchButton  = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
+		searchButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				run();
+				run(false);
 			}
 		});
-		toolbar.add(refresh);
+		toolbar.add(searchButton);
+
+		checkAll  = new AonToolbarButton( AON.MSG.selectAll(), AON.CSS.aonIconChecked() );
+		checkAll .addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				run(true);
+			}
+		});
+		toolbar.add(checkAll );
+		
+		uncheckAll  = new AonToolbarButton( AON.MSG.selectNone(), AON.CSS.aonIconCheck() );
+		uncheckAll.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				run(false);
+			}
+		});
+		toolbar.add(uncheckAll);
+		
+		deleteAll  = new AonToolbarButton( AON.MSG.deleteSelected(), AON.CSS.aonIconDelete() );
+		deleteAll.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				deleteAll(false);
+			}
+		});
+		toolbar.add(deleteAll);
 		return toolbar;
 	}
 	
+	protected void deleteAll(boolean b) {
+		double count = 0;
+		if (this.result != null) {
+			for (IAccUtilitiesItem item : this.result.getItems()) {
+				AccUtilitiesRemoveEntryItem it = (AccUtilitiesRemoveEntryItem) item;
+				count = count + (it.isSelected()?1:0);
+			}
+		}
+		if (count > 0) {
+			AonConfirmDialog cd = new AonConfirmDialog();
+			cd.confirm("Borrado masivo de apuntes manuales"
+					,"Continuar con el borrado de " + count + " apuntes? \n Esta operaci\u00F3n es irreversible."
+					, new AonConfirmDialogCallback() {
+						
+						@Override
+						public void onCancel() {
+						}
+						
+						@Override
+						public void onAccept() {
+							prepareInfoPanel();
+							for (IAccUtilitiesItem item : EntriesRemover.this.result.getItems()) {
+								AccUtilitiesRemoveEntryItem it = (AccUtilitiesRemoveEntryItem) item;
+								if (it.isSelected()) {
+									ACCOUNT_ENTRY_SERVICE.deleteAccountEntry(domainName, it.getDomain(), EntriesRemover.this.user, it.getEntryId(), new AsyncCallback<Void>() {
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											addErrorPanel("[ERROR] " + item.getMessage() + " - " + caught.getMessage());
+										}
+										
+										@Override
+										public void onSuccess(Void result) {
+											addInfoPanel("[BORRADO] " + item.getMessage());
+										}
+									});
+								}
+							}
+						}
+					});
+		} else {
+			AonConfirmDialog cd = new AonConfirmDialog();
+			cd.confirm( "", "No se ha seleccionado ning\u00FAn apunte. Nada que borrar." , new AonConfirmDialogCallback() {
+				@Override public void onAccept() {}
+				@Override public void onCancel() {}
+				
+			});
+		}
+	}
 
 	public void run() {
+		run(false);
+	}
+	
+	public void run(boolean check) {
 		AccountEntryParams params = getWidgetParams();
 		final PopupPanel popup = new PopupPanel(false, true);
 		Label label = new Label(AON.MSG.processing());
@@ -606,19 +696,24 @@ class EntriesRemover extends OptionBase {
 			public void onSuccess(AccUtilitiesResult result) {
 				popup.hide();
 				cleanErrorPanel();
-				centerPanel.setWidget( paintResults(result) );
+				centerPanel.setWidget( paintResults(result, check) );
 			}
 		});
 	}
 
 	@Override
 	protected Widget paintResults(AccUtilitiesResult result) {
+		return paintResults(result, false);
+	}
+	
+	private Widget paintResults(AccUtilitiesResult accUtilitiesResult, boolean check) {
+		this.result = accUtilitiesResult;
 		FlowPanel log = new FlowPanel( PreElement.TAG );
 		log.setStyleName(AON.CSS.aonFontSmaller());
 		log.addStyleName(AON.CSS.aonMarginBottom());
-		if (result != null && !result.isEmpty()) {
+		if (this.result != null && !this.result.isEmpty()) {
 			StringBuffer buf = new StringBuffer();
-			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE,15));
+			buf.append(AonStringUtils.repeat(AonStringUtils.SPACE,20));
 			buf.append(AonStringUtils.rightPad("Diario",10));
 			buf.append(AonStringUtils.SPACE);
 			buf.append(AonStringUtils.rightPad("Fecha",10));
@@ -635,8 +730,10 @@ class EntriesRemover extends OptionBase {
 			InlineLabel headerLabel = new InlineLabel(buf.toString());
 			headerLabel.setStyleName(AON.CSS.aonTextUnderline());
  			log.add(headerLabel);
-			for (IAccUtilitiesItem item : result.getItems()) {
-				item.getType().visit( new RemoverVisitor(log, (AccUtilitiesRemoveEntryItem) item) );
+			for (IAccUtilitiesItem item : this.result.getItems()) {
+				AccUtilitiesRemoveEntryItem it = (AccUtilitiesRemoveEntryItem) item;
+				it.setSelected(check);
+				item.getType().visit( new RemoverVisitor(log, it) );
 			}
 		} else {
 			Label label = new Label(AON.MSG.noData());
@@ -703,20 +800,38 @@ class EntriesRemover extends OptionBase {
 		
 		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
-			AonTableButton clickLabel = new AonTableButton("Ver/Editar", AON.CSS.aonIconSearch());
-			clickLabel.addStyleName(AON.CSS.aonMarginLeft());
-			itemPanel.add(clickLabel);
-			clickLabel.addClickHandler( new ClickHandler() {
+			AonTableButton checkButton = new AonTableButton(AON.MSG.selectAction()
+					, item.isSelected()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck());
+			checkButton.addStyleName(AON.CSS.aonMarginLeft());
+			itemPanel.add(checkButton);
+			checkButton.addClickHandler( new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					item.setSelected(!item.isSelected());
+					if (item.isSelected()) {
+						checkButton.addStyleName(AON.CSS.aonIconChecked());
+						checkButton.removeStyleName(AON.CSS.aonIconCheck());
+					} else {
+						checkButton.addStyleName(AON.CSS.aonIconCheck());			
+						checkButton.removeStyleName(AON.CSS.aonIconChecked());
+					}
+				}
+			});
+
+			AonTableButton showEntryButton = new AonTableButton("Ver/Editar", AON.CSS.aonIconSearch());
+			showEntryButton.addStyleName(AON.CSS.aonMarginLeft());
+			itemPanel.add(showEntryButton);
+			showEntryButton.addClickHandler( new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					showEntry(item.getDomain(),item.getEntryId());
 				}
 			});
 			
-			AonTableButton removeLabel = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
-			removeLabel.addStyleName(AON.CSS.aonMarginLeft());
-			itemPanel.add(removeLabel);
-			removeLabel.addClickHandler( new ClickHandler() {
+			AonTableButton removeButton = new AonTableButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+			removeButton.addStyleName(AON.CSS.aonMarginLeft());
+			itemPanel.add(removeButton);
+			removeButton.addClickHandler( new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					ConfirmDialog cd = new ConfirmDialog();
@@ -738,7 +853,7 @@ class EntriesRemover extends OptionBase {
 
 								@Override
 								public void onSuccess(Void result) {
-									run();
+									run(false);
 								}
 								
 							});

@@ -187,6 +187,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_table_button")
 	String aonTableButton();
 	
+	@ClassName("aon_search_panel_button")
+	String aonSearchPanelButton();
+	
 	@ClassName("aon_tab_icon")
 	String aonTabIcon();
 
@@ -250,6 +253,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_refresh")
 	String aonIconRefresh();
+
+	@ClassName("aon_icon_clear")
+	String aonIconClear();
 
 	@ClassName("aon_icon_back")
 	String aonIconBack();

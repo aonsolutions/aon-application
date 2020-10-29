@@ -26,6 +26,8 @@ input[type="checkbox"]:focus + label {
 .aon_icon_back { background-image: iconBack;}
 @url iconRefresh aonIconRefresh;
 .aon_icon_refresh { background-image: iconRefresh;}
+@url iconClear aonIconClear;
+.aon_icon_clear { background-image: iconClear;}
 @url iconCopy aonIconCopy;
 .aon_icon_copy { background-image: iconCopy;}
 @url iconAudit aonIconAudit;
@@ -272,6 +274,16 @@ input[type="checkbox"]:focus + label {
 	height: 20px;
 	background-size: 100% auto;
 }
+.aon_search_panel_button {
+	width: 20px;
+	height: 20px;
+	background-size: 100% auto;
+	background-color: #DDD !important; 
+}
+.aon_search_panel_button:hover {
+	background-color: white !important; 
+}
+
 /* GRID */
 .aon_grid {
 	border-collapse: collapse;
