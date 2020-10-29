@@ -35,7 +35,7 @@
                         </div>
                         
                         <div class="row">
-                            <div class="col-7 atp_caja_form">
+                            <div class="col-7 atp_caja_form div_ticket">
                                 <form method="post" id="formulario" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-12">
@@ -81,7 +81,7 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-5">
+                            <div class="col-5 div_alma">
                                 <div class="row">
                                     <div class="col-12" id="contentAlma">
                                         <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 mt-2">
+                            <div class="col-12 mt-2 div_faqs d-none">
                                 <div class="row">
                                     <div class="col-12 faqs"></div>
                                 </div>
@@ -145,6 +145,7 @@
             //
             // Agregamos los valores de los select
             //
+            let accesoAlma = false;
                 $(document).ready(function(){
                     // Datos del ticket en JSON
                     let nuevoTicket = {
@@ -170,9 +171,9 @@
                             type : 0, // 0 o 1
                             uid : "1dc7b94a-bc75-4c9d-f458-7c8ad73f5f57",
                             companyType : "Autónomo", // Autónomo o Sociedad
-                            //uidChatbot : "599bb6e0-7318-11ea-bcf6-b310b0b3ad6d",
                             uidChatbot : "4a638e00-1372-11eb-a604-c775ec150b03",
-                            uidEmpresa : "11b575c0-3b73-11ea-9b14-afbcefb5bb52"
+                            uidEmpresa : "11b575c0-3b73-11ea-9b14-afbcefb5bb52",
+                            almaModule : true
                         }
                     };
 
@@ -182,42 +183,52 @@
                         // Agregamos el valor
                         $('#postings').append("<option value='"+posting.id+"'>"+posting.name+"</option>");
                     }
+                    
+                    if(nuevoTicket.user.almaModule){
+                        //
+                        // ALMA
+                        //
+                        // Cogemos los datos del usuario logueado para el chat de alma
+                        accesoAlma = true;
+                        
+                        var almaServer  = "dev.mispapeles.es";
+                        userName        = nuevoTicket.user.name;
+                        chatbot         = nuevoTicket.user.uidChatbot;
+                        empresa         = nuevoTicket.user.uidEmpresa;
+                        companyType     = nuevoTicket.user.companyType;
+                        urlClient       = btoa(window.location.protocol + "//" +window.location.host);
+                        var urlIframe   = "https://dev.almaintelligence.com:8888/suite/?idDespacho="+empresa+"&idChatbot="+chatbot+"&nombreUsuario="+userName+"&tipoEmpresa="+companyType+"&uc="+urlClient;
 
-                    //
-                    // ALMA
-                    //
-                    // Cogemos los datos del usuario logueado para el chat de alma
-                    var almaServer  = "dev.mispapeles.es";
-                    userName        = nuevoTicket.user.name;
-                    chatbot         = nuevoTicket.user.uidChatbot;
-                    empresa         = nuevoTicket.user.uidEmpresa;
-                    companyType     = nuevoTicket.user.companyType;
-                    urlClient       = btoa(window.location.protocol + "//" +window.location.host);
-                    var urlIframe   = "https://dev.almaintelligence.com:8888/suite/?idDespacho="+empresa+"&idChatbot="+chatbot+"&nombreUsuario="+userName+"&tipoEmpresa="+companyType+"&uc="+urlClient;
+                        // Incrustamos todo el chatbot en el contenedor
+                        var s   = document.createElement("script");
+                        s.type  = "text/javascript";
+                        //s.src = "https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.js"; PRODUCCION
+                        s.src   = "https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.js";
+                        s.id    = "helper";
+                        s.dataset["idEmpresa"] = empresa;
+                        s.dataset["idChatbot"] = chatbot;
 
-                    // Incrustamos todo el chatbot en el contenedor
-                    var s   = document.createElement("script");
-                    s.type  = "text/javascript";
-                    //s.src = "https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.js"; PRODUCCION
-                    s.src   = "https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.js";
-                    s.id    = "helper";
-                    s.dataset["idEmpresa"] = empresa;
-                    s.dataset["idChatbot"] = chatbot;
+                        $("#contentAlma").append(s);
 
-                    $("#contentAlma").append(s);
+                        var divCb           = document.createElement("div");
+                        divCb.id            = "contenedorChatbot";
+                        divCb.style.width   = "100%";
+                        divCb.style.height  = "530px";
 
-                    var divCb           = document.createElement("div");
-                    divCb.id            = "contenedorChatbot";
-                    divCb.style.width   = "100%";
-                    divCb.style.height  = "530px";
-
-                    var iframeCb            = document.createElement("iframe");
-                    iframeCb.src            = urlIframe;
-                    iframeCb.id             = "iframeContainerAlma";
-                    iframeCb.style.width    = "100%";
-                    iframeCb.style.height   = "100%";
-                    divCb.appendChild(iframeCb);
-                    $("#contentAlma").append(divCb);
+                        var iframeCb            = document.createElement("iframe");
+                        iframeCb.src            = urlIframe;
+                        iframeCb.id             = "iframeContainerAlma";
+                        iframeCb.style.width    = "100%";
+                        iframeCb.style.height   = "100%";
+                        divCb.appendChild(iframeCb);
+                        $("#contentAlma").append(divCb);
+                    } else {
+                        $('.div_alma').remove();
+                        $('.div_ticket').removeClass('col-7');
+                        $('.div_ticket').addClass('col-12');
+                        $('.div_faqs').removeClass('col-12');
+                        $('.div_faqs').addClass('col-5');
+                    }
                 });
 
             //    
@@ -232,19 +243,31 @@
                     if(asuntoActual != "" && asuntoActual != asuntoChatbot){
                         asuntoChatbot = asuntoActual;
                         
-                        var obj = {
-                            0 : readCookie( "idSesionAlma" ),
-                            1 : location.href,
-                            2 : location.hostname + location.pathname,
-                            3 : readCookie( "urlAlma" ),
-                            "asunto" : asuntoChatbot,
-                            "idDespacho" : empresa,
-                            "idChatbot" : chatbot,
-                            "userName" : userName
-                        };
-                        
-                        var iframeSelect= $('#iframeContainerAlma')[0].contentWindow;
-                        iframeSelect.postMessage(obj, '*');
+                        if(accesoAlma){
+                            var obj = {
+                                0 : readCookie( "idSesionAlma" ),
+                                1 : location.href,
+                                2 : location.hostname + location.pathname,
+                                3 : readCookie( "urlAlma" ),
+                                "asunto" : asuntoChatbot,
+                                "idDespacho" : empresa,
+                                "idChatbot" : chatbot,
+                                "userName" : userName
+                            };
+
+                            var iframeSelect= $('#iframeContainerAlma')[0].contentWindow;
+                            iframeSelect.postMessage(obj, '*');
+                            
+                            // Eliminamos la cookie de reiniciar la cookie de ALMA
+                            var reiniciaCookieAlma = readCookie('reiniciaCookie');
+                            if(reiniciaCookieAlma == 1){
+                                document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                            }
+                            
+                            // Mostramos el botón de resuelto por ALMA
+                            $('#btn-send-alma').removeClass('d-none');
+                        }
+                            
                         
                         // Llamada para traernos las faqs
                         // Recibiremos un json
@@ -263,42 +286,47 @@
                             }
                         };
                         
-                        var htmlFaqs = "<div class='col-12 mt-3'>";
-                                htmlFaqs += "<h3>FAQS</h3>";
-                            htmlFaqs += "</div>";
-                            htmlFaqs += "<div class='accordion' id='accordionFaqs'>";
-                        for (const prop in faqs) {
-                            var faq = faqs[prop];
+                        if(!$.isEmptyObject(faqs)){
+                            $(".div_ticket").removeClass('col-12').addClass('col-7');
                             
-                            htmlFaqs += "<div class='card'>";
-                                htmlFaqs += "<div class='card-header' id='heading"+prop+"'>";
-                                    htmlFaqs += "<h2 class='mb-0'>";
-                                        htmlFaqs += "<button class='btn btn-block text-left button_faq' type='button' data-toggle='collapse' data-target='#collapse"+prop+"' aria-expanded='true' aria-controls='collapse"+prop+"' data-faq='"+prop+"'>";
-                                            htmlFaqs += faq.question;
-                                            htmlFaqs += "<span class='material-icons float-right expand_icon"+prop+"'>expand_more</span>";
-                                        htmlFaqs += "</button>";
-                                    htmlFaqs += "</h2>";
+                            // Rellenamos las faqs
+                            var htmlFaqs = "<div class='col-12 mt-3'>";
+                                    htmlFaqs += "<h3>FAQS</h3>";
                                 htmlFaqs += "</div>";
-                                htmlFaqs += "<div id='collapse"+prop+"' class='collapse' aria-labelledby='heading"+prop+"' data-parent='#accordionFaqs'>";
-                                    htmlFaqs += "<div class='card-body'>";
-                                        htmlFaqs += faq.answer;
+                                htmlFaqs += "<div class='accordion' id='accordionFaqs'>";
+                                
+                            for (const prop in faqs) {
+                                var faq = faqs[prop];
+
+                                htmlFaqs += "<div class='card'>";
+                                    htmlFaqs += "<div class='card-header' id='heading"+prop+"'>";
+                                        htmlFaqs += "<h2 class='mb-0'>";
+                                            htmlFaqs += "<button class='btn btn-block text-left button_faq' type='button' data-toggle='collapse' data-target='#collapse"+prop+"' aria-expanded='true' aria-controls='collapse"+prop+"' data-faq='"+prop+"'>";
+                                                htmlFaqs += faq.question;
+                                                htmlFaqs += "<span class='material-icons float-right expand_icon"+prop+"'>expand_more</span>";
+                                            htmlFaqs += "</button>";
+                                        htmlFaqs += "</h2>";
+                                    htmlFaqs += "</div>";
+                                    htmlFaqs += "<div id='collapse"+prop+"' class='collapse' aria-labelledby='heading"+prop+"' data-parent='#accordionFaqs'>";
+                                        htmlFaqs += "<div class='card-body'>";
+                                            htmlFaqs += faq.answer;
+                                        htmlFaqs += "</div>";
                                     htmlFaqs += "</div>";
                                 htmlFaqs += "</div>";
+                            }
+                            
                             htmlFaqs += "</div>";
+
+                            // Lo ponemos en su div
+                            $('.faqs').html(htmlFaqs);
+
+                            // Efecto de aparición
+                            $(".div_faqs").hide();
+                            $(".div_faqs").removeClass('d-none');
+                            $(".div_faqs").show(1000);
+                        } else {
+                            $(".div_ticket").removeClass('col-7').addClass('col-12');
                         }
-                        htmlFaqs += "</div>";
-                        
-                        // Lo ponemos en su div
-                        $('.faqs').html(htmlFaqs);
-                        
-                        // Eliminamos la cookie de reiniciar la cookie de ALMA
-                        var reiniciaCookieAlma = readCookie('reiniciaCookie');
-                        if(reiniciaCookieAlma == 1){
-                            document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                        }
-                        
-                        // Mostramos el botón de resuelto por ALMA
-                        $('#btn-send-alma').removeClass('d-none');
                     }
                 });
                 
@@ -402,9 +430,11 @@
                         };
                         let data = createJsonApi(dataCreate);
                         
-                        // Creamos un cookie para que se reinicie la sesión de Alma la próxima vez que vaya a abrir un ticket
-                        document.cookie = "reiniciaCookie=1";
-
+                        if(accesoAlma){
+                            // Creamos un cookie para que se reinicie la sesión de Alma la próxima vez que vaya a abrir un ticket
+                            document.cookie = "reiniciaCookie=1";
+                        }
+                        
                         // Al recibir que se ha creado, recibiremos el id del ticket, devolvemos a la pantalla del ticket
                         document.location.href = "show.html?ticket="+ticket.id;
                     } else {
