@@ -95,6 +95,19 @@ public class Toolkit {
 		}
 		
 	}
+	public static void buildFile (byte[] arr_bytes, String docName) {
+		File f=new File(docName);
+		try {
+			FileOutputStream fos=new FileOutputStream(f);
+			fos.write(arr_bytes);
+			fos.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Archivo no encontrado");
+		} catch (IOException e) {
+			System.err.println("Error al escribir");
+		}
+		
+	}
 	
 	
 }
