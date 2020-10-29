@@ -4,7 +4,7 @@ import static com.code.aon.jaas.auth.IConstants.DEFAULT_CONTEXT_PATH;
 
 import java.net.IDN;
 import java.security.Principal;
-import java.security.acl.Group;
+import com.code.aon.jaas.security.acl.Group;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;

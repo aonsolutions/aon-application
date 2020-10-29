@@ -287,7 +287,7 @@
 		<mapping class="com.esferalia.aon.payroll.TrainingCenter"/>
 		<mapping class="com.esferalia.aon.payroll.TrainingCourse"/>
 
-		<!-- AON-PMS Mapping files -->	
+		<!-- AON-PMS Mapping files	
 		<mapping class="com.esferalia.aon.pms.Allotment"/>
 		<mapping class="com.esferalia.aon.pms.AllotmentItem"/>
 		<mapping class="com.esferalia.aon.pms.AllotmentTariff"/>
@@ -306,6 +306,7 @@
 		<mapping class="com.esferalia.aon.pms.StopSales"/>
 		<mapping class="com.esferalia.aon.pms.StopSalesItem"/>
 		<mapping class="com.esferalia.aon.pms.StopSalesTariff"/>
+		-->
 
 		<!-- AON-PROJECT Mapping files -->  
 		<mapping class="com.code.aon.project.ActivityType"/>
