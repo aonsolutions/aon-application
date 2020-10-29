@@ -1,5 +1,5 @@
 import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
-import { AVAILABLE_OPTIONS, MULTIPLE_DOWNLOAD_OPTION, CREATE_NOTE_OPTION, DELETE_OPTION } from './toolbar_options.js';
+import { AVAILABLE_OPTIONS, MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION } from './toolbar_options.js';
 
 const ITEMS_PER_PAGE = 10;
 const TYPES = {
@@ -29,10 +29,13 @@ export const getList = async (page_this = 1) => {
 
     if (typeof window.folders !== 'undefined') {
         const subfolders = {};
+        const foldersByID = {};
 
         // Recorremos las carpetas para almacenar en una variable todas las subcarpetas del cliente
         for (let i = 0; i < window.folders.length; i++) {
             const folder = window.folders[i];
+
+            foldersByID[folder.carpetaID] = folder;
 
             if (folder.subcarpetas.length) {
                 for (let j = 0; j < folder.subcarpetas.length; j++) {
@@ -52,37 +55,43 @@ export const getList = async (page_this = 1) => {
             });
 
             const jsonData = JSON.parse(data).datos;
-            const documents = jsonData.documentos;
 
             return new Promise((resolve, reject) => {
-                if (typeof documents !== 'undefined') {
-                    const page_this_element = page_this == 1 ? page_this : ((page_this - 1) * ITEMS_PER_PAGE) + 1;
-                    const page_total = page_this_element + documents.length;
+                if (typeof jsonData !== 'undefined') {
+                    const documents = jsonData.documentos;
 
-                    const list = documents.map((document) => ({
-                            "id": document.id,
-                            "tags": document.tags,
-                            "date": document.date,
-                            "file_name": document.name,
-                            "type": (document.type == 1) ? 'received' : 'sent',
-                            "url": document.image,
-                            "model": document.model,
-                            "year": document.year,
-                            "period": document.period,
-                            "read": document.read,
-                            "subfolder": (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
-                            "uploaded_by": document.uploaded_by
-                    }));
+                    if (typeof documents !== 'undefined') {
+                        const page_this_element = page_this == 1 ? page_this : ((page_this - 1) * ITEMS_PER_PAGE) + 1;
+                        const page_total = page_this_element + documents.length;
 
-                    const paginationList = {
-                        "list": list,
-                        "total_data": jsonData.total_resultados, // cantidad total de elementos
-                        "total_page": jsonData.total_paginas + 1, // total de paginas
-                        "page": page_this, // pagina en la que estamos
-                        "shown_page": page_this_element + ' - ' + (page_total - 1), // cantidad mostrada por paginas 1 - 10
+                        const list = documents.map((document) => ({
+                                "id": document.id,
+                                "url": document.image,
+                                "date": document.date,
+                                "file_name": document.name,
+                                "category": (typeof foldersByID[document.service] !== 'undefined') ? foldersByID[document.service].carpeta : '',
+                                "subfolder": (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
+                                "model": document.model,
+                                "year": document.year,
+                                "period": document.period,
+                                "type": (document.type == 1) ? 'received' : 'sent',
+                                "uploaded_by": document.uploaded_by,
+                                "tags": document.tags,
+                                "read": document.read
+                        }));
+
+                        const paginationList = {
+                            "list": list,
+                            "total_data": jsonData.total_resultados, // cantidad total de elementos
+                            "total_page": jsonData.total_paginas + 1, // total de paginas
+                            "page": page_this, // pagina en la que estamos
+                            "shown_page": page_this_element + ' - ' + (page_total - 1), // cantidad mostrada por paginas 1 - 10
+                        }
+
+                        resolve(paginationList);
+                    } else {
+                        reject('Ocurrió un error al intentar obtener los documentos');
                     }
-
-                    resolve(paginationList);
                 } else {
                     reject('Ocurrió un error al intentar obtener los documentos');
                 }
@@ -106,7 +115,7 @@ export const createTable = (data) => {
     let tbody = '';
 
     // Número de columnas base para la tabla, dependiendo de la carpeta seleccionada, etc. puede tener más o menos columnas
-    let numberOfColumns = 7;
+    let numberOfColumns = 8;
 
     if (list.length) {
         const selectedFolderObject = window.folders.find((folder) => {
@@ -146,10 +155,10 @@ export const createTable = (data) => {
                         case 'url': // No mostramos la URL en la tabla
                             break;
                         case 'tags':
-                            tbody+= `<td class="show_doc pointer">
+                            tbody+= `<td>
                                         <span>`;
                                             if ($.isArray(val) && val.length) {
-                                                const tags = val.map((tag) => `#${tag.name}`).join('<br>');
+                                                const tags = val.map((tag) => `<a href="#">#${tag.name}</a>`).join('<br>');
 
                                                 tbody += tags;
                                             }
@@ -306,11 +315,11 @@ function getAllowedOptions(document) {
 
     // Si el usuario ha enviado el documento, permitimos opciones adicionales
     if (document.type === 'sent') {
-        allowedOptions.push(CREATE_NOTE_OPTION);
+        allowedOptions.push(ADD_NOTE_OPTION);
 
         // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
         if (parseInt(window.selectedFolder) === CARPETA_A_CONTABILIZAR) {
-            allowedOptions.push(DELETE_OPTION);
+            allowedOptions.push(MULTIPLE_DELETE_OPTION);
         }
     }
 

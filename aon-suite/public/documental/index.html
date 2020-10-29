@@ -38,16 +38,17 @@
                                     <thead>
                                         <tr>
                                             <th class="align-middle"></th>
-                                            <th class="align-middle">Tags</th>
                                             <th class="align-middle">Fecha</th>
                                             <th class="align-middle">Nombre</th>
-                                            <th class="align-middle">Tipo</th>
+                                            <th class="align-middle">Categoría</th>
+                                            <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
                                             <th class="align-middle d-none" id="model_column">Modelo</th>
                                             <th class="align-middle d-none" id="year_column">Año</th>
                                             <th class="align-middle d-none" id="period_column">Período</th>
-                                            <th class="text-center align-middle">Leído</th>
-                                            <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
+                                            <th class="align-middle">Tipo</th>
                                             <th class="align-middle">Subido por</th>
+                                            <th class="align-middle">Etiquetas</th>
+                                            <th class="text-center align-middle">Leído</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -84,7 +85,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button id="confirm_new_note_doc" type="button" class="btn btn-primary">Crear</button>
+                        <button id="confirm_new_note_doc" type="button" class="btn btn-primary">Añadir</button>
                     </div>
                 </div>
             </div>
@@ -93,13 +94,13 @@
         <!-- Scripts -->
         <script src="../js/app.js"></script>
         <script type="module">
-            import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, bidoq } from './aon-documental.js';
+            import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
             import { createTable, getList } from './table.js';
             import {
                 AVAILABLE_OPTIONS,
                 MULTIPLE_DOWNLOAD_OPTION,
-                CREATE_NOTE_OPTION,
-                DELETE_OPTION,
+                ADD_NOTE_OPTION,
+                MULTIPLE_DELETE_OPTION,
                 getOptionButtons
             } from './toolbar_options.js';
 
@@ -113,6 +114,8 @@
                 window.folders = $(window.aonDocumental).data('folders');
                 // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
                 window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
+                window.selectedFolder = (window.selectedFolder === 'pendientes') ? CARPETA_A_CONTABILIZAR : window.selectedFolder;
+
                 // Almacenamos el número de la página actual en una variable global
                 window.page = 0;
 
@@ -121,7 +124,17 @@
 
                     createTable(list);
                 } catch (error) {
-                    console.error(error.message);
+                    const list = {
+                        "list": [],
+                        "total_data": 0, // cantidad total de elementos
+                        "total_page": 1, // total de paginas
+                        "page": 1, // pagina en la que estamos
+                        "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
+                    }
+
+                    createTable(list);
+
+                    console.error(error);
                 }
             });
 
@@ -137,7 +150,7 @@
 
                         createTable(list);
                     } catch (error) {
-                        console.error(error.message);
+                        console.error(error);
                     }
                 });
 
@@ -204,11 +217,11 @@
                         }
                     } else {
                         // Si no hay documentos seleccionados, eliminamos los botones correspondientes a las opciones de la barra de herramientas
-                        window.aonDocumental.removeToolbarOptions([MULTIPLE_DOWNLOAD_OPTION, CREATE_NOTE_OPTION, DELETE_OPTION]);
+                        window.aonDocumental.removeToolbarOptions([MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION]);
                     }
                 });
 
-                // Al pulsar el boton de crear / editar nota desde el modal
+                // Al pulsar el boton de añadir nota desde el modal
                 $(document).on('click', '#confirm_new_note_doc', async function() {
                     // Recuperamos el texto que vamos a añadir a los documentos como nota
                     const text = $('#note_doc').val();
@@ -222,19 +235,20 @@
                         const data = await bidoq({
                             "method": "crear_editar_nota_docs",
                             "docs": JSON.stringify(window.docsCreateNote),
-                            "texto": text
+                            "texto": text,
+                            "agregar": true
                         });
 
                         const response = JSON.parse(data);
 
                         if (typeof response !== 'undefined') {
                             if (typeof response.code !== 'undefined' && response.code === 0) {
-                                alert('Nota creada con éxito en los documentos de tipo "Enviado" seleccionados');
+                                alert('Nota añadida con éxito en los documentos de tipo "Enviado" seleccionados');
                             } else if (typeof response['1047'] !== 'undefined') {
-                                alert(`Ocurrió un error al intentar crear la nota`);
+                                alert(`Ocurrió un error al intentar añadir la nota`);
                             }
                         } else {
-                            console.error('Ocurrió un error al intentar crear la nota');
+                            console.error('Ocurrió un error al intentar añadir la nota');
                         }
 
                         // Ocultamos el modal
@@ -292,7 +306,7 @@
                                     if (!uploadError && documentResponse.code !== 0) {
                                         uploadError = true;
 
-                                        alert(`Ocurrió un error al intentar subir el documento: ${documentResponse.message.toLowerCase()}`);
+                                        alert('Ocurrió un error al intentar subir el documento');
                                     }
                                 }
 

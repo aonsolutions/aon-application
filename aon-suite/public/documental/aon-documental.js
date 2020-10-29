@@ -68,7 +68,7 @@ class AonDocumental extends HTMLElement {
         this.loadIndex();
     }
 
-    loadIndex(folder = CARPETA_A_CONTABILIZAR) {
+    loadIndex(folder = 'pendientes') {
         let aonDocumental = document.getElementById('aonDocumental');
         const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
 
@@ -139,14 +139,15 @@ class AonDocumental extends HTMLElement {
     addDocumentOptions(aonDocumental) {
         let documentOptions = [
             {
+                name: 'Pendientes',
+                icon: 'inbox',
+                fn: () => this.loadIndex('pendientes'),
+                default: true
+            },
+            {
                 name: 'Recientes',
                 icon: 'access_time',
                 fn: () => this.loadIndex('recientes')
-            },
-            {
-                name: 'Pendientes',
-                icon: 'inbox',
-                fn: () => this.loadIndex('pendientes')
             }
         ];
 
@@ -160,10 +161,6 @@ class AonDocumental extends HTMLElement {
                 icon: 'folder',
                 fn: () => this.loadIndex(folder.carpetaID)
             };
-
-            if (parseInt(folder.carpetaID) === CARPETA_A_CONTABILIZAR) {
-                option['default'] = true;
-            }
 
             return option;
         });

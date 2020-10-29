@@ -4,8 +4,9 @@ import { createTable, getList } from './table.js';
 export const SINGLE_DOWNLOAD_OPTION = 'singleDownload';
 export const MULTIPLE_DOWNLOAD_OPTION = 'multipleDownload';
 export const EDIT_OPTION = 'edit';
-export const DELETE_OPTION = 'delete';
-export const CREATE_NOTE_OPTION = 'createNote';
+export const SINGLE_DELETE_OPTION = 'singleDelete';
+export const MULTIPLE_DELETE_OPTION = 'multipleDelete';
+export const ADD_NOTE_OPTION = 'createNote';
 export const VIEW_NOTE_OPTION = 'viewNote';
 export const AVAILABLE_OPTIONS = [
     {
@@ -27,16 +28,22 @@ export const AVAILABLE_OPTIONS = [
         fn: editOption
     },
     {
-        name: DELETE_OPTION,
+        name: SINGLE_DELETE_OPTION,
         icon: 'delete_forever',
-        title: 'Eliminar los documentos seleccionados',
-        fn: deleteOption
+        title: 'Eliminar documento',
+        fn: singleDeleteOption
     },
     {
-        name: CREATE_NOTE_OPTION,
+        name: MULTIPLE_DELETE_OPTION,
+        icon: 'delete_forever',
+        title: 'Eliminar los documentos seleccionados',
+        fn: multipleDeleteOption
+    },
+    {
+        name: ADD_NOTE_OPTION,
         icon: 'note_add',
-        title: 'Crear nota en los documentos seleccionados',
-        fn: createNoteOption
+        title: 'Añadir nota a los documentos seleccionados',
+        fn: addNoteOption
     },
     {
         name: VIEW_NOTE_OPTION,
@@ -96,7 +103,51 @@ function editOption() {
     $("#edit_doc").modal();
 }
 
-async function deleteOption() {
+async function singleDeleteOption() {
+    const confirmed = confirm('¿Estás seguro de que deseas eliminar el documento?');
+
+    if (confirmed) {
+        const { id, folder: service } = window.currentFile;
+        let { type } = window.currentFile;
+
+        type = (type === 'sent') ? 2 : 1;
+
+        const docs = [{id, type}];
+
+        try {
+            // Hacemos una petición a bidoq para eliminar el documento
+            const data = await bidoq({
+                "method": "delete_docs",
+                service,
+                "docs": JSON.stringify(docs)
+            });
+
+            const response = JSON.parse(data);
+
+            if (typeof response !== 'undefined') {
+                if (typeof response.code !== 'undefined' && response.code === 0) {
+                    alert('El documento ha sido eliminado con éxito');
+
+                    window.history.back();
+                } else {
+                    if (typeof response['1047'] !== 'undefined') {
+                        alert('Ocurrió un error al intentar eliminar el documento');
+                    }
+
+                    if (typeof response['1048'] !== 'undefined') {
+                        alert('El documento no pudo ser eliminado debido a que se encuentra marcado como incidencia');
+                    }
+                }
+            } else {
+                console.error('Ocurrió un error al intentar eliminar los documentos');
+            }
+        } catch (error) {
+            console.error('Ocurrió un error: ' + error.message);
+        }
+    }
+}
+
+async function multipleDeleteOption() {
     const confirmed = confirm('¿Estás seguro de que deseas eliminar los documentos de tipo "Enviado" seleccionados?');
 
     if (confirmed) {
@@ -107,7 +158,7 @@ async function deleteOption() {
             const row = $(this).closest('tr');
             const allowedOptions = row.data('allowed_options').split(',');
 
-            return ($.inArray(DELETE_OPTION, allowedOptions) !== -1);
+            return ($.inArray(MULTIPLE_DELETE_OPTION, allowedOptions) !== -1);
         }).map(function() {
             // Mapeamos el listado de objetos jQuery ya filtrado en un nuevo listado de objetos con las propiedades id y type
             const row = $(this).closest('tr');
@@ -121,7 +172,7 @@ async function deleteOption() {
         }).toArray(); // Obtenemos el listado de objetos jQuery como un array JS
 
         try {
-            // Hacemos una petición a bidoq para eliminar los documentos seleccionado
+            // Hacemos una petición a bidoq para eliminar los documentos seleccionados
             const data = await bidoq({
                 "method": "delete_docs",
                 service,
@@ -163,13 +214,13 @@ async function deleteOption() {
     }
 }
 
-function createNoteOption() {
+function addNoteOption() {
     // Filtramos los documentos seleccionados quitando aquellos que no tengan la opción de crear nota
     const docs = $('.select_doc:checked').filter(function() {
         const row = $(this).closest('tr');
         const allowedOptions = row.data('allowed_options').split(',');
 
-        return ($.inArray(CREATE_NOTE_OPTION, allowedOptions) !== -1);
+        return ($.inArray(ADD_NOTE_OPTION, allowedOptions) !== -1);
     }).map(function() {
         // Mapeamos el listado de objetos jQuery ya filtrado en un nuevo listado de objetos con las propiedades id y type
         const row = $(this).closest('tr');
@@ -189,17 +240,48 @@ function createNoteOption() {
         $('.error-empty-note-doc').addClass('d-none');
     }
 
-    // Vaciamos el contenido del campo si existe
-    if ($('#note_doc').length) {
-        $('#note_doc').attr('value', '');
+    // Vaciamos el contenido del campo si tiene
+    if (document.getElementById('note_doc').value.length) {
+        document.getElementById('note_doc').value = '';
     }
 
     // Mostramos el modal
     $("#new_note_doc").modal();
 }
 
-function viewNoteOption() {
-    alert('Ver nota del documento');
+async function viewNoteOption() {
+    window.noteAction = 'add';
+
+    const { id } = window.currentFile;
+
+    // Vaciamos el contenido del campo si tiene
+    if (document.getElementById('note_doc').value.length) {
+        document.getElementById('note_doc').value = '';
+    }
+
+    $('#confirm_view_note_doc').text('Crear');
+    $('#title_view_note_doc').text('Añadir nota al documento');
+
+    const data = await bidoq({
+        "method": "obtener_nota_doc",
+        id
+    });
+
+    const response = JSON.parse(data);
+
+    if (typeof response !== 'undefined') {
+        if (response.code === 0 && response.datos.length) {
+            window.noteAction = 'edit';
+
+            document.getElementById('note_doc').value = response.datos;
+
+            $('#confirm_view_note_doc').text('Editar');
+            $('#title_view_note_doc').text('Editar la nota del documento');
+        }
+    }
+
+    // Mostramos el modal
+    $('#view_note_doc').modal();
 }
 
 export const getOptionButtons = (documentObject) => {
