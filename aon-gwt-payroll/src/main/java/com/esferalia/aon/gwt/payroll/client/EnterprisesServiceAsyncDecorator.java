@@ -24,6 +24,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -562,6 +563,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> callback) {
 		AON.start();
 		enterprisesServiceAsync.getCNOs(currentDomainName, new AsyncCallbackWrapper<Map<String, CNO>>(callback));
+	}
+
+	@Override
+	public void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificate>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getDigitalCertificates(currentDomainName, currentUser, new AsyncCallbackWrapper<List<DigitalCertificate>>(callback));
+	}
+
+	@Override
+	public void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.setDigitalCertificates(currentDomainName, currentUser, digitalCertificateList, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }

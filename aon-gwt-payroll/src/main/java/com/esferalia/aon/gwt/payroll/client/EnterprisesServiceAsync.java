@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -126,5 +127,7 @@ public interface EnterprisesServiceAsync {
 	void getContractSpecificData(String currentDomainName, Integer contractId, AsyncCallback<ContractSpecificData> asyncCallback);
 	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getCNOs(String currentDomainName, AsyncCallback<Map<String, CNO>> asyncCallback);
+	void getDigitalCertificates(String currentDomainName, String currentUser, AsyncCallback<List<DigitalCertificate>> asyncCallback);
+	void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback);
 	
 }

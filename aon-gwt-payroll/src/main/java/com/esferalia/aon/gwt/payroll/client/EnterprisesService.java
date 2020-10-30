@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -199,5 +200,9 @@ public interface EnterprisesService extends RemoteService {
 	void setContractSpecificData(String currentDomainName, EmployeeContractInfo employeeContractData);	
 	
 	Map<String, CNO> getCNOs(String currentDomainName);
+
+	List<DigitalCertificate> getDigitalCertificates(String currentDomainName, String currentUser);
+
+	void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList);
 	
 }
