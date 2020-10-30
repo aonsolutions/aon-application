@@ -10,28 +10,16 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class FieParser {
 
 	public static class UnknownFileException extends IOException {
-
-		public UnknownFileException() {
-			super();
-		}
-
-		public UnknownFileException(String message, Throwable cause) {
-			super(message, cause);
-		}
-
-		public UnknownFileException(String message) {
-			super(message);
-		}
-
-		public UnknownFileException(Throwable cause) {
-			super(cause);
-		}
-
+		public UnknownFileException() {super();}
+		public UnknownFileException(String message, Throwable cause) {super(message, cause);}
+		public UnknownFileException(String message) {super(message);}
+		public UnknownFileException(Throwable cause) {super(cause);}
 	}
 
 	public static interface Listener {
@@ -110,11 +98,13 @@ public class FieParser {
 			
 			// ETI ETIquetas de proceso
 			String eti = find(reader, "ETI");
-			
+			Optional<String> empl = null;
 			do {
 			
 				// EMP Identificación de EMPpresa
-				Optional<String> empl = attemp(reader, "EMP");
+				try {empl = attemp(reader, "EMP");}
+				catch(NoSuchElementException e) {}
+				
 				String emp = empl.get();
 				listener.startEnterprise();
 				
@@ -239,13 +229,26 @@ public class FieParser {
 					if(!itd.isEmpty()) {
 						listener.startITD();
 						
-//						Date directPaymentStartDate = parseDateFromFie(itd.get().substring(3,11));					
-//						listener.onItdDirectPaymentStartDate(directPaymentStartDate);						
-//						listener.onItdDirectPaymentStartEntity(directPaymentStartEntity);
-//						listener.onItdActualResponsibleEntity(actualResponsibleEntity);
-//						listener.onItdResponsibleEntityInitialPaymentDate(responsibleEntityInitialPaymentDate);
-//						listener.onItdResponsibleEntityFinalPaymentDate(responsibleEntityFinalPaymentDate);
-//						listener.onItdRegulatoryBase(regulatoryBase);			
+						Date directPaymentStartDate = parseDateFromFie(itd.get().substring(3,11));					
+						listener.onItdDirectPaymentStartDate(directPaymentStartDate);						
+
+						String directPaymentStartEntity = itd.get().substring(11,14);
+						listener.onItdDirectPaymentStartEntity(directPaymentStartEntity);
+						
+						String actualResponsibleEntity = itd.get().substring(14,17);
+						listener.onItdActualResponsibleEntity(actualResponsibleEntity);
+						
+						Date responsibleEntityInitialPaymentDate = parseDateFromFie(itd.get().substring(17,25));
+						listener.onItdResponsibleEntityInitialPaymentDate(responsibleEntityInitialPaymentDate);
+						
+						Date responsibleEntityFinalPaymentDate = parseDateFromFie(itd.get().substring(25,33));
+						listener.onItdResponsibleEntityFinalPaymentDate(responsibleEntityFinalPaymentDate);
+						
+						Float regulatoryBase = null;
+					
+						try { regulatoryBase = Float.parseFloat(itd.get().substring(33,34)+"."+itd.get().substring(33,35));}
+						catch (NumberFormatException e){}
+						listener.onItdRegulatoryBase(regulatoryBase);			
 						
 						listener.endITD();	
 					}
@@ -271,28 +274,36 @@ public class FieParser {
 						listener.onOitCause92Date(cause92Date);
 
 						Boolean process170_2 = null;
-						oit.get().substring(35,43);	
+						process170_2 = (oit.get().substring(43,44).equals("S"));	
 						listener.onOitProcess170_2(process170_2);
-//						listener.onOitCause42Date(cause42Date);
-//						listener.onOitCause35Date(cause35Date);
-//						listener.onOitMedicalCertificateDate(MedicalCertificateDate);
+												
+						Date cause42Date = parseDateFromFie(oit.get().substring(44,52));						
+						listener.onOitCause42Date(cause42Date);
+						
+						Date cause35Date = parseDateFromFie(oit.get().substring(52,60));
+						listener.onOitCause35Date(cause35Date);
+
+						Date medicalCertificateDate = parseDateFromFie(oit.get().substring(60,68));
+						listener.onOitMedicalCertificateDate(medicalCertificateDate);
 						
 						listener.endOIT();	
 					}
 		
 				listener.endEnterprise();
-			} while ( false );
+			} while ( empl != null );
 
 			// ETF ETiquetas de proceso
 			String etf = find(reader, "ETF");
 		}
 	}
 	
+	//PARSE A DATE FROM FIE FILE
 	private static Date parseDateFromFie(String dateStr){
 		if(dateStr.equals("00000000"))		return null;
 		
 		SimpleDateFormat dateBuilder = new SimpleDateFormat("yyyyMMdd");
 		Date d;
+		
 		
 		try {
 			d = dateBuilder.parse(dateStr);
@@ -303,34 +314,24 @@ public class FieParser {
 		return null;
 	}
 	
-	
+	//FIND A STRING IN FILE AND RETURN LINE
 	private static String find( BufferedReader reader, String head ) throws IOException {
-		
 		String line  ; 
-		while ( ( line = reader.readLine() ) != null  ) {
-			if ( line.startsWith(head) ) {
+		while ( ( line = reader.readLine() ) != null  ) 
+			if ( line.startsWith(head) ) 
 				return line;
-			}
-			
-		}
-		
 		throw new UnknownFileException(String.format("Segment: '%s' Not found" ,  head));
-				
 	}	
 	
+	//FIND A STRING IN FILE AND RETURN LINE (optional)
 	private static Optional<String> attemp( BufferedReader reader, String head ) throws IOException {
 		reader.mark(1024);
 		String line  ; 
-		while ( ( line = reader.readLine() ) != null  ) {
-			if ( line.startsWith(head) ) {
-				return Optional.of(line);
-			}
-			
-		}
+		while ( ( line = reader.readLine() ) != null  )
+			if ( line.startsWith(head) ) return Optional.of(line);
 		
 		reader.reset();
 		return Optional.empty();
-				
 	}	
 	
 	
