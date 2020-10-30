@@ -63,23 +63,7 @@ class AonHeader extends HTMLElement {
 					<span id="aonHeaderCompanyName"> </span>
 				</span>
 
-				<span class="aonRight160">
-					<ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect" for="aonHeaderUserButton">
-						<li id="aonHeaderFichar" class="mdl-menu__item">
-							<i class="material-icons mdl-list__item-icon aonMenuIcon">alarm</i>
-							<span id="aonHeaderFicharText"> Marcar Entrada </span>
-						</li>
-						<li id="aonHeaderConfiguration" class="mdl-menu__item">
-							<i class="material-icons mdl-list__item-icon aonMenuIcon">settings</i>
-							Configuración
-						</li>
-						<li id="aonHeaderCloseSession" class="mdl-menu__item">
-							<i class="material-icons mdl-list__item-icon aonMenuIcon">input</i>
-							Cerrar Sesión
-						</li>
-					</ul>
-				</span>
-			</div>
+				<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
 			`;
 
 			this.build();
@@ -89,10 +73,8 @@ class AonHeader extends HTMLElement {
 		const BASE_ID = 'aonHeader';
 		let aonHeaderWeb = document.getElementById('aonHeaderWeb');
 
-		document.getElementById(BASE_ID + 'CloseSession')
-			.addEventListener('click', () => closeSession());
-
 		this.buildLogo();
+
 		if(!isMobile()) {
 			let aonHeaderHomeButton = document.getElementById(BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
@@ -142,11 +124,6 @@ class AonHeader extends HTMLElement {
 			rootPanel('<aon-parent id="aonParent"></aon-parent>');
 		});
 
-		let aonHeaderConfiguration = document.getElementById(BASE_ID + 'Configuration');
-		aonHeaderConfiguration.addEventListener('click', () => {
-			this.aonConfiguration();
-		});
-
 		let aonUserConnected = document.createElement('div');
 		aonUserConnected.id = BASE_ID + 'UserConnected';
 		aonUserConnected.className = 'aonConnected';
@@ -155,18 +132,36 @@ class AonHeader extends HTMLElement {
 		let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
 		aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
 
-		let aonHeaderFichar = document.getElementById(BASE_ID + 'Fichar');
-		aonHeaderFichar.addEventListener('click', () => {
-			let text = document.getElementById(BASE_ID + 'FicharText');
-			if(aonUserConnected.style.backgroundColor === 'red'){
-				aonUserConnected.style.backgroundColor = '#35ac19';
-				text.innerHTML = 'Marcar Salida';
-			} else {
-				aonUserConnected.style.backgroundColor = 'red';
-				text.innerHTML = 'Marcar Entrada';
-			}
+		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
+		aonHeaderUserButton.addEventListener('click', () => {
+			const top  = aonHeaderUserButton.getBoundingClientRect().top;
+			const left = aonHeaderUserButton.getBoundingClientRect().left;
+			let d = document.getElementById('aonHeaderDialogUserOption');
 
+			let fichajeText = aonUserConnected.style.backgroundColor === 'red'
+				? 'Marcar Entrada': 'Marcar Salida';
+			let options = [{
+					name: fichajeText,
+					icon: 'alarm',
+					fn: () => this.aonFichar()
+				}, {
+					name: 'Configuración',
+					icon: 'settings',
+					fn: () => this.aonConfiguration()
+				}, {
+					name: 'Cerrar Sesión',
+					icon: 'input',
+					fn: () => closeSession()
+				}];
+			d.setMenuOptions(options, top, left);
+			d.open();
 		});
+	}
+
+	aonFichar() {
+		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
+		aonUserConnected.style.backgroundColor =
+			aonUserConnected.style.backgroundColor === 'red' ? '#35ac19' : 'red';
 	}
 
 	buildLogo() {
