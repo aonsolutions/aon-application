@@ -43,9 +43,9 @@
                                         <input type="number" class="form-control" id="cantidad" name="cantidad" value="1">
                                     </div>
                                     <button type="button" class="btn btn-primary mr-2" id="ticket">Crear Ticket</button>
-                                    <button type="button" class="btn btn-primary mr-2" id="otro">otro tipo</button>
-                                    <button type="button" class="btn btn-primary mr-2" id="otro">otro tipo</button>
-                                    <button type="button" class="btn btn-primary mr-2" id="otro">otro tipo</button>
+                                    <button type="button" class="btn btn-primary mr-2" id="faq"   >Crear FAQS</button>
+                                    <button type="button" class="btn btn-primary mr-2" id="otro"  >otro tipo</button>
+                                    <button type="button" class="btn btn-primary mr-2" id="otro"  >otro tipo</button>
                                 </form>
                             </div>
                         </div>
@@ -130,6 +130,50 @@
                                 let dataCreate = {
                                     name : 'messenger', // tickets
                                     json : ticket
+                                };
+                                let data = createJsonApi(dataCreate);
+                        }
+
+                        alert('Datos almacenados');
+                    }
+                });
+                
+            //
+            // Crear FAQ
+            //
+                $(document).on('click', '#faq', function () {
+                    // Cantidad de datos a crear
+                    let cantidad = $('#cantidad').val();
+
+                    // datos aleatorios
+                    let question  = [
+                        '¿Hacer?',
+                        '¿Como?',
+                        '¿Cuando?',
+                        '¿Tal vez?',
+                        '¿Alta?',
+                    ];
+                    let reply    = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.";
+            
+                    // La cantidad es mayor a 1
+                    if(cantidad > 0){
+                        for (let index = 0; index < cantidad; index++) {
+                            // Creamos el Json de alamacenamiento
+                            let faq  = {
+                                id          : returnNextID('faq'),                          // id
+                                created_at  : Today(),                                      // fecha
+                                from        : NameRandom(2),                                // creado
+                                question    : question[Math.floor((Math.random() * 5))],    // pregunta
+                                reply       : reply,                                        // respuesta
+                            };
+
+                            //
+                            // Almacenamos en el Storage
+                            //
+                                // No tenemos datos
+                                let dataCreate = {
+                                    name : 'faq',
+                                    json : faq
                                 };
                                 let data = createJsonApi(dataCreate);
                         }
