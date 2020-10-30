@@ -26,6 +26,14 @@ class AonDialog extends HTMLElement {
 		this.setAttribute('type', type);
 	}
 
+	get width() {
+		return this.getAttribute('width');
+	}
+
+	set width(width) {
+		this.setAttribute('width', width);
+	}
+
 	constructor () {
 		super();
 	}
@@ -51,6 +59,10 @@ class AonDialog extends HTMLElement {
 	build() {
 		let dialog = document.getElementById(this.getAttribute('id') + 'Dialog');
 		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
+
+		if(this.hasAttribute('width')) {
+			content.style.width = this.getAttribute('width');
+		}
 
 		if(this.isTypeMenu()){
 			dialog.style.backgroundColor = 'transparent';
