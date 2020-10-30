@@ -1,13 +1,16 @@
 package solutions.aon.seg.social;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-
+import com.gargoylesoftware.css.parser.javacc.ParseException;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -34,7 +37,6 @@ public class Paternidad {
 			"Parto múltiple","Inicio del descanso antes del parto (solo para madre biológica ET)"};
 	final static String[] FATHER_REASON= {"Nacimiento de hijo","Parto múltiple"};
 	final static String ADOPTERS= "Adopción/Tutela/Acogimiento";
-	
 	
 	public static byte[] grabarCertificado(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
@@ -105,7 +107,7 @@ public class Paternidad {
 		}
 	
 	}
-	
+
 	public static void voidPaternity(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
@@ -140,19 +142,25 @@ public class Paternidad {
 					int rows=resultTable.getRowCount()-1;
 					for(int i=1;i<=rows;i++) {
 						HtmlTableCell resultCell=resultTable.getCellAt(i, 0);
+						formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 						try {
 							HtmlInput resultInput=(HtmlInput) resultCell.getFirstElementChild();
 							htmlPage=resultInput.click();
+							//VOIDING
+							
+							HtmlPage htmlAux=formDatos.getInputByValue("Anular").click();
+							htmlAux=htmlAux.getElementById("SPM.ACC.AC_GE_ANULAR").click();
+							//htmlPage=HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("SPM.ACC.AC_GE_ANULAR")).orElseThrow().click();
 						}catch (NullPointerException |ElementNotFoundException e) {
 							//It's already voided
 						}
 					}
 					
-					//VOIDING
-					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-					htmlPage=formDatos.getInputByValue("Anular").click();
-					//htmlPage=htmlPage.getElementById("SPM.ACC.AC_GE_ANULAR").click();
-					htmlPage=HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("SPM.ACC.AC_GE_ANULAR")).orElseThrow().click();
+//					//VOIDING
+//					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+//					htmlPage=formDatos.getInputByValue("Anular").click();
+//					htmlPage=htmlPage.getElementById("SPM.ACC.AC_GE_ANULAR").click();
+//					//htmlPage=HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("SPM.ACC.AC_GE_ANULAR")).orElseThrow().click();
 					
 					
 				}catch (NullPointerException | ElementNotFoundException e) {
@@ -167,8 +175,6 @@ public class Paternidad {
 					}catch (NullPointerException e1) {
 					throw new PaternityException();
 					}
-				} catch (InterruptedException e) {
-					throw new SegSocialException(e);
 				}
 				
 			} catch (FailingHttpStatusCodeException e) {
@@ -187,4 +193,94 @@ public class Paternidad {
 			}
 	}
 	
-}
+	
+	
+
+	
+	
+}	
+	
+	
+	
+	
+//	public static void consultCertificate (final InputStream certificateInputStream,
+//			final String certificatePassword, final String certificateType, final String affiliationNumber,
+//			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
+//			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+//				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
+//				//MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
+//				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+//				htmlPage=formDatos.getInputByValue("Consultar certificado").click();
+//				formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+//				//REGIME
+//				formDatos.getInputByName("regimen").setValueAttribute(regime);
+//				//CCC
+//				formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
+//				formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+//				//DATE FROM
+//				formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, "dd/MM/yyyy").get());
+//				//END DATE
+//				formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, "dd/MM/yyyy").get());
+//				//NAF
+//				formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
+//				formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+//				//START DATE (OPTIONAL)
+//				if(!startDate.isEmpty()) {
+//					formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(startDate.get(), "dd/MM/yyyy").get());
+//				}
+//				
+//				//SUBMIT
+//				htmlPage=formDatos.getInputByValue("Buscar").click();
+//				//CHECKING IF THE PAGE THREW RESULTS
+//				try {
+//					HtmlTable resultTable=(HtmlTable)htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
+//					int rows=resultTable.getRowCount()-1;
+//					for(int i=1;i<=rows;i++) {
+//						HtmlTableCell resultCell=resultTable.getCellAt(i, 0);
+//						try {
+//							HtmlInput resultInput=(HtmlInput) resultCell.getFirstElementChild();
+//							htmlPage=resultInput.click();
+//						}catch (NullPointerException |ElementNotFoundException e) {
+//							//It's already voided
+//						}
+//					}
+//					
+//				}catch (NullPointerException | ElementNotFoundException e) {
+//					try {
+//						HtmlListItem errorLi=(HtmlListItem)htmlPage.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
+//						if(errorLi.getVisibleText().trim().equalsIgnoreCase("Régimen/Cuenta de Cotización NO HAY DATOS PARA ESTOS CRITERIOS DE CONSULTA")) {
+//							throw new PaternityNotFoundException();
+//						}
+//						else {
+//							throw new PaternityWrongDataException();
+//						}
+//					}catch (NullPointerException e1) {
+//					throw new PaternityException();
+//					}
+//				
+//			} catch (FailingHttpStatusCodeException e) {
+//				switch (e.getStatusCode()) {
+//				case 403:
+//					throw new ForbiddenException();
+//				default:
+//					throw new SegSocialException();
+//				}
+//			} catch (MalformedURLException e) {
+//				throw new SegSocialException(e);
+//			} catch (IOException e) {
+//				throw new SegSocialException(e);
+//			}	catch (NoSuchElementException e) {
+//				throw new PaternityException();
+//			}
+//	} catch (FailingHttpStatusCodeException e2) {
+//		// TODO Auto-generated catch block
+//		e2.printStackTrace();
+//	} catch (MalformedURLException e2) {
+//		// TODO Auto-generated catch block
+//		e2.printStackTrace();
+//	} catch (IOException e2) {
+//		// TODO Auto-generated catch block
+//		e2.printStackTrace();
+//	}
+//			}
+	
