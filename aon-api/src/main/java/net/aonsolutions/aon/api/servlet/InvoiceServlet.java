@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
@@ -181,7 +182,8 @@ public class InvoiceServlet extends HttpServlet{
 		if(file != null) {
 			String base64 = file.optString("content");
 			String type = file.optString("contentType");
-			
+			String fileName = file.optString("fileName");
+			byte[] fileData = Base64.getDecoder().decode(base64);
 			Attach attach = new Attach(AttachType.DATA)
 				.setDomain(domain)
 				.setSource(DataAttachSource.INVOICE.value()) 
@@ -189,18 +191,30 @@ public class InvoiceServlet extends HttpServlet{
 				.setType(DataAttachType.REQUEST.value())
 				.setDescription("invoice")
 				.setMimeType(MimeType.get(type))
-				.setData(Base64.getDecoder().decode(base64));
+				.setData(fileData);
 			Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
 			attach.setId(attachId);
 			DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
 		    Drive drive = AonDrive.getInstace().serviceInitialize(d);
 		    AonDrive.getInstace().sync(drive, new User().setLogin(login), attach, false);
-		    String driveId = AON.getAttach(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(attachId), AttachType.DATA).getDriveId();
 		    AonDrive.getInstace().setPermission(drive, attach.getDriveId());
 		    JSONObject f = new JSONObject();
-		    f.put("url", getFile(drive, driveId).getWebContentLink());
+		    String str = "domain="+ domain.getId() + "&id=" + attach.getId() + "&attach_type=data";
+		    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+		    String url =  "ms/download_attachment/"  + domain.getName() + "/" + login + "/" +  result;
+		    f.put("url", url);
 		    f.put("type", type);
 		    json.put("file", f);
+
+//			TEDI PARSER!!!		    
+//		    
+//		    InputStream input = new ByteArrayInputStream(fileData);
+//		    try {
+//		    	TediResult r = TEDI.parseInvoice(domain.getName(), domain.getId(), true, login, fileName, input);
+//		    	json = TediInvoiceJSON.toJSON(r.getTedi());
+//			} catch (TediException e) {
+//				e.printStackTrace();
+//			}
 		}
 				
 		Optional<DataResponseDetail> drdOpt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(drId).and(f.getDataVariableProperty().eq("json")));
@@ -209,7 +223,6 @@ public class InvoiceServlet extends HttpServlet{
 			drd.setDataValue(json.toString());
 			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drd, f -> f.getIdProperty().eq(drd.getId()));
 		} else {
-			System.out.println("ZZZZ");
 			DataResponseDetail drd = new DataResponseDetail()
 					.setDomain(domain.getId())
 					.setDataResponse(dr.getId())
