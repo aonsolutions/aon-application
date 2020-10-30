@@ -71,7 +71,6 @@
 			}
 
 			let input = document.createElement('input');
-		//	input.className = "mdl-checkbox__input";
 			input.setAttribute('id', this.getAttribute('id') + 'Input');
 			input.setAttribute('type', 'checkbox');
 			if(this.hasAttribute('value') && "true" === this.getAttribute('value')){
@@ -85,11 +84,9 @@
 			});
 
 			let label = document.createElement('label');
-			//label.className = "mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect";
 			label.setAttribute('for', input.getAttribute('id'));
 
 			let span = document.createElement('span');
-			//span.className = "mdl-checkbox__label";
 			span.innerHTML = this.getAttribute('description');
 
 			label.appendChild(input);
