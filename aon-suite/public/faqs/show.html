@@ -1,72 +1,75 @@
 <!doctype html>
 <html lang="es">
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="AYUDA T">
+        <meta name="generator" content="">
+        <title>aon Suite</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="AYUDA T">
-    <meta name="generator" content="">
-    <title>aon Suite</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+        <!-- MATERIAL ICONS -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
 
-    <!-- MATERIAL ICONS -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+        <!-- MATERIAL COMPONENTS -->
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
 
-    <!-- MATERIAL COMPONENTS -->
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
-    <link href="../css/app.css" rel="stylesheet" id="linkcss">
-
+        <link href="../css/app.css" rel="stylesheet" id="linkcss">
     </head>
     <body>
-
-
-    <!-- start contenido centro -->
-    <div class="col" id="atp_contenido_centro">
-        <div class="container-fluid">
-            <div class="row justify-content-center">
-                <!-- INICIO VISTA -->
-                <div class="col-12 border pb-2">
-                    <div class="row">
-                        <div class="col-12 mt-2">
-                            <h3>Editar FAQ</h3>
+        <!-- start contenido centro -->
+        <div class="col" id="atp_contenido_centro">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <!-- INICIO VISTA -->
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>Nueva FAQ</h3>
+                            </div>
                         </div>
-                        <div class="col-12 mt-2">
-                            <form method="post" id="formulario" enctype="multipart/form-data">
-                                <div class="col-12 mt-2">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label class="font-weight-bold" for="question">Pregunta</label>
-                                            <input type="text" id="question" name="question" class="form-control" value="" placeholder="" />
-                                            <label class="d-none errores error-question text-ayudat font-weight-bold">Introduce la pregunta.</label>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <label class="font-weight-bold">Respuesta:</label>
-                                            <label class="d-none errores error-editor text-ayudat font-weight-bold">Introduce la respuesta.</label>
-                                            <div id="editor"></div>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Guardar</button>
-                                        </div>
+                        <form method="post" id="formulario" enctype="multipart/form-data" class="atp_caja_form">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="d-block atp_inputs">
+                                            <input type="text" id="question" name="question" value="" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                            <span>Pregunta</span>
+                                        </label>
+                                        <label class="d-none errores error-question text-ayudat font-weight-bold">Introduce la pregunta.</label>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label class="font-weight-bold">Respuesta:</label>
+                                    <label class="d-none errores error-editor text-ayudat font-weight-bold">Introduce la respuesta.</label>
+                                    <div id="editor"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mt-2">
+                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Guardar</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
-    </div><!-- end contenido centro -->
+        </div><!-- end contenido centro -->
+    </body>
     
-
-        <!-- Scripts -->
-        <script src="../js/app.js"></script>
-        <script>
-
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script src="../js/crud.js"></script>
+    <script>
+        //
+        // Cargamos el CKEditor
+        //
             let theEditor;
             // Inicializamos CKEditor
             ClassicEditor.create( document.querySelector('#editor'),{
@@ -79,68 +82,101 @@
             .catch( error => {
                 console.error( error );
             } );
+        //
+        // FIN CKEditor
+        //
 
-            $(function() {
-                // Datos del ticket en JSON
-                let faq = {
-                    id : "1",
-                    question : "¿Se introduce aquí la pregunta?",
-                    reply : "Teskiya, aquí no. Vayan a la ventanilla 1 por el pasillo de la izquierda. La última puerta a la derecha",
-                    userIdLogin : "425",              // ID del usuario logueado
-                };
+        $(function() {
+            //
+            // Cogemos los parametros por GET
+            //
+                let params = getAllGetParams();
 
-                // Leemos los datos del FAQ y montamos la estructura
-                $('#question').val(faq.question);
-                theEditor.setData(faq.reply);
+                for(var i in params){
+                    switch (params[i][0]) {
+                        case 'faq':
+                            //
+                            // Leemos el ticket en el que estamos
+                            // Como variables generales
+                            //
+                                faq = readJsonApi('faq');
+                            let key = params[i][1];
 
-                // Añadimos al boton el data del id del usuario logueado y el id del ticket
-                $('#btn-send').attr('data-user', ticket.userIdLogin);
-                $('#btn-send').attr('data-ticket', ticket.id);
+                            // Como varible general para poder usarla
+                            faq = (faq[key]) ? faq[key] :  alert('No existen datos');
+                        break;
+                    
+                        default:
+                            break;
+                    }
+                }
+
+            //
+            // Montamos la estructura, si tenemos datos
+            //
+                if (faq !== undefined) {
+                    console.log(faq);
+
+                    // Leemos los datos del FAQ y montamos la estructura
+                        $('#question').attr('value', faq.question);
+                        theEditor.setData(faq.reply);
+
+                    // Añadimos al boton el data del UID del usuario logueado y el ID del ticket
+                    // Usamos los nombres, pero tendría que ser los UID
+                        $('#btn-send').attr('data-uid', faq.from);
+                        $('#btn-send').attr('data-id', faq.id);
+                            
+                } else {
+                    // No existe el dato, no permitimos el envio
+                    $('#btn-send').addClass('hidden');
+                }
+        });
+
+        // Guardar
+        $('#btn-send').click(function(){
+            let envio   = true;
+
+            // Quitamos todos los errores
+            $('.errores').each(function() {
+                $(this).addClass('d-none');
             });
 
-            // Guardar
-            $('#btn-send').click(function(){
-                let envio = true;
-
-                // Quitamos todos los errores
-                $('.errores').each(function() {
-                    $(this).addClass('d-none');
-                });
-
-                // Creamos el formData para enviar
-                let formData = new FormData();
-
-                // Añadimos el resto de datos del formulario
-                let respuesta = theEditor.getData();
-                if(respuesta == '') {
-                    $('.error-respuesta').removeClass('d-none');
-                    envio = false;
-                }
-                formData.append("answer", respuesta);
-
+            // Añadimos el resto de datos del formulario
                 let pregunta = $("#question").val();
                 if(pregunta == '') {
                     $('.error-question').removeClass('d-none');
                     envio = false;
                 }
-                formData.append('question', pregunta);
 
-                if(envio) {
-                    // Enviamos los datos del nuevo ticket por AJAX
-                    // TO-DO
-                    let response = {
-                        faqId : '1'
-                    };
-
-                    // Al recibir que se ha creado, recibiremos el FAQ ID, devolvemos a la pantalla de detalle del FAQ
-                    document.location.href = "show.html?id=" + response.faqId;
-                } else {
-                    return 0;
+                let respuesta = theEditor.getData();
+                if(respuesta == '') {
+                    $('.error-respuesta').removeClass('d-none');
+                    envio = false;
                 }
-            });
+                
+            
+            if(envio) {
+                faq["question"] = pregunta;
+                faq["reply"]    = respuesta;
+                
+                //
+                // Almacenamos los cambios en localStorage
+                //
+                    // Almacenamos el cambio del estado
+                    let dataUpdateStatus = {
+                        name        : 'faq',
+                        json        : faq,
+                    };
+                    updateJsonApi(dataUpdateStatus);
+
+                // Al recibir que se ha creado, recibiremos el FAQ ID, devolvemos a la pantalla de detalle del FAQ
+                document.location.href = "show.html?faq=" + faq.id;
+            } else {
+                return 0;
+            }
+        });
 
 
-        </script>
-        <!-- FIN Scripts -->
-    </body>
+    </script>
+    <!-- FIN Scripts -->
 </html>
