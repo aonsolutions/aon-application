@@ -36,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCRA;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
+import com.esferalia.aon.gwt.payroll.jooq.JooqDigitalCertificate;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeAFI;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeePeculiarities;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
@@ -62,6 +63,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -2356,6 +2358,30 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	public Map<String, CNO> getCNOs(String domainName) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			return JooqContrataContract.getCNOs(connection);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public List<DigitalCertificate> getDigitalCertificates(String domainName, String userLogin) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			return JooqDigitalCertificate.getDigitalCertificates(connection, domainId, userId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void setDigitalCertificates(String domainName, String userLogin, List<DigitalCertificate> digitalCertificateList) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			JooqDigitalCertificate.setDigitalCertificates(connection, domainId, userId, digitalCertificateList);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

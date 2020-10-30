@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
+import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
@@ -351,6 +352,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getCNOs(getCurrentDomainName(), asyncCallback);
 	}
 	
+	public void getDigitalCertificates(AsyncCallback<List<DigitalCertificate>> asyncCallback) {
+		enterprisesServiceAsync.getDigitalCertificates(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
+	public void setDigitalCertificates(List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.setDigitalCertificates(getCurrentDomainName(), getCurrentUser(), digitalCertificateList, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getCurrentUser() {
@@ -360,7 +369,5 @@ public class DomainEnterprisesServiceAsync {
 	private static String getCurrentDomainName() {
 		return Wnd.getCurrentDomainNameURL();
 	}
-
-	
 
 }
