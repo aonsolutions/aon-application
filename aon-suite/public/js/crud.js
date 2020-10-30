@@ -17,7 +17,7 @@
             }
         } else {
             // Tenemos datos, agregamos este dato al resto
-            dataLoad[returnNextID('messenger')] = data.json;
+            dataLoad[returnNextID(data.name)] = data.json;
         }
 
         // Almacenamos
