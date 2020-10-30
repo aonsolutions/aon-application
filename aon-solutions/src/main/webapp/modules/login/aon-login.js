@@ -110,23 +110,29 @@ class AonLogin extends HTMLElement {
 			      </div>
 			    </div>
 
-					<dialog class="mdl-dialog">
-    				<h4> Recuperar Contraseña</h4>
-    				<div>
-							<form action="#">
-								<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
-							</form>
-      			</div>
-    				<div class="mdl-dialog__actions">
-      				<button id="aonLoginRememberSend" type="button" class="mdl-button">Enviar</button>
-      				<button type="button" class="mdl-button close">Cancelar</button>
-    				</div>
-  				</dialog>
 				</div>
 			</div>
+
+			<aon-dialog id="aonDialogLogin" width="400px">
+
+			</aon-dialog>
 			`;
 
 			this.buildLogo();
+
+			let dialog = document.getElementById('aonDialogLogin');
+			dialog.setContentHtml(`
+				<h4> Recuperar Contraseña</h4>
+				<div>
+					<form action="#">
+						<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
+					</form>
+				</div>
+				<div class="mdl-dialog__actions">
+					<button id="aonLoginRememberSend" type="button" class="mdl-button">Enviar</button>
+					<button type="button" class="mdl-button close">Cancelar</button>
+				</div>
+			`);
 
 			let aonManifest = document.getElementById('aonManifest');
 			getManifest().then(r => {
@@ -142,18 +148,9 @@ class AonLogin extends HTMLElement {
 			let signin = document.getElementById('aonLoginSignin');
 			signin.addEventListener('click', () => this.signin());
 
-			let dialog = document.querySelector('dialog');
-			if (! dialog.showModal) {
-				dialogPolyfill.registerDialog(dialog);
-			}
-
 			let aonLoginRemember = document.getElementById('aonLoginRemember');
 			aonLoginRemember.addEventListener('click', () => {
-      	dialog.showModal();
-    	});
-
-    	dialog.querySelector('.close').addEventListener('click', () => {
-      	dialog.close();
+      	dialog.open();
     	});
 
 			let aonLoginRememberSend = document.getElementById('aonLoginRememberSend');
