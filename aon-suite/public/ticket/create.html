@@ -306,6 +306,9 @@
                             $(".div_faqs").show(1000);
                         } else {
                             $(".div_ticket").removeClass('col-7').addClass('col-12');
+                            
+                            // Mostramos alert de aviso de que no hay faqs relacionadas
+                            avisoFlotante("No hemos podido encontrar FAQs relacionadas.");
                         }
                     }
                 });
