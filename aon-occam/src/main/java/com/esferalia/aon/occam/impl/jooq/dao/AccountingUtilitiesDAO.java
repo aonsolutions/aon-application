@@ -4,7 +4,6 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.AccountEntryInvoice.ACCOUNT_ENTRY_INVOICE;
-import static com.esferalia.aon.jooq.tables.AccountHelper.ACCOUNT_HELPER;
 import static com.esferalia.aon.jooq.tables.AccountPeriod.ACCOUNT_PERIOD;
 import static com.esferalia.aon.jooq.tables.Amortization.AMORTIZATION;
 import static com.esferalia.aon.jooq.tables.BankConcept.BANK_CONCEPT;
@@ -210,22 +209,6 @@ public class AccountingUtilitiesDAO {
 					.and(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT.eq(oldAccount.getId())))
 				.execute();
 		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " contrapartidas modificadas en l\u00EDneas de apuntes."));
-		
-		// FK_ACCOUNT_HELPER_ACCOUNT
-		// Cuenta contable en ayudas en contrapartidas
-		count = ctx.getDslContext().delete(ACCOUNT_HELPER)
-			.where(ACCOUNT_HELPER.DOMAIN.eq(domain)
-			.and(ACCOUNT_HELPER.ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " cuentas contables borradas en ayudas a contrapartidas."));
-
-		// FK_ACCOUNT_HELPER_BAL_ACCOUNT
-		// Contrapartida en ayudas en contrapartidas
-		count = ctx.getDslContext().delete(ACCOUNT_HELPER)
-			.where(ACCOUNT_HELPER.DOMAIN.eq(domain)
-			.and(ACCOUNT_HELPER.BALANCING_ACCOUNT.eq(oldAccount.getId())))
-			.execute();
-		if (count > 0) result.add(new AccUtilitiesInfoItem().setMessage("" + count + " contrapartidas borradas en ayudas a contrapartidas."));
 		
 		// FK_INVOICE_DETAIL_ACCOUNT_ACCOUNT
 		// Enlace con lineas de facturas.

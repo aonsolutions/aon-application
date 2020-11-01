@@ -17,11 +17,6 @@
 		<hibernate names="accountEntry.id,accountEntry.type,accountEntry.entryDate,accountEntry.accountPeriod.id,accountEntry.securityLevel,accountEntry.journal,account.id,account.code,account.description,balancingAccount.id,balancingAccount.code,balancingAccount.description,concept,credit,debit,id,line,documentNumber" />
 	</bean>
 
-	<bean class="com.code.aon.accounting.AccountHelper" sqlName="account_helper">
-		<hibernate names="account.id,account.code,account.description,balancingAccount.id,balancingAccount.code,balancingAccount.description,counter,id" />
-		<alias     names="account_id,account_code,account_description,balancingAccount_id,balancingAccount_code,balancingAccount_description,counter,id" />
-	</bean>
-
 	<bean class="com.code.aon.accounting.Amortization" sqlName="amortization">
 		<hibernate names="accumulatedAccount.id,allocationAccount.id,amortizationType.id,amortizationType.accumulatedAccount.id,amortizationType.allocationAccount.id,amortizationType.description,amortizationType.fixedAssetAccount.id,amount,comments,deadline,description,feePeriod,fixedAssetAccount.id,id,initialDate,percentage,saleAmount,securityLevel" />
 		<alias     names="accumulatedAccount_id,allocationAccount_id,amortizationType_id,amortizationType_accumulatedAccount_id,amortizationType_allocationAccount_id,amortizationType_description,amortizationType_fixedAssetAccount_id,amount,comments,deadline,description,feePeriod,fixedAssetAccount_id,id,initialDate,percentage,saleAmount,securityLevel" />

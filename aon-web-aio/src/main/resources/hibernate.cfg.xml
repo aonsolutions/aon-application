@@ -37,7 +37,6 @@
 		<mapping class="com.code.aon.accounting.AutoConcept"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
-		<mapping class="com.code.aon.accounting.AccountHelper"/>
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
 		<mapping class="com.code.aon.accounting.AmortizationInvoice"/>

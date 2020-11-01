@@ -1,6 +1,5 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
-import static com.esferalia.aon.jooq.tables.AccountHelper.ACCOUNT_HELPER;
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 
 import java.util.function.Function;
@@ -178,24 +177,6 @@ public class AccountDAO {
 	public static Account delete(AONContext ctx, Account account) {
 		ctx.checkWrite();
 		AccountValidation.validateDeletion(ctx, account);
-		
-		// ****
-		// La tabla "account_helper" no se usa en la aplicación.
-		// Si algún dia se borra es te código es prescindible.
-		// Puede tener valores por el uso que se dio a la tabla en el pasado.
-			int deleted = ctx.getDslContext()
-				.delete(ACCOUNT_HELPER)
-				.where(ACCOUNT_HELPER.ACCOUNT.eq(account.getId()))
-				.execute();
-			ctx.log().info("DELETE " + deleted + " rows ACCOUNT_HELPER account id: " + account.getId() + " code: " + account.getCode());
-			deleted = ctx.getDslContext()
-				.delete(ACCOUNT_HELPER)
-				.where(ACCOUNT_HELPER.BALANCING_ACCOUNT.eq(account.getId()))
-				.execute();
-			ctx.log().info("DELETE " + deleted + " rows ACCOUNT_HELPER balancing_account id: " + account.getId() + " code: " + account.getCode());
-		// ****
-		// ****
-			
 		ctx.getDslContext()
 			.delete(ACCOUNT)
 			.where(ACCOUNT.ID.eq(account.getId()))

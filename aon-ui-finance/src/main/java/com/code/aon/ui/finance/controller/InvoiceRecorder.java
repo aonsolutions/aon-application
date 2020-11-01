@@ -2,26 +2,38 @@ package com.code.aon.ui.finance.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_INACCURACY_MSG;
 import static com.code.aon.ui.common.ICommonMessages.FINANCE_NO_AMORTIZATION_MSG;
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
+import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.jooq.AggregateFunction;
+import org.jooq.DSLContext;
+import org.jooq.Record2;
+import org.jooq.Record4;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.AmortizationInvoice;
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.Finance;
@@ -36,6 +48,9 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class InvoiceRecorder implements ITransferObject {
 
@@ -221,7 +236,6 @@ public class InvoiceRecorder implements ITransferObject {
 
 	private void checkExpenseAccount() throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		IManagerBean accountHelperBean = BeanManager.getManagerBean(AccountHelper.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
 		List<ITransferObject> list = invoiceDetailBean.getList(criteria);
@@ -235,30 +249,73 @@ public class InvoiceRecorder implements ITransferObject {
 						wrong = true;
 						addMessage("El gasto: \"" + invoiceDetail.getDescription() + "\" no tiene cuenta contable asociada.");			
 					} else {
-						Criteria c = new Criteria();
-						c.addEqualExpression(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE), getAccount().getCode());
-						c.addOrder(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER), false);
-						List<ITransferObject> ahs = accountHelperBean.getList(c);
-						AccountHelper first = null;
-						boolean used = false;
-						for (ITransferObject aht: ahs) {
-							AccountHelper ah = (AccountHelper) aht;
-							if (first == null && ah.getBalancingAccount().getCode().startsWith("6") ) {
-								first = ah;
+						Connection connection = null; 
+						try {
+							IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+							connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+							DSLContext ctx = DSL.using(connection, AccountingUtil.getDefaultSettings());
+							AggregateFunction<Integer> countFunc = DSL.countDistinct(ACCOUNT_ENTRY_DETAIL.ID);
+							Result<Record4<Integer,String,String,Integer>> record = 
+								ctx.select(ACCOUNT_ENTRY_DETAIL.ACCOUNT,ACCOUNT.CODE,ACCOUNT.DESCRIPTION,countFunc)
+									.from(ACCOUNT_ENTRY_DETAIL)
+									.innerJoin(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+									.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(DomainManager.getCurrentDomain()))
+									.and(ACCOUNT.CODE.like(getAccount().getCode()))
+									.groupBy(ACCOUNT_ENTRY_DETAIL.ACCOUNT)
+									.orderBy(countFunc.desc())
+									.fetch();
+							Account first = null;
+							boolean used = false;
+							for (Record4<Integer,String,String,Integer> step : record) {
+								Integer id = step.getValue(ACCOUNT_ENTRY_DETAIL.ACCOUNT);
+								String code = step.getValue(ACCOUNT.CODE);
+								if (first == null && "6".startsWith(code)) {
+									first = new Account();
+									first.setId(id);
+									first.setCode(code);
+									first.setDescription(step.getValue(ACCOUNT.DESCRIPTION));
+								}
+								if (id.equals(expenseAccount.getId()) ) {
+									used = true;
+									break;
+								}
 							}
-							Account balancingAccount = ah.getBalancingAccount();
-							if (balancingAccount.equals(expenseAccount) ) {
-								used = true;
-								break;
+							if (!used) {
+								String msg = "Este acreedor nunca ha registrado una factura de gasto \"" + invoiceDetail.getDescription() + "\""; 
+								if (first != null) {
+									msg += " y su cuenta de gastos más utilizada es \"" + first.getFullDescription() +"\".";
+								}
+								addMessage(msg);
 							}
+						} catch (AonConnectionException e) {
+							throw new ManagerBeanException(e.getMessage(), e);
+						} finally {
+							DatabaseUtil.closeQuietly(connection);
 						}
-						if (!used) {
-							String msg = "Este acreedor nunca ha registrado una factura de gasto \"" + invoiceDetail.getDescription() + "\""; 
-							if (first != null) {
-								msg += " y su cuenta de gastos más utilizada es \"" + first.getBalancingAccount().getFullDescription() +"\".";
-							}
-							addMessage(msg);
-						}
+//						Criteria c = new Criteria();
+//						c.addEqualExpression(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE), getAccount().getCode());
+//						c.addOrder(accountHelperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER), false);
+//						List<ITransferObject> ahs = accountHelperBean.getList(c);
+//						AccountHelper first = null;
+//						boolean used = false;
+//						for (ITransferObject aht: ahs) {
+//							AccountHelper ah = (AccountHelper) aht;
+//							if (first == null && ah.getBalancingAccount().getCode().startsWith("6") ) {
+//								first = ah;
+//							}
+//							Account balancingAccount = ah.getBalancingAccount();
+//							if (balancingAccount.equals(expenseAccount) ) {
+//								used = true;
+//								break;
+//							}
+//						}
+//						if (!used) {
+//							String msg = "Este acreedor nunca ha registrado una factura de gasto \"" + invoiceDetail.getDescription() + "\""; 
+//							if (first != null) {
+//								msg += " y su cuenta de gastos más utilizada es \"" + first.getBalancingAccount().getFullDescription() +"\".";
+//							}
+//							addMessage(msg);
+//						}
 					}
 					
 				}
