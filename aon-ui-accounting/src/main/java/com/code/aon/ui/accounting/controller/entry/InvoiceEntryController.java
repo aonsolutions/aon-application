@@ -1,8 +1,12 @@
 package com.code.aon.ui.accounting.controller.entry;
 
 import static com.code.aon.ui.common.ICommonMessages.UNABLE_RECORD_INACCURACY_ERROR_KEY;
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AccountEntry.ACCOUNT_ENTRY;
+import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +24,12 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jooq.AggregateFunction;
+import org.jooq.DSLContext;
+import org.jooq.Record2;
+import org.jooq.Result;
+import org.jooq.conf.ParamType;
+import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +41,6 @@ import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountHelper;
 import com.code.aon.accounting.InvoiceEntryDetail;
 import com.code.aon.accounting.InvoiceEntryHeader;
 import com.code.aon.accounting.Period;
@@ -43,6 +52,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.AppParam;
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
@@ -75,9 +85,7 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -98,6 +106,9 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+
+import net.aonsolutions.core.dbutils.DatabaseUtil;
+import net.aonsolutions.core.pool.AonConnectionException;
 
 public class InvoiceEntryController implements ISpecialAccountEntry, Serializable, IBankAccountContainerProvider {
 	
@@ -1782,34 +1793,79 @@ public class InvoiceEntryController implements ISpecialAccountEntry, Serializabl
 	private List<SelectItem> getRelatedAccounts(Account a) throws ManagerBeanException {
 		List<SelectItem> retList = new LinkedList<SelectItem>();
 		if (a != null) {
-			IManagerBean helperBean = BeanManager.getManagerBean(AccountHelper.class);
-			String accountAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_ACCOUNT_CODE);
-			String balAccountAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
-			String counterAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountAlias, a.getCode());
-			String c = "%";
-			if (a.getCode().startsWith("430")) {
-				c = "7%";
-			} else if (a.getCode().startsWith("400")) {
-				c = "6%";
-			} else if (a.getCode().startsWith("410")) {
-				c = "6%";
+			Connection connection = null; 
+			try {
+				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+				connection = DatabaseUtil.getConnection(AonUtil.getDomainName());
+				DSLContext ctx = DSL.using(connection, AccountingUtil.getDefaultSettings());
+				AggregateFunction<Integer> countFunc = DSL.countDistinct(ACCOUNT_ENTRY_DETAIL.ID);
+				String c = "%";
+				if (a.getCode().startsWith("430")) {
+					c = "7%";
+				} else if (a.getCode().startsWith("400")) {
+					c = "6%";
+				} else if (a.getCode().startsWith("410")) {
+					c = "6%";
+				}
+				Result<Record2<Integer,Integer>> record = 
+					ctx.select(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT,countFunc)
+						.from(ACCOUNT_ENTRY_DETAIL)
+						.innerJoin(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
+						.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(DomainManager.getCurrentDomain()))
+						.and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(a.getId()))
+						.and(ACCOUNT.CODE.like(c))
+						.groupBy(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT)
+						.orderBy(countFunc.desc())
+						.limit(1)
+						.fetch();
+				for (Record2<Integer,Integer> step : record) {
+					Integer id = step.value1();
+					Account account = (Account) accountBean.get(id);
+					SelectItem item = new SelectItem(account, account.getFullDescription());
+					retList.add(item);
+				}
+				retList.add(new SelectItem(null,"---------------","---------------",true) );
+			} catch (AonConnectionException e) {
+				throw new ManagerBeanException(e.getMessage(), e);
+			} finally {
+				DatabaseUtil.closeQuietly(connection);
 			}
-			Expression exp = ExpressionUtilities.getLikeExpression(balAccountAlias, c);	
-			criteria.addExpression(exp);
-			criteria.addOrder(counterAlias, false );
-			List<ITransferObject> list = helperBean.getList(criteria);
-			for (ITransferObject to : list) {
-				AccountHelper ah = (AccountHelper) to;
-				Account account = ah.getBalancingAccount();
-				SelectItem item = new SelectItem(account, account.getFullDescription());
-				retList.add(item);
-			}
-			retList.add(new SelectItem(null,"---------------","---------------",true) );
 		}
 		return retList;
 	}
+//			
+//			
+//			
+//			
+//			
+//			IManagerBean helperBean = BeanManager.getManagerBean(AccountHelper.class);
+//			String accountAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_CODE);
+//			String balAccountAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_CODE);
+//			String counterAlias = helperBean.getFieldName(IEntityAlias.ACCOUNT_HELPER_COUNTER);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(accountAlias, a.getCode());
+//			String c = "%";
+//			if (a.getCode().startsWith("430")) {
+//				c = "7%";
+//			} else if (a.getCode().startsWith("400")) {
+//				c = "6%";
+//			} else if (a.getCode().startsWith("410")) {
+//				c = "6%";
+//			}
+//			Expression exp = ExpressionUtilities.getLikeExpression(balAccountAlias, c);	
+//			criteria.addExpression(exp);
+//			criteria.addOrder(counterAlias, false );
+//			List<ITransferObject> list = helperBean.getList(criteria);
+//			for (ITransferObject to : list) {
+//				AccountHelper ah = (AccountHelper) to;
+//				Account account = ah.getBalancingAccount();
+//				SelectItem item = new SelectItem(account, account.getFullDescription());
+//				retList.add(item);
+//			}
+//			retList.add(new SelectItem(null,"---------------","---------------",true) );
+//		}
+//		return retList;
+//	}
 
 	private boolean useRegistryBanks(PayMethod pm) {
 		return ((isSales() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (!isSales() && pm.getType() == PayMethodType.BANK_TRANSFER));	

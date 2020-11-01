@@ -1334,24 +1334,6 @@ CREATE TABLE `account_entry_invoice` (
   CONSTRAINT `FK_ACCOUNT_ENTRY_INVOICE_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Asientos Contables y Facturas';
 
-#
-# Structure for the `account_helper` table : 
-#
-
-CREATE TABLE `account_helper` (
-  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
-  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
-  `counter` int(4) NOT NULL DEFAULT '0' COMMENT 'Contador, veces que se ha usado',
-  `account` int(4) NOT NULL COMMENT 'Cuenta Contable',
-  `balancing_account` int(4) NOT NULL COMMENT 'Contrapartida',
-  PRIMARY KEY (`id`),
-  KEY `IDX_ACCOUNT_HELPER_ACCOUNT` (`account`),
-  KEY `IDX_ACCOUNT_HELPER_BAL_ACCOUNT` (`balancing_account`),
-  KEY `IDX_ACCOUNT_HELPER_DOMAIN` (`domain`),
-  CONSTRAINT `FK_ACCOUNT_HELPER_ACCOUNT` FOREIGN KEY (`account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_ACCOUNT_HELPER_BAL_ACCOUNT` FOREIGN KEY (`balancing_account`) REFERENCES `account` (`id`),
-  CONSTRAINT `FK_ACCOUNT_HELPER_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ayuda a la introduccion de apuntes';
 
 #
 # Structure for the `application` table : 

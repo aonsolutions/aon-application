@@ -1,11 +1,10 @@
 package com.esferalia.aon.gwt.template.server.imports;
 
+import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import static com.esferalia.aon.jooq.tables.AccountEntryDetail.ACCOUNT_ENTRY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
 import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
-import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
-import static com.esferalia.aon.jooq.tables.AccountHelper.ACCOUNT_HELPER;
 
 import java.util.LinkedList;
 import java.util.Optional;
@@ -241,13 +240,6 @@ public class ImportFixer {
 	
 	private static void deleteAccount(Domain domain, String login, Integer account) {
 		try (AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), login)){
-			ctx.getDslContext()
-				.delete(ACCOUNT_HELPER)
-				.where(
-					ACCOUNT_HELPER.ACCOUNT.eq(account)
-					.or(ACCOUNT_HELPER.BALANCING_ACCOUNT.eq(account)))
-				.execute();
-
 			ctx.getDslContext()
 				.delete(ACCOUNT)
 				.where(ACCOUNT.ID.eq(account))

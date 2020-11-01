@@ -6,13 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.code.aon.accounting.AccountHelper;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
+
 import net.aonsolutions.core.dbutils.DatabaseUtil;
 import net.aonsolutions.core.pool.AonConnectionException;
 
@@ -22,7 +23,7 @@ public class AccountJournalManager {
 
 	public IManagerBean getBean() throws ManagerBeanException {
 		if (bean == null) {
-			bean = BeanManager.getManagerBean(AccountHelper.class);
+			bean = BeanManager.getManagerBean(AccountEntry.class);
 		}
 		return bean;
 	}

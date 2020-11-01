@@ -6,10 +6,9 @@ import java.util.Date;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.accounting.Period;
-import com.code.aon.accounting.util.AccountHelperManager;
-import com.code.aon.accounting.util.AccountJournalManager;
 import com.code.aon.AonVersion;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.util.AccountJournalManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.accounting.check.AonCheckException;
@@ -81,14 +80,7 @@ public class AccountRegeneratorController implements Serializable {
 	}
 
 	private void regenerateAccountHelper() {
-		try {
-			AccountHelperManager manager = new AccountHelperManager();
-			manager.regenerateAccountHelper();
-			AonUtil.addInfoMessage("- Las ayudas para las contrapartidas de cuentas de han regenerado correctamente.");
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("- No se han podido regenerar las ayudas para las contrapartidas de cuentas . Causa: "
-					+ e.getMessage());
-		}
+		AonUtil.addInfoMessage("- Las ayudas para las contrapartidas ya no se regeneran.");
 	}
 	private void regenerateJournalCounter() {
 		try {

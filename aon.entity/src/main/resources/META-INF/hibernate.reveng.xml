@@ -87,16 +87,6 @@
 	
 	<table name="account_entry_fbatch" class="com.esferalia.aon.entity.master.AccountEntryFinanceBatch" />
 
-	<table name="account_helper">
-		<column name="counter" type="java.lang.Integer"/>
-		<foreign-key constraint-name="FK_ACCOUNT_HELPER_ACCOUNT">
-			<many-to-one property="account" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_ACCOUNT_HELPER_BAL_ACCOUNT">
-			<many-to-one property="balancingAccount" />
-		</foreign-key>
-	</table>
-	
 	<table name="account_period" class="com.esferalia.aon.entity.master.Period">
 		<column name="status" type="com.code.aon.accounting.enumeration.AccountPeriodStatus"/>
 	</table>
