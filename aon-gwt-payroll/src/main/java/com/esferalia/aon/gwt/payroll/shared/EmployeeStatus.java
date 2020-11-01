@@ -297,6 +297,78 @@ public abstract class EmployeeStatus implements Serializable {
 	
 	public abstract void visit(Visitor visitor);
 
+	public static void ifSistemaREDEnabled(EmployeeStatus employeeStatus, Runnable saltraEnable, Runnable saltraDisabled) {
+		employeeStatus.visit(new Visitor() {
+	
+			@Override
+			public void up2Date() {
+				saltraEnable.run();
+			}
+			
+			@Override
+			public void forbidden() {
+				saltraDisabled.run();
+			}
+	
+			@Override
+			public void invalidData() {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void endDateNotFound() {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void employeeNotFound() {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void occupationNotFound() {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void saltraCredentialsNotFound() {
+				saltraDisabled.run();
+			}
+	
+			@Override
+			public void mismatchedStartDate(MismatchedStartDate status) {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void mismatchedOccupation(MismatchedOccupation status) {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void mismatchedContractType(MismatchedContractType status) {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void mismatchedCCC(MismatchedCCC status) {
+				saltraEnable.run();
+			}
+	
+			@Override
+			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				saltraEnable.run();
+	
+			}
+	
+		});
+	}
+
 	public static void trace(AndEmployeeStatus employeeStatus) {
 		employeeStatus.visit(new Visitor() {
 			

@@ -21,9 +21,11 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ContrataEmployeeObject {
@@ -400,6 +402,21 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
+		
+		employeesService.getEmployeeStatus(contractData.getContractId(), new AsyncCallback<EmployeeStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EmployeeStatus result) {
+				 success.accept(result);
+			}
+		});
+	}
+		
 	// ---------------------------------------------- GETTERS  -------------------------------------------------
 	
 	// TABLA DATOS CONTRATO

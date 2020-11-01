@@ -1,13 +1,17 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEnabled;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -46,6 +50,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -541,6 +546,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	Button deleteContract;
 	
 	@UiField
+	MenuItem archivoMenuItem;
+	
+	@UiField
 	MenuItem taButton;
 	
 	@UiField
@@ -591,6 +599,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	@UiField
 	TabLayoutPanel footTabPanel;
 	
+	ResultsPanel resultsPanel;
+	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	private int zoom;
 	private ContrataEmployeeObject contrataEmployeeObject;
@@ -622,6 +632,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initTabLayOutPanel();
 		initFootPanel();
 		initMenuItems();
+		initResultsPanel();
 	}
 
 	private void setDefaultEmployeeView() {
@@ -708,6 +719,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		footPanel.addMinimizeHandler((e) -> {
 			splitLayoutPanel.setWidgetSize(footPanel, 25);
 		});
+		
+	}
+	
+	private void initResultsPanel () {
+		resultsPanel = new ResultsPanel();		
 	}
 	
 	private void initMenuItems() {
@@ -726,6 +742,41 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 	}
 
+	private void showResultsPanel() {
+		InlineLabel tab = new InlineLabel("Resultados");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		footTabPanel.add(resultsPanel, tab);
+		footTabPanel.selectTab(resultsPanel);
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+
+	}
+	
+	private void selectResultsPanel() {
+
+		InlineLabel tab = new InlineLabel("Resultados");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		footTabPanel.add(resultsPanel, tab);
+		footTabPanel.selectTab(resultsPanel);
+
+	}
+
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void showFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+	}
+	
+	private void setTGSSVisible( boolean visible ) {
+		archivoMenuItem.setVisible(visible);
+	}
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
 	@UiHandler("listEmployees")
@@ -916,6 +967,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				}, 
 				t -> {}
 		);
+		
+		this.contrataEmployeeObject.setEmployeeContractInfo(employeeContractInfo);		
+		checkStatus(this.contrataEmployeeObject);
+		
+		
 	}
 	
 	private void initLogicWindow() {
@@ -971,6 +1027,61 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 	}
 	
+	private void checkStatus(ContrataEmployeeObject contrataEmployeeObject) {
+		contrataEmployeeObject.checkStatus(employeeStatus -> {
+			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
+
+				@Override
+				public void run() {
+					contrataEmployeeObject.checkStatus(employeeStatus -> {
+						removeAll();
+						employeeStatus.visit(this);
+					}, throwable -> {
+					});
+				}
+				
+				@Override
+				protected void saltraCredentialsFound() {
+					contrataEmployeeObject.checkStatus(employeeStatus -> {
+						removeAll();
+						employeeStatus.visit(this);
+						selectResultsPanel();
+						ifSistemaREDEnabled(employeeStatus, () -> {
+							showFootPanel();
+							ContrataEmployee.this.setTGSSVisible(true);
+							//ContrataEmployee.this.setOnSaved(e -> run());
+						}, () -> {
+							closeFootPanel();
+							ContrataEmployee.this.setTGSSVisible(false);
+
+						});
+					}, throwable -> {
+						closeFootPanel();
+						ContrataEmployee.this.setTGSSVisible(false);
+
+					});
+				}
+			};
+
+			employeeStatus.visit(sistemaREDResults);
+			resultsPanel.setWidget(sistemaREDResults);
+			selectResultsPanel();
+
+			ifSistemaREDEnabled(employeeStatus, () -> {
+				showFootPanel();
+				ContrataEmployee.this.setTGSSVisible(true);
+				//ContrataEmployee.this.setOnSaved(e -> sistemaREDResults.run());
+			}, () -> {
+				closeFootPanel();
+				ContrataEmployee.this.setTGSSVisible(false);
+			});
+
+		}, throwable -> {
+			closeFootPanel();
+			ContrataEmployee.this.setTGSSVisible(false);
+		});
+	}
+
 	// ----------------------------------------------- METODOS AUXILIARES ------------------------------------------------
 	
 	private void reformatAccount(SuggestBox accountField) {
