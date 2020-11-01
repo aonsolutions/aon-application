@@ -2750,7 +2750,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private void checkStatus(EmployeeDraftObject employeeDraftObject) {
 		employeeDraftObject.checkStatus(employeeStatus -> {
-			SistemaREDResults saltraResults = new SistemaREDResults() {
+			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
 
 				@Override
 				public void run() {
@@ -2770,7 +2770,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						removeAll();
 						employeeStatus.visit(this);
 						selectResultsPanel();
-						ifSaltraEnabled(employeeStatus, () -> {
+						EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
 							showFootPanel();
 							getEmployeeDraft().setTaVisible(true);
 							getEmployeeDraft().setIdcVisible(true);
@@ -2789,15 +2789,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				}
 			};
 
-			employeeStatus.visit(saltraResults);
-			resultsPanel.setWidget(saltraResults);
+			employeeStatus.visit(sistemaREDResults);
+			resultsPanel.setWidget(sistemaREDResults);
 			selectResultsPanel();
 
-			ifSaltraEnabled(employeeStatus, () -> {
+			EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
 				showFootPanel();
 				getEmployeeDraft().setTaVisible(true);
 				getEmployeeDraft().setIdcVisible(true);
-				getEmployeeDraft().setOnSaved(e -> saltraResults.run());
+				getEmployeeDraft().setOnSaved(e -> sistemaREDResults.run());
 			}, () -> {
 				closeFootPanel();
 				getEmployeeDraft().setTaVisible(false);
@@ -3525,78 +3525,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		} catch (Exception e) {
 			return false;
 		}
-	}
-
-	private static void ifSaltraEnabled(EmployeeStatus employeeStatus, Runnable saltraEnable, Runnable saltraDisabled) {
-		employeeStatus.visit(new EmployeeStatus.Visitor() {
-
-			@Override
-			public void up2Date() {
-				saltraEnable.run();
-			}
-			
-			@Override
-			public void forbidden() {
-				saltraDisabled.run();
-			}
-
-			@Override
-			public void invalidData() {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void endDateNotFound() {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void employeeNotFound() {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void occupationNotFound() {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void saltraCredentialsNotFound() {
-				saltraDisabled.run();
-			}
-
-			@Override
-			public void mismatchedStartDate(MismatchedStartDate status) {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void mismatchedOccupation(MismatchedOccupation status) {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void mismatchedContractType(MismatchedContractType status) {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void mismatchedCCC(MismatchedCCC status) {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
-				saltraEnable.run();
-
-			}
-
-		});
 	}
 
 	private static void ifSaltraEnabled(EnterpriseStatus enterpriseStatus, Runnable saltraEnable,

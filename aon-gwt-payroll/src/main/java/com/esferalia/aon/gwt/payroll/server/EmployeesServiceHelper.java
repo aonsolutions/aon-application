@@ -53,6 +53,7 @@ import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
@@ -287,7 +288,7 @@ public class EmployeesServiceHelper {
 		//catch ( InvalidArgumentException e ) {
 		//	return new EmployeeStatus.InvalidData();
 		//} 
-		catch ( SaltraCredentialsNotFoundException e ) {
+		catch ( SaltraCredentialsNotFoundException | CertificateNotFoundException e ) {
 			return new EmployeeStatus.CredentialsNotFound();
 		}
 
