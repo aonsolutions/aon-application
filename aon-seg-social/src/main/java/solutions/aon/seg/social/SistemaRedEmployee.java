@@ -361,7 +361,7 @@ public class SistemaRedEmployee {
 			}			
 		}
 		
-
+		
 		public static void main(String[] args)
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {

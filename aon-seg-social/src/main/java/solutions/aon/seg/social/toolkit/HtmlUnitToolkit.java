@@ -59,23 +59,16 @@ public class HtmlUnitToolkit {
 		try {
 			String status=HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
 			status=Toolkit.removeNBSP(status).replace(" ", "");
-			if((status.length()>0)&&(status.charAt(0)=='*'))
-				status=status.substring(1);
-			if(status.equals("")){
-				return 3083;
-			}
-			if(status.indexOf("*")==-1) {
-				throw new SegSocialException ();
-			}
-			return Integer.parseInt(status.substring(0, status.indexOf("*")));
 			
-		}catch (ElementNotFoundException e) {
-			return 3083;
-		}
-		catch(NumberFormatException nfe) {
-			throw new SegSocialException ();
-		}
-		
+			if((status.length()>0)&&(status.charAt(0)=='*'))	status=status.substring(1);
+			if(status.equals(""))	return 3083;
+			if(status.indexOf("*")==-1) 
+				if(status.indexOf("-" ) == -1)	throw new SegSocialException ();
+				else return Integer.parseInt(status.substring(0, status.indexOf("-")));
+
+			return Integer.parseInt(status.substring(0, status.indexOf("*")));
+		}catch (ElementNotFoundException e) {return 3083;}
+		catch(NumberFormatException nfe) {throw new SegSocialException ();}
 	}
 
 	//MANAGES THE EXCEPTIONS

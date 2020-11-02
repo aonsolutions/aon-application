@@ -66,55 +66,23 @@ public class Employee {
 	
 	}
 	
-	
-	public String getIpf() {
-		return ipf;
-	}
-	
-	public String getNss() {
-		return nss;
-	}
-	
-	public Date getFra() {
-		return fra;
-	}
-	
-	public Optional<String> getName() {
-		return Optional.ofNullable(name);
-	}
-	
-	public Optional<String> getGc() {
-		return Optional.ofNullable(gc);
-	}
-	
-	public Optional<Date> getFrb() {
-		return Optional.ofNullable(frb);
-	}
-	
-	public Optional<String>  getCtaCti() {
-		return Optional.ofNullable(ctaCti);
-	}
-	
-	public Optional<String> getContract(){
-		return Optional.ofNullable(contract);
-	}
-	
-	public Optional<Date> getBirthDate() {
-		return Optional.ofNullable(birthDate);
-	}
-
+	public String getIpf() {return ipf;}
+	public String getNss() {return nss;}
+	public Date getFra() {return fra;}
+	public Optional<String> getName() {return Optional.ofNullable(name);}
+	public Optional<String> getGc() {return Optional.ofNullable(gc);}
+	public Optional<Date> getFrb() {return Optional.ofNullable(frb);}
+	public Optional<String>  getCtaCti() {return Optional.ofNullable(ctaCti);}
+	public Optional<String> getContract(){return Optional.ofNullable(contract);}	
+	public Optional<Date> getBirthDate() {return Optional.ofNullable(birthDate);}
 	public Optional<Double> getCoef() {
 		try {
 			return Optional.of(Double.parseDouble(coef));
 		} catch ( Exception e) {
 			return Optional.empty();
 		}
-	}
-	
-	
-	public Optional<String> getSex() {
-		return Optional.of(sex);
-	}
+	}	
+	public Optional<String> getSex() {return Optional.of(sex);}
 	
 	//TO_DO Generate getters y toString
 	@Override
@@ -123,141 +91,59 @@ public class Employee {
 		stringBuffer.append('{');
 		accept(new Visitor() {
 			@Override
-			public void visitNSS(String nss) {
-				stringBuffer.append(String.format(" nss : \"%s\" ", nss));
-			}
-
+			public void visitNSS(String nss) {stringBuffer.append(String.format(" nss : \"%s\" ", nss));}
 			@Override
-			public void visitName(String name) {
-				stringBuffer.append(String.format(" name : \"%s\" ", name));
-			}
-
+			public void visitName(String name) {stringBuffer.append(String.format(" name : \"%s\" ", name));}
 			@Override
-			public void visitBirthDate(Date birthDate) {
-				stringBuffer.append(String.format(" birthDate : \"%s\" ", birthDate));				
-			}
-
+			public void visitBirthDate(Date birthDate) {stringBuffer.append(String.format(" birthDate : \"%s\" ", birthDate));}
 			@Override
-			public void visitIpf(String ipf) {
-				stringBuffer.append(String.format(" ipf : \"%s\" ", ipf));	
-			}
-
+			public void visitIpf(String ipf) {stringBuffer.append(String.format(" ipf : \"%s\" ", ipf));}
 			@Override
-			public void visitSex(String sex) {
-				stringBuffer.append(String.format(" sex : \"%s\" ", sex));	
-			}
-			
+			public void visitSex(String sex) {stringBuffer.append(String.format(" sex : \"%s\" ", sex));}
 			@Override
-			public void visitTlf(String tlf) {
-				stringBuffer.append(String.format(" movil : \"%s\" ", tlf));	
-			}
-			
+			public void visitTlf(String tlf) {stringBuffer.append(String.format(" movil : \"%s\" ", tlf));}
 			@Override
-			public void visitCtaCti(String ctaCti) {
-				stringBuffer.append(String.format(" ctaCti : \"%s\" ", ctaCti));
-			}
-
+			public void visitCtaCti(String ctaCti) {stringBuffer.append(String.format(" ctaCti : \"%s\" ", ctaCti));}
 			@Override
-			public void visitRegime(String regime) {
-				stringBuffer.append(String.format(" regime : \"%s\" ", regime));
-			}
-
+			public void visitRegime(String regime) {stringBuffer.append(String.format(" regime : \"%s\" ", regime));}
 			@Override
-			public void visitCompanyId(String companyId) {
-				stringBuffer.append(String.format(" companyId : \"%s\" ", companyId));
-			}
-
+			public void visitCompanyId(String companyId) {stringBuffer.append(String.format(" companyId : \"%s\" ", companyId));}
 			@Override
-			public void visitCompanyName(String companyName) {
-				stringBuffer.append(String.format(" companyName : \"%s\" ", companyName));				
-			}
-
+			public void visitCompanyName(String companyName) {stringBuffer.append(String.format(" companyName : \"%s\" ", companyName));}
 			@Override
-			public void visitSituation(String situation) {
-				stringBuffer.append(String.format(" situation : \"%s\" ", situation));
-			}
-
+			public void visitSituation(String situation) {stringBuffer.append(String.format(" situation : \"%s\" ", situation));}
 			@Override
-			public void visitGc(String gc) {
-				stringBuffer.append(String.format(" gc : \"%s\" ", gc));
-			}
-			
+			public void visitGc(String gc) {stringBuffer.append(String.format(" gc : \"%s\" ", gc));}
 			@Override
-			public void visitGcDesc(String gcDesc) {
-				stringBuffer.append(String.format(" gcDesc : \"%s\" ", gcDesc));
-			}
-
+			public void visitGcDesc(String gcDesc) {stringBuffer.append(String.format(" gcDesc : \"%s\" ", gcDesc));}
 			@Override
-			public void visitAgricultPromo(Boolean agriculturePromo) {
-				stringBuffer.append(String.format(" agriculturePromo : \"%s\" ", agriculturePromo));
-			}
-
+			public void visitAgricultPromo(Boolean agriculturePromo) {stringBuffer.append(String.format(" agriculturePromo : \"%s\" ", agriculturePromo));}
 			@Override
-			public void visitWorkTimeReduct(Boolean workTimeReduct) {
-				stringBuffer.append(String.format(" workTimeReduct : \"%s\" ", workTimeReduct));				
-			}
-
+			public void visitWorkTimeReduct(Boolean workTimeReduct) {stringBuffer.append(String.format(" workTimeReduct : \"%s\" ", workTimeReduct));}
 			@Override
-			public void visitrFra(Date fra) {
-				stringBuffer.append(String.format(" fra : \"%s\" ", fra));
-			}
-
+			public void visitrFra(Date fra) {stringBuffer.append(String.format(" fra : \"%s\" ", fra));}
 			@Override
-			public void visitrFea(Date fea) {
-				stringBuffer.append(String.format(" fea : \"%s\" ", fea));
-			}
-
+			public void visitrFea(Date fea) {stringBuffer.append(String.format(" fea : \"%s\" ", fea));}
 			@Override
-			public void visitrFrb(Date frb) {
-				stringBuffer.append(String.format(" frb : \"%s\" ", frb));
-			}
-
+			public void visitrFrb(Date frb) {stringBuffer.append(String.format(" frb : \"%s\" ", frb));}
 			@Override
-			public void visitrFeb(Date feb) {
-				stringBuffer.append(String.format(" feb : \"%s\" ", feb));	
-			}
-
+			public void visitrFeb(Date feb) {stringBuffer.append(String.format(" feb : \"%s\" ", feb));	}
 			@Override
-			public void visitContract(String contract) {
-				stringBuffer.append(String.format(" contract : \"%s\" ", contract));
-			}
-
+			public void visitContract(String contract) {stringBuffer.append(String.format(" contract : \"%s\" ", contract));}
 			@Override
-			public void visitCoef(String coef) {
-				stringBuffer.append(String.format(" coef : \"%s\" ", coef));
-			}
-
+			public void visitCoef(String coef) {stringBuffer.append(String.format(" coef : \"%s\" ", coef));}
 			@Override
-			public void visitColec(String colec) {
-				stringBuffer.append(String.format(" colec : \"%s\" ", colec));
-			}
-
+			public void visitColec(String colec) {stringBuffer.append(String.format(" colec : \"%s\" ", colec));}
 			@Override
-			public void visitEpig(String epig) {
-				stringBuffer.append(String.format(" epig : \"%s\" ", epig));
-			}
-
+			public void visitEpig(String epig) {stringBuffer.append(String.format(" epig : \"%s\" ", epig));}
 			@Override
-			public void visitOcup(String ocup) {
-				stringBuffer.append(String.format(" ocup : \"%s\" ", ocup));
-			}
-
+			public void visitOcup(String ocup) {stringBuffer.append(String.format(" ocup : \"%s\" ", ocup));}
 			@Override
-			public void visitVinFam(String vimFam) {
-				stringBuffer.append(String.format(" vinFam : \"%s\" ", vimFam));
-			}
-
+			public void visitVinFam(String vimFam) {stringBuffer.append(String.format(" vinFam : \"%s\" ", vimFam));}
 			@Override
-			public void visitProfesCat(String profesCat) {
-				stringBuffer.append(String.format(" profesCat : \"%s\" ", profesCat));		
-			}
-
+			public void visitProfesCat(String profesCat) {stringBuffer.append(String.format(" profesCat : \"%s\" ", profesCat));}
 			@Override
-			public void visitReducingcoefic(String reducingCoefic) {
-				stringBuffer.append(String.format(" reducingCoefic : \"%s\" ", reducingCoefic));
-			}
-
-
+			public void visitReducingcoefic(String reducingCoefic) {stringBuffer.append(String.format(" reducingCoefic : \"%s\" ", reducingCoefic));}
 		});
 		stringBuffer.append('}');
 		return stringBuffer.toString();
@@ -540,109 +426,57 @@ public class Employee {
 	public static abstract class AbstractVisitor implements Visitor {
 
 		@Override
-		public void visitNSS(String nss) {
-		}
-
+		public void visitNSS(String nss) {}
 		@Override
-		public void visitName(String name) {
-		}
-
+		public void visitName(String name) {}
 		@Override
-		public void visitBirthDate(Date birthDate) {
-		}
-
+		public void visitBirthDate(Date birthDate) {}
 		@Override
-		public void visitIpf(String ipf) {
-		}
-
+		public void visitIpf(String ipf) {}
 		@Override
-		public void visitSex(String sex) {
-		}
-
+		public void visitSex(String sex) {}
 		@Override
-		public void visitTlf(String tlf) {
-		}
-
+		public void visitTlf(String tlf) {}
 		@Override
-		public void visitCtaCti(String ctaCti) {
-		}
-
+		public void visitCtaCti(String ctaCti) {}
 		@Override
-		public void visitRegime(String regime) {
-		}
-
+		public void visitRegime(String regime) {}
 		@Override
-		public void visitCompanyId(String companyId) {
-		}
-
+		public void visitCompanyId(String companyId) {}
 		@Override
-		public void visitCompanyName(String companyName) {
-		}
-
+		public void visitCompanyName(String companyName) {}
 		@Override
-		public void visitSituation(String situaction) {
-		}
-
+		public void visitSituation(String situaction) {}
 		@Override
-		public void visitGc(String gc) {
-		}
-
+		public void visitGc(String gc) {}
 		@Override
-		public void visitAgricultPromo(Boolean agriculturePromo) {
-		}
-
+		public void visitAgricultPromo(Boolean agriculturePromo) {}
 		@Override
-		public void visitWorkTimeReduct(Boolean workTimeReduct) {
-		}
-
+		public void visitWorkTimeReduct(Boolean workTimeReduct) {}
 		@Override
-		public void visitrFra(Date fra) {
-		}
-
+		public void visitrFra(Date fra) {}
 		@Override
-		public void visitrFea(Date fea) {
-		}
-
+		public void visitrFea(Date fea) {}
 		@Override
-		public void visitrFrb(Date frb) {
-		}
-
+		public void visitrFrb(Date frb) {}
 		@Override
-		public void visitrFeb(Date feb) {
-		}
-
+		public void visitrFeb(Date feb) {}
 		@Override
-		public void visitContract(String contract) {
-		}
-
+		public void visitContract(String contract) {}
 		@Override
-		public void visitCoef(String coef) {
-		}
-
+		public void visitCoef(String coef) {}
 		@Override
-		public void visitColec(String colec) {
-		}
-
+		public void visitColec(String colec) {}
 		@Override
-		public void visitEpig(String epig) {
-		}
-
+		public void visitEpig(String epig) {}
 		@Override
-		public void visitOcup(String ocup) {
-		}
-
+		public void visitOcup(String ocup) {}
 		@Override
-		public void visitVinFam(String vimFam) {
-		}
-
+		public void visitVinFam(String vimFam) {}
 		@Override
-		public void visitProfesCat(String profesCat) {
-		}
-
+		public void visitProfesCat(String profesCat) {}
 		@Override
-		public void visitReducingcoefic(String reducingCoefic) {
-		}
-		
+		public void visitReducingcoefic(String reducingCoefic) {}
 	}
 	
 }
