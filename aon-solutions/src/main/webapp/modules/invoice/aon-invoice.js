@@ -134,7 +134,8 @@ import '../../components/aon-viewer.js';
 				dataDiv.style.width = '50%';
 				document.getElementById('aonInvoiceDiv').style.display = 'block';
 				document.getElementById('aonInvoiceTaxDiv').style.width = '100%';
-				fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}"><aon-viewer>`;
+
+				fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
 			}
 		}
 
@@ -154,7 +155,7 @@ import '../../components/aon-viewer.js';
 				document.getElementById('aonInvoiceDiv').style.display = 'block';
 				document.getElementById('aonInvoiceTaxDiv').style.width = '100%';
 				this.attach(READER.result, file.type);
-				fileDiv.innerHTML = `<aon-viewer type="${file.type}" file="${READER.result}"><aon-viewer>`;
+				fileDiv.innerHTML = `<aon-viewer type="${file.type}" file="${READER.result}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
 			};
 		}
 
@@ -169,7 +170,12 @@ import '../../components/aon-viewer.js';
 					},
 					invoice: this.getInvoice()
 				};
-				insertInvoice(data).then((r) => this.getInvoice().id = r.id);
+				let aonInvoice = document.getElementById('aonInvoice');
+				aonInvoice.startLoader();
+				insertInvoice(data).then((r) => {
+					aonInvoice.stopLoader();
+					this.getInvoice().id = r.id;
+				});
 			}
 		}
 

@@ -24,6 +24,14 @@ class AonViewer extends HTMLElement {
 		this.setAttribute('file', file);
 	}
 
+	get width() {
+		return this.getAttribute('width');
+	}
+
+	set width(width) {
+		this.setAttribute('width', width);
+	}
+
 	constructor () {
 		super();
 	}
@@ -44,9 +52,11 @@ class AonViewer extends HTMLElement {
 		this.appendChild(img);
 	}
 	printPdf() {
+		let me = this;
+		let width = this.getAttribute('width');
 		// this.innerHTML = `<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>`;
-		let canvas = document.createElement('canvas');
-		this.appendChild(canvas);
+		// let canvas = document.createElement('canvas');
+		// this.appendChild(canvas);
 
 		let pdfjsLib = window['pdfjs-dist/build/pdf'];
 
@@ -55,34 +65,56 @@ class AonViewer extends HTMLElement {
 
 		// Asynchronous download of PDF
 		//		var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
-		let loadingTask = pdfjsLib.getDocument(this.file);
+
+		let loadingTask = pdfjsLib.getDocument({
+			url: this.file,
+			httpHeaders: {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE, HEAD',
+				'Access-Control-Allow-Headers': 'X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept',
+				'Access-Control-Max-Age': '1728000'
+			},
+			withCredentials: true
+		});
 		loadingTask.promise.then(function(pdf) {
   		console.log('PDF loaded');
-
+			alert(pdf.numPages);
   		// Fetch the first page
   		let pageNumber = 1;
-  		pdf.getPage(pageNumber).then(function(page) {
-    		console.log('Page loaded');
+			for(let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++){
+				let canvas = document.createElement('canvas');
+				canvas.id = 'canvas' + pageNumber;
+				me.appendChild(canvas);
 
-    		let scale = 1.5;
-    		let viewport = page.getViewport({scale: scale});
+  			pdf.getPage(pageNumber).then(function(page) {
+    			console.log('Page loaded');
 
-    		// Prepare canvas using PDF page dimensions
-    		//var canvas = document.getElementById('the-canvas');
-    		let context = canvas.getContext('2d');
-    		canvas.height = viewport.height;
-    		canvas.width = viewport.width;
+					let scale = 1;
+    			let viewport = page.getViewport({scale});
+					if(width) {
+						scale = width / viewport.width;
+						viewport = page.getViewport({ scale });
+					}
 
-    		// Render PDF page into canvas context
-    		let renderContext = {
-      		canvasContext: context,
-      		viewport: viewport
-    		};
-    		let renderTask = page.render(renderContext);
-    		renderTask.promise.then(function () {
-      		console.log('Page rendered');
-    		});
-  		});
+    			// Prepare canvas using PDF page dimensions
+    			//var canvas = document.getElementById('the-canvas');
+					let canvasPage = document.getElementById('canvas' + pageNumber);
+
+    			let context = canvasPage.getContext('2d');
+    			canvasPage.height = viewport.height;
+    			canvasPage.width = viewport.width;
+
+    			// Render PDF page into canvas context
+    			let renderContext = {
+      			canvasContext: context,
+      			viewport: viewport
+    			};
+    			let renderTask = page.render(renderContext);
+    			renderTask.promise.then(function () {
+      			console.log('Page rendered');
+    			});
+  			});
+			}
 		}, function (reason) {
   		// PDF loading error
   		console.error(reason);
