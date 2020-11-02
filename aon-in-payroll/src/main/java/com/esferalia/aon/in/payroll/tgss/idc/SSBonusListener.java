@@ -1,93 +1,26 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
-import java.util.ArrayList;
-import java.util.Date;
+import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
+import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
+import static com.esferalia.aon.jooq.tables.Person.PERSON;
+
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Result;
+
 final class SSBonusListener extends DefaultListener implements Listener {
 	
-	public static class SSBonus {
-
-		private String ssNum;
-		private String ccc;
-		private Date startDate;
-		private Date endDate;
-		private String description;
-		private Byte type; // Bonus.Type.values()
-		private String formula;
-
-		public SSBonus() {
-			super();
-		}
-
-		public Date getStartDate() {
-			return startDate;
-		}
-
-		public void setStartDate(Date startDate) {
-			this.startDate = startDate;
-		}
-
-		public Date getEndDate() {
-			return endDate;
-		}
-
-		public void setEndDate(Date endDate) {
-			this.endDate = endDate;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public Byte getType() {
-			return type;
-		}
-
-		public void setType(Byte type) {
-			this.type = type;
-		}
-
-		public String getFormula() {
-			return formula;
-		}
-
-		public void setFormula(String formula) {
-			this.formula = formula;
-		}
-
-		public String getSsNum() {
-			return ssNum;
-		}
-
-		public void setSsNum(String ssNum) {
-			this.ssNum = ssNum;
-		}
-
-		public String getCcc() {
-			return ccc;
-		}
-
-		public void setCcc(String ccc) {
-			this.ccc = ccc;
-		}
-
-		@Override
-		public String toString() {
-			return "SSBonus -> SS Number : " + getSsNum() + ", CCC : " + getCcc() + ", Description : " + getDescription() + ", Formula : " + getFormula() + ", Start : "
-					+ getStartDate() + ", End : " + getEndDate();
-		}
-	}
-
 	static final int[] ssBonusCodes = new int[] { 1, 2, 13, 15, 16, 37, 41, 46, 48, 51, 52, 54, 55 };
 	
+	@SuppressWarnings("serial")
 	static final Map<String, String> quotaFracctionMap = new HashMap<String, String>() {
 		{
 			put("01", "(IT_E + IMS_E + DESMPL_E + FOGASA_E + FP_E)");
@@ -172,27 +105,114 @@ final class SSBonusListener extends DefaultListener implements Listener {
 		}
 	};
 	
-	private List<SSBonus> ssBonuses = new ArrayList<SSBonus>();
-
+	private DSLContext dslContext;
+	
+	public void setDSLContext(DSLContext dSLContext) {
+		this.dslContext = dSLContext;
+	}
+	
+	// ------------------------------------------ LISTENER IMPLEMENTS METHODS --------------------------------------------------------
+	
 	@Override
-	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo, String quota, Date start, Date end) {
+	public void onEmployeePerido(String ssNum, String ccc, java.util.Date startDate, java.util.Date endDate) {
+//		System.out.println("SS NUM: " + ssNum + " CCC: " + ccc + " DESDE: " + dateFormat.format(startDate) + " HASTA: " + dateFormat.format(endDate));
+		deleteRepeatContractBonus(ssNum, ccc, startDate, endDate);
+	}
+	
+	@Override
+	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo, String quota, java.util.Date start, java.util.Date end) {
 		Integer codeInt = Integer.parseInt(code);
 		if (IntStream.of(ssBonusCodes).anyMatch(x -> x == codeInt)) {
-//			System.out.println("TIPO DE PECULIARIDAD : " + code + " " + description + " PORCENTAJE/TIPO: " + portTipo + " FRACCION DE CUOTA: " + quota + " DESDE: " + start + " HASTA: " + end);
+//			System.out.println("SS NUM: " + ssNum + " CCC: " + ccc + " TIPO DE PECULIARIDAD : " + code + " " + description + " - " + portTipo + "%" + " PORCENTAJE/TIPO: " + portTipo + " FRACCION DE CUOTA: " + quota + " DESDE: " + dateFormat.format(start) + " HASTA: " + dateFormat.format(end));
 			SSBonus ssBonus = new SSBonus();
 			ssBonus.setSsNum(ssNum);
 			ssBonus.setCcc(ccc);
-			ssBonus.setStartDate(start);
-			ssBonus.setEndDate(end);
-			ssBonus.setDescription(code + " " + description);
+			ssBonus.setStartDate(new Date(start.getTime()));
+			ssBonus.setEndDate(new Date(end.getTime()));
+			ssBonus.setDescription(code + " " + description + " - " + portTipo + "%");
 			String quotaCode = quota.trim().split(" ")[0];
-			ssBonus.setFormula(SSBonusListener.quotaFracctionMap.get(quotaCode) + " * " + Double.parseDouble(portTipo.replace(",", ".")) / 100);
-			ssBonuses.add(ssBonus);
+			ssBonus.setFormula("/*idc*/" + SSBonusListener.quotaFracctionMap.get(quotaCode) + " * " + Double.parseDouble(portTipo.replace(",", ".")) / 100);
+			insertContractBonus(ssBonus);
 		}
 	}
 	
-	public List<SSBonus> getSSBonus(){
-		return this.ssBonuses;
+	@Override
+	public void onEmployeeQuotePECList(List<EmployeeQuotePEC> employeeQuotePECList) {
+		employeeQuotePECList.forEach(e -> {
+			Integer codeInt = Integer.parseInt(e.getCode());
+			if (IntStream.of(ssBonusCodes).anyMatch(x -> x == codeInt)) {
+//				System.out.println("SS NUM: " + e.getSsNum() + " CCC: " + e.getEnterpriseCCC() + " TIPO DE PECULIARIDAD : " + e.getCode() + " " + e.getDescription() + " - " + e.getType() + "%" + " PORCENTAJE/TIPO: " + e.getType() + " FRACCION DE CUOTA: " + e.getQuota() + " DESDE: " + dateFormat.format(e.getStart()) + " HASTA: " + dateFormat.format(e.getEnd()));
+				SSBonus ssBonus = new SSBonus();
+				ssBonus.setSsNum(e.getSsNum());
+				ssBonus.setCcc(e.getEnterpriseCCC());
+				ssBonus.setStartDate(new Date(e.getStart().getTime()));
+				ssBonus.setEndDate(new Date(e.getEnd().getTime()));
+				ssBonus.setDescription(e.getCode() + " " + e.getDescription() + " - " + e.getType() + "%");
+				String quotaCode = e.getQuota().trim().split(" ")[0];
+				ssBonus.setFormula("/*idc*/" + SSBonusListener.quotaFracctionMap.get(quotaCode) + " * " + Double.parseDouble(e.getType().replace(",", ".")) / 100);
+				insertContractBonus(ssBonus);
+			}
+		});
+	}
+	
+	// ------------------------------------------- INSERT/DELETE METHODS DB ---------------------------------------------------------
+	
+	private void deleteRepeatContractBonus(String ssNum, String ccc, java.util.Date startDateJ, java.util.Date endDateJ) {
+		Integer enterpriseCCCId = getEnterpriseCCCId(dslContext, ccc);
+		Record contractRecord = getContractRecord(dslContext, ssNum, enterpriseCCCId);
+		
+		Integer contractId = contractRecord.get(CONTRACT.ID);
+		Date startDate = new Date(startDateJ.getTime());
+		Date endDate = null == endDateJ ? null : new Date(endDateJ.getTime());
+		
+		dslContext.delete(CONTRACT_BONUS)
+			.where(CONTRACT_BONUS.CONTRACT.eq(contractId))
+			.and(CONTRACT_BONUS.START_DATE.equal(startDate))
+			.and(CONTRACT_BONUS.END_DATE.equal(endDate))
+			.execute();
+	}
+	
+	private void insertContractBonus(SSBonus ssBonus) {
+		String ssNum = ssBonus.getSsNum();
+		String ccc = ssBonus.getCcc();
+		
+		Integer enterpriseCCCId = getEnterpriseCCCId(dslContext, ccc);
+		Record contractRecord = getContractRecord(dslContext, ssNum, enterpriseCCCId);
+		
+		Integer contractId = contractRecord.get(CONTRACT.ID);
+		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
+		Date startDate = new Date(ssBonus.getStartDate().getTime());
+		Date endDate = null == ssBonus.getEndDate() ? null : new Date(ssBonus.getEndDate().getTime());
+		
+		dslContext.insertInto(CONTRACT_BONUS)
+			.set(CONTRACT_BONUS.DOMAIN, domainId)
+			.set(CONTRACT_BONUS.CONTRACT, contractId)
+			.set(CONTRACT_BONUS.DESCRIPTION, ssBonus.getDescription())
+			.set(CONTRACT_BONUS.EXPRESSION, ssBonus.getFormula())
+			.set(CONTRACT_BONUS.START_DATE, startDate)
+			.set(CONTRACT_BONUS.END_DATE, endDate)
+			.execute();
+	}
+	
+	private Record getContractRecord(DSLContext dslContext, String ssNum, Integer enterpriseCCCId) {
+		Record contractRecord = dslContext.select().from(CONTRACT)
+				.where(CONTRACT.PERSON.eq(
+						dslContext.select(PERSON.REGISTRY).from(PERSON)
+							.where(PERSON.SOCIAL_SECURITY_NUM.eq(ssNum)).fetchOne(PERSON.REGISTRY)))
+				.and(CONTRACT.ENTERPRISE_CCC.eq(enterpriseCCCId))
+				.orderBy(CONTRACT.START_DATE.desc())
+				.limit(1)
+				.fetchOne();
+		
+		return contractRecord;
+	}
+
+	private Integer getEnterpriseCCCId(DSLContext dslContext, String ccc) {
+		Result<Record1<Integer>> enterpriseCCCRecords = dslContext.select(ENTERPRISE_CCC.ID).from(ENTERPRISE_CCC)
+				.where(ENTERPRISE_CCC.CCC.eq(ccc))
+				.fetch();
+		
+		return enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.ID);
 	}
 
 }

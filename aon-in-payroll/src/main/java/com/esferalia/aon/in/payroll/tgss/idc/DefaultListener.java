@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
 import java.util.Date;
+import java.util.List;
 
 public class DefaultListener implements Listener{
 
@@ -14,7 +15,7 @@ public class DefaultListener implements Listener{
 	public void onEmployee(String nss, String name) {}
 
 	@Override
-	public void onEmployeePerido(Date startDate, Date endDate) {}
+	public void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate) {}
 
 	@Override
 	public void onEmployeeQuoteGroup(String group) {}
@@ -63,5 +64,8 @@ public class DefaultListener implements Listener{
 
 	@Override
 	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo, String quota, Date start, Date end) {}
+
+	@Override
+	public void onEmployeeQuotePECList(List<EmployeeQuotePEC> employeeQuotePEC) {}
 
 }

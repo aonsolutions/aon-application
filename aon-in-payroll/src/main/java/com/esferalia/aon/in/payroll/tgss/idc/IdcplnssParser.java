@@ -22,7 +22,7 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class IdcplcccParser {
+public class IdcplnssParser {
 
 	public static void parse( File file , Listener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file))
@@ -68,9 +68,23 @@ public class IdcplcccParser {
 	}
 		
 	public static void parse(String text, Listener listener) throws IOException, UnknownPDFException {
-		//System.out.println(text);
+//		System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
-			Matcher matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
+			SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
+			
+			Matcher matcher = find(reader, EMPLOYEE_INFO);
+			
+			String fullName = matcher.group("name");
+			String ssNum = matcher.group("province")+ matcher.group("nss");
+			listener.onEmployee(matcher.group("province")+ matcher.group("nss"), fullName);
+			try {
+				listener.onEmployeeOtherInfo(matcher.group("docType"), matcher.group("doc"), matcher.group("gender"), simpleDateFormat2.parse(matcher.group("birthDate")));
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
 			
 			String socialReason = matcher.group("name");
 			String enterpriseCCC = matcher.group("province") + matcher.group("ccc");
@@ -96,9 +110,6 @@ public class IdcplcccParser {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			while ( true ) {
 				try {
-					matcher = find(reader, EMPLOYEE_NSS_NAME);
-					String ssNum = matcher.group("nss");
-					listener.onEmployee(matcher.group("nss"), matcher.group("name"));
 					matcher = find(reader, EMPLOYEE_PERIOD_QUOTE);
 					listener.onEmployeePerido(
 							ssNum,
@@ -169,7 +180,14 @@ public class IdcplcccParser {
 		
 		return Optional.empty();
 				
-	}		
+	}
+	
+	//NOMBRE Y APELLIDOS: ESTHER ARANDA MARTIN NÚMERO SEGURIDAD SOCIAL: 01 1006286569 DOC.IDENTIFICATIVO: 1 NÚMERO: 072745627P SEXO: MUJER NACIMIENTO: 15/09/1985
+	private static final Pattern EMPLOYEE_INFO = 
+	Pattern.compile(
+	"^NOMBRE\\s*Y\\s*APELLIDOS\\s*:(?<name>.+)NÚMERO\\s*SEGURIDAD\\s*SOCIAL\\s*:\\s*(?<province>[0-9]{2})\\s*(?<nss>[0-9]+)\\s*DOC\\.IDENTIFICATIVO\\s*:\\s*(?<docType>.*)\\s*NÚMERO\\s*:\\s*(?<doc>.+)SEXO\\s*:\\s*(?<gender>.*)\\s*NACIMIENTO\\s*:\\s*(?<birthDate>[0-9]+\\/[0-9]+\\/[0-9]+).*$"
+	, Pattern.CASE_INSENSITIVE);
+	
 	//RAZÓN SOCIAL: AON SOLUTIONS S.L. C.C.C.: 01 105360062 DNI/NIE/CIF: 0B01487271 RÉGIMEN: REGIMEN GENERAL
 	private static final Pattern ENTERPRISE_NAME_CCC_CIF_REGIME = 
 	Pattern.compile(
@@ -194,14 +212,8 @@ public class IdcplcccParser {
 	, Pattern.CASE_INSENSITIVE);
 	
 	
-	//01 1011187190 ANDER IBAÑEZ DE GAUNA NAVAZO            CBJ
-    //      1       01-10-2020    31-10-2020      02 0,80 0,70 1,50 7,05  J7Q
+	//      1       01-10-2020    31-10-2020      02 0,80 0,70 1,50 7,05  J7Q
 	//                SIN PECULIARIDADES DE COTIZACION            IHG
-	private static final Pattern EMPLOYEE_NSS_NAME = 
-	Pattern.compile(
-	"^(?<index>[0-9]+)\\s*(?<nss>[0-9]+)\\s*(?<name>.*)\\s*(?<clv>[^\\s]{3})$"
-	, Pattern.CASE_INSENSITIVE);
-	
 	private static final Pattern EMPLOYEE_PERIOD_QUOTE = 
 	Pattern.compile(
 	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+).*$"

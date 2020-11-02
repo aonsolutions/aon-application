@@ -1,135 +1,101 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
-import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
-import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
-import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Person.PERSON;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
+import java.util.TimeZone;
 
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Result;
+import org.jooq.SQLDialect;
+import org.jooq.conf.ParamType;
+import org.jooq.conf.Settings;
+import org.jooq.impl.DSL;
 
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.in.payroll.tgss.idc.SSBonusListener.SSBonus;
-import com.esferalia.aon.occam.api.AONContext;
 
 public class SSBonusSync {
 	
-	private void syncSSBonus(DSLContext dslContext, InputStream is) {
+	private DSLContext dslContext;
+	
+	public SSBonusSync(DSLContext dslContext) {
+		this.dslContext = dslContext;
+	}
+	
+	public DSLContext getDSLContext() {
+		return this.dslContext;
+	}
+	
+	private void syncSSBonus(InputStream is) {
 		SSBonusListener ssBonusListener = new SSBonusListener();
+		ssBonusListener.setDSLContext(getDSLContext());
 		try {
-			IdcplcccParser.parse(is, ssBonusListener);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (UnknownPDFException e) {
+			IdcplnssParser.parse(is, ssBonusListener);
+		} catch (IOException exc) {
+			exc.printStackTrace();
+		} catch (UnknownPDFException exc) {
 			try {
-				IdcParser.parse(is, ssBonusListener);
-			} catch (IOException ex) {
+				IdcplcccParser.parse(is, ssBonusListener);
+			} catch (IOException e) {
 				e.printStackTrace();
-			} catch (UnknownPDFException ex) {
-				ex.printStackTrace();
+			} catch (UnknownPDFException e) {
+				try {
+					IdcParser.parse(is, ssBonusListener);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				} catch (UnknownPDFException ex) {
+					
+				}
 			}
 		}
 		
-		if(!ssBonusListener.getSSBonus().isEmpty()) {
-			ssBonusListener.getSSBonus().forEach(b -> System.out.println(b.toString()));
-			for(SSBonus ssBonus : ssBonusListener.getSSBonus())
-				deleteRepeatContractBonus(dslContext, ssBonus);
-			
-			for(SSBonus ssBonus : ssBonusListener.getSSBonus())
-				insertContractBonus(dslContext, ssBonus);
-		}
-		
-	}
-
-	private void deleteRepeatContractBonus(DSLContext dslContext, SSBonus ssBonus) {
-		String ssNum = ssBonus.getSsNum();
-		String ccc = ssBonus.getCcc();
-		
-		Integer enterpriseCCCId = getEnterpriseCCCId(dslContext, ccc);
-		Record contractRecord = getContractRecord(dslContext, ssNum, enterpriseCCCId);
-		
-		Integer contractId = contractRecord.get(CONTRACT.ID);
-		Date startDate = new Date(ssBonus.getStartDate().getTime());
-		Date endDate = null == ssBonus.getEndDate() ? null : new Date(ssBonus.getEndDate().getTime());
-		
-		dslContext.delete(CONTRACT_BONUS)
-			.where(CONTRACT_BONUS.CONTRACT.eq(contractId))
-			.and(CONTRACT_BONUS.START_DATE.equal(startDate))
-			.and(CONTRACT_BONUS.END_DATE.equal(endDate))
-			.execute();
 	}
 	
-	private void insertContractBonus(DSLContext dslContext, SSBonus ssBonus) {
-		String ssNum = ssBonus.getSsNum();
-		String ccc = ssBonus.getCcc();
+	private static DSLContext getDSLContext (Connection connection) throws SQLException {
+		Settings settings;
+		settings = new Settings();
+		settings.setRenderSchema(false);
+		settings.setParamType(ParamType.INLINED);
 		
-		Integer enterpriseCCCId = getEnterpriseCCCId(dslContext, ccc);
-		Record contractRecord = getContractRecord(dslContext, ssNum, enterpriseCCCId);
+		DSLContext dslContext = DSL.using(connection, SQLDialect.MARIADB, settings);
+    	return dslContext;
+    }
+    
+    private static Connection getConnection() throws SQLException {
+		String port = "3306";
+    	String host = System.getenv("DB_HOST");
+		String user = System.getenv("DB_USER");
+		String password = System.getenv("DB_PASSWD");
+		String database = System.getenv("DB_NAME");
+    	
+		Properties properties = new Properties();
+		properties.setProperty("user", user);
+		properties.setProperty("password", password);
+		properties.setProperty("useSSL", "false");
+		properties.setProperty("serverTimezone", TimeZone.getDefault().getID());
+		String url = String.format("jdbc:mysql://%s:%s/%s", host, port, database);
 		
-		Integer contractId = contractRecord.get(CONTRACT.ID);
-		Integer domainId = contractRecord.get(CONTRACT.DOMAIN);
-		Date startDate = new Date(ssBonus.getStartDate().getTime());
-		Date endDate = null == ssBonus.getEndDate() ? null : new Date(ssBonus.getEndDate().getTime());
-		
-		dslContext.insertInto(CONTRACT_BONUS)
-			.set(CONTRACT_BONUS.DOMAIN, domainId)
-			.set(CONTRACT_BONUS.CONTRACT, contractId)
-			.set(CONTRACT_BONUS.DESCRIPTION, ssBonus.getDescription())
-			.set(CONTRACT_BONUS.EXPRESSION, ssBonus.getFormula())
-			.set(CONTRACT_BONUS.START_DATE, startDate)
-			.set(CONTRACT_BONUS.END_DATE, endDate)
-			.execute();
-	}
-
-	private Record getContractRecord(DSLContext dslContext, String ssNum, Integer enterpriseCCCId) {
-		Record contractRecord = dslContext.select().from(CONTRACT)
-				.where(CONTRACT.PERSON.eq(
-						dslContext.select(PERSON.REGISTRY).from(PERSON)
-							.where(PERSON.SOCIAL_SECURITY_NUM.eq(ssNum)).fetchOne(PERSON.REGISTRY)))
-				.and(CONTRACT.ENTERPRISE_CCC.eq(enterpriseCCCId))
-				.orderBy(CONTRACT.START_DATE.desc())
-				.limit(1)
-				.fetchOne();
-		
-		return contractRecord;
-	}
-
-	private Integer getEnterpriseCCCId(DSLContext dslContext, String ccc) {
-		Result<Record1<Integer>> enterpriseCCCRecords = dslContext.select(ENTERPRISE_CCC.ID).from(ENTERPRISE_CCC)
-				.where(ENTERPRISE_CCC.CCC.eq(ccc))
-				.fetch();
-		
-		return enterpriseCCCRecords.get(0).get(ENTERPRISE_CCC.ID);
-	}
+		return DriverManager.getConnection(url, properties);
+    }
 
 	public static void main(String[] args) {
 		try {
-			Connection connection = DriverManager.getConnection(
-					String.format(
-							"jdbc:mysql://%s:%d/%s",
-							"127.0.0.1",
-							3306, 
-							"ayudat-aonsolutions-net"),
-					"root",
-					"r00t");
+			Connection connection = getConnection();
+			DSLContext dslContext = getDSLContext(connection);
 			
-			// Get dslContext for given connection
-			DSLContext dslContext = new AONContext(connection).getDslContext();
+			FileInputStream is = new FileInputStream(new File("/Users/sergio/Desktop/idcplnss.pdf"));
 			
-			SSBonusSync ssBonusSync = new SSBonusSync();
-			ssBonusSync.syncSSBonus(dslContext, null);
+			SSBonusSync ssBonusSync = new SSBonusSync(dslContext);
+			ssBonusSync.syncSSBonus(is);
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
