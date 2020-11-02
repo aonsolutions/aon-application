@@ -128,10 +128,12 @@ import '../../components/aon-viewer.js';
 			} else {
 				let fileDiv = document.getElementById('aonInvoiceFile');
 				let dataDiv = document.getElementById('aonInvoiceData');
-
+				fileDiv.className = 'aonContent';
+				dataDiv.className = 'aonContent';
 				fileDiv.style.display = 'block';
 				fileDiv.style.width = '50%';
 				dataDiv.style.width = '50%';
+
 				document.getElementById('aonInvoiceDiv').style.display = 'block';
 				document.getElementById('aonInvoiceTaxDiv').style.width = '100%';
 
@@ -149,6 +151,8 @@ import '../../components/aon-viewer.js';
 			const READER = new FileReader();
 			READER.readAsDataURL(file);
 			READER.onload = (_event) => {
+				fileDiv.className = 'aonContent';
+				dataDiv.className = 'aonContent';
 				fileDiv.style.display = 'block';
 				fileDiv.style.width = '50%';
 				dataDiv.style.width = '50%';

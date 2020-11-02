@@ -78,7 +78,6 @@ class AonViewer extends HTMLElement {
 		});
 		loadingTask.promise.then(function(pdf) {
   		console.log('PDF loaded');
-			alert(pdf.numPages);
   		// Fetch the first page
   		let pageNumber = 1;
 			for(let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++){
