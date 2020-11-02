@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,19 +22,16 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-
 public class IdcParser {
 	
 	public static void parse( File file , Listener listener) throws IOException, UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(file))
-		{
+		try (PDDocument doc = PDDocument.load(file)){
 			parse(doc, listener);
 		}
 	}
 
-	public static void parse( InputStream is ,Listener listener) throws IOException , UnknownPDFException {
-		try (PDDocument doc = PDDocument.load(is))
-		{
+ 	public static void parse( InputStream is ,Listener listener) throws IOException , UnknownPDFException {
+		try (PDDocument doc = PDDocument.load(is)){
 			parse(doc, listener);
 		}
 	}
@@ -57,8 +57,7 @@ public class IdcParser {
 				continue;
 			
 			parse(text, listener);	
-		}			
-			
+		}					
 	}
 		
 	public static void parse(String text, Listener listener) throws IOException, UnknownPDFException {
@@ -87,6 +86,9 @@ public class IdcParser {
 			String enterpriseActivityDescription = matcher.group("description");
 			String enterpriseRegime = matcher.group("regime");
 			
+			matcher = find(reader, EMPLOYEE_PERIOD_START);
+			Date startDate = simpleDateFormat.parse(matcher.group("start"));
+			
 			matcher = find(reader, CONTRACT_TYPE_START_END);
 			listener.onContractType(matcher.group("contractType"));
 			listener.onContractStart(simpleDateFormat.parse(matcher.group("start")));
@@ -98,7 +100,6 @@ public class IdcParser {
 					listener.onContractEnd(null);
 				}	
 			}
-			
 			
 			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
 			if(null != matcher.group("partialCoef")) listener.onContractPartialCoeficient(matcher.group("partialCoef"));
@@ -122,10 +123,16 @@ public class IdcParser {
 			
 			matcher = find(reader, PECULIARITIES_HEADER);
 			
+			Date endDate = null;
+			List<EmployeeQuotePEC> employeeQuotePECList = new ArrayList<EmployeeQuotePEC>();
+			
 			try {
 				for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
-					optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC))
-					listener.onEmployeeQuotePEC(
+					optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC)){
+					
+					endDate = simpleDateFormat.parse(optional.get().group("end"));
+					
+					EmployeeQuotePEC employeeQuotePEC = new EmployeeQuotePEC(
 							ssNum,
 							enterpriseCCC,
 							optional.get().group("code"), 
@@ -134,12 +141,19 @@ public class IdcParser {
 							optional.get().group("quota"),
 							simpleDateFormat.parse(optional.get().group("start")), 
 							simpleDateFormat.parse(optional.get().group("end")));
+					
+					employeeQuotePECList.add(employeeQuotePEC);
+				}
 			} catch ( UnknownPDFException e ) {
 				// No more Employees
 			} catch ( ParseException e ) {
 				throw new UnknownPDFException(e);					
 			} 
 			
+			if(null != endDate) {
+				listener.onEmployeePerido(ssNum, enterpriseCCC, startDate, endDate);
+				listener.onEmployeeQuotePECList(employeeQuotePECList);
+			}
 			
 			matcher = find(reader, TOTAL_CLV);
 			matcher = find(reader, QUOTATION_TYPES);
@@ -148,7 +162,6 @@ public class IdcParser {
 			Double unemployment = hasData(matcher.group("unemployment")) ? Double.parseDouble(matcher.group("unemployment").replace(",", ".")) : null;
 			listener.onEmployeeQuoteTypes(it, ims, unemployment);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -158,19 +171,15 @@ public class IdcParser {
 	}
 	
 	private static Matcher find( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
-		
 		String line  ; 
 		while ( ( line = reader.readLine() ) != null  ) {
 			Matcher matcher = pattern.matcher(line) ;
 			if ( !matcher.matches() ) {
 				continue;
 			}
-			
 			return matcher;
 		}
-		
-		throw new UnknownPDFException(String.format("Pattern: '%s' Not found" ,  pattern.pattern()) );
-				
+		throw new UnknownPDFException(String.format("Pattern: '%s' Not found" ,  pattern.pattern()) );		
 	}	
 
 	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
@@ -209,6 +218,12 @@ public class IdcParser {
 	private static final Pattern ENTERPRISE_ACTIVITY_REGIME = 
 	Pattern.compile(
 	"^ACTIVIDAD\\s*ECONOMICA\\s*:\\s*(?<code>[0-9]+)\\s*(?<description>.*)REGIMEN\\s*:\\s*(?<regime>.*)$"
+	, Pattern.CASE_INSENSITIVE);
+	
+	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
+	private static final Pattern EMPLOYEE_PERIOD_START = 
+	Pattern.compile(
+	"^PERIODO\\s*:\\s*DESDE\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*.\\s*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TIPO CONTRATO: 289 INDEFINIDO.TIEMPO PARCIAL.TRANSFORMACION ALTA: 01-05-2018 BAJA:  

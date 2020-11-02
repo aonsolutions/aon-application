@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
 import java.util.Date;
+import java.util.List;
 
 public interface Listener {
 	void onPeriod(Date date);
@@ -11,11 +12,12 @@ public interface Listener {
 	
 	void onEmployee(String nss, String name);
 	void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate);
-	void onEmployeePerido(Date startDate, Date endDate);
+	void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate);
 	void onEmployeeQuoteGroup(String group);
 	void onEmployeeQuoteTypes(double it, double ims, double unemployment);
 	void onEmployeeQuotePEC(String code, String description, String portTipo, String quota, String colectivo, String legislacion );
 	void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo, String quota, Date start, Date end );
+	void onEmployeeQuotePECList(List<EmployeeQuotePEC> employeeQuotePEC);
 	
 	void onContractType(String contractType);
 	void onContractStart(Date start);
