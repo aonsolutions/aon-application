@@ -148,6 +148,9 @@ public class SIIPost {
         } else if(result.contains("<soap:Body>")) {
         	body = "<soap:Body>";
         	endBody = "</soap:Body>";
+        } else if(result.contains("<faultstring>")) {
+        	body = "<faultstring>";
+        	endBody = "</faultstring>";
         }
         result = result.split(body )[1];
         result = result.split(endBody)[0];
