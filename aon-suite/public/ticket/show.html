@@ -35,94 +35,62 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <p id="subject"></p>
+                                <h4 id="subject"></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <div class="row">
+                            <div class="col-12">
+                                <select class="atp_input" id="postings" name="postings"></select>
+                            </div>
+                            <div class="col-12 text-right">
+                                <small id="createDate"></small>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <table cellspacing="0" cellpadding="0" width="100%" border="0">
-                                    <tbody>
-                                        <tr>
-                                            <td width="50%">
-                                                <table border="0" cellspacing="" cellpadding="4" width="100%">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Departamento:</th>
-                                                            <td id="postings"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Creado en:</th>
-                                                            <td id="createDate"></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                            <td width="50%" style="vertical-align:top">
-                                                <table border="0" cellspacing="" cellpadding="4" width="100%">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th width="100">De:</th>
-                                                            <td><span id="from"></span></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th width="100">Para:</th>
-                                                            <td><span id="assignaedTo"></span></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <form>
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <div id="editor" class="row"></div>
+
+                                            <div id="ticket-comentario-subir">
+                                                <div class="row m-2">
+                                                    <div class="col-md-12">
+                                                        <a id="ticket-comentario-subir-precarga" class="form-inline naranja negrita">
+                                                            <i class="material-icons">file_upload</i>
+                                                            <span id="ticket-comentario-subir-precarga-subrayar" class="pl-1">Agregar archivos al comentario.</span>
+                                                            <input type="hidden" id="upload-solo-precarga" name="precarga" value="true">
+                                                            <input type="file" name="document[]" multiple id="upload-file">
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <small>
+                                                            Para subir los archivos, tiene que existir un comentario.
+                                                            Si el archivo es de tipo imagen se puede agregar al comentario, pulsando sobe el texto que aparece debajo del previo.
+                                                        </small>
+                                                    </div>
+                                                    <div class="col-md-12 archivos-previos"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 mt-3">
+                                            <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-10">
-                                <hr>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="col-7">
                         <div class="row">
                             <div class="col-12 ticket-body">
                                 <ul class="ticket" id="ticket-messages"></ul>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <h3>Responder</h3>
-                            </div>
-                        </div>
-                        <form>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div id="editor"></div>
-                                    
-                                    <div id="ticket-comentario-subir">
-                                        <div class="row m-2">
-                                            <div class="col-md-12">
-                                                <a id="ticket-comentario-subir-precarga" class="form-inline naranja negrita">
-                                                    <i class="material-icons">file_upload</i>
-                                                    <span id="ticket-comentario-subir-precarga-subrayar" class="pl-1">Agregar archivos al comentario.</span>
-                                                    <input type="hidden" id="upload-solo-precarga" name="precarga" value="true">
-                                                    <input type="file" name="document[]" multiple id="upload-file">
-                                                </a>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <small>
-                                                    Para subir los archivos, tiene que existir un comentario.
-                                                    Si el archivo es de tipo imagen se puede agregar al comentario, pulsando sobe el texto que aparece debajo del previo.
-                                                </small>
-                                            </div>
-                                            <div class="col-md-12 archivos-previos"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 mt-3">
-                                    <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
-                                </div>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -187,15 +155,27 @@
                         '',             // En el primer valor no existe dato
                         "Programación",
                         "Calidad",
-                        "Administración",
+                        "Administración"
                     ];
-
-                    console.log(ticket);
+                    
+                    for(const keyDpt in departament){
+                        if(departament[keyDpt] != ''){
+                            var selected = false;
+                            if(departament[ticket.postings] == departament[keyDpt]){
+                                selected = true; 
+                            }
+                            $('#postings').append($('<option />',{
+                                text : departament[keyDpt],
+                                value : keyDpt,
+                                selected : selected
+                            }));
+                        }
+                    }
 
                     // Mostrar los datos
                     $('#id').html(ticket.id);
                     $('#subject').html(ticket.subject);
-                    $('#postings').html(departament[ticket.postings]);
+                    //$('#postings').html(departament[ticket.postings]);
                     $('#createDate').html(ticket.createDate);
                     $('#from').html(ticket.from);
                     $('#assignaedTo').html(ticket.assignaedTo);
@@ -207,7 +187,16 @@
                     
                     // Formateamos los mensajes
                     // Usamos los nombres, pero tendría que ser los UID
-                    let msg = messages(ticket.message, ticket.from);
+                    var mensajesTickets = ticket.message;
+                    // Convertimos el objeto a array para darle la vuelta y poner el
+                    // más reciente arriba
+                    var array = $.map(mensajesTickets, function(value, index) {
+                        return [value];
+                    });
+                    mensajesTickets = array.reverse();
+                    // Volvemos a convertirlo a Objeto para enviar a la función
+                    mensajesTickets = Object.assign({}, mensajesTickets);
+                    let msg = messages(mensajesTickets, ticket.from);
                     
                     // Mostramos los mensajes
                     $('#ticket-messages').html(msg);
@@ -241,16 +230,15 @@
                     userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
                     messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
                     message      : messageText,                                 // Mensaje
-                    documents    : filesName,                                   // Docuemntos
-                }
+                    documents    : filesName                                    // Docuemntos
+                };
     
                 // Lo agregamos al resto
                 ticket.message[Object.keys(ticket.message).length + 1] = messageData;
 
                 // Mostramos el mensaje
-                console.log(messageData);
-                let msg = messages( ticket.message, from);
-                $('#ticket-messages').html(msg);
+                let msg = messages( { 0 : messageData}, from);
+                $('#ticket-messages').prepend(msg);
     
                 // Limpiamos el editor
                 theEditor.setData('');
@@ -269,57 +257,77 @@
                     };
                     updateJsonApi(dataUpdateStatus);
             } else {
-                alert('Rellene para poder enviar')
+                alert('Rellene para poder enviar');
             }
+        });
+        
+        // Si cambiamos el destinatario, generamos una acción
+        $(document).on('change', '#postings', function(){
+            let id          = $('#btn-send').data('id');
+            let from        = $('#btn-send').data('uid');
+            var posting     = $(this);
+            
+            let messageData = {
+                userName     : from,                                        // Nombre del usuario del mensaje
+                userId       : "425",                                       // ID del usuario que crea el ticket
+                messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
+                action       : {
+                    message : "ha cambiado el destinatario a",
+                    change  : posting.val(),
+                    changeName : $('#postings option:selected').text(),
+                    icon : "swap_horizontal_circle"
+                }
+            };
+            
+            var ticketActual = ticket;
+            var nuevoTicket = {};
+            for(const keyTck in ticketActual){
+                ticketActual.postings = posting.val();
+                
+                nuevoTicket = ticketActual;
+            }
+            
+            // Mostramos el mensaje de accion
+            var msg = messages( { 0 : messageData}, from);
+            $('#ticket-messages').prepend(msg);
+            
+            // Lo agregamos al resto
+            nuevoTicket.message[Object.keys(nuevoTicket.message).length + 1] = messageData;
+            
+            //
+            // Almacenamos los cambios en localStorage
+            //
+            // Almacenamos el cambio del estado
+            let dataUpdateStatus = {
+                name        : 'messenger',
+                json        : nuevoTicket
+            };
+            updateJsonApi(dataUpdateStatus);
+            
         });
 
         // Formatea el json de mensajes para mostrarlos
         function messages(messages, userLogin){
             let msg = "";
-
+            
             for (const key in messages) {
                 let message = messages[key];
-                // Tendría que comprar UID no nombres
-                if(message.userName == userLogin){ // El mensaje es del usuario logueado
-                    msg += "<li class='right clearfix'>";
-                        msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
-                            msg += "<div class='row clearfix'>";
-                                msg += "<div class='col-11 border-from'>";
-                                    msg += "<div class='header'>";
-                                        msg += "<strong class='primary-font'>"+message.userName+"</strong>";
-                                        msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
-                                    msg += "</div>";
-                                    msg += "<p>"+message.message+"</p>";
-                                    // Adjuntos
-                                    if(message.documents){
-                                        msg += "<hr>";
-                                        msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
-                                            msg += "<h5>Adjuntos</h5>";
-                                            for (const key in message.documents) {
-                                                msg += "<a href='#' class='pr-3'>"+message.documents[key]+"</a>";
-                                            }
+                
+                // Si no es una acción, sino que es un mensaje
+                if(!message.action || message.action.length == 0){
+                    // Tendría que comprar UID no nombres
+                    if(message.userName == userLogin){ // El mensaje es del usuario logueado
+                        msg += "<li class='right clearfix'>";
+                            msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
+                                msg += "<div class='row clearfix caja_mensaje_ticket_from'>";
+                                    msg += "<div class='col-11'>";
+                                        msg += "<div class='header'>";
+                                            msg += "<strong class='primary-font'>"+message.userName+"</strong>";
+                                            msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
                                         msg += "</div>";
-                                    }
-                                msg += "</div>";
-                                msg += "<div class='col-1'>";
-                                    msg += "<span class='ticket-img float-right'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
-                                msg += "</div>";
-                            msg += "</div>";
-                        msg += "</div>";
-                    msg += "</li>";
-                } else { // El mensaje es respuesta al usuario que está leyendo
-                    msg += "<li class='left clearfix'>";
-                        msg += "<div class='col-12 pt-2 pb-2 pr-5'>";
-                            msg += "<div class='row clearfix'>";
-                                msg += "<div class='col-1'>";
-                                    msg += "<span class='ticket-img float-left'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
-                                msg += "</div>";
-                                msg += "<div class='col-11 border-to'>";
-                                    msg += "<div class='header'>";
-                                        msg += "<strong class='primary-font'>"+message.userName+"</strong>";
-                                        msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
+                                        msg += "<p>"+message.message+"</p>";
                                         // Adjuntos
-                                        if(message.documents){
+                                        if(message.documents && message.documents.length > 0){
                                             msg += "<hr>";
                                             msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
                                                 msg += "<h5>Adjuntos</h5>";
@@ -329,7 +337,59 @@
                                             msg += "</div>";
                                         }
                                     msg += "</div>";
-                                    msg += "<p>"+message.message+"</p>";
+                                    msg += "<div class='col-1 p-0'>";
+                                        msg += "<span class='ticket-img float-right'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
+                                    msg += "</div>";
+                                msg += "</div>";
+                            msg += "</div>";
+                        msg += "</li>";
+                    } else { // El mensaje es respuesta al usuario que está leyendo
+                        msg += "<li class='left clearfix'>";
+                            msg += "<div class='col-12 pt-2 pb-2 pr-5'>";
+                                msg += "<div class='row clearfix caja_mensaje_ticket_to'>";
+                                    msg += "<div class='col-1 p-0'>";
+                                        msg += "<span class='ticket-img float-left'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
+                                    msg += "</div>";
+                                    msg += "<div class='col-11'>";
+                                        msg += "<div class='header'>";
+                                            msg += "<strong class='primary-font'>"+message.userName+"</strong>";
+                                            msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
+                                            // Adjuntos
+                                            if(message.documents && message.documents.length > 0){
+                                                msg += "<hr>";
+                                                msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
+                                                    msg += "<h5>Adjuntos</h5>";
+                                                    for (const key in message.documents) {
+                                                        msg += "<a href='#' class='pr-3'>"+message.documents[key]+"</a>";
+                                                    }
+                                                msg += "</div>";
+                                            }
+                                        msg += "</div>";
+                                        msg += "<p>"+message.message+"</p>";
+                                    msg += "</div>";
+                                msg += "</div>";
+                            msg += "</div>";
+                        msg += "</li>";
+                    }
+                } else {
+                    var action = message.action;
+                    
+                    var icon = "swap_horizontal_circle";
+                    if(action.icon){
+                        icon = action.icon;
+                    }
+                    
+                    msg += "<li class='right clearfix'>";
+                        msg += "<div class='col-12 pt-1 pb-2 pl-5'>";
+                            msg += "<div class='row'>";
+                                msg += "<div class='col-1 offset-1'>";
+                                    msg += "<span class='material-icons'>"+icon+"</span>";
+                                msg += "</div>";
+                                msg += "<div class='col-7 pl-0'>";
+                                    msg += "<label class='text-center'><strong class='primary-font'>" + message.userName + "</strong> " + action.message + " <strong class='primary-font'>" +action.changeName + "</strong></label>" ;
+                                msg += "</div>";
+                                msg += "<div class='col-3 justify-content-right'>";
+                                    msg += "<small class='text-right'>"+ message.messageDate+"</small>";
                                 msg += "</div>";
                             msg += "</div>";
                         msg += "</div>";
@@ -344,9 +404,9 @@
         // Subir imagenes (ficticiamente)
         //
         if (typeof UploadDocumentos !== 'undefined') {
-                // Esta cargado correctamente
-                UploadDocumentos();
-            }
+            // Esta cargado correctamente
+            UploadDocumentos();
+        }
     </script>
     <!-- FIN Scripts -->
 </html>
