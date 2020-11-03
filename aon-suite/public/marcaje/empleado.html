@@ -39,7 +39,7 @@
     </div> -->
 
                 <!-- Main-->
-                <div class="container-fluid pt-5">
+                <div class="container-fluid pt-5 atp_caja_form">
                     <form id="form" name="form" action="#" method="post">
                         <div class="row">
                             <div class="col-12 text-center">
@@ -57,23 +57,26 @@
                             <div class="row ">
                                 <div class="col-lg-6 col-md-12">
 
-
-
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <label for="nombreApellido">Nombre y apellidos:</label>
-                                                <input class="form-control" type="text" readonly="readonly"
-                                                    id="nombreApellido" name="nombreApellido">
+                                                <label class="d-block atp_inputs" for="nombreApellido">
+                                                    <input class="" type="text" readonly="readonly" id="nombreApellido"
+                                                        name="nombreApellido"
+                                                        onchange="this.setAttribute('value', this.value);">
+                                                    <span>Nombre y apellidos</span>
+                                                </label>
                                             </div>
 
                                         </div>
 
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <label for="dni">DNI:</label>
-                                                <input class="form-control" type="text" readonly="readonly" id="dni"
-                                                    name="dni">
+                                                <label class="d-block atp_inputs" for="dni">
+                                                    <input class="" type="text" readonly="readonly" id="dni" name="dni"
+                                                        onchange="this.setAttribute('value', this.value);">
+                                                    <span>DNI</span>
+                                                </label>
                                             </div>
 
                                         </div>
@@ -82,17 +85,23 @@
                                     <div class="row">
                                         <div class="col-lg-3 col-md-3 col-sm-3 col-6">
                                             <div class="form-group">
-                                                <label for="fecha">Fecha:</label>
-                                                <input class="form-control" type="text" readonly="readonly" id="fecha"
-                                                    name="fecha">
+                                                <label class="d-block atp_inputs" for="fecha">
+                                                    <input class="" type="text" readonly="readonly" id="fecha"
+                                                        name="fecha" onchange="this.setAttribute('value', this.value);">
+                                                    <span>Fecha</span>
+                                                </label>
+
                                             </div>
 
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-sm-3 col-6">
                                             <div class="form-group">
-                                                <label for="reloj">Hora:</label>
-                                                <input class="form-control" type="text" readonly="readonly" id="reloj"
-                                                    name="reloj">
+                                                <label class="d-block atp_inputs" for="reloj">
+                                                    <input class="" type="text" readonly="readonly" id="reloj"
+                                                        name="reloj" onchange="this.setAttribute('value', this.value);">
+                                                        <span>Hora</span>
+                                                </label>
+
                                             </div>
 
                                         </div>
@@ -100,9 +109,11 @@
 
                                         <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                                             <div class="form-group">
-                                                <label for="tipoEntrada">Tipo de marcaje:</label>
-                                                <select class="form-control tipoMarcaje" id="tipoMarcaje"
+
+                                                
+                                                <select class="d-block atp_input tipoMarcaje" id="tipoMarcaje"
                                                     name="tipoMarcaje">
+                                                    <option value='' disabled selected>- Selecciona tipo de marcaje -</option>
                                                     <option value='1'>Marcaje sin incidencia</option>
                                                     <option value='2'>Ausencia justificada</option>
                                                     <option value='3'>Baja médica</option>
@@ -114,6 +125,8 @@
                                                     <option value='11'>Vacaciones</option>
                                                     <option value='12'>Visita médico</option>
                                                 </select>
+
+
                                             </div>
 
                                         </div>
@@ -125,9 +138,12 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="notaEntrada">Nota:</label>
-                                                <textarea class="form-control" id="notaEntrada" name="notaEntrada"
-                                                    rows="5"></textarea>
+                                                <label class="d-block atp_inputs" for="notaEntrada">
+                                                    <textarea class="" id="notaEntrada" name="notaEntrada"
+                                                        rows="5" placeholder=" "></textarea>
+                                                        <span>Nota</span>
+                                                </label>
+                                                
                                             </div>
                                         </div>
 
@@ -275,7 +291,7 @@
             var datos = "";
             datosHistorial = obtenerHistorialAjax(datos);
             cargarHistorial(datosHistorial, fechaActual);
-            
+
             $('#mes').val(fechaActual);
 
         });
@@ -528,13 +544,13 @@
 
             $("#tablaMarcajes").empty();
             if (mostrado) {
-                
+
             } else {
                 hijo = "<tr><td colspan='6'>No hay datos para mostrar</td></tr>";
             }
 
             $(hijo).appendTo("#tablaMarcajes");
-            
+
         }
 
         function getFechaActual() {

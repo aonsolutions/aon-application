@@ -41,7 +41,7 @@
     </div> -->
 
                 <!-- Main-->
-                <div class="container-fluid pt-5">
+                <div class="container-fluid pt-5 atp_caja_form">
                     <form id="form" name="form" action="#" method="post">
                         <div class="row">
                             <div class="col-12 text-center">
@@ -59,9 +59,8 @@
                             <div class="row">
                                 <div class="col-lg-3 col-md-6">
                                     <div class="form-group">
-                                        <label for="empleado">Nombre y apellidos:</label>
-                                        <select class="form-control" id="empleado" name="empleado">
-                                            <option value='0' disabled selected>Selecciona un empleado</option>
+                                        <select class="d-block atp_input" id="empleado" name="empleado">
+                                            <option value='' disabled selected>- Selecciona un empleado -</option>
                                         </select>
                                     </div>
 
@@ -79,31 +78,39 @@
 
                                     <div class="row">
                                         <div class="col-lg-3 col-md-6">
-                                            <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+
                                             <div class="form-group">
-                                                <label for="fechaEntrada">Fecha:</label>
-                                                <input class="form-control" type="date" value="" id="fechaEntrada"
-                                                    name="fechaEntrada">
+                                                <label class="d-block atp_inputs" for="fechaEntrada">
+                                                    <input class="" type="date" value="" id="fechaEntrada"
+                                                        name="fechaEntrada">
+                                                    <span>Fecha</span>
+                                                </label>
+
                                             </div>
 
                                         </div>
                                         <div class="col-lg-3 col-md-6">
-                                            <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+
                                             <div class="form-group">
-                                                <label for="horaEntrada">Hora:</label>
-                                                <input class="form-control" type="time" value="" id="horaEntrada"
-                                                    name="horaEntrada">
+                                                <label class="d-block atp_inputs" for="horaEntrada">
+                                                    <input class="" type="time" value="" id="horaEntrada"
+                                                        name="horaEntrada">
+                                                    <!-- <span>Hora</span> -->
+
+                                                </label>
+
                                             </div>
 
                                         </div>
 
 
                                         <div class="col-lg-6 col-md-12">
-                                            <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+
                                             <div class="form-group">
-                                                <label for="tipoEntrada">Tipo de marcaje:</label>
-                                                <select class="form-control tipoMarcaje" id="tipoEntrada"
+
+                                                <select class="d-block atp_input tipoMarcaje" id="tipoEntrada"
                                                     name="tipoEntrada">
+                                                    <option value='' disabled selected>- Selecciona tipo de marcaje -</option>
                                                     <option value='1'>Marcaje sin incidencia</option>
                                                     <option value='2'>Ausencia justificada</option>
                                                     <option value='3'>Baja médica</option>
@@ -123,9 +130,14 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="notaEntrada">Nota:</label>
-                                                <textarea class="form-control" id="notaEntrada" name="notaEntrada"
-                                                    rows="3"></textarea>
+
+                                                <label class="d-block atp_inputs" for="notaEntrada">
+                                                    <textarea class="" id="notaEntrada" name="notaEntrada" rows="3"
+                                                        placeholder=" "></textarea>
+                                                    <span>Nota</span>
+                                                </label>
+
+
                                             </div>
                                         </div>
 
@@ -145,28 +157,35 @@
                                     <div class="row">
                                         <div class="col-lg-3 col-md-6">
                                             <div class="form-group">
-                                                <label for="fechaSalida">Fecha:</label>
-                                                <input class="form-control" type="date" value="" id="fechaSalida"
+                                                <label class="d-block atp_inputs" for="fechaSalida">
+                                                    <input class="" type="date" value="" id="fechaSalida"
                                                     name="fechaSalida">
+                                                    <span>Fecha</span>
+                                                </label>
+                                               
                                             </div>
 
                                         </div>
                                         <div class="col-lg-3 col-md-6">
                                             <div class="form-group">
-                                                <label for="horaSalida">Hora:</label>
-                                                <input class="form-control" type="time" value="" id="horaSalida"
+                                                <label class="d-block atp_inputs" for="horaSalida">
+                                                    <input class="" type="time" value="" id="horaSalida"
                                                     name="horaSalida">
+                                                    <!-- <span>Hora</span> -->
+                                                </label>
+                                                
                                             </div>
 
                                         </div>
 
 
                                         <div class="col-lg-6 col-md-12">
-                                            <!-- <a href="#" class="btn btn-info" role="button">Marcar entrada/salida</a> -->
+                                   
                                             <div class="form-group">
-                                                <label for="tipoSalida">Tipo de marcaje:</label>
-                                                <select class="form-control tipoMarcaje" id="tipoSalida"
+                                             
+                                                <select class="d-block atp_input tipoMarcaje" id="tipoSalida"
                                                     name="tipoSalida">
+                                                    <option value='' disabled selected>- Selecciona tipo de marcaje -</option>                                             
                                                     <option value='1'>Marcaje sin incidencia</option>
                                                     <option value='2'>Ausencia justificada</option>
                                                     <option value='3'>Baja médica</option>
@@ -186,9 +205,14 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="notaSalida">Nota:</label>
-                                                <textarea class="form-control" id="notaSalida" name="notaSalida"
-                                                    rows="3"></textarea>
+                                                <label class="d-block atp_inputs" for="notaSalida">
+                                                    <textarea class="" id="notaSalida" name="notaSalida" rows="3"
+                                                        placeholder=" "></textarea>
+                                                    <span>Nota</span>
+                                                </label>
+
+
+                                              
                                             </div>
                                         </div>
 
@@ -389,7 +413,7 @@
 
             $("#tablaMarcajes").empty();
             if (mostrado) {
-                
+
             } else {
                 hijo = "<tr><td colspan='6'>No hay datos para mostrar</td></tr>";
             }
