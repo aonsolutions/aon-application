@@ -7,13 +7,27 @@
  * https://developer.mozilla.org/es/docs/Web/API/FileReader
  * https://www.javascripture.com/FileReader
 
+    -- PRUEBASSSSSSSSSSSSSSS
+    ESTA MONTADO DE PRUEBAS, TENDRA QUE CAMBIARSE
+    -- PRUEBASSSSSSSSSSSSSSS
+
  */
 
 if (typeof jQuery === 'undefined') {
     throw new Error('multiselect requiere JQuery');
 }
 
-function UploadDocumentos(){
+import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
+import { createTable, getList } from './table.js';
+
+export function UploadDocumentos(){
+    //
+    // Datos de sesion por ahora -- PRUEBASSSSSSSSSSSSSSS
+    //
+        const BIDOQ_CLIENTE_ID   = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+        const BIDOQ_TIPO_USUARIO = 6;
+        const BIDOQ_SESSION_ID   = 'c2d3Y3lRUzExdFBxckxlTQ==';
+
     //  
     // Configuracion 
     //  
@@ -92,8 +106,8 @@ function UploadDocumentos(){
         var documentos      = '';                                           // Donde cargaremos los documentos
         var formulario      = '';                                           // Donde cargaremos los demas datos del formulario
         var url             = '';                                           // Donde subimos
-        var usuarioID       = '';                                           // Al usuario que le subimos
-        var usuarioTipoID   = '';                                           // El tipo de usuario que sube
+        var usuarioID       = BIDOQ_CLIENTE_ID;                             // Al usuario que le subimos
+        var usuarioTipoID   = BIDOQ_TIPO_USUARIO;                           // El tipo de usuario que sube
         var previoCantidad  = 0;                                            // Donde iremos controlando la cantidad de previos que tenemos
         var reloadTabla     = '';                                           // Tabla que recarga
         var ajaxTabla       = '';                                           // Tabla que recarga por ajax el listado
@@ -112,7 +126,6 @@ function UploadDocumentos(){
             }
         });
         
-
     //
     // Cogemos los documentos
     //
@@ -180,7 +193,7 @@ function UploadDocumentos(){
                     }
                 });
             }
-            
+
             if(ticketPrevio){
                 // Todo correcto ya que solo mostramos el previo
                 comprobar();
@@ -199,6 +212,9 @@ function UploadDocumentos(){
                 return 0;
             }
             
+            // Todo correcto // NO COMPROBAMOS SESSION
+            comprobar();
+            /*
             // Hacemos comprobacion del estado del cliente
             $.ajax({
                 type            : "POST",
@@ -213,11 +229,11 @@ function UploadDocumentos(){
                         comprobar();
                     } else {
                         // Ha dado algun error
-                        /* Errores que devuelve:
-                        *      usuarioComprobarEstado
-                        *      usuarioPendientePago
-                        *      usuarioInactivo
-                        */
+                        // Errores que devuelve:
+                        //      usuarioComprobarEstado
+                        //      usuarioPendientePago
+                        //     usuarioInactivo
+                        //
                         erroresAlert(errorMensaje[data.mensaje]);
                         return 0;
                     }
@@ -227,6 +243,7 @@ function UploadDocumentos(){
                     //alert(thrownError);
                 }
             });
+            */
         };
     
     //
@@ -305,11 +322,11 @@ function UploadDocumentos(){
         }
 
         function montarDivPrevios(){
-            var cerrarPrevio = ticketPrevio ? '' : '<div class="btn btn-warning float-right boton-naranja boton-cancelar-archivos"> <i class="glyphicon glyphicon-ban-circle"></i> <span id="upload-cerrar">Cerrar</span> </div>';
+            var cerrarPrevio = ticketPrevio ? '' : '<div class="col-12"><div class="btn btn-warning float-right boton-cancelar-archivos"> <i class="glyphicon glyphicon-ban-circle"></i> <span id="upload-cerrar">Cerrar</span> </div></div>';
             // Miramos si tenemos que cargar o no
             if ($('.files')[0] == undefined ){
                 var div = 
-                '<div class="row">' +
+                '<div class="row pb-3">' +
                     '<div class="col-12 p-3 div-archivos fondo-gris">' +
                         '<div class="row">' +
                             '<div class="files col-12 row p-3"></div>' +
@@ -332,7 +349,8 @@ function UploadDocumentos(){
             // Si cargamos la barra o la referencia de la imagen para los ticket
             var barra_o_referencia = MontarBarraReferencia(documento, correcto);
             // Si el previo tiene enlace o no
-            var previo = ticketPrevio ? '<span class="upload-previa upload-ruta-'+previoCantidad+'">' + tipoprevio + '</span>' : '<a href="" title="'+documento.name+'" class="upload-previa upload-ruta-'+previoCantidad+'" target="_blank">' + tipoprevio + '</a>';
+                //var previo = ticketPrevio ? '<span class="upload-previa upload-ruta-'+previoCantidad+'">' + tipoprevio + '</span>' : '<a href="" title="'+documento.name+'" class="upload-previa upload-ruta-'+previoCantidad+'" target="_blank">' + tipoprevio + '</a>';
+            var previo = '<span title="'+documento.name+'" class="upload-previa upload-ruta-'+previoCantidad+'">' + tipoprevio + '</span>';
             // Cargamos todo el contenido del previo
             var previo =
             '<div class="row col-6 template-download upload-subido fadeIn">' +
@@ -416,8 +434,175 @@ function UploadDocumentos(){
     //
     // Empezamos el proceso de subir el documento
     //
-        function subir(documento, recorrido){
-            alert('no se deja subir');
+        async function subir(documento, recorrido){
+            // recorrido = previoCantidad, para saber que documento estamos subiendo
+            var barra = $('#progressBar-'+recorrido);                       // Barra cargando - donde la metemos el recorrido de la barra
+            // Datos del formulario
+            var formData = new FormData();
+            formData.append('documento', documento);                        // Agregamos el documento
+            // recorremos los valores del formulario para agregar
+            $(formulario).find('input, select').each(function () {
+                if(this.type !== 'file'){                                   // Siempre y cuando no sea file el campo
+                    var campoAgregar = updateForm(this);
+                    // Agregamos el campo siempre tengamos un valor
+                    if(campoAgregar !== undefined){
+                        formData.append(campoAgregar.elName, campoAgregar.elValue); // Agregamos los demas datos del formulario
+                    }
+                }
+            });
+            
+            // Cambios para AON
+            // no tenemos en cuenta el formData
+            // Cogemos solo el documento
+            //
+            // Le quitamos la extensión al fichero para quedarnos solo con el nombre
+                let uploadError = false;
+                let fileName    = documento.name.split('.');
+                fileName.pop();
+                fileName     = fileName.join('.');
+                const filesPromises = [{
+                    "image_content": await readFile(documento),
+                    "image_name": fileName,
+                    "image_type": documento.type.split('/')[1],
+                    "image_size": documento.size
+                }];
+
+                // Barra cargando - Al inicio
+                barraBeforeSend(barra);
+                // Subimos la barra hasta el 90% simplemente
+                let porcentaje = 90;
+                barra.text(porcentaje+'%');
+                barra.css('width', porcentaje+'%');
+
+                Promise.all(filesPromises).then(async (files) => {
+                    
+                    // Hacemos una petición a bidoq para subir los archivos seleccionados
+                    try {
+                        const data = await bidoq({
+                            "method"    : "upload",
+                            "services"  : window.selectedFolder,
+                            "files"     : JSON.stringify(files)
+                        });
+
+                        let response = JSON.parse(data);
+
+                        if (typeof response !== 'undefined') {
+                            for (let i = 0; i < response.length; i++) {
+                                const documentResponse = response[i];
+
+                                if (documentResponse.code !== 0) {
+                                    uploadError = true;
+                                    // Barra cargando - Si tenemos algún tipo de error
+                                    barraError(barra);
+                                    // Error
+                                    erroresPHP(recorrido, documentResponse.message);
+                                }
+                            }
+
+                            if (!uploadError) {
+                               //
+                               // Correcto
+                               //
+                                
+                               // Barra cargando - Completado correctamente
+                                barraSuccess(barra);
+                                // Mensaje de correcto
+                                // Tenemos nombre y ruta de bidoq devueltos
+                                correctoPHP(recorrido, '<p class="upload-succes">Subido correctamente!!</p>');
+                                // Recargar tabla si se pide y el js
+                                if(reloadTabla !== undefined){
+                                    $(reloadTabla).load(location.href + ' '+reloadTabla, function(){
+                                        // Recargamos el popover para los previos de las imagenes
+                                        $(".popover_previo").popover('destroy');
+                                        $(".popover_previo").popover({
+                                            placement: 'right',
+                                            trigger: 'hover',
+                                            html: true
+                                        });
+                                    });
+                                }
+                                // Cargar la tabla con los documentos por ajax
+                                CargarDivAjaxDocumentos();
+                            }
+                        } else {
+                            // Barra cargando - Si tenemos algún tipo de error
+                            barraError(barra);
+                            // Error
+                            erroresPHP(recorrido, '2 - Ocurrió un error al intentar subir los documentos');
+                        }
+                    } catch (error) {
+                        // Barra cargando - Si tenemos algún tipo de error
+                        barraError(barra);
+                        // Error
+                        erroresPHP(recorrido, '1 - Ocurrió un error al intentar subir los documentos');
+                        console.error('Ocurrió un error: ' + error.message);
+                    }
+                });
+
+            /*    
+            return ajaxReq = $.ajax({
+                url         : url,
+                type        : 'POST',
+                data        : formData,
+                dataType    : "json",
+                cache       : false,
+                contentType : false,
+                processData : false,
+                xhr: function () {
+                    // Barra cargando - Porcentaje mientras se realiza el proceso
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.onprogress = function (event) {
+                        // Solo subimos la barra hasta el 90%, al 100% en el success
+                        var porcentaje = Math.round((event.loaded / event.total) * 90);
+                        barra.text(porcentaje+'%');
+                        barra.css('width', porcentaje+'%');
+                    };
+                    return xhr;
+                },
+                beforeSend: function (xhr) {
+                    // Barra cargando - Al inicio
+                    barraBeforeSend(barra);
+                },
+                success: function (data, textStatus, jqXHR){
+                    if(data.succes){
+                        // Barra cargando - Completado correctamente
+                        barraSuccess(barra);
+                        // Mensaje de correcto
+                        correctoPHP(recorrido, data.mensaje, data.enlace);
+                        // Recargar tabla si se pide y el js
+                        if(reloadTabla !== undefined){
+                            $(reloadTabla).load(location.href + ' '+reloadTabla, function(){
+                                // Recargamos el popover para los previos de las imagenes
+                                $(".popover_previo").popover('destroy');
+                                $(".popover_previo").popover({
+                                    placement: 'right',
+                                    trigger: 'hover',
+                                    html: true
+                                });
+                            });
+                        }
+                        // Cargar la tabla con los documentos por ajax
+                        if(ajaxTabla !== undefined){
+                            CargarDivAjaxDocumentos(ajaxTabla, '../ajax/documentos_asesores_ajax.php');
+                        }
+                        return;
+                    } else {
+                        // Barra cargando - Si tenemos algún tipo de error
+                        barraError(barra);
+                        // Error
+                        erroresPHP(recorrido, data.mensaje);
+                        return;
+                    }
+                },
+                error: function (jqXHR, textStatus) {
+                    // Barra cargando - Si tenemos algún tipo de error
+                    barraError(barra);
+                    // Error
+                    erroresPHP(recorrido, errorMensaje.error);
+                    return;
+                }
+            });
+            */
         }
         
     //
@@ -434,7 +619,8 @@ function UploadDocumentos(){
     // Funciones generales
     // 
         function erroresAlert(mensaje) {
-            swal('Oops', mensaje, 'warning');
+            alert(mensaje);
+            //swal('Oops', mensaje, 'warning');
         }
         
         function errores(documento, mensaje) {
@@ -449,9 +635,9 @@ function UploadDocumentos(){
             $('.mensaje-'+recorrido).append(mensaje);                       // Donde imprimimos el error devuelto por PHP
         }
         
-        function correctoPHP(recorrido, mensaje, ruta) {
+        function correctoPHP(recorrido, mensaje, ruta = null) {
             $('.correcto-'+recorrido).append(mensaje);                      // Donde imprimimos lo devuelto por PHP
-            $('.upload-ruta-'+recorrido).attr("href", ruta);                // Ruta devueltoa por PHP del previo
+            //$('.upload-ruta-'+recorrido).attr("href", ruta);                // Ruta devueltoa por PHP del previo
         }
     
         function trim(str) {
@@ -595,32 +781,41 @@ function UploadDocumentos(){
         }
 }
 
-function CargarDivAjaxDocumentos(id,url){
-    id = '#'+id;
+async function CargarDivAjaxDocumentos(id,url){
     // Poner la imagen del cargando
-        $(id).html('<center class="pt-5" ><i class="fa fa-refresh fa-spin fa-3x fa-fw"></i></center>');
-    // Llamada 
-        $.ajax({
-            async   : true, 
-            cache   : false,
-            url     : url,
-            success: function(data) { 
-                // Cargamos el contenido en el div. 
-                $(id).html(data);
+        $('table tbody').html('<tr><td colspan="8"><center class="pt-5"><div class="lds-ripple"><div></div><div></div></div></center></td></tr>');
+    // Recargar tabla y paginado
+        try {
+            const list = await getList();
 
-                // Cargar el dataTable
-                $('.documentos-asesores').DataTable({
-                    "aaSorting": [[ 0, 'desc' ]]
-                });
-
-                //POPOVER con el previo
-                $(".popover_previo").popover('destroy');
-                $(".popover_previo").popover({
-                    placement: 'right',
-                    trigger: 'hover',
-                    html: true
-                });
-                // Fin POPOVER
+            createTable(list);
+        } catch (error) {
+            const list = {
+                "list": [],
+                "total_data": 0, // cantidad total de elementos
+                "total_page": 1, // total de paginas
+                "page": 1, // pagina en la que estamos
+                "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
             }
-        });
+
+            createTable(list);
+
+            console.error(error);
+        }
+}
+
+function readFile(file) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+
+        reader.readAsDataURL(file);
+
+        reader.onload = function() {
+            resolve(reader.result.split(',')[1]);
+        };
+
+        reader.onerror = function(error) {
+            reject(error);
+        };
+    });
 }

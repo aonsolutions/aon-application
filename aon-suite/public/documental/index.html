@@ -1,67 +1,66 @@
 <!doctype html>
 <html lang="es">
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="AYUDA T">
+        <meta name="generator" content="">
+        <title>aon Suite</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="AYUDA T">
-    <meta name="generator" content="">
-    <title>aon Suite</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+        <!-- MATERIAL ICONS -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
 
-    <!-- MATERIAL ICONS -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+        <!-- MATERIAL COMPONENTS -->
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
 
-    <!-- MATERIAL COMPONENTS -->
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
-    <link href="../css/app.css" rel="stylesheet" id="linkcss">
-
+        <link href="../css/app.css" rel="stylesheet" id="linkcss">
+        <link href="../css/upload.css" rel="stylesheet" id="linkcss">
     </head>
 
     <body>
-
-                <!-- start contenido centro -->
-                <div id="atp_contenido_centro">
-                    <div class="container-fluid">
-                        <!-- INICIO VISTA -->
-                        <form class="d-none" enctype="multipart/form-data">
-                            <input id="upload" class="form-control-file" type="file" name="" multiple accept=".bmp, .jpg, .jpeg, .png, .gif, .tiff, .tif, .txt, .rtf, .odt, .doc, .docx, .ods, .xls, .pdf, .xlsx, .xlsb">
-                        </form>
-                        <div class="row justify-content-center">
-                            <div class="col-12">
-                                <table class="table" id="tabla_documentos">
-                                    <thead>
-                                        <tr>
-                                            <th class="align-middle"></th>
-                                            <th class="align-middle">Fecha</th>
-                                            <th class="align-middle">Nombre</th>
-                                            <th class="align-middle">Categoría</th>
-                                            <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
-                                            <th class="align-middle d-none" id="model_column">Modelo</th>
-                                            <th class="align-middle d-none" id="year_column">Año</th>
-                                            <th class="align-middle d-none" id="period_column">Período</th>
-                                            <th class="align-middle">Tipo</th>
-                                            <th class="align-middle">Subido por</th>
-                                            <th class="align-middle">Etiquetas</th>
-                                            <th class="text-center align-middle">Leído</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                    <tfoot></tfoot>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- FIN VISTA -->
+        <!-- start contenido centro -->
+        <div id="atp_contenido_centro">
+            <div class="container-fluid">
+                <!-- INICIO VISTA -->
+                <form class="d-none" enctype="multipart/form-data">
+                    <input type="file" name="document[]" multiple id="upload-file"> 
+                </form>
+                <div class="col-md-12 archivos-previos"></div>
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <table class="table" id="tabla_documentos">
+                            <thead>
+                                <tr>
+                                    <th class="align-middle"></th>
+                                    <th class="align-middle">Fecha</th>
+                                    <th class="align-middle">Nombre</th>
+                                    <th class="align-middle">Categoría</th>
+                                    <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
+                                    <th class="align-middle d-none" id="model_column">Modelo</th>
+                                    <th class="align-middle d-none" id="year_column">Año</th>
+                                    <th class="align-middle d-none" id="period_column">Período</th>
+                                    <th class="align-middle">Tipo</th>
+                                    <th class="align-middle">Subido por</th>
+                                    <th class="align-middle">Etiquetas</th>
+                                    <th class="text-center align-middle">Leído</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot></tfoot>
+                        </table>
                     </div>
                 </div>
-                <!-- end contenido centro -->
+
+                <!-- FIN VISTA -->
+            </div>
+        </div>
+        <!-- end contenido centro -->
 
         <!-- Modales -->
         <div class="modal fade" id="new_note_doc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -90,256 +89,182 @@
                 </div>
             </div>
         </div>
+        <!-- FIN Modales -->
+    </body >
 
-        <!-- Scripts -->
-        <script src="../js/app.js"></script>
-        <script type="module">
-            import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
-            import { createTable, getList } from './table.js';
-            import {
-                AVAILABLE_OPTIONS,
-                MULTIPLE_DOWNLOAD_OPTION,
-                ADD_NOTE_OPTION,
-                MULTIPLE_DELETE_OPTION,
-                getOptionButtons
-            } from './toolbar_options.js';
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script type="module">
+        import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
+        import { createTable, getList } from './table.js';
+        import { UploadDocumentos } from './upload.js';
+        import {
+            AVAILABLE_OPTIONS,
+            MULTIPLE_DOWNLOAD_OPTION,
+            ADD_NOTE_OPTION,
+            MULTIPLE_DELETE_OPTION,
+            getOptionButtons
+        } from './toolbar_options.js';
 
-            const MAX_FILE_SIZE = 5;
+        const MAX_FILE_SIZE = 5;
 
-            $(document).ready(async function() {
-                window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
-                window.aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+        $(document).ready(async function() {
+            window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+            window.aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
 
-                // Obtenemos las carpetas del cliente
-                window.folders = $(window.aonDocumental).data('folders');
-                // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
-                window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
-                window.selectedFolder = (window.selectedFolder === 'pendientes') ? CARPETA_A_CONTABILIZAR : window.selectedFolder;
+            // Obtenemos las carpetas del cliente
+            window.folders = $(window.aonDocumental).data('folders');
+            // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
+            window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
+            window.selectedFolder = (window.selectedFolder === 'pendientes') ? CARPETA_A_CONTABILIZAR : window.selectedFolder;
 
-                // Almacenamos el número de la página actual en una variable global
-                window.page = 0;
+            // Almacenamos el número de la página actual en una variable global
+            window.page = 0;
+
+            try {
+                const list = await getList();
+
+                createTable(list);
+            } catch (error) {
+                const list = {
+                    "list": [],
+                    "total_data": 0, // cantidad total de elementos
+                    "total_page": 1, // total de paginas
+                    "page": 1, // pagina en la que estamos
+                    "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
+                }
+
+                createTable(list);
+
+                console.error(error);
+            }
+
+            //
+            // Iniciamos el subir
+            //
+                UploadDocumentos();
+
+        });
+
+        //
+        // Eventos
+        //
+            // Pasar de pagina
+            $(document).on('click', '.go_page', async function () {
+                const page = $(this).data('page');
 
                 try {
-                    const list = await getList();
+                    const list = await getList(page);
 
                     createTable(list);
                 } catch (error) {
-                    const list = {
-                        "list": [],
-                        "total_data": 0, // cantidad total de elementos
-                        "total_page": 1, // total de paginas
-                        "page": 1, // pagina en la que estamos
-                        "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
-                    }
-
-                    createTable(list);
-
                     console.error(error);
                 }
             });
 
-            //
-            // Eventos
-            //
-                // Pasar de pagina
-                $(document).on('click', '.go_page', async function () {
-                    const page = $(this).data('page');
+            // Hacer click en un documento para ir a la vista de detalles de este
+            $(document).on('click', 'td.show_doc', function() {
+                const id = $(this).closest('tr').data('id');
+                const type = $(this).closest('tr').data('type');
 
-                    try {
-                        const list = await getList(page);
+                window.aonDocumentalContainer.loadShow(id, type);
+            });
 
-                        createTable(list);
-                    } catch (error) {
-                        console.error(error);
-                    }
-                });
+            // Seleccionar documentos
+            $(document).on('change', '.select_doc', function() {
+                // Recuperamos del DOM los botones correspondientes a las opciones
+                const optionButtons = getOptionButtons(window.frameElement.ownerDocument);
 
-                // Hacer click en un documento para ir a la vista de detalles de este
-                $(document).on('click', 'td.show_doc', function() {
-                    const id = $(this).closest('tr').data('id');
-                    const type = $(this).closest('tr').data('type');
+                // Si hay algún documento seleccionado
+                if ($('.select_doc:checked').length) {
+                    const allowedOptionsText = [];
 
-                    window.aonDocumentalContainer.loadShow(id, type);
-                });
+                    // Recorremos los documentos seleccionados
+                    $('.select_doc:checked').each(function() {
+                        const row = $(this).closest('tr');
+                        // Comprobamos cuáles son las opciones permitidas para el documento seleccionado
+                        const rowAllowedOptionsText = row.data('allowed_options').split(',');
 
-                // Seleccionar documentos
-                $(document).on('change', '.select_doc', function() {
-                    // Recuperamos del DOM los botones correspondientes a las opciones
-                    const optionButtons = getOptionButtons(window.frameElement.ownerDocument);
+                        // Almacenamos en un array las opciones que debemos añadir a la barra de herramientas
+                        for (let i = 0; i < rowAllowedOptionsText.length; i++) {
+                            const option = rowAllowedOptionsText[i];
 
-                    // Si hay algún documento seleccionado
-                    if ($('.select_doc:checked').length) {
-                        const allowedOptionsText = [];
-
-                        // Recorremos los documentos seleccionados
-                        $('.select_doc:checked').each(function() {
-                            const row = $(this).closest('tr');
-                            // Comprobamos cuáles son las opciones permitidas para el documento seleccionado
-                            const rowAllowedOptionsText = row.data('allowed_options').split(',');
-
-                            // Almacenamos en un array las opciones que debemos añadir a la barra de herramientas
-                            for (let i = 0; i < rowAllowedOptionsText.length; i++) {
-                                const option = rowAllowedOptionsText[i];
-
-                                if ($.inArray(option, allowedOptionsText) === -1) {
-                                    allowedOptionsText.push(option);
-                                }
-                            }
-
-                            // Si ya estan todas las opciones disponibles en el array de opciones que vamos a añadir a la barra de herramientas, salimos del bucle
-                            if (allowedOptionsText.length === AVAILABLE_OPTIONS.length) {
-                                return false;
-                            }
-                        });
-
-                        // Obtenemos las opciones permitidas a partir del texto de cada acción
-                        const allowedOptions = allowedOptionsText.map((optionName) =>
-                            AVAILABLE_OPTIONS.find((option) =>
-                                optionName === option.name
-                            )
-                        );
-
-                        for (let i = 0; i < optionButtons.length; i++) {
-                            const optionButton = optionButtons[i];
-                            // Buscamos la acción correspondiente al botón
-                            const option = allowedOptions.find((option) => optionButton.name === option.name);
-
-                            // Comprobamos si la acción que corresponde a este botón se encuentra entre las opciones permitidas
-                            if (typeof option !== 'undefined') {
-                                // Si el botón aún no existe en el DOM, lo creamos
-                                if (optionButton.element === null) {
-                                    window.aonDocumental.addToolbarOption(option.name, option.icon, option.fn, option.title);
-                                }
-                            } else if (optionButton.element !== null) {
-                                // Si la acción que corresponde a este botón no se encuentra entre las opciones permitidas, eliminamos dicho botón
-                                window.aonDocumental.removeToolbarOptions([optionButton.name]);
+                            if ($.inArray(option, allowedOptionsText) === -1) {
+                                allowedOptionsText.push(option);
                             }
                         }
-                    } else {
-                        // Si no hay documentos seleccionados, eliminamos los botones correspondientes a las opciones de la barra de herramientas
-                        window.aonDocumental.removeToolbarOptions([MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION]);
-                    }
-                });
 
-                // Al pulsar el boton de añadir nota desde el modal
-                $(document).on('click', '#confirm_new_note_doc', async function() {
-                    // Recuperamos el texto que vamos a añadir a los documentos como nota
-                    const text = $('#note_doc').val();
-
-                    if (text.length) {
-                        // Ocultamos los errores si están visibles
-                        if (!$('.error-empty-note-doc').hasClass('d-none')) {
-                            $('.error-empty-note-doc').addClass('d-none');
-                        }
-
-                        const data = await bidoq({
-                            "method": "crear_editar_nota_docs",
-                            "docs": JSON.stringify(window.docsCreateNote),
-                            "texto": text,
-                            "agregar": true
-                        });
-
-                        const response = JSON.parse(data);
-
-                        if (typeof response !== 'undefined') {
-                            if (typeof response.code !== 'undefined' && response.code === 0) {
-                                alert('Nota añadida con éxito en los documentos de tipo "Enviado" seleccionados');
-                            } else if (typeof response['1047'] !== 'undefined') {
-                                alert(`Ocurrió un error al intentar añadir la nota`);
-                            }
-                        } else {
-                            console.error('Ocurrió un error al intentar añadir la nota');
-                        }
-
-                        // Ocultamos el modal
-                        $("#new_note_doc").modal('hide');
-                    } else {
-                        $('.error-empty-note-doc').removeClass('d-none');
-                    }
-                });
-
-                $(document).on('change', '#upload', function() {
-                    let uploadError = false;
-
-                    // No permitimos subir archivos que superen el peso máximo permitido
-                    const filesPromises = Array.from(this.files).filter((file) => {
-                        if ((file.size / 1024 / 1024) < MAX_FILE_SIZE) {
-                            return true;
-                        } else {
-                            uploadError = true;
-
-                            alert(`El documento ${file.name} excede el peso máximo`);
-
+                        // Si ya estan todas las opciones disponibles en el array de opciones que vamos a añadir a la barra de herramientas, salimos del bucle
+                        if (allowedOptionsText.length === AVAILABLE_OPTIONS.length) {
                             return false;
                         }
-                    }).map(async (file) => {
-                        // Le quitamos la extensión al fichero para quedarnos solo con el nombre
-                        let fileName = file.name.split('.');
-
-                        fileName.pop();
-
-                        fileName = fileName.join('.');
-
-                        return {
-                            "image_content": await readFile(file),
-                            "image_name": fileName,
-                            "image_type": file.type.split('/')[1],
-                            "image_size": file.size
-                        };
                     });
 
-                    Promise.all(filesPromises).then(async (files) => {
-                        try {
-                            // Hacemos una petición a bidoq para subir los archivos seleccionados
-                            const data = await bidoq({
-                                "method": "upload",
-                                "services": window.selectedFolder,
-                                "files": JSON.stringify(files)
-                            });
+                    // Obtenemos las opciones permitidas a partir del texto de cada acción
+                    const allowedOptions = allowedOptionsText.map((optionName) =>
+                        AVAILABLE_OPTIONS.find((option) =>
+                            optionName === option.name
+                        )
+                    );
 
-                            let response = JSON.parse(data);
+                    for (let i = 0; i < optionButtons.length; i++) {
+                        const optionButton = optionButtons[i];
+                        // Buscamos la acción correspondiente al botón
+                        const option = allowedOptions.find((option) => optionButton.name === option.name);
 
-                            if (typeof response !== 'undefined') {
-                                for (let i = 0; i < response.length; i++) {
-                                    const documentResponse = response[i];
-
-                                    if (!uploadError && documentResponse.code !== 0) {
-                                        uploadError = true;
-
-                                        alert('Ocurrió un error al intentar subir el documento');
-                                    }
-                                }
-
-                                if (!uploadError) {
-                                    alert('Los documentos han sido subidos con éxito');
-
-                                    // Recargamos la página
-                                    document.location.reload();
-                                }
-                            } else {
-                                console.error('Ocurrió un error al intentar subir los documentos');
+                        // Comprobamos si la acción que corresponde a este botón se encuentra entre las opciones permitidas
+                        if (typeof option !== 'undefined') {
+                            // Si el botón aún no existe en el DOM, lo creamos
+                            if (optionButton.element === null) {
+                                window.aonDocumental.addToolbarOption(option.name, option.icon, option.fn, option.title);
                             }
-                        } catch (error) {
-                            console.error('Ocurrió un error: ' + error.message);
+                        } else if (optionButton.element !== null) {
+                            // Si la acción que corresponde a este botón no se encuentra entre las opciones permitidas, eliminamos dicho botón
+                            window.aonDocumental.removeToolbarOptions([optionButton.name]);
                         }
-                    });
-                });
-
-                function readFile(file) {
-                    return new Promise((resolve, reject) => {
-                        let reader = new FileReader();
-
-                        reader.readAsDataURL(file);
-
-                        reader.onload = function() {
-                            resolve(reader.result.split(',')[1]);
-                        };
-
-                        reader.onerror = function(error) {
-                            reject(error);
-                        };
-                    });
+                    }
+                } else {
+                    // Si no hay documentos seleccionados, eliminamos los botones correspondientes a las opciones de la barra de herramientas
+                    window.aonDocumental.removeToolbarOptions([MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION]);
                 }
-        </script>
-    </body >
+            });
+
+            // Al pulsar el boton de añadir nota desde el modal
+            $(document).on('click', '#confirm_new_note_doc', async function() {
+                // Recuperamos el texto que vamos a añadir a los documentos como nota
+                const text = $('#note_doc').val();
+
+                if (text.length) {
+                    // Ocultamos los errores si están visibles
+                    if (!$('.error-empty-note-doc').hasClass('d-none')) {
+                        $('.error-empty-note-doc').addClass('d-none');
+                    }
+
+                    const data = await bidoq({
+                        "method": "crear_editar_nota_docs",
+                        "docs": JSON.stringify(window.docsCreateNote),
+                        "texto": text,
+                        "agregar": true
+                    });
+
+                    const response = JSON.parse(data);
+
+                    if (typeof response !== 'undefined') {
+                        if (typeof response.code !== 'undefined' && response.code === 0) {
+                            alert('Nota añadida con éxito en los documentos de tipo "Enviado" seleccionados');
+                        } else if (typeof response['1047'] !== 'undefined') {
+                            alert(`Ocurrió un error al intentar añadir la nota`);
+                        }
+                    } else {
+                        console.error('Ocurrió un error al intentar añadir la nota');
+                    }
+
+                    // Ocultamos el modal
+                    $("#new_note_doc").modal('hide');
+                } else {
+                    $('.error-empty-note-doc').removeClass('d-none');
+                }
+            });
+
+    </script>
 </html>
