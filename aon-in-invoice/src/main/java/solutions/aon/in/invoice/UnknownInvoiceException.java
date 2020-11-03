@@ -1,6 +1,7 @@
 package solutions.aon.in.invoice;
 
 public class UnknownInvoiceException extends Exception {
+	private static final long serialVersionUID = 3011553751625387926L;
 
 	public UnknownInvoiceException() {
 		super();

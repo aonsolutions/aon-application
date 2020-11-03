@@ -16,6 +16,7 @@ import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -34,6 +35,7 @@ import net.aonsolutions.aon.tedi.TediErrorMessages;
 import net.aonsolutions.aon.tedi.TediParser;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class TediValidationTest {
 
 	@After

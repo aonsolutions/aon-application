@@ -288,7 +288,9 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		commentsButton.setTabIndex(-1);
 		
 		for (EntryType et : EntryType.values() ) {
-			entryType.addItem(et.getDescription());
+			if ( et != EntryType.TICKET) {
+				entryType.addItem(et.getDescription());
+			}
 		}
 		
 		entryDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {

@@ -8,8 +8,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.InvoiceTemplate;
 import solutions.aon.in.invoice.UnknownInvoiceException;
@@ -55,8 +53,9 @@ public class InvoicePDFParser {
 			
 			String text = stripper.getText(doc);
 //System.out.println(text);
-			if ( AonStringUtils.isBlank(text) ) 
+			if (text == null || (text.length()) == 0) {
 				continue;
+			}
 			template = parse(template, text, invoiceBuilder);
 			
 		}

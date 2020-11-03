@@ -18,9 +18,9 @@ public class TotalParser {
 		String digitPattern = "(?<integ>-?\\+?(\\d+\\"+gs+")*\\d+)"+"\\"+ds+"(?<fract>\\d+)";
 		
 		String[] patterns = {
-			"total.+pagar\\D*"+digitPattern+"\\b",
-			"total.+factura\\D*"+digitPattern+"\\b",
-			"total\\D*"+digitPattern+"\\b"
+			"total.+pagar.*"+digitPattern+"\\b",
+			"total.+factura.*"+digitPattern+"\\b",
+			"total.*"+digitPattern+"\\b"
 		};
 		
 		List<Double> amounts = new ArrayList<Double>();
@@ -55,7 +55,6 @@ public class TotalParser {
 					if ( !fake ) {
 						added = true;
 						amounts.add(amount);
-						System.out.println(  "TOTAL MACTH ..: " + text.substring(matcher.start(),matcher.end()) + " ["+pat+"]") ;
 					} 
 					index = matcher.end() + 1 ;
 				} else {

@@ -277,6 +277,7 @@ public class InvoicePDFParserTestCase {
 		private Collection<Double> amounts;
 		private Collection<Double> totals;
 		
+		private Date issueDate;
 		private Double total;
 		private Collection<InvoiceTax> taxes;
 
@@ -328,7 +329,15 @@ public class InvoicePDFParserTestCase {
 			} 
 			this.taxes.add(tax);
 		}
-
+		@Override
+		public boolean hasIssueDate() {
+			return this.issueDate != null;
+		}
+		@Override
+		public void setIssueDate(Date issueDate) {
+			this.issueDate = issueDate;
+		}
+		
 		public Collection<Document> getNifs() {
 			return nifs;
 		}
@@ -345,6 +354,9 @@ public class InvoicePDFParserTestCase {
 		}
 		public Double getTotal() {
 			return total;
+		}
+		public Date getIssueDate() {
+			return issueDate;
 		}
 		public Collection<InvoiceTax> getTaxes() {
 			return taxes;
