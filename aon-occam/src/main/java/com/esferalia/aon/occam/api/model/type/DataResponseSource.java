@@ -27,7 +27,8 @@ public enum DataResponseSource implements Serializable{
 	PATURPAT_QUALITY,
 	ANALYTIC_ACCOUNTING,
 	INVOICE,
-	IMPORTATION
+	IMPORTATION,
+	NOTIFICATION_TOKEN
 	;
 
 
