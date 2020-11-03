@@ -168,9 +168,10 @@ public class Utils {
 	}
 	
     public static void addCorsHeader(HttpServletResponse response){
-        response.addHeader("Access-Control-Allow-Origin", "*");
+    	//response.addHeader("Access-Control-Allow-Credentials", "true");
+    	response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-        response.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+        response.addHeader("Access-Control-Allow-Headers", "*");//X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
         response.addHeader("Access-Control-Max-Age", "1728000");
     }
 
