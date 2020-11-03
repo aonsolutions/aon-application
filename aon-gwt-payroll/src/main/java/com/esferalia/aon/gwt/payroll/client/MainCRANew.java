@@ -118,12 +118,6 @@ public class MainCRANew extends MainEntryPoint {
 	ListBox yearTillT;
 	
 	@UiField
-	ListBox monthTTo;
-	
-	@UiField
-	ListBox yearTTo;
-	
-	@UiField
 	HTMLPanel mainTablePanel;
 	
 	@UiField
@@ -168,16 +162,13 @@ public class MainCRANew extends MainEntryPoint {
 		// Set list box for filter by dates
 		month.clear();
 		monthTillT.clear();
-		monthTTo.clear();
 		year.clear();
 		yearTillT.clear();
-		yearTTo.clear();
 		
 		String[] months = new String[]{"Enero", "Frebero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
 		for(int i=0; i<months.length; i++) {
 			month.addItem(months[i], i+"");
 			monthTillT.addItem(months[i], i+"");
-			monthTTo.addItem(months[i], i+"");
 		}
 		
 		Integer yearInt = new Date().getYear();
@@ -187,9 +178,6 @@ public class MainCRANew extends MainEntryPoint {
 		
 		yearTillT.addItem((yearInt + 1900) + "", yearInt + "");
 		yearTillT.addItem((yearInt + 1900 - 1) + "", (yearInt - 1) + "");
-		
-		yearTTo.addItem((yearInt + 1900) + "", year + "");
-		yearTTo.addItem((yearInt + 1900 - 1) + "", (yearInt - 1) + "");
 		
 		// Type List
 		typeList.clear();
@@ -625,7 +613,7 @@ public class MainCRANew extends MainEntryPoint {
 	
 	private void initPreView() {
 		collapsePanel.setOpen(false);
-		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
+//		filterTable.getRows().getItem(2).getStyle().setDisplay(Display.NONE);
 		enterprisesSelected.setText(enterprisesSelectedCount.toString());
 	}
 	
@@ -660,13 +648,13 @@ public class MainCRANew extends MainEntryPoint {
 		this.mainCRAObjectNew.getEnterprisesCCCInfo(findPeriod.getTime(),
 				s -> {
 					initEnterpriseSB();
-					clearSelectionModel();
+//					clearSelectionModel();
 //					initListBox();
-					initCCCsTable();
+//					initCCCsTable();
 //					initCRATable();
 					setInitialLBAndCBSelected(initialYear, initialMonth);
-					setTableHeights();		
-					
+					peddingCCCsCB.setValue(true, true);
+					setTableHeights();			
 				}, 
 				f -> {}
 		);
@@ -713,8 +701,10 @@ public class MainCRANew extends MainEntryPoint {
 	private void setInitialLBAndCBSelected(Integer initialYear, Integer initialMonth) {
 		setSelectedValueLB(this.year, initialYear+"");
 		setSelectedValueLB(this.month, initialMonth+"");
+		setSelectedValueLB(this.yearTillT, initialYear+"");
+		setSelectedValueLB(this.monthTillT, initialMonth+"");
 		
-		this.allCCCsCB.setValue(true);
+		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
 		this.peddingCCCsCB.setValue(false);
 	}
@@ -1231,27 +1221,8 @@ public class MainCRANew extends MainEntryPoint {
 //		initCRATable();
 //	}
 	
-	@UiHandler({"monthTillT", "yearTillT", "monthTTo", "yearTTo", "geozoneList", "typeList"})
+	@UiHandler({"geozoneList", "typeList"})
 	public void onFilterChange(ChangeEvent event) {
-		// DATES
-		Date date1 = new Date(Integer.parseInt(yearTillT.getSelectedValue()), Integer.parseInt(monthTillT.getSelectedValue()), 1);
-		Date date2 = new Date(Integer.parseInt(yearTTo.getSelectedValue()), Integer.parseInt(monthTTo.getSelectedValue()), 1);
-		
-		Date startDate = null;
-		Date endDate = null;
-		
-		if(date1.before(date2) || date1.equals(date2)) {
-			startDate = DateUtils.copyDateOnly(date1);
-			
-			endDate = DateUtils.copyDateOnly(date2);
-			endDate = DateUtils.getLastDayOfMonth(endDate);
-		} else {
-			startDate = DateUtils.copyDateOnly(date2);
-			
-			endDate = DateUtils.copyDateOnly(date1);
-			endDate = DateUtils.getLastDayOfMonth(endDate);
-		}
-		
 		// GEOZONE
 		String geozoneName = geozoneList.getSelectedItemText();
 		
@@ -1262,8 +1233,20 @@ public class MainCRANew extends MainEntryPoint {
 		else
 			cccType = Byte.parseByte(typeList.getSelectedValue());
 		
-		mainCRAObjectNew.filterCras(startDate, endDate, geozoneName, cccType);
+		mainCRAObjectNew.filterCras(geozoneName, cccType);
 		initCRATable();
+	}
+	
+	@UiHandler({"monthTillT", "yearTillT"})
+	public void onFilterDatesChange(ChangeEvent event) {
+		// DATES
+		Date liquidDate = new Date(Integer.parseInt(yearTillT.getSelectedValue()), Integer.parseInt(monthTillT.getSelectedValue()), 1);
+		
+		mainCRAObjectNew.getCRAs(liquidDate.getTime(),
+				s -> {
+					initCRATable();
+				}, 
+				f -> {});
 	}
 	
 	@UiHandler("collapsePanel")
@@ -1394,9 +1377,9 @@ public class MainCRANew extends MainEntryPoint {
 		listButton.setVisible(true);
 		newCRAButton.setVisible(false);
 		
-		this.allCCCsCB.setValue(true);
+		this.allCCCsCB.setValue(false);
 		this.emitCCCsCB.setValue(false);
-		this.peddingCCCsCB.setValue(false);
+		this.peddingCCCsCB.setValue(true);
 	}
 	
 	private void showCRAS() {
@@ -1410,6 +1393,9 @@ public class MainCRANew extends MainEntryPoint {
 	}
 	
 	private String parseCRAType(String type) {
+		if(null == type)
+			return "-";
+		
 		switch (type) {
 		case "N":
 			return "-";

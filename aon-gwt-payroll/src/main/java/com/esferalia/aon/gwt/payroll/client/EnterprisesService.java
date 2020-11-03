@@ -124,7 +124,7 @@ public interface EnterprisesService extends RemoteService {
 
 	Map<Integer, List<AgrarianJourney>> getAgrarianJourney(long findingDate, List<String> cccList, String domain);
 
-	List<CRA> getCRAs(String domain, String user);
+	List<CRA> getCRAs(String domain, String string, long liquidDateTime);
 
 	String createNewCRA(String domainName, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList,
 			Integer cccId, String type);

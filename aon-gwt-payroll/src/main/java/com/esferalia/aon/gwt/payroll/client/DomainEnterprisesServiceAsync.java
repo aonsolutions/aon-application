@@ -208,8 +208,8 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getAgrarianJourney(findingDate, cccList, getCurrentDomainName(), asyncCallback);
 	}
 	
-	public void getCRAs(AsyncCallback<List<CRA>> asyncCallback) {
-		enterprisesServiceAsync.getCRAs(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	public void getCRAs(long liquidDateTime, AsyncCallback<List<CRA>> asyncCallback) {
+		enterprisesServiceAsync.getCRAs(getCurrentDomainName(), getCurrentUser(), liquidDateTime, asyncCallback);
 	}
 	
 	public void createNewCRA(long findingDate, List<String> cccList, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<String> asyncCallback) {
