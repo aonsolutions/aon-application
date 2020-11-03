@@ -1,682 +1,1028 @@
 <!doctype html>
 <html lang="es">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="AYUDA T">
-        <meta name="generator" content="">
-        <title>aon Suite</title>
 
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="AYUDA T">
+    <meta name="generator" content="">
+    <title>aon Suite</title>
 
-        <!-- MATERIAL ICONS -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet" type='text/css'>
 
-        <!-- MATERIAL COMPONENTS -->
-        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <!-- MATERIAL ICONS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
 
-        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <!-- MATERIAL COMPONENTS -->
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
 
-        <link href="../css/app.css" rel="stylesheet" id="linkcss">
-    </head>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
-    <body>
-        <!-- start contenido centro -->
-        <div class="col" id="atp_contenido_centro">
-            <div class="container-fluid">
-                <div class="row justify-content-center">
-                    <!-- INICIO VISTA -->
-                    <div class="col-12">
-                        <table class="table" id="listado_modelos">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="align-middle text-center">Modelo</th>
-                                    <th scope="col" class="align-middle text-center">Estado</th>
-                                    <th scope="col" class="align-middle text-center">Resultado</th>
-                                    <th scope="col" class="align-middle text-center">Método de pago</th>
-                                    <th scope="col" class="align-middle text-center">Nota</th>
-                                    <th scope="col" class="align-middle text-center">Documento asociado</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                            <tfoot></tfoot>
-                        </table>
+    <link href="../css/app.css" rel="stylesheet" id="linkcss">
+</head>
+
+<body>
+    <!-- start contenido centro -->
+    <div class="col" id="atp_contenido_centro">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <!-- INICIO VISTA -->
+                <div class="col-12">
+                    <table class="table" id="listado_modelos">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-middle text-center">Modelo</th>
+                                <th scope="col" class="align-middle text-center">Estado</th>
+                                <th scope="col" class="align-middle text-center">Resultado</th>
+                                <th scope="col" class="align-middle text-center">Método de pago</th>
+                                <th scope="col" class="align-middle text-center">Nota</th>
+                                <th scope="col" class="align-middle text-center">Documento asociado</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                </div>
+                <!-- FIN VISTA -->
+            </div>
+        </div>
+    </div>
+    <!-- end contenido centro -->
+
+    <!-- Modales -->
+    <div id="zonaModal"></div>
+    <!-- <div class="modal fade" id="info_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header font-weight-bold">
+                    <span>Modelo <span id="numero_modelo_modal_info"></span></span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6 d-flex align-items-center">
+                            <button class="btn btn-outline-secondary d-flex" id="ver_listado_modelo"
+                                data-numero_modelo="">
+                                <i class="material-icons list mr-1"></i>
+                                <span class="d-flex align-items-center">Listado</span>
+                            </button>
+                        </div>
+                        <div class="col-6 d-flex flex-column align-items-end">
+                            <span class="text-muted">Resultado</span>
+                            <span id="resultado_modelo" class="font-weight-bold">-73,50€</span>
+                        </div>
                     </div>
-                    <!-- FIN VISTA -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-primary" id="ver_confirmar">Confirmar</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="ver_rectificar">Rectificar</button>
                 </div>
             </div>
         </div>
-        <!-- end contenido centro -->
+    </div> -->
 
-        <!-- Modales -->
-        <div class="modal fade" id="info_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header font-weight-bold">
-                        <span>Modelo <span id="numero_modelo_modal_info"></span></span>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-6 d-flex align-items-center">
-                                <button class="btn btn-outline-secondary d-flex" id="ver_listado_modelo" data-numero_modelo="">
-                                    <i class="material-icons list mr-1"></i>
-                                    <span class="d-flex align-items-center">Listado</span>
-                                </button>
-                            </div>
-                            <div class="col-6 d-flex flex-column align-items-end">
-                                <span class="text-muted">Resultado</span>
-                                <span id="resultado_modelo" class="font-weight-bold">-73,50€</span>
-                            </div>
+    <!-- <div class="modal fade" id="nota_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header font-weight-bold">
+                    <span>Nota sobre el modelo <span id="numero_modelo_modal_nota"></span></span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12 d-flex align-items-center justify-content-between">
+                            <span id="mensaje_nota"></span>
+                            <i title="Eliminar nota" id="eliminar_nota"
+                                class="material-icons text-danger pointer">delete_forever</i>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-primary" id="ver_confirmar">Confirmar</button>
-                        <button type="button" class="btn btn-sm btn-danger" id="ver_rectificar">Rectificar</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
+    </div> -->
 
-        <div class="modal fade" id="nota_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header font-weight-bold">
-                        <span>Nota sobre el modelo <span id="numero_modelo_modal_nota"></span></span>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+    <!-- Listado de facturas de los distintos modelos -->
+    <!-- <div class="modal fade" id="listado_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" style="min-width: 80vw;">
+            <div class="modal-content">
+                <div class="modal-header font-weight-bold">
+                    <span>Listado de facturas del modelo <span id="numero_modelo_modal_listado"></span></span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12" id="contenedor_tablas_modelo"></div>
                     </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12 d-flex align-items-center justify-content-between">
-                                <span id="mensaje_nota"></span>
-                                <i title="Eliminar nota" id="eliminar_nota" class="material-icons text-danger pointer">delete_forever</i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
+    </div> -->
 
-        <!-- Listado de facturas de los distintos modelos -->
-        <div class="modal fade" id="listado_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog" style="min-width: 80vw;">
-                <div class="modal-content">
-                    <div class="modal-header font-weight-bold">
-                        <span>Listado de facturas del modelo <span id="numero_modelo_modal_listado"></span></span>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
 
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12" id="contenedor_tablas_modelo"></div>
+    <!-- Modal de rectificar -->
+    <!-- <div class="modal fade" id="rectificar_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header font-weight-bold">
+                    <span>Rectificar</span>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="texto_rectificar">Explique los motivos por los que debe rectificarse el
+                                resultado:</label>
+                            <textarea class="form-control" id="texto_rectificar" rows="3"></textarea>
                         </div>
                     </div>
+                </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="enviar_rectificar">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
 
-        <!-- Listado de facturas de los distintos modelos -->
-        <div class="modal fade" id="listado_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog" style="min-width: 80vw;">
-                <div class="modal-content">
-                    <div class="modal-header font-weight-bold">
-                        <span>Listado de facturas del modelo <span id="numero_modelo_modal_listado"></span></span>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12" id="contenedor_tablas_modelo"></div>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-
-        <!-- Modal de rectificar -->
-        <div class="modal fade" id="rectificar_modelo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header font-weight-bold">
-                        <span>Rectificar</span>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <label for="texto_rectificar">Explique los motivos por los que debe rectificarse el resultado:</label>
-                                <textarea class="form-control" id="texto_rectificar" rows="3"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="enviar_rectificar">Enviar</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-
-        <!-- Scripts -->
-        <script src="../js/app.js"></script>
-        <script>
-            var modalsListsStructure = {
-                "303": {
-                    "income": {
-                        "title": "Facturas emitidas",
-                        "columns": [
-                            {
-                                "text": "Nombre Cliente"
-                            },
-                            {
-                                "text": "CIF Cliente"
-                            },
-                            {
-                                "text": "Fecha Factura"
-                            },
-                            {
-                                "text": "Nº Factura"
-                            },
-                            {
-                                "text": "Tipo de Operación"
-                            },
-                            {
-                                "text": "Base Imponible",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "%IVA"
-                            },
-                            {
-                                "text": "Cuota IVA",
-                                "foot": "sumatorio"
-                            }
-                        ]
-                    },
-                    "expenses": {
-                        "title": "Facturas recibidas",
-                        "columns": [
-                            {
-                                "text": "Nombre Proveedor"
-                            },
-                            {
-                                "text": "CIF Proveedor"
-                            },
-                            {
-                                "text": "Fecha Factura"
-                            },
-                            {
-                                "text": "Nº Factura"
-                            },
-                            {
-                                "text": "Tipo de Operación"
-                            },
-                            {
-                                "text": "Base Imponible",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "%IVA"
-                            },
-                            {
-                                "text": "Cuota IVA",
-                                "foot": "sumatorio"
-                            }
-                        ]
-                    }
-                },
-                "115": {
-                    "list": {
-                        "columns": [
-                            {
-                                "text": "Nombre Perceptor"
-                            },
-                            {
-                                "text": "CIF Perceptor"
-                            },
-                            {
-                                "text": "Fecha Factura"
-                            },
-                            {
-                                "text": "Nº Factura"
-                            },
-                            {
-                                "text": "Tipo de Operación"
-                            },
-                            {
-                                "text": "Base Imponible",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "%Retención"
-                            },
-                            {
-                                "text": "Retención",
-                                "foot": "sumatorio"
-                            }
-                        ]
-                    }
-                },
-                "111": {
-                    "list": {
-                        "columns": [
-                            {
-                                "text": "Nombre Perceptor"
-                            },
-                            {
-                                "text": "CIF Perceptor"
-                            },
-                            {
-                                "text": "Fecha Factura"
-                            },
-                            {
-                                "text": "Nº Factura"
-                            },
-                            {
-                                "text": "Tipo de Operación"
-                            },
-                            {
-                                "text": "Base Imponible",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "%Retención"
-                            },
-                            {
-                                "text": "Retención",
-                                "foot": "sumatorio"
-                            }
-                        ]
-                    }
-                },
-                "130": {
-                    "income": {
-                        "title": "Listado de Ingresos",
-                        "columns": [
-                            {
-                                "text": "Nombre Cliente"
-                            },
-                            {
-                                "text": "CIF Cliente"
-                            },
-                            {
-                                "text": "Fecha Factura"
-                            },
-                            {
-                                "text": "Nº Factura"
-                            },
-                            {
-                                "text": "Tipo de Operación"
-                            },
-                            {
-                                "text": "Ingresos",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "%Retención"
-                            },
-                            {
-                                "text": "Retención",
-                                "foot": "sumatorio"
-                            }
-                        ]
-                    },
-                    "expenses": {
-                        "title": "Listado de Gastos",
-                        "columns": [
-                            {
-                                "text": "Nombre Proveedor"
-                            },
-                            {
-                                "text": "CIF Proveedor"
-                            },
-                            {
-                                "text": "Fecha Factura"
-                            },
-                            {
-                                "text": "Nº Factura"
-                            },
-                            {
-                                "text": "Tipo de Operación",
-                                "foot": "amortizaciones"
-                            },
-                            {
-                                "text": "Gastos",
-                                "foot": "amortizaciones"
-                            }
-                        ]
-                    }
-                },
-                "347": {
-                    "list": {
-                        "columns": [
-                            {
-                                "text": "Clave operación"
-                            },
-                            {
-                                "text": "NIF Declarado"
-                            },
-                            {
-                                "text": "Apellido y Nombre"
-                            },
-                            {
-                                "text": "Cód. Prov."
-                            },
-                            {
-                                "text": "Cód. País"
-                            },
-                            {
-                                "text": "NIF Comunitario"
-                            },
-                            {
-                                "text": "Ejercicio"
-                            },
-                            {
-                                "text": "Importe Anual",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "Importe 1T",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "Importe 2T",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "Importe 3T",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "Importe 4T",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "*Retención IRPF"
-                            },
-                            {
-                                "text": "*Incluir en el modelo"
-                            }
-                        ]
-                    }
-                },
-                "349": {
-                    "list": {
-                        "columns": [
-                            {
-                                "text": "Razón social"
-                            },
-                            {
-                                "text": "CIF"
-                            },
-                            {
-                                "text": "Fecha Factura"
-                            },
-                            {
-                                "text": "Nº Factura"
-                            },
-                            {
-                                "text": "Tipo de Operación"
-                            },
-                            {
-                                "text": "Base Imponible",
-                                "foot": "sumatorio"
-                            },
-                            {
-                                "text": "Clave"
-                            }
-                        ]
-                    }
-                }
-            };
-            var modalsListsContent = {
-                "303": {
-                    "income": [{
-                        "name": "Cliente de prueba",
-                        "cif": "98600782N",
-                        "date": "23-09-2020",
-                        "number": "42",
-                        "operation_type": "Operaciones interiores sujeto a IGIC",
-                        "base": 100,
-                        "iva_pct": 21,
-                        "iva": 21
-                    }, {
-                        "name": "Cliente de prueba",
-                        "cif": "98600782N",
-                        "date": "27-09-2020",
-                        "number": "43",
-                        "operation_type": "Operaciones interiores sujeto a IGIC",
-                        "base": 200,
-                        "iva_pct": 21,
-                        "iva": 42
-                    }],
-                    "expenses": []
-                }
-            };
-            var data = {
-                "list": [
-                    {
-                        "model": 303,
-                        "status": "Presentado",
-                        "result": 5238.21,
-                        "paymentMethod": {
-                            "text": "Domiciliado",
-                            "number": "ES3330622260951433920930"
+    <!-- Scripts -->
+    <script src="../js/app.js"></script>
+    <script>
+        var modalsListsStructure = {
+            "303": {
+                "income": {
+                    "title": "Facturas emitidas",
+                    "columns": [
+                        {
+                            "text": "Nombre Cliente"
                         },
-                        // "paymentMethod": {
-                        //     "text": "Aplazamiento / Fraccionamiento",
-                        //     "number": "ES3330622260951433920930",
-                        //     "installmentsInfo": {
-                        //         "firstInstallmentDate": "05-09-2020",
-                        //         "numberOfInstallments": 5
-                        //     }
-                        // },
-                        "note": null,
-                        "fileURL": "https://via.placeholder.com/768/" // URL de prueba
-                    },
-                    {
-                        "model": 115,
-                        "status": "Rectificar",
-                        "result": -98.75,
-                        "paymentMethod": null,
-                        "note": "Este modelo necesita rectificación, el importe de la casilla 2 no es correcto",
-                        "fileURL": null
-                    },
-                    {
-                        "model": 111,
-                        "status": "Pendiente",
-                        "result": -25.78,
-                        "paymentMethod": null,
-                        "note": null,
-                        "fileURL": null
-                    },
-                    {
-                        "model": 130,
-                        "status": "Confirmado",
-                        "result": 0,
-                        "paymentMethod": {
-                            "text": "Negativa"
+                        {
+                            "text": "CIF Cliente"
                         },
-                        "note": "No cuadra el importe total de la base imponible de los ingresos",
-                        "fileURL": null
+                        {
+                            "text": "Fecha Factura"
+                        },
+                        {
+                            "text": "Nº Factura"
+                        },
+                        {
+                            "text": "Tipo de Operación"
+                        },
+                        {
+                            "text": "Base Imponible",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "%IVA"
+                        },
+                        {
+                            "text": "Cuota IVA",
+                            "foot": "sumatorio"
+                        }
+                    ]
+                },
+                "expenses": {
+                    "title": "Facturas recibidas",
+                    "columns": [
+                        {
+                            "text": "Nombre Proveedor"
+                        },
+                        {
+                            "text": "CIF Proveedor"
+                        },
+                        {
+                            "text": "Fecha Factura"
+                        },
+                        {
+                            "text": "Nº Factura"
+                        },
+                        {
+                            "text": "Tipo de Operación"
+                        },
+                        {
+                            "text": "Base Imponible",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "%IVA"
+                        },
+                        {
+                            "text": "Cuota IVA",
+                            "foot": "sumatorio"
+                        }
+                    ]
+                }
+            },
+            "115": {
+                "list": {
+                    "columns": [
+                        {
+                            "text": "Nombre Perceptor"
+                        },
+                        {
+                            "text": "CIF Perceptor"
+                        },
+                        {
+                            "text": "Fecha Factura"
+                        },
+                        {
+                            "text": "Nº Factura"
+                        },
+                        {
+                            "text": "Tipo de Operación"
+                        },
+                        {
+                            "text": "Base Imponible",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "%Retención"
+                        },
+                        {
+                            "text": "Retención",
+                            "foot": "sumatorio"
+                        }
+                    ]
+                }
+            },
+            "111": {
+                "list": {
+                    "columns": [
+                        {
+                            "text": "Nombre Perceptor"
+                        },
+                        {
+                            "text": "CIF Perceptor"
+                        },
+                        {
+                            "text": "Fecha Factura"
+                        },
+                        {
+                            "text": "Nº Factura"
+                        },
+                        {
+                            "text": "Tipo de Operación"
+                        },
+                        {
+                            "text": "Base Imponible",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "%Retención"
+                        },
+                        {
+                            "text": "Retención",
+                            "foot": "sumatorio"
+                        }
+                    ]
+                }
+            },
+            "130": {
+                "income": {
+                    "title": "Listado de Ingresos",
+                    "columns": [
+                        {
+                            "text": "Nombre Cliente"
+                        },
+                        {
+                            "text": "CIF Cliente"
+                        },
+                        {
+                            "text": "Fecha Factura"
+                        },
+                        {
+                            "text": "Nº Factura"
+                        },
+                        {
+                            "text": "Tipo de Operación"
+                        },
+                        {
+                            "text": "Ingresos",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "%Retención"
+                        },
+                        {
+                            "text": "Retención",
+                            "foot": "sumatorio"
+                        }
+                    ]
+                },
+                "expenses": {
+                    "title": "Listado de Gastos",
+                    "columns": [
+                        {
+                            "text": "Nombre Proveedor"
+                        },
+                        {
+                            "text": "CIF Proveedor"
+                        },
+                        {
+                            "text": "Fecha Factura"
+                        },
+                        {
+                            "text": "Nº Factura"
+                        },
+                        {
+                            "text": "Tipo de Operación",
+                            "foot": "amortizaciones"
+                        },
+                        {
+                            "text": "Gastos",
+                            "foot": "amortizaciones"
+                        }
+                    ]
+                }
+            },
+            "347": {
+                "list": {
+                    "columns": [
+                        {
+                            "text": "Clave operación"
+                        },
+                        {
+                            "text": "NIF Declarado"
+                        },
+                        {
+                            "text": "Apellido y Nombre"
+                        },
+                        {
+                            "text": "Cód. Prov."
+                        },
+                        {
+                            "text": "Cód. País"
+                        },
+                        {
+                            "text": "NIF Comunitario"
+                        },
+                        {
+                            "text": "Ejercicio"
+                        },
+                        {
+                            "text": "Importe Anual",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "Importe 1T",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "Importe 2T",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "Importe 3T",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "Importe 4T",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "*Retención IRPF"
+                        },
+                        {
+                            "text": "*Incluir en el modelo"
+                        }
+                    ]
+                }
+            },
+            "349": {
+                "list": {
+                    "columns": [
+                        {
+                            "text": "Razón social"
+                        },
+                        {
+                            "text": "CIF"
+                        },
+                        {
+                            "text": "Fecha Factura"
+                        },
+                        {
+                            "text": "Nº Factura"
+                        },
+                        {
+                            "text": "Tipo de Operación"
+                        },
+                        {
+                            "text": "Base Imponible",
+                            "foot": "sumatorio"
+                        },
+                        {
+                            "text": "Clave"
+                        }
+                    ]
+                }
+            }
+        };
+        var modalsListsContent = {
+            "303": {
+                "income": [{
+                    "name": "Cliente de prueba",
+                    "cif": "98600782N",
+                    "date": "23-09-2020",
+                    "number": "42",
+                    "operation_type": "Operaciones interiores sujeto a IGIC",
+                    "base": 100,
+                    "iva_pct": 21,
+                    "iva": 21
+                }, {
+                    "name": "Cliente de prueba",
+                    "cif": "98600782N",
+                    "date": "27-09-2020",
+                    "number": "43",
+                    "operation_type": "Operaciones interiores sujeto a IGIC",
+                    "base": 200,
+                    "iva_pct": 21,
+                    "iva": 42
+                }],
+                "expenses": []
+            }
+        };
+
+        var data = {
+            "list": [
+                {
+                    "model": 303,
+                    "status": "Presentado",
+                    "result": 5238.21,
+                    "paymentMethod": {
+                        "text": "Domiciliado",
+                        "number": "ES3330622260951433920930"
                     },
-                    {
-                        "model": 349,
-                        "status": "En proceso",
-                        "result": "Informativa",
-                        "paymentMethod": null,
-                        "note": null,
-                        "fileURL": null
+                    // "paymentMethod": {
+                    //     "text": "Aplazamiento / Fraccionamiento",
+                    //     "number": "ES3330622260951433920930",
+                    //     "installmentsInfo": {
+                    //         "firstInstallmentDate": "05-09-2020",
+                    //         "numberOfInstallments": 5
+                    //     }
+                    // },
+                    "note": null,
+                    "fileURL": "https://via.placeholder.com/768/" // URL de prueba
+                },
+                {
+                    "model": 303,
+                    "status": "Presentado",
+                    "result": -5238.21,
+                    "paymentMethod": {
+                        "text": "Domiciliado",
+                        "number": "ES3330622260951433920930"
+                    },
+                    // "paymentMethod": {
+                    //     "text": "Aplazamiento / Fraccionamiento",
+                    //     "number": "ES3330622260951433920930",
+                    //     "installmentsInfo": {
+                    //         "firstInstallmentDate": "05-09-2020",
+                    //         "numberOfInstallments": 5
+                    //     }
+                    // },
+                    "note": null,
+                    "fileURL": "https://via.placeholder.com/768/" // URL de prueba
+                },
+                {
+                    "model": 303,
+                    "status": "Presentado",
+                    "result": 0,
+                    "paymentMethod": {
+                        "text": "Domiciliado",
+                        "number": "ES3330622260951433920930"
+                    },
+                    // "paymentMethod": {
+                    //     "text": "Aplazamiento / Fraccionamiento",
+                    //     "number": "ES3330622260951433920930",
+                    //     "installmentsInfo": {
+                    //         "firstInstallmentDate": "05-09-2020",
+                    //         "numberOfInstallments": 5
+                    //     }
+                    // },
+                    "note": null,
+                    "fileURL": "https://via.placeholder.com/768/" // URL de prueba
+                },
+                {
+                    "model": 115,
+                    "status": "Rectificar",
+                    "result": -98.75,
+                    "paymentMethod": null,
+                    "note": "Este modelo necesita rectificación, el importe de la casilla 2 no es correcto",
+                    "fileURL": null
+                },
+                {
+                    "model": 111,
+                    "status": "Pendiente",
+                    "result": -25.78,
+                    "paymentMethod": null,
+                    "note": null,
+                    "fileURL": null
+                },
+                {
+                    "model": 111,
+                    "status": "Pendiente",
+                    "result": 0,
+                    "paymentMethod": null,
+                    "note": null,
+                    "fileURL": null
+                },
+                {
+                    "model": 111,
+                    "status": "Pendiente",
+                    "result": "Informativa",
+                    "paymentMethod": null,
+                    "note": null,
+                    "fileURL": null
+                },
+                {
+                    "model": 130,
+                    "status": "Confirmado",
+                    "result": 0,
+                    "paymentMethod": {
+                        "text": "Negativa"
+                    },
+                    "note": "No cuadra el importe total de la base imponible de los ingresos",
+                    "fileURL": null
+                },
+                {
+                    "model": 349,
+                    "status": "En proceso",
+                    "result": "Informativa",
+                    "paymentMethod": null,
+                    "note": null,
+                    "fileURL": null
+                }
+            ],
+            "totalData": 5,
+            "totalPage": 1,
+            "page": 1,
+            "shownPage": "1-5"
+        };
+
+        // Todos los modelos, aparece al pulsar en la tabla
+        function todosLosModelos() {
+            var idModal = 'info_modelo';
+            var header = '<span>Modelo <span id="numero_modelo_modal_info"></span></span>';
+            var body = '<div class="col-6 d-flex align-items-center">' +
+                '<button class="btn btn-outline-secondary d-flex" id="ver_listado_modelo" data-numero_modelo="">' +
+                '<i class="material-icons list mr-1"></i>' +
+                '<span class="d-flex align-items-center">Listado</span>' +
+                '</button>' +
+                '</div>' +
+                '<div class="col-6 d-flex flex-column align-items-end">' +
+                '<span class="text-muted">Resultado</span>' +
+                '<span id="resultado_modelo" class="font-weight-bold"></span>' +
+                '</div>';
+            var footer = '<button type="button" class="btn btn-sm btn-primary" id="ver_confirmar">Confirmar</button>' +
+                '<button type="button" class="btn btn-sm btn-danger" id="ver_rectificar">Rectificar</button>';
+
+            createModal(idModal, header, body, footer);
+        }
+
+        // Nota sobre el modelo
+        function notaDelModelo() {
+            var idModal = 'nota_modelo';
+            var header = '<span>Nota sobre el modelo <span id="numero_modelo_modal_nota"></span></span>';
+            var body = '<div class="col-12 d-flex align-items-center justify-content-between">' +
+                '<span id="mensaje_nota"></span>' +
+                '<i title="Eliminar nota" id="eliminar_nota" class="material-icons text-danger pointer">delete_forever</i>' +
+                '</div>';
+            var footer = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>';
+
+            createModal(idModal, header, body, footer);
+        }
+
+        // Listado de facturas del modelo
+        function listadoFacturas() {
+            var idModal = 'listado_modelo';
+            var header = '<span>Listado de facturas del modelo <span id="numero_modelo_modal_listado"></span></span>';
+            var body = '<div class="col-12" id="contenedor_tablas_modelo"></div>';
+            var footer = '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>';
+
+            createModal(idModal, header, body, footer);
+            $('#listado_modelo > div').css('min-width', '80vw');
+        }
+
+        // Rectificar del modelo
+        function rectificarModelos() {
+            var idModal = 'rectificar_modelo';
+            var header = '<span>Rectificar</span>';
+            var body = '<div class="col-12">' +
+                '<label for="texto_rectificar">Explique los motivos por los que debe rectificarse el resultado:</label>' +
+                '<textarea class="form-control" id="texto_rectificar" rows="3"></textarea>' +
+                '</div>';
+            var footer = '<button type="button" class="btn btn-primary" id="enviar_rectificar">Enviar</button>';
+
+            createModal(idModal, header, body, footer);
+        }
+
+
+        // Confirmar el modelo
+        function confirmarModelo() {
+            var idModal = 'confirmar_modelo';
+            var header = '<span id="confirmar_modelo_header"></span>';
+            var body = '<form id="formularioConfirmar" name="formularioConfirmar" action="#" method="post"><div id="confirmar_modelo_body" class="col-12"></div>';
+            var footer = '<button type="submit" form="formularioConfirmar" class="btn btn-primary" id="enviar_confirmar">Confirmar</button>';
+
+            createModal(idModal, header, body, footer);
+        }
+
+        function createModal(idModal, header, body, footer) {
+            var htmlModal = getModal(idModal, header, body, footer);
+            $(htmlModal).appendTo("#zonaModal");
+        }
+
+        // Cuando se hace click en el botón de confirmar
+        $(document).on('click', '#ver_confirmar', function (e) {
+            var header = "<span></span>";
+            var body = "<span></span>";
+            switch (window.numeroModelo) {
+                case 115: case 111:
+
+                    if (isNaN(window.resultadoOriginal)) {
+                        // window.resultadoOriginal === 'Informativa'
+                        header = "<span>Confirmar modelo</span>";
+                        body = '<span>' + window.resultadoOriginal + '</span>' +
+                            '<input name="resultado" type="hidden" value="' + window.resultadoOriginal + '">';
+
+                    } else if (window.resultadoOriginal === 0) {
+                        header = "<span>Declaración negativa</span>";
+                        body = '<span>La declaración es negativa</span>' +
+                            '<input name="resultado" type="hidden" value="La declaración es negativa">';
+
+                    } else if (window.resultadoOriginal > 0 || window.resultadoOriginal < 0) {
+                        var hay = false;
+                        header = "<span>Domicialización bancaria</span>";
+                        // solo aparece hasta una fecha indicada
+                        if (enFecha()) {
+                            body = '<div class="form-check">' +
+                                '<input class="form-check-input chb" type="checkbox" name="domiciliadosRadios" id="domiciliadoRadio" value="option1" checked>' +
+                                '<label class="form-check-label" for="domiciliadoRadio">Domiciliado</label>' +
+                                '<input type="text" class="form-control" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '">' +
+                                '</div>';
+                            hay = true;
+                        }
+
+                        // esta opción solo aparece cuando el cliente no es Basic
+                        if (!window.esBasic) {
+                            body = body +
+                                '<div class="form-check">' +
+                                '<input class="form-check-input chb" type="checkbox" name="domiciliadosRadios" id="nrcRadio" value="option2">' +
+                                '<label class="form-check-label" for="nrcRadio">NRC (Banca online u oficina bancaria)</label>' +
+                                '<input type="text" class="form-control" id="ncrText" name="ncrText">' +
+                                '</div>';
+                            hay = true
+                        }
+
+                        if (!hay) {
+                            body = "<span>Fuera de fecha</span>";
+                        }
+
                     }
-                ],
-                "totalData": 5,
-                "totalPage": 1,
-                "page": 1,
-                "shownPage": "1-5"
-            };
+                    break;
 
-            $(document).ready(function(){
-                var year = new URLSearchParams(window.location.search).get('year') || new Date().getFullYear();
-                var quarter = new URLSearchParams(window.location.search).get('quarter') || 3;
+                case 303:
+                    if (isNaN(window.resultadoOriginal)) {
+                        // window.resultadoOriginal === 'Informativa'
+                        header = "<span>Confirmar modelo</span>";
+                        body = "<span>" + window.resultadoOriginal + "</span>" +
+                            '<input name="resultado" type="hidden" value="' + window.resultadoOriginal + '">';
 
-                createTable(data);
+                    } else if (window.resultadoOriginal === 0) {
+                        header = "<span>Resultado cero</span>";
+                        body = '<span>El resultado del modelo es 0,00€</span>' +
+                            '<input name="resultado" type="hidden" value="El resultado del modelo es 0,00€">';
+                    } else if (window.resultadoOriginal < 0) {
+                        header = "<span>Declaración negativa</span>";
+                        switch (window.trimestre) {
+                            case 1: case 2: case 3:
+                                body =
+                                    '<div class="form-check">' +
+                                    '<input class="form-check-input" type="checkbox" name="aCompensarCheck" id="aCompensarCheck" checked>' +
+                                    '<label class="form-check-label" for="aCompensarCheck">A compensar</label>' +
+                                    '</div>';
+                                break;
 
-                //
-                // Creamos la tabla con los datos a listar
-                //
-                function createTable(data){
-                    var list = (year == 2020 && quarter == 3) ? data.list : [];
+                            case 4:
+                                body =
+                                    '<div class="form-check">' +
+                                    '<input class="form-check-input chb" type="checkbox" name="negativaChecks" id="aCompensarCheck" value="option1">' +
+                                    '<label class="form-check-label" for="aCompensarCheck">A compensar</label>' +
+                                    '</div>' +
+                                    '<div class="form-inline">' +
+                                    '<div class="form-check">' +
+                                    '<input class="form-check-input chb" type="checkbox" name="negativaChecks" id="solicitudDevolucionCheck" value="option2">' +
+                                    '<label class="form-check-label" for="solicitudDevolucionCheck">Solicitud de devolución</label>' +
+                                    '</div>' +
+                                    '&nbsp;<input type="text" class="form-inline " id="solicitudDevolucionText" name="solicitudDevolucionText" value="' + window.cuentaImpuestos + '">' +
+                                    '</div>';
+                                break;
 
-                    // Recorremos los datos a mostrar
-                    var tbody = '';
+                            default:
+                                break;
+                        }
+                    } else if (window.resultadoOriginal > 0) {
+                        var hay = false;
+                        header = "<span>Domicialización bancaria</span>";
+                        // solo aparece hasta una fecha indicada
+                        if (enFecha()) {
+                            body = '<div class="form-check">' +
+                                '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="domiciliadoRadio" value="option1">' +
+                                '<label class="form-check-label" for="domiciliadoRadio">Domiciliado</label>' +
+                                '<input type="text" class="form-control" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '">' +
+                                '</div>';
+                            hay = true;
+                        }
 
-                    if (list.length) {
-                        $.each(list, function(i, item) {
-                            var clickable = (item.status === 'En proceso') ? '' : 'pointer';
-                            var result = '';
+                        // esta opción solo aparece cuando el cliente no es Basic
+                        if (!window.esBasic) {
+                            body = body +
+                                '<div class="form-check">' +
+                                '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="nrcRadio" value="option2">' +
+                                '<label class="form-check-label" for="nrcRadio">NRC (Banca online u oficina bancaria)</label>' +
+                                '<input type="text" class="form-control" id="ncrText" name="ncrText">' +
+                                '</div>';
+                            hay = true
+                        }
 
-                            if (item.result !== null) {
-                                result = (item.result === 'Informativa') ? item.result : formatearNumero(item.result) + '€';
-                            }
 
-                            tbody+= '<tr class="' + clickable + ' fila_modelo" data-numero_modelo="' + item.model + '" data-resultado_modelo="' + result + '" data-mensaje_nota="' + item.note + '">';
+                        body = body +
 
-                                // Recorremos los <td>
-                                $.each(item, function(key, val) {
-                                    switch (key) {
-                                        case 'result':
-                                            tbody+= '<td class="text-center"><span>'+result+'</span></td>';
-                                            break;
-                                        case 'paymentMethod':
-                                            var text = (val !== null && typeof val.text !== 'undefined' && val.text !== null) ? val.text : '';
-                                            var number = (val !== null && typeof val.number !== 'undefined' && val.number !== null) ? val.number : '';
+                            '<div class="form-check">' +
+                            '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="aplazadoRadio" value="option3">' +
+                            '<label class="form-check-label" for="aplazadoRadio">Aplazamiento / Fraccionamiento</label>' +
+                            '&nbsp;<input type="text" class="form-control" id="aplazadoText" name="aplazadoText" value="' + window.cuentaImpuestos + '">' +
+                            '<div class="form-inline" style="padding: 7px 0 0 0;">' +
+                            '<label class="form-check-label" for="fechaPlazoText">Fecha primer plazo</label>' +
+                            '&nbsp;<input type="date" class="form-inline " id="fechaPlazoText" name="fechaPlazoText" value="">' +
+                            '</div>' +
 
-                                            tbody+= '' +
-                                                '<td class="col-4">' +
-                                                    '<div class="row">' +
-                                                        '<div class="col-6 text-center">' + text + '</div>' +
-                                                        '<div class="col-6 text-center text-break">';
+                            '<div class="form-inline" style="padding: 7px 0;">' +
+                            '<label class="form-check-label" for="numeroPlazos">Fecha primer plazo</label>' +
+                            '&nbsp;<input type="number" id="numeroPlazos" name="numeroPlazos" style="width: 50px;">' +
+                            '</div>' +
+                            '</div>';
 
-                                                            if (text !== '' && text === 'Aplazamiento / Fraccionamiento') {
-                                                                var firstInstallmentDate = (val.installmentsInfo !== null && val.installmentsInfo.firstInstallmentDate !== null) ? val.installmentsInfo.firstInstallmentDate : '';
-                                                                var numberOfInstallments = (val.installmentsInfo !== null && val.installmentsInfo.numberOfInstallments !== null) ? val.installmentsInfo.numberOfInstallments : '';
 
-                                                                tbody+= '<p>Fecha primer plazo: ' + firstInstallmentDate + '</p>' +
-                                                                    '<p>Nº plazos: ' + numberOfInstallments + '</p>' +
-                                                                    '<p class="text-break">' + number + '</p>';
-                                                            } else {
-                                                                tbody+= '<span>' + number + '</span>';
-                                                            }
 
-                                                        tbody+= '</div>' +
-                                                    '</div>' +
-                                                '</td>';
-                                            break;
-                                        case 'note':
-                                            var note = (val !== null) ? '<i title="Ver nota" class="material-icons ver_nota text-primary">sticky_note_2</i>' : '';
 
-                                            tbody+= '<td class="text-center"><span>'+note+'</span></td>';
-                                            break;
-                                        case 'fileURL':
-                                            var fileURL = (val !== null) ? '<a class="ver_documento_asociado" href="../documental/show.html?document=Presentación modelo 303.pdf"><i class="material-icons text-primary" title="Ver documento asociado">visibility</i></a>' : '';
+                    }
 
-                                            tbody+= '<td class="text-center"><span>'+fileURL+'</span></td>';
-                                            break;
-                                        default:
-                                            tbody+= '<td class="text-center"><span>'+val+'</span></td>';
-                                            break;
+                    break;
+
+                case 130:
+                    if (isNaN(window.resultadoOriginal)) {
+                        // window.resultadoOriginal === 'Informativa'
+                        header = "<span>Confirmar modelo</span>";
+                        body = '<span>' + window.resultadoOriginal + '</span>' +
+                            '<input name="resultado" type="hidden" value="' + window.resultadoOriginal + '">';
+
+                    } else if (window.resultadoOriginal === 0 || window.resultadoOriginal < 0) {
+                        header = "<span>Declaración negativa</span>";
+                        body = '<span>La declaración es negativa</span>' +
+                            '<input name="resultado" type="hidden" value="La declaración es negativa">';
+
+                    } else if (window.resultadoOriginal > 0) {
+                        var hay = false;
+                        header = "<span>Domicialización bancaria</span>";
+                        // solo aparece hasta una fecha indicada
+                        if (enFecha()) {
+                            body = '<div class="form-check">' +
+                                '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="domiciliadoRadio" value="option1">' +
+                                '<label class="form-check-label" for="domiciliadoRadio">Domiciliado</label>' +
+                                '<input type="text" class="form-control" id="domiciliadoText" value="' + window.cuentaImpuestos + '">' +
+                                '</div>';
+                            hay = true;
+                        }
+
+                        // esta opción solo aparece cuando el cliente no es Basic
+                        if (!window.esBasic) {
+                            body = body +
+                                '<div class="form-check">' +
+                                '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="nrcRadio" value="option2">' +
+                                '<label class="form-check-label" for="nrcRadio">NRC (Banca online u oficina bancaria)</label>' +
+                                '<input type="text" class="form-control" id="ncrText">' +
+                                '</div>';
+                            hay = true
+                        }
+
+
+                        body = body +
+
+                            '<div class="form-check">' +
+                            '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="aplazadoRadio" value="option3">' +
+                            '<label class="form-check-label" for="aplazadoRadio">Aplazamiento / Fraccionamiento</label>' +
+                            '&nbsp;<input type="text" class="form-control " id="aplazadoText" value="' + window.cuentaImpuestos + '">' +
+                            '<div class="form-inline" style="padding: 7px 0 0 0;">' +
+                            '<label class="form-check-label" for="fechaPlazoText">Fecha primer plazo</label>' +
+                            '&nbsp;<input type="date" class="form-inline " id="fechaPlazoText" value="">' +
+                            '</div>' +
+                            '<div class="form-inline" style="padding: 7px 0;">' +
+                            '<label class="form-check-label" for="numeroPlazos">Fecha primer plazo</label>' +
+                            '&nbsp;<input type="number" id="numeroPlazos" name="numeroPlazos" style="width: 50px;">' +
+                            '</div>' +
+                            '</div>';
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+
+            $('#confirmar_modelo_header').empty();
+            $('#confirmar_modelo_header').append(header);
+            $('#confirmar_modelo_body').empty();
+            $('#confirmar_modelo_body').append(body);
+            $('#confirmar_modelo').modal();
+            //TODO
+        });
+
+
+        $(document).ready(function () {
+            datosDeEjemplo();
+            //Cargamos los modales
+            todosLosModelos();
+            notaDelModelo();
+            listadoFacturas();
+            rectificarModelos();
+            confirmarModelo();
+
+
+            var year = new URLSearchParams(window.location.search).get('year') || new Date().getFullYear();
+            var quarter = new URLSearchParams(window.location.search).get('quarter') || 3;
+
+            createTable(data);
+
+            //
+            // Creamos la tabla con los datos a listar
+            //
+            function createTable(data) {
+                var list = (year == 2020 && quarter == 3) ? data.list : [];
+
+                // Recorremos los datos a mostrar
+                var tbody = '';
+
+                if (list.length) {
+                    $.each(list, function (i, item) {
+                        var clickable = (item.status === 'En proceso') ? '' : 'pointer';
+                        var result = '';
+                        var resultado_original = '';
+
+                        if (item.result !== null) {
+                            result = (item.result === 'Informativa') ? item.result : formatearNumero(item.result) + '€';
+                            resultado_original = item.result;
+                        }
+
+                        tbody += '<tr class="' + clickable + ' fila_modelo" data-numero_modelo="' + item.model + '" data-resultado_modelo="' + result + '" data-mensaje_nota="' + item.note + '" data-resultado_original="' + resultado_original + '">';
+
+                        // Recorremos los <td>
+                        $.each(item, function (key, val) {
+                            switch (key) {
+                                case 'result':
+                                    tbody += '<td class="text-center"><span>' + result + '</span></td>';
+                                    break;
+                                case 'paymentMethod':
+                                    var text = (val !== null && typeof val.text !== 'undefined' && val.text !== null) ? val.text : '';
+                                    var number = (val !== null && typeof val.number !== 'undefined' && val.number !== null) ? val.number : '';
+
+                                    tbody += '' +
+                                        '<td class="col-4">' +
+                                        '<div class="row">' +
+                                        '<div class="col-6 text-center">' + text + '</div>' +
+                                        '<div class="col-6 text-center text-break">';
+
+                                    if (text !== '' && text === 'Aplazamiento / Fraccionamiento') {
+                                        var firstInstallmentDate = (val.installmentsInfo !== null && val.installmentsInfo.firstInstallmentDate !== null) ? val.installmentsInfo.firstInstallmentDate : '';
+                                        var numberOfInstallments = (val.installmentsInfo !== null && val.installmentsInfo.numberOfInstallments !== null) ? val.installmentsInfo.numberOfInstallments : '';
+
+                                        tbody += '<p>Fecha primer plazo: ' + firstInstallmentDate + '</p>' +
+                                            '<p>Nº plazos: ' + numberOfInstallments + '</p>' +
+                                            '<p class="text-break">' + number + '</p>';
+                                    } else {
+                                        tbody += '<span>' + number + '</span>';
                                     }
-                                });
-                            // Cerramos el <tr>
-                            tbody+= '</tr>';
+
+                                    tbody += '</div>' +
+                                        '</div>' +
+                                        '</td>';
+                                    break;
+                                case 'note':
+                                    var note = (val !== null) ? '<i title="Ver nota" class="material-icons ver_nota text-primary">sticky_note_2</i>' : '';
+
+                                    tbody += '<td class="text-center"><span>' + note + '</span></td>';
+                                    break;
+                                case 'fileURL':
+                                    var fileURL = (val !== null) ? '<a class="ver_documento_asociado" href="../documental/show.html?document=Presentación modelo 303.pdf"><i class="material-icons text-primary" title="Ver documento asociado">visibility</i></a>' : '';
+
+                                    tbody += '<td class="text-center"><span>' + fileURL + '</span></td>';
+                                    break;
+                                default:
+                                    tbody += '<td class="text-center"><span>' + val + '</span></td>';
+                                    break;
+                            }
                         });
-                    } else {
-                        tbody+= '' +
-                            '<tr>'+
-                                '<td colspan="6">'+
-                                    '<div class="row">'+
-                                        '<div class="col-12 text-center">'+
-                                            'No existen datos para mostrar'
-                                        '</div>'+
-                                    '</div>'+
-                                '</td>'
-                            '</tr>';
-                    }
+                        // Cerramos el <tr>
+                        tbody += '</tr>';
+                    });
+                } else {
+                    tbody += '' +
+                        '<tr>' +
+                        '<td colspan="6">' +
+                        '<div class="row">' +
+                        '<div class="col-12 text-center">' +
+                        'No existen datos para mostrar'
+                    '</div>' +
+                        '</div>' +
+                        '</td>' +
+                        '</tr>';
+                }
 
-                    // Agregamos el cuerpo de la tabla
-                    $('#listado_modelos tbody').append(tbody);
+                // Agregamos el cuerpo de la tabla
+                $('#listado_modelos tbody').append(tbody);
 
-                    // Agregamos el paginado en el footer de la tabla
-                    var tfoot = 
-                    '<tr>'+
-                        '<td colspan="6">'+
-                            '<div class="row">'+
-                                '<div class="col-md-6">'+
-                                    'Mostrando del '+data.shownPage+' de un total de '+data.totalData+' elementos'+
-                                '</div>'+
-                                '<div class="col-md-6"></div>'+
-                            '</div>'+
-                        '</td>'
+                // Agregamos el paginado en el footer de la tabla
+                var tfoot =
+                    '<tr>' +
+                    '<td colspan="6">' +
+                    '<div class="row">' +
+                    '<div class="col-md-6">' +
+                    'Mostrando del ' + data.shownPage + ' de un total de ' + data.totalData + ' elementos' +
+                    '</div>' +
+                    '<div class="col-md-6"></div>' +
+                    '</div>' +
+                    '</td>' +
                     '</tr>';
 
-                    // Agregamos el pie de la tabla
-                    $('#listado_modelos tfoot').html(tfoot);
-                }
-            });
+                // Agregamos el pie de la tabla
+                $('#listado_modelos tfoot').html(tfoot);
+            }
+        });
 
-            //
-            // Eventos
-            //
-                // Cuando se hace click en una fila del listado de modelos
-                $(document).on('click', '.pointer.fila_modelo', function() {
-                    var numeroModelo = $(this).data('numero_modelo');
-                    var resultadoModelo = $(this).data('resultado_modelo');
+        //
+        // Eventos
+        //
+        // Cuando se hace click en una fila del listado de modelos
+        $(document).on('click', '.pointer.fila_modelo', function () {
+            var numeroModelo = $(this).data('numero_modelo');
+            var resultadoModelo = $(this).data('resultado_modelo');
+            var resultado_original = $(this).data('resultado_original');
 
-                    // Almacenamos el numero de modelo seleccionado en una variable global
-                    window.numeroModelo = numeroModelo;
+            // Almacenamos el numero de modelo seleccionado en una variable global
+            window.numeroModelo = numeroModelo;
 
-                    // Insertamos en el título del modal el número del modelo
-                    $('#numero_modelo_modal_info').text(numeroModelo);
+            // Almacenamos el resultado formateado con euros de modelo seleccionado en una variable global
+            window.resultadoModelo = resultadoModelo;
 
-                    // Insertamos en el modal el resultado del modelo
-                    $('#resultado_modelo').text(resultadoModelo);
+            // Almacenamos el resultado sin formatear de modelo seleccionado en una variable global
+            window.resultadoOriginal = resultado_original;
 
-                    // Mostramos el modal
-                    $('#info_modelo').modal();
-                });
+            // Insertamos en el título del modal el número del modelo
+            $('#numero_modelo_modal_info').text(numeroModelo);
 
-                // Cuando se hace click en el botón que abre el listado
-                $(document).on('click', '#ver_listado_modelo', function() {
-                    $('#numero_modelo_modal_listado').text(window.numeroModelo);
+            // Insertamos en el modal el resultado del modelo
+            $('#resultado_modelo').text(resultadoModelo);
 
-                    var numeroModelo = $(this).data('numero_modelo');
-                    var titleStructure = `<span class="font-weight-bold">
+            // Mostramos el modal
+            $('#info_modelo').modal();
+        });
+
+        $(document).on('change', '.chb', function () {
+            $(".chb").prop('checked', false);
+            $(this).prop('checked', true);
+        });
+
+        // Cuando se hace click en el botón que abre el listado
+        $(document).on('click', '#ver_listado_modelo', function () {
+            $('#numero_modelo_modal_listado').text(window.numeroModelo);
+
+            var numeroModelo = $(this).data('numero_modelo');
+            var titleStructure = `<span class="font-weight-bold">
                                             <span>##title##</span>
                                         </span>`;
-                    var tableStructure = `<div class="table-responsive pt-2 mb-2 px-0">
+            var tableStructure = `<div class="table-responsive pt-2 mb-2 px-0">
                                             <table class="table" id="##table_type##">
                                                 <thead>
                                                     <tr>
@@ -688,158 +1034,244 @@
                                             </table>
                                         </div>`;
 
-                    // Vaciamos el contenedor de las tablas antes de rellenarlo
-                    $('#contenedor_tablas_modelo').empty();
+            // Vaciamos el contenedor de las tablas antes de rellenarlo
+            $('#contenedor_tablas_modelo').empty();
 
-                    // Obtenemos la estructura de los listados del modelo
-                    const modelLists = modalsListsStructure[window.numeroModelo];
+            // Obtenemos la estructura de los listados del modelo
+            const modelLists = modalsListsStructure[window.numeroModelo];
 
-                    // Recorremos la estructura de los listados del modelo para obtener sus columnas y mostrarlas
-                    for (const prop in modelLists) {
-                        const columns = modelLists[prop].columns.map((column) => `<th>${column.text}</th>`);
+            // Recorremos la estructura de los listados del modelo para obtener sus columnas y mostrarlas
+            for (const prop in modelLists) {
+                const columns = modelLists[prop].columns.map((column) => `<th>${column.text}</th>`);
 
-                        // Si la tabla tiene título lo mostramos
-                        if (typeof modelLists[prop].title !== 'undefined') {
-                            const title = titleStructure.replace('##title##', modelLists[prop].title);
-                            $('#contenedor_tablas_modelo').append(title);
-                        }
+                // Si la tabla tiene título lo mostramos
+                if (typeof modelLists[prop].title !== 'undefined') {
+                    const title = titleStructure.replace('##title##', modelLists[prop].title);
+                    $('#contenedor_tablas_modelo').append(title);
+                }
 
-                        const table = tableStructure.replace('##columns##', columns.join(''))
-                            .replace('##table_type##', prop);
-                        
-                        $('#contenedor_tablas_modelo').append(table);
-                    }
+                const table = tableStructure.replace('##columns##', columns.join(''))
+                    .replace('##table_type##', prop);
 
-                    // Obtenemos los datos de las facturas del modelo
-                    const emptyModelList = (window.numeroModelo === 303 || window.numeroModelo === 130) ? {"income": [], "expenses": []} : {"list": []};
-                    const modelContent = (typeof modalsListsContent[window.numeroModelo] !== 'undefined') ? modalsListsContent[window.numeroModelo] : emptyModelList;
+                $('#contenedor_tablas_modelo').append(table);
+            }
 
-                    // Recorremos los datos de las facturas del modelo para mostrarlas
-                    for (const prop in modelContent) {
-                        const content = modelContent[prop];
-                        let tbodyContent = '';
+            // Obtenemos los datos de las facturas del modelo
+            const emptyModelList = (window.numeroModelo === 303 || window.numeroModelo === 130) ? { "income": [], "expenses": [] } : { "list": [] };
+            const modelContent = (typeof modalsListsContent[window.numeroModelo] !== 'undefined') ? modalsListsContent[window.numeroModelo] : emptyModelList;
 
-                        if (content.length) {
-                            $.each(content, function(i, item) {
-                                tbodyContent += '<tr>';
-                                    $.each(item, function(key, val) {
-                                        switch (key) {
-                                            case 'base':
-                                                const base = formatearNumero(val);
-                                                tbodyContent+= '<td class="text-center"><span>'+base+'€</span></td>';
-                                                break;
-                                            case 'iva_pct':
-                                                const ivaPct = val + '%';
-                                                tbodyContent+= '<td class="text-center"><span>'+ivaPct+'</span></td>';
-                                                break;
-                                            case 'iva':
-                                                const iva = formatearNumero(val);
-                                                tbodyContent+= '<td class="text-center"><span>'+iva+'€</span></td>';
-                                                break;
-                                            default:
-                                                tbodyContent+= '<td class="text-center"><span>'+val+'</span></td>';
-                                                break;
-                                        }
-                                    });
-                                tbodyContent += '</tr>';
-                            });
-                        } else {
-                            const numberOfColumns = $('#' + prop + ' th').length;
+            // Recorremos los datos de las facturas del modelo para mostrarlas
+            for (const prop in modelContent) {
+                const content = modelContent[prop];
+                let tbodyContent = '';
 
-                            tbodyContent += `<tr>
+                if (content.length) {
+                    $.each(content, function (i, item) {
+                        tbodyContent += '<tr>';
+                        $.each(item, function (key, val) {
+                            switch (key) {
+                                case 'base':
+                                    const base = formatearNumero(val);
+                                    tbodyContent += '<td class="text-center"><span>' + base + '€</span></td>';
+                                    break;
+                                case 'iva_pct':
+                                    const ivaPct = val + '%';
+                                    tbodyContent += '<td class="text-center"><span>' + ivaPct + '</span></td>';
+                                    break;
+                                case 'iva':
+                                    const iva = formatearNumero(val);
+                                    tbodyContent += '<td class="text-center"><span>' + iva + '€</span></td>';
+                                    break;
+                                default:
+                                    tbodyContent += '<td class="text-center"><span>' + val + '</span></td>';
+                                    break;
+                            }
+                        });
+                        tbodyContent += '</tr>';
+                    });
+                } else {
+                    const numberOfColumns = $('#' + prop + ' th').length;
+
+                    tbodyContent += `<tr>
                                                 <td colspan="${numberOfColumns}" class="text-center">
                                                     No existen datos para mostrar
                                                 </td>
                                             </tr>`;
+                }
+
+                $('#' + prop + ' tbody').append(tbodyContent);
+            }
+
+            // Mostramos el modal
+            $('#listado_modelo').modal();
+        });
+
+        // Cuando se hace click en el botón de rectificar
+        $(document).on('click', '#ver_rectificar', function (e) {
+            // Mostramos el modal
+            $('#rectificar_modelo').modal();
+        });
+
+        $(document).on('click', '#enviar_rectificar', function (e) {
+            alert('Modelo ' + window.numeroModelo + ' rectificado');
+
+            // Recargamos la página
+            document.location.reload();
+        });
+
+        // Cuando se hace click en el icono de ver la nota asociada al modelo
+        $(document).on('click', '.ver_nota', function (e) {
+            // Evitar que se ejecute el evento del elemento contenedor
+            e.stopPropagation();
+
+            var fila = $(this).closest('.fila_modelo');
+            var numeroModelo = fila.data('numero_modelo');
+            var mensajeNota = fila.data('mensaje_nota')
+
+            // Insertamos en el título del modal el número del modelo
+            $('#numero_modelo_modal_nota').text(numeroModelo);
+
+            // Insertamos en el modal el mensaje de la nota
+            $('#mensaje_nota').text(mensajeNota);
+
+            // Mostramos el modal
+            $('#nota_modelo').modal();
+        });
+
+        // Cuando se hace click en el icono de eliminar nota
+        $(document).on('click', '#eliminar_nota', function (e) {
+            var confirmed = confirm('¿Estás seguro de que deseas eliminar la nota?');
+
+            if (confirmed) {
+                alert('Nota eliminada con éxito');
+
+                // Ocultamos el modal
+                $('#nota_modelo').modal('hide');
+            }
+        });
+
+        // Cuando se hace click en el icono de ver el documento asociado al modelo
+        $(document).on('click', '.ver_documento_asociado', function (e) {
+            // Evitar que se ejecute el evento del elemento contenedor
+            e.stopPropagation();
+        });
+
+        function formatearNumero(valor) {
+            var numero = (isNaN(parseFloat(valor))) ? 0 : parseFloat(valor); // Si isNaN devuelve true es que no es un numero
+            var conDecimales = numero.toFixed(2); // toFixed devuelve un string
+            var conSeparadorMiles = parseFloat(conDecimales).toLocaleString("es");
+            var formateado = insertarCerosTrasComa(conSeparadorMiles);
+
+            return formateado;
+        }
+
+        function insertarCerosTrasComa(numero, nCeros) {
+            var separadoPorComas = numero.split(",");
+            var numeroConCeros = numero;
+            var nCerosInsertar = nCeros || 2; // Por defecto si no se le pasa este parametro tendra el valor detras del OR (||)
+
+            // No tiene decimales (numero entero)
+            if (separadoPorComas.length == 1) {
+                numeroConCeros += ",";
+            } else if (separadoPorComas.length == 2) { // Tiene decimales
+                var decimales = separadoPorComas[1];
+
+                nCerosInsertar = nCerosInsertar - decimales.length;
+            }
+
+            for (var i = 0; i < nCerosInsertar; i++) {
+                numeroConCeros += "0";
+            }
+
+            return numeroConCeros;
+        }
+
+        function getModal(idModal, header, body, footer) {
+            var html = "";
+            html = html + '<div class="modal fade" id="' + idModal + '" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
+            html = html + '<div class="modal-dialog">';
+            html = html + '<div class="modal-content">';
+            html = html + '<div class="modal-header font-weight-bold">';
+            html = html + header;
+            html = html + '<button type="button" class="close" data-dismiss="modal" aria-label="Close">';
+            html = html + '<span aria-hidden="true">&times;</span>';
+            html = html + '</button>';
+            html = html + '</div>';
+            html = html + '<div class="modal-body">';
+            html = html + '<div class="row">';
+            html = html + body;
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '<div class="modal-footer">';
+            html = html + footer;
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+            html = html + '</div>';
+
+            return html;
+        }
+
+        function datosDeEjemplo() {
+            window.esBasic = false;
+            window.cuentaImpuestos = "ES6621000418401234567891";
+            // window.fechaLimite = "2020-12-21";
+            window.trimestre = 4;
+
+        }
+
+        // comprueba si aun esta en fecha segun una fecha estipulada
+        // devuelve false si no lo esta y true si si esta en fecha
+        function enFecha() {
+            var estaEnFecha = false;
+            var f = new Date();
+            var fechaHoy = new Date(f.getFullYear(), (f.getMonth() + 1), f.getDate());
+            // fecha limite hasta cuando tiene que aparecer (incluida esta)
+            var f1 = new Date(2020, 12, 15);
+            if (fechaHoy > f1) {
+                estaEnFecha = false;
+            } else {
+                estaEnFecha = true;
+            }
+            return estaEnFecha;
+        }
+
+        (function ($) {
+            $.fn.serializeFormJSON = function () {
+                var o = {};
+                var a = this.serializeArray();
+                $.each(a, function () {
+                    if (o[this.name]) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
                         }
-
-                        $('#' + prop + ' tbody').append(tbodyContent);
-                    }
-
-                    // Mostramos el modal
-                    $('#listado_modelo').modal();
-                });
-
-                // Cuando se hace click en el botón de rectificar
-                $(document).on('click', '#ver_rectificar', function(e) {
-
-                    // Mostramos el modal
-                    $('#rectificar_modelo').modal()
-                });
-
-                $(document).on('click', '#enviar_rectificar', function(e) {
-                    alert('Modelo ' + window.numeroModelo + ' rectificado');
-
-                    // Recargamos la página
-                    document.location.reload();
-                });
-
-                // Cuando se hace click en el icono de ver la nota asociada al modelo
-                $(document).on('click', '.ver_nota', function(e) {
-                    // Evitar que se ejecute el evento del elemento contenedor
-                    e.stopPropagation();
-
-                    var fila = $(this).closest('.fila_modelo');
-                    var numeroModelo = fila.data('numero_modelo');
-                    var mensajeNota = fila.data('mensaje_nota')
-
-                    // Insertamos en el título del modal el número del modelo
-                    $('#numero_modelo_modal_nota').text(numeroModelo);
-
-                    // Insertamos en el modal el mensaje de la nota
-                    $('#mensaje_nota').text(mensajeNota);
-
-                    // Mostramos el modal
-                    $('#nota_modelo').modal();
-                });
-
-                // Cuando se hace click en el icono de eliminar nota
-                $(document).on('click', '#eliminar_nota', function(e) {
-                    var confirmed = confirm('¿Estás seguro de que deseas eliminar la nota?');
-
-                    if (confirmed) {
-                        alert('Nota eliminada con éxito');
-
-                        // Ocultamos el modal
-                        $('#nota_modelo').modal('hide');
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
                     }
                 });
+                return o;
+            };
+        })(jQuery);
 
-                // Cuando se hace click en el icono de ver el documento asociado al modelo
-                $(document).on('click', '.ver_documento_asociado', function(e) {
-                    // Evitar que se ejecute el evento del elemento contenedor
-                    e.stopPropagation();
-                });
 
-            function formatearNumero(valor) {
-                var numero              = (isNaN(parseFloat(valor))) ? 0 : parseFloat(valor); // Si isNaN devuelve true es que no es un numero
-                var conDecimales        = numero.toFixed(2); // toFixed devuelve un string
-                var conSeparadorMiles   = parseFloat(conDecimales).toLocaleString("es");
-                var formateado          = insertarCerosTrasComa(conSeparadorMiles);
+        $(document).on("submit", "#formularioConfirmar", function (e) {
+            e.preventDefault();
+            var data = $(this).serializeFormJSON();
+            console.log(data);
+            alert(JSON.stringify(data));
 
-                return formateado;
-            }
+            /* Object
+                email: "value"
+                name: "value"
+                password: "value"
+             */
+        });
 
-            function insertarCerosTrasComa(numero, nCeros) {
-                var separadoPorComas    = numero.split(",");
-                var numeroConCeros      = numero;
-                var nCerosInsertar      = nCeros || 2; // Por defecto si no se le pasa este parametro tendra el valor detras del OR (||)
 
-                // No tiene decimales (numero entero)
-                if (separadoPorComas.length == 1) {
-                    numeroConCeros += ",";
-                } else if (separadoPorComas.length == 2) { // Tiene decimales
-                    var decimales = separadoPorComas[1];
 
-                    nCerosInsertar = nCerosInsertar - decimales.length;
-                }
 
-                for (var i = 0; i < nCerosInsertar; i++) {
-                    numeroConCeros += "0";
-                }
+    </script>
+</body>
 
-                return numeroConCeros;
-            }
-        </script>
-    </body >
 </html>
