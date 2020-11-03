@@ -2,9 +2,10 @@ package solutions.aon.in.invoice.pdf;
 
 public class InvoicePDFException extends RuntimeException {
 
+	private static final long serialVersionUID = -510898356845421382L;
+
 	public InvoicePDFException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InvoicePDFException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.tedi;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -29,6 +30,10 @@ import es.translogia.tedi.baloo.TediException;
 import es.translogia.tedi.ewok.TediCompany;
 import es.translogia.tedi.ewok.TediInvoice;
 import es.translogia.tedi.ewok.TediInvoiceStatus;
+import solutions.aon.in.invoice.UnknownInvoiceException;
+import solutions.aon.in.invoice.pdf.InvoicePDFParser;
+import solutions.aon.in.invoice.tedi.TediInvoiceBuilder;
+import solutions.aon.in.invoice.tedi.TediInvoiceContext;
 
 public class TEDI {
 	private static Logger LOGGER = Logger.getLogger(TEDI.class.getName());
@@ -185,24 +190,6 @@ public class TEDI {
 		}
 		if (AonStringUtils.isBlank(invoice.getCompany())) {
 			throw new TediException("La factura no tiene el atributo compa\u00F1ia");
-		}
-	}
-
-	public static TediResult parseInvoice(String domainName, int domain, boolean snapshot, String user, String fileName, InputStream input) throws TediException {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			Company company = CompanyDAO.getCompany(ctx, domain);
-			if (company == null) {
-				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + domain);
-			}
-			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
-			Tedi tedi = getTedi(ctx, snapshot);
-			LOGGER.info("[TEDI] Attempt to parse invoice []");
-			return TediParser.toFullInvoice(ctx, aonCtx, tedi.parseInvoice(company.getDocument(),fileName,input));
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 	}
 
@@ -443,5 +430,34 @@ public class TEDI {
 		}
 		return result;
 	}
+	
+	
+	public static TediResult parseInvoice(String domainName, int domain, String user, InputStream input) throws TediException {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			Company company = CompanyDAO.getCompany(ctx, domain);
+			if (company == null) {
+				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + domain);
+			}
+			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
+			
+			TediInvoiceContext tediInvoiceContext = new TediInvoiceContext()
+					.setDocument(company.getDocument())
+					.setName(company.getName());
+			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tediInvoiceContext );
+			InvoicePDFParser.parse(input, tediInvoiceBuilder);
+			TediResultBuilder.build( tediInvoiceBuilder.getInvoice() );
+			return TediParser.toFullInvoice(ctx, aonCtx, tediInvoiceBuilder.getInvoice());
+		} catch (IOException e) {
+			throw new TediException(e.getMessage());
+		} catch (UnknownInvoiceException e) {
+			throw new TediException(e.getMessage());
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 
 }

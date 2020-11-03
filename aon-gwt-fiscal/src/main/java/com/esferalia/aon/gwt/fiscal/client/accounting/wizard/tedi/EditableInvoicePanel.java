@@ -62,8 +62,6 @@ import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
-import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -1697,7 +1695,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 					dropPanel.clear();
 					registryBox.setFocus(true);
 				}
-				fileSelectHandler(fileUpload.getElement(), event.getNativeEvent());
+				event.preventDefault();
+				fileSelectHandler(fileUpload.getElement());
 			}
 		});
 			
@@ -1735,10 +1734,10 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			@Override
 			public void onDragOver(DragOverEvent event) {
 				dropZone.addStyleName(AON.CSS.aonDropZoneHover());
-				event.stopPropagation();
 				event.preventDefault();
+				event.stopPropagation();
 		        DataTransfer dataTransfer = event.getDataTransfer();
-		        dataTransfer.setDropEffect(DropEffect.COPY);				
+		        dataTransfer.setDropEffect(DropEffect.NONE);				
 			}
 		});
 		dropZone.addDragLeaveHandler(new DragLeaveHandler() {
@@ -1748,18 +1747,19 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				event.preventDefault();
 			}
 		});
+		/*
 		dropZone.addDropHandler(new DropHandler() {
 				
 			@Override
 			public void onDrop(DropEvent event) {
 				dropZone.removeStyleName(AON.CSS.aonDropZoneHover());
 				LOGGER.info("File Droped!");
-				event.stopPropagation();
 				event.preventDefault();
+				event.stopPropagation();
 				fileDrop(fileUpload.getElement() ,event.getNativeEvent());
 			}
 		});
-		
+		*/
 		filedrag.add(dropZone);
 		dropPanel.add(filedrag);
 		return dropPanel;
@@ -1771,9 +1771,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 
 	
-	private native void fileSelectHandler(Element fileselect, NativeEvent event) /*-{
+	private native void fileSelectHandler(Element fileselect) /*-{
 		var self = this;		
-		event.preventDefault();
 		var file = fileselect.files[0];
 		var reader = new FileReader();
 		reader.addEventListener("load", function () {
@@ -1782,14 +1781,17 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		reader.readAsDataURL( file );
 	}-*/;
 	
-	private native void fileDrop(Element fileselect, NativeEvent event) /*-{
-		fileselect.files = e.target.files || e.dataTransfer.files;
+	private native void fileDrop(Element fileselect, NativeEvent e) /*-{
 		if (e.dataTransfer.items) {
 			e.dataTransfer.items.clear();
-			} else {
+		} else {
 			e.dataTransfer.clearData();
-			}		
-		fileselect.click();
+		}
+		fileselect.files = e.target.files || e.dataTransfer.files;
+//		var event = new Event('change');
+//		fileselect.dispatchEvent(event);
+//		fileselect.click();
+		fileSelectHandler(fileselect);
 	}-*/;	
 
 }

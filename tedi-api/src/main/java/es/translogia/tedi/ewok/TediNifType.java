@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 public enum TediNifType implements Serializable {
 
-	DNI, NIE, CIF;
+	DNI, 
+	NIE, 
+	CIF;
 
 	private TediNifType() {
 	}

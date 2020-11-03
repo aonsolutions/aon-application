@@ -28,8 +28,8 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.watson</artifactId>
+			<groupId>es.translogia</groupId>
+			<artifactId>tedi.api</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

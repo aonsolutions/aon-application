@@ -8,7 +8,7 @@ public class InvoiceTaxParser {
 	
 	private static final double IVA_PERCENTS [] = {21.0, 10.0, 4.0};
 
-	public static void getTaxes(List<Double> collection, InvoiceBuilder<?> handler) {
+	public static void setTaxes(List<Double> collection, InvoiceBuilder<?> handler) {
 		Double[] amounts = collection.stream().sorted((a1,a2)-> Double.compare(Math.abs(a2), Math.abs(a1))).toArray(Double[]::new);
 		
 		@SuppressWarnings("unused")

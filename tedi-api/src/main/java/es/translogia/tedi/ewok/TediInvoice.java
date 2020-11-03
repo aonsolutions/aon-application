@@ -265,4 +265,56 @@ public class TediInvoice implements Serializable{
 		return isRecibida() && !isExpense(); 
 	}
 
+	public void ensureVatTax(double base, double quota, double percentage) {
+		if (getTaxes() == null) {
+			setTaxes( new LinkedList<TediInvoiceTax>());
+		}
+		TediInvoiceTax toAdd = null;
+		for (TediInvoiceTax tax : getTaxes() ) {
+			if (tax.getTaxType() == TediTaxType.IVA && equals(percentage, tax.getPercentage()) ) {
+				toAdd = tax;
+				break;
+			}
+		}
+		if (toAdd == null) {
+			toAdd = new TediInvoiceTax();
+			toAdd.setTaxType(TediTaxType.IVA);
+			toAdd.setPercentage(percentage);
+			toAdd.setBase(base);
+			toAdd.setQuota(quota);
+			toAdd.setPercentage(percentage);
+			getTaxes().add(toAdd);		
+		}
+	}
+
+	public TediRegistry ensureSender() {
+		if (getSender() == null) {
+			setSender( new TediRegistry() );
+		}
+		return getSender();
+	}
+
+	public TediRegistry ensureReceiver() {
+		if (getReceiver() == null) {
+			setReceiver( new TediRegistry() );
+		}
+		return getReceiver();
+	}
+	public TediInsightInvoice ensureInsights() {
+		if (getInsight() == null) {
+			setInsight( new TediInsightInvoice() );
+		}
+		return getInsight();
+	}
+	
+	private boolean equals(Number n1, Number n2) {
+		if (n1 == n2)
+			return true;
+		if (n1 == null)
+			return false;
+		if (n2 == null)
+			return false;
+		return n1.equals(n2);
+	}
+
 }

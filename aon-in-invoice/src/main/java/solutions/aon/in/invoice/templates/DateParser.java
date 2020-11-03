@@ -13,19 +13,20 @@ import java.util.regex.Pattern;
 
 public class DateParser {
 	
+	protected static final String DATES_PATTERN = 
+			"(?<day>0?[1-9]|[12][0-9]|3[01])"
+			+"(?:[-|/|\\.|\\p{Blank}*|\\h*])"
+			+"(?:de|\\/)?"
+			+"(?:\\p{Blank}*)"
+			+"(?<month>0?[1-9]|1[012]|[a-z]+\\.?)"
+			+"(?:[-|/|\\.|\\p{Blank}*|\\h*])"
+			+"(?:de|del|\\/)?"
+			+"(?:\\p{Blank}*|\\h*)"
+			+"(?<year>20\\d{2}|[12][0-9])";
+
 	public static Collection<Date> getDates(String text) {
 		List<Date> dates = new LinkedList<Date>();
-		Pattern pattern = Pattern.compile(
-				 "(?<day>0?[1-9]|[12][0-9]|3[01])"
-				+"(?:[-|/|\\.|\\p{Blank}*|\\h*])"
-				+"(?:de|\\/)?"
-				+"(?:\\p{Blank}*)"
-				+"(?<month>0?[1-9]|1[012]|[a-z]+\\.?)"
-				+"(?:[-|/|\\.|\\p{Blank}*|\\h*])"
-				+"(?:de|del|\\/)?"
-				+"(?:\\p{Blank}*|\\h*)"
-				+"(?<year>20\\d{2}|[12][0-9])"
-				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		Pattern pattern = Pattern.compile( DATES_PATTERN, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(text);
 		int index = 0;
 		while ( index <= text.length() && matcher.find(index) ) {
