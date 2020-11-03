@@ -81,6 +81,7 @@
 		<module>aon-dump</module>
 		<module>aon-sii</module>
 		<module>aon-seres</module>
+		<module>aon-tbai</module>
 
 		<!-- ENTITY -->
 		<module>aon-carrier</module>
