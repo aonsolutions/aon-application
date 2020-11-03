@@ -39,7 +39,7 @@
     </div> -->
 
                 <!-- Main-->
-                <div class="container-fluid pt-5">
+                <div class="container-fluid pt-5 atp_caja_form">
                     <form id="form" name="form" action="#" method="post">
                         <div class="row">
                             <div class="col-12 text-center">
@@ -57,10 +57,10 @@
                             <div class="row">
                                 <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label for="tipoSolicitud">Tipo de solicitud:</label>
-                                        <select class="form-control tipoMarcaje" id="tipoSolicitud"
+                
+                                        <select class="d-block atp_input tipoMarcaje" id="tipoSolicitud"
                                             name="tipoSolicitud">
-                                            <option value="" class="">- Seleccione -</option>
+                                            <option value="" class="" disabled selected>- Seleccione tipo de solicitud -</option>
                                             <option value="0">AUSENCIA JUSTIFICADA (AJ)</option>
                                             <option value="1">BAJA MÉDICA (BAJA)</option>
                                             <option value="2">EXCEDENCIA CUIDADO HIJOS (EXCD)</option>
@@ -85,16 +85,22 @@
                                     <div class="row">
                                         <div class="col-lg-6 col-md-3 col-sm-3 col-6">
                                             <div class="form-group">
-                                                <label for="horaComienzo">Hora comienzo de la solicitud:</label>
-                                                <input class="form-control" type="time" id="horaComienzo"
+                                                <label class="d-block atp_inputs" for="horaComienzo">
+                                                    <input class="" type="time" id="horaComienzo"
                                                     name="horaComienzo">
+                                                    <!-- <span>Hora comienzo</span> -->
+                                                </label>
+                                               
                                             </div>
 
                                         </div>
                                         <div class="col-lg-6 col-md-3 col-sm-3 col-6">
                                             <div class="form-group">
-                                                <label for="horaFin">Hora de fin de la solicitud:</label>
-                                                <input class="form-control" type="time" id="horaFin" name="horaFin">
+                                                <label class="d-block atp_inputs" for="horaFin">
+                                                    <input class="" type="time" id="horaFin" name="horaFin">
+                                                     <!-- <span>Hora fin</span> -->
+                                                </label>
+                                                
                                             </div>
 
                                         </div>
@@ -102,16 +108,22 @@
 
                                         <div class="col-lg-6 col-md-3 col-sm-3 col-6">
                                             <div class="form-group">
-                                                <label for="fechaComienzo">Fecha comienzo de la solicitud:</label>
-                                                <input class="form-control" type="date" id="fechaComienzo"
+                                                <label class="d-block atp_inputs" for="fechaComienzo">
+                                                    <input class="" type="date" id="fechaComienzo"
                                                     name="fechaComienzo">
+                                                    <span>Fecha comienzo</span> 
+                                                </label>
+                                                
                                             </div>
 
                                         </div>
                                         <div class="col-lg-6 col-md-3 col-sm-3 col-6">
                                             <div class="form-group">
-                                                <label for="fechaFin">Fecha de fin de la solicitud:</label>
-                                                <input class="form-control" type="date" id="fechaFin" name="fechaFin">
+                                                <label class="d-block atp_inputs" for="fechaFin">
+                                                    <input class="" type="date" id="fechaFin" name="fechaFin">
+                                                    <span>Fecha fin</span> 
+                                                </label>
+                                                
                                             </div>
 
                                         </div>
@@ -124,9 +136,12 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <label for="notaEntrada">Nota:</label>
-                                                <textarea class="form-control" id="notaEntrada" name="notaEntrada"
-                                                    rows="5"></textarea>
+                                                <label class="d-block atp_inputs" for="notaEntrada">
+                                                    <textarea class="" id="notaEntrada" name="notaEntrada"
+                                                        rows="5" placeholder=" "></textarea>
+                                                        <span>Nota</span>
+                                                </label>
+
                                             </div>
                                         </div>
 

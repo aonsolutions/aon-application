@@ -567,6 +567,26 @@
                     "fileURL": null
                 },
                 {
+                    "model": 130,
+                    "status": "Confirmado",
+                    "result": 23,
+                    "paymentMethod": {
+                        "text": "Negativa"
+                    },
+                    "note": "No cuadra el importe total de la base imponible de los ingresos",
+                    "fileURL": null
+                },
+                {
+                    "model": 130,
+                    "status": "Confirmado",
+                    "result": -23,
+                    "paymentMethod": {
+                        "text": "Negativa"
+                    },
+                    "note": "No cuadra el importe total de la base imponible de los ingresos",
+                    "fileURL": null
+                },
+                {
                     "model": 349,
                     "status": "En proceso",
                     "result": "Informativa",
@@ -643,7 +663,7 @@
         function confirmarModelo() {
             var idModal = 'confirmar_modelo';
             var header = '<span id="confirmar_modelo_header"></span>';
-            var body = '<form id="formularioConfirmar" name="formularioConfirmar" action="#" method="post"><div id="confirmar_modelo_body" class="col-12"></div>';
+            var body = '<div class="atp_caja_form"><form id="formularioConfirmar" name="formularioConfirmar" action="#" method="post"><div id="confirmar_modelo_body" class="col-12"></div></form></div>';
             var footer = '<button type="submit" form="formularioConfirmar" class="btn btn-primary" id="enviar_confirmar">Confirmar</button>';
 
             createModal(idModal, header, body, footer);
@@ -679,8 +699,9 @@
                         if (enFecha()) {
                             body = '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="domiciliadosRadios" id="domiciliadoRadio" value="option1" checked>' +
-                                '<label class="form-check-label" for="domiciliadoRadio">Domiciliado</label>' +
-                                '<input type="text" class="form-control" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '">' +
+                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoRadio">' +
+                                '<input type="text" class="" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '" onchange="this.setAttribute(\"value\", this.value);">' +
+                                '<span>Domiciliado</span></label>' +
                                 '</div>';
                             hay = true;
                         }
@@ -690,8 +711,9 @@
                             body = body +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="domiciliadosRadios" id="nrcRadio" value="option2">' +
-                                '<label class="form-check-label" for="nrcRadio">NRC (Banca online u oficina bancaria)</label>' +
-                                '<input type="text" class="form-control" id="ncrText" name="ncrText">' +
+                                '<label class="form-check-label d-block atp_inputs" for="nrcRadio">' +
+                                '<input type="text" class="form-control" id="ncrText" name="ncrText" onchange="this.setAttribute(\"value\", this.value);">' +
+                                '<span>NRC (Banca online u oficina bancaria)</span></label>' +
                                 '</div>';
                             hay = true
                         }
@@ -714,6 +736,7 @@
                         header = "<span>Resultado cero</span>";
                         body = '<span>El resultado del modelo es 0,00€</span>' +
                             '<input name="resultado" type="hidden" value="El resultado del modelo es 0,00€">';
+
                     } else if (window.resultadoOriginal < 0) {
                         header = "<span>Declaración negativa</span>";
                         switch (window.trimestre) {
@@ -734,9 +757,11 @@
                                     '<div class="form-inline">' +
                                     '<div class="form-check">' +
                                     '<input class="form-check-input chb" type="checkbox" name="negativaChecks" id="solicitudDevolucionCheck" value="option2">' +
-                                    '<label class="form-check-label" for="solicitudDevolucionCheck">Solicitud de devolución</label>' +
+
                                     '</div>' +
-                                    '&nbsp;<input type="text" class="form-inline " id="solicitudDevolucionText" name="solicitudDevolucionText" value="' + window.cuentaImpuestos + '">' +
+                                    '<label class="form-check-label d-block atp_inputs" for="solicitudDevolucionCheck">' +
+                                    '<input type="text" class="" id="solicitudDevolucionText" name="solicitudDevolucionText" value="' + window.cuentaImpuestos + '" onchange="this.setAttribute(\"value\", this.value);">' +
+                                    '<span>Solicitud de devolución</span></label>' +
                                     '</div>';
                                 break;
 
@@ -750,8 +775,9 @@
                         if (enFecha()) {
                             body = '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="domiciliadoRadio" value="option1">' +
-                                '<label class="form-check-label" for="domiciliadoRadio">Domiciliado</label>' +
-                                '<input type="text" class="form-control" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '">' +
+                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoRadio">' +
+                                '<input type="text" class="" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '" onchange="this.setAttribute(\"value\", this.value);">' +
+                                '<span>Domiciliado</span></label>' +
                                 '</div>';
                             hay = true;
                         }
@@ -761,8 +787,9 @@
                             body = body +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="nrcRadio" value="option2">' +
-                                '<label class="form-check-label" for="nrcRadio">NRC (Banca online u oficina bancaria)</label>' +
-                                '<input type="text" class="form-control" id="ncrText" name="ncrText">' +
+                                '<label class="form-check-label d-block atp_inputs" for="nrcRadio">' +
+                                '<input type="text" class="" id="ncrText" name="ncrText" onchange="this.setAttribute(\"value\", this.value);">' +
+                                '<span>NRC (Banca online u oficina bancaria)</span></label>' +
                                 '</div>';
                             hay = true
                         }
@@ -771,18 +798,26 @@
                         body = body +
 
                             '<div class="form-check">' +
+
                             '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="aplazadoRadio" value="option3">' +
-                            '<label class="form-check-label" for="aplazadoRadio">Aplazamiento / Fraccionamiento</label>' +
-                            '&nbsp;<input type="text" class="form-control" id="aplazadoText" name="aplazadoText" value="' + window.cuentaImpuestos + '">' +
-                            '<div class="form-inline" style="padding: 7px 0 0 0;">' +
-                            '<label class="form-check-label" for="fechaPlazoText">Fecha primer plazo</label>' +
-                            '&nbsp;<input type="date" class="form-inline " id="fechaPlazoText" name="fechaPlazoText" value="">' +
+                            '<label class="form-check-label d-block atp_inputs" for="aplazadoRadio">' +
+                            '<input type="text" class="" id="aplazadoText" name="aplazadoText" value="' + window.cuentaImpuestos + '" onchange="this.setAttribute(\"value\", this.value);">' +
+                            '<span>Aplazamiento / Fraccionamiento</span></label>' +
+
+                            '<div class="" style="display: flex;">' +
+                            '<div class="" style="padding: 7px 0 0 0;">' +
+                            '<label class="form-check-label d-block atp_inputs" for="fechaPlazoText">' +
+                            '<input type="date" class="" id="fechaPlazoText" name="fechaPlazoText" value="">' +
+                            '<span>Fecha primer plazo</span></label>' +
                             '</div>' +
 
-                            '<div class="form-inline" style="padding: 7px 0;">' +
-                            '<label class="form-check-label" for="numeroPlazos">Fecha primer plazo</label>' +
-                            '&nbsp;<input type="number" id="numeroPlazos" name="numeroPlazos" style="width: 50px;">' +
+                            '<div class="" style="padding: 7px 0;">' +
+                            '<label class="form-check-label d-block atp_inputs" for="numeroPlazos">' +
+                            '<input type="number" id="numeroPlazos" name="numeroPlazos" >' +
+                            '<span>Nº de plazos</span></label>' +
                             '</div>' +
+                            '</div>' +
+
                             '</div>';
 
 
@@ -811,8 +846,9 @@
                         if (enFecha()) {
                             body = '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="domiciliadoRadio" value="option1">' +
-                                '<label class="form-check-label" for="domiciliadoRadio">Domiciliado</label>' +
-                                '<input type="text" class="form-control" id="domiciliadoText" value="' + window.cuentaImpuestos + '">' +
+                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoRadio">' +
+                                '<input type="text" class="" id="domiciliadoText" value="' + window.cuentaImpuestos + '" onchange="this.setAttribute(\"value\", this.value);">' +
+                                '<span>Domiciliado</span></label>' +
                                 '</div>';
                             hay = true;
                         }
@@ -822,8 +858,9 @@
                             body = body +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="nrcRadio" value="option2">' +
-                                '<label class="form-check-label" for="nrcRadio">NRC (Banca online u oficina bancaria)</label>' +
-                                '<input type="text" class="form-control" id="ncrText">' +
+                                '<label class="form-check-label d-block atp_inputs" for="nrcRadio">' +
+                                '<input type="text" class="form-control" id="ncrText" onchange="this.setAttribute(\"value\", this.value);">' +
+                                '<span>NRC (Banca online u oficina bancaria)</span></label>' +
                                 '</div>';
                             hay = true
                         }
@@ -832,17 +869,26 @@
                         body = body +
 
                             '<div class="form-check">' +
+
                             '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="aplazadoRadio" value="option3">' +
-                            '<label class="form-check-label" for="aplazadoRadio">Aplazamiento / Fraccionamiento</label>' +
-                            '&nbsp;<input type="text" class="form-control " id="aplazadoText" value="' + window.cuentaImpuestos + '">' +
-                            '<div class="form-inline" style="padding: 7px 0 0 0;">' +
-                            '<label class="form-check-label" for="fechaPlazoText">Fecha primer plazo</label>' +
-                            '&nbsp;<input type="date" class="form-inline " id="fechaPlazoText" value="">' +
+                            '<label class="form-check-label d-block atp_inputs" for="aplazadoRadio">' +
+                            '<input type="text" class="" id="aplazadoText" name="aplazadoText" value="' + window.cuentaImpuestos + '" onchange="this.setAttribute(\"value\", this.value);">' +
+                            '<span>Aplazamiento / Fraccionamiento</span></label>' +
+
+                            '<div class="" style="display: flex;">' +
+                            '<div class="" style="padding: 7px 0 0 0;">' +
+                            '<label class="form-check-label d-block atp_inputs" for="fechaPlazoText">' +
+                            '<input type="date" class="" id="fechaPlazoText" name="fechaPlazoText" value="">' +
+                            '<span>Fecha primer plazo</span></label>' +
                             '</div>' +
-                            '<div class="form-inline" style="padding: 7px 0;">' +
-                            '<label class="form-check-label" for="numeroPlazos">Fecha primer plazo</label>' +
-                            '&nbsp;<input type="number" id="numeroPlazos" name="numeroPlazos" style="width: 50px;">' +
+
+                            '<div class="" style="padding: 7px 0;">' +
+                            '<label class="form-check-label d-block atp_inputs" for="numeroPlazos">' +
+                            '<input type="number" id="numeroPlazos" name="numeroPlazos" >' +
+                            '<span>Nº de plazos</span></label>' +
                             '</div>' +
+                            '</div>' +
+
                             '</div>';
                     }
 
