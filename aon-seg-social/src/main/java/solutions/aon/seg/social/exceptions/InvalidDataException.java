@@ -31,6 +31,8 @@ public class InvalidDataException extends SegSocialException{
 			throw new invalidCccException();
 		case 3037:
 			throw new NoMoreDataException();
+		case 2147:
+			throw new ExistingSecondaryUserException();
 		default:
 			throw new InvalidDataException();
 		}

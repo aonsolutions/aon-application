@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLInputElement;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLOptionElement;
 
 import solutions.aon.seg.social.exceptions.ForbiddenException;
@@ -36,10 +37,8 @@ public class SistemaRedSecondaryUser {
 			return getSecondaryUsersImpl(certificateInputStream, certificatePassword, certificateType,ipf);			
 		} catch (FailingHttpStatusCodeException e) {
 			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException(e);
+				case 403:	throw new ForbiddenException();
+				default:	throw new SegSocialException(e);
 			}
 		}
 		catch (MalformedURLException e) {}
@@ -52,7 +51,7 @@ public class SistemaRedSecondaryUser {
 			final String certificateType, final String ipf) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
-						
+		
 			
 			HtmlCheckBoxInput ch = htmlPage.querySelector("#chkgrupo1_2");
 			htmlPage = ch.click();
@@ -106,10 +105,95 @@ public class SistemaRedSecondaryUser {
 		}
 	}
 	
+	//HANDLE EXCEPTIONS OF registerSecondaryUserByDniImpl()
+	public static boolean registerSecondaryUserByNie(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String nie, String naf) throws SegSocialException {
+			try {
+				registerSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,nie,naf);
+				return true;
+			}
+			catch (InvalidCertificateException e) {throw new SegSocialException(e);}
+			catch (FailingHttpStatusCodeException e) {throw new SegSocialException(e);}
+			catch (MalformedURLException e) {throw new SegSocialException(e);}
+			catch (IOException e) {throw new SegSocialException(e);}
+	}
+	
+	//REGISTER SECONDARY USER 
+	public static void registerSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String ipf, String naf) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException {
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+		
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW68&E=I&AP=AUT");
+			
+			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_1");
+			htmlPage = ch1.click();
+			
+			HtmlOption opt1 = (HtmlOption) htmlPage.querySelector("#inputgrupo1_1_1 option:nth-child(2)");
+			htmlPage = opt1.click();
+			
+			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_1_2");
+			ipf_txt.setAttribute("value", ipf);
+			
+			HtmlInput naf_txt = htmlPage.querySelector("#inputgrupo1_1_3");
+			naf_txt.setAttribute("value", naf);
+			
+			HtmlSubmitInput submit_btn = htmlPage.querySelector("#Sub2207101004_52");
+			htmlPage = submit_btn.click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
+			HtmlSubmitInput next_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
+			htmlPage = next_submit_btn.click();
+			
+			HtmlSubmitInput final_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
+			htmlPage = final_submit_btn.click();
+			
+			System.out.println(htmlPage.asXml());
+			
+		}		
+	}
+	
+	
+	
+	
+	//HANDLE EXCEPTIONS OF deleteSecondaryUser
+	public void deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String ipf) {
+		deleteSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,ipf);
+	}
+	
+	//DELETE SECONDARY USER
+	public void deleteSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String ipf) {
+		
+	}
+	
+	
+	
+	
+	//HANDLE EXCEPTIONS OF
+	public void modifySecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String ipf) {
+		modifySecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,ipf);
+	}
+	
+	//MODIFY SECONDARY USERS 
+	public void modifySecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String ipf) {
+		
+	}
+	
+	
+	
+	
 	//MAIN
 	public static void main(String[] args) {
 		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			try { System.out.println(getSecondaryUsers(certificateInputStream,"jg@FNMT", "pkcs12","044679529M"));}
+			try { 
+				registerSecondaryUserByNie(certificateInputStream,"jg@FNMT","pkcs12", "0Y7514970X", "291136796369");
+			}
+			//ipf	0Y7514970X
+			//naf	291136796369
 			catch (SegSocialException e) {e.printStackTrace();}
 		} 
 		catch (FileNotFoundException e1) {} 
