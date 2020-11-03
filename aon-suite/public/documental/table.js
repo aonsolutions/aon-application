@@ -7,7 +7,7 @@ const TYPES = {
     'received': 'Recibido'
 };
 
-export const getList = async (page_this = 1) => {
+export const getList = async (page_this = 1, tagID = null) => {
     // Actualizamos la variable global que almacena el número de página actual
     window.page = page_this;
 
@@ -16,14 +16,15 @@ export const getList = async (page_this = 1) => {
     window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
 
     // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
-    if (parseInt(window.selectedFolder) === CARPETA_CONTABILIZADOS && uploadButton !== null) {
+    // Si estamos filtrando por TAG eliminamos el boton de subir tambien
+    if ((parseInt(window.selectedFolder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
         window.aonDocumental.removeToolbarOptions(['Subir']);
     }
 
     // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
-    if (parseInt(window.selectedFolder) !== CARPETA_CONTABILIZADOS && uploadButton === null) {
+    // y no se este filtrando pot TAG
+    if (parseInt(window.selectedFolder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
         window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-            //$('#upload').trigger('click');
             $('#upload-file').trigger('click');
         }, 'Subir documentos');
     }
@@ -49,12 +50,17 @@ export const getList = async (page_this = 1) => {
 
         try {
             // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
-            const data = await bidoq({
-                "method": "list_docs",
-                "carpeta": window.selectedFolder,
-                "pagina": page_this - 1
+            const data = tagID !== null ? await bidoq({
+                "method"    : "list_docs",
+                "carpeta"   : window.selectedFolder,
+                "pagina"    : page_this - 1,
+                "tagID"     : tagID
+            }) : await bidoq({
+                "method"    : "list_docs",
+                "carpeta"   : window.selectedFolder,
+                "pagina"    : page_this - 1,
             });
-
+            
             const jsonData = JSON.parse(data).datos;
 
             return new Promise((resolve, reject) => {
@@ -157,14 +163,14 @@ export const createTable = (data) => {
                             break;
                         case 'tags':
                             tbody+= `<td>
-                                        <span>`;
-                                            if ($.isArray(val) && val.length) {
-                                                const tags = val.map((tag) => `<a href="#">#${tag.name}</a>`).join('<br>');
+                                    <span>`;
+                                        if ($.isArray(val) && val.length) {
+                                            const tags = val.map((tag) => `<a id="documentTags" href="#" data-tag="${tag.id}" >#${tag.name}</a>`).join('<br>');
 
-                                                tbody += tags;
-                                            }
-                                        tbody += `</span>
-                                    </td>`;
+                                            tbody += tags;
+                                        }
+                                    tbody += `</span>
+                                </td>`;
                             break;
                         case 'date':
                             // Formateamos la fecha
@@ -326,3 +332,29 @@ function getAllowedOptions(document) {
 
     return allowedOptions;
 }
+
+    //
+    // Filtrar por TAG
+    //
+        $(document).on('click', '#documentTags', async function () {
+            let tagID = $(this).data('tag');
+
+            // Recargar tabla y paginado
+            try {
+                const list = await getList(1, tagID); // Pasamos pagina 1 y el valor del tagID
+
+                createTable(list);
+            } catch (error) {
+                const list = {
+                    "list"      : [],
+                    "total_data": 0,                // cantidad total de elementos
+                    "total_page": 1,                // total de paginas
+                    "page"      : 1,                // pagina en la que estamos
+                    "shown_page": 0 + ' - ' + 0,    // cantidad mostrada por paginas 1 - 10
+                }
+
+                createTable(list);
+
+                console.error(error);
+            }
+        });
