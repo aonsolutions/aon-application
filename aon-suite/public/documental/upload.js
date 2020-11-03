@@ -791,11 +791,11 @@ async function CargarDivAjaxDocumentos(id,url){
             createTable(list);
         } catch (error) {
             const list = {
-                "list": [],
-                "total_data": 0, // cantidad total de elementos
-                "total_page": 1, // total de paginas
-                "page": 1, // pagina en la que estamos
-                "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
+                "list"      : [],
+                "total_data": 0,                // cantidad total de elementos
+                "total_page": 1,                // total de paginas
+                "page"      : 1,                // pagina en la que estamos
+                "shown_page": 0 + ' - ' + 0,    // cantidad mostrada por paginas 1 - 10
             }
 
             createTable(list);

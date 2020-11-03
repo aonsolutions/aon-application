@@ -86,7 +86,6 @@ class AonDocumental extends HTMLElement {
                 const contentIframe = document.querySelector('iframe');
     
                 contentIframe.contentWindow.document.getElementById('upload-file').click();
-                //contentIframe.contentWindow.document.getElementById('upload').click();
             }, 'Subir documentos');
         }
 
