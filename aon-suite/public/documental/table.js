@@ -23,7 +23,8 @@ export const getList = async (page_this = 1) => {
     // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
     if (parseInt(window.selectedFolder) !== CARPETA_CONTABILIZADOS && uploadButton === null) {
         window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-            $('#upload').trigger('click');
+            //$('#upload').trigger('click');
+            $('#upload-file').trigger('click');
         }, 'Subir documentos');
     }
 

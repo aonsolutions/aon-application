@@ -85,7 +85,8 @@ class AonDocumental extends HTMLElement {
             aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
                 const contentIframe = document.querySelector('iframe');
     
-                contentIframe.contentWindow.document.getElementById('upload').click();
+                contentIframe.contentWindow.document.getElementById('upload-file').click();
+                //contentIframe.contentWindow.document.getElementById('upload').click();
             }, 'Subir documentos');
         }
 
