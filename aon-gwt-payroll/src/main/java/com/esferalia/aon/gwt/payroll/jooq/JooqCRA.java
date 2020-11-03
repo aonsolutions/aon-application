@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Record6;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -34,6 +36,7 @@ import com.esferalia.aon.gwt.payroll.shared.CRA;
 import com.esferalia.aon.jooq.tables.records.CraBatchRecord;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.google.api.services.gmail.Gmail.Users.Settings.GetAutoForwarding;
 
 public class JooqCRA {
 	
@@ -94,42 +97,39 @@ public class JooqCRA {
 	//													GET DOMAIN CRAs FOR LIST
 	// ********************************************************************************************************************************************
 	
-	public static List<CRA> getDomainCRAs(Integer domainId, Integer parentDomainId, Integer userId, Connection conn) {
-		return getDomainCRAsDB(domainId, parentDomainId, userId, DSL.using(conn, getDefaultSettings()));
+	public static List<CRA> getDomainCRAs(Integer domainId, Integer parentDomainId, Integer userId, long liquidDateTime, Connection conn) {
+		return getDomainCRAsDB(domainId, parentDomainId, userId, DSL.using(conn, getDefaultSettings()), liquidDateTime);
 	}
 	
-	private static List<CRA> getDomainCRAsDB(Integer domainId, Integer parentDomainId, Integer userId, DSLContext dslContext) {
+	private static List<CRA> getDomainCRAsDB(Integer domainId, Integer parentDomainId, Integer userId, DSLContext dslContext, long liquidDateTime) {
 		List<CRA> cras = new ArrayList<CRA>();
 		
-		Result<Record> childDomainRecords = dslContext.select().from(DOMAIN)
+		List<Integer> domainChilds = dslContext.select(DOMAIN.ID).from(DOMAIN)
 				.where(DOMAIN.PARENT.eq(domainId))
 				.and(DOMAIN.SCOPE.in(
 					dslContext.select(USER_SCOPE.SCOPE).from(USER_SCOPE)
 						.where(USER_SCOPE.USER_ID.eq(userId))
 						.fetch(USER_SCOPE.SCOPE)
-				)).fetch();
-		
-		List<Integer> domainChilds = new ArrayList<Integer>();
-		
-		for(Record childDomainRecord : childDomainRecords)
-			domainChilds.add(childDomainRecord.get(DOMAIN.ID));
+				)).fetch(DOMAIN.ID);
 		
 		// Domain enterprise CCCs
-		List<Integer> ownCCCs = new ArrayList<Integer>();
-		Result<Record> entepriseCCCRecords = dslContext.select().from(ENTERPRISE_CCC)
+		List<Integer> ownCCCs = dslContext.select(ENTERPRISE_CCC.ID).from(ENTERPRISE_CCC)
 				.where(ENTERPRISE_CCC.DOMAIN.eq(domainId)
 					.or(ENTERPRISE_CCC.DOMAIN.in(domainChilds)))
-				.fetch();
+				.fetch(ENTERPRISE_CCC.ID);
 		
-		for(Record enterpriseCCCRecord : entepriseCCCRecords) {
-			ownCCCs.add(enterpriseCCCRecord.get(ENTERPRISE_CCC.ID));
-		}
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTimeInMillis(liquidDateTime);
+		endDate.add(Calendar.MONTH, 1);
+		endDate.add(Calendar.DAY_OF_MONTH, -1);
 		
 		// Get CRAs
-		Result<Record> craBatchRecords = dslContext.select().from(CRA_BATCH)
+		Result<Record6<Integer, Integer, Byte, Timestamp, Timestamp, String>> craBatchRecords = dslContext.select(CRA_BATCH.ID, CRA_BATCH.DOMAIN, CRA_BATCH.STATUS, CRA_BATCH.DATE, CRA_BATCH.OUTCOME_FILE_DATE, CRA_BATCH.COMMUNICATION_ID).from(CRA_BATCH)
 				.where(CRA_BATCH.DOMAIN.eq(domainId)
 //						.or(CRA_BATCH.DOMAIN.eq(parentDomainId))
 						.or(CRA_BATCH.DOMAIN.in(domainChilds)))
+				.and(CRA_BATCH.OUTCOME_FILE_DATE.ge(new Timestamp(liquidDateTime)))
+				.and(CRA_BATCH.OUTCOME_FILE_DATE.le(new Timestamp(endDate.getTimeInMillis())))
 				.fetch();
 		
 		for(Record craBatchRecord : craBatchRecords) {

@@ -192,7 +192,7 @@ public class MainCRA extends MainEntryPoint {
 				// Set all enterprises of a domain
 				enterprisesList = enterprises;
 				
-				impl.getCRAs(new AsyncCallback<List<CRA>>() {
+				impl.getCRAs(new Date().getTime(), new AsyncCallback<List<CRA>>() {
 
 					@Override
 					public void onFailure(Throwable caught) { }

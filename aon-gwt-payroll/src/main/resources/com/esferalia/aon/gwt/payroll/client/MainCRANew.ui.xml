@@ -223,7 +223,7 @@
 											</tr>
 											<tr>
 												<td class="aon-panelGrid-odd">
-													<g:Label styleName="aon-outputLabel {style.pt9}">Desde/Hasta</g:Label>
+													<g:Label styleName="aon-outputLabel {style.pt9}">P. Liquidación</g:Label>
 												</td>
 												<td class="aon-panelGrid-even" colspan="2">
 													<table>
@@ -234,12 +234,12 @@
 															<td>
 																<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTillT"></g:ListBox>
 															</td>
-															<td>
+															<!-- td>
 																<g:ListBox styleName="aon-selectOneMenu {style.ml8}" ui:field="monthTTo"></g:ListBox>
 															</td>
 															<td>
 																<g:ListBox styleName="aon-selectOneMenu" ui:field="yearTTo"></g:ListBox>
-															</td>
+															</td -->
 														</tr>
 													</table>
 												</td>

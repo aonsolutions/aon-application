@@ -1783,14 +1783,14 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<CRA> getCRAs(String domain, String user) {
+	public List<CRA> getCRAs(String domain, String user, long liquidDateTime) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domain);
 			Integer userId = AonServletUtils.getUserID(connection, user, domainId, parentDomainId);
-			return JooqCRA.getDomainCRAs(domainId, parentDomainId, userId, connection);
+			return JooqCRA.getDomainCRAs(domainId, parentDomainId, userId, liquidDateTime, connection);
 //			return JooqCRA.getDomainCRAs(getDomain(domainStr), connection);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

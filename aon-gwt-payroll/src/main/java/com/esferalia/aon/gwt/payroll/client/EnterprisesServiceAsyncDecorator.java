@@ -344,9 +344,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCRAs(String domain, String user, AsyncCallback<List<CRA>> callback) {
+	public void getCRAs(String domain, String user, long liquidDateTime, AsyncCallback<List<CRA>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getCRAs(domain, user, new AsyncCallbackWrapper<List<CRA>>(callback));
+		enterprisesServiceAsync.getCRAs(domain, user, liquidDateTime, new AsyncCallbackWrapper<List<CRA>>(callback));
 	}
 
 	@Override

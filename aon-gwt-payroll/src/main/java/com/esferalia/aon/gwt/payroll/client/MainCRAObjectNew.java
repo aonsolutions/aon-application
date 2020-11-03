@@ -34,6 +34,7 @@ public class MainCRAObjectNew {
 	
 	private Integer domainId;
 	
+	private Date defaultLiquidDate;
 	
 	public MainCRAObjectNew() {
 		super();
@@ -49,6 +50,10 @@ public class MainCRAObjectNew {
 		this.crasRectif = new ArrayList<CRA>();
 		
 		this.domainId = -1;
+		
+		defaultLiquidDate = new Date();
+		defaultLiquidDate = DateUtils.addMonths2Date(defaultLiquidDate, -2);
+		defaultLiquidDate = DateUtils.getLastDayOfMonth(defaultLiquidDate);
 		
 	}
 	
@@ -83,7 +88,7 @@ public class MainCRAObjectNew {
 				enterpriseCCCs.addAll(enterprisesCCCInfo);
 				allEnterpriseCCCs.addAll(enterprisesCCCInfo);
 				
-				getCRAs(
+				getCRAs(defaultLiquidDate.getTime(),
 					s -> {
 						success.accept(enterprisesCCCInfo);
 					}, 
@@ -118,9 +123,9 @@ public class MainCRAObjectNew {
 //		
 //	}
 	
-	public void getCRAs(Consumer<List<CRA>> success, Consumer<Throwable> failure){
+	public void getCRAs(long liquidDateTime ,Consumer<List<CRA>> success, Consumer<Throwable> failure){
 		
-		impl.getCRAs(new AsyncCallback<List<CRA>>() {
+		impl.getCRAs(liquidDateTime, new AsyncCallback<List<CRA>>() {
 			
 			@Override
 			public void onSuccess(List<CRA> dbCRAs) {
@@ -161,7 +166,7 @@ public class MainCRAObjectNew {
 
 			@Override
 			public void onSuccess(String result) {
-				getCRAs(s -> {
+				getCRAs(defaultLiquidDate.getTime(), s -> {
 					success.accept(result);
 				}, f -> {});
 			}
@@ -189,7 +194,7 @@ public class MainCRAObjectNew {
 
 			@Override
 			public void onSuccess(String result) {
-				getCRAs(s -> {
+				getCRAs(defaultLiquidDate.getTime(), s -> {
 					success.accept(result);
 				}, f -> {});
 			}
@@ -329,7 +334,7 @@ public class MainCRAObjectNew {
 		this.filterCRAs.addAll(dbCRAs);
 		
 		for(CRA cra : dbCRAs){
-			if(cra.getType() == "N") {
+			if(null == cra.getType() || cra.getType() == "N") {
 				cras.add(cra);
 			} else if(cra.getType() == "R") {
 				crasRectif.add(cra);
@@ -379,7 +384,7 @@ public class MainCRAObjectNew {
 		return this.domainId;
 	}
 
-	public void filterCras(Date startDate, Date endDate, String geozoneName, Byte cccType) {
+	public void filterCras(String geozoneName, Byte cccType) {
 		List<CRA> newCRAs = new ArrayList<CRA>();
 		List<CRA> auxListCRAs = new ArrayList<CRA>();
 		
