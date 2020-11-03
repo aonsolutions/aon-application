@@ -10913,6 +10913,33 @@ body::-webkit-scrollbar-thumb {
 .text-ayudat {
   color: #007bff; }
 
+.caja_mensaje_ticket_from {
+    border-radius: 5px;
+    border-right : 1px solid #B5D9FF;
+    border-top : 1px solid #B5D9FF;
+    border-bottom : 1px solid #B5D9FF;
+    border-left: 5px solid #007bff;
+}
+
+.caja_mensaje_ticket_to {
+    border-radius: 5px;
+    border-left : 1px solid #FDF5DC;
+    border-top : 1px solid #FDF5DC;
+    border-bottom : 1px solid #FDF5DC;
+    border-right: 5px solid #ffdf7e;
+}
+
+.ticket-body {
+    min-height : 300px;
+    max-height : 600px;
+    overflow : auto;
+}
+
+.caja_accion{
+    border-radius: 10px;
+    background-color : #E5E4E4;
+}
+
 .ticket {
   list-style: none;
   margin: 0;
@@ -10920,8 +10947,7 @@ body::-webkit-scrollbar-thumb {
 
 .ticket li {
   margin-bottom: 10px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #F4F2F2; }
+  padding-bottom: 5px; }
 
 .ticket li.left .ticket-body {
   margin-left: 60px; }
@@ -10933,11 +10959,10 @@ body::-webkit-scrollbar-thumb {
   margin: 0;
   color: #777777; }
 
-.border-from {
-  border-left: 5px solid #007bff; }
-
-.border-to {
-  border-right: 5px solid #ffdf7e; }
+.ticket .header {
+    padding: 5px;
+    border-bottom : 1px solid #EDEBEB;
+}
 
 .fon-size-20 {
   font-size: 20px; }
