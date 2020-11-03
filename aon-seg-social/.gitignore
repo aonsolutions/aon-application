@@ -3,6 +3,7 @@
 .settings
 logEmployee.txt
 *.pdf
+*.html
 /target/
 /bin/
 *.ak
