@@ -130,12 +130,12 @@
             import { bidoq } from './aon-documental.js';
             import { AVAILABLE_OPTIONS, SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION } from './toolbar_options.js';
 
-            const DOC_SENT_OPTIONS = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION];
-            const DOC_RECEIVED_OPTIONS = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION];
+            const DOC_SENT_OPTIONS      = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION];
+            const DOC_RECEIVED_OPTIONS  = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION];
 
             $(document).ready(async function(){
                 // ID del documento
-                const id = new URLSearchParams(window.location.search).get('id');
+                const id   = new URLSearchParams(window.location.search).get('id');
                 // Tipo del documento
                 const type = new URLSearchParams(window.location.search).get('type');
 
@@ -152,6 +152,14 @@
                         const doc = response.datos;
                         const storedFileNameSplitted = doc.stored_file_name.split('.');
                         const extension = storedFileNameSplitted[storedFileNameSplitted.length - 1].toLowerCase();
+
+                        //
+                        // Marcar el documento como líedo
+                        //
+                            if(type === 'received' && doc.read == 0){
+                                // El documento es subido por el asesor, y no esta marcado como leido
+                                UpdateReadDocument(id, type);
+                            }
 
                         // Almacenamos en una variable global la información del documento que estamos viendo actualmente
                         window.currentFile = {id, type, ...doc};
@@ -289,6 +297,27 @@
                         $('.error-empty-note-doc').removeClass('d-none');
                     }
                 });
+
+            //
+            // Marcar documento como leído
+            //
+                async function UpdateReadDocument(id, type){
+                    type = (type === 'sent') ? 2 : 1;
+                    
+                    const data = await bidoq({
+                        "method": "editar_doc_leido",
+                        id,
+                        "tipo": type
+                    });
+
+                    let response = JSON.parse(data);
+
+                    if (typeof response !== 'undefined') {
+                        if (response.code === 0) {
+                            //alert('Documento marcado como leído con éxito');
+                        }
+                    }
+                }
         </script>
     </body >
 </html>
