@@ -260,7 +260,9 @@ import '../../components/aon-viewer.js';
 		}
 
 		printInvoice() {
-
+			let json = btoa(JSON.stringify(this._invoice));
+			console.log(json);
+			open('/ms/api/download_invoice_pdf?json=' + json);
 		}
 
 		sendInvoice() {
