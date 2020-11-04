@@ -53,12 +53,14 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificate;
+import com.esferalia.aon.file.payroll.contract.pdf.enterpriseCertificate.EnterpriseCertificateSea;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
@@ -490,8 +492,21 @@ public class CertificadosController implements ISepeHandler, Serializable {
 			CertificadoEmpresa certificadoEmpresa = ( CertificadoEmpresa )
 			JAXBContext.newInstance(CertificadoEmpresa.class)
 			.createUnmarshaller().unmarshal(xmlIn);
-
+			
+			
 			EnterpriseCertificate certificate = new EnterpriseCertificate();
+			try {
+				boolean sea =  
+				certificadoEmpresa.getCuentaCotizacion().stream()
+				.flatMap(ccc -> ccc.getDatosTrabajador().stream())
+				.allMatch(trabajador -> trabajador.getDatosCotizacionREA().size() > 0  );
+				if ( sea ) {
+					certificate = new EnterpriseCertificateSea();
+				}
+			}  catch ( Throwable t ) {
+				// NOOP
+			}
+
 			certificate.setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 			String tc2 = utils.getContractDataMap(contract, Boolean.FALSE, Boolean.TRUE).get(ContextVariable.TC2.getName());
 			ContractCode code = ContractCode.getContractCodeByValue(tc2);
