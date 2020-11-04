@@ -50,16 +50,15 @@ export const getList = async (page_this = 1, tagID = null) => {
 
         try {
             // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
-            const data = tagID !== null ? await bidoq({
+            const defaultRequestData = {
                 "method"    : "list_docs",
                 "carpeta"   : window.selectedFolder,
-                "pagina"    : page_this - 1,
-                "tagID"     : tagID
-            }) : await bidoq({
-                "method"    : "list_docs",
-                "carpeta"   : window.selectedFolder,
-                "pagina"    : page_this - 1,
-            });
+                "pagina"    : page_this - 1
+            };
+
+            const data = (tagID !== null)
+                ? await bidoq({...defaultRequestData, tagID})
+                : await bidoq(defaultRequestData);
             
             const jsonData = JSON.parse(data).datos;
 
