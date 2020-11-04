@@ -11,6 +11,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import solutions.aon.seg.social.exceptions.ForbiddenException;
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.PaternityException;
 import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
@@ -37,7 +39,10 @@ public class TestPaternity {
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("21-11-2020");
 			assertFalse("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
 			
-		}catch(SegSocialException e) {
+		}catch (ForbiddenException fe) {
+			assertTrue(true);
+		}
+		catch(SegSocialException e) {
 			assertTrue(true);
 		} catch (ParseException e) {
 			fail("Date typed wrong");
@@ -45,7 +50,7 @@ public class TestPaternity {
 			fail("Certificate file does not exist");
 		} catch (IOException e1) {
 			fail("Certificate error");
-		}
+		} 
 	}
 	
 	/*@Test
@@ -79,7 +84,9 @@ public class TestPaternity {
 			}catch (PaternityException e) {
 				fail("Should have done it");
 			}
-		}catch(SegSocialException e) {
+		} catch (ForbiddenException fe) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
 			fail("Wrong data");
 		} catch (ParseException e) {
 			fail("Date typed wrong");
@@ -101,7 +108,9 @@ public class TestPaternity {
 			}catch (PaternityWrongDataException e) {
 				assertTrue(true);
 			}
-		}catch(SegSocialException e) {
+		} catch (ForbiddenException fe) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
 			fail("Wrong data");
 		} catch (ParseException e) {
 			fail("Date typed wrong");
@@ -123,7 +132,9 @@ public class TestPaternity {
 			}catch (PaternityWrongDataException e) {
 				assertTrue(true);
 			}
-		}catch(SegSocialException e) {
+		} catch (ForbiddenException fe) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
 			fail("Wrong data");
 		} catch (ParseException e) {
 			fail("Date typed wrong");
@@ -145,7 +156,9 @@ public class TestPaternity {
 			}catch (PaternityNotFoundException e) {
 				assertTrue(true);
 			}
-		}catch(SegSocialException e) {
+		} catch (ForbiddenException fe) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
 			fail("Wrong data");
 		} catch (ParseException e) {
 			fail("Date typed wrong");
@@ -156,6 +169,49 @@ public class TestPaternity {
 		}
 	}
 	
+	@Test
+	public void testGrabarCertificadoWrongCertificateKey() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("24-11-2020");
+			Paternity.grabarCertificado(certificateInputStream, "jr@FlMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28);
+			fail("Should have failed");
+		} catch(InvalidCertificateException e) {
+			assertTrue(true);
+		} catch (ForbiddenException fe) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
 	
-	
+	@Test
+	public void testGrabarCertificadoWrongCertificateType() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("24-11-2020");
+			Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs32", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28);
+			fail("Should have failed");
+		} catch(InvalidCertificateException e) {
+			assertTrue(true);
+		} catch (ForbiddenException fe) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
 }
