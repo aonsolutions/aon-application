@@ -8,6 +8,7 @@ import '../components/aon-search-box.js';
 import './configuration/aon-configuration.js';
 import './invoice/aon-invoice-panel.js';
 import './invoice/aon-invoice.js';
+import './company/aon-mobile-desktop.js';
 import './user/aon-user.js';
 
 class AonHeader extends HTMLElement {
@@ -78,7 +79,9 @@ class AonHeader extends HTMLElement {
 		if(!isMobile()) {
 			let aonHeaderHomeButton = document.getElementById(BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
-				rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+				rootPanel(isMobile()
+					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = document.getElementById('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			});
@@ -175,7 +178,10 @@ class AonHeader extends HTMLElement {
 		} else aonLogo.src = '../assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
-				rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+
+				rootPanel(isMobile()
+					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = document.getElementById('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			} else {
