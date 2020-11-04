@@ -736,8 +736,6 @@ public class SistemaRED_I {
 				}
 			}
 			
-		} catch (InvalidCertificateException e) {
-			throw new SegSocialException(e);
 		} catch (FailingHttpStatusCodeException e) {
 			switch (e.getStatusCode()) {
 			case 403:
