@@ -63,8 +63,8 @@ class AonHeader extends HTMLElement {
 				<span id="aonHeaderCompany" class="aonRight180 aonHeaderButton" style="display:none;top:25px;">
 					<span id="aonHeaderCompanyName"> </span>
 				</span>
-
-				<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
+			</div>
+			<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
 			`;
 
 			this.build();

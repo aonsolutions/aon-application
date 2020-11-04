@@ -100,7 +100,7 @@
 	.rootMobilePanel {
 		position: relative;
 		margin-right: 100px;
-		height:calc(100vh - 122px);
+		height:calc(100vh - 163px);
 		overflow-y: auto;
 		margin: 0;
 	}

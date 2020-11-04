@@ -37,9 +37,18 @@ class AonMobileHeader extends HTMLElement {
 		this.innerHTML = `
 			<div id="aonHeaderWeb" class="aonHeader" >
 				<span>
-					<img id="aonMobileLogo" class="aonMobileLogo" width="230px" />
+					<img id="aonMobileLogo" class="aonLogo" width="230px" />
+				</span>
+				<span id="aonHeaderUser" class="aonRight20 aonHeaderButton">
+					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
 				</span>
 			</div>
+			<div id="aonHeaderCompany">
+				<span>
+					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
+				</span>
+			</div>
+			<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
 			`;
 
 			this.build();
@@ -49,6 +58,56 @@ class AonMobileHeader extends HTMLElement {
 		const BASE_ID = 'aonHeader';
 		let aonHeaderWeb = document.getElementById('aonHeaderWeb');
 		this.buildLogo();
+
+		let aonUserConnected = document.createElement('div');
+		aonUserConnected.id = BASE_ID + 'UserConnected';
+		aonUserConnected.className = 'aonConnected';
+		aonUserConnected.style.backgroundColor = 'red';
+
+		let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
+		aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
+
+		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
+		aonHeaderUserButton.addEventListener('click', () => {
+			const top  = aonHeaderUserButton.getBoundingClientRect().top;
+			const left = aonHeaderUserButton.getBoundingClientRect().left;
+			let d = document.getElementById('aonHeaderDialogUserOption');
+
+			let fichajeText = aonUserConnected.style.backgroundColor === 'red'
+				? 'Marcar Entrada': 'Marcar Salida';
+			let options = [{
+					name: fichajeText,
+					icon: 'alarm',
+					fn: () => this.aonFichar()
+				}, {
+					name: 'Configuración',
+					icon: 'settings',
+					fn: () => this.aonConfiguration()
+				}, {
+					name: 'Cerrar Sesión',
+					icon: 'input',
+					fn: () => closeSession()
+				}];
+			d.setMenuOptions(options, top, left);
+			d.open();
+		});
+	}
+
+	aonFichar() {
+		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
+		aonUserConnected.style.backgroundColor =
+			aonUserConnected.style.backgroundColor === 'red' ? '#35ac19' : 'red';
+	}
+
+	aonConfiguration() {
+		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');
+		let aonConfiguration = document.getElementById('aon-configuration');
+		if(this.getAttribute('company')){
+			aonConfiguration.setAttribute('company', this.getAttribute('company'));
+		}
+		if(this.getAttribute('user')){
+			aonConfiguration.setAttribute('user', this.getAttribute('user'));
+		}
 	}
 
 	buildLogo() {
