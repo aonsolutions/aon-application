@@ -7,9 +7,13 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 import org.junit.Test;
 
+import solutions.aon.seg.social.exceptions.PaternityException;
+import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
+import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.*;
@@ -44,16 +48,16 @@ public class TestPaternity {
 		}
 	}
 	
-	@Test
+	/*@Test
 	public void testGrabarCertificadoOk() {
 		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
-			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("25-11-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("24-11-2020");
 			assertTrue("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
 			
 		}catch(SegSocialException e) {
-			assertTrue(true);
+			fail("Wrong data");
 		} catch (ParseException e) {
 			fail("Date typed wrong");
 		} catch (FileNotFoundException e1) {
@@ -61,7 +65,7 @@ public class TestPaternity {
 		} catch (IOException e1) {
 			fail("Certificate error");
 		}
-	}
+	}*/
 
 	
 	@Test
@@ -69,11 +73,14 @@ public class TestPaternity {
 		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
-			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("25-11-2020");
-			assertTrue("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
-			
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-11-2020");
+			try {
+				Paternity.voidPaternity(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", startDate, endDate, Optional.empty());	
+			}catch (PaternityException e) {
+				fail("Should have done it");
+			}
 		}catch(SegSocialException e) {
-			assertTrue(true);
+			fail("Wrong data");
 		} catch (ParseException e) {
 			fail("Date typed wrong");
 		} catch (FileNotFoundException e1) {
@@ -82,6 +89,73 @@ public class TestPaternity {
 			fail("Certificate error");
 		}
 	}
+	
+	@Test
+	public void testVoidCertificateWrongEndDate() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("30-11-2020");
+			try {
+				Paternity.voidPaternity(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", startDate, endDate, Optional.empty());	
+			}catch (PaternityWrongDataException e) {
+				assertTrue(true);
+			}
+		}catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+	
+	@Test
+	public void testVoidCertificateWrongStartDate() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("09-11-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-11-2020");
+			try {
+				Paternity.voidPaternity(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", startDate, endDate, Optional.empty());	
+			}catch (PaternityWrongDataException e) {
+				assertTrue(true);
+			}
+		}catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+	
+	@Test
+	public void testVoidCertificateNotFound() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-10-2020");
+			try {
+				Paternity.voidPaternity(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", startDate, endDate, Optional.empty());	
+			}catch (PaternityNotFoundException e) {
+				assertTrue(true);
+			}
+		}catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+	
 	
 	
 }
