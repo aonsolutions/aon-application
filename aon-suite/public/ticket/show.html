@@ -81,6 +81,10 @@
                                             <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Enviar</button>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-12 mt-5" id="div_adjuntos">
+                                        </div>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -196,7 +200,11 @@
                     mensajesTickets = array.reverse();
                     // Volvemos a convertirlo a Objeto para enviar a la función
                     mensajesTickets = Object.assign({}, mensajesTickets);
+                    
                     let msg = messages(mensajesTickets, ticket.from);
+                    
+                    // Sacamos todos los adjuntos
+                    var adjuntosTicket = adjuntosTicketTotal(mensajesTickets);
                     
                     // Mostramos los mensajes
                     $('#ticket-messages').html(msg);
@@ -318,27 +326,36 @@
                     // Tendría que comprar UID no nombres
                     if(message.userName == userLogin){ // El mensaje es del usuario logueado
                         msg += "<li class='right clearfix'>";
-                            msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
+                            msg += "<div class='col-12 pt-2 pb-2 pl-5 '>";
                                 msg += "<div class='row clearfix caja_mensaje_ticket_from'>";
-                                    msg += "<div class='col-11'>";
-                                        msg += "<div class='header'>";
-                                            msg += "<strong class='primary-font'>"+message.userName+"</strong>";
-                                            msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
+                                    msg += "<div class='col-12'>";
+                                        msg += "<div class='row'>";
+                                            msg += "<div class='col-11'>";
+                                                msg += "<div class='header'>";
+                                                    msg += "<strong class='primary-font'>"+message.userName+"</strong>";
+                                                    msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
+                                                msg += "</div>";
+                                                msg += "<p>"+message.message+"</p>";
+                                            msg += "</div>";
+                                            msg += "<div class='col-1 p-0'>";
+                                                msg += "<span class='ticket-img float-right'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
+                                            msg += "</div>";
                                         msg += "</div>";
-                                        msg += "<p>"+message.message+"</p>";
+                                    msg += "</div>";
+                                    msg += "<div class='col-12'>";
                                         // Adjuntos
-                                        if(message.documents && message.documents.length > 0){
-                                            msg += "<hr>";
-                                            msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
-                                                msg += "<h5>Adjuntos</h5>";
-                                                for (const key in message.documents) {
-                                                    msg += "<a href='#' class='pr-3'>"+message.documents[key]+"</a>";
-                                                }
+                                        if(message.documents && Object.keys(message.documents).length > 0){
+                                            msg += "<div class='row pt-2 pb-2 adjuntos_mensaje'>";
+                                                msg += "<div class='col-1'>";
+                                                    msg += "<span class='material-icons align-middle'>attach_file</span>";
+                                                msg += "</div>";
+                                                msg += "<div class='col-11 pl-0'>";
+                                                    for (const key in message.documents) {
+                                                        msg += "<button class='btn btn-link mr-2'>"+message.documents[key]+"</button>";
+                                                    }
+                                                msg += "</div>";
                                             msg += "</div>";
                                         }
-                                    msg += "</div>";
-                                    msg += "<div class='col-1 p-0'>";
-                                        msg += "<span class='ticket-img float-right'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
                                     msg += "</div>";
                                 msg += "</div>";
                             msg += "</div>";
@@ -347,25 +364,35 @@
                         msg += "<li class='left clearfix'>";
                             msg += "<div class='col-12 pt-2 pb-2 pr-5'>";
                                 msg += "<div class='row clearfix caja_mensaje_ticket_to'>";
-                                    msg += "<div class='col-1 p-0'>";
-                                        msg += "<span class='ticket-img float-left'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
+                                    msg += "<div class='col-12'>";
+                                        msg += "<div class='row'>";
+                                            msg += "<div class='col-1 p-0'>";
+                                                msg += "<span class='ticket-img float-left'><img src='"+message.userAvatar+"' alt='User Avatar'/></span>";
+                                            msg += "</div>";
+                                            msg += "<div class='col-11'>";
+                                                msg += "<div class='header'>";
+                                                    msg += "<strong class='primary-font'>"+message.userName+"</strong>";
+                                                    msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
+                                                msg += "</div>";
+                                                msg += "<p>"+message.message+"</p>";
+
+                                            msg += "</div>";
+                                        msg += "</div>";
                                     msg += "</div>";
-                                    msg += "<div class='col-11'>";
-                                        msg += "<div class='header'>";
-                                            msg += "<strong class='primary-font'>"+message.userName+"</strong>";
-                                            msg += "<small class='ml-2 text-muted'>"+message.messageDate+"</small>";
-                                            // Adjuntos
-                                            if(message.documents && message.documents.length > 0){
-                                                msg += "<hr>";
-                                                msg += "<div class='col-12 pt-2 pb-2 pl-5'>";
-                                                    msg += "<h5>Adjuntos</h5>";
+                                    msg += "<div class='col-12'>";
+                                        // Adjuntos
+                                        if(message.documents && Object.keys(message.documents).length > 0){
+                                            msg += "<div class='row pt-2 pb-2 adjuntos_mensaje'>";
+                                                msg += "<div class='col-1'>";
+                                                    msg += "<span class='material-icons align-middle'>attach_file</span>";
+                                                msg += "</div>";
+                                                msg += "<div class='col-11 pl-0'>";
                                                     for (const key in message.documents) {
-                                                        msg += "<a href='#' class='pr-3'>"+message.documents[key]+"</a>";
+                                                        msg += "<button class='btn btn-link mr-2'>"+message.documents[key]+"</button>";
                                                     }
                                                 msg += "</div>";
-                                            }
-                                        msg += "</div>";
-                                        msg += "<p>"+message.message+"</p>";
+                                            msg += "</div>";
+                                        }
                                     msg += "</div>";
                                 msg += "</div>";
                             msg += "</div>";
@@ -380,7 +407,7 @@
                     }
                     
                     msg += "<li class='right clearfix'>";
-                        msg += "<div class='col-12 pt-1 pb-2 pl-5'>";
+                        msg += "<div class='col-12 pt-1 pb-2 pl-5 caja_accion'>";
                             msg += "<div class='row'>";
                                 msg += "<div class='col-1 offset-1'>";
                                     msg += "<span class='material-icons'>"+icon+"</span>";
@@ -406,6 +433,60 @@
         if (typeof UploadDocumentos !== 'undefined') {
             // Esta cargado correctamente
             UploadDocumentos();
+        }
+        
+        /*
+         * Creamos una tabla con todos los adjuntos del ticket
+         */
+        function adjuntosTicketTotal(mensajes){
+            var hayAdjuntos = false;
+            var lista = "<ul class='list-group list-group-flush'>";
+            for(const i in mensajes){
+                var mensaje = mensajes[i];
+                
+                if(mensaje.documents && Object.keys(mensaje.documents).length > 0){
+                    for(const iAdjunto in mensaje.documents){
+                        lista += "<li class='list-group-item'>";
+                            lista += "<div class='col-12'>";
+                                lista += "<div class='row'>";
+                                    lista += "<div class='col-11'>";
+                                        lista += "<span class='align-middle'>"+mensaje.documents[iAdjunto]+"</span>";
+                                    lista += "</div>";
+                                    lista += "<div class='col-1'>";
+                                        lista += "<a href='#'><span class='material-icons align-middle' data-doc='"+iAdjunto+"' data-msg='"+i+"'>save_alt</span></a>";
+                                    lista += "</div>";
+                                lista += "</div>";
+                            lista += "</div>";
+                        lista += "</li>";
+                    }
+                    hayAdjuntos = true;
+                }
+            }
+            lista += "</ul>";
+            
+            // Si hay adjuntos, creamos la tabla
+            if(hayAdjuntos){
+                var card = "<div class='card'>";
+                    card += "<div class='card-header'>";
+                        card += "<div class='col-12'>";
+                            card += "<div class='row'>";
+                                card += "<div class='col-8'>";
+                                    card += "Adjuntos";
+                                card += "</div>";
+                                card += "<div class='col-4 text-right pr-0'>";
+                                    card += "<a href='#'>Descargar todo</a>";
+                                card += "</div>";
+                            card += "</div>";
+                        card += "</div>";
+                        
+                    card += "</div>";
+                    card += "<div class='card-body'>";
+                        card += lista;
+                    card += "</div>";
+                card += "</div>";
+                
+                $('#div_adjuntos').html(card);
+            }
         }
     </script>
     <!-- FIN Scripts -->

@@ -10935,9 +10935,27 @@ body::-webkit-scrollbar-thumb {
     overflow : auto;
 }
 
-.caja_accion{
-    border-radius: 10px;
-    background-color : #E5E4E4;
+.caja_accion span, .caja_accion label, .caja_accion small{
+    color: gray;
+}
+
+.adjuntos_mensaje {
+    background-color: #F5F4F4;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+}
+
+.adjuntos_mensaje .btn-link {
+    color: gray;
+    font-size: smaller;
+}
+
+.adjuntos_mensaje .material-icons {
+    font-size : medium;
+}
+
+.adjuntos_mensaje .btn-link:hover {
+    color: blue;
 }
 
 .ticket {
