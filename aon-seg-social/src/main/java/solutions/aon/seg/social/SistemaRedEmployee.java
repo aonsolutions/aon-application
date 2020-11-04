@@ -198,17 +198,11 @@ public class SistemaRedEmployee {
 				final String certificateType, String regimen, String ccc) throws SegSocialException{
 			
 			try {return getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);} 
-			catch (FailingHttpStatusCodeException e) {
-				switch (e.getStatusCode()) {
-				case 403:
-					throw new ForbiddenException();
-				default:
-					throw new SegSocialException(e);
-				}
-			} 
+			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
 			catch (IOException e) {throw new SegSocialException(e);} 
 			catch (InterruptedException e) {throw new SegSocialException(e);}
+			return null;
 		}
 		
 		//RETURN ALL THE EMPLOYEES
