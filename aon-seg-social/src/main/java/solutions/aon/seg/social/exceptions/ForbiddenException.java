@@ -1,5 +1,5 @@
 package solutions.aon.seg.social.exceptions;
 
-public class ForbiddenException extends SegSocialException{
+public class ForbiddenException extends StatusCodeException{
 
 }
