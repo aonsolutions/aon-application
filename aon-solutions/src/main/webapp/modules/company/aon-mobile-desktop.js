@@ -53,10 +53,20 @@ class AonMobileDesktop extends HTMLElement {
   }
 
 	buildNotifications() {
+
+		let div = document.createElement('div');
+		div.style.paddingBottom = '25px';
+		div.style.borderBottom = '1px solid #ebebeb';
+		this.appendChild(div);
+
+		let titleA = document.createElement('div');
+		titleA.className = 'aonSidenavTitle';
+		titleA.innerHTML = 'TAREAS PENDIENTES';
+		div.appendChild(titleA);
+
 		let ul = document.createElement('ul');
 		ul.className = 'aonClip';
-		ul.style.borderBottom = "1px solid #ddd";
-		this.appendChild(ul);
+		div.appendChild(ul);
 
 		ul.appendChild(this.buildNotificationsLi('99 Nuevos documentos sin leer', 'snippet_folder'));
 		ul.appendChild(this.buildNotificationsLi('99 Facturas Pendientes', 'inbox'));
@@ -65,22 +75,20 @@ class AonMobileDesktop extends HTMLElement {
 		ul.appendChild(this.buildNotificationsLi('99 Solicitudes Abiertas', 'assignment'));
 		ul.appendChild(this.buildNotificationsLi('99 Solicitudes requieren tu intervención', 'assignment_ind'));
 
-		let div = document.createElement('div');
-		div.style.margin = '25px';
-		let i = document.createElement('i');
-		i.className = 'material-icons aonVerticalMiddle';
-		i.innerHTML = 'access_time';
-		div.appendChild(i);
-
-		let span = document.createElement('span')
-		span.innerHTML = 'CONTROL DE HORARIO';
-		div.appendChild(span);
-		this.appendChild(div);
 
 		let div2 = document.createElement('div');
-		div2.id = "aonControl";
-		div2.style.margin = '25px';
+
+		let titleB = document.createElement('div');
+		titleB.className = 'aonSidenavTitle';
+		titleB.innerHTML = 'CONTROL DE HORARIO';
+		div2.appendChild(titleB);
+
 		this.appendChild(div2);
+
+		let div3 = document.createElement('div');
+		div3.id = "aonControl";
+		div3.style.margin = '25px';
+		this.appendChild(div3);
 
 		this.entrada();
 	}

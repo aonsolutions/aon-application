@@ -1,8 +1,13 @@
 import './aon-icon-button.js';
 
 class AonSearchBox extends HTMLElement {
+
 	constructor () {
 		super();
+	}
+
+	static get observedAttributes() {
+		return ['selected'];
 	}
 
 	get id() {
@@ -19,6 +24,20 @@ class AonSearchBox extends HTMLElement {
 
 	set opened(opened) {
 		this.setAttribute('opened', opened);
+	}
+
+	get selected() {
+		return this.getAttribute('selected');
+	}
+
+	set selected(selected) {
+		this.setAttribute('selected', selected);
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if('selected' === name){
+			document.getElementById('search-input').value = newValue;
+		}
 	}
 
 	connectedCallback () {

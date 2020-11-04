@@ -67,7 +67,7 @@ class AonParent extends HTMLElement {
 					fn: () => {}
 				}
 			];
-			aonParent.addSidenavOptions('TAREAS PENDIENTOS', taskOptions);
+			aonParent.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
 		}
 
 		this.init();
@@ -193,8 +193,6 @@ class AonParent extends HTMLElement {
 	companySelection(company) {
 		const BASE_ID = 'aonHeader';
 
-
-
 		if(!isMobile()){
 			let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';
@@ -219,6 +217,8 @@ class AonParent extends HTMLElement {
 
 			let aonLogo = document.getElementById('aonLogo');
 		} else {
+			document.getElementById('aonHeaderSearchBox').setAttribute('selected', company.name);
+
 			let aonMobileMenu = document.getElementById('aonMobileMenu');
 			aonMobileMenu.open();
 		}
