@@ -33,6 +33,10 @@ public class InvalidDataException extends SegSocialException{
 			throw new NoMoreDataException();
 		case 2147:
 			throw new ExistingSecondaryUserException();
+		case 4113:
+			throw new DataDoesNotExist();
+		case 3053:
+			throw new InvalidDateException();
 		default:
 			throw new InvalidDataException();
 		}

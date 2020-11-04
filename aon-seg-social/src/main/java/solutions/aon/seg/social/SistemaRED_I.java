@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
+
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -22,9 +24,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLLabelElement;
 
+import solutions.aon.seg.social.exceptions.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.ForbiddenException;
+import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.NoMoreDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.objects.Idc;
@@ -686,69 +691,68 @@ public class SistemaRED_I {
 			throw new SegSocialException(e);
 		}
 	}
-
-	public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException,
-			InterruptedException, ParseException, SegSocialException {
-		/*
-		  try (final InputStream certificateInputStream = new FileInputStream(args[0]))
-		  { System.out.println(getSituacionEmpresa(certificateInputStream, "jg@FNMT",
-		  "pkcs12", "0111", "01105360062"));
-		  
-		  }*/
-		  /*try (final InputStream certificateInputStream = new FileInputStream(args[0])){
-			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			  byte[] pdf=getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
-		  System.out.println(pdf.length+" Bytes downloaded");
-		  Toolkit.buildPdf(pdf,"DuplicadoTA");
-		  }*/
-		 /* try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			  byte[] pdf=getContributionInformation(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
-		  System.out.println(pdf.length+" Bytes downloaded");
-		  Toolkit.buildPdf(pdf,"InfoCotizacion");
-		  }
-		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			  byte[] pdf=getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT","pkcs12", "0111", "01105360062");
-		  System.out.println(pdf.length+" Bytes downloaded");
-		  Toolkit.buildPdf(pdf,"ObligationAwarenessCertificate");
-		  }
-		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) { 
-			  //Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			  Collection<Idc> r=getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924","0111", "01105360062"); Toolkit.log(r.toArray());
-		  }
-		 
-		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			// Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			Collection<Date> i = getDischargeDates(certificateInputStream, "jg@FNMT", "pkcs12", "011005185924", "0111",
-					"01105360062");
-			Toolkit.log(i.toArray());
-		}*/
-//		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-//			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-//			  Collection<byte[]> col=getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
-//			  String nom="a";
-//			  for (byte[] bs : col) {
-//				Toolkit.buildPdf(bs, nom);
-//				System.out.println(nom+".pdf CREATED");
-//				nom+=1;
-//			}
-//		  }
-//		  try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-//			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-//			  Collection<byte[]> col=getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d);
-//			  String nom="b";
-//			  for (byte[] bs : col) {
-//				Toolkit.buildPdf(bs, nom);
-//				System.out.println(nom+".pdf CREATED");
-//				nom+=1;
-//			}
-//		  }
-		/*try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
-			  HtmlPage html=getPageForPdfs("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR", certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "0111", "01105360062", d, 1);
-			  System.out.println(html.asXml());
-		}*/
-		System.out.println(args[0]);
+	
+	public static byte[] getContributionSettlementReport(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String contributionAccount, final Optional<Date> settlementPeriod) throws SegSocialException {
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
+			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR39&E=I&AP=AFIR").click();
+			HtmlForm jacadaform=htmlPage.getFormByName("jacadaform");
+			//NSS
+			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
+			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			//REGIME
+			jacadaform.getInputByName("txt_SDFREGCTA_ayuda").setValueAttribute(regime);
+			//CCC
+			jacadaform.getInputByName("txt_SDFTESCTA").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[0]);
+			jacadaform.getInputByName("txt_SDFCUENTA").setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
+			//Settlement period
+			if(!settlementPeriod.isEmpty()) {
+				Calendar c=Calendar.getInstance();
+				c.setTime(settlementPeriod.get());
+				String month=""+c.get(Calendar.MONTH)+1;
+				String year=""+c.get(Calendar.YEAR);
+				jacadaform.getInputByName("txt_SDFMES").setValueAttribute(month);
+				jacadaform.getInputByName("txt_SDFAO").setValueAttribute(year);
+			}
+			//PRINTING METHOD
+			HtmlSelect printSelect=jacadaform.getSelectByName("cbo_ListaTipoImpresion");
+			printSelect.getOptionByText("OnLine").setSelected(true);
+			//GETTING THE PDF
+			if(jacadaform.getInputByValue("Continuar").click() instanceof com.gargoylesoftware.htmlunit.UnexpectedPage) {
+				InputStream is=jacadaform.getInputByValue("Continuar").click().getWebResponse().getContentAsStream();
+				byte[] ret=is.readAllBytes();
+				is.close();
+				return ret;
+			}
+			else {
+				htmlPage=jacadaform.getInputByValue("Continuar").click();
+				try {
+					HtmlUnitToolkit.manageStatusCode(htmlPage);
+					return null;
+				}catch (DataDoesNotExist ddne){
+					throw ddne;
+				}
+			}
+			
+		} catch (InvalidCertificateException e) {
+			throw new SegSocialException(e);
+		} catch (FailingHttpStatusCodeException e) {
+			switch (e.getStatusCode()) {
+			case 403:
+				throw new ForbiddenException();
+			default:
+				throw new SegSocialException();
+			}
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+		
 	}
+
+
 
 }
