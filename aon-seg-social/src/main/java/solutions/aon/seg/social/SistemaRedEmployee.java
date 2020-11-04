@@ -21,6 +21,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
@@ -293,7 +294,7 @@ public class SistemaRedEmployee {
 				case 403:
 					throw new ForbiddenException();
 				default:
-					throw new SegSocialException(e);
+					throw new StatusCodeException();
 				}
 			} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
@@ -367,7 +368,7 @@ public class SistemaRedEmployee {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
 				
 //				Toolkit.buildPdf(getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy")),"log.html");
-				Toolkit.log(getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062").toArray());		
+						
 			}catch (NullPointerException e) {}
 		}
 	}
