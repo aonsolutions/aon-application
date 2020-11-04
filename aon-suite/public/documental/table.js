@@ -68,30 +68,31 @@ export const getList = async (page_this = 1, tagID = null) => {
                     const documents = jsonData.documentos;
 
                     if (typeof documents !== 'undefined') {
-                        const page_this_element = page_this == 1 ? page_this : ((page_this - 1) * ITEMS_PER_PAGE) + 1;
-                        const page_total = page_this_element + documents.length;
+                        const page_this_real    = page_this == 1 ? page_this : ((page_this - 1) * ITEMS_PER_PAGE) + 1;
+                        const page_total        = page_this_real + documents.length;
+                        const page_this_element = !documents.length ? documents.length : page_this_real;
 
                         const list = documents.map((document) => ({
-                                "id": document.id,
-                                "url": document.image,
-                                "date": document.date,
-                                "file_name": document.name,
-                                "category": (typeof foldersByID[document.service] !== 'undefined') ? foldersByID[document.service].carpeta : '',
-                                "subfolder": (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
-                                "model": document.model,
-                                "year": document.year,
-                                "period": document.period,
-                                "type": (document.type == 1) ? 'received' : 'sent',
-                                "uploaded_by": document.uploaded_by,
-                                "tags": document.tags,
-                                "read": document.read
+                            "id"            : document.id,
+                            "url"           : document.image,
+                            "date"          : document.date,
+                            "file_name"     : document.name,
+                            "category"      : (typeof foldersByID[document.service] !== 'undefined') ? foldersByID[document.service].carpeta : '',
+                            "subfolder"     : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
+                            "model"         : document.model,
+                            "year"          : document.year,
+                            "period"        : document.period,
+                            "type"          : (document.type == 1) ? 'received' : 'sent',
+                            "uploaded_by"   : document.uploaded_by,
+                            "tags"          : document.tags,
+                            "read"          : document.read
                         }));
 
                         const paginationList = {
-                            "list": list,
-                            "total_data": jsonData.total_resultados, // cantidad total de elementos
-                            "total_page": jsonData.total_paginas + 1, // total de paginas
-                            "page": page_this, // pagina en la que estamos
+                            "list"      : list,
+                            "total_data": jsonData.total_resultados,                    // cantidad total de elementos
+                            "total_page": jsonData.total_paginas + 1,                   // total de paginas
+                            "page"      : page_this,                                    // pagina en la que estamos
                             "shown_page": page_this_element + ' - ' + (page_total - 1), // cantidad mostrada por paginas 1 - 10
                         }
 
