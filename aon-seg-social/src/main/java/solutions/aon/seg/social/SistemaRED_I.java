@@ -32,6 +32,7 @@ import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.NoMoreDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.StatusCodeException;
 import solutions.aon.seg.social.objects.Idc;
 import solutions.aon.seg.social.objects.SituacionEmpresa;
 import solutions.aon.seg.social.objects.SituacionEmpresa.SituacionEmpresaBuilder;
@@ -210,13 +211,9 @@ public class SistemaRED_I {
 
 			return seb1.build();
 		} catch (FailingHttpStatusCodeException fhsce) {
-			switch (fhsce.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(fhsce);
 		}
+		return null;
 
 	}
 
@@ -293,16 +290,12 @@ public class SistemaRED_I {
 			is.close();
 			return ret;
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return null;
 	}
 	
 	public static Collection<byte[]> getTACertificatePDFs (final InputStream certificateInputStream,
@@ -390,16 +383,12 @@ public class SistemaRED_I {
  			}
 			return ret;
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return null;
 	}
 	
 	
@@ -461,16 +450,12 @@ public class SistemaRED_I {
 			return htmlPage;
 			
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return null;
 	}
 	
 	
@@ -522,16 +507,12 @@ public class SistemaRED_I {
 			is.close();
 			return ret;
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return null;
 	}
 
 	// RETURNS A COLLECTION OF OBJECTS WITH THE DATE AND THE DESCRIPTION OF ALL TA
@@ -608,17 +589,13 @@ public class SistemaRED_I {
 			 * ret=is.readAllBytes();
 			 */
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 		} catch (ElementNotFoundException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return null;
 	}
 
 	public static Collection<Date> getDischargeDates(final InputStream certificateInputStream,
@@ -679,17 +656,13 @@ public class SistemaRED_I {
 			return ret;
 
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return null;
 	}
 	
 	public static byte[] getContributionSettlementReport(final InputStream certificateInputStream,
@@ -737,17 +710,13 @@ public class SistemaRED_I {
 			}
 			
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return null;
 		
 	}
 
