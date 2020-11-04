@@ -5,10 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
@@ -26,6 +30,7 @@ import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
+import sun.tools.jconsole.HTMLPane;
 
 public class SistemaRedSecondaryUser {
 
@@ -64,57 +69,63 @@ public class SistemaRedSecondaryUser {
 			htmlPage = continue_btn.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			
-			//OBJECT CREATE
-			String authoritation =  HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFAUTORIZ");
-			String authoritation_entity = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFRAZSOCIALAUT");
-			String main_user_name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBREAUT");
-			String main_user_ipf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFIPFAUT");
-			String main_user_naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFAUT");
-			
-			String name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBRESEC");
-			String province = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPROVSEC");;
-			String naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFSEC");;
-			String situation = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFSITSEC");;
-			Date situation_date = Toolkit.parseDate(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFECSITSEC"),"dd/MM/yyyy");
-			String telephone = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELEFONOSEC");;
-			String fax = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFAXSEC");;
-			String mobile = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFMOVILSEC");;
-			String mail = HtmlUnitToolkit.getTrimmedById(htmlPage, "txtconcat1_2");;
-			
-			SecondaryUserBuilder builder = new SecondaryUserBuilder();
-			
-			builder.setAuthoritation(authoritation)
-			.setAuthoritation_entity(authoritation_entity)
-			.setMain_user_name(main_user_name)
-			.setMain_user_ipf(main_user_ipf)
-			.setMain_user_naf(main_user_naf)
-			.setName(name)
-			.setProvince(province)
-			.setNaf(naf)
-			.setSituation(situation)
-			.setSituation_date(situation_date)
-			.setTelephone(telephone)
-			.setFax(fax)
-			.setMobile(mobile)
-			.setMail(mail);
-			
-			SecondaryUser user = builder.build();
-			return user;
+			return getSecondaryUserInfo(htmlPage);
+
 		}
 	}
 	
+	public static SecondaryUser getSecondaryUserInfo(HtmlPage htmlPage) {
+		
+		//OBJECT CREATE
+		String authoritation =  HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFAUTORIZ");
+		String authoritation_entity = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFRAZSOCIALAUT");
+		String main_user_name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBREAUT");
+		String main_user_ipf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFIPFAUT");
+		String main_user_naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFAUT");
+		
+		String name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBRESEC");
+		String province = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPROVSEC");;
+		String naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFSEC");;
+		String situation = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFSITSEC");;
+		Date situation_date = Toolkit.parseDate(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFECSITSEC"),"dd/MM/yyyy");
+		String telephone = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELEFONOSEC");;
+		String fax = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFAXSEC");;
+		String mobile = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFMOVILSEC");;
+		String mail = HtmlUnitToolkit.getTrimmedById(htmlPage, "txtconcat1_2");;
+		
+		SecondaryUserBuilder builder = new SecondaryUserBuilder();
+		
+		builder.setAuthoritation(authoritation)
+		.setAuthoritation_entity(authoritation_entity)
+		.setMain_user_name(main_user_name)
+		.setMain_user_ipf(main_user_ipf)
+		.setMain_user_naf(main_user_naf)
+		.setName(name)
+		.setProvince(province)
+		.setNaf(naf)
+		.setSituation(situation)
+		.setSituation_date(situation_date)
+		.setTelephone(telephone)
+		.setFax(fax)
+		.setMobile(mobile)
+		.setMail(mail);
+		
+		SecondaryUser user = builder.build();
+		return user;
+	}
+	
+	
 	//HANDLE EXCEPTIONS OF 
-	public static void getSecondaryUsers(final InputStream certificateInputStream, final String certificatePassword,
+	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SegSocialException{
 		
-		try {getSecondaryUsersImpl(certificateInputStream, certificatePassword, certificateType);}
+		try {return getSecondaryUsersImpl(certificateInputStream, certificatePassword, certificateType);}
 		catch(Exception e) {throw new SegSocialException(e);}
 	
 	}
 	
 	//GET SECONDARY USERS 
-	public static void getSecondaryUsersImpl(final InputStream certificateInputStream, final String certificatePassword,
+	public static Collection<SecondaryUser> getSecondaryUsersImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException{
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
@@ -125,14 +136,29 @@ public class SistemaRedSecondaryUser {
 			
 			HtmlSubmitInput btn = htmlPage.querySelector("#Sub2207101004_46");
 			htmlPage = btn.click();			
-			System.out.println(htmlPage.asText());
 			
-			/*TO_DO 
-				- Click users
-				- Get info 
-				- Create collection
-				- Return collection			
-			*/
+			DomNodeList<DomNode> checkboxes = htmlPage.querySelectorAll("#Sub0800010080>tbody>tr input[type=checkbox]");
+			for (DomNode checkbox : checkboxes) {
+				HtmlCheckBoxInput check = (HtmlCheckBoxInput) checkbox;
+				htmlPage = check.click();
+			}
+			
+			HtmlSubmitInput query_btn = htmlPage.querySelector("#Sub2205301004_72");
+			htmlPage = query_btn.click();
+			HtmlSubmitInput continue_btn = null;
+			
+			ArrayList<SecondaryUser> users = new ArrayList<SecondaryUser>(); 
+			
+			do{
+				continue_btn = htmlPage.querySelector("#Sub2207101004_92");
+				if(continue_btn == null) break;
+				
+				SecondaryUser user = getSecondaryUserInfo(htmlPage);
+				users.add(user);
+				htmlPage = continue_btn.click();
+			}while(true);
+			
+			return users;
 		}		
 	}
 	
@@ -251,7 +277,7 @@ public class SistemaRedSecondaryUser {
 			try { 
 				//registerSecondaryUserByNie(certificateInputStream,"jg@FNMT","pkcs12", "0Y7514970X", "291136796369");
 				//deleteSecondaryUser(certificateInputStream,"jg@FNMT","pkcs12", "0Y7514970X");
-				getSecondaryUsers(certificateInputStream,"jg@FNMT","pkcs12");
+				System.out.println(getSecondaryUsers(certificateInputStream,"jg@FNMT","pkcs12"));
 			}
 			//ipf	0Y7514970X
 			//naf	291136796369
