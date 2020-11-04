@@ -8,6 +8,7 @@ import '../components/aon-search-box.js';
 import './configuration/aon-configuration.js';
 import './invoice/aon-invoice-panel.js';
 import './invoice/aon-invoice.js';
+import './company/aon-mobile-desktop.js';
 import './user/aon-user.js';
 
 class AonMobileHeader extends HTMLElement {
@@ -61,7 +62,7 @@ class AonMobileHeader extends HTMLElement {
 		} else aonLogo.src = '../assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
-				rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+				rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
 				let aonDesktop = document.getElementById('aonDesktop');
 				aonDesktop.setAttribute('company', this.getAttribute('company'));
 			} else {

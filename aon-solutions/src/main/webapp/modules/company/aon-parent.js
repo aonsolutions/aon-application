@@ -238,7 +238,9 @@ class AonParent extends HTMLElement {
 			aonHeader.setAttribute('company', JSON.stringify(company));
 			aonHeader.setAttribute('user', JSON.stringify(user));
 
-			rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
+			rootPanel(isMobile()
+				? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+				: '<aon-desktop id="aonDesktop"></aon-desktop>');
 			let aonDesktop = document.getElementById('aonDesktop');
 			aonDesktop.setAttribute('company', JSON.stringify(company));
 			aonDesktop.setAttribute('user', JSON.stringify(user));
