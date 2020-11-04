@@ -604,6 +604,7 @@ public class ContextFunctions {
 	}
 
 	public static Calendar parseExtraDate(String str, Date date) {
+		str = AonStringUtils.trim(str);
 		Matcher matcher =  Pattern.compile("(?<date>\\d+)/(?<month>\\d+)(\\s+(?<year>[-+]?\\d+))?").matcher(str);
 		matcher.matches();
 		
