@@ -1,3 +1,4 @@
+package solutions.aon;
 import static org.junit.Assert.*;
 
 import java.io.FileInputStream;
@@ -34,7 +35,7 @@ public class TestPaternity {
 
 	@Test
 	public void testGrabarCertificadoWrongPeriod() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("29-10-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("21-11-2020");
@@ -56,7 +57,7 @@ public class TestPaternity {
 	
 	/*@Test
 	public void testGrabarCertificadoOk() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("24-11-2020");
@@ -76,7 +77,7 @@ public class TestPaternity {
 	
 	@Test
 	public void testVoidCertificateOk() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-11-2020");
@@ -100,7 +101,7 @@ public class TestPaternity {
 	
 	@Test
 	public void testVoidCertificateWrongEndDate() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("30-11-2020");
@@ -124,7 +125,7 @@ public class TestPaternity {
 	
 	@Test
 	public void testVoidCertificateWrongStartDate() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("09-11-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-11-2020");
@@ -148,7 +149,7 @@ public class TestPaternity {
 	
 	@Test
 	public void testVoidCertificateNotFound() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("01-10-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-10-2020");
@@ -172,7 +173,7 @@ public class TestPaternity {
 	
 	@Test
 	public void testGrabarCertificadoWrongCertificateKey() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("24-11-2020");
@@ -195,7 +196,7 @@ public class TestPaternity {
 	
 	@Test
 	public void testGrabarCertificadoWrongCertificateType() {
-		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
 			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("24-11-2020");
