@@ -699,7 +699,7 @@
                         if (enFecha()) {
                             body = '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="domiciliadosRadios" id="domiciliadoRadio" value="option1" checked>' +
-                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoRadio">' +
+                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoText">' +
                                 '<input type="text" class="campoLabel" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '" >' +
                                 '<span>Domiciliado</span></label>' +
                                 '</div>';
@@ -711,8 +711,8 @@
                             body = body +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="domiciliadosRadios" id="nrcRadio" value="option2">' +
-                                '<label class="form-check-label d-block atp_inputs" for="nrcRadio">' +
-                                '<input type="text" class="campoLabel" id="ncrText" name="ncrText" >' +
+                                '<label class="form-check-label d-block atp_inputs" for="ncrText">' +
+                                '<input type="text" class="campoLabel" id="ncrText" name="ncrText" value="">' +
                                 '<span>NRC (Banca online u oficina bancaria)</span></label>' +
                                 '</div>';
                             hay = true
@@ -759,7 +759,7 @@
                                     '<input class="form-check-input chb" type="checkbox" name="negativaChecks" id="solicitudDevolucionCheck" value="option2">' +
 
                                     '</div>' +
-                                    '<label class="form-check-label d-block atp_inputs" for="solicitudDevolucionCheck">' +
+                                    '<label class="form-check-label d-block atp_inputs" for="solicitudDevolucionText">' +
                                     '<input type="text" class="campoLabel" id="solicitudDevolucionText" name="solicitudDevolucionText" value="' + window.cuentaImpuestos + '" >' +
                                     '<span>Solicitud de devolución</span></label>' +
                                     '</div>';
@@ -775,7 +775,7 @@
                         if (enFecha()) {
                             body = '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="domiciliadoRadio" value="option1">' +
-                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoRadio">' +
+                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoText">' +
                                 '<input type="text" class="campoLabel" id="domiciliadoText" name="domiciliadoText" value="' + window.cuentaImpuestos + '" >' +
                                 '<span>Domiciliado</span></label>' +
                                 '</div>';
@@ -787,8 +787,8 @@
                             body = body +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="nrcRadio" value="option2">' +
-                                '<label class="form-check-label d-block atp_inputs" for="nrcRadio">' +
-                                '<input type="text" class="campoLabel" id="ncrText" name="ncrText" >' +
+                                '<label class="form-check-label d-block atp_inputs" for="ncrText">' +
+                                '<input type="text" class="campoLabel" id="ncrText" name="ncrText" value="">' +
                                 '<span>NRC (Banca online u oficina bancaria)</span></label>' +
                                 '</div>';
                             hay = true
@@ -800,7 +800,7 @@
                             '<div class="form-check">' +
 
                             '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="aplazadoRadio" value="option3">' +
-                            '<label class="form-check-label d-block atp_inputs" for="aplazadoRadio">' +
+                            '<label class="form-check-label d-block atp_inputs" for="aplazadoText">' +
                             '<input type="text" class="campoLabel" id="aplazadoText" name="aplazadoText" value="' + window.cuentaImpuestos + '" >' +
                             '<span>Aplazamiento / Fraccionamiento</span></label>' +
 
@@ -813,7 +813,7 @@
 
                             '<div class="" style="padding: 7px 0;">' +
                             '<label class="form-check-label d-block atp_inputs" for="numeroPlazos">' +
-                            '<input type="number" id="numeroPlazos" name="numeroPlazos" >' +
+                            '<input class="campoLabel" type="number" min="0" id="numeroPlazos" name="numeroPlazos" value="">' +
                             '<span>Nº de plazos</span></label>' +
                             '</div>' +
                             '</div>' +
@@ -846,8 +846,8 @@
                         if (enFecha()) {
                             body = '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="domiciliadoRadio" value="option1">' +
-                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoRadio">' +
-                                '<input type="text" class="" id="domiciliadoText" value="' + window.cuentaImpuestos + '" >' +
+                                '<label class="form-check-label d-block atp_inputs" for="domiciliadoText">' +
+                                '<input type="text" class="campoLabel" id="domiciliadoText" value="' + window.cuentaImpuestos + '" >' +
                                 '<span>Domiciliado</span></label>' +
                                 '</div>';
                             hay = true;
@@ -858,8 +858,8 @@
                             body = body +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="nrcRadio" value="option2">' +
-                                '<label class="form-check-label d-block atp_inputs" for="nrcRadio">' +
-                                '<input type="text" class="campoLabel" id="ncrText" >' +
+                                '<label class="form-check-label d-block atp_inputs" for="ncrText">' +
+                                '<input type="text" class="campoLabel" id="ncrText" value="">' +
                                 '<span>NRC (Banca online u oficina bancaria)</span></label>' +
                                 '</div>';
                             hay = true
@@ -871,7 +871,7 @@
                             '<div class="form-check">' +
 
                             '<input class="form-check-input chb" type="checkbox" name="aplazadoRadios" id="aplazadoRadio" value="option3">' +
-                            '<label class="form-check-label d-block atp_inputs" for="aplazadoRadio">' +
+                            '<label class="form-check-label d-block atp_inputs" for="aplazadoText">' +
                             '<input type="text" class="campoLabel" id="aplazadoText" name="aplazadoText" value="' + window.cuentaImpuestos + '" >' +
                             '<span>Aplazamiento / Fraccionamiento</span></label>' +
 
@@ -884,7 +884,7 @@
 
                             '<div class="" style="padding: 7px 0;">' +
                             '<label class="form-check-label d-block atp_inputs" for="numeroPlazos">' +
-                            '<input type="number" id="numeroPlazos" name="numeroPlazos" >' +
+                            '<input class="campoLabel" type="number" min="0" id="numeroPlazos" name="numeroPlazos" value="">' +
                             '<span>Nº de plazos</span></label>' +
                             '</div>' +
                             '</div>' +
