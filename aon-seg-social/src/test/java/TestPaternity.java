@@ -1,0 +1,87 @@
+import static org.junit.Assert.*;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.junit.Test;
+
+import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.toolkit.Toolkit;
+import solutions.aon.seg.social.*;
+
+public class TestPaternity {
+	final static String[] ID_TYPE={"NIF", "NIE"};
+	//M -> Madre, P -> 'Otro progenitor', A -> Primer adoptante, B -> Segundo adoptante
+	final static String[] APPLICANT_TYPE= {"M", "P", "A", "B"};
+	final static String[] MOTHER_REASON= {"Nacimiento de hijo","Fallecimiento de la madre","Cesión/Opción en favor del otro progenitor",
+			"Parto múltiple","Inicio del descanso antes del parto (solo para madre biológica ET)"};
+	final static String[] FATHER_REASON= {"Nacimiento de hijo","Parto múltiple"};
+	//ADOPTERS es válido para las opciones del primer y segundo adoptante
+	final static String ADOPTERS= "Adopción/Tutela/Acogimiento";
+	final static String CERTIFICATE="src/test/resources/Julio GARCIA - Certificado FNMT.p12";
+
+	@Test
+	public void testGrabarCertificadoWrongPeriod() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("29-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("21-11-2020");
+			assertFalse("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
+			
+		}catch(SegSocialException e) {
+			assertTrue(true);
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+	
+	@Test
+	public void testGrabarCertificadoOk() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("25-11-2020");
+			assertTrue("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
+			
+		}catch(SegSocialException e) {
+			assertTrue(true);
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+
+	
+	@Test
+	public void testVoidCertificateOk() {
+		try(final InputStream certificateInputStream=new FileInputStream(CERTIFICATE)){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("25-11-2020");
+			assertTrue("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
+			
+		}catch(SegSocialException e) {
+			assertTrue(true);
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+	
+	
+}

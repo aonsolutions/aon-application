@@ -22,6 +22,7 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlListItem;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -50,7 +51,7 @@ public class Paternity {
 	//ADOPTERS es válido para las opciones del primer y segundo adoptante
 	final static String ADOPTERS= "Adopción/Tutela/Acogimiento";
 	
-	public static byte[] grabarCertificado(final InputStream certificateInputStream,
+	public static boolean grabarCertificado(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount,final String docType, final String docNum,
 			final String applicantType, final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days) throws SegSocialException{
@@ -99,10 +100,22 @@ public class Paternity {
 			//CONFIRM
 			htmlPage=formDatos2.getInputByValue("Confirmar").click();
 			
-			InputStream docIS=htmlPage.getWebResponse().getContentAsStream();
-			byte[] ret=docIS.readAllBytes();
-			docIS.close();
-			return ret;
+			try {
+				HtmlHeading3 h3=htmlPage.querySelector("#ARQcapaPrincipalPest>h3");
+				if(h3.getVisibleText().equalsIgnoreCase("Resumen del certificado")) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}catch (ElementNotFoundException | NullPointerException e) {
+				throw new SegSocialException();
+			}
+			
+//			InputStream docIS=htmlPage.getWebResponse().getContentAsStream();
+//			byte[] ret=docIS.readAllBytes();
+//			docIS.close();
+//			return ret;
 			
 			
 		} catch (FailingHttpStatusCodeException e) {
