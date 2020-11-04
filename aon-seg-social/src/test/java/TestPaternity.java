@@ -17,6 +17,7 @@ import solutions.aon.seg.social.exceptions.PaternityException;
 import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.StatusCodeException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.*;
 
@@ -39,7 +40,7 @@ public class TestPaternity {
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("21-11-2020");
 			assertFalse("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
 			
-		}catch (ForbiddenException fe) {
+		}catch (StatusCodeException sce) {
 			assertTrue(true);
 		}
 		catch(SegSocialException e) {
@@ -84,7 +85,7 @@ public class TestPaternity {
 			}catch (PaternityException e) {
 				fail("Should have done it");
 			}
-		} catch (ForbiddenException fe) {
+		} catch (StatusCodeException sce) {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			fail("Wrong data");
@@ -108,7 +109,7 @@ public class TestPaternity {
 			}catch (PaternityWrongDataException e) {
 				assertTrue(true);
 			}
-		} catch (ForbiddenException fe) {
+		} catch (StatusCodeException sce) {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			fail("Wrong data");
@@ -132,7 +133,7 @@ public class TestPaternity {
 			}catch (PaternityWrongDataException e) {
 				assertTrue(true);
 			}
-		} catch (ForbiddenException fe) {
+		} catch (StatusCodeException sce) {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			fail("Wrong data");
@@ -156,7 +157,7 @@ public class TestPaternity {
 			}catch (PaternityNotFoundException e) {
 				assertTrue(true);
 			}
-		} catch (ForbiddenException fe) {
+		} catch (StatusCodeException sce) {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			fail("Wrong data");
@@ -179,7 +180,7 @@ public class TestPaternity {
 			fail("Should have failed");
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (ForbiddenException fe) {
+		} catch (StatusCodeException sce) {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			fail("Wrong data");
@@ -202,7 +203,7 @@ public class TestPaternity {
 			fail("Should have failed");
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
-		} catch (ForbiddenException fe) {
+		} catch (StatusCodeException sce) {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			fail("Wrong data");

@@ -36,6 +36,7 @@ import solutions.aon.seg.social.exceptions.PaternityException;
 import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.StatusCodeException;
 import solutions.aon.seg.social.objects.PaternityCertificate;
 import solutions.aon.seg.social.objects.PaternityCertificate.PaternityCertificateBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
@@ -119,17 +120,13 @@ public class Paternity {
 			
 			
 		} catch (FailingHttpStatusCodeException e) {
-			switch (e.getStatusCode()) {
-			case 403:
-				throw new ForbiddenException();
-			default:
-				throw new SegSocialException();
-			}
+			StatusCodeException.HandleStatusCodeException(e);
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
+		return false;
 	
 	}
 
@@ -203,12 +200,7 @@ public class Paternity {
 				}
 				
 			} catch (FailingHttpStatusCodeException e) {
-				switch (e.getStatusCode()) {
-				case 403:
-					throw new ForbiddenException();
-				default:
-					throw new SegSocialException();
-				}
+				StatusCodeException.HandleStatusCodeException(e);
 			} catch (MalformedURLException e) {
 				throw new SegSocialException(e);
 			} catch (IOException e) {
@@ -340,12 +332,7 @@ public class Paternity {
 				}
 				
 			} catch (FailingHttpStatusCodeException e) {
-				switch (e.getStatusCode()) {
-				case 403:
-					throw new ForbiddenException();
-				default:
-					throw new SegSocialException();
-				}
+				StatusCodeException.HandleStatusCodeException(e);
 			} catch (MalformedURLException e) {
 				throw new SegSocialException(e);
 			} catch (IOException e) {
@@ -502,12 +489,7 @@ public class Paternity {
 				}
 				
 			} catch (FailingHttpStatusCodeException e) {
-				switch (e.getStatusCode()) {
-				case 403:
-					throw new ForbiddenException();
-				default:
-					throw new SegSocialException();
-				}
+				StatusCodeException.HandleStatusCodeException(e);
 			} catch (MalformedURLException e) {
 				throw new SegSocialException(e);
 			} catch (IOException e) {
@@ -515,6 +497,7 @@ public class Paternity {
 			}	catch (NoSuchElementException e) {
 				throw new PaternityException();
 			}
+			return null;
 	}
 	
 	
