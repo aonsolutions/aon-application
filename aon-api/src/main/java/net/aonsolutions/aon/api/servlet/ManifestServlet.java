@@ -39,7 +39,8 @@ public class ManifestServlet extends HttpServlet{
 //			}
 			String buildDate = StringUtils.trimToNull(attrs.getValue("buildDate"));
 			json.put("build_date", buildDate);
-			Utils.addCorsHeader(resp);
+			String origin = req.getHeader("access-control-allow-origin") != null ? req.getHeader("access-control-allow-origin") : "*";
+	    	resp.addHeader("Access-Control-Allow-Origin", origin);
 			Utils.giveBack(req, resp, json, new JSONObject());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
