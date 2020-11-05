@@ -31,12 +31,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.PaternityException;
-import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
-import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
+import solutions.aon.seg.social.exceptions.paternity.PaternityException;
+import solutions.aon.seg.social.exceptions.paternity.PaternityNotFoundException;
+import solutions.aon.seg.social.exceptions.paternity.PaternityWrongDataException;
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.PaternityCertificate;
 import solutions.aon.seg.social.objects.PaternityCertificate.PaternityCertificateBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;

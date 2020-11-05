@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+
 public class SegSocialException extends Exception{
 
 	

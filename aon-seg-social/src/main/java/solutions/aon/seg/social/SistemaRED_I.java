@@ -27,12 +27,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLLabelElement;
 
-import solutions.aon.seg.social.exceptions.DataDoesNotExist;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.NoMoreDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
+import solutions.aon.seg.social.exceptions.invalidData.NoMoreDataException;
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Idc;
 import solutions.aon.seg.social.objects.SituacionEmpresa;
 import solutions.aon.seg.social.objects.SituacionEmpresa.SituacionEmpresaBuilder;

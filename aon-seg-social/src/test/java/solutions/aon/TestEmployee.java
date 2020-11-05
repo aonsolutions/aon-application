@@ -9,12 +9,12 @@ import java.io.InputStream;
 import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaRedEmployee;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
-import solutions.aon.seg.social.exceptions.SyntaxException;
-import solutions.aon.seg.social.exceptions.WrongRegimeException;
-import solutions.aon.seg.social.exceptions.invalidCccException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.SyntaxException;
+import solutions.aon.seg.social.exceptions.invalidData.WrongRegimeException;
+import solutions.aon.seg.social.exceptions.invalidData.invalidCccException;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class TestEmployee {

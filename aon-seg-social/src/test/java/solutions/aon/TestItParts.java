@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaREDITParts;
 import solutions.aon.seg.social.SistemaRedEmployee;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class TestItParts {

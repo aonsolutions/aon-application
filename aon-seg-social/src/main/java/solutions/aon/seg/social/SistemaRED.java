@@ -9,8 +9,8 @@ import java.util.Date;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
-import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 
 public class SistemaRED {

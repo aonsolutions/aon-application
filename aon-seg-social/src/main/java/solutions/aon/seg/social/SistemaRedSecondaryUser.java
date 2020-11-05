@@ -23,9 +23,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLInputElement;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLOptionElement;
 
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
