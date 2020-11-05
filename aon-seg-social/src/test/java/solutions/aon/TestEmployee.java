@@ -22,7 +22,14 @@ public class TestEmployee {
 	@Test
 	public void getEmployeesCertificateTest() {
 		
+		
+		
+		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+			
+			
+			
+			
 			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNT","pkcs12","0111","01105360062");					
 		}
 		catch (InvalidCertificateException e) {}
@@ -71,13 +78,6 @@ public class TestEmployee {
 		catch (IOException e) {fail("IOException");}
 		catch (Exception e) {fail("unknown exception");}
 	}
-	
-
-	
-	
-	
-	
-	
 	
 	@Test
 	public void getEmployeeCertificateTest() {

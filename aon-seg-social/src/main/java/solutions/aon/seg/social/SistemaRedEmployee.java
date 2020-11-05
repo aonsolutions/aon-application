@@ -358,9 +358,7 @@ public class SistemaRedEmployee {
 		public static void main(String[] args)
 				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
 			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-				
-//				Toolkit.buildPdf(getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy")),"log.html");
-						
+										
 			}catch (NullPointerException e) {}
 		}
 	}
