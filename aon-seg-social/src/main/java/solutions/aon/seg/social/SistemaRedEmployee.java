@@ -310,14 +310,12 @@ public class SistemaRedEmployee {
 		
 		//GETS A PDF CCC LIQUIDATION
 		public static byte[] getCccLiquidation(InputStream certificateInputStream, String certificatePassword,
-				String certificateType, String regime, String ccc,Date liquidationPeriod) {
-			try {
-				return getCccLiquidationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, liquidationPeriod);
-			}catch(Exception e) {
-				System.err.println(">> EXCEPTION:" + e.getMessage());
-			}
-			return null;
-			
+				String certificateType, String regime, String ccc,Date liquidationPeriod) throws SegSocialException {
+				try {
+					return getCccLiquidationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, liquidationPeriod);
+				} catch (FailingHttpStatusCodeException e) {throw new StatusCodeException();} 
+				catch (MalformedURLException e) {throw new SegSocialException();} 
+				catch (IOException e) {throw new SegSocialException();} 			
 		}
 		
 		
