@@ -113,7 +113,7 @@ public class TestEmployee {
 	@Test
 	public void getEmployeeRegimeTest() {
 		
-		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNM.p12")) {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRedEmployee.getEmployee(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062", "011005185924");					
 		}
 		catch (WrongRegimeException e) {}
