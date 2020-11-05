@@ -245,8 +245,11 @@
                 ticket.message[Object.keys(ticket.message).length + 1] = messageData;
 
                 // Mostramos el mensaje
-                let msg = messages( { 0 : messageData}, from);
+                let msg = messages( {0 : messageData}, from);
                 $('#ticket-messages').prepend(msg);
+                
+                // Enviamos para añadir los documentos (si hubiese) a la lista de adjuntos
+                adjuntosTicketTotal({0 : messageData});
     
                 // Limpiamos el editor
                 theEditor.setData('');
@@ -261,7 +264,7 @@
                     // Almacenamos el cambio del estado
                     let dataUpdateStatus = {
                         name        : 'messenger',
-                        json        : ticket,
+                        json        : ticket
                     };
                     updateJsonApi(dataUpdateStatus);
             } else {
@@ -296,7 +299,7 @@
             }
             
             // Mostramos el mensaje de accion
-            var msg = messages( { 0 : messageData}, from);
+            var msg = messages( { 0 : messageData }, from);
             $('#ticket-messages').prepend(msg);
             
             // Lo agregamos al resto
@@ -440,52 +443,83 @@
          */
         function adjuntosTicketTotal(mensajes){
             var hayAdjuntos = false;
-            var lista = "<ul class='list-group list-group-flush'>";
-            for(const i in mensajes){
-                var mensaje = mensajes[i];
-                
-                if(mensaje.documents && Object.keys(mensaje.documents).length > 0){
-                    for(const iAdjunto in mensaje.documents){
-                        lista += "<li class='list-group-item'>";
-                            lista += "<div class='col-12'>";
-                                lista += "<div class='row'>";
-                                    lista += "<div class='col-11'>";
-                                        lista += "<span class='align-middle'>"+mensaje.documents[iAdjunto]+"</span>";
-                                    lista += "</div>";
-                                    lista += "<div class='col-1'>";
-                                        lista += "<a href='#'><span class='material-icons align-middle' data-doc='"+iAdjunto+"' data-msg='"+i+"'>save_alt</span></a>";
+            
+            // Comprobamos si existe ya la lista
+            if ( $("#listado_adjuntos").length ) {
+                // Recorremos los mensajes y añadimos al principio de la lista
+                var lista = "";
+                for(const i in mensajes){
+                    var mensaje = mensajes[i];
+
+                    if(mensaje.documents && Object.keys(mensaje.documents).length > 0){
+                        for(const iAdjunto in mensaje.documents){
+                            lista += "<li class='list-group-item'>";
+                                lista += "<div class='col-12'>";
+                                    lista += "<div class='row'>";
+                                        lista += "<div class='col-11'>";
+                                            lista += "<span class='align-middle'>"+mensaje.documents[iAdjunto]+"</span>";
+                                        lista += "</div>";
+                                        lista += "<div class='col-1'>";
+                                            lista += "<a href='#'><span class='material-icons align-middle' data-doc='"+iAdjunto+"' data-msg='"+i+"'>save_alt</span></a>";
+                                        lista += "</div>";
                                     lista += "</div>";
                                 lista += "</div>";
-                            lista += "</div>";
-                        lista += "</li>";
+                            lista += "</li>";
+                        }
+                        hayAdjuntos = true;
                     }
-                    hayAdjuntos = true;
                 }
-            }
-            lista += "</ul>";
-            
-            // Si hay adjuntos, creamos la tabla
-            if(hayAdjuntos){
-                var card = "<div class='card'>";
-                    card += "<div class='card-header'>";
-                        card += "<div class='col-12'>";
-                            card += "<div class='row'>";
-                                card += "<div class='col-8'>";
-                                    card += "Adjuntos";
-                                card += "</div>";
-                                card += "<div class='col-4 text-right pr-0'>";
-                                    card += "<a href='#'>Descargar todo</a>";
+                
+                if(hayAdjuntos){
+                    $("#listado_adjuntos").prepend(lista);
+                }
+            } else {
+                var lista = "<ul class='list-group list-group-flush' id='listado_adjuntos'>";
+                for(const i in mensajes){
+                    var mensaje = mensajes[i];
+
+                    if(mensaje.documents && Object.keys(mensaje.documents).length > 0){
+                        for(const iAdjunto in mensaje.documents){
+                            lista += "<li class='list-group-item'>";
+                                lista += "<div class='col-12'>";
+                                    lista += "<div class='row'>";
+                                        lista += "<div class='col-11'>";
+                                            lista += "<span class='align-middle'>"+mensaje.documents[iAdjunto]+"</span>";
+                                        lista += "</div>";
+                                        lista += "<div class='col-1'>";
+                                            lista += "<a href='#'><span class='material-icons align-middle' data-doc='"+iAdjunto+"' data-msg='"+i+"'>save_alt</span></a>";
+                                        lista += "</div>";
+                                    lista += "</div>";
+                                lista += "</div>";
+                            lista += "</li>";
+                        }
+                        hayAdjuntos = true;
+                    }
+                }
+                lista += "</ul>";
+
+                // Si hay adjuntos, creamos la tabla
+                if(hayAdjuntos){
+                    var card = "<div class='card'>";
+                        card += "<div class='card-header'>";
+                            card += "<div class='col-12'>";
+                                card += "<div class='row'>";
+                                    card += "<div class='col-8'>";
+                                        card += "Adjuntos";
+                                    card += "</div>";
+                                    card += "<div class='col-4 text-right pr-0'>";
+                                        card += "<a href='#'>Descargar todo</a>";
+                                    card += "</div>";
                                 card += "</div>";
                             card += "</div>";
                         card += "</div>";
-                        
+                        card += "<div class='card-body'>";
+                            card += lista;
+                        card += "</div>";
                     card += "</div>";
-                    card += "<div class='card-body'>";
-                        card += lista;
-                    card += "</div>";
-                card += "</div>";
-                
-                $('#div_adjuntos').html(card);
+
+                    $('#div_adjuntos').html(card);
+                }
             }
         }
     </script>
