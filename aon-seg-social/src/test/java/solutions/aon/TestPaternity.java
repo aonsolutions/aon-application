@@ -12,13 +12,13 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import solutions.aon.seg.social.exceptions.ForbiddenException;
-import solutions.aon.seg.social.exceptions.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.PaternityException;
-import solutions.aon.seg.social.exceptions.PaternityNotFoundException;
-import solutions.aon.seg.social.exceptions.PaternityWrongDataException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.StatusCodeException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.paternity.PaternityException;
+import solutions.aon.seg.social.exceptions.paternity.PaternityNotFoundException;
+import solutions.aon.seg.social.exceptions.paternity.PaternityWrongDataException;
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.*;
 
@@ -31,7 +31,7 @@ public class TestPaternity {
 	final static String[] FATHER_REASON= {"Nacimiento de hijo","Parto múltiple"};
 	//ADOPTERS es válido para las opciones del primer y segundo adoptante
 	final static String ADOPTERS= "Adopción/Tutela/Acogimiento";
-	final static String CERTIFICATE="src/test/resources/Julio GARCIA - Certificado FNMT.p12";
+	final static String CERTIFICATE="src/test/resources/aon/solutions/FNMT.p12";
 
 	@Test
 	public void testGrabarCertificadoWrongPeriod() {
@@ -205,6 +205,54 @@ public class TestPaternity {
 		} catch(InvalidCertificateException e) {
 			assertTrue(true);
 		} catch (StatusCodeException sce) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+	
+	@Test
+	public void testVoidCertificateWrongCertificateKey() {
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-11-2020");
+				Paternity.voidPaternity(certificateInputStream, "jg@FrMT", "pkcs12", "011017250195", "0111", "01105577910", startDate, endDate, Optional.empty());	
+				fail("Should't let do");
+		} catch (InvalidCertificateException e) {
+			assertTrue(true);
+		}
+		catch (StatusCodeException sce) {
+			assertTrue(true);
+		} catch(SegSocialException e) {
+			fail("Wrong data");
+		} catch (ParseException e) {
+			fail("Date typed wrong");
+		} catch (FileNotFoundException e1) {
+			fail("Certificate file does not exist");
+		} catch (IOException e1) {
+			fail("Certificate error");
+		}
+	}
+	
+	@Test
+	public void testVoidCertificateWrongCertificateType() {
+		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
+			
+			Date startDate= new SimpleDateFormat("dd-MM-yyyy").parse("28-10-2020");
+			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("04-11-2020");
+				Paternity.voidPaternity(certificateInputStream, "jg@FNMT", "pkc412", "011017250195", "0111", "01105577910", startDate, endDate, Optional.empty());	
+				fail("Shouldn't let do");
+		} catch (InvalidCertificateException e) {
+			assertTrue(true);
+		}
+		catch (StatusCodeException sce) {
 			assertTrue(true);
 		} catch(SegSocialException e) {
 			fail("Wrong data");

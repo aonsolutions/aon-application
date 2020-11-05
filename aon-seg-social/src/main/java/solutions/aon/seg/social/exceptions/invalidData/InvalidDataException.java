@@ -1,4 +1,6 @@
-package solutions.aon.seg.social.exceptions;
+package solutions.aon.seg.social.exceptions.invalidData;
+
+import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class InvalidDataException extends SegSocialException{
 	public static void checkCode(Integer statusCode) throws SegSocialException {
