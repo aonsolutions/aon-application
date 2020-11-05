@@ -1,20 +1,15 @@
 
-export const isMobile = () => {
-  return window.innerWidth <= 850 && window.innerHeight <= 850;
-}
+export const isMobile = () => window.innerWidth <= 850 && window.innerHeight <= 850;
 
 export const clearElement = (id) => {
   document.getElementById(id).innerHTML = '';
 }
 
+export const getElement = (id) => document.getElementById(id);
 
-export const isNumber = (n) => {
-  return !isNaN(parseFloat(n)) && isFinite(n);
-}
+export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
-export const round = (value) => {
-  return decimalAdjust('round', value, -2);
-}
+export const round = (value) => decimalAdjust('round', value, -2);
 
 export const decimalAdjust = (type, value, exp)  => {
   // Si el exp no está definido o es cero...
