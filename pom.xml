@@ -155,6 +155,7 @@
 		<module>aon-saltra-api</module>
 		<module>aon-seg-social</module>
 		<module>aon-in-invoice</module>
+		<module>aon-in-payroll</module>
 
 		
 		<module>aon-jasper-report</module>

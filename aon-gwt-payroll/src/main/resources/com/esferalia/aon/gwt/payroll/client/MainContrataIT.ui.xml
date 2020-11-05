@@ -182,15 +182,15 @@
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 					<g:HorizontalPanel styleName="aon-finding-toolbar">
-						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="sldToolbarPanel">
-							<g:FormPanel visible="false" ui:field="msjFIEFormPanel" method="{METHOD_POST}" action="{FIE_URL}"  encoding="{ENCODING_MULTIPART}">
-								<g:VerticalPanel visible="false" >
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="sldToolbarPanel">							
+							<g:FormPanel ui:field="msjFIEFormPanel" method="{METHOD_POST}" action="{FIE_URL}"  encoding="{ENCODING_MULTIPART}"  >
+								<g:HorizontalPanel >
 									<a:MultiFileUpload visible="false"  ui:field="msjFIEFileUpload" name="{FILE.name}"  accept=".msj" />
 									<g:Hidden ui:field="userNameHidden" name="{USER.name}" />
 									<g:Hidden ui:field="domainNameHidden" name="{DOMAIN.name}" />
-								</g:VerticalPanel>
-							</g:FormPanel>								
-							<g:Button ui:field='msjFIEButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="MENSAJES DE I.N.S.S.EMPRESA (FIE)" /> 
+									<g:Button ui:field='msjFIEButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="MENSAJES DE I.N.S.S.EMPRESA (FIE)" /> 
+								</g:HorizontalPanel>
+							</g:FormPanel>	
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>

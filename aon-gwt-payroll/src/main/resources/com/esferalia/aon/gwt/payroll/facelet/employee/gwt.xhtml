@@ -63,6 +63,16 @@
         function getCurrentDomainNameURL() {
         	return '#{domainSwitcher.currentDomainNameURL}';
         }
+
+        var iframes = document.getElementsByTagName("iframe");
+        for (var i = 0; i < iframes.length; ++i) {
+                var iframe = iframes[i];
+                if (iframe.name && iframe.name.startsWith('FormPanel')) {
+                        var parent = iframe.parentNode;
+                        parent.removeChild(iframe);
+                }
+        }       
+        
         //]]>
     </script>
     
