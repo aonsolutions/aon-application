@@ -35,9 +35,10 @@ public class SistemaRedEmployee {
 		public static Collection<Employee> getFullEmployees(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc) throws SegSocialException 
 		{
-			try {
-				return getEmployeesFullImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
-			} catch (FailingHttpStatusCodeException e) {
+			InvalidCertificateException.checkCertificate(certificateInputStream);
+			try {return getEmployeesFullImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+} 
+			catch (FailingHttpStatusCodeException e) {
 				switch (e.getStatusCode()) {
 				case 403:
 					throw new ForbiddenException();
@@ -198,7 +199,7 @@ public class SistemaRedEmployee {
 		//HANDLE THE EXCEPTIONS OF GETEMPLOYEE METHOD
 		public static Collection<Employee> getEmployees(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc) throws SegSocialException{
-			
+			InvalidCertificateException.checkCertificate(certificateInputStream);
 			try {return getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
@@ -313,12 +314,12 @@ public class SistemaRedEmployee {
 		
 		//GETS A PDF CCC LIQUIDATION
 		public static byte[] getCccLiquidation(InputStream certificateInputStream, String certificatePassword,
-				String certificateType, String regime, String ccc,Date liquidationPeriod) throws SegSocialException {
-				try {
-					return getCccLiquidationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, liquidationPeriod);
-				} catch (FailingHttpStatusCodeException e) {throw new StatusCodeException();} 
-				catch (MalformedURLException e) {throw new SegSocialException();} 
-				catch (IOException e) {throw new SegSocialException();} 			
+			String certificateType, String regime, String ccc,Date liquidationPeriod) throws SegSocialException {
+			InvalidCertificateException.checkCertificate(certificateInputStream);
+			try {return getCccLiquidationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, liquidationPeriod);} 
+			catch (FailingHttpStatusCodeException e) {throw new StatusCodeException();} 
+			catch (MalformedURLException e) {throw new SegSocialException();} 
+			catch (IOException e) {throw new SegSocialException();} 			
 		}
 		
 		

@@ -36,7 +36,7 @@ public class SistemaREDITParts {
 	//GET ITs
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to)throws SegSocialException{
-		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		ArrayList<It> its = new ArrayList<It>();
 		ArrayList<ITPart>  itParts = (ArrayList<ITPart>) getFullItParts(certificateInputStream, certificatePassword, certificateType, regime, ccc, from, to);
 		HashMap<ItPartId, Collection<ITPart>> orderedItParts = new HashMap<ItPartId, Collection<ITPart>>();
@@ -79,7 +79,7 @@ public class SistemaREDITParts {
 	//HANDLE GETFULLITPARTS EXCEPTIONS
 	public static Collection<ITPart> getFullItParts(final InputStream certificateInputStream, final String certificatePassword,
 	final String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException{
-		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try { return getFullItPartsImpl(certificateInputStream, certificatePassword,	certificateType, regime, ccc, from, to); } 
 		catch (FailingHttpStatusCodeException e) { 
 			switch (e.getStatusCode()) {
@@ -96,7 +96,7 @@ public class SistemaREDITParts {
 	//GET ALL THE ITPARTS
 	private static Collection<ITPart> getFullItPartsImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, Date from, Date to) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, InvalidCertificateException {
-		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setJavaScriptEnabled(false);
 			
@@ -172,25 +172,5 @@ public class SistemaREDITParts {
 			return itParts;
 			
 		}		
-	}
-	
-	public static void main(String[] args) {
-		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			ArrayList<It> its = (ArrayList<It>) getIts(
-					certificateInputStream,"jg@FNMT", "pkcs12", "0111", "01105360062", 
-					Toolkit.parseDate("1/1/2015", "dd/MM/yyyy"), Toolkit.parseDate("1/1/2020", "dd/MM/yyyy")			
-			);
-			
-			File f = new File("Log_Its.ak");
-			FileWriter fw = new FileWriter(f);
-			for(It it : its) fw.write(it.toString());
-			fw.close();
-				
-		} 
-		catch (SegSocialException e) {e.printStackTrace();} 
-		catch (FileNotFoundException e1) {e1.printStackTrace();} 
-		catch (IOException e1) {e1.printStackTrace();}
-	}
-	
-	
+	}	
 }

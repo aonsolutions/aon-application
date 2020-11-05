@@ -20,19 +20,16 @@ public class TestItParts {
 	@Test
 	public void testGetIts() {
 		
-		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-			SistemaRedEmployee.getCccLiquidation(certificateInputStream, "jg@FNMT", "ppkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy"));				
-			//SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "ppkcs12", "0111", , Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), Toolkit.parseDate("1-1-2020", "dd-MM-yyyy"));
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
+			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", "0111","01105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), Toolkit.parseDate("1-1-2020", "dd-MM-yyyy"));
 		}
-		catch (InvalidCertificateException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
 		catch (Exception e) {fail("unknown exception");}
-		
-		
-		fail("Not yet implemented");
+
 	}
 
 }
