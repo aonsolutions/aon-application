@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -362,6 +363,14 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void setDigitalCertificates(List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> asyncCallback) {
 		enterprisesServiceAsync.setDigitalCertificates(getCurrentDomainName(), getCurrentUser(), digitalCertificateList, asyncCallback);
+	}
+	
+	public void getMainCCCInfoDataBase(AsyncCallback<MainCCCInfo> asyncCallback) {
+		enterprisesServiceAsync.getMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+	
+	public void setMainCCCInfoDataBase(MainCCCInfo mainCCCInfo, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.setMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), mainCCCInfo, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static
