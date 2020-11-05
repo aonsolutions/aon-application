@@ -1,15 +1,24 @@
 
-	export const requestFile = (url, token, formData) => {
-		let xhr = new XMLHttpRequest();
-		xhr.open('POST', url, true);
-		xhr.setRequestHeader('session_id', token);
-		const domainId = localStorage.getItem("aon_domain_id");
-		xhr.setRequestHeader('domain_id', domainId);
-		xhr.send(formData);
+	
+	const formatParams = (params) =>{
+		return "?" + Object
+		.keys(params)
+		.map( key => key+"="+encodeURIComponent( params[key] ) )
+		.join("&");
 	}
+
+	// export const requestFile = (url, token, formData) => {
+	// 	let xhr = new XMLHttpRequest();
+	// 	xhr.open('POST', url, true);
+	// 	xhr.setRequestHeader('session_id', token);
+	// 	const domainId = localStorage.getItem("aon_domain_id");
+	// 	xhr.setRequestHeader('domain_id', domainId);
+	// 	xhr.send(formData);
+	// }
 
 	export const request = (method, url, token, sendData, fn) => {
 		let xhr = new XMLHttpRequest();
+		if( sendData && method === "GET" ) url = url + formatParams(sendData); //send params url method GET
 		xhr.open(method, url);
 		xhr.setRequestHeader('session_id', token);
 		const domainId = localStorage.getItem("aon_domain_id");
@@ -18,7 +27,6 @@
 		xhr.setRequestHeader('domain_name', domainName);
 		xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 		xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-
 		xhr.send(JSON.stringify(sendData));
 
 		xhr.onload = () => {
