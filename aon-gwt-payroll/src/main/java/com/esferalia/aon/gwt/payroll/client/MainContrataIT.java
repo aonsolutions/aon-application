@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -24,8 +23,6 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -33,7 +30,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -122,6 +118,8 @@ public class MainContrataIT extends MainEntryPoint {
 	@UiField
 	MultiFileUpload msjFIEFileUpload;
 	
+	@UiField
+	HTMLPanel sldToolbarPanel;
 	
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
@@ -134,8 +132,8 @@ public class MainContrataIT extends MainEntryPoint {
 	private List<IT> itsList = Collections.emptyList();
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
-	private Integer itIds [] ;
 	private ListDataProvider<ITEmployee> dataProvider ;
+	
 	
 	public MainContrataIT() {
 		
@@ -160,7 +158,7 @@ public class MainContrataIT extends MainEntryPoint {
 		userNameHidden.setValue(Wnd.getCurrentUser());
 		domainNameHidden.setValue(Wnd.getCurrentDomainNameURL());
 		
-	    
+				
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -993,7 +991,6 @@ public class MainContrataIT extends MainEntryPoint {
 	@UiHandler("msjFIEButton")
 	public void onMsjFIEButtonClick(ClickEvent event) {
 		msjFIEFileUpload.click();
-		//msjFIEFormPanel.submit();
 	}
 	
 	@UiHandler("msjFIEFileUpload")
@@ -1005,7 +1002,6 @@ public class MainContrataIT extends MainEntryPoint {
 	public void onMsjFIEFormPanelSubmitComplete(SubmitCompleteEvent e) {
 		String json = e.getResults();
 		
-		
 		JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
 		
 		List<ITEmployee> itEmployees = new ArrayList<ITEmployee>(jsITEmployees.length());
@@ -1015,10 +1011,7 @@ public class MainContrataIT extends MainEntryPoint {
 			ITEmployee itEmployee = fromJsITEmployee(jsITEmployee);
 			itEmployees.add(itEmployee); 		
 		}
-		
-//		itIds = itEmployees.stream().flatMap( employee -> employee.getIts().stream() ).map( it -> it.getId() ).toArray(Integer[]::new);
-		
-//		mainContrataITObject.getEmployeesInfo( itIds,
+				
 		mainContrataITObject.setEmployeesInfo(itEmployees,
 			s -> {
 				initEnterpriseSB();
@@ -1033,7 +1026,6 @@ public class MainContrataIT extends MainEntryPoint {
 	// --------------------------------------------------------------------------------------------
 	// 										AUXILIAR METHODS
 	// --------------------------------------------------------------------------------------------
-	
 	
 	private IT checkIfIsOpenIt(ITEmployee itEmployee) {
   		for(IT it : itEmployee.getIts()) {
@@ -1270,5 +1262,5 @@ public class MainContrataIT extends MainEntryPoint {
 		return eval(javascript);
 	}-*/;
 
-	
+
 }
