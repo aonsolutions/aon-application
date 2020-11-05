@@ -476,6 +476,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
+	public void getEmployeesITInfo(String currentDomainName, Integer ids [], AsyncCallback<List<ITEmployee>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getEmployeesITInfo(currentDomainName, ids, new AsyncCallbackWrapper<List<ITEmployee>>(callback));
+	}
+
+	@Override
 	public void deleteIT(String currentDomainName, Integer itId, AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.deleteIT(currentDomainName, itId, new AsyncCallbackWrapper<String>(callback));

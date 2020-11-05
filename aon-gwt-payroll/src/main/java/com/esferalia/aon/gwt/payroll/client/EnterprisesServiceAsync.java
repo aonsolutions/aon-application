@@ -107,6 +107,8 @@ public interface EnterprisesServiceAsync {
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getEmployeesITInfo(String currentDomainName, Boolean allEmployees,
 			AsyncCallback<List<ITEmployee>> asyncCallback);
+	void getEmployeesITInfo(String currentDomainName, Integer ids [],
+			AsyncCallback<List<ITEmployee>> asyncCallback);
 	void deleteIT(String currentDomainName, Integer itId, AsyncCallback<String> asyncCallback);
 	void createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo,
 			AsyncCallback<String> asyncCallback);

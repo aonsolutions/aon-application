@@ -166,6 +166,8 @@ public interface EnterprisesService extends RemoteService {
 
 	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);
 
+	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Integer ids []);
+
 	String deleteIT(String currentDomainName, Integer itId);
 
 	String createUpdateITEmployee(String currentDomainName, ITEmployee employeeITInfo);

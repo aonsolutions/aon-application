@@ -3,22 +3,37 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.FIEService.JsContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.FIEService.JsEmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.FIEService.JsIT;
+import com.esferalia.aon.gwt.payroll.shared.FIEService.JsITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -30,8 +45,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -93,6 +111,18 @@ public class MainContrataIT extends MainEntryPoint {
 	@UiField(provided = true)
 	DataGrid<IT> itDataGrid;
 	
+	@UiField
+	Button msjFIEButton;	
+	@UiField
+	FormPanel msjFIEFormPanel;
+	@UiField
+	Hidden userNameHidden;
+	@UiField
+	Hidden domainNameHidden;
+	@UiField
+	MultiFileUpload msjFIEFileUpload;
+	
+	
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
 	// --------------------------------------------------------------------------------------------
@@ -104,16 +134,21 @@ public class MainContrataIT extends MainEntryPoint {
 	private List<IT> itsList = Collections.emptyList();
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
+	private Integer itIds [] ;
+	private ListDataProvider<ITEmployee> dataProvider ;
+	
 	public MainContrataIT() {
-		provideEmployeesDataGrid();
-		provideITsDataGrid();
 		
-		// Add style to table header
-	    addStyleToHeader();
-	    addStyleToITHeader();
 		
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 		AON.ensureInjected();
+
+		provideEmployeesDataGrid();
+		provideITsDataGrid();
+
+		// Add style to table header
+	    addStyleToHeader();
+	    addStyleToITHeader();
 	
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
@@ -121,6 +156,11 @@ public class MainContrataIT extends MainEntryPoint {
 		deckPanel.showWidget(0);
 		inactiveITsCB.setValue(true);
 		backContractButton.getElement().getStyle().setDisplay(Display.NONE);
+		
+		userNameHidden.setValue(Wnd.getCurrentUser());
+		domainNameHidden.setValue(Wnd.getCurrentDomainNameURL());
+		
+	    
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -132,6 +172,7 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		// Resource Style CellTable
 		employeeDataGrid = new CustomDataGrid<ITEmployee>(Integer.MAX_VALUE, ITEmployee.KEY_PROVIDER);
+		
 		employeeDataGrid.setWidth("100%");
 		
 		//Do not refresh the headers every time the dataGrid is updated.
@@ -147,10 +188,18 @@ public class MainContrataIT extends MainEntryPoint {
 	    // Initialize the columns.
 	    addEmployeeInfoColumns(this.selectionCCCInfoModel);
 	    
-	    new ListDataProvider<ITEmployee>(Collections.emptyList()).addDataDisplay(employeeDataGrid);
+		// Create a data provider.
+	    dataProvider = new ListDataProvider<ITEmployee>();
+	    // Connect the table to the data provider.
+	    dataProvider.addDataDisplay(employeeDataGrid);
+	    // Add style to table header
+	    addStyleToHeader();
+
+	    // new ListDataProvider<ITEmployee>(Collections.emptyList()).addDataDisplay(employeeDataGrid);
 
 	}
 	
+
 	private void addEmployeeInfoColumns(NoSelectionModel<ITEmployee> selectionCCCInfoModel) {
 		selectionCCCInfoModel.addSelectionChangeHandler(new Handler() {
 	        
@@ -635,11 +684,6 @@ public class MainContrataIT extends MainEntryPoint {
 	// --------------------------------------------------------------------------------------------
 
 	private void initContractTable() {		
-		// Create a data provider.
-	    ListDataProvider<ITEmployee> dataProvider = new ListDataProvider<ITEmployee>();
-
-	    // Connect the table to the data provider.
-	    dataProvider.addDataDisplay(employeeDataGrid);
 	    
 	    // Add the data to the data provider, which automatically pushes it to the
 	    // widget.
@@ -652,14 +696,16 @@ public class MainContrataIT extends MainEntryPoint {
 	    	employeeContractInfoList.add(employeeContractInfo);
 	    } 
 	    
+	    addSortColums(employeeContractInfoList); 
+
 	    // Set page size
 	    employeeDataGrid.setPageSize(employeesList.size());
+	    employeeDataGrid.setVisibleRange(0, employeesList.size());
 	    
-	    // Add style to table header
-	    addStyleToHeader();
-	    
-	    addSortColums(employeeContractInfoList); 
 		
+	    dataProvider.refresh();
+	    employeeDataGrid.redraw();
+	    
 	}
 	
 	private void addSortColums(List<ITEmployee> employeeContractInfoList) {
@@ -944,9 +990,50 @@ public class MainContrataIT extends MainEntryPoint {
 		initITTable();
 	}
 	
+	@UiHandler("msjFIEButton")
+	public void onMsjFIEButtonClick(ClickEvent event) {
+		msjFIEFileUpload.click();
+		//msjFIEFormPanel.submit();
+	}
+	
+	@UiHandler("msjFIEFileUpload")
+	public void  onMsjFIEFileUploadChange(ChangeEvent e) {
+		msjFIEFormPanel.submit();
+	}
+	
+	@UiHandler("msjFIEFormPanel") 
+	public void onMsjFIEFormPanelSubmitComplete(SubmitCompleteEvent e) {
+		String json = e.getResults();
+		
+		
+		JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
+		
+		List<ITEmployee> itEmployees = new ArrayList<ITEmployee>(jsITEmployees.length());
+		
+		for (int i = 0; i < jsITEmployees.length(); i++ ) {
+			JsITEmployee jsITEmployee = jsITEmployees.get(i);			
+			ITEmployee itEmployee = fromJsITEmployee(jsITEmployee);
+			itEmployees.add(itEmployee); 		
+		}
+		
+//		itIds = itEmployees.stream().flatMap( employee -> employee.getIts().stream() ).map( it -> it.getId() ).toArray(Integer[]::new);
+		
+//		mainContrataITObject.getEmployeesInfo( itIds,
+		mainContrataITObject.setEmployeesInfo(itEmployees,
+			s -> {
+				initEnterpriseSB();
+				initITSB();
+				initContractTable();
+				setTableHeights();
+			},
+			f -> {}
+		);
+		
+	}
 	// --------------------------------------------------------------------------------------------
 	// 										AUXILIAR METHODS
 	// --------------------------------------------------------------------------------------------
+	
 	
 	private IT checkIfIsOpenIt(ITEmployee itEmployee) {
   		for(IT it : itEmployee.getIts()) {
@@ -1035,5 +1122,153 @@ public class MainContrataIT extends MainEntryPoint {
 				return "-";
 		}
 	}
+	
+	private static ITEmployee fromJsITEmployee(JsITEmployee jsITEmployee) {
+		ITEmployee itEmployee = new ITEmployee();
+		
+		JsEmployeeInfo jsEmployeeInfo = jsITEmployee.getEmployeeInfo();
+		EmployeeInfo employeeInfo = fromJsEmployeeInfo(jsEmployeeInfo);
+		
+		JsContractInfo jsContractInfo = jsITEmployee.getContractInfo();
+		ContractInfo contractInfo = fromJsContractInfo(jsContractInfo);
+		
+		JsArray<JsIT> jsITs = jsITEmployee.getITs();
+		List<IT> its = new ArrayList<IT>();
+		for ( int i = 0; i < jsITs.length(); i++ ) {
+			its.add(fromJsIT(jsITs.get(i)));
+		}
+
+		itEmployee.setEmployeeInfo(employeeInfo);
+		itEmployee.setContractInfo(contractInfo);
+		itEmployee.setIts(its);
+		
+		itEmployee.setStatus(jsITEmployee.getStatus());
+
+		return itEmployee;
+	}
+	
+	
+	
+	private static Date parseDate(String str) {
+		if ( str == null )
+			return null;
+		if (str.trim().length() == 0 )
+			return null;
+		try {
+			return DateTimeFormat.getFormat("yyyy-MM-dd").parse(str);
+		} catch ( IllegalArgumentException e ) {
+			return null;
+		}
+	}
+
+	private static IT fromJsIT(JsIT jsIT) {
+		
+		IT it = new IT();
+		it.setContract(jsIT.getContract());
+		it.setDailyCGCBase(jsIT.getDailyCGCBase());
+		it.setDailyCGPBase(jsIT.getDailyCGPBase());
+		it.setDailyREGBase(jsIT.getDailyREGBase());
+		it.setDescription(jsIT.getDescription());
+		it.setDomain(jsIT.getDomain());
+		it.setEndDate(parseDate(jsIT.getEndDate()));
+		it.setFullName(jsIT.getFullName());
+		it.setMaternityReason(jsIT.getMaternityReason());
+		it.setMaternityType(jsIT.getMaternityType());
+		it.setId(jsIT.getId());
+		it.setIsParent(jsIT.isParent());
+		//it.setITParts(jsIT.getITParts());
+		it.setParent(jsIT.getParent());
+		it.setStartDate(parseDate(jsIT.getStartDate()));
+		it.setTypeHighPart(jsIT.getTypeHighPart());
+		it.setTypeLowPart(jsIT.getTypeLowPart());
+		return it;
+	}
+	
+	private static ContractInfo fromJsContractInfo(JsContractInfo jsContractInfo) {
+		ContractInfo contractInfo = new ContractInfo();	
+		contractInfo.setActivityId(jsContractInfo.getActivityId());
+		contractInfo.setEnterpriseCIF(jsContractInfo.getEnterpriseCIF());
+		contractInfo.setCccId(jsContractInfo.getCccId());
+		contractInfo.setCompleteCCC(jsContractInfo.getCompleteCCC());
+		contractInfo.setCccType(jsContractInfo.getCccType());
+		contractInfo.setWorkplaceId(jsContractInfo.getWorkplaceId());
+		contractInfo.setWorkplaceZIP(jsContractInfo.getWorkplaceZIP());
+		contractInfo.setWorkplaceFullAddress(jsContractInfo.getWorkplaceFullAddress());
+		contractInfo.setContractType(jsContractInfo.getContractType());
+		contractInfo.setContractModel(jsContractInfo.getContractModel());
+		contractInfo.setStartDate(parseDate(jsContractInfo.getStartDate()));
+		contractInfo.setEndDate(parseDate(jsContractInfo.getEndDate()));
+		contractInfo.setSeniorityDate(parseDate(jsContractInfo.getSeniorityDate()));
+		contractInfo.setAgreementId(jsContractInfo.getAgreementId());
+		contractInfo.setAgreementLevelId(jsContractInfo.getAgreementLevelId());
+		contractInfo.setAgreementCategory(jsContractInfo.getAgreementCategory());
+		contractInfo.setQuoteGroup(jsContractInfo.getQuoteGroup());
+		contractInfo.setOcupation(jsContractInfo.getOcupation());
+		contractInfo.setJourneyType(jsContractInfo.getJourneyType());
+		contractInfo.setSsRegimen(jsContractInfo.getSsRegimen());
+		contractInfo.setContractId(jsContractInfo.getContractId());
+		contractInfo.setContracttypeId(jsContractInfo.getContracttypeId());
+		contractInfo.setQuotegroupId(jsContractInfo.getQuotegroupId());
+		contractInfo.setOcupationId(jsContractInfo.getOcupationId());
+		contractInfo.setJourneytypeId(jsContractInfo.getJourneytypeId());
+		contractInfo.setContractmodelId(jsContractInfo.getContractmodelId());
+		contractInfo.setRetaId(jsContractInfo.getRetaId());
+//		contractInfo.setContractJourneyDuration(jsContractInfo.getContractJourneyDuration());
+		contractInfo.setOldStartDate(parseDate(jsContractInfo.getOldStartDate()));
+		contractInfo.setOldEndDate(parseDate(jsContractInfo.getOldEndDate()));
+		contractInfo.setHasPayroll(jsContractInfo.getHasPayroll());
+		contractInfo.setPayrollDate(parseDate(jsContractInfo.getPayrollDate()));
+		return contractInfo;
+	}
+
+	private static EmployeeInfo fromJsEmployeeInfo(JsEmployeeInfo jsEmployeeInfo) {		
+		EmployeeInfo employeeInfo = new EmployeeInfo();
+		
+		employeeInfo.setAccount(jsEmployeeInfo.getAccount());
+		employeeInfo.setAddresNum(jsEmployeeInfo.getAddresNum());
+		employeeInfo.setAddress(jsEmployeeInfo.getAddress());
+		employeeInfo.setAddressCity(jsEmployeeInfo.getAddressCity());
+		employeeInfo.setAddressInfo(jsEmployeeInfo.getAddressInfo());
+		employeeInfo.setAddressProvinces(jsEmployeeInfo.getAddressProvinces());
+		employeeInfo.setAddressZip(jsEmployeeInfo.getAddressZip());
+		employeeInfo.setBic(jsEmployeeInfo.getBic());
+		employeeInfo.setBirthdate(parseDate(jsEmployeeInfo.getBirthdate()));
+		employeeInfo.setCivilStatus(jsEmployeeInfo.getCivilStatus());
+		employeeInfo.setContractActive(jsEmployeeInfo.getContractActive());
+		employeeInfo.setContractId(jsEmployeeInfo.getContractId());
+		employeeInfo.setDocument(jsEmployeeInfo.getDocument());
+		employeeInfo.setDocumentType(jsEmployeeInfo.getDocumentType());
+		employeeInfo.setDomain(jsEmployeeInfo.getDomain());
+		employeeInfo.setEmail(jsEmployeeInfo.getEmail());
+		employeeInfo.setEmailId(jsEmployeeInfo.getEmailId());
+		employeeInfo.setEmployeeId(jsEmployeeInfo.getEmployeeId());
+		employeeInfo.setGender(jsEmployeeInfo.getGender());
+		employeeInfo.setGeozoneId(jsEmployeeInfo.getGeozoneId());
+		employeeInfo.setIsFullTime(jsEmployeeInfo.getIsFullTime());
+		employeeInfo.setMobile(jsEmployeeInfo.getMobile());
+		employeeInfo.setMobileId(jsEmployeeInfo.getMobileId());
+		employeeInfo.setName(jsEmployeeInfo.getName());
+		employeeInfo.setNationality(jsEmployeeInfo.getNationality());
+		employeeInfo.setPaymethodId(jsEmployeeInfo.getPaymethodId());
+		employeeInfo.setPayMethodType(jsEmployeeInfo.getPayMethodType());
+		employeeInfo.setPayMethodTypeB(jsEmployeeInfo.getPayMethodTypeB());
+		employeeInfo.setPhone(jsEmployeeInfo.getPhone());
+		employeeInfo.setPhoneId(jsEmployeeInfo.getPhoneId());
+		employeeInfo.setRaddressId(jsEmployeeInfo.getRaddressId());
+		employeeInfo.setRbankId(jsEmployeeInfo.getRbankId());
+		employeeInfo.setRpaymethodId(jsEmployeeInfo.getRpaymethodId());
+		employeeInfo.setSecondSurName(jsEmployeeInfo.getSecondSurName());
+		employeeInfo.setSsNumber(jsEmployeeInfo.getSsNumber());
+		employeeInfo.setStreetType(jsEmployeeInfo.getStreetType());
+		employeeInfo.setSurName(jsEmployeeInfo.getSurName());
+		
+		return employeeInfo;
+	}
+
+	private static native <T extends JavaScriptObject> T eval(String javascript)
+	/*-{
+		return eval(javascript);
+	}-*/;
+
 	
 }

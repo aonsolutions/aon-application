@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataITObject {
@@ -56,6 +57,23 @@ public class MainContrataITObject {
 		
 	}
 	
+	public void getEmployeesInfo(Integer itIds [], Consumer<List<ITEmployee>> success, Consumer<Throwable> failure){
+		
+		impl.getEmployeesITInfo(itIds, new AsyncCallback<List<ITEmployee>>() {
+			
+			@Override
+			public void onSuccess(List<ITEmployee> employeesInfoList) {
+				initEmployeeList(employeesInfoList);
+				initITList(employeesInfoList);
+				success.accept(employeesInfoList);	
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+		
+	}
+
 	public void deleteIT(IT it, Consumer<String> success, Consumer<Throwable> failure) {
 		impl.deleteIT(it.getId(), new AsyncCallback<String>() {
 			
@@ -82,19 +100,25 @@ public class MainContrataITObject {
 		});
 	}
 	
+	public void setEmployeesInfo(List<ITEmployee> employeesInfoList, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
+		initEmployeeList(employeesInfoList);
+		initITList(employeesInfoList);
+		success.accept(employeesInfoList);	
+	}
+	
 	private void initEmployeeList(List<ITEmployee> employeesInfoList) {
 		allEmployeesList.clear();
 		employeesList.clear();
 		allEmployeesList.addAll(employeesInfoList);
 		employeesList.addAll(employeesInfoList);
 		
+		employeesFilterMap.clear();
 		// Init map
 		for(ITEmployee employee : allEmployeesList) {
 			String fullName = employee.getEmployeeInfo().getFullName();
 			String document = employee.getEmployeeInfo().getDocument();
 			String ssNumber = employee.getEmployeeInfo().getSsNumber();
 			Integer contractId = employee.getContractInfo().getContractId();
-			
 			employeesFilterMap.put(fullName + ", Documento : " + document + ", SS : " + ssNumber, contractId);
 		}
 	}
@@ -105,6 +129,7 @@ public class MainContrataITObject {
 		
 		Date currentDate = new Date();
 		
+		itsFilterMap.clear();
 		// Init map
 		for(ITEmployee employee : allEmployeesList) {
 			String fullName = employee.getEmployeeInfo().getFullName();
@@ -112,7 +137,6 @@ public class MainContrataITObject {
 				it.setFullName(fullName);
 				
 				allITsList.add(it);
-				
 				if(it.getEndDate() == null || it.getEndDate().after(currentDate)) {
 					itsList.add(it);
 					String description = fullName + (StringUtils.isBlank(it.getDescription()) ? "" : " " + it.getDescription())

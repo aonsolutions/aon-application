@@ -289,6 +289,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEmployeesITInfo(getCurrentDomainName(), allEmployees, asyncCallback);
 	}
 
+	public void getEmployeesITInfo(Integer ids [], AsyncCallback<List<ITEmployee>> asyncCallback) {
+		enterprisesServiceAsync.getEmployeesITInfo(getCurrentDomainName(), ids, asyncCallback);
+	}
+
 	public void deleteIT(Integer itId, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.deleteIT(getCurrentDomainName(), itId, asyncCallback);
 	}

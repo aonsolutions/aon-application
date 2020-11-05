@@ -43,6 +43,16 @@ public class AONContext implements AutoCloseable{
 		return SETTINGS;
 	}
 	
+	private static int getDomainId(DSLContext dslContext, String domainName) {
+		return 
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.where(DOMAIN.NAME.eq(domainName))
+		.fetchOne(DOMAIN.ID)
+		;
+	}
+	
 	/**
 	 * @deprecated Usar getAONContext(String domainName, int domainId, <b>String user</b>)
 	 *  para obtener el usuario, desde un servlet (parte cliente), se puede llamar al método
@@ -76,6 +86,15 @@ public class AONContext implements AutoCloseable{
 	public static AONContext getAONContext(String schema) {
 		try {
 			return new AONContext(AonDataSource.getInstance().getDatabaseConnection(schema));
+		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		}
+	}
+	
+	public static AONContext getAONContext(String domainName,String user) {
+		try {
+			return new AONContext(AonDataSource.getInstance().getConnection(
+					domainName), domainName, user);
 		} catch (AonConnectionException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
@@ -130,6 +149,14 @@ public class AONContext implements AutoCloseable{
 		
 	}
 	
+	private AONContext(Connection connection, String domainName, String user) {
+		this.domainName = domainName;
+		this.user = user;
+		this.connection = connection;
+		this.dslContext = DSL.using(connection,getDefaultSettings());
+		this.domainId = getDomainId(dslContext, domainName);
+	}
+
 	private AONContext(Connection connection, String domainName, int domainId, String user) {
 		this.domainName = domainName;
 		this.domainId = domainId;
