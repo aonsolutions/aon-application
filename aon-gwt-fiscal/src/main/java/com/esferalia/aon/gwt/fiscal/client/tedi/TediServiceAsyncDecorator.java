@@ -1,16 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.tedi;
 
-import java.util.LinkedList;
-
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import es.translogia.tedi.ewok.TediInvoice;
 
 public class TediServiceAsyncDecorator implements TediServiceAsync {
 
@@ -20,6 +13,20 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 		this.fsa = mod190ServiceAsync;
 	}
 	
+	@Override
+	public void parseInvoice(String domainName, String user, int domain, String fileName, String content,
+			AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.parseInvoice(domainName, user, domain, fileName , content, new AsyncCallbackWrapper<TediResult>(callback));		
+	}
+
+	@Override
+	public void validateInvoice(String domainName, String user, int domain, TediResult result,
+			AsyncCallback<TediResult> callback) {
+		AON.start();
+		fsa.validateInvoice(domainName, user, domain, result, new AsyncCallbackWrapper<TediResult>(callback));
+	}
+/*
 	@Override
 	public void getAonConfiguration(String domainName, String user, int domain,
 			AsyncCallback<AonConfiguration> callback) {
@@ -70,13 +77,6 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 	}
 	
 	@Override
-	public void validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result,
-			AsyncCallback<TediResult> callback) {
-		AON.start();
-		fsa.validateInvoice(domainName, user, domain, snapshot,result, new AsyncCallbackWrapper<TediResult>(callback));
-	}
-	
-	@Override
 	public void getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid, AsyncCallback<String> callback) {
 		AON.start();
 		fsa.getInvoiceAttachURL(domainName, user, domain,snapshot, uuid, new AsyncCallbackWrapper<String>(callback));
@@ -109,12 +109,6 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 		fsa.addTediCompany(domainName, user, domain, snapshot, company, new AsyncCallbackWrapper<Void>(callback));		
 	}
 
-	@Override
-	public void parseInvoice(String domainName, String user, int domain, boolean snapshot, String fileName, String content,
-			AsyncCallback<TediResult> callback) {
-		AON.start();
-		fsa.parseInvoice(domainName, user, domain, snapshot,fileName , content, new AsyncCallbackWrapper<TediResult>(callback));		
-	}
 
 	@Override
 	public void fillAttach(String domainName, String user, int domain, boolean snapshot, TediResult result,
@@ -122,4 +116,5 @@ public class TediServiceAsyncDecorator implements TediServiceAsync {
 		AON.start();
 		fsa.fillAttach(domainName, user, domain, snapshot,result, new AsyncCallbackWrapper<TediResult>(callback));		
 	}
+*/
 }

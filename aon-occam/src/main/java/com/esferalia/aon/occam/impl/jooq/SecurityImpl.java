@@ -228,15 +228,15 @@ public class SecurityImpl implements ISecurity {
 	}
 
 	@Override
-	public DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
+	public DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.insertDomainApp(ctx, domainApp));
+				configuration -> SecurityDAO.saveDomainApp(ctx, domainApp));
 	}
 
 	@Override
-	public DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp) {
+	public boolean isOCRActive(AONContext ctx, int domain) {
 		return ctx.getDslContext().transactionResult( 
-				configuration -> SecurityDAO.updateDomainApp(ctx, domainApp));
+				configuration -> SecurityDAO.isOCRActive(ctx, domain));
 	}
 	
 	@Override

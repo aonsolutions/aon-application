@@ -73,8 +73,8 @@ public interface ISecurity {
 	// DOMAIN APP
 	
 	public Stream<DomainApp> getDomainAppStream(AONContext ctx, DomainAppFilter filter);
-	public DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp);
-	public DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp);
+	public DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp);
+	public boolean isOCRActive(AONContext ctx,int domain); 
 	
 	// USER APP ROLE
 	
@@ -89,6 +89,6 @@ public interface ISecurity {
 	
 	// CERTIFICATE
 	public Certificate getCertificate(AONContext ctx, UserFilter userFilter ) ; 
-	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ; 
+	public Certificate insertCertificate(AONContext ctx, UserFilter userFilter , Certificate certificate) ;
 	
 }

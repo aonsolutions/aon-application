@@ -8,16 +8,12 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
-import com.code.aon.accounting.Period;
 import com.code.aon.AonVersion;
+import com.code.aon.accounting.Period;
 import com.code.aon.common.domain.DomainManager;
-import com.code.aon.ui.accounting.check.modules.account.AccountEnabledCheck;
-import com.code.aon.ui.accounting.check.modules.account.ParentEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.entry.EmptyAccountEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.entry.UnbalancedAccountEntryCheck;
 import com.code.aon.ui.accounting.check.modules.account.invoice.DuplicatedInvoicesCheck;
-import com.code.aon.ui.accounting.check.modules.account.invoice.NoRecordedInvoiceCheck;
-import com.code.aon.ui.accounting.check.modules.balance.BalanceCheck;
 import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.util.AonUtil;
@@ -43,12 +39,12 @@ public class CheckController extends DataScrollerState {
 	public List<ICheckModule> getAccountChecks() {
 		if (accountChecks == null) {
 			accountChecks = new LinkedList<ICheckModule>();
-			accountChecks.add( new ParentEntryCheck() );
-			accountChecks.add( new AccountEnabledCheck() );
-			accountChecks.add( new EmptyAccountEntryCheck() );
-			accountChecks.add( new UnbalancedAccountEntryCheck() );
-			accountChecks.add( new BalanceCheck() );
-			accountChecks.add( new NoRecordedInvoiceCheck() );
+//			accountChecks.add( new ParentEntryCheck() );
+//			accountChecks.add( new AccountEnabledCheck() );
+//			accountChecks.add( new EmptyAccountEntryCheck() );
+//			accountChecks.add( new UnbalancedAccountEntryCheck() );
+//			accountChecks.add( new BalanceCheck() );
+//			accountChecks.add( new NoRecordedInvoiceCheck() );
 			accountChecks.add( new DuplicatedInvoicesCheck() );
 		}
 		return accountChecks;

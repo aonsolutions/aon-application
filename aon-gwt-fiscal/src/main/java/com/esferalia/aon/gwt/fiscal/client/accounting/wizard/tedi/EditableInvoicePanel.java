@@ -1675,7 +1675,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		iconWaitLabel.setStyleName(AON.CSS.aonLoader());
 		iconWaitLabel.addStyleName(AON.CSS.aonMargin());
 		hp.add(iconWaitLabel);
-		Label textWaitLabel = new Label("Procesando el reconocimiento del archivo. Conectando con tEDI Center. Un  momento, por favor.....");
+		Label textWaitLabel = new Label("Procesando la extracci\u00F3n de datos del documento.");
 		textWaitLabel.setStyleName(AON.CSS.aonMargin());
 		textWaitLabel.addStyleName(AON.CSS.aonBold());
 		hp.add(textWaitLabel);
@@ -1689,7 +1689,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		fileUpload.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
 				dropPanel.clear();
-				if ( invoiceCallback.getConfiguration().isTediActive() ) {
+				if ( invoiceCallback.getConfiguration().isOCRActive() ) {
 					dropPanel.add(getSplashWidget());
 				} else {
 					dropPanel.clear();
@@ -1705,21 +1705,8 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		
 		FlowPanel filedrag = new FlowPanel();
 		filedrag.add(fileUpload);
-		String label = "Arrastre aqu\u00ED el archivo o click para seleccionar";
-		Label dropZone = new Label( label );
-		
-		if (invoiceCallback.getConfiguration().isTediActive()) {
-			if (invoiceCallback.getConfiguration().isTediSnapshotUser()) {
-				dropZone.setStyleName(AON.CSS.aonTediSnapshotDropZone());
-			} else if (invoiceCallback.getConfiguration().isTediUser()) {
-				dropZone.setStyleName(AON.CSS.aonTediDropZone());
-			} else {
-				dropZone.setStyleName(AON.CSS.aonDropZone());	
-			}
-		} else {
-			dropZone.setStyleName(AON.CSS.aonDropZone());
-		}
-		
+		Label dropZone = new Label();
+		dropZone.setStyleName(AON.CSS.aonDropZone());
 		dropZone.getElement().getStyle().setCursor(Style.Cursor.POINTER);
 		dropZone.addClickHandler( new ClickHandler() {
 			

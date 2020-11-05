@@ -49,7 +49,7 @@ public class DomainBookingController extends DataScrollerState {
 	private int totalSmbUsers;
 	private int totalAiOUsers;
 	private int totalPortals;
-	private int totalTedis;
+	private int totalOCRs;
 	
 	private DataScrollerState parentState;
 	
@@ -212,7 +212,7 @@ public class DomainBookingController extends DataScrollerState {
 		this.totalAiOUsers = 0;
 		this.totalSmbUsers = 0;
 		this.totalPortals = 0;
-		this.totalTedis = 0;
+		this.totalOCRs = 0;
 		
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		AONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), "");
@@ -231,8 +231,8 @@ public class DomainBookingController extends DataScrollerState {
 			if ( data.isPortal() ) {
 				this.totalPortals++;
 			}
-			if(data.isTediCenter()) {
-				this.totalTedis++;
+			if(data.isOCR()) {
+				this.totalOCRs++;
 			}
 			
 			if((isShowSMB() && data.isAonSmb())  || (isShowAio() && data.isAonAio())) {	
@@ -283,8 +283,8 @@ public class DomainBookingController extends DataScrollerState {
 				modules.add( dim.getDescription() );
 			}
 		}
-		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		if(tedi.isAccepted()) modules.add("Tedi Center");
+		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
+		if(ocr.isActive()) modules.add("OCR");
 		return StringUtils.join(modules, ", ");					
 	}
 
@@ -300,7 +300,7 @@ public class DomainBookingController extends DataScrollerState {
 		return ! StringUtils.isEmpty(backAction);
 	}
 
-	public int getTotalTedis() {
-		return totalTedis;
+	public int getTotalOCRs() {
+		return totalOCRs;
 	}
 }

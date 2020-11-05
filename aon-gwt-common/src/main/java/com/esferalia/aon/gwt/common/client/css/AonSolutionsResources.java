@@ -12,8 +12,8 @@ public interface AonSolutionsResources extends ClientBundle {
 	@CssResource.NotStrict
 	AonSolutionsCSS css();
 	
-	@Source("images/logo-tedi-transparent.png")
-	ImageResource aonTediLogoTransparent();
+	@Source("images/aon-ocr.png")
+	ImageResource aonOcrDrop();
 	
 	@Source("images/logo-tedi-gray.png")
 	ImageResource aonTediLogoGray();

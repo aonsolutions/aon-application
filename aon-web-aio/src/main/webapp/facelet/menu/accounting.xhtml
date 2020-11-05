@@ -64,7 +64,7 @@
 											<aon:outputText
 												styleClass="aon-fiscal-link-label aon-icon-beta-text"
 												style="margin-left: 5px; padding-left: 20px;"
-												value="#{bundle.accounting_entry_module} (powered by tEDI)" />
+												value="#{bundle.accounting_entry_module}" />
 										</aon:commandLink>
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -287,14 +287,6 @@
 											value="#{bundle.aon_utilities_treasury}" />												
 									</aon:commandLink>
 								</aon:div>
-<!-- 
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_tediImport-child"
-										action="gwt_tediImport-child"
-										title="tEDI center"
-										value="tEDI center" />
-								</aon:div>
- -->
 							</aon:div>
 						</aon:panelGrid>
 
@@ -621,12 +613,12 @@
 											<aon:outputText value="#{bundle.aon_utilities}" />
 										</f:facet>
 										<aon:div styleClass="aon-direct-access-list">
-<!-- 
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="accountCheck" action="check_form"
 													actionListener="#{accountCheck.onInitialize}"
-													value="#{bundle.accounting_check_balance_module}" />
+													value="Chequeo de posibles facturas duplicadas." />
 											</aon:div>
+<!-- 
  -->							
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="accountingFinanceChecker"

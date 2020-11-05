@@ -74,8 +74,6 @@ import com.esferalia.aon.occam.api.model.Signature;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
-import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
-import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
@@ -93,6 +91,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserScopePropertiesDA
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.UserWorkgroupPropertiesDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SecurityDAO {
@@ -188,21 +187,44 @@ public class SecurityDAO {
 		return auth;
 	}
 	
-	public static DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
+	public static DomainApp saveDomainApp(AONContext ctx, DomainApp domainApp) {
+		if (domainApp == null) throw new AonCoreException("DomainApp can not be null");
+		if (domainApp.getDomain() == null) throw new AonCoreException("DomainApp.domain can not be null"); 
+		if (domainApp.getApp() == null) throw new AonCoreException("DomainApp.app can not be null");
+		// Se chequea que no exista una fila para ese dominio y app
+		DomainApp exists = getDomainAppStream(ctx, p -> p.getDomainProperty().eq(domainApp.getDomain())
+	 			.and(p.getAppProperty().eq( domainApp.getApp().value())))
+				.findFirst()
+				.orElseGet(null); 
+		if (exists == null) {
+			return insertDomainApp(ctx, domainApp);
+		} else {
+			if (domainApp.getId() == null) {
+				domainApp.setId(exists.getId());
+			} else {
+				if (!AonNumberUtils.equals(domainApp.getId(), exists.getId()) ) {
+					throw new AonCoreException("A row for domain+App exists with other ID");			
+				}
+			}
+			return updateDomainApp(ctx, domainApp);
+		}
+	}
+	private static DomainApp insertDomainApp(AONContext ctx, DomainApp domainApp) {
 		Integer id = ctx.getDslContext().insertInto(DOMAIN_APP)
 			.set(DOMAIN_APP.DOMAIN, domainApp.getDomain())
 			.set(DOMAIN_APP.APP, domainApp.getApp().value())
 			.set(DOMAIN_APP.ACTIVE, domainApp.getActive() ? (byte) 1 : (byte) 0)
 			.execute();
-		
+		ctx.log().info("\tINSERT DOMAIN APP id: " + id);
 		return domainApp.setId(id);
 	}
 	
-	public static DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp) {
+	private static DomainApp updateDomainApp(AONContext ctx, DomainApp domainApp) {
 		ctx.getDslContext().update(DOMAIN_APP)
 			.set(DOMAIN_APP.ACTIVE, domainApp.getActive() ? (byte) 1 : (byte) 0)
 			.where(DOMAIN_APP.ID.eq(domainApp.getId()))
 			.execute();
+		ctx.log().info("\tUPDATE DOMAIN APP id: " + domainApp.getId());
 		return domainApp;
 	}
 	
@@ -1044,6 +1066,16 @@ public class SecurityDAO {
 		;
 		
 		return certificate;
+	}
+
+	public static boolean isOCRActive(AONContext ctx, int domain) {
+		return getDomainAppStream(ctx, p -> 
+		 	p.getDomainProperty().eq(domain)
+		 	.and(p.getAppProperty().eq( AonApp.OCR.value()))
+		 	.and(p.getActiveProperty().eq( (byte) 1 ))
+			)
+		.findFirst()
+		.isPresent();
 	}
 	
 }

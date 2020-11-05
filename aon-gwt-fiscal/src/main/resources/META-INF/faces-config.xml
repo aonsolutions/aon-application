@@ -161,18 +161,5 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/accounting/accountConsolidatedBalance.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== tEDI center  ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_tediCenter</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/tedi/tedi.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>gwt_tediCenter_beta</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/tedi/tedi_snapshot.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	
 </faces-config>
 		

@@ -253,16 +253,16 @@
 						
 						<aon:column styleClass="aon-editDataTable-iconColumn aon-text-center">
 							<f:facet name="header">
-								<aon:outputText value="Tedi Center" />
+								<aon:outputText value="OCR" />
 							</f:facet>
-							<aon:outputText rendered="#{!to.tediCenter}" value="-" />
+							<aon:outputText rendered="#{!to.OCR}" value="-" />
 							<aon:outputText value="&#160;"
-								rendered="#{to.tediCenter}" styleClass="aon-icon-check-black"
+								rendered="#{to.OCR}" styleClass="aon-icon-check-black"
 								style="padding-left:12px" />	
 							<f:facet name="footer">
 								<aon:div style="float:right">
 									<aon:outputText	styleClass="aon-italic"
-										value="#{controller.totalTedis}" />
+										value="#{controller.totalOCRs}" />
 								</aon:div>
 							</f:facet>									
 						</aon:column>

@@ -56,7 +56,7 @@ public class DomainInfo implements Serializable {
 	
 	private static final String USER = "user";
 	
-	private static final String TEDI_CENTER = "tediCenter";
+	private static final String OCR = "ocr";
 	
 	private static final String NAME = "name";
 	
@@ -92,7 +92,7 @@ public class DomainInfo implements Serializable {
 	
 	private Date date;
 	
-	private boolean tediCenter;
+	private boolean ocr;
 	
 	private boolean autoUpdate;
 	
@@ -158,9 +158,9 @@ public class DomainInfo implements Serializable {
 			}
 		}
 
-		String tediCenterValue = properties.getProperty(TEDI_CENTER);
-		if(BooleanUtils.toBoolean(tediCenterValue)) {
-			this.tediCenter = true;
+		String ocrValue = properties.getProperty(OCR);
+		if(BooleanUtils.toBoolean(ocrValue)) {
+			this.ocr = true;
 		}
 		
 		String autoUpdateValue = properties.getProperty(AUTO_UPDATE);
@@ -269,12 +269,12 @@ public class DomainInfo implements Serializable {
 		this.user = user;
 	}
 	
-	public boolean isTediCenter() {
-		return tediCenter;
+	public boolean isOCR() {
+		return ocr;
 	} 
 	
-	public void setTediCenter(boolean tediCenter) {
-		this.tediCenter = tediCenter;
+	public void setOCR(boolean ocr) {
+		this.ocr = ocr;
 	}
 	
 	public String getName() {
@@ -373,8 +373,8 @@ public class DomainInfo implements Serializable {
 		if (! StringUtils.equals(getPayer(), di.getPayer()) ) {
 			diff( sb, ICommonMessages.PAYER_DOMAIN, (di.getPayer()!=null?di.getPayer():"-") );
 		} 
-		if(isTediCenter() != di.isTediCenter()) {
-			diff(sb, ICommonMessages.EXTERNAL_TEDI_CENTER, di.isTediCenter());
+		if(isOCR() != di.isOCR()) {
+			diff(sb, ICommonMessages.EXTERNAL_OCR, di.isOCR());
 		}
 		return sb.toString();
 	}
@@ -411,8 +411,8 @@ public class DomainInfo implements Serializable {
 			String modulesValue = StringUtils.join(displayModules, " ");
 			properties.setProperty(DISPLAY_MODULES, modulesValue);			
 		}
-		if( tediCenter ) {
-			properties.setProperty(TEDI_CENTER, Boolean.TRUE.toString());
+		if( ocr ) {
+			properties.setProperty(OCR, Boolean.TRUE.toString());
 		}
 		if ( autoUpdate ) {
 			properties.setProperty(AUTO_UPDATE, Boolean.TRUE.toString());
@@ -468,7 +468,7 @@ public class DomainInfo implements Serializable {
 		di.setDomainManagement(domain.isDomainManagement());
 		di.setBookingModules(bookingInfo.getBookingModules());
 		di.setDisplayModules(bookingInfo.getDisplayModules());
-		di.setTediCenter(bookingInfo.isTediCenter());
+		di.setOCR(bookingInfo.isOCR());
 		return di;
 	}
 	

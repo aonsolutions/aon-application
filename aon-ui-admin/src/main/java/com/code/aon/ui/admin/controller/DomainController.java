@@ -149,8 +149,8 @@ public class DomainController extends BasicController {
 
 	@Override
 	protected void accept() {
-		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		tedi.contract();
+		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
+		ocr.contract();
 		super.accept();
 	}
 	
@@ -195,8 +195,8 @@ public class DomainController extends BasicController {
 				this.currentDomainInfo.setAutoUpdate(true);
 				saveHistory(this.currentDomainInfo, getCompany());
 			}
-			TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-			tedi.onInit(event);
+			OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
+			ocr.init();
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
@@ -499,7 +499,7 @@ public class DomainController extends BasicController {
 		body.append( AonUtil.getMessage(ICommonMessages.DOMAIN_EMAIL_BODY_4, type, di.getNumberOfUsers(), size ) );
 		String multiDomain = di.isDomainManagement() ? AonUtil.getMessage(ICommonMessages.YES) : AonUtil.getMessage(ICommonMessages.NO);
 
-		String booking = String.valueOf(di.getBookingModules().size());
+		String booking = String.valueOf(di.getBookingModules().size() + (di.isOCR()?1:0) );
 		if ( di.getType() == DomainType.ENTERPRISE ) {
 			boolean isAonOne = di.getBookingModules().contains(Module.AON_ONE);
 			boolean isAonFinance = !isAonOne && di.getBookingModules().contains(Module.AON_FINANCE);
@@ -512,8 +512,8 @@ public class DomainController extends BasicController {
 				String name = StringEscapeUtils.escapeHtml(module.getName(locale));
 				body.append( "<li>" ).append(name).append( "</li>" );
 			}
-			if(di.isTediCenter()) {
-				body.append( "<li>" ).append("tEDI Center").append( "</li>" );
+			if(di.isOCR()) {
+				body.append( "<li>" ).append("OCR").append( "</li>" );
 			}
 			body.append( "</ul>" );
 		}
@@ -736,6 +736,7 @@ public class DomainController extends BasicController {
 			emails.addAll(getUserEmails());
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
+			return new Address[]{};
 		}
 		return emails.toArray(new Address[emails.size()]);
 	}
