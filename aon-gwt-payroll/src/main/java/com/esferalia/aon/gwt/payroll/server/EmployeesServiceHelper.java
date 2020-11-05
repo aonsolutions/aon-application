@@ -101,8 +101,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
 
 public class EmployeesServiceHelper {

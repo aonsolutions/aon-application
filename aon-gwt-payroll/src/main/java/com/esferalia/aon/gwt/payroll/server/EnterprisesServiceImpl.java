@@ -114,8 +114,8 @@ import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 import solutions.aon.seg.social.SistemaRED;
-import solutions.aon.seg.social.exceptions.ForbiddenException;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 
 /**
  * The server side implementation of the RPC service.
