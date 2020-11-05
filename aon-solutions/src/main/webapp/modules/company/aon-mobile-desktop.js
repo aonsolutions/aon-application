@@ -7,7 +7,7 @@ import {startModule, rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
-
+import '../../components/aon-search-box.js';
 import '../marketplace/aon-marketplace.js';
 
 class AonMobileDesktop extends HTMLElement {
@@ -53,6 +53,12 @@ class AonMobileDesktop extends HTMLElement {
   }
 
 	buildNotifications() {
+		let searchDiv = document.createElement('div');
+		searchDiv.id = 'aonHeaderCompany';
+		this.appendChild(searchDiv)
+		searchDiv.innerHTML = `<aon-search-box id="aonHeaderSearchBox"></aon-search-box>`;
+
+		// search = document.getElementById("aonHeaderSearchBox");
 
 		let div = document.createElement('div');
 		div.style.paddingBottom = '25px';
@@ -68,13 +74,12 @@ class AonMobileDesktop extends HTMLElement {
 		ul.className = 'aonClip';
 		div.appendChild(ul);
 
-		ul.appendChild(this.buildNotificationsLi('99 Nuevos documentos sin leer', 'snippet_folder'));
+		ul.appendChild(this.buildNotificationsLi('99 Documentos sin leer', 'snippet_folder'));
+		ul.appendChild(this.buildNotificationsLi('99 Notificaciones', 'notifications'));
 		ul.appendChild(this.buildNotificationsLi('99 Facturas Pendientes', 'inbox'));
 		ul.appendChild(this.buildNotificationsLi('99 Facturas Rechazadas', 'report'));
-		ul.appendChild(this.buildNotificationsLi('99 Notificaciones sin leer', 'notifications'));
 		ul.appendChild(this.buildNotificationsLi('99 Solicitudes Abiertas', 'assignment'));
-		ul.appendChild(this.buildNotificationsLi('99 Solicitudes requieren tu intervención', 'assignment_ind'));
-
+		ul.appendChild(this.buildNotificationsLi('99 Solicitudes para ti', 'assignment_ind'));
 
 		let div2 = document.createElement('div');
 

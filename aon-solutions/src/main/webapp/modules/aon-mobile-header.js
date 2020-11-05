@@ -3,7 +3,7 @@ import {isMobile} from  '../services/utils.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon-button.js';
-import '../components/aon-search-box.js';
+
 
 import './configuration/aon-configuration.js';
 import './invoice/aon-invoice-panel.js';
@@ -43,11 +43,7 @@ class AonMobileHeader extends HTMLElement {
 					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
 				</span>
 			</div>
-			<div id="aonHeaderCompany">
-				<span>
-					<aon-search-box id="aonHeaderSearchBox"></aon-search-box>
-				</span>
-			</div>
+
 			<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
 			`;
 
@@ -120,13 +116,7 @@ class AonMobileHeader extends HTMLElement {
 			aonLogo.style.top = '0px';
 		} else aonLogo.src = '../assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
-			if(localStorage.getItem('aon_domain_id')){
-				rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
-				let aonDesktop = document.getElementById('aonDesktop');
-				aonDesktop.setAttribute('company', this.getAttribute('company'));
-			} else {
-				rootPanel('<aon-parent id="aonParent"></aon-parent>');
-			}
+			rootPanel('<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>');
 		});
 	}
 }

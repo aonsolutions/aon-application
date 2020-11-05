@@ -1,5 +1,8 @@
+import {getElement} from '../services/utils.js'
 
 class AonLoader extends HTMLElement {
+
+	PROGRESS;
 
 	get id() {
 		return this.getAttribute('id');
@@ -11,22 +14,21 @@ class AonLoader extends HTMLElement {
 
 	constructor () {
 		super();
+		this.PROGRESS = this.getAttribute('id') + 'Progress';
 	}
 
 	connectedCallback () {
 		this.innerHTML = `
-			<div id="${this.getAttribute('id') + 'Progress'}" class="aonProgress"></div>
+			<div id="${this.PROGRESS}" class="aonProgress"></div>
 		`;
 	}
 
 	start() {
-		document.getElementById(this.getAttribute('id') + 'Progress')
-			.style.display = 'flex';
+		getElement(this.PROGRESS).style.display = 'flex';
 	}
 
 	stop() {
-		document.getElementById(this.getAttribute('id') + 'Progress')
-			.style.display = 'none';
+		getElement(this.PROGRESS).style.display = 'none';
 	}
 }
 
