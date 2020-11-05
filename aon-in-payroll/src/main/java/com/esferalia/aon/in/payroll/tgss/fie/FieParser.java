@@ -1,5 +1,8 @@
 package com.esferalia.aon.in.payroll.tgss.fie;
 
+import static com.esferalia.aon.watson.util.AonStringUtils.isBlank;
+import static com.esferalia.aon.watson.util.AonStringUtils.substring;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +16,8 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class FieParser {
 
 	public static class UnknownFileException extends IOException {
@@ -22,103 +27,40 @@ public class FieParser {
 		public UnknownFileException(Throwable cause) {super(cause);}
 	}
 
-	public static interface Listener {
-		
-		public void startEnterprise();
-			public void onRegime(String regime);
-			public void onCCC(String ccc);
-		public void endEnterprise();
-		
-		public void startRZS();
-			public void onEntepriseName(String enterpriseName);
-		public void endRZS();
-		
-		public void startEmployee();
-			public void onNaf(String naf);
-			public void onIPF(String ipf);
-		public void endEmployee();
-		
-		public void startNameData();
-			public void onFirstSurname(String firstSurname);
-			public void onSecondSurname(String secondSurname);
-			public void onName(String name);
-		public void endNameData();
-				
-		public void startDIT();
-			public void onDitResponsibleEntity(String responsibleEntity); 
-			public void onDitItStartDate(Date itStartDate);
-			public void onDitRelapse(Boolean relapse);
-			public void onDitInitialProcessDate(Date initialProcessDate);
-			public void onDitLastProcessDate(Date lastProcessDate);
-			public void onDitAcumulatedDays(Integer acumulatedDays);
-			public void onDitNonExistantProcessDate(Date nonExistantProcessDate);
-			public void onDitNonExistantProcessCause(String nonExistantProcessCause);
-			public void onDitContingency(Integer contingency);
-			public void onDitDeficiencyIndicator(String deficiencyIndicator);
-			public void onDitProcessType(Integer processType);
-			public void onDitEstimatedDuration(Integer estimatedDuration);
-			public void onDitDelegatePaymendEndDate(Date delegatePaymentEndDate);
-			public void onDitDelegatePaymendEndCause(String delegatePaymentEndCause);
-			public void onDitItEndDate(Date itEndDate);
-			public void onDitItEndCause(String itEndCause);
-			public void onDitItPartCancel(Boolean itPartCancel);
-		public void endDIT();
-		
-		public void startITD();
-			public void onItdDirectPaymentStartDate(Date directPaymentStartDate);
-			public void onItdDirectPaymentStartEntity(String directPaymentStartEntity);
-			public void onItdActualResponsibleEntity(String actualResponsibleEntity);
-			public void onItdResponsibleEntityInitialPaymentDate(Date responsibleEntityInitialPaymentDate);
-			public void onItdResponsibleEntityFinalPaymentDate(Date responsibleEntityFinalPaymentDate);
-			public void onItdRegulatoryBase(Float regulatoryBase);
-		public void endITD();
-		
-		public void startOIT();
-			public void onOitMcssProcessRevisionStartDate(Date mcssProcessRevisionStartDate);
-			public void onOitCause89Date(Date cause89Date);
-			public void onOitCause90Date(Date cause90Date);
-			public void onOitCause91Date(Date cause91Date);
-			public void onOitCause92Date(Date cause92Date);
-			public void onOitProcess170_2(Boolean process170_2);
-			public void onOitCause42Date(Date cause42Date);
-			public void onOitCause35Date(Date cause35Date);
-			public void onOitMedicalCertificateDate(Date MedicalCertificateDate);
-		public void endOIT();
-
-	}
-	
-	public static void parse(File file, Listener listener) throws FileNotFoundException, IOException {
+	public static void parse(File file, FieListener listener) throws FileNotFoundException, IOException {
 		try(FileInputStream is = new FileInputStream(file)) {
 			parse(is, listener);
 		}
 	}
 
-	public static void parse(InputStream is , Listener listener) throws IOException {	
+	public static void parse(InputStream is , FieListener listener) throws IOException {	
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))){
 			
 			// ETI ETIquetas de proceso
 			String eti = find(reader, "ETI");
-			Optional<String> empl = null;
 			do {
-			
+				String emp ;
 				// EMP Identificación de EMPpresa
-				try {empl = attemp(reader, "EMP");}
-				catch(NoSuchElementException e) {}
+				try {
+					emp = attemp(reader, "EMP").get();
+				}
+				catch(NoSuchElementException e) {
+					break;
+				}
 				
-				String emp = empl.get();
 				listener.startEnterprise();
 				
-				String regime = emp.substring(3, 7);
+				String regime = substring(emp, 3, 7);
 				listener.onRegime(regime);
 				
-				String ccc = emp.substring(7, 18);
+				String ccc = substring(emp,7, 18);
 				listener.onCCC(ccc);				
 				
 				// RZS RaZón Social
 				String rzs = find(reader, "RZS");
 				listener.startRZS();
 				
-				String enterpriseName = rzs.substring(5,60);
+				String enterpriseName = substring(rzs,5,60);
 				listener.onEntepriseName(enterpriseName.trim());
 				listener.endRZS();
 
@@ -127,10 +69,10 @@ public class FieParser {
 				String tra = find(reader, "TRA");
 				listener.startEmployee();
 				
-				String naf = tra.substring(3, 15);
+				String naf = substring(tra,3, 15);
 				listener.onNaf(naf);
 				
-				String ipf = tra.substring(19,33);
+				String ipf = substring(tra,19,33);
 				listener.onIPF(ipf);
 				listener.endEmployee();
 				
@@ -138,13 +80,13 @@ public class FieParser {
 				String ayn = find(reader, "AYN");
 				listener.startNameData();
 				
-				String firstSurname = ayn.substring(3,23);
+				String firstSurname = substring(ayn,3,23);
 				listener.onFirstSurname(firstSurname.trim());
 				
-				String secondSurname = ayn.substring(23,43);
+				String secondSurname = substring(ayn,23,43);
 				listener.onSecondSurname(secondSurname.trim());
 				
-				String name = ayn.substring(43,58);
+				String name = substring(ayn,43,58);
 				listener.onName(name.trim());
 				listener.endNameData();
 				
@@ -153,74 +95,74 @@ public class FieParser {
 					listener.startDIT();
 					String dit =  find(reader,"DIT");
 					
-					String responsibleEntity = dit.substring(3,6).trim();
-					if(responsibleEntity.equals("")) responsibleEntity = null;
+					String responsibleEntity = substring(dit,3,6).trim();
+					if(AonStringUtils.isBlank(responsibleEntity)) responsibleEntity = null;
 					listener.onDitResponsibleEntity(responsibleEntity); 
 
-					Date itStartDate = parseDateFromFie(dit.substring(6,14));
+					Date itStartDate = parseDateFromFie(substring(dit,6,14));
 					listener.onDitItStartDate(itStartDate);				
 					
-					String relapseStr = dit.substring(14,15).trim();
+					String relapseStr = substring(dit,14,15).trim();
 					Boolean relapse = (relapseStr.toUpperCase().equals("S"));
-					if(relapseStr.equals(""))
+					if(isBlank(relapseStr))
 							relapse = null;
 					listener.onDitRelapse(relapse);
 					
-					Date initialProcessDate = parseDateFromFie(dit.substring(15,23));
+					Date initialProcessDate = parseDateFromFie(substring(dit,15,23));
 					listener.onDitInitialProcessDate(initialProcessDate);
 					
-					Date lastProcessDate = parseDateFromFie(dit.substring(23,31));
+					Date lastProcessDate = parseDateFromFie(substring(dit,23,31));
 					listener.onDitLastProcessDate(lastProcessDate);
 					
 					Integer acumulatedDays = null;
-					try { acumulatedDays = Integer.parseInt(dit.substring(31,35));}
+					try { acumulatedDays = Integer.parseInt(substring(dit,31,35));}
 					catch(NumberFormatException e) {}
 					listener.onDitAcumulatedDays(acumulatedDays);
 					
-					Date nonExistantProcessDate = parseDateFromFie(dit.substring(35, 43));
+					Date nonExistantProcessDate = parseDateFromFie(substring(dit,35, 43));
 					listener.onDitNonExistantProcessDate(nonExistantProcessDate);
 					
-					String nonExistantProcessCause = dit.substring(43, 45).trim();
-					if(nonExistantProcessCause.equals("")) nonExistantProcessCause = null;
+					String nonExistantProcessCause = substring(dit,43, 45).trim();
+					if(isBlank(nonExistantProcessCause)) nonExistantProcessCause = null;
 					listener.onDitNonExistantProcessCause(nonExistantProcessCause);
 					
 					Integer contingency = null;
-					try {contingency = Integer.parseInt(dit.substring(45,46));}
+					try {contingency = Integer.parseInt(substring(dit,45,46));}
 					catch(NumberFormatException e) {}
 					listener.onDitContingency(contingency);
 					
-					String deficiencyIndicator = dit.substring(46,47);
-					if(deficiencyIndicator.equals("")) deficiencyIndicator = null;
+					String deficiencyIndicator = substring(dit,46,47);
+					if(isBlank(deficiencyIndicator)) deficiencyIndicator = null;
 					listener.onDitDeficiencyIndicator(deficiencyIndicator);
 					
 					Integer processType = null;
-					try {processType = Integer.parseInt(dit.substring(47,48));}
+					try {processType = Integer.parseInt(substring(dit,47,48));}
 					catch(NumberFormatException e) {}
 					listener.onDitProcessType(processType);
 					
 					
 					Integer estimatedDuration = null;
-					try {estimatedDuration = Integer.parseInt(dit.substring(48,52).trim());}
+					try {estimatedDuration = Integer.parseInt(substring(dit,48,52).trim());}
 					catch (NumberFormatException e) {}					
 					listener.onDitEstimatedDuration(estimatedDuration);
 					
-					Date delegatePaymentEndDate = parseDateFromFie(dit.substring(52,60));
+					Date delegatePaymentEndDate = parseDateFromFie(substring(dit,52,60));
 					listener.onDitDelegatePaymendEndDate(delegatePaymentEndDate);
 					
-					String delegatePaymentEndCause = dit.substring(60,62).trim();
-					if(delegatePaymentEndCause.equals("")) delegatePaymentEndCause = null;
+					String delegatePaymentEndCause = substring(dit,60,62).trim();
+					if(isBlank(delegatePaymentEndCause)) delegatePaymentEndCause = null;
 					listener.onDitDelegatePaymendEndCause(delegatePaymentEndCause);
 					
-					Date itEndDate = parseDateFromFie(dit.substring(62,70));
+					Date itEndDate = parseDateFromFie(substring(dit,62,70));
 					listener.onDitItEndDate(itEndDate);
 					
-					String itEndCause = dit.substring(70,72);
-					if(itEndCause.trim().equals("")) itEndCause = null;
+					String itEndCause = substring(dit,70,72);
+					if(isBlank(itEndCause)) itEndCause = null;
 					listener.onDitItEndCause(itEndCause);
 					
-					String itPartCancelStr = dit.substring(72,73);
+					String itPartCancelStr = substring(dit,72,73);
 					Boolean itPartCancel = itPartCancelStr.equals("S");
-					if(itPartCancelStr.trim().equals("")) itPartCancel = null;
+					if(isBlank(itPartCancelStr)) itPartCancel = null;
 					listener.onDitItPartCancel(itPartCancel);					
 					listener.endDIT();
 
@@ -229,24 +171,24 @@ public class FieParser {
 					if(!itd.isEmpty()) {
 						listener.startITD();
 						
-						Date directPaymentStartDate = parseDateFromFie(itd.get().substring(3,11));					
+						Date directPaymentStartDate = parseDateFromFie(substring(itd.get(),3,11));					
 						listener.onItdDirectPaymentStartDate(directPaymentStartDate);						
 
-						String directPaymentStartEntity = itd.get().substring(11,14);
+						String directPaymentStartEntity = substring(itd.get(),11,14);
 						listener.onItdDirectPaymentStartEntity(directPaymentStartEntity);
 						
-						String actualResponsibleEntity = itd.get().substring(14,17);
+						String actualResponsibleEntity = substring(itd.get(),14,17);
 						listener.onItdActualResponsibleEntity(actualResponsibleEntity);
 						
-						Date responsibleEntityInitialPaymentDate = parseDateFromFie(itd.get().substring(17,25));
+						Date responsibleEntityInitialPaymentDate = parseDateFromFie(substring(itd.get(),17,25));
 						listener.onItdResponsibleEntityInitialPaymentDate(responsibleEntityInitialPaymentDate);
 						
-						Date responsibleEntityFinalPaymentDate = parseDateFromFie(itd.get().substring(25,33));
+						Date responsibleEntityFinalPaymentDate = parseDateFromFie(substring(itd.get(),25,33));
 						listener.onItdResponsibleEntityFinalPaymentDate(responsibleEntityFinalPaymentDate);
 						
 						Float regulatoryBase = null;
 					
-						try { regulatoryBase = Float.parseFloat(itd.get().substring(33,34)+"."+itd.get().substring(33,35));}
+						try { regulatoryBase = Float.parseFloat(substring(itd.get(),33,34)+"."+substring(itd.get(),33,35));}
 						catch (NumberFormatException e){}
 						listener.onItdRegulatoryBase(regulatoryBase);			
 						
@@ -258,39 +200,39 @@ public class FieParser {
 					if(!oit.isEmpty()) {
 						listener.startOIT();
 						
-						Date mcssProcessRevisionStartDate = parseDateFromFie(oit.get().substring(3,11));			
+						Date mcssProcessRevisionStartDate = parseDateFromFie(substring(oit.get(),3,11));			
 						listener.onOitMcssProcessRevisionStartDate(mcssProcessRevisionStartDate);
 						
-						Date cause89Date = parseDateFromFie(oit.get().substring(11,19));							
+						Date cause89Date = parseDateFromFie(substring(oit.get(),11,19));							
 						listener.onOitCause89Date(cause89Date);
 						
-						Date cause90Date = parseDateFromFie(oit.get().substring(19,27));	
+						Date cause90Date = parseDateFromFie(substring(oit.get(),19,27));	
 						listener.onOitCause90Date(cause90Date);
 
-						Date cause91Date = parseDateFromFie(oit.get().substring(27,35));	
+						Date cause91Date = parseDateFromFie(substring(oit.get(),27,35));	
 						listener.onOitCause91Date(cause91Date);
 						
-						Date cause92Date = parseDateFromFie(oit.get().substring(35,43));	
+						Date cause92Date = parseDateFromFie(substring(oit.get(),35,43));	
 						listener.onOitCause92Date(cause92Date);
 
 						Boolean process170_2 = null;
-						process170_2 = (oit.get().substring(43,44).equals("S"));	
+						process170_2 = (substring(oit.get(),43,44).equals("S"));	
 						listener.onOitProcess170_2(process170_2);
 												
-						Date cause42Date = parseDateFromFie(oit.get().substring(44,52));						
+						Date cause42Date = parseDateFromFie(substring(oit.get(),44,52));						
 						listener.onOitCause42Date(cause42Date);
 						
-						Date cause35Date = parseDateFromFie(oit.get().substring(52,60));
+						Date cause35Date = parseDateFromFie(substring(oit.get(),52,60));
 						listener.onOitCause35Date(cause35Date);
 
-						Date medicalCertificateDate = parseDateFromFie(oit.get().substring(60,68));
+						Date medicalCertificateDate = parseDateFromFie(substring(oit.get(),60,68));
 						listener.onOitMedicalCertificateDate(medicalCertificateDate);
 						
 						listener.endOIT();	
 					}
 		
 				listener.endEnterprise();
-			} while ( empl != null );
+			} while ( true );
 
 			// ETF ETiquetas de proceso
 			String etf = find(reader, "ETF");
@@ -336,7 +278,7 @@ public class FieParser {
 	
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		parse(new File(args[0]), new Listener() {
+		parse(new File(args[0]), new FieListener() {
 			
 			@Override
 			public void startRZS() {System.out.println("RZS: \n{");}
