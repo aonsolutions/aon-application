@@ -5,7 +5,31 @@ export const clearElement = (id) => {
   document.getElementById(id).innerHTML = '';
 }
 
+export const getReader = (file)=> {
+  return new Promise((resolve, reject)=>{
+      const READER = new FileReader();
+			READER.readAsDataURL(file);
+			READER.onload = () => {
+        const {result} = READER;
+        const {name, size, type:contentType} = file;
+        const base64File = result.split(',')[1];
+        const datos = {
+          content: base64File,
+          contentType,
+          contentEncoding: 'base64',
+          name,
+          size
+        };
+				resolve(datos);
+			};
+  });
+
+}
+
 export const getElement = (id) => document.getElementById(id);
+
+export const getElementById = (id) => document.getElementById(id);
+
 
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
