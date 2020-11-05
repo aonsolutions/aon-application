@@ -1,7 +1,5 @@
-import {startModule, rootPanel} from '../services/gwtLoader.js';
-import {closeSession} from  '../services/service.js';
+import {rootPanel} from '../services/gwtLoader.js';
 
-import {bidoq} from '../services/bidoq.js';
 import '../components/aon-icon.js'
 
 class AonMobileMenu extends HTMLElement {
@@ -69,10 +67,16 @@ class AonMobileMenu extends HTMLElement {
 					<aon-icon-button id="aonMobileMenuInvoiceButton" icon="receipt"></aon-icon-button>
 				</span>
 
-				<span id="aonMobileMenuCloseSession"  style="top: 10px; position: relative;">
-					<aon-icon-button id="aonMobileMenuCloseSessionButton" icon="input"></aon-icon-button>
+				<span id="aonMobileMenuCamera"  style="top: 10px; position: relative;">
+					<aon-icon-button id="aonMobileMenuCameraButton" icon="camera"></aon-icon-button>
 				</span>
-
+				<input
+					type="file"
+					accept="image/*"
+					capture="camera"
+					id="aonMobileMenuCameraInput"
+					hidden
+			  	/>
 			</div>
 		`;
 		let rp = document.getElementById('rootPanel');
@@ -108,16 +112,14 @@ class AonMobileMenu extends HTMLElement {
 		aonMobileMenuInvoice.style.marginLeft = n;
 		aonMobileMenuInvoice.style.marginRight = n;
 
-		let aonMobileMenuCloseSession = document.getElementById('aonMobileMenuCloseSession');
-		aonMobileMenuCloseSession.style.marginLeft = n;
 
 		let aonMobileMenuInvoiceButton = document.getElementById('aonMobileMenuInvoiceButton');
 		aonMobileMenuInvoiceButton.addEventListener('click', () => {
 			rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 		});
 
-		let aonMobileMenuCloseSessionButton = document.getElementById('aonMobileMenuCloseSessionButton');
-		aonMobileMenuCloseSessionButton.addEventListener('click',() => closeSession());
+		let aonMobileMenuCameraButton = document.getElementById('aonMobileMenuCameraButton');
+		aonMobileMenuCameraButton.addEventListener('click',() => this.openCamera());
 	}
 
 
@@ -138,6 +140,17 @@ class AonMobileMenu extends HTMLElement {
 		rootPanel.style.marginBottom = '0px';
 
 		this.removeAttribute('opened');
+	}
+	
+	openCamera(){
+		document.getElementById('aonMobileMenuCameraInput').click();
+	}
+
+	async sendImage(){
+		// insertInvoice
+		document.getElementById('aonMobileMenuCameraInput').addEventListener('change',(resp)=>{
+			console.log(resp);
+		})
 	}
 
 }
