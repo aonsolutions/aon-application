@@ -1,10 +1,10 @@
-export * from './authService';
+export * from './authService.js';
 
-export * from './invoiceService';
+export * from './invoiceService.js';
 
-export * from './companyService';
+export * from './companyService.js';
 
-export * from './userService';
+export * from './userService.js';
 
-export * from './fileService';
+export * from './fileService.js';
 
