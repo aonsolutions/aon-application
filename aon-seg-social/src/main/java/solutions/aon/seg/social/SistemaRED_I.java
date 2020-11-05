@@ -28,6 +28,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLLabelElement;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.invalidData.NoMoreDataException;
@@ -293,7 +294,7 @@ public class SistemaRED_I {
 			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return null;
 	}
@@ -386,7 +387,7 @@ public class SistemaRED_I {
 			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return null;
 	}
@@ -453,7 +454,7 @@ public class SistemaRED_I {
 			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return null;
 	}
@@ -510,7 +511,7 @@ public class SistemaRED_I {
 			StatusCodeException.HandleStatusCodeException(e);
 
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return null;
 	}
@@ -593,7 +594,7 @@ public class SistemaRED_I {
 		} catch (ElementNotFoundException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return null;
 	}
@@ -660,7 +661,7 @@ public class SistemaRED_I {
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return null;
 	}
@@ -714,7 +715,7 @@ public class SistemaRED_I {
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return null;
 		
