@@ -12,7 +12,6 @@ import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleTEDI.IAccountEntryModuleCallback;
 import com.esferalia.aon.gwt.fiscal.client.accounting.ISelectionCallback;
-import com.esferalia.aon.gwt.fiscal.client.tedi.TediContextVisitor;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediServiceAsyncDecorator;
@@ -470,10 +469,10 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 				}
 			}
 			
-			if ( invoiceCallback.getConfiguration().isTediActive() ) {
+			if ( invoiceCallback.getConfiguration().isOCRActive() ) {
 				final MimeType attachMimeType = mimeType;
-				TEDI_SERVICE.parseInvoice(invoiceCallback.getCurrentDomainName(), invoiceCallback.getCurrentUser(), invoiceCallback.getCurrentDomainId(),
-						invoiceCallback.getConfiguration().isTediSnapshotUser(), name, doc, new AsyncCallback<TediResult>() {
+				TEDI_SERVICE.parseInvoice(invoiceCallback.getCurrentDomainName(), invoiceCallback.getCurrentUser(), 
+					invoiceCallback.getCurrentDomainId(), name, doc, new AsyncCallback<TediResult>() {
 					
 					@Override
 					public void onSuccess(TediResult result) {
@@ -577,8 +576,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 						@Override
 						public void onAccept(TediResult result) {
 							TEDI_SERVICE.validateInvoice(getCallback().getCurrentDomainName(),
-									getCallback().getCurrentUser(), getCallback().getCurrentDomainId(),
-									getCallback().getConfiguration().isTediSnapshotUser(), result, new AsyncCallback<TediResult>() {
+									getCallback().getCurrentUser(), getCallback().getCurrentDomainId(), result, new AsyncCallback<TediResult>() {
 
 										@Override
 										public void onSuccess(TediResult result) {

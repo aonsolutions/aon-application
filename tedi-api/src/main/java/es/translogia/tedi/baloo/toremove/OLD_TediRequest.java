@@ -1,4 +1,4 @@
-package es.translogia.tedi.baloo;
+package es.translogia.tedi.baloo.toremove;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -11,7 +11,7 @@ import java.net.URLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class TediRequest {
+public class OLD_TediRequest {
 	private static final String TEDI_SNAPSHOT = "https://europe-west1-tedi-snapshot.cloudfunctions.net";
 	private static final String TEDI = "https://europe-west1-tedicenter.cloudfunctions.net";
 	private static final String LINE_FEED = "\r\n";
@@ -20,7 +20,7 @@ public class TediRequest {
 		return snapshot?TEDI_SNAPSHOT:TEDI; 
 	}
 	
-	protected TediResponse get(String tediUrl, String token) {
+	protected OLD_TediResponse get(String tediUrl, String token) {
 		HttpsURLConnection conn = null;
 		Integer responseCode = null;
 		try {
@@ -42,17 +42,17 @@ public class TediRequest {
 				while ((output = br.readLine()) != null) {
 					response = output;	
 				}
-				return new TediResponse(response);
+				return new OLD_TediResponse(response);
 			} else {
-				return new TediResponse(conn.getResponseMessage(), conn.getResponseCode());
+				return new OLD_TediResponse(conn.getResponseMessage(), conn.getResponseCode());
 			}
 		} catch (Throwable  e) {
-			return new TediResponse(e.getMessage(), responseCode==null?null:responseCode);
+			return new OLD_TediResponse(e.getMessage(), responseCode==null?null:responseCode);
 		} finally {
 			if (conn != null) conn.disconnect();
 		}
 	}
-	protected TediResponse post(String tediUrl, String token, String requestData) {
+	protected OLD_TediResponse post(String tediUrl, String token, String requestData) {
 		HttpsURLConnection conn = null;
 		Integer responseCode = null;
 		try {
@@ -78,20 +78,20 @@ public class TediRequest {
 				while ((output = br.readLine()) != null) {
 					response = output;	
 				}
-				return new TediResponse(response);
+				return new OLD_TediResponse(response);
 			} else {
-				return new TediResponse(conn.getResponseMessage(), conn.getResponseCode());
+				return new OLD_TediResponse(conn.getResponseMessage(), conn.getResponseCode());
 			}
 			
 		} catch (Throwable  e) {
 			e.printStackTrace();
-			return new TediResponse(e.getMessage(), responseCode==null?null:responseCode);
+			return new OLD_TediResponse(e.getMessage(), responseCode==null?null:responseCode);
 		} finally {
 			if (conn != null) conn.disconnect();
 		}
 	}
 
-	protected TediResponse postMultipartFile(String tediUrl, String token, String fileName, InputStream input) {
+	protected OLD_TediResponse postMultipartFile(String tediUrl, String token, String fileName, InputStream input) {
 		HttpsURLConnection conn = null;
 		Integer responseCode = null;
 		try {
@@ -139,20 +139,20 @@ public class TediRequest {
 				while ((outputResponse = br.readLine()) != null) {
 					response = outputResponse;	
 				}
-				return new TediResponse(response);
+				return new OLD_TediResponse(response);
 			} else {
-				return new TediResponse(conn.getResponseMessage(), conn.getResponseCode());
+				return new OLD_TediResponse(conn.getResponseMessage(), conn.getResponseCode());
 			}
 		} catch (Throwable  e) {
 			e.printStackTrace();
-			return new TediResponse(e.getMessage(), responseCode==null?null:responseCode);
+			return new OLD_TediResponse(e.getMessage(), responseCode==null?null:responseCode);
 		} finally {
 			if (conn != null) conn.disconnect();
 		}
 
 	}
 	
-	protected TediResponse postFile(String tediUrl, String token, String fileName, InputStream input) {
+	protected OLD_TediResponse postFile(String tediUrl, String token, String fileName, InputStream input) {
 		HttpsURLConnection conn = null;
 		Integer responseCode = null;
 		try {
@@ -185,13 +185,13 @@ public class TediRequest {
 				while ((outputResponse = br.readLine()) != null) {
 					response = outputResponse;	
 				}
-				return new TediResponse(response);
+				return new OLD_TediResponse(response);
 			} else {
-				return new TediResponse(conn.getResponseMessage(), conn.getResponseCode());
+				return new OLD_TediResponse(conn.getResponseMessage(), conn.getResponseCode());
 			}
 		} catch (Throwable  e) {
 			e.printStackTrace();
-			return new TediResponse(e.getMessage(), responseCode==null?null:responseCode);
+			return new OLD_TediResponse(e.getMessage(), responseCode==null?null:responseCode);
 		} finally {
 			if (conn != null) conn.disconnect();
 		}

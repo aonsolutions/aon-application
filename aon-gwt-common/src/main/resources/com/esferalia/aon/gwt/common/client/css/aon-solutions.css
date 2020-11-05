@@ -663,61 +663,9 @@ input[type="checkbox"]:focus + label {
 }
 
 @sprite .aon_drop_zone {
-	gwt-image: "aonTediLogoRed";
-	background-position: center right;
-	background-size: 50%;
-	background-color: white;
-	min-height: 150px;
-	height: 150px;
-	min-width: 180px;
-	display: table;
-	margin-top: 1em;
-	margin-left: auto;
-	margin-right: auto;
-	width: 80%;
-	border-width: 2px;
-	border-style: dashed;
-	border-color: #bbb;
-	border-radius: 2em;
-	text-align: center;
-	vertical-align: middle;	
-    padding-top: 28px;
-    padding-bottom: 28px;
-    font-size: 1.2em;
-    color: #2d4b6d;
-    font-weight: bold;
-}
-
-@sprite .aon_tedi_drop_zone {
-	gwt-image: "aonTediLogoGray";
-	background-position: center right;
-	background-size: 50%;
-	background-color: white;
-	min-height: 150px;
-	height: 150px;
-	min-width: 180px;
-	display: table;
-	margin-top: 1em;
-	margin-left: auto;
-	margin-right: auto;
-	width: 80%;
-	border-width: 2px;
-	border-style: dashed;
-	border-color: #bbb;
-	border-radius: 2em;
-	text-align: center;
-	vertical-align: middle;	
-    padding-top: 28px;
-    padding-bottom: 28px;
-    font-size: 1.2em;
-    color: #2d4b6d;
-    font-weight: bold;
-}
-
-@sprite .aon_tedi_snapshot_drop_zone {
-	gwt-image: "aonTediSnapshotLogo";
-	background-position: center right;
-	background-size: 50%;
+	gwt-image: "aonOcrDrop";
+	background-position: center center;
+	background-size: 30%;
 	background-color: white;
 	min-height: 150px;
 	height: 150px;

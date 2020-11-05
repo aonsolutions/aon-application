@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.tedi;
+package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 
 import java.util.Date;
 import java.util.LinkedHashSet;

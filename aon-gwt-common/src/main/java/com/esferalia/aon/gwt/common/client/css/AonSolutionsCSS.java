@@ -347,12 +347,6 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_drop_zone")
 	String aonDropZone();
 	
-	@ClassName("aon_tedi_drop_zone")
-	String aonTediDropZone();
-	
-	@ClassName("aon_tedi_snapshot_drop_zone")
-	String aonTediSnapshotDropZone();
-
 	@ClassName("aon_drop_zone_hover")
 	String aonDropZoneHover();
 	

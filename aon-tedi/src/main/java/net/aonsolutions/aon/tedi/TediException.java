@@ -1,4 +1,4 @@
-package es.translogia.tedi.baloo;
+package net.aonsolutions.aon.tedi;
 
 public class TediException extends Exception {
 

@@ -137,25 +137,6 @@
 			selector="body" query="removeClass('aon-overflow-hidden')" />						
 	</ui:define>
 
-	<ui:define name="tediCenterMenuContent"> 
-		<aon:if test="#{desktop.state.tediCenter}">
-			<aon:commandLink 
-				action="gwt_tediCenter"
-				title="tEDI Center" 
-				value="&#160;"
-				inmediate="true"
-				styleClass="aon-menu-icon aon-icon-tedi" />
-			<aon:if test="#{domainSwitcher.betaUser}">
-				<aon:commandLink 
-					action="gwt_tediCenter_beta"
-					title="tEDI Center [TESTT]" 
-					inmediate="true"
-					value="&#160;"
-					styleClass="aon-menu-icon aon-icon-tedi" />
- 			</aon:if>
-		</aon:if>
-	</ui:define>
-	
 	<ui:define name="callCenterMenuContent">
 		<aon:if test="#{aonRole.callCenter}">
 			<aon:commandLink id="menu_call_center" 

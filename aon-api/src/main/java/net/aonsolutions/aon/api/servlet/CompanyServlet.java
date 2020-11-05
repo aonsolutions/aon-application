@@ -92,24 +92,24 @@ public class CompanyServlet extends HttpServlet{
 					.setActive(true);
 			if(Module.ACCOUNTING.equals(r)) {
 				dapp.setApp(AonApp.ACCOUNTING);
-				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
 			} else if(Module.AON_FINANCE.equals(r)) {
 				dapp.setApp(AonApp.INVOICE);
-				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
 			} else if(Module.CALL_CENTER.equals(r)) {
 				dapp.setApp(AonApp.MESSENGER);
-				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
 			} else if(Module.CONTRATA.equals(r)) {
 				
 			} else if(Module.DOCUMENT.equals(r)) {
 				dapp.setApp(AonApp.DOCUMENTAL);
-				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
 			} else if(Module.FISCAL.equals(r)) {
 				dapp.setApp(AonApp.FISCAL);
-				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
 			} else if(Module.PAYROLL.equals(r)) {
 				dapp.setApp(AonApp.PAYROLL);
-				AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", dapp);
+				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
 			}
 			if(dapp.getApp() != null)
 				json.put(dapp.getApp().name().toLowerCase(), dapp.getActive());
@@ -132,10 +132,10 @@ public class CompanyServlet extends HttpServlet{
 					.setDomain(domain.getId())
 					.setApp(aonApp)
 					.setActive(active);
-			domainApp = AON_SOLUTIONS.insertDomainApp(domain.getName(), domain.getId(), "", domainApp);
+			domainApp = AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", domainApp);
 		} else {
 			domainApp.setActive(active);
-			domainApp = AON_SOLUTIONS.updateDomainApp(domain.getName(), domain.getId(), "", domainApp);
+			domainApp = AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", domainApp);
 		}
 		
 		return domainApp.toJSON();

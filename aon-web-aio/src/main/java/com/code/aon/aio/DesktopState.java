@@ -52,7 +52,7 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import net.aonsolutions.core.pool.AonConnectionException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.admin.PortalInfo;
-import com.code.aon.ui.admin.controller.TediConfigurationController;
+import com.code.aon.ui.admin.controller.OCRConfigurationController;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.BasicOption;
@@ -120,7 +120,7 @@ public class DesktopState implements Serializable {
 		}
 		User user = UserUtils.getInstance().getLoggedUser();
 		initPortal(user, ds);
-		initTediCenter(user, ds);
+		initOCR(user, ds);
 		initUser(user);
 		initSupport();
 		checkSerialization();
@@ -209,9 +209,9 @@ public class DesktopState implements Serializable {
 		return this.adminRole;
 	}
 	
-	public boolean isTediCenter() {
-		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		return tedi.isAccepted();
+	public boolean isOCR() {
+		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
+		return ocr.isActive();
 	}
 
 	private boolean calculateAdminRole() {
@@ -352,9 +352,9 @@ public class DesktopState implements Serializable {
 		}
 	}
 	
-	private void initTediCenter(User user, DomainSwitcher ds) {
-		TediConfigurationController tedi = (TediConfigurationController) AonUtil.getRegisteredBean("tediConfiguration");
-		tedi.init();
+	private void initOCR(User user, DomainSwitcher ds) {
+		OCRConfigurationController ocr = (OCRConfigurationController) AonUtil.getRegisteredBean("ocrConfiguration");
+		ocr.init();
 	}
 
 	private void initHotel() {

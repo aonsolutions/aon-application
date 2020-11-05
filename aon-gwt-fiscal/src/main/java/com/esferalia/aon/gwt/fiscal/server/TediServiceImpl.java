@@ -2,39 +2,54 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.ByteArrayInputStream;
 import java.net.MalformedURLException;
-import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.tedi.TediService;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.ApplicationParameter;
-import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.tedi.TediCompanyResult;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
-import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.io.DataUrl;
 import com.esferalia.aon.watson.server.io.DataUrlSerializer;
 import com.esferalia.aon.watson.server.io.IDataUrlSerializer;
 
-import es.translogia.tedi.baloo.TediException;
-import es.translogia.tedi.ewok.TediAddress;
-import es.translogia.tedi.ewok.TediCompany;
-import es.translogia.tedi.ewok.TediInvoice;
-import es.translogia.tedi.ewok.TediInvoiceStatus;
 import net.aonsolutions.aon.tedi.TEDI;
+import net.aonsolutions.aon.tedi.TediContext;
+import net.aonsolutions.aon.tedi.TediException;
 
 @WebServlet(name = "TEDI Servlet", urlPatterns = { "/aon_gwt_fiscal/roms/Tedi" })
 public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements TediService {
 
 	private static final long serialVersionUID = -2121272613749054639L;
 
+	@Override
+	public TediResult parseInvoice(String domainName, String user, int domain, String fileName, String content) throws AonCoreException {
+		try {
+			IDataUrlSerializer serializer = new DataUrlSerializer();
+			DataUrl unserialized = serializer.unserialize(content);
+			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
+			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input); 
+			return result;
+		} catch ( TediException t) {
+			t.printStackTrace();
+			throw new AonCoreException(t);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			throw new AonCoreException(e);
+		}
+	}
+	
+	@Override
+	public TediResult validateInvoice(String domainName, String user, int domain, TediResult result ) throws AonCoreException {
+		try {
+			return TEDI.validateInvoice(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), result);
+		} catch ( TediException t) {
+			t.printStackTrace();
+			throw new AonCoreException(t);
+		} 	
+	}
+	
+/*
 	@Override
 	public AonConfiguration getAonConfiguration(String domainName, String user, int domain) {
 		return AON.getConfiguration(domainName, domain,user, null);
@@ -103,10 +118,6 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 		}
 	}
 
-	@Override
-	public TediResult validateInvoice(String domainName, String user, int domain, boolean snapshot, TediResult result ) throws AonCoreException {
-		return TEDI.validateInvoice(domainName, domain, user, result);
-	}
 	
 	@Override
 	public String getInvoiceAttachURL(String domainName, String user, int domain, boolean snapshot, String uuid) throws AonCoreException {
@@ -210,24 +221,6 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 	
 	
 	@Override
-	public TediResult parseInvoice(String domainName, String user, int domain, boolean snapshot, String fileName, String content)
-			throws AonCoreException {
-		try {
-			IDataUrlSerializer serializer = new DataUrlSerializer();
-			DataUrl unserialized = serializer.unserialize(content);
-			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
-			TediResult result = TEDI.parseInvoice(domainName, domain, user, input); 
-			return result;
-		} catch ( TediException t) {
-			t.printStackTrace();
-			throw new AonCoreException(t);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			throw new AonCoreException(e);
-		}
-	}
-
-	@Override
 	public TediResult fillAttach(String domainName, String user, int domain, boolean snapshot, TediResult result) throws AonCoreException {
 		try {
 			return TEDI.fillAttach(domainName, domain, snapshot, user, result);
@@ -236,4 +229,5 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 			throw new AonCoreException(t);
 		}			
 	}
+*/
 }

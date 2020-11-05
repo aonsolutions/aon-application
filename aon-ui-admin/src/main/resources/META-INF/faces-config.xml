@@ -524,11 +524,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>			
 	
-	<!-- ************* TEDI CENTER ***************** -->
+	<!-- ************* OCR CONFIGURATION ***************** -->
 	<managed-bean>
-		<managed-bean-name>tediConfiguration</managed-bean-name>
+		<managed-bean-name>ocrConfiguration</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.admin.controller.TediConfigurationController
+			com.code.aon.ui.admin.controller.OCRConfigurationController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>			
@@ -543,12 +543,6 @@
 	
 	<!-- =================== Service Account ================= -->
 
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>adminTediCenter_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/admin/facelet/serviceAccount/formTediCenter.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>adminGoogle_form</from-outcome>

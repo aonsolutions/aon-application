@@ -2,34 +2,13 @@ package net.aonsolutions.aon.tedi;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.DataResponseDetail;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
-import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.DataResponseSource;
-import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
-import es.translogia.tedi.baloo.Tedi;
-import es.translogia.tedi.baloo.TediException;
-import es.translogia.tedi.ewok.TediCompany;
-import es.translogia.tedi.ewok.TediInvoice;
-import es.translogia.tedi.ewok.TediInvoiceStatus;
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.pdf.InvoicePDFParser;
 import solutions.aon.in.invoice.tedi.TediInvoiceBuilder;
@@ -40,7 +19,67 @@ public class TEDI {
 
 	private TEDI() {
 	}
+	
+	public static TediResult validateInvoice(TediContext tctx, TediResult result) throws TediException {
+		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		boolean mustCloseCtx =  tctx.getAONContext() != null; 
+		AONContext ctx = tctx.getAONContext();
+		try {
+			result.clearMessages();
+			if (ctx == null) {
+				if (tctx.getDomainName() == null) throw new IllegalArgumentException("TediContext.domainName can not be null");		
+				if (tctx.getDomain() == null) throw new IllegalArgumentException("TediContext.domain can not be null");
+				if (tctx.getUser() == null) throw new IllegalArgumentException("TediContext.user can not be null");
+				ctx = AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser());
+			}
+			TediValidator.validateInvoice(ctx,result);
+		} catch (Throwable t) {
+			throw new TediException(t.getMessage());
+		} finally {
+			if (ctx != null && mustCloseCtx)
+				ctx.close();
+		}
+		return result;
+	}
 
+	public static TediResult parse(TediContext tctx, InputStream input) throws TediException {
+		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		boolean mustCloseCtx =  tctx.getAONContext() != null; 
+		AONContext ctx = tctx.getAONContext();
+		try {
+			if (ctx == null) {
+				if (tctx.getDomainName() == null) throw new IllegalArgumentException("TediContext.domainName can not be null");		
+				if (tctx.getDomain() == null) throw new IllegalArgumentException("TediContext.domain can not be null");
+				if (tctx.getUser() == null) throw new IllegalArgumentException("TediContext.user can not be null");
+				ctx = AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser());
+			}
+			AonConfiguration aonCtx = (tctx.getAonConfiguration() == null)
+				?aonCtx = ConfigurationDAO.getConfiguration(ctx)
+				:tctx.getAonConfiguration();
+			if (aonCtx == null || aonCtx.getCompany() == null) {
+				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida " 
+					+ "para el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
+			}
+			TediInvoiceContext tictx = new TediInvoiceContext()
+					.setDocument(aonCtx.getCompany().getDocument())
+					.setName(aonCtx.getCompany().getName());
+			LOGGER.info("[TEDI] Attempt to parse document for [" + tictx.getDocument() + ", " + tictx.getName() + "]");
+			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tictx );
+			InvoicePDFParser.parse(input, tediInvoiceBuilder);
+			TediResultBuilder.build( tediInvoiceBuilder.getInvoice() );
+			return TediParser.toFullInvoice(ctx, aonCtx, tediInvoiceBuilder.getInvoice());
+		} catch (IOException e) {
+			throw new TediException(e.getMessage());
+		} catch (UnknownInvoiceException e) {
+			throw new TediException(e.getMessage());
+		} finally {
+			if (ctx != null && mustCloseCtx)
+				ctx.close();
+		}
+	}
+	
+	
+/*
 	public static Tedi getTedi(AONContext ctx, boolean snapshot) throws TediException {
 		String tediTokenParam = snapshot?AppParam.TEDI_SNAPSHOT_TOKEN.getValue():AppParam.TEDI_TOKEN.getValue();
 		Domain domain = AON.getDomain(ctx.getDomainName(), ctx.getDomainId(),ctx.getUser());
@@ -327,19 +366,6 @@ public class TEDI {
 		return returned;
 	}
 	
-	public static TediResult validateInvoice(String domainName, int domain, String user, TediResult result) {
-		AONContext ctx = null;
-		try {
-			result.clearMessages();
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			TediValidator.validateInvoice(ctx,result);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-		return result;
-	}
-
 	public static LinkedList<TediCompany> getCompanies(String domainName, int domain, boolean snapshot, String user)
 			throws TediException {
 		AONContext ctx = null;
@@ -430,34 +456,6 @@ public class TEDI {
 		}
 		return result;
 	}
-	
-	
-	public static TediResult parseInvoice(String domainName, int domain, String user, InputStream input) throws TediException {
-		AONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			Company company = CompanyDAO.getCompany(ctx, domain);
-			if (company == null) {
-				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida para el dominio " + domain);
-			}
-			final AonConfiguration aonCtx = ConfigurationDAO.getConfiguration(ctx);
-			
-			TediInvoiceContext tediInvoiceContext = new TediInvoiceContext()
-					.setDocument(company.getDocument())
-					.setName(company.getName());
-			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tediInvoiceContext );
-			InvoicePDFParser.parse(input, tediInvoiceBuilder);
-			TediResultBuilder.build( tediInvoiceBuilder.getInvoice() );
-			return TediParser.toFullInvoice(ctx, aonCtx, tediInvoiceBuilder.getInvoice());
-		} catch (IOException e) {
-			throw new TediException(e.getMessage());
-		} catch (UnknownInvoiceException e) {
-			throw new TediException(e.getMessage());
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
+*/	
 
 }

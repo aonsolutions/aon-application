@@ -320,47 +320,16 @@
 
 
 					<aon:outputLabel for="Domain_externalApplications"
-						value="#{bundle.aon_external_applications}" />
+						value="Extensiones complementarias" />
 					<aon:div id="Domain_externalApplications">
-						
-						<!-- TEDI CENTER -->
+						<!-- OCR -->
 						<aon:selectBooleanCheckbox
-							id="ExternalApplication_TediCenter"
-							value="#{tediConfiguration.active}" 
+							id="ExternalApplication_OCR"
+							value="#{ocrConfiguration.active}" 
 							reRender="aonContent" onclick="this.blur();">
-							<!-- <a4j:support event="onchange" reRender="Domain_externalApplications,showTediCenterWindow"
-								actionListener="#{tediConfiguration.onChangeTediCenterStatus}"
-								ajaxSingle="true" /> -->
 						</aon:selectBooleanCheckbox>
-						<aon:outputLabel for="ExternalApplication_TediCenter"
-							value="#{bundle.aon_external_tediCenter}" />
-						<!-- <aon:commandLink id="tediCenter-link" immediate="true"
-							value="&#160;" title="#{bundle.aon_edit}"
-							styleClass="aon-icon-config" 
-							style="margin-left: 5px; padding-right: 12px;"
-							rendered="#{tediConfiguration.active}"
-							actionListener="#{tediConfiguration.onChangeTediCenterStatus}"
-							reRender="showTediCenterWindow" /> -->
-						
-						<!-- TEDI CENTER SNAPSHOT-->
-						<!-- <aon:if test="#{domainSwitcher.betaUser}">
-							<aon:selectBooleanCheckbox id="ExternalApplication_TediCenterSnapshot"
-								value="#{tediConfiguration.snapshotActive}" disabled="#{tediConfiguration.snapshotActive}" 
-								reRender="aonContent" onclick="this.blur();">
-								<a4j:support event="onchange" reRender="Domain_externalApplications,showTediCenterSnapshotWindow"
-									actionListener="#{tediConfiguration.onChangeTediCenterSnapshotStatus}"
-									ajaxSingle="true" />
-							</aon:selectBooleanCheckbox>
-							<aon:outputLabel for="ExternalApplication_TediCenterSnapshot"
-								value="#{bundle.aon_external_tediCenterSnapshot}" />		
-							<aon:commandLink id="tediCenterSnapshot-link" immediate="true"
-								value="&#160;" title="#{bundle.aon_edit}"
-								styleClass="aon-icon-config" 
-								style="margin-left: 5px; padding-right: 12px;"
-								rendered="#{tediConfiguration.snapshotActive}"
-								actionListener="#{tediConfiguration.onChangeTediCenterSnapshotStatus}"
-								reRender="showTediCenterSnapshotWindow" />
-						</aon:if> -->					
+						<aon:outputLabel for="ExternalApplication_OCR"
+							value="OCR" />
 					</aon:div>			
 				</aon:panelGrid>								
 
@@ -385,8 +354,5 @@
 			<ui:param name="auditableController" value="#{adminDomain}" />
 		</ui:include>		
 		
-		<ui:include src="/com/code/aon/ui/admin/facelet/adminDomain/tedicenter.xhtml">
-			<ui:param name="controller" value="#{tediConfiguration}" />
-		</ui:include>
 	</ui:define>
 </ui:composition>

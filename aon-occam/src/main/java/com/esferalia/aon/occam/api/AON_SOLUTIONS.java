@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON_SOLUTIONS {
@@ -147,18 +148,18 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static DomainApp insertDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
-		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
-			return getSecurity().insertDomainApp(ctx, domainApp);
+	public static boolean isOCRActive(String domainName, Integer domainId, String login) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getSecurity().isOCRActive(ctx,domainId);
 		}
 	}
-	
-	public static DomainApp updateDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
+
+	public static DomainApp saveDomainApp(String domainName, Integer domainId, String login, DomainApp domainApp) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
-			return getSecurity().updateDomainApp(ctx, domainApp);
+			return getSecurity().saveDomainApp(ctx, domainApp);
 		}
 	}
-	
+
 	public static Stream<UserAppRole> getUserAppRole(String domainName, Integer domainId, String login, UserAppRoleFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)){		
 			return getSecurity().getUserAppRoleStream(ctx, filter);
