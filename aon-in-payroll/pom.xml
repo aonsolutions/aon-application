@@ -73,10 +73,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jcl</artifactId>
+			<version>1.7.25</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.7.25</version>
 			<scope>runtime</scope>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-master</artifactId>
