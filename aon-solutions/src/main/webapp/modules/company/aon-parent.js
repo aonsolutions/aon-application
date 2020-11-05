@@ -218,9 +218,6 @@ class AonParent extends HTMLElement {
 			let aonLogo = document.getElementById('aonLogo');
 		} else {
 			document.getElementById('aonHeaderSearchBox').setAttribute('selected', company.name);
-
-			let aonMobileMenu = document.getElementById('aonMobileMenu');
-			aonMobileMenu.open();
 		}
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);

@@ -1,8 +1,8 @@
+import {isMobile} from  '../../services/utils.js';
 import {login, getManifest, rememberPassword} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import '../../components/aon-input.js';
 import '../company/aon-parent.js';
-
 
 class AonLogin extends HTMLElement {
 
@@ -135,10 +135,7 @@ class AonLogin extends HTMLElement {
 			`);
 
 			let aonManifest = document.getElementById('aonManifest');
-			getManifest().then(r => {
-				let manifest = JSON.parse(r);
-				aonManifest.innerHTML = 'Version: ' + manifest.build_date;
-			});
+			getManifest().then(manifest => aonManifest.innerHTML = 'Version: ' + manifest.build_date);
 
 			let username = document.getElementById("aonLoginUser");
 			username.addEventListener('keyup', event => this.onEnter(event));
@@ -183,7 +180,9 @@ class AonLogin extends HTMLElement {
 			loader.stop();
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
-			rootPanel('<aon-parent id="aonParent"></aon-parent>');
+			rootPanel(isMobile()
+				? '<aon-mobile-desktop id="aonParent"></aon-mobile-desktop>'
+				: '<aon-parent id="aonParent"></aon-parent>');
 		}).catch(error => {
 			loader.stop();
 			let err = JSON.parse(error);

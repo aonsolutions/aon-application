@@ -40,6 +40,8 @@ class AonHome extends HTMLElement {
 					});
 				}
 			});
+		} else {
+				document.getElementById('aonMobileMenu').open();
 		}
   }
 }

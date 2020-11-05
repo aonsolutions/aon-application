@@ -26,16 +26,16 @@ class AonSearchBox extends HTMLElement {
 		this.setAttribute('opened', opened);
 	}
 
-	get selected() {
-		return this.getAttribute('selected');
+	get value() {
+		return this.getAttribute('value');
 	}
 
-	set selected(selected) {
-		this.setAttribute('selected', selected);
+	set selected(value) {
+		this.setAttribute('value', value);
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if('selected' === name){
+		if('value' === name){
 			document.getElementById('search-input').value = newValue;
 		}
 	}
@@ -52,8 +52,8 @@ class AonSearchBox extends HTMLElement {
 		let div = document.getElementById('aon-search-div');
 		let input = document.getElementById('search-input');
 		input.addEventListener('keyup', () => {
-			let aonParent = document.getElementById('aonParent');
-			aonParent.init({value: input.value});
+			this.value = input.value;
+	    this.dispatchEvent(new Event('keyup'));
 		});
 
 

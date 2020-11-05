@@ -1,3 +1,4 @@
+import {isMobile} from '../services/utils.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import './login/aon-login.js';
@@ -31,7 +32,9 @@ import './company/aon-desktop.js';
 				document.getElementById("aonHome").style.display = 'block';
 				localStorage.removeItem('aon_domain_id');
 				localStorage.removeItem('aon_domain_name');
-				rootPanel('<aon-parent id="aonParent"></aon-parent>');
+				rootPanel(isMobile()
+					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+					: '<aon-parent id="aonParent"></aon-parent>');
 			} else {
 				document.getElementById("aonLogin").style.display = 'block';
 				document.getElementById("aonHome").style.display = 'none';
