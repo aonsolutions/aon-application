@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import solutions.aon.seg.social.SistemaRedEmployee;
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.SyntaxException;
 import solutions.aon.seg.social.exceptions.invalidData.WrongRegimeException;
@@ -58,6 +59,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062");					
 		}
+		catch (InvalidCertificateException e) {}
 		catch (WrongRegimeException e) {}
 		catch (StatusCodeException e) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
@@ -73,6 +75,7 @@ public class TestEmployee {
 		}
 		catch (invalidCccException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -110,11 +113,12 @@ public class TestEmployee {
 	@Test
 	public void getEmployeeRegimeTest() {
 		
-		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNM.p12")) {
 			SistemaRedEmployee.getEmployee(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062", "011005185924");					
 		}
 		catch (WrongRegimeException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -129,6 +133,7 @@ public class TestEmployee {
 		}
 		catch (invalidCccException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -143,6 +148,7 @@ public class TestEmployee {
 		}
 		catch (SyntaxException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -184,6 +190,7 @@ public class TestEmployee {
 		}
 		catch (WrongRegimeException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -198,6 +205,7 @@ public class TestEmployee {
 		}
 		catch (invalidCccException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -212,6 +220,7 @@ public class TestEmployee {
 		}
 		catch (WrongRegimeException e) {}
 		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}

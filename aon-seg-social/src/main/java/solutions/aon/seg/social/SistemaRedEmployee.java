@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
@@ -44,7 +45,7 @@ public class SistemaRedEmployee {
 				}
 			} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
-			catch (IOException e) {throw new SegSocialException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SegSocialException(e);}
 		}
 		
@@ -200,7 +201,7 @@ public class SistemaRedEmployee {
 			try {return getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
-			catch (IOException e) {throw new SegSocialException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SegSocialException(e);}
 			return null;
 		}
@@ -292,7 +293,7 @@ public class SistemaRedEmployee {
 				}
 			} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
-			catch (IOException e) {throw new SegSocialException(e);} 
+			catch (IOException e) {throw new CertificateNotFoundException();} 
 			catch (InterruptedException e) {throw new SegSocialException(e);}
 		}
 		
@@ -346,7 +347,6 @@ public class SistemaRedEmployee {
 				InputStream stream = submit.click().getWebResponse().getContentAsStream();
 
 				byte[] ret = stream.readAllBytes();
-				for(byte b : ret) System.out.println(b); 
 				stream.close();  
 				
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
