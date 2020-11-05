@@ -42,7 +42,7 @@ class AonMobileMenu extends HTMLElement {
 
 	connectedCallback () {
 		this.build();
-  }
+  	}
 
 	build() {
 		this.innerHTML = `
@@ -141,17 +141,25 @@ class AonMobileMenu extends HTMLElement {
 
 		this.removeAttribute('opened');
 	}
-	
+
+	getCameraInput() {
+		return document.getElementById('aonMobileMenuCameraInput');
+	}
+	// getCameraInput = () => document.getElementById('aonMobileMenuCameraInput');
+
+
 	openCamera(){
-		document.getElementById('aonMobileMenuCameraInput').click();
+		getCameraInput.click();
 	}
 
 	async sendImage(){
 		// insertInvoice
-		document.getElementById('aonMobileMenuCameraInput').addEventListener('change',(resp)=>{
+		getCameraInput.addEventListener('change',(resp)=>{
 			console.log(resp);
 		})
 	}
+
+
 
 }
 
