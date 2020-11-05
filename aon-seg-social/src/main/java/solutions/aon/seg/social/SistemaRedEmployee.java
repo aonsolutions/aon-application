@@ -21,6 +21,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
@@ -283,6 +284,7 @@ public class SistemaRedEmployee {
 		public static Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 			
+			InvalidCertificateException.checkCertificate(certificateInputStream);
 			try {return getEmployeeImpl(certificateInputStream, certificatePassword, certificateType, nss);} 
 			catch (FailingHttpStatusCodeException e) {
 				switch (e.getStatusCode()) {
@@ -352,14 +354,6 @@ public class SistemaRedEmployee {
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 				return ret;
 			}			
-		}
-		
-		
-		public static void main(String[] args)
-				throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, SegSocialException {
-			try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-										
-			}catch (NullPointerException e) {}
 		}
 	}
 
