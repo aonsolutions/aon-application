@@ -156,6 +156,10 @@
 		
 	</ui:style>
 
+	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
+	<ui:import field="com.esferalia.aon.gwt.payroll.shared.FIEService.*" />
+	<ui:import field="com.esferalia.aon.gwt.payroll.shared.FIEService.Parameter.*" />
+
 	<g:DockLayoutPanel unit="PX">
 		<!-- INIT HEADER MENU -->
 		<g:north size="25">
@@ -175,6 +179,18 @@
 						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 							<g:Button ui:field='backContractButton' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" VOLVER"/>
 							<g:Button debugId='listITsButton' ui:field='listITsButton' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTA ITs" />
+						</g:HTMLPanel>
+					</g:HorizontalPanel>
+					<g:HorizontalPanel styleName="aon-finding-toolbar">
+						<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="sldToolbarPanel">
+							<g:FormPanel visible="false" ui:field="msjFIEFormPanel" method="{METHOD_POST}" action="{FIE_URL}"  encoding="{ENCODING_MULTIPART}">
+								<g:VerticalPanel visible="false" >
+									<a:MultiFileUpload visible="false"  ui:field="msjFIEFileUpload" name="{FILE.name}"  accept=".msj" />
+									<g:Hidden ui:field="userNameHidden" name="{USER.name}" />
+									<g:Hidden ui:field="domainNameHidden" name="{DOMAIN.name}" />
+								</g:VerticalPanel>
+							</g:FormPanel>								
+							<g:Button ui:field='msjFIEButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small aon-uppercase' text="MENSAJES DE I.N.S.S.EMPRESA (FIE)" /> 
 						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:HorizontalPanel>

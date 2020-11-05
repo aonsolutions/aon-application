@@ -2128,6 +2128,17 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
+	public List<ITEmployee> getEmployeesITInfo(String domainName, Integer itIds []) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqIT.getEmployeesITInfo(connection, itIds);
+//			return JooqIT.getEmployeesITInfo(connection, domainId, false);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
 	public String deleteIT(String domainName, Integer itId) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
