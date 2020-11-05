@@ -60,6 +60,30 @@ public class CCCInfo implements Serializable{
 		this.useByContracts = useByContracts;
 	}
 
+	public CCCInfo(String ccc, String cccRegime, String account, Byte typeCode, String province, String provinceCode, int activityId, Integer cccId, Boolean useByContracts) {
+		super();
+		this.ccc = ccc;
+		this.cccRegimeCode = cccRegime;
+		this.cccAccount = account;
+		this.type = typeCode;
+		this.geozone = province;
+		this.geozoneCode = provinceCode;
+		this.activityId = activityId;
+		this.cccId = cccId;
+		this.useByContracts = useByContracts;
+	}
+
+	public CCCInfo(int activityId, byte cccRegimeType, String cccRegimeCode, String ccc, String province, String provinceCode, Boolean useByContracts) {
+		super();
+		this.activityId = activityId;
+		this.type = cccRegimeType;
+		this.cccRegimeCode = cccRegimeCode;
+		this.ccc = ccc;
+		this.geozone = province;
+		this.geozoneCode = provinceCode;
+		this.useByContracts = useByContracts;
+	}
+
 	public String getCcc() {
 		return ccc;
 	}

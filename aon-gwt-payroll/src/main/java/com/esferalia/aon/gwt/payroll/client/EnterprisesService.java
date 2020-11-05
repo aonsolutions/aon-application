@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -206,5 +207,9 @@ public interface EnterprisesService extends RemoteService {
 	List<DigitalCertificate> getDigitalCertificates(String currentDomainName, String currentUser);
 
 	void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList);
+
+	MainCCCInfo getMainCCCInfoDataBase(String currentDomainName, String currentUser);
+
+	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo);
 	
 }

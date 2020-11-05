@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -581,6 +582,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void setDigitalCertificates(String currentDomainName, String currentUser, List<DigitalCertificate> digitalCertificateList, AsyncCallback<Void> callback) {
 		AON.start();
 		enterprisesServiceAsync.setDigitalCertificates(currentDomainName, currentUser, digitalCertificateList, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getMainCCCInfoDataBase(String currentDomainName, String currentUser, AsyncCallback<MainCCCInfo> callback) {
+		AON.start();
+		enterprisesServiceAsync.getMainCCCInfoDataBase(currentDomainName, currentUser, new AsyncCallbackWrapper<MainCCCInfo>(callback));
+	}
+
+	@Override
+	public void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.setMainCCCInfoDataBase(currentDomainName, currentUser, mainCCCInfo, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }
