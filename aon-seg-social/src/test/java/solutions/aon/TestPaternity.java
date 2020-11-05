@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityNotFoundException;
@@ -41,10 +42,11 @@ public class TestPaternity {
 			Date endDate= new SimpleDateFormat("dd-MM-yyyy").parse("21-11-2020");
 			assertFalse("Should throw an exception", Paternity.grabarCertificado(certificateInputStream, "jg@FNMT", "pkcs12", "011017250195", "0111", "01105577910", ID_TYPE[0], "58025118M", APPLICANT_TYPE[1], FATHER_REASON[0], startDate, endDate, 1200, 1200, 28));	
 			
-		}catch (StatusCodeException sce) {
+		} catch (CertificateNotFoundException e) {
+			fail("Certificate path is wrong");
+		} catch (StatusCodeException sce) {
 			assertTrue(true);
-		}
-		catch(SegSocialException e) {
+		} catch(SegSocialException e) {
 			assertTrue(true);
 		} catch (ParseException e) {
 			fail("Date typed wrong");

@@ -32,6 +32,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityWrongDataException;
@@ -124,7 +125,7 @@ public class Paternity {
 		} catch (MalformedURLException e) {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
-			throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 		}
 		return false;
 	
@@ -204,7 +205,7 @@ public class Paternity {
 			} catch (MalformedURLException e) {
 				throw new SegSocialException(e);
 			} catch (IOException e) {
-				throw new SegSocialException(e);
+				throw new CertificateNotFoundException();
 			}	catch (NoSuchElementException e) {
 				throw new PaternityException();
 			}
@@ -336,7 +337,7 @@ public class Paternity {
 			} catch (MalformedURLException e) {
 				throw new SegSocialException(e);
 			} catch (IOException e) {
-				throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 			}	catch (NoSuchElementException e) {
 				throw new PaternityException();
 			}
@@ -493,7 +494,7 @@ public class Paternity {
 			} catch (MalformedURLException e) {
 				throw new SegSocialException(e);
 			} catch (IOException e) {
-				throw new SegSocialException(e);
+			throw new CertificateNotFoundException();
 			}	catch (NoSuchElementException e) {
 				throw new PaternityException();
 			}
