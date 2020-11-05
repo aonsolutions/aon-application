@@ -6,6 +6,8 @@ let company;
 let invoices;
 let invoice;
 
+let TOKEN = localStorage.getItem('aon_session_id')
+
 export const closeSession = () => {
 	localStorage.removeItem('aon_session_id');
 	localStorage.removeItem('aon_domain_id');
@@ -190,11 +192,11 @@ export const getInvoice = (id) => {
 
 export const getInvoices = (data) => {
   return new Promise((resolve, reject) => {
-    request('GET', '/ms/api/invoice'  + getInvoiceQuery(data), localStorage.getItem('aon_session_id'), undefined, (result, error) => {
+    request('GET', '/ms/api/invoice', localStorage.getItem('aon_session_id'), data, (result, error) => {
       if(error) {
         reject(error);
       } else {
-				resolve(JSON.parse(result));
+			resolve(JSON.parse(result));
     	}
   	});
   });
@@ -223,6 +225,42 @@ export const deleteInvoices = (invoiceIds) => {
 		});
 	});
 }
+
+ export const get = (url, data) => {
+	return new Promise((resolve, reject) => {
+	  request('GET', url, TOKEN, data, (result, error) => {
+		if(error) {
+		  reject(error);
+		} else {
+			resolve(JSON.parse(result));
+		}
+		});
+	});
+  }
+  
+  export const post = (url, data) => {
+	  return new Promise((resolve, reject) => {
+		request('POST', url, TOKEN, data, (result, error) => {
+			  if(error) {
+				  reject(error);
+			  } else {
+				  resolve(JSON.parse(result));
+			  }
+		  });
+	  });
+  }
+  
+  export const remove = (url, data) => {
+	  return new Promise((resolve, reject) => {
+		request('DELETE', url, TOKEN, data, (result, error) => {
+			  if(error) {
+				  reject(error);
+			  } else {
+				  resolve( JSON.parse(result));
+			  }
+		  });
+	  });
+  }
 
 const getInvoiceQuery = (params) => {
 	let query = '';
