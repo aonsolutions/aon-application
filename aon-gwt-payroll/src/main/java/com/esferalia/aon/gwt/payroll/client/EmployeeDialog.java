@@ -532,15 +532,15 @@ public abstract class EmployeeDialog extends CustomDialog {
 			this.account.setValue(null);
 			this.bic.setValue(null);
 			
-			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
-				this.account.setEnabled(true);
-				this.bic.setEnabled(true);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
-			} else {
-				this.account.setEnabled(false);
-				this.bic.setEnabled(false);
-			}
+//			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
+//				this.account.setEnabled(true);
+//				this.bic.setEnabled(true);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
+//			} else {
+//				this.account.setEnabled(false);
+//				this.bic.setEnabled(false);
+//			}
 		}
 
 		@Override

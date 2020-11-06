@@ -588,17 +588,17 @@ public class EmployeeDraft extends Composite {
 			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
 			employeeDraftObject.setEmployeePayMethod(methodPay);
 			
-			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
-				this.account.setEnabled(true);
-				this.bic.setEnabled(true);
-			} else {
-				this.account.setValue(null);
-				this.bic.setValue(null);
-				this.account.setEnabled(false);
-				this.bic.setEnabled(false);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
-			}
+//			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
+//				this.account.setEnabled(true);
+//				this.bic.setEnabled(true);
+//			} else {
+//				this.account.setValue(null);
+//				this.bic.setValue(null);
+//				this.account.setEnabled(false);
+//				this.bic.setEnabled(false);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
+//			}
 			
 			saving();
 			

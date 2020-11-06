@@ -267,12 +267,16 @@ public class JooqEmployee {
 				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
 				Integer rbankTableId = null;
 				String account = employeeData.getAccount();
-				String alias = "CUENTA";
-				if(null != account && account.length() > 8) {
-					String codeBank = account.substring(4, 8);
-					alias = BankEntities.getBankEntity(codeBank);
-				}
-				if(!StringUtils.isBlank(account)){
+				if(!StringUtils.isBlank(account)) {
+					account.trim();
+					account.replaceAll(" ", "");
+					
+					String alias = "CUENTA";
+					if(account.length() > 8) {
+						String codeBank = account.substring(4, 8);
+						alias = BankEntities.getBankEntity(codeBank);
+					}
+					
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
@@ -1084,8 +1088,15 @@ public class JooqEmployee {
 			}
 		}
 		
+		// Create RPayMethod
 		if(null == employeeData.getRpaymethodId()){
 			String typePayMethod = getTypeDescription(employeeData.getPayMethodTypeB());
+			String account = employeeData.getAccount();
+			if(!StringUtils.isBlank(account)) {
+				account.trim();
+				account.replaceAll(" ", "");
+			}
+			
 			if(!StringUtils.isEmpty(typePayMethod)){
 				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
 						.set(PAY_METHOD.DOMAIN, domain)
@@ -1095,17 +1106,18 @@ public class JooqEmployee {
 						.fetchOne();
 				
 				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
+				
 				Integer rbankTableId = null;
-				if(employeeData.getAccount() != null && employeeData.getAccount() != ""){
+				if(!StringUtils.isBlank(account)){
 					String alias = "CUENTA";
-					if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
-						String codeBank = employeeData.getAccount().substring(4, 8);
+					if(null != account && account.length() > 8) {
+						String codeBank = account.substring(4, 8);
 						alias = BankEntities.getBankEntity(codeBank);
 					}
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
+							.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
 							.set(RBANK.BIC, employeeData.getBic())
 							.set(RBANK.ALIAS,alias)
 							.set(RBANK.ACTIVE, (byte) 1)
@@ -1132,20 +1144,48 @@ public class JooqEmployee {
 				employeeData.setRpaymethodId(rpayMethodTableId);
 				employeeData.setRbankId(rbankTableId);
 			}
-		}else{
+		// Update RPayMethod	
+		} else {
 			String payMethod = getTypeDescription(employeeData.getPayMethodTypeB());
-			if("TRANSFERENCIA".equals(payMethod) || "GIRO".equals(payMethod)){
+			String account = employeeData.getAccount();
+			if(!StringUtils.isBlank(account)) {
+				account.trim();
+				account.replaceAll(" ", "");
+			}
+			
+			// Delete RPayMethod
+			if(StringUtils.isBlank(payMethod)) {
+				dslContext.delete(RPAYMETHOD)
+				.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+				.execute();
+				
+				dslContext.delete(RBANK)
+					.where(RBANK.ID.eq(employeeData.getRbankId()))
+					.execute();
+				
+				dslContext.delete(PAY_METHOD)
+					.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+					.execute();
+				
+				//ACTUALIZAR CAMPOS
+				employeeData.setPaymethodId(null);
+				employeeData.setRpaymethodId(null);
+				employeeData.setRbankId(null);
+			
+			// Update RPayMethod
+			} else {
+				// RBank
 				Integer rbankTableId = employeeData.getRbankId();
-				if(null == employeeData.getRbankId()  /*&& (employeeData.getAccount() != null && employeeData.getAccount() != "")*/){
+				if(null == employeeData.getRbankId()){
 					String alias = "CUENTA";
-					if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
-						String codeBank = employeeData.getAccount().substring(4, 8);
+					if(null != account && account.length() > 8) {
+						String codeBank = account.substring(4, 8);
 						alias = BankEntities.getBankEntity(codeBank);
 					}
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
+							.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
 							.set(RBANK.BIC, employeeData.getBic())
 							.set(RBANK.ALIAS, alias)
 							.set(RBANK.ACTIVE, (byte) 1)
@@ -1153,107 +1193,64 @@ public class JooqEmployee {
 							.fetchOne();
 					 
 					 rbankTableId = rbankRecord.get(RBANK.ID); 
-				}else{
-					if(null != employeeData.getAccount() && !StringUtils.isEmpty(employeeData.getAccount())) {
+				} else {
+					if(!StringUtils.isBlank(account)) {
+						
 						Result<Record> findRBankRecord = dslContext.select().from(RBANK)
-								.where(RBANK.BANK_ACCOUNT.eq(employeeData.getAccount()))
+								.where(RBANK.BANK_ACCOUNT.eq(account))
 								.fetch();
 						
 						if(!findRBankRecord.isEmpty()) {
 							rbankTableId = findRBankRecord.get(0).get(RBANK.ID); 
+							
 							if(findRBankRecord.get(0).get(RBANK.ID) == rbankTableId) {
 								String alias = "CUENTA";
-								if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
-									String codeBank = employeeData.getAccount().substring(4, 8);
+								if(null != account && account.length() > 8) {
+									String codeBank = account.substring(4, 8);
 									alias = BankEntities.getBankEntity(codeBank);
 								}
 								dslContext.update(RBANK)
-								.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
+								.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
 								.set(RBANK.BIC, employeeData.getBic())
 								.set(RBANK.ALIAS, alias)
 								.where(RBANK.ID.eq(rbankTableId))
 								.execute();
 							}
-						}else {
+							
+						} else {
 							String alias = "CUENTA";
-							if(null != employeeData.getAccount() && employeeData.getAccount().length() > 8) {
-								String codeBank = employeeData.getAccount().substring(4, 8);
+							if(null != account && account.length() > 8) {
+								String codeBank = account.substring(4, 8);
 								alias = BankEntities.getBankEntity(codeBank);
 							}
+							
 							RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 									.set(RBANK.DOMAIN, domain)
 									.set(RBANK.REGISTRY, registryId)
-									.set(RBANK.BANK_ACCOUNT, null == employeeData.getAccount() ? "" : employeeData.getAccount())
+									.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
 									.set(RBANK.BIC, employeeData.getBic())
 									.set(RBANK.ALIAS, alias)
 									.set(RBANK.ACTIVE, (byte) 1)
 									.returning(RBANK.ID)
 									.fetchOne();
 							 
-							 rbankTableId = rbankRecord.get(RBANK.ID);
+							rbankTableId = rbankRecord.get(RBANK.ID);
 						}
-						
 					}
-					
 				}
 				
-				String typePayMethod = getTypeDescription(employeeData.getPayMethodTypeB());
 				dslContext.update(PAY_METHOD)
-						.set(PAY_METHOD.NAME, typePayMethod)
-						.set(PAY_METHOD.TYPE, employeeData.getPayMethodTypeB())
-						.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-						.execute();
+					.set(PAY_METHOD.NAME, payMethod)
+					.set(PAY_METHOD.TYPE, employeeData.getPayMethodTypeB())
+					.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+					.execute();
 				
 				dslContext.update(RPAYMETHOD)
-				.set(RPAYMETHOD.RBANK, rbankTableId)
-				.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-				.execute();
+						.set(RPAYMETHOD.PAY_METHOD, employeeData.getPaymethodId())
+						.set(RPAYMETHOD.RBANK, rbankTableId)
+						.execute();
 				
-				//ACTUALIZAR CAMPOS
-//				employeeData.setPaymethodId(payMethodTableId);
-//				employeeData.setRpaymethodId(rpayMethodTableId);
 				employeeData.setRbankId(rbankTableId);
-				
-			}else{
-				String typePayMethod = getTypeDescription(employeeData.getPayMethodTypeB());
-				if(StringUtils.isEmpty(typePayMethod)){
-					dslContext.delete(RPAYMETHOD)
-					.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-					.execute();
-					
-					dslContext.delete(RBANK)
-						.where(RBANK.ID.eq(employeeData.getRbankId()))
-						.execute();
-					
-					dslContext.delete(PAY_METHOD)
-						.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-						.execute();
-					
-					//ACTUALIZAR CAMPOS
-					employeeData.setPaymethodId(null);
-					employeeData.setRpaymethodId(null);
-					employeeData.setRbankId(null);
-				}else{
-					dslContext.update(PAY_METHOD)
-						.set(PAY_METHOD.NAME, typePayMethod)
-						.set(PAY_METHOD.TYPE, employeeData.getPayMethodTypeB())
-						.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-						.execute();
-			
-					if(null != employeeData.getRbankId()){
-						dslContext.update(RPAYMETHOD)
-							.set(RPAYMETHOD.RBANK, (Integer) null)
-							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-							.execute();
-						
-						dslContext.delete(RBANK)
-							.where(RBANK.ID.eq(employeeData.getRbankId()))
-							.execute();
-						
-						//ACTUALIZAR CAMPOS
-						employeeData.setRbankId(null);
-					}
-				}
 			}
 		}
 		
