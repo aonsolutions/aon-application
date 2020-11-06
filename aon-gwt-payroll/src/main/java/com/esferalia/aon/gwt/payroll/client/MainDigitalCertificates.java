@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainDigitalCertificates extends MainEntryPoint{
@@ -142,15 +143,15 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(200, Unit.PX);
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(50, Unit.PX);
 		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setPaddingLeft(10, Unit.PX);
-		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(200, Unit.PX);
-		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(400, Unit.PX);
-		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(100, Unit.PX);
+		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(175, Unit.PX);
+		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(375, Unit.PX);
+		digitalCertificatesDataTableHeader.getCellFormatter().getElement(0, 4).getStyle().setWidth(150, Unit.PX);
 		
 		digitalCertificatesDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(200, Unit.PX);
 		digitalCertificatesDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(50, Unit.PX);
-		digitalCertificatesDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(200, Unit.PX);
-		digitalCertificatesDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(400, Unit.PX);
-		digitalCertificatesDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(100, Unit.PX);
+		digitalCertificatesDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(175, Unit.PX);
+		digitalCertificatesDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(375, Unit.PX);
+		digitalCertificatesDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(150, Unit.PX);
 	}
 	
 	private void insertRows() {
@@ -258,9 +259,16 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		HorizontalPanel mainFlowPanel = new HorizontalPanel();
 		mainFlowPanel.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 		mainFlowPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		mainFlowPanel.setWidth("350px");
 		
-		Label fileNameL = new Label();
-		fileNameL.setText(mainDigitalCertificatesObject.getDescription(Byte.parseByte(certificateTypeStr)));
+		TextBox fileNameTB = new TextBox();
+		fileNameTB.getElement().getStyle().setWidth(325, Unit.PX);
+		if(mainDigitalCertificatesObject.hasData(Byte.parseByte(certificateTypeStr)))
+			fileNameTB.setValue(mainDigitalCertificatesObject.getDescription(Byte.parseByte(certificateTypeStr)));
+		
+		fileNameTB.addValueChangeHandler(e -> {
+			mainDigitalCertificatesObject.setDescription(Byte.parseByte(certificateTypeStr), e.getValue());
+		});
 		
 		//Create formPanel to UploadFiles
 		FlowPanel flowPanel = new FlowPanel();
@@ -290,7 +298,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
             } else {
             	extension.setValue(fileExt);
             	fileName.setValue(filename);
-            	fileNameL.setText(filename);
+            	fileNameTB.setValue(filename);
             	formPanel.submit();
             }
 		});
@@ -327,7 +335,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		formPanel.add(flowPanel);
 			
 		mainFlowPanel.add(formPanel);
-		mainFlowPanel.add(fileNameL);
+		mainFlowPanel.add(fileNameTB);
 		return mainFlowPanel;
 	}
 
