@@ -1,14 +1,20 @@
 import { requestBidoq } from  '../components/request.js';
 
-// const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
-const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
 const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
-const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
+
+// Local
+// const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
+// const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
+
+// DEV
+const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
+const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
 
 export const CARPETA_A_CONTABILIZAR = 5;
-const CARPETA_CONTABILIZADOS = 14;
+export const CARPETA_CONTABILIZADOS = 14;
+export const CARPETA_FISCAL = 8;
 
-export const bidoq = (additionalData) => {
+export const bidoq = async (additionalData) => {
     // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
     const data = Object.assign({
         "device_info": "phone",
@@ -35,6 +41,9 @@ export const bidoq = (additionalData) => {
 
 class AonDocumental extends HTMLElement {
 
+    folder = null;
+    page = null;
+
     constructor () {
         super();
     }
@@ -46,66 +55,105 @@ class AonDocumental extends HTMLElement {
         this.build();
     }
 
-    build() {
-        this.getFolders((folders) => {
-            let aonDocumental = document.getElementById('aonDocumental');
+    async build() {
+        let aonDocumental = document.getElementById('aonDocumental');
 
-            aonDocumental.dataset['folders'] = JSON.stringify(folders);
+        const folders = await this.getFolders();
+        aonDocumental.dataset['folders'] = JSON.stringify(folders);
 
+        const tags = await this.getTags();
+        aonDocumental.dataset['tags'] = JSON.stringify(tags);
+
+        this.addDocumentOptions(aonDocumental);
+
+        this.addCategoryOptions(aonDocumental, folders);
+
+        this.loadIndex();
+    }
+
+    loadIndex(folder = 'pendientes') {
+        let aonDocumental = document.getElementById('aonDocumental');
+        const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
+
+        // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
+        this.folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
+
+        // Eliminamos todas las opciones de la barra de herramientas
+        aonDocumental.removeToolbarOptions();
+
+        // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
+        if (parseInt(folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) {
+            aonDocumental.removeToolbarOptions(['Subir']);
+        }
+
+        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
+        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null) {
             aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
                 const contentIframe = document.querySelector('iframe');
     
-                contentIframe.contentWindow.document.getElementById('upload').click();
-            });
-
-            this.addDocumentOptions(aonDocumental);
-
-            this.addCategoryOptions(aonDocumental, folders);
-
-            this.loadIndex();
-        });
-    }
-
-    loadIndex(folder = CARPETA_A_CONTABILIZAR) {
-        let aonDocumental = document.getElementById('aonDocumental');
-
-        // No permitimos subir documentos a la carpeta "Contabilizados"
-        const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
-
-        if (parseInt(folder) === CARPETA_CONTABILIZADOS) {
-            uploadButton.style.display = 'none';
+                contentIframe.contentWindow.document.getElementById('upload-file').click();
+            }, 'Subir documentos');
         }
 
-        aonDocumental.setContentHTML('<iframe src="./index.html?folder=' + folder + '" style="width:100%;height:100%;border:none;"></iframe>');
+        aonDocumental.setContentHTML(`<iframe src="./index.html?folder=${folder}" style="width:100%;height:100%;border:none;"></iframe>`);
     }
 
-    getFolders(callback) {
-        bidoq({
-            "method": "carpetas"
-        }).then((data) => {
+    loadShow(id, type) {
+        const contentIframe = document.querySelector('iframe');
+
+        contentIframe.src = `./show.html?id=${id}&type=${type}`;
+    }
+
+    async getFolders() {
+        try {
+            const data = await bidoq({
+                "method": "carpetas"
+            });
             const folders = JSON.parse(data).datos;
 
-            if (typeof folders !== 'undefined') {
-                callback(folders);
-            } else {
-                console.error('Ocurrió un error al intentar obtener las carpetas');
-            }
-        }).catch(function(error) {
+            return new Promise((resolve, reject) => {
+                if (typeof folders !== 'undefined') {
+                    resolve(folders);
+                } else {
+                    reject('Ocurrió un error al intentar obtener las carpetas');
+                }
+            });
+        } catch (error) {
             console.error('Ocurrió un error: ' + error.message);
-        });
+        }
+    }
+
+    async getTags() {
+        try {
+            const data = await bidoq({
+                "method": "tags"
+            });
+            const tags = JSON.parse(data).datos;
+
+            return new Promise((resolve, reject) => {
+                if (typeof tags !== 'undefined') {
+                    resolve(tags);
+                } else {
+                    reject('Ocurrió un error al intentar obtener los tags');
+                }
+            });
+        } catch (error) {
+            console.error('Ocurrió un error: ' + error.message);
+        }
     }
 
     addDocumentOptions(aonDocumental) {
         let documentOptions = [
             {
+                name: 'Pendientes',
+                icon: 'inbox',
+                fn: () => this.loadIndex('pendientes'),
+                default: true
+            },
+            {
                 name: 'Recientes',
                 icon: 'access_time',
                 fn: () => this.loadIndex('recientes')
-            },
-            {
-                name: 'Pendientes',
-                icon: 'inbox',
-                fn: () => this.loadIndex('pendientes')
             }
         ];
 
@@ -119,10 +167,6 @@ class AonDocumental extends HTMLElement {
                 icon: 'folder',
                 fn: () => this.loadIndex(folder.carpetaID)
             };
-
-            if (parseInt(folder.carpetaID) === CARPETA_A_CONTABILIZAR) {
-                option['default'] = true;
-            }
 
             return option;
         });

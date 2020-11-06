@@ -10898,3 +10898,36 @@ $(document).ready(function(){
         $('#atp_menu_derecha').toggleClass('atp_abierto');
     });
 });
+
+function avisoFlotante(mensaje){
+    // Creamos el div del aviso
+    var aviso            = document.createElement("div");
+    aviso.id             = "avisoFlotante";
+    aviso.style.width    = "360px";
+    aviso.style.padding  = "15px";
+    aviso.style.right    = "0";
+    aviso.style.top      = "20%";
+    aviso.style.position = "absolute";
+    aviso.style.background = "#CFCFCF";
+    
+    var spanAviso  = document.createElement("span");
+    spanAviso.style.fontWeight  = "bold";
+    var spanText = document.createTextNode(mensaje);
+    spanAviso.appendChild(spanText);
+    aviso.appendChild(spanAviso);
+    
+    // Cogemos el body padre (no el del iframe)
+    var parentBody = window.parent.document.body;
+    
+    // Añadimos al final del body padre
+    parentBody.appendChild(aviso);
+    
+    // En 5 segundo lo mandamos a ocultar
+    setTimeout(ocultarFlotante, 5000);
+}
+
+function ocultarFlotante(){
+    $("#avisoFlotante", window.parent.document).toggle( 'slow', function() {
+        $(this).remove();
+    });
+}

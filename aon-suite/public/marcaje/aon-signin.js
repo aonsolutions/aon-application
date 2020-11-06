@@ -44,7 +44,7 @@ class AonSignin extends HTMLElement {
 			}
 		];
 		aonSignin.addSidenavOptions('OPCIONES', options);
-		this.loadAdmin();
+		this.loadEmployee();
 	}
 
 	loadAdmin() {

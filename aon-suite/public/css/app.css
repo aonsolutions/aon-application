@@ -10913,6 +10913,51 @@ body::-webkit-scrollbar-thumb {
 .text-ayudat {
   color: #007bff; }
 
+.caja_mensaje_ticket_from {
+    border-radius: 5px;
+    border-right : 1px solid #B5D9FF;
+    border-top : 1px solid #B5D9FF;
+    border-bottom : 1px solid #B5D9FF;
+    border-left: 5px solid #007bff;
+}
+
+.caja_mensaje_ticket_to {
+    border-radius: 5px;
+    border-left : 1px solid #FDF5DC;
+    border-top : 1px solid #FDF5DC;
+    border-bottom : 1px solid #FDF5DC;
+    border-right: 5px solid #ffdf7e;
+}
+
+.ticket-body {
+    min-height : 300px;
+    max-height : 600px;
+    overflow : auto;
+}
+
+.caja_accion span, .caja_accion label, .caja_accion small{
+    color: gray;
+}
+
+.adjuntos_mensaje {
+    background-color: #F5F4F4;
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+}
+
+.adjuntos_mensaje .btn-link {
+    color: gray;
+    font-size: smaller;
+}
+
+.adjuntos_mensaje .material-icons {
+    font-size : medium;
+}
+
+.adjuntos_mensaje .btn-link:hover {
+    color: blue;
+}
+
 .ticket {
   list-style: none;
   margin: 0;
@@ -10920,8 +10965,7 @@ body::-webkit-scrollbar-thumb {
 
 .ticket li {
   margin-bottom: 10px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #F4F2F2; }
+  padding-bottom: 5px; }
 
 .ticket li.left .ticket-body {
   margin-left: 60px; }
@@ -10933,11 +10977,106 @@ body::-webkit-scrollbar-thumb {
   margin: 0;
   color: #777777; }
 
-.border-from {
-  border-left: 5px solid #007bff; }
-
-.border-to {
-  border-right: 5px solid #ffdf7e; }
+.ticket .header {
+    padding: 5px;
+    border-bottom : 1px solid #EDEBEB;
+}
 
 .fon-size-20 {
   font-size: 20px; }
+
+/* Inputs y textarea (sin CKEditor) style */
+    .atp_caja_form {
+        padding: 25px 10px 5px;
+        background-color: #fff;
+        border-radius: 5px; 
+    }
+    
+    .atp_caja_form .atp_inputs {
+        position: relative;
+        margin-bottom: 0; 
+    }
+    
+    .atp_caja_form .atp_inputs input {
+        height: 50px;
+        border: none;
+        background-color: #f5f5f5;
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 0 15px; 
+    }
+    
+    .atp_caja_form .atp_inputs textarea {
+        min-height: 80px;
+        border: none;
+        background-color: #f5f5f5;
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px 0 0 15px; 
+    }
+    
+    .atp_caja_form .atp_inputs input:focus {
+        outline: none; 
+    }
+    
+    .atp_caja_form .atp_inputs textarea:focus {
+        outline: none; 
+    }
+    
+    .atp_caja_form .atp_inputs input:focus + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
+    .atp_caja_form .atp_inputs textarea:focus + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
+    .atp_caja_form .atp_inputs input:not([value=""]):not([type="date"]) + span, .atp_caja_form .atp_inputs input:not([value=""]):not([type="time"]) + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
+    .atp_caja_form .atp_inputs input[type="date"] + span, .atp_caja_form .atp_inputs input[type="time"] + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
+    .atp_caja_form .atp_inputs textarea:not(:placeholder-shown) + span {
+        font-size: 10px;
+        top: 5px;
+        transition: all .5s; 
+    }
+    
+    .atp_caja_form .atp_inputs span {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        color: #4a4a4a;
+        font-size: 13px;
+        line-height: 1em;
+        transition: all .5s; 
+    }
+    
+    .atp_input {
+        height : 50px;
+        border : none;
+        background-color : #f5f5f5;
+        width : 100%;
+        border-radius : 5px;
+        margin-bottom: 10px;
+        padding : 0 15px;
+    }
+    
+    .atp_caja_form .atp_inputs input:disabled, .atp_caja_form .atp_inputs input:read-only,
+    .atp_caja_form .atp_inputs textarea:disabled, .atp_caja_form .atp_inputs textarea:read-only,
+    .atp_input:disabled {
+        background-color : #cfcfcf;
+    }
