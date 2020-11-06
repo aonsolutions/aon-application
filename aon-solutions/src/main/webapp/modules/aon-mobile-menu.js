@@ -82,7 +82,7 @@ export class AonMobileMenu extends AonElement {
 					capture="camera"
 					id="aonMobileMenuCameraInput"
 					hidden
-			  	/>
+				  />
 			</div>
 		`;
 		let rp = this.getElement('rootPanel');
@@ -152,12 +152,13 @@ export class AonMobileMenu extends AonElement {
 
 
 	openCamera(){
-		this.getElement(this.CAMERA_INPUT).click();
+	    if(!webkit.messageHandlers.cordova_iab) throw "Cordova IAB postMessage API not found!";
+	    webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify({action:"camera"}));
 	}
 
 	async sendImage({target}){
 		try {
-			const {files: [file]} = target; // file = event.target.files[0];
+			const {files: [file]} = target;
 			const archivo = await getReader(file);
 			const resp = await uploadFile({ file: archivo });
 			console.log("archivo guardado!", resp);
