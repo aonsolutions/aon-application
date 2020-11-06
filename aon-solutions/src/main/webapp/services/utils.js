@@ -1,10 +1,3 @@
-
-export const isMobile = () => window.innerWidth <= 850 && window.innerHeight <= 850;
-
-export const clearElement = (id) => {
-  document.getElementById(id).innerHTML = '';
-}
-
 export const getReader = (file)=> {
   return new Promise((resolve, reject)=>{
       const READER = new FileReader();
@@ -23,13 +16,7 @@ export const getReader = (file)=> {
 				resolve(datos);
 			};
   });
-
 }
-
-export const getElement = (id) => document.getElementById(id);
-
-export const getElementById = (id) => document.getElementById(id);
-
 
 export const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 

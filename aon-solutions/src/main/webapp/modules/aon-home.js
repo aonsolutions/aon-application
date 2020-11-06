@@ -1,16 +1,16 @@
-import {isMobile} from '../services/utils.js'
+import {AonElement} from '../components/AonElement.js';
 import './aon-header.js';
 import './aon-menu.js';
 import './aon-mobile-header.js';
 import './aon-mobile-menu.js';
 
-class AonHome extends HTMLElement {
+export class AonHome extends AonElement {
 	constructor () {
 		super();
 	}
 
 	connectedCallback () {
-		this.innerHTML = isMobile()
+		this.innerHTML = this.isMobile()
 		?  `
 			<aon-mobile-header id="aonHeader"></aon-mobile-header>
 			<div id="rootPanel" class="rootPanel"></div>
@@ -25,7 +25,7 @@ class AonHome extends HTMLElement {
 			<div id="rootPanel" class="rootPanel"></div>
 		`;
 
-		if(!isMobile()) {
+		if(!this.isMobile()) {
 			let aonShowMenu = document.getElementById('aonShowMenu');
 			aonShowMenu.addEventListener('mouseover', () => {
 				if(localStorage.getItem('aon_domain_id')){
@@ -45,5 +45,4 @@ class AonHome extends HTMLElement {
 		}
   }
 }
-
 window.customElements.define('aon-home', AonHome);

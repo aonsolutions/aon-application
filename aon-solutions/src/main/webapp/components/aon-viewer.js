@@ -1,4 +1,6 @@
-class AonViewer extends HTMLElement {
+import {AonElement} from './AonElement.js';
+
+export class AonViewer extends AonElement {
 
 	get id() {
 		return this.getAttribute('id');
@@ -45,7 +47,7 @@ class AonViewer extends HTMLElement {
 	}
 
 	printImage() {
-		let img = document.createElement('img');
+		let img = this.createElement('img');
 		img.style.width = '100%';
 		img.src = this.file;
 

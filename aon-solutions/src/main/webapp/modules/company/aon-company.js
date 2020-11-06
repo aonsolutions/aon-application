@@ -1,7 +1,8 @@
+import {AonElement} from '../../components/AonElement.js';
 import {Apps} from  '../../services/app.js';
 import {getDomainApps, setUserAppRole, setUser} from  '../../services/service.js';
 
-class AonCompany extends HTMLElement {
+export class AonCompany extends AonElement {
 
 	static get observedAttributes() {
 		return ['company'];

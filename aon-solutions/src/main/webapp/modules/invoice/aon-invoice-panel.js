@@ -1,11 +1,11 @@
-import {isMobile} from  '../../services/utils.js';
+import {AonElement} from '../../components/AonElement.js';
 
 import './aon-invoice.js';
 import './aon-invoice-mobile.js';
 import './aon-invoice-list.js';
 
 
-class AonInvoicePanel extends HTMLElement {
+export class AonInvoicePanel extends AonElement {
 
 	selected;
 
@@ -116,7 +116,7 @@ class AonInvoicePanel extends HTMLElement {
 
 	aonInvoice(type, invoice) {
 		let aonInvoice = document.getElementById('aonInvoice');
-		if(isMobile()) {
+		if(this.isMobile()) {
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice-mobile invoice='${JSON.stringify(invoice)}'> </aon-invoice-mobile>`
 				: `<aon-invoice-mobile type="${type}"> </maon-invoice-mobile>`);

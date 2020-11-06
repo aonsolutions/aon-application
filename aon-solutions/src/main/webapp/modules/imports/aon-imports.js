@@ -1,6 +1,7 @@
+import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
 
-class AonImports extends HTMLElement {
+export class AonImports extends AonElement {
 
 	constructor () {
 		super();

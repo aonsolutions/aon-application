@@ -1,6 +1,7 @@
+import {AonElement} from './AonElement.js';
 import '../../components/aon-checkbox.js';
 
-class AonTable extends HTMLElement {
+export class AonTable extends HTMLElement {
 
 		columns;
 

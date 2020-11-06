@@ -1,6 +1,7 @@
+import {AonElement} from './AonElement.js';
 import {icons} from '../assets/icons/icons.js';
 
-class AonIcon extends HTMLElement {
+export class AonIcon extends AonElement {
 
   static get observedAttributes() {
     return ['icon', 'color', 'size'];

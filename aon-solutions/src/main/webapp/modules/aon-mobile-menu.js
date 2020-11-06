@@ -1,12 +1,13 @@
+import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon.js'
 
-import {getElementById, getReader} from '../services/utils.js'
+import {getReader} from '../services/utils.js'
 
 import { uploadFile } from '../services/fileService.js'
 
-class AonMobileMenu extends HTMLElement {
+export class AonMobileMenu extends AonElement {
 	CAMERA_INPUT;
 	get id() {
 		return this.getAttribute('id');
@@ -84,8 +85,8 @@ class AonMobileMenu extends HTMLElement {
 			  	/>
 			</div>
 		`;
-		let rp = getElementById('rootPanel');
-		let aonMenuSidenav = getElementById('aonMobileMenuSidenav');
+		let rp = this.getElement('rootPanel');
+		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
 
 		if(this.getAttribute('opened')) {
 			rp.className = 'rootMobilePanel';
@@ -98,41 +99,41 @@ class AonMobileMenu extends HTMLElement {
 		}
 		let n = ((window.innerWidth / 6) - 40) / 2;
 
-		let aonMobileMenuHome = getElementById('aonMobileMenuHome');
+		let aonMobileMenuHome = this.getElement('aonMobileMenuHome');
 		aonMobileMenuHome.style.marginRight = n;
 
-		let aonMobileMenuDocumental = getElementById('aonMobileMenuDocumental');
+		let aonMobileMenuDocumental = this.getElement('aonMobileMenuDocumental');
 		aonMobileMenuDocumental.style.marginLeft = n;
 		aonMobileMenuDocumental.style.marginRight = n;
 
-		let aonMobileMenuAdd = getElementById('aonMobileMenuAdd');
+		let aonMobileMenuAdd = this.getElement('aonMobileMenuAdd');
 		aonMobileMenuAdd.style.marginLeft = n;
 		aonMobileMenuAdd.style.marginRight = n;
 
-		let aonMobileMenuTime = getElementById('aonMobileMenuTime');
+		let aonMobileMenuTime = this.getElement('aonMobileMenuTime');
 		aonMobileMenuTime.style.marginLeft = n;
 		aonMobileMenuTime.style.marginRight = n;
 
-		let aonMobileMenuInvoice = getElementById('aonMobileMenuInvoice');
+		let aonMobileMenuInvoice = getElement('aonMobileMenuInvoice');
 		aonMobileMenuInvoice.style.marginLeft = n;
 		aonMobileMenuInvoice.style.marginRight = n;
 
 
-		let aonMobileMenuInvoiceButton = getElementById('aonMobileMenuInvoiceButton');
+		let aonMobileMenuInvoiceButton = this.getElement('aonMobileMenuInvoiceButton');
 		aonMobileMenuInvoiceButton.addEventListener('click', () => {
 			rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 		});
 
-		let aonMobileMenuCameraButton = getElementById('aonMobileMenuCameraButton');
+		let aonMobileMenuCameraButton = this.getElement('aonMobileMenuCameraButton');
 		aonMobileMenuCameraButton.addEventListener('click',() => this.openCamera());
-		
-		getElementById(this.CAMERA_INPUT).addEventListener('change', (ev)=> this.sendImage(ev) );
+
+		this.getElement(this.CAMERA_INPUT).addEventListener('change', (ev)=> this.sendImage(ev) );
 	}
 
 
 	open() {
-		let aonMenuSidenav = getElementById('aonMobileMenuSidenav');
-		let rootPanel = getElementById('rootPanel');
+		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
+		let rootPanel = this.getElement('rootPanel');
 		rootPanel.className = 'rootMobilePanel';
 		aonMenuSidenav.style.height = '60px';
 		rootPanel.style.marginBottom = '60px';
@@ -140,8 +141,8 @@ class AonMobileMenu extends HTMLElement {
 	}
 
 	close() {
-		let aonMenuSidenav = getElementById('aonMobileMenuSidenav');
-		let rootPanel = getElementById('rootPanel');
+		let aonMenuSidenav = this.getElement('aonMobileMenuSidenav');
+		let rootPanel = this.getElement('rootPanel');
 		rootPanel.className = 'rootPanel';
 		aonMenuSidenav.style.height = '0px';
 		rootPanel.style.marginBottom = '0px';
@@ -151,7 +152,7 @@ class AonMobileMenu extends HTMLElement {
 
 
 	openCamera(){
-		getElementById(this.CAMERA_INPUT).click();
+		this.getElement(this.CAMERA_INPUT).click();
 	}
 
 	async sendImage({target}){
@@ -164,9 +165,6 @@ class AonMobileMenu extends HTMLElement {
 			console.log(error);
 		}
 	}
-
-
-
 }
 
 window.customElements.define('aon-mobile-menu', AonMobileMenu);

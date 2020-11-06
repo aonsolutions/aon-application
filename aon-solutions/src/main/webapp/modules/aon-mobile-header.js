@@ -1,5 +1,5 @@
+import {AonElement} from '../components/AonElement.js';
 import {closeSession} from  '../services/service.js';
-import {isMobile} from  '../services/utils.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon-button.js';
@@ -11,7 +11,7 @@ import './invoice/aon-invoice.js';
 import './company/aon-mobile-desktop.js';
 import './user/aon-user.js';
 
-class AonMobileHeader extends HTMLElement {
+export class AonMobileHeader extends AonElement {
 
 	get id() {
 		return this.getAttribute('id');

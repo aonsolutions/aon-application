@@ -1,92 +1,79 @@
-(function() {
+import {AonElement} from './AonElement.js';
 
-	class AonCard extends HTMLElement {
+export class AonCard extends AonElement {
 
-		static get observedAttributes() {
-			return ['visible'];
-		}
+	TITLE;
+	CONTENT;
 
-		get id() {
-			return this.getAttribute('id');
-		}
+	static get observedAttributes() {
+		return ['visible'];
+	}
 
-		set id(id) {
-			this.setAttribute('id', id);
-		}
+	get id() {
+		return this.getAttribute('id');
+	}
 
-		get title() {
-			return this.getAttribute('title');
-		}
+	set id(id) {
+		this.setAttribute('id', id);
+	}
 
-		set title(title) {
-			this.setAttribute('title', title);
-		}
+	get title() {
+		return this.getAttribute('title');
+	}
 
-		get visible() {
-			return this.getAttribute('visible');
-		}
+	set title(title) {
+		this.setAttribute('title', title);
+	}
 
-		set visible(visible) {
-			this.setAttribute('visible', visible);
-		}
+	get visible() {
+		return this.getAttribute('visible');
+	}
 
-		attributeChangedCallback(name, oldValue, newValue) {
-			if('visible' === name){
-				if(this.getAttribute('visible') != undefined && 'false' == this.getAttribute('visible')){
-					this.style.display = 'none';
-				} else {
-					this.style.display = 'block';
-				}
+	set visible(visible) {
+		this.setAttribute('visible', visible);
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if('visible' === name){
+			if(this.getAttribute('visible') != undefined && 'false' == this.getAttribute('visible')){
+				this.style.display = 'none';
+			} else {
+				this.style.display = 'block';
 			}
-		}
-
-		constructor () {
-			super();
-		}
-
-		connectedCallback () {
-			this.innerHTML = `
-				<div class="aonCard">
-					<div id="${this.getId() + 'Title'}">
-
-					</div>
-					<div id="${this.getId() + 'Content'}">
-
-					</div>
-
-				</div>
-			`;
-			this.build();
-		}
-
-		build() {
-			let title = document.getElementById(this.getId() + 'Title')
-			title.innerHTML = this.getTitle();
-		}
-
-		setContent(el) {
-			let content = document.getElementById(this.getId() + 'Content');
-			content.appendChild(el);
-		}
-
-		setContentHTML(html) {
-			let content = document.getElementById(this.getId() + 'Content');
-			content.innerHTML = html;
-		}
-
-		setVisible(visible) {
-			this.setAttribute('visible', visible)
-		}
-
-		getId() {
-			return this.getAttribute('id');
-		}
-
-		getTitle() {
-			return this.getAttribute('title');
 		}
 	}
 
-	window.customElements.define('aon-card',  AonCard);
+	constructor () {
+		super();
+		this.TITLE = this.id + 'Title';
+		this.CONTENT = this.id + 'Content';
+	}
 
-})();
+	connectedCallback () {
+		this.build();
+	}
+
+	build() {
+		let div = this.createElement('div');
+		div.className = 'aonCard';
+		this.appendChild(div);
+
+		let title = this.createElement('div');
+		title.id = this.TITLE;
+		title.innerHTML = this.title;
+		div.appendChild(title);
+
+		let content = this.createElement('div');
+		content.id = this.CONTENT;
+		div.appendChild(content);
+	}
+
+	setContent(el) {
+		this.getElement(this.CONTENT).appendChild(el);
+	}
+
+	setContentHTML(html) {
+		this.getElement(this.CONTENT).innerHTML = html;
+	}
+}
+window.customElements.define('aon-card',  AonCard);

@@ -1,6 +1,6 @@
-import {getElement} from '../services/utils.js'
+import {AonElement} from './AonElement.js';
 
-class AonLoader extends HTMLElement {
+export class AonLoader extends AonElement {
 
 	PROGRESS;
 
@@ -24,11 +24,11 @@ class AonLoader extends HTMLElement {
 	}
 
 	start() {
-		getElement(this.PROGRESS).style.display = 'flex';
+		this.getElement(this.PROGRESS).style.display = 'flex';
 	}
 
 	stop() {
-		getElement(this.PROGRESS).style.display = 'none';
+		this.getElement(this.PROGRESS).style.display = 'none';
 	}
 }
 

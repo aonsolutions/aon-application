@@ -1,4 +1,6 @@
-class AonDocumental extends HTMLElement {
+import {AonElement} from '../../components/AonElement.js';
+
+export class AonDocumental extends AonElement {
 
 	constructor () {
 		super();
