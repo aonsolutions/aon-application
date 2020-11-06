@@ -139,7 +139,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		void visitInvoice();
 		void visitSalary();
 		void visitFinance();
-		void visitTicket();
 	}
 	public interface IEntryTypeVisitorWalker {
 		void visit( IEntryTypeVisitor visitor);
@@ -149,8 +148,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitManual();}})
 		,INVOICE( AON.MSG.invoice(), new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitInvoice();}})
-		,TICKET( "Gasto no Ded./Ticket", new  IEntryTypeVisitorWalker() {
-			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitTicket();}})
 		,SALARY( AON.MSG.salary(), new  IEntryTypeVisitorWalker() {
 			@Override public void visit(IEntryTypeVisitor visitor) {visitor.visitSalary();}})
 		,FINANCE( AON.MSG.treasury(), new  IEntryTypeVisitorWalker() {
@@ -288,9 +285,7 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		commentsButton.setTabIndex(-1);
 		
 		for (EntryType et : EntryType.values() ) {
-			if ( et != EntryType.TICKET) {
-				entryType.addItem(et.getDescription());
-			}
+			entryType.addItem(et.getDescription());
 		}
 		
 		entryDate.getTextBox().addKeyUpHandler(new KeyUpHandler() {
@@ -837,10 +832,6 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 			}
 			@Override
 			public void visitInvoice() {
-				createAndAttachInvoicePanel(cbk);
-			}
-			@Override
-			public void visitTicket() {
 				createAndAttachInvoicePanel(cbk);
 			}
 			@Override
