@@ -32,6 +32,7 @@ import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundExcept
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.DataDoesNotExist;
 import solutions.aon.seg.social.exceptions.invalidData.NoMoreDataException;
+import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Idc;
@@ -45,7 +46,7 @@ public class SistemaRED_I {
 	public static SituacionEmpresa getSituacionEmpresa(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String ccc)
 			throws MalformedURLException, IOException, InterruptedException, SegSocialException {
-
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
@@ -213,6 +214,8 @@ public class SistemaRED_I {
 			return seb1.build();
 		} catch (FailingHttpStatusCodeException fhsce) {
 			StatusCodeException.HandleStatusCodeException(fhsce);
+		} catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 
@@ -246,7 +249,7 @@ public class SistemaRED_I {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount, final Date fecha)
 			throws SegSocialException, InterruptedException {
-
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
 
@@ -295,6 +298,8 @@ public class SistemaRED_I {
 
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		} catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 	}
@@ -317,7 +322,7 @@ public class SistemaRED_I {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount, final Date fecha)
 			throws SegSocialException, InterruptedException {
-
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			ArrayList<byte[]> ret=new ArrayList<byte[]>();
@@ -388,6 +393,8 @@ public class SistemaRED_I {
 
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		} catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 	}
@@ -455,6 +462,8 @@ public class SistemaRED_I {
 
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		} catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 	}
@@ -480,6 +489,7 @@ public class SistemaRED_I {
 	public static byte[] getObligationAwarenessCertificate(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regime, String contributionAccount)
 			throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
@@ -512,6 +522,8 @@ public class SistemaRED_I {
 
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		}catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 	}
@@ -521,7 +533,7 @@ public class SistemaRED_I {
 	public static Collection<Idc> getIDCDates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount) throws SegSocialException, InterruptedException {
-
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
 
@@ -595,6 +607,8 @@ public class SistemaRED_I {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		}catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 	}
@@ -602,6 +616,7 @@ public class SistemaRED_I {
 	public static Collection<Date> getDischargeDates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount) throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType);) {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
@@ -662,6 +677,8 @@ public class SistemaRED_I {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		}catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 	}
@@ -669,6 +686,7 @@ public class SistemaRED_I {
 	public static byte[] getContributionSettlementReport(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount, final Optional<Date> settlementPeriod) throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuAFI-REMESAS.html");
 			htmlPage=htmlPage.getAnchorByHref("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR39&E=I&AP=AFIR").click();
@@ -716,6 +734,8 @@ public class SistemaRED_I {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		}catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return null;
 		
