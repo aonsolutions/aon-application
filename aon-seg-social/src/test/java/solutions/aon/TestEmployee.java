@@ -1,6 +1,7 @@
 package solutions.aon;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,9 +9,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.junit.Test;
+
 import solutions.aon.seg.social.SistemaRedEmployee;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
 import solutions.aon.seg.social.exceptions.invalidData.SyntaxException;
 import solutions.aon.seg.social.exceptions.invalidData.WrongRegimeException;
@@ -56,7 +59,6 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062");					
 		}
-		catch (InvalidCertificateException e) {}
 		catch (WrongRegimeException e) {}
 		catch (StatusCodeException e) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
@@ -65,12 +67,39 @@ public class TestEmployee {
 		catch (Exception e) {fail("unknown exception");}
 	}
 	
+	@Test 
+	public void getEmployeesRegimeEmptyTest() {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12",null,"01105360062");					
+		}
+		catch (InvalidDataException e) {}
+		catch (StatusCodeException e) {}
+		catch (SegSocialException e) {fail("unexpected SegSocialException");}
+		catch (FileNotFoundException e) {fail("File not found");}
+		catch (IOException e) {fail("IOException");}
+		catch (Exception e) {fail("unknown exception");}
+	}	
+	
 	@Test
 	public void getEmployeesCccTest() {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","011205360062");					
 		}
 		catch (invalidCccException e) {}
+		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (SegSocialException e) {fail("unexpected SegSocialException");}
+		catch (FileNotFoundException e) {fail("File not found");}
+		catch (IOException e) {fail("IOException");}
+		catch (Exception e) {fail("unknown exception");}
+	}
+	
+	@Test
+	public void getEmployeesCccEmptyTest() {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211",null);					
+		}
+		catch (InvalidDataException e) {}
 		catch (StatusCodeException e) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
@@ -96,6 +125,14 @@ public class TestEmployee {
 		catch (Exception e) {fail("unknown exception");}
 	}
 		
+	
+	
+	
+	
+	
+	
+	
+	
 	//GET EMPLOYEE TESTS
 	
 	@Test

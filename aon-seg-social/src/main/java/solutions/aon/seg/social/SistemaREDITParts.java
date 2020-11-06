@@ -22,7 +22,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.ITPart;
 import solutions.aon.seg.social.objects.It;
 import solutions.aon.seg.social.objects.ItPartId;
@@ -36,7 +39,10 @@ public class SistemaREDITParts {
 	//GET ITs
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to)throws SegSocialException{
+		
+		Toolkit.verifyData(new Object[] {regime,ccc,from,to});
 		InvalidCertificateException.checkCertificate(certificateInputStream);
+		
 		ArrayList<It> its = new ArrayList<It>();
 		ArrayList<ITPart>  itParts = (ArrayList<ITPart>) getFullItParts(certificateInputStream, certificatePassword, certificateType, regime, ccc, from, to);
 		HashMap<ItPartId, Collection<ITPart>> orderedItParts = new HashMap<ItPartId, Collection<ITPart>>();
@@ -84,7 +90,7 @@ public class SistemaREDITParts {
 		catch (FailingHttpStatusCodeException e) { 
 			switch (e.getStatusCode()) {
 				case 403: throw new ForbiddenException();
-				default: throw new SegSocialException(e); 
+				default: throw new StatusCodeException(); 
 			}
 		}
 		catch (MalformedURLException e) { throw new SegSocialException(e); }
@@ -95,11 +101,15 @@ public class SistemaREDITParts {
 
 	//GET ALL THE ITPARTS
 	private static Collection<ITPart> getFullItPartsImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, Date from, Date to) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, InvalidCertificateException {
+			String certificateType, String regime, String ccc, Date from, Date to) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, InvalidCertificateException, InvalidDataException {
+		
+		Toolkit.verifyData(new Object[] {regime,ccc,from,to});
 		InvalidCertificateException.checkCertificate(certificateInputStream);
+		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setJavaScriptEnabled(false);
 			
+			if(Toolkit.isFuture(to)) throw new InvalidDateException();
 			
 			ArrayList<ITPart> itParts = new ArrayList<ITPart>();
 			Boolean last = false;
@@ -127,6 +137,7 @@ public class SistemaREDITParts {
 				
 				HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
 				htmlPage = show.click();
+				handleItPartErrors(htmlPage);
 	
 				ITPartBuilder builder = new ITPartBuilder();
 				String format = "dd/MM/yyyy";
@@ -166,11 +177,17 @@ public class SistemaREDITParts {
 					if(itParts.contains(part)) last = true;
 					else itParts.add(part);
 				}
-				
 				to = itParts.get(itParts.size()-1).getReceptionDate();
 			}
 			return itParts;
 			
 		}		
+	}
+
+
+	private static void handleItPartErrors(HtmlPage htmlPage) throws InvalidDataException {
+		DomNode errors = htmlPage.querySelector("#errores");
+		if(errors != null) throw new InvalidDataException();
+		
 	}	
 }

@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
+import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+
 public class Toolkit {
 	
 	//LOGS AN ARRAY OF INFORMATION THROUGH CONSOLE
@@ -95,6 +97,8 @@ public class Toolkit {
 		}
 		
 	}
+	
+	//BUILD A FILE FROM ARRAY OF BYTES
 	public static void buildFile (byte[] arr_bytes, String docName) {
 		File f=new File(docName);
 		try {
@@ -109,5 +113,32 @@ public class Toolkit {
 		
 	}
 	
+	//ADD DAYS TO A DATE
+    public static Date addDays(Date date, int days)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days); 
+        return cal.getTime();
+    }
 	
+	//GET AN UREACHABLE DATE
+	public static Date getUnreachableDate() {
+		Date d = addDays(new Date(), 10);
+		return d;
+	}
+
+	//RETURNS IF A DATE IS FUTURE
+	public static boolean isFuture(Date to) {
+		int r = to.compareTo(new Date());
+		if(r == 1) return true;
+		return false;
+	}		
+	
+	//HANDLES EMPTY DATA 
+	public static void verifyData(Object[] data) throws InvalidDataException {
+		for (Object o : data) {
+			if(o ==  null || o.equals("")) throw new InvalidDataException();
+		}
+	}
 }

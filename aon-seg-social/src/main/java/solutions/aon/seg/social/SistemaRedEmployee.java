@@ -1,5 +1,4 @@
 	package solutions.aon.seg.social;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -10,10 +9,7 @@ import java.util.Date;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebWindowEvent;
-import com.gargoylesoftware.htmlunit.WebWindowListener;
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
@@ -199,7 +195,10 @@ public class SistemaRedEmployee {
 		//HANDLE THE EXCEPTIONS OF GETEMPLOYEE METHOD
 		public static Collection<Employee> getEmployees(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc) throws SegSocialException{
+			
+			Toolkit.verifyData(new Object[]{regimen,ccc});
 			InvalidCertificateException.checkCertificate(certificateInputStream);
+			
 			try {return getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
@@ -213,6 +212,7 @@ public class SistemaRedEmployee {
 				final String certificateType, String regimen, String ccc) throws ElementNotFoundException, IOException, InterruptedException, SegSocialException
 		{
 				try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+					
 				webClient.getOptions().setJavaScriptEnabled(false);
 				ArrayList<Employee> employees = new ArrayList<Employee>();
 				
@@ -285,7 +285,9 @@ public class SistemaRedEmployee {
 		public static Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 			
+			Toolkit.verifyData(new Object[]{regimen,ccc,nss});
 			InvalidCertificateException.checkCertificate(certificateInputStream);
+			
 			try {return getEmployeeImpl(certificateInputStream, certificatePassword, certificateType, nss);} 
 			catch (FailingHttpStatusCodeException e) {
 				switch (e.getStatusCode()) {

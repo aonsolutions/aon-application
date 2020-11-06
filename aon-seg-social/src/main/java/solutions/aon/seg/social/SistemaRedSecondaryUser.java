@@ -37,7 +37,7 @@ public class SistemaRedSecondaryUser {
 	//HANDLE SECONDARYUSERS EXCEPTIONS
 	public static SecondaryUser getSecondaryUserByIpf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType,final String ipf) throws SegSocialException {
-		
+		Toolkit.verifyData(new Object[]{ipf});
 		try {
 			return getSecondaryUserByIpfImpl(certificateInputStream, certificatePassword, certificateType,ipf);			
 		} catch (FailingHttpStatusCodeException e) {
