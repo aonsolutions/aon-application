@@ -69,6 +69,13 @@ public class MainDigitalCertificatesObject {
 			if(digitalCertificate.getType() == certificateType)
 				digitalCertificate.setPassword(password);
 	}
+	
+	public void setDescription(byte certificateType, String description) {
+		checkAndCreateCertificateType(certificateType);
+		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
+			if(digitalCertificate.getType() == certificateType)
+				digitalCertificate.setDescription(description);
+	}
 
 	private void checkAndCreateCertificateType(byte certificateType) {
 		boolean exists = false;
@@ -86,9 +93,17 @@ public class MainDigitalCertificatesObject {
 	public String getDescription(byte certificateType) {
 		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
 			if(digitalCertificate.getType() == certificateType)
-				return digitalCertificate.getDescription();
+				return StringUtils.isBlank(digitalCertificate.getDescription()) ? "Certficado sin nombre" : digitalCertificate.getDescription();
 		
-		return "";
+		return "Certficado sin nombre";
+	}
+
+	public boolean hasData(byte certificateType) {
+		for(DigitalCertificate digitalCertificate : digitalCertificateList) 
+			if(digitalCertificate.getType() == certificateType)
+				return digitalCertificate.getHasCertificate();
+		
+		return false;
 	}
 		
 }

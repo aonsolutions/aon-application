@@ -130,6 +130,7 @@ public class JooqDigitalCertificate {
 				if(null != employeeCertificateRecord) {
 					dslContext.update(RATTACH)
 						.set(RATTACH.SECURITY_LEVEL, digitalCertificate.getConfidential() ? (byte)1 : (byte)0)
+						.set(RATTACH.DESCRIPTION, digitalCertificate.getDescription())
 						.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
 						.where(RATTACH.ID.eq(employeeCertificateRecord.get(RATTACH.ID)))
 						.execute();
@@ -140,6 +141,7 @@ public class JooqDigitalCertificate {
 						.set(RATTACH.MIMETYPE, (byte)36)
 						.set(RATTACH.TYPE, (byte)4)
 						.set(RATTACH.SECURITY_LEVEL, digitalCertificate.getConfidential() ? (byte)1 : (byte)0)
+						.set(RATTACH.DESCRIPTION, digitalCertificate.getDescription())
 						.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
 						.execute();
 				}
@@ -175,6 +177,7 @@ public class JooqDigitalCertificate {
 				if(null != enterpriseCertificateRecord) {
 					dslContext.update(RATTACH)
 						.set(RATTACH.SECURITY_LEVEL, digitalCertificate.getConfidential() ? (byte)1 : (byte)0)
+						.set(RATTACH.DESCRIPTION, digitalCertificate.getDescription())
 						.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
 						.where(RATTACH.ID.eq(enterpriseCertificateRecord.get(RATTACH.ID)))
 						.execute();
@@ -185,6 +188,7 @@ public class JooqDigitalCertificate {
 						.set(RATTACH.MIMETYPE, (byte)36)
 						.set(RATTACH.TYPE, (byte)4)
 						.set(RATTACH.SECURITY_LEVEL, digitalCertificate.getConfidential() ? (byte)1 : (byte)0)
+						.set(RATTACH.DESCRIPTION, digitalCertificate.getDescription())
 						.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
 						.execute();
 				}
