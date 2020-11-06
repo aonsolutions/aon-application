@@ -1,55 +1,47 @@
-import {AonElement} from '../../components/AonElement.js';
+class AonMessenger extends HTMLElement {
+    constructor () {
+        super();
+    }
 
-export class AonMessenger extends AonElement {
+    connectedCallback () {
+        this.innerHTML = `<aon-application id="aonMessenger" title="MESSENGER"></aon-application>`;
+        this.build();
+    }
 
-	constructor () {
-		super();
-	}
+    build() {
+        let aonMessenger = document.getElementById('aonMessenger');
 
-	connectedCallback () {
-		this.innerHTML = `
-			<aon-application id="aonMessenger" title="MESSENGER"></aon-application>
-		`;
-		this.build();
- 	}
+        aonMessenger.addToolbarOption('Add', 'add', () => {this.loadCreate()});
 
- 	build() {
-		let aonMessenger = document.getElementById('aonMessenger');
+        let options = [
+            {
+                name: 'Messenger',
+                icon: 'inbox',
+                fn: () => this.loadIndex()
+            },
+            {
+                name: 'Crear nuevo',
+                icon: 'create',
+                fn: () => this.loadCreate()
+            }
+        ];
+        aonMessenger.addSidenavOptions('OPCIONES', options);
+        this.loadIndex();
+    }
 
-		let options = [
-			{
-				name: 'Index',
-				icon: 'message',
-				fn: () => this.loadIndex()
-			},
-			{
-				name: 'Create',
-				icon: 'message',
-				fn: () => this.loadCreate()
-			},
-			{
-				name: 'Show',
-				icon: 'message',
-				fn: () => this.loadShow()
-			}
-		];
-		aonMessenger.addSidenavOptions('OPCIONES', options);
-		this.loadIndex();
-	}
+    loadIndex() {
+        let aonMessenger = document.getElementById('aonMessenger');
+        aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/index.html" style="width:100%;height:100%;border:none;"></iframe>');
+    }
 
-	loadIndex() {
-		let aonMessenger = document.getElementById('aonMessenger');
-		aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/index.html" style="width:100%;height:100%;border:none;"></iframe>');
-	}
+    loadCreate() {
+        let aonMessenger = document.getElementById('aonMessenger');
+        aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/create.html" style="width:100%;height:100%;border:none;"></iframe>');
+    }
 
-	loadCreate() {
-		let aonMessenger = document.getElementById('aonMessenger');
-		aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/create.html" style="width:100%;height:100%;border:none;"></iframe>');
-	}
-
-	loadShow() {
-		let aonMessenger = document.getElementById('aonMessenger');
-		aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/show.html" style="width:100%;height:100%;border:none;"></iframe>');
-	}
+    loadShow() {
+        let aonMessenger = document.getElementById('aonMessenger');
+        aonMessenger.setContentHTML('<iframe src="../../aon-suite/public/ticket/show.html" style="width:100%;height:100%;border:none;"></iframe>');
+    }
 }
 window.customElements.define('aon-messenger', AonMessenger);
