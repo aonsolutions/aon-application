@@ -195,7 +195,7 @@ public class SecurityDAO {
 		DomainApp exists = getDomainAppStream(ctx, p -> p.getDomainProperty().eq(domainApp.getDomain())
 	 			.and(p.getAppProperty().eq( domainApp.getApp().value())))
 				.findFirst()
-				.orElseGet(null); 
+				.orElse(null); 
 		if (exists == null) {
 			return insertDomainApp(ctx, domainApp);
 		} else {
