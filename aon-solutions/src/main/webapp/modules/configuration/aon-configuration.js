@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {getAuth} from '../../services/service.js';
 
-import '../../components/aon-toolbar.js';
+import '../../components/aon-application.js';
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../marketplace/aon-marketplace.js';
@@ -10,7 +10,9 @@ import '../user/aon-user.js';
 import '../company/aon-company-list.js';
 
 export class AonConfiguration extends AonElement {
-
+	AON_CONFIGURATION;
+	COMPANY;
+	COMPANY_LIST;
 	selected;
 
 	static get observedAttributes() {
@@ -51,143 +53,70 @@ export class AonConfiguration extends AonElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('company' === name || 'user' === name){
-			this.actualize();
+
 		}
 	}
 
 	constructor () {
 		super();
+		this.AON_CONFIGURATION = 'aonConfiguration';
+		this.COMPANY = this.AON_CONFIGURATION + 'Company';
+		this.COMPANY_LIST = this.AON_CONFIGURATION + 'CompanyList';
 	}
 
 	connectedCallback () {
 		this.innerHTML = `
-
-			<!-- AON CONFIGURATION TOOLBAR -->
-			<aon-toolbar id="aonConfiguration" title="CONFIGURACIÓN"></aon-toolbar>
-
-			<!-- AON CONFIGURATION MENU (SIDENAV) -->
-			<div id="aonConfigurationSidenav" class="sidenav">
-				<div class="aonSidenavTitle"> USUARIO </div>
-				<ul class="aonClip">
-					<li id="aonConfigurationPersonal" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">person</i>
-						<span class="aonMenuItemSpan"> Datos Usuario </span>
-					</li>
-				</ul>
-
-				<div id="aonConfigurationCompanyTitle" class="aonSidenavTitle"> EMPRESA </div>
-				<ul class="aonClip">
-					<li id="aonConfigurationGeneral" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">business</i>
-						<span class="aonMenuItemSpan"> Información General	</span>
-					</li>
-
-					<li id="aonConfigurationUser" class="aonAppMenuSidenavList aonOpacity">
-						<i class="material-icons aonVerticalMiddle">people</i>
-						<span class="aonMenuItemSpan"> Gestión de Usuarios </span>
-					</li>
-
-					<li id="aonConfigurationCompany" class="aonAppMenuSidenavList aonOpacity">
-						<i class="material-icons aonVerticalMiddle">business</i>
-						<span class="aonMenuItemSpan"> Gestión de Empresas </span>
-					</li>
-
-					<li id="aonConfigurationStore" class="aonAppMenuSidenavList aonOpacity" >
-						<i class="material-icons aonVerticalMiddle">store_mall_directory</i>
-						<span class="aonMenuItemSpan"> Contratación </span>
-					</li>
-				</ul>
-			</div>
-
-			<!-- AON CONFIGURATION CONTENT -->
-			<div id="aonConfigurationContent" class="aonContent">
-
-			</div>
-
-			<!-- <aon-dialog id="aonConfigurationDialog" title="CONFIGURACIÓN"></aon-dialog> -->
-			`;
-			this.build();
+			<aon-application id="${this.AON_CONFIGURATION}" title="CONFIGURACIÓN"></aon-application>
+		`;
+		this.build();
   }
 
 	build() {
-		document.getElementById("aonConfigurationSidenav").style.width = "250px";
-		document.getElementById("aonConfigurationContent").style['margin-left'] = "250px";
+		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+
+		let userOptions = [{
+			name: 'Datos Usuario',
+			icon: 'person',
+			fn: () => this.buildPersonal()
+		}];
+		aonConfiguration.addSidenavOptions('USUARIO', userOptions);
+
+		let companyOptions = [{
+			name: 'Información General',
+			icon: 'business',
+			hidden: this.hiddenGeneral(),
+			fn: () => this.buildGeneral()
+		},{
+			name: 'Gestión de Usuarios',
+			icon: 'people',
+			hidden: this.hiddenUser(),
+			fn: () => this.buildUser()
+		},{
+			name: 'Gestión de Empresas',
+			icon: 'business',
+			hidden: this.hiddenCompany(),
+			fn: () => this.buildCompany()
+		},{
+			name: 'Contratación',
+			icon: 'store_mall_directory',
+			hidden: this.hiddenStore(),
+			fn: () => this.buildStore()
+		}];
+
+		aonConfiguration.addSidenavOptions('EMPRESA', companyOptions);
+
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		let listIds = ['aonConfigurationPersonal', 'aonConfigurationGeneral', 'aonConfigurationUser', 'aonConfigurationCompany', 'aonConfigurationStore']
-		listIds.forEach((id, i) => {
-				let el = document.getElementById(id);
-				if((!company || !user || (user && !user.admin)) && i != 0) {
-					el.style.display = 'none';
-				} else if(this.getAttribute('company') && i === 3) {
-					let company = JSON.parse(this.getAttribute('company'));
-					if(!company.parent) {
-						el.style.display = 'none';
-					} else el.style.display = 'list-item';
-				} else el.style.display = 'list-item';
 
-				el.addEventListener('mouseover', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = '#f1f1f1';
-				});
-				el.addEventListener('mouseleave', () => {
-					if(!this.selected || this.selected !== id)
-						el.style.backgroundColor = 'transparent';
-				});
-				el.addEventListener('click', () => {
-					listIds.forEach((id, i) => {
-						let el1 = document.getElementById(id);
-						el1.style.backgroundColor = 'transparent';
-					});
-					this.buildContent(id);
-				});
-		});
-		this.buildContent('aonConfigurationPersonal');
-	}
-
-	actualize() {
-		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
-		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
-		let listIds = ['aonConfigurationPersonal', 'aonConfigurationGeneral', 'aonConfigurationUser', 'aonConfigurationCompany', 'aonConfigurationStore']
-		listIds.forEach((id, i) => {
-				let el = document.getElementById(id);
-				if((!company || !user || (user && !user.admin)) && i != 0) {
-					el.style.display = 'none';
-				} else if(this.getAttribute('company') && i === 3) {
-					let company = JSON.parse(this.getAttribute('company'));
-					if(!company.parent) {
-						el.style.display = 'none';
-					} else el.style.display = 'list-item';
-				} else el.style.display = 'list-item';
-		});
-	}
-
-	buildContent(id) {
-		let el = document.getElementById(id);
-		el.style.backgroundColor = '#ddd';
-		this.selected = id;
-		let toolbar = document.getElementById('aonConfiguration');
-		toolbar.removeButtons();
-
-		this.setAttribute('option', id);
-		if('aonConfigurationPersonal' === id){
-			this.buildPersonal();
-		} else if('aonConfigurationGeneral' === id ) {
-			this.buildGeneral();
-		} else if('aonConfigurationUser' === id) {
-			this.buildUser();
-		} else if('aonConfigurationCompany' === id ) {
-			this.buildCompany();
-		} else if('aonConfigurationStore' === id) {
-			this.buildStore();
-		}
+		this.buildPersonal()
 	}
 
 	buildPersonal() {
 		getAuth().then( user => {
-			let content = document.getElementById('aonConfigurationContent');
-			content.innerHTML = '<aon-user id="aonUserPersonal" ><aon-user>';
-			let aonUser = document.getElementById('aonUserPersonal');
+			let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+			aonConfiguration.removeToolbarOptions();
+			aonConfiguration.setContentHTML('<aon-user id="aonUserPersonal" ><aon-user>');
+			let aonUser = this.getElement('aonUserPersonal');
 			aonUser.style.display = "flex";
 			aonUser.style.width = "100%";
 			aonUser.setAttribute('user', JSON.stringify(user));
@@ -196,14 +125,16 @@ export class AonConfiguration extends AonElement {
 
 	buildGeneral() {
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
+		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+		aonConfiguration.removeToolbarOptions();
+		aonConfiguration.setContentHTML( `
+			<div style="display:flex;">
+				<aon-card id="aonConfigurationGeneralCard" style="width:50%;" title="Información General"></aon-card>
+				<aon-card id="aonConfigurationGeneral2Card" style="width:50%;" title="Información Adicional"></aon-card>
+			</div>
+		`);
 
-		let content = document.getElementById('aonConfigurationContent');
-		content.style.display = "flex";
-		content.innerHTML = `
-			<aon-card id="aonConfigurationGeneralCard" style="width:50%;" title="Información General"></aon-card>
-			<aon-card id="aonConfigurationGeneral2Card" style="width:50%;" title="Información Adicional"></aon-card>
-		`;
-		let card = document.getElementById('aonConfigurationGeneralCard');
+		let card = this.getElement('aonConfigurationGeneralCard');
 		card.setContentHTML(`
 			<form action="#" class="aon-margin-0">
 				<aon-input class="aonWidth25" id="aonConfigurationGeneralNif" description="NIF" value="${company.document}"></aon-input>
@@ -214,7 +145,7 @@ export class AonConfiguration extends AonElement {
 			</form>
 		`);
 
-		let card2 = document.getElementById('aonConfigurationGeneral2Card');
+		let card2 = this.getElement('aonConfigurationGeneral2Card');
 		card2.setContentHTML(`
 			<form action="#" class="aon-margin-0">
 				<aon-input class="aonWidth50" id="aonConfigurationGeneral2Phone" description="Teléfono" value=""></aon-input>
@@ -231,33 +162,32 @@ export class AonConfiguration extends AonElement {
 
 			<!-- LOGO -->
 		`);
-
-		componentHandler.upgradeAllRegistered();
 	}
 
 	buildUser() {
-		let toolbar = document.getElementById('aonConfiguration');
-		toolbar.addButton('UserShare', 'share', () => {
-			this.buildCreateUser(true);
-		});
+		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+		aonConfiguration.removeToolbarOptions();
 
-		toolbar.addButton('UserAdd', 'add', () => {
-			this.buildCreateUser(false);
-		});
+		aonConfiguration.addToolbarOption('UserShare', 'share', () => this.buildCreateUser(true));
+		aonConfiguration.addToolbarOption('UserAdd', 'add', () => this.buildCreateUser(true));
 
-		let content = document.getElementById('aonConfigurationContent');
-		content.style.display = "block";
-		content.innerHTML = '<aon-user-list> </aon-user-list>' ;
+		aonConfiguration.setContentHTML('<aon-user-list> </aon-user-list>');
 	}
 
 	buildCompany() {
-		let toolbar = document.getElementById('aonConfiguration');
-		toolbar.addButton('CompanyAdd', 'add', () => {});
+		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+		aonConfiguration.removeToolbarOptions();
+		aonConfiguration.addToolbarOption('CompanyAdd', 'share', () => {});
 
-		let content = document.getElementById('aonConfigurationContent');
-		content.style.display = "block";
 		let companyId = JSON.parse(this.getAttribute('company')).id;
-		content.innerHTML = `<aon-company-list company="${companyId}"> </aon-company-list>` ;
+		let filter = JSON.stringify({id: companyId});
+		aonConfiguration.setContentHTML(`<aon-company-list id="${this.COMPANY_LIST}" filter="${filter}"> </aon-company-list>`);
+
+		let companyList = this.getElement(this.COMPANY_LIST);
+		companyList.addEventListener('select', (event) => {
+			aonConfiguration.setContentHTML(`<aon-company id="${this.COMPANY}"> </aon-company>`);
+			this.getElement(this.COMPANY).company = event.company;
+		});
 	}
 
 	buildCreateUser(share) {
@@ -270,13 +200,31 @@ export class AonConfiguration extends AonElement {
 	}
 
 	buildStore() {
-		let content = document.getElementById('aonConfigurationContent');
-		content.style.display = "block";
-		content.innerHTML = '<aon-marketplace id="aonMarketplace" > </aon-marketplace>';
+		let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
+		aonConfiguration.removeToolbarOptions();
+
+		aonConfiguration.setContentHTML(`<aon-marketplace id="aonMarketplace" > </aon-marketplace>`);
+
 		if(this.getAttribute('company')){
-			let aonMarketplace = document.getElementById('aonMarketplace');
+			let aonMarketplace = this.getElement('aonMarketplace');
 			aonMarketplace.setAttribute('company', this.getAttribute('company'));
 		}
+	}
+
+	hiddenGeneral(){
+		return false;
+	}
+
+	hiddenUser(){
+		return false;
+	}
+
+	hiddenCompany(){
+		return false;
+	}
+
+	hiddenStore(){
+		return false;
 	}
 
 }

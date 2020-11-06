@@ -75,5 +75,9 @@ export class AonCard extends AonElement {
 	setContentHTML(html) {
 		this.getElement(this.CONTENT).innerHTML = html;
 	}
+
+	setVisible(visible) {
+		this.setAttribute('visible', visible);
+	}
 }
 window.customElements.define('aon-card',  AonCard);
