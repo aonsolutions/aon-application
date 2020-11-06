@@ -151,8 +151,6 @@ async function multipleDeleteOption() {
     const confirmed = confirm('¿Estás seguro de que deseas eliminar los documentos de tipo "Enviado" seleccionados?');
 
     if (confirmed) {
-        const service = window.selectedFolder;
-
         // Filtramos los documentos seleccionados quitando aquellos que no tengan la opción de eliminar
         const docs = $('.select_doc:checked').filter(function() {
             const row = $(this).closest('tr');
@@ -172,6 +170,8 @@ async function multipleDeleteOption() {
         }).toArray(); // Obtenemos el listado de objetos jQuery como un array JS
 
         try {
+            const service = window.aonDocumentalContainer.folder;
+
             // Hacemos una petición a bidoq para eliminar los documentos seleccionados
             const data = await bidoq({
                 "method": "delete_docs",
@@ -199,7 +199,7 @@ async function multipleDeleteOption() {
                 }
 
                 try {
-                    const list = await getList(window.page);
+                    const list = await getList(window.aonDocumentalContainer.page);
 
                     createTable(list);
                 } catch (error) {

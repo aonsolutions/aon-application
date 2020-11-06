@@ -116,12 +116,6 @@
 
             // Obtenemos las carpetas del cliente
             window.folders = $(window.aonDocumental).data('folders');
-            // Obtenemos la carpeta seleccionada a partir del parametro folder de la url y la almacenamos en una variable global
-            window.selectedFolder = new URLSearchParams(window.location.search).get('folder');
-            window.selectedFolder = (window.selectedFolder === 'pendientes') ? CARPETA_A_CONTABILIZAR : window.selectedFolder;
-
-            // Almacenamos el número de la página actual en una variable global
-            window.page = 0;
 
             try {
                 const list = await getList();

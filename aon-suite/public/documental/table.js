@@ -8,22 +8,19 @@ const TYPES = {
 };
 
 export const getList = async (page_this = 1, tagID = null) => {
-    // Actualizamos la variable global que almacena el número de página actual
-    window.page = page_this;
-
     const uploadButton = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbarSubirButton');
 
     window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
 
     // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
     // Si estamos filtrando por TAG eliminamos el boton de subir tambien
-    if ((parseInt(window.selectedFolder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
+    if ((parseInt(window.aonDocumentalContainer.folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
         window.aonDocumental.removeToolbarOptions(['Subir']);
     }
 
     // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
     // y no se este filtrando pot TAG
-    if (parseInt(window.selectedFolder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
+    if (parseInt(window.aonDocumentalContainer.folder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
         window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
             $('#upload-file').trigger('click');
         }, 'Subir documentos');
@@ -52,14 +49,14 @@ export const getList = async (page_this = 1, tagID = null) => {
             // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
             const defaultRequestData = {
                 "method"    : "list_docs",
-                "carpeta"   : window.selectedFolder,
+                "carpeta"   : window.aonDocumentalContainer.folder,
                 "pagina"    : page_this - 1
             };
 
             const data = (tagID !== null)
                 ? await bidoq({...defaultRequestData, tagID})
                 : await bidoq(defaultRequestData);
-            
+
             const jsonData = JSON.parse(data).datos;
 
             return new Promise((resolve, reject) => {
@@ -67,6 +64,11 @@ export const getList = async (page_this = 1, tagID = null) => {
                     const documents = jsonData.documentos;
 
                     if (typeof documents !== 'undefined') {
+                        page_this = jsonData.pagina_actual + 1;
+
+                        // Actualizamos el número de página actual almacenado en el elemento aon-documental
+                        window.aonDocumentalContainer.page = page_this;
+
                         const page_this_real    = page_this == 1 ? page_this : ((page_this - 1) * ITEMS_PER_PAGE) + 1;
                         const page_total        = page_this_real + documents.length;
                         const page_this_element = !documents.length ? documents.length : page_this_real;
@@ -76,7 +78,10 @@ export const getList = async (page_this = 1, tagID = null) => {
                             "url"           : document.image,
                             "date"          : document.date,
                             "file_name"     : document.name,
-                            "category"      : (typeof foldersByID[document.service] !== 'undefined') ? foldersByID[document.service].carpeta : '',
+                            "category"      : (typeof foldersByID[document.service] !== 'undefined') ? {
+                                "id": document.service,
+                                "name": foldersByID[document.service].carpeta
+                            } : null,
                             "subfolder"     : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
                             "model"         : document.model,
                             "year"          : document.year,
@@ -91,7 +96,7 @@ export const getList = async (page_this = 1, tagID = null) => {
                             "list"      : list,
                             "total_data": jsonData.total_resultados,                    // cantidad total de elementos
                             "total_page": jsonData.total_paginas + 1,                   // total de paginas
-                            "page"      : page_this,                                    // pagina en la que estamos
+                            "page"      : jsonData.pagina_actual + 1,                   // pagina en la que estamos
                             "shown_page": page_this_element + ' - ' + (page_total - 1), // cantidad mostrada por paginas 1 - 10
                         }
 
@@ -125,10 +130,10 @@ export const createTable = (data) => {
     let numberOfColumns = 8;
 
     if (list.length) {
-        const selectedFolderObject = window.folders.find((folder) => {
-            return parseInt(folder.carpetaID) === parseInt(window.selectedFolder);
+        const folderObject = window.folders.find((folder) => {
+            return parseInt(folder.carpetaID) === parseInt(window.aonDocumentalContainer.folder);
         });
-        const hasSubfolders = (typeof selectedFolder !== 'undefined' && selectedFolderObject.subcarpetas.length);
+        const hasSubfolders = (typeof folder !== 'undefined' && folderObject.subcarpetas.length);
 
         if (hasSubfolders) {
             $('#subfolder_column').removeClass('d-none');
@@ -136,7 +141,7 @@ export const createTable = (data) => {
             numberOfColumns += 1;
         }
 
-        if (parseInt(window.selectedFolder) === CARPETA_FISCAL) {
+        if (parseInt(window.aonDocumentalContainer.folder) === CARPETA_FISCAL) {
             $('#model_column, #year_column, #period_column').removeClass('d-none');
 
             numberOfColumns += 3;
@@ -184,6 +189,13 @@ export const createTable = (data) => {
                                         <span>${formattedDate}</span>
                                     </td>`;
                             break;
+                        case 'category':
+                            const category = (val === null) ? '' : val.name;
+
+                            tbody+= `<td class="show_doc pointer">
+                                        <span>${category}</span>
+                                    </td>`;
+                            break;
                         case 'type':
                             const type = TYPES[item.type];
 
@@ -194,7 +206,7 @@ export const createTable = (data) => {
                         case 'model':
                         case 'year':
                         case 'period':
-                            if (parseInt(window.selectedFolder) === CARPETA_FISCAL) {
+                            if (parseInt(window.aonDocumentalContainer.folder) === CARPETA_FISCAL) {
                                 let value = '';
 
                                 if (val !== null) {
@@ -325,7 +337,7 @@ function getAllowedOptions(document) {
         allowedOptions.push(ADD_NOTE_OPTION);
 
         // Solo puede eliminar los documentos de la carpeta "A contabilizar" enviados por él mismo
-        if (parseInt(window.selectedFolder) === CARPETA_A_CONTABILIZAR) {
+        if (parseInt(document.category.id) === CARPETA_A_CONTABILIZAR) {
             allowedOptions.push(MULTIPLE_DELETE_OPTION);
         }
     }
@@ -333,28 +345,28 @@ function getAllowedOptions(document) {
     return allowedOptions;
 }
 
-    //
-    // Filtrar por TAG
-    //
-        $(document).on('click', '#documentTags', async function () {
-            let tagID = $(this).data('tag');
+//
+// Filtrar por TAG
+//
+$(document).on('click', '#documentTags', async function () {
+    let tagID = $(this).data('tag');
 
-            // Recargar tabla y paginado
-            try {
-                const list = await getList(1, tagID); // Pasamos pagina 1 y el valor del tagID
+    // Recargar tabla y paginado
+    try {
+        const list = await getList(1, tagID); // Pasamos pagina 1 y el valor del tagID
 
-                createTable(list);
-            } catch (error) {
-                const list = {
-                    "list"      : [],
-                    "total_data": 0,                // cantidad total de elementos
-                    "total_page": 1,                // total de paginas
-                    "page"      : 1,                // pagina en la que estamos
-                    "shown_page": 0 + ' - ' + 0,    // cantidad mostrada por paginas 1 - 10
-                }
+        createTable(list);
+    } catch (error) {
+        const list = {
+            "list"      : [],
+            "total_data": 0,                // cantidad total de elementos
+            "total_page": 1,                // total de paginas
+            "page"      : 1,                // pagina en la que estamos
+            "shown_page": 0 + ' - ' + 0,    // cantidad mostrada por paginas 1 - 10
+        }
 
-                createTable(list);
+        createTable(list);
 
-                console.error(error);
-            }
-        });
+        console.error(error);
+    }
+});
