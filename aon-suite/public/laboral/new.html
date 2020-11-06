@@ -68,32 +68,32 @@
                                 // Datos de ALTA
                                 //
                             -->
-                            <form id="formulario-alta">
+                            <form id="formulario-alta" class="atp_caja_form">
                                 <input type="hidden" name="empleadoID" id='empleadoID' value="" />
                             
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Nombre y apellidos
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="nombre" id="nombre" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Nombre y apellidos</span>
                                             </label>
-                                            <input type="text" name="nombre" id="nombre" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                DNI o NIE
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="dni" id="dni" value="" class="form-control numero-letras" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>DNI o NIE</span>
                                             </label>
-                                            <input type="text" name="dni" id="dni" value="" class="form-control numero-letras" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Número seguridad social (NAF)
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="naf" id="naf" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Número seguridad social (NAF)</span>
                                             </label>
-                                            <input type="text" name="naf" id="naf" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                 </div>
@@ -101,18 +101,18 @@
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Fecha de Nacimiento 
+                                            <label class="d-block atp_inputs">
+                                                <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="" >
+                                                <span>Fecha de Nacimiento</span>
                                             </label>
-                                            <input type="date" name="fechaNacimiento" id="fechaNacimiento" value="" class="form-control text-center pointer" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Nacionalidad
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="nacionalidad" id="nacionalidad" value=""   class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Nacionalidad</span>
                                             </label>
-                                            <input type="text" name="nacionalidad" id="nacionalidad" value=""   class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -128,27 +128,24 @@
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Domicilio en España
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="domicilio" id="domicilio" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Domicilio en España</span>
                                             </label>
-                                            <input type="text" name="domicilio" id="domicilio" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                C.P.
+                                            <label class="d-block atp_inputs">
+                                                <input type="number" name="cp" id="cp" value="" maxlength="5" onchange="this.setAttribute('value', this.value);">
+                                                <span>C.P.</span>
                                             </label>
-                                            <input type="number" name="cp" id="cp" value="" class="form-control" placeholder="" maxlength="5" >
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Nivel de estudios
-                                            </label>
-                                            <select id="estudios" name="estudios" class="form-control">
-                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                            <select id="estudios" name="estudios" class="form-control atp_input">
+                                                <option value="" disabled="" selected="" style="display:none;">Nivel de estudios</option>
                                                 <option value="0">Educación primaria o equivalente</option>
                                                 <option value="1">Educación secundaria o equivalente</option>
                                                 <option value="2">bachillerato o equivalente</option>
@@ -163,11 +160,8 @@
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Tipo de contrato
-                                            </label>
-                                            <select id="contrato" name="contrato" class="form-control">
-                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                            <select id="contrato" name="contrato" class="form-control atp_input">
+                                                <option value="" disabled="" selected="" style="display:none;">Tipo de contrato</option>
                                                 <option value="0">Indefinido ordinario (sin bonificaciones)</option>
                                                 <option value="1">Indefinido bonificado (consultar al asesor)</option>
                                                 <option value="2">Temporal. Eventual*</option>
@@ -186,10 +180,10 @@
                                 <div id="otros" class="row hidden">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                *Si eligió "Otros", indique el tipo de contrato
+                                            <label class="d-block atp_inputs">
+                                                <textarea class="form-control" rows="2" name="otroContrato" id="otroContrato" maxlength="5000" placeholder=" " ></textarea>
+                                                <span>*Si eligió "Otros", indique el tipo de contrato</span>
                                             </label>
-                                            <textarea class="form-control" rows="2" name="otroContrato" id="otroContrato" maxlength="5000" placeholder="" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -198,10 +192,10 @@
                                 <div id="temporalObra" class="row hidden">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label contrato-tipo-temporal-obra">
-                                                Detalles del contrato temporal
+                                            <label class="d-block atp_inputs contrato-tipo-temporal-obra">
+                                                <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder=" " ></textarea>
+                                                <span>*Si eligió "Temporal. Obra y servicio", detalle la obra, servicio y dirección de la misma</span>
                                             </label>
-                                            <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder="(Por ejemplo.:  Reforma local C. Juan XXIII, 2 Barcelona 08003)" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -210,10 +204,10 @@
                                 <div id="temporalEventual" class="row hidden">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label contrato-tipo-temporal-eventual">
-                                                Detalles del contrato temporal
+                                            <label class="d-block atp_inputs contrato-tipo-temporal-eventual">
+                                                <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder=" " ></textarea>
+                                                <span>*Si eligió "Temporal. Eventual" detalle la eventualidad del contrato</span>
                                             </label>
-                                            <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder="(Por ejemplo.:  Aumento de la producción por temporada de verano)" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -263,10 +257,14 @@
                                             </div>
                                             <div class="col-5 col-xs-5 padding-left-15 padding-right-0">
                                                 <div id="horaSemanales"  class="form-group hidden">
-                                                    <label>Horas: </label>
-                                                    <input type="number" name="hsemanales" id="hsemanales" value="" class="form-control numero" max="100" min="00" >
-                                                    <label>Minutos: </label>
-                                                    <input type="number" name="msemanales" id="msemanales" value="" class="form-control numero" max="59" min="00" >
+                                                    <label class="d-block atp_inputs">
+                                                        <input type="number" name="hsemanales" id="hsemanales" value="" max="100" min="00" >
+                                                        <span>Horas:</span>
+                                                    </label>
+                                                    <label class="d-block atp_inputs">
+                                                        <input type="number" name="msemanales" id="msemanales" value="" max="59" min="00" >
+                                                        <span>Minutos:</span>
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -296,10 +294,10 @@
                                 <div class="row">
                                     <div id="importbilletes" class="col-4 hidden">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Importe del salario
+                                            <label class="d-block atp_inputs">
+                                                <input type="number" name="importe" id="importe" value="" >
+                                                <span>Importe del salario</span>
                                             </label>
-                                            <input type="number" name="importe" id="importe" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -311,20 +309,17 @@
                                 <div class="row">
                                     <div class="col-6" >
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Distribución de la jornada
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="horasSemana" id="horasSemana" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Distribución de la jornada</span>
                                             </label>
-                                            <input type="text" name="horasSemana" id="horasSemana" value="" class="form-control" placeholder="(Por ejemplo. Lunes a Jueves 09.00-14.00 y 16.00-19.00 y Viernes 09.00-14.00)" >
                                         </div>
                                     </div>
                                     
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Pagas extraordinarias
-                                            </label>
-                                            <select id="pagas" name="pagas" class="form-control">
-                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                            <select id="pagas" name="pagas" class="form-control atp_input">
+                                                <option value="" disabled="" selected="" style="display:none;">Pagas extraordinarias</option>
                                                 <option value="0">Prorrateadas mes a mes</option>
                                                 <option value="1">Al vencimiento (si lo permite el convenio)</option>
                                             </select>
@@ -335,18 +330,18 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Grupo profesional o puesto de trabajo
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="catProfesional" id="catProfesional" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Grupo profesional o puesto de trabajo</span>
                                             </label>
-                                            <input type="text" name="catProfesional" id="catProfesional" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Centro de trabajo <small>(Si hay más de uno)</small>
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="centTrabajo" id="centTrabajo" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Centro de trabajo <small>(Si hay más de uno)</small></span>
                                             </label>
-                                            <input type="text" name="centTrabajo" id="centTrabajo" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                 </div>
@@ -354,18 +349,18 @@
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Fecha de inicio del contrato
+                                            <label class="d-block atp_inputs">
+                                                <input type="date" name="fechaInicio" id="fechaInicio" value="" >
+                                                <span>Fecha de inicio del contrato</span>
                                             </label>
-                                            <input type="date" name="fechaInicio" id="fechaInicio" value="" class="form-control" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Fecha efectiva de la baja
+                                            <label class="d-block atp_inputs">
+                                                <input type="date" name="fechaFin" id="fechaFin" value="" >
+                                                <span>Fecha efectiva de la baja</span>
                                             </label>
-                                            <input type="date" name="fechaFin" id="fechaFin" value="" class="form-control" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -379,20 +374,20 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Cláusulas adicionales a incluir en el contrato
+                                            <label class="d-block atp_inputs">
+                                                <textarea class="form-control" rows="2" id="Clausulas" name="Clausulas" placeholder=" "></textarea>
+                                                <span>Cláusulas adicionales a incluir en el contrato</span>
                                             </label>
-                                            <textarea class="form-control" rows="2" id="Clausulas" name="Clausulas" ></textarea>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-group form-group-alto">
-                                            <label class="control-label">
-                                                Sugerencias
+                                            <label class="d-block atp_inputs">
+                                                <textarea class="form-control" rows="2" id="empleadoSugerencias" name="sugerencias" placeholder=" "></textarea>
+                                                <span>Sugerencias</span>
                                             </label>
-                                            <textarea class="form-control" rows="2" id="empleadoSugerencias" name="sugerencias"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -408,31 +403,28 @@
                                 // Datos de BAJA
                                 //
                             -->
-                            <form id="formulario-baja">
+                            <form id="formulario-baja" class="atp_caja_form">
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                DNI o NIE
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="dni" id="dni" value="" class="form-control numero-letras" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>DNI o NIE</span>
                                             </label>
-                                            <input type="text" name="dni" id="dni" value="" class="form-control numero-letras" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Número seguridad social (NAF)
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="naf" id="naf" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Número seguridad social (NAF)</span>
                                             </label>
-                                            <input type="text" name="naf" id="naf" value="" class="form-control" placeholder="" >
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Tipo de contrato
-                                            </label>
-                                            <select id="contrato" name="contrato" class="form-control">
-                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                            <select id="contrato" name="contrato" class="form-control atp_input">
+                                                <option value="" disabled="" selected="" style="display:none;">Tipo de contrato</option>
                                                 <option value="0">Indefinido ordinario (sin bonificaciones)</option>
                                                 <option value="1">Indefinido bonificado (consultar al asesor)</option>
                                                 <option value="2">Temporal. Eventual*</option>
@@ -449,10 +441,10 @@
                                 <div id="otros" class="row hidden">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label">
+                                            <label class="d-blocka atp_input">
                                                 *Si eligió "Otros", indique el tipo de contrato
+                                                <textarea class="form-control" rows="2" name="otroContrato" id="otroContrato" maxlength="5000" placeholder=" " ></textarea>
                                             </label>
-                                            <textarea class="form-control" rows="2" name="otroContrato" id="otroContrato" maxlength="5000" placeholder="" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -461,10 +453,10 @@
                                 <div id="temporalObra" class="row hidden">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label contrato-tipo-temporal-obra">
-                                                Detalles del contrato temporal
+                                            <label class="d-block atp_inputs contrato-tipo-temporal-obra">
+                                                <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder=" " ></textarea>
+                                                <span>*Si eligió "Temporal. Obra y servicio", detalle la obra, servicio y dirección de la misma</span>
                                             </label>
-                                            <textarea class="form-control" rows="2" name="temporalContratoObra" id="temporalContratoObra" maxlength="5000"  placeholder="(Por ejemplo.:  Reforma local C. Juan XXIII, 2 Barcelona 08003)" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -473,10 +465,10 @@
                                 <div id="temporalEventual" class="row hidden">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label contrato-tipo-temporal-eventual">
-                                                Detalles del contrato temporal
+                                            <label class="d-block atp_inputs contrato-tipo-temporal-eventual">
+                                                <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder=" " ></textarea>
+                                                <span>*Si eligió "Temporal. Eventual" detalle la eventualidad del contrato</span>
                                             </label>
-                                            <textarea class="form-control" rows="2" name="temporalContratoEventual" id="temporalContratoEventual" maxlength="5000"  placeholder="(Por ejemplo.:  Aumento de la producción por temporada de verano)" ></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -484,19 +476,16 @@
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Nombre y apellidos
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="nombre" id="nombre" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Nombre y apellidos</span>
                                             </label>
-                                            <input type="text" name="nombre" id="nombre" value="" class="form-control" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Motivo de la baja
-                                            </label>
-                                            <select id="baja" name="baja" class="form-control">
-                                                <option value="" disabled="" selected="" style="display:none;">Seleccione un campo</option>
+                                            <select id="baja" name="baja" class="form-control atp_input">
+                                                <option value="" disabled="" selected="" style="display:none;">Motivo de la baja</option>
                                                 <option value="0">Baja voluntaria</option>
                                                 <option value="1">Baja en periodo de prueba a instancia del trabajador</option>
                                                 <option value="2">Baja en periodo de prueba a instancia del empresario</option>
@@ -511,10 +500,10 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Fecha efectiva de la baja
+                                            <label class="d-block atp_inputs">
+                                                <input type="date" name="fechaFin" id="fechaFin" value="" >
+                                                <span>Fecha efectiva de la baja</span>
                                             </label>
-                                            <input type="date" name="fechaFin" id="fechaFin" class="form-control" value="" placeholder="">
                                         </div>
                                     </div>
                                 </div>
@@ -544,18 +533,18 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Nº de días de vacaciones pendientes de disfrute
+                                            <label class="d-block atp_inputs">
+                                                <input type="number" name="vacaciones" id="vacaciones" value="" >
+                                                <span>Nº de días de vacaciones pendientes de disfrute</span>
                                             </label>
-                                            <input type="number" name="vacaciones" id="vacaciones" value="" class="form-control numero" placeholder="">
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Aclaraciones sobre el Nº de días
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="vacAclaracion" id="vacAclaracion" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Aclaraciones sobre el Nº de días</span>
                                             </label>
-                                            <input type="text" name="vacAclaracion" id="vacAclaracion" value="" class="form-control" placeholder="">
                                         </div>
                                     </div>
                                 </div>
@@ -563,10 +552,10 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                *Importe indemnización si es pactada
+                                            <label class="d-block atp_inputs">
+                                                <input type="number" name="importe" id="importe" value="" >
+                                                <span>*Importe indemnización si es pactada</span>
                                             </label>
-                                            <input type="number" name="importe" id="importe" value="" class="form-control" placeholder="">
                                         </div>
                                     </div>
                                 </div>
@@ -574,10 +563,10 @@
                                 <div class="row motivoBaja">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <label class="control-label">
-                                                Aclaraciones del caso de despido por causas objetivas
+                                            <label class="d-block atp_inputs">
+                                                <input type="text" name="desAclaracion" id="desAclaracion" rows="2" value="" class="form-control" placeholder="" onchange="this.setAttribute('value', this.value);">
+                                                <span>Aclaraciones del caso de despido por causas objetivas</span>
                                             </label>
-                                            <input type="text" name="desAclaracion" id="desAclaracion" rows="2" value="" class="form-control" placeholder="">
                                         </div>
                                     </div>
                                 </div>
@@ -706,10 +695,7 @@
             //
                 let params = getAllGetParams();
 
-                //console.log(params);
-                console.log();
-                
-                for(var i in params){     
+                for(var i in params){
                     switch (params[i][0]) {
                         case 'id':
                             switch (params[i][1]) {
@@ -1001,23 +987,23 @@
                         case 'text':
                             switch (this.name) {
                                 case 'nombre':
-                                    $( "input[name*='"+this.name+"']" ).val("Manolo");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"Manolo");
                                     break;
                                 case 'dni':
-                                    $( "input[name*='"+this.name+"']" ).val("91556716H");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"91556716H");
                                     break;
                                 case 'naf':
-                                    $( "input[name*='"+this.name+"']" ).val("016896821030");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"016896821030");
                                     break;
                                 case 'nacionalidad':
-                                    $( "input[name*='"+this.name+"']" ).val("España");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"España");
                                     break;
                                 case 'domicilio':
-                                    $( "input[name*='"+this.name+"']" ).val("calle de manolo");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"calle de manolo");
                                     break;
                                     
                                 default:
-                                    $( "input[name*='"+this.name+"']" ).val("texto que ponemos en los input text...");
+                                    $( "input[name*='"+this.name+"']" ).attr('value',"texto que ponemos en los input text...");
                                     break;
                             }
                         break;
@@ -1025,7 +1011,7 @@
                         case 'number':
                             switch (this.name) {
                                 case 'cp':
-                                    $( "input[name*='"+this.name+"']" ).val(11405);
+                                    $( "input[name*='"+this.name+"']" ).attr('value',11405);
                                     break;
                                 
                                 default:
@@ -1038,14 +1024,14 @@
                             let day = ("0" + now.getDate()).slice(-2);
                             let month = ("0" + (now.getMonth() + 1)).slice(-2);
                             let today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-                            $( "input[name*='"+this.name+"']" ).val(today);
+                            $( "input[name*='"+this.name+"']" ).attr('value',today);
                         break;
 
                         default:
                             // Select
-                            $( "select[name*='"+this.name+"']" ).val(1);
+                            $( "select[name*='"+this.name+"']" ).attr('value',1);
                             // Texto
-                            $( "textarea[name*='"+this.name+"']" ).val("texto que ponemos en los textarea...");
+                            $( "textarea[name*='"+this.name+"']" ).attr('value',"texto que ponemos en los textarea...");
                             break;
                     }
                 });

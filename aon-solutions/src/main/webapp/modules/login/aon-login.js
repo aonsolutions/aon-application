@@ -1,10 +1,10 @@
-import {isMobile} from  '../../services/utils.js';
+import {AonElement} from '../../components/AonElement.js';
 import {login, getManifest, rememberPassword} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import '../../components/aon-input.js';
 import '../company/aon-parent.js';
 
-class AonLogin extends HTMLElement {
+export class AonLogin extends AonElement {
 
 	constructor () {
 		super();
@@ -128,9 +128,8 @@ class AonLogin extends HTMLElement {
 						<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
 					</form>
 				</div>
-				<div class="mdl-dialog__actions">
-					<button id="aonLoginRememberSend" type="button" class="mdl-button">Enviar</button>
-					<button type="button" class="mdl-button close">Cancelar</button>
+				<div>
+					<button id="aonLoginRememberSend" type="button">Enviar</button>
 				</div>
 			`);
 
@@ -180,18 +179,16 @@ class AonLogin extends HTMLElement {
 			loader.stop();
 			localStorage.removeItem('aon_domain_id');
 			localStorage.removeItem('aon_domain_name');
-			rootPanel(isMobile()
+			rootPanel(this.isMobile()
 				? '<aon-mobile-desktop id="aonParent"></aon-mobile-desktop>'
 				: '<aon-parent id="aonParent"></aon-parent>');
 		}).catch(error => {
 			loader.stop();
-			let err = JSON.parse(error);
-
 			let aonLoginError = document.getElementById('aonLoginError');
 			aonLoginError.style.display = 'block';
 
 			let aonLoginErrorMessage = document.getElementById('aonLoginErrorMessage');
-			aonLoginErrorMessage.innerHTML = err.message;
+			aonLoginErrorMessage.innerHTML = error.message;
 		});
 	}
 
@@ -201,8 +198,6 @@ class AonLogin extends HTMLElement {
     	document.getElementById('aonLoginSignin').click();
   	}
 	}
-
-
 }
 
 window.customElements.define('aon-login', AonLogin);

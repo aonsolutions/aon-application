@@ -1,5 +1,5 @@
+import {AonElement} from '../components/AonElement.js';
 import {closeSession} from  '../services/service.js';
-import {isMobile} from  '../services/utils.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon-button.js';
@@ -11,7 +11,7 @@ import './invoice/aon-invoice.js';
 import './company/aon-mobile-desktop.js';
 import './user/aon-user.js';
 
-class AonHeader extends HTMLElement {
+export class AonHeader extends AonElement {
 
 	get id() {
 		return this.getAttribute('id');
@@ -76,10 +76,10 @@ class AonHeader extends HTMLElement {
 
 		this.buildLogo();
 
-		if(!isMobile()) {
+		if(!this.isMobile()) {
 			let aonHeaderHomeButton = document.getElementById(BASE_ID + 'HomeButton');
 			aonHeaderHomeButton.addEventListener('click', () => {
-				rootPanel(isMobile()
+				rootPanel(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = document.getElementById('aonDesktop');
@@ -94,7 +94,7 @@ class AonHeader extends HTMLElement {
 
 		let aonHeaderCompanyListButton = document.getElementById(BASE_ID + 'CompanyListButton');
 		aonHeaderCompanyListButton.addEventListener('click', () => {
-			if(!isMobile()) {
+			if(!this.isMobile()) {
 				let aonHeaderSearch = document.getElementById(BASE_ID + 'Search');
 				aonHeaderSearch.style.display = 'block';
 
@@ -179,7 +179,7 @@ class AonHeader extends HTMLElement {
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
 
-				rootPanel(isMobile()
+				rootPanel(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
 				let aonDesktop = document.getElementById('aonDesktop');

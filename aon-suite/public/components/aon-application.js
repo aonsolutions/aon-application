@@ -88,13 +88,18 @@ class AonApplication extends HTMLElement {
 		div.appendChild(sidenavTitle);
 
     let ul = document.createElement('ul');
-    ul.className = 'aonClip';
+    ul.className = 'aonClip listUnstyled';
 
     options.forEach((option, i) => {
       let id = sidenav.id + option.name;
       let li = document.createElement('li');
       li.id = id;
       li.className = 'aonAppMenuSidenavList aonOpacity';
+
+      if(!this.selected && option.default) {
+        this.selected = id;
+        li.style.backgroundColor = '#ddd';
+      }
 
       if(option.icon) {
         let i = document.createElement('i');
@@ -144,9 +149,21 @@ class AonApplication extends HTMLElement {
     this.addToolbarOption(name, icon, fn);
   }
 
-  addToolbarOption(name, icon, fn) {
+  addToolbarOption(name, icon, fn, title = null) {
     let toolbar = document.getElementById(this.getId() + 'Toolbar');
-    toolbar.addButton(name, icon, fn);
+    toolbar.addButton(name, icon, fn, title);
+  }
+
+  removeToolbarOptions(names = null) {
+    let toolbar = document.getElementById(this.getId() + 'Toolbar');
+
+    if (names === null) {
+      toolbar.removeButtons();
+    } else {
+      names.map((name) => {
+        toolbar.removeButton(name);
+      });
+    }
   }
 
   setContent(element){

@@ -1,92 +1,67 @@
-import './aon-company.js'
-import { getCompanies} from  '../../services/service.js';
+import {AonElement} from '../../components/AonElement.js';
+import {getCompanies} from '../../services/service.js';
 
+export class AonCompanyList extends AonElement {
 
-(function() {
-
-	const html = `
-	<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable">
-	  <thead>
-	    <tr>
-	      <th class="mdl-data-table__cell--non-numeric">Razón Social</th>
-	      <th class="mdl-data-table__cell--non-numeric">CIF</th>
-	      <th class="mdl-data-table__cell--non-numeric"></th>
-	    </tr>
-	  </thead>
-	  <tbody id="company-tbody">
-
-	  </tbody>
-	</table>
-	`;
-
-class AonCompanyList extends HTMLElement {
-
-	get company() {
-		return this.getAttribute('company');
+	AON_COMPANY_TABLE;
+	static get observedAttributes() {
+		return ['filter'];
 	}
 
-	set company(company) {
-		this.setAttribute('company', company);
+	get filter() {
+    return this.getAttribute('filter');
+  }
+
+  set filter(filter) {
+    this.setAttribute('filter', filter);
+  }
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if('filter' === name) {
+			this.init();
+		}
 	}
 
 	constructor () {
 		super();
-		this.innerHTML = html;
-		let parentId = parseInt(this.getAttribute('company'));
-		getCompanies().then(r => {
-      this.build(r.companies.filter(f => !f.parent && f.parentId === parentId ))
-		});
+		this.AON_COMPANY_TABLE = 'aonCompanyTable';
 	}
 
 	connectedCallback () {
-
+		this.innerHTML = `
+			<aon-table id='${this.AON_COMPANY_TABLE}'></aon-table>
+			`;
+		this.build();
  	}
 
- 	build(companies) {
-		let tbody = document.getElementById('company-tbody');
-		for(let i = 0; i < companies.length; i++) {
-			let company = companies[i];
-			let event = new CustomEvent('select', { 'detail': company });
-			let tr = document.createElement('tr');
-			tr.style.cursor = 'pointer';
+	build() {
+	 let aonTable = this.getElement(this.AON_COMPANY_TABLE);
+	 aonTable.addColumn('Razón Social', 'string', 'name');
+	 aonTable.addColumn('CIF', 'string', 'document');
 
-			let td1 = document.createElement('td');
-			td1.className = 'mdl-data-table__cell--non-numeric';
-			td1.innerHTML = company.name ? company.name : '';
-			td1.addEventListener('click', () => this.dispatchEvent(event));
+	 // INFO
+	 // aonInvoiceTable.addColumn('', '', '');
 
-			let td2 = document.createElement('td');
-			td2.className = 'mdl-data-table__cell--non-numeric';
-			td2.innerHTML = company.document ? company.document : '';
-			td2.addEventListener('click', () => this.dispatchEvent(event));
+	 this.init();
+ }
 
-			// TODO:
-			let td5 = document.createElement('td');
-			td5.className = 'mdl-data-table__cell--non-numeric';
-			td5.innerHTML = '<aon-icon-button id="aonCompanyListSecurityButton-'+ company.id +'" icon="edit"></aon-icon-button>';
-			td5.addEventListener('click', () => this.dispatchEvent(event));
-
-			tr.appendChild(td1);
-			tr.appendChild(td2);
-			tr.appendChild(td5);
-
-
-			tbody.appendChild(tr);
-
-			let aonCompanyListSecurityButton = document.getElementById('aonCompanyListSecurityButton-' + company.id);
-			aonCompanyListSecurityButton.addEventListener('click', () => {
-				let content = document.getElementById('aonConfigurationContent');
-				content.innerHTML = '<aon-company id="aonCompany-' + company.id + '" ><aon-company>';
-				let aonCompany = document.getElementById('aonCompany-' + company.id);
-				aonCompany.style.display = "flex";
-				aonCompany.style.width = "100%";
-				aonCompany.setAttribute('company', JSON.stringify(company));
-			})
+	init() {
+		let aonTable = this.getElement(this.AON_COMPANY_TABLE);
+		if(aonTable) {
+			getCompanies(this.getFilter()).then(companies => {
+				aonTable.removeRows();
+				companies.forEach((company, i) => {
+					aonTable.addRow(company, () =>
+						this.dispatchEvent(new CustomEvent('select', {company})));
+				});
+			});
 		}
-
 	}
 
+	getFilter() {
+		return this.hasAttribute('filter')
+			? JSON.parse(this.filter)
+			: {};
+	}
 }
 window.customElements.define('aon-company-list', AonCompanyList);
-
-})();

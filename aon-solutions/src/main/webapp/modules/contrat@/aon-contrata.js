@@ -1,20 +1,24 @@
+import {AonElement} from '../../components/AonElement.js';
 import {startModule} from '../../services/gwtLoader.js';
 
-class AonContrata extends HTMLElement {
+export class AonContrata extends AonElement {
+
+	AON_CONTRATA;
 
 	constructor () {
 		super();
+		this.AON_CONTRATA = 'aonContrata';
 	}
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-application id="aonContrata" title="CONTRAT@"></aon-application>
+			<aon-application id="${this.AON_CONTRATA}" title="CONTRAT@"></aon-application>
 		`;
     this.build();
  	}
 
  	build() {
-		let aonContrata = document.getElementById('aonContrata');
+		let aonContrata = this.getElement(this.AON_CONTRATA);
 
 		let options = [
 			{

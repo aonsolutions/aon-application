@@ -1,4 +1,4 @@
-import {isMobile} from  '../../services/utils.js';
+import {AonElement} from '../../components/AonElement.js';
 import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
 import {getDomainApps, setDomainApp} from  '../../services/service.js';
@@ -10,7 +10,7 @@ import '../../components/aon-application.js';
 
 import '../marketplace/aon-marketplace.js';
 
-class AonDesktop extends HTMLElement {
+export class AonDesktop extends AonElement {
 
 	static get observedAttributes() {
 		return ['company'];
@@ -45,7 +45,7 @@ class AonDesktop extends HTMLElement {
 			let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 			if(company) {
 				getDomainApps(company.domain).then(r => {
-					if(isMobile()) {
+					if(this.isMobile()) {
 						this.buildMobile(r);
 					} else this.build(r);
 				//	componentHandler.upgradeAllRegistered();
@@ -56,13 +56,14 @@ class AonDesktop extends HTMLElement {
 
 	constructor () {
 		super();
+		this.id = 'aonDesktop';
 	}
 
 	connectedCallback () {
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
 			getDomainApps(company.domain).then(r => {
-				if(isMobile()){
+				if(this.isMobile()){
 					this.buildMobile(r);
 				} else this.build(r);
 			//	componentHandler.upgradeAllRegistered();
@@ -362,6 +363,7 @@ class AonDesktop extends HTMLElement {
 		let div = document.createElement('div');
 		div.style.marginLeft = '100px';
 		div.style.marginRight = '100px';
+		aonDesktop.setContent(div);
 
 		let banner = document.createElement('div');
 		banner.style.marginTop = '20px';
@@ -431,12 +433,13 @@ class AonDesktop extends HTMLElement {
 		div.appendChild(ul);
 
 		div.appendChild(this.buildTitle('DESCUBRIR'));
-		div.appendChild(this.buildCards(r));
+
+		this.buildCards(div, r);
 
 		div.appendChild(this.buildTitle('OTROS SERVICIOS'));
 		// TODO
 
-		aonDesktop.setContent(div);
+
 	}
 
 	buildTitle(title) {
@@ -448,19 +451,26 @@ class AonDesktop extends HTMLElement {
 		return div;
 	}
 
-	buildCards(r) {
+	buildCards(el, r) {
 		let ul = document.createElement('ul');
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
+		el.appendChild(ul);
 		for (let key in AllApps){
 			if(!r[AllApps[key].app]) {
+				let id = 'aonCard' + key;
 				let li = document.createElement('li');
 				li.style.display = 'inline-block';
 				li.style.marginRight = '20px';
 				li.style.marginBottom = '20px';
+				li.style.backgroundColor = 'transparent';
+				li.innerHTML = `<aon-card id="${id}"></aon-card>`;
+				ul.appendChild(li);
+
+
+
 				let div = document.createElement('div');
 				div.style.margin = '0px';
-				div.className = 'demo-card-wide mdl-card mdl-shadow--2dp';
 
 				let span = document.createElement('span');
 				span.style.margin = '20px';
@@ -475,6 +485,9 @@ class AonDesktop extends HTMLElement {
 				span.appendChild(span2);
 
 				let div2 = document.createElement('div');
+				div2.style.height = '80px';
+				div2.style.width = '250px';
+
 				let span3 = document.createElement('span');
 				span3.style.padding = '25px';
 				span3.style.color = '#7E7E7E';
@@ -482,10 +495,9 @@ class AonDesktop extends HTMLElement {
 				div2.appendChild(span3);
 
 				let buttons = document.createElement('span');
-				buttons.style.position = 'absolute';
-				buttons.style.bottom = '10px';
-				buttons.style.right = '10px';
-
+				buttons.style.position = 'relative';
+				buttons.style.left = '60px';
+				
 				let moreInfo = document.createElement('a');
 				moreInfo.style.margin = '10px';
 				moreInfo.style.color = 'gray';
@@ -515,12 +527,10 @@ class AonDesktop extends HTMLElement {
 				div.appendChild(div2);
 				div.appendChild(buttons);
 
-
-				li.appendChild(div);
-				ul.appendChild(li);
+				let aonCard = this.getElement(id);
+				aonCard.setContent(div);
 			}
 		}
-		return ul;
 	}
 
 }

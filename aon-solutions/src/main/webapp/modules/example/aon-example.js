@@ -1,31 +1,32 @@
+import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
 
-class AonExample extends HTMLElement {
+export class AonExample extends AonElement {
+
+	AON_EXAMPLE;
 
 	constructor () {
 		super();
+		this.AON_EXAMPLE = 'aonExample';
 	}
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-application id="aonExample" title="Example"></aon-application>
+			<aon-application id="${this.AON_EXAMPLE}" title="Example"></aon-application>
 		`;
     this.build();
  	}
 
  	build() {
-		let aonExample = document.getElementById('aonExample');
+		let aonExample = this.getElement(this.AON_EXAMPLE);
 
 		aonExample.addToolbarOption('Add', 'add', () => {alert('Add Example')});
 
-
-		let options = [
-			{
-				name: 'Prueba',
-				icon: 'accessibility',
-				fn: () => alert('PRUEBA!!')
-			}
-		];
+		let options = [{
+			name: 'Prueba',
+			icon: 'accessibility',
+			fn: () => alert('PRUEBA!!')
+		}];
 		aonExample.addSidenavOptions('OPCIONES', options);
 	}
 }

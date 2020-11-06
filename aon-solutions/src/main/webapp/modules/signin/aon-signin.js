@@ -1,38 +1,50 @@
 class AonSignin extends HTMLElement {
 
-	constructor () {
+	constructor() {
 		super();
 	}
 
-	connectedCallback () {
+	connectedCallback() {
 		this.innerHTML = `
 			<aon-application id="aonSignin" title="CONTROL DE HORARIO"></aon-application>
 		`;
-    this.build();
- 	}
+		this.build();
+	}
 
- 	build() {
+	build() {
 		let aonSignin = document.getElementById('aonSignin');
+
+		aonSignin.addToolbarOption('Add', 'add', () => { alert('Add Example') });
 
 		let options = [
 			{
-				name: 'Administradores',
-				icon: 'admin_panel_settings',
-				fn: () => this.loadAdmin()
-			},
-			{
-				name: 'Empleados',
+				name: 'Marcaje de empleado',
 				icon: 'people',
 				fn: () => this.loadEmployee()
 			},
 			{
-				name: 'Historial',
+				name: 'Marcaje desde administrador',
+				icon: 'admin_panel_settings',
+				fn: () => this.loadAdmin()
+			},
+			{
+				name: 'Historial de marcajes',
 				icon: 'history',
 				fn: () => this.loadHistory()
+			},
+			{
+				name: 'Solicitud de vacaciones',
+				icon: 'flight_takeoff',
+				fn: () => this.loadSolicitarVacaciones()
+			},
+			{
+				name: 'Historial de solicitudes',
+				icon: 'history',
+				fn: () => this.loadHistorialSolicitudes()
 			}
 		];
 		aonSignin.addSidenavOptions('OPCIONES', options);
-		this.loadAdmin();
+		this.loadEmployee();
 	}
 
 	loadAdmin() {
@@ -48,6 +60,16 @@ class AonSignin extends HTMLElement {
 	loadHistory() {
 		let aonSignin = document.getElementById('aonSignin');
 		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/historial.html" style="width:100%;height:100%;border:none;"></iframe>');
+	}
+
+	loadSolicitarVacaciones() {
+		let aonSignin = document.getElementById('aonSignin');
+		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/solicitar-vacaciones.html" style="width:100%;height:100%;border:none;"></iframe>');
+	}
+
+	loadHistorialSolicitudes() {
+		let aonSignin = document.getElementById('aonSignin');
+		aonSignin.setContentHTML('<iframe src="../../aon-suite/public/marcaje/historial-solicitudes.html" style="width:100%;height:100%;border:none;"></iframe>');
 	}
 }
 window.customElements.define('aon-signin', AonSignin);

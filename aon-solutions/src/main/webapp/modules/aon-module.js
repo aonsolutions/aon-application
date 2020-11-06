@@ -1,47 +1,55 @@
-import {isMobile} from '../services/utils.js';
+import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import './login/aon-login.js';
 import './aon-home.js';
 import './company/aon-parent.js';
 import './company/aon-desktop.js';
+import './company/aon-mobile-desktop.js';
 
-(function() {
+export class AonModule extends AonElement {
+	AON_LOGIN;
+	AON_HOME;
+	AON_DESKTOP;
+	AON_PARENT;
 
-	class AonModule extends HTMLElement {
-
-		constructor () {
-			super();
-		}
-
-		connectedCallback () {
-			this.innerHTML = `
-				<div id="aonLogin" style="display:none">
-					<aon-login></aon-login>
-				</div>
-				<div id="aonHome" style="display:none">
-					<aon-home> </aon-home>
-				</div>
-			`;
-			this.load();
-		}
-
-		load() {
-			if(localStorage.getItem('aon_session_id')){
-				document.getElementById("aonLogin").style.display = 'none';
-				document.getElementById("aonHome").style.display = 'block';
-				localStorage.removeItem('aon_domain_id');
-				localStorage.removeItem('aon_domain_name');
-				rootPanel(isMobile()
-					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-					: '<aon-parent id="aonParent"></aon-parent>');
-			} else {
-				document.getElementById("aonLogin").style.display = 'block';
-				document.getElementById("aonHome").style.display = 'none';
-			};
-		}
+	constructor () {
+		super();
+		this.AON_LOGIN = 'aonLogin';
+		this.AON_HOME = 'aonHome';
+		this.AON_DESKTOP = 'aonDesktop';
+		this.AON_PARENT = 'aonParent';
 	}
 
-	window.customElements.define('aon-module',  AonModule);
+	connectedCallback () {
+		let loginDiv= this.createElement('div');
+		loginDiv.id = this.AON_LOGIN;
+		loginDiv.style.display = 'display:none'
+		this.appendChild(loginDiv);
+		loginDiv.innerHTML = '<aon-login></aon-login>';
 
-})();
+		let homeDiv = this.createElement('div');
+		homeDiv.id = this.AON_HOME;
+		homeDiv.style.display = 'display:none'
+		homeDiv.innerHTML = '<aon-home></aon-home>';
+		this.appendChild(homeDiv);
+
+		this.load();
+	}
+
+	load() {
+		if(localStorage.getItem('aon_session_id')){
+			document.getElementById("aonLogin").style.display = 'none';
+			document.getElementById("aonHome").style.display = 'block';
+			localStorage.removeItem('aon_domain_id');
+			localStorage.removeItem('aon_domain_name');
+			rootPanel(this.isMobile()
+			 	? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
+			 	: '<aon-parent id="aonParent"></aon-parent>');
+		} else {
+			this.getElement(this.AON_LOGIN).style.display = 'block';
+			this.getElement(this.AON_HOME).style.display = 'none';
+		};
+	}
+}
+window.customElements.define('aon-module',  AonModule);

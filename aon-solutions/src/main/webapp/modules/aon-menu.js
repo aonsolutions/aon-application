@@ -1,3 +1,4 @@
+import {AonElement} from '../components/AonElement.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
 import {Apps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
@@ -6,6 +7,10 @@ import '../components/aon-icon.js';
 import './contrat@/aon-contrata.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';
+import './faqs/aon-faqs.js';
+import './contable/aon-contable.js';
+import './fiscal/aon-fiscal.js';
+import './laboral/aon-laboral.js';
 import './example/aon-example.js';
 import './imports/aon-imports.js';
 import './documental/aon-documental.js';
@@ -14,7 +19,7 @@ const ID = 'id';
 const OPENED = 'opened';
 const APP = 'app';
 
-class AonMenu extends HTMLElement {
+export class AonMenu extends AonElement {
 
 	get id() {
 		return this.getAttribute('id');
