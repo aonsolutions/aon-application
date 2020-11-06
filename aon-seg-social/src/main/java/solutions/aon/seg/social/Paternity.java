@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,6 +34,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
 import solutions.aon.seg.social.exceptions.paternity.PaternityException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityWrongDataException;
@@ -57,7 +60,7 @@ public class Paternity {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount,final String docType, final String docNum,
 			final String applicantType, final String reason, final Date dateFrom, final Date dateTo, final float baseCC, final float baseCP, final int days) throws SegSocialException{
-		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
@@ -126,6 +129,8 @@ public class Paternity {
 			throw new SegSocialException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
+		} catch (StringIndexOutOfBoundsException e) {
+			throw new UnfilledMandatory();
 		}
 		return false;
 	
@@ -134,7 +139,8 @@ public class Paternity {
 	public static void voidPaternity(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
-			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+		InvalidCertificateException.checkCertificate(certificateInputStream);	
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
 				//MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
 				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
@@ -208,13 +214,16 @@ public class Paternity {
 				throw new CertificateNotFoundException();
 			}	catch (NoSuchElementException e) {
 				throw new PaternityException();
+			} catch (StringIndexOutOfBoundsException e) {
+				throw new UnfilledMandatory();
 			}
 	}
 	
-	public static void consultCertificates(final InputStream certificateInputStream,
+	public static Collection<PaternityCertificate> consultCertificates(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
-			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+		InvalidCertificateException.checkCertificate(certificateInputStream);	
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
 				//MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
 				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
@@ -245,6 +254,7 @@ public class Paternity {
 					HtmlTable resultTable=(HtmlTable)htmlPage.querySelector("#ARQcapaPrincipalPest fieldset>div>table");
 					int rows=resultTable.getRowCount()-1;
 					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+					ArrayList<PaternityCertificate> ret=new ArrayList<PaternityCertificate>();
 					for(int i=1;i<=rows;i++) {
 						HtmlTableCell resultCell=resultTable.getCellAt(i, 0);
 						//System.out.println(resultTable.getCellAt(i, 0).asXml());
@@ -314,10 +324,12 @@ public class Paternity {
 							is.close();
 							pcb.setPdf(pdf);
 							PaternityCertificate pc=pcb.build();
+							ret.add(pc);
  						}catch (NullPointerException |ElementNotFoundException e) {
 							//If radiobutton doesn't exist
 						}
 					}
+					return ret;
 				}catch (NullPointerException | ElementNotFoundException e) {
 					try {
 						HtmlListItem errorLi=(HtmlListItem)htmlPage.querySelector("#ARQContenMensajePest>ul>.mensajeError[title='Error']");
@@ -340,7 +352,10 @@ public class Paternity {
 			throw new CertificateNotFoundException();
 			}	catch (NoSuchElementException e) {
 				throw new PaternityException();
+			} catch (StringIndexOutOfBoundsException e) {
+				throw new UnfilledMandatory();
 			}
+		return null;
 	}
 	
 	private static void chooseDataType(DomNode dt, PaternityCertificateBuilder pcb) {
@@ -433,7 +448,8 @@ public class Paternity {
 	public static byte[] getCertificatePdf(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String contributionAccount, final Date dateFrom, final Date dateTo, final Optional<Date> startDate) throws SegSocialException{
-			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+		InvalidCertificateException.checkCertificate(certificateInputStream);	
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100");
 				//MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
 				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
@@ -497,6 +513,8 @@ public class Paternity {
 			throw new CertificateNotFoundException();
 			}	catch (NoSuchElementException e) {
 				throw new PaternityException();
+			} catch (StringIndexOutOfBoundsException e) {
+				throw new UnfilledMandatory();
 			}
 			return null;
 	}
