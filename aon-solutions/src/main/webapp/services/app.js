@@ -292,19 +292,22 @@ export const PayrollMenu =
         content: '<aon-invoice-panel></aon-invoice-panel>'
       },{
         title: 'Contable.',
-        content: '<aon-example></aon-example>'
+        content: '<aon-contable></aon-aon-contable>'
       },{
         title: 'Fiscal.',
-        content: '<aon-example></aon-example>'
+        content: '<aon-fiscal></aon-fiscal>'
       },{
         title: 'Laboral.',
-        content: '<aon-example></aon-example>'
+        content: '<aon-laboral></aon-laboral>'
       },{
         title: 'Control de Horario.',
         content: '<aon-signin></aon-signin>'
       },{
         title: 'Messenger.',
         content: '<aon-messenger></aon-messenger>'
+      }, {
+        title: 'Faqs.',
+        content: '<aon-faqs></aon-faqs>'
       }];
 
 export const ArabaFiscalMenu =
