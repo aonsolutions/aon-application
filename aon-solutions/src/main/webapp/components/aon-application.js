@@ -56,6 +56,10 @@ export class AonApplication extends AonElement {
 	}
 
 	connectedCallback () {
+		this.build();
+	}
+
+ 	build() {
 		this.innerHTML = `
 			<!-- AON APPLICATION TOOLBAR -->
 			<aon-toolbar id="${this.TOOLBAR}" title="${this.getTitle()}"></aon-toolbar>
@@ -64,20 +68,12 @@ export class AonApplication extends AonElement {
 			<aon-loader id="${this.LOADER}"> </aon-loader>
 
 			<!-- AON APPLICATION MENU (SIDENAV) -->
-			<div id="${this.SIDENAV}" class="sidenav">
-
-			</div>
+			<div id="${this.SIDENAV}" class="sidenav"></div>
 
 			<!-- AON APPLICATION CONTENT -->
-			<div id="${this.CONTENT}">
-
-			</div>
-
+			<div id="${this.CONTENT}"></div>
 		`;
-    this.build();
- 	}
 
- 	build() {
     let toolbar = this.getElement(this.TOOLBAR);
     toolbar.toogleSidenav(() => this.toogleSidenav());
 
@@ -142,64 +138,66 @@ export class AonApplication extends AonElement {
     	ul.className = 'aonClip';
     	div.appendChild(ul);
     	options.forEach((option, i) => {
-      	let id = sidenav.id + option.name;
-      	let li =  this.createElement('li');
-      	li.id = id;
-      	li.className = 'aonAppMenuSidenavList aonOpacity';
-				ul.appendChild(li);
+				if(!option.hidden){
+      		let id = sidenav.id + option.name;
+      		let li =  this.createElement('li');
+      		li.id = id;
+      		li.className = 'aonAppMenuSidenavList aonOpacity';
+					ul.appendChild(li);
 
-				let span =  this.createElement('span');
-				span.className = 'aonMenuItemSpan';
-				span.innerHTML = option.name;
+					let span =  this.createElement('span');
+					span.className = 'aonMenuItemSpan';
+					span.innerHTML = option.name;
 
-      	if(option.icon) {
-        	let i =  this.createElement('i');
-        	i.className = 'material-icons aonVerticalMiddle';
-        	i.innerHTML = option.icon;
-        	li.appendChild(i);
-      	} else if(option.aonIcon) {
-        	li.innerHTML = `<aon-icon id="${id + 'AonIcon' }" icon="${option.aonIcon.icon}" size="18px"></aon-icon>`;
+      		if(option.icon) {
+        		let i =  this.createElement('i');
+        		i.className = 'material-icons aonVerticalMiddle';
+        		i.innerHTML = option.icon;
+        		li.appendChild(i);
+      		} else if(option.aonIcon) {
+        		li.innerHTML = `<aon-icon id="${id + 'AonIcon' }" icon="${option.aonIcon.icon}" size="18px"></aon-icon>`;
 
-					li.addEventListener('mouseover', () => {
-						this.getElement(id + 'AonIcon').color = option.aonIcon.color;
-					});
+						li.addEventListener('mouseover', () => {
+							this.getElement(id + 'AonIcon').color = option.aonIcon.color;
+						});
 
-					li.addEventListener('mouseleave', () => {
-						this.getElement(id + 'AonIcon').color = '#5f6368';
-					});
-      	} else if(option.img) {
-        	let img =  this.createElement('img');
-        	img.style.width = '18px';
-        	img.src = option.img;
-        	li.appendChild(img);
-      	} else {
-					span.style.marginLeft = '28px';
-				}
-      	li.appendChild(span);
-
-      	li.addEventListener('mouseover', () => {
-        	if(!this.selected || this.selected !== id)
-          	li.style.backgroundColor = '#f1f1f1';
-      	});
-
-      	li.addEventListener('mouseleave', () => {
-        	if(!this.selected || this.selected !== id)
-          	li.style.backgroundColor = 'white';
-      	});
-
-      	li.addEventListener('click', () => {
-      		document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
-          	el.style.backgroundColor = 'white';
-        	});
-        	this.selected = id;
-        	li.style.backgroundColor = '#ddd';
-			    let toolbar = this.getElement(this.TOOLBAR);
-					toolbar.setAttribute('option', option.name);
-        	option.fn();
-					if(this.isMobile()) {
-						this.closeSidenav();
+						li.addEventListener('mouseleave', () => {
+							this.getElement(id + 'AonIcon').color = '#5f6368';
+						});
+      		} else if(option.img) {
+        		let img =  this.createElement('img');
+        		img.style.width = '18px';
+        		img.src = option.img;
+        		li.appendChild(img);
+      		} else {
+						span.style.marginLeft = '28px';
 					}
-      	});
+      		li.appendChild(span);
+
+      		li.addEventListener('mouseover', () => {
+        		if(!this.selected || this.selected !== id)
+          		li.style.backgroundColor = '#f1f1f1';
+      		});
+
+      		li.addEventListener('mouseleave', () => {
+        		if(!this.selected || this.selected !== id)
+          		li.style.backgroundColor = 'white';
+      		});
+
+      		li.addEventListener('click', () => {
+      			document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
+          		el.style.backgroundColor = 'white';
+        		});
+        		this.selected = id;
+        		li.style.backgroundColor = '#ddd';
+			    	let toolbar = this.getElement(this.TOOLBAR);
+						toolbar.setAttribute('option', option.name);
+        		option.fn();
+						if(this.isMobile()) {
+							this.closeSidenav();
+						}
+      		});
+				}
     	});
 		}
   }

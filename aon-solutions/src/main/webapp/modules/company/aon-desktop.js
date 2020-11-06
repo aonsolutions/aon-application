@@ -363,6 +363,7 @@ export class AonDesktop extends AonElement {
 		let div = document.createElement('div');
 		div.style.marginLeft = '100px';
 		div.style.marginRight = '100px';
+		aonDesktop.setContent(div);
 
 		let banner = document.createElement('div');
 		banner.style.marginTop = '20px';
@@ -432,12 +433,13 @@ export class AonDesktop extends AonElement {
 		div.appendChild(ul);
 
 		div.appendChild(this.buildTitle('DESCUBRIR'));
-		div.appendChild(this.buildCards(r));
+
+		this.buildCards(div, r);
 
 		div.appendChild(this.buildTitle('OTROS SERVICIOS'));
 		// TODO
 
-		aonDesktop.setContent(div);
+
 	}
 
 	buildTitle(title) {
@@ -449,19 +451,26 @@ export class AonDesktop extends AonElement {
 		return div;
 	}
 
-	buildCards(r) {
+	buildCards(el, r) {
 		let ul = document.createElement('ul');
 		ul.style.margin = '0px';
 		ul.style.padding = '0px';
+		el.appendChild(ul);
 		for (let key in AllApps){
 			if(!r[AllApps[key].app]) {
+				let id = 'aonCard' + key;
 				let li = document.createElement('li');
 				li.style.display = 'inline-block';
 				li.style.marginRight = '20px';
 				li.style.marginBottom = '20px';
+				li.style.backgroundColor = 'transparent';
+				li.innerHTML = `<aon-card id="${id}"></aon-card>`;
+				ul.appendChild(li);
+
+
+
 				let div = document.createElement('div');
 				div.style.margin = '0px';
-				div.className = 'demo-card-wide mdl-card mdl-shadow--2dp';
 
 				let span = document.createElement('span');
 				span.style.margin = '20px';
@@ -476,6 +485,9 @@ export class AonDesktop extends AonElement {
 				span.appendChild(span2);
 
 				let div2 = document.createElement('div');
+				div2.style.height = '80px';
+				div2.style.width = '250px';
+
 				let span3 = document.createElement('span');
 				span3.style.padding = '25px';
 				span3.style.color = '#7E7E7E';
@@ -483,10 +495,9 @@ export class AonDesktop extends AonElement {
 				div2.appendChild(span3);
 
 				let buttons = document.createElement('span');
-				buttons.style.position = 'absolute';
-				buttons.style.bottom = '10px';
-				buttons.style.right = '10px';
-
+				buttons.style.position = 'relative';
+				buttons.style.left = '60px';
+				
 				let moreInfo = document.createElement('a');
 				moreInfo.style.margin = '10px';
 				moreInfo.style.color = 'gray';
@@ -516,12 +527,10 @@ export class AonDesktop extends AonElement {
 				div.appendChild(div2);
 				div.appendChild(buttons);
 
-
-				li.appendChild(div);
-				ul.appendChild(li);
+				let aonCard = this.getElement(id);
+				aonCard.setContent(div);
 			}
 		}
-		return ul;
 	}
 
 }

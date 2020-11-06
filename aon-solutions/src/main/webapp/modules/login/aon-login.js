@@ -128,9 +128,8 @@ export class AonLogin extends AonElement {
 						<aon-input id="aonLoginRememberEmail" description="Email"></aon-input>
 					</form>
 				</div>
-				<div class="mdl-dialog__actions">
-					<button id="aonLoginRememberSend" type="button" class="mdl-button">Enviar</button>
-					<button type="button" class="mdl-button close">Cancelar</button>
+				<div>
+					<button id="aonLoginRememberSend" type="button">Enviar</button>
 				</div>
 			`);
 
