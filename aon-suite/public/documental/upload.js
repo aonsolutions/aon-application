@@ -480,7 +480,7 @@ export function UploadDocumentos(){
                     try {
                         const data = await bidoq({
                             "method"    : "upload",
-                            "services"  : window.selectedFolder,
+                            "services"  : window.aonDocumentalContainer.folder,
                             "files"     : JSON.stringify(files)
                         });
 

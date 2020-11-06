@@ -41,6 +41,9 @@ export const bidoq = async (additionalData) => {
 
 class AonDocumental extends HTMLElement {
 
+    folder = null;
+    page = null;
+
     constructor () {
         super();
     }
@@ -71,6 +74,9 @@ class AonDocumental extends HTMLElement {
     loadIndex(folder = 'pendientes') {
         let aonDocumental = document.getElementById('aonDocumental');
         const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
+
+        // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
+        this.folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
 
         // Eliminamos todas las opciones de la barra de herramientas
         aonDocumental.removeToolbarOptions();
