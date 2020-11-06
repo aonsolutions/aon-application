@@ -1,4 +1,4 @@
-import {isMobile} from  '../../services/utils.js';
+import {AonElement} from '../../components/AonElement.js';
 import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
 import {getDomainApps, setDomainApp} from  '../../services/service.js';
@@ -10,7 +10,7 @@ import '../../components/aon-application.js';
 
 import '../marketplace/aon-marketplace.js';
 
-class AonDesktop extends HTMLElement {
+export class AonDesktop extends AonElement {
 
 	static get observedAttributes() {
 		return ['company'];
@@ -45,7 +45,7 @@ class AonDesktop extends HTMLElement {
 			let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 			if(company) {
 				getDomainApps(company.domain).then(r => {
-					if(isMobile()) {
+					if(this.isMobile()) {
 						this.buildMobile(r);
 					} else this.build(r);
 				//	componentHandler.upgradeAllRegistered();
@@ -56,13 +56,14 @@ class AonDesktop extends HTMLElement {
 
 	constructor () {
 		super();
+		this.id = 'aonDesktop';
 	}
 
 	connectedCallback () {
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
 			getDomainApps(company.domain).then(r => {
-				if(isMobile()){
+				if(this.isMobile()){
 					this.buildMobile(r);
 				} else this.build(r);
 			//	componentHandler.upgradeAllRegistered();

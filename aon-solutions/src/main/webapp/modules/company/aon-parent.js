@@ -1,15 +1,16 @@
-import {isMobile} from  '../../services/utils.js';
+import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getUserAppRole, getCompanies} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import './aon-desktop.js';
 
-class AonParent extends HTMLElement {
+export class AonParent extends AonElement {
 
 	companies;
 	selected;
 
 	constructor () {
 		super();
+		this.id = 'aonParent';
 	}
 
 	connectedCallback () {
@@ -18,7 +19,7 @@ class AonParent extends HTMLElement {
 		`;
 
 		let aonParent = document.getElementById('aonParentMain');
-		if(isMobile()){
+		if(this.isMobile()){
 			aonParent.closeSidenav();
 		} else {
 			let filterOptions = [
@@ -193,7 +194,7 @@ class AonParent extends HTMLElement {
 	companySelection(company) {
 		const BASE_ID = 'aonHeader';
 
-		if(!isMobile()){
+		if(!this.isMobile()){
 			let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';
 
@@ -223,7 +224,7 @@ class AonParent extends HTMLElement {
 		localStorage.setItem("aon_domain_name", company.domain);
 
 		getUserAppRole().then(user => {
-			if(!isMobile()) {
+			if(!this.isMobile()) {
 				let aonMenu = document.getElementById('aonMenu');
 				aonMenu.innerHTML = '';
 				aonMenu.setAttribute('company', JSON.stringify(company));
@@ -235,7 +236,7 @@ class AonParent extends HTMLElement {
 			aonHeader.setAttribute('company', JSON.stringify(company));
 			aonHeader.setAttribute('user', JSON.stringify(user));
 
-			rootPanel(isMobile()
+			rootPanel(this.isMobile()
 				? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 				: '<aon-desktop id="aonDesktop"></aon-desktop>');
 			let aonDesktop = document.getElementById('aonDesktop');

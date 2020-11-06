@@ -1,36 +1,32 @@
+import {AonElement} from '../../components/AonElement.js';
 import './aon-user.js'
 import {getUsers} from  '../../services/service.js';
 
-(function() {
-
-	const html = `
-	<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable">
-	  <thead>
-	    <tr>
-	      <th class="mdl-data-table__cell--non-numeric">Nombre</th>
-	      <th class="mdl-data-table__cell--non-numeric">Apellidos</th>
-	      <th class="mdl-data-table__cell--non-numeric">Email</th>
-	      <th class="mdl-data-table__cell--non-numeric">DNI/NIE</th>
-	      <th class="mdl-data-table__cell--non-numeric"></th>
-	    </tr>
-	  </thead>
-	  <tbody id="user-tbody">
-
-	  </tbody>
-	</table>
-	`;
-
-class AonUserList extends HTMLElement {
+export class AonUserList extends AonElement {
 	constructor () {
 		super();
-		this.innerHTML = html;
-		getUsers().then(users => {
-			this.build(users);
-		});
 	}
 
 	connectedCallback () {
+		this.innerHTML = `
+		<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable">
+			<thead>
+				<tr>
+					<th class="mdl-data-table__cell--non-numeric">Nombre</th>
+					<th class="mdl-data-table__cell--non-numeric">Apellidos</th>
+					<th class="mdl-data-table__cell--non-numeric">Email</th>
+					<th class="mdl-data-table__cell--non-numeric">DNI/NIE</th>
+					<th class="mdl-data-table__cell--non-numeric"></th>
+				</tr>
+			</thead>
+			<tbody id="user-tbody">
 
+			</tbody>
+		</table>
+		`;
+		getUsers().then(users => {
+			this.build(users);
+		});
  	}
 
  	build(users) {
@@ -91,5 +87,3 @@ class AonUserList extends HTMLElement {
 
 }
 window.customElements.define('aon-user-list', AonUserList);
-
-})();

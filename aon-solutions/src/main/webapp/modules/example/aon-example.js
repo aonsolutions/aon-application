@@ -1,6 +1,7 @@
+import {AonElement} from '../../components/AonElement.js';
 import '../../components/aon-application.js';
 
-class AonExample extends HTMLElement {
+export class AonExample extends AonElement {
 
 	constructor () {
 		super();
@@ -28,5 +29,8 @@ class AonExample extends HTMLElement {
 		];
 		aonExample.addSidenavOptions('OPCIONES', options);
 	}
+
+	define() {
+		window.customElements.define('aon-example', AonExample);
+	}
 }
-window.customElements.define('aon-example', AonExample);

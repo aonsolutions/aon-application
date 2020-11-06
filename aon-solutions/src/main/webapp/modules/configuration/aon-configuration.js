@@ -1,3 +1,4 @@
+import {AonElement} from '../../components/AonElement.js';
 import {getAuth} from '../../services/service.js';
 
 import '../../components/aon-toolbar.js';
@@ -8,7 +9,7 @@ import '../user/aon-user-list.js';
 import '../user/aon-user.js';
 import '../company/aon-company-list.js';
 
-class AonConfiguration extends HTMLElement {
+export class AonConfiguration extends AonElement {
 
 	selected;
 

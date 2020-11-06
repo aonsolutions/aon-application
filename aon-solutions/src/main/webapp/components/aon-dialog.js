@@ -1,6 +1,6 @@
+import {AonElement} from './AonElement.js';
 
-
-class AonDialog extends HTMLElement {
+export class AonDialog extends AonElement {
 
 	get id() {
 		return this.getAttribute('id');

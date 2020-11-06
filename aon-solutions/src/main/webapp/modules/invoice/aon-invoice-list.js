@@ -1,9 +1,8 @@
+import {AonElement} from '../../components/AonElement.js';
 import {getInvoices} from '../../services/service.js';
 import '../../components/aon-table.js';
 
-(function() {
-
-class AonInvoiceList extends HTMLElement {
+export class AonInvoiceList extends AonElement {
 
 	static get observedAttributes() {
 		return ['filter'];
@@ -75,4 +74,3 @@ class AonInvoiceList extends HTMLElement {
 	}
 }
 window.customElements.define('aon-invoice-list', AonInvoiceList);
-})();

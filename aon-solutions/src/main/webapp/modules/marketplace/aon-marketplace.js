@@ -1,8 +1,9 @@
+import {AonElement} from '../../components/AonElement.js';
 import {Apps, Services} from  '../../services/app.js';
 import {getDomainApps, setDomainApp} from  '../../services/service.js';
 import '../../components/aon-icon.js';
 
-class AonMarketplace extends HTMLElement {
+export class AonMarketplace extends AonElement {
 
 	static get observedAttributes() {
 		return ['company'];

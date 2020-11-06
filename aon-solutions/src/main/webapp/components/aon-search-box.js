@@ -1,6 +1,8 @@
+import {AonElement} from './AonElement.js';
+
 import './aon-icon-button.js';
 
-class AonSearchBox extends HTMLElement {
+export class AonSearchBox extends HTMLElement {
 
 	constructor () {
 		super();

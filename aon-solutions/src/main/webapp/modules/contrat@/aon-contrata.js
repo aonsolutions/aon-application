@@ -1,6 +1,7 @@
+import {AonElement} from '../../components/AonElement.js';
 import {startModule} from '../../services/gwtLoader.js';
 
-class AonContrata extends HTMLElement {
+export class AonContrata extends AonElement {
 
 	constructor () {
 		super();

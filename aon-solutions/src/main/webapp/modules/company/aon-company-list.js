@@ -1,25 +1,9 @@
+import {AonElement} from '../../components/AonElement.js';
+
 import './aon-company.js'
 import { getCompanies} from  '../../services/service.js';
 
-
-(function() {
-
-	const html = `
-	<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable">
-	  <thead>
-	    <tr>
-	      <th class="mdl-data-table__cell--non-numeric">Razón Social</th>
-	      <th class="mdl-data-table__cell--non-numeric">CIF</th>
-	      <th class="mdl-data-table__cell--non-numeric"></th>
-	    </tr>
-	  </thead>
-	  <tbody id="company-tbody">
-
-	  </tbody>
-	</table>
-	`;
-
-class AonCompanyList extends HTMLElement {
+export class AonCompanyList extends AonElement {
 
 	get company() {
 		return this.getAttribute('company');
@@ -31,15 +15,27 @@ class AonCompanyList extends HTMLElement {
 
 	constructor () {
 		super();
-		this.innerHTML = html;
-		let parentId = parseInt(this.getAttribute('company'));
-		getCompanies().then(r => {
-      this.build(r.companies.filter(f => !f.parent && f.parentId === parentId ))
-		});
 	}
 
 	connectedCallback () {
+		this.innerHTML = `
+		<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp aonTable">
+			<thead>
+				<tr>
+					<th class="mdl-data-table__cell--non-numeric">Razón Social</th>
+					<th class="mdl-data-table__cell--non-numeric">CIF</th>
+					<th class="mdl-data-table__cell--non-numeric"></th>
+				</tr>
+			</thead>
+			<tbody id="company-tbody">
 
+			</tbody>
+		</table>
+		`;
+		let parentId = parseInt(this.getAttribute('company'));
+		getCompanies().then(r => {
+			this.build(r.companies.filter(f => !f.parent && f.parentId === parentId ))
+		});
  	}
 
  	build(companies) {
@@ -88,5 +84,3 @@ class AonCompanyList extends HTMLElement {
 
 }
 window.customElements.define('aon-company-list', AonCompanyList);
-
-})();
