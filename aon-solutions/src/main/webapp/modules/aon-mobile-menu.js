@@ -114,7 +114,7 @@ export class AonMobileMenu extends AonElement {
 		aonMobileMenuTime.style.marginLeft = n;
 		aonMobileMenuTime.style.marginRight = n;
 
-		let aonMobileMenuInvoice = getElement('aonMobileMenuInvoice');
+		let aonMobileMenuInvoice = this.getElement('aonMobileMenuInvoice');
 		aonMobileMenuInvoice.style.marginLeft = n;
 		aonMobileMenuInvoice.style.marginRight = n;
 
@@ -157,7 +157,7 @@ export class AonMobileMenu extends AonElement {
 
 	async sendImage({target}){
 		try {
-			const {files: [file]} = target;
+			const {files: [file]} = target; // file = event.target.files[0];
 			const archivo = await getReader(file);
 			const resp = await uploadFile({ file: archivo });
 			console.log("archivo guardado!", resp);
