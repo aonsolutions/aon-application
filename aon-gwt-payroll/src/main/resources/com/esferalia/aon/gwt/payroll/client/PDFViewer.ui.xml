@@ -49,6 +49,9 @@
 								<g:Button debugId='downloadButton' ui:field='downloadButton'
 									styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
 							</g:HTMLPanel>
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" ui:field="customToolBarPanel">
+							</g:HTMLPanel>
+							
 						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>				

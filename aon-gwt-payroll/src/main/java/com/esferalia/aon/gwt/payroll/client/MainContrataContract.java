@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.ifSistemaREDEnabled;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,8 +10,12 @@ import java.util.List;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,16 +32,24 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
+
+import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class MainContrataContract extends MainEntryPoint {
 
@@ -65,6 +79,9 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	@UiField
+	DockLayoutPanel splitLayoutPanel;
+	
+	@UiField
 	Button newContractButton;
 	
 	@UiField
@@ -88,6 +105,20 @@ public class MainContrataContract extends MainEntryPoint {
 	@UiField(provided = true)
 	ContrataEmployee contrataEmployee;
 	
+	@UiField
+	MinimizePanel footPanel;
+	
+	@UiField
+	TabLayoutPanel footTabPanel;
+	
+	@UiField
+	PDFViewer pdfViewer;
+	
+	@UiField
+	Panel sistemaREDPanel;
+	
+	
+	ResultsPanel resultsPanel;
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
 	// --------------------------------------------------------------------------------------------
@@ -113,6 +144,10 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		// Show table
 		deckPanel.showWidget(0);
+		
+		initFootPanel();
+		initResultsPanel();
+		initPDFViewer();
 	}
 
 	// --------------------------------------------------------------------------------------------
@@ -280,6 +315,8 @@ public class MainContrataContract extends MainEntryPoint {
 				},
 				f -> {}
 		);
+		
+		checkStatus(this.mainContrataContractObject);
 	}
 	
 	private void initEnterpriseSB() {
@@ -492,6 +529,46 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDialog.show();
 	}
 	
+	@UiHandler("up2DateSSButton")
+	void onClickUp2DateSSButton(ClickEvent e) {
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_REPORT);
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				if (state != XMLHttpRequest.DONE)
+					return;
+				try {
+					String dataURI = xhr.getResponseText();
+					showPFDF(dataURI);
+					AON.stop();
+				} catch ( Throwable t ) {
+					AON.fail();
+				}
+			}
+		});
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer
+		.append(SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL())
+		.append("&" +SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser() )
+		;
+		
+		xhr.send(requestDataBuffer.toString());
+		AON.start();
+		
+	}
+	
+	protected void showPFDF(String dataURI) {
+		pdfViewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
+		pdfViewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
+		deckPanel.showWidget(2);
+	}	
+	
+	
 	private void redrawTable() {
 		this.inactiveContractsCB.setValue(false);
 		this.mainContrataContractObject.getEmployeesInfo(false,
@@ -513,5 +590,111 @@ public class MainContrataContract extends MainEntryPoint {
 		
 	}
 	
+	private void initFootPanel() {
+		footPanel.addMaximizeHandler((e) -> {
+			splitLayoutPanel.setWidgetSize(footPanel, 150);
+		});
+		
+		footPanel.addMinimizeHandler((e) -> {
+			splitLayoutPanel.setWidgetSize(footPanel, 25);
+		});
+		
+	}
+	
+	private void initResultsPanel () {
+		resultsPanel = new ResultsPanel();		
+	}
+	
+	private void initPDFViewer () {
+		Button closeButton = new Button("Cerrar");
+		closeButton.setStylePrimaryName(AON.AON_ICON_CANCEL);
+		closeButton.addClickHandler( e -> deckPanel.showWidget(0));
+		pdfViewer.addCustomToolBarButton(closeButton);
+	}
+
+	private void checkStatus(MainContrataContractObject mainContrataContractObject) {
+		mainContrataContractObject.checkStatus(enterpriseStatus -> {
+			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
+				
+				@Override
+				public void up2Date() {
+				}
+
+				@Override
+				public void run() {
+					mainContrataContractObject.checkStatus(enterpriseStatus -> {
+						removeAll();
+						enterpriseStatus.visit(this);
+					}, throwable -> {
+					});
+				}
+				
+				@Override
+				protected void saltraCredentialsFound() {
+					mainContrataContractObject.checkStatus(enterpriseStatus -> {
+						removeAll();
+						enterpriseStatus.visit(this);
+						selectResultsPanel();
+						EnterpriseStatus.ifSistemaREDEnabled(enterpriseStatus, () -> {
+							showFootPanel();
+							MainContrataContract.this.setSistemaREDVisible(true);
+							//ContrataEmployee.this.setOnSaved(e -> run());
+						}, () -> {
+							closeFootPanel();
+							MainContrataContract.this.setSistemaREDVisible(false);
+
+						});
+					}, throwable -> {
+						closeFootPanel();
+						MainContrataContract.this.setSistemaREDVisible(false);
+
+					});
+				}
+			};
+
+			enterpriseStatus.visit(sistemaREDResults);
+			resultsPanel.setWidget(sistemaREDResults);
+			selectResultsPanel();
+
+			ifSistemaREDEnabled(enterpriseStatus, () -> {
+				showFootPanel();
+				MainContrataContract.this.setSistemaREDVisible(true);
+				//ContrataEmployee.this.setOnSaved(e -> sistemaREDResults.run());
+			}, () -> {
+				closeFootPanel();
+				MainContrataContract.this.setSistemaREDVisible(false);
+			});
+
+		}, throwable -> {
+			closeFootPanel();
+			MainContrataContract.this.setSistemaREDVisible(false);
+		});
+	}
+	
+	private void closeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void maximizeFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, 0);
+	}
+
+	private void showFootPanel() {
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+	}
+	
+	private void selectResultsPanel() {
+
+		InlineLabel tab = new InlineLabel("Resultados");
+		tab.addStyleName(AON.AON_ICON_TIME);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		footTabPanel.add(resultsPanel, tab);
+		footTabPanel.selectTab(resultsPanel);
+
+	}
+
+	private void setSistemaREDVisible( boolean visible ){
+		sistemaREDPanel.setVisible(visible);
+	}
 
 }

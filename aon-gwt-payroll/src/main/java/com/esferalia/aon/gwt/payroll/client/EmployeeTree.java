@@ -57,8 +57,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Province;
@@ -1754,7 +1752,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
 		void onClickUp2DateSSButton(ClickEvent e) {
 			XMLHttpRequest xhr = XMLHttpRequest.create();
-			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_REPORT);
+			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_CCC_REPORT);
 			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
 				@Override
@@ -2845,7 +2843,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						removeAll();
 						enterpiseStatus.visit(this);
 						selectResultsPanel();
-						ifSaltraEnabled(enterpiseStatus, () -> {
+						EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
 							showFootPanel();
 							getCCCCretaDetail().setUp2DateButtonVisible(true);
 						}, () -> {
@@ -2865,7 +2863,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			resultsPanel.setWidget(saltraResults);
 			selectResultsPanel();
 
-			ifSaltraEnabled(enterpiseStatus, () -> {
+			EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
 				showFootPanel();
 				getCCCCretaDetail().setUp2DateButtonVisible(true);
 			}, () -> {
@@ -2948,7 +2946,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	protected static void showPFDF(String dataURI, DetailPanel detailPanel) {
 		PDFViewer viewer = new PDFViewer() {
-			String getFileName() {
+			public String getFileName() {
 				return "CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.pdf";
 			};
 		};
@@ -3525,40 +3523,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		} catch (Exception e) {
 			return false;
 		}
-	}
-
-	private static void ifSaltraEnabled(EnterpriseStatus enterpriseStatus, Runnable saltraEnable,
-			Runnable saltraDisabled) {
-		enterpriseStatus.visit(new EnterpriseStatus.Visitor() {
-
-			@Override
-			public void up2Date() {
-				saltraEnable.run();
-			}
-
-			@Override
-			public void forbidden() {
-				saltraDisabled.run();
-			}
-
-			@Override
-			public void saltraCredentialsNotFound() {
-				saltraDisabled.run();
-			}
-
-			
-			@Override
-			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
-				saltraEnable.run();
-			}
-			
-			@Override
-			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
-				saltraEnable.run();
-			}
-			
-			
-		});
 	}
 
 	private static String getDescription(CCC ccc, Workplace workplace) {

@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -26,6 +27,8 @@ import org.jooq.Record;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -71,6 +74,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			case UP2DATE_REPORT:
 				doUp2DateReportPost(req, resp);
 				break;
+			case UP2DATE_CCC_REPORT:
+				doUp2DateCCCReportPost(req, resp);
+				break;
 
 			default:
 				break;
@@ -84,6 +90,38 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	
 	
 	private void doUp2DateReportPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException ,SegSocialException{
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		try ( Connection connection = getConnection(req);
+			OutputStream os = resp.getOutputStream();
+			Writer writer = new OutputStreamWriter(os)){
+			
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			for ( CCC ccc: JooqEnterprise.getCCCs(connection, domainId) ) {
+
+				Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+				byte data [] = SistemaRED.getUp2DateSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
+				
+				
+				resp.setStatus(HttpServletResponse.SC_OK);
+				String base64 = Base64.getEncoder().encodeToString(data);
+				encodeURIComponent("application/pdf", base64, writer);
+				return;
+				
+			}
+			
+			resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			
+		}
+		
+	}
+
+	private void doUp2DateCCCReportPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException ,SegSocialException{
 		String userLogin = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
 		

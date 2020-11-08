@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.jooq.impl.DSL;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
@@ -88,8 +88,6 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
-import com.esferalia.aon.payroll.enumeration.CCCType;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
@@ -1102,7 +1100,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					ccc.setId( cccId );
 					ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
 					ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
-					ccc.setRegime(getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE)).getCode());
+					ccc.setRegime(JooqEnterprise.getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE)).getCode());
 					ccc.setType(rs.getByte(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE));
 					
 					activity.addCcc(ccc);
@@ -1478,22 +1476,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	
-	public static SSRegimeType getSSRegime( int cccType ) {
-		Map<CCCType, SSRegimeType> regimes = new HashMap<CCCType, SSRegimeType>(){
-			{
-				put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
-				put(CCCType.ARTIST, SSRegimeType.ARTIST);
-				put(CCCType.HOME_EMPLOYEES, SSRegimeType.DOMESTIC_EMPLOYEES);
-			}
-		};
-		
-		try {
-			return regimes.getOrDefault(CCCType.values()[cccType], SSRegimeType.GENERAL);
-		} catch ( Throwable t){
-			return SSRegimeType.GENERAL;
-		}
-	}
-
 	@Override
 	public WorkplaceInfo getWorkplaceInfo(String domain, Integer workplaceId) {
 		Connection connection = null;
@@ -2172,7 +2154,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId );
 			
 			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
-			.filter(e -> e.getId().equals(enterpriseId))
+			.filter(e -> enterpriseId == null || e.getId().equals(enterpriseId) )
 			.flatMap(e -> e.getActivities().stream() )
 			.flatMap(a -> a.getCccs().stream())
 			.collect(Collectors.toList());
