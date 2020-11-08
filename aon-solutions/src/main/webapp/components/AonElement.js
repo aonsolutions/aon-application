@@ -22,6 +22,10 @@ export class AonElement extends HTMLElement{
     document.getElementById(id).innerHTML = '';
   }
 
+  hideElement(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
   rootPanel(element) {
     this.clearElement(this.ROOT_PANEL);
     this.getElement(this.ROOT_PANEL).appendChild(element);

@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
-import {getDomainApps, setDomainApp} from  '../../services/service.js';
+import {getDomainApps, setDomainApp, getCompanies} from  '../../services/service.js';
 import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
 
@@ -12,6 +12,8 @@ import '../../components/aon-search-box.js';
 import '../marketplace/aon-marketplace.js';
 
 export class AonMobileDesktop extends AonElement {
+
+	SUGGESTION;
 
 	static get observedAttributes() {
 		return ['company'];
@@ -48,6 +50,7 @@ export class AonMobileDesktop extends AonElement {
 	constructor () {
 		super();
 		this.id = 'aonDesktop';
+		this.SUGGESTION = this.id + 'Suggestion';
 	}
 
 	connectedCallback () {
@@ -58,9 +61,20 @@ export class AonMobileDesktop extends AonElement {
 		let searchDiv = document.createElement('div');
 		searchDiv.id = 'aonHeaderCompany';
 		this.appendChild(searchDiv)
-		searchDiv.innerHTML = `<aon-search-box id="aonHeaderSearchBox"></aon-search-box>`;
+		searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
 
-		// search = document.getElementById("aonHeaderSearchBox");
+		let searchSuggestion = this.getElement(this.SUGGESTION);
+		suggestion.addIcon('search');
+		searchSuggestion.addEventListener('keyup', () => {
+			if(searchSuggestion.value.length > 2) {
+				getCompanies().then( companies => searchSuggestion
+					.buildOptions(companies.filter(f => this.companyFilter(f, {value: searchSuggestion.value})))
+				);
+			} else {
+				searchSuggestion.closeOptions();
+			}
+		})
+
 
 		let div = document.createElement('div');
 		div.style.paddingBottom = '25px';
@@ -166,6 +180,37 @@ export class AonMobileDesktop extends AonElement {
 		li.appendChild(span);
 		return li;
 	}
+
+	companyFilter(f, q) {
+		if(!q) {
+			q = {
+				inactive: false,
+				active: true,
+				shared: true
+			};
+		}
+		let value = true;
+		if(q && q.value) {
+			const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
+			const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
+			value = document || name;
+		}
+
+		if(q && q.active && !q.inactive) {
+			value = f.active && value;
+		}
+
+		if(q && q.inactive && !q.active) {
+			value = !f.active && value;
+		}
+
+		if(q && q.shared) {
+			// TODO
+		}
+
+		return value;
+	}
+
 }
 
 window.customElements.define('aon-mobile-desktop', AonMobileDesktop);

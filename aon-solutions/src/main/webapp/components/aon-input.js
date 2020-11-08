@@ -2,7 +2,10 @@ import {AonElement} from './AonElement.js';
 import {Countries} from '../services/country.js';
 
 export class AonInput extends AonElement {
-
+  DIV;
+  ICON;
+  ICON_LABEL;
+  INPUT;
   static get observedAttributes() {
     return ['value', 'disabled', 'readonly', 'visible', 'options'];
   }
@@ -132,6 +135,10 @@ export class AonInput extends AonElement {
 
   constructor () {
     super();
+    this.DIV = this.id + 'Div';
+    this.ICON = this.id + 'Icon';
+    this.ICON_LABEL = this.id + 'IconLabel';
+    this.INPUT = this.id + 'Input';
   }
 
   connectedCallback () {
@@ -140,6 +147,7 @@ export class AonInput extends AonElement {
 
   build() {
     let div = document.createElement('div');
+    div.id = this.DIV;
     div.className = 'omrs-input-group';
     div.style.width = '100%';
     this.appendChild(div);
@@ -166,6 +174,11 @@ export class AonInput extends AonElement {
     input.addEventListener('change', () => {
       this.setAttribute('value', document.getElementById(input.getAttribute('id')).value);
     });
+
+    input.addEventListener('keyup', () => {
+			this.value = input.value;
+	    this.dispatchEvent(new Event('keyup'));
+		});
 
     label.appendChild(input);
 
@@ -235,6 +248,19 @@ export class AonInput extends AonElement {
         }
       });
     }
+  }
+
+  addIcon(icon) {
+    let div = this.getElement(this.DIV);
+    let iconLabel = this.createElement('label');
+    iconLabel.style.position = 'absolute';
+    iconLabel.style.top = '5px';
+    iconLabel.style.right = '0px';
+    iconLabel.style.marginBottom = '0px';
+    iconLabel.setAttribute('id', this.ICON);
+    iconLabel.setAttribute('for', this.INPUT);
+    iconLabel.innerHTML = `<aon-icon-button id="${this.ICON_LABEL}" icon="${icon}" noHover="true"></aon-icon-button>`;
+    div.appendChild(iconLabel);
   }
 
   buildOptions() {
