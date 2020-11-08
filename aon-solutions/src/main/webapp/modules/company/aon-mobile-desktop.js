@@ -7,8 +7,7 @@ import {startModule, rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
-import '../../components/aon-search-box.js';
-
+import '../../components/aon-suggestion.js';
 import '../marketplace/aon-marketplace.js';
 
 export class AonMobileDesktop extends AonElement {
@@ -64,7 +63,7 @@ export class AonMobileDesktop extends AonElement {
 		searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
 
 		let searchSuggestion = this.getElement(this.SUGGESTION);
-		suggestion.addIcon('search');
+		searchSuggestion.addIcon('search');
 		searchSuggestion.addEventListener('keyup', () => {
 			if(searchSuggestion.value.length > 2) {
 				getCompanies().then( companies => searchSuggestion
@@ -73,7 +72,12 @@ export class AonMobileDesktop extends AonElement {
 			} else {
 				searchSuggestion.closeOptions();
 			}
-		})
+		});
+		searchSuggestion.addEventListener('select', (event) => {
+			let company = event.detail;
+			localStorage.setItem("aon_domain_id", company.id);
+			localStorage.setItem("aon_domain_name", company.domain);
+		});
 
 
 		let div = document.createElement('div');

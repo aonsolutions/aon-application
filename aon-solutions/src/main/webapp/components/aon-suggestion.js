@@ -72,7 +72,7 @@ export class AonSuggestion extends AonElement {
         this.value = options[i].value;
         let input = this.getElement(this.INPUT);
         input.value = options[i].name;
-        this.dispatchEvent(new Event('select'));
+        this.dispatchEvent(new CustomEvent('select', {detail: options[i]}));
       });
       ul.appendChild(li);
     }
