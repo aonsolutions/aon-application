@@ -4,7 +4,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
-	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client' >
 
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
@@ -157,7 +157,7 @@
 	</ui:style>
 
 	<g:DeckPanel ui:field="deckPanel">
-		<g:DockLayoutPanel unit="PX">
+		<g:SplitLayoutPanel ui:field="splitLayoutPanel" >
 			<!-- INIT HEADER MENU -->
 			<g:north size="25">
 				<g:FlowPanel styleName="aon-finding-title-toolbar">
@@ -177,11 +177,17 @@
 								<g:Button ui:field='newContractButton' styleName='aon-finding-toolbar-item aon-icon-reset {style.pl20}' text=" NUEVO CONTRATO"/>
 							</g:HTMLPanel>
 						</g:HorizontalPanel>
+						<g:HorizontalPanel styleName="aon-finding-toolbar" ui:field="sistemaREDPanel">
+							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+								<g:Button ui:field='up2DateSSButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text=" CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S."/>
+							</g:HTMLPanel>
+						</g:HorizontalPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 			</g:north>
 			<!-- END HEADER MENU -->
 			<g:center>
+				
 				<g:HTMLPanel ui:field="mainContainer" styleName="{style.widthAll}">
 					<g:ScrollPanel height="100%" styleName="{style.p5}">
 						<g:VerticalPanel styleName="{style.tableStylePanel}">
@@ -210,10 +216,17 @@
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 				</g:HTMLPanel>
+				
 			</g:center>
-		</g:DockLayoutPanel>
+			<g:south size="15">
+				<a:MinimizePanel ui:field="footPanel" styleName="{res.css.aonSelector}" >
+					<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
+				</a:MinimizePanel>
+			</g:south>
+		</g:SplitLayoutPanel>
 
 		<d:ContrataEmployee ui:field="contrataEmployee"></d:ContrataEmployee>
+ 		<d:PDFViewer styleName="reset" ui:field='pdfViewer' /> 
 		
 	</g:DeckPanel>
 </ui:UiBinder> 

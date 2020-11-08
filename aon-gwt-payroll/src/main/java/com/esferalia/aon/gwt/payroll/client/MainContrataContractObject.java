@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataContractObject {
@@ -45,6 +47,21 @@ public class MainContrataContractObject {
 		
 	}
 	
+	public void checkStatus(Consumer<EnterpriseStatus> success, Consumer<Throwable> failure) {
+		
+		impl.getEnterpriseStatus(null, new AsyncCallback<EnterpriseStatus>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept( caught );
+			}
+			
+			 @Override
+			public void onSuccess(EnterpriseStatus result) {
+				 success.accept(result);
+			}
+		});
+	}
+
 	private void initEmployeeList(List<EmployeeContractInfo> employeesInfoList) {
 		allEmployeesList.clear();
 		employeesList.clear();

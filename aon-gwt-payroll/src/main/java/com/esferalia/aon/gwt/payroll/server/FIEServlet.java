@@ -52,7 +52,7 @@ import com.google.gson.GsonBuilder;
 @MultipartConfig
 @SuppressWarnings("serial")
 @WebServlet(
-		name = "RED-Directo", 
+		name = "INNS-FIE", 
 		urlPatterns = { 
 				"/aon_gwt_aio/fie/*" ,
 				"/aon_gwt_payroll/fie/*" 

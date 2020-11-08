@@ -1,7 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.EMPLOYEE;
+import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.SISTEMA_RED_URL;
+
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedCCC;
@@ -13,9 +17,11 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedAtTrash;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -35,11 +41,14 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -176,10 +185,9 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	private Images images;
 
 	private TreeItem errorsItem;
-	private TreeItem warningsItem;
-	
-	private TreeItem messagesItem;
-	
+	private TreeItem warningsItem;	
+	private TreeItem messagesItem;	
+	private TreeItem notFoundItem;
 	
 	public SistemaREDResults() {
 		
@@ -196,6 +204,8 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		messagesItem = new TreeItem(imageItemHTML(images.info(), "MENSAJES"));
 		eventsTree.addItem(messagesItem);
 		
+		notFoundItem = new TreeItem(imageItemHTML(images.warn(), "AFILIADOS NO ENCONTRADOS EN AON SOLUTIONS"));
+		eventsTree.addItem(notFoundItem);
 
 //		eventsTree.addSelectionHandler(new EventsSelectionHandler());
 //		eventsTree.addDomHandler(new EventsContextMenuHandler(),
@@ -204,6 +214,7 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		errorsItem.setVisible(false);
 		warningsItem.setVisible(false);
 		messagesItem.setVisible(false);
+		notFoundItem.setVisible(false);
 		
 		export2JS(this);
 		
@@ -448,8 +459,8 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		
 		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
 		
-		addWarning(horizontalPanel);
-		syncWarnings();
+		addNotFound(horizontalPanel);
+		syncNotFound();
 	}
 	
 	@Override
@@ -503,6 +514,8 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		syncWarnings();
 		messagesItem.removeItems();
 		syncMessages();
+		notFoundItem.removeItems();
+		syncNotFound();
 	}
 	
 
@@ -526,6 +539,12 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 
 	}
 	
+	protected void newEmployees() {
+		
+		
+		
+	}
+
 	protected void restoreEmployee(AffiliatedAtTrash affiliatedAtTrash) {
 		idHidden.setValue(affiliatedAtTrash.getId().toString());
 		cccHidden.setValue(affiliatedAtTrash.getCcc());
@@ -561,6 +580,36 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 				"AVISOS (" + messagesItem.getChildCount() + ")"));
 		messagesItem.setVisible(messagesItem.getChildCount() > 0);
 		messagesItem.setState(messagesItem.getChildCount() > 0);
+	}
+
+	protected void syncNotFound() {
+		
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(
+		new Label(
+			"(" + notFoundItem.getChildCount() + ")"
+			+ " AFILIADOS NO ENCONTRADOS."
+			+" PULSE"
+			)
+		);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		Anchor anchor = new Anchor("AQU\u00CD");
+		anchor.addClickHandler(e -> newEmployees());
+		
+		anchor.getElement().getStyle().setColor("blue");
+		anchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		
+		horizontalPanel.add(anchor);
+		horizontalPanel.add(new HTML("&nbsp;"));
+		horizontalPanel.add(new Label("PARA A\u00D1ADIRLOS EN AON SOLUTIONS."));
+		
+		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
+				
+		notFoundItem.setWidget(imageItemWidget(images.warn(),
+				horizontalPanel));
+		notFoundItem.setVisible(notFoundItem.getChildCount() > 0);
+		notFoundItem.setState(notFoundItem.getChildCount() > 0);
 	}
 
 	protected TreeItem addError(SaltraEvent error) {
@@ -611,6 +660,14 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		return treeItem;
 	}	
 	
+
+	protected TreeItem addNotFound(Widget  widget) {
+		TreeItem treeItem = new TreeItem(
+				imageItemWidget(images.warn(), widget));
+		notFoundItem.addItem(treeItem);
+		return treeItem;
+	}
+
 	protected void expandAll() {
 		errorsItem.setState(true);
 		warningsItem.setState(true);
@@ -622,6 +679,28 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		warningsItem.setState(false);
 	}
 
+	
+	private FormPanel createEmployeesFormPanel() {
+		//Create formPanel to UploadFiles
+		FlowPanel flowPanel = new FlowPanel();
+		
+		FormPanel formPanel = new FormPanel();
+		formPanel.setMethod(FormPanel.METHOD_POST);
+		formPanel.setAction(GWT.getModuleBaseURL() + SISTEMA_RED_URL + "/" + EMPLOYEE);
+		
+		Hidden userLogin = new Hidden(SistemaREDService.Parameter.USER.name(), Wnd.getCurrentUser());
+		Hidden currentDomain = new Hidden(SistemaREDService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
+		
+		formPanel.addSubmitCompleteHandler((e) -> {
+	    });
+		
+		flowPanel.add(userLogin);
+		flowPanel.add(currentDomain);
+		
+		formPanel.add(flowPanel);
+			
+		return formPanel;
+	}	
 
 	// ------------------------------------------------------------------------
 

@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -35,6 +36,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
@@ -595,6 +597,28 @@ public class JooqEnterprise {
 	// --------------------------------------------------------------------------------------------------
 	//										MAIN CRA GET CCC INFO
 	// --------------------------------------------------------------------------------------------------
+	
+	public static List<CCC> getCCCs(Connection conn, Integer domainId) {
+		try (DSLContext dslContext = DSL.using(conn, getDefaultSettings())) {
+			return getCCCs(dslContext, domainId);
+		}
+	}
+
+	private static List<CCC> getCCCs(DSLContext ctx, Integer domainId) {
+		return 
+		ctx.select()
+		.from(ENTERPRISE_CCC)
+		.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
+		.fetchStreamInto(ENTERPRISE_CCC)
+		.map( r -> {
+			CCC ccc = new CCC();
+			ccc.setCode(r.getCcc());
+			ccc.setRegime(getSSRegime(r.getType()).getCode());
+			return ccc;
+		})
+		.collect(Collectors.toList())
+		;
+	}
 
 	public static List<CCCInfo> getEnterprisesCCCInfo(Connection conn, Integer userId, Integer domainId, Integer parentDomainId, long findPeriodTime) {
 		return getEnterprisesCCCInfoDB(DSL.using(conn, getDefaultSettings()), userId, domainId, parentDomainId, findPeriodTime);
@@ -856,10 +880,13 @@ public class JooqEnterprise {
 		return enterprisesCCCInfo;
 	}
 	
+
 	public static SSRegimeType getSSRegime( int cccType ) {
 		Map<CCCType, SSRegimeType> regimes = new HashMap<CCCType, SSRegimeType>(){
 			{
 				put(CCCType.AGRICULTURAL, SSRegimeType.AGRICULTURAL);
+				put(CCCType.ARTIST, SSRegimeType.ARTIST);
+				put(CCCType.HOME_EMPLOYEES, SSRegimeType.DOMESTIC_EMPLOYEES);
 			}
 		};
 		

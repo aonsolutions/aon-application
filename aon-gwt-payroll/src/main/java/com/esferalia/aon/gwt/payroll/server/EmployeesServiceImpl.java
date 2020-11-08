@@ -6,7 +6,6 @@ import static com.esferalia.aon.gwt.common.server.AonServletUtils.disableAutoCom
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.enableAutoCommit;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.getConnection;
 import static com.esferalia.aon.gwt.common.server.AonServletUtils.rollback;
-import static com.esferalia.aon.gwt.payroll.server.EnterprisesServiceImpl.getSSRegime;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ACTIVE_DAYS;
 import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
@@ -97,6 +96,7 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendarNew;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
+import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEvents;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayments;
 import com.esferalia.aon.gwt.payroll.jooq.JooqPayrollSalaries;
@@ -2893,7 +2893,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 				ccc.setId(rs.getInt(EnterpriseCccColumns.ID));
 				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE + "." +GeozoneColumns.CODE));
 				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.CCC));
-				ccc.setRegime(getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.TYPE)).getCode());
+				ccc.setRegime(JooqEnterprise.getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC + "." + EnterpriseCccColumns.TYPE)).getCode());
 				cccs.add(ccc);
 			}
 
@@ -4437,7 +4437,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			ccc.setId(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.ID)));
 			ccc.setCode(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.CCC)));
 			ccc.setGeozone(rs.getString(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.GEOZONE)));
-			ccc.setRegime(getSSRegime(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.TYPE))).getCode());
+			ccc.setRegime(JooqEnterprise.getSSRegime(rs.getInt(tableCol(ENTERPRISE_CCC, EnterpriseCccColumns.TYPE))).getCode());
 			if(null != workplaceHandler.getWorkplace().getActivity())
 				workplaceHandler.getWorkplace().getActivity().addCcc(ccc);
 		}

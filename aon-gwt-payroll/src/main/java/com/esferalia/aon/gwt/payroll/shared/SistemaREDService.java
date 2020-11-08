@@ -39,8 +39,10 @@ public interface SistemaREDService {
 	
 	public static final String EMPLOYEE = "employee";
 	public static final String REGISTER = "register";
+	public static final String EMPLOYEES = "employees";
 	public static final String CERTIFICATE = "certificate";
 	public static final String UP2DATE_REPORT = "up2date_report";
+	public static final String UP2DATE_CCC_REPORT = "up2date_ccc_report";
 	
 	
 	
