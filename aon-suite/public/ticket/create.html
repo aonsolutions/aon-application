@@ -25,77 +25,141 @@
         <!-- start contenido centro -->
         <div class="col" id="atp_contenido_centro">
             <div class="container-fluid">
-                <div class="row justify-content-center">
-                    <!-- INICIO VISTA -->
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="col-12">
-                                <h3>Nuevo ticket</h3>
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <ul class="nav nav-tabs" id="tabMessenger" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="consultas_tab" data-toggle="tab" href="#consultas" role="tab" aria-controls="consultas" aria-selected="true">Consultas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="solicitudes_tab" data-toggle="tab" href="#solicitudes" role="tab" aria-controls="solicitudes" aria-selected="false">Solicitudes</a>
+                            </li>
+                        </ul>
+                    </div>
                         
-                        <div class="row">
-                            <div class="col-7 atp_caja_form div_ticket">
-                                <form method="post" id="formulario" enctype="multipart/form-data">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label class="d-block atp_inputs">
-                                                <input type="text" id="subject" name="subject" class="" value="" onchange="this.setAttribute('value', this.value);"/>
-                                                <span>Asunto</span>
-                                            </label>
-                                            <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <select class="atp_input" id="postings" name="postings">
-                                                <option value="">Elija un destinatario</option>
-                                            </select>
-                                            <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
-                                            <div id="editor"></div>
-                                            <div id="ticket-comentario-subir">
-                                                <div class="row m-2">
-                                                    <div class="col-md-12">
-                                                        <a id="ticket-comentario-subir-precarga" class="form-inline naranja negrita">
-                                                            <i class="material-icons">file_upload</i>
-                                                            <span id="ticket-comentario-subir-precarga-subrayar" class="pl-1">Agregar archivos al comentario.</span>
-                                                            <input type="hidden" id="upload-solo-precarga" name="precarga" value="true">
-                                                            <input type="file" name="document[]" multiple id="upload-file">
-                                                        </a>
+                    <div class="tab-content col-12" id="tabMessengerContent">
+                        <!-- PESTAÑA CONSULTAS -->
+                        <div class="tab-pane fade show active" id="consultas" role="tabpanel" aria-labelledby="consultas_tab">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Nueva consulta</h3>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-7 atp_caja_form div_ticket">
+                                        <form method="post" id="formulario" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <label class="d-block atp_inputs">
+                                                        <input type="text" id="subject" name="subject" class="" value="" onchange="this.setAttribute('value', this.value);"/>
+                                                        <span>Asunto</span>
+                                                    </label>
+                                                    <label class="d-none errores error-subject text-ayudat font-weight-bold">Debe escribir el asunto del ticket</label>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <select class="atp_input" id="postings" name="postings">
+                                                        <option value="">Elija un destinatario</option>
+                                                    </select>
+                                                    <label class="d-none errores error-postings text-ayudat font-weight-bold">Debe seleccionar el destinatario del ticket</label>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <label class="d-none errores error-msg text-ayudat font-weight-bold">Debe escribir el mensaje del ticket</label>
+                                                    <div id="editor"></div>
+                                                    <div id="ticket-comentario-subir">
+                                                        <div class="row m-2">
+                                                            <div class="col-md-12">
+                                                                <a id="ticket-comentario-subir-precarga" class="form-inline naranja negrita">
+                                                                    <i class="material-icons">file_upload</i>
+                                                                    <span id="ticket-comentario-subir-precarga-subrayar" class="pl-1">Agregar archivos al comentario.</span>
+                                                                    <input type="hidden" id="upload-solo-precarga" name="precarga" value="true">
+                                                                    <input type="file" name="document[]" multiple id="upload-file">
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <small>
+                                                                    Para subir los archivos, tiene que existir un comentario.
+                                                                    Si el archivo es de tipo imagen se puede agregar al comentario, pulsando sobe el texto que aparece debajo del previo.
+                                                                </small>
+                                                            </div>
+                                                            <div class="col-md-12 archivos-previos"></div>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-12">
-                                                        <small>
-                                                            Para subir los archivos, tiene que existir un comentario.
-                                                            Si el archivo es de tipo imagen se puede agregar al comentario, pulsando sobe el texto que aparece debajo del previo.
-                                                        </small>
-                                                    </div>
-                                                    <div class="col-md-12 archivos-previos"></div>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <button type="button" id="enviar_ticket_alma" class="btn btn-sm btn-success float-right ml-1 d-none">Resuelto por ALMA</button>
+                                                    <button type="button" id="enviar_ticket" class="btn btn-sm btn-info float-right">Crear nuevo</button>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <button type="button" id="btn-send-alma" class="btn btn-sm btn-success float-right ml-1 d-none">Resuelto por ALMA</button>
-                                            <button type="button" id="btn-send" class="btn btn-sm btn-info float-right">Crear nuevo</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-5 div_alma">
+                                        <div class="row">
+                                            <div class="col-12" id="contentAlma">
+                                                <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
+                                                <!--<link href="https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">-->
+                                                <link href="https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                            <div class="col-5 div_alma">
-                                <div class="row">
-                                    <div class="col-12" id="contentAlma">
-                                        <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
-                                        <!--<link href="https://assistant.almaintelligence.com:7777/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">-->
-                                        <link href="https://dev.almaintelligence.com:8888/stylesAndScripts/versionSuite/iframe.css" rel="stylesheet">
+                                    <div class="col-12 mt-2 div_faqs d-none">
+                                        <div class="row">
+                                            <div class="col-12 faqs"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-12 mt-2 div_faqs d-none">
-                                <div class="row">
-                                    <div class="col-12 faqs"></div>
                                 </div>
                             </div>
                         </div>
+                        <!-- FIN CONSULTAS -->
+                        
+                        <!-- PESTAÑA SOLICITUDES -->
+                        <div class="tab-pane fade show active" id="solicitudes" role="tabpanel" aria-labelledby="solicitudes_tab">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Nueva solicitud</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12 atp_caja_form">
+                                        <form method="post" id="formulario_solicitud" enctype="multipart/form-data">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <select class="atp_input" id="tipo_solicitud" name="tipo_solicitud">
+                                                        <option value="0">Elija el tipo de solicitud</option>
+                                                        <option value="1">Solicitud de impuestos</option>
+                                                        <option value="2">Alta empleado</option>
+                                                    </select>
+                                                    <label class="d-none errores error-tipo-solicitud text-ayudat font-weight-bold">Debe seleccionar el tipo de solicitud</label>
+                                                </div>
+                                                <div class="col-6 d-none labelPostingsSolicitud">
+                                                    <label class="d-block atp_inputs">
+                                                        <input type="text" id="postings_solicitud" name="postings_solicitud" class="" value="" readonly/>
+                                                        <span>Destinatario</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="col-12 mt-3">
+                                                    <div class="card d-none cardSolicitudCampos">
+                                                        <div class="card-header" id="headerCardSolicitud"></div>
+                                                        <div class="card-body">
+                                                            <div class="row div_solicitud_campos"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-12 mt-3">
+                                                    <div class="row buttonsSolicitud justify-content-center"></div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- FIN SOLICITUDES -->
                     </div>
                 </div>
             </div><!-- end contenido centro -->
@@ -357,17 +421,17 @@
             //
             // Enviar o crear mensage nuevo
             //
-                $('#btn-send').click(function(){
+                $('#enviar_ticket').click(function(){
                     newTicket(1); // Estado abierto
                 });
 
                 // Resuelto por ALMA
-                $('#btn-send-alma').click(function(){
-                    newTicket(0); // Estado cerrado
+                $('#enviar_ticket_alma').click(function(){
+                    newTicket(0, false); // Estado cerrado
                 });
                 
                 // Función crear ticket
-                function newTicket(status){
+                function newTicket(status, msgCheck = true){
                     var envio = true;
                     
                     // Quitamos todos los errores
@@ -377,11 +441,13 @@
                     
                     // Añadimos textArea (CKEditor)
                     let msgUser = theEditor.getData();
-                    if(msgUser == ''){
-                        $('.error-msg').removeClass('d-none');
-                        envio = false;
+                    if(msgCheck){
+                        if(msgUser == ''){
+                            $('.error-msg').removeClass('d-none');
+                            envio = false;
+                        }
                     }
-
+                        
                     // Añadimos el asunto
                     let subject = $("#subject").val();
                     if(subject == ''){
@@ -500,6 +566,176 @@
                     // Esta cargado correctamente
                     UploadDocumentos();
                 }
+                
+            /*
+             * FUNCIONES PARA LAS SOLICITUDES
+             */
+            $(document).on('change', '#tipo_solicitud', function(){
+                $('.error-tipo-solicitud').addClass('d-none');
+                $('.cardSolicitudCampos').addClass('d-none');
+                $('.labelPostingsSolicitud').addClass('d-none');
+                
+                var solicitud = $(this).val();
+                if(solicitud == "0"){
+                    $('.error-tipo-solicitud').removeClass('d-none');
+                    $(".div_solicitud_campos").empty();
+                    $("#postings_solicitud").empty();
+                    $('.buttonsSolicitud').empty();
+                    $("#postings_solicitud").addClass('d-none');
+                    
+                    return 0;
+                }
+                
+                var campos = {
+                    impuestos : {
+                        header : "Modelo 303",
+                        postings : 2,
+                        inputs : {
+                            0 : {
+                                type : "input",
+                                name : "name",
+                                placeholder : "Cantidad de impuestos",
+                                value : '400',
+                                readonly : true
+                            }
+                        },
+                        buttons : {
+                            0 : {
+                                action : "rechazar_impuestos",
+                                value : "Rechazar",
+                                type : 'danger'
+                            },
+                            1 : {
+                                action : "aceptar_impuestos",
+                                value : "Aceptar",
+                                type : 'success'
+                            }
+                        }
+                    },
+                    alta_empleado : {
+                        header : "Datos de empleado",
+                        postings : 1,
+                        inputs : {
+                            0 : {
+                                type : "input",
+                                name : "name",
+                                placeholder : "Nombre",
+                                value : '',
+                                readonly : false
+                            },
+                            1 : {
+                                type : "input",
+                                name : "apellido",
+                                placeholder : "Apellidos",
+                                value : '',
+                                readonly : false
+                            },
+                            2 : {
+                                type : "input",
+                                name : "cif",
+                                placeholder : "CIF",
+                                value : '',
+                                readonly : false
+                            },
+                            3 : {
+                                type : "date",
+                                name : "fecha_nacimiento",
+                                placeholder : "Fecha de nacimiento",
+                                value : '',
+                                readonly : false
+                            }
+                        },
+                        buttons : {
+                            0 : {
+                                action : "enviar_solicitud",
+                                value : "Enviar solicitud",
+                                type : 'success'
+                            }
+                        }
+                    }
+                };
+                
+                var datos = {};
+                switch(solicitud){
+                    case "1":
+                        datos = campos.impuestos;
+                        break;
+                    case "2":
+                        datos = campos.alta_empleado;
+                        break;
+                }
+                
+                generaFormularioSolicitud(datos);
+            });
+            
+            function generaFormularioSolicitud(jsonSolicitudForm){
+                var postings = ["Programación", "Calidad", "Administración"];
+                
+                if(!$.isEmptyObject(jsonSolicitudForm)){
+                    var select = postings[jsonSolicitudForm.postings];
+                    
+                    $('#postings_solicitud').attr('value', select);
+                    $('.labelPostingsSolicitud').removeClass('d-none');
+                    
+                    $("#headerCardSolicitud").html(jsonSolicitudForm.header);
+                    
+                    var formSolicitud = "";
+                    for(const i in jsonSolicitudForm.inputs){
+                        var input = jsonSolicitudForm.inputs[i];
+                        
+                        switch(input.type){
+                            case "input":
+                                formSolicitud += "<div class='col-6 mt-2'>";
+                                    formSolicitud += "<label class='d-block atp_inputs'>";
+                                        formSolicitud += "<input type='text' id='subject' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
+                                        formSolicitud += "<span>"+input.placeholder+"</span>";
+                                    formSolicitud += "</label>";
+                                formSolicitud += "</div>";
+                                break;
+                                
+                            case "date":
+                                break;
+                                
+                            case "number":
+                                break;
+
+                            case "select":
+                                break;
+
+                            case "textarea":
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                    }
+                    
+                    var buttons = "";
+                    for(const j in jsonSolicitudForm.buttons){
+                        var button = jsonSolicitudForm.buttons[j];
+                        
+                        buttons += "<button type='button' class='btn btn-"+button.type+" mr-2 buttonSolicitudAction' data-action='"+button.action+"'>"+button.value+"</button>";
+                    }
+                    
+                    $(".div_solicitud_campos").html(formSolicitud);
+                    $('.buttonsSolicitud').html(buttons);
+                    $('.cardSolicitudCampos').removeClass('d-none');
+                } else {
+                    $(".div_solicitud_campos").empty();
+                    $('.buttonsSolicitud').empty();
+                    $("#postings_solicitud").empty();
+                }
+            }
+            
+            $(document).on('change', '.setAttributeInput', function(){
+                $(this).attr('value', $(this).val());
+            });
+            
+            $(document).on('click', '.buttonSolicitudAction', function(){
+                var action = $(this).data('action');
+                
+                alert(action);
+            });
         </script>
         <!-- FIN Scripts -->
     </body>

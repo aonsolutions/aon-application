@@ -6,7 +6,7 @@
     export const BIDOQ_API_KEY  = 'K7>})(xQw~px_wgs#0=97..QGkBSxw*=.uatCfw[D.T{,fy.nrt?ok8jB@9}2}I';
     export const AON_SESSION_ID = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJzY2hlbWFcIjpcImF5dWRhdC1hb25zb2x1dGlvbnMtbmV0XCIsXCJzY2hlbWFfZmlyc3RfZG9tYWluXCI6XCIwMDIyNDIwMzllLWF5dWRhdC5hb25zb2x1dGlvbnMubmV0XCIsXCJ1dWlkXCI6XCJFNkFGMjg1NEI2NjYxMUVBODMyMzA2QTBCREQ3MkE0NlwifSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjAwNzkzNDgyfQ.4O-z1Hldqz1WAmX7kcsBkRlb0zy64ucYXQIoLnDL7mA';
    
-    export const bidoq = () => {
+    export const loginbidoq = () => {
         // Datos que le pasamos para el login
         const data = {
             api_key     : BIDOQ_API_KEY,
@@ -27,6 +27,3 @@
             });
         });
     }
-
-    // Llamamos a Bidoq para hacer el Login
-    bidoq();

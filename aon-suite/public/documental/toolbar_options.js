@@ -28,18 +28,6 @@ export const AVAILABLE_OPTIONS = [
         fn: editOption
     },
     {
-        name: SINGLE_DELETE_OPTION,
-        icon: 'delete_forever',
-        title: 'Eliminar documento',
-        fn: singleDeleteOption
-    },
-    {
-        name: MULTIPLE_DELETE_OPTION,
-        icon: 'delete_forever',
-        title: 'Eliminar los documentos seleccionados',
-        fn: multipleDeleteOption
-    },
-    {
         name: ADD_NOTE_OPTION,
         icon: 'note_add',
         title: 'Añadir nota a los documentos seleccionados',
@@ -51,6 +39,18 @@ export const AVAILABLE_OPTIONS = [
         title: 'Ver nota del documento',
         fn: viewNoteOption
     },
+    {
+        name: SINGLE_DELETE_OPTION,
+        icon: 'delete_forever',
+        title: 'Eliminar documento',
+        fn: singleDeleteOption
+    },
+    {
+        name: MULTIPLE_DELETE_OPTION,
+        icon: 'delete_forever',
+        title: 'Eliminar los documentos seleccionados',
+        fn: multipleDeleteOption
+    }
 ];
 
 function singleDownloadOption() {
@@ -259,8 +259,8 @@ async function viewNoteOption() {
         document.getElementById('note_doc').value = '';
     }
 
-    $('#confirm_view_note_doc').text('Crear');
     $('#title_view_note_doc').text('Añadir nota al documento');
+    $('#confirm_view_note_doc').text('Añadir');
 
     const data = await bidoq({
         "method": "obtener_nota_doc",

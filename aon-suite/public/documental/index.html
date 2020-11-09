@@ -110,41 +110,41 @@
 
         const MAX_FILE_SIZE = 5;
 
-        $(document).ready(async function() {
-            window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
-            window.aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
-
-            // Obtenemos las carpetas del cliente
-            window.folders = $(window.aonDocumental).data('folders');
-
-            try {
-                const list = await getList();
-
-                createTable(list);
-            } catch (error) {
-                const list = {
-                    "list": [],
-                    "total_data": 0, // cantidad total de elementos
-                    "total_page": 1, // total de paginas
-                    "page": 1, // pagina en la que estamos
-                    "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
-                }
-
-                createTable(list);
-
-                console.error(error);
-            }
-
-            //
-            // Iniciamos el subir
-            //
-                UploadDocumentos();
-
-        });
-
         //
         // Eventos
         //
+            $(document).ready(async function() {
+                window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+                window.aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+
+                // Obtenemos las carpetas del cliente
+                window.folders = $(window.aonDocumental).data('folders');
+
+                try {
+                    const list = await getList();
+
+                    createTable(list);
+                } catch (error) {
+                    const list = {
+                        "list": [],
+                        "total_data": 0, // cantidad total de elementos
+                        "total_page": 1, // total de paginas
+                        "page": 1, // pagina en la que estamos
+                        "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
+                    }
+
+                    createTable(list);
+
+                    console.error(error);
+                }
+
+                //
+                // Iniciamos el subir
+                //
+                    UploadDocumentos();
+
+            });
+
             // Pasar de pagina
             $(document).on('click', '.go_page', async function () {
                 const page = $(this).data('page');
@@ -261,6 +261,5 @@
                     $('.error-empty-note-doc').removeClass('d-none');
                 }
             });
-
     </script>
 </html>

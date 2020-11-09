@@ -7,7 +7,8 @@ const TYPES = {
     'received': 'Recibido'
 };
 
-export const getList = async (page_this = 1, tagID = null) => {
+export const getList = async (page_this = 1) => {
+    const tagID = window.aonDocumentalContainer.selectedTag;
     const uploadButton = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbarSubirButton');
 
     window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
@@ -349,11 +350,14 @@ function getAllowedOptions(document) {
 // Filtrar por TAG
 //
 $(document).on('click', '#documentTags', async function () {
-    let tagID = $(this).data('tag');
+    const tagID = $(this).data('tag');
+
+    // Actualizamos con el valor del tagID la propiedad que contiene el tag seleccionado
+    window.aonDocumentalContainer.selectedTag = tagID;
 
     // Recargar tabla y paginado
     try {
-        const list = await getList(1, tagID); // Pasamos pagina 1 y el valor del tagID
+        const list = await getList(1); // Pasamos pagina 1
 
         createTable(list);
     } catch (error) {
