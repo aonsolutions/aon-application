@@ -259,8 +259,8 @@ async function viewNoteOption() {
         document.getElementById('note_doc').value = '';
     }
 
-    $('#confirm_view_note_doc').text('Crear');
     $('#title_view_note_doc').text('Añadir nota al documento');
+    $('#confirm_view_note_doc').text('Añadir');
 
     const data = await bidoq({
         "method": "obtener_nota_doc",

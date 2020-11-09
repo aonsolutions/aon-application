@@ -43,6 +43,7 @@ class AonDocumental extends HTMLElement {
 
     folder = null;
     page = null;
+    selectedTag = null;
 
     constructor () {
         super();
@@ -72,6 +73,9 @@ class AonDocumental extends HTMLElement {
     }
 
     loadIndex(folder = 'pendientes') {
+        // Reseteamos la propiedad que contiene el tag seleccionado
+        this.selectedTag = null;
+
         let aonDocumental = document.getElementById('aonDocumental');
         const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
 
