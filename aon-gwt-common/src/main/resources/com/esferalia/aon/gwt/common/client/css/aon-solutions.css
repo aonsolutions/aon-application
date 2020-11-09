@@ -272,7 +272,7 @@ input[type="checkbox"]:focus + label {
 .aon_table_button {
 	width: 20px;
 	height: 20px;
-	background-size: 100% auto;
+	background-size: 20px 20px;
 }
 .aon_search_panel_button {
 	width: 20px;
@@ -662,13 +662,9 @@ input[type="checkbox"]:focus + label {
     padding-right: 10px;
 }
 
-@sprite .aon_drop_zone {
-	gwt-image: "aonOcrDrop";
-	background-position: center center;
-	background-size: 30%;
-	background-color: white;
-	min-height: 150px;
-	height: 150px;
+.aon_drop_zone {
+	min-height: 80px;
+	height: 80px;
 	min-width: 180px;
 	display: table;
 	margin-top: 1em;
@@ -686,6 +682,14 @@ input[type="checkbox"]:focus + label {
     font-size: 1.2em;
     color: #2d4b6d;
     font-weight: bold;
+}
+
+@sprite .aon_drop_zone_image {
+	gwt-image: "aonOcrDrop";
+	background-position: center center;
+	background-size: 271px 61px;
+	background-color: white;
+	width: 100%;
 }
 
 .aon_drop_zone_hover {

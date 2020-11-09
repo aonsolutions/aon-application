@@ -79,11 +79,13 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -108,7 +110,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	private AccountingRegistryBox registryBox;
 	private CheckBox undeductible;
 	private InlineLabel invoiceTypeLabel;
-	private FlowPanel dropPanel; 	
+	private FocusPanel dropPanel; 	
 	private ListBox series;
 	private TextBox referenceCode;
 	private AonDoubleBox invoiceTotal;
@@ -565,8 +567,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 				registryBox.setValue(invoiceCallback.getInvoice().getRegistry(),false);
 			}
 		} else {
-			FlowPanel dropPanel = getDropFileZone( invoiceCallback );
-			invoicePanelContainer.setWidget(dropPanel);
+			invoicePanelContainer.setWidget( getDropFileZone( invoiceCallback ) );
 		}
 		
 		setStyleName(AON.CSS.aonWidthAll());
@@ -1682,7 +1683,7 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		return hp;
 	}
 
-	private FlowPanel getDropFileZone(InvoicePanelCallback invoiceCallback) {
+	private Panel getDropFileZone(InvoicePanelCallback invoiceCallback) {
 		FileUpload fileUpload = new FileUpload();
 		fileUpload.ensureDebugId("fileselect");
 		fileUpload.getElement().getStyle().setDisplay(Style.Display.NONE);
@@ -1701,14 +1702,15 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		});
 			
 			
-		dropPanel = new FlowPanel();
+		dropPanel = new FocusPanel();
+		dropPanel.setStyleName(AON.CSS.aonDropZone());
 		
 		FlowPanel filedrag = new FlowPanel();
 		filedrag.add(fileUpload);
-		Label dropZone = new Label();
-		dropZone.setStyleName(AON.CSS.aonDropZone());
-		dropZone.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-		dropZone.addClickHandler( new ClickHandler() {
+		filedrag.setStyleName(AON.CSS.aonDropZoneImage());
+		
+		dropPanel.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+		dropPanel.addClickHandler( new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -1716,21 +1718,21 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 			
-		dropZone.addDragOverHandler(new DragOverHandler() {
+		dropPanel.addDragOverHandler(new DragOverHandler() {
 			
 			@Override
 			public void onDragOver(DragOverEvent event) {
-				dropZone.addStyleName(AON.CSS.aonDropZoneHover());
+				dropPanel.addStyleName(AON.CSS.aonDropZoneHover());
 				event.preventDefault();
 				event.stopPropagation();
 		        DataTransfer dataTransfer = event.getDataTransfer();
 		        dataTransfer.setDropEffect(DropEffect.NONE);				
 			}
 		});
-		dropZone.addDragLeaveHandler(new DragLeaveHandler() {
+		dropPanel.addDragLeaveHandler(new DragLeaveHandler() {
 			@Override
 			public void onDragLeave(DragLeaveEvent event) {
-				dropZone.removeStyleName(AON.CSS.aonDropZoneHover());
+				dropPanel.removeStyleName(AON.CSS.aonDropZoneHover());
 				event.preventDefault();
 			}
 		});
@@ -1747,7 +1749,6 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 			}
 		});
 		*/
-		filedrag.add(dropZone);
 		dropPanel.add(filedrag);
 		return dropPanel;
 	}
