@@ -1,7 +1,5 @@
 package solutions.aon.seg.social;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -13,24 +11,18 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLInputElement;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLOptionElement;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
-import sun.tools.jconsole.HTMLPane;
 
 public class SistemaRedSecondaryUser {
 
@@ -46,9 +38,8 @@ public class SistemaRedSecondaryUser {
 				default:	throw new SegSocialException(e);
 			}
 		}
-		catch (MalformedURLException e) {}
-		catch (IOException e) {e.printStackTrace();}
-		return null; 		
+		catch (MalformedURLException e) {throw new SegSocialException(e);}
+		catch (IOException e) {throw new SegSocialException(e);}		
 	}
 	
 	//GET THE SECONDARY USER BY IPF
@@ -114,14 +105,13 @@ public class SistemaRedSecondaryUser {
 		return user;
 	}
 	
-	
 	//HANDLE EXCEPTIONS OF 
 	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SegSocialException{
-		
 		try {return getSecondaryUsersImpl(certificateInputStream, certificatePassword, certificateType);}
-		catch(Exception e) {throw new SegSocialException(e);}
-	
+		catch (FailingHttpStatusCodeException e) {throw new SegSocialException(e);}
+		catch (MalformedURLException e) {throw new SegSocialException(e);}
+		catch (IOException e) {throw new SegSocialException(e);}	
 	}
 	
 	//GET SECONDARY USERS 
@@ -162,7 +152,6 @@ public class SistemaRedSecondaryUser {
 		}		
 	}
 	
-	
 	//HANDLE EXCEPTIONS OF registerSecondaryUserImpl()
 	public static boolean registerSecondaryUserByNie(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String nie, String naf) throws SegSocialException {
@@ -170,7 +159,6 @@ public class SistemaRedSecondaryUser {
 				registerSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,nie,naf);
 				return true;
 			}
-			catch (InvalidCertificateException e) {throw new SegSocialException(e);}
 			catch (FailingHttpStatusCodeException e) {throw new SegSocialException(e);}
 			catch (MalformedURLException e) {throw new SegSocialException(e);}
 			catch (IOException e) {throw new SegSocialException(e);}
@@ -208,10 +196,7 @@ public class SistemaRedSecondaryUser {
 			
 		}		
 	}
-	
-	
-	
-	
+		
 	//HANDLE EXCEPTIONS OF deleteSecondaryUser
 	public static boolean deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String nie) throws SegSocialException {
@@ -253,9 +238,6 @@ public class SistemaRedSecondaryUser {
 		}				
 	}
 	
-	
-	
-	
 	//HANDLE EXCEPTIONS OF
 	public void modifySecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, final String ipf) {
@@ -267,23 +249,8 @@ public class SistemaRedSecondaryUser {
 			final String certificateType, final String ipf) {
 		
 	}
-	
-	
-	
-	
-	//MAIN
-	public static void main(String[] args) {
-		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {
-			try { 
-				//registerSecondaryUserByNie(certificateInputStream,"jg@FNMT","pkcs12", "0Y7514970X", "291136796369");
-				//deleteSecondaryUser(certificateInputStream,"jg@FNMT","pkcs12", "0Y7514970X");
-				System.out.println(getSecondaryUsers(certificateInputStream,"jg@FNMT","pkcs12"));
-			}
-			//ipf	0Y7514970X
-			//naf	291136796369
-			catch (SegSocialException e) {e.printStackTrace();}
-		} 
-		catch (FileNotFoundException e1) {} 
-		catch (IOException e1) {}
-	}
+
+	//ipf	
+	//naf	291136796369
+
 }

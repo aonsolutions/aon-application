@@ -104,8 +104,6 @@ public class TestItParts {
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
-	}
-	
-	
+	}	
 	
 }
