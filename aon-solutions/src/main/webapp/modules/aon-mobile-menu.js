@@ -2,6 +2,7 @@ import {AonElement} from '../components/AonElement.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon.js'
+import './documental/aon-documental.js'
 
 import {getReader} from '../services/utils.js'
 
@@ -53,24 +54,21 @@ export class AonMobileMenu extends AonElement {
 	build() {
 		this.innerHTML = `
 			<div id="aonMobileMenuSidenav" class="aonMobileMenuSidenav">
-				<span id="aonMobileMenuHome"  style="top: 10px; position: relative;">
-					<aon-icon-button id="aonMobileMenuHomeButton" icon="home"></aon-icon-button>
-				</span>
 
 				<span id="aonMobileMenuDocumental"  style="top: 10px; position: relative;">
-					<aon-icon-button id="aonMobileMenuDocumentalButton" icon="attach_file"></aon-icon-button>
+					<aon-icon-button id="aonMobileMenuDocumentalButton" icon="snippet_folder"></aon-icon-button>
 				</span>
 
 				<span id="aonMobileMenuAdd"  style="top: 10px; position: relative;">
-					<aon-icon-button id="aonMobileMenuAddButton" icon="add"></aon-icon-button>
-				</span>
-
-				<span id="aonMobileMenuTime" style="top: 10px; position: relative;">
-					<aon-icon-button id="aonMobileMenuTimeButton" icon="access_time"></aon-icon-button>
+					<aon-icon-button id="aonMobileMenuAddButton" icon="assignment"></aon-icon-button>
 				</span>
 
 				<span id="aonMobileMenuInvoice"  style="top: 10px; position: relative;">
 					<aon-icon-button id="aonMobileMenuInvoiceButton" icon="receipt"></aon-icon-button>
+				</span>
+
+				<span id="aonMobileMenuComunica" style="top: 10px; position: relative;">
+					<aon-icon-button id="aonMobileMenuComunicaButton" icon="alternate_email"></aon-icon-button>
 				</span>
 
 				<span id="aonMobileMenuCamera"  style="top: 10px; position: relative; color:red;">
@@ -97,32 +95,39 @@ export class AonMobileMenu extends AonElement {
 			aonMenuSidenav.style.height = '0px';
 			rp.style.marginBottom = '0px';
 		}
-		let n = ((window.innerWidth / 6) - 40) / 2;
-
-		let aonMobileMenuHome = this.getElement('aonMobileMenuHome');
-		aonMobileMenuHome.style.marginRight = n;
+		let n = ((window.innerWidth / 5) - 40) / 2;
 
 		let aonMobileMenuDocumental = this.getElement('aonMobileMenuDocumental');
-		aonMobileMenuDocumental.style.marginLeft = n;
 		aonMobileMenuDocumental.style.marginRight = n;
+		aonMobileMenuDocumental.addEventListener('click', () => {
+			rootPanel('<aon-documental></aon-documental>');
+		});
 
 		let aonMobileMenuAdd = this.getElement('aonMobileMenuAdd');
 		aonMobileMenuAdd.style.marginLeft = n;
 		aonMobileMenuAdd.style.marginRight = n;
-
-		let aonMobileMenuTime = this.getElement('aonMobileMenuTime');
-		aonMobileMenuTime.style.marginLeft = n;
-		aonMobileMenuTime.style.marginRight = n;
+		aonMobileMenuAdd.addEventListener('click', () => {
+			rootPanel('<aon-messenger></aon-messenger>');
+		});
 
 		let aonMobileMenuInvoice = this.getElement('aonMobileMenuInvoice');
 		aonMobileMenuInvoice.style.marginLeft = n;
 		aonMobileMenuInvoice.style.marginRight = n;
 
-
 		let aonMobileMenuInvoiceButton = this.getElement('aonMobileMenuInvoiceButton');
 		aonMobileMenuInvoiceButton.addEventListener('click', () => {
 			rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 		});
+
+		let aonMobileMenuComunica = this.getElement('aonMobileMenuComunica');
+		aonMobileMenuComunica.style.marginLeft = n;
+		aonMobileMenuComunica.style.marginRight = n;
+		aonMobileMenuComunica.addEventListener('click', () => {
+			rootPanel('<aon-comunica></aon-comunica>');
+		});
+
+		let aonMobileMenuCamera = this.getElement('aonMobileMenuCamera');
+		aonMobileMenuCamera.style.marginLeft = n;
 
 		let aonMobileMenuCameraButton = this.getElement('aonMobileMenuCameraButton');
 		aonMobileMenuCameraButton.addEventListener('click',() => this.openCamera());

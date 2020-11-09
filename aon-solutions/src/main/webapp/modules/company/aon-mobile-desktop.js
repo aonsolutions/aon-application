@@ -172,6 +172,9 @@ export class AonMobileDesktop extends AonElement {
 	buildNotificationsLi(name, icon) {
 		let li = document.createElement('li');
 		li.className = 'aonAppMenuSidenavList aonOpacity';
+		li.style.height = '40px';
+		li.style.lineHeight = '40px';
+		li.style.borderBottom = '1px solid #ddd';
 
 		let i = document.createElement('i');
 		i.className = 'material-icons aonVerticalMiddle';
@@ -182,6 +185,16 @@ export class AonMobileDesktop extends AonElement {
 		span.className = 'aonMenuItemSpan';
 		span.innerHTML = name;
 		li.appendChild(span);
+
+		let sp = document.createElement('span');
+		sp.style.position = 'absolute';
+		sp.style.right = '0px';
+
+		let i2 = document.createElement('i');
+		i2.className = 'material-icons aonAvatar';
+		i2.innerHTML = 'keyboard_arrow_right';
+		sp.appendChild(i2);
+		li.appendChild(sp);
 		return li;
 	}
 

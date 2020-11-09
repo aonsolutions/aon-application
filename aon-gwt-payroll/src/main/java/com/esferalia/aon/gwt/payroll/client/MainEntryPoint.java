@@ -27,8 +27,6 @@ import com.vaadin.polymer.paper.PaperTextareaElement;
 import com.vaadin.polymer.paper.PaperToggleButtonElement;
 import com.vaadin.polymer.vaadin.VaadinComboBoxElement;
 
-import net.aonsolutions.polymer.aon.AonComboBoxElement;
-
 public class MainEntryPoint implements EntryPoint {
 
 	interface CodeMirrorResources extends ClientBundle {
@@ -51,7 +49,6 @@ public class MainEntryPoint implements EntryPoint {
 				PaperTextareaElement.SRC,
 				PaperDialogElement.SRC,
 				VaadinComboBoxElement.SRC,
-				AonComboBoxElement.SRC,
 				PaperIconButtonElement.SRC,
 				IronListElement.SRC,
 				PaperToggleButtonElement.SRC,
