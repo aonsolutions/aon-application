@@ -35,13 +35,14 @@
 	<inherits name='com.esferalia.aon.gwt.visualization.Visualization'/>
 		
 	<!-- Spanish language, independent of country -->
-	<extend-property name="locale" values="es" />
+	<!--  extend-property name="locale" values="es" /-->
 	<!-- English language, independent of country -->
 	<!--  extend-property name="locale" values="en"/-->
 	
 	<!--  Spanish in Spain -->
 	<extend-property name="locale" values="es_ES" />
 	
+	<set-property name="locale" value="es_ES"/>
 	<set-property-fallback name="locale" value="es_ES"/> 
 
 	<set-property name="user.agent" value="gecko1_8" />	
