@@ -28,18 +28,6 @@ export const AVAILABLE_OPTIONS = [
         fn: editOption
     },
     {
-        name: SINGLE_DELETE_OPTION,
-        icon: 'delete_forever',
-        title: 'Eliminar documento',
-        fn: singleDeleteOption
-    },
-    {
-        name: MULTIPLE_DELETE_OPTION,
-        icon: 'delete_forever',
-        title: 'Eliminar los documentos seleccionados',
-        fn: multipleDeleteOption
-    },
-    {
         name: ADD_NOTE_OPTION,
         icon: 'note_add',
         title: 'Añadir nota a los documentos seleccionados',
@@ -51,6 +39,18 @@ export const AVAILABLE_OPTIONS = [
         title: 'Ver nota del documento',
         fn: viewNoteOption
     },
+    {
+        name: SINGLE_DELETE_OPTION,
+        icon: 'delete_forever',
+        title: 'Eliminar documento',
+        fn: singleDeleteOption
+    },
+    {
+        name: MULTIPLE_DELETE_OPTION,
+        icon: 'delete_forever',
+        title: 'Eliminar los documentos seleccionados',
+        fn: multipleDeleteOption
+    }
 ];
 
 function singleDownloadOption() {
@@ -151,8 +151,6 @@ async function multipleDeleteOption() {
     const confirmed = confirm('¿Estás seguro de que deseas eliminar los documentos de tipo "Enviado" seleccionados?');
 
     if (confirmed) {
-        const service = window.selectedFolder;
-
         // Filtramos los documentos seleccionados quitando aquellos que no tengan la opción de eliminar
         const docs = $('.select_doc:checked').filter(function() {
             const row = $(this).closest('tr');
@@ -172,6 +170,8 @@ async function multipleDeleteOption() {
         }).toArray(); // Obtenemos el listado de objetos jQuery como un array JS
 
         try {
+            const service = window.aonDocumentalContainer.folder;
+
             // Hacemos una petición a bidoq para eliminar los documentos seleccionados
             const data = await bidoq({
                 "method": "delete_docs",
@@ -199,7 +199,7 @@ async function multipleDeleteOption() {
                 }
 
                 try {
-                    const list = await getList(window.page);
+                    const list = await getList(window.aonDocumentalContainer.page);
 
                     createTable(list);
                 } catch (error) {
@@ -259,8 +259,8 @@ async function viewNoteOption() {
         document.getElementById('note_doc').value = '';
     }
 
-    $('#confirm_view_note_doc').text('Crear');
     $('#title_view_note_doc').text('Añadir nota al documento');
+    $('#confirm_view_note_doc').text('Añadir');
 
     const data = await bidoq({
         "method": "obtener_nota_doc",

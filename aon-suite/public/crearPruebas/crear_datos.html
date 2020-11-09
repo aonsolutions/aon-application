@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="AYUDA T">
+        <meta name="generator" content="">
+        <title>aon Suite</title>
+
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet" type='text/css'>
+
+        <!-- MATERIAL ICONS -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined">
+        <!-- MATERIAL COMPONENTS -->
+        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+        <link href="../css/app.css" rel="stylesheet" id="linkcss">
+    </head>
+
+    <body>
+        <!-- start contenido centro -->
+        <div class="col" id="atp_contenido_centro">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <!-- INICIO VISTA -->
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Crear valores para probar</h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 mt-2">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Cantidad a crear:</label>
+                                                <input type="number" class="form-control" id="cantidad" name="cantidad" value="1" min="1" max="50" >
+                                            </div>
+                                            <button type="button" class="btn btn-primary mr-2 crear-pruebas" data-name="messenger">Crear Tickets</button>
+                                            <button type="button" class="btn btn-primary mr-2 crear-pruebas" data-name="faq"      >Crear FAQS</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-5">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Eliminar valores de pruebas</h3>              
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 mt-2">
+                                        <button type="button" class="btn btn-danger mr-2 delete-pruebas" data-title="Tickets" data-name="messenger">Eliminar Tickets</button>
+                                        <button type="button" class="btn btn-danger mr-2 delete-pruebas" data-title="FAQS"    data-name="faq"      >Eliminar FAQS</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row pt-5">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h3>Eliminar todo los valores de pruebas</h3>              
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 mt-2">
+                                        <button type="button" class="btn btn-danger mr-2 delete-todo">Eliminar Todo</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- end contenido centro -->
+
+        <!-- Scripts -->
+        <script src="../js/app.js"></script>
+        <script src="../js/crud.js"></script>
+        <script>
+            //
+            // Eliminar
+            //
+                // Eliminar valores de pruebas
+                $(document).on('click', '.delete-pruebas', function () {
+                    const name  = $(this).data('name');
+                    const title = $(this).data('title');
+                    // Preguntar que hacer
+                    let opcion = confirm("Eliminar todo los datos de "+title);
+                   
+                    // Confirma que se elimina el ticket
+                    if (opcion == true) {
+                        // Eliminar dato
+                        deleteStorage(name);
+                        // Mensaje
+                        console.log('Datos eliminados de '+title);
+                    }
+                });
+                
+                // Eliminar todo los datos
+                $(document).on('click', '.delete-todo', function () {
+                    // Preguntar que hacer
+                    let opcion = confirm("Eliminar todo los datos");
+                    
+                    // Confirma que se elimina el ticket
+                    if (opcion == true) {
+                        // Eliminar dato
+                        clearStorage();
+                        // Mensaje
+                        console.log('Datos eliminados');
+                    }
+                });
+
+            //
+            // Crear
+            //
+                $(document).on('click', '.crear-pruebas', function () {
+                    const name      = $(this).data('name');
+                    const cantidad  = $('#cantidad').val();
+
+                    if(cantidadCrearPruebas(cantidad)){
+                        for (let index = 0; index < cantidad; index++) {
+                            //
+                            // Almacenamos en el Storage
+                            //
+                                // No tenemos datos
+                                let dataCreate = {
+                                    name : name,            // Nombre del tipo que almacenamos
+                                    json : randonData(name) // Datos que almacenamos
+                                }
+                                let data = createJsonApi(dataCreate);
+
+                        }
+                    }
+                });
+
+            //
+            // Funciones utiles
+            //
+                // Comprobar la cantidad de datos a crear
+                function cantidadCrearPruebas(cantidad){
+                    // La cantidad esta entre 1 y 50
+                    if(cantidad > 0 && cantidad < 51){
+                        return true;
+                    } else {
+                        alert('min 1 y max 50');
+                        return false;
+                    }
+                }
+                
+                // Obstener datos para rellenar
+                function randonData(name){
+                    switch (name) {
+                        case 'messenger':
+                            return randomMessenger();
+                            break;
+                        case 'faq':
+                            return randomFaq();
+                            break;
+                    
+                        default:
+                            return console.log('No se puede crear dato');
+                            break;
+                    }
+                    return console.log('Datos almacenados');
+                }
+
+                // Crear un ticket
+                function randomMessenger(){
+                    // datos aleatorios
+                    const subject  = [
+                        'Parece que...',
+                        'El otro día...',
+                        'Bienvenido al nuevo..',
+                        'Estoy viendo..',
+                        'Recuerdalo siempre..',
+                    ];
+                    const postings = [1, 2, 3];
+                    const text     = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.";
+            
+                    // Creamos el Json de alamacenamiento
+                    const from        = NameRandom();
+                    const assignaedTo = NameRandom(2);
+
+                    // Devolvemos el ticket
+                    return ticket = {
+                        id           : returnNextID('messenger'),                   // campo ticket
+                        createDate   : Today(),                                     // Creado
+                        subject      : subject[Math.floor((Math.random() * 5))],    // titulo del ticket
+                        postings     : postings[Math.floor((Math.random() * 3))],   // select del destinatario
+                        from         : from,                                        // creador del ticket
+                        assignaedTo  : assignaedTo,                                 // asigando a
+                        answer       : Math.floor((Math.random() * 2)),             // tienes que responder = 0 : respondido | 1 : responder
+                        status       : 1,                                           // 0: Cerrado; 1: Abierto
+                        message      : {
+                            1 : {
+                                userName     : from,                                        // Nombre del usuario del mensaje
+                                userId       : "425",                                       // ID del usuario que crea el ticket
+                                userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
+                                messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
+                                message      : text,                                        // Mensaje
+                            },
+                            2 : {
+                                userName     : assignaedTo,                                 // Nombre del usuario del mensaje
+                                userId       : "426",                                       // ID del usuario que crea el ticket
+                                userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
+                                messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
+                                message      : text,                                        // Mensaje
+                            },
+                            3 : {
+                                userName     : from,                                        // Nombre del usuario del mensaje
+                                userId       : "425",                                       // ID del usuario que crea el ticket
+                                userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
+                                messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
+                                message      : text,                                        // Mensaje
+                            },
+                            4 : {
+                                userName     : assignaedTo,                                 // Nombre del usuario del mensaje
+                                userId       : "426",                                       // ID del usuario que crea el ticket
+                                userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
+                                messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
+                                message      : text,                                        // Mensaje
+                            }
+                        }
+                    }
+                }
+              
+                // Crear un FAQ
+                function randomFaq(){
+                    // datos aleatorios
+                    const question  = [
+                        '¿Hacer?',
+                        '¿Como?',
+                        '¿Cuando?',
+                        '¿Tal vez?',
+                        '¿Alta?',
+                    ];
+                    const reply     = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.";
+                    
+                    // Devolvemos el FAQ
+                    return faq  = {
+                        id          : returnNextID('faq'),                          // id
+                        created_at  : Today(),                                      // fecha
+                        from        : NameRandom(2),                                // creado
+                        question    : question[Math.floor((Math.random() * 5))],    // pregunta
+                        reply       : reply,                                        // respuesta
+                    };
+                }
+
+        </script>
+        <!-- FIN Scripts -->
+    </body>
+</html>
