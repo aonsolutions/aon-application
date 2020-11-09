@@ -4,7 +4,8 @@ public class Wnd {
 
 	public static native String getCurrentUser()
 	/*-{
-		return $wnd.getCurrentUser();
+		var token = $wnd.localStorage.getItem("aon_session_id");
+		return token ? "" : $wnd.getCurrentUser();
 	}-*/;
 
 	public static native String getCurrentDomainNameURL()
