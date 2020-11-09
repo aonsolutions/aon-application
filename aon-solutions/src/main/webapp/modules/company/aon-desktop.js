@@ -216,8 +216,8 @@ export class AonDesktop extends AonElement {
 			case Apps.TOOLS.app:
 				this.buildAppMenu(Apps.TOOLS);
 				break;
-			case Apps.CONTRATA.app:
-				alert('CONTRAT@');
+			case Apps.COMUNICA.app:
+				alert('COMUNIC@');
 				break;
 			case Apps.PORTAL.app:
 				open('https://mispapeles.es/');
@@ -497,7 +497,7 @@ export class AonDesktop extends AonElement {
 				let buttons = document.createElement('span');
 				buttons.style.position = 'relative';
 				buttons.style.left = '60px';
-				
+
 				let moreInfo = document.createElement('a');
 				moreInfo.style.margin = '10px';
 				moreInfo.style.color = 'gray';

@@ -7,7 +7,25 @@ export class AonElement extends HTMLElement{
   }
 
   isMobile() {
-    return window.innerWidth <= 850 && window.innerHeight <= 850;
+    return this.iOS() || this.android() || this.blackBerry() || this.windowsPhone() || (window.innerWidth <= 850 && window.innerHeight <= 850);
+  }
+
+  iOS() {
+    return navigator.platform.toLowerCase().includes('ipad')
+      || navigator.platform.toLowerCase().includes('iphone')
+      || navigator.platform.toLowerCase().includes('ipod');
+  }
+
+  android() {
+    return navigator.platform.toLowerCase().includes('android');
+  }
+
+  blackBerry() {
+    return navigator.platform.toLowerCase().includes('blackberry');
+  }
+
+  windowsPhone() {
+    return navigator.platform.toLowerCase().includes('windows phone');
   }
 
   getElement(id) {

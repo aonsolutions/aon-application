@@ -4,7 +4,7 @@ import {Apps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscal
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
 import {bidoq} from '../services/bidoq.js';
 import '../components/aon-icon.js';
-import './contrat@/aon-contrata.js';
+import './comunic@/aon-comunica.js';
 import './messenger/aon-messenger.js';
 import './signin/aon-signin.js';
 import './faqs/aon-faqs.js';
@@ -110,8 +110,8 @@ export class AonMenu extends AonElement {
 			case Apps.TOOLS.app:
 				this.buildAppMenu(Apps.TOOLS);
 				break;
-			case Apps.CONTRATA.app:
-				rootPanel('<aon-contrata></aon-contrata>');
+			case Apps.COMUNICA.app:
+				rootPanel('<aon-comunica></aon-comunica>');
 				break;
 			case Apps.PORTAL.app:
 				this.buildAppMenu(Apps.PORTAL);
@@ -145,8 +145,8 @@ export class AonMenu extends AonElement {
 			// 	return Apps.AIO;
 			case Apps.TOOLS.app:
 				return Apps.TOOLS;
-			case Apps.CONTRATA.app:
-				return Apps.CONTRATA;
+			case Apps.COMUNICA.app:
+				return Apps.COMUNICA;
 			case Apps.PORTAL.app:
 				return Apps.PORTAL;
 			// case Apps.CONVENIOS.app:

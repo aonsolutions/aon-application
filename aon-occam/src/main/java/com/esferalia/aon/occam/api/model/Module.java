@@ -23,7 +23,7 @@ public enum Module {
 	PAYROLL_PORTAL( "payroll_portal" ),
 	DOCUMENT_PORTAL( "document_portal" ),
 	POS( "pos" ),
-	CONTRATA( "contrata" ),
+	COMUNICA( "comunica" ),
 	CONFIGURATION( "configuration" ),
 	AON_ONE( "aonOne" ),
 	ECOMMERCE( "eCommerce" ),

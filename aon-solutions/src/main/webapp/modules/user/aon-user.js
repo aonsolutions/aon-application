@@ -283,8 +283,8 @@ export class AonUser extends AonElement {
 				return AllApps.AIO;
 			case AllApps.TOOLS.app:
 				return AllApps.TOOLS;
-			case AllApps.CONTRATA.app:
-				return AllApps.CONTRATA;
+			case AllApps.COMUNICA.app:
+				return AllApps.COMUNICA;
 			case AllApps.PORTAL.app:
 				return AllApps.PORTAL;
 			case AllApps.CONVENIOS.app:

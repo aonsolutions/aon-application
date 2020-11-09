@@ -1,4 +1,4 @@
-export const MenuApps = ['accounting', 'fiscal', 'payroll', 'contrata', 'documental', 'portal', 'tools'];
+export const MenuApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'portal', 'tools'];
 
 export const Apps = {
   ACCOUNTING: {
@@ -22,10 +22,10 @@ export const Apps = {
     icon: 'aon_app',
     color: '#1F8CFF'
   },
-  CONTRATA: {
-    app: 'contrata',
-    title: 'Contrat@',
-    description: 'Contrat@',
+  COMUNICA: {
+    app: 'comunica',
+    title: 'Comunic@',
+    description: 'Comunic@',
     icon: 'aon_app',
     color: '#6C75AB'
   },
@@ -140,10 +140,10 @@ export const AllApps = {
       icon: 'aon_app',
       color: 'gray'
     },
-    CONTRATA: {
-      app: 'contrata',
-      title: 'Contrat@',
-      description: 'Contrat@',
+    COMUNICA: {
+      app: 'comunica',
+      title: 'Comunic@',
+      description: 'Comunic@',
       icon: 'aon_app',
       color: '#6C75AB'
     },

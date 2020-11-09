@@ -12,7 +12,7 @@ public enum AonApp implements Serializable{
 	OCR,
 	AIO,
 	TOOLS,
-	CONTRATA,
+	COMUNICA,
 	PORTAL,
 	CONVENIOS,
 	BANK;
@@ -52,8 +52,8 @@ public enum AonApp implements Serializable{
 			return AIO;
 		} else if(i.equalsIgnoreCase(TOOLS.name())) {
 			return TOOLS;
-		} else if(i.equalsIgnoreCase(CONTRATA.name())) {
-			return CONTRATA;
+		} else if(i.equalsIgnoreCase(COMUNICA.name())) {
+			return COMUNICA;
 		} else if(i.equalsIgnoreCase(PORTAL.name())) {
 			return PORTAL;
 		} else if(i.equalsIgnoreCase(MESSENGER.name())) {

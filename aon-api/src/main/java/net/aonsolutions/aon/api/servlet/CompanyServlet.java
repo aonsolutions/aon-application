@@ -99,7 +99,7 @@ public class CompanyServlet extends HttpServlet{
 			} else if(Module.CALL_CENTER.equals(r)) {
 				dapp.setApp(AonApp.MESSENGER);
 				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
-			} else if(Module.CONTRATA.equals(r)) {
+			} else if(Module.COMUNICA.equals(r)) {
 				
 			} else if(Module.DOCUMENT.equals(r)) {
 				dapp.setApp(AonApp.DOCUMENTAL);
