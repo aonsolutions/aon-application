@@ -23,10 +23,13 @@ class AonApplication extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-		if('title' === name) {
-			let toolbar = document.getElementById(this.getId() + 'Toolbar');
-			toolbar.setAttribute('title', newValue);
-		}
+    if('title' === name) {
+      let toolbar = document.getElementById(this.getId() + 'Toolbar');
+
+      if (toolbar !== null) {
+        toolbar.setAttribute('title', newValue);
+      }
+    }
   }
 
 	constructor () {

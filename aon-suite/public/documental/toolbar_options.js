@@ -28,18 +28,6 @@ export const AVAILABLE_OPTIONS = [
         fn: editOption
     },
     {
-        name: SINGLE_DELETE_OPTION,
-        icon: 'delete_forever',
-        title: 'Eliminar documento',
-        fn: singleDeleteOption
-    },
-    {
-        name: MULTIPLE_DELETE_OPTION,
-        icon: 'delete_forever',
-        title: 'Eliminar los documentos seleccionados',
-        fn: multipleDeleteOption
-    },
-    {
         name: ADD_NOTE_OPTION,
         icon: 'note_add',
         title: 'Añadir nota a los documentos seleccionados',
@@ -51,6 +39,18 @@ export const AVAILABLE_OPTIONS = [
         title: 'Ver nota del documento',
         fn: viewNoteOption
     },
+    {
+        name: SINGLE_DELETE_OPTION,
+        icon: 'delete_forever',
+        title: 'Eliminar documento',
+        fn: singleDeleteOption
+    },
+    {
+        name: MULTIPLE_DELETE_OPTION,
+        icon: 'delete_forever',
+        title: 'Eliminar los documentos seleccionados',
+        fn: multipleDeleteOption
+    }
 ];
 
 function singleDownloadOption() {
