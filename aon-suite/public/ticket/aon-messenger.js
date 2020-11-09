@@ -8,7 +8,6 @@ class AonMessenger extends HTMLElement {
     connectedCallback () {
         this.innerHTML = `<aon-application id="aonMessenger" title="MESSENGER"></aon-application>`;
         this.build();
-        this.suiteOld();
     }
 
     build() {
@@ -30,6 +29,8 @@ class AonMessenger extends HTMLElement {
         ];
         aonMessenger.addSidenavOptions('OPCIONES', options);
         this.loadIndex();
+        
+        this.suiteOld();
     }
 
     suiteOld() {
@@ -82,11 +83,6 @@ class AonMessenger extends HTMLElement {
             console.error('Ocurrió un error: ' + error.message);
             aonMessenger.setContentHTML('');
         }
-    }
-
-    loadAonSolutions(){
-        // Llamamos a Bidoq para hacer el Login
-        alert('Login para aonSolutions');
     }
     
     loadIndex() {
