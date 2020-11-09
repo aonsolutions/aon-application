@@ -38,12 +38,12 @@ export class AonComunica extends AonElement {
 			},
 			{
 				name: 'Partes IT',
-				icon: 'table_chart',
+				icon: 'local_hospital',
 				fn: () => startModule('aon_gwt_payroll', 'MainIT', aonComunica.CONTENT)
 			},
 			{
 				name: 'CCC',
-				icon: 'table_chart',
+				icon: 'account_balance',
 				fn: () => startModule('aon_gwt_payroll', 'MainCCC', aonComunica.CONTENT)
 			},
 			{
