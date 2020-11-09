@@ -108,7 +108,7 @@ class AonDocumental extends HTMLElement {
     loadShow(id, type) {
         const contentIframe = document.querySelector('iframe');
 
-        contentIframe.src = `./show.html?id=${id}&type=${type}`;
+        contentIframe.src = `../../aon-suite/public/documental/show.html?id=${id}&type=${type}`;
     }
 
     async getFolders() {
