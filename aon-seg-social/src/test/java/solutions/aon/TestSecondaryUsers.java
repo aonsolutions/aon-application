@@ -118,6 +118,20 @@ public class TestSecondaryUsers {
 	}
 	
 	@Test
+	public void registerSecondaryUsersNieTest(){
+		
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
+			SistemaRedSecondaryUser.registerSecondaryUserByNie(certificateInputStream,"jg@FNMT", "pkcs12","x","x");
+		}
+		catch (StatusCodeException e) {}
+		catch (InvalidDataException e) {}
+		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
+		catch (FileNotFoundException e) {fail("File not found");}
+		catch (IOException e) {fail("IOException");}
+		catch (Exception e) {fail("unknown exception");}
+	}
+	
+	@Test
 	public void registerSecondaryUsersNieEmptyTest(){
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
@@ -143,7 +157,6 @@ public class TestSecondaryUsers {
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
 		catch (Exception e) {fail("unknown exception");}
-	}
-	
+	}	
 
 }

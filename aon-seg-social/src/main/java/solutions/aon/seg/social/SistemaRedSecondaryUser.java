@@ -1,5 +1,6 @@
 package solutions.aon.seg.social;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -18,7 +19,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.response.NotRespondingException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.SecondaryUser;
 import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
@@ -203,24 +206,27 @@ public class SistemaRedSecondaryUser {
 		try {
 			deleteSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,nie);
 			return true;
-		}catch (Exception  e) {throw new SegSocialException(e);}
+		}
+		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}	
+		catch(RuntimeException e) {throw new NotRespondingException();} 
+		catch (Exception  e) {throw new SegSocialException(e);}
+		return false;
 		
 	}
 	
 	//DELETE SECONDARY USER
 	public static void deleteSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipf) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException, InterruptedException {
+			final String certificateType, final String ipf) throws StatusCodeException, MalformedURLException, IOException, SegSocialException, InterruptedException {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			
 			webClient.getOptions().setTimeout(15000);
-			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW68&E=I&AP=AUT");
 			
 			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_2");
 			htmlPage = ch1.click();
 			
-			HtmlOption opt1 = (HtmlOption) htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child(2)");
+			HtmlOption opt1 = (HtmlOption) htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child(1)");
 			htmlPage = opt1.click();
 			
 			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_2_2");
@@ -228,14 +234,16 @@ public class SistemaRedSecondaryUser {
 			
 			HtmlSubmitInput submit_btn = htmlPage.querySelector("#Sub2207101004_52");
 			htmlPage = submit_btn.click();
+						
+			System.out.println(htmlPage.asXml());
 			
-			HtmlUnitToolkit.wait4(htmlPage, p->p.querySelector("Sub0600301012")).orElseThrow();
+			HtmlUnitToolkit.wait4(htmlPage, p->p.querySelector("Sub2207101004_99")).orElseThrow();
 			
 			HtmlSubmitInput final_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
 			htmlPage = final_submit_btn.click();			
-		}				
+		}
 	}
 	
 	//HANDLE EXCEPTIONS OF
@@ -252,5 +260,17 @@ public class SistemaRedSecondaryUser {
 
 	//ipf	
 	//naf	291136796369
+	
+	public static void main(String[] args) {
+		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {			
+			deleteSecondaryUser(certificateInputStream, "jg@FNMT", "pkcs12", "072828005T");
+		} catch (SegSocialException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
 
 }
