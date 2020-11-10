@@ -43,7 +43,6 @@ class AonDocumental extends HTMLElement {
 
     folder = null;
     page = null;
-    selectedTag = null;
 
     constructor () {
         super();
@@ -57,7 +56,7 @@ class AonDocumental extends HTMLElement {
     }
 
     async build() {
-        let aonDocumental = document.getElementById('aonDocumental');
+        const aonDocumental = document.getElementById('aonDocumental');
 
         const folders = await this.getFolders();
         aonDocumental.dataset['folders'] = JSON.stringify(folders);
@@ -68,38 +67,25 @@ class AonDocumental extends HTMLElement {
         this.addDocumentOptions(aonDocumental);
 
         this.addCategoryOptions(aonDocumental, folders);
-
+        
         this.loadIndex();
     }
 
-    loadIndex(folder = 'pendientes') {
-        // Reseteamos la propiedad que contiene el tag seleccionado
-        this.selectedTag = null;
-
-        let aonDocumental = document.getElementById('aonDocumental');
-        const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
+    loadIndex({folder = 'pendientes', tag = null} = {}) {
+        const contentIframe = document.querySelector('iframe');
+        const aonDocumental = document.getElementById('aonDocumental');
 
         // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
         this.folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
 
-        // Eliminamos todas las opciones de la barra de herramientas
-        aonDocumental.removeToolbarOptions();
+        const tagParameter = (tag === null) ? '' : `?tag=${tag}`;
+        const indexURL = `../../aon-suite/public/documental/index.html${tagParameter}`;
 
-        // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
-        if (parseInt(folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) {
-            aonDocumental.removeToolbarOptions(['Subir']);
+        if (contentIframe === null) {
+            aonDocumental.setContentHTML(`<iframe src="${indexURL}" style="width:100%;height:100%;border:none;"></iframe>`);
+        } else {
+            contentIframe.src = indexURL;
         }
-
-        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
-        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null) {
-            aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-                const contentIframe = document.querySelector('iframe');
-
-                contentIframe.contentWindow.document.getElementById('upload-file').click();
-            }, 'Subir documentos');
-        }
-
-        aonDocumental.setContentHTML(`<iframe src="../../aon-suite/public/documental/index.html?folder=${folder}" style="width:100%;height:100%;border:none;"></iframe>`);
     }
 
     loadShow(id, type) {
@@ -151,13 +137,13 @@ class AonDocumental extends HTMLElement {
             {
                 name: 'Pendientes',
                 icon: 'inbox',
-                fn: () => this.loadIndex('pendientes'),
+                fn: () => this.loadIndex({folder: 'pendientes'}),
                 default: true
             },
             {
                 name: 'Recientes',
                 icon: 'access_time',
-                fn: () => this.loadIndex('recientes')
+                fn: () => this.loadIndex({folder: 'recientes'})
             }
         ];
 
@@ -169,7 +155,7 @@ class AonDocumental extends HTMLElement {
             const option = {
                 name: folder.carpeta,
                 icon: 'folder',
-                fn: () => this.loadIndex(folder.carpetaID)
+                fn: () => this.loadIndex({folder: folder.carpetaID})
             };
 
             return option;
