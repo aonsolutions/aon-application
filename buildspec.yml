@@ -73,7 +73,7 @@ phases:
       # - command
   post_build:
     commands:
-      - echo Entered the post_build phase...
+      - [[ $CODEBUILD_BUILD_SUCCEEDING != 0 ]] && exit 255 || echo "Entered the post_build phase..."
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI/aon-db-up2date:latest
