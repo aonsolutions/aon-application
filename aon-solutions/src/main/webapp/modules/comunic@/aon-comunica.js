@@ -61,6 +61,11 @@ export class AonComunica extends AonElement {
 			}
 		];
 		aonComunica.addSidenavOptions('OPCIONES', options);
+
+		if(this.isMobile()){
+			aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
+		}
+		
 	}
 }
 window.customElements.define('aon-comunica', AonComunica);

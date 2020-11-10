@@ -40,3 +40,12 @@ export const decimalAdjust = (type, value, exp)  => {
   value = value.toString().split('e');
   return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 }
+
+export const serializeForm = (form)=> {
+  let obj = {};
+  let formData = new FormData(form);
+  for (let  key of formData.keys()) {
+    obj[key] = formData.get(key);
+  }
+  return obj;
+}

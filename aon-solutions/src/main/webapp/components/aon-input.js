@@ -18,6 +18,22 @@ export class AonInput extends AonElement {
     this.setAttribute('id', id);
   }
 
+  get required() {
+    return this.getAttribute('required');
+  }
+
+  set required(required) {
+    this.setAttribute('required', required);
+  }
+
+  get name() {
+    return this.getAttribute('name');
+  }
+
+  set name(name) {
+    this.setAttribute('name', name);
+  }
+
   get type() {
     return this.getAttribute('type');
   }
@@ -159,8 +175,9 @@ export class AonInput extends AonElement {
     label.style.width = '100%';
 
     let input = document.createElement('input');
-    input.required = true;
+    input.required = this.getAttribute('required');
     input.id = this.getAttribute('id') + 'Input';
+    input.name = this.getAttribute('name');
     input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
     input.type = this.getAttribute('type') && !this.isTypeList() ? this.getAttribute('type') : 'text';
     if('date' === this.getAttribute('type')){

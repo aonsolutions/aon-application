@@ -1,25 +1,39 @@
 import {AonElement} from '../../components/AonElement.js';
-
+import './aon-movements-list.js';
+import './aon-alta-directa.js';
 export class AonMovements extends AonElement {
+    constructor () {
+        super();
+    }
 
-  get id() {
-    return this.getAttribute('id');
-  }
 
-  set id(id) {
-    this.setAttribute('id', id);
-  }
+    connectedCallback () {
+        this.innerHTML = `
+            <aon-dialog id="aonDialogAddOption" type="menu" > </aon-dialog>
+        `;
+        this.build();
+    }
 
-	constructor () {
-		super();
-	}
+    build(){
+        let aonMovements = this.getElement('aonComunica');
+        aonMovements.removeToolbarOptions();
+        aonMovements.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
+        this.aonList();
+    }
 
-	connectedCallback () {
-    this.build();
- 	}
+    async aonList(filter){
+        let list = this.getElement('aonComunica')
+        if(filter) list.setFilter(filter);
+        else {
+            let aonComunica = this.getElement('aonComunica');
+            aonComunica.setContentHTML(`<aon-movements-list />`);
+        }
+    }
+    
+    aonAltaDirecta() {
+        let aonComunica = this.getElement('aonComunica');
+        aonComunica.setContentHTML(`<aon-alta-directa />`);
+    }
 
- 	build() {
-
-  }
 }
 window.customElements.define('aon-movements', AonMovements);
