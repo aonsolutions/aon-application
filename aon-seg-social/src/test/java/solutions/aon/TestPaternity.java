@@ -19,6 +19,7 @@ import org.junit.Test;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
 import solutions.aon.seg.social.exceptions.paternity.PaternityException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityNotFoundException;
 import solutions.aon.seg.social.exceptions.paternity.PaternityWrongDataException;
@@ -593,7 +594,6 @@ public class TestPaternity {
 	
 	
 	@Test
-	@Ignore("Fails !!!!!!!!")
 	public void testConsultCertificatesUnfilledCCC() {
 		try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
 			
@@ -612,7 +612,9 @@ public class TestPaternity {
 			fail("Invalid certificate");
 		} catch (StatusCodeException sce) {
 			assertTrue(true);
-		} catch(SegSocialException e) {
+		} catch (UnfilledMandatory e) {
+			assertTrue(true);
+		}catch(SegSocialException e) {
 			fail("Wrong data");
 		} catch (ParseException e) {
 			fail("Date typed wrong");
