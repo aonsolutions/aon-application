@@ -27,8 +27,8 @@ class AonMessenger extends HTMLElement {
                 fn: () => this.loadIndex()
             },
             {
-                name: 'Crear nuevo',
-                icon: 'create',
+                name: 'Nueva solicitud',
+                icon: 'add',
                 fn: () => this.loadCreate()
             }
         ];

@@ -46,7 +46,7 @@
                         <div class="tab-pane fade show active" id="consultas" role="tabpanel" aria-labelledby="consultas_tab">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="col-7 atp_caja_form div_ticket">
+                                    <div class="col-12 atp_caja_form div_ticket">
                                         <form method="post" id="formulario" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-12">
@@ -92,7 +92,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="col-5 div_alma">
+                                    <div class="col-5 div_alma d-none">
                                         <div class="row">
                                             <div class="col-12" id="contentAlma">
                                                 <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
@@ -280,8 +280,6 @@
                         $("#contentAlma").append(divCb);
                     } else {
                         $('.div_alma').remove();
-                        $('.div_ticket').removeClass('col-7');
-                        $('.div_ticket').addClass('col-12');
                         $('.div_faqs').removeClass('col-12');
                         $('.div_faqs').addClass('col-5');
                     }
@@ -320,6 +318,13 @@
                                 document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                             }
                             
+                            // Efecto de aparición del chatbot
+                            if($(".div_alma").hasClass("d-none")){
+                                $(".div_alma").hide();
+                                $(".div_alma").removeClass('d-none');
+                                $(".div_alma").show(1000);
+                            }
+                                
                             // Mostramos el botón de resuelto por ALMA
                             $('#btn-send-alma').removeClass('d-none');
                         }
