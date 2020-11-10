@@ -15,6 +15,7 @@ public interface SistemaREDService {
 		DATE,
 		FILE, 
 		USER,
+		COUNT,
 		DOMAIN,
 		REGIME,
 		CONTRACT,

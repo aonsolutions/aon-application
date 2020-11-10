@@ -68,6 +68,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			case EMPLOYEE:
 				doEmployeePost(req, resp);
 				break;
+			case EMPLOYEES:
+				doEmployeesPost(req, resp);
+				break;
 			case CERTIFICATE:
 				doCertificatePost(req, resp);
 				break;
@@ -195,7 +198,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		String userLogin = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
 		
-		
 		try (Connection connection = getConnection(req);
 			OutputStream os = resp.getOutputStream();){	
 			
@@ -208,34 +210,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String naf = req.getParameter(Parameter.NAF.name());
 			String date = req.getParameter(Parameter.DATE.name());
 
-			
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			solutions.aon.seg.social.objects.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
-			
-			String nss = ssEmployee.getNss();			
-			Date startDate = ssEmployee.getFra();
-			ccc = ssEmployee.getCtaCti().orElse(ccc);								
-
-			Employee aonEmployee = new Employee()
-			.setNaf(naf)
-			.setCcc(ccc)
-			.setRegime(regime)
-			.setStartDate(startDate)
-			.setDni(ssEmployee.getIpf())
-			;
-
-			ssEmployee.getGc().ifPresent( gc -> aonEmployee.setQuoteGroup(gc));
-			ssEmployee.getName().ifPresent( name -> aonEmployee.setName(name));
-			aonEmployee.setContractType(ssEmployee.getContract().orElse("000"));
-			ssEmployee.getFrb().ifPresent( endDate -> aonEmployee.setEndDate(endDate));
-			ssEmployee.getCoef().ifPresent( coef -> aonEmployee.setFactor(coef));
-			ssEmployee.getBirthDate().ifPresent( birthDate -> aonEmployee.setBirthDate(birthDate));
-			ssEmployee.getSex().ifPresent( sex -> aonEmployee.setSex(sex));
-			
-			//String category = statusJSONObject.getString(Saltra.GRUPO_COTIZACION_TEXT);
-			//aonEmployee.setCategory(AonStringUtils.defaultIfBlank(category, null));
-			
-			Employee employee = PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
+			Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
 
 			resp.setStatus(HttpServletResponse.SC_OK);
 			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
@@ -244,7 +219,38 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			resp.setContentLength(content.length);
 			os.write(content);		
 		} 
+	}
+
+	private Employee addEmployee(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+			String ccc, String naf) throws SegSocialException {
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+		solutions.aon.seg.social.objects.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 		
+		String nss = ssEmployee.getNss();			
+		Date startDate = ssEmployee.getFra();
+		ccc = ssEmployee.getCtaCti().orElse(ccc);								
+
+		Employee aonEmployee = new Employee()
+		.setNaf(naf)
+		.setCcc(ccc)
+		.setRegime(regime)
+		.setStartDate(startDate)
+		.setDni(ssEmployee.getIpf())
+		;
+
+		ssEmployee.getGc().ifPresent( gc -> aonEmployee.setQuoteGroup(gc));
+		ssEmployee.getName().ifPresent( name -> aonEmployee.setName(name));
+		aonEmployee.setContractType(ssEmployee.getContract().orElse("000"));
+		ssEmployee.getFrb().ifPresent( endDate -> aonEmployee.setEndDate(endDate));
+		ssEmployee.getCoef().ifPresent( coef -> aonEmployee.setFactor(coef));
+		ssEmployee.getBirthDate().ifPresent( birthDate -> aonEmployee.setBirthDate(birthDate));
+		ssEmployee.getSex().ifPresent( sex -> aonEmployee.setSex(sex));
+		
+		//String category = statusJSONObject.getString(Saltra.GRUPO_COTIZACION_TEXT);
+		//aonEmployee.setCategory(AonStringUtils.defaultIfBlank(category, null));
+		
+		Employee employee = PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
+		return employee;
 	}	
 	
 	private void doRestoreEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
@@ -279,6 +285,41 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		}
 	}
 
+	private void doEmployeesPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SegSocialException, SQLException {
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		try (Connection connection = getConnection(req);
+			OutputStream os = resp.getOutputStream();){	
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			int contentLength = 2;			
+			int count = Integer.parseInt(req.getParameter(Parameter.COUNT.name()));
+			os.write('[');
+			for ( int i = 0; i < count; i++ ) {
+				String regime = req.getParameter(Parameter.REGIME.name()+i);
+				String ccc = req.getParameter(Parameter.CCC.name()+i);
+				String naf = req.getParameter(Parameter.NAF.name()+i);
+				String date = req.getParameter(Parameter.DATE.name()+i);
+	
+				Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
+	
+				byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d },", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
+				os.write(content);		
+				contentLength += content.length;
+			}
+			os.write(']');
+
+//			resp.setContentType("application/json");
+			resp.setStatus(HttpServletResponse.SC_OK);
+			resp.setContentType("text/html");
+			resp.setContentLength(contentLength);
+		} 
+
+	}	
 
 	
 	protected String getDomain(HttpServletRequest req) {

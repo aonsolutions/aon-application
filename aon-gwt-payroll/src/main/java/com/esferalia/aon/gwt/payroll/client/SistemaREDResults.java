@@ -1,8 +1,12 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.EMPLOYEE;
+import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.EMPLOYEES;
 import static com.esferalia.aon.gwt.payroll.shared.SistemaREDService.SISTEMA_RED_URL;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -21,7 +25,7 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -38,17 +42,15 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -181,6 +183,9 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	Hidden userHidden;
 	@UiField
 	Hidden domainHidden;
+	
+	@UiField
+	FlowPanel menuBarFlowPanel;
 
 	private Images images;
 
@@ -459,7 +464,7 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		
 		horizontalPanel.getElement().getStyle().setFontSize(12, Unit.PX);
 		
-		addNotFound(horizontalPanel);
+		addNotFound(horizontalPanel).setUserObject(status);
 		syncNotFound();
 	}
 	
@@ -505,6 +510,10 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {
 		
 	}
+	
+	protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults) {
+		
+	}
 	// ------------------------------------------------------------------------
 	
 	protected void removeAll() {
@@ -532,16 +541,38 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		dateHidden.setValue( DateTimeFormat.getFormat("dd-MM-yyyy").format(affiliatedNotFound.getDate()) );
 		
 		employeeFormPanel.addSubmitCompleteHandler((e) -> {
-			JsSistemaREDResults jsSaltraResults = eval("("+ e.getResults() +")");
-			newAffiliated(jsSaltraResults);
+			JsSistemaREDResults jsSistemaREDResults = eval("("+ e.getResults() +")");
+			newAffiliated(jsSistemaREDResults);
 		});
 		employeeFormPanel.submit(); 	
+ 
+	}
+	protected void newEmployees() {
+		newEmployees(getAllAffiliatedNotFound());
+	}
 
+	private AffiliatedNotFound[] getAllAffiliatedNotFound() {
+		AffiliatedNotFound affiliatedNotFound [] = new AffiliatedNotFound [notFoundItem.getChildCount()];
+		for ( int i = 0; i < notFoundItem.getChildCount(); i++ ) {
+			affiliatedNotFound[i] = (AffiliatedNotFound)notFoundItem.getChild(i).getUserObject();
+		}
+		return affiliatedNotFound;
 	}
 	
-	protected void newEmployees() {
+	protected void newEmployees(AffiliatedNotFound affiliatedNotFound []) {
 		
+		FormPanel employeesFormPanel = createEmployeesFormPanel( 
+		affiliatedNotFound, 
+		(event,formPanel)  -> {
+			JsArray<JsSistemaREDResults> jsSistemaREDResults = eval("("+ event.getResults() +")");
+			AON.stop();
+			newAffiliated(jsSistemaREDResults);
+			formPanel.removeFromParent();
+		});
 		
+		menuBarFlowPanel.add(employeesFormPanel);
+		AON.start();
+		employeesFormPanel.submit();
 		
 	}
 
@@ -680,22 +711,30 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	}
 
 	
-	private FormPanel createEmployeesFormPanel() {
-		//Create formPanel to UploadFiles
+	private FormPanel createEmployeesFormPanel(AffiliatedNotFound affiliatedNotFound [], BiConsumer<SubmitCompleteEvent, FormPanel> handler) {
+		//Create formPanel to UploadFiles-
 		FlowPanel flowPanel = new FlowPanel();
 		
 		FormPanel formPanel = new FormPanel();
 		formPanel.setMethod(FormPanel.METHOD_POST);
-		formPanel.setAction(GWT.getModuleBaseURL() + SISTEMA_RED_URL + "/" + EMPLOYEE);
+		formPanel.setAction(SISTEMA_RED_URL + "/" + EMPLOYEES);
 		
 		Hidden userLogin = new Hidden(SistemaREDService.Parameter.USER.name(), Wnd.getCurrentUser());
 		Hidden currentDomain = new Hidden(SistemaREDService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
 		
-		formPanel.addSubmitCompleteHandler((e) -> {
-	    });
+
+		formPanel.addSubmitCompleteHandler(e -> handler.accept(e, formPanel));
 		
 		flowPanel.add(userLogin);
 		flowPanel.add(currentDomain);
+		
+		flowPanel.add(new Hidden(SistemaREDService.Parameter.COUNT.name(), String.valueOf(affiliatedNotFound.length)));
+		
+		for ( int i = 0; i < affiliatedNotFound.length; i++ ) {
+			flowPanel.add(new Hidden(SistemaREDService.Parameter.CCC.name() + i, affiliatedNotFound[i].getCcc()));
+			flowPanel.add(new Hidden(SistemaREDService.Parameter.NAF.name() + i, affiliatedNotFound[i].getNaf()));
+			flowPanel.add(new Hidden(SistemaREDService.Parameter.REGIME.name() + i, affiliatedNotFound[i].getRegime()));
+		}
 		
 		formPanel.add(flowPanel);
 			

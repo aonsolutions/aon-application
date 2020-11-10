@@ -16,7 +16,9 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -629,6 +631,33 @@ public class MainContrataContract extends MainEntryPoint {
 					});
 				}
 				
+				@Override
+				protected void newAffiliated(JsSistemaREDResults jsSaltraResults) {
+					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false,
+							s -> {
+								MainContrataContract.this.initEnterpriseSB();
+								MainContrataContract.this.initContractTable();
+								MainContrataContract.this.setTableHeights();
+							},
+							f -> {}
+					);	
+					run();
+				}
+				
+				@Override
+				protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults ) {
+					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false,
+							s -> {
+								MainContrataContract.this.initEnterpriseSB();
+								MainContrataContract.this.initContractTable();
+								MainContrataContract.this.setTableHeights();
+							},
+							f -> {}
+					);	
+					run();
+				}
+				
+
 				@Override
 				protected void saltraCredentialsFound() {
 					mainContrataContractObject.checkStatus(enterpriseStatus -> {
