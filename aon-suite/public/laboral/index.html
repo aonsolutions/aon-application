@@ -40,12 +40,12 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">Estado</th>
-                                                    <th scope="col">Fecha alta/baja</th>
-                                                    <th scope="col">Contrato</th>
                                                     <th scope="col">Nombre</th>
                                                     <th scope="col">DNI</th>
                                                     <th scope="col">NAF</th>
+                                                    <th scope="col">Fecha alta/baja</th>
+                                                    <th scope="col">Contrato</th>
+                                                    <th scope="col">Estado</th>
                                                     <th scope="col">Coste empleado</th>
                                                 </tr>
                                             </thead>
@@ -82,26 +82,77 @@
                     // recorremos los datos a mostrar
                     let tbody = '';
                     let aHref = 'new.html';
+                    
+                    var orderColumn = ['nombre', 'dni', 'naf', 'fecha', 'contrato', 'estado', 'coste'];
 
                     $.each(data.dateList, function (i, item) {
                         // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
                         tbody += item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
-                        // Recorremos los <td>    
-                        $.each(item, function (key, val) {
-                            switch (key) {
-                                case 'id':
-                                    // No metemos el ID
-                                    break;  
-                                default:
+                        
+                        for(const order in orderColumn){
+                            var colum = orderColumn[order];
+                            var valor = "";
+                            var columnComun = false;
+                            
+                            switch(colum){
+                                case 'nombre':
+                                    valor = item.name;
+                                    columnComun = true;
+                                    break;
+                                    
+                                case 'dni':
+                                    valor = item.dni;
+                                    columnComun = true;
+                                    break;
+
+                                case 'naf':
+                                    valor = item.naf;
+                                    columnComun = true;
+                                    break;
+
+                                case 'fecha':
+                                    valor = item.date;
+                                    columnComun = true;
+                                    break;
+
+                                case 'contrato':
+                                    valor = item.contract;
+                                    columnComun = true;
+                                    break;
+
+                                case 'estado':
+                                    valor = item.state;
+                                    var classText = "";
+                                    
+                                    if(valor == 'Alta'){
+                                        classText = 'text-success';
+                                    } else if (valor == 'Baja'){
+                                        classText = 'text-danger';
+                                    }
+                                    
                                     tbody +=
                                         '<td>' +
                                             '<a class="text-dark" href="' + aHref + '?id=' + item.id + '&tipo=' + item.state + '">' +
-                                                val +
+                                                '<span class="'+classText+'">'+ valor + '</span>' +
                                             '</a>' +
                                         '</td>';
                                     break;
+
+                                case 'coste':
+                                    valor = item.coste;
+                                    columnComun = true;
+                                    break;
                             }
-                        });
+                            
+                            if(columnComun){
+                                tbody +=
+                                        '<td>' +
+                                            '<a class="text-dark" href="' + aHref + '?id=' + item.id + '&tipo=' + item.state + '">' +
+                                                valor +
+                                            '</a>' +
+                                        '</td>';
+                            }
+                        }
                         // Cerramos el <tr>
                         tbody += '</tr>';
                     });

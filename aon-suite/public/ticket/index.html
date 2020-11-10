@@ -97,51 +97,33 @@
                             // Recorremos los <td>
                             for(const order in orderColumn){
                                 var column = orderColumn[order];
+                                var columnComun = false;
+                                var valor = "";
                                 
                                 switch(orderColumn[order]){
                                     case '#':
-                                        tbody +=
-                                            '<td>' +
-                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    item.id +
-                                                '</a>' +
-                                            '</td>';
+                                        columnComun = true;
+                                        valor = item.id;
                                         break;
                                         
                                     case 'De':
-                                        tbody +=
-                                            '<td>' +
-                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    item.from +
-                                                '</a>' +
-                                            '</td>';
+                                        columnComun = true;
+                                        valor = item.from;
                                         break;
                                         
                                     case 'Creado':
-                                        tbody +=
-                                            '<td>' +
-                                                '<a class="text-dark" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    item.createDate +
-                                                '</a>' +
-                                            '</td>';
+                                        columnComun = true;
+                                        valor = item.createDate;
                                         break;
                                         
                                     case 'Asunto':
-                                        tbody +=
-                                            '<td>' +
-                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    item.subject +
-                                                '</a>' +
-                                            '</td>';
+                                        columnComun = true;
+                                        valor = item.subject;
                                         break;
                                         
                                     case 'Asignado':
-                                        tbody +=
-                                            '<td>' +
-                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    item.assignaedTo +
-                                                '</a>' +
-                                            '</td>';
+                                        columnComun = true;
+                                        valor = item.assignaedTo;
                                         break;
                                         
                                     case 'Estado':
@@ -163,6 +145,16 @@
                                             '</td>';
                                         break;
                                 }
+                                
+                                if(columnComun){
+                                    tbody +=
+                                            '<td>' +
+                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
+                                                    valor +
+                                                '</a>' +
+                                            '</td>';
+                                }
+                                
                             }
                             // Agregamos opciones que tenga
                             tbody +=
