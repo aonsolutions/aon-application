@@ -13,19 +13,20 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.jooq.Condition;
-import org.jooq.Record2;
 import org.jooq.impl.DSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,6 @@ import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class DomainSwitcher extends AbstractDomainSwitcher implements
@@ -63,7 +63,8 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 
-	private static final String TOOLBAR_LOGO_DEFAULT = "/images/aon-icon/aon-icon-logo.png";
+	private static final String TOOLBAR_LOGO_DEFAULT =
+	new ResourceResolver().getResolve().get( "/images/aon-icon/aon-icon-logo.png");
 
 	private final static Logger LOGGER = LoggerFactory
 			.getLogger(DomainSwitcher.class);
@@ -264,46 +265,47 @@ public class DomainSwitcher extends AbstractDomainSwitcher implements
 		return condition;
 	}
 
-	private void fillDomainData(AONContext ctx, DomainData data) {
-		Record2<byte[], Byte> logo = ctx
-				.getDslContext()
-				.select(RATTACH.DATA, RATTACH.MIMETYPE)
-				.from(APP_PARAM)
-				.leftOuterJoin(RATTACH)
-				.on(DSL.cast(APP_PARAM.VALUE, Integer.class).eq(RATTACH.REGISTRY))
-				.where(APP_PARAM.DOMAIN.eq(data.getId())
-						.and(APP_PARAM.NAME.eq(AppParam.AON_CUSTOMIZE_ID
-								.getValue())))
-				.and(RATTACH.DESCRIPTION.eq(ICommonConstants.TOOLBAR_LOGO_NAME))
-				.fetchOne();
-		
-
-		if (logo == null || AonArrayUtils.isEmpty(logo.value1())) {
-			ResourceResolver resolver = new ResourceResolver();
-			data.setLogo(resolver.getResolve().get(TOOLBAR_LOGO_DEFAULT));
-		} else {
-			MimeType mimeType = AonEnumUtils.enumValue(logo.value2(),
-					MimeType.MIME_PNG);
-			data.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
-					Base64.getEncoder().encodeToString(logo.value1())));
-		}
-
-	}
-
 	private void initializeModel() {
 		List<DomainData> domains = Collections.emptyList();
 		if (getParentDomain() != null) {
 			AONContext ctx = AONContext.getAONContext(getDomainNameURL(),domainId,getCurrentUser());
 			domains = ctx
 					.getDslContext()
-					.select(DOMAIN.ID, DOMAIN.NAME, DOMAIN.DESCRIPTION,
-							DOMAIN.EXPIRATIONDATE, DOMAIN.ACTIVE, DOMAIN.ENABLEHEREDITY)
-					.from(DOMAIN).where(getDomainCondition())
-					.orderBy(DOMAIN.DESCRIPTION).fetch().into(DomainData.class);
+					.select()
+					.from(DOMAIN)
+					
+					.leftOuterJoin(APP_PARAM).on(APP_PARAM.DOMAIN.eq(DOMAIN.ID).and(APP_PARAM.NAME.eq(AppParam.AON_CUSTOMIZE_ID.getValue())))
+					.leftOuterJoin(RATTACH).on(DSL.cast(APP_PARAM.VALUE, Integer.class).eq(RATTACH.REGISTRY).and(RATTACH.DESCRIPTION.eq(ICommonConstants.TOOLBAR_LOGO_NAME)))
+					
+					.where(getDomainCondition())
 
-			for (DomainData data : domains) {
-				fillDomainData(ctx, data);
-			}
+					.orderBy(DOMAIN.DESCRIPTION)
+					.fetchStream()
+					.map( r -> {
+						DomainData domainData = 
+								new DomainData(
+								r.get(DOMAIN.ID), 
+								r.get(DOMAIN.NAME), 
+								r.get(DOMAIN.DESCRIPTION), 
+								r.get(DOMAIN.EXPIRATIONDATE), 
+								r.get(DOMAIN.ACTIVE) == 1, 
+								r.get(DOMAIN.ENABLEHEREDITY) == 1);
+						
+						byte logo [] = r.get(RATTACH.DATA);
+						if ( logo == null || ArrayUtils.isEmpty(logo) ) {
+							domainData.setLogo(TOOLBAR_LOGO_DEFAULT);
+						}
+						else {
+							MimeType mimeType = AonEnumUtils.enumValue(r.get(RATTACH.MIMETYPE),
+									MimeType.MIME_PNG);
+							domainData.setLogo(String.format("data:%s;base64,%s", mimeType.getName(),
+									Base64.getEncoder().encodeToString(logo)));
+						}
+						return domainData;
+						
+					}).collect(Collectors.toList())					
+					;
+
 			ctx.finalize();
 		}
 		setModel(new SerializableListDataModel(domains));
