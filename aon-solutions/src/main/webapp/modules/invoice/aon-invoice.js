@@ -8,6 +8,7 @@ import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 
 import '../../components/aon-card.js';
+import '../../components/aon-date.js';
 import '../../components/aon-input.js';
 import '../../components/aon-checkbox.js';
 import '../../components/aon-dialog.js';
@@ -306,10 +307,10 @@ export class AonInvoice extends AonElement {
 		}
 		// DATE
 		let tdDate = document.createElement('td');
-		tdDate.innerHTML = `<aon-input id="date" type="date" description="Fecha"></aon-input>`;
+		tdDate.innerHTML = `<aon-date id="date" title="Fecha"></aon-date>`;
 		tr.appendChild(tdDate);
 		let date = document.getElementById('date');
-		date.value = this._invoice.date;
+		date.setDate(this._invoice.date);
 		date.addEventListener('change', () => this.update('date'));
 
 		// TOTAL
@@ -1008,10 +1009,10 @@ export class AonInvoice extends AonElement {
 
 		// FINANCE DUE DATE
 		let tdFinanceDueDate = document.createElement('td');
-		tdFinanceDueDate.innerHTML = `<aon-input id="financeDueDate${i}" description="Fecha Vencimiento" type="date"></aon-input>`;
+		tdFinanceDueDate.innerHTML = `<aon-date id="financeDueDate${i}" title="Fecha Vencimiento" ></aon-date>`;
 		tr.appendChild(tdFinanceDueDate);
 		let financeDueDate = document.getElementById('financeDueDate' + i);
-		financeDueDate.value = finance.due_date;
+		financeDueDate.setDate(finance.due_date);
 		financeDueDate.addEventListener('change', () => this.updateFinanceDate(i));
 
 		// FINANCE PAYMETHOD

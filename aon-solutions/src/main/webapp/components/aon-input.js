@@ -2,6 +2,7 @@ import {AonElement} from './AonElement.js';
 import {Countries} from '../services/country.js';
 
 export class AonInput extends AonElement {
+  SPAN;
   DIV;
   ICON;
   ICON_LABEL;
@@ -151,6 +152,7 @@ export class AonInput extends AonElement {
 
   constructor () {
     super();
+    this.SPAN = this.id + 'Span';
     this.DIV = this.id + 'Div';
     this.ICON = this.id + 'Icon';
     this.ICON_LABEL = this.id + 'IconLabel';
@@ -278,6 +280,15 @@ export class AonInput extends AonElement {
     iconLabel.setAttribute('for', this.INPUT);
     iconLabel.innerHTML = `<aon-icon-button id="${this.ICON_LABEL}" icon="${icon}" noHover="true"></aon-icon-button>`;
     div.appendChild(iconLabel);
+  }
+
+  addIconButton(icon, fn) {
+    this.addIcon(icon);
+    this.getElement(this.ICON_LABEL)
+      .addEventListener('click', (event) => {
+        event.preventDefault();
+        fn();
+      });
   }
 
   buildOptions() {

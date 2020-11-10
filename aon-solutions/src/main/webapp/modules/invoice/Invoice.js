@@ -20,16 +20,11 @@ export class Invoice {
   totalSuplidos;
 
   constructor(type) {
-    let d = new Date();
-    let month = d.getMonth() + 1;
-    let day = d.getDate();
-    let curDate = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
-
     this.type = type || 'emitida';
     this.serie = '';
     this.number = 0;
     this.reference = '';
-    this.date = curDate;
+    this.date = new Date(Date.now());
     this.total = 0;
     this.sender = {
       document: '',
@@ -71,7 +66,7 @@ export class Invoice {
       this.serie = invoice.serie || '';
       this.number = invoice.number || 0;
       this.reference = invoice.reference || '';
-      this.date = invoice.date || new Date();
+      this.date = invoice.date || new Date(Date.now());
       this.total = invoice.total || 0;
       this.type = invoice.type || 'emitida',
       this.category = invoice.category || '',

@@ -587,6 +587,35 @@
 	}
 
 
+	.aonDatepickerDaysTitle {
+		color: lightgray;
+	}
+
+	.aonDatepickerDays {
+		text-align: center;
+	}
+
+	.aonDatepicker {
+		display: block;
+		background: #fff;
+		margin: 0;
+		padding: 0;
+		border: none;
+		position: absolute;
+		overflow: visible;
+		width: 0;
+		visibility: hidden;
+		z-index: -1;
+	}
+
+	.aonDatepicker.is-visible {
+		z-index: 999;
+		visibility: visible;
+		width: 100%;
+		padding: 1px;
+		border: 1px solid #ddd;
+		border-radius: 2px;
+	}
 
 .aonRow .aonCol {
 	float: left;
@@ -733,5 +762,3 @@ div[class*='aonCol aonS']{
 		width: var(--col-width12);
 	}
 }
-
-

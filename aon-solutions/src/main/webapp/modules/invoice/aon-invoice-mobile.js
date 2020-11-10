@@ -131,10 +131,10 @@ export class AonInvoiceMobile extends AonElement {
 
 		// DATE
 		let tdDate = document.createElement('td');
-		tdDate.innerHTML = `<aon-input id="date" type="date" description="Fecha"></aon-input>`;
+		tdDate.innerHTML = `<aon-date id="date" title="Fecha"></aon-date>`;
 		tr1.appendChild(tdDate);
 		let date = document.getElementById('date');
-		date.value = this._invoice.date;
+		date.setDate(this._invoice.date);
 		date.addEventListener('change', () => this.update('date'));
 
 		// TOTAL
@@ -921,10 +921,10 @@ export class AonInvoiceMobile extends AonElement {
 		// FINANCE DUE DATE
 		let tdFinanceDueDate = document.createElement('td');
 		tdFinanceDueDate.setAttribute('colspan','2');
-		tdFinanceDueDate.innerHTML = `<aon-input id="dialogFinanceDueDate${i}" description="Fecha Vencimiento" type="date"></aon-input>`;
+		tdFinanceDueDate.innerHTML = `<aon-date id="dialogFinanceDueDate${i}" title="Fecha Vencimiento" ></aon-date>`;
 		tr1.appendChild(tdFinanceDueDate);
 		let financeDueDate = document.getElementById('dialogFinanceDueDate' + i);
-		financeDueDate.value = finance.due_date;
+		financeDueDate.setDate(finance.due_date);
 		financeDueDate.addEventListener('change', () => this.updateFinanceDate(i));
 
 		let tr2 = document.createElement('tr');
@@ -992,10 +992,10 @@ export class AonInvoiceMobile extends AonElement {
 
 		// FINANCE DUE DATE
 		let tdFinanceDueDate = document.createElement('td');
-		tdFinanceDueDate.innerHTML = `<aon-input id="financeDueDate${i}" description="Fecha Vencimiento" type="date"></aon-input>`;
+		tdFinanceDueDate.innerHTML = `<aon-date id="financeDueDate${i}" title="Fecha Vencimiento"></aon-date>`;
 		tr.appendChild(tdFinanceDueDate);
 		let financeDueDate = document.getElementById('financeDueDate' + i);
-		financeDueDate.value = finance.due_date;
+		financeDueDate.setDate(finance.due_date);
 		financeDueDate.addEventListener('change', () => this.updateFinanceDate(i));
 
 		// FINANCE AMOUNT

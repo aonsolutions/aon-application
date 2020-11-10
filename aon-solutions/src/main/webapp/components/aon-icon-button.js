@@ -2,6 +2,8 @@ import {AonElement} from './AonElement.js';
 
 export class AonIconButton extends AonElement {
 
+	BUTTON;
+
 	static get observedAttributes() {
 		return ['disabled', 'visible', 'icon'];
 	}
@@ -98,6 +100,7 @@ export class AonIconButton extends AonElement {
 
 	constructor () {
 		super();
+		this.BUTTON = this.id + 'IconButton';
 	}
 
 	connectedCallback () {
@@ -106,7 +109,7 @@ export class AonIconButton extends AonElement {
 
 	build() {
 		let button = document.createElement('button');
-		button.setAttribute('id', this.getAttribute('id') + 'IconButton');
+		button.setAttribute('id', this.BUTTON);
 		button.className = "aonIconButton";
 		button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
 
