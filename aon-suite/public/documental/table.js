@@ -8,7 +8,7 @@ const TYPES = {
 };
 
 export const getList = async (page_this = 1) => {
-    const tagID = window.aonDocumentalContainer.selectedTag;
+    const tagID = new URLSearchParams(window.location.search).get('tag');
     const uploadButton = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbarSubirButton');
 
     window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
@@ -121,7 +121,7 @@ export const getList = async (page_this = 1) => {
 // Creamos la tabla con los datos a listar
 //
 export const createTable = (data) => {
-    // Simulamos que solo tenga datos la carpeta "A contabilizar"
+    const FILE_NAME_MAX_LENGTH = 35;
     const list = data.list;
 
     // Recorremos los datos a mostrar
@@ -131,10 +131,10 @@ export const createTable = (data) => {
     let numberOfColumns = 8;
 
     if (list.length) {
-        const folderObject = window.folders.find((folder) => {
+        const folder = window.folders.find((folder) => {
             return parseInt(folder.carpetaID) === parseInt(window.aonDocumentalContainer.folder);
         });
-        const hasSubfolders = (typeof folder !== 'undefined' && folderObject.subcarpetas.length);
+        const hasSubfolders = (typeof folder !== 'undefined' && folder.subcarpetas.length);
 
         if (hasSubfolders) {
             $('#subfolder_column').removeClass('d-none');
@@ -171,7 +171,7 @@ export const createTable = (data) => {
                             tbody+= `<td>
                                     <span>`;
                                         if ($.isArray(val) && val.length) {
-                                            const tags = val.map((tag) => `<a id="documentTags" href="#" data-tag="${tag.id}" >#${tag.name}</a>`).join('<br>');
+                                            const tags = val.map((tag) => `<a class="documentTags" href="#" data-tag="${tag.id}">#${tag.name}</a>`).join('<br>');
 
                                             tbody += tags;
                                         }
@@ -188,6 +188,12 @@ export const createTable = (data) => {
 
                             tbody+= `<td class="show_doc pointer">
                                         <span>${formattedDate}</span>
+                                    </td>`;
+                            break;
+                        case 'file_name':
+                            const truncatedFileName = (val.length > FILE_NAME_MAX_LENGTH) ? `${val.substr(0, FILE_NAME_MAX_LENGTH)}&hellip;` : val;
+                            tbody+= `<td class="show_doc pointer" title="${val}">
+                                        <span>${truncatedFileName}</span>
                                     </td>`;
                             break;
                         case 'category':
@@ -345,32 +351,3 @@ function getAllowedOptions(document) {
 
     return allowedOptions;
 }
-
-//
-// Filtrar por TAG
-//
-$(document).on('click', '#documentTags', async function () {
-    const tagID = $(this).data('tag');
-
-    // Actualizamos con el valor del tagID la propiedad que contiene el tag seleccionado
-    window.aonDocumentalContainer.selectedTag = tagID;
-
-    // Recargar tabla y paginado
-    try {
-        const list = await getList(1); // Pasamos pagina 1
-
-        createTable(list);
-    } catch (error) {
-        const list = {
-            "list"      : [],
-            "total_data": 0,                // cantidad total de elementos
-            "total_page": 1,                // total de paginas
-            "page"      : 1,                // pagina en la que estamos
-            "shown_page": 0 + ' - ' + 0,    // cantidad mostrada por paginas 1 - 10
-        }
-
-        createTable(list);
-
-        console.error(error);
-    }
-});
