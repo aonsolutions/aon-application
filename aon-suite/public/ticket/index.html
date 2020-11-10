@@ -33,11 +33,13 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">#Ticket</th>
-                                            <th scope="col">Creado</th>
-                                            <th scope="col">Asunto</th>
+                                            <th scope="col">#</th>
                                             <th scope="col">De</th>
+                                            <th scope="col">Asunto</th>
                                             <th scope="col">Asignado</th>
+                                            <th scope="col">Estado</th>
+                                            <th scope="col">Creado</th>
+                                            <th scope="col"></th>
                                             <th scope="col"></th>
                                         </tr>
                                     </thead>
@@ -74,6 +76,8 @@
                     let colspan = 7;
                     let a_href  = 'show.html';
                     
+                    var orderColumn = ['#', 'De', 'Asunto', 'Asignado', 'Estado', 'Creado'];
+                    
                     if(!data){
                         // No tenemos datos
                         let tbody =
@@ -91,50 +95,85 @@
                             // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
                             tbody += item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
                             // Recorremos los <td>
-                            $.each(item, function (key, val) {
-                                switch (key) {
-                                    case 'subject':
-                                        tbody +=
-                                            '<td>' +
-                                                '<a class="text-dark" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    '<div class="row">' +
-                                                        '<div class="col-md-8">' +
-                                                            val +
-                                                        '</div>' +
-                                                        '<div class="col-md-4 text-right">' +
-                                                            '<small class="form-inline">' +
-                                                                '<i class="material-icons">comment</i> ' +
-                                                                '<span class="pl-1">' + Object.keys(item.message).length + '</span>' +
-                                                            '</small>' +
-                                                        '</div>' +
-                                                    '</div>' +
-                                                '</a>' +
-                                            '</td>';
-                                        break;
-                                    case 'comments_quantity':
-                                        // No metemos nada por que este valor lo metemos en el subject
-                                        break;
-                                    case 'answer':
-                                        // No metemos el valor si tiene que responder o no
-                                        break;
-                                    case 'postings':
-                                        // No metemos el valor
-                                        break;
-                                    case 'message':
-                                        // No metemos el valor
-                                        break;
-        
-                                    default:
+                            for(const order in orderColumn){
+                                var column = orderColumn[order];
+                                
+                                switch(orderColumn[order]){
+                                    case '#':
                                         tbody +=
                                             '<td>' +
                                                 '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    val +
+                                                    item.id +
+                                                '</a>' +
+                                            '</td>';
+                                        break;
+                                        
+                                    case 'De':
+                                        tbody +=
+                                            '<td>' +
+                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
+                                                    item.from +
+                                                '</a>' +
+                                            '</td>';
+                                        break;
+                                        
+                                    case 'Creado':
+                                        tbody +=
+                                            '<td>' +
+                                                '<a class="text-dark" href="' + a_href + '?ticket=' + item.id + '">' +
+                                                    item.createDate +
+                                                '</a>' +
+                                            '</td>';
+                                        break;
+                                        
+                                    case 'Asunto':
+                                        tbody +=
+                                            '<td>' +
+                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
+                                                    item.subject +
+                                                '</a>' +
+                                            '</td>';
+                                        break;
+                                        
+                                    case 'Asignado':
+                                        tbody +=
+                                            '<td>' +
+                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
+                                                    item.assignaedTo +
+                                                '</a>' +
+                                            '</td>';
+                                        break;
+                                        
+                                    case 'Estado':
+                                        var classStatus = "";
+                                        var val = "";
+                                        if(item.status == 1) {
+                                            val = "Abierto";
+                                            classStatus = "text-success";
+                                        } else {
+                                            val = "Cerrado";
+                                            classStatus = "text-secondary";
+                                        }
+                                        
+                                        tbody +=
+                                            '<td>' +
+                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
+                                                    '<span class="'+classStatus+'">'+ val + '</span>' +
                                                 '</a>' +
                                             '</td>';
                                         break;
                                 }
-                            });
+                            }
                             // Agregamos opciones que tenga
+                            tbody +=
+                                '<td>' +
+                                    '<a class="text-dark" href="' + a_href + '?ticket=' + item.id + '">' +
+                                        '<small class="form-inline">' +
+                                            '<i class="material-icons">comment</i> ' +
+                                            '<span class="pl-1">' + Object.keys(item.message).length + '</span>' +
+                                        '</small>' +
+                                    '</a>' +
+                                '</td>';
                             tbody +=
                                 '<td>' +
                                     '<a class="text-dark text-decoration-none">' +
