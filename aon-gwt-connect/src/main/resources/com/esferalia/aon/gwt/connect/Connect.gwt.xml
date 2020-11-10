@@ -12,10 +12,10 @@
 
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 
-	<extend-property name="locale" values="es" />
+	<!--extend-property name="locale" values="es" /-->
 
 	<extend-property name="locale" values="es_ES" />
-
+	<set-property name="locale" value="es_ES" />
 	<set-property-fallback name="locale" value="es_ES" />
 
 	<set-property name="user.agent" value="gecko1_8" />
