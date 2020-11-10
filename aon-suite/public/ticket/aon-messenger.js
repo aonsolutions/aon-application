@@ -6,7 +6,7 @@ class AonMessenger extends HTMLElement {
     }
 
     connectedCallback () {
-        this.innerHTML = `<aon-application id="aonMessenger" title="MESSENGER"></aon-application>`;
+        this.innerHTML = `<aon-application id="aonMessenger" title="SOLICITUDES"></aon-application>`;
         this.build();
     }
 
@@ -17,13 +17,18 @@ class AonMessenger extends HTMLElement {
 
         let options = [
             {
-                name: 'Messenger',
+                name: 'Consultas',
                 icon: 'inbox',
                 fn: () => this.loadIndex()
             },
             {
-                name: 'Crear nuevo',
-                icon: 'create',
+                name: 'Trámites',
+                icon: 'inbox',
+                fn: () => this.loadIndex()
+            },
+            {
+                name: 'Nueva solicitud',
+                icon: 'add',
                 fn: () => this.loadCreate()
             }
         ];

@@ -261,5 +261,12 @@
                     $('.error-empty-note-doc').removeClass('d-none');
                 }
             });
+
+            // Filtrar por tag
+            $(document).on('click', '.documentTags', function () {
+                const tagID = $(this).data('tag');
+
+                window.aonDocumentalContainer.loadIndex({tag: tagID});
+            });
     </script>
 </html>

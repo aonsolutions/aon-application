@@ -27,12 +27,16 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 mb-3">
+                        <h3>Nueva solicitud</h3>
+                    </div>
+                    
+                    <div class="col-12 mb-3">
                         <ul class="nav nav-tabs" id="tabMessenger" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="consultas_tab" data-toggle="tab" href="#consultas" role="tab" aria-controls="consultas" aria-selected="true">Consultas</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="solicitudes_tab" data-toggle="tab" href="#solicitudes" role="tab" aria-controls="solicitudes" aria-selected="false">Solicitudes</a>
+                                <a class="nav-link" id="tramites_tab" data-toggle="tab" href="#tramites" role="tab" aria-controls="tramites" aria-selected="false">Trámites</a>
                             </li>
                         </ul>
                     </div>
@@ -42,13 +46,7 @@
                         <div class="tab-pane fade show active" id="consultas" role="tabpanel" aria-labelledby="consultas_tab">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="col-12">
-                                        <h3>Nueva consulta</h3>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-7 atp_caja_form div_ticket">
+                                    <div class="col-12 atp_caja_form div_ticket">
                                         <form method="post" id="formulario" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-12">
@@ -94,7 +92,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="col-5 div_alma">
+                                    <div class="col-5 div_alma d-none">
                                         <div class="row">
                                             <div class="col-12" id="contentAlma">
                                                 <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
@@ -113,45 +111,39 @@
                         </div>
                         <!-- FIN CONSULTAS -->
                         
-                        <!-- PESTAÑA SOLICITUDES -->
-                        <div class="tab-pane fade show active" id="solicitudes" role="tabpanel" aria-labelledby="solicitudes_tab">
+                        <!-- PESTAÑA TRAMITES -->
+                        <div class="tab-pane fade" id="tramites" role="tabpanel" aria-labelledby="tramites_tab">
                             <div class="col-12">
                                 <div class="row">
-                                    <div class="col-12">
-                                        <h3>Nueva solicitud</h3>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
                                     <div class="col-12 atp_caja_form">
-                                        <form method="post" id="formulario_solicitud" enctype="multipart/form-data">
+                                        <form method="post" id="formulario_tramite" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-6">
-                                                    <select class="atp_input" id="tipo_solicitud" name="tipo_solicitud">
-                                                        <option value="0">Elija el tipo de solicitud</option>
+                                                    <select class="atp_input" id="tipo_tramite" name="tipo_solicitud">
+                                                        <option value="0">Elija el tipo de trámite</option>
                                                         <option value="1">Solicitud de impuestos</option>
                                                         <option value="2">Alta empleado</option>
                                                     </select>
-                                                    <label class="d-none errores error-tipo-solicitud text-ayudat font-weight-bold">Debe seleccionar el tipo de solicitud</label>
+                                                    <label class="d-none errores error-tipo-solicitud text-ayudat font-weight-bold">Debe seleccionar el tipo de trámite</label>
                                                 </div>
-                                                <div class="col-6 d-none labelPostingsSolicitud">
+                                                <div class="col-6 d-none labelPostingsTramite">
                                                     <label class="d-block atp_inputs">
-                                                        <input type="text" id="postings_solicitud" name="postings_solicitud" class="" value="" readonly/>
+                                                        <input type="text" id="postings_tramite" name="postings_tramite" class="" value="" readonly/>
                                                         <span>Destinatario</span>
                                                     </label>
                                                 </div>
                                                 
                                                 <div class="col-12 mt-3">
-                                                    <div class="card d-none cardSolicitudCampos">
-                                                        <div class="card-header" id="headerCardSolicitud"></div>
+                                                    <div class="card d-none cardTramiteCampos">
+                                                        <div class="card-header" id="headerCardTramite"></div>
                                                         <div class="card-body">
-                                                            <div class="row div_solicitud_campos"></div>
+                                                            <div class="row div_tramite_campos"></div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 
                                                 <div class="col-12 mt-3">
-                                                    <div class="row buttonsSolicitud justify-content-center"></div>
+                                                    <div class="row buttonsTramite justify-content-center"></div>
                                                 </div>
                                             </div>
                                         </form>
@@ -159,7 +151,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- FIN SOLICITUDES -->
+                        <!-- FIN TRAMITES -->
                     </div>
                 </div>
             </div><!-- end contenido centro -->
@@ -288,8 +280,6 @@
                         $("#contentAlma").append(divCb);
                     } else {
                         $('.div_alma').remove();
-                        $('.div_ticket').removeClass('col-7');
-                        $('.div_ticket').addClass('col-12');
                         $('.div_faqs').removeClass('col-12');
                         $('.div_faqs').addClass('col-5');
                     }
@@ -328,6 +318,13 @@
                                 document.cookie = 'reiniciaCookie=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                             }
                             
+                            // Efecto de aparición del chatbot
+                            if($(".div_alma").hasClass("d-none")){
+                                $(".div_alma").hide();
+                                $(".div_alma").removeClass('d-none');
+                                $(".div_alma").show(1000);
+                            }
+                                
                             // Mostramos el botón de resuelto por ALMA
                             $('#btn-send-alma').removeClass('d-none');
                         }
@@ -570,18 +567,18 @@
             /*
              * FUNCIONES PARA LAS SOLICITUDES
              */
-            $(document).on('change', '#tipo_solicitud', function(){
-                $('.error-tipo-solicitud').addClass('d-none');
-                $('.cardSolicitudCampos').addClass('d-none');
-                $('.labelPostingsSolicitud').addClass('d-none');
+            $(document).on('change', '#tipo_tramite', function(){
+                $('.error-tipo-tramite').addClass('d-none');
+                $('.cardTramiteCampos').addClass('d-none');
+                $('.labelPostingsTramite').addClass('d-none');
                 
-                var solicitud = $(this).val();
-                if(solicitud == "0"){
-                    $('.error-tipo-solicitud').removeClass('d-none');
-                    $(".div_solicitud_campos").empty();
-                    $("#postings_solicitud").empty();
-                    $('.buttonsSolicitud').empty();
-                    $("#postings_solicitud").addClass('d-none');
+                var tramite = $(this).val();
+                if(tramite == "0"){
+                    $('.error-tipo-tramite').removeClass('d-none');
+                    $(".div_tramite_campos").empty();
+                    $("#postings_tramite").empty();
+                    $('.buttonsTtramite').empty();
+                    $("#postings_tramite").addClass('d-none');
                     
                     return 0;
                 }
@@ -647,8 +644,8 @@
                         },
                         buttons : {
                             0 : {
-                                action : "enviar_solicitud",
-                                value : "Enviar solicitud",
+                                action : "enviar_tramite",
+                                value : "Enviar trámite",
                                 type : 'success'
                             }
                         }
@@ -656,7 +653,7 @@
                 };
                 
                 var datos = {};
-                switch(solicitud){
+                switch(tramite){
                     case "1":
                         datos = campos.impuestos;
                         break;
@@ -665,32 +662,32 @@
                         break;
                 }
                 
-                generaFormularioSolicitud(datos);
+                generaFormularioTramite(datos);
             });
             
-            function generaFormularioSolicitud(jsonSolicitudForm){
+            function generaFormularioTramite(jsonTramiteForm){
                 var postings = ["Programación", "Calidad", "Administración"];
                 
-                if(!$.isEmptyObject(jsonSolicitudForm)){
-                    var select = postings[jsonSolicitudForm.postings];
+                if(!$.isEmptyObject(jsonTramiteForm)){
+                    var select = postings[jsonTramiteForm.postings];
                     
-                    $('#postings_solicitud').attr('value', select);
-                    $('.labelPostingsSolicitud').removeClass('d-none');
+                    $('#postings_tramite').attr('value', select);
+                    $('.labelPostingsTramite').removeClass('d-none');
                     
-                    $("#headerCardSolicitud").html(jsonSolicitudForm.header);
+                    $("#headerCardTramite").html(jsonTramiteForm.header);
                     
-                    var formSolicitud = "";
-                    for(const i in jsonSolicitudForm.inputs){
-                        var input = jsonSolicitudForm.inputs[i];
+                    var formTramite = "";
+                    for(const i in jsonTramiteForm.inputs){
+                        var input = jsonTramiteForm.inputs[i];
                         
                         switch(input.type){
                             case "input":
-                                formSolicitud += "<div class='col-6 mt-2'>";
-                                    formSolicitud += "<label class='d-block atp_inputs'>";
-                                        formSolicitud += "<input type='text' id='subject' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
-                                        formSolicitud += "<span>"+input.placeholder+"</span>";
-                                    formSolicitud += "</label>";
-                                formSolicitud += "</div>";
+                                formTramite += "<div class='col-6 mt-2'>";
+                                    formTramite += "<label class='d-block atp_inputs'>";
+                                        formTramite += "<input type='text' id='subject' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
+                                        formTramite += "<span>"+input.placeholder+"</span>";
+                                    formTramite += "</label>";
+                                formTramite += "</div>";
                                 break;
                                 
                             case "date":
@@ -711,19 +708,19 @@
                     }
                     
                     var buttons = "";
-                    for(const j in jsonSolicitudForm.buttons){
-                        var button = jsonSolicitudForm.buttons[j];
+                    for(const j in jsonTramiteForm.buttons){
+                        var button = jsonTramiteForm.buttons[j];
                         
-                        buttons += "<button type='button' class='btn btn-"+button.type+" mr-2 buttonSolicitudAction' data-action='"+button.action+"'>"+button.value+"</button>";
+                        buttons += "<button type='button' class='btn btn-"+button.type+" mr-2 buttonTramiteAction' data-action='"+button.action+"'>"+button.value+"</button>";
                     }
                     
-                    $(".div_solicitud_campos").html(formSolicitud);
-                    $('.buttonsSolicitud').html(buttons);
-                    $('.cardSolicitudCampos').removeClass('d-none');
+                    $(".div_tramite_campos").html(formTramite);
+                    $('.buttonsTramite').html(buttons);
+                    $('.cardTramiteCampos').removeClass('d-none');
                 } else {
-                    $(".div_solicitud_campos").empty();
-                    $('.buttonsSolicitud').empty();
-                    $("#postings_solicitud").empty();
+                    $(".div_tramite_campos").empty();
+                    $('.buttonsTramite').empty();
+                    $("#postings_tramite").empty();
                 }
             }
             
@@ -731,7 +728,7 @@
                 $(this).attr('value', $(this).val());
             });
             
-            $(document).on('click', '.buttonSolicitudAction', function(){
+            $(document).on('click', '.buttonTramiteAction', function(){
                 var action = $(this).data('action');
                 
                 alert(action);
