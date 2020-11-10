@@ -99,6 +99,7 @@
                         // Eliminar dato
                         deleteStorage(name);
                         // Mensaje
+                        avisoFlotante('Datos eliminados de '+title);
                         console.log('Datos eliminados de '+title);
                     }
                 });
@@ -113,6 +114,7 @@
                         // Eliminar dato
                         clearStorage();
                         // Mensaje
+                        avisoFlotante('Datos eliminados');
                         console.log('Datos eliminados');
                     }
                 });
@@ -135,8 +137,9 @@
                                     json : randonData(name) // Datos que almacenamos
                                 }
                                 let data = createJsonApi(dataCreate);
-
                         }
+                        
+                        avisoFlotante('Datos almacenados');
                     }
                 });
 
