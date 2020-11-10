@@ -27,3 +27,11 @@
             });
         });
     }
+
+    export const loginAon = () => {
+        // Datos de mientras de pruebas
+        const aon_domain_name = 'altai-G90317447-ayudat.aonsolutions.net';
+        const aon_session_id  = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJzY2hlbWFcIjpcImF5dWRhdC1hb25zb2x1dGlvbnMtbmV0XCIsXCJzY2hlbWFfZmlyc3RfZG9tYWluXCI6XCIwMDIyNDIwMzllLWF5dWRhdC5hb25zb2x1dGlvbnMubmV0XCIsXCJ1dWlkXCI6XCJFNkFGMjg1NEI2NjYxMUVBODMyMzA2QTBCREQ3MkE0NlwifSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjAwNzkzNDgyfQ.4O-z1Hldqz1WAmX7kcsBkRlb0zy64ucYXQIoLnDL7mA';
+        const aon_enlace   	  = 'https://' + aon_domain_name + '/login?token=' + aon_session_id;
+        return aon_enlace;
+    }
