@@ -28,6 +28,14 @@ export class AonDate extends AonElement {
 		this.setAttribute('id', id);
 	}
 
+  get name() {
+		return this.getAttribute('name');
+	}
+
+	set name(name) {
+		this.setAttribute('name', name);
+	}
+
   get value() {
     return this.getAttribute('value');
   }

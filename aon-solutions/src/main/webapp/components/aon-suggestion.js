@@ -14,6 +14,14 @@ export class AonSuggestion extends AonElement {
 		this.setAttribute('id', id);
 	}
 
+  get name() {
+    return this.getAttribute('name');
+  }
+
+  set name(name) {
+    this.setAttribute('name', name);
+  }
+
   get value() {
     return this.getAttribute('value');
   }
@@ -39,7 +47,6 @@ export class AonSuggestion extends AonElement {
 	connectedCallback () {
 		this.innerHTML = `
       <aon-input id="${this.INPUT}"  description="${this.title}"></aon-input>
-      <div id="${this.OPTIONS}" class="aonInputListOptions"><span>
 		`;
     this.build();
 	}
@@ -50,7 +57,16 @@ export class AonSuggestion extends AonElement {
 			this.value = input.value;
 	    this.dispatchEvent(new Event('keyup'));
     });
-    this.getElement(input.DIV).style.marginBottom = '0px';
+
+    let div = this.getElement(input.DIV);
+    let span = this.createElement('span');
+    span.id = input.SPAN;
+    div.appendChild(span);
+
+    let options = this.createElement('div');
+    options.id = this.OPTIONS;
+    options.className = 'aonInputListOptions';
+    span.appendChild(options);
   }
 
   buildOptions(options) {
