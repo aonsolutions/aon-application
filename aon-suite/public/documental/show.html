@@ -44,16 +44,22 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <span class="text-muted">Fecha:</span> <span id="doc-date"></span>
+                                        <span class="text-muted">Fecha:</span> <span id="doc_date"></span>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-6">
-                                        <span class="text-muted">Tamaño:</span> <span id="doc-size"></span>
+                                        <span class="text-muted">Categoría:</span> <span id="doc_folder"></span>
+                                    </div>
+                                </div>
+                                <div class="row" id="doc_tags"></div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="text-muted">Tamaño:</span> <span id="doc_size"></span>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12 text-center pt-3 pb-2" id="doc_container"></div>
+                                    <div class="col-12 text-center pt-3 pb-2" id="file_container"></div>
                                 </div>
                             </div>
 
@@ -128,12 +134,15 @@
         <script src="../js/app.js"></script>
         <script type="module">
             import { bidoq } from './aon-documental.js';
+            import { getList, createTable } from './table.js';
             import { AVAILABLE_OPTIONS, SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION } from './toolbar_options.js';
 
             const DOC_SENT_OPTIONS      = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION];
             const DOC_RECEIVED_OPTIONS  = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION];
 
-            $(document).ready(async function(){
+            $(document).ready(async function() {
+                const aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+
                 // ID del documento
                 const id   = new URLSearchParams(window.location.search).get('id');
                 // Tipo del documento
@@ -154,7 +163,7 @@
                         const extension = storedFileNameSplitted[storedFileNameSplitted.length - 1].toLowerCase();
 
                         //
-                        // Marcar el documento como líedo
+                        // Marcar el documento como leído
                         //
                             if(type === 'received' && doc.read == 0){
                                 // El documento es subido por el asesor, y no esta marcado como leido
@@ -164,25 +173,45 @@
                         // Almacenamos en una variable global la información del documento que estamos viendo actualmente
                         window.currentFile = {id, type, ...doc};
 
-                        let docTag = '';
+                        window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+                        // Obtenemos las etiquetas del despacho del cliente
+                        window.tags = $(window.aonDocumental).data('tags');
 
-                        if (extension === 'pdf') {
-                            docTag = `<embed src="${doc.url}" class="w-100 vh-100" type="application/pdf">`;
-                        } else {
-                            docTag = `<img class="img-fluid" src="${doc.url}" alt="Documento ${doc.file_name}">`;
-                        }
-
-                        // Insertamos un etiqueta u otra dependiendo del tipo de archivo
-                        $('#doc_container').html(docTag);
+                        // Obtenemos las carpetas del despacho del cliente
+                        const folders = $(window.aonDocumental).data('folders');
+                        // Recuperamos la carpeta a la que pertenece el documento
+                        const docFolder = folders.find((folder) => {
+                            return parseInt(doc.folder) === parseInt(folder.carpetaID);
+                        })?.carpeta;
 
                         // Leemos los datos del documento y montamos la estructura
                         $('#doc-file_name').html(doc.file_name);
-                        $('#doc-date').html(doc.date);
-                        $('#doc-size').html(doc.size);
+                        $('#doc_date').html(doc.date);
+                        $('#doc_size').html(doc.size);
+                        $('#doc_folder').html(docFolder);
 
-                        window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
-                        // Obtenemos los tags del despacho del cliente
-                        window.tags = $(window.aonDocumental).data('tags');
+                        if (doc.tags.length) {
+                            const docTags = doc.tags.map((tag) => (
+                                `<a class="documentTags" href="#" data-tag="${tag.id}">#${tag.name}</a>`
+                            )).join(', ');
+
+                            $('#doc_tags').html(`
+                                <div class="col-12">
+                                    <span class="text-muted">Etiquetas:</span> ${docTags}
+                                </div>
+                            `);
+                        }
+
+                        let fileContent = '';
+
+                        if (extension === 'pdf') {
+                            fileContent = `<embed src="${doc.url}" class="w-100 vh-100" type="application/pdf">`;
+                        } else {
+                            fileContent = `<img class="img-fluid" src="${doc.url}" alt="Documento ${doc.file_name}">`;
+                        }
+
+                        // Insertamos una etiqueta HTML u otra dependiendo del tipo de archivo
+                        $('#file_container').html(fileContent);
 
                         // Eliminamos todas las opciones de la barra de herramientas
                         window.aonDocumental.removeToolbarOptions();
@@ -218,10 +247,13 @@
                     // Recuperamos el tipo del documento que vamos a editar
                     const type = ($('#edit_doc_type').attr('value') === 'sent') ? 2 : 1;
                     const fileName = $('#file_name_doc').attr('value'); 
-                    const tags = $('#tags_doc option:selected').map(function(i, element) {
-                        return $(element).attr('value');
+                    const selectedTags = $('#tags_doc option:selected').map(function(i, element) {
+                        return {
+                            id: $(element).attr('value'),
+                            name: $(element).text()
+                        };
                     }).toArray();
-                    const tagValues = tags.join(',');
+                    const selectedTagsIDs = selectedTags.map((tag) => tag.id);
 
                     if (fileName.length) {
                         const data = await bidoq({
@@ -229,15 +261,32 @@
                             id,
                             "tipo": type,
                             "nombre": fileName,
-                            tags
+                            "tags": selectedTagsIDs
                         });
 
                         let response = JSON.parse(data);
 
                         if (typeof response !== 'undefined') {
                             if (response.code === 0) {
+                                // Actualizamos con los tags seleccionados la variable global que contiene los datos del documento
+                                window.currentFile.tags = selectedTags;
+
                                 // Actualizamos el nombre en la vista
                                 $('#doc-file_name').html($('#file_name_doc').attr('value'));
+                                // Actualizamos los tags en la vista
+                                if (selectedTags.length) {
+                                    const docTags = selectedTags.map((tag) => (
+                                        `<a class="documentTags" href="#" data-tag="${tag.id}">#${tag.name}</a>`
+                                    )).join(', ');
+
+                                    $('#doc_tags').html(`
+                                        <div class="col-12">
+                                            <span class="text-muted">Etiquetas:</span> ${docTags}
+                                        </div>
+                                    `);
+                                } else {
+                                    $('#doc_tags').html('');
+                                }
 
                                 alert('Documento editado con éxito');
                             }
@@ -296,6 +345,14 @@
                     } else {
                         $('.error-empty-note-doc').removeClass('d-none');
                     }
+                });
+
+                // Filtrar por tag
+                $(document).on('click', '.documentTags', function () {
+                    const aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+                    const tagID = $(this).data('tag');
+
+                    aonDocumentalContainer.loadIndex({tag: tagID});
                 });
 
             //

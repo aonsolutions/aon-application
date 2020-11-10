@@ -63,7 +63,7 @@ function multipleDownloadOption() {
 
 function editOption() {
     const { id, type, file_name, tags } = window.currentFile;
-    const tagValues = tags.map((tag) => tag.id);
+    const tagIDs = tags.map((tag) => tag.id);
 
     // Insertamos en el modal el ID del documento que vamos a editar
     $('#edit_doc_id').attr('value', id)
@@ -94,7 +94,7 @@ function editOption() {
     // Marcamos en el select los tags que tiene el documento
     $('#tags_doc option').each(function() {
         // Comprobamos si el tag que estamos recorriendo se encuentra entre los tags del documento
-        if ($.inArray($(this).attr('value'), tagValues) !== -1) {
+        if ($.inArray($(this).attr('value'), tagIDs) !== -1) {
             $(this).prop('selected', true);
         }
     });
