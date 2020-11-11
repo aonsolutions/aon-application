@@ -7,8 +7,6 @@ const formatParams = (params) => {
   );
 };
 
-let TOKEN = localStorage.getItem("aon_session_id");
-
 // export const requestFile = (url, token, formData) => {
 // 	let xhr = new XMLHttpRequest();
 // 	xhr.open('POST', url, true);
@@ -89,7 +87,7 @@ export const requestBidoq = (method, url, sendData, fn) => {
 
 export const get = (url, data) => {
   return new Promise((resolve, reject) => {
-    request("GET", url, TOKEN, data, (result, error) => {
+    request("GET", url, getToken(), data, (result, error) => {
       if (error) reject(error);
       else resolve(JSON.parse(result));
     });
@@ -98,7 +96,7 @@ export const get = (url, data) => {
 
 export const post = (url, data) => {
   return new Promise((resolve, reject) => {
-    request("POST", url, TOKEN, data, (result, error) => {
+    request("POST", url, getToken(), data, (result, error) => {
       if (error) reject(error);
       else resolve(JSON.parse(result));
     });
@@ -107,9 +105,11 @@ export const post = (url, data) => {
 
 export const remove = (url, data) => {
   return new Promise((resolve, reject) => {
-    request("DELETE", url, TOKEN, data, (result, error) => {
+    request("DELETE", url, getToken(), data, (result, error) => {
       if (error) reject(error);
       else resolve(JSON.parse(result));
     });
   });
 };
+
+export const getToken = () => localStorage.getItem("aon_session_id");
