@@ -621,7 +621,7 @@ public class JooqEnterprise {
 	}
 
 	public static List<CCCInfo> getEnterprisesCCCInfo(Connection conn, Integer userId, Integer domainId, Integer parentDomainId, long findPeriodTime) {
-		return getEnterprisesCCCInfoDB(DSL.using(conn, getDefaultSettings()), userId, domainId, parentDomainId, findPeriodTime);
+		return getEnterprisesCCCInfoDB2(DSL.using(conn, getDefaultSettings()), userId, domainId, parentDomainId, findPeriodTime);
 	}
 
 	private static List<CCCInfo> getEnterprisesCCCInfoDB(DSLContext dslContext, Integer userId, Integer domainId, Integer parentDomainId, long findPeriodTime) {
