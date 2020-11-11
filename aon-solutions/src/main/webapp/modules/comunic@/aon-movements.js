@@ -2,6 +2,15 @@ import {AonElement} from '../../components/AonElement.js';
 import './aon-movements-list.js';
 import './aon-alta-directa.js';
 export class AonMovements extends AonElement {
+    
+    get id() {
+		return this.getAttribute('id');
+	}
+
+	set id(id) {
+		this.setAttribute('id', id);
+	}
+
     constructor () {
         super();
     }
@@ -22,10 +31,9 @@ export class AonMovements extends AonElement {
     }
 
     async aonList(filter){
-        let list = this.getElement('aonComunica')
-        if(filter) list.setFilter(filter);
+        let aonComunica = this.getElement('aonComunica');
+        if(filter) aonComunica.setFilter(filter);
         else {
-            let aonComunica = this.getElement('aonComunica');
             aonComunica.setContentHTML(`<aon-movements-list />`);
         }
     }

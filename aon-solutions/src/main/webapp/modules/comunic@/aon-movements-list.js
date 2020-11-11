@@ -33,12 +33,11 @@ export class AonMovementsList extends AonElement {
 
  	build() {
 		let aonMovementTable = this.getElement('aonMovementTable');
-		aonMovementTable.addColumn('Nombre', 'string', 'name');
+		aonMovementTable.addColumn('Nombre', 'string', 'nombre');
 		aonMovementTable.addColumn('Apellidos', 'string', 'last_name');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
 		aonMovementTable.addColumn('Movimiento', 'string', 'mov');
-		aonMovementTable.addColumn('Número de afiliación', 'string', 'naf');
-		aonMovementTable.addColumn('Tipo de contrato', 'string', 'tipo_contrato');
+		aonMovementTable.addColumn('T. contrato', 'string', 'tipo_contrato');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
 		this.init();
 	}
