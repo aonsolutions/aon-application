@@ -141,7 +141,7 @@
             const DOC_RECEIVED_OPTIONS  = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION];
 
             $(document).ready(async function() {
-                const aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+                const aonDocumentalContainer = window.parent.document.querySelector('aon-documental');
 
                 // ID del documento
                 const id   = new URLSearchParams(window.location.search).get('id');
@@ -173,7 +173,7 @@
                         // Almacenamos en una variable global la información del documento que estamos viendo actualmente
                         window.currentFile = {id, type, ...doc};
 
-                        window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
+                        window.aonDocumental = window.parent.document.getElementById('aonDocumental');
                         // Obtenemos las etiquetas del despacho del cliente
                         window.tags = $(window.aonDocumental).data('tags');
 
@@ -226,7 +226,7 @@
                             window.aonDocumental.addToolbarOption(option.name, option.icon, option.fn, option.title);
                         });
                     } else {
-                        alert(`Ocurrió un error al intentar obtener los datos del documento`);
+                        avisoFlotante('Ocurrió un error al intentar obtener los datos del documento');
 
                         window.history.back();
                     }
@@ -288,7 +288,7 @@
                                     $('#doc_tags').html('');
                                 }
 
-                                alert('Documento editado con éxito');
+                                avisoFlotante('Documento editado con éxito');
                             }
                         }
 
@@ -332,9 +332,9 @@
 
                         if (typeof response !== 'undefined') {
                             if (typeof response.code !== 'undefined' && response.code === 0) {
-                                alert(`Nota ${(window.noteAction === 'add') ? 'añadida' : 'editada'} con éxito`);
+                                avisoFlotante(`Nota ${(window.noteAction === 'add') ? 'añadida' : 'editada'} con éxito`);
                             } else if (typeof response['1047'] !== 'undefined') {
-                                alert(`Ocurrió un error al intentar ${(window.noteAction === 'add') ? 'añadir' : 'editar'} la nota`);
+                                avisoFlotante(`Ocurrió un error al intentar ${(window.noteAction === 'add') ? 'añadir' : 'editar'} la nota`);
                             }
                         } else {
                             console.error(`Ocurrió un error al intentar ${(window.noteAction === 'add') ? 'añadir' : 'editar'} la nota`);
@@ -349,7 +349,7 @@
 
                 // Filtrar por tag
                 $(document).on('click', '.documentTags', function () {
-                    const aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+                    const aonDocumentalContainer = window.parent.document.querySelector('aon-documental');
                     const tagID = $(this).data('tag');
 
                     aonDocumentalContainer.loadIndex({tag: tagID});

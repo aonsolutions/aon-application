@@ -108,14 +108,12 @@
             getOptionButtons
         } from './toolbar_options.js';
 
-        const MAX_FILE_SIZE = 5;
-
         //
         // Eventos
         //
             $(document).ready(async function() {
-                window.aonDocumental = window.frameElement.ownerDocument.getElementById('aonDocumental');
-                window.aonDocumentalContainer = window.frameElement.ownerDocument.querySelector('aon-documental');
+                window.aonDocumental = window.parent.document.getElementById('aonDocumental');
+                window.aonDocumentalContainer = window.parent.document.querySelector('aon-documental');
 
                 // Obtenemos las carpetas del cliente
                 window.folders = $(window.aonDocumental).data('folders');
@@ -169,7 +167,7 @@
             // Seleccionar documentos
             $(document).on('change', '.select_doc', function() {
                 // Recuperamos del DOM los botones correspondientes a las opciones
-                const optionButtons = getOptionButtons(window.frameElement.ownerDocument);
+                const optionButtons = getOptionButtons(window.parent.document);
 
                 // Si hay algún documento seleccionado
                 if ($('.select_doc:checked').length) {
@@ -247,9 +245,9 @@
 
                     if (typeof response !== 'undefined') {
                         if (typeof response.code !== 'undefined' && response.code === 0) {
-                            alert('Nota añadida con éxito en los documentos de tipo "Enviado" seleccionados');
+                            avisoFlotante('Nota añadida con éxito en los documentos de tipo "Enviado" seleccionados');
                         } else if (typeof response['1047'] !== 'undefined') {
-                            alert(`Ocurrió un error al intentar añadir la nota`);
+                            avisoFlotante(`Ocurrió un error al intentar añadir la nota`);
                         }
                     } else {
                         console.error('Ocurrió un error al intentar añadir la nota');

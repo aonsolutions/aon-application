@@ -8,24 +8,43 @@ const TYPES = {
 };
 
 export const getList = async (page_this = 1) => {
+    const folder = new URLSearchParams(window.location.search).get('folder');
     const tagID = new URLSearchParams(window.location.search).get('tag');
-    const uploadButton = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbarSubirButton');
+    const uploadButton = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
+
+    // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
+        const selectedFolderData = window.folders.find((currentFolder) => {
+            return parseInt(currentFolder.carpetaID) === parseInt(folder);
+        });
+        // Obtenemos el nombre de la carpeta seleccionada, el cual se utiliza en el ID de la opción
+        const folderName = selectedFolderData.carpeta;
+        // Obtenemos el sidenav
+        const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
+        // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
+        const selectedOptionID = sidenav.id + folderName;
+
+        // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
+        // Comprobamos también que la opción seleccionada no sea "A contabilizar", ya que por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
+        if (window.aonDocumental.selected !== selectedOptionID && parseInt(folder) !== parseInt(CARPETA_A_CONTABILIZAR)) {
+            window.aonDocumental.selectOption(folderName);
+        }
 
     window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
 
-    // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
-    // Si estamos filtrando por TAG eliminamos el boton de subir tambien
-    if ((parseInt(window.aonDocumentalContainer.folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
-        window.aonDocumental.removeToolbarOptions(['Subir']);
-    }
+    // Añadimos (si es necesario) la opción de subir documentos
+        // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
+        // Si estamos filtrando por TAG eliminamos el boton de subir tambien
+        if ((parseInt(folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
+            window.aonDocumental.removeToolbarOptions(['Subir']);
+        }
 
-    // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
-    // y no se este filtrando pot TAG
-    if (parseInt(window.aonDocumentalContainer.folder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
-        window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-            $('#upload-file').trigger('click');
-        }, 'Subir documentos');
-    }
+        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
+        // y no se este filtrando pot TAG
+        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
+            window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+                $('#upload-file').trigger('click');
+            }, 'Subir documentos');
+        }
 
     if (typeof window.folders !== 'undefined') {
         const subfolders = {};
@@ -33,13 +52,13 @@ export const getList = async (page_this = 1) => {
 
         // Recorremos las carpetas para almacenar en una variable todas las subcarpetas del cliente
         for (let i = 0; i < window.folders.length; i++) {
-            const folder = window.folders[i];
+            const currentFolder = window.folders[i];
 
-            foldersByID[folder.carpetaID] = folder;
+            foldersByID[currentFolder.carpetaID] = currentFolder;
 
-            if (folder.subcarpetas.length) {
-                for (let j = 0; j < folder.subcarpetas.length; j++) {
-                    const subfolder = folder.subcarpetas[j];
+            if (currentFolder.subcarpetas.length) {
+                for (let j = 0; j < currentFolder.subcarpetas.length; j++) {
+                    const subfolder = currentFolder.subcarpetas[j];
 
                     subfolders[subfolder.subcarpetaID] = subfolder.subcarpeta;
                 }
@@ -50,7 +69,7 @@ export const getList = async (page_this = 1) => {
             // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
             const defaultRequestData = {
                 "method"    : "list_docs",
-                "carpeta"   : window.aonDocumentalContainer.folder,
+                "carpeta"   : folder,
                 "pagina"    : page_this - 1
             };
 
@@ -94,7 +113,7 @@ export const getList = async (page_this = 1) => {
                         }));
 
                         const paginationList = {
-                            "list"      : list,
+                            list,
                             "total_data": jsonData.total_resultados,                    // cantidad total de elementos
                             "total_page": jsonData.total_paginas + 1,                   // total de paginas
                             "page"      : jsonData.pagina_actual + 1,                   // pagina en la que estamos
@@ -123,6 +142,7 @@ export const getList = async (page_this = 1) => {
 export const createTable = (data) => {
     const FILE_NAME_MAX_LENGTH = 35;
     const list = data.list;
+    const folder = new URLSearchParams(window.location.search).get('folder');
 
     // Recorremos los datos a mostrar
     let tbody = '';
@@ -131,10 +151,10 @@ export const createTable = (data) => {
     let numberOfColumns = 8;
 
     if (list.length) {
-        const folder = window.folders.find((folder) => {
-            return parseInt(folder.carpetaID) === parseInt(window.aonDocumentalContainer.folder);
+        const selectedFolderData = window.folders.find((currentFolder) => {
+            return parseInt(currentFolder.carpetaID) === parseInt(folder);
         });
-        const hasSubfolders = (typeof folder !== 'undefined' && folder.subcarpetas.length);
+        const hasSubfolders = (typeof selectedFolderData !== 'undefined' && selectedFolderData.subcarpetas.length);
 
         if (hasSubfolders) {
             $('#subfolder_column').removeClass('d-none');
@@ -142,7 +162,7 @@ export const createTable = (data) => {
             numberOfColumns += 1;
         }
 
-        if (parseInt(window.aonDocumentalContainer.folder) === CARPETA_FISCAL) {
+        if (parseInt(folder) === CARPETA_FISCAL) {
             $('#model_column, #year_column, #period_column').removeClass('d-none');
 
             numberOfColumns += 3;
@@ -213,7 +233,7 @@ export const createTable = (data) => {
                         case 'model':
                         case 'year':
                         case 'period':
-                            if (parseInt(window.aonDocumentalContainer.folder) === CARPETA_FISCAL) {
+                            if (parseInt(folder) === CARPETA_FISCAL) {
                                 let value = '';
 
                                 if (val !== null) {
