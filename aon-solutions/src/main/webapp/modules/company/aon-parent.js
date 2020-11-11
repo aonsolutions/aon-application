@@ -2,6 +2,7 @@ import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getUserAppRole, getCompanies} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import './aon-desktop.js';
+import '../signin/aon-sign.js';
 
 export class AonParent extends AonElement {
 
@@ -19,57 +20,62 @@ export class AonParent extends AonElement {
 		`;
 
 		let aonParent = document.getElementById('aonParentMain');
-		if(this.isMobile()){
-			aonParent.closeSidenav();
-		} else {
-			let filterOptions = [
-				{
-					name: 'Activas',
-					icon: 'domain',
-					fn: () => {}
-				},
-				{
-					name: 'Inactivas',
-					icon: 'domain_disabled',
-					fn: () => {}
-				},
-				{
-					name: 'Compartidas',
-					icon: 'share',
-					fn: () => {}
-				},
-				{
-					name: 'Entorno',
-					icon: 'apartment',
-					fn: () => {}
-				}
-			];
-			aonParent.addSidenavOptions('FILTROS', filterOptions);
 
-			let taskOptions = [
-				{
-					name: 'Facturas Pendientes',
-					icon: 'inbox',
-					fn: () => {}
-				},
-				{
-					name: 'Incidencias',
-					icon: 'report',
-					fn: () => {}
-				},
-				{
-					name: 'Notificaciones',
-					icon: 'notifications',
-					fn: () => {}
-				},
-				{
-					name: 'Tickets',
-					icon: 'article',
-					fn: () => {}
-				}
-			];
-			aonParent.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
-		}
+		let taskOptions = [{
+				name: 'Documentos sin leer',
+				icon: 'snippet_folder',
+				fn: () => {}
+			},{
+				name: 'Notificaciones',
+				icon: 'notifications',
+				fn: () => {}
+			},{
+				name: 'Facturas Pendientes',
+				icon: 'inbox',
+				fn: () => {}
+			}, {
+				name: 'Facturas Rechazadas',
+				icon: 'report',
+				fn: () => {}
+			}, {
+				name: 'Solicitudes Abiertas',
+				icon: 'assignment',
+				fn: () => {}
+			}, {
+				name: 'Solicitudes para ti',
+				icon: 'assignment_ind',
+				fn: () => {}
+			}
+		];
+		aonParent.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
+
+		aonParent.addSidenavWidgetHTML('CONTROL DE HORARIO',
+		 		'<aon-sign></aon-sign>');
+
+		let filterOptions = [{
+				name: 'Activas',
+				icon: 'domain',
+				fn: () => {}
+			}, {
+				name: 'Inactivas',
+				icon: 'domain_disabled',
+				fn: () => {}
+			}, {
+				name: 'Compartidas',
+				icon: 'share',
+				fn: () => {}
+			}, {
+				name: 'Entorno',
+				icon: 'apartment',
+				fn: () => {}
+			},{
+				name: 'Despacho',
+				icon: 'work',
+				fn: () => {}
+			}
+		];
+		aonParent.addSidenavOptions('FILTROS', filterOptions);
+
 
 		this.init();
 	}

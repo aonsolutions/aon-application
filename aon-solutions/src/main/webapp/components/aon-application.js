@@ -120,7 +120,45 @@ export class AonApplication extends AonElement {
 		content.style.marginLeft = "0px";
 	}
 
-  addSidenavOptions(title, options) {
+	addSidenavWidget(title, element) {
+		let sidenav = this.getElement(this.SIDENAV);
+
+		let div = this.createElement('div');
+		div.style.paddingBottom = '25px';
+		div.style.borderBottom = '1px solid #ebebeb';
+		sidenav.appendChild(div);
+
+		let sidenavTitle =  this.createElement('div');
+		sidenavTitle.className = 'aonSidenavTitle';
+		sidenavTitle.innerHTML = title;
+		div.appendChild(sidenavTitle);
+
+		let content = this.createElement('div');
+		content.style.paddingLeft = '26px';
+		content.appendChild(element);
+		div.appendChild(content);
+	}
+
+	addSidenavWidgetHTML(title, html) {
+		let sidenav = this.getElement(this.SIDENAV);
+
+		let div = this.createElement('div');
+		div.style.paddingBottom = '25px';
+		div.style.borderBottom = '1px solid #ebebeb';
+		sidenav.appendChild(div);
+
+		let sidenavTitle =  this.createElement('div');
+		sidenavTitle.className = 'aonSidenavTitle';
+		sidenavTitle.innerHTML = title;
+		div.appendChild(sidenavTitle);
+
+		let content = this.createElement('div');
+		content.style.paddingLeft = '26px';
+		content.innerHTML = html;
+		div.appendChild(content);
+	}
+
+	addSidenavOptions(title, options) {
 		if(options && options.length > 0) {
     	let sidenav = this.getElement(this.SIDENAV);
 

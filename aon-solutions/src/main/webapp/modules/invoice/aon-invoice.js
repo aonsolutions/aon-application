@@ -9,6 +9,7 @@ import {Invoice} from './Invoice.js';
 
 import '../../components/aon-card.js';
 import '../../components/aon-date.js';
+import '../../components/aon-select.js';
 import '../../components/aon-input.js';
 import '../../components/aon-checkbox.js';
 import '../../components/aon-dialog.js';
@@ -377,7 +378,8 @@ export class AonInvoice extends AonElement {
 		// PAYMETHOD
 		let tdPaymethod = document.createElement('td');
 		tdPaymethod.setAttribute('colspan', '2');
-		tdPaymethod.innerHTML = `<aon-input id="pay_method" type="list" description="Forma de Pago"></aon-input>`;
+		//tdPaymethod.innerHTML = `<aon-input id="pay_method" type="list" description="Forma de Pago"></aon-input>`;
+		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
 		tr4.appendChild(tdPaymethod);
 		let paymethod = document.getElementById('pay_method');
 		paymethod.options = JSON.stringify(Paymethods);

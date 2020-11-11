@@ -79,7 +79,6 @@ export class AonMobileDesktop extends AonElement {
 			localStorage.setItem("aon_domain_name", company.domain);
 		});
 
-
 		let div = document.createElement('div');
 		div.style.paddingBottom = '25px';
 		div.style.borderBottom = '1px solid #ebebeb';
