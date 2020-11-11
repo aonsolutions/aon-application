@@ -269,6 +269,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void fillContract(String currentDomainName, Integer contractType, Map<String, String> contractOtherData,
+				AsyncCallback<String> callback) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 		
 
@@ -525,6 +532,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					
 					@Override
 					public void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void fillContract(String currentDomainName, Integer contractType,
+							Map<String, String> contractOtherData, AsyncCallback<String> callback) {
 						// TODO Auto-generated method stub
 						
 					}

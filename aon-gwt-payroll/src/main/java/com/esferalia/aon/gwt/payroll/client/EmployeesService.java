@@ -225,6 +225,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	String getEmployeeIdc(String domain, String user, Integer contractId, Date date);
 	
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
+
+	String fillContract(String currentDomainName, Integer contractType, Map<String, String> contractOtherData);
 	
 	
 

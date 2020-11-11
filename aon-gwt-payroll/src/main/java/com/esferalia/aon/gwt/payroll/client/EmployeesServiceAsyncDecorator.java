@@ -734,6 +734,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		AON.start();
 		employeesServiceAsync.getEmployeeStatus(domain, user, contractId, new AsyncCallbackWrapper<EmployeeStatus>(callback));
 	}
+
+	@Override
+	public void fillContract(String currentDomainName, Integer contractType, Map<String, String> contractOtherData, AsyncCallback<String> callback) {
+		AON.start();
+		employeesServiceAsync.fillContract(currentDomainName, contractType, contractOtherData, new AsyncCallbackWrapper<String>(callback));
+	}
 	
 	
 }

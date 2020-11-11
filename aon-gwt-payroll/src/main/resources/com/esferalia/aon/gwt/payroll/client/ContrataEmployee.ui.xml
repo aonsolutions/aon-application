@@ -80,7 +80,7 @@
 						<g:HorizontalPanel >
 							<g:HTMLPanel styleName="aon-finding-title">
 								<g:HTMLPanel styleName="aon-finding-title-internal" >
-									<g:Label styleName="aon-outputText">Contrat@ - Edición Contrato</g:Label>
+									<g:Label styleName="aon-outputText">Edición Contrato</g:Label>
 								</g:HTMLPanel>
 							</g:HTMLPanel>
 							<g:HTMLPanel styleName="aon-finding-subtitle">
@@ -97,6 +97,9 @@
 								</g:HTMLPanel>
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
 									<g:Button ui:field='listEmployees' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTA"/>
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
+									<g:Button ui:field='exportContract' styleName='aon-finding-toolbar-item aon-icon-pdf {style.pl20}' text=" GENERAR CONTRATO"/>
 								</g:HTMLPanel>
 								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 									<g:Button ui:field='afiButton'

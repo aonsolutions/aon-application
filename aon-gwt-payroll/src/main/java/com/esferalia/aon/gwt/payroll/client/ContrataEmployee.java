@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
 import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.animation.client.Animation;
@@ -546,6 +547,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	Button deleteContract;
 	
 	@UiField
+	Button exportContract;
+	
+	@UiField
 	MenuItem archivoMenuItem;
 	
 	@UiField
@@ -687,21 +691,25 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			switch (itemIdx) {
 			case 1:
 				contrataEmployeeObject.getContractSpecificData(s -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
 			case 2:
 				contrataEmployeeObject.getContractOtherInfo(s -> {
+					exportContract.getElement().getStyle().clearDisplay();
 					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
 			case 3:
 				contrataEmployeeObject.getContractClauses(s -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					contractClauseUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
 			case 4:
 				contrataEmployeeObject.getContractAttachments(s -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
@@ -857,6 +865,22 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 	}
 	
+	@UiHandler("exportContract")
+	void onExportContractButtonClick(ClickEvent event) {
+		contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+		contrataEmployeeObject.setContractOtherInfo(s -> {
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "contract_export/";
+			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
+		            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
+		            + "&contractType=" + contrataEmployeeObject.getContractData().getContractType();
+				
+			
+			Window.open(fileDownloadURL+query, "_blank", null);
+		}, f -> {});
+		
+//		showContract();
+	}
+	
 	@UiHandler("closePdfButton")
 	void onClosePdfButtonClick(ClickEvent event) {
 		showEmployee();
@@ -957,6 +981,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		splitLayoutPanel.setWidgetSize(footPanel, 25);
 		
 		title.setText(employeeContractInfo.getEmployeeInfo().getFullName());
+		
+		exportContract.getElement().getStyle().setDisplay(Display.NONE);
 		
 		this.contrataEmployeeObject.getAgreements(
 				r -> {
@@ -1534,6 +1560,17 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			
 		}
 		);
+	}
+	
+	private void showContract() {
+		contrataEmployeeObject.fillContract(
+				(dataURI) -> {
+					showPdf();
+					pdfViewer.setDocument(dataURI, zoom / 100.00);
+				}, 
+				(trowable)-> {
+					
+				});
 	}
 	
 	

@@ -25,7 +25,6 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ContrataEmployeeObject {
@@ -312,7 +311,7 @@ public class ContrataEmployeeObject {
 	public void setContractOtherInfo(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
 		Integer contractId = employeeContractData.getContractInfo().getContractId();
 		String contractType = employeeContractData.getContractInfo().getContractType();
-		Map<String, String> contractOtherData = employeeContractData.getContractOtherData();
+		Map<String, String> contractOtherData = getContractEmployeeInfo().getContractOtherData();
 		enterprisesService.setContractOtherInfo(contractId, contractType, contractOtherData, new AsyncCallback<Map<String, String>>() {
 			
 			@Override
@@ -391,6 +390,19 @@ public class ContrataEmployeeObject {
 
 	public void downloadIdc(Consumer<String> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeIdc(contractData.getContractId(), new Date(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void fillContract(Consumer<String> success, Consumer<Throwable> failure) {
+		employeesService.fillContract(getContractType(), getContractEmployeeInfo().getContractOtherData(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -840,6 +852,10 @@ public class ContrataEmployeeObject {
 
 	public String getEmployeeFullName() {
 		return employeeData.getFullName();
+	}
+
+	public void setContractOtherData(Map<String, String> contractOtherData) {
+		this.employeeContractData.setContractOtherData(contractOtherData);
 	}
 		
 }

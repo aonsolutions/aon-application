@@ -90,6 +90,7 @@ import com.esferalia.aon.gwt.payroll.client.StatisticsService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCalendar;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
+import com.esferalia.aon.gwt.payroll.jooq.JooqContrataContract;
 import com.esferalia.aon.gwt.payroll.jooq.JooqDeductions;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployee;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEmployeeCalendar;
@@ -5153,6 +5154,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return EmployeesServiceHelper.getStatus(connection, domainName, domainId, userLogin, userId, contractId);			
 		} 
 		catch (SQLException | IOException | SegSocialException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public String fillContract(String domainName, Integer contractType, Map<String, String> contractOtherData) {
+		try {
+			String base64Pdf = JooqContrataContract.contractFill(contractType, contractOtherData);
+			Writer stringWriter = new StringWriter();
+			
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+			
+			stringWriter.flush();		
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+			
+			return dataUri;
+		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}

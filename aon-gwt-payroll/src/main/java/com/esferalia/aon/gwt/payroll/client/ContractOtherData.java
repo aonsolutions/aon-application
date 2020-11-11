@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Map;
+
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
@@ -1943,6 +1945,10 @@ public class ContractOtherData extends ResizeComposite {
 	        }
 	    }
 	    lBox.setSelectedIndex(indexToFind);
+	}
+
+	public  Map<String, String> getContractOtherData() {
+		return contractEmployeeInfo.getContractOtherData();
 	}
 	
 

@@ -484,6 +484,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.getEmployeeStatus(getCurrentDomainName(), getCurrentUser(), contractId, callback);
 
 	}
+	
+	public void fillContract(Integer contractType, Map<String, String> contractOtherData, AsyncCallback<String> callback) {
+		employeesServiceAsync.fillContract(getCurrentDomainName(), contractType, contractOtherData, callback);
+	}
 	// ------------------------------------------------------------------------
 	
 	public AgreementServiceAsync asAgreementServiceAsync() {

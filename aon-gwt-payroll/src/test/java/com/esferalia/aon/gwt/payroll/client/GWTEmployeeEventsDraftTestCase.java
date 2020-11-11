@@ -306,6 +306,15 @@ public class GWTEmployeeEventsDraftTestCase extends GWTTestCase {
 				
 			}
 
+
+
+			@Override
+			public void fillContract(String currentDomainName, Integer contractType,
+					Map<String, String> contractOtherData, AsyncCallback<String> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
 			
 		};
 

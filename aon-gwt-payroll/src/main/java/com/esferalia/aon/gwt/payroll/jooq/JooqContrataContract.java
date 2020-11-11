@@ -26,8 +26,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.file.payroll.contract.pdf.ModelOption;
+import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
@@ -54,6 +57,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.payroll.contract.ContractFill;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
@@ -71,6 +75,24 @@ public class JooqContrataContract {
 			SETTINGS.setRenderSchema(false);
 		}
 		return SETTINGS;
+	}
+	
+	public static String contractFill(Integer contractType, Map<String, String> contractOtherData) {
+		byte[] data = ContractFill.fillContract(contractType, contractOtherData);
+		return Base64.getEncoder().encodeToString(data);
+	}
+
+	public static byte[] contractFill(String domainName, Integer contractId, String contractTypeStr) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer contractType = Integer.parseInt(contractTypeStr);
+			
+			Map<String, String> contractOtherInfo = getContractOtherInfoDB(dslContext, domainId, contractId, contractTypeStr);
+			return ContractFill.fillContract(contractType, contractOtherInfo);
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
 	}
 	
 	// ------------------------------------------------------------------------------------------------------------------------
