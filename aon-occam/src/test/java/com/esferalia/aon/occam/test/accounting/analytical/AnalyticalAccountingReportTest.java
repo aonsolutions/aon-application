@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 
 import org.junit.Test;
@@ -48,7 +47,7 @@ public class AnalyticalAccountingReportTest extends AbstractOccamTest {
 		params.setPercentsEnabled(false);
 		params.setByMonth(false);
 
-		try (FileWriter writer = new FileWriter( FILE ,Charset.forName("UTF-8"))) {
+		try (FileWriter writer = new FileWriter( FILE )) {
 			
 			AccountingAnalyticalReport report = AnalyticalAccountingDAO.analyticalReport(ctx, params);
 			writer.write("\n");

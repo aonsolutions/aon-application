@@ -82,6 +82,20 @@ input[type="checkbox"]:focus + label {
 .aon_icon_changed { background-image: iconChanged;}
 @url iconCalc aonIconCalc;
 .aon_icon_calc { background-image: iconCalc;}
+@url iconFinanceIn aonIconFinanceIn;
+.aon_icon_finance_in { background-image: iconFinanceIn;}
+@url iconFinanceOut aonIconFinanceOut;
+.aon_icon_finance_out { background-image: iconFinanceOut;}
+@url iconFinanceReturn aonIconFinanceReturn;
+.aon_icon_finance_return { background-image: iconFinanceReturn;}
+@url iconFinanceUndo aonIconFinanceUndo;
+.aon_icon_finance_undo { background-image: iconFinanceUndo;}
+@url iconFinanceSettle aonIconFinanceSettle;
+.aon_icon_finance_settle { background-image: iconFinanceSettle;}
+@url iconFinancePay aonIconFinancePay;
+.aon_icon_finance_pay { background-image: iconFinancePay;}
+@url iconFinanceGroup aonIconFinanceGroup;
+.aon_icon_finance_group { background-image: iconFinanceGroup;}
 
 /* BASICS */
 .aon_selector {
@@ -136,6 +150,17 @@ input[type="checkbox"]:focus + label {
 
 .aon_nowrap {
 	white-space: nowrap;
+}
+
+.aon_truncate {
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  
+}
+
+.aon_text_left {
+	text-align: left;
 }
 .aon_text_center {
 	text-align: center;
@@ -278,7 +303,6 @@ input[type="checkbox"]:focus + label {
 	width: 20px;
 	height: 20px;
 	background-size: 100% auto;
-	background-color: #DDD !important; 
 }
 .aon_search_panel_button:hover {
 	background-color: white !important; 
@@ -298,6 +322,9 @@ input[type="checkbox"]:focus + label {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+.aon_grid tr:hover {
+	background-color: #edf0ff;
 }
 .aon_grid_header {
 	padding: 5px 1em;
@@ -407,11 +434,14 @@ input[type="checkbox"]:focus + label {
 	display: inline-block;
 	background-position: center center;
 	background-repeat: no-repeat;
-	background-color: white;
+	background-color: inherit;
 }
 
 .aon_button:hover {
  	background-color: #EEE;
+}
+.aon_button:disabled {
+	opacity: 0.2;
 }
 .aon_custom_dialog {
 	background: white none repeat scroll 0 0;
@@ -739,10 +769,9 @@ input[type="checkbox"]:focus + label {
 }
 
 .aon_search_panel {
-	background-color: #DDD;
-	margin-top: 0.5em;
-	padding-bottom: 1em;
+	background-color: #edf0ff;
 	border: #999 1px solid;
+	padding: 5px 1.5em 5px 1.5em;
 }
 .aon_search_panel td{
 	border: none;
@@ -753,3 +782,40 @@ input[type="checkbox"]:focus + label {
 	font-weight: bold;
 	white-space: nowrap;
 }
+
+.aon_block_message{
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	padding: 0px 20px 0px 40px;
+	height: 28px;
+	line-height: 28px;
+	font-weight: bold;
+}
+.aon_block_info_message{
+	background-image: iconInfo;
+	background-color: #ECECEC;
+	border: solid black 1px;
+}
+.aon_icon_label{
+	flex-shrink: 0;
+	box-sizing: border-box;
+	position: relative;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	outline: 0;
+	border: none;
+	overflow: visible;
+	display: inline-block;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-color: inherit;
+	width: 20px;
+	height: 20px;
+	background-size: 20px 20px;		
+}
+

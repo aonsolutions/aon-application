@@ -2422,6 +2422,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Tipo de factura")
 	String invoiceType();
 
+	@DefaultMessage("Fecha de factura")
+	String invoiceDate();
+
 	@DefaultMessage("N\u00BA de factura")
 	String invoiceNumber();
 
@@ -3532,11 +3535,17 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Saldar vencimientos pendientes")
 	String settleFinances();
 	
+	@DefaultMessage("Saldar vencimientos seleccionados")
+	String settleSelected();	
+	
 	@DefaultMessage("Saldar vencimiento")
 	String settleFinance();
 
 	@DefaultMessage("\u00BFDesea saldar el vencimiento?")
 	String settleFinanceAction();
+
+	@DefaultMessage("\u00BFDesea saldar {0} vencimientos?")
+	String settleAllFinanceAction(int count);
 
 	@DefaultMessage("\u00BFDesea deshacer el \u00FAltimo movimiento del vencimiento?")
 	String undoFinanceAction();
@@ -3639,6 +3648,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Historial")
 	String tracking();
+
+	@DefaultMessage("Deshacer el \u00FAltimo movimiento")
+	String undoFinanceLastTracking();
 
 	@DefaultMessage("El Vencimiento tiene movimientos posteriores")
 	String noLastTracking();
@@ -3856,6 +3868,10 @@ public interface CommonMessages extends Messages {
     
    	@DefaultMessage("Entidades menores dependientes de di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica integradas en la declaraci\u00F3n, previamente autorizadas")
    	String minorEntities();
+
+   	@DefaultMessage("Cartera de cobros y pagos")
+	String financeModule();
+
 
 }
 

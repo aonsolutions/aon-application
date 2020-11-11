@@ -258,7 +258,7 @@ public class FinanceTrackingDAO {
 					entry.setId(entryId);
 					pay(ctx, tracking, entry);
 				}
-				return tracking;
+				return tracking.setFinance(FinanceDAO.getFinance(ctx, tracking.getFinance().getId()));
 			} 
 			// TODO ¿Si no se quiere contabilizar el pago?
 			throw new AonCoreException(AonError.FINANCE_TRACKING_NO_BANK_ACCOUNT.getMessage());
@@ -306,7 +306,7 @@ public class FinanceTrackingDAO {
 					entry.setId(entryId);
 					tracking = returnFinance(ctx,tracking, entry);
 				}
-				return tracking;
+				return tracking.setFinance(FinanceDAO.getFinance(ctx, tracking.getFinance().getId()));
 			}
 			// TODO ¿Si no se quiere contabilizar el pago?
 			throw new AonCoreException(AonError.FINANCE_TRACKING_NO_BANK_ACCOUNT.getMessage());

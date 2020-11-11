@@ -61,13 +61,29 @@ public class FinanceUtils {
 			}
 				
 		}
+		Filter[] statusFilters = new Filter[]{
+			(params.isPending()?p.getStatusProperty().eq(FinanceStatus.PENDING.value()):null),
+			(params.isBatched()?p.getStatusProperty().eq(FinanceStatus.BATCHED.value()):null),
+			(params.isReturned()?p.getStatusProperty().eq(FinanceStatus.RETURNED.value()):null),
+			(params.isPaid()?p.getStatusProperty().eq(FinanceStatus.PAID.value()):null),
+			(params.isSettled()?p.getStatusProperty().eq(FinanceStatus.SETTLED.value()):null)
+		}; 
+		Filter statusFilter = null;
+		for (Filter f : statusFilters) {
+			if (f != null) {
+				statusFilter = (statusFilter == null) ? f : statusFilter.or(f);
+			}
+		}
+		if (statusFilter != null) {
+			prop = prop.and(statusFilter);
+		}
+
 		if (!params.hasConfidentialityRole()) {
 			prop = prop.and(p.getConfidentialProperty().eq(
 					SecurityLevel.OFFICIAL.value()));
 		} else {
-			if (params.isConfidential()) {
-				prop = prop.and(p.getConfidentialProperty().eq(
-						SecurityLevel.CONFIDENTIAL.value()));
+			if (params.getSecurityLevel() != null) {
+				prop = prop.and(p.getConfidentialProperty().eq(params.getSecurityLevel().value()));
 			}
 		}
 		if (params.getPayMethod() != null) {

@@ -6,10 +6,13 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
-import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.gwt.common.client.widget.PayMethodListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.type.FinanceStatus;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,39 +36,46 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focusable, HasValueChangeHandlers<FinanceParams>{
 
-	private String domainName;
-	private int domainId;
-	private String currentUser;
-	private AonConfiguration configuration;
+	public static final double HEIGHT = 130;
 	
-	private FlowPanel container;
-	private FlowPanel datePanel;
-	private FlowPanel amountPanel; 
 	private FlowPanel paymentPanel; 
 	
-	private DateBoxEx fromDate;
-	private DateBoxEx toDate;
+	private DateBoxEx fromInvoiceDate;
+	private DateBoxEx toInvoiceDate;
 	
-	private CheckBox confidential;
+	private DateBoxEx fromDueDate;
+	private DateBoxEx toDueDate;
+	
+	private ListBox confidential;
 	private ListBox payment;
 	private AccountingRegistryBox registryBox;
 	private DoubleBox amount;
 	private CheckBox nearbyNumbers;
 	private TextBox concept;
 	private TextBox referenceCode;
+	private PayMethodListBox payMethod;
 	
+	private CheckBox pending;
+	private CheckBox batched;
+	private CheckBox returned;
+	private CheckBox paid;
+	private CheckBox settled;
+	
+	private AonSearchPanelButton cleanButton;
+	private AonSearchPanelButton refreshButton;
+
 	public static interface IFinancePanelCallback {
 		boolean isSelected( Finance finance);
 	}
 	
-	public FinanceModuleSearchPanel(String domainName,int domainId, String currentUser, AonConfiguration config) {
-		this.domainName = domainName;
-		this.domainId = domainId;
-		this.currentUser = currentUser;
-		this.configuration = config;
+	public FinanceModuleSearchPanel(final FinanceModuleOptions opt) {
 		
-		addStyleName(AON.AON_CSS.aonScrollArea());
-		addStyleName(AON.AON_CSS.aonMarginBottom());
+		setStyleName(AON.CSS.aonSearchPanel());
+		addStyleName(AON.CSS.aonScrollArea());
+		addStyleName(AON.CSS.aonMarginBottom());
+		addStyleName(AON.CSS.aonMarginLeft());
+		addStyleName(AON.CSS.aonMarginRight());
+		addStyleName(AON.CSS.aonBlockCenter());
 
 		amount = new DoubleBox();
 		amount.setVisibleLength(6);
@@ -74,76 +84,154 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> arg0) {
-				search();
+				search(opt);
 			}
 		});
 		
 		nearbyNumbers = new CheckBox(AON.MSG.nearbyNumbers());
-		nearbyNumbers.setStyleName(AON.AON_CSS.aonPadding2Left());
+		nearbyNumbers.setStyleName(AON.CSS.aonPaddingLeft());
 		nearbyNumbers.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent arg0) {
-				search();
+				search(opt);
 			}
 		});
 
 		concept = new TextBox();
-		concept.setStyleName(AON.AON_CSS.aonInputText());
+		concept.setStyleName(AON.CSS.aonInputText());
 		concept.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> arg0) {
-				search();
+				search(opt);
 			}
 		});
 
-		fromDate = new DateBoxEx();
-		fromDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+		fromInvoiceDate = new DateBoxEx();
+		fromInvoiceDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> arg0) {
-				search();
+				search(opt);
 			}
 		});
 		
-		toDate = new DateBoxEx();
-		toDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+		toInvoiceDate = new DateBoxEx();
+		toInvoiceDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> arg0) {
-				search();
+				search(opt);
 			}
 		});
 		
-		confidential = new CheckBox( AON.MSG.confidential());
-		confidential.addStyleName(AON.AON_CSS.aonMarginLeft());
-		confidential.addClickHandler(new ClickHandler() {
+		fromDueDate = new DateBoxEx();
+		fromDueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			
 			@Override
-			public void onClick(ClickEvent arg0) {
-				search();
+			public void onValueChange(ValueChangeEvent<Date> arg0) {
+				search(opt);
+			}
+		});
+		
+		toDueDate = new DateBoxEx();
+		toDueDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> arg0) {
+				search(opt);
+			}
+		});
+
+		confidential = new ListBox();
+		confidential.setStyleName(AON.CSS.aonMarginLeft());
+		confidential.setWidth("100px");
+		confidential.addItem( "NO confidenciales" );
+		confidential.addItem( "Confidenciales" );
+		confidential.addItem(" Todos ");
+		confidential.setSelectedIndex(2);
+		confidential.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				search(opt);
 			}
 		});
 		
 		referenceCode = new TextBox();
-		referenceCode.setStyleName(AON.AON_CSS.aonInputText());
+		referenceCode.setStyleName(AON.CSS.aonInputText());
 		referenceCode.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> arg0) {
-				search();
+				search(opt);
 			}
 		});
+		
+		payMethod = new PayMethodListBox();
+		payMethod.fill(opt.getConfiguration().getPayMethods());
+		payMethod.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				search(opt);
+			}
+		});
+		
+		pending = new CheckBox( FinanceStatus.PENDING.getDescription()) ;
+		pending.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				search(opt);
+			}
+		});
+		
+		batched  = new CheckBox( FinanceStatus.BATCHED.getDescription()) ;
+		batched.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				search(opt);
+			}
+		});
+		
+		returned  = new CheckBox( FinanceStatus.RETURNED.getDescription()) ;
+		returned.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				search(opt);
+			}
+		});
+		
+		paid  = new CheckBox( FinanceStatus.PAID.getDescription()) ;
+		paid.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				search(opt);
+			}
+		});
+		
+		settled  = new CheckBox( FinanceStatus.SETTLED.getDescription()) ;
+		settled.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				search(opt);
+			}
+		});
+		
 
-		registryBox = new AccountingRegistryBox(this.domainName,this.domainId,this.currentUser, null, false);
+		registryBox = new AccountingRegistryBox(opt.getDomainName(),opt.getDomain(),opt.getUser(), opt.getConfiguration(), true);
 		registryBox.setRequired(false);
 		
 		registryBox.addSelectionHandler(new SelectionHandler<AccountingRegistry>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<AccountingRegistry> arg0) {
-				search();
+				search(opt);
 			}
 		});
 
@@ -155,68 +243,163 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				search();
+				search(opt);
 			}
 		});
 		
-		FlowPanel flowNorthPanel = new FlowPanel();
+		cleanButton = new AonSearchPanelButton(AON.MSG.clean(), AON.CSS.aonIconClear());
+		cleanButton.addStyleName(AON.CSS.aonMarginLeft());
+		cleanButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				initialize(opt);
+			}
+		});
+
+		refreshButton = new AonSearchPanelButton(AON.MSG.refresh(), AON.CSS.aonIconSearch());
+		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				search(opt);
+			}
+		});
+
 		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		tab.addStyleName(AON.AON_CSS.aonWidthAll());
+		tab.setStyleName(AON.CSS.aonGrid());
+		tab.setWidth("100%");
 		
-		tab.getColumnFormatter().setWidth(0, "60px");
-		tab.getColumnFormatter().setWidth(1, "180px");
-		tab.getColumnFormatter().setWidth(2, "85px");
-		tab.getColumnFormatter().setWidth(3, "auto");
+		tab.getColumnFormatter().setWidth(0, "110px");
+		tab.getColumnFormatter().setWidth(1, "250px");
+		tab.getColumnFormatter().setWidth(2, "110px");
+		tab.getColumnFormatter().setWidth(3, "250px");
+		tab.getColumnFormatter().setWidth(4, "auto");
 		
-		tab.setWidget(0, 0, new Label(AON.MSG.amount()));
-		tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonBold());
-		amountPanel = new FlowPanel();
-		amountPanel.setStyleName(AON.AON_CSS.aonNowrap());
+		int row = 0;
+		int col = 0;
+		
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.amount()));
+		++col;
+		FlowPanel amountPanel = new FlowPanel();
+		amountPanel.setStyleName(AON.CSS.aonNowrap());
 		amountPanel.add(amount);
 		amountPanel.add(nearbyNumbers);
-		tab.setWidget(0, 1, amountPanel);
+		tab.setWidget(row, col, amountPanel);
+		++col;
 
 
-		tab.setWidget(0, 2, new Label(AON.MSG.concept()));
-		tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonBold());
-		tab.setWidget(0, 3, concept);
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.titular()));
+		++col;
+		tab.setWidget(row, col, registryBox);
+		++col;
 		
-		tab.setWidget(1, 0, new Label(AON.MSG.date()));
-		tab.getCellFormatter().setStyleName(1,0, AON.AON_CSS.aonBold());
+		tab.setWidget(row, col, new InlineLabel());
+		++col;
 		
-		datePanel = new FlowPanel();
-		datePanel.setStyleName(AON.AON_CSS.aonNowrap());
-		datePanel.add(fromDate);
+		++row;
+		col = 0;
+		
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.invoiceNumberAbbr()));
+		++col;
+		tab.setWidget(row, col, referenceCode);
+		++col;
+		
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.concept()));
+		++col;
+		tab.setWidget(row, col, concept);
+		++col;
+
+		tab.setWidget(row, col, new InlineLabel());
+		++col;
+
+		//TODO Buscar sin FACTURA
+		
+		++row;
+		col = 0;
+
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.invoiceDate()));
+		++col;
+		FlowPanel invoiceDatePanel = new FlowPanel();
+		invoiceDatePanel.setStyleName(AON.CSS.aonNowrap());
+		invoiceDatePanel.add(fromInvoiceDate);
 		InlineLabel to = new InlineLabel(AON.MSG.to());
-		to.setStyleName(AON.AON_CSS.aonItalic());
-		to.addStyleName(AON.AON_CSS.aonMarginRight());
-		to.addStyleName(AON.AON_CSS.aonMarginLeft());
-		datePanel.add(to);
-		datePanel.add(toDate);
-		tab.setWidget(1, 1, datePanel);
-
-		tab.setWidget(1, 2, new Label(AON.MSG.invoiceNumberAbbr()));
-		tab.getCellFormatter().setStyleName(1,2, AON.AON_CSS.aonBold());
-		tab.setWidget(1, 3, referenceCode);
-
-		tab.setWidget(2, 0, new Label(AON.MSG.titular()));
-		tab.getCellFormatter().setStyleName(2,0, AON.AON_CSS.aonBold());
-		tab.setWidget(2, 1, registryBox);
+		to.setStyleName(AON.CSS.aonItalic());
+		to.addStyleName(AON.CSS.aonMarginRight());
+		to.addStyleName(AON.CSS.aonMarginLeft());
+		invoiceDatePanel.add(to);
+		invoiceDatePanel.add(toInvoiceDate);
+		tab.setWidget(row, col, invoiceDatePanel);
+		++col;
 		
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.dueDate()));
+		++col;
+		FlowPanel dueDatePanel = new FlowPanel();
+		dueDatePanel.setStyleName(AON.CSS.aonNowrap());
+		dueDatePanel.add(fromDueDate);
+		InlineLabel dueTo = new InlineLabel(AON.MSG.to());
+		dueTo.setStyleName(AON.CSS.aonItalic());
+		dueTo.addStyleName(AON.CSS.aonMarginRight());
+		dueTo.addStyleName(AON.CSS.aonMarginLeft());
+		dueDatePanel.add(dueTo);
+		dueDatePanel.add(toDueDate);
+		tab.setWidget(row, col, dueDatePanel);
+		++col;
+		tab.setWidget(row, col, new InlineLabel());
+		++col;
+		
+		++row;
+		col = 0;
 		paymentPanel = new FlowPanel();
 		paymentPanel.add(payment);
-		tab.setWidget(2, 2, new Label(AON.MSG.type()));
-		tab.getCellFormatter().setStyleName(2,2, AON.AON_CSS.aonBold());
-		tab.setWidget(2, 3, paymentPanel);
-
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.type()));
+		++col;
+		tab.setWidget(row, col, paymentPanel);
+		++col;
 		// TODO
-		if (configuration != null && configuration.getUser() != null && configuration.getUser().hasConfidentialityRole()) {
+		if (opt.getConfiguration() != null && opt.getConfiguration().getUser() != null && opt.getConfiguration().getUser().hasConfidentialityRole()) {
 			paymentPanel.add(confidential);
 		}
 		
-		flowNorthPanel.add(tab);
-		setWidget(flowNorthPanel);
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.payMethod()));
+		++col;
+		tab.setWidget(row, col, payMethod);
+		++col;
+		tab.setWidget(row, col, new InlineLabel());
+		++col;
+		
+		++row;
+		col = 0;
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(row, col, new Label(AON.MSG.status()));
+		++col;
+		FlowPanel statusPanel = new FlowPanel();
+		statusPanel.add(pending);
+		statusPanel.add(batched);
+		statusPanel.add(returned);
+		statusPanel.add(paid);
+		statusPanel.add(settled);
+		tab.setWidget(row, col, statusPanel);
+		tab.getFlexCellFormatter().setColSpan(row, col, 3);
+		++col;
+		
+		
+		FlowPanel buttonsPanel = new FlowPanel();
+		buttonsPanel.setStyleName(AON.CSS.aonNowrap());
+		buttonsPanel.add( cleanButton );
+		buttonsPanel.add( refreshButton );
+		tab.setWidget(row, col, buttonsPanel);
+		++col;
+		setWidget(tab);
+		
+		initialize(opt);
 	}
 	
 	@Override
@@ -237,22 +420,27 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 
 	@Override
 	public void setTabIndex(int index) {
-		fromDate.setTabIndex(index);
+		fromInvoiceDate.setTabIndex(index);
 	}
 	
-	private void search() {
-		ValueChangeEvent.<FinanceParams>fire( FinanceModuleSearchPanel.this, getParams() ); 
+	private void search(final FinanceModuleOptions opt) {
+		ValueChangeEvent.<FinanceParams>fire( FinanceModuleSearchPanel.this, getParams( opt ) ); 
 	}
 
-	public void initialize() {
-		container.clear();
-		fromDate.setValue(null);
-		toDate.setValue(null);
-		confidential.setValue(false);
-		registryBox.setValue( (AccountingRegistry) null, false);
+	public void initialize(final FinanceModuleOptions opt) {
 		amount.setValue(null);
+		nearbyNumbers.setValue(false);
+		fromInvoiceDate.setValue(null);
+		toInvoiceDate.setValue(null);
+		payMethod.setSelectedIndex(0);
+		confidential.setSelectedIndex(2);
+		registryBox.setValue( (AccountingRegistry) null, false);
 		concept.setValue(null);
-		search();
+		pending.setValue(true);
+		batched.setValue(false);
+		returned.setValue(true);
+		paid.setValue(false);
+		settled.setValue(false);
 	}
 	
 	@Override
@@ -260,21 +448,27 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		return super.addHandler(handler, ValueChangeEvent.getType());
 	}
 
-	public FinanceParams getParams() {
-		boolean confidentiality = this.configuration != null 
-				&&  this.configuration.getUser() != null 
-				&& this.configuration.getUser().hasConfidentialityRole();
+	public FinanceParams getParams( final FinanceModuleOptions opt) {
+		boolean confidentiality = opt.getConfiguration() != null 
+				&& opt.getUser() != null 
+				&& opt.getConfiguration().getUser().hasConfidentialityRole();
 		return new FinanceParams()
-			.setDomain(this.domainId)
-			.setFrom(fromDate.getValue())
-			.setTo(toDate.getValue())
+			.setDomain(opt.getDomain())
+			.setFrom(fromInvoiceDate.getValue())
+			.setTo(toInvoiceDate.getValue())
 			.setRegistry(registryBox.getId())
 			.setAmount((amount.getValue() != null && amount.getValue()!=0)?amount.getValue():null)
 			.setNearbyNumbers(nearbyNumbers.getValue())
 			.setConcept(concept.getValue())
 			.setReferenceCode(referenceCode.getValue())
+			.setPayMethod(payMethod.getValue())
 			.setPayment((payment.getSelectedIndex() == 0)?null:(payment.getSelectedIndex() == 1))
-			.setConfidential(confidential.getValue())
+			.setPending(pending.getValue())
+			.setBatched(batched.getValue())
+			.setReturned(returned.getValue())
+			.setPaid(paid.getValue())
+			.setSettled(settled.getValue())
+			.setSecurityLevel(confidential!=null?SecurityLevel.safeValueOf(confidential.getSelectedIndex()):SecurityLevel.OFFICIAL)
 			.setHasConfidentialityRole(confidentiality)
 			;
 	}

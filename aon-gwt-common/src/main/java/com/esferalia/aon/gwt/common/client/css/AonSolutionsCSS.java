@@ -4,6 +4,131 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface AonSolutionsCSS extends CssResource {
 
+	/* ICONS */
+
+	@ClassName("aon_icon_add")
+	String aonIconAdd();
+
+	@ClassName("aon_icon_save")
+	String aonIconSave();
+
+	@ClassName("aon_icon_delete")
+	String aonIconDelete();
+
+	@ClassName("aon_icon_search")
+	String aonIconSearch();
+	
+	@ClassName("aon_icon_refresh")
+	String aonIconRefresh();
+
+	@ClassName("aon_icon_clear")
+	String aonIconClear();
+
+	@ClassName("aon_icon_back")
+	String aonIconBack();
+
+	@ClassName("aon_icon_copy")
+	String aonIconCopy();
+
+	@ClassName("aon_icon_audit")
+	String aonIconAudit();
+
+	@ClassName("aon_icon_pdf")
+	String aonIconPdf();
+	
+	@ClassName("aon_icon_excel")
+	String aonIconExcel();
+
+	@ClassName("aon_icon_comments")
+	String aonIconComments();
+
+	@ClassName("aon_icon_no_comments")
+	String aonIconNoComments();
+
+	@ClassName("aon_icon_info")
+	String aonIconInfo();
+	
+	@ClassName("aon_icon_error")
+	String aonIconError();
+
+	@ClassName("aon_icon_warning")
+	String aonIconWarning();
+
+	@ClassName("aon_icon_minimize")
+	String aonIconMinimize();
+
+	@ClassName("aon_icon_maximize")
+	String aonIconMaximize();
+	
+	@ClassName("aon_icon_euro")
+	String aonIconEuro();
+	
+	@ClassName("aon_icon_book")
+	String aonIconBook();
+	
+	@ClassName("aon_icon_list")
+	String aonIconList();
+	
+	@ClassName("aon_icon_history")
+	String aonIconHistory();
+	
+	@ClassName("aon_icon_undo")
+	String aonIconUndo();
+
+	@ClassName("aon_icon_redo")
+	String aonIconRedo();
+
+	@ClassName("aon_icon_accept")
+	String aonIconAccept();
+
+	@ClassName("aon_icon_cancel")
+	String aonIconCancel();
+
+	@ClassName("aon_icon_close")
+	String aonIconClose();
+	
+	@ClassName("aon_icon_check")
+	String aonIconCheck();
+
+	@ClassName("aon_icon_checked")
+	String aonIconChecked();
+
+	@ClassName("aon_icon_launch")
+	String aonIconLaunch();
+	
+	@ClassName("aon_icon_swap")
+	String aonIconSwap();
+	
+	@ClassName("aon_icon_help")
+	String aonIconHelp();
+
+	@ClassName("aon_icon_changed")
+	String aonIconChaged();
+
+	@ClassName("aon_icon_calc")
+	String aonIconCalc();
+
+	@ClassName("aon_icon_finance_in")
+	String aonIconFinanceIn();
+
+	@ClassName("aon_icon_finance_out")
+	String aonIconFinanceOut();
+
+	@ClassName("aon_icon_finance_return")
+	String aonIconFinanceReturn();
+
+	@ClassName("aon_icon_finance_undo")
+	String aonIconFinanceUndo();
+
+	@ClassName("aon_icon_finance_settle")
+	String aonIconFinanceSettle();
+
+	@ClassName("aon_icon_finance_pay")
+	String aonIconFinancePay();
+
+	@ClassName("aon_icon_finance_group")
+	String aonIconFinanceGroup();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -46,13 +171,19 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_nowrap")
 	String aonNowrap();
-
+	
+	@ClassName("aon_truncate")
+	String aonTruncate();
+	
 	@ClassName("aon_text_underline")
 	String aonTextUnderline();
 	
 	@ClassName("aon_text_line_through")
 	String aonTextLineThrough();
 	
+	@ClassName("aon_text_left")
+	String aonTextLeft();
+
 	@ClassName("aon_text_center")
 	String aonTextCenter();
 
@@ -237,110 +368,6 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_cancel_button")
 	String aonCancelButton();
 	
-	/* ICONS */
-
-	@ClassName("aon_icon_add")
-	String aonIconAdd();
-
-	@ClassName("aon_icon_save")
-	String aonIconSave();
-
-	@ClassName("aon_icon_delete")
-	String aonIconDelete();
-
-	@ClassName("aon_icon_search")
-	String aonIconSearch();
-	
-	@ClassName("aon_icon_refresh")
-	String aonIconRefresh();
-
-	@ClassName("aon_icon_clear")
-	String aonIconClear();
-
-	@ClassName("aon_icon_back")
-	String aonIconBack();
-
-	@ClassName("aon_icon_copy")
-	String aonIconCopy();
-
-	@ClassName("aon_icon_audit")
-	String aonIconAudit();
-
-	@ClassName("aon_icon_pdf")
-	String aonIconPdf();
-	
-	@ClassName("aon_icon_excel")
-	String aonIconExcel();
-
-	@ClassName("aon_icon_comments")
-	String aonIconComments();
-
-	@ClassName("aon_icon_no_comments")
-	String aonIconNoComments();
-
-	@ClassName("aon_icon_info")
-	String aonIconInfo();
-	
-	@ClassName("aon_icon_error")
-	String aonIconError();
-
-	@ClassName("aon_icon_warning")
-	String aonIconWarning();
-
-	@ClassName("aon_icon_minimize")
-	String aonIconMinimize();
-
-	@ClassName("aon_icon_maximize")
-	String aonIconMaximize();
-	
-	@ClassName("aon_icon_euro")
-	String aonIconEuro();
-	
-	@ClassName("aon_icon_book")
-	String aonIconBook();
-	
-	@ClassName("aon_icon_list")
-	String aonIconList();
-	
-	@ClassName("aon_icon_history")
-	String aonIconHistory();
-	
-	@ClassName("aon_icon_undo")
-	String aonIconUndo();
-
-	@ClassName("aon_icon_redo")
-	String aonIconRedo();
-
-	@ClassName("aon_icon_accept")
-	String aonIconAccept();
-
-	@ClassName("aon_icon_cancel")
-	String aonIconCancel();
-
-	@ClassName("aon_icon_close")
-	String aonIconClose();
-	
-	@ClassName("aon_icon_check")
-	String aonIconCheck();
-
-	@ClassName("aon_icon_checked")
-	String aonIconChecked();
-
-	@ClassName("aon_icon_launch")
-	String aonIconLaunch();
-	
-	@ClassName("aon_icon_swap")
-	String aonIconSwap();
-	
-	@ClassName("aon_icon_help")
-	String aonIconHelp();
-
-	@ClassName("aon_icon_changed")
-	String aonIconChaged();
-
-	@ClassName("aon_icon_calc")
-	String aonIconCalc();
-
 	@ClassName("aon_accounting_invoice_panel")
 	String aonAccountingInvoicePanel();
 	
@@ -367,6 +394,16 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_search_panel_label")
 	String aonSearchPanelLabel();
+
+	
+	@ClassName("aon_block_message")
+	String aonBlockMessage();
+
+	@ClassName("aon_block_info_message")
+	String aonBlockInfoMessage();
+
+	@ClassName("aon_icon_label")
+	String aonIconLabel();
 
 	
 }

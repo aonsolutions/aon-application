@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
+
 public class FinanceParams implements Serializable{
 
 	private static final long serialVersionUID = 7399522390660289406L;
@@ -10,9 +12,15 @@ public class FinanceParams implements Serializable{
 	private int domain;
 	private Date from;
 	private Date to;
-	private boolean confidential; 
+	private SecurityLevel securityLevel; 
 	private boolean hasConfidentialityRole;
 	private Boolean payment;
+	
+	private boolean pending;
+	private boolean batched;
+	private boolean returned;
+	private boolean paid;
+	private boolean settled;
 	
 	private Integer registry;
 	private Double amount;
@@ -86,6 +94,41 @@ public class FinanceParams implements Serializable{
 		this.payment = payment;
 		return this;
 	}
+	public boolean isPending() {
+		return pending;
+	}
+	public FinanceParams setPending(boolean pending) {
+		this.pending = pending;
+		return this;
+	}
+	public boolean isBatched() {
+		return batched;
+	}
+	public FinanceParams setBatched(boolean batched) {
+		this.batched = batched;
+		return this;
+	}
+	public boolean isReturned() {
+		return returned;
+	}
+	public FinanceParams setReturned(boolean returned) {
+		this.returned = returned;
+		return this;
+	}
+	public boolean isPaid() {
+		return paid;
+	}
+	public FinanceParams setPaid(boolean paid) {
+		this.paid = paid;
+		return this;
+	}
+	public boolean isSettled() {
+		return settled;
+	}
+	public FinanceParams setSettled(boolean settled) {
+		this.settled = settled;
+		return this;
+	}
 	public String getReferenceCode() {
 		return referenceCode;
 	}
@@ -94,11 +137,11 @@ public class FinanceParams implements Serializable{
 		return this;
 	}
 	
-	public boolean isConfidential() {
-		return confidential;
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
 	}
-	public FinanceParams setConfidential(boolean confidential) {
-		this.confidential = confidential;
+	public FinanceParams setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 		return this;
 	}
 	public boolean hasConfidentialityRole() {
@@ -121,6 +164,14 @@ public class FinanceParams implements Serializable{
 	}
 	public FinanceParams setOrder(int order) {
 		this.order = order;
+		return this;
+	}
+	public FinanceParams setConfidential(Boolean confidential) {
+		if (confidential == null) {
+			setSecurityLevel( null );	
+		} else {
+			setSecurityLevel(confidential?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL);
+		}
 		return this;
 	}
 	

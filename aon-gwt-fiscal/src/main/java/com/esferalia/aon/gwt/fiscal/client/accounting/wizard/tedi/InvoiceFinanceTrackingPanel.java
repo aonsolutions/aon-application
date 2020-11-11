@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi;
 import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
@@ -21,35 +22,33 @@ public class InvoiceFinanceTrackingPanel extends ScrollPanel implements HasAccou
 	
 	public InvoiceFinanceTrackingPanel(LinkedList<FinanceTracking> list) {
 		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonDataTable());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
-		tab.addStyleName(AON.AON_CSS.aonWidthAutoImportant());
+		tab.setStyleName(AON.CSS.aonGrid());
 		int row = 0;
 		int col = 0;
 		
 		tab.setWidget(row,col, new Label(AON.MSG.date()));
-		tab.getCellFormatter().addStyleName(row, col,AON.AON_CSS.aonDataTableHeader());
+		tab.getCellFormatter().addStyleName(row, col,AON.CSS.aonGridHeader());
 		tab.getColumnFormatter().setWidth(col, "80px");
 		++col;
 		tab.setWidget(row,col, new Label(AON.MSG.action()));
-		tab.getCellFormatter().addStyleName(row, col,AON.AON_CSS.aonDataTableHeader());
+		tab.getCellFormatter().addStyleName(row, col,AON.CSS.aonGridHeader());
 		tab.getColumnFormatter().setWidth(col, "100px");
 		++col;
 		tab.setWidget(row,col, new Label());
-		tab.getCellFormatter().addStyleName(row, col,AON.AON_CSS.aonDataTableHeader());
+		tab.getCellFormatter().addStyleName(row, col,AON.CSS.aonGridHeader());
 		tab.getColumnFormatter().setWidth(col, "auto");
 		++col;
 		tab.setWidget(row,col, new Label(AON.MSG.amount()));
-		tab.getCellFormatter().setStyleName(row, col,AON.AON_CSS.aonTextRight());
-		tab.getCellFormatter().addStyleName(row, col,AON.AON_CSS.aonDataTableHeader());
+		tab.getCellFormatter().setStyleName(row, col,AON.CSS.aonTextRight());
+		tab.getCellFormatter().addStyleName(row, col,AON.CSS.aonGridHeader());
 		tab.getColumnFormatter().setWidth(col, "100px");
 		++col;
 		tab.setWidget(row,col, new Label());
-		tab.getFlexCellFormatter().addStyleName(row, col,AON.AON_CSS.aonDataTableHeader());
+		tab.getFlexCellFormatter().addStyleName(row, col,AON.CSS.aonGridHeader());
 		tab.getColumnFormatter().setWidth(col, "40px");
 		++col;
 		tab.setWidget(row,col, new Label( AON.MSG.audit()));
-		tab.getFlexCellFormatter().addStyleName(row, col,AON.AON_CSS.aonDataTableHeader());
+		tab.getFlexCellFormatter().addStyleName(row, col,AON.CSS.aonGridHeader());
 		tab.getColumnFormatter().setWidth(col, "350px");
 		++col;
 		++row;
@@ -63,47 +62,43 @@ public class InvoiceFinanceTrackingPanel extends ScrollPanel implements HasAccou
 			ft.getType().visit( new IFinanceTrackingTypeVisitor() {
 				@Override
 				public void visitSettled() {
-					typeLabel.setStyleName(AON.AON_CSS.aonColoRoyalblue());
+					typeLabel.setStyleName(AON.CSS.aonColorBlue());
 				}
 				
 				@Override
 				public void visitReturned() {
-					typeLabel.setStyleName(AON.AON_CSS.aonColorRed());
-					typeLabel.addStyleName(AON.AON_CSS.aonBold());
+					typeLabel.setStyleName(AON.CSS.aonColorRed());
+					typeLabel.addStyleName(AON.CSS.aonBold());
 				}
 				
 				@Override
 				public void visitFractioned() {
-					typeLabel.setStyleName(AON.AON_CSS.aonColoRoyalblue());
+					typeLabel.setStyleName(AON.CSS.aonColorBlue());
 				}
 				
 				@Override
 				public void visitPaid() {
-					typeLabel.setStyleName(AON.AON_CSS.aonColorGreen());
+					typeLabel.setStyleName(AON.CSS.aonColorGreen());
 				}
 				
 				@Override
 				public void visitBatched() {
-					typeLabel.setStyleName(AON.AON_CSS.aonColorGreen());
+					typeLabel.setStyleName(AON.CSS.aonColorGreen());
 				}
 			});
 			tab.setWidget(row,col, typeLabel);
 			++col;
 			
 			tab.setWidget(row,col, new Label(ft.getDescription()));
-			tab.getCellFormatter().setStyleName(row, col,AON.AON_CSS.aonTextLeft());
+			tab.getCellFormatter().setStyleName(row, col,AON.CSS.aonTextLeft());
 			++col;
 			
 			tab.setWidget(row,col, new Label(AON.FMT.format( ft.getAmount()) ));
-			tab.getCellFormatter().setStyleName(row, col,AON.AON_CSS.aonTextRight());
+			tab.getCellFormatter().setStyleName(row, col,AON.CSS.aonTextRight());
 			++col;
 			
 			if (ft.getAccountEntry() != null) {
-				Label entryLink = new Label();
-				entryLink.setTitle(AON.MSG.gotoAccountEntry());
-				entryLink.setStyleName(AON.AON_CSS.aonIconGoto());
-				entryLink.addStyleName(AON.AON_CSS.aonIconPaddingLeft());
-				entryLink.addStyleName(AON.AON_CSS.aonClickable());
+				AonTableButton entryLink = new AonTableButton(AON.MSG.gotoAccountEntry(), AON.CSS.aonIconLaunch());
 				entryLink.addClickHandler( new ClickHandler() {
 					
 					@Override
@@ -114,12 +109,12 @@ public class InvoiceFinanceTrackingPanel extends ScrollPanel implements HasAccou
 				});
 				tab.setWidget(row,col, entryLink);
 			}
-			tab.getCellFormatter().setStyleName(row, col,AON.AON_CSS.aonTextCenter());
+			tab.getCellFormatter().setStyleName(row, col,AON.CSS.aonTextCenter());
 			++col;
 
 			Label auditLabel = new Label(AonStringUtils.isEmpty(ft.getCreationUser()) ? AON.MSG.emptyCreatedBy() : AON.MSG.createdBy(ft.getCreationUser(), ft.getCreationDate())); 
 			tab.setWidget(row,col, auditLabel);
-			tab.getCellFormatter().setStyleName(row, col,AON.AON_CSS.aonNowrap());
+			tab.getCellFormatter().setStyleName(row, col,AON.CSS.aonNowrap());
 			++col;
 			++row;
 		}
