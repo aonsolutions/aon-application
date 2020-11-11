@@ -203,7 +203,8 @@ public class Cra {
 					.and(SALARY.CCC.eq(ccc))
 					.and(SALARY.TYPE.eq((byte)0))
 					.and(SALARY.SS_REGIME.notEqual((byte)3))
-					.and(SALARY.CGC_BASE.gt(0.00))
+					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+//					.and(SALARY.CGC_BASE.gt(0.00))
 					.fetch();
 			
 			// TODO : eliminar cuando avergigue por que se pone ss_regime 0 en vez de 3 en este caso
