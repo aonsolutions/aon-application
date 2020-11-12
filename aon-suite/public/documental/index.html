@@ -33,7 +33,8 @@
                 <div class="col-md-12 archivos-previos"></div>
                 <div class="row justify-content-center">
                     <div class="col-12">
-                        <div class="table-responsive-sm">
+                        <!-- Tabla que ocultamos cuando se alcanza el breakpoint "sm" -->
+                        <div class="table-responsive-sm d-none d-md-block">
                             <table class="table" id="tabla_documentos">
                                 <thead>
                                     <tr>
@@ -56,9 +57,13 @@
                                 <tfoot></tfoot>
                             </table>
                         </div>
+                        <!-- Tarjetas para el diseño responsive que se ven solo cuando se alcanza el breakpoint "sm" -->
+                        <div id="doc_cards_container" class="d-block d-md-none">
+                            <div id="doc_cards_list"></div>
+                            <div id="doc_cards_footer"></div>
+                        </div>
                     </div>
                 </div>
-
                 <!-- FIN VISTA -->
             </div>
         </div>
@@ -157,9 +162,10 @@
             });
 
             // Hacer click en un documento para ir a la vista de detalles de este
-            $(document).on('click', 'td.show_doc', function() {
-                const id = $(this).closest('tr').data('id');
-                const type = $(this).closest('tr').data('type');
+            $(document).on('click', '.show_doc', function() {
+                const container = $(this).closest('.show_doc_container');
+                const id = container.data('id');
+                const type = container.data('type');
 
                 window.aonDocumentalContainer.loadShow(id, type);
             });

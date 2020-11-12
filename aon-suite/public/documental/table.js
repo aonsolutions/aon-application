@@ -94,22 +94,23 @@ export const getList = async (page_this = 1) => {
                         const page_this_element = !documents.length ? documents.length : page_this_real;
 
                         const list = documents.map((document) => ({
-                            "id"            : document.id,
-                            "url"           : document.image,
-                            "date"          : document.date,
-                            "file_name"     : document.name,
-                            "category"      : (typeof foldersByID[document.service] !== 'undefined') ? {
+                            "id"                : document.id,
+                            "url"               : document.image,
+                            "date"              : document.date,
+                            "file_name"         : document.name,
+                            "stored_file_name"  : document.stored_file_name,
+                            "category"          : (typeof foldersByID[document.service] !== 'undefined') ? {
                                 "id": document.service,
                                 "name": foldersByID[document.service].carpeta
                             } : null,
-                            "subfolder"     : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
-                            "model"         : document.model,
-                            "year"          : document.year,
-                            "period"        : document.period,
-                            "type"          : (document.type == 1) ? 'received' : 'sent',
-                            "uploaded_by"   : document.uploaded_by,
-                            "tags"          : document.tags,
-                            "read"          : document.read
+                            "subfolder"         : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
+                            "model"             : document.model,
+                            "year"              : document.year,
+                            "period"            : document.period,
+                            "type"              : (document.type == 1) ? 'received' : 'sent',
+                            "uploaded_by"       : document.uploaded_by,
+                            "tags"              : document.tags,
+                            "read"              : document.read
                         }));
 
                         const paginationList = {
@@ -118,7 +119,7 @@ export const getList = async (page_this = 1) => {
                             "total_page": jsonData.total_paginas + 1,                   // total de paginas
                             "page"      : jsonData.pagina_actual + 1,                   // pagina en la que estamos
                             "shown_page": page_this_element + ' - ' + (page_total - 1), // cantidad mostrada por paginas 1 - 10
-                        }
+                        };
 
                         resolve(paginationList);
                     } else {
@@ -171,7 +172,7 @@ export const createTable = (data) => {
         $.each(list, function(i, item) {
             const allowedOptions = getAllowedOptions(item);
 
-            tbody+= '<tr data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.map((tag) => tag.id).join(',') + '">';
+            tbody+= '<tr class="show_doc_container" data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.map((tag) => tag.id).join(',') + '">';
 
                 // Columna para seleccionar documentos
                 tbody+= `<td>
@@ -199,13 +200,7 @@ export const createTable = (data) => {
                                 </td>`;
                             break;
                         case 'date':
-                            // Formateamos la fecha
-                            const date = new Date(val * 1000);
-                            const year = date.getFullYear();
-                            const month = "0" + (date.getMonth() + 1);
-                            const day = "0" + date.getDate();
-                            const formattedDate = day.substr(-2) + '-' + month.substr(-2) + '-' + year;
-
+                            const formattedDate = getFormattedDate(val);
                             tbody+= `<td class="show_doc pointer">
                                         <span>${formattedDate}</span>
                                     </td>`;
@@ -288,26 +283,79 @@ export const createTable = (data) => {
     // Agregamos el cuerpo de la tabla
     $('.table tbody').html(tbody);
 
-    // Cogemos el paginado que tendía la tabla
+    // Obtenemos el paginado
     const pagination = createPaginate(data.page, data.total_page);
-
-    // Agregamos el paginado en el footer de la tabla
-    const tfoot =
-    '<tr>'+
-        '<td colspan="' + numberOfColumns + '">'+
-            '<div class="row">'+
-                '<div class="col-md-6">'+
-                    'Mostrando del '+data.shown_page+' de un total de '+data.total_data+' elementos'+
-                '</div>'+
-                '<div class="col-md-6">'+
-                    pagination+
-                '</div>'+
-            '</div>'+
-        '</td>'
-    '</tr>';
+    // Creamos el contenedor con la paginación para la tabla
+    const tablePagination = `
+        <tr>
+            <td colspan="${numberOfColumns}">
+                <div class="row">
+                    <div class="col-md-6">
+                        Mostrando del ${data.shown_page} de un total de ${data.total_data} elementos
+                    </div>
+                    <div class="col-md-6">
+                        ${pagination}
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+    // Creamos el contenedor con la paginación para las tarjetas
+    const cardsPagination = `
+        <div class="row">
+            <div class="col-md-6">
+                ${pagination}
+            </div>
+        </div>
+    `;
 
     // Agregamos el pie de la tabla
-    $('.table tfoot').html(tfoot);
+    $('.table tfoot').html(tablePagination);
+
+    // Creamos las tarjetas para el modo responsive
+    createCards(list);
+
+    $('#doc_cards_footer').html(cardsPagination);
+}
+
+function createCards(list) {
+    const cards = list.map(({id, type, date, category, uploaded_by: uploadedBy, file_name, stored_file_name: storedFileName}) => {
+        const formattedDate = getFormattedDate(date);
+        const storedFileNameSplitted = storedFileName.split('.');
+        const extension = storedFileNameSplitted[storedFileNameSplitted.length - 1].toLowerCase();
+        const docIcon = getIconFromDocExtension(extension);
+
+        return `
+            <div class="show_doc_container" data-id="${id}" data-type="${type}">
+                <div class="card mb-3 show_doc" role="button">
+                    <div class="card-header">
+                        <ul class="list-inline mb-0 d-flex">
+                            <li class="list-inline-item">
+                                <span class="material-icons align-middle">${docIcon}</span>
+                            </li>
+                            <li class="list-inline-item font-weight-bold">
+                                <span class="align-middle">${category.name}</span>
+                            </li>
+                            <li class="list-inline-item" title="${uploadedBy}">
+                                <span class="align-middle">${uploadedBy}</span>
+                            </li>
+                            <li class="d-flex list-inline-item ml-auto">
+                                <i class="material-icons align-middle">calendar_today</i>
+                                <small class="align-middle ml-1">${formattedDate}</small>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            ${file_name}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    $('#doc_cards_list').html(cards);
 }
 
 //
@@ -370,4 +418,50 @@ function getAllowedOptions(document) {
     }
 
     return allowedOptions;
+}
+
+function getFormattedDate(milliseconds) {
+    const date = new Date(milliseconds * 1000);
+    const year = date.getFullYear();
+    const month = "0" + (date.getMonth() + 1);
+    const day = "0" + date.getDate();
+    const formattedDate = day.substr(-2) + '-' + month.substr(-2) + '-' + year;
+
+    return formattedDate;
+}
+
+function getIconFromDocExtension(extension) {
+    let icon = '';
+
+    switch (extension) {
+        case 'tiff':
+        case 'tif':
+        case 'txt':
+        case 'rtf':
+        case 'odt':
+        case 'doc':
+        case 'docx':
+        case 'ods':
+        case 'xls':
+            icon = 'text_snippet';
+            break;
+        case 'bmp':
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+            icon = 'photo';
+            break;
+        case 'pdf':
+            icon = 'picture_as_pdf';
+            break;
+        case 'zip':
+        case 'rar':
+            icon = 'archive';
+            break;
+        default:
+            icon = 'archive';
+    }
+
+    return icon;
 }
