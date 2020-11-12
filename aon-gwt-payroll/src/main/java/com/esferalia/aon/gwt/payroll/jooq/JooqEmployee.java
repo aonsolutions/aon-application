@@ -1244,11 +1244,25 @@ public class JooqEmployee {
 					.set(PAY_METHOD.TYPE, employeeData.getPayMethodTypeB())
 					.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
 					.execute();
-				
-				dslContext.update(RPAYMETHOD)
-						.set(RPAYMETHOD.PAY_METHOD, employeeData.getPaymethodId())
-						.set(RPAYMETHOD.RBANK, rbankTableId)
-						.execute();
+
+// ****************************************************************************				
+// ****************************************************************************				
+//				FALTA LA WHERE				
+//				FALTA LA WHERE				
+//				FALTA LA WHERE				
+//				FALTA LA WHERE				
+//				FALTA LA WHERE				
+//				FALTA LA WHERE				
+// ****************************************************************************				
+// ****************************************************************************				
+//				dslContext.update(RPAYMETHOD)
+//						.set(RPAYMETHOD.PAY_METHOD, employeeData.getPaymethodId())
+//						.set(RPAYMETHOD.RBANK, rbankTableId)
+//						.execute();
+// ****************************************************************************				
+// ****************************************************************************				
+// ****************************************************************************				
+// ****************************************************************************				
 				
 				employeeData.setRbankId(rbankTableId);
 			}
