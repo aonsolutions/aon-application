@@ -188,6 +188,8 @@ export const createTable = (data) => {
                             break;
                         case 'url': // No mostramos la URL en la tabla
                             break;
+                        case 'stored_file_name': // No mostramos el nombre almacenado del archivo en la tabla
+                            break;
                         case 'tags':
                             tbody+= `<td>
                                     <span>`;
