@@ -29,7 +29,7 @@
                     <!-- INICIO VISTA -->
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-12 d-none d-sm-block">
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -46,6 +46,9 @@
                                     <tbody></tbody>
                                     <tfoot></tfoot>
                                 </table>
+                            </div>
+                            <div class="col-12 d-block d-sm-none">
+                                <div class="row" id="div_tarjetas"></div>
                             </div>
                         </div>
                     </div>
@@ -73,6 +76,7 @@
                 function createTable(data) { 
                     // Variables que usuamos
                     let tbody   = '';
+                    var cards = '';
                     let colspan = 7;
                     let a_href  = 'show.html';
                     
@@ -94,6 +98,7 @@
                         $.each(data.list, function (i, item) {
                             // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
                             tbody += item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
+                            
                             // Recorremos los <td>
                             for(const order in orderColumn){
                                 var column = orderColumn[order];
@@ -123,7 +128,7 @@
                                         
                                     case 'Asignado':
                                         columnComun = true;
-                                        valor = item.assignaedTo;
+                                        valor = item.assignedTo;
                                         break;
                                         
                                     case 'Estado':
@@ -178,13 +183,37 @@
                                 '</td>';
                             // Cerramos el <tr>
                             tbody += '</tr>';
+                            
+                            // Creamos las tarjetas para versión móvil
+                            var cardType = item.status == 1 ? '' : 'bg-light text-muted';
+                            cards += "<div class='col-12'>";
+                                cards += "<div class='card "+cardType+" mb-3 card_link' data-id='"+item.id+"'>";
+                                    cards += "<div class=card-header>";
+                                        cards += "<ul class='list-inline mb-0'>";
+                                            cards += "<li class='list-inline-item font-weight-bold'><span>Consulta #"+item.id+"</span></li>";
+                                            cards += "<li class='list-inline-item'><span>"+item.from+"</span></li>";
+                                        cards += "</ul>";
+                                    cards += "</div>";
+                                    cards += "<div class='card-body'>";
+                                        cards += "<p class='card-text text-justify'>"+item.subject+"</p>";
+                                        cards += "<ul class='list-inline mb-0 mt-3'>";
+                                            cards += "<li class='list-inline-item mr-4'><small class='form-inline'><i class='material-icons'>comment</i><span class='pl-1'>"+Object.keys(item.message).length+"<span></small></li>";
+                                            cards += "<li class='list-inline-item mr-4'><small class='form-inline'><i class='material-icons'>supervisor_account</i><span class='pl-1'>"+item.assignedTo+"</span></small></li>";
+                                            cards += "<li class='list-inline-item'><small class='form-inline'><i class='material-icons'>calendar_today</i><span class='pl-1'>"+item.createDate+"</span></small></li>";
+                                        cards += "</ul>";
+                                    cards += "</div>";
+                                cards += "</div>";
+                            cards += "</div>";
                         });
         
                         // Agregamos el cuerpo de la tabla
                         $('.table tbody').html(tbody);
+                        
+                        // Agregamos las tarjetas para la versión móvil
+                        $('#div_tarjetas').html(cards);
         
                         // Cogemos el paginado que tendía la tabla
-                        var pagination = createPaginate(data.user_id, data.page, data.total_page)
+                        var pagination = createPaginate(data.user_id, data.page, data.total_page);
         
                         // Agregamos el paginado en el footer de la tabla
                         var tfoot =
@@ -234,6 +263,14 @@
                     }
 
                 });
+                
+            /*
+             * Ir al ticket
+             */
+            $(document).on('click', '.card_link', function(){
+                var id = $(this).data('id');
+                location.href = 'show.html?ticket=' + id;
+            });
 
             //
             // Crear el paginado
