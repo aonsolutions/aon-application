@@ -475,21 +475,24 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void onEmployeePayMethodChange() {
-			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
-			contrataEmployeeObject.setEmployeePayMethod(methodPay);
+			Integer payMethodId = Integer.parseInt(this.payMethod.getSelectedValue());
+			contrataEmployeeObject.setEmployeePayMethodId(-1 == payMethodId ? null : payMethodId);
 			
-			this.account.setValue(null);
-			this.bic.setValue(null);
-			
-			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
-				this.account.setEnabled(true);
-				this.bic.setEnabled(true);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
-			} else {
-				this.account.setEnabled(false);
-				this.bic.setEnabled(false);
-			}
+//			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
+//			contrataEmployeeObject.setEmployeePayMethod(methodPay);
+//			
+//			this.account.setValue(null);
+//			this.bic.setValue(null);
+//			
+//			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
+//				this.account.setEnabled(true);
+//				this.bic.setEnabled(true);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
+//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
+//			} else {
+//				this.account.setEnabled(false);
+//				this.bic.setEnabled(false);
+//			}
 		}
 
 		@Override
@@ -533,6 +536,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	@UiField (provided = true)
 	ContractAttachUI contractAttachUI;
+	
+	@UiField (provided = true)
+	ContractBonusUI contractBonusUI;
 	
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
@@ -592,6 +598,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ScrollPanel scrolledPanelAttach;
 	
 	@UiField
+	ScrollPanel scrolledPanelBonus;
+	
+	@UiField
 	ScrollPanel scrolledPDFPanel;
 	
 	@UiField
@@ -626,6 +635,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				paintMessagesResult(messages);
 			}
 		};
+		contractBonusUI = new ContractBonusUI() {
+			@Override
+			protected void fireMessagesResults(Messages messages) {
+				paintMessagesResult(messages);
+			}
+		};
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -655,6 +670,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		scrolledPanelContractOtherData.setHeight((height-260)+"px");
 		scrolledPanelClauses.setHeight((height-265)+"px");
 		scrolledPanelAttach.setHeight((height-265)+"px");
+		scrolledPanelBonus.setHeight((height-265)+"px");
 		scrolledPanelContractSpecificData.setHeight((height-260)+"px");
 		scrolledPDFPanel.setHeight((height-260)+"px");
 	}
@@ -681,6 +697,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			case 4:
 				contrataEmployeeObject.setContractAttachments(s -> {}, f -> {});
 				break;
+//			case 5:
+//				contrataEmployeeObject.setContractBonus(s -> {}, f -> {});
+//				break;
 			default:
 				break;
 			}
@@ -711,6 +730,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.getContractAttachments(s -> {
 					exportContract.getElement().getStyle().setDisplay(Display.NONE);
 					contractAttachUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+				}, f -> {});
+				break;
+			case 5:
+				contrataEmployeeObject.getContractBonus(s -> {
+					exportContract.getElement().getStyle().setDisplay(Display.NONE);
+					contractBonusUI.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
 				}, f -> {});
 				break;
 			default:
@@ -816,19 +841,19 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		if(checkIfSaveIsPossible())
 			if(checkDates())
-				if(checkPayMethod())
-					//TODO: UPDATE
-					contrataEmployeeObject.updateEmployee(
-							r -> { 
+//				if(checkPayMethod())
+				//TODO: UPDATE
+				contrataEmployeeObject.updateEmployee(
+						r -> { 
 //								onListShow(true);
-							}, 
-							t -> {}
-					);
-				else {
-					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-					dialog.center();
-					dialog.show();
-				}
+						}, 
+						t -> {}
+				);
+//				else {
+//					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
+//					dialog.center();
+//					dialog.show();
+//				}
 					
 			else{
 				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
@@ -1005,6 +1030,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initWorkplaces();
 		initContractType();
 		initAgreements();
+		initPayMethods();
 		initFocus();
 	}
 	
@@ -1042,6 +1068,14 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		List<Agreement> agreements = contrataEmployeeObject.getActiveAgreements();
 		for (Agreement agreement : agreements)
 			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+	}
+	
+	private void initPayMethods() {
+		this.employee.payMethod.clear();
+		this.employee.payMethod.addItem("-", "-1");
+		for(Entry<String, String> entry : contrataEmployeeObject.getPayMethods().entrySet()) {
+			this.employee.payMethod.addItem(entry.getKey(), entry.getValue());
+		}
 	}
 	
 	private void initFocus() {
@@ -1186,7 +1220,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employee.phone.setValue(employeeData.getPhone());
 		employee.email.setValue(employeeData.getEmail());
 		
-		employee.payMethod.setSelectedIndex(getPayMethodIndex(employeeData.getPayMethodTypeB()));
+//		employee.payMethod.setSelectedIndex(getPayMethodIndex(employeeData.getPayMethodTypeB()));
+		setSelectedValueLB(employee.payMethod, null == employeeData.getPaymethodId() ? "-1" : employeeData.getPaymethodId().toString());
 		employee.account.setValue(employeeData.getAccount());
 		employee.bic.setValue(employeeData.getBic());
 		reformatAccount(this.employee.account);

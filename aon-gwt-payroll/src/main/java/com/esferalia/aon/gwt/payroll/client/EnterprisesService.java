@@ -211,5 +211,11 @@ public interface EnterprisesService extends RemoteService {
 	MainCCCInfo getMainCCCInfoDataBase(String currentDomainName, String currentUser);
 
 	void setMainCCCInfoDataBase(String currentDomainName, String currentUser, MainCCCInfo mainCCCInfo);
+
+	List<SSBonusData> getContractBonus(String currentDomainName, Integer contractId);
+
+	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData);
+
+	Map<String, String> getPayMethods(String currentDomainName);
 	
 }

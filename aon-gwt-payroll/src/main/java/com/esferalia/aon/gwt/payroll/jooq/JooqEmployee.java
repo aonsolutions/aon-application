@@ -55,7 +55,6 @@ import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.GeozoneRecord;
-import com.esferalia.aon.jooq.tables.records.PayMethodRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RbankRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
@@ -255,17 +254,38 @@ public class JooqEmployee {
 					.set(RMEDIA.RADDRESS, rAddressId)
 					.execute();
 			
-			byte typePayMethod = employeeData.getPayMethodTypeB();
-			if(-1 != typePayMethod){
-				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
-						.set(PAY_METHOD.DOMAIN, domain)
-						.set(PAY_METHOD.NAME, getPaymentTypeName(typePayMethod))
-						.set(PAY_METHOD.TYPE, typePayMethod)
-						.returning(PAY_METHOD.ID)
-						.fetchOne();
+			Integer payMethodId = employeeData.getPaymethodId();
+			
+			// No tiene forma de pago, pero ha podido introducir un banco
+			if(null == payMethodId) {
+				String account = employeeData.getAccount();
+				if(!StringUtils.isBlank(account)) {
+					account.trim();
+					account.replaceAll(" ", "");
+					
+					String alias = "CUENTA";
+					if(account.length() > 8) {
+						String codeBank = account.substring(4, 8);
+						alias = BankEntities.getBankEntity(codeBank);
+					}
+					
+					dslContext.insertInto(RBANK)
+							.set(RBANK.DOMAIN, domain)
+							.set(RBANK.REGISTRY, registryId)
+							.set(RBANK.BANK_ACCOUNT, account)
+							.set(RBANK.BIC, employeeData.getBic())
+							.set(RBANK.ALIAS, alias)
+							.set(RBANK.ACTIVE, (byte) 1)
+							.execute();
+				}
+			
+			// Tiene forma de pago
+			} else {
+				Byte typePayMethod = dslContext.select(PAY_METHOD.TYPE).from(PAY_METHOD)
+						.where(PAY_METHOD.ID.eq(payMethodId)).fetchOne(PAY_METHOD.TYPE);
 				
-				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
 				Integer rbankTableId = null;
+				
 				String account = employeeData.getAccount();
 				if(!StringUtils.isBlank(account)) {
 					account.trim();
@@ -280,24 +300,26 @@ public class JooqEmployee {
 					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
 							.set(RBANK.DOMAIN, domain)
 							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, employeeData.getAccount())
+							.set(RBANK.BANK_ACCOUNT, account)
 							.set(RBANK.BIC, employeeData.getBic())
 							.set(RBANK.ALIAS, alias)
 							.set(RBANK.ACTIVE, (byte) 1)
 							.returning(RBANK.ID)
 							.fetchOne();
-					 
-					 rbankTableId = rbankRecord.get(RBANK.ID); 
+					
+					// Si es transferencia (no se si giro tambien) se actualizar el rbankTableId para el rpaymethod
+					if(typePayMethod == (byte)5)
+						rbankTableId = rbankRecord.get(RBANK.ID); 
 				}
 				
 				dslContext.insertInto(RPAYMETHOD)
-					.set(RPAYMETHOD.DOMAIN, domain)
-					.set(RPAYMETHOD.REGISTRY, registryId)
-					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
-					.set(RPAYMETHOD.RBANK, rbankTableId)
-					.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
-					.set(RPAYMETHOD.PYMNT_DAYS, "")
-					.execute();
+				.set(RPAYMETHOD.DOMAIN, domain)
+				.set(RPAYMETHOD.REGISTRY, registryId)
+				.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+				.set(RPAYMETHOD.RBANK, rbankTableId)
+				.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
+				.set(RPAYMETHOD.PYMNT_DAYS, "")
+				.execute();
 			}
 			
 		}else{ //EMPLEADO YA EXISTENTE
@@ -567,6 +589,7 @@ public class JooqEmployee {
 			Record payMethodTable = dslContext.select().from(PAY_METHOD)
 					.where(PAY_METHOD.ID.eq(rPayMethodRecord.get(RPAYMETHOD.PAY_METHOD)))
 					.fetchOne();
+			
 			if(null != payMethodTable) {
 				employeeData.setPaymethodId(payMethodTable.get(PAY_METHOD.ID));
 				employeeData.setPayMethodType(payMethodTable.get(PAY_METHOD.NAME));
@@ -991,7 +1014,7 @@ public class JooqEmployee {
 				
 				GeozoneRecord geozoneParentRecord  = dslContext.insertInto(GEOZONE)
 						.set(GEOZONE.DOMAIN, domain)
-						.set(GEOZONE.NAME, "ESPA�A")
+						.set(GEOZONE.NAME, "ESPA" + String.valueOf("\u00D1") + "A")
 						.set(GEOZONE.CODE, "ES")
 						.set(GEOZONE.SYSTEM, (byte) 1)
 						.returning(GEOZONE.ID)
@@ -1088,183 +1111,114 @@ public class JooqEmployee {
 			}
 		}
 		
-		// Create RPayMethod
-		if(null == employeeData.getRpaymethodId()){
-			String typePayMethod = getTypeDescription(employeeData.getPayMethodTypeB());
-			String account = employeeData.getAccount();
-			if(!StringUtils.isBlank(account)) {
-				account.trim();
-				account.replaceAll(" ", "");
-			}
+		// Insertar RBank si lo precisa
+		String account = employeeData.getAccount();
+		Integer rbankTableId = null;
+		if(!StringUtils.isBlank(account)) {
 			
-			if(!StringUtils.isEmpty(typePayMethod)){
-				PayMethodRecord payMethodRecord = dslContext.insertInto(PAY_METHOD)
-						.set(PAY_METHOD.DOMAIN, domain)
-						.set(PAY_METHOD.NAME, typePayMethod)
-						.set(PAY_METHOD.TYPE, employeeData.getPayMethodTypeB())
-						.returning(PAY_METHOD.ID)
-						.fetchOne();
-				
-				Integer payMethodTableId = payMethodRecord.get(PAY_METHOD.ID);
-				
-				Integer rbankTableId = null;
-				if(!StringUtils.isBlank(account)){
-					String alias = "CUENTA";
-					if(null != account && account.length() > 8) {
-						String codeBank = account.substring(4, 8);
-						alias = BankEntities.getBankEntity(codeBank);
-					}
-					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-							.set(RBANK.DOMAIN, domain)
-							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
-							.set(RBANK.BIC, employeeData.getBic())
-							.set(RBANK.ALIAS,alias)
-							.set(RBANK.ACTIVE, (byte) 1)
-							.returning(RBANK.ID)
-							.fetchOne();
-					 
-					 rbankTableId = rbankRecord.get(RBANK.ID); 
-				}
-				
-				RpaymethodRecord rpaymethodRecord = dslContext.insertInto(RPAYMETHOD)
-					.set(RPAYMETHOD.DOMAIN, domain)
-					.set(RPAYMETHOD.REGISTRY, registryId)
-					.set(RPAYMETHOD.PAY_METHOD, payMethodTableId)
-					.set(RPAYMETHOD.RBANK, rbankTableId)
-					.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
-					.set(RPAYMETHOD.PYMNT_DAYS, "")
-					.returning(RPAYMETHOD.ID)
-					.fetchOne();
-				
-				Integer rpayMethodTableId = rpaymethodRecord.get(RPAYMETHOD.ID);
+			Result<Record> findRBankRecord = dslContext.select().from(RBANK)
+					.where(RBANK.BANK_ACCOUNT.eq(account))
+					.and(RBANK.DOMAIN.eq(domain))
+					.fetch();
 			
-				//ACTUALIZAR CAMPOS
-				employeeData.setPaymethodId(payMethodTableId);
-				employeeData.setRpaymethodId(rpayMethodTableId);
-				employeeData.setRbankId(rbankTableId);
-			}
-		// Update RPayMethod	
-		} else {
-			String payMethod = getTypeDescription(employeeData.getPayMethodTypeB());
-			String account = employeeData.getAccount();
-			if(!StringUtils.isBlank(account)) {
-				account.trim();
-				account.replaceAll(" ", "");
-			}
-			
-			// Delete RPayMethod
-			if(StringUtils.isBlank(payMethod)) {
-				dslContext.delete(RPAYMETHOD)
-				.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-				.execute();
-				
-				dslContext.delete(RBANK)
-					.where(RBANK.ID.eq(employeeData.getRbankId()))
-					.execute();
-				
-				dslContext.delete(PAY_METHOD)
-					.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
-					.execute();
-				
-				//ACTUALIZAR CAMPOS
-				employeeData.setPaymethodId(null);
-				employeeData.setRpaymethodId(null);
-				employeeData.setRbankId(null);
-			
-			// Update RPayMethod
+			if(!findRBankRecord.isEmpty()) {
+				rbankTableId = findRBankRecord.get(0).get(RBANK.ID); 
 			} else {
-				// RBank
-				Integer rbankTableId = employeeData.getRbankId();
-				if(null == employeeData.getRbankId()){
-					String alias = "CUENTA";
-					if(null != account && account.length() > 8) {
-						String codeBank = account.substring(4, 8);
-						alias = BankEntities.getBankEntity(codeBank);
-					}
-					RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-							.set(RBANK.DOMAIN, domain)
-							.set(RBANK.REGISTRY, registryId)
-							.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
-							.set(RBANK.BIC, employeeData.getBic())
-							.set(RBANK.ALIAS, alias)
-							.set(RBANK.ACTIVE, (byte) 1)
-							.returning(RBANK.ID)
-							.fetchOne();
-					 
-					 rbankTableId = rbankRecord.get(RBANK.ID); 
-				} else {
-					if(!StringUtils.isBlank(account)) {
-						
-						Result<Record> findRBankRecord = dslContext.select().from(RBANK)
-								.where(RBANK.BANK_ACCOUNT.eq(account))
-								.fetch();
-						
-						if(!findRBankRecord.isEmpty()) {
-							rbankTableId = findRBankRecord.get(0).get(RBANK.ID); 
-							
-							if(findRBankRecord.get(0).get(RBANK.ID) == rbankTableId) {
-								String alias = "CUENTA";
-								if(null != account && account.length() > 8) {
-									String codeBank = account.substring(4, 8);
-									alias = BankEntities.getBankEntity(codeBank);
-								}
-								dslContext.update(RBANK)
-								.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
-								.set(RBANK.BIC, employeeData.getBic())
-								.set(RBANK.ALIAS, alias)
-								.where(RBANK.ID.eq(rbankTableId))
-								.execute();
-							}
-							
-						} else {
-							String alias = "CUENTA";
-							if(null != account && account.length() > 8) {
-								String codeBank = account.substring(4, 8);
-								alias = BankEntities.getBankEntity(codeBank);
-							}
-							
-							RbankRecord rbankRecord = dslContext.insertInto(RBANK)
-									.set(RBANK.DOMAIN, domain)
-									.set(RBANK.REGISTRY, registryId)
-									.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
-									.set(RBANK.BIC, employeeData.getBic())
-									.set(RBANK.ALIAS, alias)
-									.set(RBANK.ACTIVE, (byte) 1)
-									.returning(RBANK.ID)
-									.fetchOne();
-							 
-							rbankTableId = rbankRecord.get(RBANK.ID);
-						}
-					}
+				
+				String alias = "CUENTA";
+				
+				if(null != account && account.length() > 8) {
+					String codeBank = account.substring(4, 8);
+					alias = BankEntities.getBankEntity(codeBank);
 				}
 				
-				dslContext.update(PAY_METHOD)
-					.set(PAY_METHOD.NAME, payMethod)
-					.set(PAY_METHOD.TYPE, employeeData.getPayMethodTypeB())
-					.where(PAY_METHOD.ID.eq(employeeData.getPaymethodId()))
+				RbankRecord rbankRecord = dslContext.insertInto(RBANK)
+						.set(RBANK.DOMAIN, domain)
+						.set(RBANK.REGISTRY, registryId)
+						.set(RBANK.BANK_ACCOUNT, null == account ? "" : account)
+						.set(RBANK.BIC, employeeData.getBic())
+						.set(RBANK.ALIAS, alias)
+						.set(RBANK.ACTIVE, (byte) 1)
+						.returning(RBANK.ID)
+						.fetchOne();
+				 
+				rbankTableId = rbankRecord.get(RBANK.ID);
+			}
+			
+			employeeData.setRbankId(rbankTableId);
+		}
+		
+		// CheckPayMethod
+		Integer payMethodId = employeeData.getPaymethodId();
+		
+		// No tiene metodo de pago por lo que hay que borrar rpaymethod si tiene
+		if(null == payMethodId) {
+			if(null != employeeData.getRpaymethodId()) {
+				dslContext.delete(RPAYMETHOD)
+					.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
 					.execute();
-
-// ****************************************************************************				
-// ****************************************************************************				
-//				FALTA LA WHERE				
-//				FALTA LA WHERE				
-//				FALTA LA WHERE				
-//				FALTA LA WHERE				
-//				FALTA LA WHERE				
-//				FALTA LA WHERE				
-// ****************************************************************************				
-// ****************************************************************************				
-//				dslContext.update(RPAYMETHOD)
-//						.set(RPAYMETHOD.PAY_METHOD, employeeData.getPaymethodId())
-//						.set(RPAYMETHOD.RBANK, rbankTableId)
-//						.execute();
-// ****************************************************************************				
-// ****************************************************************************				
-// ****************************************************************************				
-// ****************************************************************************				
 				
-				employeeData.setRbankId(rbankTableId);
+				employeeData.setRpaymethodId(null);
+			}
+			
+		// Si tiene payMethod hay que crear/actualizar rpaymethod y poner rbank si es tipo 5
+		} else {
+			Byte payMethodType = dslContext.select(PAY_METHOD.TYPE).from(PAY_METHOD)
+					.where(PAY_METHOD.ID.eq(payMethodId)).fetchOne(PAY_METHOD.TYPE);
+			
+			// Creamos un rpaymethod
+			if(null == employeeData.getRpaymethodId()) {
+			
+				RpaymethodRecord rpaymethodRecord = null;
+				
+				if(payMethodType == (byte) 5)
+					rpaymethodRecord = dslContext.insertInto(RPAYMETHOD)
+							.set(RPAYMETHOD.DOMAIN, domain)
+							.set(RPAYMETHOD.REGISTRY, registryId)
+							.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+							.set(RPAYMETHOD.RBANK, rbankTableId)
+							.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
+							.set(RPAYMETHOD.PYMNT_DAYS, "")
+							.returning(RPAYMETHOD.ID)
+							.fetchOne();
+				else {
+					
+					Integer rbank = null;
+					
+					rpaymethodRecord = dslContext.insertInto(RPAYMETHOD)
+						.set(RPAYMETHOD.DOMAIN, domain)
+						.set(RPAYMETHOD.REGISTRY, registryId)
+						.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+						.set(RPAYMETHOD.RBANK, rbank)
+						.set(RPAYMETHOD.NUMBER_OF_PYMNTS, (short) 1)
+						.set(RPAYMETHOD.PYMNT_DAYS, "")
+						.returning(RPAYMETHOD.ID)
+						.fetchOne();
+				}
+					
+				Integer rpayMethodTableId = rpaymethodRecord.get(RPAYMETHOD.ID);
+				
+				employeeData.setRpaymethodId(rpayMethodTableId);
+				
+			// Actualizamos el existente
+			} else {
+				
+				if(payMethodType == (byte) 5)
+					dslContext.update(RPAYMETHOD)
+							.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+							.set(RPAYMETHOD.RBANK, rbankTableId)
+							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+							.execute();
+				else {
+					
+					Integer rbank = null;
+					dslContext.update(RPAYMETHOD)
+						.set(RPAYMETHOD.PAY_METHOD, payMethodId)
+						.set(RPAYMETHOD.RBANK, rbank)
+						.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
+						.execute();
+				}
+				
 			}
 		}
 		

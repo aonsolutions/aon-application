@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.jooq;
 
+import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Calendar.CALENDAR;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -20,6 +21,7 @@ import java.util.Map;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -312,6 +314,42 @@ public class JooqWorkplace {
 			.execute();
 		
 		return workplaceInfo;
+	}
+
+	public static Map<String, String> getPayMethods(Connection conn, Integer domainId) {
+		return getPayMethodsDB(DSL.using(conn, getDefaultSettings()), domainId);
+	}
+
+	private static Map<String, String> getPayMethodsDB(DSLContext dslContext, Integer domainId) {
+		Map<String, String> payMethods = new HashMap<String, String>();
+		
+		Record2<Byte, Integer> domainRecord = dslContext.select(DOMAIN.ENABLEHEREDITY, DOMAIN.PARENT).from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId)).fetchOne();
+		
+		Result<Record> payMethodRecords = null;
+		Byte hasHeredity = domainRecord.get(DOMAIN.ENABLEHEREDITY);
+		
+		if(hasHeredity == (byte) 1) {
+			Integer parentDomainId = domainRecord.get(DOMAIN.PARENT);
+			
+			payMethodRecords = dslContext.select().from(PAY_METHOD)
+					.where(PAY_METHOD.DOMAIN.eq(domainId)
+							.or(PAY_METHOD.DOMAIN.eq(parentDomainId)))
+					.fetch();
+		} else {
+			payMethodRecords = dslContext.select().from(PAY_METHOD)
+					.where(PAY_METHOD.DOMAIN.eq(domainId))
+					.fetch();
+		}
+		
+		for(Record r : payMethodRecords) {
+			Integer payMethodId = r.get(PAY_METHOD.ID);
+			String payMethodDescription = r.get(PAY_METHOD.NAME);
+			
+			payMethods.put(payMethodDescription, payMethodId.toString());
+		}
+		
+		return payMethods;
 	}
 
 	

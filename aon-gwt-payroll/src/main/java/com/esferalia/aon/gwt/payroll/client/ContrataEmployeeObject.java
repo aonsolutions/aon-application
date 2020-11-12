@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -43,6 +44,8 @@ public class ContrataEmployeeObject {
 	private List<Workplace> workplaces;
 	private ActivitiesCCC activitiesCCC;
 	
+	private Map<String, String> payMethodsMap;
+	
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------
 	
 	public ContrataEmployeeObject(Workplace workplace, DomainEmployeesServiceAsync employeesService,
@@ -53,6 +56,7 @@ public class ContrataEmployeeObject {
 		this.employeesService = employeesService;
 		this.enterprisesService = enterprisesService;
 		this.workplaces = new ArrayList<>();
+		this.payMethodsMap = new HashMap<String, String>();
 		
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
@@ -130,6 +134,26 @@ public class ContrataEmployeeObject {
 			@Override
 			public void onSuccess(ActivitiesCCC result) {
 				activitiesCCC = result;
+				getPayMethods(
+						r->{
+							success.accept(result);
+						}, f->{}
+					);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void getPayMethods(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getPayMethods(new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				payMethodsMap = result;
 				success.accept(result);
 			}
 			
@@ -358,6 +382,38 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void getContractBonus(Consumer<List<SSBonusData>> success, Consumer<Throwable> failure) {
+		Integer contractId = employeeContractData.getContractInfo().getContractId();
+		enterprisesService.getContractBonus(contractId, new AsyncCallback<List<SSBonusData>>() {
+			
+			@Override
+			public void onSuccess(List<SSBonusData> result) {
+				employeeContractData.setContractBonus(result);
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void setContractBonus(Consumer<Void> success, Consumer<Throwable> failure) {
+		enterprisesService.setContractBonus(employeeContractData, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	public void deleteContract(Consumer<Void> success, Consumer<Throwable> failure) {
 		Employee employeeAux = new Employee();
 		employeeAux.setId(getContractData().getContractId());
@@ -542,6 +598,10 @@ public class ContrataEmployeeObject {
 	
 	public Map<Integer, String> getActivities() {
 		return activitiesCCC.getActivities();
+	}
+	
+	public Map<String, String> getPayMethods() {
+		return payMethodsMap;
 	}
 	
 	public Map<Integer, CCCInfo> getCCCs() {
@@ -823,6 +883,11 @@ public class ContrataEmployeeObject {
 			
 			@Override
 			public void onSuccess(EmployeeContractInfo result) {
+				employeeContractData = result;
+				employeeContractData.setEmployeeInfo(result.getEmployeeInfo());
+				employeeContractData.setContractInfo(result.getContractInfo());
+				contractData = result.getContractInfo();
+				employeeData = result.getEmployeeInfo();
 				success.accept(result);
 			}
 
@@ -856,6 +921,10 @@ public class ContrataEmployeeObject {
 
 	public void setContractOtherData(Map<String, String> contractOtherData) {
 		this.employeeContractData.setContractOtherData(contractOtherData);
+	}
+
+	public void setEmployeePayMethodId(Integer paymethodId) {
+		this.employeeData.setPaymethodId(paymethodId);
 	}
 		
 }

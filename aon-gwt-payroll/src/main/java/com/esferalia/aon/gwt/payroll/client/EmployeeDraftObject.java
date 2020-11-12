@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -41,6 +42,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	private ActivitiesCCC activitiesCCC;
 	
+	private Map<String, String> payMethodsMap;
+	
 	private EmployeeCalendarDraftObject employeeCalendar;
 	
 
@@ -61,6 +64,8 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
 		this.contractData = new ContractInfo();
+		
+		this.payMethodsMap = new HashMap<String, String>();
 		
 		this.undoManager = new UndoManager<Undoable>();
 	}
@@ -149,7 +154,27 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			@Override
 			public void onSuccess(List<Workplace> result) {
 				workplaces = result;
-				success.accept(result);	
+				getPayMethods(
+						r->{
+							success.accept(result);
+						}, f->{}
+					);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void getPayMethods(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getPayMethods(new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				payMethodsMap = result;
+				success.accept(result);
 			}
 			
 			@Override
@@ -264,6 +289,10 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	public Map<Integer, String> getActivities() {
 		return activitiesCCC.getActivities();
+	}
+	
+	public Map<String, String> getPayMethods() {
+		return payMethodsMap;
 	}
 	
 	public Map<Integer, CCCInfo> getCCCs() {
@@ -913,6 +942,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 			ibans.add(rbank.getIban());
 		
 		return ibans;
+	}
+
+	public void setEmployeePayMethodId(Integer paymethodId) {
+		employeeData.setPaymethodId(paymethodId);
+	}
+
+	public Integer getPaymethodId() {
+		return employeeData.getPaymethodId();
 	}
 	
 }

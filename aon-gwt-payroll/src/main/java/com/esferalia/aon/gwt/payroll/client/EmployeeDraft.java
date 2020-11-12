@@ -585,8 +585,11 @@ public class EmployeeDraft extends Composite {
 
 		@Override
 		public void onEmployeePayMethodChange() {
-			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
-			employeeDraftObject.setEmployeePayMethod(methodPay);
+			Integer payMethodId = Integer.parseInt(this.payMethod.getSelectedValue());
+			employeeDraftObject.setEmployeePayMethodId(-1 == payMethodId ? null : payMethodId);
+			
+//			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
+//			employeeDraftObject.setEmployeePayMethod(methodPay);
 			
 //			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
 //				this.account.setEnabled(true);
@@ -1069,6 +1072,7 @@ public class EmployeeDraft extends Composite {
 		initWorkplaces();
 		initContractType();
 		initAgreements();
+		initPayMethods();
 		initIbans();
 		initHandlers();
 		
@@ -1166,6 +1170,14 @@ public class EmployeeDraft extends Composite {
 		List<Agreement> agreements = employeeDraftObject.getActiveAgreements();
 		for (Agreement agreement : agreements)
 			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+	}
+	
+	private void initPayMethods() {
+		this.employee.payMethod.clear();
+		this.employee.payMethod.addItem("-", "-1");
+		for(Entry<String, String> entry : employeeDraftObject.getPayMethods().entrySet()) {
+			this.employee.payMethod.addItem(entry.getKey(), entry.getValue());
+		}
 	}
 	
 	private void initIbans() {
@@ -1335,7 +1347,8 @@ public class EmployeeDraft extends Composite {
 		this.employee.phone.setValue(employeeDraftObject.getEmployeePhone());
 		this.employee.email.setValue(employeeDraftObject.getEmployeeEmail());
 
-		this.employee.payMethod.setSelectedIndex(employeeDraftObject.getEmployeePayMethod());
+//		this.employee.payMethod.setSelectedIndex(employeeDraftObject.getEmployeePayMethod());
+		setSelectedValueLB(employee.payMethod, null == employeeDraftObject.getPaymethodId() ? "-1" : employeeDraftObject.getPaymethodId().toString());
 		
 		if(null != employeeDraftObject.getEmployeeAccount()) {
 			this.employee.bic.setValue(employeeDraftObject.getEmployeeBIC());

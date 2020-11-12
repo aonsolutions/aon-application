@@ -1549,6 +1549,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+	
+	@Override
+	public Map<String, String> getPayMethods(String domainName) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqWorkplace.getPayMethods(connection, domainId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public ActivityInfo getActivityInfoDataBase(Integer activityId, String domain) {
@@ -2401,6 +2411,26 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			JooqMainCCC.setMainCCCInfo(connection, domainId, userId, mainCCCInfo);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public List<SSBonusData> getContractBonus(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqContrataContract.getContractBonus(connection, domainId, contractId);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void setContractBonus(String domainName, EmployeeContractInfo employeeContractData) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			JooqContrataContract.setContractBonus(connection, domainId, employeeContractData);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

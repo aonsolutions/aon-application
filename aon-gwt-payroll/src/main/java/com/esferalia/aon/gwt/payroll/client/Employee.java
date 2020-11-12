@@ -662,11 +662,11 @@ public abstract class Employee extends ResizeComposite {
 
 		
 		// TIPO DE PAGO
-		this.payMethod.addItem("-", "-1");
-		this.payMethod.addItem("EFECTIVO", "0");
-//		this.payMethod.addItem("GIRO", "1");
-		this.payMethod.addItem("CHEQUE", "4");
-		this.payMethod.addItem("TRANSFERENCIA", "5");	
+//		this.payMethod.addItem("-", "-1");
+//		this.payMethod.addItem("EFECTIVO", "0");
+////		this.payMethod.addItem("GIRO", "1");
+//		this.payMethod.addItem("CHEQUE", "4");
+//		this.payMethod.addItem("TRANSFERENCIA", "5");	
 	}
 	
 	private void initDisplayElements() {

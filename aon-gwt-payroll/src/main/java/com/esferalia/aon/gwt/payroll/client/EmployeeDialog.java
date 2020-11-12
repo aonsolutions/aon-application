@@ -526,11 +526,14 @@ public abstract class EmployeeDialog extends CustomDialog {
 
 		@Override
 		public void onEmployeePayMethodChange() {
-			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
-			employeeDialogObject.setEmployeePayMethod(methodPay);
+			Integer payMethodId = Integer.parseInt(this.payMethod.getSelectedValue());
+			employeeDialogObject.setEmployeePayMethodId(-1 == payMethodId ? null : payMethodId);
 			
-			this.account.setValue(null);
-			this.bic.setValue(null);
+//			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
+//			employeeDialogObject.setEmployeePayMethod(methodPay);
+//			
+//			this.account.setValue(null);
+//			this.bic.setValue(null);
 			
 //			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
 //				this.account.setEnabled(true);
@@ -633,24 +636,24 @@ public abstract class EmployeeDialog extends CustomDialog {
 		
 		if(checkIfSaveIsPossible())
 			if(checkDates())
-				if(checkPayMethod())
-					this.employeeDialogObject.createEmployeeContract(
-							r -> { 
-									hide();
-									if(null != employeeDialogObject.getWorkplaceObj()) 
-										EmployeeTree.invokeRefreshWorkplace();
-					
-									onAccept();
+//				if(checkPayMethod())
+				this.employeeDialogObject.createEmployeeContract(
+						r -> { 
+								hide();
+								if(null != employeeDialogObject.getWorkplaceObj()) 
+									EmployeeTree.invokeRefreshWorkplace();
+				
+								onAccept();
 //									cb.onAccept(this);
-									
-								 }, 
-							t -> {}
-					);
-				else {
-					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-					dialog.center();
-					dialog.show();
-				}
+								
+							 }, 
+						t -> {}
+				);
+//				else {
+//					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
+//					dialog.center();
+//					dialog.show();
+//				}
 					
 			else{
 				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
@@ -706,15 +709,15 @@ public abstract class EmployeeDialog extends CustomDialog {
 			return false;
 	}
 	
-	private boolean checkPayMethod() {
-		if(4 == this.employee.payMethod.getSelectedIndex()) {
-			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
-				return false;
-			else
-				return true;
-		}else
-			return true;
-	}
+//	private boolean checkPayMethod() {
+//		if(4 == this.employee.payMethod.getSelectedIndex()) {
+//			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
+//				return false;
+//			else
+//				return true;
+//		} else
+//			return true;
+//	}
 	
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 	
@@ -737,10 +740,11 @@ public abstract class EmployeeDialog extends CustomDialog {
 		initWorkplaces();
 		initContractType();
 		initAgreements();
+		initPayMethods();
 		fillDefaultFields();
 		initFocus();	
 	}
-	
+
 	private void hideEmployeeTable() {
 		employee.employeeTablePanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
@@ -815,6 +819,14 @@ public abstract class EmployeeDialog extends CustomDialog {
 		List<Agreement> agreements = employeeDialogObject.getActiveAgreements();
 		for (Agreement agreement : agreements)
 			this.employee.agreement.addItem(agreement.getDescription(), String.valueOf(agreement.getId()));
+	}
+	
+	private void initPayMethods() {
+		this.employee.payMethod.clear();
+		this.employee.payMethod.addItem("-", "-1");
+		for(Entry<String, String> entry : employeeDialogObject.getPayMethods().entrySet()) {
+			this.employee.payMethod.addItem(entry.getKey(), entry.getValue());
+		}
 	}
 	
 	private void fillDefaultFields() {
@@ -945,7 +957,8 @@ public abstract class EmployeeDialog extends CustomDialog {
 		employee.phone.setValue(employeeData.getPhone());
 		employee.email.setValue(employeeData.getEmail());
 		
-		employee.payMethod.setSelectedIndex(getPayMethodIndex(employeeData.getPayMethodTypeB()));
+		setSelectedValueLB(employee.payMethod, null == employeeData.getPaymethodId() ? "-1" : employeeData.getPaymethodId().toString());
+//		employee.payMethod.setSelectedIndex(getPayMethodIndex(employeeData.getPayMethodTypeB()));
 		employee.account.setValue(employeeData.getAccount());
 		employee.bic.setValue(employeeData.getBic());
 		reformatAccount(this.employee.account);

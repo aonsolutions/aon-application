@@ -596,4 +596,22 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.setMainCCCInfoDataBase(currentDomainName, currentUser, mainCCCInfo, new AsyncCallbackWrapper<Void>(callback));
 	}
 
+	@Override
+	public void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getContractBonus(currentDomainName, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+	}
+
+	@Override
+	public void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.setContractBonus(currentDomainName, employeeContractData, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getPayMethods(String currentDomainName, AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getPayMethods(currentDomainName, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+
 }

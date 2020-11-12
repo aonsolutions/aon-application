@@ -38,6 +38,8 @@ public class EmployeeDialogObject {
 	private List<Workplace> workplaces;
 	private ActivitiesCCC activitiesCCC;
 	
+	private Map<String, String> payMethodsMap;
+	
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------
 	
 	public EmployeeDialogObject(Workplace workplace, DomainEmployeesServiceAsync employeesService,
@@ -48,6 +50,7 @@ public class EmployeeDialogObject {
 		this.employeesService = employeesService;
 		this.enterprisesService = enterprisesService;
 		this.workplaces = new ArrayList<>();
+		this.payMethodsMap = new HashMap<String, String>();
 		
 		this.employeeContractData = new EmployeeContractInfo();
 		this.employeeData = new EmployeeInfo();
@@ -125,6 +128,26 @@ public class EmployeeDialogObject {
 			@Override
 			public void onSuccess(ActivitiesCCC result) {
 				activitiesCCC = result;
+				getPayMethods(
+						r->{
+							success.accept(result);
+						}, f->{}
+					);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void getPayMethods(Consumer<Map<String, String>> success, Consumer<Throwable> failure) {
+		enterprisesService.getPayMethods(new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				payMethodsMap = result;
 				success.accept(result);
 			}
 			
@@ -307,6 +330,10 @@ public class EmployeeDialogObject {
 	
 	public Map<Integer, String> getActivities() {
 		return activitiesCCC.getActivities();
+	}
+	
+	public Map<String, String> getPayMethods() {
+		return payMethodsMap;
 	}
 	
 	public Map<Integer, CCCInfo> getCCCs() {
@@ -570,6 +597,10 @@ public class EmployeeDialogObject {
 	
 	public Date getContractEndDate() {
 		return this.contractData.getEndDate();
+	}
+
+	public void setEmployeePayMethodId(Integer paymethodId) {
+		this.employeeData.setPaymethodId(paymethodId);
 	}
 		
 }
