@@ -110,62 +110,9 @@ export class AonMobileDesktop extends AonElement {
 		this.appendChild(div2);
 
 		let div3 = document.createElement('div');
-		div3.id = "aonControl";
-		div3.style.margin = '25px';
+		div3.style.marginLeft = '25px';
+		div3.innerHTML = '<aon-sign></aon-sign>'
 		this.appendChild(div3);
-
-		this.entrada();
-	}
-
-	entrada() {
-		let div2 = document.getElementById('aonControl');
-		div2.innerHTML = '';
-
-		let button = document.createElement('button');
-		button.style.backgroundColor = '#86D364';
-		button.style.marginRight = '10px';
-		button.innerHTML = 'ENTRADA';
-		button.addEventListener('click', () => {
-			this.salida();
-		});
-		div2.appendChild(button);
-	}
-
-	salida() {
-		let div2 = document.getElementById('aonControl');
-		div2.innerHTML = '';
-
-		let button = document.createElement('button');
-		button.style.backgroundColor = '#DC4D30';
-		button.style.marginRight = '10px';
-		button.innerHTML = 'SALIDA';
-		button.addEventListener('click', () => {
-			this.entrada();
-		});
-		div2.appendChild(button);
-
-		let button2 = document.createElement('button');
-		button2.style.backgroundColor = '#F39F1D';
-		button2.style.marginRight = '10px';
-		button2.innerHTML = 'PAUSA';
-		button2.addEventListener('click', () => {
-			this.vuelta();
-		});
-		div2.appendChild(button2);
-	}
-
-	vuelta() {
-		let div2 = document.getElementById('aonControl');
-		div2.innerHTML = '';
-
-		let button = document.createElement('button');
-		button.style.backgroundColor = '#86D364';
-		button.style.marginRight = '10px';
-		button.innerHTML = 'VUELTA';
-		button.addEventListener('click', () => {
-			this.salida();
-		});
-		div2.appendChild(button);
 	}
 
 	buildNotificationsLi(name, icon) {
