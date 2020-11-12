@@ -1,5 +1,4 @@
 import { requestBidoq } from  '../components/request.js';
-import {loginbidoq} from  '../components/bidoq.js';
 
 const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
 
@@ -17,14 +16,15 @@ export const CARPETA_FISCAL = 8;
 
 export const bidoq = async (additionalData) => {
     // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
-    const data = Object.assign({
+    const data = {
         "device_info": "phone",
         "app_code": "1",
         "operating_system_version": "4.2",
         "clienteID":BIDOQ_CLIENTE_ID,
         "sessionID":BIDOQ_SESSION_ID,
-        "app_version": "1.0"
-    }, additionalData);
+        "app_version": "1.0",
+        ...additionalData
+    };
 
     // Codificamos el objeto a una query string de URL
     const sendData = new URLSearchParams(data).toString();
@@ -42,7 +42,6 @@ export const bidoq = async (additionalData) => {
 
 class AonDocumental extends HTMLElement {
 
-    folder = null;
     page = null;
 
     constructor () {
@@ -69,20 +68,17 @@ class AonDocumental extends HTMLElement {
 
         this.addCategoryOptions(aonDocumental, folders);
 
-        this.addSuiteOldOptions(aonDocumental);
-
         this.loadIndex();
     }
 
     loadIndex({folder = 'pendientes', tag = null} = {}) {
-        const contentIframe = document.querySelector('iframe');
-        const aonDocumental = document.getElementById('aonDocumental');
-
         // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-        this.folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
+        folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
 
-        const tagParameter = (tag === null) ? '' : `?tag=${tag}`;
-        const indexURL = `./index.html${tagParameter}`;
+        const aonDocumental = document.getElementById('aonDocumental');
+        const contentIframe = document.querySelector('iframe');
+        const tagParameter = (tag === null) ? '' : `&tag=${tag}`;
+        const indexURL = `./index.html?folder=${folder}${tagParameter}`;
 
         if (contentIframe === null) {
             aonDocumental.setContentHTML(`<iframe src="${indexURL}" style="width:100%;height:100%;border:none;"></iframe>`);
@@ -165,57 +161,6 @@ class AonDocumental extends HTMLElement {
         });
 
         aonDocumental.addSidenavOptions('CATEGORIAS', categoryOptions);
-    }
-
-    addSuiteOldOptions(aonDocumental) {
-        // Datos de mientras de pruebas
-        const aon_domain_name = 'altai-G90317447-ayudat.aonsolutions.net';
-        const aon_session_id  = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJzY2hlbWFcIjpcImF5dWRhdC1hb25zb2x1dGlvbnMtbmV0XCIsXCJzY2hlbWFfZmlyc3RfZG9tYWluXCI6XCIwMDIyNDIwMzllLWF5dWRhdC5hb25zb2x1dGlvbnMubmV0XCIsXCJ1dWlkXCI6XCJFNkFGMjg1NEI2NjYxMUVBODMyMzA2QTBCREQ3MkE0NlwifSIsImlzcyI6ImF1dGgwIiwiaWF0IjoxNjAwNzkzNDgyfQ.4O-z1Hldqz1WAmX7kcsBkRlb0zy64ucYXQIoLnDL7mA';
-   
-        let options = [
-            {
-                name: 'aonSolutions',
-                img : '../img/aon.png',
-                fn: () => open('https://' + aon_domain_name + '/login?token=' + aon_session_id, '_blank')
-            },
-            {
-                name: 'Bidoq',
-                img : '../img/bidoq.png',
-                fn  : () => this.loadBidoq()
-            }
-        ];
-
-        aonDocumental.addSidenavOptions('VISTA CLÁSICA', options);
-    }
-
-    async loadBidoq(){
-        // Ponemos un cargando mientras
-        const aonDocumental = document.getElementById('aonDocumental');
-        aonDocumental.setContentHTML('<center class="lds-padding-top"><div class="lds-ripple"><div></div><div></div></div></center>');
-
-        try {
-            // Llamamos a Bidoq para hacer el Login
-            const loginBidoq    = await loginbidoq();
-            const response      = JSON.parse(loginBidoq);
-            
-            if (typeof response !== 'undefined') {
-                if (typeof response.code !== 'undefined' && response.code === 0 && response.datos.ruta) {
-                    // Abrir BIDOQ
-                    window.open(response.datos.respuesta, '_blank');
-                    aonDocumental.setContentHTML('');
-                } else {
-                    console.log(response);
-                    alert(response.message);
-                    aonDocumental.setContentHTML('');
-                }
-            } else {
-                console.error('Ocurrió un error al intentar abrir BIDOQ');
-                aonDocumental.setContentHTML('');
-            }
-        } catch (error) {
-            console.error('Ocurrió un error: ' + error.message);
-            aonDocumental.setContentHTML('');
-        }
     }
 
 }

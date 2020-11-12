@@ -29,21 +29,26 @@
                     <!-- INICIO VISTA -->
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-12 d-none d-sm-block">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">#Ticket</th>
-                                            <th scope="col">Creado</th>
-                                            <th scope="col">Asunto</th>
+                                            <th scope="col">#</th>
                                             <th scope="col">De</th>
+                                            <th scope="col">Asunto</th>
                                             <th scope="col">Asignado</th>
+                                            <th scope="col">Estado</th>
+                                            <th scope="col">Creado</th>
+                                            <th scope="col"></th>
                                             <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
                                     <tfoot></tfoot>
                                 </table>
+                            </div>
+                            <div class="col-12 d-block d-sm-none">
+                                <div class="row" id="div_tarjetas"></div>
                             </div>
                         </div>
                     </div>
@@ -71,8 +76,11 @@
                 function createTable(data) { 
                     // Variables que usuamos
                     let tbody   = '';
+                    var cards = '';
                     let colspan = 7;
                     let a_href  = 'show.html';
+                    
+                    var orderColumn = ['#', 'De', 'Asunto', 'Asignado', 'Estado', 'Creado'];
                     
                     if(!data){
                         // No tenemos datos
@@ -90,51 +98,79 @@
                         $.each(data.list, function (i, item) {
                             // Abrimos el <tr> // Si tenemos que responder lo ponemos como negrita
                             tbody += item.answer == 1 ? '<tr class="font-weight-bold">' : '<tr>';
+                            
                             // Recorremos los <td>
-                            $.each(item, function (key, val) {
-                                switch (key) {
-                                    case 'subject':
-                                        tbody +=
-                                            '<td>' +
-                                                '<a class="text-dark" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    '<div class="row">' +
-                                                        '<div class="col-md-8">' +
-                                                            val +
-                                                        '</div>' +
-                                                        '<div class="col-md-4 text-right">' +
-                                                            '<small class="form-inline">' +
-                                                                '<i class="material-icons">comment</i> ' +
-                                                                '<span class="pl-1">' + Object.keys(item.message).length + '</span>' +
-                                                            '</small>' +
-                                                        '</div>' +
-                                                    '</div>' +
-                                                '</a>' +
-                                            '</td>';
+                            for(const order in orderColumn){
+                                var column = orderColumn[order];
+                                var columnComun = false;
+                                var valor = "";
+                                
+                                switch(orderColumn[order]){
+                                    case '#':
+                                        columnComun = true;
+                                        valor = item.id;
                                         break;
-                                    case 'comments_quantity':
-                                        // No metemos nada por que este valor lo metemos en el subject
+                                        
+                                    case 'De':
+                                        columnComun = true;
+                                        valor = item.from;
                                         break;
-                                    case 'answer':
-                                        // No metemos el valor si tiene que responder o no
+                                        
+                                    case 'Creado':
+                                        columnComun = true;
+                                        valor = item.createDate;
                                         break;
-                                    case 'postings':
-                                        // No metemos el valor
+                                        
+                                    case 'Asunto':
+                                        columnComun = true;
+                                        valor = item.subject;
                                         break;
-                                    case 'message':
-                                        // No metemos el valor
+                                        
+                                    case 'Asignado':
+                                        columnComun = true;
+                                        valor = item.assignedTo;
                                         break;
-        
-                                    default:
+                                        
+                                    case 'Estado':
+                                        var classStatus = "";
+                                        var val = "";
+                                        if(item.status == 1) {
+                                            val = "Abierto";
+                                            classStatus = "text-success";
+                                        } else {
+                                            val = "Cerrado";
+                                            classStatus = "text-secondary";
+                                        }
+                                        
                                         tbody +=
                                             '<td>' +
                                                 '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
-                                                    val +
+                                                    '<span class="'+classStatus+'">'+ val + '</span>' +
                                                 '</a>' +
                                             '</td>';
                                         break;
                                 }
-                            });
+                                
+                                if(columnComun){
+                                    tbody +=
+                                            '<td>' +
+                                                '<a class="text-dark text-decoration-none" href="' + a_href + '?ticket=' + item.id + '">' +
+                                                    valor +
+                                                '</a>' +
+                                            '</td>';
+                                }
+                                
+                            }
                             // Agregamos opciones que tenga
+                            tbody +=
+                                '<td>' +
+                                    '<a class="text-dark" href="' + a_href + '?ticket=' + item.id + '">' +
+                                        '<small class="form-inline">' +
+                                            '<i class="material-icons">comment</i> ' +
+                                            '<span class="pl-1">' + Object.keys(item.message).length + '</span>' +
+                                        '</small>' +
+                                    '</a>' +
+                                '</td>';
                             tbody +=
                                 '<td>' +
                                     '<a class="text-dark text-decoration-none">' +
@@ -147,13 +183,37 @@
                                 '</td>';
                             // Cerramos el <tr>
                             tbody += '</tr>';
+                            
+                            // Creamos las tarjetas para versión móvil
+                            var cardType = item.status == 1 ? '' : 'bg-light text-muted';
+                            cards += "<div class='col-12'>";
+                                cards += "<div class='card "+cardType+" mb-3 card_link' data-id='"+item.id+"'>";
+                                    cards += "<div class=card-header>";
+                                        cards += "<ul class='list-inline mb-0'>";
+                                            cards += "<li class='list-inline-item font-weight-bold'><span>Consulta #"+item.id+"</span></li>";
+                                            cards += "<li class='list-inline-item'><span>"+item.from+"</span></li>";
+                                        cards += "</ul>";
+                                    cards += "</div>";
+                                    cards += "<div class='card-body'>";
+                                        cards += "<p class='card-text text-justify'>"+item.subject+"</p>";
+                                        cards += "<ul class='list-inline mb-0 mt-3'>";
+                                            cards += "<li class='list-inline-item mr-4'><small class='form-inline'><i class='material-icons'>comment</i><span class='pl-1'>"+Object.keys(item.message).length+"<span></small></li>";
+                                            cards += "<li class='list-inline-item mr-4'><small class='form-inline'><i class='material-icons'>supervisor_account</i><span class='pl-1'>"+item.assignedTo+"</span></small></li>";
+                                            cards += "<li class='list-inline-item'><small class='form-inline'><i class='material-icons'>calendar_today</i><span class='pl-1'>"+item.createDate+"</span></small></li>";
+                                        cards += "</ul>";
+                                    cards += "</div>";
+                                cards += "</div>";
+                            cards += "</div>";
                         });
         
                         // Agregamos el cuerpo de la tabla
                         $('.table tbody').html(tbody);
+                        
+                        // Agregamos las tarjetas para la versión móvil
+                        $('#div_tarjetas').html(cards);
         
                         // Cogemos el paginado que tendía la tabla
-                        var pagination = createPaginate(data.user_id, data.page, data.total_page)
+                        var pagination = createPaginate(data.user_id, data.page, data.total_page);
         
                         // Agregamos el paginado en el footer de la tabla
                         var tfoot =
@@ -203,6 +263,14 @@
                     }
 
                 });
+                
+            /*
+             * Ir al ticket
+             */
+            $(document).on('click', '.card_link', function(){
+                var id = $(this).data('id');
+                location.href = 'show.html?ticket=' + id;
+            });
 
             //
             // Crear el paginado

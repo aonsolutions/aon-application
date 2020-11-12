@@ -126,16 +126,16 @@ async function singleDeleteOption() {
 
             if (typeof response !== 'undefined') {
                 if (typeof response.code !== 'undefined' && response.code === 0) {
-                    alert('El documento ha sido eliminado con éxito');
+                    avisoFlotante('El documento ha sido eliminado con éxito');
 
                     window.history.back();
                 } else {
                     if (typeof response['1047'] !== 'undefined') {
-                        alert('Ocurrió un error al intentar eliminar el documento');
+                        avisoFlotante('Ocurrió un error al intentar eliminar el documento');
                     }
 
                     if (typeof response['1048'] !== 'undefined') {
-                        alert('El documento no pudo ser eliminado debido a que se encuentra marcado como incidencia');
+                        avisoFlotante('El documento no pudo ser eliminado debido a que se encuentra marcado como incidencia');
                     }
                 }
             } else {
@@ -170,7 +170,7 @@ async function multipleDeleteOption() {
         }).toArray(); // Obtenemos el listado de objetos jQuery como un array JS
 
         try {
-            const service = window.aonDocumentalContainer.folder;
+            const service = new URLSearchParams(window.location.search).get('folder');
 
             // Hacemos una petición a bidoq para eliminar los documentos seleccionados
             const data = await bidoq({
@@ -183,10 +183,10 @@ async function multipleDeleteOption() {
 
             if (typeof response !== 'undefined') {
                 if (typeof response.code !== 'undefined' && response.code === 0) {
-                    alert('Los documentos de tipo "Enviado" seleccionados han sido eliminados con éxito');
+                    avisoFlotante('Los documentos de tipo "Enviado" seleccionados han sido eliminados con éxito');
                 } else {
                     if (typeof response['1047'] !== 'undefined') {
-                        alert(`Ocurrieron errores al intentar eliminar algunos de los documentos`);
+                        avisoFlotante(`Ocurrieron errores al intentar eliminar algunos de los documentos`);
                     }
 
                     if (typeof response['1048'] !== 'undefined') {
@@ -194,7 +194,7 @@ async function multipleDeleteOption() {
                             return document.name;
                         }).join(', ');
 
-                        alert(`Los siguientes documentos no pudieron ser eliminados debido a que se encuentran marcados como incidencia: ${failedDocuments}`);
+                        avisoFlotante(`Los siguientes documentos no pudieron ser eliminados debido a que se encuentran marcados como incidencia: ${failedDocuments}`);
                     }
                 }
 
