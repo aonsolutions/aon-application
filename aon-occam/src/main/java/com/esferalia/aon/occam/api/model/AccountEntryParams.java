@@ -20,6 +20,8 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	private Date toDate;
 	private AccountEntryType type;
 	private Integer journal;
+	private Integer fromJournal;
+	private Integer toJournal;
 	private Integer activity;
 	private SecurityLevel securityLevel;
 	// private boolean confidential; 
@@ -114,6 +116,20 @@ public class AccountEntryParams implements IAccountParams,Serializable{
 	}
 	public AccountEntryParams setJournal(Integer journal) {
 		this.journal = journal;
+		return this;
+	}
+	public Integer getFromJournal() {
+		return fromJournal;
+	}
+	public AccountEntryParams setFromJournal(Integer fromJournal) {
+		this.fromJournal = fromJournal;
+		return this;
+	}
+	public Integer getToJournal() {
+		return toJournal;
+	}
+	public AccountEntryParams setToJournal(Integer toJournal) {
+		this.toJournal = toJournal;
 		return this;
 	}
 	public Integer getActivity() {

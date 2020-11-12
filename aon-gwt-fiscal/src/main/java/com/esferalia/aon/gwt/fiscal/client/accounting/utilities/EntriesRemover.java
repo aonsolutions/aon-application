@@ -96,6 +96,8 @@ class EntriesRemover extends OptionBase {
 	private AccountEntryListBox entryListBox;
 	private ListBox confidential;
 	private IntegerBox journal;
+	private IntegerBox fromJournal;
+	private IntegerBox toJournal;
 	private AccountBox account;
 	private DoubleBox debit;
 	private DoubleBox credit;
@@ -250,6 +252,27 @@ class EntriesRemover extends OptionBase {
 				run(false);
 			}
 		});
+		
+		fromJournal = new IntegerBox();
+		fromJournal.setVisibleLength(8);
+		fromJournal.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				run(false);
+			}
+		});
+		
+		toJournal = new IntegerBox();
+		toJournal.setVisibleLength(8);
+		toJournal.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				run(false);
+			}
+		});
+		
 		concept = new TextBox();
 		concept.setVisibleLength(10);
 		concept.setStyleName(AON.CSS.aonInputText());
@@ -496,11 +519,19 @@ class EntriesRemover extends OptionBase {
 
 		tab.setWidget(1, 5, concept);
 
-		tab.setWidget(2, 0, new Label(AON.MSG.comments()));
+		tab.setWidget(2, 0, new Label( AON.MSG.journal()));
 		tab.getCellFormatter().setStyleName(2,0, AON.CSS.aonSearchPanelLabel());
+		FlowPanel journalPanel = new FlowPanel();
+		journalPanel.setStyleName(AON.CSS.aonNowrap());
+		journalPanel.add(fromJournal);
+		InlineLabel to0 = new InlineLabel("al");
+		to0.setStyleName(AON.CSS.aonItalic());
+		to0.addStyleName(AON.CSS.aonMarginRight());
+		to0.addStyleName(AON.CSS.aonMarginLeft());
+		journalPanel.add(to0);
+		journalPanel.add(toJournal);
+		tab.setWidget(2, 1, journalPanel);
 		
-		tab.setWidget(2, 1, comments);
-
 		tab.setWidget(2, 2, new Label("Id Interno"));
 		tab.getCellFormatter().setStyleName(2,2, AON.CSS.aonSearchPanelLabel());
 		tab.getCellFormatter().addStyleName(2,2, AON.CSS.aonTextRight());
@@ -552,6 +583,10 @@ class EntriesRemover extends OptionBase {
 		
 		tab.setWidget(4, 3, modificationUser);
 		
+		tab.setWidget(5, 0, new Label(AON.MSG.comments()));
+		tab.getCellFormatter().setStyleName(5,0, AON.CSS.aonSearchPanelLabel());
+		tab.setWidget(5, 1, comments);
+
 		tab.setWidget(5, 2, new Label("Orden"));
 		tab.getCellFormatter().setStyleName(5,2, AON.CSS.aonSearchPanelLabel());
 		
@@ -882,6 +917,8 @@ class EntriesRemover extends OptionBase {
 			.setToDate(toDate.getValue())
 			.setType(entryListBox.getValue())
 			.setJournal(journal.getValue())
+			.setFromJournal(fromJournal.getValue())
+			.setToJournal(toJournal.getValue())
 			.setActivity(activityId)
 			.setAccount(account.getId())
 			.setBalancingAccount(account.getId())

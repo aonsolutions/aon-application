@@ -23,6 +23,13 @@ public class AccountEntryUtils {
 		if (params.getJournal()  != null && params.getJournal().intValue() != 0 ) {
 			prop = prop.and(p.getJournalProperty().eq(params.getJournal()));
 		}
+		if (params.getFromJournal()  != null && params.getFromJournal().intValue() != 0 ) {
+			prop = prop.and(p.getJournalProperty().ge(params.getFromJournal()));
+		}
+		if (params.getToJournal()  != null && params.getToJournal().intValue() != 0 ) {
+			prop = prop.and(p.getJournalProperty().le(params.getToJournal()));
+		}
+		
 		if (params.getActivity()  != null && params.getActivity().intValue() != 0 ) {
 			prop = prop.and(p.getActivityProperty().eq(params.getActivity()));
 		}
