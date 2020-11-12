@@ -322,7 +322,7 @@ export function UploadDocumentos(){
         }
 
         function montarDivPrevios(){
-            var cerrarPrevio = ticketPrevio ? '' : '<div class="col-12"><div class="btn btn-warning float-right boton-cancelar-archivos"> <i class="glyphicon glyphicon-ban-circle"></i> <span id="upload-cerrar">Cerrar</span> </div></div>';
+            var cerrarPrevio = ticketPrevio ? '' : '<div class="col-12"><div class="btn btn-warning float-right boton-cancelar-archivos"> <i class="material-icons align-middle">clear</i> <span id="upload-cerrar">Cerrar</span> </div></div>';
             // Miramos si tenemos que cargar o no
             if ($('.files')[0] == undefined ){
                 var div = 
@@ -770,7 +770,7 @@ export function UploadDocumentos(){
             $('body').css('display','none');
             $('html').addClass('upoload-arrastras-entras');
             if(!$(".upoload-arrastras-entras-mensaje")[0]){
-                $( "html" ).append( "<span class='upoload-arrastras-entras-mensaje'>Suelta la documentación <i class='glyphicon glyphicon-save'></i><span>" );
+                $( "html" ).append( "<span class='upoload-arrastras-entras-mensaje'>Suelta la documentación <i class='material-icons align-middle'>get_app</i><span>" );
             }
         }
 

@@ -330,10 +330,10 @@ function createCards(list) {
         return `
             <div class="show_doc_container" data-id="${id}" data-type="${type}">
                 <div class="card mb-3 show_doc" role="button">
-                    <div class="card-header">
-                        <ul class="list-inline mb-0 d-flex">
+                    <div class="card-header d-flex align-items-start">
+                        <ul class="list-inline mb-0 d-flex flex-wrap align-items-center">
                             <li class="list-inline-item">
-                                <span class="material-icons align-middle">${docIcon}</span>
+                                <i class="material-icons align-middle">${docIcon}</i>
                             </li>
                             <li class="list-inline-item font-weight-bold">
                                 <span class="align-middle">${category.name}</span>
@@ -341,6 +341,8 @@ function createCards(list) {
                             <li class="list-inline-item" title="${uploadedBy}">
                                 <span class="align-middle">${uploadedBy}</span>
                             </li>
+                        </ul>
+                        <ul class="list-inline mb-0 d-flex ml-auto align-items-center">
                             <li class="d-flex list-inline-item ml-auto">
                                 <i class="material-icons align-middle">calendar_today</i>
                                 <small class="align-middle ml-1">${formattedDate}</small>
@@ -445,6 +447,8 @@ function getIconFromDocExtension(extension) {
         case 'docx':
         case 'ods':
         case 'xls':
+        case 'xlsx':
+        case 'xlsb':
             icon = 'text_snippet';
             break;
         case 'bmp':
@@ -462,7 +466,7 @@ function getIconFromDocExtension(extension) {
             icon = 'archive';
             break;
         default:
-            icon = 'archive';
+            icon = 'text_snippet';
     }
 
     return icon;
