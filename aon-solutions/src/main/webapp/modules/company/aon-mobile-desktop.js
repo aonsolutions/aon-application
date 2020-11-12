@@ -63,7 +63,30 @@ export class AonMobileDesktop extends AonElement {
 		searchDiv.innerHTML = `<aon-suggestion id="${this.SUGGESTION}" title="Búsqueda Empresas"></aon-suggestion>`;
 
 		let searchSuggestion = this.getElement(this.SUGGESTION);
-		searchSuggestion.addIcon('search');
+
+		if(localStorage.getItem('company')) {
+			searchSuggestion.title = 'Empresa Seleccionada';
+			searchSuggestion.value = JSON.parse(localStorage.getItem('company')).name;
+			searchSuggestion.readonly = true;
+		}
+
+		document.addEventListener('click', function(event) {
+			let isClickInside = searchSuggestion.contains(event.target);
+			if(!isClickInside){
+				if(localStorage.getItem('company')) {
+					searchSuggestion.title = 'Empresa Seleccionada';
+					searchSuggestion.value = JSON.parse(localStorage.getItem('company')).name;
+					searchSuggestion.readonly = true;
+				}
+			}
+		});
+		
+		searchSuggestion.addIconButton('search', () => {
+			searchSuggestion.title = 'Búsqueda Empresas';
+			searchSuggestion.readonly = false;
+			searchSuggestion.value = '';
+			this.getElement(searchSuggestion.INPUT).focus();
+		});
 		searchSuggestion.addEventListener('keyup', () => {
 			if(searchSuggestion.value.length > 2) {
 				getCompanies().then( companies => searchSuggestion
@@ -73,8 +96,12 @@ export class AonMobileDesktop extends AonElement {
 				searchSuggestion.closeOptions();
 			}
 		});
+
 		searchSuggestion.addEventListener('select', (event) => {
+			searchSuggestion.title = 'Empresa Seleccionada';
 			let company = event.detail;
+			searchSuggestion.setAttribute('readonly', true);
+			localStorage.setItem('company', JSON.stringify(company));
 			localStorage.setItem("aon_domain_id", company.id);
 			localStorage.setItem("aon_domain_name", company.domain);
 		});

@@ -52,6 +52,14 @@ export class AonSelect extends AonElement {
 		this.setAttribute('options', options);
 	}
 
+  get autocomplete() {
+    return this.getAttribute('autocomplete');
+  }
+
+  set autocomplete(autocomplete) {
+    this.setAttribute('autocomplete', autocomplete);
+  }
+
   attributeChangedCallback(name, oldValue, newValue) {
     if('value' === name) {
       this.getElement(this.INPUT).value = newValue;
@@ -73,6 +81,9 @@ export class AonSelect extends AonElement {
 
   build() {
     let input = this.getElement(this.INPUT);
+    if(!this.hasAttribute('autocomplete')) {
+      input.setAttribute('readonly', true);
+    }
     input.addEventListener('keyup', () => {
       let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
       this.buildOptions(options.filter(opt => opt.name.toUpperCase().includes(input.value.toUpperCase())));

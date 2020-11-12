@@ -81,6 +81,7 @@ export class AonDate extends AonElement {
 
   build() {
     let input = this.getElement(this.INPUT);
+    input.setAttribute('readonly', true);
     input.addIconButton('calendar_today', () => this.openDatepicker());
     this.getElement(input.INPUT).style.minWidth = '125px';
   }

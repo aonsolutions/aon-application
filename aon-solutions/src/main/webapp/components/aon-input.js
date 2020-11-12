@@ -2,13 +2,16 @@ import {AonElement} from './AonElement.js';
 import {Countries} from '../services/country.js';
 
 export class AonInput extends AonElement {
+
   SPAN;
   DIV;
   ICON;
   ICON_LABEL;
   INPUT;
+  DESCRIPTION;
+
   static get observedAttributes() {
-    return ['value', 'disabled', 'readonly', 'visible', 'options'];
+    return ['value', 'disabled', 'readonly', 'visible', 'options', 'description'];
   }
 
   get id() {
@@ -102,7 +105,7 @@ export class AonInput extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     //console.log(`attribute ${name} change!! ${newValue}`);
     if('value' === name) {
-      let input = document.getElementById(this.getAttribute('id') + 'Input');
+      let input = this.getElement(this.INPUT);
       if(this.isTypeList()) {
   			let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
         options.forEach((item, i) => {
@@ -121,7 +124,11 @@ export class AonInput extends AonElement {
 				let val = `${value.address}, ${value.zip} ${value.city}, ${value.province}, ${value.country}`;
 				input.value = val;
       } else {
+
         if(newValue && 'undefined' !== newValue && input) input.value = newValue;
+        if(input && newValue === ''){
+            input.value = '';
+        }
       }
     }
 
@@ -130,7 +137,9 @@ export class AonInput extends AonElement {
     }
 
     if('readonly' === name){
-      document.getElementById(this.getAttribute('id') + 'Input').setAttribute('readonly', this.isReadonly());
+      if(this.isReadonly())
+        this.getElement(this.INPUT).setAttribute('readonly', this.isReadonly());
+      else this.getElement(this.INPUT).removeAttribute('readonly');
     }
 
     if('visible' === name){
@@ -148,6 +157,10 @@ export class AonInput extends AonElement {
     if('options' === name) {
       this.buildOptions();
     }
+
+    if('description' === name && this.getElement(this.DESCRIPTION)) {
+      this.getElement(this.DESCRIPTION).innerHTML = newValue;
+    }
   }
 
   constructor () {
@@ -157,6 +170,7 @@ export class AonInput extends AonElement {
     this.ICON = this.id + 'Icon';
     this.ICON_LABEL = this.id + 'IconLabel';
     this.INPUT = this.id + 'Input';
+    this.DESCRIPTION = this.id + 'Description';
   }
 
   connectedCallback () {
@@ -202,8 +216,8 @@ export class AonInput extends AonElement {
     label.appendChild(input);
 
     let span = document.createElement('span');
+    span.id = this.DESCRIPTION;
     span.className = 'omrs-input-label';
-    span.id = this.getAttribute('id') + 'Description';
     span.innerHTML = this.getAttribute('description');
 
     label.appendChild(span);

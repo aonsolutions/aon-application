@@ -167,7 +167,6 @@ export class AonHeader extends AonElement {
 				d.setMenuOptions(options, top, left);
 				d.open();
 			});
-
 		});
 	}
 

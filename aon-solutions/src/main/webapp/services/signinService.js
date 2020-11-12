@@ -7,6 +7,12 @@ export const getSigninStatus = () => {
   let started = localStorage.getItem('aon-signin-started');
   let time = localStorage.getItem('aon-signin-time') || 0;
   if(started) {
+    let startedDate = new Date(Number(started));
+    if(date.getDate() !== startedDate.getDate()){
+      startedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+      started = startedDate.getTime();
+      localStorage.setItem('aon-signin-started', started);
+    }
     time = Number(time) + (date.getTime() - Number(started));
   }
   let signin = {

@@ -1,5 +1,5 @@
 import {AonElement} from '../components/AonElement.js';
-import {closeSession} from  '../services/service.js';
+import {closeSession, getSigninStatus, updateSigninStatus} from  '../services/service.js';
 import {rootPanel} from '../services/gwtLoader.js';
 
 import '../components/aon-icon-button.js';
@@ -55,26 +55,33 @@ export class AonMobileHeader extends AonElement {
 		let aonHeaderWeb = document.getElementById('aonHeaderWeb');
 		this.buildLogo();
 
-		let aonUserConnected = document.createElement('div');
-		aonUserConnected.id = BASE_ID + 'UserConnected';
-		aonUserConnected.className = 'aonConnected';
-		aonUserConnected.style.backgroundColor = 'red';
-
-		let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
-		aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
+		getSigninStatus().then(r => {
+			let aonUserConnected = document.createElement('div');
+			aonUserConnected.id = BASE_ID + 'UserConnected';
+			aonUserConnected.className = 'aonConnected';
+			if(r.status === 'in'){
+				aonUserConnected.style.backgroundColor = '#86D364';
+			} else if(r.status === 'pause') {
+				aonUserConnected.style.backgroundColor = '#F39F1D';
+			} else {
+				aonUserConnected.style.backgroundColor = '#DC4D30';
+			}
+			let aonHeaderUserButtonIconButton = document.getElementById('aonHeaderUserButtonIconButton');
+			aonHeaderUserButtonIconButton.appendChild(aonUserConnected);
+		});
 
 		let aonHeaderUserButton = document.getElementById('aonHeaderUserButton');
 		aonHeaderUserButton.addEventListener('click', () => {
-			const top  = aonHeaderUserButton.getBoundingClientRect().top;
-			const left = aonHeaderUserButton.getBoundingClientRect().left;
-			let d = document.getElementById('aonHeaderDialogUserOption');
-
-			let fichajeText = aonUserConnected.style.backgroundColor === 'red'
-				? 'Marcar Entrada': 'Marcar Salida';
-			let options = [{
+			getSigninStatus().then(r => {
+				const top  = aonHeaderUserButton.getBoundingClientRect().top;
+				const left = aonHeaderUserButton.getBoundingClientRect().left;
+				let d = document.getElementById('aonHeaderDialogUserOption');
+				let fichajeText = r.status === 'in' ? 'Marcar Salida': 'Marcar Entrada';
+				let signin = r.status === 'in' ? {status: 'out'} : {status: 'in'};
+				let options = [{
 					name: fichajeText,
 					icon: 'alarm',
-					fn: () => this.aonFichar()
+					fn: () => this.aonFichar(signin)
 				}, {
 					name: 'Configuración',
 					icon: 'settings',
@@ -84,16 +91,24 @@ export class AonMobileHeader extends AonElement {
 					icon: 'input',
 					fn: () => closeSession()
 				}];
-			d.setMenuOptions(options, top, left);
-			d.open();
+				d.setMenuOptions(options, top, left);
+				d.open();
+			});
 		});
 	}
 
-	aonFichar() {
+	aonFichar(signin) {
+		updateSigninStatus(signin);
+
+		let aonSign = this.getElement('aonSign');
+		if(aonSign) {
+			aonSign.buildSignin();
+		}
+
 		let aonUserConnected = document.getElementById('aonHeaderUserConnected');
-		aonUserConnected.style.backgroundColor =
-			aonUserConnected.style.backgroundColor === 'red' ? '#35ac19' : 'red';
+		aonUserConnected.style.backgroundColor = signin === 'in' ? '#86D364' : '#DC4D30';
 	}
+
 
 	aonConfiguration() {
 		rootPanel('<aon-configuration id="aon-configuration"></aon-configuration>');

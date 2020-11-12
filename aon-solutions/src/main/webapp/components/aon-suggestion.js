@@ -6,6 +6,10 @@ export class AonSuggestion extends AonElement {
   INPUT;
   OPTIONS;
 
+  static get observedAttributes() {
+    return ['value', 'readonly', 'title'];
+  }
+
 	get id() {
 		return this.getAttribute('id');
 	}
@@ -36,6 +40,29 @@ export class AonSuggestion extends AonElement {
 
   set title(title) {
     this.setAttribute('title', title);
+  }
+
+  get readonly() {
+    return this.getAttribute('readonly');
+  }
+
+  set readonly(readonly) {
+    this.setAttribute('readonly', readonly);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    //console.log(`attribute ${name} change!! ${newValue}`);
+    if('value' === name  && this.getElement(this.INPUT)) {
+      this.getElement(this.INPUT).value = newValue;
+    }
+
+    if('readonly' === name && this.getElement(this.INPUT)){
+      this.getElement(this.INPUT).readonly = newValue;
+    }
+
+    if('title' === name && this.getElement(this.INPUT)){
+      this.getElement(this.INPUT).description = newValue;
+    }
   }
 
 	constructor () {
@@ -106,6 +133,10 @@ export class AonSuggestion extends AonElement {
 
   addIcon(icon) {
     this.getElement(this.INPUT).addIcon(icon);
+  }
+
+  addIconButton(icon, fn) {
+    this.getElement(this.INPUT).addIconButton(icon, fn);
   }
 
   closeOptions() {
