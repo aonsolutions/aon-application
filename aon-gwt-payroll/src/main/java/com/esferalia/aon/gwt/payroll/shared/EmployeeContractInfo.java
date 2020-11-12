@@ -17,6 +17,7 @@ public class EmployeeContractInfo implements Serializable{
 	private Map<String, String> contractOtherData;
 	private List<ContractClause> contractClauses;
 	private List<ContractAttach> contractAttachments;
+	private List<SSBonusData> contractBonus;
 	private Map<String, String> scopeMap;
 	
 	/**
@@ -35,6 +36,7 @@ public class EmployeeContractInfo implements Serializable{
 		this.contractOtherData = new HashMap<String, String>();
 		this.contractClauses = new ArrayList<ContractClause>();
 		this.contractAttachments = new ArrayList<ContractAttach>();
+		this.contractBonus = new ArrayList<SSBonusData>();
 		this.scopeMap = new HashMap<String, String>();
 	}
 	
@@ -92,6 +94,18 @@ public class EmployeeContractInfo implements Serializable{
 		this.contractAttachments.add(contractAttach);
 	}
 
+	public List<SSBonusData> getContractBonus() {
+		return contractBonus;
+	}
+
+	public void setContractBonus(List<SSBonusData> contractBonus) {
+		this.contractBonus = contractBonus;
+	}
+	
+	public void addContractBonus(SSBonusData contractBonus) {
+		this.contractBonus.add(contractBonus);
+	}
+	
 	public Map<String, String> getScopeMap() {
 		return scopeMap;
 	}

@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.ContractAttach.CONTRACT_ATTACH;
 import static com.esferalia.aon.jooq.tables.ContractClause.CONTRACT_CLAUSE;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
+import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
@@ -57,6 +58,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.payroll.contract.ContractFill;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
@@ -95,6 +97,39 @@ public class JooqContrataContract {
 		} 
 	}
 	
+	// ------------------------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------ CONTRACT BONUS -------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------------------------
+	
+	public static List<SSBonusData> getContractBonus(Connection conn, Integer domainId, Integer contractId) {
+		return getContractBonusDB(DSL.using(conn, getDefaultSettings()), domainId, contractId);
+	}
+
+	private static List<SSBonusData> getContractBonusDB(DSLContext dslContext, Integer domainId, Integer contractId) {
+		List<SSBonusData> contractBonusList = new ArrayList<SSBonusData>();
+		
+		Result<Record> contractBonusRecords = dslContext.select().from(CONTRACT_BONUS)
+				.where(CONTRACT_BONUS.CONTRACT.eq(contractId))
+				.fetch();
+		
+		for(Record r : contractBonusRecords) {
+			SSBonusData ssBonusData = new SSBonusData();
+			ssBonusData.setStartDate(r.get(CONTRACT_BONUS.START_DATE));
+			ssBonusData.setEndDate(r.get(CONTRACT_BONUS.END_DATE));
+			ssBonusData.setDescription(r.get(CONTRACT_BONUS.DESCRIPTION));
+		}
+		
+		return contractBonusList;
+	}
+
+	public static void setContractBonus(Connection conn, Integer domainId, EmployeeContractInfo employeeContractData) {
+		setContractBonusDB(DSL.using(conn, getDefaultSettings()), domainId, employeeContractData);
+	}
+	
+	private static void setContractBonusDB(DSLContext dslContext, Integer domainId, EmployeeContractInfo employeeContractData) {
+		// TODO Auto-generated method stub
+	}
+
 	// ------------------------------------------------------------------------------------------------------------------------
 	// ------------------------------------------------ CONTRACT ATTACH -------------------------------------------------------
 	// ------------------------------------------------------------------------------------------------------------------------
@@ -585,6 +620,7 @@ public class JooqContrataContract {
 				Record payMethodTable = dslContext.select().from(PAY_METHOD)
 						.where(PAY_METHOD.ID.eq(rPayMethodRecord.get(RPAYMETHOD.PAY_METHOD)))
 						.fetchOne();
+				
 				if(null != payMethodTable) {
 					employeeData.setPaymethodId(payMethodTable.get(PAY_METHOD.ID));
 					employeeData.setPayMethodType(payMethodTable.get(PAY_METHOD.NAME));
