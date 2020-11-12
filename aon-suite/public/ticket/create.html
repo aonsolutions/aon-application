@@ -92,7 +92,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="col-5 div_alma d-none">
+                                    <div class="col-12 col-md-5 div_alma d-none">
                                         <div class="row">
                                             <div class="col-12" id="contentAlma">
                                                 <!--<iframe src="" scrolling="no" frameborder="0" height="100%" id="chat-box" class="initAuto" style="overflow: none"></iframe>-->
@@ -118,7 +118,7 @@
                                     <div class="col-12 atp_caja_form">
                                         <form method="post" id="formulario_tramite" enctype="multipart/form-data">
                                             <div class="row">
-                                                <div class="col-6">
+                                                <div class="col-12 col-md-6">
                                                     <select class="atp_input" id="tipo_tramite" name="tipo_solicitud">
                                                         <option value="0">Elija el tipo de trámite</option>
                                                         <option value="1">Solicitud de impuestos</option>
@@ -126,7 +126,7 @@
                                                     </select>
                                                     <label class="d-none errores error-tipo-solicitud text-ayudat font-weight-bold">Debe seleccionar el tipo de trámite</label>
                                                 </div>
-                                                <div class="col-6 d-none labelPostingsTramite">
+                                                <div class="col-12 col-md-6 d-none labelPostingsTramite">
                                                     <label class="d-block atp_inputs">
                                                         <input type="text" id="postings_tramite" name="postings_tramite" class="" value="" readonly/>
                                                         <span>Destinatario</span>
@@ -280,8 +280,8 @@
                         $("#contentAlma").append(divCb);
                     } else {
                         $('.div_alma').remove();
-                        $('.div_faqs').removeClass('col-12');
-                        $('.div_faqs').addClass('col-5');
+                        //$('.div_faqs').removeClass('col-12');
+                        $('.div_faqs').addClass('col-md-5');
                     }
                 });
 
@@ -348,7 +348,7 @@
                         };
                         
                         if(!$.isEmptyObject(faqs)){
-                            $(".div_ticket").removeClass('col-12').addClass('col-7');
+                            $(".div_ticket").addClass('col-md-7');
                             
                             // Rellenamos las faqs
                             var htmlFaqs = "<div class='col-12 mt-3'>";
@@ -386,7 +386,7 @@
                             $(".div_faqs").removeClass('d-none');
                             $(".div_faqs").show(1000);
                         } else {
-                            $(".div_ticket").removeClass('col-7').addClass('col-12');
+                            $(".div_ticket").removeClass('col-md-7');
                             
                             // Mostramos alert de aviso de que no hay faqs relacionadas
                             avisoFlotante("No hemos podido encontrar FAQs relacionadas.");
@@ -682,7 +682,7 @@
                         
                         switch(input.type){
                             case "input":
-                                formTramite += "<div class='col-6 mt-2'>";
+                                formTramite += "<div class='col-12 col-md-6 mt-2'>";
                                     formTramite += "<label class='d-block atp_inputs'>";
                                         formTramite += "<input type='text' id='subject' name='"+input.name+"' class='setAttributeInput' value='"+input.value+"'/>";
                                         formTramite += "<span>"+input.placeholder+"</span>";
