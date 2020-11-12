@@ -4,6 +4,7 @@
 logEmployee.txt
 *.pdf
 *.html
+*.txt
 /target/
 /bin/
 *.ak
