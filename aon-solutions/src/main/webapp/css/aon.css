@@ -1,764 +1,621 @@
-:root{
-	--col-width1: 8.3333333333%;
-	--col-width2: 16.6666666667%;
-	--col-width3: 25%;
-	--col-width4: 33.3333333333%;
-	--col-width5: 41.6666666667%;
-	--col-width6: 50%;
-	--col-width7: 58.3333333333%;
-	--col-width8: 66.6666666667%;
-	--col-width9: 75%;
-	--col-width10: 83.3333333333%;
-	--col-width11: 91.6666666667%;
-	--col-width12: 100%;
+body {
+  padding: 0px !important;
+  margin: 0px !important;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: normal !important;
 }
-	body {
-		padding: 0px !important;
-		margin: 0px !important;
-		font-family: "Roboto","Helvetica","Arial",sans-serif !important;
-		font-weight: 400 !important;
-		font-size: 14px !important;
-		line-height: normal !important;
-	}
 
-	ul {
-		list-style: none;
-		padding: 0;
-   		margin: 0;
-	}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-	li:hover {
-		background-color: #f1f1f1;
-	}
+li:hover {
+  background-color: #f1f1f1;
+}
 
-	a{
-		color: #12CCD1;
-		cursor: pointer;
-	}
+a {
+  color: #12ccd1;
+  cursor: pointer;
+}
 
-	a:hover{
-		color: #12CCD1;
-		text-decoration: underline;
-	}
-	button {
-    display: inline-block;
-    border: none;
-    padding: 1rem 2rem;
-    margin: 0;
-    text-decoration: none;
-    background: #002469;
-    color: #ffffff;
-    font-family: sans-serif;
-    font-size: 1rem;
-    cursor: pointer;
-    text-align: center;
-    transition: background 250ms ease-in-out,
-                transform 150ms ease;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-		outline: none !important;
-	}
+a:hover {
+  color: #12ccd1;
+  text-decoration: underline;
+}
+button {
+  display: inline-block;
+  border: none;
+  padding: 1rem 2rem;
+  margin: 0;
+  text-decoration: none;
+  background: #002469;
+  color: #ffffff;
+  font-family: sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background 250ms ease-in-out, transform 150ms ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none !important;
+}
 
-	button:active {
-    transform: scale(0.99);
-	}
+button:active {
+  transform: scale(0.99);
+}
 
-	.aonColorIcon {
-		color: #5f6368;
-	}
+.aonColorIcon {
+  color: #5f6368;
+}
 
-	.aonColorGray {
-		color: #A2A8B6;
-	}
+.aonColorGray {
+  color: #a2a8b6;
+}
 
-	.aonColorPrimary {
-		color: #002469;
-	}
+.aonColorPrimary {
+  color: #002469;
+}
 
-	.aonColorSecondary {
-		color: #12CCD1;
-	}
+.aonColorSecondary {
+  color: #12ccd1;
+}
 
-	.aonTitle {
-			font-size: 20px;
-			font-weight:400;
-			line-height: normal;
-			margin: 0;
-	}
+.aonTitle {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: normal;
+  margin: 0;
+}
 
-	.aonMarketplaceTitle {
-		color: #5f6368;
-		font-weight: bold;
-		padding-left: 40px;
-	}
+.aonMarketplaceTitle {
+  color: #5f6368;
+  font-weight: bold;
+  padding-left: 40px;
+}
 
-	.aonAppTitle {
-		color: #5f6368;
-		font-weight: bold;
-		padding-left: 20px;
-	}
+.aonAppTitle {
+  color: #5f6368;
+  font-weight: bold;
+  padding-left: 20px;
+}
 
-	.aonMenu {
-		position: relative;
-		height:calc(100vh - 61px);
-	}
+.aonMenu {
+  position: relative;
+  height: calc(100vh - 61px);
+}
 
-	.rootPanel {
-		position: relative;
-    margin-right: 100px;
-		height:calc(100vh - 61px);
-  	overflow-y: auto;
-		margin: 0;
-	}
+.rootPanel {
+  position: relative;
+  margin-right: 100px;
+  height: calc(100vh - 61px);
+  overflow-y: auto;
+  margin: 0;
+}
 
-	.rootMobilePanel {
-		position: relative;
-		margin-right: 100px;
-		height:calc(100vh - 163px);
-		overflow-y: auto;
-		margin: 0;
-	}
+.rootMobilePanel {
+  position: relative;
+  margin-right: 100px;
+  height: calc(100vh - 163px);
+  overflow-y: auto;
+  margin: 0;
+}
 
-	.aonIconButton {
-		border-radius: 50%;
-    font-size: 24px;
-    height: 40px;
-		margin: 0;
-    min-width: 40px;
-    width: 40px;
-    padding: 0;
-    overflow: hidden;
-    color: inherit;
-    line-height: normal;
-		background: 0 0;
-    border: none;
-		position: relative;
-		display: inline-block;
-		outline: none !important;
-		cursor: pointer;
-	}
+.aonIconButton {
+  border-radius: 50%;
+  font-size: 24px;
+  height: 40px;
+  margin: 0;
+  min-width: 40px;
+  width: 40px;
+  padding: 0;
+  overflow: hidden;
+  color: inherit;
+  line-height: normal;
+  background: 0 0;
+  border: none;
+  position: relative;
+  display: inline-block;
+  outline: none !important;
+  cursor: pointer;
+}
 
-	.aonLogo {
-		position: absolute;
-		margin-left: 10px;
-		top: 15px;
-		cursor: pointer;
-	}
+.aonLogo {
+  position: absolute;
+  margin-left: 10px;
+  top: 15px;
+  cursor: pointer;
+}
 
-	.aonMobileLogo {
-		position: absolute;
-		margin-left: 15%;
-		top: 15px;
-		cursor: pointer;
-	}
+.aonMobileLogo {
+  position: absolute;
+  margin-left: 15%;
+  top: 15px;
+  cursor: pointer;
+}
 
-	.aonParentLogo {
-	  position: absolute;
-	  left: 140px;
-	  top: 0;
-	  margin: 10px;
-	  height: 60px;
-	  cursor: pointer;
-	}
+.aonParentLogo {
+  position: absolute;
+  left: 140px;
+  top: 0;
+  margin: 10px;
+  height: 60px;
+  cursor: pointer;
+}
 
-  .aonWidth25{
-      width: 24%;
-      display: inline-block !important;
+.aonWidth25 {
+  width: 24%;
+  display: inline-block !important;
+}
+
+.aonWidth50 {
+  width: 49%;
+  display: inline-block !important;
+}
+
+.aonWidth75 {
+  width: 73.5%;
+  display: inline-block !important;
+}
+
+.aonWidth300 {
+  width: 300px;
+}
+
+.aonRight0 {
+  position: absolute;
+  right: 0px;
+}
+
+.aonRight20 {
+  position: absolute;
+  right: 20px;
+}
+
+.aonRight40 {
+  position: absolute;
+  right: 40px;
+}
+
+.aonRight60 {
+  position: absolute;
+  right: 60px;
+}
+
+.aonRight100 {
+  position: absolute;
+  right: 100px;
+}
+
+.aonRight140 {
+  position: absolute;
+  right: 140px;
+}
+
+.aonRight160 {
+  position: absolute;
+  right: 160px;
+}
+
+.aonRight180 {
+  position: absolute;
+  right: 180px;
+}
+
+.aonRight220 {
+  position: absolute;
+  right: 220px;
+}
+
+.aonLeft250 {
+  position: absolute;
+  left: 250px;
+}
+
+.aonMenuIcon {
+  position: relative;
+  top: 7px;
+}
+
+.aonMenuSidenavSubAppListItem {
+  height: 30px;
+  padding: 0px 16px;
+  background-color: transparent;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.aonMenuLink {
+  height: 30px;
+  color: #000;
+  white-space: nowrap;
+}
+
+.aonHeader {
+  background-color: #fff;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #ddd;
+  color: #5f6368;
+  height: 60px;
+}
+
+.aonHeaderButton {
+  top: 10px;
+}
+
+.aonAvatar {
+  color: #5f6368;
+  margin-top: 5px;
+  font-size: 24px;
+  margin-right: 20px;
+  float: left;
+  box-sizing: border-box;
+  border-radius: 50%;
+}
+
+.aonLi {
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.aonToolbar {
+  display: flex;
+  height: 40px;
+  padding-left: 16px;
+  border-top: 0px none;
+  border-bottom: 1px solid rgb(221, 221, 221);
+  font-size: 16px;
+}
+
+.aonToolbarSection {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  z-index: 1;
+}
+
+.aonToolbarSectionEnd {
+  justify-content: flex-end;
+}
+
+.aonTable {
+  width: 100%;
+  border: 0px;
+}
+
+.aonTableTh {
+  text-align: center !important;
+}
+
+.aonMenuSidenav {
+  height: calc(100vh - 61px);
+  width: 60px;
+  position: fixed;
+  top: 60px;
+  right: 0;
+  background-color: #fff;
+  border-left: 1px solid #ddd;
+  overflow-x: hidden;
+  z-index: 2;
+}
+
+.aonMobileMenuSidenav {
+  height: 40px;
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  overflow-x: hidden;
+  z-index: 2;
+}
+
+.aonMenuSidenavAppToolbar {
+  height: 64px;
+  color: white;
+  display: flex;
+  box-sizing: border-box;
+  padding: 0 16px;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.aonMenuSidenavSubAppList {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+  height: calc(100vh - 126px);
+  overflow: auto;
+}
+
+.aonCompanyList {
+  margin: 0px;
+  padding: 0px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.aonSidenavDiv {
+  padding-left: 25px;
+}
+
+.aonSidenavTitle {
+  font-size: 12px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: gray;
+  margin-left: 15px;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0px;
+  position: fixed;
+  z-index: 1;
+  top: 100px;
+  left: 0;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+  transition-duration: 500ms;
+  overflow-x: hidden;
+}
+
+.sidenav::-webkit-scrollbar {
+  display: none;
+}
+
+.aonContent {
+  position: relative;
+  display: block;
+  transition: 0.5s;
+  height: calc(100vh - 102px);
+  overflow-y: auto;
+}
+
+.aonMobileContent {
+  position: relative;
+  display: block;
+  transition: 0.5s;
+  height: calc(100vh - 162px);
+  overflow-y: auto;
+}
+
+.aonContent::-webkit-scrollbar {
+  display: none;
+}
+
+.aonScroll {
+  overflow: auto;
+}
+
+.aonAppMenuSidenavList {
+  height: 30px;
+  line-height: 30px;
+  margin: 0;
+  padding: 0 26px;
+  cursor: pointer;
+}
+
+.aonVerticalMiddle {
+  vertical-align: middle;
+  font-size: 1.3rem;
+}
+
+.aonVerticalCenter {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.aonClip {
+  clip: rect(0px, 250px, 112px, 0px) !important;
+  opacity: 1;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.aonOpacity {
+  opacity: 1 !important;
+  width: 100%;
+}
+
+.aonMenuItemSpan {
+  position: absolute;
+  margin-left: 10px;
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.aonDivButton {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.aonSearchBox {
+  position: absolute;
+  height: 40px;
+  border: none;
+  -webkit-appearance: none;
+  outline: 0px;
+  font-size: 14px;
+}
+
+.aonFormCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.aonConnected {
+  position: absolute;
+  right: 4px;
+  bottom: 6px;
+  background: #35ac19;
+  width: 8px;
+  height: 8px;
+  border-radius: 10px;
+}
+
+.aonTable {
+  width: 100%;
+  border: 0px;
+  border-bottom: 1px solid #ddd;
+}
+
+.aonTable th {
+  position: relative;
+  vertical-align: bottom;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0;
+  height: 48px;
+  font-size: 12px;
+  color: rgb(95, 99, 104);
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  padding-left: 8px;
+}
+
+.aonTable tbody tr {
+  position: relative;
+  height: 48px;
+  font-size: 12px;
+  transition-duration: 0.18s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: background-color;
+}
+
+.aonTable tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.aonTable tbody tr:active {
+  background-color: #bbb;
+}
+
+.aonTable td {
+  padding-left: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.aonCard {
+  border: 1px solid #ebebeb;
+  border-radius: 5px;
+  margin: 10px;
+  min-width: 250px;
+  padding: 15px 22px;
+}
+
+.aonDialog {
+  display: none;
+  position: fixed;
+  z-index: 3;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.aonDialogContent {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  width: 80%;
+}
+
+.aonProgress,
+.aonProgress:before {
+  height: 3px;
+  width: 100%;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.aonProgress {
+  background-color: #b3d4fc;
+  display: none;
+}
+
+.aonProgress:before {
+  background-color: #002469;
+  content: "";
+  -webkit-animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@-webkit-keyframes running-progress {
+  0% {
+    margin-left: 0px;
+    margin-right: 100%;
   }
-
-  .aonWidth50{
-      width: 49%;
-      display: inline-block !important;
+  50% {
+    margin-left: 25%;
+    margin-right: 0%;
   }
-
-  .aonWidth75{
-      width: 73.5%;
-      display: inline-block !important;
+  100% {
+    margin-left: 100%;
+    margin-right: 0;
   }
+}
 
-	.aonWidth300{
-      width: 300px;
+@keyframes running-progress {
+  0% {
+    margin-left: 0px;
+    margin-right: 100%;
   }
-
-	.aonRight0 {
-		position: absolute;
-		right:0px;
-	}
-
-	.aonRight20 {
-		position: absolute;
-		right:20px;
-	}
-
-	.aonRight40 {
-		position: absolute;
-		right:40px;
-	}
-
-  .aonRight60 {
-		position: absolute;
-		right:60px;
-	}
-
-	.aonRight100 {
-		position: absolute;
-		right:100px;
-	}
-
-	.aonRight140 {
-		position: absolute;
-		right:140px;
-	}
-
-	.aonRight160 {
-		position: absolute;
-		right:160px;
-	}
-
-	.aonRight180 {
-		position: absolute;
-		right:180px;
-	}
-
-	.aonRight220 {
-		position: absolute;
-		right:220px;
-	}
-
-	.aonLeft250 {
-		position: absolute;
-		left:250px;
-	}
-
-	.aonMenuIcon {
-		position: relative;
-		top: 7px;
-	}
-
-	.aonMenuSidenavSubAppListItem {
-		height: 30px;
-    padding: 0px 16px;
-    background-color: transparent;
-    cursor: pointer;
-    text-overflow: ellipsis;
-    overflow: hidden;
-	}
-
-	.aonMenuLink {
-		height: 30px;
-		color: #000;
-    white-space: nowrap;
-	}
-
-	.aonHeader {
-	    background-color: #fff;
-	    padding: 0!important;
-	    margin: 0!important;
-	    border-bottom: 1px solid #ddd;
-	    color: #5f6368;
-	    height: 60px;
-	}
-
-	.aonHeaderButton {
-			top: 10px;
-	}
-
-	.aonAvatar {
-		color: #5f6368;
-		margin-top: 5px;
-		font-size: 24px;
-		margin-right: 20px;
-		float: left;
-		box-sizing: border-box;
-		border-radius: 50%;
-	}
-
-	.aonLi {
-	    border-bottom: 1px solid #ddd;
-			cursor:pointer;
-	}
-
-	.aonToolbar {
-    display:flex;
-		height:40px;
-		padding-left:16px;
-		border-top: 0px none;
-		border-bottom: 1px solid rgb(221, 221, 221);
-    font-size: 16px;
-	}
-
-  .aonToolbarSection {
-    display: inline-flex;
-    flex: 1 1 auto;
-    align-items: center;
-    min-width: 0;
-    z-index: 1;
+  50% {
+    margin-left: 25%;
+    margin-right: 0%;
   }
-
-  .aonToolbarSectionEnd {
-    justify-content: flex-end;
+  100% {
+    margin-left: 100%;
+    margin-right: 0;
   }
-
-	.aonTable {
-		width: 100%;
-		border: 0px;
-	}
-
-	.aonTableTh {
-		text-align: center !important;
-	}
-
-	.aonMenuSidenav {
-		height: calc(100vh - 61px);
-		width: 60px;
-		position: fixed;
-		top: 60px;
-		right: 0;
-		background-color: #fff;
-		border-left: 1px solid #ddd;
-		overflow-x: hidden;
-		z-index: 2;
-	}
-
-	.aonMobileMenuSidenav {
-		height: 40px;
-		width: 100%;
-		position: absolute;
-		bottom: 0px;
-		background-color: #fff;
-		border-top: 1px solid #ddd;
-		overflow-x: hidden;
-		z-index: 2;
-	}
-
-	.aonMenuSidenavAppToolbar {
-		height: 64px;
-		color: white;
-		display: flex;
-    box-sizing: border-box;
-    padding: 0 16px;
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    white-space: nowrap;
-	}
-
-	.aonMenuSidenavSubAppList {
-		margin: 0px;
-    padding: 0px;
-    list-style: none;
-    height: calc(100vh - 126px);
-    overflow: auto;
-	}
-
-	.aonCompanyList {
-		margin: 0px;
-		padding: 0px;
-		height: 100%;
-		overflow-y: auto;
-	}
-
-	.aonSidenavDiv {
-		padding-left: 25px;
-	}
-
-	.aonSidenavTitle {
-		font-size: 12px;
-		margin-top: 15px;
-		margin-bottom: 10px;
-		color: gray;
-		margin-left: 15px;
-	}
-
-	.sidenav {
-		height: 100%;
-		width: 0px;
-		position: fixed;
-		z-index: 1;
-		top: 100px;
-		left: 0;
-		background-color: #fff;
-		border-right: 1px solid #ddd;
-    transition-duration: 500ms;
-		overflow-x: hidden;
-	}
-
-	.sidenav::-webkit-scrollbar {
-		display: none;
-	}
-
-	.aonContent {
-		position: relative;
-		display: block;
-		transition: 0.5s;
-		height: calc(100vh - 102px);
-		overflow-y: auto;
-	}
-
-	.aonMobileContent {
-		position: relative;
-		display: block;
-		transition: 0.5s;
-		height: calc(100vh - 162px);
-		overflow-y: auto;
-	}
-
-	.aonContent::-webkit-scrollbar {
-    display: none;
-	}
-
-	.aonScroll {
-		overflow: auto;
-	}
-
-	.aonAppMenuSidenavList {
-		height: 30px;
-  	line-height: 30px;
-		margin: 0;
-    padding: 0 26px;
-    cursor: pointer;
-	}
-
-	.aonVerticalMiddle {
-		vertical-align: middle;
-		font-size: 1.3rem;
-	}
-
-	.aonVerticalCenter {
-		margin: 0;
-	  position: absolute;
-	  top: 50%;
-	  -ms-transform: translateY(-50%);
-	  transform: translateY(-50%);
-	}
-
-	.aonClip {
-		clip: rect(0px, 250px, 112px, 0px) !important;
-		opacity: 1;
-		z-index: 1;
-		margin: 0;
-		padding: 0;
-		width: 100%;
-	}
-
-	.aonOpacity {
-		opacity: 1 !important;
-		width: 100%;
-	}
-
-	.aonMenuItemSpan {
-		position: absolute;
-		margin-left: 10px;
-		margin-top: 2px;
-		font-size: 12px;
-	}
-
-  .aonDivButton {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-  }
-
-	.aonSearchBox {
-		position: absolute;
-	  height: 40px;
-	  border: none;
-	  -webkit-appearance: none;
-	  outline: 0px;
-		font-size: 14px;
-	}
-
-	.aonFormCenter {
-		display: flex;
-		justify-content: center;
-	}
-
-	.aonConnected {
-		position: absolute;
-		right: 4px;
-		bottom: 6px;
-		background: #35ac19;
-		width: 8px;
-		height: 8px;
-		border-radius: 10px;
-	}
-
-	.aonTable {
-	  width: 100%;
-	  border: 0px;
-	  border-bottom: 1px solid #ddd;
-	}
-
-	.aonTable th {
-	  position: relative;
-	  vertical-align: bottom;
-	  text-overflow: ellipsis;
-	  font-weight: 500;
-	  line-height: 24px;
-	  letter-spacing: 0;
-	  height: 48px;
-	  font-size: 12px;
-	  color: rgb(95, 99, 104);
-	  padding-bottom: 8px;
-	  border-bottom: 1px solid #ddd;
-		padding-left: 8px;
-	}
-
-	.aonTable tbody tr {
-		position: relative;
-		height: 48px;
-	  font-size: 12px;
-		transition-duration: .18s;
-		transition-timing-function: cubic-bezier(.4,0,.2,1);
-		transition-property: background-color;
-	}
-
-	.aonTable tbody tr:hover {
-		background-color: #f1f1f1;
-	}
-
-	.aonTable tbody tr:active {
-		background-color: #bbb;
-	}
-
-	.aonTable td {
-		padding-left: 8px;
-		border-bottom: 1px solid #ddd;
-	}
-
-	.aonCard {
-    border: 1px solid #ebebeb;
-    border-radius: 5px;
-    margin: 10px;
-    min-width: 250px;
-    padding: 15px 22px;
-	}
-
-	.aonDialog {
-		display: none;
-		position: fixed;
-		z-index: 3;
-		padding-top: 100px;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		overflow: auto;
-		background-color: rgba(0,0,0,0.4);
-	}
-
-	.aonDialogContent {
-		background-color: #fefefe;
- 		margin: auto;
- 		padding: 20px;
- 		border: 1px solid #ddd;
- 		width: 80%;
-	}
-
-	.aonProgress, .aonProgress:before {
-  	height: 3px;
-  	width: 100%;
-  	margin: 0;
-		margin-bottom: 5px;
-	}
-
-	.aonProgress {
-  	background-color: #b3d4fc;
-		display: none;
-	}
-
-	.aonProgress:before {
-  	background-color: #002469;
-  	content: '';
-  	-webkit-animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  	animation: running-progress 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-	}
-
-	@-webkit-keyframes running-progress {
-  	0% { margin-left: 0px; margin-right: 100%; }
-  	50% { margin-left: 25%; margin-right: 0%; }
-  	100% { margin-left: 100%; margin-right: 0; }
-	}
-
-	@keyframes running-progress {
-  	0% { margin-left: 0px; margin-right: 100%; }
-  	50% { margin-left: 25%; margin-right: 0%; }
-  	100% { margin-left: 100%; margin-right: 0; }
-	}
-
-
-	.aonDatepickerDaysTitle {
-		color: lightgray;
-	}
-
-	.aonDatepickerDays {
-		text-align: center;
-	}
-
-	.aonDatepicker {
-		display: block;
-		background: #fff;
-		margin: 0;
-		padding: 0;
-		border: none;
-		position: absolute;
-		overflow: visible;
-		width: 0;
-		visibility: hidden;
-		z-index: -1;
-	}
-
-	.aonDatepicker.is-visible {
-		z-index: 999;
-		visibility: visible;
-		width: 100%;
-		padding: 1px;
-		border: 1px solid #ddd;
-		border-radius: 2px;
-	}
-
-.aonRow .aonCol {
-	float: left;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	padding: 0 0.75rem;
 }
 
-.aonContainer {
-	padding: 0 0.5rem;
-	margin: 0 auto;
-	max-width: 100% !important;
+.aonDatepickerDaysTitle {
+  color: lightgray;
 }
 
-.aonContainer .aonRow {
-	margin-left: -0.75rem;
-	margin-right: -0.75rem;
-}
-div[class*='aonCol aonS']{
-	margin-left: auto;
-	left: auto;
-	right: auto;
+.aonDatepickerDays {
+  text-align: center;
 }
 
-/* .aonCol.aonOffset-S6{
-	width: var(--col-width6);
-} */
-
-/* pantalla pequeña */
-.aonRow .aonCol.aonS1 {
-	width: var(--col-width1);
-}
-.aonRow .aonCol.aonS2 {
-	width: var(--col-width2);
-}
-.aonRow .aonCol.aonS3 {
-    width: var(--col-width3);
-}
-.aonRow .aonCol.aonS4 {
-    width: var(--col-width4);
-}
-.aonRow .aonCol.aonS5 {
-    width: var(--col-width5);
-}
-.aonRow .aonCol.aonS6 {
-    width: var(--col-width6);
-}
-.aonRow .aonCol.aonS7 {
-    width: var(--col-width7);
-}
-.aonRow .aonCol.aonS8 {
-    width: var(--col-width8);
-}
-.aonRow .aonCol.aonS9 {
-    width: var(--col-width9);
-}
-.aonRow .aonCol.aonS10 {
-    width: var(--col-width10);
-}
-.aonRow .aonCol.aonS11 {
-    width: var(--col-width11);
-}
-.aonRow .aonCol.aonS12 {
-    width: var(--col-width12);
+.aonDatepicker {
+  display: block;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+  border: none;
+  position: absolute;
+  overflow: visible;
+  width: 0;
+  visibility: hidden;
+  z-index: -1;
 }
 
-/* pantalla media */
-@media only screen and (min-width: 601px) {
-	.aonRow .aonCol.aonM1 {
-		width: var(--col-width1)
-	}
-	.aonRow .aonCol.aonM2 {
-		width: var(--col-width2);
-	}
-	.aonRow .aonCol.aonM3 {
-		width: var(--col-width3);
-	}
-	.aonRow .aonCol.aonM4 {
-		width: var(--col-width4);
-	}
-	.aonRow .aonCol.aonM5 {
-		width: var(--col-width5);
-	}
-	.aonRow .aonCol.aonM6 {
-		width: var(--col-width6);
-	}
-	.aonRow .aonCol.aonM7 {
-		width: var(--col-width7);
-	}
-	.aonRow .aonCol.aonM8 {
-		width: var(--col-width8);
-	}
-	.aonRow .aonCol.aonM9 {
-		width: var(--col-width9);
-	}
-	.aonRow .aonCol.aonM10 {
-		width: var(--col-width10);
-	}
-	.aonRow .aonCol.aonM11 {
-		width: var(--col-width11);
-	}
-	.aonRow .aonCol.aonM12 {
-		width: var(--col-width12);
-	}
-}
-
-/* pantalla grande */
-@media only screen and (min-width: 993px) {
-	.aonRow .aonCol.aonL1 {
-		width: var(--col-width1)
-	}
-	.aonRow .aonCol.aonL2 {
-		width: var(--col-width2);
-	}
-	.aonRow .aonCol.aonL3 {
-		width: var(--col-width3);
-	}
-	.aonRow .aonCol.aonL4 {
-		width: var(--col-width4);
-	}
-	.aonRow .aonCol.aonL5 {
-		width: var(--col-width5);
-	}
-	.aonRow .aonCol.aonL6 {
-		width: var(--col-width6);
-	}
-	.aonRow .aonCol.aonL7 {
-		width: var(--col-width7);
-	}
-	.aonRow .aonCol.aonL8 {
-		width: var(--col-width8);
-	}
-	.aonRow .aonCol.aonL9 {
-		width: var(--col-width9);
-	}
-	.aonRow .aonCol.aonL10 {
-		width: var(--col-width10);
-	}
-	.aonRow .aonCol.aonL11 {
-		width: var(--col-width11);
-	}
-	.aonRow .aonCol.aonL12 {
-		width: var(--col-width12);
-	}
+.aonDatepicker.is-visible {
+  z-index: 999;
+  visibility: visible;
+  width: 100%;
+  padding: 1px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
 }

@@ -6,7 +6,7 @@ export const getMovements = () =>  new Promise((resolve) => {
     resolve([
         {
             id: 1,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE1',
             last_name: 'APELLIDOS', 
             dni: '0Y777777X',
             mov: 'Alta',
@@ -15,7 +15,7 @@ export const getMovements = () =>  new Promise((resolve) => {
         },
         {
             id: 2,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE2',
             last_name: 'APELLIDOS', 
             dni: '0Y777777X',
             mov: 'Alta',
@@ -24,7 +24,7 @@ export const getMovements = () =>  new Promise((resolve) => {
         },
         {
             id: 3,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE3',
             last_name: 'APELLIDOS', 
             dni: '0Y777777X',
             mov: 'Alta',
@@ -33,7 +33,7 @@ export const getMovements = () =>  new Promise((resolve) => {
         },
         {
             id: 4,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE4',
             last_name: 'APELLIDOS', 
             dni: '0Y777777X',
             mov: 'Alta',
@@ -42,7 +42,7 @@ export const getMovements = () =>  new Promise((resolve) => {
         },
         {
             id: 5,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE5',
             last_name: 'APELLIDOS', 
             dni: '0Y777777X',
             mov: 'Alta',
@@ -56,7 +56,7 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
     let jsonValues= [
         {
             id: 1,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE1',
             last_name1: 'APELLIDO1', 
             last_name2: 'APELLIDO2', 
             dni: 'Y11111X',
@@ -67,7 +67,7 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         },
         {
             id: 2,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE2',
             last_name1: 'APELLIDO1', 
             last_name2: 'APELLIDO2', 
             dni: 'Y222X',
@@ -78,7 +78,7 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         },
         {
             id: 3,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE3',
             last_name1: 'APELLIDO1', 
             last_name2: 'APELLIDO2', 
             dni: '33333X',
@@ -89,7 +89,7 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         },
         {
             id: 4,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE4',
             last_name1: 'APELLIDO1', 
             last_name2: 'APELLIDO2', 
             dni: '333311X',
@@ -100,7 +100,7 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         },
         {
             id: 5,
-            nombre: 'NOMBRE',
+            nombre: 'NOMBRE5',
             last_name1: 'APELLIDO1', 
             last_name2: 'APELLIDO2', 
             dni: '123456789X',
