@@ -9,6 +9,7 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -78,4 +79,13 @@ public class HtmlUnitToolkit {
 		InvalidDataException.checkCode(code);
 	}
 
+	//SHOW HTML ELEMENTS AS XML
+	public static void showAsXML(HtmlElement[] elements) {
+		for (HtmlElement e : elements) { if(e != null) System.out.println(e.asXml());}
+	}
+	
+	//SHOW HTML ELEMENTS AS TEXT
+	public static void showAsText(HtmlElement[] elements) {
+		for (HtmlElement e : elements) { if(e != null) System.out.println(e.asText());}
+	}
 }

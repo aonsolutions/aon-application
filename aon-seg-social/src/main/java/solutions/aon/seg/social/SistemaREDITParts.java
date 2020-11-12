@@ -1,9 +1,5 @@
 package solutions.aon.seg.social;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -16,9 +12,13 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
@@ -35,6 +35,7 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class SistemaREDITParts {
+		
 	
 	//GET ITs
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
@@ -184,10 +185,135 @@ public class SistemaREDITParts {
 		}		
 	}
 
-
+	//HANDLE IT PART ERRORS
 	private static void handleItPartErrors(HtmlPage htmlPage) throws InvalidDataException {
 		DomNode errors = htmlPage.querySelector("#errores");
 		if(errors != null) throw new InvalidDataException();
 		
 	}	
+	
+	public static String[] causes = {"Baja","Confirmación","Alta"};
+	
+	//CONTINGENCIES 
+	public static enum Contingencies{
+		ENFERMEDAD_COMUN,
+		ACCIDENTE_NO_LABORAL,
+		ACCIDENT_LABORAL,
+		ENFERMEDAD_PROFESIONAL,
+		PERIODOS_OBSERVACIÓN;
+	}
+	
+	//PART TYPE 
+	public static enum PartType{
+		ALTA,
+		CONFIRMACION,
+		BAJA;
+	}
+	
+	//CONTRACTS
+	public static enum ContractType{
+		FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL,
+		RESTO_Y_AUTONOMOS
+	}
+	
+	//REGISTER IT START HANDLE EXCEPTIONS
+	public static void addItStart(InputStream certificateInputStream, String certificatePassword,String certificateType,
+			String regime, String ccc, String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType) throws StatusCodeException, InvalidCertificateException, MalformedURLException, IOException, InvalidDataException {
+		
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, licenseNumber, cias, startdate, contractType});
+		
+		try{ addItStartImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency,licenseNumber, cias, startdate, contractType);}
+		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+	}
+	
+	//REGISTER IT START
+	private static void addItStartImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc,
+			String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType) throws InvalidCertificateException, FailingHttpStatusCodeException, MalformedURLException, IOException, InvalidDataException {
+		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
+			HtmlOption type = htmlPage.querySelector("#tipoParte option:nth-child(2)");
+			htmlPage = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
+			
+			Integer[] arr_startDate = Toolkit.getDateArray(startdate);		
+			ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber, new int[]{2,4});
+			
+			HtmlInput n_coleg_1_in = htmlPage.querySelector("#ncol_0");
+			HtmlInput n_coleg_2_in = htmlPage.querySelector("#ncol_1");
+			HtmlInput n_coleg_3_in = htmlPage.querySelector("#ncol_2");
+			HtmlInput cias_in = htmlPage.querySelector("#cias");
+			HtmlInput startDate_dd_in = htmlPage.querySelector("#fechaBaja_dd");			
+			HtmlInput startDate_mm_in = htmlPage.querySelector("#fechaBaja_mm");			
+			HtmlInput startDate_aa_in = htmlPage.querySelector("#fechaBaja_aa");	
+			
+			n_coleg_1_in.setValueAttribute(n_coleg_arr_ls.get(0));
+			n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
+			n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
+			cias_in.setValueAttribute(cias);
+			startDate_dd_in.setValueAttribute(arr_startDate[0] + "");
+			startDate_mm_in.setValueAttribute(arr_startDate[1] + "");
+			startDate_aa_in.setValueAttribute(arr_startDate[2] + "");
+			
+			HtmlOption contract_type_opt = null;
+			
+			switch (contractType) {
+				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL: 	contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(2)");	break;
+				case RESTO_Y_AUTONOMOS:						contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(3)");	break;
+			}
+			
+			HtmlUnitToolkit.showAsXML(new HtmlElement[]{contract_type_opt});
+		} 
+	}
+	
+	
+	//COMMON DATA FILLING
+	private static HtmlPage fillCommonData(HtmlPage htmlPage,String regime, String ccc, String naf, Contingencies contingency,PartType type) throws IOException, InvalidDataException {
+		HtmlInput regime_in = htmlPage.querySelector("#regimen");
+		HtmlInput ccc_1_in = htmlPage.querySelector("#ccc1");
+		HtmlInput ccc_2_in = htmlPage.querySelector("#ccc2");
+		HtmlInput naf_1_in = htmlPage.querySelector("#naf1");
+		HtmlInput naf_2_in = htmlPage.querySelector("#naf2");
+		HtmlOption contingency_opt = null;
+		HtmlSubmitInput accept = (HtmlSubmitInput) htmlPage.querySelector("#situacionTrabajador").getNextSibling().getNextSibling();
+		
+		switch(contingency) {
+			case ENFERMEDAD_COMUN: 			contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(2)");	break;
+			case ACCIDENTE_NO_LABORAL: 		contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(3)");	break;
+			case ACCIDENT_LABORAL: 			contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(4)"); 	break;
+			case ENFERMEDAD_PROFESIONAL: 	contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(5)"); 	break;
+			case PERIODOS_OBSERVACIÓN: 		contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(6)"); 	break;
+		}
+		
+		String[] ccc_arr =  Toolkit.SplitString(ccc, 2);
+		String[] naf_arr =  Toolkit.SplitString(naf, 2);
+		
+		regime_in.setValueAttribute(regime);
+		ccc_1_in.setValueAttribute(ccc_arr[0]);
+		ccc_2_in.setValueAttribute(ccc_arr[1]);
+		
+		naf_1_in.setValueAttribute(naf_arr[0]);
+		naf_2_in.setValueAttribute(naf_arr[1]);
+		
+		htmlPage = accept.click();		
+		return htmlPage;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

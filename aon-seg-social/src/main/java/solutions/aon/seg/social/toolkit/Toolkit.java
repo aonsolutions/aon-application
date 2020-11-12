@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -77,11 +78,28 @@ public class Toolkit {
 		return null;
 	}
 	
-	//SPLITS AN STRING AND RETURNS AN ARRAY
-	public static String[] SplitString(String str, int i) {
-		return new String[] {str.substring(0,i),str.substring(i)};
+	//SPLITS AN STRING BY 2 AND RETURNS AN ARRAY
+	public static String[] SplitString(String str, int i) throws InvalidDataException {
+		try {return new String[] {str.substring(0,i),str.substring(i)};}
+		catch(StringIndexOutOfBoundsException e) {throw new InvalidDataException();}
 	}
 	
+	//SPLITS AN ARRAY MULTIPLE TIMES AND RETURNS AN ARRAY
+	public static ArrayList<String> splitString_m(String str, int[] indexes) throws InvalidDataException {
+		try {
+			ArrayList<String> result = new ArrayList<String>();
+			int ant = 0;
+			for (int i : indexes) {
+				String cut = str.substring(ant,i);
+				ant = i;
+				result.add(cut);
+			}
+			result.add(str.substring(ant));
+			
+			return result;
+		}
+		catch(StringIndexOutOfBoundsException e) {throw new InvalidDataException();}
+	}
 	
 	//CONVERTS A BYTE ARRAY INTO A PDF FILE ON THE PROJECT FOLDER PATH
 	public static void buildPdf (byte[] arr_bytes, String docName) {

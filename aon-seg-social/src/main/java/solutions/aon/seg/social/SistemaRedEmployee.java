@@ -32,14 +32,13 @@ public class SistemaRedEmployee {
 				final String certificateType, String regimen, String ccc) throws SegSocialException 
 		{
 			InvalidCertificateException.checkCertificate(certificateInputStream);
-			try {return getEmployeesFullImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
-} 
+			try {return getEmployeesFullImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);} 
 			catch (FailingHttpStatusCodeException e) {
 				switch (e.getStatusCode()) {
 				case 403:
 					throw new ForbiddenException();
 				default:
-					throw new SegSocialException(e);
+					throw new StatusCodeException();
 				}
 			} 
 			catch (MalformedURLException e) {throw new SegSocialException(e);} 
