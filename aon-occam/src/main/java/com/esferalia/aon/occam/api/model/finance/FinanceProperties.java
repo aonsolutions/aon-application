@@ -16,7 +16,8 @@ public interface FinanceProperties {
 	Property<String> getConceptProperty();
 	Property<Byte> getStatusProperty();
 	Property<Byte> getConfidentialProperty();
-	Property<String> getInvoiceReferenceCode();
+	Property<String> getInvoiceReferenceCodeProperty();
+	Property<Date> getInvoiceDateProperty();
 	Property<Integer> getPayMethodProperty();
 
 }

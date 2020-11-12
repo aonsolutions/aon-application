@@ -23,6 +23,8 @@ import com.esferalia.aon.gwt.fiscal.client.FinanceService;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsync;
 import com.esferalia.aon.gwt.fiscal.client.FinanceServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
+import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFinanceStatusVisitor;
@@ -48,7 +50,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -64,6 +68,8 @@ public class FinanceModule extends MainEntryPoint {
 		SafeHtml tab(String title, String icon);
 	}
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
+	
+	private static final String FINANCE_REPORT_EXCEL_PRINT = "/aon_gwt_fiscal/roms/FinanceReportExcelPrint";
 	
 	private static FinanceServiceAsync FINANCE_SERVICE;
 	private static CommonServiceAsync COMMON_SERVICE;
@@ -276,6 +282,20 @@ public class FinanceModule extends MainEntryPoint {
 	private Widget getToolbarPanel(final FinanceModuleOptions opt) {
 		toolbar = new AonToolbar(AON.MSG.financeModule());
 
+		FormPanel diskForm = new FormPanel("_blank");
+		diskForm.setMethod(FormPanel.METHOD_POST);
+		Hidden financeParamsHidden = new Hidden(IRequestParamsNames.FINANCE_PARAMS);
+		Hidden domainIdHidden = new Hidden(IRequestParamsNames.DOMAIN_ID);
+		Hidden domainNameHidden= new Hidden(IRequestParamsNames.DOMAIN_NAME);
+		Hidden userHidden = new Hidden(IRequestParamsNames.USER);
+		FlowPanel formFlowPanel = new FlowPanel();
+		diskForm.add(formFlowPanel);
+		formFlowPanel.add(financeParamsHidden);
+		formFlowPanel.add(domainIdHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(userHidden);
+		toolbar.add(diskForm);
+
 		searchButton = new AonToolbarButton( AON.MSG.searchAction(), AON.CSS.aonIconSearch() );
 		searchButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -295,7 +315,12 @@ public class FinanceModule extends MainEntryPoint {
 		exportButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Window.alert("No implementado");
+				diskForm.setAction(GWT.getHostPageBaseURL() + FINANCE_REPORT_EXCEL_PRINT);
+				financeParamsHidden.setValue(JsonParams.convert(searchPanel.getParams( opt )));
+				domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
+				domainNameHidden.setValue(getCurrentDomainName());
+				userHidden.setValue(getCurrentUser());
+				diskForm.submit();
 			}
 		});
 		toolbar.add(exportButton);
@@ -385,6 +410,7 @@ public class FinanceModule extends MainEntryPoint {
 			}
 		});
 		toolbar.add(settleAllButton);
+	
 		return toolbar;
 	}
 	

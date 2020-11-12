@@ -432,6 +432,8 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 		nearbyNumbers.setValue(false);
 		fromInvoiceDate.setValue(null);
 		toInvoiceDate.setValue(null);
+		fromDueDate.setValue(null);
+		toDueDate.setValue(null);
 		payMethod.setSelectedIndex(0);
 		confidential.setSelectedIndex(2);
 		registryBox.setValue( (AccountingRegistry) null, false);
@@ -454,8 +456,10 @@ public class FinanceModuleSearchPanel extends SimpleLayoutPanel implements Focus
 				&& opt.getConfiguration().getUser().hasConfidentialityRole();
 		return new FinanceParams()
 			.setDomain(opt.getDomain())
-			.setFrom(fromInvoiceDate.getValue())
-			.setTo(toInvoiceDate.getValue())
+			.setFromInvoiceDate(fromInvoiceDate.getValue())
+			.setToInvoiceDate(toInvoiceDate.getValue())
+			.setFromDueDate(fromDueDate.getValue())
+			.setToDueDate(toDueDate.getValue())
 			.setRegistry(registryBox.getId())
 			.setAmount((amount.getValue() != null && amount.getValue()!=0)?amount.getValue():null)
 			.setNearbyNumbers(nearbyNumbers.getValue())

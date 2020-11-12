@@ -4,6 +4,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -181,4 +182,29 @@ public class JsonParams extends JSONObject {
 		return json.toString();
 	}
 	
+	public static String convert(FinanceParams params) {		
+		JSONObject json = new JSONObject();
+		JSONNull JSON_NULL = JSONNull.getInstance();
+		json.put(IRequestParamsNames.DOMAIN   		,new JSONNumber( params.getDomain()));
+		json.put(IRequestParamsNames.FROM_DATE 		,params.getFromInvoiceDate() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromInvoiceDate())));
+		json.put(IRequestParamsNames.TO_DATE  	 	,params.getToInvoiceDate()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToInvoiceDate())));
+		json.put(IRequestParamsNames.FROM_DUE_DATE 		,params.getFromDueDate() == null? JSON_NULL : new JSONString( FORMATTER.format(params.getFromDueDate())));
+		json.put(IRequestParamsNames.TO_DUE_DATE  	 	,params.getToDueDate()   == null? JSON_NULL : new JSONString( FORMATTER.format(params.getToDueDate())));
+		json.put(IRequestParamsNames.SECURITY_LEVEL ,params.getSecurityLevel() == null?JSON_NULL :new JSONNumber( params.getSecurityLevel().value()));
+		json.put(IRequestParamsNames.HAS_CONFIDENTIALITY_ROLE,new JSONNumber( params.hasConfidentialityRole()?1:0));
+		json.put(IRequestParamsNames.PAYMENT		,params.getPayment()   == null? JSON_NULL : new JSONNumber( params.getPayment()?1:0));
+		json.put(IRequestParamsNames.PENDING,new JSONNumber( params.isPending()?1:0));
+		json.put(IRequestParamsNames.BATCHED,new JSONNumber( params.isBatched()?1:0));
+		json.put(IRequestParamsNames.RETURNED,new JSONNumber( params.isReturned()?1:0));
+		json.put(IRequestParamsNames.PAID,new JSONNumber( params.isPaid()?1:0));
+		json.put(IRequestParamsNames.SETTLED,new JSONNumber( params.isSettled()?1:0));
+		json.put(IRequestParamsNames.REGISTRY 		,params.getRegistry() == null? JSON_NULL : new JSONNumber( params.getRegistry()));
+		json.put(IRequestParamsNames.AMOUNT			,params.getAmount()   == null? JSON_NULL : new JSONNumber( params.getAmount()));		
+		json.put(IRequestParamsNames.NEARBY_NUMBERS,new JSONNumber( params.isNearbyNumbers()?1:0));
+		json.put(IRequestParamsNames.CONCEPT  	 	 ,AonStringUtils.isBlank(params.getConcept())? JSON_NULL : new JSONString( params.getConcept()));
+		json.put(IRequestParamsNames.REFERENCE_CODE,AonStringUtils.isBlank(params.getReferenceCode())? JSON_NULL : new JSONString( params.getReferenceCode()));
+		json.put(IRequestParamsNames.PAY_METHOD	,params.getPayMethod() 		== null? JSON_NULL : new JSONNumber( params.getPayMethod()));		
+		json.put(IRequestParamsNames.ORDER_BY		,new JSONNumber( params.getOrder()));		
+		return json.toString();
+	}
 }

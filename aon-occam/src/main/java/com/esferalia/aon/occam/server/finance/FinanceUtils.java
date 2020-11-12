@@ -36,11 +36,17 @@ public class FinanceUtils {
 		if (params.getPayment() != null) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()) ));
 		}
-		if (params.getFrom() != null) {
-			prop = prop.and(p.getDueDateProperty().ge(params.getFrom()));
+		if (params.getFromInvoiceDate() != null) {
+			prop = prop.and(p.getInvoiceDateProperty().ge(params.getFromInvoiceDate()));
 		}
-		if (params.getTo() != null) {
-			prop = prop.and(p.getDueDateProperty().le(params.getTo()));
+		if (params.getToInvoiceDate() != null) {
+			prop = prop.and(p.getInvoiceDateProperty().le(params.getToInvoiceDate()));
+		}
+		if (params.getFromDueDate() != null) {
+			prop = prop.and(p.getDueDateProperty().ge(params.getFromDueDate()));
+		}
+		if (params.getToDueDate() != null) {
+			prop = prop.and(p.getDueDateProperty().le(params.getToDueDate()));
 		}
 		if (params.getRegistry() != null) {
 			prop = prop.and(p.getRegistryProperty().eq(params.getRegistry()));
@@ -50,7 +56,7 @@ public class FinanceUtils {
 					AonStringUtils.SQLlike(params.getConcept())));
 		}
 		if (AonStringUtils.isNotEmpty(params.getReferenceCode())) {
-			prop = prop.and(p.getInvoiceReferenceCode().like(AonStringUtils.SQLlike(params.getReferenceCode())));
+			prop = prop.and(p.getInvoiceReferenceCodeProperty().like(AonStringUtils.SQLlike(params.getReferenceCode())));
 		}
 		if (params.getAmount() != null && AonMathUtils.isNotZero(params.getAmount())) {
 			if (params.isNearbyNumbers()) {

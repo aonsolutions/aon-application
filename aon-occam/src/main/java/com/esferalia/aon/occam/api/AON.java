@@ -1721,11 +1721,18 @@ public class AON {
 	}
 
 	public static LinkedList<Finance> getFinances(String domainName, int domain, String user, FinanceParams params,int offset, int limit) {
+		return getFinancesStream(domainName, domain, user, p -> FinanceUtils.getFilter(p, params),offset,limit)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	public static Stream<Finance> getFinancesStream(String domainName, int domain, String user, FinanceParams params,int offset, int limit) {
+		return getFinancesStream(domainName, domain, user, p -> FinanceUtils.getFilter(p, params),offset,limit);
+	}
+	
+	public static Stream<Finance> getFinancesStream(String domainName, int domain, String user, FinanceFilter filter,int offset, int limit) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().getFinanceStream(ctx, p -> FinanceUtils.getFilter(p, params),offset,limit)
-					.collect(Collectors.toCollection(LinkedList::new));
+			return getFinance().getFinanceStream(ctx, filter,offset,limit);
 		} finally {
 			if (ctx != null)
 				ctx.close();

@@ -10,8 +10,11 @@ public class FinanceParams implements Serializable{
 	private static final long serialVersionUID = 7399522390660289406L;
 	
 	private int domain;
-	private Date from;
-	private Date to;
+	private String domainName;
+	private Date fromInvoiceDate;
+	private Date toInvoiceDate;
+	private Date fromDueDate;
+	private Date toDueDate;
 	private SecurityLevel securityLevel; 
 	private boolean hasConfidentialityRole;
 	private Boolean payment;
@@ -38,18 +41,39 @@ public class FinanceParams implements Serializable{
 		this.domain = domain;
 		return this;
 	}
-	public Date getFrom() {
-		return from;
+	public String getDomainName() {
+		return domainName;
 	}
-	public FinanceParams setFrom(Date from) {
-		this.from = from;
+	public FinanceParams setDomainName(String domainName) {
+		this.domainName = domainName;
 		return this;
 	}
-	public Date getTo() {
-		return to;
+	public Date getFromInvoiceDate() {
+		return fromInvoiceDate;
 	}
-	public FinanceParams setTo(Date to) {
-		this.to = to;
+	public FinanceParams setFromInvoiceDate(Date fromInvoiceDate) {
+		this.fromInvoiceDate = fromInvoiceDate;
+		return this;
+	}
+	public Date getToInvoiceDate() {
+		return toInvoiceDate;
+	}
+	public FinanceParams setToInvoiceDate(Date toInvoiceDate) {
+		this.toInvoiceDate = toInvoiceDate;
+		return this;
+	}
+	public Date getFromDueDate() {
+		return fromDueDate;
+	}
+	public FinanceParams setFromDueDate(Date fromDueDate) {
+		this.fromDueDate = fromDueDate;
+		return this;
+	}
+	public Date getToDueDate() {
+		return toDueDate;
+	}
+	public FinanceParams setToDueDate(Date toDueDate) {
+		this.toDueDate = toDueDate;
 		return this;
 	}
 	public Integer getRegistry() {

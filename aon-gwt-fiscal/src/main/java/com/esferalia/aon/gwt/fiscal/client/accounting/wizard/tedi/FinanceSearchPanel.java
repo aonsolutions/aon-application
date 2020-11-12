@@ -405,8 +405,8 @@ public class FinanceSearchPanel extends DockLayoutPanel implements Focusable, Ha
 		
 		FinanceParams params = new FinanceParams()
 			.setDomain(this.domainId)
-			.setFrom(fromDate.getValue())
-			.setTo(toDate.getValue())
+			.setFromDueDate(fromDate.getValue())
+			.setToDueDate(toDate.getValue())
 			.setRegistry(registryBox.getId())
 			.setAmount((amount.getValue() != null && amount.getValue()!=0)?amount.getValue():null)
 			.setNearbyNumbers(nearbyNumbers.getValue())

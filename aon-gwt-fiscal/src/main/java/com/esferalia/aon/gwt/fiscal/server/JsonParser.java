@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.AccountEntryParams;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -493,6 +494,104 @@ public class JsonParser {
 			params.setConsolidation(consolidation==1);
 		}
 
+		return params;
+	}
+	
+	public static FinanceParams parseFinanceParams(String financeParams) throws ParseException, java.text.ParseException {
+		FinanceParams params = new FinanceParams();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonParams =  (JSONObject) parser.parse(financeParams);
+		
+		String domainName = (String) jsonParams.get(IRequestParamsNames.DOMAIN_NAME);
+		params.setDomainName(domainName);
+
+		Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
+		params.setDomain(domain.intValue());
+		
+		String fromInvoiceDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
+		if (AonStringUtils.isNotBlank(fromInvoiceDate)) {
+			params.setFromInvoiceDate( FORMATTER.parse(fromInvoiceDate));			
+		}
+		String toInvoiceDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
+		if (AonStringUtils.isNotBlank(toInvoiceDate)) {
+			params.setToInvoiceDate( FORMATTER.parse(toInvoiceDate));			
+		}
+
+		String fromDueDate = (String) jsonParams.get(IRequestParamsNames.FROM_DUE_DATE);
+		if (AonStringUtils.isNotBlank(fromDueDate)) {
+			params.setFromDueDate( FORMATTER.parse(fromDueDate));			
+		}
+		String toDueDate = (String) jsonParams.get(IRequestParamsNames.TO_DUE_DATE);
+		if (AonStringUtils.isNotBlank(toDueDate)) {
+			params.setToInvoiceDate( FORMATTER.parse(toDueDate));			
+		}
+
+		Long securityLevel = (Long) jsonParams.get(IRequestParamsNames.SECURITY_LEVEL);
+		if (securityLevel != null) {
+			params.setSecurityLevel( SecurityLevel.safeValueOf( securityLevel.intValue() ));
+		}
+		Long hasConfidentialityRole = (Long) jsonParams.get(IRequestParamsNames.HAS_CONFIDENTIALITY_ROLE);
+		if (hasConfidentialityRole!= null) {
+			params.setHasConfidentialityRole(hasConfidentialityRole==1);	
+		}
+
+		Long payment= (Long) jsonParams.get(IRequestParamsNames.PAYMENT);
+		if (payment!= null) {
+			params.setPayment(payment==1);	
+		}
+		
+		Long pending= (Long) jsonParams.get(IRequestParamsNames.PENDING);
+		if (pending!= null) {
+			params.setPending(pending==1);	
+		}
+
+		Long batched= (Long) jsonParams.get(IRequestParamsNames.BATCHED);
+		if (batched!= null) {
+			params.setBatched(batched==1);	
+		}
+
+		Long returned= (Long) jsonParams.get(IRequestParamsNames.RETURNED);
+		if (returned!= null) {
+			params.setReturned(returned==1);	
+		}
+
+		Long paid= (Long) jsonParams.get(IRequestParamsNames.PAID);
+		if (paid!= null) {
+			params.setPaid(paid==1);	
+		}
+
+		Long settled= (Long) jsonParams.get(IRequestParamsNames.SETTLED);
+		if (settled!= null) {
+			params.setSettled(settled==1);	
+		}
+		Long registry = (Long) jsonParams.get(IRequestParamsNames.REGISTRY);
+		if (registry != null) {
+			params.setRegistry(registry.intValue());	
+		}
+		Number amount = (Number) jsonParams.get(IRequestParamsNames.AMOUNT);
+		if (amount != null) {
+			params.setAmount(amount.doubleValue());	
+		}
+		Long nearbyNumbers= (Long) jsonParams.get(IRequestParamsNames.NEARBY_NUMBERS);
+		if (nearbyNumbers!= null) {
+			params.setNearbyNumbers(nearbyNumbers==1);	
+		}
+		String concept = (String) jsonParams.get(IRequestParamsNames.CONCEPT);
+		if (AonStringUtils.isNotBlank(concept)) {
+			params.setConcept(concept);			
+		}
+		String referenceCode = (String) jsonParams.get(IRequestParamsNames.REFERENCE_CODE);
+		if (AonStringUtils.isNotBlank(referenceCode)) {
+			params.setConcept(referenceCode);			
+		}
+		Number payMethod = (Number) jsonParams.get(IRequestParamsNames.PAY_METHOD);
+		if (payMethod != null) {
+			params.setPayMethod(payMethod.intValue());	
+		}
+		Number order = (Number) jsonParams.get(IRequestParamsNames.ORDER_BY);
+		if (order != null) {
+			params.setOrder(order.intValue());	
+		}
 		return params;
 	}
 }

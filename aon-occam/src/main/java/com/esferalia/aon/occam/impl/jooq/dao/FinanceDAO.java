@@ -77,7 +77,8 @@ public class FinanceDAO {
 		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<Double>(FINANCE.AMOUNT);}
 		@Override public Property<String> getConceptProperty() {return new FilterDAO.PropertyDAO<String>(FINANCE.CONCEPT);}
 		@Override public Property<Byte> getPaymentProperty() {return new FilterDAO.PropertyDAO<Byte>(FINANCE.PAYMENT);}
-		@Override public Property<String> getInvoiceReferenceCode() {return new FilterDAO.PropertyDAO<String>(INVOICE.REFERENCE_CODE);}
+		@Override public Property<Date> getInvoiceDateProperty() {return new FilterDAO.DatePropertyDAO(INVOICE.ISSUE_DATE);}
+		@Override public Property<String> getInvoiceReferenceCodeProperty() {return new FilterDAO.PropertyDAO<String>(INVOICE.REFERENCE_CODE);}
 		@Override public Property<Integer> getPayMethodProperty() {return new FilterDAO.PropertyDAO<Integer>(FINANCE.PAY_METHOD);}
 	}
 	

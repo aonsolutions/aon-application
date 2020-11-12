@@ -8,6 +8,7 @@ public interface IRequestParamsNames {
 	String ACCOUNT_PARAMS = "accountParams";
 	String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
 	String ACCOUNT_REPORT_PARAMS = "accountReportParams";
+	String FINANCE_PARAMS = "financeParams";	
 	String VAT_PARAMS = "vatParams";
 
 	String OFFSET = "offset";
@@ -23,6 +24,8 @@ public interface IRequestParamsNames {
 	String ACTIVITY_DESCRIPTION = "activityDescription";
 	String FROM_DATE = "fromDate";
 	String TO_DATE = "toDate";
+	String FROM_DUE_DATE = "fromDueDate";
+	String TO_DUE_DATE = "toDueDate";
 	String PERCENT = "percent";
 	String REGISTRY_ID = "registryId";
 	String PRODUCT_ID = "productId";
@@ -44,6 +47,7 @@ public interface IRequestParamsNames {
 	String ACCOUNT_ENTRY_ID = "accountEntryId";
 	String JOURNAL = "journal";
 	String CONFIDENTIAL = "confidential";
+	String SECURITY_LEVEL = "securityLevel";
 	String ACCOUNT = "account";
 	String ACCOUNT_CODE = "accountCode";
 	String ACCOUNT_DESCRIPTION = "accountDescription";
@@ -110,4 +114,16 @@ public interface IRequestParamsNames {
 
 	String FILE_DATA = "fileData";
 	String IRPF_PARAMS = "irpfParams";
+	String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";
+	String PAYMENT = "payment";
+	String PENDING = "pending";
+	String BATCHED = "batched";
+	String RETURNED = "returned";
+	String PAID = "paid";
+	String SETTLED = "settled";
+	String AMOUNT = "amount";
+	String NEARBY_NUMBERS = "nearbyNumbers";
+	String REFERENCE_CODE = "referenceCode";
+	String PAY_METHOD = "payMethod";
+	
 }
