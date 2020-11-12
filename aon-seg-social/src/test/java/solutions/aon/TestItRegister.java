@@ -14,9 +14,10 @@ import solutions.aon.seg.social.SistemaREDITParts.ContractType;
 public class TestItRegister {
 
 	@Test
+	@Ignore
 	public void registerItCertificateTest() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITParts.addItStart(certificateInputStream,"jg@FNMT","pkcs12", "0111", "01105360062", "291136796369", Contingencies.ENFERMEDAD_COMUN, "1342341245", "0123456789", new Date(), ContractType.RESTO_Y_AUTONOMOS);
+			SistemaREDITParts.addItStart(certificateInputStream,"jg@FNMT","pkcs12", "0111", "01105360062", "291136796369", Contingencies.ENFERMEDAD_COMUN, "1342341245", "0123456789", new Date(), ContractType.RESTO_Y_AUTONOMOS,2.3f,23);
 		} catch (Exception e) {System.err.println(e);}
 	}
 	

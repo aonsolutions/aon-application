@@ -117,12 +117,12 @@ public class SistemaREDITParts {
 			
 			while(!last) {
 				HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
-				HtmlPage htmlPage = HtmlUnitToolkit.wait4(origen, p -> p.getAnchorByHref("https://w2.seg-social.es/isincaA/inicio.do")).orElseThrow().click();
-				htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
+				HtmlPage document = HtmlUnitToolkit.wait4(origen, p -> p.getAnchorByHref("https://w2.seg-social.es/isincaA/inicio.do")).orElseThrow().click();
+				document = document.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
 				
-				HtmlForm formularioPartes = htmlPage.getFormByName("BuscaPartesForm");
+				HtmlForm formularioPartes = document.getFormByName("BuscaPartesForm");
 				formularioPartes.getInputByName("regimen").setValueAttribute(regime);
-				htmlPage.getElementById("ccc1").setAttribute("value", ccc.substring(0,2));
+				document.getElementById("ccc1").setAttribute("value", ccc.substring(0,2));
 				formularioPartes.getInputByName("ccc2").setValueAttribute(ccc.substring(2));
 				
 				Integer[] fromArray = Toolkit.getDateArray(from);
@@ -137,13 +137,13 @@ public class SistemaREDITParts {
 				formularioPartes.getInputByName("fechaHasta_aa").setValueAttribute(toArray[2].toString());
 				
 				HtmlInput show = (HtmlInput) formularioPartes.querySelectorAll("input[type=submit]").get(0);
-				htmlPage = show.click();
-				handleItPartErrors(htmlPage);
+				document = show.click();
+				handleItPartErrors(document);
 	
 				ITPartBuilder builder = new ITPartBuilder();
 				String format = "dd/MM/yyyy";
 					
-				DomNodeList<DomNode> rows = htmlPage.querySelectorAll(".resultados>tbody>tr");
+				DomNodeList<DomNode> rows = document.querySelectorAll(".resultados>tbody>tr");
 				for (DomNode row : rows) {
 					ArrayList<String> data = new ArrayList<String>(); 
 					Iterable<DomNode> cells = row.getChildren();	
@@ -218,34 +218,57 @@ public class SistemaREDITParts {
 	
 	//REGISTER IT START HANDLE EXCEPTIONS
 	public static void addItStart(InputStream certificateInputStream, String certificatePassword,String certificateType,
-			String regime, String ccc, String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType) throws StatusCodeException, InvalidCertificateException, MalformedURLException, IOException, InvalidDataException {
+			String regime, String ccc, String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, 
+			ContractType contractType,  float baseCot , int cotDays) throws StatusCodeException, InvalidCertificateException, MalformedURLException, IOException, InvalidDataException {
 		
-		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, licenseNumber, cias, startdate, contractType});
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, licenseNumber, cias, startdate, contractType,baseCot,cotDays});
 		
-		try{ addItStartImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency,licenseNumber, cias, startdate, contractType);}
+		try{ addItStartImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency,licenseNumber, cias, startdate, contractType, baseCot, cotDays);}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
 	}
 	
 	//REGISTER IT START
 	private static void addItStartImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc,
-			String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType) throws InvalidCertificateException, FailingHttpStatusCodeException, MalformedURLException, IOException, InvalidDataException {
+			String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType, float base_cot , int cotDays) throws InvalidCertificateException, FailingHttpStatusCodeException, MalformedURLException, IOException, InvalidDataException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			
-			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
-			HtmlOption type = htmlPage.querySelector("#tipoParte option:nth-child(2)");
-			htmlPage = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
+			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
+			HtmlOption type = document.querySelector("#tipoParte option:nth-child(2)");
+			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
 			
 			Integer[] arr_startDate = Toolkit.getDateArray(startdate);		
 			ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber, new int[]{2,4});
+			String[] arr_base_cot = Toolkit.splitDecimal(base_cot);
 			
-			HtmlInput n_coleg_1_in = htmlPage.querySelector("#ncol_0");
-			HtmlInput n_coleg_2_in = htmlPage.querySelector("#ncol_1");
-			HtmlInput n_coleg_3_in = htmlPage.querySelector("#ncol_2");
-			HtmlInput cias_in = htmlPage.querySelector("#cias");
-			HtmlInput startDate_dd_in = htmlPage.querySelector("#fechaBaja_dd");			
-			HtmlInput startDate_mm_in = htmlPage.querySelector("#fechaBaja_mm");			
-			HtmlInput startDate_aa_in = htmlPage.querySelector("#fechaBaja_aa");	
+			HtmlInput n_coleg_1_in = document.querySelector("#ncol_0");
+			HtmlInput n_coleg_2_in = document.querySelector("#ncol_1");
+			HtmlInput n_coleg_3_in = document.querySelector("#ncol_2");
+			HtmlInput cias_in = document.querySelector("#cias");
+			HtmlInput startDate_dd_in = document.querySelector("#fechaBaja_dd");			
+			HtmlInput startDate_mm_in = document.querySelector("#fechaBaja_mm");			
+			HtmlInput startDate_aa_in = document.querySelector("#fechaBaja_aa");	
+
+						
+			HtmlOption contract_type_opt = null;
+			HtmlInput cot_base_in_1 = null;
+			HtmlInput cot_base_in_2 = null;
+			HtmlInput cot_days_in = null;
 			
+			switch (contractType) {
+				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL: 	
+					contract_type_opt = document.querySelector("#tipoContrato option:nth-child(2)");	
+					cot_base_in_1 = document.querySelector("#sumaBC1");
+					cot_base_in_2 = document.querySelector("#sumaBC2");
+					cot_days_in = document.querySelector("#sumaDias");
+					break;
+				case RESTO_Y_AUTONOMOS:						
+					contract_type_opt = document.querySelector("#tipoContrato option:nth-child(3)");	
+					cot_base_in_1 = document.querySelector("#baseCotizacion1");
+					cot_base_in_2 = document.querySelector("#baseCotizacion2");
+					cot_days_in = document.querySelector("#diasCot");
+					break;
+			}
+						
 			n_coleg_1_in.setValueAttribute(n_coleg_arr_ls.get(0));
 			n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
 			n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
@@ -253,36 +276,41 @@ public class SistemaREDITParts {
 			startDate_dd_in.setValueAttribute(arr_startDate[0] + "");
 			startDate_mm_in.setValueAttribute(arr_startDate[1] + "");
 			startDate_aa_in.setValueAttribute(arr_startDate[2] + "");
+			cot_base_in_1.setValueAttribute(arr_base_cot[0]);
+			cot_base_in_2.setValueAttribute(arr_base_cot[1]);
+			cot_days_in.setValueAttribute(cotDays + "");
 			
-			HtmlOption contract_type_opt = null;
+			document = contract_type_opt.click();
 			
-			switch (contractType) {
-				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL: 	contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(2)");	break;
-				case RESTO_Y_AUTONOMOS:						contract_type_opt = htmlPage.querySelector("#tipoContrato option:nth-child(3)");	break;
-			}
+			HtmlSubmitInput validate = document.querySelector("#Validar");
+			document = validate.click();
 			
-			HtmlUnitToolkit.showAsXML(new HtmlElement[]{contract_type_opt});
+			HtmlUnitToolkit.showAsXML(new HtmlElement[]{cot_base_in_1,cot_base_in_2,cot_days_in});
+			Toolkit.buildFile(document.getWebResponse().getContentAsStream().readAllBytes(),"coso.txt");
+			
 		} 
 	}
 	
 	
 	//COMMON DATA FILLING
-	private static HtmlPage fillCommonData(HtmlPage htmlPage,String regime, String ccc, String naf, Contingencies contingency,PartType type) throws IOException, InvalidDataException {
-		HtmlInput regime_in = htmlPage.querySelector("#regimen");
-		HtmlInput ccc_1_in = htmlPage.querySelector("#ccc1");
-		HtmlInput ccc_2_in = htmlPage.querySelector("#ccc2");
-		HtmlInput naf_1_in = htmlPage.querySelector("#naf1");
-		HtmlInput naf_2_in = htmlPage.querySelector("#naf2");
+	private static HtmlPage fillCommonData(HtmlPage document,String regime, String ccc, String naf, Contingencies contingency,PartType type) throws IOException, InvalidDataException {
+		HtmlInput regime_in = document.querySelector("#regimen");
+		HtmlInput ccc_1_in = document.querySelector("#ccc1");
+		HtmlInput ccc_2_in = document.querySelector("#ccc2");
+		HtmlInput naf_1_in = document.querySelector("#naf1");
+		HtmlInput naf_2_in = document.querySelector("#naf2");
 		HtmlOption contingency_opt = null;
-		HtmlSubmitInput accept = (HtmlSubmitInput) htmlPage.querySelector("#situacionTrabajador").getNextSibling().getNextSibling();
+		HtmlSubmitInput accept = (HtmlSubmitInput) document.querySelector("#situacionTrabajador").getNextSibling().getNextSibling();
 		
 		switch(contingency) {
-			case ENFERMEDAD_COMUN: 			contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(2)");	break;
-			case ACCIDENTE_NO_LABORAL: 		contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(3)");	break;
-			case ACCIDENT_LABORAL: 			contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(4)"); 	break;
-			case ENFERMEDAD_PROFESIONAL: 	contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(5)"); 	break;
-			case PERIODOS_OBSERVACIÓN: 		contingency_opt = htmlPage.querySelector("#contingencia option:nth-child(6)"); 	break;
+			case ENFERMEDAD_COMUN: 			contingency_opt = document.querySelector("#contingencia option:nth-child(2)");	break;
+			case ACCIDENTE_NO_LABORAL: 		contingency_opt = document.querySelector("#contingencia option:nth-child(3)");	break;
+			case ACCIDENT_LABORAL: 			contingency_opt = document.querySelector("#contingencia option:nth-child(4)"); 	break;
+			case ENFERMEDAD_PROFESIONAL: 	contingency_opt = document.querySelector("#contingencia option:nth-child(5)"); 	break;
+			case PERIODOS_OBSERVACIÓN: 		contingency_opt = document.querySelector("#contingencia option:nth-child(6)"); 	break;
 		}
+		
+		document = contingency_opt.click();
 		
 		String[] ccc_arr =  Toolkit.SplitString(ccc, 2);
 		String[] naf_arr =  Toolkit.SplitString(naf, 2);
@@ -294,8 +322,8 @@ public class SistemaREDITParts {
 		naf_1_in.setValueAttribute(naf_arr[0]);
 		naf_2_in.setValueAttribute(naf_arr[1]);
 		
-		htmlPage = accept.click();		
-		return htmlPage;
+		document = accept.click();		
+		return document;
 	}
 	
 	

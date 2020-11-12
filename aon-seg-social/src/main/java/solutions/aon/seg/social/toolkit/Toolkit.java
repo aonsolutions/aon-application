@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
 
 public class Toolkit {
 	
@@ -123,11 +124,9 @@ public class Toolkit {
 			FileOutputStream fos=new FileOutputStream(f);
 			fos.write(arr_bytes);
 			fos.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("Archivo no encontrado");
-		} catch (IOException e) {
-			System.err.println("Error al escribir");
 		}
+		catch (FileNotFoundException e) {System.err.println("Archivo no encontrado");}
+		catch (IOException e) {System.err.println("Error al escribir");}
 		
 	}
 	
@@ -151,12 +150,17 @@ public class Toolkit {
 		int r = to.compareTo(new Date());
 		if(r == 1) return true;
 		return false;
-	}		
+	}
+	
+	//SPLITS A FLOAT/DOUBLE 
+	public static String[] splitDecimal(double dc){
+		String dc_str = dc + "";
+		return new String[]{ dc_str.substring(0,dc_str.indexOf(".")), dc_str.substring(dc_str.indexOf(".")+1)};	
+	}
 	
 	//HANDLES EMPTY DATA 
 	public static void verifyData(Object[] data) throws InvalidDataException {
-		for (Object o : data) {
-			if(o ==  null || o.equals("")) throw new InvalidDataException();
-		}
+		for (Object o : data) 
+			if(o ==  null || (o instanceof String && ((String) o).trim().equals(""))) throw new UnfilledMandatory();
 	}
 }

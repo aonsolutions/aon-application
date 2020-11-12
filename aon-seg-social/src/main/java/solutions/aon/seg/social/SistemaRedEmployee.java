@@ -188,9 +188,6 @@ public class SistemaRedEmployee {
 			return builder.build();
 		}
 		
-		
-		
-		
 		//HANDLE THE EXCEPTIONS OF GETEMPLOYEE METHOD
 		public static Collection<Employee> getEmployees(final InputStream certificateInputStream, final String certificatePassword,
 				final String certificateType, String regimen, String ccc) throws SegSocialException{
