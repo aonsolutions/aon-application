@@ -1,5 +1,11 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
+import static com.esferalia.aon.watson.util.AonStringUtils.endsWithAny;
+import static com.esferalia.aon.watson.util.AonStringUtils.remove;
+import static com.esferalia.aon.watson.util.AonStringUtils.removeEnd;
+import static com.esferalia.aon.watson.util.AonStringUtils.removeStart;
+import static com.esferalia.aon.watson.util.AonStringUtils.trim;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -24,21 +30,21 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IdcplcccParser {
 
-	public static void parse( File file , Listener listener) throws IOException, UnknownPDFException {
+	public static void parse( File file , IdcListener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file))
 		{
 			parse(doc, listener);
 		}
 	}
 
-	public static void parse( InputStream is ,Listener listener) throws IOException , UnknownPDFException {
+	public static void parse( InputStream is ,IdcListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(is))
 		{
 			parse(doc, listener);
 		}
 	}
 	
-	public static void parse(PDDocument doc, Listener listener) throws IOException, UnknownPDFException {
+	public static void parse(PDDocument doc, IdcListener listener) throws IOException, UnknownPDFException {
        AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent())
 		{
@@ -67,7 +73,7 @@ public class IdcplcccParser {
 			
 	}
 		
-	public static void parse(String text, Listener listener) throws IOException, UnknownPDFException {
+	public static void parse(String text, IdcListener listener) throws IOException, UnknownPDFException {
 		//System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			Matcher matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
@@ -81,7 +87,8 @@ public class IdcplcccParser {
 			String enterpriseActivityCode = matcher.group("code");
 			String enterpriseActivityDescription = matcher.group("description");
 			
-			listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, null);
+			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseRegime, enterpriseActivityCode,
+					enterpriseActivityDescription);
 
 			matcher = find(reader, MAIN_PERIOD);
 			String month = matcher.group("month");
@@ -97,38 +104,30 @@ public class IdcplcccParser {
 			while ( true ) {
 				try {
 					matcher = find(reader, EMPLOYEE_NSS_NAME);
-					String ssNum = matcher.group("nss");
-					listener.onEmployee(matcher.group("nss"), matcher.group("name"));
+					String employeeeNss = matcher.group("province") + matcher.group("nss");
+					String employeeName  = matcher.group("name");
+					onEmployee(listener, employeeeNss, employeeName);
 					matcher = find(reader, EMPLOYEE_PERIOD_QUOTE);
-					listener.onEmployeePerido(
-							ssNum,
-							enterpriseCCC,
-							simpleDateFormat.parse(matcher.group("start")), 
-							simpleDateFormat.parse(matcher.group("end")));
-					listener.onEmployeeQuoteGroup(matcher.group("group"));
-					
 					Date startDate = simpleDateFormat.parse(matcher.group("start"));
 					Date endDate = simpleDateFormat.parse(matcher.group("end"));
+					onEmployeePeriod(listener, enterpriseCCC, employeeeNss, startDate, endDate);
+					String group = matcher.group("group");
+					onEmployeeQuoteGroup(listener, group);
 					
 					for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
 						optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC)) {
-						listener.onEmployeeQuotePEC(
-								optional.get().group("code"), 
-								optional.get().group("description"),
-								optional.get().group("tipo"), 
-								optional.get().group("quota"),
-								optional.get().group("colective"), 
-								optional.get().group("law"));
 						
-						listener.onEmployeeQuotePEC(
-								ssNum,
-								enterpriseCCC,
-								optional.get().group("code"), 
-								optional.get().group("description"),
-								optional.get().group("tipo"), 
-								optional.get().group("quota"),
-								startDate,
-								endDate);
+						String code = optional.get().group("code");
+						String description = optional.get().group("description");
+						String tipo = optional.get().group("tipo");
+						String quota = optional.get().group("quota");
+						String colective = optional.get().group("colective"); 
+						String law = optional.get().group("law");
+						
+//						onEmployeeQuotePEC(listener, code, description, tipo, quota, colective, law);
+						
+						onEmployeeQuotePEC(listener, enterpriseCCC, employeeeNss, startDate, endDate, code, description,
+								tipo, quota);
 					}
 				
 				} catch ( UnknownPDFException e ) {
@@ -139,6 +138,70 @@ public class IdcplcccParser {
 				} 
 			}
 		}
+	}
+
+//	private static void onEmployeeQuotePEC(IdcListener listener, String code, String description, String tipo,
+//			String quota, String colective, String law) {
+//		code = remove(code, " ");
+//		tipo = remove(tipo, " ");
+//		quota = remove(quota, " ");
+//		listener.onEmployeeQuotePEC(
+//				code, 
+//				description,
+//				tipo, 
+//				quota,
+//				colective, 
+//				law);
+//	}
+
+	private static void onEmployeeQuotePEC(IdcListener listener, String enterpriseCCC, String employeeeNss,
+			Date startDate, Date endDate, String code, String description, String tipo, String quota) {
+		code = remove(code, " ");
+		tipo = remove(tipo, " ");
+		quota = remove(quota, " ");
+		listener.onEmployeeQuotePEC(
+				employeeeNss,
+				enterpriseCCC,
+				code, 
+				description,
+				tipo, 
+				quota,
+				startDate,
+				endDate);
+	}
+
+	private static void onEmployeeQuoteGroup(IdcListener listener, String group) {
+		group = trim(group);
+		listener.onEmployeeQuoteGroup(group);
+	}
+
+	private static void onEmployeePeriod(IdcListener listener, String enterpriseCCC, String employeeeNss,
+			Date startDate, Date endDate) {
+		listener.onEmployeePerido(employeeeNss, enterpriseCCC, startDate, endDate);
+	}
+
+	private static void onEmployee(IdcListener listener, String nss, String name) {
+		nss = remove(nss, " ");
+		
+		name  = trim(name);
+		while (endsWithAny(name, "-"))
+			name = removeEnd(name, "-");
+		name  = trim(name);
+		
+		listener.onEmployee(nss, name);
+	}
+
+	private static void onEnterprise(IdcListener listener, String socialReason, String enterpriseCCC,
+			String enterpriseCIF, String enterpriseRegime, String enterpriseActivityCode,
+			String enterpriseActivityDescription) {
+		socialReason = trim(socialReason);
+		enterpriseCCC = remove(enterpriseCCC, " ");
+		enterpriseCIF = remove(enterpriseCIF, " ");
+		enterpriseCIF = removeStart(enterpriseCIF, "0");
+		enterpriseActivityCode = remove(enterpriseActivityCode, " ");
+		enterpriseActivityDescription = trim(enterpriseActivityDescription);
+		enterpriseRegime = trim(enterpriseRegime);
+		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, null);
 	}
 	
 	private static Matcher find( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
@@ -199,7 +262,7 @@ public class IdcplcccParser {
 	//                SIN PECULIARIDADES DE COTIZACION            IHG
 	private static final Pattern EMPLOYEE_NSS_NAME = 
 	Pattern.compile(
-	"^(?<index>[0-9]+)\\s*(?<nss>[0-9]+)\\s*(?<name>.*)\\s*(?<clv>[^\\s]{3})$"
+	"^(?<province>[0-9]+)\\s*(?<nss>[0-9]+)\\s*(?<name>.*)\\s*(?<clv>[^\\s]{3})$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	private static final Pattern EMPLOYEE_PERIOD_QUOTE = 
@@ -209,7 +272,7 @@ public class IdcplcccParser {
 
 	private static final Pattern EMPLOYEE_QUOTE_PEC = 
 	Pattern.compile(
-	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2}[^0-9]+)\\s+(?<colective>[0-9]{4}[^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
+	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})([^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 
 }

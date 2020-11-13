@@ -1,5 +1,9 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
+import static com.esferalia.aon.watson.util.AonStringUtils.remove;
+import static com.esferalia.aon.watson.util.AonStringUtils.removeStart;
+import static com.esferalia.aon.watson.util.AonStringUtils.trim;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -24,19 +28,19 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class IdcParser {
 	
-	public static void parse( File file , Listener listener) throws IOException, UnknownPDFException {
+	public static void parse( File file , IdcListener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file)){
 			parse(doc, listener);
 		}
 	}
 
- 	public static void parse( InputStream is ,Listener listener) throws IOException , UnknownPDFException {
+ 	public static void parse( InputStream is ,IdcListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(is)){
 			parse(doc, listener);
 		}
 	}
 	
-	public static void parse(PDDocument doc, Listener listener) throws IOException, UnknownPDFException {
+	public static void parse(PDDocument doc, IdcListener listener) throws IOException, UnknownPDFException {
        AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent()){
 			throw new IOException("You do not have permission to extract text");
@@ -60,7 +64,7 @@ public class IdcParser {
 		}					
 	}
 		
-	public static void parse(String text, Listener listener) throws IOException, UnknownPDFException {
+	public static void parse(String text, IdcListener listener) throws IOException, UnknownPDFException {
 //		System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -71,8 +75,10 @@ public class IdcParser {
 			
 			matcher = find(reader, EMPLOYEE_NSS_TYPEDOC_DOC_GENDER_BIRTHDATE);
 			
-			String ssNum = matcher.group("province")+ matcher.group("nss");
-			listener.onEmployee(matcher.group("province")+ matcher.group("nss"), fullName);
+			String nss = matcher.group("province")+ matcher.group("nss");
+			
+			onEmployee(listener, fullName, nss);
+			
 			listener.onEmployeeOtherInfo(matcher.group("docType"), matcher.group("doc"), matcher.group("gender"), simpleDateFormat.parse(matcher.group("birthDate")));
 			
 			matcher = find(reader, ENTERPRISE_NAME_CCC_CIF);
@@ -109,7 +115,8 @@ public class IdcParser {
 			String enterpriseCompleteCCC = (matcher.group("completeCCC"));
 			if(hasData(matcher.group("inactivity"))) listener.onContractInactivityType(matcher.group("inactivity"));
 			
-			listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
+			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
+					enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
 			
 			matcher = find(reader, CONTRACT_OCUPATION);
 			if(hasData(matcher.group("ocupation"))) listener.onContractOcupation(matcher.group("ocupation"));
@@ -124,7 +131,7 @@ public class IdcParser {
 			matcher = find(reader, PECULIARITIES_HEADER);
 			
 			Date endDate = null;
-			List<EmployeeQuotePEC> employeeQuotePECList = new ArrayList<EmployeeQuotePEC>();
+			startDate = null;
 			
 			try {
 				for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
@@ -132,28 +139,24 @@ public class IdcParser {
 					
 					endDate = simpleDateFormat.parse(optional.get().group("end"));
 					
-					EmployeeQuotePEC employeeQuotePEC = new EmployeeQuotePEC(
-							ssNum,
-							enterpriseCCC,
-							optional.get().group("code"), 
-							optional.get().group("description"),
-							optional.get().group("tipo"), 
-							optional.get().group("quota"),
-							simpleDateFormat.parse(optional.get().group("start")), 
-							simpleDateFormat.parse(optional.get().group("end")));
+					String code = optional.get().group("code");
+					String description = optional.get().group("description");
+					String portTipo = optional.get().group("tipo");
+					String quota = optional.get().group("quota");
+					Date start = simpleDateFormat.parse(optional.get().group("start"));
+					Date end = simpleDateFormat.parse(optional.get().group("end"));
 					
-					employeeQuotePECList.add(employeeQuotePEC);
+					if ( !start.equals(startDate) || !end.equals(endDate)) 
+						listener.onEmployeePerido(nss, enterpriseCCC, start, end);
+					onEmployeeQuotePEC(listener, nss, enterpriseCCC, code, description, portTipo, quota, start, end);
+					
+					startDate = start;
+					endDate = end;
+					
 				}
-			} catch ( UnknownPDFException e ) {
-				// No more Employees
 			} catch ( ParseException e ) {
 				throw new UnknownPDFException(e);					
 			} 
-			
-			if(null != endDate) {
-				listener.onEmployeePerido(ssNum, enterpriseCCC, startDate, endDate);
-				listener.onEmployeeQuotePECList(employeeQuotePECList);
-			}
 			
 			matcher = find(reader, TOTAL_CLV);
 			matcher = find(reader, QUOTATION_TYPES);
@@ -164,6 +167,35 @@ public class IdcParser {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static void onEmployeeQuotePEC(IdcListener listener, String nss, String enterpriseCCC, String code,
+			String description, String portTipo, String quota, Date start, Date end) {
+		code = remove(code, " ");
+		quota = remove(quota, " ");
+		portTipo = remove(portTipo, " ");
+		listener.onEmployeeQuotePEC(nss, enterpriseCCC, code, description, portTipo, quota, start, end);
+	}
+
+	private static void onEnterprise(IdcListener listener, String socialReason, String enterpriseCCC,
+			String enterpriseCIF, String enterpriseActivityCode, String enterpriseActivityDescription,
+			String enterpriseRegime, String enterpriseCompleteCCC) {
+		socialReason = trim(socialReason);
+		enterpriseCCC = remove(enterpriseCCC, " ");
+		enterpriseCIF = remove(enterpriseCIF, " ");
+		enterpriseCIF = removeStart( enterpriseCIF, "0");
+		enterpriseActivityCode = remove(enterpriseActivityCode, " ");
+		enterpriseActivityDescription = trim(enterpriseActivityDescription);
+		enterpriseRegime = remove(enterpriseRegime, " ");
+		enterpriseCompleteCCC = remove(enterpriseCompleteCCC, " ");
+		
+		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
+	}
+
+	private static void onEmployee(IdcListener listener, String fullName, String nss) {
+		nss = remove(nss, " ");
+		fullName = trim(fullName);
+		listener.onEmployee(nss, fullName);
 	}
 	
 	private static boolean hasData(String data) {
@@ -182,10 +214,9 @@ public class IdcParser {
 		throw new UnknownPDFException(String.format("Pattern: '%s' Not found" ,  pattern.pattern()) );		
 	}	
 
-	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
+	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException {
 		reader.mark(256);
 		String line = reader.readLine() ; 
-//		System.out.println(line);
 		Matcher matcher = pattern.matcher(line) ;
 		if ( matcher.matches() )
 			return Optional.of(matcher);
@@ -211,7 +242,7 @@ public class IdcParser {
 	//RAZÓN SOCIAL: SOUTHWEST GOLF S.L. CCC: 11 112501771 DNI/NIE/CIF: 9 0B85729648
 	private static final Pattern ENTERPRISE_NAME_CCC_CIF = 
 	Pattern.compile(
-	"^RAZÓN\\s*SOCIAL\\s*:\\s*(?<name>.+)CCC\\s*:\\s*(?<province>[0-9]{2})\\s*(?<ccc>[0-9]+)\\s*DNI/NIE/CIF\\s*:\\s*(?<cif>.+)$"
+	"^RAZÓN\\s*SOCIAL\\s*:\\s*(?<name>.+)CCC\\s*:\\s*(?<province>[0-9]{2})\\s*(?<ccc>[0-9]+)\\s*DNI/NIE/CIF\\s*:\\s*(?<type>[0-9]{1})\\s*(?<cif>.+)$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
@@ -272,7 +303,7 @@ public class IdcParser {
 	//37 EXONE.ERE.F.MAY.COMP 85,00  01   CUOTA EMPRESARIAL 14-05-2020 31-05-2020 FD4
 	private static final Pattern EMPLOYEE_QUOTE_PEC = 
 	Pattern.compile(
-	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2}[^0-9]+)\\s+(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+).*$"
+	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TOTAL CLV NFL

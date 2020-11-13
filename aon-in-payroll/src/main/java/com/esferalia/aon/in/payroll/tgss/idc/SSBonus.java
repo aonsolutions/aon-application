@@ -1,6 +1,6 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class SSBonus {
 
@@ -60,7 +60,7 @@ public class SSBonus {
 		return ssNum;
 	}
 
-	public void setSsNum(String ssNum) {
+	public void setNss(String ssNum) {
 		this.ssNum = ssNum;
 	}
 

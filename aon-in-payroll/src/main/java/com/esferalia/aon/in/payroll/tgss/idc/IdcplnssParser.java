@@ -1,5 +1,11 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
+import static com.esferalia.aon.watson.util.AonStringUtils.endsWithAny;
+import static com.esferalia.aon.watson.util.AonStringUtils.remove;
+import static com.esferalia.aon.watson.util.AonStringUtils.removeEnd;
+import static com.esferalia.aon.watson.util.AonStringUtils.removeStart;
+import static com.esferalia.aon.watson.util.AonStringUtils.trim;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -19,26 +25,27 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
 public class IdcplnssParser {
 
-	public static void parse( File file , Listener listener) throws IOException, UnknownPDFException {
+	public static void parse( File file , IdcListener listener) throws IOException, UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(file))
 		{
 			parse(doc, listener);
 		}
 	}
 
-	public static void parse( InputStream is ,Listener listener) throws IOException , UnknownPDFException {
+	public static void parse( InputStream is ,IdcListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = PDDocument.load(is))
 		{
 			parse(doc, listener);
 		}
 	}
 	
-	public static void parse(PDDocument doc, Listener listener) throws IOException, UnknownPDFException {
+	public static void parse(PDDocument doc, IdcListener listener) throws IOException, UnknownPDFException {
        AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent())
 		{
@@ -67,89 +74,107 @@ public class IdcplnssParser {
 			
 	}
 		
-	public static void parse(String text, Listener listener) throws IOException, UnknownPDFException {
-//		System.out.println(text);
+	public static void parse(String text, IdcListener listener) throws IOException, UnknownPDFException {
+		//System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
-			SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
+			Matcher matcher = find(reader, EMPLOYEE_NAME_NSS_NIF);
 			
-			Matcher matcher = find(reader, EMPLOYEE_INFO);
+			String employeeCif = matcher.group("cif");
+			String employeeName = matcher.group("name");
+			String employeeNss = matcher.group("province") + matcher.group("nss");
 			
-			String fullName = matcher.group("name");
-			String ssNum = matcher.group("province")+ matcher.group("nss");
-			listener.onEmployee(matcher.group("province")+ matcher.group("nss"), fullName);
-			try {
-				listener.onEmployeeOtherInfo(matcher.group("docType"), matcher.group("doc"), matcher.group("gender"), simpleDateFormat2.parse(matcher.group("birthDate")));
-			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			matcher = find(reader, ENTERPRISE_PERIOD_CCC_NAME);
 			
-			matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
-			
-			String socialReason = matcher.group("name");
-			String enterpriseCCC = matcher.group("province") + matcher.group("ccc");
-			String enterpriseCIF = matcher.group("cif");
 			String enterpriseRegime = matcher.group("regime");
+			String enterpriseName = matcher.group("name");
+			String enterpriseCCC = matcher.group("province") + matcher.group("ccc");
 			
-			matcher = find(reader, ENTERPRISE_ACTIVITY);
-			String enterpriseActivityCode = matcher.group("code");
-			String enterpriseActivityDescription = matcher.group("description");
+			onEnterprise(listener, enterpriseName, enterpriseCCC, enterpriseRegime);
 			
-			listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, null);
-
-			matcher = find(reader, MAIN_PERIOD);
-			String month = matcher.group("month");
-			String year = matcher.group("year");
-			try {
-				Date date = new SimpleDateFormat("MMMM-yyyy", new Locale("es", "ES")).parse(month+"-"+year);
-				listener.onPeriod(date);
-			} catch (ParseException e) {
-				throw new UnknownPDFException(e);
-			}
+			onEmployee(listener, employeeNss, employeeName);
 			
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			while ( true ) {
-				try {
-					matcher = find(reader, EMPLOYEE_PERIOD_QUOTE);
-					listener.onEmployeePerido(
-							ssNum,
-							enterpriseCCC,
-							simpleDateFormat.parse(matcher.group("start")), 
-							simpleDateFormat.parse(matcher.group("end")));
-					listener.onEmployeeQuoteGroup(matcher.group("group"));
-					
-					Date startDate = simpleDateFormat.parse(matcher.group("start"));
-					Date endDate = simpleDateFormat.parse(matcher.group("end"));
-					
-					for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
-						optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC)) {
-						listener.onEmployeeQuotePEC(
-								optional.get().group("code"), 
-								optional.get().group("description"),
-								optional.get().group("tipo"), 
-								optional.get().group("quota"),
-								optional.get().group("colective"), 
-								optional.get().group("law"));
-						
-						listener.onEmployeeQuotePEC(
-								ssNum,
-								enterpriseCCC,
-								optional.get().group("code"), 
-								optional.get().group("description"),
-								optional.get().group("tipo"), 
-								optional.get().group("quota"),
-								startDate,
-								endDate);
-					}
+			Date fromDate = simpleDateFormat.parse(matcher.group("from"));
+			//Date endDate = simpleDateFormat.parse(matcher.group("to"));	
+			listener.onPeriod(fromDate);
+			
+			matcher = ateempt(reader, EMPLOYEE_PERIOD);
+			while ( matcher != null ) {
+				Date startDate = simpleDateFormat.parse(matcher.group("start"));
+				Date endDate = simpleDateFormat.parse(matcher.group("end"));				
+				onEmployeePeriod(listener, enterpriseCCC, employeeNss, startDate, endDate);
 				
-				} catch ( UnknownPDFException e ) {
-					// No more Employees
-					break;
-				} catch ( ParseException e ) {
-					throw new UnknownPDFException(e);					
-				} 
+				matcher = tryy(reader, EMPLOYEE_PEC);
+				while ( matcher != null ) {
+					String code = matcher.group("code");
+					String description = matcher.group("description");
+					String tipo = matcher.group("tipo");
+					String quota = matcher.group("quota");
+					String colective = matcher.group("colective"); 
+					String law = matcher.group("law");
+					startDate = simpleDateFormat.parse(matcher.group("start"));
+					endDate = simpleDateFormat.parse(matcher.group("end"));				
+										
+					onEmployeeQuotePEC(listener, enterpriseCCC, employeeNss, startDate, endDate, code, description,
+							tipo, quota);
+					
+					matcher = tryy(reader, EMPLOYEE_PEC);
+				}
+				
+				matcher = ateempt(reader, EMPLOYEE_PERIOD);
 			}
+			
 		}
+		catch (ParseException e) {
+			throw new UnknownPDFException(e);					
+		}
+	}
+
+
+
+	private static void onEmployeeQuotePEC(IdcListener listener, String enterpriseCCC, String employeeeNss,
+			Date startDate, Date endDate, String code, String description, String tipo, String quota) {
+		code = remove(code, " ");
+		tipo = remove(tipo, " ");
+		quota = remove(quota, " ");
+		listener.onEmployeeQuotePEC(
+				employeeeNss,
+				enterpriseCCC,
+				code, 
+				description,
+				tipo, 
+				quota,
+				startDate,
+				endDate);
+	}
+
+	private static void onEmployeeQuoteGroup(IdcListener listener, String group) {
+		group = trim(group);
+		listener.onEmployeeQuoteGroup(group);
+	}
+
+	private static void onEmployeePeriod(IdcListener listener, String enterpriseCCC, String employeeeNss,
+			Date startDate, Date endDate) {
+		listener.onEmployeePerido(employeeeNss, enterpriseCCC, startDate, endDate);
+	}
+
+	private static void onEmployee(IdcListener listener, String nss, String name) {
+		nss = remove(nss, " ");
+		
+		name  = trim(name);
+		while (endsWithAny(name, "-"))
+			name = removeEnd(name, "-");
+		name  = trim(name);
+		
+		listener.onEmployee(nss, name);
+	}
+
+	private static void onEnterprise(IdcListener listener, String socialReason, String enterpriseCCC,
+			String enterpriseRegime ) {
+		socialReason = trim(socialReason);
+		enterpriseCCC = remove(enterpriseCCC, " ");
+		enterpriseRegime = trim(enterpriseRegime);
+		listener.onEnterprise(socialReason, enterpriseCCC, null, null, null, enterpriseRegime, null);
 	}
 	
 	private static Matcher find( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
@@ -168,60 +193,52 @@ public class IdcplnssParser {
 				
 	}	
 
-	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
+	private static Matcher ateempt( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
+		
+		String line  ; 
+		while ( ( line = reader.readLine() ) != null  ) {
+			Matcher matcher = pattern.matcher(line) ;
+			if ( !matcher.matches() ) {
+				continue;
+			}
+			
+			return matcher;
+		}
+		
+		return null;
+				
+	}	
+	
+	private static Matcher tryy( BufferedReader reader, Pattern pattern ) throws IOException {
 		reader.mark(256);
 		String line = reader.readLine() ; 
-		//System.out.println(line);
 		Matcher matcher = pattern.matcher(line) ;
 		if ( matcher.matches() )
-			return Optional.of(matcher);
+			return matcher;
 		
 		reader.reset();
 		
-		return Optional.empty();
+		return null;
 				
-	}
-	
-	//NOMBRE Y APELLIDOS: ESTHER ARANDA MARTIN NÚMERO SEGURIDAD SOCIAL: 01 1006286569 DOC.IDENTIFICATIVO: 1 NÚMERO: 072745627P SEXO: MUJER NACIMIENTO: 15/09/1985
-	private static final Pattern EMPLOYEE_INFO = 
+	}	
+	private static final Pattern EMPLOYEE_NAME_NSS_NIF = 
 	Pattern.compile(
-	"^NOMBRE\\s*Y\\s*APELLIDOS\\s*:(?<name>.+)NÚMERO\\s*SEGURIDAD\\s*SOCIAL\\s*:\\s*(?<province>[0-9]{2})\\s*(?<nss>[0-9]+)\\s*DOC\\.IDENTIFICATIVO\\s*:\\s*(?<docType>.*)\\s*NÚMERO\\s*:\\s*(?<doc>.+)SEXO\\s*:\\s*(?<gender>.*)\\s*NACIMIENTO\\s*:\\s*(?<birthDate>[0-9]+\\/[0-9]+\\/[0-9]+).*$"
+			"^NOMBRE\\s*Y\\s*APELLIDOS\\s*:\\s*(?<name>.+)NÚMERO\\s*SEGURIDAD\\s*SOCIAL\\s*:\\s*(?<province>[0-9]{2})\\s*(?<nss>[0-9]+)\\s*DOC.IDENTIFICATIVO\\s*:\\s*([0-9])\\s*NÚMERO\\s*:\\s*(?<cif>.+)SEXO.*$"
+			, Pattern.CASE_INSENSITIVE);
+	
+	private static final Pattern ENTERPRISE_PERIOD_CCC_NAME = 
+	Pattern.compile(
+	"^PERIODO\\s*SOLICITADO\\s*:\\s*DESDE\\s*(?<from>[0-9]+-[0-9]+-[0-9]+)\\s*HASTA\\s*(?<to>[0-9]+-[0-9]+-[0-9]+)\\s*CCC\\s*SOLICITADO\\s*:\\s*(?<regime>[0-9]+)\\s*(?<province>[0-9]+)\\s*(?<ccc>[0-9]+)\\s*(?<name>.*)$"
 	, Pattern.CASE_INSENSITIVE);
-	
-	//RAZÓN SOCIAL: AON SOLUTIONS S.L. C.C.C.: 01 105360062 DNI/NIE/CIF: 0B01487271 RÉGIMEN: REGIMEN GENERAL
-	private static final Pattern ENTERPRISE_NAME_CCC_CIF_REGIME = 
+		
+	private static final Pattern EMPLOYEE_PERIOD = 
 	Pattern.compile(
-	"^RAZÓN\\s*SOCIAL\\s*:\\s*(?<name>.+)C\\.C\\.C\\.\\s*:\\s*(?<province>[0-9]{2})\\s*(?<ccc>[0-9]+)\\s*DNI/NIE/CIF\\s*:\\s*(?<cif>.+)RÉGIMEN\\s*:\\s*(?<regime>.*)$"
-	, Pattern.CASE_INSENSITIVE);
-	
-	//ACT. ECONÓMICA: 6209  Otros servicios rela 
-	private static final Pattern ENTERPRISE_ACTIVITY = 
-	Pattern.compile(
-	"^ACT.\\s*ECONÓMICA\\s*:\\s*(?<code>[0-9]+)\\s*(?<description>.*)$"
-	, Pattern.CASE_INSENSITIVE);
-	
-	
-	//CONVENIO COLECTIVO
-	//   
-	//99001355011983
-	
-	//PERIODO DE LIQUIDACIÓN:    OCTUBRE 2020 
-	private static final Pattern MAIN_PERIOD = 
-	Pattern.compile(
-	"^PERIODO\\s*DE\\s*LIQUIDACIÓN\\s*:\\s*(?<month>[A-Z]+)\\s*(?<year>[0-9]+)\\s*$"
-	, Pattern.CASE_INSENSITIVE);
-	
-	
-	//      1       01-10-2020    31-10-2020      02 0,80 0,70 1,50 7,05  J7Q
-	//                SIN PECULIARIDADES DE COTIZACION            IHG
-	private static final Pattern EMPLOYEE_PERIOD_QUOTE = 
-	Pattern.compile(
-	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+(?<group>[0-9]+).*$"
+	"^\\s*(?<index>[0-9]+)\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s+([0-9]+)\\s*([0-9]+-[0-9]+-[0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 
-	private static final Pattern EMPLOYEE_QUOTE_PEC = 
+	private static final Pattern EMPLOYEE_PEC = 
 	Pattern.compile(
-	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2}[^0-9]+)\\s+(?<colective>[0-9]{4}[^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
+	"^\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})(.*)\\s+(?<law>[0-9]{4}.*).*$"
 	, Pattern.CASE_INSENSITIVE);
-
+	//        03-07-2020 31-07-2020   37 EXONE.ERE.F.MAY.COMP 60,00  01 CUOTA EMPRESARIAL 4608 EX.FM37CV<50.789R 0222 RDL 24/2020      H1B
 }
