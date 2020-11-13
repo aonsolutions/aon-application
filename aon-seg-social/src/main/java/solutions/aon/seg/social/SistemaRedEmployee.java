@@ -109,7 +109,8 @@ public class SistemaRedEmployee {
 			_htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 			HtmlUnitToolkit.manageStatusCode(_htmlPage);
 			
-			String ipf = _htmlPage.getElementById("SDFTIPIPF").getTextContent() +  _htmlPage.getElementById("SDFNUMIPF").getTextContent();
+			/*_htmlPage.getElementById("SDFTIPIPF").getTextContent() + */
+			String ipf =  _htmlPage.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
 			String birthDateStr = _htmlPage.getElementById("SDFDIANAC").getTextContent() + "-" 
 					+ _htmlPage.getElementById("SDFMESNAC").getTextContent() + "-" 
 					+ _htmlPage.getElementById("SDFAONAC").getTextContent();
