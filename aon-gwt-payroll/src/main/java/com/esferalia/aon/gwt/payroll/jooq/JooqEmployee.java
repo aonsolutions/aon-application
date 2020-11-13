@@ -1118,6 +1118,7 @@ public class JooqEmployee {
 			
 			Result<Record> findRBankRecord = dslContext.select().from(RBANK)
 					.where(RBANK.BANK_ACCOUNT.eq(account))
+					.and(RBANK.REGISTRY.eq(registryId))
 					.and(RBANK.DOMAIN.eq(domain))
 					.fetch();
 			
