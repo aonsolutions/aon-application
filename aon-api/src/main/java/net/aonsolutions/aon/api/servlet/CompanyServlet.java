@@ -36,13 +36,11 @@ public class CompanyServlet extends HttpServlet{
 		List<String> schemas = AONContext.getSchemas();
 		String domainName = req.getHeader("domain_name");
 		String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-		JSONObject json = new JSONObject();
 		Object object = new Object();
 		if(pathInfo  != null) {
 			if("app".equalsIgnoreCase(pathInfo[1])) {
 				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-				json = getDomainApps(domain);
-				object = json;
+				object = getDomainApps(domain);
 			}
 		} else {
 			for(String schema : schemas) {
@@ -70,22 +68,22 @@ public class CompanyServlet extends HttpServlet{
 		Utils.giveBack(req, resp, json, new JSONObject());
 	}
 		
-	private JSONObject getDomainApps(Domain domain){
-		JSONObject json = new JSONObject();
+	private JSONArray getDomainApps(Domain domain){
+		JSONArray array = new JSONArray();
 		AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> 
 		f.getDomainProperty().eq(domain.getId())).forEach(domainApp -> {	
-			if(domainApp.getApp() != null) {
-				json.put(domainApp.getApp().name().toLowerCase(), domainApp.getActive());
+			if(domainApp.getApp() != null && domainApp.getActive()) {
+				array.put(domainApp.getApp().name().toLowerCase());
 			}
 		});
-		if(json.isEmpty()) {
+		if(array.isEmpty()) {
 			return oldModules(domain);
 		}
-		return json;
+		return array;
 	}
 	
-	private JSONObject oldModules(Domain domain) {
-		JSONObject json = new JSONObject();
+	private JSONArray oldModules(Domain domain) {
+		JSONArray array = new JSONArray();
 		AON.getDomainModules(domain.getName(), domain.getId(), "").forEach(r -> {
 			DomainApp dapp = new DomainApp()
 					.setDomain(domain.getId())
@@ -111,11 +109,11 @@ public class CompanyServlet extends HttpServlet{
 				dapp.setApp(AonApp.PAYROLL);
 				AON_SOLUTIONS.saveDomainApp(domain.getName(), domain.getId(), "", dapp);
 			}
-			if(dapp.getApp() != null)
-				json.put(dapp.getApp().name().toLowerCase(), dapp.getActive());
+			if(dapp.getApp() != null && dapp.getActive())
+				array.put(dapp.getApp().name().toLowerCase());
 
 		});			
-		return json;
+		return array;
 	}
 	
 	private JSONObject setDomainApp(JSONObject json){

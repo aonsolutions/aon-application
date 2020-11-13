@@ -1,9 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {AllApps, Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
-	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
-import {getDomainApps, setDomainApp, getCompanies} from  '../../services/service.js';
-import {bidoq} from  '../../services/bidoq.js';
-import {startModule, rootPanel} from '../../services/gwtLoader.js';
+import {getCompanies} from  '../../services/service.js';
 
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
@@ -80,7 +76,7 @@ export class AonMobileDesktop extends AonElement {
 				}
 			}
 		});
-		
+
 		searchSuggestion.addIconButton('search', () => {
 			searchSuggestion.title = 'Búsqueda Empresas';
 			searchSuggestion.readonly = false;

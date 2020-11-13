@@ -1,6 +1,4 @@
 import {AonElement} from '../../components/AonElement.js';
-import {Apps} from  '../../services/app.js';
-import {getDomainApps, setUserAppRole, setUser} from  '../../services/service.js';
 
 export class AonCompany extends AonElement {
 

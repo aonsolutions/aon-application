@@ -199,7 +199,7 @@ export class AonParent extends AonElement {
 
 	companySelection(company) {
 		const BASE_ID = 'aonHeader';
-
+		localStorage.setItem('company', JSON.stringify(company));
 		if(!this.isMobile()){
 			let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
 			aonHeaderCompanyList.style.display = 'block';

@@ -36,27 +36,48 @@ export const Apps = {
     icon: 'aon_app',
     color: '#6986BB'
   },
-  PORTAL: {
-    app: 'portal',
-    title: 'Portal',
-    description: 'Portal',
+  HORARIO: {
+    app: 'timecontrol',
+    title: 'Horario',
+    description: 'Control de Horario.',
     icon: 'aon_app',
     color: '#B50061'
   },
-  TOOLS: {
-    app: 'tools',
-    title: 'Herramientas',
-    description: 'Utilidades Generales de Aon Solutions.',
+  INVOICE: {
+    app: 'invoice',
+    title: 'Facturas',
+    description: 'Gestion de Facturas.',
     icon: 'aon_app',
-    color: 'gray'
+    color: '#B50061'
+  }
+}
+
+export const ClassicApps = {
+  AON_SOLUTIONS: {
+    app: 'aio',
+    title: 'aonSolutions',
+    description: 'aonSolutions.',
+    logo: '../assets/apps/aon.png',
+  },
+  BIDOQ: {
+    app: 'bidoq',
+    title: 'Bidoq',
+    description: 'Bidoq.',
+    logo: '../assets/apps/bidoq.png'
   }
 }
 
 export const Services = {
+  ALMA: {
+    app: 'alma',
+    title: 'Alma',
+    description: 'Alma',
+    logo: '../assets/apps/alma.png'
+  },
   MESSENGER: {
     app: 'messenger',
-    title: 'Messenger',
-    description: 'Messenger',
+    title: 'Mensajería',
+    description: 'Mensajería',
     icon: 'aon_app',
     color: '#CADEFF'
   },
@@ -83,92 +104,32 @@ export const Services = {
   }
 }
 
-export const AllApps = {
-    INVOICE: {
-      app: 'invoice',
-      title: 'Facturas',
-      description: 'Gestor de Facturas.',
-      icon: 'aon_app',
-      color: '#A2A8B6'
-    },
-    DOCUMENTAL: {
-      app: 'documental',
-      title: 'Documental',
-      description: 'Gestor de Documentos.',
-      icon: 'aon_app',
-      color: '#6986BB'
-    },
-    MESSENGER: {
-      app: 'messenger',
-      title: 'Messenger',
-      description: 'Messenger',
-      icon: 'aon_app',
-      color: '#CADEFF'
-    },
-    ACCOUNTING: {
-      app: 'accounting',
-      title: 'Contabilidad',
-      description: 'Gestor de Contabilidad.',
-      icon: 'aon_app',
-      color: '#1FD8B9'
-    },
-    FISCAL: {
-      app: 'fiscal',
-      title: 'Fiscal',
-      description: 'Gestor Fiscal.',
-      icon: 'aon_app',
-      color: '#1FBCE5'
-    },
-    PAYROLL: {
-      app: 'payroll',
-      title: 'Laboral',
-      description: 'Gestor Laboral.',
-      icon: 'aon_app',
-      color: '#1F8CFF'
-    },
-    OCR: {
-      app: 'ocr',
-      title: 'OCR',
-      description: 'Gestor OCR.',
-      icon: 'aon_app',
-      color: '#535353'
-    },
-    TOOLS: {
-      app: 'tools',
-      title: 'Herramientas',
-      description: 'Utilidades Generales de Aon Solutions.',
-      icon: 'aon_app',
-      color: 'gray'
-    },
-    COMUNICA: {
-      app: 'comunica',
-      title: 'Comunic@',
-      description: 'Comunic@',
-      icon: 'aon_app',
-      color: '#6C75AB'
-    },
-    PORTAL: {
-      app: 'portal',
-      title: 'Portal',
-      description: 'Portal',
-      icon: 'aon_app',
-      color: '#B50061'
-    },
-    CONVENIOS: {
-      app: 'convenios',
-      title: 'Convenios',
-      description: 'Convenios',
-      icon: 'aon_app',
-      color: '#329905'
-    },
-    BANK: {
-      app: 'bank',
-      title: 'Bank',
-      description: 'Gestor de Bancos.',
-      icon: 'aon_app',
-      color: '#D38C5B'
-    }
-};
+export const OtherServices = {
+  FORMACION: {
+    app: 'formacion',
+    title: 'Formación',
+    description: 'Formación.',
+    icon: 'ayudat',
+    color: '#535353',
+    moreInfo: 'https://ayudatpymes.com/formacion/formacion-bonificada/'
+  },
+  ACELERA: {
+    app: 'acelera',
+    title: 'Acelera',
+    description: 'Acelera.',
+    icon: 'ayudat',
+    color: '#535353',
+    moreInfo: 'https://ayudatpymes.com/despachos/aceleratudespacho/'
+  },
+  OUTSOURCING: {
+    app: 'outsourcing',
+    title: 'Outsourcing',
+    description: 'Outsourcing.',
+    icon: 'ayudat',
+    color: '#535353',
+    moreInfo: 'https://ayudatpymes.com/despachos/outsourcing/'
+  }
+}
 
 export const AccountingMenu =
   [{

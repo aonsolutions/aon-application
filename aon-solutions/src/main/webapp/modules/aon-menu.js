@@ -1,8 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
-import {Apps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
-	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
-import {bidoq} from '../services/bidoq.js';
+import {Apps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
 import '../components/aon-icon.js';
 import './comunic@/aon-comunica.js';
 import './messenger/aon-messenger.js';
@@ -83,15 +81,9 @@ export class AonMenu extends AonElement {
 
 	appSelection(app) {
 		switch(app){
-    	// case Apps.INVOICE.app:
-			// 	rootPanel('<aon-invoice-panel></aon-invoice-panel>');
-			// 	break;
     	case Apps.DOCUMENTAL.app:
 				startModule('aon_gwt_aio', 'documents');
 				break;
-			// case Apps.MESSENGER.app:
-			// 	startModule('aon_gwt_aio', 'issues');
-			// 	break;
     	case Apps.ACCOUNTING.app:
 				this.buildAppMenu(Apps.ACCOUNTING);
 				break;
@@ -101,58 +93,24 @@ export class AonMenu extends AonElement {
 			case Apps.PAYROLL.app:
 				this.buildAppMenu(Apps.PAYROLL);
 				break;
-			// case Apps.OCR.app:
-			// 	alert('OCR');
-			// 	break;
-			// case Apps.AIO.app:
-	    //   open('https://' + localStorage.getItem('aon_domain_name') + '/login?token=' + localStorage.getItem('aon_session_id'));
-			// 	break;
-			case Apps.TOOLS.app:
-				this.buildAppMenu(Apps.TOOLS);
-				break;
 			case Apps.COMUNICA.app:
 				rootPanel('<aon-comunica></aon-comunica>');
 				break;
-			case Apps.PORTAL.app:
-				this.buildAppMenu(Apps.PORTAL);
-				break;
-			// case Apps.CONVENIOS.app:
-			// 	alert('CONVENIOS');
-			// 	break;
-			// case Apps.BANK.app:
-			// 	alert('BANK');
-			// 	break;
 		}
 	}
 
 	getApp(app) {
 		switch(app.toLowerCase()){
-    	// case Apps.INVOICE.app:
-			// 	return Apps.INVOICE;
     	case Apps.DOCUMENTAL.app:
 				return Apps.DOCUMENTAL;
-			// case Apps.MESSENGER.app:
-			// 	return Apps.MESSENGER;
     	case Apps.ACCOUNTING.app:
 				return Apps.ACCOUNTING;
 			case Apps.FISCAL.app:
 				return Apps.FISCAL;
 			case Apps.PAYROLL.app:
 				return Apps.PAYROLL;
-			// case Apps.OCR.app:
-			// 	return Apps.OCR;
-			// case Apps.AIO.app:
-			// 	return Apps.AIO;
-			case Apps.TOOLS.app:
-				return Apps.TOOLS;
 			case Apps.COMUNICA.app:
 				return Apps.COMUNICA;
-			case Apps.PORTAL.app:
-				return Apps.PORTAL;
-			// case Apps.CONVENIOS.app:
-			// 	return Apps.CONVENIOS;
-			// case Apps.BANK.app:
-			// 	return Apps.BANK;
 		}
 	}
 
@@ -263,58 +221,58 @@ export class AonMenu extends AonElement {
 
 	buildApp(app) {
 		let li = document.createElement('li');
-		li.id = 'aonMenuList' + app.app;
-		li.style.backgroundColor = 'transparent';
-		li.addEventListener('mouseover', () => {
-			let img = document.getElementById('aonMenuListAppImg-' + app.app);
-			img.size = '40px';
-		});
+		if (app) {
+			li.id = 'aonMenuList' + app.app;
+	    li.style.backgroundColor = 'transparent';
+	    li.addEventListener('mouseover', () => {
+	      let img = document.getElementById('aonMenuListAppImg-' + app.app);
+	      img.size = '40px';
+	    });
 
-		li.addEventListener('mouseleave', () => {
-			let img = document.getElementById('aonMenuListAppImg-' + app.app);
-			img.size = '30px';
-		});
+	    li.addEventListener('mouseleave', () => {
+	      let img = document.getElementById('aonMenuListAppImg-' + app.app);
+	      img.size = '30px';
+	    });
 
-		let a = document.createElement('a');
-		a.style.cursor = 'pointer';
-		a.style.textAlign = 'right';
-		a.addEventListener('click', () => {
-			this.appSelection(app.app);
-		});
+	    let a = document.createElement('a');
+	    a.style.cursor = 'pointer';
+	    a.style.textAlign = 'right';
+	    a.addEventListener('click', () => {
+	      this.appSelection(app.app);
+	    });
 
-		let div = document.createElement('div');
-		div.style.padding = '8px 0px';
+	    let div = document.createElement('div');
+	    div.style.padding = '8px 0px';
 
-		if(app.icon) {
-			div.innerHTML = `
+	    if (app.icon) {
+	      div.innerHTML = `
 				<span id="aonMenuListApp-${app.app}" style="display:none;"> ${app.title} </span>
 				<aon-icon id="aonMenuListAppImg-${app.app}" icon="${app.icon}" color="${app.color}" size="30px" style="margin-right: 15px;"></aon-icon>
 			`;
 
-		} else {
-			let span = document.createElement('span');
-			span.id = 'aonMenuListApp-' + app.app;
-			span.style.display = 'none';
-			span.style.marginRight = '5px';
-			span.innerHTML = app.title;
-			div.appendChild(span);
+	    } else {
+	      let span = document.createElement('span');
+	      span.id = 'aonMenuListApp-' + app.app;
+	      span.style.display = 'none';
+	      span.style.marginRight = '5px';
+	      span.innerHTML = app.title;
+	      div.appendChild(span);
 
-			let img = document.createElement('img');
-			img.id = 'aonMenuListAppImg-' + app.app;
-			img.style.width = '30px';
-			img.style.marginRight = '15px';
-			img.src = app.logo;
-			img.title = app.title;
-			div.appendChild(img);
-		}
-		let div2 = document.createElement('div');
+	      let img = document.createElement('img');
+	      img.id = 'aonMenuListAppImg-' + app.app;
+	      img.style.width = '30px';
+	      img.style.marginRight = '15px';
+	      img.src = app.logo;
+	      img.title = app.title;
+	      div.appendChild(img);
+	    }
+	    let div2 = document.createElement('div');
 
-		a.appendChild(div);
-		li.appendChild(a);
-
+	    a.appendChild(div);
+	    li.appendChild(a);
+	  }
 		return li;
 	}
-
 	buildAppMenu(app) {
 		let company;
 		if(this.getAttribute('company')){

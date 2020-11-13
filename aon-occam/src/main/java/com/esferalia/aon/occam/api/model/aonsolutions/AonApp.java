@@ -11,11 +11,13 @@ public enum AonApp implements Serializable{
 	PAYROLL,
 	OCR,
 	AIO,
-	TOOLS,
+	ALMA,
 	COMUNICA,
-	PORTAL,
+	BIDOQ,
 	CONVENIOS,
-	BANK;
+	BANK,
+	TIMECONTROL,
+	MANAGEMENT;
 	
 	public Byte value(){
 		return (byte) ordinal();
@@ -34,12 +36,13 @@ public enum AonApp implements Serializable{
 	
 	public static AonApp safeValueOf( String i ) {
 		if (i == null || "".equals(i)) return null;
+		
 		if(i.equalsIgnoreCase(INVOICE.name())) {
 			return INVOICE;
 		} else if(i.equalsIgnoreCase(DOCUMENTAL.name())) {
 			return DOCUMENTAL;
-		} else if(i.equalsIgnoreCase(BANK.name())) {
-			return BANK;
+		} else if(i.equalsIgnoreCase(MESSENGER.name())) {
+			return MESSENGER;
 		} else if(i.equalsIgnoreCase(ACCOUNTING.name())) {
 			return ACCOUNTING;
 		} else if(i.equalsIgnoreCase(FISCAL.name())) {
@@ -50,16 +53,20 @@ public enum AonApp implements Serializable{
 			return OCR;
 		} else if(i.equalsIgnoreCase(AIO.name())) {
 			return AIO;
-		} else if(i.equalsIgnoreCase(TOOLS.name())) {
-			return TOOLS;
+		} else if(i.equalsIgnoreCase(ALMA.name())) {
+			return ALMA;
 		} else if(i.equalsIgnoreCase(COMUNICA.name())) {
 			return COMUNICA;
-		} else if(i.equalsIgnoreCase(PORTAL.name())) {
-			return PORTAL;
-		} else if(i.equalsIgnoreCase(MESSENGER.name())) {
-			return MESSENGER;
+		} else if(i.equalsIgnoreCase(BIDOQ.name())) {
+			return BIDOQ;
 		} else if(i.equalsIgnoreCase(CONVENIOS.name())) {
 			return CONVENIOS;
+		} else if(i.equalsIgnoreCase(BANK.name())) {
+			return BANK;
+		} else if(i.equalsIgnoreCase(TIMECONTROL.name())) {
+			return TIMECONTROL;
+		} else if(i.equalsIgnoreCase(MANAGEMENT.name())) {
+			return MANAGEMENT;
 		} 
 		return null;
 	}

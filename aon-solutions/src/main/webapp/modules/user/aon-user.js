@@ -1,5 +1,4 @@
 import {AonElement} from '../../components/AonElement.js';
-import {AllApps} from  '../../services/app.js';
 import {getDomainApps, setUserAppRole, setUser} from  '../../services/service.js';
 
 import '../../components/aon-card.js';
@@ -55,7 +54,7 @@ export class AonUser extends AonElement {
 			let table = document.getElementById('aonUserRoleTable');
 			table.appendChild(this.buildAppSelect(undefined));
 			for(let key in apps){
-					if(apps[key]) table.appendChild(this.buildAppSelect(this.getApp(key)));
+					//if(apps[key]) table.appendChild(this.buildAppSelect(this.getApp(key)));
 			}
 			componentHandler.upgradeAllRegistered();
 		}
@@ -261,37 +260,6 @@ export class AonUser extends AonElement {
 	isNew() {
 		let user = this.getAttribute('user') ? JSON.parse(this.getAttribute('user')) : undefined;
 		return user === undefined;
-	}
-
-	getApp(app) {
-		switch(app.toLowerCase()){
-			case AllApps.INVOICE.app:
-				return AllApps.INVOICE;
-			case AllApps.DOCUMENTAL.app:
-				return AllApps.DOCUMENTAL;
-			case AllApps.MESSENGER.app:
-				return AllApps.MESSENGER;
-			case AllApps.ACCOUNTING.app:
-				return AllApps.ACCOUNTING;
-			case AllApps.FISCAL.app:
-				return AllApps.FISCAL;
-			case AllApps.PAYROLL.app:
-				return AllApps.PAYROLL;
-			case AllApps.OCR.app:
-				return AllApps.OCR;
-			case AllApps.AIO.app:
-				return AllApps.AIO;
-			case AllApps.TOOLS.app:
-				return AllApps.TOOLS;
-			case AllApps.COMUNICA.app:
-				return AllApps.COMUNICA;
-			case AllApps.PORTAL.app:
-				return AllApps.PORTAL;
-			case AllApps.CONVENIOS.app:
-				return AllApps.CONVENIOS;
-			case AllApps.BANK.app:
-				return AllApps.BANK;
-		}
 	}
 
 }
