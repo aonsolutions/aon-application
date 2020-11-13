@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getMovements} from '../../services/service.js';
+import {getMovements, getTest} from '../../services/service.js';
 import '../../components/aon-table.js';
 import '../../components/aon-toast.js';
 
@@ -33,32 +33,47 @@ export class AonMovementsList extends AonElement {
 			<aon-dialog id="aonDialogAddOption" type="menu"></aon-dialog>
 		`;
 		this.build();
- 	}
+	}
+	 
+
 
  	build() {
 		let aonMovementTable = this.getElement('aonMovementTable');
-		aonMovementTable.addColumn('Nombre', 'string', 'nombre');
-		aonMovementTable.addColumn('Apellidos', 'string', 'last_name');
+		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
 		aonMovementTable.addColumn('Movimiento', 'string', 'mov');
-		aonMovementTable.addColumn('T. contrato', 'string', 'tipo_contrato');
+		aonMovementTable.addColumn('NNS', 'string', 'nss');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
-		this.init();
+		this.getTable();
 	}
 
-	init() {
+	async getTable() {
 		let aonMovementTable = this.getElement('aonMovementTable');
 		if(aonMovementTable) {
-			getMovements(this.getFilter()).then(Movements => {
+			try{
+				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
-				Movements.forEach((data, i) => {
+				resp.map(r=>{
+					let {name:nombres, ipf, fra:fecha, nss} = r;
+					let identificacion = ipf.toString().substring(0,1);
+					let dni = ipf.toString().substring(1);
+					let data = {
+						nombres,
+						dni: `${identificacion} ${dni}`,
+						mov: 'Alta',
+						nss,
+						fecha
+					};
 					aonMovementTable.addRow(data, (el) => this.aonMovement(el, data));
-				});
-			});
+				})
+			} catch(e){
+				console.log(e);
+			}
 		}
 	}
 
 	aonMovement({target:el}, data) {
+
 		const top  = el.getBoundingClientRect().top;
 		const left = el.getBoundingClientRect().left;
 		let d = this.getElement('aonDialogAddOption');

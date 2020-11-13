@@ -1,11 +1,12 @@
 import {AonElement} from '../../components/AonElement.js';
 import {serializeForm} from '../../services/utils.js'
-import {getPersonas, getTipoContrato, getCuentaCotizacion, getOcupacion, getGrupoCotizacion, postAltaDirecta} from '../../services/service.js'
+import {getPersonas, getCentroTrabajo, getCuentaCotizacion, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta} from '../../services/service.js'
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-date.js';
 import '../../components/aon-suggestion.js';
 import '../../components/aon-toast.js';
+import '../../components/aon-select.js';
 
 export class AonAltaDirecta extends AonElement {
     ID;
@@ -52,50 +53,52 @@ export class AonAltaDirecta extends AonElement {
 
         let aonEmpresaCard = this.getElement(`${this.ID}EmpresaCard`);
         aonEmpresaCard.setContentHTML(`
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-input name="cuenta_cotizacion" id="cuenta_cotizacion" description="Cuenta de cotización" type="list"></aon-input>
+            <div class="aonCol-sm-12 aonCol-md-4">
+                <aon-select name="centro_trabajo" id="centro_trabajo" title="Centro de trabajo"></aon-select>
             </div> 
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-input name="convenio" id="convenio" description="Convenio" type="text"value="60888888888888"></aon-input>
+            <div class="aonCol-sm-12 aonCol-md-4">
+                <aon-select name="cuenta_cotizacion" id="cuenta_cotizacion" title="Cuenta de cotización"></aon-select>
             </div> 
-            
+            <div class="aonCol-sm-12 aonCol-md-4">
+                <aon-input name="convenio" id="convenio" description="Convenio" type="text" value="60888888888888"></aon-input>
+            </div> 
         `);
 
         let aonTrabajadorCard = this.getElement(`${this.ID}TrabajadorCard`);
         aonTrabajadorCard.setContentHTML(`
-            <div class="aonCol-sm-12">
+            <div class="aonCol-sm-12 aonCol-md-6">
                 <div id="${this.ID}DivDni"></div>
             </div>
-            <div class="aonCol-sm-12">
+            <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-input name="naf" id="naf" description="Número de afiliación" type="text"></aon-input>
             </div>
             <div class="aonCol-sm-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text"></aon-input>
             </div>
-            <div class="aonCol-sm-12">
+            <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-input name="apellido" id="apellido1" description="1er Apellido" type="text"></aon-input>
             </div>
-            <div class="aonCol-sm-12">
+            <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-input name="apellido2" id="apellido2" description="2do Apellido" type="text"></aon-input>
             </div>
         `);
 
         let aonContratoCard = this.getElement(`${this.ID}ContratoCard`);
         aonContratoCard.setContentHTML(`
-            <div class="aonCol-sm-12">
-                <aon-date name="fecha" id="fecha" title="Fecha"></aon-date>
-            </div> 
-            <div class="aonCol-sm-12">
-                <aon-input name="grupo_cotizacion" id="grupo_cotizacion" description="Grupo de cotización" type="list"></aon-input>
-            </div> 
-            <div class="aonCol-sm-12">
-                <aon-input name="ocupacion" id="ocupacion" description="Ocupación" type="list"></aon-input>
-            </div> 
-            <div class="aonCol-sm-12">
-                <aon-input name="tipo_contrato" id="tipo_contrato" description="Tipo de contrato" type="list"></aon-input>
+            <div class="aonCol-sm-12 aonCol-md-6">
+                <aon-select name="tipo_contrato" id="tipo_contrato" title="Tipo de contrato"></aon-select>
             </div>
+            <div class="aonCol-sm-12 aonCol-md-6">
+                <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
+            </div> 
+            <div class="aonCol-sm-12 aonCol-md-6">
+                <aon-select name="grupo_cotizacion" id="grupo_cotizacion" title="Grupo de cotización"></aon-select>
+            </div> 
+            <div class="aonCol-sm-12 aonCol-md-6">
+                <aon-select name="ocupacion" id="ocupacion" title="Ocupación" ></aon-select>
+            </div> 
             <div class="aonCol-sm-12">
-                <aon-input name="coeficiente_parcial" id="coeficiente_parcial" description="Coeficiente Parcial" type="text"></aon-input>
+                <aon-input name="coeficiente_parcial" id="coeficiente_parcial" description="Coeficiente Parcial" type="text" visible="false"></aon-input>
             </div>
 
         `);
@@ -116,6 +119,7 @@ export class AonAltaDirecta extends AonElement {
 
     startFunctions(){
         this.suggestionDni();
+        this.listCentroTrabajo();
         this.listCuentaCotizacion();
         this.listTipoContrato();
         this.listGrupoCotizacion();
@@ -123,8 +127,15 @@ export class AonAltaDirecta extends AonElement {
     }
 
     selectTipoContrato(e){
-        //si el tipo de contrato es parcial se debe llenar el coeficiente parcial
-
+        let {detail:{tipo_jornada}} = e;
+        tipo_jornada = parseInt(tipo_jornada); 
+        let coeficiente_parcial= this.getElement('coeficiente_parcial');
+        if(tipo_jornada){
+            coeficiente_parcial.value = '';
+            coeficiente_parcial.visible =  true;
+        }  else {
+            coeficiente_parcial.visible =  false;
+        } 
     }
 
     suggestionDni(){
@@ -148,6 +159,14 @@ export class AonAltaDirecta extends AonElement {
 		});
     }
 
+    async listCentroTrabajo(){
+        let centro_trabajo = this.getElement('centro_trabajo');
+        try {
+            const resp = await getCentroTrabajo();
+            centro_trabajo.options = JSON.stringify(resp);
+        } catch (error) {}
+    }
+
     async listCuentaCotizacion(){
         let cuenta_cotizacion = this.getElement('cuenta_cotizacion');
         try {
@@ -163,6 +182,7 @@ export class AonAltaDirecta extends AonElement {
             tipo_contrato.options = JSON.stringify(
                 resp.map(r=> {
                     return {
+                        ...r,
                         name: `${r.value} - ${r.name}`,
                         value: r.value
                     }
@@ -174,10 +194,11 @@ export class AonAltaDirecta extends AonElement {
     async listGrupoCotizacion(){
         let grupo_cotizacion = this.getElement('grupo_cotizacion');
         try {
-            const resp = await getGrupoCotizacion()
+            const resp = await getGrupoCotizacion();
             grupo_cotizacion.options = JSON.stringify(
                 resp.map(r=> {
                     return {
+                        ...r,
                         name: `${r.value} - ${r.name}`,
                         value: r.value
                     }

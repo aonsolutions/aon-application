@@ -20,6 +20,9 @@ export class AonMovements extends AonElement {
         this.innerHTML = `
             <aon-dialog id="aonDialogAddOption" type="menu" > </aon-dialog>
         `;
+
+        this.storageTest();
+        
         this.build();
     }
 
@@ -29,6 +32,11 @@ export class AonMovements extends AonElement {
         aonMovements.addToolbarOption('Add', 'add', () => this.aonAltaDirecta());
         this.aonList();
     }
+
+    storageTest(){
+        localStorage.setItem('aon_domain_id', 3348);
+        localStorage.setItem('aon_domain_name', 'altai-G90317447-ayudat.aonsolutions.net');
+	}
 
     async aonList(filter){
         let aonComunica = this.getElement('aonComunica');

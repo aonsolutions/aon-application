@@ -92,6 +92,12 @@ export class AonSelect extends AonElement {
       let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
       this.buildOptions(options);
     });
+
+    input.addEventListener('click', () => {
+      let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
+      this.buildOptions(options);
+    });
+
     let div = this.getElement(input.DIV);
     let span = this.createElement('span');
     span.id = input.SPAN;
