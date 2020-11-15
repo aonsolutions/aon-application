@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.test.aherse;
 
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
