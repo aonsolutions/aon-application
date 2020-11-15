@@ -10,9 +10,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -30,12 +35,17 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEmployees;
 import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
+import com.esferalia.aon.in.payroll.tgss.idc.Idcplccc;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
@@ -53,6 +63,14 @@ import solutions.aon.seg.social.exceptions.SegSocialException;
 public class SistemaREDServlet extends HttpServlet implements SistemaREDService {
 	
 	private static final String CIF = "B01487271";
+	
+	private ExecutorService executorService;
+	
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		executorService = Executors.newCachedThreadPool();
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -211,6 +229,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String date = req.getParameter(Parameter.DATE.name());
 
 			Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
+			execute(() -> addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf) );
 
 			resp.setStatus(HttpServletResponse.SC_OK);
 			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
@@ -252,7 +271,40 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		Employee employee = PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
 		return employee;
 	}	
+
+	private void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+			String ccc, String ...nafs) {
+		try {
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+			
+			for ( String naf : nafs ) {
+				Bonus bonuses [] =
+				Idcplccc.getSSBonuses(data).stream()
+				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+				.map( b -> 
+				new Bonus()
+				.setEndDate(b.getEndDate())
+				.setStartDate(b.getStartDate())
+				.setExpression(b.getFormula())
+				.setDescription(b.getDescription())
+				.setType(BonusType.SOCIAL_SECURITY)
+				)
+				.toArray(Bonus[]::new)
+				;
+				Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+				Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(new Date());
+				PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, firstDayOfMonth, lastDayOfMonth, bonuses);					
+			}
+			
+		} catch ( Exception e ) {
+			
+		}
+		 
+				
+	}
 	
+
 	private void doRestoreEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
 		Connection connection = null;
 		
@@ -296,6 +348,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
+			Map<Pair<String,String>, List<String>> cccNafs = new HashMap<Pair<String,String>, List<String>>();
+			
 			int contentLength = 2;			
 			int count = Integer.parseInt(req.getParameter(Parameter.COUNT.name()));
 			os.write('[');
@@ -306,6 +360,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				String date = req.getParameter(Parameter.DATE.name()+i);
 	
 				Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
+				
+				cccNafs.computeIfAbsent(new Pair(regime,ccc), k -> new ArrayList()).add(naf);
 	
 				byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d },", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
 				os.write(content);		
@@ -317,9 +373,17 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			resp.setStatus(HttpServletResponse.SC_OK);
 			resp.setContentType("text/html");
 			resp.setContentLength(contentLength);
+			
+			cccNafs.forEach( (k,v) -> execute(() -> addBonus(userLogin, domainName, parentDomainId, userId, k.getLeft(), k.getRight(), v.toArray(new String[v.size()])) ));
+
 		} 
 
 	}	
+	
+
+	private void execute(Runnable command) {
+		executorService.execute(command);
+	}
 
 	
 	protected String getDomain(HttpServletRequest req) {
@@ -331,7 +395,8 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		return AonServletUtils.getConnection(domain);
 	}
 	
-	private byte []  readAllBytes ( InputStream is ) throws IOException {
+	
+	private static byte []  readAllBytes ( InputStream is ) throws IOException {
 		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
 		    int nRead;
 		    byte[] data = new byte[1024];

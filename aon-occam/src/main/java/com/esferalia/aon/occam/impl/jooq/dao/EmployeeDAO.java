@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
@@ -12,9 +13,14 @@ import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -26,6 +32,7 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -36,14 +43,16 @@ import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.type.ContractModel;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.SSRegimeType;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class EmployeeDAO {
+	
 
 	public  static Employee addEmployee(AONContext aonContext, String domainName, Employee employee ) {
 		DSLContext dslContext = aonContext.getDslContext();
@@ -120,6 +129,10 @@ public class EmployeeDAO {
 		insertContractData.execute();
 		
 		return contractRecord;
+	}
+
+	public static Bonus [] setBonuses(AONContext aonContext, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus ...bonuses) {
+		return setBonuses(aonContext.getDslContext(), domainName, ccc, naf, toSql(startDate), toSql(endDate), bonuses);
 	}
 
 	private static  EnterpriseCccRecord getEnterpriseCCC(DSLContext dslContext, Integer domainId, Employee employee) {
@@ -317,6 +330,154 @@ public class EmployeeDAO {
 		});
 	}
 	
+	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, String ccc, String naf, java.sql.Date startDate, java.sql.Date endDate, Bonus ...bonuses) {
+		
+		
+//		Arrays.parallelSort(bonuses, (b1,b2) -> {
+//			int compare = compare(b1.getStartDate(), b2.getStartDate());
+//			return compare != 0 ? compare : compare(b1.getEndDate(),b2.getEndDate());
+//		});
+//		
+//		java.sql.Date startDate = toSql(bonuses[0].getStartDate());
+//		java.sql.Date endDate = toSql(bonuses[bonuses.length -1].getEndDate());
+		
+		List<ContractRecord> contractRecords = 
+		dslContext
+		.select()
+		.from(DOMAIN)
+		.innerJoin(PERSON).on(PERSON.DOMAIN.eq(DOMAIN.ID))
+		.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+		.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+		.where(DOMAIN.NAME.eq(domainName))
+		.and(PERSON.SOCIAL_SECURITY_NUM.eq(naf))
+		.and(ENTERPRISE_CCC.CCC.eq(ccc))
+		.and(DSL.condition(endDate == null ).or(CONTRACT.START_DATE.le(endDate)))
+		.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
+		.fetchInto(CONTRACT)
+		;
+		
+		for ( ContractRecord contractRecord : contractRecords  ) {
+			Bonus contractBonuses [] = 
+			Arrays.stream(bonuses)
+			.filter( b -> intersects(contractRecord, b) )
+			.toArray(Bonus[]::new);
+			if ( contractBonuses.length >= 0 ) {
+				setBonuses(dslContext, domainName, startDate, endDate, contractRecord, contractBonuses);
+			}
+			
+		}
+		
+		return bonuses;
+	}
+
+	private static boolean intersects(ContractRecord r, Bonus b) {
+		return compare(max(r.getStartDate(), b.getStartDate()), min(r.getEndDate(), b.getEndDate())) <= 0;
+	}
+	
+	
+	private static Bonus [] setBonuses(DSLContext dslContext, String domainName, java.sql.Date startDate, java.sql.Date endDate, ContractRecord contractRecord, Bonus ...bonuses) {
+		
+		List<Bonus> bonusList = new ArrayList<Bonus>(bonuses.length);
+		Arrays.stream(bonuses).forEach( bonus -> bonusList.add(bonus));
+		
+		dslContext
+		.select()
+		.from(CONTRACT_BONUS)
+		.where(CONTRACT_BONUS.CONTRACT.eq(contractRecord.getId()))
+		.and(DSL.condition(endDate == null ).or(CONTRACT_BONUS.START_DATE.le(endDate)))
+		.and(CONTRACT_BONUS.END_DATE.isNull().or(CONTRACT_BONUS.END_DATE.ge(startDate)))
+		.fetchStreamInto(CONTRACT_BONUS)
+		.forEach( contractBonus -> {
+			if ( remove(bonusList, contractBonus) ) {
+				return;
+			}
+			
+			if ( compare(contractBonus.getStartDate(), startDate) >= 0 ) { 
+				if ( compare(contractBonus.getEndDate(), endDate ) <= 0 ) {
+					// contract bonus starts after start date and ends before end date. So delete it.
+					contractBonus.delete();
+				}
+				else { 
+					// contract bonus ends after end date. So now starts just after end date. 
+					contractBonus.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					contractBonus.update();
+				}
+			} else {
+				if ( compare(contractBonus.getEndDate(), endDate ) <= 0 ) {
+					// contract bonus starts before start date and ends before end date. So ends just before start date.
+					contractBonus.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					contractBonus.update();
+				} else {
+					// contract bonus starts before start date and ends after end date. So we need to split it.
+					ContractBonusRecord leftContractBonus = contractBonus;
+					ContractBonusRecord rightContractBonus = contractBonus.copy();
+					leftContractBonus.setEndDate(AonDateUtils.add(startDate, Calendar.DAY_OF_MONTH, -1));
+					leftContractBonus.update();
+					rightContractBonus.setStartDate(AonDateUtils.add(endDate, Calendar.DAY_OF_MONTH, 1));
+					rightContractBonus.insert();
+				}
+			}
+				
+		});
+		;
+		
+		for (Bonus bonus : bonusList) {
+			dslContext
+			.insertInto(CONTRACT_BONUS)
+			.set(CONTRACT_BONUS.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_BONUS.CONTRACT, contractRecord.getId())
+			.set(CONTRACT_BONUS.START_DATE, toSql(bonus.getStartDate()))
+			.set(CONTRACT_BONUS.END_DATE, toSql(bonus.getEndDate()))
+			.set(CONTRACT_BONUS.DESCRIPTION, bonus.getDescription())
+			.set(CONTRACT_BONUS.EXPRESSION, bonus.getExpression())
+			.execute()
+			;
+		}
+		
+		
+		
+		return bonuses;
+		
+	}
+	
+	private static boolean remove( List<Bonus> list, ContractBonusRecord r ) {
+		for (int i = 0; i < list.size(); i++) {
+			Bonus b = list.get(i);
+			if ( !equals(b, r) )
+				continue;
+			list.remove(i);
+			return true;
+				
+		}	
+		return false; 
+	}
+	
+	private static boolean equals( Bonus bonus, ContractBonusRecord record) {
+		if( equals(bonus.getStartDate(),record.getStartDate())
+				&& equals(bonus.getEndDate(),record.getEndDate())
+				&& AonStringUtils.equals(bonus.getExpression(), record.getExpression()))
+			return true;
+		if ( AonStringUtils.equals(bonus.getExpression(), record.getExpression()) ){
+			if ((compare( record.getStartDate(), bonus.getStartDate()) <= 0 )
+				&& (compare( record.getEndDate(), bonus.getEndDate()) >= 0 )
+				&& (AonDateUtils.get(bonus.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
+				&& (bonus.getEndDate() == null || AonDateUtils.get(bonus.getEndDate(), Calendar.DAY_OF_MONTH) == AonDateUtils.getMax(bonus.getEndDate(), Calendar.DAY_OF_MONTH) ))
+				return true;
+		}
+		
+		return false;
+				
+	}
+	
+	private static boolean equals ( Date d1, Date d2) {
+		
+		return  d1 == d2 
+				&& (get(d1, Calendar.YEAR) == get(d2, Calendar.YEAR))
+				&& (get(d1, Calendar.MONTH) == get(d2, Calendar.MONTH))
+				&& (get(d1, Calendar.DAY_OF_MONTH) == get(d2, Calendar.DAY_OF_MONTH));
+				
+	}
+	
 	private static Gender getGender( String sex ) {
 		sex = AonStringUtils.trimToEmpty(sex);
 		sex = AonStringUtils.upperCase(sex);
@@ -377,6 +538,8 @@ public class EmployeeDAO {
 	}
 	
 	private static java.sql.Date toSql(Date date) {
+		if ( date == null )
+			return null;
 		return new java.sql.Date(date.getTime());
 	}
 	
@@ -558,5 +721,20 @@ public class EmployeeDAO {
 		}		
 	}	
 
+	public static Date max(Date a, Date b) {
+		return compare(a, b) > 0 ? a : b;
+	}
+
+	public static Date min(Date a, Date b) {
+		return compare(a, b) < 0 ? a : b;
+	}
+
+
+	public static int compare(Date a, Date b) {
+		if (a == null) {
+			return b == null ? 0 : 1;
+		}
+		return b == null ? -1 : a.compareTo(b);
+	}
 
 }

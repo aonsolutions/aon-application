@@ -16,6 +16,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -379,6 +380,24 @@ public class IdcTest {
 
 				
 			});
+		}
+	}
+
+	@Test
+	public void testIdcplcccBonus0() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplccc.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplccc.getSSBonuses(is);
+			assertEquals(0, ssBonuses.size());
+		}
+	}
+
+	@Test
+	public void testIdcplcccBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccI.pdf") ){
+			Collection<Bonus> ssBonuses = Idcplccc.getSSBonuses(is);
+			assertEquals(4, ssBonuses.size());
+			
+			ssBonuses.forEach( b -> System.out.println(b));
 		}
 	}
 

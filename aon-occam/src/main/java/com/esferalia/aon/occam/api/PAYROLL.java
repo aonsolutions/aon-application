@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
@@ -25,6 +27,15 @@ public class PAYROLL {
 	// ********************************************
 	// ********************************* PAYROLL **
 	// ********************************************
+
+	// -------------------- BONUS
+	
+	public static Bonus[] setBonuses(String domainName, Integer domainId, String login, String ccc, String naf, Date startDate, Date endDate, Bonus... bonuses) {
+		try (AONContext ctx  = AONContext.getAONContext(domainName, domainId, login) ) {
+			return getPayroll().setBonuses(ctx, domainName, ccc, naf, startDate, endDate, bonuses);
+		}
+	}
+	
 
 	// -------------------- EMPLOYEE
 	

@@ -2,19 +2,14 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 
 import java.util.Date;
 
-public class SSBonus {
+public class Bonus {
 
-	private String ssNum;
+	private String naf;
 	private String ccc;
-	private Date startDate;
 	private Date endDate;
+	private Date startDate;
 	private String description;
-	private Byte type; // Bonus.Type.values()
-	private String formula;
-
-	public SSBonus() {
-		super();
-	}
+	private String expression;
 
 	public Date getStartDate() {
 		return startDate;
@@ -40,28 +35,20 @@ public class SSBonus {
 		this.description = description;
 	}
 
-	public Byte getType() {
-		return type;
-	}
-
-	public void setType(Byte type) {
-		this.type = type;
-	}
-
 	public String getFormula() {
-		return formula;
+		return expression;
 	}
 
 	public void setFormula(String formula) {
-		this.formula = formula;
+		this.expression = formula;
 	}
 
 	public String getSsNum() {
-		return ssNum;
+		return naf;
 	}
 
 	public void setNss(String ssNum) {
-		this.ssNum = ssNum;
+		this.naf = ssNum;
 	}
 
 	public String getCcc() {

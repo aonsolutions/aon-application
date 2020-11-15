@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq;
 
+import java.util.Date;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IPayroll;
+import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
@@ -17,6 +19,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
 
 public class PayrollImpl implements IPayroll {
+	
+	// -------------------- EMPLOYEE
+	
+	@Override
+	public Bonus[] setBonuses(AONContext ctx, String domainName, String ccc, String naf, Date startDate, Date endDate, Bonus... bonuses) {
+		return EmployeeDAO.setBonuses(ctx, domainName, ccc, naf, startDate, endDate, bonuses);
+	}
 	
 	// -------------------- EMPLOYEE
 	
@@ -54,7 +63,8 @@ public class PayrollImpl implements IPayroll {
 		return ctx.getDslContext().transactionResult(configuration ->
 			ContractDAO.getAgreementLevelCategoryStream(ctx, filter));
 	}
-	
+
+
 	
 	
 

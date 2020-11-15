@@ -83,6 +83,20 @@ public class SistemaRED {
 		}
 	}
 	
+	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regimen, String ccc, Date date) throws SegSocialException {
+		return SistemaRED_I.getContributionInformationCCC(certificateInputStream, certificatePassword, certificateType, regimen, ccc, date);
+	}
+	
+	public static byte[] getIDCCCC(final byte certificateData [], final String certificatePassword,
+			final String certificateType, String regimen, String ccc, Date date) throws SegSocialException{
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
+			return SistemaRED_I.getContributionInformationCCC(certificateInputStream, certificatePassword, certificateType, regimen, ccc, date);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+
 	public static byte[] getUp2DateSS(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc ) throws SegSocialException {
 		return SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, certificatePassword, certificateType, regimen, ccc);

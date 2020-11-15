@@ -15,6 +15,7 @@ import org.jooq.Result;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.jooq.tables.records.BonusConceptRecord;
 
@@ -52,25 +53,30 @@ public class JooqSSBonus {
 		
 		int contId = 0;
 		for(Record b : bonuses){
-			Record bonusConcept = null;
-			if(b.get(CONTRACT_BONUS.BONUS_CONCEPT) != null){
-				bonusConcept = dslContext.select()
-						.from(BONUS_CONCEPT)
-						.where(BONUS_CONCEPT.ID.eq(b.get(CONTRACT_BONUS.BONUS_CONCEPT)))
-						.fetchOne();
-			}
-			
 			SSBonusData bonusData = new SSBonusData();
 			bonusData.setId(contId);
-			bonusData.setSystem((0 == bonusConcept.get(BONUS_CONCEPT.DOMAIN) ? true : false));
 			bonusData.setStartDate(b.get(CONTRACT_BONUS.START_DATE));
 			bonusData.setEndDate(b.get(CONTRACT_BONUS.END_DATE));
 			bonusData.setDescription(b.get(CONTRACT_BONUS.DESCRIPTION));
-			bonusData.setType(bonusConcept == null ? null : bonusConcept.get(BONUS_CONCEPT.TYPE));
-			bonusData.setFormula((null == b.get(CONTRACT_BONUS.EXPRESSION)) ? bonusConcept.get(BONUS_CONCEPT.EXPRESSION) : b.get(CONTRACT_BONUS.EXPRESSION));
+
+			if(b.get(CONTRACT_BONUS.BONUS_CONCEPT) != null){
+				Record bonusConcept = dslContext.select()
+						.from(BONUS_CONCEPT)
+						.where(BONUS_CONCEPT.ID.eq(b.get(CONTRACT_BONUS.BONUS_CONCEPT)))
+						.fetchOne();
+				bonusData.setSystem((0 == bonusConcept.get(BONUS_CONCEPT.DOMAIN) ? true : false));
+				bonusData.setType(bonusConcept.get(BONUS_CONCEPT.TYPE));
+				bonusData.setFormula((null == b.get(CONTRACT_BONUS.EXPRESSION)) ? bonusConcept.get(BONUS_CONCEPT.EXPRESSION) : b.get(CONTRACT_BONUS.EXPRESSION));
+				//Set Bonus Concept if is sytem
+				bonusData.setBonusConceptId(bonusData.isSystem() ? bonusConcept.get(BONUS_CONCEPT.ID) : null);
+			} else {
+				bonusData.setSystem(false);
+				bonusData.setBonusConceptId(null);
+				bonusData.setType((byte)0); //SOCIAL_SECURITY
+				bonusData.setFormula(b.get(CONTRACT_BONUS.EXPRESSION));
+			}
 			
-			//Set Bonus Concept if is sytem
-			bonusData.setBonusConceptId(bonusData.isSystem() ? bonusConcept.get(BONUS_CONCEPT.ID) : null);
+			
 			
 			result.add(bonusData);
 			contId++;

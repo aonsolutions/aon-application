@@ -301,6 +301,21 @@ public class TestSisetemaRED_I {
 	
 	
 	
+	@Test
+	public void testContributionInfoCCCDuplicateOk() {
+		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		  Date d=new Date();
+		  byte[] pdf=SistemaRED_I.getContributionInformationCCC(certificateInputStream, "jg@FNMT", "pkcs12","0111", "01105360062", d);
+		  if(!(pdf.length>0))
+			  fail("Should have returned a pdf");
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
+		} catch (FailingHttpStatusCodeException e) {
+			  assertTrue(true);
+		} catch (IOException e1) {
+			fail("Error with the certificate input");
+		}
+	}
 	
 	
 	@Test

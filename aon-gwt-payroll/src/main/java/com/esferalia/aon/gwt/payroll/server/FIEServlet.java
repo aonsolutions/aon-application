@@ -110,7 +110,11 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			Fie2AON fie2AON = new Fie2AON() {
 				@Override
 				public void endDIT() {
-					ids.add(addIT(ctx, getIt()));
+					try {
+						ids.add(addIT(ctx, getIt()));
+					} catch ( EmployeeNotFoundexception e) {
+						
+					}
 				}
 				
 				@Override

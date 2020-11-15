@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -233,6 +234,18 @@ public class SistemaRED_I {
 		}
 	}
 
+	public static byte[] getContributionInformationCCC(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String regime,
+			String contributionAccount, Date fecha) throws SegSocialException {
+		try {
+			return getPdfInfo("/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR38&E=I&AP=AFIR",
+					certificateInputStream, certificatePassword, certificateType, null, regime,
+					contributionAccount, fecha);
+		} catch (InterruptedException ie) {
+			throw new SegSocialException();
+		}
+	}
+
 	public static byte[] getTADuplicate(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String affiliationNumber, String regime, String contributionAccount,
 			Date fecha) throws SegSocialException {
@@ -258,8 +271,12 @@ public class SistemaRED_I {
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			HtmlForm jacadaform = htmlPage.getFormByName("jacadaform");
 			// Filling the fields
-			jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			
+			try {
+				jacadaform.getInputByName("txt_SDFTESNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
+				jacadaform.getInputByName("txt_SDFNAF").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			} catch (ElementNotFoundException enfe) {
+			}
 			try {
 				jacadaform.getInputByName("txt_SDFREGCTA_NH").setValueAttribute(regime);
 			} catch (ElementNotFoundException enfe) {
@@ -271,7 +288,10 @@ public class SistemaRED_I {
 					.setValueAttribute(Toolkit.SplitString(contributionAccount, 2)[1]);
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(fecha);
-			jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
+			try {
+				jacadaform.getInputByName("txt_SDFDIA").setValueAttribute("" + calendar.get(Calendar.DAY_OF_MONTH));
+			} catch (ElementNotFoundException enfe) {
+			}
 			jacadaform.getInputByName("txt_SDFMES").setValueAttribute("" + (calendar.get(Calendar.MONTH) + 1));
 			jacadaform.getInputByName("txt_SDFAO").setValueAttribute("" + calendar.get(Calendar.YEAR));
 			// Selecting document's printing method
@@ -283,8 +303,17 @@ public class SistemaRED_I {
 					break;
 				}
 			}
-			htmlPage = jacadaform.getInputByValue("Continuar").click();
+			Page page = jacadaform.getInputByValue("Continuar").click();
+			if ( !page.isHtmlPage() ) {
+				InputStream is = page.getWebResponse().getContentAsStream();
+				byte[] ret = is.readAllBytes();
+				is.close();
+				return ret;
+			}
+			
+			htmlPage = (HtmlPage) page;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
 			// REVISAR SPLIT
 			// Obtaining the first table registry's label to double-click on it so that it
 			// loads the pdf

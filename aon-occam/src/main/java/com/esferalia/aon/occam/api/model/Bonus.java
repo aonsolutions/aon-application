@@ -69,8 +69,9 @@ public class Bonus implements Serializable, HasId, HasDomain {
 		return description;
 	}
 
-	public void setDescription(String name) {
+	public Bonus setDescription(String name) {
 		this.description = name;
+		return this;
 	}
 
 	public String getExpression() {
