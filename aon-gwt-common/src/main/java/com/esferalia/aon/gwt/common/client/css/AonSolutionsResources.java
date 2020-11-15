@@ -178,5 +178,34 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-finance-group.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconFinanceGroup();
+	
+	@Source("icons/aon-icon-inbox.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconInbox();
+	
+	@Source("icons/aon-icon-reject.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconReject();
+
+	@Source("icons/aon-icon-draft.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDraft();
+	
+	@Source("icons/aon-icon-restore-deleted.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRestoreDeleted();
+	
+	@Source("icons/aon-icon-restore-rejected.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconRestoreRejected();
+
+	@Source("icons/aon-icon-view-document.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconViewDocument();
+	
+	@Source("icons/aon-icon-delete-forever.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconDeleteForever();
+	
 }
 

@@ -782,11 +782,13 @@ public class TediParser {
 			if (filled) {
 				AccountingRegistry ar = result.getAccountingInvoice().getRegistry();
 				if (ar.getType() == AccountingRegistryType.CREDITOR) {
+					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() == InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.EXPENSES );
 						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.EXPENSES.getDescription()));
 					}
 				} else  if (ar.getType() == AccountingRegistryType.SUPPLIER) {
+					result.getTedi().getSender().setName(ar.getName());
 					if (result.getInvoice().getType() != InvoiceType.PURCHASE) {
 						result.getInvoice().setType( InvoiceType.PURCHASE );
 						result.add( TediErrorMessages.C003.inf(TediContextKey.TYPE,TediContextKey.TYPE.getDescription(),InvoiceType.PURCHASE.getDescription()));

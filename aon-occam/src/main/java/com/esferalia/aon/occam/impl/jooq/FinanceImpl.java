@@ -11,7 +11,10 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -37,6 +40,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceUtilitiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 
 public class FinanceImpl implements IFinance {
@@ -311,5 +315,52 @@ public class FinanceImpl implements IFinance {
 			return RegistryDAO.getRBankStream(ctx, filter -> filter.getRegistryProperty().eq(company.getId()))
 					.collect(Collectors.toCollection(LinkedList::new));
 		});
+	}
+
+	// ------------------------------------- RAWDOC
+	@Override
+	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.get(ctx,filter,offset,limit));
+	}
+	
+	@Override
+	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.getDomainData(ctx,searchDomain));
+	}
+	
+	@Override
+	public Rawdoc getRawdocFull(AONContext ctx, int id) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.getFull(ctx, id));
+	}
+	
+	@Override
+	public void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId) {
+		ctx.getDslContext().transaction(configuration -> {
+			RawdocDAO.delete(ctx, domain, rawdocId);
+		} );			
+	}
+	
+	@Override
+	public void rawdocToDraft(AONContext ctx, Integer rawdocId) {
+		ctx.getDslContext().transaction(configuration -> {
+			RawdocDAO.toDraft(ctx, rawdocId);
+		} );			
+	}
+
+	@Override
+	public void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason) {
+		ctx.getDslContext().transaction(configuration -> {
+			RawdocDAO.toRejected(ctx, rawdocId, reason);
+		} );			
+	}
+
+	@Override
+	public void rawdocToInbox(AONContext ctx, Integer rawdocId) {
+		ctx.getDslContext().transaction(configuration -> {
+			RawdocDAO.toInbox(ctx, rawdocId);
+		} );			
 	}
 }

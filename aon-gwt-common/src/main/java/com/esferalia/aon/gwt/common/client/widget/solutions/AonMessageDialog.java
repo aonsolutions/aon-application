@@ -1,8 +1,8 @@
 package com.esferalia.aon.gwt.common.client.widget.solutions;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.occam.api.model.HasAudit;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -14,30 +14,37 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class AonAuditDialog extends AonCustomDialog {
+public class AonMessageDialog extends AonCustomDialog {
+    
+	public static interface AonMessageDialogCallback {
+		void onAccept();
+		default void onClose() {
+			this.onAccept();
+		}
+	}
 
-	public void show(HasAudit auditable) {
-		setVisible(false);
-		setAnimationEnabled(true);
-		setGlassEnabled(true);
-		setModal(true);
-		setCaption(AON.MSG.audit());
-		FlowPanel panel = new FlowPanel();
-		panel.setStyleName(AON.CSS.aonScrollArea());
-		Label created = new Label();
-		created.addStyleName(AON.CSS.aonMargin());
-		created.setText(AonStringUtils.isEmpty(auditable.getCreationUser()) ? AON.MSG
-				.emptyCreatedBy() : AON.MSG.createdBy(
-				auditable.getCreationUser(), auditable.getCreationDate()));
-		panel.add(created);
-		Label modified = new Label();
-		modified.setText(AonStringUtils.isEmpty(auditable.getModificationUser()) ? AON.MSG
-				.emptyModifiedBy() : AON.MSG.modifiedBy(
-				auditable.getModificationUser(),
-				auditable.getModificationDate()));
-		modified.addStyleName(AON.CSS.aonMargin());
-		
+	private SimpleLayoutPanel root;
+	
+	public AonMessageDialog() {
+		addStyleName(AON.CSS.aonConfirmDialog());
+		root = new SimpleLayoutPanel();
+		root.setWidth("500px");
+		root.setHeight("90px");
+		root.setStyleName(AON.CSS.aonPadding());
+		this.setWidget(root);
+	}
+    public void show(String msg, final AonMessageDialogCallback callback) {
+    	show("", msg, callback);
+    }
+    
+	public void show(String header,String msg, final AonMessageDialogCallback callback) {
+    	setCaption(header);
+    	FlowPanel panel = new FlowPanel();
+    	Label label = new Label(msg);
+    	label.setStyleName(AON.CSS.aonConfirmDialogMsg());
+    	panel.add(label);
     	FlowPanel buttons = new FlowPanel();
     	buttons.setStyleName(AON.CSS.aonTextCenter());
     	
@@ -49,6 +56,7 @@ public class AonAuditDialog extends AonCustomDialog {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
 					hide();
+					callback.onAccept();;	
 				}
 			}
 		});
@@ -58,6 +66,7 @@ public class AonAuditDialog extends AonCustomDialog {
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
 				hide();
+				callback.onAccept();
 			}
 		});
     	buttons.add(okButton);
@@ -65,15 +74,20 @@ public class AonAuditDialog extends AonCustomDialog {
     	addCloseHandler(new CloseHandler<PopupPanel>() {
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
-				hide();
+				callback.onClose();
 			}
 		});
-
     	panel.add(buttons);
-		panel.add(modified);
-		add(panel);
-		center();
-		show();
-	}
-
+    	root.setWidget(panel);
+    	
+    	center();
+    	show();
+    	
+	    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+	        public void execute() {
+	        	okButton.setFocus(true);        	
+	        }
+	    });
+    }
+	
 }

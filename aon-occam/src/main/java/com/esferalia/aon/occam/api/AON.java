@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.PurchaseFilter;
 import com.esferalia.aon.occam.api.model.Filter.RDirStaffFilter;
+import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RecordDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
@@ -114,6 +115,9 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailTemplate;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocParams;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -238,6 +242,7 @@ import com.esferalia.aon.occam.impl.jooq.SystemImpl;
 import com.esferalia.aon.occam.impl.jooq.TaskImpl;
 import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
+import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 public class AON {
@@ -254,10 +259,6 @@ public class AON {
 		return new CommissionImpl();
 	}
 
-	//	private static IAccounting getAccounting() {
-	//		return new AccountingImpl();
-	//	}
-
 	private static ISalary getSalary() {
 		return new SalaryImpl();
 	}
@@ -265,10 +266,6 @@ public class AON {
 	private static ISystem getSystem() {
 		return new SystemImpl();
 	}
-
-	// private static IFiscal getFiscal() {
-	// return new FiscalImpl();
-	// }
 
 	private static IFinance getFinance() {
 		return new FinanceImpl();
@@ -5963,4 +5960,95 @@ public class AON {
 		}
 	}
 
+	// ------------------------------------- RAWDOC
+	public static LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String user, RawdocParams params) {
+		return getRawdocStream(domainName, domain, user, p -> RawdocUtils.getFilter(p, params),0,Integer.MAX_VALUE)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	public static LinkedList<Rawdoc> getRawdocs(String domainName, int domain, String user, RawdocParams params, int offset, int limit) {
+		return getRawdocStream(domainName, domain, user, p -> RawdocUtils.getFilter(p, params),offset,limit)
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	public static Stream<Rawdoc> getRawdocStream(String domainName, int domain, String user, RawdocFilter filter) {
+		return getRawdocStream(domainName, domain, user, filter,0,Integer.MAX_VALUE); 
+	}
+	
+	public static Stream<Rawdoc> getRawdocStream(String domainName, int domain, String user, RawdocFilter filter,int offset, int limit) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().getRawdocStream(ctx, filter,offset,limit);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static Rawdoc getRawdocFull(String domainName, int domain, String user, int id) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().getRawdocFull(ctx, id);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static LinkedList<RawdocDomainData> getRawdocDomainData(String domainName, int domain, String user, int searchDomain) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().getRawdocDomainData(ctx, searchDomain);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void rawdocDelete(String domainName, int domain, String user, Integer rawdocId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getFinance().rawdocDelete(ctx, domain, rawdocId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void rawdocToDraft(String domainName, int domain, String user, Integer rawdocId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getFinance().rawdocToDraft(ctx, rawdocId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void rawdocToRejected(String domainName, int domain, String user, Integer rawdocId, String reason) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getFinance().rawdocToRejected(ctx, rawdocId, reason);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static void rawdocToInbox(String domainName, int domain, String user, Integer rawdocId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getFinance().rawdocToInbox(ctx, rawdocId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
 }

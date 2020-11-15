@@ -805,6 +805,9 @@ public class AccountingInvoiceDAO {
 		}
 		Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
 		ctx.log().info("INSERT INVOICE ATTACH (invoice: "+ accInvoice.getAttach().getAttachModule() + " id : " +  attachId + ")");
+		if ( accInvoice.isTediParsed()) {
+			RawdocDAO.delete(ctx, accInvoice.getInvoice().getDomain(), accInvoice.getAttach().getId());
+		}
 	}
 
 	public static boolean isPresentInInvoiceDUA(AONContext ctx, Integer invoiceImportId) {

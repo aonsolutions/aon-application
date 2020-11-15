@@ -393,6 +393,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("\u00BFDeshacer el borrado?")
 	String confirmRestoreAction();
 
+	@DefaultMessage("\u00BFAceptar de nuevo el documento?")
+	String confirmRestoreRejected();
+
 	@DefaultMessage("Si continua se borrar\u00E1 la declaraci\u00F3n completa.\n \u00BFContinuar con el borrado?")
 	String confirmDeclarationDeleteAction();
 
@@ -405,8 +408,14 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Confirme si desea cancelar la confecci\u00F3n de la declaraci\u00F3n.")
 	String confirmDeclarationCancelAction();
 
+	@DefaultMessage("\u00BFConfirma el borrado definitivo del documento?")
+	String confirmDeleteForever();
+
 	@DefaultMessage("Restaurar")
 	String restoreAction();
+
+	@DefaultMessage("Borrar definitivamente")
+	String deleteForeverAction();
 
 	@DefaultMessage("Buscar")
 	String searchAction();
@@ -1010,6 +1019,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Datos adicionales")
 	String additionalData();
+
+	@DefaultMessage("Visor de documentos")
+	String documentViewer();
 
 	@DefaultMessage("A\u00F1o de nacimiento")
 	String birthYear();
@@ -3226,6 +3238,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Asiento contable")
 	String accountEntry();
  	
+ 	@DefaultMessage("Aceptar Factura")
+	String acceptInvoice();
+
  	@DefaultMessage("Ir a asiento contable")
 	String gotoAccountEntry();
 
@@ -3872,6 +3887,26 @@ public interface CommonMessages extends Messages {
    	@DefaultMessage("Cartera de cobros y pagos")
 	String financeModule();
 
+   	@DefaultMessage("Gesti\u00F3n de documentos pendientes.")
+	String rawdocModule();
+
+   	@DefaultMessage("Bandeja de entrada.")
+	String inbox();
+
+   	@DefaultMessage("Documentos rechazados.")
+	String rejectedDocs();
+
+	@DefaultMessage("\u00BFEnviar el documento a la papelera?")
+	String confirmDraftAction();
+
+	@DefaultMessage("\u00BFRechazar el documento?")
+	String confirmRejectAction();
+
+	@DefaultMessage("\u00BFRestaurar el documento?")
+	String confirmInboxAction();
+	
+	@DefaultMessage("Papelera.")
+	String draftDocs();
 
 }
 

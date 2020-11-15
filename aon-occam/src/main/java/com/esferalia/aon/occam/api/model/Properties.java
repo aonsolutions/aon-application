@@ -1267,4 +1267,17 @@ public interface Properties {
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
 	}
+	
+	public interface RawdocProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Byte> getNatureProperty();
+		Property<Byte> getTypeProperty();
+		Property<Byte> getStatusProperty();
+		Property<Timestamp> getCreationDateProperty();
+		Property<String> getCreationUserProperty();
+		Property<Timestamp> getModificationDateProperty();
+		Property<String> getModificationUserProperty();
+	}
+	
 }

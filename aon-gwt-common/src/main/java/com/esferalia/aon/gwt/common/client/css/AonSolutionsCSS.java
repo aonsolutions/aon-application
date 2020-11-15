@@ -129,6 +129,27 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_finance_group")
 	String aonIconFinanceGroup();
 
+	@ClassName("aon_icon_inbox")
+	String aonIconInbox();
+
+	@ClassName("aon_icon_reject")
+	String aonIconReject();
+
+	@ClassName("aon_icon_draft")
+	String aonIconDraft();
+	
+	@ClassName("aon_icon_restore_rejected")
+	String aonIconRestoreRejected();
+
+	@ClassName("aon_icon_restore_deleted")
+	String aonIconRestoreDeleted();
+
+	@ClassName("aon_icon_view_document")
+	String aonIconViewDocument();
+	
+	@ClassName("aon_icon_delete_forever")
+	String aonIconDeleteForever();
+	
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();
@@ -405,6 +426,5 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_label")
 	String aonIconLabel();
 
-	
 }
 

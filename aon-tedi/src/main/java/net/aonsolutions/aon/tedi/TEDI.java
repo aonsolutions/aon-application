@@ -1,13 +1,19 @@
 package net.aonsolutions.aon.tedi;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.in.invoice.UnknownInvoiceException;
 import solutions.aon.in.invoice.pdf.InvoicePDFParser;
@@ -44,7 +50,7 @@ public class TEDI {
 
 	public static TediResult parse(TediContext tctx, InputStream input) throws TediException {
 		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
-		boolean mustCloseCtx =  tctx.getAONContext() != null; 
+		boolean mustCloseCtx =  tctx.getAONContext() == null; 
 		AONContext ctx = tctx.getAONContext();
 		try {
 			if (ctx == null) {
@@ -67,7 +73,8 @@ public class TEDI {
 			TediInvoiceBuilder tediInvoiceBuilder = new TediInvoiceBuilder( tictx );
 			InvoicePDFParser.parse(input, tediInvoiceBuilder);
 			TediResultBuilder.build( tediInvoiceBuilder.getInvoice() );
-			return TediParser.toFullInvoice(ctx, aonCtx, tediInvoiceBuilder.getInvoice());
+			TediResult result = TediParser.toFullInvoice(ctx, aonCtx, tediInvoiceBuilder.getInvoice()); 
+			return result;
 		} catch (IOException e) {
 			throw new TediException(e.getMessage());
 		} catch (UnknownInvoiceException e) {
@@ -78,6 +85,51 @@ public class TEDI {
 		}
 	}
 	
+	public static TediResult fromRawdoc(TediContext tctx, int rawdocId) throws TediException {
+		if (tctx == null) throw new IllegalArgumentException("TediContext can not be null");
+		boolean mustCloseCtx =  tctx.getAONContext() == null; 
+		AONContext ctx = tctx.getAONContext();
+		try {
+			if (ctx == null) {
+				if (tctx.getDomainName() == null) throw new IllegalArgumentException("TediContext.domainName can not be null");		
+				if (tctx.getDomain() == null) throw new IllegalArgumentException("TediContext.domain can not be null");
+				if (tctx.getUser() == null) throw new IllegalArgumentException("TediContext.user can not be null");
+				ctx = AONContext.getAONContext(tctx.getDomainName(), tctx.getDomain(), tctx.getUser());
+				tctx.setAONContext(ctx);
+			}
+			if (tctx.getAonConfiguration() == null) {
+				tctx.setAonConfiguration(ConfigurationDAO.getConfiguration(ctx));
+			} 
+			if (tctx.getAonConfiguration() == null || tctx.getAonConfiguration().getCompany() == null) {
+				throw new TediException("No se ha encontrado una compa\u00F1ia v\u00E1lida "
+					+ "para el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
+			}
+			Rawdoc rawdoc = RawdocDAO.get(ctx, rawdocId);
+			if (rawdoc == null) {
+				throw new TediException("No se ha encontrado el documento " + rawdocId + "en el dominio " + "( " + ctx.getDomainId() + " - " + ctx.getDomainName() +")");
+			}
+			TediResult result = null;
+			if ( AonStringUtils.isBlank( rawdoc.getJson() )) {
+				rawdoc = RawdocDAO.getFull(ctx, rawdocId);
+				result = parse(tctx, new ByteArrayInputStream(rawdoc.getData()));
+			} else {
+				result = TediParser.toFullInvoice(ctx, tctx.getAonConfiguration(), rawdoc.getTediInvoice());
+			}
+			Attach attach = new Attach();
+			attach.setId(rawdoc.getId());
+			attach.setAttachType(AttachType.INVOICE);
+			attach.setMimeType( rawdoc.getMimeType());
+			attach.setData(rawdoc.getData());
+			attach.setAttachURL("RAWDOC");
+			result.getAccountingInvoice().setAttach(attach);
+			return result;
+		} catch (Throwable e) {
+			throw new TediException(e.getMessage());
+		} finally {
+			if (ctx != null && mustCloseCtx)
+				ctx.close();
+		}
+	}
 	
 /*
 	public static Tedi getTedi(AONContext ctx, boolean snapshot) throws TediException {
@@ -438,24 +490,6 @@ public class TEDI {
 		
 	}
 
-	public static TediResult fillAttach(String domainName, int domain, boolean snapshot, String user, TediResult result) throws TediException {
-		if (result == null || result.getAccountingInvoice() == null) {
-			throw new TediException("No se ha encontrado una factura v\u00E1lida");
-		}
-		if (result.getTedi().getFile() != null) {
-			Attach attach = result.getAccountingInvoice().getAttach();
-			if (attach == null) {
-				String uuid = result.getTedi().getUuid();
-				String url = TEDI.getInvoiceAttach(domainName, domain, snapshot, user, uuid);
-				attach = new Attach();
-				attach.setMimeType( MimeType.safeValueFromContenType(result.getTedi().getFile().getContentType()) );
-				attach.setAttachType(AttachType.INVOICE);
-				attach.setAttachURL(url);
-				result.getAccountingInvoice().setAttach(attach);
-			}
-		}
-		return result;
-	}
 */	
 
 }

@@ -61,7 +61,8 @@ public class FullViewer extends Frame {
 		return VIEWER_PATH + "?";// + "#" + scale.getValue() + "?";
 	}
 	private boolean isURLocal(String url) {
-		return AonStringUtils.contains(url,"ms/download_attachment");
+		return AonStringUtils.contains(url,"ms/download_attachment")
+			|| AonStringUtils.contains(url,"ms/download_rawdoc");
 	}
 
 	public void open(String dataURI) {

@@ -38,6 +38,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod347.Model347;
 import com.esferalia.aon.gwt.fiscal.client.mod349.Model349;
 import com.esferalia.aon.gwt.fiscal.client.mod390.Model390;
 import com.esferalia.aon.gwt.fiscal.client.mod390HF.Model390HF;
+import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -96,7 +97,10 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_ACCOUNTING_UTILITIES_ENTRY_POINT = "AccountingUtilities";
 	private static final String ACC_ACCOUNTING_BALANCE_REPORT_ENTRY_POINT = "AccountBalanceReport";
 	private static final String ACC_ACCOUNTING_CONSOLIDATED_BALANCE_REPORT_ENTRY_POINT = "AccountConsolidatedBalanceReport";
-	
+	//
+	//    ================================================================== RAWDOC
+	//
+	private static final String RAWDOC_ENTRY_POINT = "RawdocModule";
 
 	private static AonData aonData;
 	
@@ -672,6 +676,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					OperationReport accountOperationReport = new OperationReport(getCurrentDomainName(),getCurrentDomain(),getCurrentUser());
 					accountOperationReport.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(RAWDOC_ENTRY_POINT)) {
+			GWT.runAsync(RawdocModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert("Error al cargar");
+				}
+
+				@Override
+				public void onSuccess() {
+					RawdocModule rawdoc  = new RawdocModule();
+					rawdoc.onModuleLoad();
 				}
 				
 			});

@@ -7,7 +7,10 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.Rawdoc;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -109,6 +112,17 @@ public interface IFinance {
 	
 	public LinkedList<RegistryBank> getRegistryBanks(AONContext ctx, Integer registry);
 	public LinkedList<RegistryBank> getCompanyRegistryBanks(AONContext ctx);
+	
+	// 	***********************************************
+	// 	************************** RAWDOC *************
+	// 	***********************************************
+	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
+	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain);
+	public Rawdoc getRawdocFull(AONContext ctx, int id);
+	void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId);
+	void rawdocToDraft(AONContext ctx, Integer rawdocId);
+	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);
+	void rawdocToInbox(AONContext ctx, Integer rawdocId);
 	
 }
 	
