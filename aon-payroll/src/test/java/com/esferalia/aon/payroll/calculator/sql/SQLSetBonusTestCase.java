@@ -17,6 +17,7 @@ import java.util.Collections;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.person.enumeration.Gender;
@@ -42,6 +43,8 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 
+
+@Ignore("need /etc/aon-aio/... configuration files")
 public class SQLSetBonusTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.006;

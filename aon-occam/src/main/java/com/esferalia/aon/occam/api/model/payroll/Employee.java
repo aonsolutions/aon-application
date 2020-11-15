@@ -20,7 +20,7 @@ public class Employee implements Serializable{
 	private String regime;
 	private Date startDate;
 	private Date endDate;
-	private double factor;
+	private Double factor;
 //	private String status;
 //	private String statusDescription;
 	private String type = "000";
