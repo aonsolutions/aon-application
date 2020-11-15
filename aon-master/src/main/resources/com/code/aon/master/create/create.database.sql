@@ -7338,6 +7338,28 @@ CREATE TABLE `rattach_tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Archivos Adjuntos y Etiquetas';
 
 #
+# Structure for the `rawdoc` table : 
+#
+CREATE TABLE `rawdoc` (
+  `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del documento',
+  `domain` int(4) NOT NULL COMMENT 'Identificador del Dominio',
+  `nature` tinyint(2) DEFAULT '0' COMMENT 'Naturaleza del documento (Factura, Nomina, etc )',
+  `type` tinyint(2) DEFAULT '0' COMMENT 'Tipo de Documento (Recibido o Emitido)',
+  `status` tinyint(2) DEFAULT '0' COMMENT 'Estado del Documento (Inbox, Rechazado, Papelera)',
+  `json` text COLLATE latin1_spanish_ci COMMENT 'Documento en formato JSON',
+  `log` text COLLATE latin1_spanish_ci COMMENT 'Documento en formato JSON',
+  `mime_type` tinyint(2) DEFAULT '0' COMMENT 'Mime Type del Archivo Adjunto',
+  `data` mediumblob COMMENT 'Archivo Adjunto en binario',
+  `creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion',
+  `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
+  `modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
+  `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  PRIMARY KEY (`id`),
+  KEY `IDX_RAW_DOCUMENT_DOMAIN` (`domain`),
+  CONSTRAINT `FK_RAW_DOCUMENT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Documentos a procesar';
+
+#
 # Structure for the `rdir_staff` table : 
 #
 
@@ -8598,7 +8620,6 @@ CREATE TABLE `workplace_department` (
   CONSTRAINT `FK_WORKPLACE_DEPARTMENT_WAREHOUSE` FOREIGN KEY (`warehouse`) REFERENCES `warehouse` (`id`),
   CONSTRAINT `FK_WORKPLACE_DEPARTMENT_WORKPLACE` FOREIGN KEY (`workplace`) REFERENCES `workplace` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Departamentos del Centro de Trabajo';
-
 
 INSERT INTO `db_version` (`version_number`) VALUES ('9.23.4');
 

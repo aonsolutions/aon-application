@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.accounting.AlterAccountEntryDetailConcept;
 import net.aonsolutions.db.up2date.accounting.DropTableAccountHelper;
+import net.aonsolutions.db.up2date.accounting.RawdocCreation;
 import net.aonsolutions.db.up2date.payroll.EresUpdateIII;
 import net.aonsolutions.db.up2date.tgss.SMI2020UpdateRollback;
 
@@ -137,7 +138,8 @@ public class Up2Date {
     		//AlterAccountEntryDetailConcept.ALTER_ACCOUNT_ENTRY_DETAIL_CONCEPT,
     		//EresUpdateIII.ERESUPDATEIII,
     		//SMI2020UpdateRollback.SMI2020UPDATEROLLBACK
-    		DropTableAccountHelper.DROP_TABLE_ACCOUNT_HELPER
+    		// DropTableAccountHelper.DROP_TABLE_ACCOUNT_HELPER
+    		RawdocCreation.RAWDOC_CREATION
     };
 
 
