@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.esferalia.aon.gwt.payroll.client.SSBonusDraft.getFullDescription;
+
+import java.util.Arrays;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
@@ -127,7 +131,7 @@ public abstract class ContractBonusUI extends ResizeComposite {
 		Label endDateLabel = new Label(null == ssBonusData.getEndDate() ? "" : formatFullDate.format(ssBonusData.getEndDate()));
 		
 		// Description TextBox
-		Label descriptionLabel = new Label(ssBonusData.getDescription());
+		Label descriptionLabel = new Label(getFullDescription(ssBonusData));
 		
 		//Add to table
 		contractBonusDataTable.setWidget(row, 0, startDateLabel);

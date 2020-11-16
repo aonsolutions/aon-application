@@ -26,11 +26,13 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResult
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesBuilder;
@@ -42,19 +44,26 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.xhr.client.ReadyStateChangeHandler;
+import com.google.gwt.xhr.client.XMLHttpRequest;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.NamedFrame;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -511,6 +520,10 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		
 	}
 	
+	protected void newAffiliated(int count, int total) {
+		
+	}
+
 	protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults) {
 		
 	}
@@ -561,18 +574,30 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	
 	protected void newEmployees(AffiliatedNotFound affiliatedNotFound []) {
 		
-		FormPanel employeesFormPanel = createEmployeesFormPanel( 
-		affiliatedNotFound, 
-		(event,formPanel)  -> {
-			JsArray<JsSistemaREDResults> jsSistemaREDResults = eval("("+ event.getResults() +")");
-			AON.stop();
-			newAffiliated(jsSistemaREDResults);
-			formPanel.removeFromParent();
-		});
+//		FormPanel employeesFormPanel = createEmployeesFormPanel( 
+//		affiliatedNotFound, 
+//		(event,formPanel)  -> {
+//			JsArray<JsSistemaREDResults> jsSistemaREDResults = eval("("+ event.getResults() +")");
+//			AON.stop();
+//			newAffiliated(jsSistemaREDResults);
+//			formPanel.removeFromParent();
+//		});
+//		
+//		menuBarFlowPanel.add(employeesFormPanel);
+//		AON.start();
+//		employeesFormPanel.submit();
 		
-		menuBarFlowPanel.add(employeesFormPanel);
+		
 		AON.start();
-		employeesFormPanel.submit();
+		submit(affiliatedNotFound, 
+		results -> {
+			AON.stop();
+			newAffiliated(results);
+		},
+		count -> {
+			newAffiliated(count, affiliatedNotFound.length );
+		}
+		);
 		
 	}
 
@@ -722,7 +747,6 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		Hidden userLogin = new Hidden(SistemaREDService.Parameter.USER.name(), Wnd.getCurrentUser());
 		Hidden currentDomain = new Hidden(SistemaREDService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
 		
-
 		formPanel.addSubmitCompleteHandler(e -> handler.accept(e, formPanel));
 		
 		flowPanel.add(userLogin);
@@ -741,6 +765,57 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		return formPanel;
 	}	
 
+	private void submit(AffiliatedNotFound affiliatedNotFound [], Consumer<JsArray<JsSistemaREDResults>> success, Consumer<Integer> progress) {
+		
+		StringBuffer requestDataBuffer = new StringBuffer();
+		
+		requestDataBuffer
+		.append("&" + SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser() );
+		requestDataBuffer
+		.append("&" + SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL() );
+
+		requestDataBuffer
+		.append("&" + SistemaREDService.Parameter.COUNT.name() + "=" + affiliatedNotFound.length );
+
+		for ( int i = 0; i < affiliatedNotFound.length; i++ ) {
+			requestDataBuffer
+			.append("&" + SistemaREDService.Parameter.CCC.name() + i + "=" + affiliatedNotFound[i].getCcc());
+			requestDataBuffer
+			.append("&" + SistemaREDService.Parameter.NAF.name() + i  + "=" + affiliatedNotFound[i].getNaf());
+			requestDataBuffer
+			.append("&" + SistemaREDService.Parameter.REGIME.name() + i + "=" + affiliatedNotFound[i].getRegime());
+		}
+		
+		// Send request to server and catch any errors.
+		
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", SISTEMA_RED_URL + "/" + EMPLOYEES);
+		xhr.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+		
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+	
+				if (state == XMLHttpRequest.DONE) {
+					JsArray<JsSistemaREDResults> jsSistemaREDResults = eval("("+ xhr.getResponseText() +")");
+					success.accept(jsSistemaREDResults);
+				} else if ( state == XMLHttpRequest.LOADING ) {
+					try {
+						int count = xhr.getResponseText().split("employeeId", -1).length -1;
+						progress.accept( count );
+					} catch ( Exception e ) {
+						
+					}
+				} 
+	
+			}
+		});
+		
+		xhr.send(requestDataBuffer.toString());
+		
+	}	
 	// ------------------------------------------------------------------------
 
 	private static SafeStyles getAnchorStyle() {

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class Municipalities {
 	
 	private Map<String, String> municipalities;
@@ -8134,7 +8136,7 @@ public class Municipalities {
 	
 	public String getMunicipalityByZip(String zip){
 		for(Entry<String, String> e: this.municipalities.entrySet()) {
-			if(zip.equals(e.getKey()))
+			if(AonStringUtils.equals(zip,e.getKey()))
 				return e.getValue();
 		}
 		return "";
@@ -8143,7 +8145,7 @@ public class Municipalities {
 	public ArrayList<String> getMunicipalitiesByZip(String zip){
 		ArrayList<String> zipMunicipalities = new ArrayList<String>();
 		for(Entry<String, String> e: this.municipalities.entrySet()) {
-			if(zip.equals(e.getKey()))
+			if(AonStringUtils.equals(zip,e.getKey()))
 				zipMunicipalities.add(e.getValue());
 		}
 		return zipMunicipalities;

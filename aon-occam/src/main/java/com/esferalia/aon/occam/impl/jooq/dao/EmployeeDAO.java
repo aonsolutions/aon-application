@@ -207,6 +207,14 @@ public class EmployeeDAO {
 		.where(GEOZONE.DOMAIN.eq(domainId))
 		.and(GEOZONE.CODE.eq(code))
 		.fetchOptionalInto(GEOZONE)
+		.or(() ->
+			dslContext
+			.select()
+			.from(GEOZONE)
+			.where(GEOZONE.DOMAIN.eq(DSL.select(DOMAIN.PARENT).from(DOMAIN).where(DOMAIN.ID.eq(domainId))))
+			.and(GEOZONE.CODE.eq(code))
+			.fetchOptionalInto(GEOZONE)
+		)
 		;
 	}
 	
@@ -278,13 +286,15 @@ public class EmployeeDAO {
 		
 			RegistryRecord registryRecord = insertRegistry.returning().fetchOne();
 			
-			SelectConditionStep<Record1<Integer>> geozoneId = 
-			DSL
-			.select(GEOZONE.ID)
-			.from(GEOZONE)
-			.where(GEOZONE.DOMAIN.eq(domainId))
-			.and(GEOZONE.CODE.eq(AonStringUtils.substring(employee.getCcc(),0,2)))
-			;
+			Integer geozoneId = getGeozone(dslContext, domainId, employee.getCcc()).map( g->g.getId()).orElseGet(null);
+			
+//			SelectConditionStep<Record1<Integer>> geozoneId = 
+//			DSL
+//			.select(GEOZONE.ID)
+//			.from(GEOZONE)
+//			.where(GEOZONE.DOMAIN.eq(domainId))
+//			.and(GEOZONE.CODE.eq(AonStringUtils.substring(employee.getCcc(),0,2)))
+//			;
 			
 			dslContext
 			.insertInto(RADDRESS)

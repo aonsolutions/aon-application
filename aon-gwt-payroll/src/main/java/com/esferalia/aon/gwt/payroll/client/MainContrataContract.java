@@ -11,11 +11,14 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -50,8 +53,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
-
-import net.aonsolutions.gwt.pdfjs.client.Viewer;
 
 public class MainContrataContract extends MainEntryPoint {
 
@@ -121,6 +122,8 @@ public class MainContrataContract extends MainEntryPoint {
 	
 	
 	ResultsPanel resultsPanel;
+	
+	ProgressPanel progressPanel;
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
 	// --------------------------------------------------------------------------------------------
@@ -149,6 +152,7 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		initFootPanel();
 		initResultsPanel();
+		initProgressPanel();
 		initPDFViewer();
 	}
 
@@ -607,6 +611,10 @@ public class MainContrataContract extends MainEntryPoint {
 		resultsPanel = new ResultsPanel();		
 	}
 	
+	private void initProgressPanel () {
+		progressPanel = new ProgressPanel();		
+	}
+
 	private void initPDFViewer () {
 		Button closeButton = new Button("Cerrar");
 		closeButton.setStylePrimaryName(AON.AON_ICON_CANCEL);
@@ -617,6 +625,8 @@ public class MainContrataContract extends MainEntryPoint {
 	private void checkStatus(MainContrataContractObject mainContrataContractObject) {
 		mainContrataContractObject.checkStatus(enterpriseStatus -> {
 			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
+				
+				IndeterminateTask syncTask ;
 				
 				@Override
 				public void up2Date() {
@@ -639,13 +649,24 @@ public class MainContrataContract extends MainEntryPoint {
 								MainContrataContract.this.initContractTable();
 								MainContrataContract.this.setTableHeights();
 							},
-							f -> {}
+							f -> {
+//								Window.alert("ERROR :" +jsSaltraResults);
+							}
 					);	
 					run();
 				}
 				
 				@Override
+				protected void newAffiliated(int count, int total ) {
+					selectProgressPanel();
+					syncTask.messageChanged("Importados " + count + " trabajadores de " + total + ".");
+				}
+				
+				@Override
 				protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults ) {
+					syncTask.messageChanged("Importados " + jsSaltraResults.length() + " trabajadores de " + jsSaltraResults.length() + ".");
+					syncTask.finished();
+					closeProgressPanel();
 					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false,
 							s -> {
 								MainContrataContract.this.initEnterpriseSB();
@@ -655,6 +676,13 @@ public class MainContrataContract extends MainEntryPoint {
 							f -> {}
 					);	
 					run();
+				}
+				
+				protected void newEmployees(AffiliatedNotFound affiliatedNotFound []) {
+					syncTask = new IndeterminateTask();
+					syncTask.setDescription("Importando trabajadores desde la Seguridad Social (Sistema R.E.D)");
+					progressPanel.showIndeterminateTask(syncTask);
+					super.newEmployees(affiliatedNotFound);
 				}
 				
 
@@ -719,6 +747,21 @@ public class MainContrataContract extends MainEntryPoint {
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		footTabPanel.add(resultsPanel, tab);
 		footTabPanel.selectTab(resultsPanel);
+
+	}
+
+	private void selectProgressPanel() {
+		InlineLabel tab = new InlineLabel("Progreso");
+		tab.addStyleName(AON.AON_ICON_PROGRESS_BAR);
+		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		footTabPanel.add(progressPanel, tab);
+		footTabPanel.selectTab(progressPanel);
+
+	}
+
+	private void closeProgressPanel() {
+		footTabPanel.remove(progressPanel);
+		//footTabPanel.selectTab(progressPanel);
 
 	}
 

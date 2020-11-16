@@ -85,7 +85,7 @@ class BonusListener  implements IdcListener {
 			put("63", "");
 			put("64", "");
 			put("65", "");
-			put("68", "CGC + CGC_E + CGP + CGP_E");
+			put("68", "CGC + CGC_E + IT_E + IMS_E");
 			put("69", "");
 			put("70", "");
 			put("71", "");
@@ -145,6 +145,8 @@ class BonusListener  implements IdcListener {
 	}
 	
 	
+	
+	
 	// ------------------------------------------------------------------------
 	
 	private static Bonus newSSBonus(String nss, String ccc, String code, String description, String portTipo,
@@ -159,9 +161,9 @@ class BonusListener  implements IdcListener {
 		ssBonus.setEndDate(end);
 		ssBonus.setDescription(String.format(new Locale("es", "ES"),"%s (%.2f%%)", description, percent));
 		ssBonus.setFormula(String.format(Locale.ROOT,
-//				"/*%s,%s,%.2f*/" +
+				"/*pec:%s,quota:%s*/" +
 				"/*read-only*/( %s ) * %.2f / 100.00/**/", 
-//				code, quota, percent, 
+				code, quota,  
 				QUOTA_EXPRESSION_MAP.get(quota), percent));
 		
 		return ssBonus;

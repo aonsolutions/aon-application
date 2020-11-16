@@ -274,9 +274,14 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 
 	private void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String ...nafs) {
+		
 		try {
+			Date today = new Date();
+			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(new Date());
+
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, today);
 			
 			for ( String naf : nafs ) {
 				Bonus bonuses [] =
@@ -284,16 +289,14 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
 				.map( b -> 
 				new Bonus()
-				.setEndDate(b.getEndDate())
-				.setStartDate(b.getStartDate())
 				.setExpression(b.getFormula())
 				.setDescription(b.getDescription())
 				.setType(BonusType.SOCIAL_SECURITY)
+				.setStartDate(b.getStartDate())
+				.setEndDate(b.getEndDate().equals(lastDayOfMonth) ? null : b.getEndDate())
 				)
 				.toArray(Bonus[]::new)
 				;
-				Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-				Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(new Date());
 				PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, firstDayOfMonth, lastDayOfMonth, bonuses);					
 			}
 			
@@ -350,9 +353,13 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			
 			Map<Pair<String,String>, List<String>> cccNafs = new HashMap<Pair<String,String>, List<String>>();
 			
+//			resp.setContentType("application/json");
+			resp.setContentType("text/html");
+
 			int contentLength = 2;			
 			int count = Integer.parseInt(req.getParameter(Parameter.COUNT.name()));
 			os.write('[');
+			os.flush();
 			for ( int i = 0; i < count; i++ ) {
 				String regime = req.getParameter(Parameter.REGIME.name()+i);
 				String ccc = req.getParameter(Parameter.CCC.name()+i);
@@ -364,14 +371,14 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				cccNafs.computeIfAbsent(new Pair(regime,ccc), k -> new ArrayList()).add(naf);
 	
 				byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d },", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
-				os.write(content);		
+				os.write(content);	
+				os.flush();
 				contentLength += content.length;
 			}
 			os.write(']');
+			os.flush();
 
-//			resp.setContentType("application/json");
 			resp.setStatus(HttpServletResponse.SC_OK);
-			resp.setContentType("text/html");
 			resp.setContentLength(contentLength);
 			
 			cccNafs.forEach( (k,v) -> execute(() -> addBonus(userLogin, domainName, parentDomainId, userId, k.getLeft(), k.getRight(), v.toArray(new String[v.size()])) ));
@@ -396,7 +403,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	}
 	
 	
-	private static byte []  readAllBytes ( InputStream is ) throws IOException {
+	protected static byte []  readAllBytes ( InputStream is ) throws IOException {
 		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
 		    int nRead;
 		    byte[] data = new byte[1024];

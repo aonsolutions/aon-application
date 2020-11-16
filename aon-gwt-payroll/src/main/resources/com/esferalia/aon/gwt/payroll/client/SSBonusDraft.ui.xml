@@ -277,7 +277,7 @@
 		
 		<div class="{style.buttons}">
 			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton">Guardar</g:Button>
+			<g:Button ui:field="acceptButton" visible="false">Guardar</g:Button>
 		</div>
 		
 	</g:HTMLPanel>

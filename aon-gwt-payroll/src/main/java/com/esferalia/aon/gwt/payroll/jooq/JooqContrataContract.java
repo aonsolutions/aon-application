@@ -118,6 +118,7 @@ public class JooqContrataContract {
 			SSBonusData ssBonusData = new SSBonusData();
 			ssBonusData.setStartDate(r.get(CONTRACT_BONUS.START_DATE));
 			ssBonusData.setEndDate(r.get(CONTRACT_BONUS.END_DATE));
+			ssBonusData.setFormula(r.get(CONTRACT_BONUS.EXPRESSION));
 			ssBonusData.setDescription(r.get(CONTRACT_BONUS.DESCRIPTION));
 			
 			contractBonusList.add(ssBonusData);
