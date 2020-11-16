@@ -35,6 +35,7 @@
                                 <div class="row mb-2">
                                     <div class="col-12">
                                         <p class="h3"><strong id="doc-file_name"></strong></p>
+                                        <a href="" id="download_file_link" class="d-none"></a>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -135,6 +136,7 @@
         <script type="module">
             import { bidoq } from './aon-documental.js';
             import { getList, createTable } from './table.js';
+            import { getFileExtensionsConfig } from './upload.js'
             import { AVAILABLE_OPTIONS, SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION } from './toolbar_options.js';
 
             const DOC_SENT_OPTIONS      = [SINGLE_DOWNLOAD_OPTION, EDIT_OPTION, SINGLE_DELETE_OPTION, VIEW_NOTE_OPTION];
@@ -202,16 +204,27 @@
                             `);
                         }
 
-                        let fileContent = '';
-
-                        if (extension === 'pdf') {
-                            fileContent = `<embed src="${doc.url}" class="w-100 vh-100" type="application/pdf">`;
+                        if (doc.url === null) {
+                            $('#file_container').html('El archivo no existe').addClass('text-muted');
                         } else {
-                            fileContent = `<img class="img-fluid" src="${doc.url}" alt="Documento ${doc.file_name}">`;
-                        }
+                            // Mostramos el documento si el tipo de archivo lo permite
+                                const { havePreview: extensionsHavePreview } = getFileExtensionsConfig();
 
-                        // Insertamos una etiqueta HTML u otra dependiendo del tipo de archivo
-                        $('#file_container').html(fileContent);
+                                let fileContent = '';
+
+                                if (extensionsHavePreview.includes(extension)) {
+                                    if (extension === 'pdf') {
+                                        fileContent = `<embed src="${doc.url}" class="w-100 vh-100" type="application/pdf">`;
+                                    } else {
+                                        fileContent = `<img class="img-fluid" src="${doc.url}" alt="Documento ${doc.file_name}">`;
+                                    }
+                                } else {
+                                    fileContent = `<a href="${doc.url}">${doc.file_name}</a>`;
+                                }
+
+                                // Insertamos una etiqueta HTML u otra dependiendo del tipo de archivo
+                                $('#file_container').html(fileContent);
+                        }
 
                         // Eliminamos todas las opciones de la barra de herramientas
                         window.aonDocumental.removeToolbarOptions();

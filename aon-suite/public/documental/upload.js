@@ -109,12 +109,7 @@ export function UploadDocumentos(){
                 }
             });
         }
-    
-        // Abrir input file para el comentario del ticket
-        $(document).on('click', '#ticket-comentario-subir-precarga', function() {
-            document.getElementById('upload-file').click();
-        });
-    
+
         // Subir por input
         $(document).on('change', '#upload-file', function() {
             subirDocumentos(this, this);
@@ -349,7 +344,7 @@ export function UploadDocumentos(){
                     }
                 } else {
                     // No podemos mostrar el previo, mostramos la extencion del documento a subir
-                    metemosPrevio = '<div class="previo-mal">'+documentoIcono(documento)+'</div>';
+                    metemosPrevio = '<div class="previo-mal"><i class="material-icons">'+documentoIcono(documento)+'</i></div>';
                 }
             } else {
                 // No se permite subir este documento
@@ -658,12 +653,35 @@ export function UploadDocumentos(){
 }
 
 export function getFileExtensionsConfig() {
+    const iconsByExtension = {
+        tiff: 'text_snippet',
+        tif: 'text_snippet',
+        txt: 'text_snippet',
+        rtf: 'text_snippet',
+        odt: 'text_snippet',
+        doc: 'text_snippet',
+        docx: 'text_snippet',
+        ods: 'text_snippet',
+        xls: 'text_snippet',
+        xlsx: 'text_snippet',
+        xlsb: 'text_snippet',
+        n43: 'text_snippet',
+        bmp: 'photo',
+        jpg: 'photo',
+        jpeg: 'photo',
+        png: 'photo',
+        gif: 'photo',
+        pdf: 'picture_as_pdf',
+        zip: 'archive',
+        rar: 'archive',
+    };
+
     // Extensiones que se permiten en algunos casos
     const allowed = [
         'bmp', 'jpg', 'jpeg', 'png', 'gif',
         'tiff', 'tif', 'txt', 'rtf', 'odt',
         'doc', 'docx', 'ods', 'xls', 'pdf',
-        'xlsx', 'xlsb', 'zip', 'rar'
+        'xlsx', 'xlsb', 'n43', 'zip', 'rar'
     ];
     // Extensiones no permitidas dependiendo del tipo de usuario
     const notAllowedByUserType = {
@@ -676,22 +694,24 @@ export function getFileExtensionsConfig() {
     ];
     // Iconos que mostramos en lugar de la previsualización según la extensión del archivo
     const havePreviewIconsByExtension = {
-        txt  : '<i class="material-icons">text_snippet</i>',
-        rtf  : '<i class="material-icons">text_snippet</i>',
-        odt  : '<i class="material-icons">text_snippet</i>',
-        doc  : '<i class="material-icons">text_snippet</i>',
-        docx : '<i class="material-icons">text_snippet</i>',
-        ods  : '<i class="material-icons">text_snippet</i>',
-        xls  : '<i class="material-icons">text_snippet</i>',
-        xlsx : '<i class="material-icons">text_snippet</i>',
-        xlsb : '<i class="material-icons">text_snippet</i>',
-        zip  : '<i class="material-icons">archive</i>',
-        rar  : '<i class="material-icons">archive</i>'
+        txt  : iconsByExtension['txt'],
+        rtf  : iconsByExtension['rtf'],
+        odt  : iconsByExtension['odt'],
+        doc  : iconsByExtension['doc'],
+        docx : iconsByExtension['docx'],
+        ods  : iconsByExtension['ods'],
+        xls  : iconsByExtension['xls'],
+        xlsx : iconsByExtension['xlsx'],
+        xlsb : iconsByExtension['xlsb'],
+        n43  : iconsByExtension['n43'],
+        zip  : iconsByExtension['zip'],
+        rar  : iconsByExtension['rar']
     };
 
     return {
         allowed,
         notAllowedByUserType,
+        iconsByExtension,
         havePreview,
         havePreviewIconsByExtension
     };

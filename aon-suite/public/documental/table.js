@@ -1,5 +1,6 @@
 import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
 import { AVAILABLE_OPTIONS, MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION } from './toolbar_options.js';
+import { getFileExtensionsConfig } from './upload.js';
 
 const ITEMS_PER_PAGE = 10;
 const TYPES = {
@@ -141,7 +142,6 @@ export const getList = async (page_this = 1) => {
 // Creamos la tabla con los datos a listar
 //
 export const createTable = (data) => {
-    const FILE_NAME_MAX_LENGTH = 35;
     const list = data.list;
     const folder = new URLSearchParams(window.location.search).get('folder');
 
@@ -208,7 +208,7 @@ export const createTable = (data) => {
                                     </td>`;
                             break;
                         case 'file_name':
-                            const truncatedFileName = (val.length > FILE_NAME_MAX_LENGTH) ? `${val.substr(0, FILE_NAME_MAX_LENGTH)}&hellip;` : val;
+                            const truncatedFileName = truncateString(val);
                             tbody+= `<td class="show_doc pointer" title="${val}">
                                         <span>${truncatedFileName}</span>
                                     </td>`;
@@ -321,14 +321,16 @@ export const createTable = (data) => {
 }
 
 function createCards(list) {
-    const cards = list.map(({id, type, date, category, uploaded_by: uploadedBy, file_name, stored_file_name: storedFileName}) => {
-        const formattedDate = getFormattedDate(date);
-        const storedFileNameSplitted = storedFileName.split('.');
+    const { iconsByExtension } = getFileExtensionsConfig();
+    const cards = list.map((card) => {
+        const formattedDate = getFormattedDate(card.date);
+        const storedFileNameSplitted = card.stored_file_name.split('.');
         const extension = storedFileNameSplitted[storedFileNameSplitted.length - 1].toLowerCase();
-        const docIcon = getIconFromDocExtension(extension);
+        const docIcon = iconsByExtension[extension];
+        const truncatedUploadedBy = truncateString(card.uploaded_by);
 
         return `
-            <div class="show_doc_container" data-id="${id}" data-type="${type}">
+            <div class="show_doc_container" data-id="${card.id}" data-type="${card.type}">
                 <div class="card mb-3 show_doc" role="button">
                     <div class="card-header d-flex align-items-start">
                         <ul class="list-inline mb-0 d-flex flex-wrap align-items-center">
@@ -336,10 +338,10 @@ function createCards(list) {
                                 <i class="material-icons align-middle">${docIcon}</i>
                             </li>
                             <li class="list-inline-item font-weight-bold">
-                                <span class="align-middle">${category.name}</span>
+                                <span class="align-middle">${card.category.name}</span>
                             </li>
-                            <li class="list-inline-item" title="${uploadedBy}">
-                                <span class="align-middle">${uploadedBy}</span>
+                            <li class="list-inline-item" title="${card.uploaded_by}">
+                                <span class="align-middle">${truncatedUploadedBy}</span>
                             </li>
                         </ul>
                         <ul class="list-inline mb-0 d-flex ml-auto align-items-center">
@@ -350,7 +352,7 @@ function createCards(list) {
                     </div>
                     <div class="card-body">
                         <p class="card-text">
-                            ${file_name}
+                            ${card.file_name}
                         </p>
                     </div>
                 </div>
@@ -433,40 +435,8 @@ function getFormattedDate(milliseconds) {
     return formattedDate;
 }
 
-function getIconFromDocExtension(extension) {
-    let icon = '';
+function truncateString(string) {
+    const FILE_NAME_MAX_LENGTH = 35;
 
-    switch (extension) {
-        case 'tiff':
-        case 'tif':
-        case 'txt':
-        case 'rtf':
-        case 'odt':
-        case 'doc':
-        case 'docx':
-        case 'ods':
-        case 'xls':
-        case 'xlsx':
-        case 'xlsb':
-            icon = 'text_snippet';
-            break;
-        case 'bmp':
-        case 'jpg':
-        case 'jpeg':
-        case 'png':
-        case 'gif':
-            icon = 'photo';
-            break;
-        case 'pdf':
-            icon = 'picture_as_pdf';
-            break;
-        case 'zip':
-        case 'rar':
-            icon = 'archive';
-            break;
-        default:
-            icon = 'text_snippet';
-    }
-
-    return icon;
+    return (string.length > FILE_NAME_MAX_LENGTH) ? `${string.substr(0, FILE_NAME_MAX_LENGTH)}&hellip;` : string;
 }
