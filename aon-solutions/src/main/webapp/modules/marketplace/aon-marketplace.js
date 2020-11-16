@@ -122,9 +122,11 @@ export class AonMarketplace extends AonElement {
 			contratar.style.width = '110px';
 			contratar.style.padding = '0.3rem 0.8rem';
 			contratar.style.borderRadius = '25px';
-			contratar.innerHTML = contratado ? 'Dar de Baja' : 'Contratar';
-			contratar.style.backgroundColor = contratado ? '#E67B6A' : '#002469';
+			contratar.innerHTML = contratado ? 'Desactivar' : 'Contratar';
+			contratar.style.backgroundColor = '#002469';
+			contratar.style.opacity = contratado ? '0.3' : '1';
 			if(OtherServices[key])  {
+				buttons.style.right = '120px';
 				contratar.disabled = true;
 				contratar.style.backgroundColor= 'lightgrey';
 			}
@@ -140,7 +142,9 @@ export class AonMarketplace extends AonElement {
 					});
 				});
 			});
-			buttons.appendChild(contratar);
+			if(!OtherServices[key])  {
+				buttons.appendChild(contratar);
+			}
 			span.appendChild(buttons);
 			li.appendChild(span);
 			ul.appendChild(li);
@@ -206,8 +210,9 @@ export class AonMarketplace extends AonElement {
 			contratar.style.width = '110px';
 			contratar.style.padding = '0.5rem 1rem';
 			contratar.style.borderRadius = '25px';
-			contratar.innerHTML = contratado ? 'Dar de Baja' : 'Contratar';
-			contratar.style.backgroundColor = contratado ? '#E67B6A' : '#002469';
+			contratar.innerHTML = contratado ? 'Desactivar' : 'Contratar';
+			contratar.style.backgroundColor = '#002469';
+			contratar.style.opacity = contratado ? '0.3' : '1';
 			if(OtherServices[key])  {
 				contratar.disabled = true;
 				contratar.style.backgroundColor= 'lightgrey';
@@ -224,7 +229,9 @@ export class AonMarketplace extends AonElement {
 					});
 				});
 			});
-			buttons.appendChild(contratar);
+			if(!OtherServices[key])  {
+				buttons.appendChild(contratar);
+			}
 
 			div.appendChild(span);
 			div.appendChild(div2);
