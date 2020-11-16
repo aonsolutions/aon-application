@@ -17,14 +17,18 @@
 			border-style: solid; 
 			width: 975px; 
 			border-width: 1px; 
-			margin-top: 20px; 
+			margin-top: 60px; 
 			margin-left: 10px;
 		}
 		
 		.tittle{
-			top: -0.8em;
+			top: -1.2em;
 			font-size: 12px;
 			margin-left: 10px;
+			position: relative;
+			width: 120px;
+			background-color: white;
+			padding: 5px;
 		}
 		
 		.footerStyle{
@@ -59,39 +63,22 @@
 			padding-left: 5px;
 		}
 		
+		.widthAll{
+			width: 100%;
+		}
+		
+		.heightAll{
+			height: 100%;
+		}
+		
 	</ui:style>
 
-	<g:DockLayoutPanel unit="PX">
-		<g:north size="35">
-			<g:FlowPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal">
-								<g:Label styleName="aon-outputText">Certificados Digitales</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-subtitle-internal">
-								<g:Label styleName="aon-outputText"></g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:Button ui:field='saveButton'
-									styleName='aon-finding-toolbar-item aon-icon-accept' text="GUARDAR"
-									enabled="true" />
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-			</g:FlowPanel>
-		</g:north>
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
 		<g:center>
-			<g:HTMLPanel styleName="aon-width-all aon-height-all {style.center}" debugId="activityHTMLPanel">
+			<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.center}" debugId="activityHTMLPanel">
 	    		<g:VerticalPanel styleName="{style.styleBorder}">
-		    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Certificados Digitales</g:Label>
-			    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+		    	<g:Label styleName='{style.tittle}'>Certificados Digitales</g:Label>
+			    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} " debugId="paymetDialogHTMLPanel">
 			    		<g:VerticalPanel>
 			    			<g:Grid ui:field="digitalCertificatesDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
 			    			<g:HTMLPanel>

@@ -4,6 +4,8 @@ import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
@@ -23,6 +25,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -47,8 +50,9 @@ public class MainCCC extends MainEntryPoint{
 		String warningColor();
 	}
 	
+	
 	@UiField
-	Button saveButton;
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	Grid cccDataTableHeader;
@@ -67,6 +71,9 @@ public class MainCCC extends MainEntryPoint{
 	private MainCCCObject mainCCCObject;
 	private Integer newId;
 	
+	private AonToolbar toolbar;
+	private AonToolbarButton accept;
+	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
 	public MainCCC() {	
@@ -76,18 +83,13 @@ public class MainCCC extends MainEntryPoint{
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
+		toolbar = getToolbarPanel();
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
 		this.newId = 0;
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
-	
-	@UiHandler("saveButton")
-	public void onSaveClick(ClickEvent event) {
-		this.mainCCCObject.setMainCCCInfo(s -> {
-			initPreview();
-			insertRows();
-		}, f -> {});
-	}
 	
 	@UiHandler("newCCC")
 	public void onNewCCC(ClickEvent event) {
@@ -146,7 +148,7 @@ public class MainCCC extends MainEntryPoint{
 	
 	private void calculateScrollPanelHeight() {
 		Integer clientHeight = Window.getClientHeight();
-		scrollPanel.setHeight((clientHeight - 600) + "px");
+		scrollPanel.setHeight((clientHeight - 400) + "px");
 	}
 	
 	private void setColumnWidth() {
@@ -500,6 +502,31 @@ public class MainCCC extends MainEntryPoint{
 		default:
 			return "0111";
 		}
+	}
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("Mantenimientos CCC");
+
+		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		accept.setAccessKey('G');
+		accept.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAccept(event);
+			}
+		});
+		toolbar.add(accept);
+
+		return toolbar;
+
+	}
+	
+	private void onAccept(ClickEvent event) {
+		this.mainCCCObject.setMainCCCInfo(s -> {
+			initPreview();
+			insertRows();
+		}, f -> {});
 	}
 
 }

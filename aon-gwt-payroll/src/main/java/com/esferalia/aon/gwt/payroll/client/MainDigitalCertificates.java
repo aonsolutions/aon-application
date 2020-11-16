@@ -4,20 +4,23 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.DigitalCertificate;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -47,7 +50,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	}
 	
 	@UiField
-	Button saveButton;
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	Grid digitalCertificatesDataTableHeader;
@@ -63,6 +66,9 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	private MainDigitalCertificatesObject mainDigitalCertificatesObject;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
+	private AonToolbar toolbar;
+	private AonToolbarButton accept;
+	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
 	public MainDigitalCertificates() {	
@@ -71,21 +77,12 @@ public class MainDigitalCertificates extends MainEntryPoint{
 	
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
+		
+		toolbar = getToolbarPanel();
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
-	
-	@UiHandler("saveButton")
-	public void onSaveClick(ClickEvent event) {
-		mainDigitalCertificatesObject.setDigitalCertificates(s -> {
-			mainDigitalCertificatesObject.getDigitalCertificates(
-					t -> {
-						initPreview();
-						insertRows();
-						fillCertificatesRows(t);
-					}, f -> {});
-		}, f -> {});
-	}
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
@@ -369,6 +366,34 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		String[] splits = filename.split("\\.");
 		return splits[splits.length-1];
 	}
+	
+	private AonToolbar getToolbarPanel() {
+		
+		AonToolbar toolbar = new AonToolbar("Certificados digitales");
 
+		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		accept.setAccessKey('G');
+		accept.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAccept(event);
+			}
+		});
+		toolbar.add(accept);
+
+		return toolbar;
+
+	}
+	
+	private void onAccept(ClickEvent event) {
+		mainDigitalCertificatesObject.setDigitalCertificates(s -> {
+			mainDigitalCertificatesObject.getDigitalCertificates(
+					t -> {
+						initPreview();
+						insertRows();
+						fillCertificatesRows(t);
+					}, f -> {});
+		}, f -> {});
+	}
 
 }

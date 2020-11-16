@@ -10,9 +10,12 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsEmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.FIEService.JsIT;
@@ -25,8 +28,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -38,11 +41,11 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Hidden;
@@ -69,10 +72,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 	
 	@UiField
-	Button backContractButton;
-	
-	@UiField
-	Button listITsButton;
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	DeckPanel deckPanel;
@@ -107,20 +107,6 @@ public class MainContrataIT extends MainEntryPoint {
 	@UiField(provided = true)
 	DataGrid<IT> itDataGrid;
 	
-	@UiField
-	Button msjFIEButton;	
-	@UiField
-	FormPanel msjFIEFormPanel;
-	@UiField
-	Hidden userNameHidden;
-	@UiField
-	Hidden domainNameHidden;
-	@UiField
-	MultiFileUpload msjFIEFileUpload;
-	
-	@UiField
-	HTMLPanel sldToolbarPanel;
-	
 	// --------------------------------------------------------------------------------------------
 	// 										VARIABLES
 	// --------------------------------------------------------------------------------------------
@@ -134,6 +120,15 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	private ListDataProvider<ITEmployee> dataProvider ;
 	
+	private AonToolbar toolbar;
+	private AonToolbarButton backContract;
+	private AonToolbarButton listITs;
+	
+	private AonToolbarButton msjFIE;
+	private FormPanel msjFIEFormPanel;
+	private Hidden userNameHidden;
+	private Hidden domainNameHidden;
+	private MultiFileUpload msjFIEFileUpload;
 	
 	public MainContrataIT() {
 		
@@ -151,13 +146,12 @@ public class MainContrataIT extends MainEntryPoint {
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
+		toolbar = getToolbarPanel();
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
 		deckPanel.showWidget(0);
 		inactiveITsCB.setValue(true);
-		backContractButton.getElement().getStyle().setDisplay(Display.NONE);
-		
-		userNameHidden.setValue(Wnd.getCurrentUser());
-		domainNameHidden.setValue(Wnd.getCurrentDomainNameURL());
-		
+		backContract.getElement().getStyle().setDisplay(Display.NONE);
 				
 	}
 
@@ -971,58 +965,6 @@ public class MainContrataIT extends MainEntryPoint {
 		setTableHeights();
 	}
 	
-	@UiHandler("backContractButton")
-	public void onBackContractButtonClick(ClickEvent event) {
-		deckPanel.showWidget(0);
-		backContractButton.getElement().getStyle().setDisplay(Display.NONE);
-		listITsButton.getElement().getStyle().clearDisplay();
-		initContractTable();
-	}
-	
-	@UiHandler("listITsButton")
-	public void onListITsButtonClick(ClickEvent event) {
-		deckPanel.showWidget(1);
-		inactiveITsCB.setValue(true);
-		listITsButton.getElement().getStyle().setDisplay(Display.NONE);
-		backContractButton.getElement().getStyle().clearDisplay();
-		initITTable();
-	}
-	
-	@UiHandler("msjFIEButton")
-	public void onMsjFIEButtonClick(ClickEvent event) {
-		msjFIEFileUpload.click();
-	}
-	
-	@UiHandler("msjFIEFileUpload")
-	public void  onMsjFIEFileUploadChange(ChangeEvent e) {
-		msjFIEFormPanel.submit();
-	}
-	
-	@UiHandler("msjFIEFormPanel") 
-	public void onMsjFIEFormPanelSubmitComplete(SubmitCompleteEvent e) {
-		String json = e.getResults();
-		
-		JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
-		
-		List<ITEmployee> itEmployees = new ArrayList<ITEmployee>(jsITEmployees.length());
-		
-		for (int i = 0; i < jsITEmployees.length(); i++ ) {
-			JsITEmployee jsITEmployee = jsITEmployees.get(i);			
-			ITEmployee itEmployee = fromJsITEmployee(jsITEmployee);
-			itEmployees.add(itEmployee); 		
-		}
-				
-		mainContrataITObject.setEmployeesInfo(itEmployees,
-			s -> {
-				initEnterpriseSB();
-				initITSB();
-				initContractTable();
-				setTableHeights();
-			},
-			f -> {}
-		);
-		
-	}
 	// --------------------------------------------------------------------------------------------
 	// 										AUXILIAR METHODS
 	// --------------------------------------------------------------------------------------------
@@ -1262,5 +1204,108 @@ public class MainContrataIT extends MainEntryPoint {
 		return eval(javascript);
 	}-*/;
 
+	private AonToolbar getToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar("Partes IT");
+		
+		// FORM
+		msjFIEFormPanel = new FormPanel();
+		msjFIEFormPanel.setMethod(FormPanel.METHOD_POST);
+		msjFIEFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
+		msjFIEFormPanel.setAction(FIEService.FIE_URL);
+		
+		userNameHidden = new Hidden(FIEService.Parameter.USER.name(), Wnd.getCurrentUser());
+		domainNameHidden = new Hidden(FIEService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
+		
+		msjFIEFileUpload = new MultiFileUpload();
+		msjFIEFileUpload.setName(FIEService.Parameter.FILE.name());
+		msjFIEFileUpload.setVisible(false);
+		msjFIEFileUpload.setAccept(".msj");
+		msjFIEFileUpload.addChangeHandler(e -> {
+			msjFIEFormPanel.submit();
+		});
+		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
+			String json = e.getResults();
+			
+			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
+			
+			List<ITEmployee> itEmployees = new ArrayList<ITEmployee>(jsITEmployees.length());
+			
+			for (int i = 0; i < jsITEmployees.length(); i++ ) {
+				JsITEmployee jsITEmployee = jsITEmployees.get(i);			
+				ITEmployee itEmployee = fromJsITEmployee(jsITEmployee);
+				itEmployees.add(itEmployee); 		
+			}
+					
+			mainContrataITObject.setEmployeesInfo(itEmployees,
+				s -> {
+					initEnterpriseSB();
+					initITSB();
+					initContractTable();
+					setTableHeights();
+				},
+				f -> {}
+			);
+		});
+		
+		FlowPanel formFlowPanel = new FlowPanel();
+		formFlowPanel.add(userNameHidden);
+		formFlowPanel.add(domainNameHidden);
+		formFlowPanel.add(msjFIEFileUpload);
+		
+		msjFIEFormPanel.add(formFlowPanel);
+		toolbar.add(msjFIEFormPanel);
+		
+		backContract = new AonToolbarButton( "Contratos", AON.CSS.aonIconBack() );
+		backContract.setAccessKey('B');
+		backContract.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onBackContract(event);
+			}
+		});
+		toolbar.add(backContract);
+		
+		listITs = new AonToolbarButton( "ITs", AON.CSS.aonIconList() );
+		listITs.setAccessKey('L');
+		listITs.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onListIT(event);
+			}
+		});
+		toolbar.add(listITs);
+		
+		msjFIE = new AonToolbarButton( "Mensaje del INSS Empresa (FIE)", AON.CSS.aonIconTgss() );
+		msjFIE.setAccessKey('F');
+		msjFIE.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onFIE(event);
+			}
+		});
+		toolbar.add(msjFIE);
+
+		return toolbar;
+
+	}
+	
+	private void onBackContract(ClickEvent event) {
+		deckPanel.showWidget(0);
+		backContract.getElement().getStyle().setDisplay(Display.NONE);
+		listITs.getElement().getStyle().clearDisplay();
+		initContractTable();
+	}
+	
+	private void onListIT(ClickEvent event) {
+		deckPanel.showWidget(1);
+		inactiveITsCB.setValue(true);
+		listITs.getElement().getStyle().setDisplay(Display.NONE);
+		backContract.getElement().getStyle().clearDisplay();
+		initITTable();
+	}
+	
+	private void onFIE(ClickEvent event) {
+		msjFIEFileUpload.click();
+	}
 
 }
