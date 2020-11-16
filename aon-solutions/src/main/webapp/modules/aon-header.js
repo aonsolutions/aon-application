@@ -48,7 +48,7 @@ export class AonHeader extends AonElement {
 					<aon-icon-button id="aonHeaderUserButton" icon="account_circle"></aon-icon-button>
 				</span>
 
-				<span id="aonHeaderHelp" class="aonRight60 aonHeaderButton" style="display:none;">
+				<span id="aonHeaderHelp" class="aonRight60 aonHeaderButton">
 					<aon-icon-button id="aonHeaderHelpButton" icon="help_outline"></aon-icon-button>
 				</span>
 
@@ -64,6 +64,7 @@ export class AonHeader extends AonElement {
 					<span id="aonHeaderCompanyName"> </span>
 				</span>
 			</div>
+			<aon-dialog id="aonHeaderDialogHelpOption" type="menu" > </aon-dialog>
 			<aon-dialog id="aonHeaderDialogUserOption" type="menu" > </aon-dialog>
 			`;
 
@@ -88,7 +89,30 @@ export class AonHeader extends AonElement {
 
 			let aonHeaderHelpButton = document.getElementById(BASE_ID + 'HelpButton');
 			aonHeaderHelpButton.addEventListener('click', () => {
-				rootPanel('<iframe height="100%" src="https://faqs.aonsolutions.es/"></iframe>');
+
+				getSigninStatus().then(r => {
+					const top  = aonHeaderUserButton.getBoundingClientRect().top;
+					const left = aonHeaderUserButton.getBoundingClientRect().left;
+					let d = document.getElementById('aonHeaderDialogHelpOption');
+
+					let options = [{
+							name: 'Solicitudes',
+							icon: 'assignment',
+							fn: () =>rootPanel('<aon-messenger></aon-messenger>')
+						}, {
+							name: 'Ayuda',
+							icon: 'help_outline',
+							fn: () => rootPanel('<iframe height="100%" src="https://faqs.aonsolutions.es/"></iframe>')
+						}, {
+							name: 'FAQs',
+							icon: 'help_outline',
+							fn: () => rootPanel('<aon-faqs></aon-faqs>')
+						}];
+					d.setMenuOptions(options, top, left);
+					d.open();
+				});
+
+				;
 			});
 		}
 
@@ -97,9 +121,6 @@ export class AonHeader extends AonElement {
 			if(!this.isMobile()) {
 				let aonHeaderSearch = document.getElementById(BASE_ID + 'Search');
 				aonHeaderSearch.style.display = 'block';
-
-				let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
-				aonHeaderHelp.style.display = 'none';
 
 				let aonHeaderHome = document.getElementById(BASE_ID + 'Home');
 				aonHeaderHome.style.display = 'none';
@@ -194,7 +215,6 @@ export class AonHeader extends AonElement {
 		} else aonLogo.src = '../assets/aon-logo2.png';
 		aonLogo.addEventListener('click', () => {
 			if(localStorage.getItem('aon_domain_id')){
-
 				rootPanel(this.isMobile()
 					? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
 					: '<aon-desktop id="aonDesktop"></aon-desktop>');
