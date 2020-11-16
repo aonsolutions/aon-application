@@ -14,77 +14,28 @@
  */
 
 if (typeof jQuery === 'undefined') {
-    throw new Error('multiselect requiere JQuery');
+    throw new Error('La subida de documentos requiere jQuery');
 }
 
-import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
+import { BIDOQ_CLIENTE_ID, BIDOQ_TIPO_USUARIO, bidoq } from "./aon-documental.js";
 import { createTable, getList } from './table.js';
 
 export function UploadDocumentos(){
-    //
-    // Datos de sesion por ahora -- PRUEBASSSSSSSSSSSSSSS
-    //
-        const BIDOQ_CLIENTE_ID   = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
-        const BIDOQ_TIPO_USUARIO = 6;
-        const BIDOQ_SESSION_ID   = 'c2d3Y3lRUzExdFBxckxlTQ==';
-
     //  
     // Configuracion 
     //  
+        // Obtenemos las extensiones de archivo que tenemos en cuenta
+        const fileExtensionsConfig = getFileExtensionsConfig();
+        const {
+            notAllowedByUserType: extNoAceptadas,
+            havePreview: extPrevios,
+            havePreviewIconsByExtension: extPreviosIcono
+        } = fileExtensionsConfig;
+        let { allowed: extAceptadas } = fileExtensionsConfig;
         var drop            = true;                                         // Si permetimos la opcion de arrastrar documentos
         var cantidad        = 50;                                           // Cantidad maxima de documentos permitidos
         var peso            = 5;                                            // Peso maximo de un documento permitido en MB
         var extNoAceptada   = '<i class="material-icons">clear</i>';        // Extenciones que se permiten en algunos casos
-        var extAceptadas    = [                                             // Extenciones que se permiten en algunos casos
-            'bmp',
-            'jpg',
-            'jpeg',
-            'png',
-            'gif',
-            'tiff',
-            'tif',
-            'txt',
-            'rtf',
-            'odt',
-            'doc',
-            'docx',
-            'ods',
-            'xls',
-            'pdf',
-            'xlsx',
-            'xlsb',
-            'zip',
-            'rar'
-        ];
-        var extNoAceptadas    = {                                           // Extenciones no aceptadas dependiendo del tipo de usuario
-            6 : [
-                'zip',
-                'rar'
-            ]
-        };
-        var extPrevios      = [                                             // Extenciones que se permiten en algunos casos
-            'bmp',
-            'jpg',
-            'jpeg',
-            'png',
-            'gif',
-            'tiff',
-            'tif',
-            'pdf'
-        ];
-        var extPreviosIcono = {                                             // Extenciones que se permiten en algunos casos
-            txt  : '<i class="material-icons">text_snippet</i>',
-            rtf  : '<i class="material-icons">text_snippet</i>',
-            odt  : '<i class="material-icons">text_snippet</i>',
-            doc  : '<i class="material-icons">text_snippet</i>',
-            docx : '<i class="material-icons">text_snippet</i>',
-            ods  : '<i class="material-icons">text_snippet</i>',
-            xls  : '<i class="material-icons">text_snippet</i>',
-            xlsx : '<i class="material-icons">text_snippet</i>',
-            xlsb : '<i class="material-icons">text_snippet</i>',
-            zip  : '<i class="material-icons">archive</i>',
-            rar  : '<i class="material-icons">archive</i>'
-        };
         var errorMensaje    = {                                             // Errores que damos
             usuario                 : 'No disponemos del campo id.',
             usuarioTipo             : 'No disponemos del campo sube.',
@@ -99,7 +50,7 @@ export function UploadDocumentos(){
         var comprobacionMensaje    = {                                      // Errores que damos
             carpetaContable : "Recuerda que si lo que quieres es subir documentos para que los contabilicemos debes subirlo a la carpeta 'A CONTABILIZAR'"
         };
-    
+
     //
     // Variables generales
     //
@@ -153,7 +104,7 @@ export function UploadDocumentos(){
                 if(e.originalEvent.dataTransfer){
                     if(e.originalEvent.dataTransfer.files.length) {
                         // Pasamos a subir la documentacion
-                        subirDcoumentos(e.originalEvent.dataTransfer, $('#upload-file')[0]);
+                        subirDocumentos(e.originalEvent.dataTransfer, $('#upload-file')[0]);
                     }   
                 }
             });
@@ -166,11 +117,11 @@ export function UploadDocumentos(){
     
         // Subir por input
         $(document).on('change', '#upload-file', function() {
-            subirDcoumentos(this, this);
+            subirDocumentos(this, this);
         });
     
         // Cogemos los documentos que se quieren subir
-        function subirDcoumentos(documentosParaSubir, input){
+        function subirDocumentos(documentosParaSubir, input){
             documentos  = documentosParaSubir.files;
             url         = input.closest("form").action;
             formulario  = input.closest("form");
@@ -263,7 +214,7 @@ export function UploadDocumentos(){
             $.each(documentos, function (index, documento) {
                 // Comprobar cuanto pesa
                 if(documento.size > (peso * 1024 * 1024)){
-                    // No es permitida esa extension
+                    // Supera el peso máximo permitido
                     errores(documento, errorMensaje.peso);
                     return;
                 }
@@ -274,13 +225,13 @@ export function UploadDocumentos(){
                         if(extAceptadas.includes(valueNoAceptadas)){
                             // Quitamos la extencion
                             extAceptadas = $.grep(extAceptadas, function(valueAceptadas) {
-                            return valueAceptadas != valueNoAceptadas;
+                                return valueAceptadas != valueNoAceptadas;
                             });
                         }
                     });
                 }
                 
-                if(jQuery.inArray(documentoExtencion(documento), extAceptadas) === -1) {
+                if(jQuery.inArray(documentoExtension(documento), extAceptadas) === -1) {
                     // No es permitida esa extension
                     errores(documento, errorMensaje.extencion);
                     return;
@@ -300,7 +251,7 @@ export function UploadDocumentos(){
             reader.onload = function(){
                 $('.files').append(montarPrevio(documento));                // Agregar donde meteremos el previo
                 // Dependiendo del tipo de documento, mostramos el previo o un archivo predefinido
-                if(jQuery.inArray(documentoExtencion(documento), extPrevios) !== -1) {
+                if(jQuery.inArray(documentoExtension(documento), extPrevios) !== -1) {
                     // Montar el previo. es una extencion que permite mostrar el previo
                     var dataURL = reader.result;
                     var output  = $('#previo-'+previoCantidad)[0];          // Que retorne el HTML DOM Object
@@ -387,7 +338,7 @@ export function UploadDocumentos(){
             var metemosPrevio = '';
             if(correcto){
                 // Si es una extencion que dejamos mostrar el previo
-                if(jQuery.inArray(documentoExtencion(documento), extPrevios) !== -1) {
+                if(jQuery.inArray(documentoExtension(documento), extPrevios) !== -1) {
                     // Es una imagen
                     if (documentoType(documento) === 'image'){
                         metemosPrevio = '<img id="'+id+'">';
@@ -463,7 +414,7 @@ export function UploadDocumentos(){
                 const filesPromises = [{
                     "image_content": await readFile(documento),
                     "image_name": fileName,
-                    "image_type": documento.type.split('/')[1],
+                    "image_type": documentoExtension(documento),
                     "image_size": documento.size
                 }];
 
@@ -475,7 +426,6 @@ export function UploadDocumentos(){
                 barra.css('width', porcentaje+'%');
 
                 Promise.all(filesPromises).then(async (files) => {
-                    
                     // Hacemos una petición a bidoq para subir los archivos seleccionados
                     try {
                         const data = await bidoq({
@@ -538,71 +488,6 @@ export function UploadDocumentos(){
                         console.error('Ocurrió un error: ' + error.message);
                     }
                 });
-
-            /*    
-            return ajaxReq = $.ajax({
-                url         : url,
-                type        : 'POST',
-                data        : formData,
-                dataType    : "json",
-                cache       : false,
-                contentType : false,
-                processData : false,
-                xhr: function () {
-                    // Barra cargando - Porcentaje mientras se realiza el proceso
-                    var xhr = new window.XMLHttpRequest();
-                    xhr.upload.onprogress = function (event) {
-                        // Solo subimos la barra hasta el 90%, al 100% en el success
-                        var porcentaje = Math.round((event.loaded / event.total) * 90);
-                        barra.text(porcentaje+'%');
-                        barra.css('width', porcentaje+'%');
-                    };
-                    return xhr;
-                },
-                beforeSend: function (xhr) {
-                    // Barra cargando - Al inicio
-                    barraBeforeSend(barra);
-                },
-                success: function (data, textStatus, jqXHR){
-                    if(data.succes){
-                        // Barra cargando - Completado correctamente
-                        barraSuccess(barra);
-                        // Mensaje de correcto
-                        correctoPHP(recorrido, data.mensaje, data.enlace);
-                        // Recargar tabla si se pide y el js
-                        if(reloadTabla !== undefined){
-                            $(reloadTabla).load(location.href + ' '+reloadTabla, function(){
-                                // Recargamos el popover para los previos de las imagenes
-                                $(".popover_previo").popover('destroy');
-                                $(".popover_previo").popover({
-                                    placement: 'right',
-                                    trigger: 'hover',
-                                    html: true
-                                });
-                            });
-                        }
-                        // Cargar la tabla con los documentos por ajax
-                        if(ajaxTabla !== undefined){
-                            CargarDivAjaxDocumentos(ajaxTabla, '../ajax/documentos_asesores_ajax.php');
-                        }
-                        return;
-                    } else {
-                        // Barra cargando - Si tenemos algún tipo de error
-                        barraError(barra);
-                        // Error
-                        erroresPHP(recorrido, data.mensaje);
-                        return;
-                    }
-                },
-                error: function (jqXHR, textStatus) {
-                    // Barra cargando - Si tenemos algún tipo de error
-                    barraError(barra);
-                    // Error
-                    erroresPHP(recorrido, errorMensaje.error);
-                    return;
-                }
-            });
-            */
         }
         
     //
@@ -634,34 +519,25 @@ export function UploadDocumentos(){
         function erroresPHP(recorrido, mensaje) {
             $('.mensaje-'+recorrido).append(mensaje);                       // Donde imprimimos el error devuelto por PHP
         }
-        
+
         function correctoPHP(recorrido, mensaje, ruta = null) {
             $('.correcto-'+recorrido).append(mensaje);                      // Donde imprimimos lo devuelto por PHP
             //$('.upload-ruta-'+recorrido).attr("href", ruta);                // Ruta devueltoa por PHP del previo
         }
-    
-        function trim(str) {
-            return str.replace(/^\s+|\s+$/gm, '');
-        }
-        
-        function documentoExtencion(documento){
-            // Retornamos la extencion
-            return documento.name.split('.').pop().toLowerCase();
-        }
-        
+
         function documentoType(documento){
             // Retornamos el type
             return documento.type.split('/').shift().toLowerCase();
         }
-        
-        function documentoExtencion(documento){
+
+        function documentoExtension(documento){
             // Retornamos la extencion
             return documento.name.split('.').pop().toLowerCase();
         }
-        
+
         function documentoIcono(documento){
             // Retornamos la extencion
-            return extPreviosIcono[documentoExtencion(documento)];
+            return extPreviosIcono[documentoExtension(documento)];
         }
         
         function formatearSizeUnits(documento, decimales = 2){
@@ -779,6 +655,46 @@ export function UploadDocumentos(){
             $(".upoload-arrastras-entras-mensaje").remove();
             $('html').removeClass('upoload-arrastras-entras');
         }
+}
+
+export function getFileExtensionsConfig() {
+    // Extensiones que se permiten en algunos casos
+    const allowed = [
+        'bmp', 'jpg', 'jpeg', 'png', 'gif',
+        'tiff', 'tif', 'txt', 'rtf', 'odt',
+        'doc', 'docx', 'ods', 'xls', 'pdf',
+        'xlsx', 'xlsb', 'zip', 'rar'
+    ];
+    // Extensiones no permitidas dependiendo del tipo de usuario
+    const notAllowedByUserType = {
+        6 : ['zip', 'rar']
+    };
+    // Extensiones con las que mostramos una previsualización del archivo
+    const havePreview = [
+        'bmp', 'jpg', 'jpeg', 'png', 'gif',
+        'tiff', 'tif', 'pdf'
+    ];
+    // Iconos que mostramos en lugar de la previsualización según la extensión del archivo
+    const havePreviewIconsByExtension = {
+        txt  : '<i class="material-icons">text_snippet</i>',
+        rtf  : '<i class="material-icons">text_snippet</i>',
+        odt  : '<i class="material-icons">text_snippet</i>',
+        doc  : '<i class="material-icons">text_snippet</i>',
+        docx : '<i class="material-icons">text_snippet</i>',
+        ods  : '<i class="material-icons">text_snippet</i>',
+        xls  : '<i class="material-icons">text_snippet</i>',
+        xlsx : '<i class="material-icons">text_snippet</i>',
+        xlsb : '<i class="material-icons">text_snippet</i>',
+        zip  : '<i class="material-icons">archive</i>',
+        rar  : '<i class="material-icons">archive</i>'
+    };
+
+    return {
+        allowed,
+        notAllowedByUserType,
+        havePreview,
+        havePreviewIconsByExtension
+    };
 }
 
 async function CargarDivAjaxDocumentos(id,url){

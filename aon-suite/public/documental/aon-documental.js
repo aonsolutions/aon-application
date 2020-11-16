@@ -1,6 +1,7 @@
 import { requestBidoq } from  '../components/request.js';
 
-const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+export const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+export const BIDOQ_TIPO_USUARIO = 6;
 
 // Local
 // const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
@@ -20,8 +21,8 @@ export const bidoq = async (additionalData) => {
         "device_info": "phone",
         "app_code": "1",
         "operating_system_version": "4.2",
-        "clienteID":BIDOQ_CLIENTE_ID,
-        "sessionID":BIDOQ_SESSION_ID,
+        "clienteID": BIDOQ_CLIENTE_ID,
+        "sessionID": BIDOQ_SESSION_ID,
         "app_version": "1.0",
         ...additionalData
     };

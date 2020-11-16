@@ -344,7 +344,6 @@ function createCards(list) {
                         </ul>
                         <ul class="list-inline mb-0 d-flex ml-auto align-items-center">
                             <li class="d-flex list-inline-item ml-auto">
-                                <i class="material-icons align-middle">calendar_today</i>
                                 <small class="align-middle ml-1">${formattedDate}</small>
                             </li>
                         </ul>
