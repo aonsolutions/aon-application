@@ -110,6 +110,8 @@ public class JooqContrataContract {
 		
 		Result<Record> contractBonusRecords = dslContext.select().from(CONTRACT_BONUS)
 				.where(CONTRACT_BONUS.CONTRACT.eq(contractId))
+				.and(CONTRACT_BONUS.EXPRESSION.isNotNull().and(CONTRACT_BONUS.EXPRESSION.ne("")))
+				.orderBy(CONTRACT_BONUS.START_DATE.desc())
 				.fetch();
 		
 		for(Record r : contractBonusRecords) {
@@ -117,6 +119,8 @@ public class JooqContrataContract {
 			ssBonusData.setStartDate(r.get(CONTRACT_BONUS.START_DATE));
 			ssBonusData.setEndDate(r.get(CONTRACT_BONUS.END_DATE));
 			ssBonusData.setDescription(r.get(CONTRACT_BONUS.DESCRIPTION));
+			
+			contractBonusList.add(ssBonusData);
 		}
 		
 		return contractBonusList;

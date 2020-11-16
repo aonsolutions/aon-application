@@ -1,5 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
+
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
@@ -10,6 +12,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -47,6 +50,9 @@ public abstract class ContractBonusUI extends ResizeComposite {
 	ScrollPanel contractBonusScrollPanel;
 	
 	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
 	Grid contractBonusDataTable;
 
 	@UiField
@@ -62,14 +68,20 @@ public abstract class ContractBonusUI extends ResizeComposite {
 		initWidget(uiBinder.createAndBindUi(this));
 		messages = new Messages();
 		initializeView();
+		deckPanel.showWidget(0);
 	}
 	
 	public void setEmployeeContractInfo(EmployeeContractInfo employeeContractInfoIn) {
 		this.employeeContractInfo = employeeContractInfoIn;
 		resetAttachDataTableStructure();
 		
+		if(employeeContractInfo.getContractBonus().size() > 0)
+			deckPanel.showWidget(1);
+		
 		for(SSBonusData contractBonus : employeeContractInfo.getContractBonus())
 			paintContractBonus(contractBonus);
+		
+		messageLabel.setText("Bonificaciones actualizadas a " + formatFullDate.format(new Date()));
 	}
 	
 	// --------------------------------------------------- UiHandlers (Aux Methods) -------------------------------------------------
@@ -94,6 +106,7 @@ public abstract class ContractBonusUI extends ResizeComposite {
 		description.addStyleName(style.headerLabelStyle());
 		startDate.addStyleName(style.headerLabelStyle());
 		endDate.addStyleName(style.headerLabelStyle());
+		startDate.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 		
 		contractBonusDataTableHeader.setWidget(row, 0, startDate);
 		contractBonusDataTableHeader.setWidget(row, 1, endDate);
@@ -108,9 +121,10 @@ public abstract class ContractBonusUI extends ResizeComposite {
 		
 		// Description TextBox
 		Label startDateLabel = new Label(formatFullDate.format(ssBonusData.getStartDate()));
+		startDateLabel.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 		
 		// Description TextBox
-		Label endDateLabel = new Label(formatFullDate.format(ssBonusData.getEndDate()));
+		Label endDateLabel = new Label(null == ssBonusData.getEndDate() ? "" : formatFullDate.format(ssBonusData.getEndDate()));
 		
 		// Description TextBox
 		Label descriptionLabel = new Label(ssBonusData.getDescription());

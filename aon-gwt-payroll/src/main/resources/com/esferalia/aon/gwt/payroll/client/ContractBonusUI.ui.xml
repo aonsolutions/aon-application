@@ -53,6 +53,11 @@
 		
 		.clauseTD{}
 		
+		.noBonusLB{
+			width: 100%;
+			text-align: center;
+		}
+		
 	</ui:style>
 
    	<g:HTMLPanel> 
@@ -65,7 +70,10 @@
 	    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
 	    			</g:HTMLPanel>
 		    		<g:ScrollPanel ui:field="contractBonusScrollPanel" styleName="{style.scrollStyle}">
-		    			<g:Grid ui:field="contractBonusDataTable"></g:Grid>
+		    			<g:DeckPanel ui:field="deckPanel">
+		    				<g:Label styleName="{style.noBonusLB}">NO EXISTEN BONIFICACIONES</g:Label>
+		    				<g:Grid ui:field="contractBonusDataTable"></g:Grid>
+		    			</g:DeckPanel>
 		    		</g:ScrollPanel>
 		    		<g:HTMLPanel styleName="{style.footerStyle}">
 	    				<g:Label ui:field="messageLabel" styleName="aon-finding-toolbar-item aon-icon-info {style.footerElement}"></g:Label>
