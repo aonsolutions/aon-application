@@ -66,8 +66,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -89,7 +87,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -461,20 +458,73 @@ public class AccountEntryModuleTEDI extends MainEntryPoint {
 		toast.setCaption(AON.MSG.comments());
 		FlowPanel commentPanel = new FlowPanel();
 		commentPanel.setStyleName(AON.CSS.aonTextCenter());
+		commentPanel.addStyleName(AON.CSS.aonPadding());
 		TextArea comment = new TextArea();
-		toast.addCloseHandler(new CloseHandler<PopupPanel>() {
-			
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-				wizardContent.getMainEntry().setComments(comment.getValue());
-				styleCommentsButton();
-				refreshIdLabel();
-			}
-		});
 		comment.setText(wizardContent.getMainEntry().getComments());
 		comment.setWidth("400px");
 		comment.setHeight("100px");
+		comment.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					toast.hide();
+				}
+			}
+		});
+
+    	FlowPanel buttons = new FlowPanel();
+    	buttons.setStyleName(AON.CSS.aonTextCenter());
+    	buttons.addStyleName(AON.CSS.aonMarginTop());
+    	
+    	final Button okButton = new Button();
+    	okButton.setStyleName(AON.CSS.aonOkButton());
+    	okButton.setText( AON.MSG.accept());
+    	okButton.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					toast.hide();
+				}
+			}
+		});
+    	okButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
+				wizardContent.getMainEntry().setComments(comment.getValue());
+				styleCommentsButton();
+				refreshIdLabel();
+				toast.hide();
+			}
+		});
+    	buttons.add(okButton);
+    	
+    	final Button cancelButton = new Button();
+    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+    	cancelButton.setText( AON.MSG.cancelAction());
+    	cancelButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				cancelButton.setEnabled(false);
+				toast.hide();
+			}
+		});
+    	cancelButton.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					toast.hide();
+				}
+			}
+		});
+    	buttons.add(cancelButton);
+		
+		
 		commentPanel.add(comment);
+		commentPanel.add(buttons);
 		toast.add(commentPanel);
 
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {

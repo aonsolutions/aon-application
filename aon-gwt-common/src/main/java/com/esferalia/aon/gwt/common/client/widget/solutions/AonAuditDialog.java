@@ -69,8 +69,8 @@ public class AonAuditDialog extends AonCustomDialog {
 			}
 		});
 
+    	panel.add(modified);
     	panel.add(buttons);
-		panel.add(modified);
 		add(panel);
 		center();
 		show();
