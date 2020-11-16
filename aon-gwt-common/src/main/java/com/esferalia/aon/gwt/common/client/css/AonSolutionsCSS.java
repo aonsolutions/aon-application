@@ -150,6 +150,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_delete_forever")
 	String aonIconDeleteForever();
 	
+	@ClassName("aon_icon_tgss")
+	String aonIconTgss();
+	
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();

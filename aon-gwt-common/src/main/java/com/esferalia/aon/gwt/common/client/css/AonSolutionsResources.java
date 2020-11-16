@@ -207,5 +207,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconDeleteForever();
 	
+	@Source("icons/aon-icon-tgss.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconTgss();
+	
 }
 

@@ -110,6 +110,8 @@ input[type="checkbox"]:focus + label {
 .aon_icon_view_document { background-image: iconViewDocument;}
 @url iconDeleteForever aonIconDeleteForever;
 .aon_icon_delete_forever { background-image: iconDeleteForever;}
+@url iconTgss aonIconTgss;
+.aon_icon_tgss { background-image: iconTgss;}
 
 /* BASICS */
 .aon_selector {
