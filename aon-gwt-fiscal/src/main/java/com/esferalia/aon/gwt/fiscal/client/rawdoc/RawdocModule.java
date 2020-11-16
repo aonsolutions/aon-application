@@ -10,8 +10,8 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
@@ -210,6 +210,7 @@ public class RawdocModule extends MainEntryPoint {
 		, TIT("Titular"					, 100,AON.CSS.aonTextLeft())
 		, AUTO(""						, 0  ,AON.CSS.aonTextLeft())
 		, AMO("Importe"					, 80 ,AON.CSS.aonTextRight())
+		, HST(""						, 20 ,AON.CSS.aonTextLeft())
 		, ACT(""						, 100 ,AON.CSS.aonTextLeft())
 		;
 
@@ -476,6 +477,15 @@ public class RawdocModule extends MainEntryPoint {
 		Label nature = new Label(rawdoc.getNature() == null?"":rawdoc.getNature().getDescription());
 		Label type = new Label(rawdoc.getType() == null?"":rawdoc.getType().getDescription());
 		Label status = new Label(rawdoc.getStatus() == null?"":rawdoc.getStatus().getDescription());
+
+		AonTableButton logButton = new AonTableButton(AON.MSG.tracking(), AON.CSS.aonIconHistory());
+		logButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addExtraInfo( new RawdocLogPanel( rawdoc.getLog()));
+			}
+		});
 		
 		FlowPanel actions = new FlowPanel();
 		actions.setStyleName(AON.CSS.aonTextCenter());
@@ -859,10 +869,18 @@ public class RawdocModule extends MainEntryPoint {
 		tab.setWidget(row, col, amount);
 		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight() );
 		++col;
+		if ( AonStringUtils.isBlank(rawdoc.getLog())) {
+			Label l = new Label();
+			l.setStyleName(AON.CSS.aonIconLabel());
+			tab.setWidget(row, col, l);
+		} else {
+			tab.setWidget(row, col, logButton);
+		}
+		++col;
 		tab.setWidget(row, col, actions);
 		++col;
 	}
-	
+
 	private static native String b64encode(String a) /*-{
 	  return window.btoa(a);
 	}-*/;	

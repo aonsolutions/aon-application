@@ -365,6 +365,8 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Deseleccionar todos")
 	String selectNone();
 
+	@DefaultMessage("Usuario")
+	String user();
 	
 	@DefaultMessage("Auditor\u00eda")
 	String audit();
@@ -3910,6 +3912,7 @@ public interface CommonMessages extends Messages {
 	
 	@DefaultMessage("Papelera.")
 	String draftDocs();
+
 
 }
 
