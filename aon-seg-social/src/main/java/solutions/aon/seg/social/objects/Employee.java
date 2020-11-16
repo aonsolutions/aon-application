@@ -479,6 +479,15 @@ public class Employee {
 		public void visitReducingcoefic(String reducingCoefic) {}
 	}
 	
+
+	public void setRegime(String regime) {
+		this.regime = regime;
+	}
+	
+	public void setCtaCti(String ctaCti) {
+		this.ctaCti = ctaCti;
+	}
+	
 }
 
 
