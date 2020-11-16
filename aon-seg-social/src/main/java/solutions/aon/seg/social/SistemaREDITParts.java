@@ -18,7 +18,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
@@ -70,7 +69,7 @@ public class SistemaREDITParts {
 			for(ITPart itp : itParts) {
 				if(itp.getPartType().toLowerCase().equals("alta")) end = itp;
 				if(itp.getPartType().toLowerCase().equals("baja")) start = itp;
-				if(itp.getPartType().toLowerCase().equals("confirmación") && !confirmations.contains(itp)) confirmations.add(itp);
+				if(itp.getPartType().toLowerCase().equals("confirmaciï¿½n") && !confirmations.contains(itp)) confirmations.add(itp);
 			}
 			
 			its.add(builder.setStart(start)
@@ -192,7 +191,7 @@ public class SistemaREDITParts {
 		
 	}	
 	
-	public static String[] causes = {"Baja","Confirmación","Alta"};
+	public static String[] causes = {"Baja","Confirmaciï¿½n","Alta"};
 	
 	//CONTINGENCIES 
 	public static enum Contingencies{
@@ -200,7 +199,7 @@ public class SistemaREDITParts {
 		ACCIDENTE_NO_LABORAL,
 		ACCIDENT_LABORAL,
 		ENFERMEDAD_PROFESIONAL,
-		PERIODOS_OBSERVACIÓN;
+		PERIODOS_OBSERVACION;
 	}
 	
 	//PART TYPE 
@@ -307,7 +306,7 @@ public class SistemaREDITParts {
 			case ACCIDENTE_NO_LABORAL: 		contingency_opt = document.querySelector("#contingencia option:nth-child(3)");	break;
 			case ACCIDENT_LABORAL: 			contingency_opt = document.querySelector("#contingencia option:nth-child(4)"); 	break;
 			case ENFERMEDAD_PROFESIONAL: 	contingency_opt = document.querySelector("#contingencia option:nth-child(5)"); 	break;
-			case PERIODOS_OBSERVACIÓN: 		contingency_opt = document.querySelector("#contingencia option:nth-child(6)"); 	break;
+			case PERIODOS_OBSERVACION: 		contingency_opt = document.querySelector("#contingencia option:nth-child(6)"); 	break;
 		}
 		
 		document = contingency_opt.click();

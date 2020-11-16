@@ -12,7 +12,7 @@ import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
 import solutions.aon.seg.social.SistemaREDITParts.ContractType;
 
 public class TestItRegister {
-
+ 
 	@Test
 	@Ignore
 	public void registerItCertificateTest() {
@@ -103,5 +103,10 @@ public class TestItRegister {
 	@Ignore
 	public void registerItTestEndCauseEmpty() {
 		
+	}
+	
+	@Test 
+	public void addItConfirmationCertificateTest(){
+
 	}
 }
