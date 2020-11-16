@@ -102,6 +102,34 @@ export class AonDesktop extends AonElement {
 		`;
 		let aonDesktop = document.getElementById('aonDesktopMain');
 
+		let taskOptions = [{
+				name: 'Documentos sin leer',
+				icon: 'snippet_folder',
+				fn: () => {}
+			},{
+				name: 'Notificaciones',
+				icon: 'notifications',
+				fn: () => {}
+			},{
+				name: 'Facturas Pendientes',
+				icon: 'inbox',
+				fn: () => {}
+			}, {
+				name: 'Facturas Rechazadas',
+				icon: 'report',
+				fn: () => {}
+			}, {
+				name: 'Solicitudes Abiertas',
+				icon: 'assignment',
+				fn: () => {}
+			}, {
+				name: 'Solicitudes para ti',
+				icon: 'assignment_ind',
+				fn: () => {}
+			}
+		];
+		aonDesktop.addSidenavOptions('TAREAS PENDIENTES', taskOptions);
+
 		let appOptions = [];
 		for (let key in Apps){
 
@@ -119,25 +147,25 @@ export class AonDesktop extends AonElement {
 		}
 		aonDesktop.addSidenavOptions('APLICACIONES CONTRATADAS', appOptions);
 
-		let serviceOptions = [];
-		for (let key in Services){
-			if(r.includes(Services[key].app)) {
-				let option = {
-					name: Services[key].title,
-					fn: () => alert('Panel ' + Services[key].title)
-				};
-				if(Services[key].logo){
-					option.img = Services[key].logo
-				} else {
-					option.aonIcon = {
-						icon: Services[key].icon,
-						color: Services[key].color
-					};
-				}
-				serviceOptions.push(option);
-			}
-		}
-		aonDesktop.addSidenavOptions('SERVICIOS CONTRATADOS', serviceOptions);
+		// let serviceOptions = [];
+		// for (let key in Services){
+		// 	if(r.includes(Services[key].app)) {
+		// 		let option = {
+		// 			name: Services[key].title,
+		// 			fn: () => alert('Panel ' + Services[key].title)
+		// 		};
+		// 		if(Services[key].logo){
+		// 			option.img = Services[key].logo
+		// 		} else {
+		// 			option.aonIcon = {
+		// 				icon: Services[key].icon,
+		// 				color: Services[key].color
+		// 			};
+		// 		}
+		// 		serviceOptions.push(option);
+		// 	}
+		// }
+		// aonDesktop.addSidenavOptions('SERVICIOS CONTRATADOS', serviceOptions);
 
 		let classicOptions = [
 			{
