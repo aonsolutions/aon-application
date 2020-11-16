@@ -43,15 +43,15 @@ public class SistemaREDITParts {
 		Toolkit.verifyData(new Object[] {regime,ccc,from,to});
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		
-		ArrayList<It> its = new ArrayList<It>();
+		ArrayList<It> its = new ArrayList<>();
 		ArrayList<ITPart>  itParts = (ArrayList<ITPart>) getFullItParts(certificateInputStream, certificatePassword, certificateType, regime, ccc, from, to);
-		HashMap<ItPartId, Collection<ITPart>> orderedItParts = new HashMap<ItPartId, Collection<ITPart>>();
+		HashMap<ItPartId, Collection<ITPart>> orderedItParts = new HashMap<>();
 		
 		for (ITPart itp : itParts) {
 			ItPartId id = new ItPartId(itp.getWorkLeaveDate(), itp.getNaf());
 			if(orderedItParts.containsKey(id)) orderedItParts.get(id).add(itp);
 			else {
-				ArrayList<ITPart> list = new ArrayList<ITPart>();
+				ArrayList<ITPart> list = new ArrayList<>();
 				list.add(itp);
 				orderedItParts.put(id, list);
 			}
@@ -64,7 +64,7 @@ public class SistemaREDITParts {
 			
 			ITPart end = null;
 			ITPart start = null;
-			ArrayList<ITPart> confirmations = new ArrayList<ITPart>();
+			ArrayList<ITPart> confirmations = new ArrayList<>();
 			
 			for(ITPart itp : itParts) {
 				if(itp.getPartType().toLowerCase().equals("alta")) end = itp;
@@ -94,14 +94,14 @@ public class SistemaREDITParts {
 			}
 		}
 		catch (MalformedURLException e) { throw new SegSocialException(e); }
-		catch (IOException e) { throw new SegSocialException(e); } 
+		catch (IOException e) { throw new SegSocialException(e); }
 		catch (InterruptedException e) {throw new SegSocialException(e);}
 		
 	}
 
 	//GET ALL THE ITPARTS
 	private static Collection<ITPart> getFullItPartsImpl(InputStream certificateInputStream, String certificatePassword,
-			String certificateType, String regime, String ccc, Date from, Date to) throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException, InvalidCertificateException, InvalidDataException {
+			String certificateType, String regime, String ccc, Date from, Date to) throws FailingHttpStatusCodeException, IOException, InterruptedException, InvalidCertificateException, InvalidDataException {
 		
 		Toolkit.verifyData(new Object[] {regime,ccc,from,to});
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -111,8 +111,8 @@ public class SistemaREDITParts {
 			
 			if(Toolkit.isFuture(to)) throw new InvalidDateException();
 			
-			ArrayList<ITPart> itParts = new ArrayList<ITPart>();
-			Boolean last = false;
+			ArrayList<ITPart> itParts = new ArrayList<>();
+			boolean last = false;
 			
 			while(!last) {
 				HtmlPage origen = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
@@ -144,7 +144,7 @@ public class SistemaREDITParts {
 					
 				DomNodeList<DomNode> rows = document.querySelectorAll(".resultados>tbody>tr");
 				for (DomNode row : rows) {
-					ArrayList<String> data = new ArrayList<String>(); 
+					ArrayList<String> data = new ArrayList<>();
 					Iterable<DomNode> cells = row.getChildren();	
 						
 					for(DomNode cell : cells) 				
@@ -190,27 +190,25 @@ public class SistemaREDITParts {
 		if(errors != null) throw new InvalidDataException();
 		
 	}	
-	
-	public static String[] causes = {"Baja","Confirmaci�n","Alta"};
-	
+
 	//CONTINGENCIES 
-	public static enum Contingencies{
+	public enum Contingencies{
 		ENFERMEDAD_COMUN,
 		ACCIDENTE_NO_LABORAL,
 		ACCIDENT_LABORAL,
 		ENFERMEDAD_PROFESIONAL,
-		PERIODOS_OBSERVACION;
+		PERIODOS_OBSERVACION
 	}
 	
 	//PART TYPE 
-	public static enum PartType{
+	public enum PartType{
 		ALTA,
 		CONFIRMACION,
-		BAJA;
+		BAJA
 	}
 	
 	//CONTRACTS
-	public static enum ContractType{
+	public enum ContractType{
 		FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL,
 		RESTO_Y_AUTONOMOS
 	}
@@ -218,7 +216,7 @@ public class SistemaREDITParts {
 	//REGISTER IT START HANDLE EXCEPTIONS
 	public static void addItStart(InputStream certificateInputStream, String certificatePassword,String certificateType,
 			String regime, String ccc, String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, 
-			ContractType contractType,  float baseCot , int cotDays) throws StatusCodeException, InvalidCertificateException, MalformedURLException, IOException, InvalidDataException {
+			ContractType contractType,  float baseCot , int cotDays) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
 		
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, licenseNumber, cias, startdate, contractType,baseCot,cotDays});
 		
@@ -228,7 +226,7 @@ public class SistemaREDITParts {
 	
 	//REGISTER IT START
 	private static void addItStartImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc,
-			String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType, float base_cot , int cotDays) throws InvalidCertificateException, FailingHttpStatusCodeException, MalformedURLException, IOException, InvalidDataException {
+			String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType, float base_cot , int cotDays) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			
 			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
@@ -237,7 +235,7 @@ public class SistemaREDITParts {
 			
 			Integer[] arr_startDate = Toolkit.getDateArray(startdate);		
 			ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber, new int[]{2,4});
-			String[] arr_base_cot = Toolkit.splitDecimal(base_cot);
+			String[] arr_base_cot = Toolkit.splitDecimal(base_cot,2);
 			
 			HtmlInput n_coleg_1_in = document.querySelector("#ncol_0");
 			HtmlInput n_coleg_2_in = document.querySelector("#ncol_1");
@@ -289,8 +287,41 @@ public class SistemaREDITParts {
 			
 		} 
 	}
-	
-	
+	//REGISTER IT CONFIRMATION HANDLE EXCEPTIONS
+	public static void addItConfirmation(InputStream certificateInputStream, String certificatePassword,String certificateType,
+								  String regime, String ccc, String naf, Contingencies contingency) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
+
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency});
+		try{ addItConfirmationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency);}
+		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+	}
+
+	//REGISTER IT CONFIRMATION
+	private static void addItConfirmationImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Contingencies contingency) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
+		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
+			HtmlOption type = document.querySelector("#tipoParte option:nth-child(3)");
+			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.CONFIRMACION);
+		}
+	}
+
+	//REGISTER IT END HANDLE EXCEPTIONS
+	public static void addItEnd(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Contingencies contingency) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
+
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency});
+		try{ addItEndImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency);}
+		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+	}
+
+	//REGISTER IT
+	private static void addItEndImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Contingencies contingency) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
+		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
+			HtmlOption type = document.querySelector("#tipoParte option:nth-child(3)");
+			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.ALTA);
+		}
+	}
+
 	//COMMON DATA FILLING
 	private static HtmlPage fillCommonData(HtmlPage document,String regime, String ccc, String naf, Contingencies contingency,PartType type) throws IOException, InvalidDataException {
 		HtmlInput regime_in = document.querySelector("#regimen");
@@ -309,7 +340,7 @@ public class SistemaREDITParts {
 			case PERIODOS_OBSERVACION: 		contingency_opt = document.querySelector("#contingencia option:nth-child(6)"); 	break;
 		}
 		
-		document = contingency_opt.click();
+		contingency_opt.click();
 		
 		String[] ccc_arr =  Toolkit.SplitString(ccc, 2);
 		String[] naf_arr =  Toolkit.SplitString(naf, 2);
@@ -325,22 +356,31 @@ public class SistemaREDITParts {
 		return document;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	//Cancel IT
+	public static void removeItStart(InputStream certificateInputStream, String certificatePassword,String certificateType,String regime, String ccc, String naf, Date startdate)
+		throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
+		Toolkit.verifyData(new Object[]{regime, ccc, naf, startdate});
+		try{ removeItStartImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, startdate);}
+		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}
+	}
+
+
+
+	//remove it
+	private static void removeItStartImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc, String naf, Date startdate)
+			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException {
+		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/isincaA/menu.do?opcion=A");
+
+			HtmlInput regime_in = htmlPage.querySelector("#regimen");
+			HtmlInput ccc_in_1 = htmlPage.querySelector("#cc1");
+			HtmlInput ccc_in_2 = htmlPage.querySelector("#cc2");
+			HtmlInput naf_in_1 = htmlPage.querySelector("#naf2");
+			HtmlInput naf_in_2 = htmlPage.querySelector("#naf2");
+			HtmlInput date_in_dd = htmlPage.querySelector("#fechaBaja_dd");
+			HtmlInput date_in_mm = htmlPage.querySelector("#fechaBaja_mm");
+			HtmlInput date_in_aa = htmlPage.querySelector("#fechaBaja_aa");
+			HtmlInput continue_in = htmlPage.querySelector("#botonesANULAR input[name=boton]");
+		}
+	}
 }

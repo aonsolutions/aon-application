@@ -153,9 +153,9 @@ public class Toolkit {
 	}
 	
 	//SPLITS A FLOAT/DOUBLE 
-	public static String[] splitDecimal(double dc){
+	public static String[] splitDecimal(double dc,int decimals){
 		String dc_str = dc + "";
-		return new String[]{ dc_str.substring(0,dc_str.indexOf(".")), dc_str.substring(dc_str.indexOf(".")+1)};	
+		return new String[]{ dc_str.substring(0, dc_str.indexOf(".")), dc_str.substring(dc_str.indexOf(".")+1, dc_str.indexOf(".") + decimals)};
 	}
 	
 	//HANDLES EMPTY DATA 

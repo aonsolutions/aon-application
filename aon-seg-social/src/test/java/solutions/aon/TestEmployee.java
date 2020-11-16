@@ -124,15 +124,7 @@ public class TestEmployee {
 		catch (IOException e) {fail("IOException");}
 		catch (Exception e) {fail("unknown exception");}
 	}
-		
-	
-	
-	
-	
-	
-	
-	
-	
+
 	//GET EMPLOYEE TESTS
 	
 	@Test
