@@ -31,7 +31,7 @@ public class TestEmployee {
 	public void getEmployeesCertificateTest() {
 		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNT","pkcs12","0111","01105360062");					
+			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062");					
 		}
 		catch (InvalidCertificateException e) {}
 		catch (StatusCodeException e) {}
@@ -83,7 +83,7 @@ public class TestEmployee {
 	@Test
 	public void getEmployeesCccTest() {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","011205360062");					
+			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","011205360062");					
 		}
 		catch (invalidCccException e) {}
 		catch (StatusCodeException e) {}
@@ -297,5 +297,6 @@ public class TestEmployee {
 		catch (Exception e) {fail("unknown exception");}
 		
 	}
+
 	
 }

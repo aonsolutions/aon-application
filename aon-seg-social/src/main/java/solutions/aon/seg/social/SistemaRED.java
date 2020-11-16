@@ -22,21 +22,21 @@ public class SistemaRED {
 	{
 		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {
 			return SistemaRedEmployee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
-		} catch ( IOException e ) {
-			throw new SegSocialException(e);
-		}
+		} catch ( IOException e ) {throw new SegSocialException(e);}
+	}
+	
+	public static Collection<Employee> getPrevEmployees(final byte certificateData [], final String certificatePassword,
+			final String certificateType, String regimen, String ccc) throws SegSocialException 
+	{
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {
+			return SistemaRedEmployee.getPrevEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+		} catch ( IOException e ) {throw new SegSocialException(e);}
 	}
 
 	public static Collection<Employee> getEmployees(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException 
 	{
 		return SistemaRedEmployee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
-	}
-	
-	public static Collection<Employee> getFullEmployees(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String regimen, String ccc) throws SegSocialException 
-	{
-		return SistemaRedEmployee.getFullEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 	}
 
 	public static Employee getEmployee(final byte certificateData [], final String certificatePassword,
