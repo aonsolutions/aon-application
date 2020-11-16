@@ -206,7 +206,7 @@ export class AonMenu extends AonElement {
 				getUserAppRole().then(roles => {
 					this._roles = roles;
 					for (let item in MenuApps){
-						if(apps.includes(MenuApps[item]) && roles.includes(MenuApps[item].toUpperCase())){
+						if(apps.includes(MenuApps[item]) && (roles.includes('ADMIN') || roles.includes(MenuApps[item].toUpperCase()))){
 							ul.appendChild(this.buildApp(this.getApp(MenuApps[item])));
 						}
 					}
