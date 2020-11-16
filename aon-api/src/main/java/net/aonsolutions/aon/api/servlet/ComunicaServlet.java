@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 //import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -22,6 +24,8 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import solutions.aon.seg.social.objects.Employee;
+import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.toolkit.Toolkit;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
@@ -49,24 +53,29 @@ public class ComunicaServlet extends HttpServlet{
 		try {
 
 			String[] pathInfo = req.getPathInfo()!= null || "null".equalsIgnoreCase(req.getPathInfo()) ? req.getPathInfo().split("/") : null;
-	
-		
-			if(pathInfo  != null) {
-				// Condicional Pathinfo... 
-				if("/movements".equalsIgnoreCase(pathInfo[1])) {
-		
-				}
-			}
-		
+			
 			Utils.addCorsHeader(resp);
 			
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
-//		    try(final InputStream certificateInputStream=TestPaternity.class.getResourceAsStream("FNMT.p12")){
-		    final InputStream certificateInputStream= ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-			Collection<Employee> Employees = SistemaRED.getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");	
-			//Collection<Employee> Employees = SistemaRED.getFullEmployees(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062");				
-			content = gjson.toJson(Employees).getBytes();
+		
+			if(pathInfo  != null) {
+				 
+				if("movements".equalsIgnoreCase(pathInfo[1])) {// mov de empleados prev de empleados
+					content = gjson.toJson(this.getMovements()).getBytes();
+				} 
+				else if("get-ta".equalsIgnoreCase(pathInfo[1])) { // obtener TA
+//					String regimen = req.getParameter(regimen);
+//					String ccc = req.getParameter(ccc);
+//					String nss = req.getParameter(nss);
+//					String fecha = req.getParameter(fecha);
+//					content = gjson.toJson(this.getTa(regimen, ccc, nss, Toolkit.parseDate(fecha, "YYYY-MM-dd"))).getBytes();
+				}
+				else if("get-idc".equalsIgnoreCase(pathInfo[1])) { // obtener IDC
+					
+				}
+			}
+
 		} 
 		catch (Exception e) {
 //            e.printStackTrace(); 
@@ -96,5 +105,34 @@ public class ComunicaServlet extends HttpServlet{
 		}
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, json, new JSONObject());
+	}
+	
+	private Collection<Employee> getMovements() throws SegSocialException {
+		Collection<Employee> EmployeesAll = new LinkedList<>();
+		
+	    final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
+	    
+		String[][] cccAll = {
+			{"01105360062", "0111"}
+		};
+		
+		for (int i = 0; i < cccAll.length; i++) {
+		    String cti = cccAll[i][0];
+		    String regimen = cccAll[i][1];
+		    Collection<Employee> Employees = SistemaRED.getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", regimen, cti);	
+		    for (Employee employee : Employees) {
+				employee.setCtaCti(cti);
+				employee.setRegime(regimen);
+			}
+		    EmployeesAll.addAll(Employees);
+		}
+		return EmployeesAll;
+	}
+	
+	private byte[] getTa(String regimen, String ccc, String nss, Date date) throws SegSocialException {
+		final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
+	    byte[] Employees = SistemaRED.getTA(certificateInputStream, "jg@FNMT", "pkcs12", nss, regimen, ccc, date);	
+	    
+	    return Employees;
 	}
 }

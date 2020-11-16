@@ -65,6 +65,8 @@ export class AonComunica extends AonElement {
 		//if(this.isMobile()){
 		aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
 		//}
+
+		// aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
 		
 	}
 }

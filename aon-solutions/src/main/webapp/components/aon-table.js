@@ -1,5 +1,6 @@
 // import {AonElement} from './AonElement.js';
 import '../../components/aon-checkbox.js';
+import '../../components/aon-dialog.js';
 
 export class AonTable extends HTMLElement {
 
@@ -29,6 +30,7 @@ export class AonTable extends HTMLElement {
 
 		connectedCallback () {
 			this.innerHTML = `
+				<aon-dialog id="${this.getId() + 'aonDialogAddOption'}" type="menu"></aon-dialog>
 				<table class="aonTable">
 					<thead>
 						<tr id="${this.getId() + 'TableHeader'}" >
@@ -78,10 +80,17 @@ export class AonTable extends HTMLElement {
 
 			this.columns.forEach((item, i) => {
 				let td = document.createElement('td');
-				td.innerHTML = value[item.id];
-				td.addEventListener('click', fn);
+				let id = item.id;
+				if('option' === id){
+					td.innerHTML = `<aon-icon-button id="${this.getId()}IconOption" icon="more_vert"></aon-icon-button>`;
+					td.addEventListener('click', () => this.getOptions(tr,td, value[id]));
+				} else {
+					td.innerHTML = value[id];
+					td.addEventListener('click', fn);
+				}
 				tr.appendChild(td);
 			});
+
 			body.appendChild(tr);
 		}
 
@@ -92,6 +101,23 @@ export class AonTable extends HTMLElement {
 
 		getId(){
 			return this.getAttribute('id');
+		}
+
+
+		getOptions(tr, td, options) {
+			const top  = td.getBoundingClientRect().top;
+			const left = td.getBoundingClientRect().left;
+			let d = document.getElementById(this.getId() + 'aonDialogAddOption');
+			options = options.map( ({icon, name, fn}) => {
+				return {
+					icon,
+					name,
+					fn: () => fn(tr) 
+				};
+			})
+
+			d.setMenuOptions(options, top, left);
+			d.open();
 		}
 }
 

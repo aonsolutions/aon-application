@@ -30,7 +30,6 @@ export class AonMovementsList extends AonElement {
 		this.innerHTML = `
 			<aon-toast id="divToast"></aon-toast>
 			<aon-table id='aonMovementTable'></aon-table>
-			<aon-dialog id="aonDialogAddOption" type="menu"></aon-dialog>
 		`;
 		this.build();
 	}
@@ -41,9 +40,8 @@ export class AonMovementsList extends AonElement {
 		let aonMovementTable = this.getElement('aonMovementTable');
 		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
-		aonMovementTable.addColumn('Movimiento', 'string', 'mov');
-		aonMovementTable.addColumn('NNS', 'string', 'nss');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
+		aonMovementTable.addColumn('Opción', 'fn', 'option');
 		this.getTable();
 	}
 
@@ -53,16 +51,31 @@ export class AonMovementsList extends AonElement {
 			try{
 				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
-				resp.map(r=>{
-					let {name:nombres, ipf, fra:fecha, nss} = r;
-					let identificacion = ipf.toString().substring(0,1);
+				resp.map(resp=>{
+					let {name:nombres, ipf, fra:fecha, nss, CtaCti, regime} = resp;
+					// let identificacion = ipf.toString().substring(0,1);
 					let dni = ipf.toString().substring(1);
 					let data = {
 						nombres,
-						dni: `${identificacion} ${dni}`,
-						mov: 'Alta',
-						nss,
-						fecha
+						dni,
+						fecha,
+						option:[
+							{
+								name:'Obtener TA',
+								icon:'print',
+								fn: (el) => this.getTa(data, el)
+							},
+							{
+								name:'Obtener IDC',
+								icon:'print',
+								fn: (el) => this.getIdc(data, el)
+							},
+							{
+								name:'Anular',
+								icon:'delete',
+								fn: (el) => this.deleteMov(data, el)
+							},
+						]
 					};
 					aonMovementTable.addRow(data, (el) => this.aonMovement(el, data));
 				})
@@ -73,35 +86,29 @@ export class AonMovementsList extends AonElement {
 	}
 
 	aonMovement({target:el}, data) {
-
-		const top  = el.getBoundingClientRect().top;
-		const left = el.getBoundingClientRect().left;
-		let d = this.getElement('aonDialogAddOption');
-
-		let options = [{
-				name: 'Anular',
-				icon: 'delete',
-				fn: () => this.deleteMov(data, el)
-			}];
-		d.setMenuOptions(options, top, left);
-		d.open();
+		console.log(data);
 	}
 
 	deleteMov(data, el){
-		if (confirm(`Estas seguro de anular ${data.mov} de ${data.nombre} ?`)) {
-			el.parentNode.remove(); //delete parent Node
+		if (confirm(`Estas seguro de anular el movimiento de ${data.nombres} ?`)) {
+			el.remove(); //delete td
 			let toast = this.getElement(`divToast`);
 			toast.start({message:'Alta eliminada!', type: 'error'});
 			console.log("eliminar movimiento>>", data);
 		}	
 	}
 
-	getFilter() {
-		return JSON.parse(this.getAttribute('filter'))
+
+	getTa(data, el){
+		alert("print TA");
 	}
 
-	setFilter(filter) {
-		return this.setAttribute('filter', JSON.stringify(filter));
+	getIdc(data, el){
+		alert("print IDC");
 	}
+
+	getFilter = () => JSON.parse(this.getAttribute('filter'));
+	
+	setFilter = (filter) => this.setAttribute('filter', JSON.stringify(filter));
 }
 window.customElements.define('aon-movements-list', AonMovementsList);
