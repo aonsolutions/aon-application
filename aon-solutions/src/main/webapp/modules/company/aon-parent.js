@@ -229,15 +229,13 @@ export class AonParent extends AonElement {
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
 
-		getUserAppRole().then(user => {
-			if(!this.isMobile()) {
-				let aonMenu = document.getElementById('aonMenu');
-				aonMenu.innerHTML = '';
-				aonMenu.setAttribute('company', JSON.stringify(company));
-				aonMenu.setAttribute('user', JSON.stringify(user));
-				aonMenu.build()
-			}
+		if(!this.isMobile()) {
+			this.clearElement('aonMenu');
+			let aonMenu = this.getElement('aonMenu');
+			aonMenu.build();
+		}
 
+		getUserAppRole().then(user => {
 			let aonHeader = document.getElementById('aonHeader');
 			aonHeader.setAttribute('company', JSON.stringify(company));
 			aonHeader.setAttribute('user', JSON.stringify(user));

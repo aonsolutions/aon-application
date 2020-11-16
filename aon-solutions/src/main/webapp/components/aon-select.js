@@ -63,6 +63,7 @@ export class AonSelect extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if('value' === name) {
       this.getElement(this.INPUT).value = newValue;
+      this.dispatchEvent(new Event('change'));
     }
   }
 

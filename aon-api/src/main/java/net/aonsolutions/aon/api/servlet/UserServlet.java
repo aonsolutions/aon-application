@@ -45,14 +45,14 @@ public class UserServlet extends HttpServlet{
 		Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		
 		if(pathInfo != null) {
-			JSONObject json = getDomainUser(domain, token);
+			JSONArray json = getDomainUser(domain, token);
 			Utils.addCorsHeader(resp);
 			Utils.giveBack(req, resp, json, new JSONObject());
 		} else {
 			JSONArray jsArray = new JSONArray();
 			AON.getUserStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))
 			.forEach(r -> {
-				JSONObject json = getUserApps(domain, r);
+				JSONObject json = new JSONObject();
 				if(r.getAuth() != null) {
 					Auth auth = AON_SOLUTIONS.getAuth(domainName, domainId, r.getAuth());
 					if(auth.getEmail() == null) {
@@ -65,6 +65,7 @@ public class UserServlet extends HttpServlet{
 					json.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
 					json.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 					json.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
+					json.put("roles", getUserRoles(domain, r));
 					jsArray.put(json);
 				} else jsArray.put(userToJSON(r, json));
 			});
@@ -73,68 +74,55 @@ public class UserServlet extends HttpServlet{
 		}
 	}
 
-	private JSONObject getDomainUser(Domain domain, String token) {
+	private JSONArray getDomainUser(Domain domain, String token) {
 		AonToken aonToken = SECURITY.getAonToken(token);
 		User user = AON.getUser(domain.getName(), domain.getId(), "", f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
-		return getUserApps(domain, user);
+		return getUserRoles(domain, user);
 	}
 	
-	private JSONObject getUserApps(Domain domain, User user) {
+	private JSONArray getUserRoles(Domain domain, User user) {
 		LinkedList<UserAppRole> roles = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> f.getUserIdProperty().eq(user.getId())).collect(Collectors.toCollection(LinkedList::new));
-		JSONObject userAppRoles = new JSONObject();
-		Boolean admin = true;
-		if(roles.stream().filter(f -> f.getApp() == null && AonRole.ADMIN.equals(f.getRole())).count() > 0) {
-			admin = true;
-			AON_SOLUTIONS.getDomainApp(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId())).forEach(da -> {
-				if(da.getActive()) {
-					userAppRoles.put(da.getApp().name(), AonRole.ADMIN);
-				}
-			});
-//			AonApp.aonValues().forEach(app -> userAppRoles.put(app.name(), AonRole.ADMIN));
-		} else if(roles.stream().count() == 0) {
+		JSONArray userAppRoles = new JSONArray();
+		if(roles.stream().count() == 0) {
 			User usr = AON.getUser(domain.getName(), user.getDomain(), user.getLogin());
 			for(Integer i = 0; i < usr.getUserRoles().length; i++) {				
 				com.esferalia.aon.occam.api.model.type.AonRole aonRole = usr.getUserRoles()[i];
 				if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER.equals(aonRole)) {
-					userAppRoles.put(AonApp.ACCOUNTING.name(), AonRole.ADMIN);
-					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ADMIN);
+					userAppRoles.put(AonRole.ACCOUNTING_MANAGER.name());
+					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ACCOUNTING);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING.equals(aonRole)) {
-					userAppRoles.put(AonApp.ACCOUNTING.name(), AonRole.GUEST);
-					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.GUEST);
+					userAppRoles.put(AonRole.ACCOUNTING.name());
+					setUserAppRole(domain, user, AonApp.ACCOUNTING, AonRole.ACCOUNTING);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER.equals(aonRole)) {
-					userAppRoles.put(AonApp.MESSENGER.name(), AonRole.ADMIN);
-					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.ADMIN);
+					userAppRoles.put(AonRole.MESSENGER_MANAGER.name());
+					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.MESSENGER_MANAGER);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER.equals(aonRole)) {
-					userAppRoles.put(AonApp.MESSENGER.name(), AonRole.GUEST);
-					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.GUEST);
+					userAppRoles.put(AonRole.MESSENGER.name());
+					setUserAppRole(domain, user, AonApp.MESSENGER, AonRole.MESSENGER);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER.equals(aonRole)) {
-					userAppRoles.put(AonApp.DOCUMENTAL.name(), AonRole.ADMIN);
-					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.ADMIN);
+					userAppRoles.put(AonRole.DOCUMENTAL_MANAGER.name());
+					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.DOCUMENTAL_MANAGER);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT.equals(aonRole)) {
-					userAppRoles.put(AonApp.DOCUMENTAL.name(), AonRole.GUEST);
-					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.GUEST);
+					userAppRoles.put(AonRole.DOCUMENTAL.name());
+					setUserAppRole(domain, user, AonApp.DOCUMENTAL, AonRole.DOCUMENTAL);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL.equals(aonRole)) {
-					userAppRoles.put(AonApp.FISCAL.name(), AonRole.ADMIN);
-					setUserAppRole(domain, user, AonApp.FISCAL, AonRole.ADMIN);
+					userAppRoles.put(AonRole.FISCAL_MANAGER);
+					setUserAppRole(domain, user, AonApp.FISCAL, AonRole.FISCAL_MANAGER);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL.equals(aonRole)) {
-					userAppRoles.put(AonApp.PAYROLL.name(), AonRole.ADMIN);
-					setUserAppRole(domain, user, AonApp.PAYROLL, AonRole.ADMIN);
+					userAppRoles.put(AonRole.PAYROLL_MANAGER.name());
+					setUserAppRole(domain, user, AonApp.PAYROLL, AonRole.PAYROLL_MANAGER);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE.equals(aonRole)) {
-					userAppRoles.put(AonApp.INVOICE.name(), AonRole.ADMIN);
-					setUserAppRole(domain, user, AonApp.INVOICE, AonRole.ADMIN);
+					userAppRoles.put(AonRole.INVOICE_MANAGER.name());
+					setUserAppRole(domain, user, AonApp.INVOICE, AonRole.INVOICE_MANAGER);
 				} else if(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN.equals(aonRole)) {
-					admin = true;
+					userAppRoles.put(AonRole.ADMIN);
 					setUserAppRole(domain, user, null, AonRole.ADMIN);
 				}		
 			}
 		} else {
-			roles.stream().forEach(uar -> userAppRoles.put(uar.getApp().name(), uar.getRole()));
+			roles.stream().forEach(uar -> userAppRoles.put(uar.getRole().name()));
 		}
-		JSONObject json = new JSONObject();
-		json.put("id", user.getId());
-		json.put("admin", admin);
-		json.put("apps", userAppRoles);
-		return json;
+		return userAppRoles;
 	}
 	
 	@Override
@@ -150,7 +138,7 @@ public class UserServlet extends HttpServlet{
 		JSONObject json = Utils.getRequestJSON(req);
 		if(pathInfo != null) {
 			if("app".equalsIgnoreCase(pathInfo[1])) {
-				json = setUserAppRole(json);
+				setUserAppRole(json);
 			}
 		} else {
 			json = setUser(domain, json);
@@ -178,42 +166,43 @@ public class UserServlet extends HttpServlet{
 		}
 	}
 	
-	private JSONObject setUserAppRole(JSONObject json){
+	private void setUserAppRole(JSONObject json){
 		String domainName = json.optString("domain");
 		String app = json.optString("app");
-		String role = json.optString("role");
+		JSONArray roles = json.optJSONArray("roles");
 		Integer user = json.optInt("user");
 		Boolean active = json.optBoolean("active"); 
 
 		AonApp aonApp = AonApp.safeValueOf(app);
-		AonRole aonRole = AonRole.safeValueOf(role);
 		Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
-
-		UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
-		f.getDomainProperty().eq(domain.getId())
-			.and(f.getUserIdProperty().eq(user))
-			.and((aonApp != null ? f.getAppProperty().eq(aonApp.value()): f.getAppProperty().isNull()))).findFirst().orElse(new UserAppRole());
-		
-		if(active) {
-			if(uar.getId() == null) {
-				uar = new UserAppRole();
-				uar.setApp(aonApp)
-					.setDomain(domain.getId())
-					.setRole(aonRole)
-					.setUser(user);
-				uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
+		for (Object role : roles) {
+			AonRole aonRole = AonRole.safeValueOf(role.toString());
+			UserAppRole uar = AON_SOLUTIONS.getUserAppRole(domain.getName(), domain.getId(), "", f -> 
+			f.getDomainProperty().eq(domain.getId())
+				.and(f.getUserIdProperty().eq(user))
+				.and(f.getRoleProperty().eq(aonRole.value())))
+				.findFirst().orElse(new UserAppRole());
+			
+			if(active) {
+				if(uar.getId() == null) {
+					uar = new UserAppRole();
+					uar.setApp(aonApp)
+						.setDomain(domain.getId())
+						.setRole(aonRole)
+						.setUser(user);
+					uar = AON_SOLUTIONS.insertUserAppRole(domain.getName(), domain.getId(), "", uar);
+				}
+//				else {
+//					uar.setRole(aonRole);
+//					AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
+//				}
 			} else {
-				uar.setRole(aonRole);
-				AON_SOLUTIONS.updateUserAppRole(domain.getName(), domain.getId(), "", uar);
-			}
-		} else {
-			if(uar.getId() != null) {
-				Integer id = uar.getId();
-				AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(id));
+				if(uar.getId() != null) {
+					Integer id = uar.getId();
+					AON_SOLUTIONS.deleteUserAppRole(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(id));
+				}
 			}
 		}
-
-		return uar.toJSON();
 	}
 	
 	private JSONObject setUser(Domain domain, JSONObject json) {
@@ -244,10 +233,7 @@ public class UserServlet extends HttpServlet{
 				js.put("surname", auth.getSurname() != null ? auth.getSurname() : "");
 				js.put("document", auth.getDocument() != null ? auth.getDocument() : "");
 				js.put("phone", auth.getPhone() != null ? auth.getPhone() : "");
-
-				JSONObject apps = getUserApps(domain, user);
-				js.put("admin", apps.optBoolean("admin"));
-				js.put("apps", apps.optJSONObject("apps"));
+				js.put("roles", getUserRoles(domain, user));
 			}
 		}
 		return js;

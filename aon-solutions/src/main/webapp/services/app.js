@@ -1,4 +1,4 @@
-export const MenuApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'portal', 'tools'];
+export const MenuApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'tools'];
 
 export const Apps = {
   ACCOUNTING: {
@@ -6,49 +6,110 @@ export const Apps = {
     title: 'Contabilidad',
     description: 'Gestor de Contabilidad.',
     icon: 'aon_app',
-    color: '#1FD8B9'
+    color: '#1FD8B9',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }]
   },
   FISCAL: {
     app: 'fiscal',
     title: 'Fiscal',
     description: 'Gestor Fiscal.',
     icon: 'aon_app',
-    color: '#1FBCE5'
+    color: '#1FBCE5',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }]
   },
   PAYROLL: {
     app: 'payroll',
     title: 'Laboral',
     description: 'Gestor Laboral.',
     icon: 'aon_app',
-    color: '#1F8CFF'
+    color: '#1F8CFF',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }, {
+        value: 'Empleado',
+        name: 'Empleado'
+      }]
   },
   COMUNICA: {
     app: 'comunica',
     title: 'Comunic@',
     description: 'Comunic@',
     icon: 'aon_app',
-    color: '#6C75AB'
+    color: '#6C75AB',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }, {
+        value: 'Empleado',
+        name: 'Empleado'
+      }]
   },
   DOCUMENTAL: {
     app: 'documental',
     title: 'Documental',
     description: 'Gestor de Documentos.',
     icon: 'aon_app',
-    color: '#6986BB'
+    color: '#6986BB',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }]
   },
-  HORARIO: {
+  TIMECONTROL: {
     app: 'timecontrol',
     title: 'Horario',
     description: 'Control de Horario.',
     icon: 'aon_app',
-    color: '#B50061'
+    color: '#B50061',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }, {
+        value: 'Empleado',
+        name: 'Empleado'
+      }]
   },
   INVOICE: {
     app: 'invoice',
     title: 'Facturas',
     description: 'Gestion de Facturas.',
     icon: 'aon_app',
-    color: '#B50061'
+    color: '#B50061',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }, {
+        value: 'Empleado',
+        name: 'Empleado'
+      }]
   }
 }
 
@@ -79,7 +140,14 @@ export const Services = {
     title: 'Mensajería',
     description: 'Mensajería',
     icon: 'aon_app',
-    color: '#CADEFF'
+    color: '#CADEFF',
+    access: [{
+        value: 'Asesor',
+        name: 'Asesor'
+      }, {
+        value: 'Empresa',
+        name: 'Empresa'
+      }]
   },
   OCR: {
     app: 'ocr',
@@ -129,6 +197,33 @@ export const OtherServices = {
     color: '#535353',
     moreInfo: 'https://ayudatpymes.com/despachos/outsourcing/'
   }
+}
+
+export const getApp = (name) => {
+  for(let key in Apps) {
+    if(name.toLowerCase() === Apps[key].app){
+      return Apps[key];
+    }
+  }
+
+  for(let key in Services) {
+    if(name.toLowerCase() === Services[key].app){
+      return Services[key];
+    }
+  }
+
+  for(let key in ClassicApps) {
+    if(name.toLowerCase() === ClassicApps[key].app){
+      return ClassicApps[key];
+    }
+  }
+
+  for(let key in OtherServices) {
+    if(name.toLowerCase() === OtherServices[key].app){
+      return OtherServices[key];
+    }
+  }
+  return undefined;
 }
 
 export const AccountingMenu =
