@@ -3544,6 +3544,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Motivo")
 	String reason();
 
+	@DefaultMessage("Motivo para el rechazo")
+	String rejectReason();
+
 	@DefaultMessage("Vencimiento agrupado")
 	String financeGrouped();
 

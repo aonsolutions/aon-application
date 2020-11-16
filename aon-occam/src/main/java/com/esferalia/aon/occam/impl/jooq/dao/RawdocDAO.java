@@ -4,6 +4,9 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -14,6 +17,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.impl.DSL;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -32,6 +36,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import es.translogia.tedi.json.TediInvoiceJSON;
 
 public class RawdocDAO {
+	private static final String ACTION_DATE = "date";
+	private static final String ACTION_USER = "user";
+	private static final String ACTION_STATUS = "status";
+	private static final String ACTION_REASON = "reason";
+	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
 	private static final RawdocPropertiesDAO RAWDOC_PROPERTIES = new RawdocPropertiesDAO();
 	
 	private static class RawdocPropertiesDAO implements RawdocProperties {
@@ -192,9 +202,11 @@ public class RawdocDAO {
 
 	public static void toDraft(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
+		Rawdoc r = get(ctx, rawdocId);
 		int count = ctx.getDslContext()
 			.update(RAWDOC)
 			.set(RAWDOC.STATUS,RawdocStatus.DRAFT.value())
+			.set(RAWDOC.LOG, getLogArray(ctx, r.getLog(), RawdocStatus.DRAFT, null ) )
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (DRAFT) id: " + rawdocId + " ("+count+" filas)");
@@ -202,9 +214,11 @@ public class RawdocDAO {
 
 	public static void toRejected(AONContext ctx, Integer rawdocId, String reason) {
 		ctx.checkWrite();
+		Rawdoc r = get(ctx, rawdocId);
 		int count = ctx.getDslContext()
 			.update(RAWDOC)
 			.set(RAWDOC.STATUS,RawdocStatus.REJECTED.value())
+			.set(RAWDOC.LOG, getLogArray(ctx, r.getLog(), RawdocStatus.REJECTED, reason ) )
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (REJECTED) id: " + rawdocId + " ("+count+" filas)");
@@ -212,11 +226,28 @@ public class RawdocDAO {
 
 	public static void toInbox(AONContext ctx, Integer rawdocId) {
 		ctx.checkWrite();
+		Rawdoc r = get(ctx, rawdocId);
 		int count = ctx.getDslContext()
 			.update(RAWDOC)
 			.set(RAWDOC.STATUS,RawdocStatus.INBOX.value())
+			.set(RAWDOC.LOG, getLogArray(ctx, r.getLog(), RawdocStatus.INBOX, null ) )
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (INBOX) id: " + rawdocId + " ("+count+" filas)");
 	}
+	
+	private static String getLogArray(AONContext ctx, String log, RawdocStatus status,String reason) {
+		JSONArray jsonLog = new JSONArray( log==null?"[]":log );
+		HashMap<String,String> map = new HashMap<String,String>();
+		map.put(ACTION_DATE  ,DATE_FORMAT.format(new Date()));
+		map.put(ACTION_USER  ,ctx.getUser() );
+		map.put(ACTION_STATUS,status.getDescription() );
+		if (reason != null) {
+			map.put(ACTION_REASON,reason );
+		}
+		JSONObject json = new JSONObject(map);
+		jsonLog.put(json);
+		return jsonLog.toString();
+	}
+	
 }

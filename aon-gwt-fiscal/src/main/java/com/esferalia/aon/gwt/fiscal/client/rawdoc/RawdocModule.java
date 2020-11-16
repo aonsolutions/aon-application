@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
@@ -38,9 +39,14 @@ import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -50,6 +56,7 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -59,6 +66,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import es.translogia.tedi.ewok.TediRegistry;
@@ -597,34 +605,106 @@ public class RawdocModule extends MainEntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				AonConfirmDialog cd = new AonConfirmDialog();
-				cd.confirm(AON.MSG.confirmRejectAction(), new AonConfirmDialogCallback() {
-
+				final AonCustomDialog toast = new AonCustomDialog();
+				toast.setCaption(AON.MSG.rejectReason());
+				FlowPanel reasonPanel = new FlowPanel();
+				reasonPanel.setStyleName(AON.CSS.aonTextCenter());
+				reasonPanel.addStyleName(AON.CSS.aonPadding());
+				TextArea reason = new TextArea();
+				reason.setWidth("400px");
+				reason.setHeight("100px");
+				reason.addKeyUpHandler(new KeyUpHandler() {
 					@Override
-					public void onAccept() {
-						RAWDOC_SERVICE.toRejected(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId(), "Rechazada"
-								, new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										actions.clear();
-										Label r = new Label(" RECHAZADA");
-										r.setStyleName(AON.CSS.aonColorRed());
-										r.addStyleName(AON.CSS.aonBold());
-										actions.add( r );
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										showError(caught.getMessage());
-									}
-								});
+					public void onKeyUp(KeyUpEvent event) {
+						if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+							toast.hide();
+						}
 					}
-
-					@Override
-					public void onCancel() {}
-					
 				});
+
+		    	FlowPanel buttons = new FlowPanel();
+		    	buttons.setStyleName(AON.CSS.aonTextCenter());
+		    	buttons.addStyleName(AON.CSS.aonMarginTop());
+		    	
+		    	final Button okButton = new Button();
+		    	okButton.setStyleName(AON.CSS.aonOkButton());
+		    	okButton.setText( AON.MSG.accept());
+		    	okButton.addKeyUpHandler(new KeyUpHandler() {
+					@Override
+					public void onKeyUp(KeyUpEvent event) {
+						if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+							toast.hide();
+						}
+					}
+				});
+		    	okButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						if (AonStringUtils.isBlank( reason.getValue() )) {
+							AonMessageDialog msg = new AonMessageDialog();
+							msg.show("ERROR", "Debe indicar una raz\u00F3n para proceder a rechazar el documento.", new AonMessageDialogCallback() {
+								@Override
+								public void onAccept() {}
+							});
+						} else {
+							okButton.setEnabled(false);
+							toast.hide();
+							RAWDOC_SERVICE.toRejected(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId(), reason.getValue()
+									, new AsyncCallback<Void>() {
+								
+								@Override
+								public void onSuccess(Void result) {
+									actions.clear();
+									Label r = new Label(" RECHAZADA");
+									r.setStyleName(AON.CSS.aonColorRed());
+									r.addStyleName(AON.CSS.aonBold());
+									actions.add( r );
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									showError(caught.getMessage());
+								}
+							});
+						}
+					}
+				});
+		    	buttons.add(okButton);
+		    	
+		    	final Button cancelButton = new Button();
+		    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
+		    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+		    	cancelButton.setText( AON.MSG.cancelAction());
+		    	cancelButton.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						cancelButton.setEnabled(false);
+						toast.hide();
+					}
+				});
+		    	cancelButton.addKeyUpHandler(new KeyUpHandler() {
+					@Override
+					public void onKeyUp(KeyUpEvent event) {
+						if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+							toast.hide();
+						}
+					}
+				});
+		    	buttons.add(cancelButton);
+				
+				reasonPanel.add(reason);
+				reasonPanel.add(buttons);
+				toast.add(reasonPanel);
+
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						reason.setFocus(true);
+					}
+				});
+				toast.center();
+				toast.show();
 			}
 		});
 		actions.add(reject);

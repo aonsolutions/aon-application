@@ -6,7 +6,7 @@ public enum RawdocStatus implements Serializable {
 	
 	 INBOX("Inbox")
 	,REJECTED("Rechazado")
-	,DRAFT("Papaelera")
+	,DRAFT("Papelera")
 	;
 
 	private String description;
