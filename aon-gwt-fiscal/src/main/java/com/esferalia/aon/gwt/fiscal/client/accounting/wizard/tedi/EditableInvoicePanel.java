@@ -48,8 +48,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.DataTransfer;
-import com.google.gwt.dom.client.DataTransfer.DropEffect;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style;
@@ -58,10 +56,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DragLeaveEvent;
-import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
+import com.google.gwt.event.dom.client.DropEvent;
+import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -81,6 +79,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -1684,84 +1683,77 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 	}
 
 	private Panel getDropFileZone(InvoicePanelCallback invoiceCallback) {
-		FileUpload fileUpload = new FileUpload();
-		fileUpload.ensureDebugId("fileselect");
-		fileUpload.getElement().getStyle().setDisplay(Style.Display.NONE);
-		fileUpload.addChangeHandler(new ChangeHandler() {
+		FlowPanel filedrag = new FlowPanel();
+		FormPanel ocrFileSelectForm = new FormPanel();
+		FileUpload ocrFileSelect = new FileUpload();
+		ocrFileSelectForm.add(ocrFileSelect);
+		filedrag.add(ocrFileSelectForm);
+
+		ocrFileSelect.ensureDebugId("ocrFileSelect");
+		ocrFileSelect.getElement().getStyle().setDisplay(Style.Display.NONE);
+		ocrFileSelect.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-				dropPanel.clear();
+				filedrag.clear();
 				if ( invoiceCallback.getConfiguration().isOCRActive() ) {
-					dropPanel.add(getSplashWidget());
+					filedrag.add(getSplashWidget());
 				} else {
-					dropPanel.clear();
+					filedrag.clear();
 					registryBox.setFocus(true);
 				}
 				event.preventDefault();
-				fileSelectHandler(fileUpload.getElement());
+				fileSelectHandler(ocrFileSelect.getElement());
 			}
 		});
 			
 			
 		dropPanel = new FocusPanel();
 		dropPanel.setStyleName(AON.CSS.aonDropZone());
-		
-		FlowPanel filedrag = new FlowPanel();
-		filedrag.add(fileUpload);
-		filedrag.setStyleName(AON.CSS.aonDropZoneImage());
+		dropPanel.addStyleName(AON.CSS.aonDropZoneImage());
 		
 		dropPanel.getElement().getStyle().setCursor(Style.Cursor.POINTER);
 		dropPanel.addClickHandler( new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				fileUpload.click();		
+				try {
+					event.preventDefault();
+					event.stopPropagation();
+					ocrFileSelect.click();
+				} catch (Throwable t) {
+					LOGGER.info("ERROR ...: " + t.getMessage());
+				}
 			}
 		});
 			
 		dropPanel.addDragOverHandler(new DragOverHandler() {
-			
 			@Override
 			public void onDragOver(DragOverEvent event) {
 				dropPanel.addStyleName(AON.CSS.aonDropZoneHover());
 				event.preventDefault();
-				event.stopPropagation();
-		        DataTransfer dataTransfer = event.getDataTransfer();
-		        dataTransfer.setDropEffect(DropEffect.NONE);				
 			}
 		});
-		dropPanel.addDragLeaveHandler(new DragLeaveHandler() {
-			@Override
-			public void onDragLeave(DragLeaveEvent event) {
-				dropPanel.removeStyleName(AON.CSS.aonDropZoneHover());
-				event.preventDefault();
-			}
-		});
-		/*
-		dropZone.addDropHandler(new DropHandler() {
+		dropPanel.addDropHandler(new DropHandler() {
 				
 			@Override
 			public void onDrop(DropEvent event) {
-				dropZone.removeStyleName(AON.CSS.aonDropZoneHover());
+				dropPanel.removeStyleName(AON.CSS.aonDropZoneHover());
 				LOGGER.info("File Droped!");
 				event.preventDefault();
-				event.stopPropagation();
-				fileDrop(fileUpload.getElement() ,event.getNativeEvent());
+				fileDrop(event.getNativeEvent());
 			}
 		});
-		*/
-		dropPanel.add(filedrag);
-		return dropPanel;
+		filedrag.add(dropPanel);
+		return filedrag;
 	}
 	
-	private void setDocument(final String doc, final String name, String type) {
+	protected void setDocument(final String doc, final String name, String type) {
 		LOGGER.info("BEFORE invCallback setDocument!");
 		invCallback.setDocument(doc, name, type);
 	}
-
 	
-	private native void fileSelectHandler(Element fileselect) /*-{
+	private native void fileSelectHandler(Element ocrFileSelect) /*-{
 		var self = this;		
-		var file = fileselect.files[0];
+		var file = ocrFileSelect.files[0];
 		var reader = new FileReader();
 		reader.addEventListener("load", function () {
 			self.@com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.EditableInvoicePanel::setDocument(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(reader.result,file.name,file.type); 
@@ -1769,17 +1761,30 @@ public class EditableInvoicePanel extends SimpleLayoutPanel implements HasSelect
 		reader.readAsDataURL( file );
 	}-*/;
 	
-	private native void fileDrop(Element fileselect, NativeEvent e) /*-{
-		if (e.dataTransfer.items) {
-			e.dataTransfer.items.clear();
+	private native void fileDrop(NativeEvent e) /*-{
+		var self = this;
+		var file;		
+		if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+			if (e.dataTransfer.items[0].kind === 'file') {
+				file = e.dataTransfer.items[0].getAsFile();
+      		}
 		} else {
-			e.dataTransfer.clearData();
-		}
-		fileselect.files = e.target.files || e.dataTransfer.files;
-//		var event = new Event('change');
-//		fileselect.dispatchEvent(event);
-//		fileselect.click();
-		fileSelectHandler(fileselect);
+			if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+				file = e.dataTransfer.files[0];
+    		}
+  		}
+  		if (file) {
+  			var reader = new FileReader();
+			reader.addEventListener("load", function () {
+				self.@com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.EditableInvoicePanel::setDocument(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)(reader.result,file.name,file.type); 
+				if (e.dataTransfer.items) {
+					e.dataTransfer.items.clear();
+				} else {
+					e.dataTransfer.clearData();
+				}  		
+			}, false);
+			reader.readAsDataURL( file );	 
+  		}
 	}-*/;	
 
 }
