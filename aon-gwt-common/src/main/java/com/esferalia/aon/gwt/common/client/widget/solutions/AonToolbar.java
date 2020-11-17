@@ -13,6 +13,7 @@ public class AonToolbar extends FlowPanel {
 	
 	private FlowPanel buttonContainer;
 	private FlowPanel messagePanel;
+	private Label title;
 	
 	public AonToolbar( String name ) {
 		super();
@@ -31,7 +32,7 @@ public class AonToolbar extends FlowPanel {
 		
 		FlowPanel titlePanel = new FlowPanel();
 		titlePanel.addStyleName(AON.CSS.aonToolbarTitleContainer());
-		Label title = new Label( name );
+		title = new Label( name );
 		title.setStyleName(AON.CSS.aonToolbarTitle());
 		titlePanel.add( title );
 		innerToolbar.add(titlePanel);
@@ -66,6 +67,10 @@ public class AonToolbar extends FlowPanel {
 
 	public void hideMesages( ) {
 		messagePanel.clear();		
+	}
+	
+	public void setTitle(String name) {
+		title.setText(name);
 	}
 	
 	
