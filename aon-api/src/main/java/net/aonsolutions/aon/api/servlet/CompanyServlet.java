@@ -17,6 +17,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
+import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 
@@ -41,6 +43,10 @@ public class CompanyServlet extends HttpServlet{
 			if("app".equalsIgnoreCase(pathInfo[1])) {
 				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
 				object = getDomainApps(domain);
+			} else if("notice".equalsIgnoreCase(pathInfo[1])) {
+				Domain domain = AON.getDomain(domainName, 0, "", f -> f.getNameProperty().eq(domainName));
+				RawdocUserData rawdocUserData = AON.getRawdocUserData(domain.getName(), domain.getId(), "");
+				object = rawdocUserData.toJSON();
 			}
 		} else {
 			for(String schema : schemas) {

@@ -185,7 +185,10 @@ export class AonApplication extends AonElement {
 
 					let span =  this.createElement('span');
 					span.className = 'aonMenuItemSpan';
-					span.innerHTML = option.name;
+					if(option.count && option.count > 0) {
+						span.innerHTML = option.name + ' (' + option.count + ')';
+						span.style.fontWeight = 'bold';
+					} else span.innerHTML = option.name;
 
       		if(option.icon) {
         		let i =  this.createElement('i');
@@ -224,7 +227,7 @@ export class AonApplication extends AonElement {
 
       		li.addEventListener('click', () => {
       			document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
-          		el.style.backgroundColor = 'white';
+          		el.style.backgroundColor = 'transparent';
         		});
         		this.selected = id;
         		li.style.backgroundColor = '#ddd';

@@ -112,17 +112,17 @@ export class AonInvoice extends AonElement {
 		if(!this._invoice.file) {
 			let fileDiv = document.getElementById('aonInvoiceFile');
 			fileDiv.style.display = 'none';
-			aonInvoice.addToolbarOption('AddFile', 'attach_file', () => {
-				let el = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
-				el.click();
-			});
-			let button = document.getElementById('aonInvoiceToolbarAddFileButton');
-				let input = document.createElement('input');
-			input.id = 'aonInvoiceToolbarAddFileButtonInput'
-			input.style.display = 'none';
-			input.type = 'file';
-			input.addEventListener('change', () => this.preview());
-			button.appendChild(input);
+			// aonInvoice.addToolbarOption('AddFile', 'attach_file', () => {
+			// 	let el = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
+			// 	el.click();
+			// });
+			// let button = document.getElementById('aonInvoiceToolbarAddFileButton');
+			// 	let input = document.createElement('input');
+			// input.id = 'aonInvoiceToolbarAddFileButtonInput'
+			// input.style.display = 'none';
+			// input.type = 'file';
+			// input.addEventListener('change', () => this.preview());
+			// button.appendChild(input);
 		} else {
 			let fileDiv = document.getElementById('aonInvoiceFile');
 			let dataDiv = document.getElementById('aonInvoiceData');

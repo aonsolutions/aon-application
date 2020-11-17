@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {closeSession, getUserAppRole, getCompanies} from  '../../services/service.js';
+import {closeSession, getUserAppRole, getCompanies, getUserNotice} from  '../../services/service.js';
 import {rootPanel} from '../../services/gwtLoader.js';
 import './aon-desktop.js';
 import '../signin/aon-sign.js';
@@ -21,6 +21,28 @@ export class AonParent extends AonElement {
 
 		let aonParent = document.getElementById('aonParentMain');
 
+
+
+		getUserNotice().then(r => {
+			this.buildSidenav(r);
+		});
+
+		this.init();
+	}
+
+	buildSidenav(notice) {
+		let aonParent = document.getElementById('aonParentMain');
+
+		let inboxCount = 0;
+		if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+			inboxCount = notice.invoice.inbox.count;
+		}
+
+		let rejectedCount = 0;
+		if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+			rejectedCount = notice.invoice.rejected.count;
+		}
+
 		let taskOptions = [{
 				name: 'Documentos sin leer',
 				icon: 'snippet_folder',
@@ -31,12 +53,22 @@ export class AonParent extends AonElement {
 				fn: () => {}
 			},{
 				name: 'Facturas Pendientes',
+				count: inboxCount,
 				icon: 'inbox',
-				fn: () => {}
+				fn: () => {
+					if(inboxCount > 0) {
+						this.init({ids: notice.invoice.inbox.domains})
+					}
+				}
 			}, {
 				name: 'Facturas Rechazadas',
+				count: rejectedCount,
 				icon: 'report',
-				fn: () => {}
+				fn: () => {
+					if(rejectedCount > 0) {
+						this.init({ids: notice.invoice.rejected.domains})
+					}
+				}
 			}, {
 				name: 'Solicitudes Abiertas',
 				icon: 'assignment',
@@ -76,8 +108,6 @@ export class AonParent extends AonElement {
 		];
 		aonParent.addSidenavOptions('FILTROS', filterOptions);
 
-
-		this.init();
 	}
 
 	init(filter) {
@@ -116,6 +146,14 @@ export class AonParent extends AonElement {
 
 		if(q && q.shared) {
 			// TODO
+		}
+
+		if(q && q.ids) {
+			let idFilter;
+			q.ids.forEach((item, i) => {
+				 idFilter = f.id == item || idFilter;
+			});
+			value = idFilter;
 		}
 
 		return value;

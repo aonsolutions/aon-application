@@ -9,6 +9,14 @@ export class AonInvoicePanel extends AonElement {
 
 	selected;
 
+	get status() {
+		return this.getAttribute('status');
+	}
+
+	set status(status) {
+		this.setAttribute('status', status);
+	}
+
 	constructor () {
 		super();
 	}
@@ -25,6 +33,7 @@ export class AonInvoicePanel extends AonElement {
 		let aonInvoice = document.getElementById('aonInvoice');
 
 		aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
+		aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 
 		let pendingOptions = [
 			{
@@ -72,8 +81,18 @@ export class AonInvoicePanel extends AonElement {
 			}
 		];
 		aonInvoice.addSidenavOptions('CONFIGURACIÓN', settingOptions);
+		this.hasAttribute
+		let filter = {status:'inbox'};
 
-		this.aonInvoiceList();
+		if(this.hasAttribute('status')) {
+			filter = {status: this.getAttribute('status')};
+		}
+
+		let toolbar = this.getElement(aonInvoice.TOOLBAR);
+		if(filter.status === 'inbox') toolbar.setAttribute('option', 'Inbox');
+		else if(filter.status === 'refused') toolbar.setAttribute('option', 'Rechazadas');
+
+		this.aonInvoiceList(filter);
 	}
 
 	aonInvoiceList(filter) {
@@ -84,6 +103,8 @@ export class AonInvoicePanel extends AonElement {
 			let aonInvoice = document.getElementById('aonInvoice');
 			aonInvoice.removeToolbarOptions();
 			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
+			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+
 			aonInvoice.setContentHTML(filter
 				? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
 				: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
@@ -114,6 +135,10 @@ export class AonInvoicePanel extends AonElement {
 		d.open();
 	}
 
+	addInvoiceFile() {
+		alert('upload Invoice');
+	}
+
 	aonInvoice(type, invoice) {
 		let aonInvoice = document.getElementById('aonInvoice');
 		if(this.isMobile()) {
@@ -121,6 +146,8 @@ export class AonInvoicePanel extends AonElement {
 				? `<aon-invoice-mobile invoice='${JSON.stringify(invoice)}'> </aon-invoice-mobile>`
 				: `<aon-invoice-mobile type="${type}"> </maon-invoice-mobile>`);
 		} else {
+			aonInvoice.removeToolbarOptions();
+			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`
 				: `<aon-invoice type="${type}"> </aon-invoice>`);

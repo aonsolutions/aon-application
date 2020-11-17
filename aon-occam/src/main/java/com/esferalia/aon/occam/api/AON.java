@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
+import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
@@ -109,6 +110,7 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -118,6 +120,7 @@ import com.esferalia.aon.occam.api.model.ProjectFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocParams;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.SalaryFilter;
 import com.esferalia.aon.occam.api.model.Signature;
@@ -244,6 +247,7 @@ import com.esferalia.aon.occam.impl.jooq.WarehouseImpl;
 import com.esferalia.aon.occam.server.finance.FinanceUtils;
 import com.esferalia.aon.occam.server.rawdoc.RawdocUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON {
 
@@ -6005,6 +6009,24 @@ public class AON {
 			if (ctx != null)
 				ctx.close();
 		}
+	}
+	
+	public static RawdocUserData getRawdocUserData(String domainName, Integer domainId, String login) {	
+		try (AONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getRawdocUserData(ctx, domainId);
+		}
+	}
+	
+	public static RawdocUserData getRawdocUserData(String token, String schema) {	
+		AonToken aonToken = SECURITY.getAonToken(token);
+		String domain = AONContext.getSchemaFirstDomain(schema);
+		
+		if(!AonStringUtils.isBlank(domain)) {
+			try (AONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+				return getFinance().getRawdocUserData(ctx, aonToken.getAuth());
+			}
+		} 
+		return new RawdocUserData();
 	}
 
 	public static Rawdoc rawdocSave(String domainName, int domain, String user, Rawdoc rawdoc) {

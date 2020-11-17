@@ -22,7 +22,6 @@ import com.esferalia.aon.occam.impl.jooq.ApiImpl;
 import com.esferalia.aon.occam.impl.jooq.CommonImpl;
 import com.esferalia.aon.occam.impl.jooq.RegistryImpl;
 import com.esferalia.aon.occam.impl.jooq.SecurityImpl;
-import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AON_SOLUTIONS {

@@ -2,7 +2,7 @@ import {AonElement} from '../../components/AonElement.js';
 import './aon-movements-list.js';
 import './aon-alta-directa.js';
 export class AonMovements extends AonElement {
-    
+
     get id() {
 		return this.getAttribute('id');
 	}
@@ -22,7 +22,7 @@ export class AonMovements extends AonElement {
         `;
 
         this.storageTest();
-        
+
         this.build();
     }
 
@@ -34,8 +34,8 @@ export class AonMovements extends AonElement {
     }
 
     storageTest(){
-        localStorage.setItem('aon_domain_id', 3348);
-        localStorage.setItem('aon_domain_name', 'altai-G90317447-ayudat.aonsolutions.net');
+        // localStorage.setItem('aon_domain_id', 3348);
+        // localStorage.setItem('aon_domain_name', 'altai-G90317447-ayudat.aonsolutions.net');
 	}
 
     async aonList(filter){
@@ -45,7 +45,7 @@ export class AonMovements extends AonElement {
             aonComunica.setContentHTML(`<aon-movements-list />`);
         }
     }
-    
+
     aonAltaDirecta() {
         let aonComunica = this.getElement('aonComunica');
         aonComunica.setContentHTML(`<aon-alta-directa />`);

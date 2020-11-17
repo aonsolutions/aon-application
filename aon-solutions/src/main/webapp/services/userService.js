@@ -9,3 +9,5 @@ export const setUser = (data) => post(`${API_URL}/user`, data);
 export const getUserAppRole = (data) => get(`${API_URL}/user/app`, data);
 
 export const setUserAppRole = (data) => post(`${API_URL}/user/app`, data);
+
+export const getUserNotice = (data) => get(`${API_URL}/user/notice`, data);

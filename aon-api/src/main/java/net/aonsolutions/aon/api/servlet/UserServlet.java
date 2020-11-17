@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -15,9 +16,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonRole;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
@@ -25,6 +28,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonUserServlet", urlPatterns = {"/ms/api/user/*"})
@@ -42,12 +46,26 @@ public class UserServlet extends HttpServlet{
 		String domainName = req.getHeader("domain_name");
 		Integer domainId = !"null".equalsIgnoreCase(req.getHeader("domain_id")) && AonNumberUtils.toInteger(req.getHeader("domain_id")) != null 
 				? AonNumberUtils.toInteger(req.getHeader("domain_id")) : 0;
-		Domain domain = AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
+
+		Domain domain = AonStringUtils.isBlank(domainName)
+				? new Domain().setName(domainName).setId(domainId)
+				: AON.getDomain(domainName, domainId, "", f -> f.getNameProperty().eq(domainName));
 		
 		if(pathInfo != null) {
-			JSONArray json = getDomainUser(domain, token);
-			Utils.addCorsHeader(resp);
-			Utils.giveBack(req, resp, json, new JSONObject());
+			if("app".equalsIgnoreCase(pathInfo[1])) {
+				JSONArray json = getDomainUser(domain, token);
+				Utils.addCorsHeader(resp);
+				Utils.giveBack(req, resp, json, new JSONObject());
+			} else if("notice".equalsIgnoreCase(pathInfo[1])) {
+				List<String> schemas = AONContext.getSchemas();
+				RawdocUserData rawdocUserData = new RawdocUserData();
+				for(String schema : schemas) {
+					rawdocUserData.append(AON.getRawdocUserData(token, schema));
+				}
+				Utils.addCorsHeader(resp);
+				Utils.giveBack(req, resp, rawdocUserData.toJSON(), new JSONObject());
+			}
+
 		} else {
 			JSONArray jsArray = new JSONArray();
 			AON.getUserStream(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()))

@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -328,6 +329,18 @@ public class FinanceImpl implements IFinance {
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> RawdocDAO.getDomainData(ctx,searchDomain));
+	}
+	
+	@Override
+	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.getUserData(ctx, auth));
+	}
+	
+	@Override
+	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.getUserData(ctx, searchDomain));
 	}
 	
 	@Override

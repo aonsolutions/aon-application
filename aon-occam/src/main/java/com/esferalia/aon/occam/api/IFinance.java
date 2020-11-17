@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -118,6 +119,8 @@ public interface IFinance {
 	// 	***********************************************
 	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain);
+	public RawdocUserData getRawdocUserData(AONContext ctx, byte[] auth);
+	public RawdocUserData getRawdocUserData(AONContext ctx, int searchDomain);
 	public Rawdoc getRawdocFull(AONContext ctx, int id);
 	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc);
 	void rawdocDelete(AONContext ctx, RawdocFilter filter);

@@ -1,4 +1,4 @@
-import { request, post} from "./request.js";
+import { request, post, get} from "./request.js";
 import { API_URL } from "../environments/environments.js";
 
 let companies;
@@ -47,6 +47,7 @@ export const getCompany = () => {
 
 export const setDomainApp = (data) => post(`${API_URL}/company/app`, data);
 
+export const getDomainNotice = (data) => get(`${API_URL}/company/notice`, data);
 
 export const getDomainApps = (domain) => {
     let d = true;
@@ -54,7 +55,7 @@ export const getDomainApps = (domain) => {
       localStorage.setItem("aon_domain_name", domain);
       d = false;
     }
-  
+
     return new Promise((resolve, reject) => {
       request(
         "GET",

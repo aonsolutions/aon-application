@@ -21,9 +21,13 @@ export const request = (method, url, token, sendData, fn) => {
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
   xhr.open(method, url);
   xhr.setRequestHeader("session_id", token);
-  const domainId = localStorage.getItem("aon_domain_id");
+  const domainId = localStorage.getItem("aon_domain_id")
+    ? localStorage.getItem("aon_domain_id")
+    : (localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")).id : '');
   xhr.setRequestHeader("domain_id", domainId);
-  const domainName = localStorage.getItem("aon_domain_name");
+  const domainName = localStorage.getItem("aon_domain_name")
+    ? localStorage.getItem("aon_domain_name")
+    : (localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")).domain : '');
   xhr.setRequestHeader("domain_name", domainName);
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.setRequestHeader("Access-Control-Allow-Origin", "*");

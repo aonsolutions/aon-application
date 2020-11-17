@@ -1,7 +1,7 @@
 import {AonElement} from '../../components/AonElement.js';
 import { Apps, Services, OtherServices, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
-import {getDomainApps, setDomainApp} from  '../../services/service.js';
+import {getDomainApps, setDomainApp, getDomainNotice} from  '../../services/service.js';
 import {bidoq} from  '../../services/bidoq.js';
 import {startModule, rootPanel} from '../../services/gwtLoader.js';
 
@@ -45,10 +45,9 @@ export class AonDesktop extends AonElement {
 			let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 			if(company) {
 				getDomainApps(company.domain).then(r => {
-					if(this.isMobile()) {
-						this.buildMobile(r);
-					} else this.build(r);
-				//	componentHandler.upgradeAllRegistered();
+					getDomainNotice().then(notice => {
+						this.build(r, notice);
+					});
 				});
 			}
 		}
@@ -69,10 +68,21 @@ export class AonDesktop extends AonElement {
 		}
   }
 
-	build(r) {
+	build(r, notice) {
 		this.innerHTML = `
 			<aon-application id="aonDesktopMain" title="Desktop" main="true"></aon-application>
 		`;
+
+		let inboxCount = 0;
+		if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+			inboxCount = notice.invoice.inbox.count;
+		}
+
+		let rejectedCount = 0;
+		if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+			rejectedCount = notice.invoice.rejected.count;
+		}
+
 		let aonDesktop = document.getElementById('aonDesktopMain');
 
 		let taskOptions = [{
@@ -85,12 +95,22 @@ export class AonDesktop extends AonElement {
 				fn: () => {}
 			},{
 				name: 'Facturas Pendientes',
+				count: inboxCount,
 				icon: 'inbox',
-				fn: () => {}
+				fn: () => {
+					if(inboxCount > 0) {
+						rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+					}
+				}
 			}, {
 				name: 'Facturas Rechazadas',
+				count: rejectedCount,
 				icon: 'report',
-				fn: () => {}
+				fn: () => {
+					if(rejectedCount > 0) {
+						rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
+					}
+				}
 			}, {
 				name: 'Solicitudes Abiertas',
 				icon: 'assignment',
@@ -358,16 +378,17 @@ export class AonDesktop extends AonElement {
 	appSelection(app) {
 		switch(app){
 			case Apps.DOCUMENTAL.app:
-				startModule('aon_gwt_aio', 'documents');
+				//startModule('aon_gwt_aio', 'documents');
+				rootPanel('<aon-documental></aon-documental>')
 				break;
 			case Apps.ACCOUNTING.app:
-				rootPanel('<aon-contable></aon-contable>')
+				rootPanel('<aon-contable></aon-contable>');
 				break;
 			case Apps.FISCAL.app:
-				rootPanel('<aon-fiscal></aon-fiscal>')
+				rootPanel('<aon-fiscal></aon-fiscal>');
 				break;
 			case Apps.PAYROLL.app:
-				rootPanel('<aon-laboral></aon-laboral>')
+				rootPanel('<aon-laboral></aon-laboral>');
 				break;
 			case Apps.COMUNICA.app:
 				rootPanel('<aon-comunica></aon-comunica>');

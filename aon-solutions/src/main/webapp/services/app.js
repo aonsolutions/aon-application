@@ -232,6 +232,14 @@ export const AccountingMenu =
     module: 'aon_gwt_fiscal',
     entryPoint: 'AccountEntryModuleTEDI'
   },{
+    title:'Documentos Pendientes.',
+    module: 'aon_gwt_fiscal',
+    entryPoint: 'RawdocModule'
+  },{
+    title:'Cartera de cobros y pagos.',
+    module: 'aon_gwt_fiscal',
+    entryPoint: 'Finance'
+  }, {
     title: 'Extracto de cuenta.',
     module: 'aon_gwt_fiscal',
     entryPoint:'StatementReportModule'

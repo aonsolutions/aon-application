@@ -62,7 +62,7 @@ public class InvoiceServlet extends HttpServlet{
 		System.out.println(types);
 		
 		JSONArray jsArray = getInvoices(domain, "api", status, types);
-
+		
 		Utils.addCorsHeader(resp);
 		Utils.giveBack(req, resp, jsArray, new JSONObject());	
 	}

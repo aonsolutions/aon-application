@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Rawdoc.RAWDOC;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -20,12 +21,15 @@ import org.jooq.impl.DSL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Properties.RawdocProperties;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
+import com.esferalia.aon.occam.api.model.RawdocNotice;
+import com.esferalia.aon.occam.api.model.RawdocUserData;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.RawdocNature;
 import com.esferalia.aon.occam.api.model.type.RawdocStatus;
@@ -214,11 +218,11 @@ public class RawdocDAO {
 		TreeMap<String,RawdocDomainData> map = new TreeMap<String,RawdocDomainData>();
 		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
 		ctx.getDslContext()
-			.select( DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,RAWDOC.NATURE,RAWDOC.TYPE,RAWDOC.STATUS, COUNT)
+			.select( DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,RAWDOC.NATURE,RAWDOC.TYPE, RAWDOC.STATUS, COUNT)
 			.from(RAWDOC)
 			.innerJoin(DOMAIN).on(DOMAIN.ID.eq(RAWDOC.DOMAIN))
 			.where(RAWDOC.DOMAIN.eq(domain))
-			.groupBy(DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,RAWDOC.NATURE,RAWDOC.TYPE,RAWDOC.STATUS)
+			.groupBy(DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,RAWDOC.NATURE, RAWDOC.STATUS)
 			.fetch()
 			.stream()
 			.forEach(record -> {
@@ -237,6 +241,79 @@ public class RawdocDAO {
 					,record.getValue(COUNT));
 			});
 		return new LinkedList<RawdocDomainData>( map.values() );
+	}
+	
+	public static RawdocUserData getUserData(AONContext ctx, int domain){
+		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
+		
+		RawdocUserData rawdocUserData = new RawdocUserData();
+		
+		ctx.getDslContext()
+			.select(RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
+			.from(RAWDOC)
+			.join(DOMAIN).on(RAWDOC.DOMAIN.eq(DOMAIN.ID))
+			.where(DOMAIN.ID.eq(domain))
+			.groupBy(RAWDOC.DOMAIN,RAWDOC.NATURE, RAWDOC.STATUS)
+			.fetch()
+			.stream()
+			.forEach(record -> {
+				RawdocStatus status = RawdocStatus.safeValueOf( record.getValue(RAWDOC.STATUS));
+				if(rawdocUserData.getInvoiceNotice().containsKey(status)) {
+					RawdocNotice notice = rawdocUserData.getInvoiceNotice().get(status);
+					notice.setCount(notice.getCount() + record.getValue(COUNT));
+					notice.getDomains().add(record.getValue(RAWDOC.DOMAIN));
+					rawdocUserData.getInvoiceNotice().put(status, notice);
+				} else {
+					LinkedList<Integer> ds = new LinkedList<Integer>();
+					ds.add(record.getValue(RAWDOC.DOMAIN));
+					rawdocUserData.getInvoiceNotice()
+						.put(status, new RawdocNotice()
+							.setCount(record.getValue(COUNT))
+							.setDomains(ds));
+				}
+			});
+		return rawdocUserData;
+	}
+	
+	public static RawdocUserData getUserData(AONContext ctx, byte[] auth){
+		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		
+		Domain domain = DOMAIN.as("d");
+		Domain parent = DOMAIN.as("p");
+		AggregateFunction<Integer> COUNT = DSL.count(RAWDOC.ID);
+		
+		RawdocUserData rawdocUserData = new RawdocUserData();
+		
+		ctx.getDslContext()
+			.select(RAWDOC.DOMAIN, RAWDOC.NATURE, RAWDOC.STATUS, COUNT)
+			.from(RAWDOC)
+			.join(domain).on(RAWDOC.DOMAIN.eq(domain.ID))
+			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
+			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
+			.where(domain.ID.in(domains)
+					.or(domain.PARENT.in(domains)
+						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))))
+			.groupBy(RAWDOC.DOMAIN,RAWDOC.NATURE, RAWDOC.STATUS)
+			.fetch()
+			.stream()
+			.forEach(record -> {
+				RawdocStatus status = RawdocStatus.safeValueOf( record.getValue(RAWDOC.STATUS));
+				if(rawdocUserData.getInvoiceNotice().containsKey(status)) {
+					RawdocNotice notice = rawdocUserData.getInvoiceNotice().get(status);
+					notice.setCount(notice.getCount() + record.getValue(COUNT));
+					notice.getDomains().add(record.getValue(RAWDOC.DOMAIN));
+					rawdocUserData.getInvoiceNotice().put(status, notice);
+				} else {
+					LinkedList<Integer> ds = new LinkedList<Integer>();
+					ds.add(record.getValue(RAWDOC.DOMAIN));
+					rawdocUserData.getInvoiceNotice()
+						.put(status, new RawdocNotice()
+							.setCount(record.getValue(COUNT))
+							.setDomains(ds));
+				}
+			});
+		return rawdocUserData;
 	}
 
 	public static void toDraft(AONContext ctx, Integer rawdocId) {
