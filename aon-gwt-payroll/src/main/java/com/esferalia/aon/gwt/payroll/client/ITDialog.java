@@ -6,9 +6,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
@@ -70,19 +73,10 @@ public abstract class ITDialog extends CustomDialog {
 	}
 	
 	@UiField
+	HTMLPanel north;
+	
+	@UiField
 	DeckPanel deckPanel;
-	
-	@UiField
-	Button deleteITButton;
-	
-	@UiField
-	Button listButton;
-	
-	@UiField
-	Button backButton;
-	
-	@UiField
-	Button newITButton;
 	
 	@UiField
 	VerticalPanel itDataTable;
@@ -164,19 +158,34 @@ public abstract class ITDialog extends CustomDialog {
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private List<IT> itList = Collections.emptyList();
 	
+	private AonToolbar toolbar;
+	private AonToolbarButton deleteIT;
+	private AonToolbarButton listIT;
+	private AonToolbarButton backListIT;
+	private AonToolbarButton newIT;
+	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
 	public ITDialog(String caption) {	
 		initPreView(caption);
+		
+		toolbar = getToolbarPanel();
+		north.add(toolbar);
+		north.setHeight("50px");
 	}
 	
 	public ITDialog(String caption, Boolean advanced) {	
 		initPreView(caption);
 		
+		toolbar = getToolbarPanel();
+		north.add(toolbar);
+		north.setHeight("50px");
+		
 		if(advanced)
 			showListOption();
 		else
 			hideListOption();	
+		
 	}
 	
 	public void setITDialogObject(ITDialogObject itDialogObject) {
@@ -305,6 +314,11 @@ public abstract class ITDialog extends CustomDialog {
 	        	ITDialog.this.it = itAux;
 	        	
 	        	paintSelectedIT(ITDialog.this.it, true);
+	        	
+	        	backListIT.setVisible(false);
+	    		newIT.setVisible(false);
+	    		listIT.setVisible(true);
+	    		deleteIT.setVisible(true);
 	        }
 	    });
 	    
@@ -420,65 +434,6 @@ public abstract class ITDialog extends CustomDialog {
 			dialog.show();
 			dialog.center();
 		}
-	}
-	
-	@UiHandler("deleteITButton")
-	public void onDeleteITButtonClick(ClickEvent event) {
-		if(null != this.it.getId()) {
-			if(this.it.getIsParent()) {
-				WarningDialog dialog = new WarningDialog("ERROR", "No se puede eliminar este parte por que tiene reca" + String.valueOf("\u00ED") + "da.");
-				dialog.setModal(true);
-				dialog.setAnimationEnabled(true);
-				dialog.show();
-				dialog.center();
-			} else {
-				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF") + "Realmente desea eliminar el parte IT?") {
-					@Override
-					protected void onAccept() {
-						onDelete(it);	
-						hide();
-						ITDialog.this.hide();
-					}
-				};
-				dialog.setModal(true);
-				dialog.setAnimationEnabled(true);
-				dialog.show();
-				dialog.center();
-			}
-		}
-	}
-	
-	@UiHandler("listButton")
-	public void onListButtonClick(ClickEvent event) {
-		// Check type of part
-		if(this.itDialogObject.getEmployeeStatus()) {
-			this.backButton.getElement().getStyle().setDisplay(Display.NONE);
-			this.newITButton.getElement().getStyle().clearDisplay();
-		} else {
-			this.newITButton.getElement().getStyle().setDisplay(Display.NONE);
-			this.backButton.getElement().getStyle().clearDisplay();
-		}
-		
-		deckPanel.showWidget(1);
-		deckPanel.setWidth("620px");
-		initITTable();
-		setTableHeights();
-	}
-	
-	@UiHandler("backButton")
-	public void onBackButtonClick(ClickEvent event) {
-		deckPanel.showWidget(0);
-		deckPanel.setWidth("620px");
-	}
-	
-	@UiHandler("newITButton")
-	public void onNewITButtonClick(ClickEvent event) {
-		clearITPage();
-		this.it = new IT();
-		this.it.setId(-1);
-		hideConfirmationParts();
-		deckPanel.showWidget(0);
-		deckPanel.setWidth("620px");
 	}
 	
 	@UiHandler("itStartDate")
@@ -777,7 +732,7 @@ public abstract class ITDialog extends CustomDialog {
 		if(showAll) {
 			informationDataTable.getElement().getStyle().clearDisplay();
 			itDataTable.getElement().getStyle().clearDisplay();
-			deleteITButton.getElement().getStyle().clearDisplay();
+			deleteIT.setVisible(true);
 			if(it.getTypeLowPart() == (byte) 2 || it.getTypeLowPart() == (byte)3) {
 				showMaternityTable();
 //				setSelectedValueLB(applicantTypeList, null == it.getMaternityType() ? "-1" : it.getMaternityType().toString());
@@ -867,19 +822,19 @@ public abstract class ITDialog extends CustomDialog {
 	// ----------------------------------------------- METODOS SHOW/HIDE ------------------------------------------------
 	
 	private void hideListOption() {
-		this.listButton.getElement().getStyle().setDisplay(Display.NONE);
+		listIT.setVisible(false);
 	}
 	
 	private void showListOption() {
-		this.listButton.getElement().getStyle().clearDisplay();
+		listIT.setVisible(true);
 	}
 	
 	private void hideDeleteOption() {
-		this.deleteITButton.getElement().getStyle().setDisplay(Display.NONE);
+		deleteIT.setVisible(false);
 	}
 	
 	private void showDeleteOption() {
-		this.deleteITButton.getElement().getStyle().clearDisplay();
+		deleteIT.setVisible(true);
 	}
 	
 	private void hideConfirmationParts() {
@@ -1393,5 +1348,122 @@ public abstract class ITDialog extends CustomDialog {
 	    itDataGrid.getColumnSortList().push(itDataGrid.getColumn(0));   
 	}
 	
+	private AonToolbar getToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar("Baja IT");
+		
+		listIT = new AonToolbarButton( "Listar ITs", AON.CSS.aonIconList() );
+		listIT.setAccessKey('L');
+		listIT.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onListIT(event);
+			}
+		});
+		toolbar.add(listIT);
+		
+		backListIT = new AonToolbarButton( "Volver a ITs", AON.CSS.aonIconBack() );
+		backListIT.setAccessKey('B');
+		backListIT.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onBackListIT(event);
+			}
+		});
+		toolbar.add(backListIT);
+		
+		newIT = new AonToolbarButton( "Nueva IT", AON.CSS.aonIconAdd() );
+		newIT.setAccessKey('N');
+		newIT.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onNewIT(event);
+			}
+		});
+		toolbar.add(newIT);
+		
+		deleteIT = new AonToolbarButton( "Borrar IT", AON.CSS.aonIconDelete() );
+		deleteIT.setAccessKey('D');
+		deleteIT.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onDeleteIT(event);
+			}
+		});
+		toolbar.add(deleteIT);
+		
+		backListIT.setVisible(false);
+		newIT.setVisible(false);
+		deleteIT.setVisible(false);
+
+		return toolbar;
+
+	}
+	
+	private void onDeleteIT(ClickEvent event) {
+		if(null != this.it.getId()) {
+			if(this.it.getIsParent()) {
+				WarningDialog dialog = new WarningDialog("ERROR", "No se puede eliminar este parte por que tiene reca" + String.valueOf("\u00ED") + "da.");
+				dialog.setModal(true);
+				dialog.setAnimationEnabled(true);
+				dialog.show();
+				dialog.center();
+			} else {
+				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF") + "Realmente desea eliminar el parte IT?") {
+					@Override
+					protected void onAccept() {
+						onDelete(it);	
+						hide();
+						ITDialog.this.hide();
+					}
+				};
+				dialog.setModal(true);
+				dialog.setAnimationEnabled(true);
+				dialog.show();
+				dialog.center();
+			}
+		}
+	}
+	
+	private void onListIT(ClickEvent event) {
+		// Check type of part
+		if(this.itDialogObject.getEmployeeStatus()) {
+			newIT.setVisible(true);
+		} else {
+			newIT.setVisible(false);
+		}
+		
+		backListIT.setVisible(true);
+		listIT.setVisible(false);
+		deleteIT.setVisible(false);
+		
+		deckPanel.showWidget(1);
+		deckPanel.setWidth("620px");
+		initITTable();
+		setTableHeights();
+	}
+	
+	private void onBackListIT(ClickEvent event) {
+		deckPanel.showWidget(0);
+		deckPanel.setWidth("620px");
+		
+		backListIT.setVisible(false);
+		newIT.setVisible(false);
+		deleteIT.setVisible(false);
+		listIT.setVisible(true);
+	}
+	
+	private void onNewIT(ClickEvent event) {
+		clearITPage();
+		this.it = new IT();
+		this.it.setId(-1);
+		hideConfirmationParts();
+		deckPanel.showWidget(0);
+		deckPanel.setWidth("620px");
+		
+		backListIT.setVisible(false);
+		newIT.setVisible(false);
+		deleteIT.setVisible(false);
+		listIT.setVisible(true);
+	}
 	
 }

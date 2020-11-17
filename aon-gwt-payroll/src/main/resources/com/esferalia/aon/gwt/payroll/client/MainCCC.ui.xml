@@ -87,9 +87,6 @@
 				    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
 				    			<g:Grid ui:field="cccDataTable"></g:Grid>
 				    		</g:ScrollPanel>
-				    		<g:HTMLPanel styleName="{style.footerStyle}">
-			    				<g:Label ui:field="newCCC" styleName="aon-finding-toolbar-item aon-icon-reset {style.footerElement}">NUEVA</g:Label>
-			    			</g:HTMLPanel>
 			    		</g:VerticalPanel>
 			    	</g:HTMLPanel>
 			    </g:VerticalPanel>

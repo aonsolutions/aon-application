@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -29,7 +31,6 @@ import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
 import com.esferalia.aon.gwt.payroll.shared.Messages.Message;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
-import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.animation.client.Animation;
@@ -38,23 +39,19 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -544,39 +541,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	SplitLayoutPanel splitLayoutPanel;
 	
 	@UiField
-	Button listEmployees;
-	
-	@UiField
-	Button saveContract;
-	
-	@UiField
-	Button deleteContract;
-	
-	@UiField
-	Button exportContract;
-	
-	@UiField
-	MenuItem archivoMenuItem;
-	
-	@UiField
-	MenuItem taButton;
-	
-	@UiField
-	MenuItem idcButton;
-
-	@UiField
-	Button closePdfButton;
-	
-	@UiField
-	ListBox zoomListBox;
-	
-	@UiField
-	Button downloadButton;
-	
-	@UiField
-	Button afiButton;
-	
-	@UiField
 	Label title;
 	
 	@UiField
@@ -620,6 +584,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private ContractType contractType;
 	private Municipalities municipalities;
 	
+	private AonToolbar toolbar;
+	private AonToolbarButton listEmployees;
+	private AonToolbarButton saveContract;
+	private AonToolbarButton deleteContract;
+	private AonToolbarButton exportContract;
+	private AonToolbarButton ta;
+	private AonToolbarButton idc;
+	private AonToolbarButton afi;
+	private AonToolbarButton closePDF;
+	private ListBox zoomListBox;
+	private AonToolbarButton downloadPDF;
+	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 	
 	public ContrataEmployee() {
@@ -644,13 +620,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		toolbar = getToolbarPanel();
+		splitLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
 		setDefaultEmployeeView();
 		showEmployee();		
 		initZoomList();
 		setScrollPanelsHeight();
 		initTabLayOutPanel();
 		initFootPanel();
-		initMenuItems();
 		initResultsPanel();
 	}
 
@@ -758,22 +736,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void initResultsPanel () {
 		resultsPanel = new ResultsPanel();		
 	}
-	
-	private void initMenuItems() {
-		taButton.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				showTa();
-			}
-		});
-		
-		idcButton.setScheduledCommand(new Command() {
-			@Override
-			public void execute() {
-				showIdc();
-			}
-		});
-	}
 
 	private void showResultsPanel() {
 		InlineLabel tab = new InlineLabel("Resultados");
@@ -808,123 +770,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void setTGSSVisible( boolean visible ) {
-		archivoMenuItem.setVisible(visible);
+		idc.setVisible(visible);
+		ta.setVisible(visible);
 	}
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
-	@UiHandler("listEmployees")
-	void onListButtonClick(ClickEvent clickEvent) {
-		onListShow(true);
-	}
-	
-	@UiHandler("deleteContract")
-	void onDeleteContractButtonClick(ClickEvent clickEvent) {
-		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF") + "Realmente desea eliminar este contrato?") {
-			@Override
-			protected void onAccept() {
-				contrataEmployeeObject.deleteContract(s -> {
-					onListShow(true);
-				}, f-> {});
-			}
-		};
-		
-		dialog.center();
-		dialog.show();
-	}
-	
 	protected abstract void onListShow(boolean reloadEmployees);
-
-	@UiHandler("saveContract")
-	void onAcceptButtonClick(ClickEvent clickEvent) {
-		int ssRegime = employee.ssRegimeType.getSelectedIndex();
-		contrataEmployeeObject.setSSRegime(ssRegime);
-		
-		if(checkIfSaveIsPossible())
-			if(checkDates())
-//				if(checkPayMethod())
-				//TODO: UPDATE
-				contrataEmployeeObject.updateEmployee(
-						r -> { 
-//								onListShow(true);
-						}, 
-						t -> {}
-				);
-//				else {
-//					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-//					dialog.center();
-//					dialog.show();
-//				}
-					
-			else{
-				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
-				dialog.center();
-				dialog.show();
-			}
-		else {
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
-			dialog.center();
-			dialog.show();
-		}
-	}
 	
-	@UiHandler("afiButton")
-	void onAFIButtonClick(ClickEvent event) {
-		
-		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
-				this.employee.start_date.getValue(),
-				this.employee.end_date.getValue(),
-				this.employee.contractType.getSelectedValue(),
-				this.employee.quote_group.getSelectedValue(),
-				this.employee.occupation.getSelectedValue(),
-				this.contrataEmployeeObject.getContractData().getPayrollDate(),
-				this.contrataEmployeeObject.getContractData().getContractId(),
-				this.contrataEmployeeObject.getEmployeeData().getDomain(),
-				this.contrataEmployeeObject.getContractData().getWorkplaceId()
-				){
-					@Override
-					protected void onAcceptCb() {}
-				};
-			
-		dialog.show();
-		dialog.center();
-		
-	}
-	
-	@UiHandler("exportContract")
-	void onExportContractButtonClick(ClickEvent event) {
-		contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
-		contrataEmployeeObject.setContractOtherInfo(s -> {
-			String fileDownloadURL = GWT.getModuleBaseURL()+ "contract_export/";
-			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
-		            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
-		            + "&contractType=" + contrataEmployeeObject.getContractData().getContractType();
-				
-			
-			Window.open(fileDownloadURL+query, "_blank", null);
-		}, f -> {});
-		
-//		showContract();
-	}
-	
-	@UiHandler("closePdfButton")
-	void onClosePdfButtonClick(ClickEvent event) {
-		showEmployee();
-	}
-	
-	@UiHandler("zoomListBox")
-	void onZoomListBoxChange(ChangeEvent event) {
-		int index =zoomListBox.getSelectedIndex();
-		String text = zoomListBox.getItemText(index);
-		zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
-		pdfViewer.scale(zoom / 100.00);
-	}	
-	
-	@UiHandler("downloadButton")
-	void onDownloadClick(ClickEvent event) {
-		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
-		pdfViewer.download(fileName);
-	}
-//	
 //	protected abstract void onAccept();
 	
 	private boolean checkIfSaveIsPossible() {
@@ -1610,15 +1462,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	
 	
 	private void showPdf() {
-		taButton.setVisible(false);
-		idcButton.setVisible(false);
+		ta.setVisible(false);
+		idc.setVisible(false);
 		saveContract.setVisible(false);
 		deleteContract.setVisible(false);
 		listEmployees.setVisible(false);
 
 		zoomListBox.setVisible(true);
-		closePdfButton.setVisible(true);
-		downloadButton.setVisible(true);
+		closePDF.setVisible(true);
+		downloadPDF.setVisible(true);
 
 		tabLayOutPanel.getElement().getStyle().setDisplay(Display.NONE);
 		pdfViewer.getElement().getStyle().clearDisplay();
@@ -1628,18 +1480,18 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		saveContract.setVisible(true);
 		deleteContract.setVisible(true);
 		listEmployees.setVisible(true);
-		taButton.setVisible(true);
-		idcButton.setVisible(true);
+		ta.setVisible(true);
+		idc.setVisible(true);
 		zoomListBox.setVisible(false);
-		closePdfButton.setVisible(false);
-		downloadButton.setVisible(false);
+		closePDF.setVisible(false);
+		pdfViewer.setVisible(false);
 		
 		pdfViewer.getElement().getStyle().setDisplay(Display.NONE);
 		tabLayOutPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	private void initZoomList() {
-
+		zoomListBox = new ListBox();
 		for (int zoom = Constants.MIN_ZOOM; zoom < Constants.DEFAULT_ZOOM; zoom += Constants.ZOOM_STEP)
 			zoomListBox.addItem(Constants.PERCENT_FORMAT.format((double) zoom / 100));
 		int selectedIndex = zoomListBox.getItemCount();
@@ -1650,4 +1502,201 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 	}
 	
+	private AonToolbar getToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar("Contrato");
+		
+		listEmployees = new AonToolbarButton( "Volver a contratos", AON.CSS.aonIconBack() );
+		listEmployees.setAccessKey('B');
+		listEmployees.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onListEmployees(event);
+			}
+		});
+		toolbar.add(listEmployees);
+		
+		saveContract = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		saveContract.setAccessKey('G');
+		saveContract.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onSaveContract(event);
+			}
+		});
+		toolbar.add(saveContract);
+		
+		deleteContract = new AonToolbarButton( AON.MSG.deleteAction(), AON.CSS.aonIconDelete() );
+		deleteContract.setAccessKey('D');
+		deleteContract.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onDeleteContract(event);
+			}
+		});
+		toolbar.add(deleteContract);
+		
+		exportContract = new AonToolbarButton( AON.MSG.export(), AON.CSS.aonIconPdf() );
+		exportContract.setAccessKey('E');
+		exportContract.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onExportContract(event);
+			}
+		});
+		toolbar.add(exportContract);
+		
+		afi = new AonToolbarButton( "Cambios AFI", AON.CSS.aonIconTgssAfi() );
+		afi.setAccessKey('A');
+		afi.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAFI(event);
+			}
+		});
+		toolbar.add(afi);
+		
+		ta = new AonToolbarButton( "Duplicados de Documentos TA", AON.CSS.aonIconTgssTa() );
+		ta.setAccessKey('T');
+		ta.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onTA(event);
+			}
+		});
+		toolbar.add(ta);
+		
+		idc = new AonToolbarButton( "Informe de Cotizaci" + String.valueOf("\u00F3") + "n IDC", AON.CSS.aonIconTgssIdc() );
+		idc.setAccessKey('I');
+		idc.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onIDC(event);
+			}
+		});
+		toolbar.add(idc);
+		
+		closePDF = new AonToolbarButton( AON.MSG.closed(), AON.CSS.aonIconClose() );
+		closePDF.setAccessKey('I');
+		closePDF.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onClosePDF(event);
+			}
+		});
+		toolbar.add(closePDF);
+		
+		initZoomList();
+		zoomListBox.addChangeHandler(e -> {
+			int index =zoomListBox.getSelectedIndex();
+			String text = zoomListBox.getItemText(index);
+			zoom = (int) (Constants.PERCENT_FORMAT.parse(text));
+			pdfViewer.scale(zoom / 100.00);
+		});
+		toolbar.add(zoomListBox);
+		
+		downloadPDF = new AonToolbarButton( AON.MSG.download(), AON.CSS.aonIconPdf() );
+		downloadPDF.setAccessKey('D');
+		downloadPDF.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onDownloadPDF(event);
+			}
+		});
+		toolbar.add(closePDF);
+
+		return toolbar;
+
+	}
+	
+
+
+	private void onListEmployees(ClickEvent event) {
+		onListShow(true);
+	}
+
+	private void onSaveContract(ClickEvent event) {
+		int ssRegime = employee.ssRegimeType.getSelectedIndex();
+		contrataEmployeeObject.setSSRegime(ssRegime);
+		
+		if(checkIfSaveIsPossible())
+			if(checkDates())
+				contrataEmployeeObject.updateEmployee(
+						r -> {}, 
+						t -> {}
+				);			
+			else{
+				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+				dialog.center();
+				dialog.show();
+			}
+		else {
+			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+			dialog.center();
+			dialog.show();
+		}
+	}
+
+	private void onDeleteContract(ClickEvent event) {
+		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF") + "Realmente desea eliminar este contrato?") {
+			@Override
+			protected void onAccept() {
+				contrataEmployeeObject.deleteContract(s -> {
+					onListShow(true);
+				}, f-> {});
+			}
+		};
+		
+		dialog.center();
+		dialog.show();
+	}
+
+	private void onExportContract(ClickEvent event) {
+		contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
+		contrataEmployeeObject.setContractOtherInfo(s -> {
+			String fileDownloadURL = GWT.getModuleBaseURL()+ "contract_export/";
+			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
+		            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
+		            + "&contractType=" + contrataEmployeeObject.getContractData().getContractType();
+				
+			
+			Window.open(fileDownloadURL+query, "_blank", null);
+		}, f -> {});
+	}
+
+	private void onAFI(ClickEvent event) {
+		EmployeeAFIDialog dialog = new EmployeeAFIDialog(
+				this.employee.start_date.getValue(),
+				this.employee.end_date.getValue(),
+				this.employee.contractType.getSelectedValue(),
+				this.employee.quote_group.getSelectedValue(),
+				this.employee.occupation.getSelectedValue(),
+				this.contrataEmployeeObject.getContractData().getPayrollDate(),
+				this.contrataEmployeeObject.getContractData().getContractId(),
+				this.contrataEmployeeObject.getEmployeeData().getDomain(),
+				this.contrataEmployeeObject.getContractData().getWorkplaceId()
+				){
+					@Override
+					protected void onAcceptCb() {}
+				};
+			
+		dialog.show();
+		dialog.center();
+	}
+
+	private void onTA(ClickEvent event) {
+		showTa();
+	}
+	
+	private void onIDC(ClickEvent event) {
+		showIdc();
+	}
+
+	private void onClosePDF(ClickEvent event) {
+		showEmployee();
+	}
+	
+	private void onDownloadPDF(ClickEvent event) {
+		String fileName = contrataEmployeeObject.getEmployeeFullName() + " IDC.pdf";
+		pdfViewer.download(fileName);
+	}
 }

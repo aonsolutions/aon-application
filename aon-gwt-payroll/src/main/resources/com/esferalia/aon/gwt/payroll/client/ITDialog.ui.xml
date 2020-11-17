@@ -182,231 +182,191 @@
 
 
 	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
-		<g:DeckPanel ui:field="deckPanel">
-			<g:VerticalPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText">Contrat@ - Bajas IT</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-								<g:Label styleName="aon-outputText" text=" "/> 
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='deleteITButton' styleName='aon-finding-toolbar-item aon-icon-delete {style.pl20}' text=" BORRAR"/>
-								<g:Button debugId='listButton' ui:field='listButton' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTA" />
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-				<g:HTMLPanel styleName="{style.paddingContainer}">
-					<table class="aon-width-all aon-height-all" >
-						<tr>
-							<td>
-								<g:HTMLPanel>
-									<g:VerticalPanel>
-									    <g:VerticalPanel ui:field="itDataTable" styleName="{style.styleBorder}">
-									    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Parte IT</g:Label>
-									    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-									    		<table style="margin-left: 10px; margin-bottom: 10px;">
-													<tbody>
-													    <tr>
-													        <td></td>
-													        <td></td>
-													        <td></td>
-													        <td></td>
-													    </tr>
-													    <tr>
-													    	<td  style="background-color: #eaeaea; width: 100px;">
-													    		<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Fecha Baja</g:Label>
-													    	</td>
-													    	<td style="width: 105px;">
-													    		<c:DateBoxEx ui:field="itStartDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
-													    	</td>
-													    	<td  style="background-color: #eaeaea; width: 110px;">
-													    		<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Causa de baja</g:Label>
-													    	</td>
-													    	<td style="width: 240px;">
-													    		<g:ListBox ui:field="causeLowPart" styleName='aon-selectOneMenu  {style.w240}'></g:ListBox>
-													    	</td>
-													    </tr>
-													     <tr>
-													    	<td  style="background-color: #eaeaea; width: 100px;">
-													    		<g:Label styleName='{style.firstColumnTextStyle}'>Fecha Alta</g:Label>
-													    	</td>
-													    	<td style="width: 105px;">
-													    		<c:DateBoxEx ui:field="itEndDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
-													    	</td>
-													    	<td  style="background-color: #eaeaea; width: 110px;">
-													    		<g:Label styleName='{style.firstColumnTextStyle}'>Causa de alta</g:Label>
-													    	</td>
-													    	<td style="width: 240px;">
-													    		<g:ListBox ui:field="causeHighPart" styleName='aon-selectOneMenu {style.w240}'></g:ListBox>
-													    	</td>
-													    </tr>
-													</tbody>
-												</table>
-									    	</g:HTMLPanel>
-									    </g:VerticalPanel>
-									    <g:VerticalPanel ui:field="informationDataTable" styleName="{style.styleBorder}">
-									    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Información parte</g:Label>
-									    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-									    		<table style="margin-left: 10px; margin-bottom: 10px;">
-													<tbody>
-													    <tr>
-													        <td></td>
-													        <td></td>
-													        <td></td>
-													        <td></td>
-													    </tr>
-													    <tr>
-													    	<td  style="background-color: #eaeaea; width: 100px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>F. Inicio</g:Label>
-													    	</td>
-													    	<td  style="width: 105px;">
-													    		<g:Label styleName="{style.w100}" ui:field="realStartDate"></g:Label>
-													    	</td>
-													    	<td  style="background-color: #eaeaea; width: 110px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Recaída</g:Label>
-													    	</td>
-													    	<td style="width: 240px;">
-													    		<g:ListBox ui:field="raggedList" styleName='aon-selectOneMenu  {style.w240}'></g:ListBox>
-													    	</td>
-													    </tr>
-													    <tr>
-													    	<td  style="background-color: #eaeaea; width: 100px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Nº colegiado</g:Label>
-													    	</td>
-													    	<td style="width: 105px;">
-													    		<g:HorizontalPanel>
-													    			<g:TextBox ui:field="collegiateNumberITPart" styleName='aon-inputText {style.w80}'></g:TextBox>
-													    			<g:Label ui:field="collegiateNumberError"></g:Label>
-													    		</g:HorizontalPanel>
-													    	</td>
-													    	<td  style="background-color: #eaeaea; width: 110px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Observaciones</g:Label>
-													    	</td>
-													    	<td style="width: 240px;">
-													    		<g:TextBox ui:field="observationTB" styleName='aon-inputText  {style.w232}'></g:TextBox>
-													    	</td>
-													    </tr>
-													    <tr>
-													    	<td  style="background-color: #eaeaea; width: 100px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>CIAS</g:Label>
-													    	</td>
-													    	<td style="width: 105px;">
-													    		<g:HorizontalPanel>
-													    			<g:TextBox ui:field="ciasITPart" styleName='aon-inputText {style.w80}'></g:TextBox>
-													    			<g:Label ui:field="ciasError"></g:Label>
-													    		</g:HorizontalPanel>
-													    	</td>
-													    	<td  style="background-color: #eaeaea; width: 110px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Ini. pago directo</g:Label>
-													    	</td>
-													    	<td style="width: 240px;">
-													    		<c:DateBoxEx ui:field="directPayDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
-													    	</td>
-													    </tr>
-													</tbody>
-												</table>
-									    	</g:HTMLPanel>
-									    </g:VerticalPanel>
-									    <g:VerticalPanel ui:field="confirmationsDataTable" styleName="{style.styleBorder}">
-									    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Partes de confirmación</g:Label>
-									    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-									    		<g:VerticalPanel>
-									    			<g:Grid ui:field="confirmationPartDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
-									    			<g:HTMLPanel>
-									    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
-									    			</g:HTMLPanel>
-										    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
-										    			<g:Grid ui:field="confirmationPartDataTable"></g:Grid>
-										    		</g:ScrollPanel>
-										    		<g:HTMLPanel styleName="{style.footerStyle}">
-									    				<g:Label ui:field="newConfirmationPart" styleName="aon-finding-toolbar-item aon-icon-reset {style.footerElement}">NUEVO</g:Label>
-									    			</g:HTMLPanel>
-									    		</g:VerticalPanel>
-									    	</g:HTMLPanel>
-									    </g:VerticalPanel>
-									    <g:VerticalPanel ui:field="maternityDataTable" styleName="{style.styleBorder}">
-									    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Maternidad</g:Label>
-									    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
-									    		<table style="margin-left: 10px; margin-bottom: 10px;">
-													<tbody>
-													    <tr>
-													        <td></td>
-													        <td></td>
-													        <td></td>
-													        <td></td>
-													    </tr>
-													    <tr>
-													    	<td  style="background-color: #eaeaea; width: 125px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Tipo de solicitante</g:Label>
-													    	</td>
-													    	<td style="width: 160px;">
-													    		<g:ListBox ui:field="applicantTypeList" styleName='aon-selectOneMenu  {style.w160}'></g:ListBox>
-													    	</td>
-													    	<td  style="background-color: #eaeaea; width: 80px;">
-													    		<g:Label  styleName='{style.firstColumnTextStyle}'>Motivo</g:Label>
-													    	</td>
-													    	<td style="width: 190px;">
-													    		<g:ListBox ui:field="applicantReasonList" styleName='aon-selectOneMenu  {style.w190}'></g:ListBox>
-													    	</td>
-													    </tr>
-													</tbody>
-												</table>
-									    	</g:HTMLPanel>
-									    </g:VerticalPanel>
-									</g:VerticalPanel>
-								</g:HTMLPanel>
-							</td>
-						</tr>
-						<tr>
-						    
-						</tr>
-						<tr>
-							<td colspan="2" align="right">
-								<g:Button ui:field="cancelButton" debugId="activityDialogCancelButton">Cancelar</g:Button>
-								<g:Button ui:field="acceptButton" debugId="activityDialogAcceptButton" >Aceptar</g:Button>
-							</td>
-						</tr>
-					</table>
-				</g:HTMLPanel>
-			</g:VerticalPanel>
-			<g:VerticalPanel>
-				<g:FlowPanel styleName="aon-finding-title-toolbar">
-					<g:HorizontalPanel>
-						<g:HTMLPanel styleName="aon-finding-title">
-							<g:HTMLPanel styleName="aon-finding-title-internal" >
-								<g:Label styleName="aon-outputText">Contrat@ - Bajas IT</g:Label>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="aon-finding-subtitle">
-							<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-								<g:Label styleName="aon-outputText" text=" "/> 
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HorizontalPanel styleName="aon-finding-toolbar">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='newITButton' styleName='aon-finding-toolbar-item aon-icon-reset {style.pl20}' text=" NUEVO"/>
-							</g:HTMLPanel>
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-								<g:Button ui:field='backButton' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" VOLVER"/>
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:HorizontalPanel>
-				</g:FlowPanel>
-				<g:HTMLPanel ui:field="mainTablePanel" styleName="aon-width-all {style.mt10}">
-			 		<d:DataGrid ui:field="itDataGrid" styleName="{style.pointer}"></d:DataGrid>
-			 	</g:HTMLPanel>
-			</g:VerticalPanel>
-		</g:DeckPanel>
-		
+		<g:VerticalPanel>
+			<g:HTMLPanel ui:field="north" styleName="aon-width-all aon-height-all"></g:HTMLPanel>
+			<g:DeckPanel ui:field="deckPanel">
+				<g:VerticalPanel>
+					<g:HTMLPanel styleName="{style.paddingContainer}">
+						<table class="aon-width-all aon-height-all" >
+							<tr>
+								<td>
+									<g:HTMLPanel>
+										<g:VerticalPanel>
+										    <g:VerticalPanel ui:field="itDataTable" styleName="{style.styleBorder}">
+										    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Parte IT</g:Label>
+										    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+										    		<table style="margin-left: 10px; margin-bottom: 10px;">
+														<tbody>
+														    <tr>
+														        <td></td>
+														        <td></td>
+														        <td></td>
+														        <td></td>
+														    </tr>
+														    <tr>
+														    	<td  style="background-color: #eaeaea; width: 100px;">
+														    		<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Fecha Baja</g:Label>
+														    	</td>
+														    	<td style="width: 105px;">
+														    		<c:DateBoxEx ui:field="itStartDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
+														    	</td>
+														    	<td  style="background-color: #eaeaea; width: 110px;">
+														    		<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Causa de baja</g:Label>
+														    	</td>
+														    	<td style="width: 240px;">
+														    		<g:ListBox ui:field="causeLowPart" styleName='aon-selectOneMenu  {style.w240}'></g:ListBox>
+														    	</td>
+														    </tr>
+														     <tr>
+														    	<td  style="background-color: #eaeaea; width: 100px;">
+														    		<g:Label styleName='{style.firstColumnTextStyle}'>Fecha Alta</g:Label>
+														    	</td>
+														    	<td style="width: 105px;">
+														    		<c:DateBoxEx ui:field="itEndDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
+														    	</td>
+														    	<td  style="background-color: #eaeaea; width: 110px;">
+														    		<g:Label styleName='{style.firstColumnTextStyle}'>Causa de alta</g:Label>
+														    	</td>
+														    	<td style="width: 240px;">
+														    		<g:ListBox ui:field="causeHighPart" styleName='aon-selectOneMenu {style.w240}'></g:ListBox>
+														    	</td>
+														    </tr>
+														</tbody>
+													</table>
+										    	</g:HTMLPanel>
+										    </g:VerticalPanel>
+										    <g:VerticalPanel ui:field="informationDataTable" styleName="{style.styleBorder}">
+										    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Información parte</g:Label>
+										    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+										    		<table style="margin-left: 10px; margin-bottom: 10px;">
+														<tbody>
+														    <tr>
+														        <td></td>
+														        <td></td>
+														        <td></td>
+														        <td></td>
+														    </tr>
+														    <tr>
+														    	<td  style="background-color: #eaeaea; width: 100px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>F. Inicio</g:Label>
+														    	</td>
+														    	<td  style="width: 105px;">
+														    		<g:Label styleName="{style.w100}" ui:field="realStartDate"></g:Label>
+														    	</td>
+														    	<td  style="background-color: #eaeaea; width: 110px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Recaída</g:Label>
+														    	</td>
+														    	<td style="width: 240px;">
+														    		<g:ListBox ui:field="raggedList" styleName='aon-selectOneMenu  {style.w240}'></g:ListBox>
+														    	</td>
+														    </tr>
+														    <tr>
+														    	<td  style="background-color: #eaeaea; width: 100px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Nº colegiado</g:Label>
+														    	</td>
+														    	<td style="width: 105px;">
+														    		<g:HorizontalPanel>
+														    			<g:TextBox ui:field="collegiateNumberITPart" styleName='aon-inputText {style.w80}'></g:TextBox>
+														    			<g:Label ui:field="collegiateNumberError"></g:Label>
+														    		</g:HorizontalPanel>
+														    	</td>
+														    	<td  style="background-color: #eaeaea; width: 110px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Observaciones</g:Label>
+														    	</td>
+														    	<td style="width: 240px;">
+														    		<g:TextBox ui:field="observationTB" styleName='aon-inputText  {style.w232}'></g:TextBox>
+														    	</td>
+														    </tr>
+														    <tr>
+														    	<td  style="background-color: #eaeaea; width: 100px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>CIAS</g:Label>
+														    	</td>
+														    	<td style="width: 105px;">
+														    		<g:HorizontalPanel>
+														    			<g:TextBox ui:field="ciasITPart" styleName='aon-inputText {style.w80}'></g:TextBox>
+														    			<g:Label ui:field="ciasError"></g:Label>
+														    		</g:HorizontalPanel>
+														    	</td>
+														    	<td  style="background-color: #eaeaea; width: 110px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Ini. pago directo</g:Label>
+														    	</td>
+														    	<td style="width: 240px;">
+														    		<c:DateBoxEx ui:field="directPayDate" styleName='aon-inputText {style.textCenter}'></c:DateBoxEx>
+														    	</td>
+														    </tr>
+														</tbody>
+													</table>
+										    	</g:HTMLPanel>
+										    </g:VerticalPanel>
+										    <g:VerticalPanel ui:field="confirmationsDataTable" styleName="{style.styleBorder}">
+										    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Partes de confirmación</g:Label>
+										    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+										    		<g:VerticalPanel>
+										    			<g:Grid ui:field="confirmationPartDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
+										    			<g:HTMLPanel>
+										    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;margin-left: 10px;"/>
+										    			</g:HTMLPanel>
+											    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
+											    			<g:Grid ui:field="confirmationPartDataTable"></g:Grid>
+											    		</g:ScrollPanel>
+											    		<g:HTMLPanel styleName="{style.footerStyle}">
+										    				<g:Label ui:field="newConfirmationPart" styleName="aon-finding-toolbar-item aon-icon-reset {style.footerElement}">NUEVO</g:Label>
+										    			</g:HTMLPanel>
+										    		</g:VerticalPanel>
+										    	</g:HTMLPanel>
+										    </g:VerticalPanel>
+										    <g:VerticalPanel ui:field="maternityDataTable" styleName="{style.styleBorder}">
+										    	<g:Label width="105px" styleName='aon-group-title {style.tittle}'>Maternidad</g:Label>
+										    	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel">
+										    		<table style="margin-left: 10px; margin-bottom: 10px;">
+														<tbody>
+														    <tr>
+														        <td></td>
+														        <td></td>
+														        <td></td>
+														        <td></td>
+														    </tr>
+														    <tr>
+														    	<td  style="background-color: #eaeaea; width: 125px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Tipo de solicitante</g:Label>
+														    	</td>
+														    	<td style="width: 160px;">
+														    		<g:ListBox ui:field="applicantTypeList" styleName='aon-selectOneMenu  {style.w160}'></g:ListBox>
+														    	</td>
+														    	<td  style="background-color: #eaeaea; width: 80px;">
+														    		<g:Label  styleName='{style.firstColumnTextStyle}'>Motivo</g:Label>
+														    	</td>
+														    	<td style="width: 190px;">
+														    		<g:ListBox ui:field="applicantReasonList" styleName='aon-selectOneMenu  {style.w190}'></g:ListBox>
+														    	</td>
+														    </tr>
+														</tbody>
+													</table>
+										    	</g:HTMLPanel>
+										    </g:VerticalPanel>
+										</g:VerticalPanel>
+									</g:HTMLPanel>
+								</td>
+							</tr>
+							<tr>
+							    
+							</tr>
+							<tr>
+								<td colspan="2" align="right">
+									<g:Button ui:field="cancelButton" debugId="activityDialogCancelButton">Cancelar</g:Button>
+									<g:Button ui:field="acceptButton" debugId="activityDialogAcceptButton" >Aceptar</g:Button>
+								</td>
+							</tr>
+						</table>
+					</g:HTMLPanel>
+				</g:VerticalPanel>
+				<g:VerticalPanel>
+					<g:HTMLPanel ui:field="mainTablePanel" styleName="aon-width-all {style.mt10}">
+				 		<d:DataGrid ui:field="itDataGrid" styleName="{style.pointer}"></d:DataGrid>
+				 	</g:HTMLPanel>
+				</g:VerticalPanel>
+			</g:DeckPanel>
+		</g:VerticalPanel>
 	</g:HTMLPanel>
 
 </ui:UiBinder>

@@ -22,7 +22,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -63,9 +62,6 @@ public class MainCCC extends MainEntryPoint{
 	@UiField
 	Grid cccDataTable;
 	
-	@UiField
-	Label newCCC;
-	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
 	private MainCCCObject mainCCCObject;
@@ -73,6 +69,7 @@ public class MainCCC extends MainEntryPoint{
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton accept;
+	private AonToolbarButton newCCC;
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
@@ -90,17 +87,6 @@ public class MainCCC extends MainEntryPoint{
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
-	
-	@UiHandler("newCCC")
-	public void onNewCCC(ClickEvent event) {
-		if(0 != cccDataTable.getRowCount()) {
-			Label firstGeozone = (Label) cccDataTable.getWidget(0, 3);
-			if(null != firstGeozone && "" != firstGeozone.getText()) {
-				insertNewRow();
-			}
-		}else
-			insertNewRow();
-	}
 
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
@@ -148,7 +134,7 @@ public class MainCCC extends MainEntryPoint{
 	
 	private void calculateScrollPanelHeight() {
 		Integer clientHeight = Window.getClientHeight();
-		scrollPanel.setHeight((clientHeight - 400) + "px");
+		scrollPanel.setHeight((clientHeight - 350) + "px");
 	}
 	
 	private void setColumnWidth() {
@@ -506,8 +492,18 @@ public class MainCCC extends MainEntryPoint{
 	
 	private AonToolbar getToolbarPanel() {
 		
-		AonToolbar toolbar = new AonToolbar("Mantenimientos CCC");
+		AonToolbar toolbar = new AonToolbar("C" + String.valueOf("\u00F3") + "digo Cuentas Cotizaci" + String.valueOf("\u00F3") + "n");
 
+		newCCC = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		newCCC.setAccessKey('N');
+		newCCC.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onNewCCC(event);
+			}
+		});
+		toolbar.add(newCCC);
+		
 		accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		accept.setAccessKey('G');
 		accept.addClickHandler(new ClickHandler() {
@@ -527,6 +523,16 @@ public class MainCCC extends MainEntryPoint{
 			initPreview();
 			insertRows();
 		}, f -> {});
+	}
+	
+	private void onNewCCC(ClickEvent event) {
+		if(0 != cccDataTable.getRowCount()) {
+			Label firstGeozone = (Label) cccDataTable.getWidget(0, 3);
+			if(null != firstGeozone && "" != firstGeozone.getText()) {
+				insertNewRow();
+			}
+		}else
+			insertNewRow();
 	}
 
 }

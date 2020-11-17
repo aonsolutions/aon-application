@@ -14,16 +14,19 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
-import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
+import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -43,7 +46,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -85,9 +87,6 @@ public class MainContrataContract extends MainEntryPoint {
 	DockLayoutPanel splitLayoutPanel;
 	
 	@UiField
-	Button newContractButton;
-	
-	@UiField
 	SuggestBox employeeSB;
 	
 	@UiField
@@ -117,10 +116,6 @@ public class MainContrataContract extends MainEntryPoint {
 	@UiField
 	PDFViewer pdfViewer;
 	
-	@UiField
-	Panel sistemaREDPanel;
-	
-	
 	ResultsPanel resultsPanel;
 	
 	ProgressPanel progressPanel;
@@ -132,6 +127,10 @@ public class MainContrataContract extends MainEntryPoint {
 	private NoSelectionModel<EmployeeContractInfo> selectionCCCInfoModel;
 	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
+	
+	private AonToolbar toolbar;
+	private AonToolbarButton newContract;
+	private AonToolbarButton up2DateSS;
 	
 	public MainContrataContract() {
 		contrataEmployee = new ContrataEmployeeImpl();
@@ -146,6 +145,9 @@ public class MainContrataContract extends MainEntryPoint {
 	
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
+		
+		toolbar = getToolbarPanel();
+		splitLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
 		// Show table
 		deckPanel.showWidget(0);
@@ -510,64 +512,6 @@ public class MainContrataContract extends MainEntryPoint {
 		);
 	}
 	
-	@UiHandler("newContractButton")
-	public void onNewContractButton(ClickEvent event) {
-		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
-		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-		
-		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
-			@Override
-			protected void onAccept() {
-				WarningDialog dialog = new WarningDialog("AVISO", "Desea dar de alta el contrato?");
-				dialog.setModal(true);
-				dialog.setAnimationEnabled(true);
-				dialog.center();
-				dialog.show();
-				redrawTable();
-			}
-		};
-		
-		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null, employeesService, enterprisesService);
-		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
-		employeeDialog.setModal(true);
-		employeeDialog.setAnimationEnabled(true);
-		employeeDialog.center();
-		employeeDialog.show();
-	}
-	
-	@UiHandler("up2DateSSButton")
-	void onClickUp2DateSSButton(ClickEvent e) {
-		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_REPORT);
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
-			@Override
-			public void onReadyStateChange(XMLHttpRequest xhr) {
-				int state = xhr.getReadyState();
-				if (state != XMLHttpRequest.DONE)
-					return;
-				try {
-					String dataURI = xhr.getResponseText();
-					showPFDF(dataURI);
-					AON.stop();
-				} catch ( Throwable t ) {
-					AON.fail();
-				}
-			}
-		});
-
-		StringBuffer requestDataBuffer = new StringBuffer();
-
-		requestDataBuffer
-		.append(SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL())
-		.append("&" +SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser() )
-		;
-		
-		xhr.send(requestDataBuffer.toString());
-		AON.start();
-		
-	}
-	
 	protected void showPFDF(String dataURI) {
 		pdfViewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
 		pdfViewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
@@ -769,7 +713,89 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 
 	private void setSistemaREDVisible( boolean visible ){
-		sistemaREDPanel.setVisible(visible);
+		up2DateSS.setVisible(visible);
+	}
+	
+	private AonToolbar getToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar("Contratos");
+		
+		newContract = new AonToolbarButton( "Nuevo contrato", AON.CSS.aonIconAdd() );
+		newContract.setAccessKey('N');
+		newContract.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onNewContract(event);
+			}
+		});
+		toolbar.add(newContract);
+		
+		up2DateSS = new AonToolbarButton( "CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", AON.CSS.aonIconTgss() );
+		up2DateSS.setAccessKey('O');
+		up2DateSS.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onUp2DateSS(event);
+			}
+		});
+		toolbar.add(up2DateSS);
+		
+		return toolbar;
+	}
+
+	private void onNewContract(ClickEvent event) {
+		DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
+		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+		
+		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
+			@Override
+			protected void onAccept() {
+				WarningDialog dialog = new WarningDialog("AVISO", "Desea dar de alta el contrato?");
+				dialog.setModal(true);
+				dialog.setAnimationEnabled(true);
+				dialog.center();
+				dialog.show();
+				redrawTable();
+			}
+		};
+		
+		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(null, employeesService, enterprisesService);
+		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
+		employeeDialog.setModal(true);
+		employeeDialog.setAnimationEnabled(true);
+		employeeDialog.center();
+		employeeDialog.show();
+	}
+
+	
+	private void onUp2DateSS(ClickEvent event) {
+		XMLHttpRequest xhr = XMLHttpRequest.create();
+		xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_REPORT);
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+			@Override
+			public void onReadyStateChange(XMLHttpRequest xhr) {
+				int state = xhr.getReadyState();
+				if (state != XMLHttpRequest.DONE)
+					return;
+				try {
+					String dataURI = xhr.getResponseText();
+					showPFDF(dataURI);
+					AON.stop();
+				} catch ( Throwable t ) {
+					AON.fail();
+				}
+			}
+		});
+
+		StringBuffer requestDataBuffer = new StringBuffer();
+
+		requestDataBuffer
+		.append(SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL())
+		.append("&" +SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser() )
+		;
+		
+		xhr.send(requestDataBuffer.toString());
+		AON.start();
 	}
 
 }

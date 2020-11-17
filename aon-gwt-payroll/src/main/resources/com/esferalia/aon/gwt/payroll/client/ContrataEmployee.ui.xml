@@ -70,68 +70,16 @@
 			border-right: none !important;
 		}
 		
+		.mt50{
+			margin-top: 50px !important;
+		}
+		
 	</ui:Style>
 
 	<g:SimpleLayoutPanel>
 		<g:SplitLayoutPanel ui:field="splitLayoutPanel">
-				<!-- INIT HEADER MENU -->
-				<g:north size="25">
-					<g:FlowPanel styleName="aon-finding-title-toolbar">
-						<g:HorizontalPanel >
-							<g:HTMLPanel styleName="aon-finding-title">
-								<g:HTMLPanel styleName="aon-finding-title-internal" >
-									<g:Label styleName="aon-outputText">Edición Contrato</g:Label>
-								</g:HTMLPanel>
-							</g:HTMLPanel>
-							<g:HTMLPanel styleName="aon-finding-subtitle">
-								<g:HTMLPanel styleName="aon-finding-aubtitle-internal" >
-									<g:Label styleName="aon-outputText" text=" "/> 
-								</g:HTMLPanel>
-							</g:HTMLPanel>
-							<g:HTMLPanel styleName="aon-finding-toolbar {style.flex}">
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-									<g:Button ui:field='saveContract' styleName='aon-finding-toolbar-item aon-icon-save {style.pl20}' text=" GUARDAR"/>
-								</g:HTMLPanel>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-									<g:Button ui:field='deleteContract' styleName='aon-finding-toolbar-item aon-icon-reset {style.pl20}' text=" BORRAR"/>
-								</g:HTMLPanel>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-									<g:Button ui:field='listEmployees' styleName='aon-finding-toolbar-item aon-icon-cancel {style.pl20}' text=" LISTA"/>
-								</g:HTMLPanel>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group" >
-									<g:Button ui:field='exportContract' styleName='aon-finding-toolbar-item aon-icon-pdf {style.pl20}' text=" GENERAR CONTRATO"/>
-								</g:HTMLPanel>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button ui:field='afiButton'
-										styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Cambios AFI"
-										enabled="true" />
-								</g:HTMLPanel>
-								<g:MenuBar styleName="aon-finding-toolbar-item-group {style.h17}">
-									<g:MenuItem text="TGSS" ui:field="archivoMenuItem" styleName="aon-finding-toolbar-item aon-icon-segsocial-small {style.bold}">
-										<g:MenuBar vertical="true" styleName="{style.p5}">
-											<g:MenuItem ui:field='idcButton' styleName='aon-finding-toolbar-item aon-icon-segsocial-small {style.nbr}' text="Informe de Cotizaci&oacute;n IDC" enabled="true" />	
-											<g:MenuItem ui:field='taButton' styleName=' aon-finding-toolbar-item aon-icon-segsocial-small {style.nbr}' text="Duplicados de Documentos TA" enabled="true" />	
-										</g:MenuBar>
-									</g:MenuItem>
-								</g:MenuBar>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button debugId='closePdfButton' ui:field='closePdfButton'
-										styleName='aon-finding-toolbar-item aon-icon-cancel' text="Cerrar" />
-								</g:HTMLPanel>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:ListBox debugId='zoomListBox' ui:field="zoomListBox" />
-								</g:HTMLPanel>
-								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-									<g:Button debugId='downloadButton' ui:field='downloadButton'
-										styleName='aon-finding-toolbar-item aon-icon-mail-save' text="Descargar" />	
-								</g:HTMLPanel>
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
-					</g:FlowPanel>
-				</g:north>
-				<!-- END HEADER MENU -->
 				<g:center>
-					<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
+					<g:HTMLPanel styleName="{style.mt50} {aonResources.css.aonSelector}">
 						<g:HTMLPanel styleName="{style.titlePanel}">
 							<g:Label styleName="{style.bold}">Contrato : </g:Label>
 							<g:Label styleName="{style.title}" ui:field="title"></g:Label>

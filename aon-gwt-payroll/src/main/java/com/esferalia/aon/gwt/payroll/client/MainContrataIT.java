@@ -1205,7 +1205,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}-*/;
 
 	private AonToolbar getToolbarPanel() {
-		AonToolbar toolbar = new AonToolbar("Partes IT");
+		AonToolbar toolbar = new AonToolbar("Partes IT (Contratos)");
 		
 		// FORM
 		msjFIEFormPanel = new FormPanel();
@@ -1255,7 +1255,7 @@ public class MainContrataIT extends MainEntryPoint {
 		msjFIEFormPanel.add(formFlowPanel);
 		toolbar.add(msjFIEFormPanel);
 		
-		backContract = new AonToolbarButton( "Contratos", AON.CSS.aonIconBack() );
+		backContract = new AonToolbarButton( "Volver a contratos", AON.CSS.aonIconBack() );
 		backContract.setAccessKey('B');
 		backContract.addClickHandler(new ClickHandler() {
 			@Override
@@ -1265,7 +1265,7 @@ public class MainContrataIT extends MainEntryPoint {
 		});
 		toolbar.add(backContract);
 		
-		listITs = new AonToolbarButton( "ITs", AON.CSS.aonIconList() );
+		listITs = new AonToolbarButton( "Listado ITs", AON.CSS.aonIconList() );
 		listITs.setAccessKey('L');
 		listITs.addClickHandler(new ClickHandler() {
 			@Override
@@ -1290,6 +1290,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 	
 	private void onBackContract(ClickEvent event) {
+		toolbar.setTitle("Partes IT (Contratos)");
 		deckPanel.showWidget(0);
 		backContract.getElement().getStyle().setDisplay(Display.NONE);
 		listITs.getElement().getStyle().clearDisplay();
@@ -1297,6 +1298,7 @@ public class MainContrataIT extends MainEntryPoint {
 	}
 	
 	private void onListIT(ClickEvent event) {
+		toolbar.setTitle("Partes IT");
 		deckPanel.showWidget(1);
 		inactiveITsCB.setValue(true);
 		listITs.getElement().getStyle().setDisplay(Display.NONE);
