@@ -27,16 +27,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -69,6 +68,8 @@ public class MainContrataIT extends MainEntryPoint {
 
 	interface MyStyle extends CssResource {
 		String suggestBox();
+		String filterPanel();
+		String flexPanel();
 	}
 	
 	@UiField
@@ -78,10 +79,10 @@ public class MainContrataIT extends MainEntryPoint {
 	DeckPanel deckPanel;
 	
 	@UiField
-	SuggestBox employeeSB;
+	HTMLPanel filterEmployeePanel;
 	
 	@UiField
-	CheckBox inactiveContractsCB;
+	HTMLPanel filterITListPanel;
 	
 	@UiField
 	HTMLPanel mainTablePanel;
@@ -91,12 +92,6 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	@UiField(provided = true)
 	DataGrid<ITEmployee> employeeDataGrid;
-	
-	@UiField
-	SuggestBox itSB;
-	
-	@UiField
-	CheckBox inactiveITsCB;
 	
 	@UiField
 	HTMLPanel mainITTablePanel;
@@ -130,6 +125,12 @@ public class MainContrataIT extends MainEntryPoint {
 	private Hidden domainNameHidden;
 	private MultiFileUpload msjFIEFileUpload;
 	
+	private SuggestBox employeeSB;
+	private CheckBox inactiveContractsCB;
+	
+	private SuggestBox itSB;
+	private CheckBox inactiveITsCB;
+	
 	public MainContrataIT() {
 		
 		
@@ -148,6 +149,9 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		toolbar = getToolbarPanel();
 		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		getFilterEmployeePanel();
+		getFilterITListPanel();
 		
 		deckPanel.showWidget(0);
 		inactiveITsCB.setValue(true);
@@ -943,28 +947,6 @@ public class MainContrataIT extends MainEntryPoint {
 	// 										UI HANDLERS
 	// --------------------------------------------------------------------------------------------
 	
-	@UiHandler("inactiveContractsCB")
-	public void onInactiveContractsCBValueChange(ValueChangeEvent<Boolean> event) {
-		this.mainContrataITObject.getEmployeesInfo(event.getValue(),
-				s -> {
-					initEnterpriseSB();
-					initITSB();
-					initContractTable();
-					setTableHeights();
-				},
-				f -> {}
-		);
-	}
-	
-	@UiHandler("inactiveITsCB")
-	public void onInactiveITsCBValueChange(ValueChangeEvent<Boolean> event) {
-		mainContrataITObject.setITsList(!event.getValue());
-		initEnterpriseSB();
-		initITSB();
-		initITTable();
-		setTableHeights();
-	}
-	
 	// --------------------------------------------------------------------------------------------
 	// 										AUXILIAR METHODS
 	// --------------------------------------------------------------------------------------------
@@ -1308,6 +1290,104 @@ public class MainContrataIT extends MainEntryPoint {
 	
 	private void onFIE(ClickEvent event) {
 		msjFIEFileUpload.click();
+	}
+	
+	private void getFilterEmployeePanel() {
+		filterEmployeePanel.setStyleName(AON.CSS.aonSearchPanel());
+		filterEmployeePanel.addStyleName(AON.CSS.aonScrollArea());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginBottom());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginLeft());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginRight());
+		filterEmployeePanel.addStyleName(AON.CSS.aonBlockCenter());
+		
+		HTMLPanel filterPanel = new HTMLPanel("");
+		filterPanel.addStyleName(style.filterPanel());
+		
+		HTMLPanel employeePanel = new HTMLPanel("");
+		employeePanel.addStyleName(style.flexPanel());
+		Label employeeL = new Label("Persona : ");
+		employeeL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		employeeL.getElement().getStyle().setMarginRight(10, Unit.PX);
+		employeeSB = new SuggestBox();
+		employeeSB.getElement().getStyle().setWidth(300, Unit.PX);
+		employeePanel.add(employeeL);
+		employeePanel.add(employeeSB);
+		
+		HTMLPanel showPanel = new HTMLPanel("");
+		showPanel.addStyleName(style.flexPanel());
+		Label showL = new Label("Mostrar Empleados : ");
+		showL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		showL.getElement().getStyle().setMarginRight(5, Unit.PX);
+		inactiveContractsCB = new CheckBox();
+		inactiveContractsCB.addValueChangeHandler(e -> {
+			this.mainContrataITObject.getEmployeesInfo(e.getValue(),
+					s -> {
+						initEnterpriseSB();
+						initITSB();
+						initContractTable();
+						setTableHeights();
+					},
+					f -> {}
+			);
+		});
+		Label inactiveL = new Label("Inactivos");
+		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		showPanel.add(showL);
+		showPanel.add(inactiveContractsCB);
+		showPanel.add(inactiveL);
+		
+		filterPanel.add(employeePanel);
+		filterPanel.add(showPanel);
+		
+		filterEmployeePanel.add(filterPanel);
+	}
+	
+	private void getFilterITListPanel() {
+		filterITListPanel.setStyleName(AON.CSS.aonSearchPanel());
+		filterITListPanel.addStyleName(AON.CSS.aonScrollArea());
+		filterITListPanel.addStyleName(AON.CSS.aonMarginBottom());
+		filterITListPanel.addStyleName(AON.CSS.aonMarginLeft());
+		filterITListPanel.addStyleName(AON.CSS.aonMarginRight());
+		filterITListPanel.addStyleName(AON.CSS.aonBlockCenter());
+		
+		HTMLPanel filterPanel = new HTMLPanel("");
+		filterPanel.addStyleName(style.filterPanel());
+		
+		HTMLPanel itPanel = new HTMLPanel("");
+		itPanel.addStyleName(style.flexPanel());
+		Label itL = new Label("IT : ");
+		itL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		itL.getElement().getStyle().setMarginRight(10, Unit.PX);
+		itSB = new SuggestBox();
+		itSB.getElement().getStyle().setWidth(300, Unit.PX);
+		itPanel.add(itL);
+		itPanel.add(itSB);
+		
+		HTMLPanel showPanel = new HTMLPanel("");
+		showPanel.addStyleName(style.flexPanel());
+		Label showL = new Label("Mostrar ITs : ");
+		showL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		showL.getElement().getStyle().setMarginRight(5, Unit.PX);
+		inactiveITsCB = new CheckBox();
+		inactiveITsCB.addValueChangeHandler(e -> {
+			mainContrataITObject.setITsList(!e.getValue());
+			initEnterpriseSB();
+			initITSB();
+			initITTable();
+			setTableHeights();
+		});
+		Label inactiveL = new Label("En vigor");
+		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		showPanel.add(showL);
+		showPanel.add(inactiveITsCB);
+		showPanel.add(inactiveL);
+		
+		filterPanel.add(itPanel);
+		filterPanel.add(showPanel);
+		
+		filterITListPanel.add(filterPanel);
 	}
 
 }

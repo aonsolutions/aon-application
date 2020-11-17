@@ -144,6 +144,7 @@
 		
 		.flexPanel{
 			display: flex;
+			align-items: center;
 		}
 		
 		.bold{
@@ -175,22 +176,7 @@
 					<g:ScrollPanel height="100%" styleName="{style.p5}">
 						<g:VerticalPanel styleName="{style.tableStylePanel}">
 						
-							<g:HTMLPanel styleName="aon-panelGrid-search {style.panelGridSearch}">
-								<g:HTMLPanel styleName="aon-panelGrid-search-info">
-									<g:Label styleName="aon-panelGrid-search-info-internal">LISTADO DE CONTRATOS</g:Label>
-								</g:HTMLPanel>
-								<g:HTMLPanel ui:field="employeePanel" styleName="{style.ml20} {style.mt10} {style.filterPanel}">
-									<g:HTMLPanel styleName="{style.flexPanel}">
-										<g:Label styleName="aon-outputLabel {style.pt4} {style.bold}">Persona</g:Label>
-										<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w600} {style.sb}" ui:field="employeeSB"></g:SuggestBox>
-									</g:HTMLPanel>
-									<g:HTMLPanel styleName="{style.flexPanel}">
-										<g:Label styleName="{style.pt4} {style.bold}">Mostrar Empleados :</g:Label>
-										<g:CheckBox ui:field="inactiveContractsCB" styleName="{style.ml5} {style.pt2}"></g:CheckBox>
-										<g:Label styleName="{style.pt4}">Inactivos</g:Label>
-									</g:HTMLPanel>
-								</g:HTMLPanel>
-							</g:HTMLPanel>
+							<g:HTMLPanel ui:field="filterEmployeePanel"></g:HTMLPanel>
 						
 						 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
 						 		<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}"></c:DataGrid>
@@ -203,22 +189,7 @@
 					<g:ScrollPanel height="100%" styleName="{style.p5}">
 						<g:VerticalPanel styleName="{style.tableStylePanel}">
 						
-							<g:HTMLPanel styleName="aon-panelGrid-search {style.panelGridSearch}">
-								<g:HTMLPanel styleName="aon-panelGrid-search-info">
-									<g:Label styleName="aon-panelGrid-search-info-internal">LISTADO DE ITs</g:Label>
-								</g:HTMLPanel>
-								<g:HTMLPanel ui:field="employeeITPanel" styleName="{style.ml20} {style.mt10} {style.filterPanel}">
-									<g:HTMLPanel styleName="{style.flexPanel}">
-										<g:Label styleName="aon-outputLabel {style.pt4} {style.bold}">IT</g:Label>
-										<g:SuggestBox styleName="aon-selectOneMenu {style.ml9} {style.w600} {style.sb}" ui:field="itSB"></g:SuggestBox>
-									</g:HTMLPanel>
-									<g:HTMLPanel styleName="{style.flexPanel}">
-										<g:Label styleName="{style.pt4} {style.bold}">Mostrar Its :</g:Label>
-										<g:CheckBox ui:field="inactiveITsCB" styleName="{style.ml5} {style.pt2}"></g:CheckBox>
-										<g:Label styleName="{style.pt4}">En vigor</g:Label>
-									</g:HTMLPanel>
-								</g:HTMLPanel>
-							</g:HTMLPanel>
+							<g:HTMLPanel ui:field="filterITListPanel"></g:HTMLPanel>
 						
 						 	<g:HTMLPanel ui:field="mainITTablePanel" styleName="{style.mt10}">
 						 		<c:DataGrid ui:field="itDataGrid" styleName="{style.pointer}"></c:DataGrid>
