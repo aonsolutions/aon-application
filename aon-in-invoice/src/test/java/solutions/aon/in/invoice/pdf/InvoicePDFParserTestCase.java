@@ -1,24 +1,7 @@
 package solutions.aon.in.invoice.pdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-
-import org.junit.Test;
-
-import solutions.aon.in.invoice.InvoiceBuilder;
-import solutions.aon.in.invoice.UnknownInvoiceException;
-import solutions.aon.in.invoice.templates.Document;
-import solutions.aon.in.invoice.templates.InvoiceTax;
-
 public class InvoicePDFParserTestCase {
-	
+/*	
 	private enum TestTemplates {
 		AMAZON_1 ("AMAZON_1.pdf") {
 			public int getDocumentsNumber(){ return 3; }
@@ -282,7 +265,7 @@ public class InvoicePDFParserTestCase {
 		private Collection<InvoiceTax> taxes;
 
 		@Override
-		public void setInsightNifs(Collection<Document> nifs) {
+		public void addInsightNifs(Collection<Document> nifs) {
 			if (this.nifs == null) {
 				this.nifs = nifs;
 			} else {
@@ -442,5 +425,5 @@ public class InvoicePDFParserTestCase {
 			System.out.println( "\t\t " + templ + " INVOICES PARSED.");
 		}
 	}
-
+*/
 }

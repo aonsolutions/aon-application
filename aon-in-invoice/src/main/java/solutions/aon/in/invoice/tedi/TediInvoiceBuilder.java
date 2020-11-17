@@ -1,20 +1,25 @@
 package solutions.aon.in.invoice.tedi;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.TreeMap;
 
 import es.translogia.tedi.ewok.TediInsightInvoice;
 import es.translogia.tedi.ewok.TediInvoice;
+import es.translogia.tedi.ewok.TediInvoiceTax;
 import es.translogia.tedi.ewok.TediInvoiceType;
 import es.translogia.tedi.ewok.TediNif;
 import es.translogia.tedi.ewok.TediNifType;
+import es.translogia.tedi.ewok.TediTaxType;
 import solutions.aon.in.invoice.InvoiceBuilder;
 import solutions.aon.in.invoice.templates.Document;
 import solutions.aon.in.invoice.templates.Document.DocumentType;
 import solutions.aon.in.invoice.templates.InvoiceTax;
+import solutions.aon.in.invoice.templates.TaxType;
 
 public class TediInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 	
@@ -33,9 +38,15 @@ public class TediInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 	}
 	
 	@Override
-	public void setInsightNifs(Collection<Document> nifs) {
+	public void addInsightNifs(Collection<Document> nifs) {
+		TediInsightInvoice insight =  invoice.ensureInsights();
+		LinkedHashMap<String,TediNif> uniqueNifs = new LinkedHashMap<String, TediNif>();
+		if (insight.getNifs() != null) {
+			for (TediNif nif : insight.getNifs()) {
+				uniqueNifs.put(nif.getStr(), nif);
+			}
+		}
 		if (nifs != null && nifs.size() > 0) {
-			LinkedHashMap<String,TediNif> uniqueNifs = new LinkedHashMap<String, TediNif>();
 			LinkedList<TediNif> tediNifs = new LinkedList<TediNif>();
 			for (Document nif : nifs ) {
 				TediNif tediNif = new TediNif();
@@ -55,28 +66,34 @@ public class TediInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 					}
 				}
 			}
-			TediInsightInvoice insight =  invoice.ensureInsights();
-			insight.setNifs(tediNifs.toArray( new TediNif[tediNifs.size()] ));
+			insight.setNifs(uniqueNifs.values().toArray( new TediNif[uniqueNifs.size()] ));
 		}
 	}
 
 	@Override
-	public void setInsightDates(Collection<Date> dates) { 
+	public void addInsightDates(Collection<Date> dates) { 
+		TediInsightInvoice insight =  invoice.ensureInsights();
+		LinkedHashSet<Date> uniqueDates = new LinkedHashSet<Date>();
+		if (insight.getDates() != null) {
+			for (Date date : insight.getDates()) {
+				uniqueDates.add(date);
+			}
+		}
 		if (dates != null && dates.size() > 0) {
-			TediInsightInvoice insight =  invoice.ensureInsights();
-			insight.setDates(dates.toArray( new Date[dates.size()] ));
+			for (Date date : dates) {
+				uniqueDates.add(date);
+			}
+			insight.setDates(uniqueDates.toArray( new Date[uniqueDates.size()] ));
 			
 			// ----- Se asume la fecha que más se repite como fecha de factura
-			if (invoice.getDate() == null) {
-				TreeMap<Date, Integer> map = new TreeMap<>();
-				dates.forEach(e -> map.put(e, map.getOrDefault(e, 0) + 1));
+			if (!hasIssueDate()) {
+				Date limit = Date.from(LocalDateTime.of(LocalDateTime.now().getYear(), 1, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());
 				Date issueDate = null;
-				int i = -1;
-				for (Date id : map.keySet()) {
-					int x = map.get(id);
-					if (x > i) {
-						issueDate = id;
-						i =x;
+				for (Date date : dates) {
+					if ( !date.before(limit) ) {
+						if (issueDate == null || date.before(issueDate)) {
+							issueDate = date;
+						}
 					}
 				}
 				invoice.setDate(issueDate);
@@ -86,10 +103,17 @@ public class TediInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 	}
 
 	@Override
-	public void setInsightAmounts(Collection<Double> amounts) {
+	public void addInsightAmounts(Collection<Double> amounts) {
+		TediInsightInvoice insight =  invoice.ensureInsights();
+		LinkedHashSet<Double> uniqueAmouts = new LinkedHashSet<Double>();
+		if (insight.getAmounts() != null) {
+			for (Double amount : insight.getAmounts()) {
+				uniqueAmouts.add(amount);
+			}
+		}
 		if (amounts != null && amounts.size() > 0) {
-			TediInsightInvoice insight =  invoice.ensureInsights();
-			insight.setAmounts(amounts.toArray( new Double[amounts.size()] ));
+			uniqueAmouts.addAll(amounts);	
+			insight.setAmounts(uniqueAmouts.toArray( new Double[uniqueAmouts.size()] ));
 		}
 	}
 
@@ -100,24 +124,80 @@ public class TediInvoiceBuilder implements InvoiceBuilder<TediInvoice> {
 	}
 
 	@Override
+	public double getTotal() {
+		return invoice.getTotal();
+	}
+	@Override
 	public void setTotal(double total) {
 		invoice.setTotal(total);
 		
 	}
 
 	@Override
+	public LinkedList<InvoiceTax> getTaxes() {
+		if ( hasTaxes() )  {
+			LinkedList<InvoiceTax> taxes = new LinkedList<InvoiceTax>(); 
+			for ( TediInvoiceTax tediTax : invoice.getTaxes() ) {
+				taxes.add( new InvoiceTax()
+					.setType( (tediTax.getTaxType() == TediTaxType.IRPF  ? TaxType.IRPF : TaxType.IVA)  )
+					.setBase(tediTax.getBase())
+					.setPercent(tediTax.getPercentage())
+					.setQuota(tediTax.getQuota()));
+			}
+			return taxes;
+		}
+		return null;
+	}
+	@Override
 	public void setTax(InvoiceTax tax) {
 		if (tax != null) {
-			invoice.ensureVatTax(tax.getBase(), tax.getQuota(), tax.getPercent());
+			invoice.ensureTax( 
+				new TediInvoiceTax()
+					.setTaxType( (tax.getType() == TaxType.IRPF  ? TediTaxType.IRPF : TediTaxType.IVA)  )
+					.setBase(tax.getBase())
+					.setPercentage(tax.getPercent())
+					.setQuota(tax.getQuota()));
 		}
 	}
 	
+	@Override
+	public void setIssueDate(Date date) {
+		invoice.setDate(date);
+	}
+	
+	@Override
+	public void setReference(String reference) {
+		invoice.setReference(reference);
+	}
+	
+	@Override
+	public String getSenderDocument() {
+		if (hasSender()) {
+			return invoice.getSender().getDocument();
+		}
+		return null;
+	}
+	@Override
+	public boolean hasTaxes() {
+		return invoice.getTaxes() != null;
+	}
 	@Override
 	public boolean hasIssueDate() {
 		return invoice.getDate() != null;
 	}
 	@Override
-	public void setIssueDate(Date date) {
-		invoice.setDate(date);
+	public boolean hasReference() {
+		return invoice.getReference() != null;
 	}
+	@Override
+	public boolean hasTotal() {
+		return invoice.getTotal() != null;
+	}
+	@Override
+	public boolean hasSender() {
+		return invoice.getSender() != null 
+			&& invoice.getSender().getDocument() != null
+			&& invoice.getSender().getDocument().trim() != "";
+	}
+	
 }
