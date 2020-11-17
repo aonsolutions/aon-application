@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getMovements, getTest} from '../../services/service.js';
+import {getMovements, getIDC, getTA} from '../../services/service.js';
 import '../../components/aon-table.js';
 import '../../components/aon-toast.js';
 
@@ -52,7 +52,7 @@ export class AonMovementsList extends AonElement {
 				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
 				resp.map(resp=>{
-					let {name:nombres, ipf, fra:fecha, nss, CtaCti, regime} = resp;
+					let {name:nombres, ipf, fra:fecha} = resp;
 					// let identificacion = ipf.toString().substring(0,1);
 					let dni = ipf.toString().substring(1);
 					let data = {
@@ -63,17 +63,17 @@ export class AonMovementsList extends AonElement {
 							{
 								name:'Obtener TA',
 								icon:'print',
-								fn: (el) => this.getTa(data, el)
+								fn: (el) => this.getTa(resp, el)
 							},
 							{
 								name:'Obtener IDC',
 								icon:'print',
-								fn: (el) => this.getIdc(data, el)
+								fn: (el) => this.getIdc(resp, el)
 							},
 							{
 								name:'Anular',
 								icon:'delete',
-								fn: (el) => this.deleteMov(data, el)
+								fn: (el) => this.deleteMov(resp, el)
 							},
 						]
 					};
@@ -98,13 +98,12 @@ export class AonMovementsList extends AonElement {
 		}	
 	}
 
-
 	getTa(data, el){
-		alert("print TA");
+		getTA(data); // open pdf
 	}
 
-	getIdc(data, el){
-		alert("print IDC");
+	getIdc(data, el) {
+		getIDC(data); // open pdf
 	}
 
 	getFilter = () => JSON.parse(this.getAttribute('filter'));

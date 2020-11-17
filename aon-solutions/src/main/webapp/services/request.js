@@ -113,3 +113,18 @@ export const remove = (url, data) => {
 };
 
 export const getToken = () => localStorage.getItem("aon_session_id");
+
+
+export const openPDF = (url, data) => {
+  let token = getToken();
+  let domainId = localStorage.getItem("aon_domain_id");
+  let domainName = localStorage.getItem("aon_domain_name");
+  let datos = {
+    ...data,
+    domain_name: domainName,
+    session_id: token,
+    domain_id: domainId
+  }
+  let json = btoa(JSON.stringify(datos));
+  open(`${url}?json=${json}`)
+}
