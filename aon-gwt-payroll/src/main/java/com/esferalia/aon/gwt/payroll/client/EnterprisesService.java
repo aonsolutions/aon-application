@@ -217,5 +217,7 @@ public interface EnterprisesService extends RemoteService {
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData);
 
 	Map<String, String> getPayMethods(String currentDomainName);
+
+	void deleteDigitalCertificate(String currentDomainName, String currentUser, Byte type);
 	
 }

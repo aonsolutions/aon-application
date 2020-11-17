@@ -55,6 +55,23 @@ public class MainDigitalCertificatesObject {
 		});
 		
 	}
+	
+	public void deleteDigitalCertificate(String typeStr, Consumer<Void> success, Consumer<Throwable> failure){
+		Byte type = Byte.parseByte(typeStr);
+		impl.deleteDigitalCertificate(type, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void accept) {
+				getDigitalCertificates(s -> {
+					success.accept(accept);	
+				}, f -> {});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) { }
+		});
+		
+	}
 
 	public void setConfidential(byte certificateType, boolean isConfidential) {
 		checkAndCreateCertificateType(certificateType);
@@ -105,5 +122,8 @@ public class MainDigitalCertificatesObject {
 		
 		return false;
 	}
-		
+	
+	public List<DigitalCertificate> getDigitalCertificateList(){
+		return digitalCertificateList;
+	}
 }

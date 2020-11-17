@@ -2391,6 +2391,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public void deleteDigitalCertificate(String domainName, String userLogin, Byte type) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			JooqDigitalCertificate.deleteDigitalCertificate(connection, domainId, userId, type);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public MainCCCInfo getMainCCCInfoDataBase(String domainName, String userLogin) {

@@ -161,7 +161,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		int row = digitalCertificatesDataTable.insertRow(digitalCertificatesDataTable.getRowCount());
 		
 		// Type Label
-		Label typeL = new Label("Certificado Empresa");
+		Label typeL = new Label("Certificado Empresa (SEPE)");
 		
 		// Confidential CheckBox
 		CheckBox confidentialCB = new CheckBox();
@@ -194,13 +194,28 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		dateL.getElement().getStyle().setPaddingLeft(5, Unit.PX);
 		
 		// Upload & Download FormPanel
+		HorizontalPanel hFormPanel = new HorizontalPanel();
 		Widget formPanel = createFormPanel("0");
+		Button deleteCertificate = new Button();
+		deleteCertificate.setStyleName("aon-editDataTable-button aon-icon-refresh");
+		deleteCertificate.getElement().getStyle().setMarginTop(5, Unit.PX);
+		deleteCertificate.addClickHandler(e -> {
+			mainDigitalCertificatesObject.deleteDigitalCertificate("0",
+    				s -> {
+    					initPreview();
+    					insertRows();
+    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
+    				}, f -> {});
+		});
+		hFormPanel.add(formPanel);
+		if(mainDigitalCertificatesObject.hasData(Byte.parseByte("0")))
+			hFormPanel.add(deleteCertificate);
 		
 		//Add to table
 		digitalCertificatesDataTable.setWidget(row, 0, typeL);
 		digitalCertificatesDataTable.setWidget(row, 1, confidentialCB);
 		digitalCertificatesDataTable.setWidget(row, 2, hPanel);
-		digitalCertificatesDataTable.setWidget(row, 3, formPanel);
+		digitalCertificatesDataTable.setWidget(row, 3, hFormPanel);
 		digitalCertificatesDataTable.setWidget(row, 4, dateL);
 	}
 	
@@ -209,7 +224,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		int row = digitalCertificatesDataTable.insertRow(digitalCertificatesDataTable.getRowCount());
 		
 		// Type Label
-		Label typeL = new Label("Certificado Personal");
+		Label typeL = new Label("Certificado Personal (TGSS)");
 		
 		// Confidential CheckBox
 		CheckBox confidentialCB = new CheckBox();
@@ -242,13 +257,28 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		dateL.getElement().getStyle().setPaddingLeft(5, Unit.PX);
 		
 		// Upload & Download FormPanel
+		HorizontalPanel hFormPanel = new HorizontalPanel();
 		Widget formPanel = createFormPanel("1");
+		Button deleteCertificate = new Button();
+		deleteCertificate.setStyleName("aon-editDataTable-button aon-icon-refresh");
+		deleteCertificate.getElement().getStyle().setMarginTop(5, Unit.PX);
+		deleteCertificate.addClickHandler(e -> {
+			mainDigitalCertificatesObject.deleteDigitalCertificate("1",
+    				s -> {
+    					initPreview();
+    					insertRows();
+    					fillCertificatesRows(mainDigitalCertificatesObject.getDigitalCertificateList());
+    				}, f -> {});
+		});
+		hFormPanel.add(formPanel);
+		if(mainDigitalCertificatesObject.hasData(Byte.parseByte("1")))
+			hFormPanel.add(deleteCertificate);
 		
 		//Add to table
 		digitalCertificatesDataTable.setWidget(row, 0, typeL);
 		digitalCertificatesDataTable.setWidget(row, 1, confidentialCB);
 		digitalCertificatesDataTable.setWidget(row, 2, hPanel);
-		digitalCertificatesDataTable.setWidget(row, 3, formPanel);
+		digitalCertificatesDataTable.setWidget(row, 3, hFormPanel);
 		digitalCertificatesDataTable.setWidget(row, 4, dateL);
 	}
 	
@@ -259,7 +289,7 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		mainFlowPanel.setWidth("350px");
 		
 		TextBox fileNameTB = new TextBox();
-		fileNameTB.getElement().getStyle().setWidth(325, Unit.PX);
+		fileNameTB.getElement().getStyle().setWidth(305, Unit.PX);
 		if(mainDigitalCertificatesObject.hasData(Byte.parseByte(certificateTypeStr)))
 			fileNameTB.setValue(mainDigitalCertificatesObject.getDescription(Byte.parseByte(certificateTypeStr)));
 		
@@ -331,8 +361,8 @@ public class MainDigitalCertificates extends MainEntryPoint{
 		
 		formPanel.add(flowPanel);
 			
-		mainFlowPanel.add(formPanel);
 		mainFlowPanel.add(fileNameTB);
+		mainFlowPanel.add(formPanel);
 		return mainFlowPanel;
 	}
 

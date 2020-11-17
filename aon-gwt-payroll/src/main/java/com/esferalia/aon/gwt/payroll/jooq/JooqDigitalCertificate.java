@@ -213,6 +213,47 @@ public class JooqDigitalCertificate {
 			}
 		}
 	}
+	
+	public static void deleteDigitalCertificate(Connection conn, Integer domainId, Integer userId, Byte type) {
+		deleteDigitalCertificateDB(DSL.using(conn, getDefaultSettings()), domainId, userId, type);
+	}
+
+	private static void deleteDigitalCertificateDB(DSLContext dslContext, Integer domainId, Integer userId, Byte type) {
+		if(type == (byte)1) {
+			// TGSS CERTIFICATE
+			
+			Record userRecord = dslContext.select().from(USER).where(USER.ID.eq(userId)).fetchOne();
+			Integer registryUserId = userRecord.get(USER.REGISTRY);
+			
+			if(null != registryUserId) {
+				Record employeeCertificateRecord = dslContext.select().from(RATTACH).where(RATTACH.REGISTRY.eq(registryUserId)).and(RATTACH.TYPE.eq((byte)4)).fetchOne();
+				
+				if(null != employeeCertificateRecord)
+					dslContext.delete(RATTACH).where(RATTACH.ID.eq(employeeCertificateRecord.get(RATTACH.ID))).execute();
+				
+				Record tgssDigitalCertificatePasswordRecord = dslContext.select().from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryUserId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetchOne();
+				
+				if(null != tgssDigitalCertificatePasswordRecord)
+					dslContext.delete(RADDINFO).where(RADDINFO.ID.eq(tgssDigitalCertificatePasswordRecord.get(RADDINFO.ID))).execute();
+					
+			}
+		} else {
+			// SEPE CERTIFICATE
+			
+			Integer registryEntepriseId = dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(domainId)).fetchOne(ENTERPRISE.REGISTRY);
+	
+			Record enterpriseCertificateRecord = dslContext.select().from(RATTACH).where(RATTACH.REGISTRY.eq(registryEntepriseId)).and(RATTACH.TYPE.eq((byte)4)).fetchOne();
+			
+			if(null != enterpriseCertificateRecord)
+				dslContext.delete(RATTACH).where(RATTACH.ID.eq(enterpriseCertificateRecord.get(RATTACH.ID))).execute();
+				
+			Record sepeDigitalCertificatePasswordRecord = dslContext.select().from(RADDINFO).where(RADDINFO.REGISTRY.eq(registryEntepriseId)).and(RADDINFO.ATTRIBUTE.eq("DIGITAL_CERTIFICATE_PASSWORD")).fetchOne();
+			
+			if(null != sepeDigitalCertificatePasswordRecord)
+				dslContext.delete(RADDINFO).where(RADDINFO.ID.eq(sepeDigitalCertificatePasswordRecord.get(RADDINFO.ID))).execute();
+			
+		}
+	}	
 
 	public static void setDigitalCertificateData(String domainName, String userLogin, byte mimeType, String fileName, Byte certificateType, byte[] data) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
@@ -303,6 +344,6 @@ public class JooqDigitalCertificate {
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
 		} 
-	}	
+	}
 	
 }

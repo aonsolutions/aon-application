@@ -137,5 +137,7 @@ public interface EnterprisesServiceAsync {
 	void getContractBonus(String currentDomainName, Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setContractBonus(String currentDomainName, EmployeeContractInfo employeeContractData, AsyncCallback<Void> asyncCallback);
 	void getPayMethods(String currentDomainName, AsyncCallback<Map<String, String>> asyncCallback);
+	void deleteDigitalCertificate(String currentDomainName, String currentUser, Byte type,
+			AsyncCallback<Void> asyncCallback);
 	
 }

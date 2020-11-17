@@ -373,6 +373,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.setDigitalCertificates(getCurrentDomainName(), getCurrentUser(), digitalCertificateList, asyncCallback);
 	}
 	
+	public void deleteDigitalCertificate(Byte type, AsyncCallback<Void> asyncCallback) {
+		enterprisesServiceAsync.deleteDigitalCertificate(getCurrentDomainName(), getCurrentUser(), type, asyncCallback);
+	}
+	
 	public void getMainCCCInfoDataBase(AsyncCallback<MainCCCInfo> asyncCallback) {
 		enterprisesServiceAsync.getMainCCCInfoDataBase(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}

@@ -614,4 +614,10 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.getPayMethods(currentDomainName, new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}
 
+	@Override
+	public void deleteDigitalCertificate(String currentDomainName, String currentUser, Byte type, AsyncCallback<Void> callback) {
+		AON.start();
+		enterprisesServiceAsync.deleteDigitalCertificate(currentDomainName, currentUser, type, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 }
