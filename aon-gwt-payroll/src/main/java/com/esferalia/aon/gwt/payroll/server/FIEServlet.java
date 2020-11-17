@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
@@ -38,6 +39,7 @@ import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.in.payroll.tgss.fie.FieListener;
 import com.esferalia.aon.in.payroll.tgss.fie.FieParser;
+import com.esferalia.aon.jooq.tables.Domain;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.occam.api.AONContext;
@@ -75,13 +77,13 @@ public class FIEServlet extends HttpServlet implements FIEService {
 		try (OutputStream os = resp.getOutputStream(); 
 			AONContext ctx = AONContext.getAONContext(domainName,userLogin)
 			) {
-
+			
 			List<Integer> itIds = new ArrayList<Integer>();
 			
 			ctx.transaction( configuration -> {
 				for ( Part part : req.getParts() ) {
 					try ( InputStream is = part.getInputStream() ) {					
-						itIds.addAll(doFie(is, ctx.getDslContext()));
+						itIds.addAll(doFie(is, ctx.getDslContext(), ctx.getDomainId() ));
 					} catch ( IOException e ) {
 						LOGGER.log(Level.WARNING, part.getName()  + ", not a .FIE message.");
 					}
@@ -104,14 +106,14 @@ public class FIEServlet extends HttpServlet implements FIEService {
 	
 
 
-	private static Collection<Integer> doFie(InputStream is, DSLContext ctx) throws IOException, SQLException {
+	private static Collection<Integer> doFie(InputStream is, DSLContext ctx, Integer domainId ) throws IOException, SQLException {
 			List<Integer> ids = new ArrayList<Integer>();
 		
 			Fie2AON fie2AON = new Fie2AON() {
 				@Override
 				public void endDIT() {
 					try {
-						ids.add(addIT(ctx, getIt()));
+						ids.add(addIT(ctx, domainId, getIt()));
 					} catch ( EmployeeNotFoundexception e) {
 						
 					}
@@ -417,12 +419,12 @@ public class FIEServlet extends HttpServlet implements FIEService {
 	
 	public static void addIT(String domainName, Integer domainId, String userLogin, IT it) {
 		try (AONContext aonContext = AONContext.getAONContext(domainName, domainId, userLogin)) {
-			addIT(aonContext.getDslContext(), it);
+			addIT(aonContext.getDslContext(), domainId, it);
 		}
 		
 	}
 	
-	public static Integer addIT(DSLContext ctx , IT it) throws EmployeeNotFoundexception, TooManyEmployeesException {
+	public static Integer addIT(DSLContext ctx , Integer domainId, IT it) throws EmployeeNotFoundexception, TooManyEmployeesException {
 		java.sql.Date itStartDate = new java.sql.Date(it.getStartDate().getTime());
 		java.sql.Date itEndDate = it.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
 		
@@ -435,13 +437,28 @@ public class FIEServlet extends HttpServlet implements FIEService {
 			.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 			.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 			.innerJoin(ENTERPRISE_CCC).onKey()
-			.where(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
+			.where(ENTERPRISE_CCC.DOMAIN.eq(domainId))
+			.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
 			.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
 			.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
 			.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
 			.fetchOptionalInto(CONTRACT)
-			.orElseThrow(() -> new EmployeeNotFoundexception() );
-			; 
+			.orElseGet(() -> 			
+					ctx
+					.select()
+					.from(REGISTRY)
+					.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+					.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+					.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
+					.where(DOMAIN.PARENT.eq(domainId))
+					.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
+					.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
+					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+					.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+					.fetchOptionalInto(CONTRACT)
+					.orElseThrow(() -> new EmployeeNotFoundexception() ) 
+			);
 			
 			
 			try {
@@ -466,9 +483,8 @@ public class FIEServlet extends HttpServlet implements FIEService {
 				contractLeaveRecord.setEndDate(it.getEndDate().map(d -> itEndDate).orElse(null));
 		
 				contractLeaveRecord.store();
-				
+						
 				return contractLeaveRecord.getId();
-				
 				
 			} catch ( TooManyRowsException e) {
 				throw new TooManyITsException(e);
