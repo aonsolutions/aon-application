@@ -159,7 +159,7 @@ export class AonLogin extends AonElement {
 	buildLogo() {
 		let logo = document.getElementById('aonLoginLogoImg');
 		if(window.location.href.includes('ayudat')){
-			logo.src = 'assets/ayudat-logo.png';
+			logo.src = 'assets/ayudat-logo4.png';
 		} else if(window.location.href.includes('translogia') || window.location.href.includes('tedi')){
 			logo.src = '../assets/tedi-logo.png';
 		} else logo.src = 'assets/aon-logo.png';
