@@ -24,7 +24,7 @@ import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
-import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
@@ -1802,12 +1802,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private class EmployeeTreeSyncCallback implements SyncCallback {
 
-		private IndeterminateTask syncTask;
+		private Task syncTask;
 		private List<JsBases> jsBasess;
 		private List<JsRespuesta> jsRespuestas;
 		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss;
 
-		public EmployeeTreeSyncCallback(IndeterminateTask syncTask) {
+		public EmployeeTreeSyncCallback(Task syncTask) {
 			this.syncTask = syncTask;
 			this.jsBasess = new ArrayList<JsBases>(5);
 			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
@@ -2596,7 +2596,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 			progressPanel.addAttachHandler(e -> {
 				// Synchronize cret@ messages.
-				IndeterminateTask syncTask = new IndeterminateTask();
+				Task syncTask = new Task();
 				syncTask.setDescription("Sincronizando mensajes");
 				progressPanel.showIndeterminateTask(syncTask);
 				MainCreta.sync(new EmployeeTreeSyncCallback(syncTask), getCCs());

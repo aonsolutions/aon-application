@@ -28,7 +28,7 @@ import com.esferalia.aon.gwt.common.client.widget.DetailPanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel.MinimizeEvent;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
-import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.EmployeeTree.CretaCommand;
@@ -127,12 +127,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	
 	private class MainCretaSyncCallback implements SyncCallback {
 
-		private IndeterminateTask syncTask ;
+		private Task syncTask ;
 		private List<JsBases> jsBasess;
 		private List<JsRespuesta> jsRespuestas;
 		private List<JsTrabajadoresYTramos> jsTrabajadoresYTramoss ;
 		
-		public MainCretaSyncCallback(IndeterminateTask syncTask) {
+		public MainCretaSyncCallback(Task syncTask) {
 			this.syncTask = syncTask;
 			this.jsBasess = new ArrayList<JsBases>(5);
 			this.jsRespuestas = new ArrayList<JsRespuesta>(5);
@@ -432,7 +432,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	public void onEnterprises(List<Enterprise> enterprises) {
 		progressPanel.addAttachHandler(e ->  {
 			// Synchronize cret@ messages. 
-			IndeterminateTask syncTask = new IndeterminateTask();
+			Task syncTask = new Task();
 			syncTask.setDescription("Sincronizando mensajes");
 			progressPanel.showIndeterminateTask(syncTask);
 			//sync( new MainCretaSyncCallback(syncTask), enterprises.size() > 1 ? Collections.emptyList() : getCCCs(enterprises) );

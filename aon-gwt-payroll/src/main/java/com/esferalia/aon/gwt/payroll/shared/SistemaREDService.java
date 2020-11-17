@@ -33,6 +33,10 @@ public interface SistemaREDService {
 		public final native int getWorkplaceId() /*-{
 			return this.workplaceId;
 		}-*/;
+
+		public final native String getEmployeeName() /*-{
+			return this.employeeName;
+		}-*/;
 	}
 
 	public static final String SISTEMA_RED_URL = URL

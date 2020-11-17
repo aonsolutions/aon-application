@@ -520,13 +520,14 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		
 	}
 	
-	protected void newAffiliated(int count, int total) {
-		
-	}
-
 	protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults) {
 		
 	}
+
+	protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults, int total) {
+		
+	}
+
 	// ------------------------------------------------------------------------
 	
 	protected void removeAll() {
@@ -594,8 +595,8 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 			AON.stop();
 			newAffiliated(results);
 		},
-		count -> {
-			newAffiliated(count, affiliatedNotFound.length );
+		results -> {
+			newAffiliated(results, affiliatedNotFound.length );
 		}
 		);
 		
@@ -765,7 +766,7 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 		return formPanel;
 	}	
 
-	private void submit(AffiliatedNotFound affiliatedNotFound [], Consumer<JsArray<JsSistemaREDResults>> success, Consumer<Integer> progress) {
+	private void submit(AffiliatedNotFound affiliatedNotFound [], Consumer<JsArray<JsSistemaREDResults>> success, Consumer<JsArray<JsSistemaREDResults>> progress) {
 		
 		StringBuffer requestDataBuffer = new StringBuffer();
 		
@@ -803,8 +804,9 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 					success.accept(jsSistemaREDResults);
 				} else if ( state == XMLHttpRequest.LOADING ) {
 					try {
-						int count = xhr.getResponseText().split("employeeId", -1).length -1;
-						progress.accept( count );
+						JsArray<JsSistemaREDResults> jsSistemaREDResults = eval("("+ xhr.getResponseText() +"])");
+						if ( jsSistemaREDResults.length() > 0 )
+							progress.accept( jsSistemaREDResults );
 					} catch ( Exception e ) {
 						
 					}

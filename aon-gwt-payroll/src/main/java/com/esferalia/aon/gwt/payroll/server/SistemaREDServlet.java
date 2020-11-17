@@ -370,7 +370,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				
 				cccNafs.computeIfAbsent(new Pair(regime,ccc), k -> new ArrayList()).add(naf);
 	
-				byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d },", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
+				byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d, \"employeeName\":\"%s\" },", employee.getEmployeeId(), employee.getWorkplaceId(), employee.getName().orElse(naf)).getBytes();
 				os.write(content);	
 				os.flush();
 				contentLength += content.length;

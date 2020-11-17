@@ -16,17 +16,13 @@ import com.vaadin.polymer.paper.widget.PaperProgress;
 
 public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 
-	public static interface Task {
-		String getDescription();
-		void addTaskListener(TaskListener listener);
-	}
-
 	public static interface TaskListener {
 		void finished();
 		void messageChanged(String message);
+		void progressChanged(double progress);
 	}
 
-	public static class IndeterminateTask implements Task , TaskListener{
+	public static class Task implements TaskListener{
 		
 		private String description;
 		private List<TaskListener> listeners = new ArrayList<TaskListener>(); 
@@ -43,19 +39,23 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 				listener.messageChanged(message);
 		}
 		
+		@Override
+		public void progressChanged(double progress) {
+			for( TaskListener listener: listeners)
+				listener.progressChanged(progress);
+		}
+		
 		// 
 		 
-		@Override
 		public String getDescription() {
 			return description;
 		}
 		
-		@Override
 		public void addTaskListener(TaskListener listener) {
 			listeners.add(listener);
 		}
 		
-		public IndeterminateTask setDescription(String description) {
+		public Task setDescription(String description) {
 			this.description = description;
 			return this;
 		}
@@ -82,7 +82,7 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 
 
 	
-	public void showIndeterminateTask(final IndeterminateTask indeterminateTask){
+	public void showIndeterminateTask(final Task indeterminateTask){
 		
 		tasks.add(indeterminateTask);
 		
@@ -122,6 +122,12 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 			@Override
 			public void messageChanged(String message) {
 				flexTable.setText(messageRow, 0, message);
+			}
+			
+			@Override
+			public void progressChanged(double progress) {
+				paperProgress.setIndeterminate(false);
+				paperProgress.setValue(progress);
 			}
 		});
 	}

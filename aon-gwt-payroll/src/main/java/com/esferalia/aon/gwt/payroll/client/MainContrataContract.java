@@ -12,7 +12,7 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
-import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.IndeterminateTask;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -626,7 +626,7 @@ public class MainContrataContract extends MainEntryPoint {
 		mainContrataContractObject.checkStatus(enterpriseStatus -> {
 			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
 				
-				IndeterminateTask syncTask ;
+				Task syncTask ;
 				
 				@Override
 				public void up2Date() {
@@ -657,14 +657,8 @@ public class MainContrataContract extends MainEntryPoint {
 				}
 				
 				@Override
-				protected void newAffiliated(int count, int total ) {
-					selectProgressPanel();
-					syncTask.messageChanged("Importados " + count + " trabajadores de " + total + ".");
-				}
-				
-				@Override
 				protected void newAffiliated(JsArray<JsSistemaREDResults> jsSaltraResults ) {
-					syncTask.messageChanged("Importados " + jsSaltraResults.length() + " trabajadores de " + jsSaltraResults.length() + ".");
+					syncTask.messageChanged("Importados todos los trabajadores.");
 					syncTask.finished();
 					closeProgressPanel();
 					MainContrataContract.this.mainContrataContractObject.getEmployeesInfo(false,
@@ -677,9 +671,18 @@ public class MainContrataContract extends MainEntryPoint {
 					);	
 					run();
 				}
+
+				@Override
+				protected void newAffiliated(JsArray<JsSistemaREDResults> jsResults, int total ) {
+					selectProgressPanel();
+					syncTask.progressChanged( ( jsResults.length()  / (double) total ) * 100.00);
+					String lastEmployeeName = jsResults.get(jsResults.length()-1).getEmployeeName();
+					syncTask.messageChanged("Importado '" + lastEmployeeName  + "' (" + jsResults.length() + " de " + total + ").");
+				}
+				
 				
 				protected void newEmployees(AffiliatedNotFound affiliatedNotFound []) {
-					syncTask = new IndeterminateTask();
+					syncTask = new Task();
 					syncTask.setDescription("Importando trabajadores desde la Seguridad Social (Sistema R.E.D)");
 					progressPanel.showIndeterminateTask(syncTask);
 					super.newEmployees(affiliatedNotFound);
