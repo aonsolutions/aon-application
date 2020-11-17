@@ -287,7 +287,12 @@ export class AonInvoice extends AonElement {
 			tr.appendChild(tdSerie);
 			let series = document.getElementById('serie');
 			series.value = this._invoice.serie;
-			series.addEventListener('change', () => this.update('serie'));
+			series.addEventListener('change', () => {
+				this._invoice.reference = series.value
+					? series.value + '/' + this._invoice.number
+					: this._invoice.number;
+				this.update('serie');
+			});
 
 			// NUMBER
 			let tdNumber = document.createElement('td');
@@ -295,7 +300,12 @@ export class AonInvoice extends AonElement {
 			tr.appendChild(tdNumber);
 			let number = document.getElementById('number');
 			number.value = this._invoice.number;
-			number.addEventListener('change', () => this.update('number'));
+			number.addEventListener('change', () => {
+				this._invoice.reference = this._invoice.serie
+					? this._invoice.serie  + '/' + number.value
+					: number.value;
+				this.update('number')
+			});
 		} else {
 			// REFERENCE CODE
 			let tdReference = document.createElement('td');
@@ -358,8 +368,8 @@ export class AonInvoice extends AonElement {
 		tr3.appendChild(tdAddress);
 		let address = document.getElementById('address');
 		address.buildAddressValue(this.isEmitida()
-			? JSON.stringify(this._invoice.receiver ? this._invoice.receiver.address : {})
-			: JSON.stringify(this._invoice.sender ? this._invoice.sender.address : {}));
+			? JSON.stringify(this._invoice.receiver && this._invoice.receiver.address ? this._invoice.receiver.address : {})
+			: JSON.stringify(this._invoice.sender && this._invoice.sender.address ? this._invoice.sender.address : {}));
 		address.addEventListener('change', () => this.updateRegistry());
 
 		let tr4 = document.createElement('tr');
@@ -378,8 +388,8 @@ export class AonInvoice extends AonElement {
 		// PAYMETHOD
 		let tdPaymethod = document.createElement('td');
 		tdPaymethod.setAttribute('colspan', '2');
-		//tdPaymethod.innerHTML = `<aon-input id="pay_method" type="list" description="Forma de Pago"></aon-input>`;
-		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
+		tdPaymethod.innerHTML = `<aon-input id="pay_method" type="list" description="Forma de Pago"></aon-input>`;
+		//tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
 		tr4.appendChild(tdPaymethod);
 		let paymethod = document.getElementById('pay_method');
 		paymethod.options = JSON.stringify(Paymethods);

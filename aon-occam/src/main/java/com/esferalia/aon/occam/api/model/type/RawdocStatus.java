@@ -35,7 +35,7 @@ public enum RawdocStatus implements Serializable {
 	
 	public static RawdocStatus safeValueOf( String i ) {
 		for (RawdocStatus rs : values()) {
-			if(i.equalsIgnoreCase(rs.getDescription()))
+			if(i.equalsIgnoreCase(rs.name()) || i.equalsIgnoreCase(rs.getDescription()))
 				return rs;
 		}
 		return null;

@@ -85,7 +85,7 @@ export class AonTable extends HTMLElement {
 					td.innerHTML = `<aon-icon-button id="${this.getId()}IconOption" icon="more_vert"></aon-icon-button>`;
 					td.addEventListener('click', () => this.getOptions(tr,td, value[id]));
 				} else {
-					td.innerHTML = value[id];
+					td.innerHTML = value[id] ? value[id] : '';
 					td.addEventListener('click', fn);
 				}
 				tr.appendChild(td);
@@ -112,7 +112,7 @@ export class AonTable extends HTMLElement {
 				return {
 					icon,
 					name,
-					fn: () => fn(tr) 
+					fn: () => fn(tr)
 				};
 			})
 

@@ -1,10 +1,9 @@
 package net.aonsolutions.aon.api.servlet;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.util.Base64;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -19,35 +18,34 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Company;
-import com.esferalia.aon.occam.api.model.DataResponse;
-import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Filter;
-import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.attachment.AttachType;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
-import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
 import com.esferalia.aon.occam.api.model.security.User;
-import com.esferalia.aon.occam.api.model.type.DataResponseSource;
+import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.api.model.type.RawdocNature;
+import com.esferalia.aon.occam.api.model.type.RawdocStatus;
+import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
+import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.api.ewok.IConstants;
 import net.aonsolutions.aon.api.json.AonInvoiceJSON;
-import net.aonsolutions.aon.google.apis.drive.AonDrive;
+import net.aonsolutions.aon.tedi.TEDI;
+import net.aonsolutions.aon.tedi.TediContext;
+import net.aonsolutions.aon.tedi.TediException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonInvoiceServlet", urlPatterns = {"/ms/api/invoice/*"})
 public class InvoiceServlet extends HttpServlet{
 		
 	private static final Logger LOGGER  = Logger.getLogger(InvoiceServlet.class.getName());
-	private static final String INBOX = "inbox";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -139,99 +137,71 @@ public class InvoiceServlet extends HttpServlet{
 			AON_SOLUTIONS.getInvoices(domain.getName(), domain.getId(), "api", f -> invoiceFilter(f, domain.getId(), status, types))
 				.forEach(invoice -> jsArray.put(AonInvoiceJSON.toJSON(invoice, company)));
 		} else {
-			AON_SOLUTIONS.getDataResponseInvoices(domain.getName(), domain.getId(), login,
-				f -> f.getSourceProperty().eq(DataResponseSource.INVOICE.value())
-				.and(f.getCodeProperty().eq(status))
-				.and(f.getDetailVariableProperty().eq("json")))
-				.forEach(json -> jsArray.put(json));
+			RawdocStatus rs = getRawdocStatus(status);
+
+			AON.getRawdocStream(domain.getName(), domain.getId(), login, 
+				f -> f.getDomainProperty().eq(domain.getId())
+					.and(f.getStatusProperty().eq(rs.value())))
+			.forEach(r -> { 
+				JSONObject json = new JSONObject(r.getJson());
+				json.put("id", r.getId());
+				jsArray.put(json);
+			});
 		}
 		return jsArray;
 	}
 	
 	private void deleteInvoices(Domain domain, String login, LinkedList<Integer> ids) {
 		Integer[] idsArray = ids.toArray(new Integer[ids.size()]);
-		AON.deleteDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().in(idsArray));
-		AON.deleteDataResponse(domain.getName(), domain.getId(), login, f -> f.getIdProperty().in(idsArray));
+		AON.rawdocDelete(domain.getName(), domain.getId(), login, 
+			f -> f.getDomainProperty().eq(domain.getId())
+				.and(f.getIdProperty().in(idsArray)));
 	}
 	
 	private static JSONObject setInvoice(Domain domain, String login, JSONObject json) {
 		JSONObject file = null;
+		
 		if(json.opt("file")!= null) { 
 			file = json.opt("invoice") != null ? json.optJSONObject("file") : null;
 			json = json.opt("invoice") != null ? json.optJSONObject("invoice"): json;
 		}
 		Integer id = json.opt("id") !=null ? json.optInt("id") : null;
-		String status = json.opt("status") != null ? json.optString("status") : INBOX;
+		RawdocStatus status = getRawdocStatus(json.optString("status")); 
+		RawdocType type = json.opt("type") != null && json.optString("type").equalsIgnoreCase("emitida") 
+				? RawdocType.OUTPUT : RawdocType.INPUT;
 
-		DataResponse dr = new DataResponse()
+		Rawdoc rawdoc = new Rawdoc()
+				.setId(id)
 				.setDomain(domain.getId())
-				.setCode(status)
-				.setSource(DataResponseSource.INVOICE)
-				.setResponseDate(new Date());
+				.setNature(RawdocNature.INVOICE)
+				.setType(type)
+				.setStatus(status);
 		
-		if(id != null) {
-			dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.INVOICE, f -> f.getIdProperty().eq(id));
-			dr.setCode(status);
-			AON.updateDataResponse(domain.getName(), domain.getId(), login, dr, f -> f.getIdProperty().eq(id));
-		} else {
-			dr = AON.insertDataResponse(domain.getName(), domain.getId(), login, dr);
-			json.put("id", dr.getId());
-		}
-
-		Integer drId = dr.getId();
 		if(file != null) {
 			String base64 = file.optString("content");
-			String type = file.optString("contentType");
-			String fileName = file.optString("fileName");
+			String contentType = file.optString("contentType");
 			byte[] fileData = Base64.getDecoder().decode(base64);
-			Attach attach = new Attach(AttachType.DATA)
-				.setDomain(domain)
-				.setSource(DataAttachSource.INVOICE.value()) 
-				.setSourceId(drId)
-				.setType(DataAttachType.REQUEST.value())
-				.setDescription("invoice")
-				.setMimeType(MimeType.get(type))
-				.setData(fileData);
-			Integer attachId = AON.insertAttach(domain.getName(), domain.getId(), login, attach);
-			attach.setId(attachId);
-			DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
-		    Drive drive = AonDrive.getInstace().serviceInitialize(d);
-		    AonDrive.getInstace().sync(drive, new User().setLogin(login), attach, false);
-		    AonDrive.getInstace().setPermission(drive, attach.getDriveId());
-		    JSONObject f = new JSONObject();
-		    String str = "domain="+ domain.getId() + "&id=" + attach.getId() + "&attach_type=data";
-		    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-		    String url =  "ms/download_attachment/"  + domain.getName() + "/" + login + "/" +  result;
-		    f.put("url", url);
-		    f.put("type", type);
-		    json.put("file", f);
+			rawdoc.setData(fileData)
+				.setMimeType(MimeType.get(contentType));
 
-//			TEDI PARSER!!!		    
-//		    
-//		    InputStream input = new ByteArrayInputStream(fileData);
-//		    try {
-//		    	TediResult r = TEDI.parseInvoice(domain.getName(), domain.getId(), true, login, fileName, input);
-//		    	json = TediInvoiceJSON.toJSON(r.getTedi());
-//			} catch (TediException e) {
-//				e.printStackTrace();
-//			}
+			// TEDI PARSER!!!		    
+		    
+		    InputStream input = new ByteArrayInputStream(fileData);
+		    TediContext tctx = new TediContext()
+		    		.setDomainName(domain.getName())
+		    		.setDomain(domain.getId())
+		    		.setUser(login);
+			try {
+		    	TediResult r = TEDI.parse(tctx, input);
+		    	json = TediInvoiceJSON.toJSON(r.getTedi());
+			} catch (TediException e) {
+				e.printStackTrace();
+			}
 		}
-				
-		Optional<DataResponseDetail> drdOpt = AON.getDataResponseDetail(domain.getName(), domain.getId(), login, f -> f.getDataResponseProperty().eq(drId).and(f.getDataVariableProperty().eq("json")));
-		if(drdOpt.isPresent()) {
-			DataResponseDetail drd = drdOpt.get();
-			drd.setDataValue(json.toString());
-			AON.updateDataResponseDetail(domain.getName(), domain.getId(), login, drd, f -> f.getIdProperty().eq(drd.getId()));
-		} else {
-			DataResponseDetail drd = new DataResponseDetail()
-					.setDomain(domain.getId())
-					.setDataResponse(dr.getId())
-					.setDataVariable("json")
-					.setDataValue(json.toString());
-			drd = AON.insertDataResponseDetail(domain.getName(), domain.getId(), login, drd);
-		}
+    	rawdoc.setJson(json.toString());
 		
-		
+		rawdoc = AON.rawdocSave(domain.getName(), domain.getId(), login, rawdoc);
+		json.put("id", rawdoc.getId());
 		return json;
 	}
 	
@@ -258,6 +228,18 @@ public class InvoiceServlet extends HttpServlet{
 			} else if("trash".equals(status)) {
 				st = InvoiceStatus.TRASH;
 			}
+		}
+		return st;
+	}
+	
+	private static RawdocStatus getRawdocStatus(String status) {
+		RawdocStatus st = RawdocStatus.safeValueOf(status);
+		if(st == null) {
+			if("refused".equalsIgnoreCase(status)) {
+				st = RawdocStatus.REJECTED; 
+			} else if("trash".equalsIgnoreCase(status)) {
+				st = RawdocStatus.DRAFT;
+			} else st = RawdocStatus.INBOX;
 		}
 		return st;
 	}
