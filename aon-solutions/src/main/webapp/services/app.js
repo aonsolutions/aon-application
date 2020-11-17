@@ -177,23 +177,23 @@ export const OtherServices = {
     app: 'formacion',
     title: 'Formación',
     description: 'Formación.',
-    icon: 'atp',
-    color: '#535353',
+    icon: 'ayudat',
+    color: '#7792d1',
     moreInfo: 'https://ayudatpymes.com/formacion/formacion-bonificada/'
   },
   ACELERA: {
     app: 'acelera',
     title: 'Acelera',
     description: 'Acelera.',
-    icon: 'atp',
-    color: '#535353',
+    icon: 'ayudat',
+    color: '#ff5c41',
     moreInfo: 'https://ayudatpymes.com/despachos/aceleratudespacho/'
   },
   OUTSOURCING: {
     app: 'outsourcing',
     title: 'Outsourcing',
     description: 'Outsourcing.',
-    icon: 'atp',
+    icon: 'ayudat',
     color: '#535353',
     moreInfo: 'https://ayudatpymes.com/despachos/outsourcing/'
   }

@@ -172,6 +172,9 @@ export class AonMenu extends AonElement {
 				aonMenuSidenav.style.width = '0px';
 				rootPanel.style.marginRight = '0px';
 			}
+			document.querySelectorAll("[id^='aonMenuListApp-']").forEach((item, i) => {
+				item.style.display = 'none';
+			});
 			this.buildMenu();
 		});
 
@@ -428,7 +431,7 @@ export class AonMenu extends AonElement {
 		}
 		switch(app.app){
 			case Apps.ACCOUNTING.app:
-				return '#D8B03D';
+				return Apps.ACCOUNTING.color;
 			case Apps.FISCAL.app:
 				if(company && company.administration && 'ALAVA' === company.administration){
 					return '#a30c51';
@@ -440,9 +443,9 @@ export class AonMenu extends AonElement {
 					return '#da002a';
 				} else return '#3a85c3';
 			case Apps.PAYROLL.app:
-				return '#90BD75';
+				return Apps.PAYROLL.color;
 			case Apps.TOOLS.app:
-				return 'gray';
+				return Apps.TOOLS.color;
 			default: return app.color ? app.color : '#f1f1f1';
 		}
 	}

@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import { Apps, Services, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
+import { Apps, Services, OtherServices, AccountingMenu, PayrollMenu, AeatFiscalMenu, ArabaFiscalMenu,
 	 GipuzkoaFiscalMenu, BizkaiaFiscalMenu, NavarraFiscalMenu, ToolsMenu} from  '../../services/app.js';
 import {getDomainApps, setDomainApp} from  '../../services/service.js';
 import {bidoq} from  '../../services/bidoq.js';
@@ -69,33 +69,6 @@ export class AonDesktop extends AonElement {
 		}
   }
 
-	getAppToolbarBackgroundColor(app) {
-		let company;
-		if(this.getAttribute('company')){
-			company = JSON.parse(this.getAttribute('company'));
-		}
-		switch(app){
-			case Apps.ACCOUNTING.app:
-				return '#D8B03D';
-			case Apps.FISCAL.app:
-				if(company && company.administration && 'ALAVA' === company.administration){
-					return '#a30c51';
-				} else if(company && company.administration && 'BIZKAIA' === company.administration){
-					return '#d70004';
-				} else if(company && company.administration && 'GIPUZKOA' === company.administration){
-					return '#a1c031';
-				} else if(company && company.administration && 'NAVARRA' === company.administration){
-					return '#da002a';
-				} else return '#3a85c3';
-			case Apps.PAYROLL.app:
-				return '#90BD75';
-			case Apps.TOOLS.app:
-				return 'gray';
-			default: return '#f1f1f1';
-		}
-	}
-
-
 	build(r) {
 		this.innerHTML = `
 			<aon-application id="aonDesktopMain" title="Desktop" main="true"></aon-application>
@@ -140,7 +113,7 @@ export class AonDesktop extends AonElement {
 					 	icon: Apps[key].icon,
 					 	color: Apps[key].color
 					},
-					fn: () => alert('Panel ' + Apps[key].title)
+					fn: () => this.appSelection(Apps[key].app)
 				}
 				appOptions.push(option);
 			}
@@ -218,6 +191,12 @@ export class AonDesktop extends AonElement {
 			if(r.includes(Apps[key].app)) {
 				let li = document.createElement('li');
 				li.className = 'list-group-item';
+				li.style.borderRight = '0px';
+				li.style.borderLeft = '0px';
+				li.style.cursor = 'pointer';
+				li.addEventListener('click', () => {
+					this.appSelection(Apps[key].app);
+				});
 				let span = document.createElement('span');
 				span.style.margin = '20px';
 
@@ -238,23 +217,28 @@ export class AonDesktop extends AonElement {
 				buttons.style.position = 'absolute';
 				buttons.style.right = '10px';
 
-				let moreInfo = document.createElement('a');
-				moreInfo.style.margin = '10px';
-				moreInfo.style.color = 'gray';
-				moreInfo.style.cursor = 'pointer';
-				moreInfo.innerHTML = 'Más Info';
-				moreInfo.addEventListener('click', () => {
-					window.open('https://www.aonsolutions.es/');
-				});
-				buttons.appendChild(moreInfo);
+				// let moreInfo = document.createElement('a');
+				// moreInfo.style.margin = '10px';
+				// moreInfo.style.color = 'gray';
+				// moreInfo.style.cursor = 'pointer';
+				// moreInfo.innerHTML = 'Más Info';
+				// moreInfo.addEventListener('click', () => {
+				// 	window.open('https://www.aonsolutions.es/');
+				// });
+				// buttons.appendChild(moreInfo);
 
-				let open = document.createElement('button');
-				open.type = 'button';
-				open.className = 'btn btn-outline-dark';
-				open.style.width = '100px';
-				open.style.borderRadius = '25px';
-				open.innerHTML = 'Abrir';
-				buttons.appendChild(open);
+				let i = this.createElement('i');
+				i.className = 'material-icons';
+				i.innerHTML = 'keyboard_arrow_right';
+				buttons.appendChild(i);
+
+				// let open = document.createElement('button');
+				// open.type = 'button';
+				// open.className = 'btn btn-outline-dark';
+				// open.style.width = '100px';
+				// open.style.borderRadius = '25px';
+				// open.innerHTML = 'Abrir';
+				// buttons.appendChild(open);
 				span.appendChild(buttons);
 				li.appendChild(span);
 				ul.appendChild(li);
@@ -262,12 +246,13 @@ export class AonDesktop extends AonElement {
   	}
 		div.appendChild(ul);
 
-		div.appendChild(this.buildTitle('DESCUBRIR'));
+		div.appendChild(this.buildTitle('DISPONIBLES'));
 
-		this.buildCards(div, r);
+		this.buildDisponibles(div, r);
 
 		div.appendChild(this.buildTitle('OTROS SERVICIOS'));
-		// TODO
+
+		this.buildOtherServices(div, r);
 	}
 
 	buildTitle(title) {
@@ -279,8 +264,121 @@ export class AonDesktop extends AonElement {
 		return div;
 	}
 
-	buildCards(el, r) {
+	buildDisponibles(el, r) {
+		let ul = document.createElement('ul');
+		ul.className = 'list-group';
+		el.appendChild(ul);
+		for (let key in Apps){
+			if(!r.includes(Apps[key].app))
+				this.buildListElement(ul, Apps, key, r);
+		}
+		for (let key in Services){
+			if(!r.includes(Services[key].app))
+			this.buildListElement(ul, Services, key, r);
+		}
+	}
 
+	buildOtherServices(el, r) {
+		let ul = document.createElement('ul');
+		ul.className = 'list-group';
+		el.appendChild(ul);
+		for (let key in OtherServices){
+			this.buildListElement(ul, OtherServices, key, r);
+		}
+	}
+
+	buildListElement(ul, apps, key, r){
+		let li = document.createElement('li');
+		li.className = 'list-group-item';
+		ul.appendChild(li);
+		let span = document.createElement('span');
+		span.style.margin = '20px';
+		li.appendChild(span);
+
+		if(apps[key].icon) {
+			let dispId = "aonDesktopDisponibles" + apps[key].app;
+			span.innerHTML = `<aon-icon id="${dispId}" icon="${apps[key].icon}" color="lightgrey" size="30px"></aon-icon>`;
+
+			li.addEventListener('mouseover', () => {
+				this.getElement(dispId).setAttribute('color', apps[key].color);
+			});
+
+			li.addEventListener('mouseleave', () => {
+				this.getElement(dispId).setAttribute('color', 'lightgrey');
+			});
+		} else {
+			let img = document.createElement('img');
+			img.style.width = '30px';
+			img.src = apps[key].logo;
+			span.appendChild(img);
+		}
+
+		let span2 = document.createElement('span');
+		span2.className = 'aonAppTitle';
+		span2.innerHTML = apps[key].title;
+		span.appendChild(span2);
+
+		let buttons = document.createElement('span');
+		buttons.style.position = 'absolute';
+		buttons.style.right = '10px';
+
+		let moreInfo = document.createElement('a');
+		moreInfo.style.margin = '10px';
+		moreInfo.style.color = 'gray';
+		moreInfo.style.cursor = 'pointer';
+		moreInfo.innerHTML = 'Más Info';
+		moreInfo.addEventListener('click', () => {
+			window.open(apps[key].moreInfo ? apps[key].moreInfo : 'https://www.aonsolutions.es/');
+		});
+		buttons.appendChild(moreInfo);
+		let contratado = r.includes(apps[key].app)
+		let contratar = document.createElement('button');
+		contratar.style.width = '110px';
+		contratar.style.padding = '0.3rem 0.8rem';
+		contratar.style.borderRadius = '25px';
+		contratar.innerHTML = contratado ? 'Desactivar' : 'Contratar';
+		contratar.style.backgroundColor = '#002469';
+		contratar.style.opacity = contratado ? '0.3' : '1';
+		if(OtherServices[key])  {
+			buttons.style.right = '120px';
+			contratar.disabled = true;
+			contratar.style.backgroundColor= 'lightgrey';
+		}
+		contratar.addEventListener('click', () => {
+			rootPanel('<aon-marketplace></aon-marketplace>');
+		});
+		if(!OtherServices[key])  {
+			buttons.appendChild(contratar);
+		}
+		span.appendChild(buttons);
+
+		return li;
+	}
+
+	appSelection(app) {
+		switch(app){
+			case Apps.DOCUMENTAL.app:
+				startModule('aon_gwt_aio', 'documents');
+				break;
+			case Apps.ACCOUNTING.app:
+				rootPanel('<aon-contable></aon-contable>')
+				break;
+			case Apps.FISCAL.app:
+				rootPanel('<aon-fiscal></aon-fiscal>')
+				break;
+			case Apps.PAYROLL.app:
+				rootPanel('<aon-laboral></aon-laboral>')
+				break;
+			case Apps.COMUNICA.app:
+				rootPanel('<aon-comunica></aon-comunica>');
+				break;
+			case Apps.INVOICE.app:
+				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+				break;
+			case Apps.TIMECONTROL.app:
+				rootPanel('<aon-signin></aon-signin>');
+				break;
+		}
 	}
 
 }
