@@ -92,21 +92,21 @@ export class AonMenu extends AonElement {
 				startModule('aon_gwt_aio', 'documents');
 				break;
     	case Apps.ACCOUNTING.app:
-				if(this._roles.includes('ACCOUNTING_MANAGER')) {
+				if(this._roles.includes('ADMIN') && this._roles.includes('ACCOUNTING_MANAGER')) {
 					this.buildAppMenu(Apps.ACCOUNTING);
 				} else {
 					rootPanel('<aon-contable></aon-contable>')
 				}
 				break;
 			case Apps.FISCAL.app:
-				if(this._roles.includes('FISCAL_MANAGER')) {
+				if(this._roles.includes('ADMIN') && this._roles.includes('FISCAL_MANAGER')) {
 					this.buildAppMenu(Apps.FISCAL);
 				} else {
 					rootPanel('<aon-fiscal></aon-fiscal>')
 				}
 				break;
 			case Apps.PAYROLL.app:
-				if(this._roles.includes('PAYROLL_MANAGER')) {
+				if(this._roles.includes('ADMIN') && this._roles.includes('PAYROLL_MANAGER')) {
 					this.buildAppMenu(Apps.PAYROLL);
 				} else {
 					rootPanel('<aon-laboral></aon-laboral>')
