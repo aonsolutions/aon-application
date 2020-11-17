@@ -23,12 +23,12 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+
 import solutions.aon.seg.social.objects.Employee;
-import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
-import solutions.aon.seg.social.toolkit.Toolkit;
+
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ComunicaServlet", urlPatterns = {"/ms/api/comunica/*"})
@@ -60,20 +60,9 @@ public class ComunicaServlet extends HttpServlet{
 			
 		
 			if(pathInfo  != null) {
-				 
 				if("movements".equalsIgnoreCase(pathInfo[1])) {// mov de empleados prev de empleados
 					content = gjson.toJson(this.getMovements()).getBytes();
 				} 
-				else if("get-ta".equalsIgnoreCase(pathInfo[1])) { // obtener TA
-//					String regimen = req.getParameter(regimen);
-//					String ccc = req.getParameter(ccc);
-//					String nss = req.getParameter(nss);
-//					String fecha = req.getParameter(fecha);
-//					content = gjson.toJson(this.getTa(regimen, ccc, nss, Toolkit.parseDate(fecha, "YYYY-MM-dd"))).getBytes();
-				}
-				else if("get-idc".equalsIgnoreCase(pathInfo[1])) { // obtener IDC
-					
-				}
 			}
 
 		} 
@@ -129,10 +118,4 @@ public class ComunicaServlet extends HttpServlet{
 		return EmployeesAll;
 	}
 	
-	private byte[] getTa(String regimen, String ccc, String nss, Date date) throws SegSocialException {
-		final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
-	    byte[] Employees = SistemaRED.getTA(certificateInputStream, "jg@FNMT", "pkcs12", nss, regimen, ccc, date);	
-	    
-	    return Employees;
-	}
 }
