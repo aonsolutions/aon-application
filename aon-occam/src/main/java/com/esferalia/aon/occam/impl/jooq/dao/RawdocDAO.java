@@ -154,12 +154,51 @@ public class RawdocDAO {
 			.set(RAWDOC.MIME_TYPE,rawdoc.getMimeType() == null? null : rawdoc.getMimeType().value())
 			.set(RAWDOC.DATA,rawdoc.getData())
 			.set(RAWDOC.CREATION_USER,ctx.getUser())
-			.set(RAWDOC.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
+			.set(RAWDOC.CREATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.returning(RAWDOC.ID)
 			.fetchOne()
 			.getValue(RAWDOC.ID);
 		ctx.log().info("INSERT RAWDOC id: " + id);
 		return get(ctx, id);
+	}
+	
+	private static Rawdoc update(AONContext ctx, Rawdoc rawdoc) {
+		ctx.checkWrite();
+
+		Rawdoc r = get(ctx, rawdoc.getId());
+
+		RawdocValidation.validateRawdoc(ctx, rawdoc);
+		ctx.getDslContext()
+			.update(RAWDOC)
+			.set(RAWDOC.DOMAIN,rawdoc.getDomain())
+			.set(RAWDOC.NATURE,rawdoc.getNature().value())
+			.set(RAWDOC.TYPE  ,rawdoc.getType().value())
+			.set(RAWDOC.STATUS,rawdoc.getStatus().value())
+			.set(RAWDOC.JSON,rawdoc.getJson())
+			.set(RAWDOC.LOG, getLogArray(ctx, r, rawdoc.getStatus(), null))
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
+			.where(RAWDOC.ID.eq(rawdoc.getId()))
+			.execute();
+		ctx.log().info("UPDATE RAWDOC id: " + rawdoc.getId());
+		return get(ctx, rawdoc.getId());
+	}
+	
+	public static Rawdoc save(AONContext ctx, Rawdoc rawdoc) {
+		ctx.checkWrite();
+		return rawdoc.getId() != null
+			? update(ctx, rawdoc)
+			: insert(ctx, rawdoc);
+	}
+	
+	public static void delete(AONContext ctx, RawdocFilter filter) {
+		ctx.checkWrite();
+		
+		int count = ctx.getDslContext()
+			.delete(RAWDOC)
+			.where(RAWDOC_PROPERTIES.getConditions(filter))
+			.execute();
+		ctx.log().info("DELETE RAWDOC " + filter.toString() + " ("+count+" filas)");
 	}
 	
 	public static void delete(AONContext ctx, Integer domain, Integer id) {
@@ -206,7 +245,9 @@ public class RawdocDAO {
 		int count = ctx.getDslContext()
 			.update(RAWDOC)
 			.set(RAWDOC.STATUS,RawdocStatus.DRAFT.value())
-			.set(RAWDOC.LOG, getLogArray(ctx, r.getLog(), RawdocStatus.DRAFT, null ) )
+			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.DRAFT, null ) )
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (DRAFT) id: " + rawdocId + " ("+count+" filas)");
@@ -218,7 +259,9 @@ public class RawdocDAO {
 		int count = ctx.getDslContext()
 			.update(RAWDOC)
 			.set(RAWDOC.STATUS,RawdocStatus.REJECTED.value())
-			.set(RAWDOC.LOG, getLogArray(ctx, r.getLog(), RawdocStatus.REJECTED, reason ) )
+			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.REJECTED, reason ))
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (REJECTED) id: " + rawdocId + " ("+count+" filas)");
@@ -230,14 +273,16 @@ public class RawdocDAO {
 		int count = ctx.getDslContext()
 			.update(RAWDOC)
 			.set(RAWDOC.STATUS,RawdocStatus.INBOX.value())
-			.set(RAWDOC.LOG, getLogArray(ctx, r.getLog(), RawdocStatus.INBOX, null ) )
+			.set(RAWDOC.LOG, getLogArray(ctx, r, RawdocStatus.INBOX, null ) )
+			.set(RAWDOC.MODIFICATION_USER, ctx.getUser())
+			.set(RAWDOC.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()))
 			.where(RAWDOC.ID.equal(rawdocId))
 			.execute();
 		ctx.log().info("UPDATE RAWDOC (INBOX) id: " + rawdocId + " ("+count+" filas)");
 	}
 	
-	private static String getLogArray(AONContext ctx, String log, RawdocStatus status,String reason) {
-		JSONArray jsonLog = new JSONArray( log==null?"[]":log );
+	private static String getLogArray(AONContext ctx, Rawdoc r, RawdocStatus status, String reason) {
+		JSONArray jsonLog = new JSONArray( r.getLog()==null?"[]":r.getLog());
 		HashMap<String,String> map = new HashMap<String,String>();
 		map.put(ACTION_DATE  ,DATE_FORMAT.format(new Date()));
 		map.put(ACTION_USER  ,ctx.getUser() );

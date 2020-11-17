@@ -119,6 +119,8 @@ public interface IFinance {
 	public Stream<Rawdoc> getRawdocStream(AONContext ctx, RawdocFilter filter, int offset, int limit);
 	public LinkedList<RawdocDomainData> getRawdocDomainData(AONContext ctx, int searchDomain);
 	public Rawdoc getRawdocFull(AONContext ctx, int id);
+	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc);
+	void rawdocDelete(AONContext ctx, RawdocFilter filter);
 	void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId);
 	void rawdocToDraft(AONContext ctx, Integer rawdocId);
 	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);

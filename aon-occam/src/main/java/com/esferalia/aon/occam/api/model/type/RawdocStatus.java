@@ -33,4 +33,11 @@ public enum RawdocStatus implements Serializable {
 		return RawdocStatus.values()[i];
 	}
 	
+	public static RawdocStatus safeValueOf( String i ) {
+		for (RawdocStatus rs : values()) {
+			if(i.equalsIgnoreCase(rs.getDescription()))
+				return rs;
+		}
+		return null;
+	}
 }

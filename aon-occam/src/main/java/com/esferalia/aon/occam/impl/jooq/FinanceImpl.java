@@ -337,6 +337,19 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Rawdoc rawdocSave(AONContext ctx, Rawdoc rawdoc) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.save(ctx, rawdoc));			
+	}
+	
+	@Override
+	public void rawdocDelete(AONContext ctx, RawdocFilter filter) {
+		ctx.getDslContext().transaction(configuration -> {
+			RawdocDAO.delete(ctx, filter);
+		} );			
+	}
+	
+	@Override
 	public void rawdocDelete(AONContext ctx, Integer domain, Integer rawdocId) {
 		ctx.getDslContext().transaction(configuration -> {
 			RawdocDAO.delete(ctx, domain, rawdocId);

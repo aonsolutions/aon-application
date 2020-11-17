@@ -6007,11 +6007,28 @@ public class AON {
 		}
 	}
 
+	public static Rawdoc rawdocSave(String domainName, int domain, String user, Rawdoc rawdoc) {
+		try (AONContext ctx = AONContext.getAONContext(domainName, domain, user)){
+			return getFinance().rawdocSave(ctx, rawdoc);
+		}	
+	}
+	
 	public static void rawdocDelete(String domainName, int domain, String user, Integer rawdocId) {
 		AONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			getFinance().rawdocDelete(ctx, domain, rawdocId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+	
+	public static void rawdocDelete(String domainName, int domain, String user, RawdocFilter filter) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			getFinance().rawdocDelete(ctx, filter);
 		} finally {
 			if (ctx != null)
 				ctx.close();
