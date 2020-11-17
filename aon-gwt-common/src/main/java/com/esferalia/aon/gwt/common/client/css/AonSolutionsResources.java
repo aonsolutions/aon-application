@@ -15,6 +15,18 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-ocr.png")
 	ImageResource aonOcrDrop();
 	
+	@Source("icons/aon-icon-tgss.png")
+	ImageResource aonIconTgss();
+	
+	@Source("icons/aon-icon-tgss-idc.png")
+	ImageResource aonIconTgssIdc();
+	
+	@Source("icons/aon-icon-tgss-afi.png")
+	ImageResource aonIconTgssAfi();
+	
+	@Source("icons/aon-icon-tgss-ta.png")
+	ImageResource aonIconTgssTa();
+	
 	@Source("icons/aon-icon-add.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAdd();
@@ -206,10 +218,6 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-delete-forever.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconDeleteForever();
-	
-	@Source("icons/aon-icon-tgss.svg")
-	@MimeType("image/svg+xml")
-	DataResource aonIconTgss();
 	
 }
 

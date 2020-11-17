@@ -112,6 +112,12 @@ input[type="checkbox"]:focus + label {
 .aon_icon_delete_forever { background-image: iconDeleteForever;}
 @url iconTgss aonIconTgss;
 .aon_icon_tgss { background-image: iconTgss;}
+@url iconTgssIdc aonIconTgssIdc;
+.aon_icon_tgss_idc { background-image: iconTgssIdc;}
+@url iconTgssAfi aonIconTgssAfi;
+.aon_icon_tgss_afi { background-image: iconTgssAfi;}
+@url iconTgssTa aonIconTgssTa;
+.aon_icon_tgss_ta { background-image: iconTgssTa;}
 
 /* BASICS */
 .aon_selector {
