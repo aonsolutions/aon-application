@@ -11,7 +11,9 @@ public class IssueDateParser {
 		String[] patterns = {
 				"Fecha de emisi.n de factura.*"+DateParser.DATES_PATTERN+"\\b",
 				"Fecha de factura.*"+DateParser.DATES_PATTERN+"\\b",
-				"Fecha de emisi.n.*"+DateParser.DATES_PATTERN+"\\b"
+				"Fecha de emisi.n.*"+DateParser.DATES_PATTERN+"\\b",
+				"Fecha emisi.n.*"+DateParser.DATES_PATTERN+"\\b",
+				"Fecha operaci.n.*"+DateParser.DATES_PATTERN+"\\b"
 			};
 		Date issueDate = null;
 		for (String pat : patterns) {

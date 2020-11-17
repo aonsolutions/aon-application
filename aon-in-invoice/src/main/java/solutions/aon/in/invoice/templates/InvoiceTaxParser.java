@@ -7,15 +7,42 @@ import solutions.aon.in.invoice.InvoiceBuilder;
 public class InvoiceTaxParser {
 	
 	private static final double IVA_PERCENTS [] = {21.0, 10.0, 4.0};
+	private static final double IRPF_PERCENTS [] = {19.0};
 
 	public static void setTaxes(List<Double> collection, InvoiceBuilder<?> handler) {
 		Double[] amounts = collection.stream().sorted((a1,a2)-> Double.compare(Math.abs(a2), Math.abs(a1))).toArray(Double[]::new);
 		
 		@SuppressWarnings("unused")
-		boolean something = 
-				simpleVATInvoice(amounts,handler)
-			|| complexVATInvoice(amounts,handler)
-			;
+		boolean something = simpleVATInvoice(amounts,handler);
+		if ( !something) {
+			complexVATInvoice(amounts,handler);
+			simpleIRPFInvoice(amounts, handler);
+			if ( handler.hasTaxes() ) {
+				double total = 0.0;
+				for ( InvoiceTax tax : handler.getTaxes() ) {
+					if (tax.getType() == TaxType.IVA) {
+						total = total + tax.getBase() + tax.getQuota();
+					}
+					if (tax.getType() == TaxType.IRPF) {
+						total = total - tax.getQuota();
+					}
+				}
+				int indexOfTotal = indexOf(amounts, total, 0);
+				if ( indexOfTotal >= 0 ) {
+					handler.setTotal( amounts[indexOfTotal]);
+				} else {
+	
+					//TODO
+					// Identificarcar aquellas lineas de IVA, únicas por porcentaje, que, sumadas 
+					// entre si den un numero (total) que exista en la factura
+					
+					
+				}
+			}
+		}
+		
+//		if (taxAdded) {
+//		}
 		
 	}
 	
@@ -76,10 +103,7 @@ public class InvoiceTaxParser {
 		return matched;
 	}
 	
-	private static boolean complexVATInvoice(Double[] amounts, InvoiceBuilder<?> handler) {
-		boolean taxAdded = false;
-		boolean matched = false;
-		double total = 0.0;
+	private static void complexVATInvoice(Double[] amounts, InvoiceBuilder<?> handler) {
 		for (int i = 0; i < amounts.length; i++) {
 			if (amounts[i] != 0.0) {
 				double base = amounts[i];
@@ -87,8 +111,6 @@ public class InvoiceTaxParser {
 					double quota = base * percentage / 100.0;
 					int indexOfQuota = indexOf(amounts, quota, i+1);
 					if ( indexOfQuota >= 0 ) {
-						taxAdded = true;
-						total = total + amounts[i] + amounts[indexOfQuota];  
 						handler.setTax(
 								new InvoiceTax()
 								.setType( TaxType.IVA )
@@ -100,20 +122,26 @@ public class InvoiceTaxParser {
 				}
 			}
 		}
-		if (taxAdded) {
-			int indexOfTotal = indexOf(amounts, total, 0);
-			if ( indexOfTotal >= 0 ) {
-				matched = true;
-				handler.setTotal( amounts[indexOfTotal]);
-			} else {
+	}
 
-				//TODO
-				// Identificarcar aquellas lineas de IVA, únicas por porcentaje, que, sumadas 
-				// entre si den un numero (total) que exista en la factura
-				
-				
+	private static void simpleIRPFInvoice(Double[] amounts, InvoiceBuilder<?> handler) {
+		for (int i = 0; i < amounts.length; i++) {
+			if (amounts[i] != 0.0) {
+				double base = amounts[i];
+				for (double percentage : IRPF_PERCENTS ) {
+					double quota = base * percentage / 100.0;
+					int indexOfQuota = indexOf(amounts, quota, i+1);
+					if ( indexOfQuota >= 0 ) {
+						handler.setTax(
+								new InvoiceTax()
+								.setType( TaxType.IRPF )
+								.setBase(amounts[i])
+								.setPercent(percentage )
+								.setQuota(amounts[indexOfQuota])
+								);
+					}
+				}
 			}
 		}
-		return matched;
 	}
 }

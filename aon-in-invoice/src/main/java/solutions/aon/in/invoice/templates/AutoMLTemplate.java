@@ -16,13 +16,16 @@ public class AutoMLTemplate extends AbstractTemplate {
 
 	@Override
 	public InvoiceTemplate parse(String text, InvoiceBuilder<?> handler) throws IOException, UnknownInvoiceException {
-		handler.setInsightNifs(DocumentParser.getNifs(text));
+		handler.addInsightNifs(DocumentParser.getNifs(text));
+		if ( handler.hasSender() && !handler.hasReference()) {
+			handler.setReference(ReferenceParser.getReference(handler.getSenderDocument(), text));		
+		}
 		if (!handler.hasIssueDate()) {
 			handler.setIssueDate(IssueDateParser.getIssueDate(text));
 		}
-		handler.setInsightDates(DateParser.getDates(text));
+		handler.addInsightDates(DateParser.getDates(text));
 		List<Double> amounts = AmountParser.getAmounts(text); 
-		handler.setInsightAmounts(amounts);
+		handler.addInsightAmounts(amounts);
 		InvoiceTaxParser.setTaxes(amounts, handler);
 		handler.setInsightTotals(TotalParser.getAmounts(text));
 		return this;

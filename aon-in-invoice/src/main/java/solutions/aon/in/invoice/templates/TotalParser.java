@@ -14,7 +14,8 @@ public class TotalParser {
 		Locale ES = new Locale("es");
 		String ds = Character.toString(DecimalFormatSymbols.getInstance( ES ).getDecimalSeparator());
 		String gs = Character.toString(DecimalFormatSymbols.getInstance( ES ).getGroupingSeparator());
-
+		System.out.println( "DecimalSeparator ..: " + ds);
+		System.out.println( "GroupingSeparator ..: " + gs);
 		String digitPattern = "(?<integ>-?\\+?(\\d+\\"+gs+")*\\d+)"+"\\"+ds+"(?<fract>\\d+)";
 		
 		String[] patterns = {
@@ -73,8 +74,7 @@ public class TotalParser {
 	}
 
 	public static void main(String[] args) {
-		String text = "TOTAL IMPORTE FACTURA: -835,95 € Dirección de suministro:  C/ COBALTO, 21  47012 VALLADOLID";
-				;
+		String text = "Total Factura 						105,50";
 		Collection<Double> totals = TotalParser.getAmounts( text );
 		System.out.println( "Totals..:" );
 		for (Double total : totals) {

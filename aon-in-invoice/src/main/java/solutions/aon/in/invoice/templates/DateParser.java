@@ -146,8 +146,7 @@ public class DateParser {
 
 	public static void main(String[] args) {
 		Collection<Date> dates = DateParser.getDates(
-			"Madrid, 19Â NoviembreÂ 2018 Factura TA5ZH0179306 TelÃ©fono: 945290461 PÃ¡gina 1/2"
-		);
+			"Información de la factura Id de la factura CI0003829550-1020 Fecha emisión 31/10/2020 Período Facturación 01/10/2020 - 31/10/2020 Fecha Vencimiento 07/11/2020" );
 		for (Date date : dates) {
 			System.out.println( date );
 		}
