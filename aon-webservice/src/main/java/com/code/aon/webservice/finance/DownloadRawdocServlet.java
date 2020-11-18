@@ -39,27 +39,26 @@ public class DownloadRawdocServlet extends HttpServlet {
 		if (rawdoc == null)  {
 			throw new ServletException("Documento no encontrado");
 		}
-		if (rawdoc.getData() == null)  {
-			throw new ServletException("El documento no contiene attach");
+		if (rawdoc.getData() != null)  {
+	        Integer length = rawdoc.getData().length;
+	
+	        ByteArrayInputStream bais = new ByteArrayInputStream(rawdoc.getData());
+	        resp.addHeader("Content-Disposition","attachment; filename=\"RAWDOC_" + rawdoc.getId() + "." + rawdoc.getMimeType().getExtension()+"\"");
+	        resp.setContentType(rawdoc.getMimeType().getName());
+	        if (length > 0 && length <= Integer.MAX_VALUE)
+	        	resp.setContentLength((int)length);
+	        ServletOutputStream out = resp.getOutputStream();
+	        resp.setBufferSize(32768);
+	        int bufSize = resp.getBufferSize();
+	        byte[] buffer = new byte[bufSize];
+	        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
+	        int bytes;
+	        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0) {
+	        	out.write(buffer, 0, bytes);
+	        }
+	        bis.close();
+	        bais.close();
+	        out.flush();
+	        out.close();
 		}
-        Integer length = rawdoc.getData().length;
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(rawdoc.getData());
-        resp.addHeader("Content-Disposition","attachment; filename=\"RAWDOC_" + rawdoc.getId() + "." + rawdoc.getMimeType().getExtension()+"\"");
-        resp.setContentType(rawdoc.getMimeType().getName());
-        if (length > 0 && length <= Integer.MAX_VALUE)
-        	resp.setContentLength((int)length);
-        ServletOutputStream out = resp.getOutputStream();
-        resp.setBufferSize(32768);
-        int bufSize = resp.getBufferSize();
-        byte[] buffer = new byte[bufSize];
-        BufferedInputStream bis = new BufferedInputStream(bais,bufSize);
-        int bytes;
-        while ((bytes = bis.read(buffer, 0, bufSize)) >= 0) {
-        	out.write(buffer, 0, bytes);
-        }
-        bis.close();
-        bais.close();
-        out.flush();
-        out.close();
     }}

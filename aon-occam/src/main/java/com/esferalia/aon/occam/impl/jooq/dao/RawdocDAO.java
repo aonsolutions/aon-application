@@ -371,5 +371,17 @@ public class RawdocDAO {
 		jsonLog.put(json);
 		return jsonLog.toString();
 	}
+
+	public static boolean hasData(AONContext ctx, Integer rawdocId ) {
+		return ctx.getDslContext()
+				.select( RAWDOC.ID )
+				.from(RAWDOC)
+				.where(RAWDOC.ID.eq(rawdocId))
+				.and(RAWDOC.DATA.isNotNull())
+				.fetch()
+				.stream()
+				.findFirst()
+				.isPresent();
+	}
 	
 }

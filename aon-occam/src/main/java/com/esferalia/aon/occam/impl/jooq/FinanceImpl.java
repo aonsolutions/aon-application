@@ -389,4 +389,9 @@ public class FinanceImpl implements IFinance {
 			RawdocDAO.toInbox(ctx, rawdocId);
 		} );			
 	}
+	@Override
+	public boolean rawdocHasData(AONContext ctx, Integer rawdocId) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> RawdocDAO.hasData(ctx, rawdocId));
+	}
 }

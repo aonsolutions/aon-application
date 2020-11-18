@@ -128,6 +128,7 @@ public interface IFinance {
 	void rawdocToDraft(AONContext ctx, Integer rawdocId);
 	void rawdocToRejected(AONContext ctx, Integer rawdocId, String reason);
 	void rawdocToInbox(AONContext ctx, Integer rawdocId);
+	boolean rawdocHasData(AONContext ctx, Integer rawdocId);
 	
 }
 	

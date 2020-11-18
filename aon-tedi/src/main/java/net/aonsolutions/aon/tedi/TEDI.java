@@ -124,6 +124,7 @@ public class TEDI {
 			result.getAccountingInvoice().setAttach(attach);
 			return result;
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new TediException(e.getMessage());
 		} finally {
 			if (ctx != null && mustCloseCtx)

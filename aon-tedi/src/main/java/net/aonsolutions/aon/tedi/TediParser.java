@@ -1,8 +1,6 @@
 package net.aonsolutions.aon.tedi;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -28,6 +26,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceWithholding;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
+import com.esferalia.aon.occam.api.model.registry.RAddress;
 import com.esferalia.aon.occam.api.model.tedi.TediContextKey;
 import com.esferalia.aon.occam.api.model.tedi.TediResult;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
@@ -523,27 +522,49 @@ public class TediParser {
 		
 	}
 
+	private static TediRegistry getCompanyTediRegistry( Company company ) {
+		RAddress address = company.getAddress();
+		return new TediRegistry()
+				.setDocument(company.getDocument())
+				.setDocumentCountry( (company.getDocumentCountry() == null?Country.ES:company.getDocumentCountry()).getIso2())
+				.setName(company.getName())
+				.setAddress( new TediAddress()
+					.setAddress( address ==null?null:address.getAddress())
+					.setCity( address ==null?null:address.getCity())
+					.setCountry( address ==null?null: (address.getCountry()==null?null:address.getCountry().getIso2()))
+					.setProvince( address ==null?null: (address.getGeozoneName()==null?null:address.getGeozoneName() ) )
+					.setPostalCode(( address ==null?null:address.getZip()) )
+						);
+	}
+	
 	private static void checkSenderAndReceiver(AonConfiguration aonCtx, TediInvoice tedi) {
 		Company company = aonCtx.getCompany();
-		
-		List<TediRegistry> registries =  new ArrayList<TediRegistry>();
-		if ( tedi.getSender() != null )
-			registries.add( tedi.getSender());
-		if ( tedi.getReceiver() != null )
-			registries.add(tedi.getReceiver());
-		
-		tedi.setSender(null);
-		tedi.setReceiver(null);
-		
-		registries.stream()
-		.filter(r -> AonStringUtils.equalsIgnoreCase(r.getDocument(), company.getDocument()))
-		.findFirst().ifPresent(r -> tedi.setReceiver(r));
-		;
-		
-		registries.stream()
-		.filter(r -> !AonStringUtils.equalsIgnoreCase(r.getDocument(), company.getDocument()))
-		.findFirst().ifPresent(r -> tedi.setSender(r));
-		;
+		if ( tedi.isEmitida() && (tedi.getSender() == null  || AonStringUtils.isBlank( tedi.getSender().getDocument()))  ) {
+			tedi.setSender( getCompanyTediRegistry(company) );
+		}
+		if ( !tedi.isEmitida() && (tedi.getReceiver() == null  || AonStringUtils.isBlank( tedi.getReceiver().getDocument()))  ) {
+			tedi.setReceiver( getCompanyTediRegistry(company) );
+		}
+
+//		List<TediRegistry> registries =  new ArrayList<TediRegistry>();
+//		if ( tedi.getSender() != null )
+//			registries.add( tedi.getSender());
+//		if ( tedi.getReceiver() != null )
+//			registries.add(tedi.getReceiver());
+//		
+//		tedi.setSender(null);
+//		tedi.setReceiver(null);
+//		
+//		registries.stream()
+//		.filter(r -> AonStringUtils.equalsIgnoreCase(r.getDocument(), company.getDocument()))
+//		.findFirst().ifPresent(r -> tedi.setReceiver(r));
+//		;
+//		
+//		registries.stream()
+//		.filter(r -> !AonStringUtils.equalsIgnoreCase(r.getDocument(), company.getDocument()))
+//		.findFirst().ifPresent(r -> tedi.setSender(r));
+//		;
+
 		
 	}
 

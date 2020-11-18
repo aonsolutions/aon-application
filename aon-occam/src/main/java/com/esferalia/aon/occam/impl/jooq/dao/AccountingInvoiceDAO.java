@@ -803,8 +803,12 @@ public class AccountingInvoiceDAO {
 			DataUrl unserialized = serializer.unserialize(data);
 			attach.setData( unserialized.getData() );
 		}
-		Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
-		ctx.log().info("INSERT INVOICE ATTACH (invoice: "+ accInvoice.getAttach().getAttachModule() + " id : " +  attachId + ")");
+		if (attach.getData() != null) {
+			Integer attachId = AttachmentDAO.insertInvoiceAttach(ctx, accInvoice.getAttach());
+			ctx.log().info("INSERT INVOICE ATTACH (invoice: "+ accInvoice.getAttach().getAttachModule() + " id : " +  attachId + ")");
+		} else {
+			ctx.log().info("INSERT INVOICE ATTACH (NO NEEDED - NO DATA)");
+		}
 		if ( accInvoice.isTediParsed()) {
 			RawdocDAO.delete(ctx, accInvoice.getInvoice().getDomain(), accInvoice.getAttach().getId());
 		}

@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
-import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
@@ -110,7 +109,6 @@ import com.esferalia.aon.occam.api.model.Filter.UserScopeFilter;
 import com.esferalia.aon.occam.api.model.Filter.UserWorkgroupFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseFilter;
 import com.esferalia.aon.occam.api.model.Filter.WarehouseTransferFilter;
-import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.FiscalParameters;
 import com.esferalia.aon.occam.api.model.MailAccount;
@@ -128,6 +126,7 @@ import com.esferalia.aon.occam.api.model.Task;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.WorkplaceFilter;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.commission.Commission;
@@ -6084,6 +6083,17 @@ public class AON {
 		try {
 			ctx = AONContext.getAONContext(domainName, domain, user);
 			getFinance().rawdocToInbox(ctx, rawdocId);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	public static boolean rawdocHasData(String domainName, int domain, String user, Integer rawdocId) {
+		AONContext ctx = null;
+		try {
+			ctx = AONContext.getAONContext(domainName, domain, user);
+			return getFinance().rawdocHasData(ctx, rawdocId);
 		} finally {
 			if (ctx != null)
 				ctx.close();

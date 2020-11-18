@@ -37,24 +37,27 @@ public class RawdocServiceImpl extends AonStatelessRemoteServiceServlet implemen
 	
 	@Override
 	public TediResult parse(String domainName, int domain, String user, Integer rawdocId) throws AonCoreException {
-		HttpServletRequest req = getThreadLocalRequest();
-		String scheme = req.getScheme();
-		String serverName = req.getServerName();
-		String contextPath = req.getContextPath();
-		int serverPort = req.getServerPort();
-		
-		StringBuilder baseURL = new StringBuilder();
-		baseURL.append(scheme).append("://").append(serverName);
-	    if (serverPort != 80 && serverPort != 443) {
-	    	baseURL.append(":").append(serverPort);
-	    }
-	    baseURL.append("/").append(contextPath);
-	    String params = "domain="+ domain + "&id=" +  rawdocId;
-		params = Base64.getEncoder().encodeToString(params.getBytes());
-		String url = baseURL.toString() + "/ms/download_rawdoc" 
-				+ "/" + domainName 
-				+ "/" + user 
-				+ "/" +  params;
+		String url = null;
+		if (AON.rawdocHasData(domainName, domain,user,rawdocId)) {
+			HttpServletRequest req = getThreadLocalRequest();
+			String scheme = req.getScheme();
+			String serverName = req.getServerName();
+			String contextPath = req.getContextPath();
+			int serverPort = req.getServerPort();
+			
+			StringBuilder baseURL = new StringBuilder();
+			baseURL.append(scheme).append("://").append(serverName);
+			if (serverPort != 80 && serverPort != 443) {
+				baseURL.append(":").append(serverPort);
+			}
+			baseURL.append("/").append(contextPath);
+			String params = "domain="+ domain + "&id=" +  rawdocId;
+			params = Base64.getEncoder().encodeToString(params.getBytes());
+			url = baseURL.toString() + "/ms/download_rawdoc" 
+					+ "/" + domainName 
+					+ "/" + user 
+					+ "/" +  params;
+		}
 		try {
 			TediContext tctx = new TediContext()
 				.setDomainName(domainName)

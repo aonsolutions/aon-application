@@ -31,7 +31,7 @@ public enum TediInvoiceJSON {
 		(invoice, json) -> json.put(IConstants.COMPANY, invoice.getCompany())
 	),
 	TYPE(
-		(invoice, json) -> invoice.setType(json.optEnum(TediInvoiceType.class, IConstants.TYPE)),
+		(invoice, json) -> invoice.setType( TediInvoiceType.safeValueof( json.optString(IConstants.TYPE) )),
 		(invoice, json) -> json.put(IConstants.TYPE, invoice.getType())
 	),
 	SERIES(
