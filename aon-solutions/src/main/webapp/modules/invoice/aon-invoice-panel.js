@@ -10,6 +10,8 @@ export class AonInvoicePanel extends AonElement {
 
 	selected;
 
+	INPUTFILE;
+
 	get status() {
 		return this.getAttribute('status');
 	}
@@ -20,12 +22,14 @@ export class AonInvoicePanel extends AonElement {
 
 	constructor () {
 		super();
+		this.INPUTFILE = 'aonInvoiceInputFile';
 	}
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-application id="aonInvoice" title="Facturas"></aon-application>
+			<aon-application id="aonInvoice" title="Facturas" drag_and_drop="true"></aon-application>
 			<aon-dialog id="aonDialogAddOption" type="menu" > </aon-dialog>
+			<input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
 		`;
 		this.build();
 	}
@@ -33,14 +37,19 @@ export class AonInvoicePanel extends AonElement {
   build(){
 		let aonInvoice = document.getElementById('aonInvoice');
 
+		let input = this.getElement(this.INPUTFILE);
+
+		input.addEventListener('change', () => this.preview(input.files));
+
+		aonInvoice.addEventListener('drop', (event) => {
+			if(event && event.dataTransfer && event.dataTransfer.files){
+				this.preview(event.dataTransfer.files);
+			}
+		});
+
 		aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 		aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
 
-		let input = document.createElement('input');
-		input.id = 'aonInvoiceToolbarUploadButtonInput'
-		input.style.display = 'none';
-		input.type = 'file';
-		input.addEventListener('change', () => this.preview());
 		this.appendChild(input);
 
 		let pendingOptions = [
@@ -144,19 +153,18 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvoiceFile() {
-		let el = document.getElementById('aonInvoiceToolbarUploadButtonInput');
+		let el = this.getElement(this.INPUTFILE);
 		el.click();
 	}
 
-	preview() {
-		let fileInput = document.getElementById('aonInvoiceToolbarUploadButtonInput');
-		const file = fileInput.files[0];
-
-		const READER = new FileReader();
-		READER.readAsDataURL(file);
-		READER.onload = (_event) => {
-			this.attach(READER.result, file.type);
-		};
+	preview(files) {
+		for(let i = 0; i < files.length; i++) {
+			const READER = new FileReader();
+			READER.readAsDataURL(files[i]);
+			READER.onload = (_event) => {
+				this.attach(READER.result, files[i].type);
+			};
+		}
 	}
 
 	attach(fileDataUri,  mimetype){
@@ -170,10 +178,11 @@ export class AonInvoicePanel extends AonElement {
 				},
 				invoice: new Invoice('recibida')
 			};
-			// let aonInvoice = document.getElementById('aonInvoice');
-			// aonInvoice.startLoader();
+			let aonInvoice = document.getElementById('aonInvoice');
+			aonInvoice.startLoader();
 			insertInvoice(data).then((r) => {
-				//aonInvoice.stopLoader();
+ 				this.aonInvoiceList({status:'inbox'})
+ 				aonInvoice.stopLoader();
 				//this.getInvoice().id = r.id;
 			});
 		}

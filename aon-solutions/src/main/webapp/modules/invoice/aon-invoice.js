@@ -381,7 +381,7 @@ export class AonInvoice extends AonElement {
 		// CATEGORY
 		let tdCategory = document.createElement('td');
 		tdCategory.setAttribute('colspan', '2');
-		tdCategory.innerHTML = `<aon-input id="category" type="list" description="Categoría"></aon-input>`;
+		tdCategory.innerHTML = `<aon-select id="category" title="Categoría"></aon-select>`;
 		tr4.appendChild(tdCategory);
 		let category = document.getElementById('category');
 		category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));
@@ -391,8 +391,7 @@ export class AonInvoice extends AonElement {
 		// PAYMETHOD
 		let tdPaymethod = document.createElement('td');
 		tdPaymethod.setAttribute('colspan', '2');
-		tdPaymethod.innerHTML = `<aon-input id="pay_method" type="list" description="Forma de Pago"></aon-input>`;
-		//tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
+		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
 		tr4.appendChild(tdPaymethod);
 		let paymethod = document.getElementById('pay_method');
 		paymethod.options = JSON.stringify(Paymethods);
@@ -420,7 +419,7 @@ export class AonInvoice extends AonElement {
 		// TRANSACTION
 		let tdTransaction = document.createElement('td');
 		tdTransaction.setAttribute('colspan', '4');
-		tdTransaction.innerHTML = `<aon-input id="transaction" type="list" description="Tipo Transacción"></aon-input>`;
+		tdTransaction.innerHTML = `<aon-select id="transaction" title="Tipo Transacción"></aon-select>`;
 		tr1.appendChild(tdTransaction);
 		let transaction = document.getElementById('transaction');
 		transaction.options = JSON.stringify(Transactions);
@@ -635,7 +634,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL VAT
 		let tdDetailVat = document.createElement('td');
-		tdDetailVat.innerHTML = `<aon-input id="detailVat${i}" type="list" description="%IVA"></aon-input>`;
+		tdDetailVat.innerHTML = `<aon-select id="detailVat${i}" title="%IVA"></aon-select>`;
 		tr.appendChild(tdDetailVat);
 		let detailVat = document.getElementById('detailVat' + i);
 		detailVat.options = JSON.stringify(TaxIVAPercentage);
@@ -780,7 +779,7 @@ export class AonInvoice extends AonElement {
 
 		// TAXTYPE
 		let tdTaxType = document.createElement('td');
-		tdTaxType.innerHTML = `<aon-input id="taxType${i}" type="list" description="Tipo"></aon-input>`;
+		tdTaxType.innerHTML = `<aon-select id="taxType${i}" title="Tipo"></aon-select>`;
 		tr.appendChild(tdTaxType);
 		let taxType = document.getElementById('taxType' + i);
 		taxType.options = JSON.stringify(TaxType);
@@ -788,7 +787,7 @@ export class AonInvoice extends AonElement {
 
 		// TAXPERCENT
 		let tdTaxPercentage= document.createElement('td');
-		tdTaxPercentage.innerHTML = `<aon-input id="taxPercentage${i}" type="list" description="%"></aon-input>`;
+		tdTaxPercentage.innerHTML = `<aon-input id="taxPercentage${i}" ="%"></aon-input>`;
 		tr.appendChild(tdTaxPercentage);
 		let taxPercentage = document.getElementById('taxPercentage' + i);
 		taxPercentage.options = JSON.stringify( tax.type === 'IVA' ? TaxIVAPercentage : TaxIRPFPercentage);
@@ -1032,7 +1031,7 @@ export class AonInvoice extends AonElement {
 
 		// FINANCE PAYMETHOD
 		let tdDetailPaymethod = document.createElement('td');
-		tdDetailPaymethod.innerHTML = `<aon-input id="financePaymethod${i}" type="list" description="Forma de Pago"></aon-input>`;
+		tdDetailPaymethod.innerHTML = `<aon-select id="financePaymethod${i}" title="Forma de Pago"></aon-select>`;
 		tr.appendChild(tdDetailPaymethod);
 		let financePaymethod = document.getElementById('financePaymethod' + i);
 		financePaymethod.options = JSON.stringify(Paymethods);
