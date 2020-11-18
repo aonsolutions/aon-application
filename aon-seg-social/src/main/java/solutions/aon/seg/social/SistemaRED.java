@@ -16,7 +16,12 @@ import solutions.aon.seg.social.objects.Employee;
 public class SistemaRED {
 
 	public SistemaRED() {}
-	
+
+	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream, final String certificatePassword,
+													  final String certificateType, String regimen, String ccc) throws SegSocialException {
+		return SistemaRedEmployee.getTotalEmployees(certificateInputStream,certificatePassword,certificateType,regimen,ccc);
+	}
+
 	public static Collection<Employee> getEmployees(final byte certificateData [], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException 
 	{

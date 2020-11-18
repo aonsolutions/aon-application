@@ -3,6 +3,10 @@ package solutions.aon.seg.social.exceptions.invalidData;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 
 public class InvalidDataException extends SegSocialException{
+
+	public InvalidDataException(){}
+	public InvalidDataException(String msg){super(msg);}
+
 	public static void checkCode(Integer statusCode) throws SegSocialException {
 		switch (statusCode) {
 		case 221:
@@ -14,10 +18,9 @@ public class InvalidDataException extends SegSocialException{
 		case 4860:
 			throw new NotAllFilledException();
 		case 3030:
-			throw new WrongRegimeException();
-		case 3260:
-			throw new WrongRegimeException();
-		case 3066:
+			case 3260:
+				throw new WrongRegimeException();
+			case 3066:
 			throw new SyntaxException();
 		case 3820:
 			throw new WrongAffNumber();

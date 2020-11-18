@@ -26,7 +26,16 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 	
 public class SistemaRedEmployee {
-	
+
+		//GETS BOTH REAL AND PREVIUS EMPLOYEES
+		public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream, final String certificatePassword,
+														  final String certificateType, String regimen, String ccc) throws SegSocialException {
+			ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream,certificatePassword,certificateType,regimen,ccc);
+			ArrayList<Employee> prevs = (ArrayList<Employee>) getPrevEmployees(certificateInputStream,certificatePassword,certificateType,regimen,ccc);
+			employees.addAll(prevs);
+			return employees;
+		}
+
 		//CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIES
 		private static Employee employeeFullInfo(String nss ,WebClient webClient) throws IOException, InterruptedException, SegSocialException {
 			
