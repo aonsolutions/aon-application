@@ -100,7 +100,15 @@ export class AonInput extends AonElement {
 
 	set options(options) {
 		this.setAttribute('options', options);
-	}
+  }
+  
+  get maxlength(){
+    return this.getAttribute('maxlength');
+  }
+
+  set maxlength(maxlength){
+    this.setAttribute('maxlength', maxlength);
+  }
 
   attributeChangedCallback(name, oldValue, newValue) {
     //console.log(`attribute ${name} change!! ${newValue}`);
@@ -194,6 +202,12 @@ export class AonInput extends AonElement {
     input.required = this.getAttribute('required');
     input.id = this.getAttribute('id') + 'Input';
     input.name = this.getAttribute('name');
+    let maxlength = this.getAttribute('maxlength');
+
+    if(maxlength) {
+      input.setAttribute("maxlength", maxlength);
+      input.setAttribute("oninput", "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);");
+    }
     input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
     input.type = this.getAttribute('type') && !this.isTypeList() ? this.getAttribute('type') : 'text';
     if('date' === this.getAttribute('type')){

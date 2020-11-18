@@ -1,8 +1,8 @@
-// import {AonElement} from './AonElement.js';
+import {AonElement} from './AonElement.js';
 import '../../components/aon-checkbox.js';
 import '../../components/aon-dialog.js';
 
-export class AonTable extends HTMLElement {
+export class AonTable extends AonElement {
 
 		columns;
 
@@ -44,11 +44,11 @@ export class AonTable extends HTMLElement {
 			`;
 
 			if(this.hasAttribute('selectable')) {
-				let header = document.getElementById(this.getId() + 'TableHeader');
+				let header = this.getElement(this.getId() + 'TableHeader');
 				let th = document.createElement('th');
 				th.innerHTML = '<aon-checkbox id="aonTableAllSelection"> </aon-checkbox>';
 				header.appendChild(th);
-				let ch = document.getElementById('aonTableAllSelection');
+				let ch = this.getElement('aonTableAllSelection');
 				ch.addEventListener('change',() => {
 					document.querySelectorAll('aon-checkbox').forEach((item, i) => {
 						item.value = ch.value;
@@ -59,7 +59,7 @@ export class AonTable extends HTMLElement {
 		}
 
 		addColumn(name, type, id) {
-			let header = document.getElementById(this.getId() + 'TableHeader');
+			let header = this.getElement(this.getId() + 'TableHeader');
 			let th = document.createElement('th');
 			th.innerHTML = name;
 			this.columns.push({name, type, id});
@@ -67,7 +67,8 @@ export class AonTable extends HTMLElement {
 		}
 
 		addRow(value, fn) {
-			let body = document.getElementById(this.getId() + 'TableBody');
+			let body = this.getElement(this.getId() + 'TableBody');
+			if(!body) return true;
 			let tr = document.createElement('tr');
 			tr.style.cursor = 'pointer';
 
@@ -95,8 +96,8 @@ export class AonTable extends HTMLElement {
 		}
 
 		removeRows() {
-			let body = document.getElementById(this.getId() + 'TableBody');
-			body.innerHTML = '';
+			let body = this.getElement(this.getId() + 'TableBody');
+			if(body) body.innerHTML = '';
 		}
 
 		getId(){
@@ -107,7 +108,7 @@ export class AonTable extends HTMLElement {
 		getOptions(tr, td, options) {
 			const top  = td.getBoundingClientRect().top;
 			const left = td.getBoundingClientRect().left;
-			let d = document.getElementById(this.getId() + 'aonDialogAddOption');
+			let d = this.getElement(this.getId() + 'aonDialogAddOption');
 			options = options.map( ({icon, name, fn}) => {
 				return {
 					icon,

@@ -81,7 +81,7 @@ export class AonAltaDirecta extends AonElement {
                 <div id="${this.ID}DivDni"></div>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-input name="naf" id="naf" description="Número de afiliación" type="text"></aon-input>
+                <aon-input name="naf" id="naf" description="Número de afiliación" type="number" maxlength="12"></aon-input>
             </div>
             <div class="aonCol-sm-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text"></aon-input>
@@ -116,10 +116,10 @@ export class AonAltaDirecta extends AonElement {
                     <aon-select id="horas_convenio" title="Horas convenio"></aon-select>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-input id="horas" description="Horas" type="text"></aon-input>
+                    <aon-input id="horas" description="Horas" type="number" maxlength="2"></aon-input>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-input name="coeficiente_parcial" id="coeficiente_parcial" description="Coeficiente Parcial" type="text"></aon-input>
+                    <aon-input name="coeficiente_parcial" id="coeficiente_parcial" description="Coeficiente Parcial"  type="number" maxlength="3"></aon-input>
                 </div>
             </div>
         `);
@@ -135,7 +135,7 @@ export class AonAltaDirecta extends AonElement {
         tipo_contrato.addEventListener('select', this.selectTipoContrato);
 
         let tipo_jornada = this.getElement('tipo_jornada');
-        tipo_jornada.addEventListener('select', this.selectTipojornada);
+        tipo_jornada.addEventListener('select', (e)=> this.selectTipojornada(e));
 
         let horas_convenio = this.getElement('horas_convenio');
         horas_convenio.addEventListener('select', () => this.calculoCoef());
@@ -159,9 +159,10 @@ export class AonAltaDirecta extends AonElement {
         this.listOcupacion();
     }
 
-    selectTipojornada = (e)=> {
+    selectTipojornada(e){
         let {detail:{value}} = e;
         this.listHorasConvenio(value);
+        this.calculoCoef();
     }
 
     selectTipoContrato(e){
@@ -288,16 +289,20 @@ export class AonAltaDirecta extends AonElement {
                     }
                 })
             );
-        } catch (error) {}
+            if(resp.length>0) horas_convenio.value = resp.find(r=>r).value;
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     calculoCoef(){
         let horas_convenio = this.getElement('horas_convenio').value;
         let horas = this.getElement('horas').value;
-        if(horas_convenio && horas_convenio){
-            let calc = parseFloat( (parseFloat(horas) / parseFloat(horas_convenio) ) *  100).toFixed(2);
-            if(calc) this.getElement('coeficiente_parcial').setAttribute('value', calc);
-        }
+        let calc = '';
+        if(horas_convenio > 0 && horas > 0){
+            calc =  Math.round( parseFloat( (parseFloat(horas) / parseFloat(horas_convenio) ) *  100) ).toString().padStart(3, "0");
+        } 
+        this.getElement('coeficiente_parcial').setAttribute('value', calc);
     }
 
     async formSubmit(){
