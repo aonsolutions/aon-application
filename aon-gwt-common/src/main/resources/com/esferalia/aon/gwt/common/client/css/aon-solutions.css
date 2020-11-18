@@ -118,6 +118,8 @@ input[type="checkbox"]:focus + label {
 .aon_icon_tgss_afi { background-image: iconTgssAfi;}
 @url iconTgssTa aonIconTgssTa;
 .aon_icon_tgss_ta { background-image: iconTgssTa;}
+@url iconTgssFie aonIconTgssFie;
+.aon_icon_tgss_fie { background-image: iconTgssFie;}
 
 /* BASICS */
 .aon_selector {

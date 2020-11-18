@@ -27,6 +27,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@Source("icons/aon-icon-tgss-ta.png")
 	ImageResource aonIconTgssTa();
 	
+	@Source("icons/aon-icon-tgss-fie.png")
+	ImageResource aonIconTgssFie();
+	
 	@Source("icons/aon-icon-add.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconAdd();
