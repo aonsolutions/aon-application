@@ -167,13 +167,13 @@ public abstract class ContractBonusUI extends ResizeComposite {
 	}
 	
 	private void setColumnsWidth() {
-		contractBonusDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(275, Unit.PX);
-		contractBonusDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(275, Unit.PX);
-		contractBonusDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(400, Unit.PX);
+		contractBonusDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(150, Unit.PX);
+		contractBonusDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(150, Unit.PX);
+		contractBonusDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(650, Unit.PX);
 		
-		contractBonusDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(275, Unit.PX);
-		contractBonusDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(275, Unit.PX);
-		contractBonusDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(400, Unit.PX);
+		contractBonusDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(150, Unit.PX);
+		contractBonusDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(150, Unit.PX);
+		contractBonusDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(650, Unit.PX);
 	}
 
 }
