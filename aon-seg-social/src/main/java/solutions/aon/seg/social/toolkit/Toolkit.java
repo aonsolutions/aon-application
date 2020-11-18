@@ -163,4 +163,8 @@ public class Toolkit {
 		for (Object o : data) 
 			if(o ==  null || (o instanceof String && ((String) o).trim().equals(""))) throw new UnfilledMandatory();
 	}
+	public static String removeWeirdCharacters(String str) {
+		str=removeNBSP(str.replaceAll(""+((char)32), " ").trim());
+		return str;
+	}
 }

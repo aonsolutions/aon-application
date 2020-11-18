@@ -200,6 +200,24 @@ public class TestSisetemaRED_I {
 	}
 	
 	@Test
+	public void testGetTADuplicateOk2() {
+		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
+		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("09-09-2020");
+		  byte[] pdf=SistemaRED_I.getTADuplicate(certificateInputStream, "jg@FNMT", "pkcs12","291136796369", "0111", "01105360062", d);
+		  if(!(pdf.length>0))
+			  fail("Should have returned a pdf");
+		} catch (FailingHttpStatusCodeException e) {
+			  assertTrue(true);
+		} catch (SegSocialException e) {
+			fail("SegSocialException");
+		} catch (ParseException e) {
+			fail("Wrong date given");
+		} catch (IOException e1) {
+			fail("Error with the certificate input");
+		}
+	}
+	
+	@Test
 	public void testGetTADuplicateWrongDate() {
 		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
 			Calendar c=Calendar.getInstance();
@@ -489,6 +507,7 @@ public class TestSisetemaRED_I {
 		} catch (UnfilledMandatory e) {
 			assertTrue(true);
 		} catch (SegSocialException e) {
+			System.out.println(e.getClass());
 			fail("SegSocialException");
 		} catch (ParseException e) {
 			fail("Wrong date given");
@@ -508,7 +527,7 @@ public class TestSisetemaRED_I {
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getTACertificatePDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "", "01105360062", d);
 			fail("Should have returned a pdf");  
-		} catch (NotAllowedContributionAccount e) {
+		} catch (UnfilledMandatory e) {
 			assertTrue(true);
 		} catch (SegSocialException e) {
 			System.out.println(e.getClass());
@@ -715,7 +734,7 @@ public class TestSisetemaRED_I {
 		  Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-08-2020");
 		  Collection<byte[]> pdfs=SistemaRED_I.getContributionPDFs(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "", "01105360062", d);
 			fail("Should have returned a pdf");  
-		} catch (WrongRegimeException e) {
+		} catch (UnfilledMandatory e) {
 			assertTrue(true);
 		} catch (SegSocialException e) {
 			fail("SegSocialException");
@@ -883,7 +902,7 @@ public class TestSisetemaRED_I {
 		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){		  
 		  byte[] pdf=SistemaRED_I.getObligationAwarenessCertificate(certificateInputStream, "jg@FNMT", "pkcs12", "", "01105360062");
 			  fail("Shouldn't have returned a pdf");
-		} catch (WrongValueException e) {
+		} catch (UnfilledMandatory e) {
 			assertTrue(true);
 		} catch (SegSocialException e) {
 			fail("SegSocialException");
@@ -1029,7 +1048,7 @@ public class TestSisetemaRED_I {
 		try (final InputStream certificateInputStream = TestSisetemaRED_I.class.getResourceAsStream("FNMT.p12")){
 		  Collection<Idc> pdfs=SistemaRED_I.getIDCDates(certificateInputStream, "jg@FNMT", "pkcs12","011005185924", "", "01105360062");
 			fail("Should have returned a pdf");  
-		} catch (NotAllowedContributionAccount e) {
+		} catch (UnfilledMandatory e) {
 			assertTrue(true);
 		} catch (SegSocialException e) {
 			System.out.println(e.getClass());
