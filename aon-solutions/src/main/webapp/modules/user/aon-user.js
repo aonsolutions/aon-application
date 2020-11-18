@@ -257,7 +257,7 @@ export class AonUser extends AonElement {
 			};
 
 			setUserAppRole(role).then(() => {
-				getUserAppRole().then(r => {
+				getUserAppRole({user:user.id}).then(r => {
 					user.roles = r;
 					this.setAttribute('user', JSON.stringify(user));
 					if(!app) {
@@ -267,8 +267,8 @@ export class AonUser extends AonElement {
 						let selectId = this.SELECT + (app ? app.app : 'ADMIN');
 						td4.innerHTML = `<aon-select id="${selectId}" title="Modo de Acceso"></aon-select>`;
 						let select = this.getElement(selectId);
-						select.value = this.getAccess(app);
 						select.options = JSON.stringify(app.access);
+						select.value = this.getAccess(app);
 						select.addEventListener('change', () => {
 							this.accessAction(app, select.value);
 						});
@@ -284,8 +284,9 @@ export class AonUser extends AonElement {
 			let selectId = this.SELECT + (app ? app.app : 'ADMIN');
 			td4.innerHTML = `<aon-select id="${selectId}" title="Modo de Acceso"></aon-select>`;
 			let select = this.getElement(selectId);
-			select.value = this.getAccess(app);
+
 			select.options = JSON.stringify(app.access);
+			select.value = this.getAccess(app);
 			select.addEventListener('change', () => {
 				this.accessAction(app, select.value);
 			});

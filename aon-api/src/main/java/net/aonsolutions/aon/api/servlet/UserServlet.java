@@ -53,7 +53,9 @@ public class UserServlet extends HttpServlet{
 		
 		if(pathInfo != null) {
 			if("app".equalsIgnoreCase(pathInfo[1])) {
-				JSONArray json = getDomainUser(domain, token);
+				String user = req.getParameter("user");
+				Integer userId = AonNumberUtils.toInteger(user);
+				JSONArray json = getDomainUser(domain, token, userId);
 				Utils.addCorsHeader(resp);
 				Utils.giveBack(req, resp, json, new JSONObject());
 			} else if("notice".equalsIgnoreCase(pathInfo[1])) {
@@ -92,9 +94,13 @@ public class UserServlet extends HttpServlet{
 		}
 	}
 
-	private JSONArray getDomainUser(Domain domain, String token) {
+	private JSONArray getDomainUser(Domain domain, String token, Integer userId) {
 		AonToken aonToken = SECURITY.getAonToken(token);
-		User user = AON.getUser(domain.getName(), domain.getId(), "", f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
+		User user = new User();
+		if(userId != null) {
+			user = AON.getUser(domain.getName(), domain.getId(), "", f -> f.getIdProperty().eq(userId));
+		} else user = AON.getUser(domain.getName(), domain.getId(), "", f -> (f.getDomainProperty().eq(domain.getId()).or(f.getDomainProperty().eq(domain.getParentId()))).and(f.getAuthProperty().eq(aonToken.getAuth())));
+		
 		return getUserRoles(domain, user);
 	}
 	

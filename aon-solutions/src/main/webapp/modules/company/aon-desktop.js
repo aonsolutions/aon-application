@@ -62,8 +62,9 @@ export class AonDesktop extends AonElement {
 		let company = this.getAttribute('company') ? JSON.parse(this.getAttribute('company')) : undefined;
 		if(company) {
 			getDomainApps(company.domain).then(r => {
-				this.build(r);
-			//	componentHandler.upgradeAllRegistered();
+				getDomainNotice().then(notice => {
+					this.build(r, notice);
+				});
 			});
 		}
   }

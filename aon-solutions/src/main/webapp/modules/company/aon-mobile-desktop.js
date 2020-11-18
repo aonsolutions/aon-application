@@ -1,5 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getCompanies} from  '../../services/service.js';
+import {getCompanies, getDomainNotice, getUserNotice} from  '../../services/service.js';
+import {rootPanel} from '../../services/gwtLoader.js';
 
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
@@ -49,10 +50,26 @@ export class AonMobileDesktop extends AonElement {
 	}
 
 	connectedCallback () {
-		this.buildNotifications();
+		this.build();
   }
 
-	buildNotifications() {
+	build() {
+		this.innerHTML = '';
+		if(localStorage.getItem('company')) {
+			let company = JSON.parse(localStorage.getItem('company'));
+			localStorage.setItem('aon_domain_id', company.id);
+			localStorage.setItem('aon_domain_name', company.domain);
+			getDomainNotice().then(notice => {
+				this.buildNotifications(notice);
+			});
+		} else {
+			getUserNotice().then(notice => {
+				this.buildNotifications(notice);
+			});
+		}
+	}
+
+	buildNotifications(notice) {
 		let searchDiv = document.createElement('div');
 		searchDiv.id = 'aonHeaderCompany';
 		this.appendChild(searchDiv)
@@ -61,18 +78,21 @@ export class AonMobileDesktop extends AonElement {
 		let searchSuggestion = this.getElement(this.SUGGESTION);
 
 		if(localStorage.getItem('company')) {
+			let company = JSON.parse(localStorage.getItem('company'));
 			searchSuggestion.title = 'Empresa Seleccionada';
-			searchSuggestion.value = JSON.parse(localStorage.getItem('company')).name;
+			searchSuggestion.value = company.name;
 			searchSuggestion.readonly = true;
 		}
 
+
 		document.addEventListener('click', function(event) {
-			let isClickInside = searchSuggestion.contains(event.target);
+			let sg = this.getElement(this.SUGGESTION);
+			let isClickInside = sg.contains(event.target);
 			if(!isClickInside){
 				if(localStorage.getItem('company')) {
-					searchSuggestion.title = 'Empresa Seleccionada';
-					searchSuggestion.value = JSON.parse(localStorage.getItem('company')).name;
-					searchSuggestion.readonly = true;
+					sg.title = 'Empresa Seleccionada';
+					sg.value = JSON.parse(localStorage.getItem('company')).name;
+					sg.readonly = true;
 				}
 			}
 		});
@@ -94,12 +114,13 @@ export class AonMobileDesktop extends AonElement {
 		});
 
 		searchSuggestion.addEventListener('select', (event) => {
-			searchSuggestion.title = 'Empresa Seleccionada';
+				searchSuggestion.title = 'Empresa Seleccionada';
 			let company = event.detail;
 			searchSuggestion.setAttribute('readonly', true);
 			localStorage.setItem('company', JSON.stringify(company));
 			localStorage.setItem("aon_domain_id", company.id);
 			localStorage.setItem("aon_domain_name", company.domain);
+			this.build();
 		});
 
 		let div = document.createElement('div');
@@ -116,12 +137,30 @@ export class AonMobileDesktop extends AonElement {
 		ul.className = 'aonClip';
 		div.appendChild(ul);
 
-		ul.appendChild(this.buildNotificationsLi('99 Documentos sin leer', 'snippet_folder'));
-		ul.appendChild(this.buildNotificationsLi('99 Notificaciones', 'notifications'));
-		ul.appendChild(this.buildNotificationsLi('99 Facturas Pendientes', 'inbox'));
-		ul.appendChild(this.buildNotificationsLi('99 Facturas Rechazadas', 'report'));
-		ul.appendChild(this.buildNotificationsLi('99 Solicitudes Abiertas', 'assignment'));
-		ul.appendChild(this.buildNotificationsLi('99 Solicitudes para ti', 'assignment_ind'));
+		let inboxCount = 0;
+		if(notice.invoice && notice.invoice.inbox && notice.invoice.inbox.count && notice.invoice.inbox.count > 0) {
+			inboxCount = notice.invoice.inbox.count;
+		}
+
+		let rejectedCount = 0;
+		if(notice.invoice && notice.invoice.rejected && notice.invoice.rejected.count && notice.invoice.rejected.count > 0) {
+			rejectedCount = notice.invoice.rejected.count;
+		}
+
+		ul.appendChild(this.buildNotificationsLi('Documentos sin leer', 'snippet_folder', 0, () => {}));
+		ul.appendChild(this.buildNotificationsLi('Notificaciones', 'notifications', 0, () => {}));
+		ul.appendChild(this.buildNotificationsLi('Facturas Pendientes', 'inbox', inboxCount, () => {
+			if(rejectedCount > 0) {
+				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
+			}
+		}));
+		ul.appendChild(this.buildNotificationsLi('Facturas Rechazadas', 'report', rejectedCount, () => {
+			if(rejectedCount > 0) {
+				rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
+			}
+		}));
+		ul.appendChild(this.buildNotificationsLi('Solicitudes Abiertas', 'assignment', 0, () => {}));
+		ul.appendChild(this.buildNotificationsLi('Solicitudes para ti', 'assignment_ind', 0, () => {}));
 
 		let div2 = document.createElement('div');
 
@@ -138,7 +177,7 @@ export class AonMobileDesktop extends AonElement {
 		this.appendChild(div3);
 	}
 
-	buildNotificationsLi(name, icon) {
+	buildNotificationsLi(name, icon, count, fn) {
 		let li = document.createElement('li');
 		li.className = 'aonAppMenuSidenavList aonOpacity';
 		li.style.height = '40px';
@@ -152,7 +191,11 @@ export class AonMobileDesktop extends AonElement {
 
 		let span = document.createElement('span');
 		span.className = 'aonMenuItemSpan';
-		span.innerHTML = name;
+		if(count > 0) {
+			span.innerHTML = name + ' (' + count + ')';
+			span.style.fontWeight = 'bold';
+		} else span.innerHTML = name;
+
 		li.appendChild(span);
 
 		let sp = document.createElement('span');
@@ -164,6 +207,8 @@ export class AonMobileDesktop extends AonElement {
 		i2.innerHTML = 'keyboard_arrow_right';
 		sp.appendChild(i2);
 		li.appendChild(sp);
+
+		li.addEventListener('click', () => fn());
 		return li;
 	}
 

@@ -7,15 +7,6 @@ const formatParams = (params) => {
   );
 };
 
-// export const requestFile = (url, token, formData) => {
-// 	let xhr = new XMLHttpRequest();
-// 	xhr.open('POST', url, true);
-// 	xhr.setRequestHeader('session_id', token);
-// 	const domainId = localStorage.getItem("aon_domain_id");
-// 	xhr.setRequestHeader('domain_id', domainId);
-// 	xhr.send(formData);
-// }
-
 export const request = (method, url, token, sendData, fn) => {
   let xhr = new XMLHttpRequest();
   if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET

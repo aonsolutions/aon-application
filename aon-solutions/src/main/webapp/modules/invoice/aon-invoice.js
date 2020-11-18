@@ -1126,7 +1126,7 @@ export class AonInvoice extends AonElement {
 	totalImpuestos() {
  		let total = 0;
 		for (let i = 0; i < this._invoice.taxes.length; i++) {
-			if(this._invoice.taxes[i].type === 'IVA'){
+			if('IVA' === this._invoice.taxes[i].type || 'IVA' ===  this._invoice.taxes[i].tax){
 				total += (this._invoice.taxes[i].base + this._invoice.taxes[i].quota);
 			} else {
 				total -= this._invoice.taxes[i].quota;
