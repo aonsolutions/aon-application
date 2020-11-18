@@ -24,15 +24,14 @@ import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -81,16 +80,15 @@ public class MainContrataContract extends MainEntryPoint {
 
 	interface MyStyle extends CssResource {
 		String suggestBox();
+		String filterPanel();
+		String flexPanel();
 	}
 	
 	@UiField
 	DockLayoutPanel splitLayoutPanel;
 	
 	@UiField
-	SuggestBox employeeSB;
-	
-	@UiField
-	CheckBox inactiveContractsCB;
+	HTMLPanel filterEmployeePanel;
 	
 	@UiField
 	HTMLPanel mainTablePanel;
@@ -132,6 +130,9 @@ public class MainContrataContract extends MainEntryPoint {
 	private AonToolbarButton newContract;
 	private AonToolbarButton up2DateSS;
 	
+	private SuggestBox employeeSB;
+	private CheckBox inactiveContractsCB;
+	
 	public MainContrataContract() {
 		contrataEmployee = new ContrataEmployeeImpl();
 		
@@ -148,6 +149,8 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		toolbar = getToolbarPanel();
 		splitLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		
+		getFilterEmployeePanel();
 		
 		// Show table
 		deckPanel.showWidget(0);
@@ -500,18 +503,6 @@ public class MainContrataContract extends MainEntryPoint {
 	// 										UI HANDLERS
 	// --------------------------------------------------------------------------------------------
 	
-	@UiHandler("inactiveContractsCB")
-	public void onInactiveContractsCBValueChange(ValueChangeEvent<Boolean> event) {
-		this.mainContrataContractObject.getEmployeesInfo(event.getValue(),
-				s -> {
-					initEnterpriseSB();
-					initContractTable();
-					setTableHeights();
-				},
-				f -> {}
-		);
-	}
-	
 	protected void showPFDF(String dataURI) {
 		pdfViewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
 		pdfViewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
@@ -796,6 +787,56 @@ public class MainContrataContract extends MainEntryPoint {
 		
 		xhr.send(requestDataBuffer.toString());
 		AON.start();
+	}
+	
+	private void getFilterEmployeePanel() {
+		filterEmployeePanel.setStyleName(AON.CSS.aonSearchPanel());
+		filterEmployeePanel.addStyleName(AON.CSS.aonScrollArea());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginBottom());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginLeft());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginRight());
+		filterEmployeePanel.addStyleName(AON.CSS.aonBlockCenter());
+		
+		HTMLPanel filterPanel = new HTMLPanel("");
+		filterPanel.addStyleName(style.filterPanel());
+		
+		HTMLPanel employeePanel = new HTMLPanel("");
+		employeePanel.addStyleName(style.flexPanel());
+		Label employeeL = new Label("Persona : ");
+		employeeL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		employeeL.getElement().getStyle().setMarginRight(10, Unit.PX);
+		employeeSB = new SuggestBox();
+		employeeSB.getElement().getStyle().setWidth(300, Unit.PX);
+		employeePanel.add(employeeL);
+		employeePanel.add(employeeSB);
+		
+		HTMLPanel showPanel = new HTMLPanel("");
+		showPanel.addStyleName(style.flexPanel());
+		Label showL = new Label("Mostrar Empleados : ");
+		showL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		showL.getElement().getStyle().setMarginRight(5, Unit.PX);
+		inactiveContractsCB = new CheckBox();
+		inactiveContractsCB.addValueChangeHandler(e -> {
+			this.mainContrataContractObject.getEmployeesInfo(e.getValue(),
+					s -> {
+						initEnterpriseSB();
+						initContractTable();
+						setTableHeights();
+					},
+					f -> {}
+			);
+		});
+		Label inactiveL = new Label("Inactivos");
+		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		showPanel.add(showL);
+		showPanel.add(inactiveContractsCB);
+		showPanel.add(inactiveL);
+		
+		filterPanel.add(employeePanel);
+		filterPanel.add(showPanel);
+		
+		filterEmployeePanel.add(filterPanel);
 	}
 
 }
