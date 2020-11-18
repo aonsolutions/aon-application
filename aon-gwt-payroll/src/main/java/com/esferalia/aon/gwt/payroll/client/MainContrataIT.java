@@ -1258,7 +1258,7 @@ public class MainContrataIT extends MainEntryPoint {
 		});
 		toolbar.add(listITs);
 		
-		msjFIE = new AonToolbarButton( "Mensaje del INSS Empresa (FIE)", AON.CSS.aonIconTgss() );
+		msjFIE = new AonToolbarButton( "Mensaje del INSS Empresa (FIE)", AON.CSS.aonIconTgssFie() );
 		msjFIE.setAccessKey('F');
 		msjFIE.addClickHandler(new ClickHandler() {
 			@Override

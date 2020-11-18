@@ -63,10 +63,6 @@
 			margin-left: 9px;
 		}
 		
-		.mt10{
-			margin-top: 5px;
-		}
-		
 		.p5{
 			padding: 5px;
 		}
@@ -110,7 +106,7 @@
 		}
 		
 		.mt10{
-			margin-top: 10px;
+			margin: 5px 1em;
 		}
 		
 		.pt2{
