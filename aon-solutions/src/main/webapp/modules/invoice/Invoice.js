@@ -2,7 +2,7 @@ export class Invoice {
 
   id;
   type;
-  serie;
+  series;
   number;
   reference;
   date;
@@ -21,7 +21,7 @@ export class Invoice {
 
   constructor(type) {
     this.type = type || 'emitida';
-    this.serie = '';
+    this.series = '';
     this.number = 0;
     this.reference = '';
     this.date = new Date(Date.now());
@@ -64,11 +64,11 @@ export class Invoice {
     if(invoice) {
 
       this.id = invoice.id || undefined;
-      this.serie = invoice.serie || '';
+      this.series = invoice.series || '';
       this.number = invoice.number || 0;
       this.reference = invoice.reference && invoice.reference !== ''
         ? invoice.reference
-        : (invoice.serie ? invoice.serie + '/' + invoice.number : invoice.number);
+        : (invoice.series ? invoice.series + '/' + invoice.number : invoice.number);
       this.date = invoice.date || new Date();
       this.total = invoice.total || 0;
       this.type = invoice.type || 'emitida',

@@ -101,12 +101,12 @@ export class AonInvoiceMobile extends AonElement {
 
 		if(this.isEmitida()) {
 			// SERIE
-			let tdSerie = document.createElement('td');
-			tdSerie.innerHTML = `<aon-input id="serie" description="Serie"></aon-input>`;
-			tr.appendChild(tdSerie);
-			let series = document.getElementById('serie');
-			series.value = this._invoice.serie;
-			series.addEventListener('change', () => this.update('serie'));
+			let tdSeries = document.createElement('td');
+			tdSeries.innerHTML = `<aon-input id="series" description="Serie"></aon-input>`;
+			tr.appendChild(tdSeries);
+			let series = document.getElementById('series');
+			series.value = this._invoice.series;
+			series.addEventListener('change', () => this.update('series'));
 
 			// NUMBER
 			let tdNumber = document.createElement('td');
