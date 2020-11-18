@@ -45,6 +45,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -85,7 +86,10 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	@UiField
-	DockLayoutPanel splitLayoutPanel;
+	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField
+	SplitLayoutPanel splitLayoutPanel;
 	
 	@UiField
 	HTMLPanel filterEmployeePanel;
@@ -148,7 +152,7 @@ public class MainContrataContract extends MainEntryPoint {
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		
 		toolbar = getToolbarPanel();
-		splitLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
 		getFilterEmployeePanel();
 		

@@ -49,6 +49,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -538,10 +539,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	ContractBonusUI contractBonusUI;
 	
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	Label title;
+	SplitLayoutPanel splitLayoutPanel;
+	
+//	@UiField
+//	Label title;
 	
 	@UiField
 	TabLayoutPanel tabLayOutPanel;
@@ -621,7 +625,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		toolbar = getToolbarPanel();
-		splitLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
 		
 		setDefaultEmployeeView();
 		showEmployee();		
@@ -857,7 +861,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		footTabPanel.clear();
 		splitLayoutPanel.setWidgetSize(footPanel, 25);
 		
-		title.setText(employeeContractInfo.getEmployeeInfo().getFullName());
+		toolbar.setTitle(employeeContractInfo.getEmployeeInfo().getFullName());
+//		title.setText(employeeContractInfo.getEmployeeInfo().getFullName());
 		
 		exportContract.getElement().getStyle().setDisplay(Display.NONE);
 		

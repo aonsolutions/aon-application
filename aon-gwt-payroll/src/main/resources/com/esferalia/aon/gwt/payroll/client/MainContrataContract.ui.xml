@@ -162,28 +162,31 @@
 	</ui:style>
 
 	<g:DeckPanel ui:field="deckPanel">
-		<g:DockLayoutPanel ui:field="splitLayoutPanel" >
+		<g:DockLayoutPanel ui:field="dockLayoutPanel" >
 			<g:center>
-				<g:HTMLPanel ui:field="mainContainer" styleName="{style.mainContainer} {style.widthAll}">
-					<g:ScrollPanel height="100%" styleName="{style.p5}">
-						<g:VerticalPanel styleName="{style.tableStylePanel}">
-						
-							<g:HTMLPanel ui:field="filterEmployeePanel"></g:HTMLPanel>
-						
-						 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
-						 		<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}"></c:DataGrid>
-						 	</g:HTMLPanel>
-					 		
-						</g:VerticalPanel>
-					</g:ScrollPanel>
-				</g:HTMLPanel>
-				
+				<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+					<g:center>
+						<g:HTMLPanel ui:field="mainContainer" styleName="{style.mainContainer} {style.widthAll}">
+							<g:ScrollPanel height="100%" styleName="{style.p5}">
+								<g:VerticalPanel styleName="{style.tableStylePanel}">
+								
+									<g:HTMLPanel ui:field="filterEmployeePanel"></g:HTMLPanel>
+								
+								 	<g:HTMLPanel ui:field="mainTablePanel" styleName="{style.mt10}">
+								 		<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}"></c:DataGrid>
+								 	</g:HTMLPanel>
+							 		
+								</g:VerticalPanel>
+							</g:ScrollPanel>
+						</g:HTMLPanel>	
+					</g:center>
+					<g:south size="15">
+						<a:MinimizePanel ui:field="footPanel" styleName="{res.css.aonSelector}" >
+							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
+						</a:MinimizePanel>
+					</g:south>
+				</g:SplitLayoutPanel>
 			</g:center>
-			<g:south size="15">
-				<a:MinimizePanel ui:field="footPanel" styleName="{res.css.aonSelector}" >
-					<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-				</a:MinimizePanel>
-			</g:south>
 		</g:DockLayoutPanel>
 
 		<d:ContrataEmployee ui:field="contrataEmployee"></d:ContrataEmployee>
