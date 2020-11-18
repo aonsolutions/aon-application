@@ -116,13 +116,13 @@ export class AonInvoice extends AonElement {
 			// 	let el = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
 			// 	el.click();
 			// });
-			// let button = document.getElementById('aonInvoiceToolbarAddFileButton');
-			// 	let input = document.createElement('input');
-			// input.id = 'aonInvoiceToolbarAddFileButtonInput'
-			// input.style.display = 'none';
-			// input.type = 'file';
-			// input.addEventListener('change', () => this.preview());
-			// button.appendChild(input);
+			//let button = document.getElementById('aonInvoiceToolbarAddFileButton');
+			let input = document.createElement('input');
+		 	input.id = 'aonInvoiceToolbarAddFileButtonInput'
+			input.style.display = 'none';
+			input.type = 'file';
+			input.addEventListener('change', () => this.preview());
+			this.appendChild(input);
 		} else {
 			let fileDiv = document.getElementById('aonInvoiceFile');
 			let dataDiv = document.getElementById('aonInvoiceData');
@@ -254,6 +254,9 @@ export class AonInvoice extends AonElement {
 	}
 
 	addInvoiceFile() {
+		let el = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
+		el.click();
+
 
 	}
 

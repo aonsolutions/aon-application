@@ -1,5 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
-
+import {insertInvoice, deleteInvoices} from '../../services/service.js';
+import {Invoice} from './Invoice.js';
 import './aon-invoice.js';
 import './aon-invoice-mobile.js';
 import './aon-invoice-list.js';
@@ -34,6 +35,13 @@ export class AonInvoicePanel extends AonElement {
 
 		aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 		aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
+
+		let input = document.createElement('input');
+		input.id = 'aonInvoiceToolbarUploadButtonInput'
+		input.style.display = 'none';
+		input.type = 'file';
+		input.addEventListener('change', () => this.preview());
+		this.appendChild(input);
 
 		let pendingOptions = [
 			{
@@ -136,7 +144,39 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvoiceFile() {
-		alert('upload Invoice');
+		let el = document.getElementById('aonInvoiceToolbarUploadButtonInput');
+		el.click();
+	}
+
+	preview() {
+		let fileInput = document.getElementById('aonInvoiceToolbarUploadButtonInput');
+		const file = fileInput.files[0];
+
+		const READER = new FileReader();
+		READER.readAsDataURL(file);
+		READER.onload = (_event) => {
+			this.attach(READER.result, file.type);
+		};
+	}
+
+	attach(fileDataUri,  mimetype){
+		if (fileDataUri.length > 0) {
+			const base64File = fileDataUri.split(',')[1];
+			const data = {
+				file: {
+					content: base64File,
+					contentType: mimetype,
+					contentEncoding: 'base64'
+				},
+				invoice: new Invoice('recibida')
+			};
+			// let aonInvoice = document.getElementById('aonInvoice');
+			// aonInvoice.startLoader();
+			insertInvoice(data).then((r) => {
+				//aonInvoice.stopLoader();
+				//this.getInvoice().id = r.id;
+			});
+		}
 	}
 
 	aonInvoice(type, invoice) {

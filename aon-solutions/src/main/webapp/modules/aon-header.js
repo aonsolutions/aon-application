@@ -103,11 +103,13 @@ export class AonHeader extends AonElement {
 							name: 'Ayuda',
 							icon: 'help_outline',
 							fn: () => rootPanel('<iframe height="100%" src="https://faqs.aonsolutions.es/"></iframe>')
-						}, {
-							name: 'FAQs',
-							icon: 'help_outline',
-							fn: () => rootPanel('<aon-faqs></aon-faqs>')
-						}];
+						}
+						// , {
+						// 	name: 'FAQs',
+						// 	icon: 'help_outline',
+						// 	fn: () => rootPanel('<aon-faqs></aon-faqs>')
+						// }
+					];
 					d.setMenuOptions(options, top, left);
 					d.open();
 				});

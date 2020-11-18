@@ -54,8 +54,8 @@ export class AonInvoiceList extends AonElement {
 				aonInvoiceTable.removeRows();
 				invoices.forEach((invoice, i) => {
 					invoice.name = invoice.type === 'emitida'
-						? invoice.receiver.name
-						: invoice.sender.name;
+						? (invoice.receiver ? invoice.receiver.name : '')
+						: (invoice.sender ? invoice.sender.name : '');
 					invoice.paymethod = invoice.finances && invoice.finances.length > 0
 						? this.getPaymethod(invoice.finances[0].paymethod) : '';
 					let date = new Date(invoice.date);
