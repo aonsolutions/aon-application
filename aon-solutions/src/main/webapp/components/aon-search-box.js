@@ -32,7 +32,7 @@ export class AonSearchBox extends HTMLElement {
 		return this.getAttribute('value');
 	}
 
-	set selected(value) {
+	set value(value) {
 		this.setAttribute('value', value);
 	}
 
@@ -46,7 +46,7 @@ export class AonSearchBox extends HTMLElement {
 		this.innerHTML = `
 		<div id="aon-search-div" style="height: 40px;">
 			<aon-icon-button id="aon-search-button" icon="search"></aon-icon-button>
-			<input role="search" title="Búsqueda" id="search-input"
+			<input title="Búsqueda" id="search-input"
 				autocomplete="off" placeholder="Búsqueda" class="aonSearchBox">
 		</div>
 		`;

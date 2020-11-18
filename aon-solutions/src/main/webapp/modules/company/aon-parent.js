@@ -21,13 +21,15 @@ export class AonParent extends AonElement {
 
 		let aonParent = document.getElementById('aonParentMain');
 
-
-
 		getUserNotice().then(r => {
 			this.buildSidenav(r);
+			this.init();
 		});
 
-		this.init();
+		let searchBox = this.getElement('aonHeaderSearchBox');
+		searchBox.addEventListener('keyup', () => {
+			this.init({value: searchBox.value});
+		});
 	}
 
 	buildSidenav(notice) {
@@ -87,23 +89,23 @@ export class AonParent extends AonElement {
 		let filterOptions = [{
 				name: 'Activas',
 				icon: 'domain',
-				fn: () => {}
+				fn: () => this.init({active: true})
 			}, {
 				name: 'Inactivas',
 				icon: 'domain_disabled',
-				fn: () => {}
+				fn: () => this.init({inactive: true})
 			}, {
 				name: 'Compartidas',
 				icon: 'share',
-				fn: () => {}
+				fn: () => this.init({shared: true})
 			}, {
 				name: 'Entorno',
 				icon: 'apartment',
-				fn: () => {}
+				fn: () => this.init({entorno:true})
 			},{
 				name: 'Despacho',
 				icon: 'work',
-				fn: () => {}
+				fn: () => this.init({despacho:true})
 			}
 		];
 		aonParent.addSidenavOptions('FILTROS', filterOptions);
@@ -124,9 +126,7 @@ export class AonParent extends AonElement {
 	companyFilter(f, q) {
 		if(!q) {
 			q = {
-				inactive: false,
-				active: true,
-				shared: true
+				active: true
 			};
 		}
 		let value = true;
@@ -136,16 +136,24 @@ export class AonParent extends AonElement {
 			value = document || name;
 		}
 
-		if(q && q.active && !q.inactive) {
-			value = f.active && value;
+		if(q && q.active) {
+			value = f.active;
 		}
 
-		if(q && q.inactive && !q.active) {
-			value = !f.active && value;
+		if(q && q.inactive) {
+			value = !f.active;
 		}
 
 		if(q && q.shared) {
-			// TODO
+			value = f.shared;
+		}
+
+		if(q && q.entorno) {
+			value = !f.parentId;
+		}
+
+		if(q && q.despacho) {
+			value = f.type === 'OFFICE';
 		}
 
 		if(q && q.ids) {
@@ -238,54 +246,47 @@ export class AonParent extends AonElement {
 	companySelection(company) {
 		const BASE_ID = 'aonHeader';
 		localStorage.setItem('company', JSON.stringify(company));
-		if(!this.isMobile()){
-			let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
-			aonHeaderCompanyList.style.display = 'block';
 
-			let aonShowMenu = document.getElementById('aonShowMenu');
-			aonShowMenu.style.display = 'block';
+		let aonHeaderCompanyList = document.getElementById(BASE_ID + 'CompanyList');
+		aonHeaderCompanyList.style.display = 'block';
 
-			let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
-			aonHeaderHelp.style.display = 'block';
+		let aonShowMenu = document.getElementById('aonShowMenu');
+		aonShowMenu.style.display = 'block';
 
-			let aonHeaderSearch = document.getElementById(BASE_ID + 'Search');
-			aonHeaderSearch.style.display = 'none';
+		let aonHeaderHelp = document.getElementById(BASE_ID + 'Help');
+		aonHeaderHelp.style.display = 'block';
 
-			let aonHeaderHome = document.getElementById(BASE_ID + 'Home');
-			aonHeaderHome.style.display = 'block';
+		let aonHeaderSearch = document.getElementById(BASE_ID + 'Search');
+		aonHeaderSearch.style.display = 'none';
 
-			let aonHeaderCompany = document.getElementById(BASE_ID + 'Company');
-			aonHeaderCompany.style.display = 'block';
+		let aonHeaderHome = document.getElementById(BASE_ID + 'Home');
+		aonHeaderHome.style.display = 'block';
 
-			let aonHeaderCompanyName = document.getElementById(BASE_ID + 'CompanyName');
-			aonHeaderCompanyName.innerHTML = company.name;
+		let aonHeaderCompany = document.getElementById(BASE_ID + 'Company');
+		aonHeaderCompany.style.display = 'block';
 
-			let aonLogo = document.getElementById('aonLogo');
-		} else {
-			document.getElementById('aonHeaderSearchBox').setAttribute('selected', company.name);
-		}
+		let aonHeaderCompanyName = document.getElementById(BASE_ID + 'CompanyName');
+		aonHeaderCompanyName.innerHTML = company.name;
+
+		let aonLogo = document.getElementById('aonLogo');
+
 		localStorage.setItem("aon_domain_id", company.id);
 		localStorage.setItem("aon_domain_name", company.domain);
 
-		if(!this.isMobile()) {
-			this.clearElement('aonMenu');
-			let aonMenu = this.getElement('aonMenu');
-			aonMenu.build();
-		}
+		this.clearElement('aonMenu');
+		let aonMenu = this.getElement('aonMenu');
+		aonMenu.build();
 
 		getUserAppRole().then(user => {
 			let aonHeader = document.getElementById('aonHeader');
 			aonHeader.setAttribute('company', JSON.stringify(company));
 			aonHeader.setAttribute('user', JSON.stringify(user));
 
-			rootPanel(this.isMobile()
-				? '<aon-mobile-desktop id="aonDesktop"></aon-mobile-desktop>'
-				: '<aon-desktop id="aonDesktop"></aon-desktop>');
+			rootPanel('<aon-desktop id="aonDesktop"></aon-desktop>');
 			let aonDesktop = document.getElementById('aonDesktop');
 			aonDesktop.setAttribute('company', JSON.stringify(company));
 			aonDesktop.setAttribute('user', JSON.stringify(user));
 		});
 	}
-
 }
 window.customElements.define('aon-parent', AonParent);

@@ -63,6 +63,7 @@ public class AonCompany implements Serializable {
 			.put("document", getCompany().getDocument())
 			.put("active", getCompany().isDomainActive())
 			.put("administration", getAdministration() != null ? getAdministration().name() : Administration.COMMON_TERRITORY.name())
+			.put("type", getDomain().getDomainType().name())
 			.put("parent",getDomain().isParent())
 			.put("parentId",getDomain().getParentId());
 		return json;
