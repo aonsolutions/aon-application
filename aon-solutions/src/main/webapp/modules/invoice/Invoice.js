@@ -18,8 +18,6 @@ export class Invoice {
   irpf;
   suplidos;
   totalSuplidos;
-  name;
-  paymethod;
 
   constructor(type) {
     this.type = type || 'emitida';
@@ -106,9 +104,6 @@ export class Invoice {
       this.suplidos = invoice.suplidos || false;
       this.totalSuplidos = invoice.totalSuplidos || 0;
       this.file = invoice.file || undefined;
-
-      this.name = this.type === 'emitida' ? this.receiver.name : this.sender.name;
-      this.paymethod = this.finances.length > 0 ? this.finances[0].paymethod : '';
     }
   }
 

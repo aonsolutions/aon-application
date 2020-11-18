@@ -769,7 +769,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	printTax(tax, i) {
-		let table = tax.type === 'IVA'
+		let table = 'IVA' === tax.type || 'IVA' === tax.tax
 			? document.getElementById('aonInvoiceItemTaxesCardTable')
 			: document.getElementById('aonInvoiceItemIRPFCardTable');
 
@@ -783,14 +783,14 @@ export class AonInvoice extends AonElement {
 		tr.appendChild(tdTaxType);
 		let taxType = document.getElementById('taxType' + i);
 		taxType.options = JSON.stringify(TaxType);
-		taxType.value = tax.type;
+		taxType.value = tax.type || tax.tax;
 
 		// TAXPERCENT
 		let tdTaxPercentage= document.createElement('td');
-		tdTaxPercentage.innerHTML = `<aon-input id="taxPercentage${i}" ="%"></aon-input>`;
+		tdTaxPercentage.innerHTML = `<aon-select id="taxPercentage${i}" title="%"></aon-select>`;
 		tr.appendChild(tdTaxPercentage);
 		let taxPercentage = document.getElementById('taxPercentage' + i);
-		taxPercentage.options = JSON.stringify( tax.type === 'IVA' ? TaxIVAPercentage : TaxIRPFPercentage);
+		taxPercentage.options = JSON.stringify( 'IVA' === tax.type || 'IVA' === tax.tax ? TaxIVAPercentage : TaxIRPFPercentage);
 		taxPercentage.value = tax.percentage;
 		taxPercentage.addEventListener('select', () => this.updateTaxPercentage(i));
 
@@ -887,7 +887,7 @@ export class AonInvoice extends AonElement {
 		} else {
 			for(let i = 0; i < this._invoice.taxes.length; i++) {
 				let tax = this._invoice.taxes[i];
-				if(tax.type === 'IRPF') {
+				if('IRPF' === tax.type || 'IRPF' === tax.tax) {
 					this._invoice.taxes.splice(i, 1);
 				}
 			}
@@ -907,7 +907,7 @@ export class AonInvoice extends AonElement {
 	updateIRPF() {
 		for(let i = 0; i < this._invoice.taxes.length; i++) {
 			let tax = this._invoice.taxes[i];
-			if(tax.type === 'IRPF') {
+			if('IRPF' === tax.type || 'IRPF' === tax.type) {
 				this._invoice.taxes[i].base = this.totalBaseIRPF();
 				this._invoice.taxes[i].quota = round(this._invoice.taxes[i].base / 100 * this._invoice.taxes[i].percentage);
 			}

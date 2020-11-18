@@ -64,7 +64,7 @@ export class AonSelect extends AonElement {
     if('value' === name) {
       let options = this.hasAttribute('options') ? JSON.parse(this.getAttribute('options')) : [];
       options.forEach((item, i) => {
-        if(item.value === newValue) {
+        if(item.value == newValue) {
           this.getElement(this.INPUT).value = item.name;
         }
       });

@@ -105,10 +105,15 @@ export class AonApplication extends AonElement {
 			});
 
 			content.addEventListener('mouseleave', (event) => {
-				event.preventDefault();
 				content.style.border = '0px';
 				content.style.opacity = '1';
 			});
+
+			content.addEventListener('mouseover', (event) => {
+				content.style.border = '0px';
+				content.style.opacity = '1';
+			});
+
 			document.addEventListener('dragleave', (event) => {
 				event.preventDefault();
 				let isClickInside = content.contains(event.target);
