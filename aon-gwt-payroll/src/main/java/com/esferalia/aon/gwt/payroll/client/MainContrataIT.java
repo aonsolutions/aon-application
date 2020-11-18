@@ -592,6 +592,7 @@ public class MainContrataIT extends MainEntryPoint {
 		this.mainContrataITObject.getEmployeesInfo(false,
 				s -> {
 					initEnterpriseSB();
+					initITSB();
 					initContractTable();
 					setTableHeights();
 				},
@@ -654,7 +655,7 @@ public class MainContrataIT extends MainEntryPoint {
 				mainContrataITObject.filterITsList(itIds);
 			}
 			
-			initContractTable();
+			initITTable();
 		});
 		
 		itSB.addSelectionHandler(e -> {
@@ -1356,7 +1357,7 @@ public class MainContrataIT extends MainEntryPoint {
 		
 		HTMLPanel itPanel = new HTMLPanel("");
 		itPanel.addStyleName(style.flexPanel());
-		Label itL = new Label("IT : ");
+		Label itL = new Label("Trabajador : ");
 		itL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		itL.getElement().getStyle().setMarginRight(10, Unit.PX);
 		itSB = new SuggestBox();
