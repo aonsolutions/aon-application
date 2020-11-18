@@ -866,6 +866,47 @@ public class SistemaRED_I {
 	
 	
 	
+	
+	
+	private static HtmlPage liquidationPageFill(HtmlPage htmlPage, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws ElementNotFoundException, IOException {
+		HtmlForm formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+		formDatos.getInputByName("CCC").setValueAttribute(ccc);
+		HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
+		selectRegime.setSelectedIndex(selectRegime.getOptionByValue(regime.getValue()).getIndex());
+		Calendar cFrom=Calendar.getInstance();
+		cFrom.setTime(dateFrom);
+		Calendar cTo=Calendar.getInstance();
+		cTo.setTime(dateTo);
+		String sFrom;
+		String sTo;
+		if(cFrom.get(Calendar.MONTH)+1<10) {
+			sFrom="0"+(cFrom.get(Calendar.MONTH)+1);
+		}
+		else
+			sFrom=""+(cFrom.get(Calendar.MONTH)+1);
+		if(cTo.get(Calendar.MONTH)+1<10) {
+			sTo="0"+(cTo.get(Calendar.MONTH)+1);
+		}
+		else
+			sTo=""+(cTo.get(Calendar.MONTH)+1);
+		HtmlSelect selectMFrom=formDatos.getSelectByName("MES_DESDE");
+		selectMFrom.setSelectedIndex(selectMFrom.getOptionByValue(sFrom).getIndex());
+		HtmlSelect selectYFrom=formDatos.getSelectByName("ANNIO_DESDE");
+		selectYFrom.setSelectedIndex(selectYFrom.getOptionByValue(""+cFrom.get(Calendar.YEAR)).getIndex());
+		HtmlSelect selectMTo=formDatos.getSelectByName("MES_HASTA");
+		selectMTo.setSelectedIndex(selectMTo.getOptionByValue(sTo).getIndex());
+		HtmlSelect selectYTo=formDatos.getSelectByName("ANNIO_HASTA");
+		selectYTo.setSelectedIndex(selectYTo.getOptionByValue(""+cTo.get(Calendar.YEAR)).getIndex());
+		HtmlSelect selectLiqType=formDatos.getSelectByName("TIPO_LIQUIDACION");
+		selectLiqType.setSelectedIndex(selectLiqType.getOptionByValue(liqType.getValue()).getIndex());
+		formDatos.getInputByValue(liqOrigin.getValue()).setChecked(true);
+		htmlPage=formDatos.getInputByValue("Aceptar").click();
+		return htmlPage;
+	}
+	
+	//RETURNS A COLLECTION OF ALL LIQUIDATIONS AVAILABLE FOR AN ENTERPRISE WITHIN THE DATE SPECIFIED
 	public static Collection<Liquidation> CalculationQueryByCCC(final InputStream certificateInputStream,
 		final String certificatePassword, final String certificateType, final String ccc,
 		final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
@@ -876,43 +917,12 @@ public class SistemaRED_I {
 		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			webClient.getOptions().setJavaScriptEnabled(false);
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
-			HtmlForm formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
-			formDatos.getInputByName("CCC").setValueAttribute(ccc);
-			HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
-			selectRegime.setSelectedIndex(selectRegime.getOptionByValue(regime.getValue()).getIndex());
-			Calendar cFrom=Calendar.getInstance();
-			cFrom.setTime(dateFrom);
-			Calendar cTo=Calendar.getInstance();
-			cTo.setTime(dateTo);
-			String sFrom;
-			String sTo;
-			if(cFrom.get(Calendar.MONTH)+1<10) {
-				sFrom="0"+(cFrom.get(Calendar.MONTH)+1);
-			}
-			else
-				sFrom=""+(cFrom.get(Calendar.MONTH)+1);
-			if(cTo.get(Calendar.MONTH)+1<10) {
-				sTo="0"+(cTo.get(Calendar.MONTH)+1);
-			}
-			else
-				sTo=""+(cTo.get(Calendar.MONTH)+1);
-			HtmlSelect selectMFrom=formDatos.getSelectByName("MES_DESDE");
-			selectMFrom.setSelectedIndex(selectMFrom.getOptionByValue(sFrom).getIndex());
-			HtmlSelect selectYFrom=formDatos.getSelectByName("ANNIO_DESDE");
-			selectYFrom.setSelectedIndex(selectYFrom.getOptionByValue(""+cFrom.get(Calendar.YEAR)).getIndex());
-			HtmlSelect selectMTo=formDatos.getSelectByName("MES_HASTA");
-			selectMTo.setSelectedIndex(selectMTo.getOptionByValue(sTo).getIndex());
-			HtmlSelect selectYTo=formDatos.getSelectByName("ANNIO_HASTA");
-			selectYTo.setSelectedIndex(selectYTo.getOptionByValue(""+cTo.get(Calendar.YEAR)).getIndex());
-			HtmlSelect selectLiqType=formDatos.getSelectByName("TIPO_LIQUIDACION");
-			selectLiqType.setSelectedIndex(selectLiqType.getOptionByValue(liqType.getValue()).getIndex());
-			formDatos.getInputByValue(liqOrigin.getValue()).setChecked(true);
-			htmlPage=formDatos.getInputByValue("Aceptar").click();
+			htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
 			try {
 				checkLiquidationExceptions(htmlPage);
 			}catch(NullPointerException | ElementNotFoundException e) {
 				Collection<Liquidation> ret= new ArrayList<Liquidation>();
-				formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+				HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 				DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
 				for (int i=0;i<liqList.size();i++) {
 					HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(i);
@@ -954,43 +964,44 @@ public class SistemaRED_I {
 			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 				webClient.getOptions().setJavaScriptEnabled(false);
 				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
-				HtmlForm formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
-				formDatos.getInputByName("CCC").setValueAttribute(ccc);
-				HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
-				selectRegime.setSelectedIndex(selectRegime.getOptionByValue(regime.getValue()).getIndex());
-				Calendar cFrom=Calendar.getInstance();
-				cFrom.setTime(dateFrom);
-				Calendar cTo=Calendar.getInstance();
-				cTo.setTime(dateTo);
-				String sFrom;
-				String sTo;
-				if(cFrom.get(Calendar.MONTH)+1<10) {
-					sFrom="0"+(cFrom.get(Calendar.MONTH)+1);
-				}
-				else
-					sFrom=""+(cFrom.get(Calendar.MONTH)+1);
-				if(cTo.get(Calendar.MONTH)+1<10) {
-					sTo="0"+(cTo.get(Calendar.MONTH)+1);
-				}
-				else
-					sTo=""+(cTo.get(Calendar.MONTH)+1);
-				HtmlSelect selectMFrom=formDatos.getSelectByName("MES_DESDE");
-				selectMFrom.setSelectedIndex(selectMFrom.getOptionByValue(sFrom).getIndex());
-				HtmlSelect selectYFrom=formDatos.getSelectByName("ANNIO_DESDE");
-				selectYFrom.setSelectedIndex(selectYFrom.getOptionByValue(""+cFrom.get(Calendar.YEAR)).getIndex());
-				HtmlSelect selectMTo=formDatos.getSelectByName("MES_HASTA");
-				selectMTo.setSelectedIndex(selectMTo.getOptionByValue(sTo).getIndex());
-				HtmlSelect selectYTo=formDatos.getSelectByName("ANNIO_HASTA");
-				selectYTo.setSelectedIndex(selectYTo.getOptionByValue(""+cTo.get(Calendar.YEAR)).getIndex());
-				HtmlSelect selectLiqType=formDatos.getSelectByName("TIPO_LIQUIDACION");
-				selectLiqType.setSelectedIndex(selectLiqType.getOptionByValue(liqType.getValue()).getIndex());
-				formDatos.getInputByValue(liqOrigin.getValue()).setChecked(true);
-				htmlPage=formDatos.getInputByValue("Aceptar").click();
+				htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+//				HtmlForm formDatos=(HtmlForm) htmlPage.getElementById("formDatos");
+//				formDatos.getInputByName("CCC").setValueAttribute(ccc);
+//				HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
+//				selectRegime.setSelectedIndex(selectRegime.getOptionByValue(regime.getValue()).getIndex());
+//				Calendar cFrom=Calendar.getInstance();
+//				cFrom.setTime(dateFrom);
+//				Calendar cTo=Calendar.getInstance();
+//				cTo.setTime(dateTo);
+//				String sFrom;
+//				String sTo;
+//				if(cFrom.get(Calendar.MONTH)+1<10) {
+//					sFrom="0"+(cFrom.get(Calendar.MONTH)+1);
+//				}
+//				else
+//					sFrom=""+(cFrom.get(Calendar.MONTH)+1);
+//				if(cTo.get(Calendar.MONTH)+1<10) {
+//					sTo="0"+(cTo.get(Calendar.MONTH)+1);
+//				}
+//				else
+//					sTo=""+(cTo.get(Calendar.MONTH)+1);
+//				HtmlSelect selectMFrom=formDatos.getSelectByName("MES_DESDE");
+//				selectMFrom.setSelectedIndex(selectMFrom.getOptionByValue(sFrom).getIndex());
+//				HtmlSelect selectYFrom=formDatos.getSelectByName("ANNIO_DESDE");
+//				selectYFrom.setSelectedIndex(selectYFrom.getOptionByValue(""+cFrom.get(Calendar.YEAR)).getIndex());
+//				HtmlSelect selectMTo=formDatos.getSelectByName("MES_HASTA");
+//				selectMTo.setSelectedIndex(selectMTo.getOptionByValue(sTo).getIndex());
+//				HtmlSelect selectYTo=formDatos.getSelectByName("ANNIO_HASTA");
+//				selectYTo.setSelectedIndex(selectYTo.getOptionByValue(""+cTo.get(Calendar.YEAR)).getIndex());
+//				HtmlSelect selectLiqType=formDatos.getSelectByName("TIPO_LIQUIDACION");
+//				selectLiqType.setSelectedIndex(selectLiqType.getOptionByValue(liqType.getValue()).getIndex());
+//				formDatos.getInputByValue(liqOrigin.getValue()).setChecked(true);
+//				htmlPage=formDatos.getInputByValue("Aceptar").click();
 				try {
 					checkLiquidationExceptions(htmlPage);
 				}catch(NullPointerException | ElementNotFoundException e) {
 					Collection<Map<String, WorkerLiquidation>> ret= new ArrayList<Map<String, WorkerLiquidation>>();
-					formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+					HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 					DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
 					for (int h=0;h<liqList.size();h++) {
 						
@@ -1044,10 +1055,139 @@ public class SistemaRED_I {
 	
 	
 	
-	
-	
-	
-	
+	////GETS THE WORKER LIQUIDATION AVAILABLE IN THE FIRST ENTERPRISE LIQUIDATION SHOWN FOR THE WORKER WHOSE NAF IS INPUTTED
+	public static WorkerLiquidation WorkerCalculationQueryByNAF(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String naf, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws SegSocialException{
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+		Toolkit.verifyData(arr_fields);
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			webClient.getOptions().setJavaScriptEnabled(false);
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+			try {
+				checkLiquidationExceptions(htmlPage);
+			}catch(NullPointerException | ElementNotFoundException e) {
+				htmlPage=htmlPage.getElementById("liquidacion0").click();
+				htmlPage=htmlPage.getElementById("SPM.ACC.CONTINUAR").click();
+				htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+				DomNodeList<DomNode> workerRows=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
+				for (DomNode rowNode : workerRows) {
+					HtmlTableRow row=(HtmlTableRow)rowNode;
+					String nafta=Toolkit.removeWeirdCharacters(row.getCell(1).getVisibleText()).trim();
+					if(nafta.equalsIgnoreCase(naf)) {
+						DomNode radNode=row.getCell(0).querySelector("input");
+						HtmlRadioButtonInput rad=(HtmlRadioButtonInput) radNode;
+						htmlPage=rad.click();
+						htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
+						DomNode cafNode=htmlPage.querySelector("abbr[title='Código alfabético (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
+						String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
+						caf=caf.substring(caf.indexOf(":")+1).trim();
+						
+						DomNode keyNode=htmlPage.querySelector("abbr[title='Número de afiliación a la Seguridad Social']").getParentNode();
+						String key=Toolkit.removeWeirdCharacters(keyNode.getVisibleText());
+						key=key.substring(key.indexOf(":")+1).trim();
+						WorkerLiquidationBuilder wlb=new WorkerLiquidationBuilder();
+						wlb.setCaf(caf);
+						wlb.setNss(key);
+						DomNodeList<DomNode> rows=htmlPage.querySelectorAll("tbody tr");
+						for (DomNode rw : rows) {
+							workerLiquidationDataType((HtmlTableRow)rw, wlb);
+						}
+						return wlb.build();
+					}
+				}
+				throw new DataDoesNotExist();
+			}
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		}
+		return null;
+}	
+	//GETS ALL AVAILABLE WORKER LIQUIDATIONS FOR THE WORKER WHOSE NAF IS INPUTTED
+	public static Collection<WorkerLiquidation> WorkerCalculationQueriesByNAF(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String naf, final String ccc,
+			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws SegSocialException{
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		Object[] arr_fields= {ccc, regime, dateFrom, dateTo, liqType, liqOrigin};
+		Toolkit.verifyData(arr_fields);
+		try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+			webClient.getOptions().setJavaScriptEnabled(false);
+			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+			htmlPage=liquidationPageFill(htmlPage, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+			try {
+				checkLiquidationExceptions(htmlPage);
+			}catch(NullPointerException | ElementNotFoundException e) {
+				Collection<WorkerLiquidation> ret=new ArrayList<WorkerLiquidation>();
+				
+				DomNodeList<DomNode> liquidationNodes=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
+				
+				for (int i=0;i<liquidationNodes.getLength();i++) {
+					
+					
+					HtmlTableRow rwLiq=(HtmlTableRow)liquidationNodes.get(i);
+					DomNode radLiqNode=rwLiq.getCell(0).querySelector("input");
+					HtmlRadioButtonInput radLiq=(HtmlRadioButtonInput)radLiqNode;
+					htmlPage=radLiq.click();
+					
+					htmlPage=htmlPage.getElementById("SPM.ACC.CONTINUAR").click();
+					htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTA_TRABAJADORES").click();
+					DomNodeList<DomNode> workerRows=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
+					for (DomNode rowNode : workerRows) {
+						HtmlTableRow row=(HtmlTableRow)rowNode;
+						String nafta=Toolkit.removeWeirdCharacters(row.getCell(1).getVisibleText()).trim();
+						if(nafta.equalsIgnoreCase(naf)) {
+							DomNode radNode=row.getCell(0).querySelector("input");
+							HtmlRadioButtonInput rad=(HtmlRadioButtonInput) radNode;
+							htmlPage=rad.click();
+							htmlPage=htmlPage.getElementById("SPM.ACC.CONSULTAR").click();
+							DomNode cafNode=htmlPage.querySelector("abbr[title='Código alfabético (abreviado a partir de nombre y apellidos) del trabajador']").getParentNode();
+							String caf=Toolkit.removeWeirdCharacters(cafNode.getVisibleText());
+							caf=caf.substring(caf.indexOf(":")+1).trim();
+							
+							DomNode keyNode=htmlPage.querySelector("abbr[title='Número de afiliación a la Seguridad Social']").getParentNode();
+							String key=Toolkit.removeWeirdCharacters(keyNode.getVisibleText());
+							key=key.substring(key.indexOf(":")+1).trim();
+							WorkerLiquidationBuilder wlb=new WorkerLiquidationBuilder();
+							wlb.setCaf(caf);
+							wlb.setNss(key);
+							DomNodeList<DomNode> rows=htmlPage.querySelectorAll("tbody tr");
+							for (DomNode rw : rows) {
+								workerLiquidationDataType((HtmlTableRow)rw, wlb);
+							}
+							ret.add(wlb.build());
+						}
+					}
+					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+					liquidationNodes=htmlPage.querySelectorAll("tbody>tr:not(.cabecera)");
+				}
+				
+				
+				
+				
+				if(ret.size()==0)
+					throw new DataDoesNotExist();
+				else
+					return ret;
+			}
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		}
+		return null;
+}	
 	
 	
 	

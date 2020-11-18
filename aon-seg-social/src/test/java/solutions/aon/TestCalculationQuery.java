@@ -213,8 +213,70 @@ public class TestCalculationQuery {
 	
 	
 	
+	@Test
+	public void testWorkerCalculationQueryByNAFOk() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+			WorkerLiquidation liq=SistemaRED_I.WorkerCalculationQueryByNAF(certificateInputStream, "jg@FNMT", "pkcs12","011005185924" ,"01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			System.out.println(liq);
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
 	
+	@Test
+	public void testWorkerCalculationQueryByNAFNotFound() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+			WorkerLiquidation liq=SistemaRED_I.WorkerCalculationQueryByNAF(certificateInputStream, "jg@FNMT", "pkcs12","naf_falso" ,"01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			fail("Shouldn't find anything");
+		} catch (DataDoesNotExist e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
 	
+	@Test
+	public void testWorkerCalculationQueriesByNAFOk() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+			Collection<WorkerLiquidation> liq=SistemaRED_I.WorkerCalculationQueriesByNAF(certificateInputStream, "jg@FNMT", "pkcs12","011005185924" ,"01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			for (WorkerLiquidation workerLiquidation : liq) {
+				System.out.println(liq);
+			}
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
 	
+	@Test
+	public void testWorkerCalculationQueriesByNAFNotFound() {
+		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+			Collection<WorkerLiquidation> liq=SistemaRED_I.WorkerCalculationQueriesByNAF(certificateInputStream, "jg@FNMT", "pkcs12","naf_falso" ,"01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			fail("Shouldn't find anything");
+		} catch (DataDoesNotExist e) {
+			
+		} catch (IOException e) {
+			fail("Wrong certificate on test");
+		} catch (SegSocialException e) {
+			fail(""+e.getClass());
+		} catch (ParseException e) {
+			fail("Test date fails");
+		}
+	}
 
 }
