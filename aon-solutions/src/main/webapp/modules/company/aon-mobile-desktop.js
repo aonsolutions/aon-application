@@ -86,13 +86,15 @@ export class AonMobileDesktop extends AonElement {
 
 
 		document.addEventListener('click', function(event) {
-			let sg = this.getElement(this.SUGGESTION);
-			let isClickInside = sg.contains(event.target);
-			if(!isClickInside){
-				if(localStorage.getItem('company')) {
-					sg.title = 'Empresa Seleccionada';
-					sg.value = JSON.parse(localStorage.getItem('company')).name;
-					sg.readonly = true;
+			let sg = document.getElementById(this.SUGGESTION);
+			if(sg) {
+				let isClickInside = sg.contains(event.target);
+				if(!isClickInside){
+					if(localStorage.getItem('company')) {
+						sg.title = 'Empresa Seleccionada';
+						sg.value = JSON.parse(localStorage.getItem('company')).name;
+						sg.readonly = true;
+					}
 				}
 			}
 		});
@@ -150,7 +152,7 @@ export class AonMobileDesktop extends AonElement {
 		ul.appendChild(this.buildNotificationsLi('Documentos sin leer', 'snippet_folder', 0, () => {}));
 		ul.appendChild(this.buildNotificationsLi('Notificaciones', 'notifications', 0, () => {}));
 		ul.appendChild(this.buildNotificationsLi('Facturas Pendientes', 'inbox', inboxCount, () => {
-			if(rejectedCount > 0) {
+			if(inboxCount > 0) {
 				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 			}
 		}));
