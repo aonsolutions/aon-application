@@ -2,6 +2,7 @@ package net.aonsolutions.aon.api.servlet;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -143,8 +144,20 @@ public class InvoiceServlet extends HttpServlet{
 				f -> f.getDomainProperty().eq(domain.getId())
 					.and(f.getStatusProperty().eq(rs.value())))
 			.forEach(r -> { 
+
 				JSONObject json = new JSONObject(r.getJson());
 				json.put("id", r.getId());
+				if(r.getMimeType() != null){
+					JSONObject f = new JSONObject();
+				    String str = "domain="+ domain.getId() + "&id=" + r.getId() + "&attach_type=data";
+				    String result = Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+				    String url =  "ms/download_rawdoc/"  + domain.getName() + "/" + login + "/" +  result;
+				    f.put("url", url);
+				    f.put("type", r.getMimeType().getName());
+				    json.put("file", f);
+				    json.put("file", f);	
+				}
+
 				jsArray.put(json);
 			});
 		}
