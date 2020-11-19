@@ -69,6 +69,8 @@ public class Employee {
 	public String getIpf() {return ipf;}
 	public String getNss() {return nss;}
 	public Date getFra() {return fra;}
+	public String getSituacion() {return situation;}
+	public String getRegime() {return regime;}
 	public Optional<String> getName() {return Optional.ofNullable(name);}
 	public Optional<String> getGc() {return Optional.ofNullable(gc);}
 	public Optional<Date> getFrb() {return Optional.ofNullable(frb);}

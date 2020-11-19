@@ -134,7 +134,7 @@ export const getTipoContrato = () =>  new Promise((resolve) => {
             "tipo_jornada": "0"
         }, {
             "id": "3",
-            "name": "TP/Obra o Servicio determinadoL",
+            "name": "TP/Obra o Servicio determinado",
             "value": "501",
             "tipo_jornada": "1"
         }, {

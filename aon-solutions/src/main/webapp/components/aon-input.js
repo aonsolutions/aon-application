@@ -102,12 +102,12 @@ export class AonInput extends AonElement {
 		this.setAttribute('options', options);
   }
   
-  get maxlength(){
-    return this.getAttribute('maxlength');
+  get pattern(){
+    return this.getAttribute('pattern');
   }
 
-  set maxlength(maxlength){
-    this.setAttribute('maxlength', maxlength);
+  set pattern(pattern){
+    this.setAttribute('pattern', pattern);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -202,11 +202,8 @@ export class AonInput extends AonElement {
     input.required = this.getAttribute('required');
     input.id = this.getAttribute('id') + 'Input';
     input.name = this.getAttribute('name');
-    let maxlength = this.getAttribute('maxlength');
-
-    if(maxlength) {
-      input.setAttribute("maxlength", maxlength);
-      input.setAttribute("oninput", "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);");
+    if(this.getAttribute('pattern')){
+      input.pattern = this.getAttribute('pattern');
     }
     input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
     input.type = this.getAttribute('type') && !this.isTypeList() ? this.getAttribute('type') : 'text';
@@ -222,8 +219,14 @@ export class AonInput extends AonElement {
       this.setAttribute('value', document.getElementById(input.getAttribute('id')).value);
     });
 
-    input.addEventListener('keyup', () => {
-			this.value = input.value;
+    input.addEventListener('keyup', (e) => {
+      let {value, pattern} = e.target;
+      if(pattern && value){
+        if( value.match(pattern) ){}
+        else e.target.value = value.slice(0, -1);
+      }
+
+      this.value = input.value;
 	    this.dispatchEvent(new Event('keyup'));
 		});
 
