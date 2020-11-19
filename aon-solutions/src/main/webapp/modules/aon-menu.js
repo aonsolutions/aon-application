@@ -1,6 +1,6 @@
 import {AonElement} from '../components/AonElement.js';
 import {startModule, rootPanel} from '../services/gwtLoader.js';
-import {Apps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
+import {Apps, AuxApps, MenuApps, AccountingMenu, PayrollMenu, AeatFiscalMenu, ToolsMenu, PortalMenu} from  '../services/app.js';
 import {getDomainApps, getUserAppRole} from  '../services/service.js';
 import '../components/aon-icon.js';
 import './comunic@/aon-comunica.js';
@@ -122,6 +122,9 @@ export class AonMenu extends AonElement {
 			case Apps.TIMECONTROL.app:
 				rootPanel('<aon-signin></aon-signin>');
 				break;
+			case AuxApps.TOOLS.app:
+				this.buildAppMenu(AuxApps.TOOLS);
+				break;
 		}
 	}
 
@@ -141,6 +144,8 @@ export class AonMenu extends AonElement {
 				return Apps.INVOICE;
 			case Apps.TIMECONTROL.app:
 				return Apps.TIMECONTROL;
+			case AuxApps.TOOLS.app:
+				return AuxApps.TOOLS;
 		}
 	}
 
@@ -377,7 +382,7 @@ export class AonMenu extends AonElement {
 				return AeatFiscalMenu;
 			case Apps.PAYROLL.app:
 				return PayrollMenu;
-			case Apps.TOOLS.app:
+			case AuxApps.TOOLS.app:
 				return ToolsMenu;
 			case Apps.PORTAL.app:
 				return PortalMenu;
@@ -430,25 +435,18 @@ export class AonMenu extends AonElement {
 		if(this.getAttribute('company')){
 			company = JSON.parse(this.getAttribute('company'));
 		}
-		switch(app.app){
-			case Apps.ACCOUNTING.app:
-				return Apps.ACCOUNTING.color;
-			case Apps.FISCAL.app:
-				if(company && company.administration && 'ALAVA' === company.administration){
-					return '#a30c51';
-				} else if(company && company.administration && 'BIZKAIA' === company.administration){
-					return '#d70004';
-				} else if(company && company.administration && 'GIPUZKOA' === company.administration){
-					return '#a1c031';
-				} else if(company && company.administration && 'NAVARRA' === company.administration){
-					return '#da002a';
-				} else return '#3a85c3';
-			case Apps.PAYROLL.app:
-				return Apps.PAYROLL.color;
-			case Apps.TOOLS.app:
-				return Apps.TOOLS.color;
-			default: return app.color ? app.color : '#f1f1f1';
+		if(Apps.FISCAL.app === app.app) {
+			if(company && company.administration && 'ALAVA' === company.administration){
+				return '#a30c51';
+			} else if(company && company.administration && 'BIZKAIA' === company.administration){
+				return '#d70004';
+			} else if(company && company.administration && 'GIPUZKOA' === company.administration){
+				return '#a1c031';
+			} else if(company && company.administration && 'NAVARRA' === company.administration){
+				return '#da002a';
+			} else return '#3a85c3';
 		}
+		return app.color ? app.color : '#f1f1f1';
 	}
 
 	addApp(app) {

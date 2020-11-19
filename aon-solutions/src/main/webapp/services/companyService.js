@@ -69,7 +69,9 @@ export const getDomainApps = (domain) => {
           if (error) {
             reject(error);
           } else {
-            resolve(JSON.parse(result));
+            let apps = JSON.parse(result);
+            apps.push('tools');
+            resolve(apps);
           }
         }
       );

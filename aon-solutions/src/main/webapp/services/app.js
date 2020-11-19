@@ -113,6 +113,15 @@ export const Apps = {
   }
 }
 
+export const AuxApps = {
+  TOOLS: {
+    app: 'tools',
+    title: 'Herramientas',
+    icon: 'aon_app',
+    color: '#535353'
+  },
+}
+
 export const ClassicApps = {
   AON_SOLUTIONS: {
     app: 'aio',
