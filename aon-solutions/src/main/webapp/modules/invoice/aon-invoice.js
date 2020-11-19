@@ -6,7 +6,7 @@ import {getInvoiceCategories} from '../../services/invoiceCategory.js';
 import {insertInvoice, deleteInvoices} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
-
+import {ToolbarType} from '../../models/enums.js';
 import '../../components/aon-card.js';
 import '../../components/aon-date.js';
 import '../../components/aon-select.js';
@@ -18,6 +18,8 @@ import '../../components/aon-viewer.js';
 export class AonInvoice extends AonElement {
 
 	_invoice;
+
+	TOOLBAR;
 
   static get observedAttributes() {
     return ['invoice'];
@@ -45,6 +47,8 @@ export class AonInvoice extends AonElement {
 
   constructor () {
     super();
+		this.id = this.id || 'aonInvoiceSheet';
+		this.TOOLBAR = this.id + 'Toolbar';
 		this._invoice = new Invoice(this.getAttribute('type'));
 		if(this.hasAttribute('invoice')){
 			this.setInvoice(JSON.parse(this.getAttribute('invoice')));
@@ -61,20 +65,22 @@ export class AonInvoice extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
+			<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.getInvoiceTitle()}"> </aon-toolbar>
+
 			<div style="display:flex;">
-			<div id="aonInvoiceData" style="width:100%">
-				<div id="aonInvoiceDiv" style="display:flex;">
-					<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%"> </aon-card>
-					<div id="aonInvoiceTaxDiv" style="width:50%">
-						<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
-						<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
+				<div id="aonInvoiceData" style="width:100%">
+					<div id="aonInvoiceDiv" style="display:flex;">
+						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%"> </aon-card>
+						<div id="aonInvoiceTaxDiv" style="width:50%">
+							<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
+							<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
+						</div>
 					</div>
+					<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
+					<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
 				</div>
-				<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
-				<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
-			</div>
-			<div id="aonInvoiceFile">
-			</div>
+				<div id="aonInvoiceFile">
+				</div>
 			</div>
 			<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
 		`;
@@ -82,6 +88,13 @@ export class AonInvoice extends AonElement {
 		this.build();
   }
 
+	getInvoiceTitle() {
+		if(this._invoice.isEmitida()) {
+			return 'Factura Emitida';
+		} else if(this._invoice.isTicket()){
+			return 'Ticket'
+		} else return 'Factura Recibida';
+	}
 	build() {
 		this.buildData();
 		if(!this.isTicket()){
@@ -99,15 +112,46 @@ export class AonInvoice extends AonElement {
 			document.getElementById('aonInvoiceItemFinanceCard').style.display = 'none';
 		}
 
-		let aonInvoice = document.getElementById('aonInvoice');
-		aonInvoice.addToolbarOption('Options', 'more_vert', () => {
-			let button = document.getElementById('aonInvoiceToolbarOptionsButton');
+		let invoiceToolbar = this.getElement(this.TOOLBAR);
+
+		if(this._invoice.file) {
+			invoiceToolbar.addButton('ShowFile', 'visibility_off', () => {
+				let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'ShowFileButton');
+				let visible = 'visibility_off' === button.icon;
+				let fileDiv = document.getElementById('aonInvoiceFile');
+				let dataDiv = document.getElementById('aonInvoiceData');
+				if(visible) {
+						button.icon = 'visibility';
+						fileDiv.style.display = 'none'
+						dataDiv.style.width = '100%'
+				} else {
+						button.icon = 'visibility_off';
+						fileDiv.style.display = 'block';
+						fileDiv.style.width = '50%';
+						dataDiv.style.width = '50%';
+				}
+			});
+		}
+
+		invoiceToolbar.addButton('Options', 'more_vert', () => {
+			let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
 			const top  = button.getBoundingClientRect().top;
 			const left = button.getBoundingClientRect().left;
 			let d = document.getElementById('aonDialogInvoiceOption');
 			d.setMenuOptions(this.getOptions(), top, left);
 			d.open();
 		});
+
+		invoiceToolbar.addButton('Back', 'arrow_back', () => this.back());
+		// let aonInvoice = document.getElementById('aonInvoice');
+		// aonInvoice.addToolbarOption('Options', 'more_vert', () => {
+		// 	let button = document.getElementById('');
+		// 	const top  = button.getBoundingClientRect().top;
+		// 	const left = button.getBoundingClientRect().left;
+		// 	let d = document.getElementById('aonDialogInvoiceOption');
+		// 	d.setMenuOptions(this.getOptions(), top, left);
+		// 	d.open();
+		// });
 
 		if(!this._invoice.file) {
 			let fileDiv = document.getElementById('aonInvoiceFile');
@@ -230,6 +274,11 @@ export class AonInvoice extends AonElement {
 			}];
 	}
 
+	back() {
+		let aip = document.querySelector('aon-invoice-panel');
+		aip.aonInvoiceList();
+	}
+
 	refuseInvoice() {
 		this._invoice.status = 'refused';
 		this.save();
@@ -248,8 +297,7 @@ export class AonInvoice extends AonElement {
 	removeInvoice() {
 		deleteInvoices([this._invoice.id]).then(() => {
 			alert('La Factura se ha borrado Definitivamente.')
-			let aip = document.querySelector('aon-invoice-panel');
-			aip.aonInvoiceList({status:'trash'});
+			this.back();
 		});
 	}
 
@@ -552,7 +600,8 @@ export class AonInvoice extends AonElement {
 	createTaxeFromTotal() {
 		if (this._invoice.taxes.length === 0) {
 			let tax = {
-				type: 'IVA',
+				tax: TaxType.IVA,
+				type: TaxType.IVA,
 				percentage: 21.0,
 				base: round(Number(this._invoice.total) / 1.21),
 				quota: round(Number(this._invoice.total / 1.21) * 0.21)
@@ -758,7 +807,8 @@ export class AonInvoice extends AonElement {
 	addTax() {
 		let i = this._invoice.taxes.length;
 		let tax = {
-			type: 'IVA',
+			tax: TaxType.IVA,
+			type: TaxType.IVA,
 			percentage: 0.0,
 			base: 0,
 			quota: 0
@@ -769,7 +819,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	printTax(tax, i) {
-		let table = 'IVA' === tax.type || 'IVA' === tax.tax
+		let table = TaxType.IVA === tax.type || TaxType.IVA === tax.tax
 			? document.getElementById('aonInvoiceItemTaxesCardTable')
 			: document.getElementById('aonInvoiceItemIRPFCardTable');
 
@@ -781,8 +831,8 @@ export class AonInvoice extends AonElement {
 		let tdTaxType = document.createElement('td');
 		tdTaxType.innerHTML = `<aon-select id="taxType${i}" title="Tipo"></aon-select>`;
 		tr.appendChild(tdTaxType);
-		let taxType = document.getElementById('taxType' + i);
-		taxType.options = JSON.stringify(TaxType);
+		let taxType = this.getElement('taxType' + i);
+		taxType.setEnumOptions(TaxType);
 		taxType.value = tax.type || tax.tax;
 
 		// TAXPERCENT
@@ -790,7 +840,7 @@ export class AonInvoice extends AonElement {
 		tdTaxPercentage.innerHTML = `<aon-select id="taxPercentage${i}" title="%"></aon-select>`;
 		tr.appendChild(tdTaxPercentage);
 		let taxPercentage = document.getElementById('taxPercentage' + i);
-		taxPercentage.options = JSON.stringify( 'IVA' === tax.type || 'IVA' === tax.tax ? TaxIVAPercentage : TaxIRPFPercentage);
+		taxPercentage.options = JSON.stringify( TaxType.IVA === tax.type || TaxType.IVA === tax.tax ? TaxIVAPercentage : TaxIRPFPercentage);
 		taxPercentage.value = tax.percentage;
 		taxPercentage.addEventListener('select', () => this.updateTaxPercentage(i));
 
@@ -877,7 +927,8 @@ export class AonInvoice extends AonElement {
 		if (val) {
 			let i = this._invoice.taxes.length;
 			let tax = {
-				type: 'IRPF',
+				tax: TaxType.IRPF,
+				type: TaxType.IRPF,
 				percentage: 19.0,
 				base: 0,
 				quota: 0
@@ -887,7 +938,7 @@ export class AonInvoice extends AonElement {
 		} else {
 			for(let i = 0; i < this._invoice.taxes.length; i++) {
 				let tax = this._invoice.taxes[i];
-				if('IRPF' === tax.type || 'IRPF' === tax.tax) {
+				if(TaxType.IRPF === tax.type || TaxType.IRPF === tax.tax) {
 					this._invoice.taxes.splice(i, 1);
 				}
 			}
@@ -907,7 +958,7 @@ export class AonInvoice extends AonElement {
 	updateIRPF() {
 		for(let i = 0; i < this._invoice.taxes.length; i++) {
 			let tax = this._invoice.taxes[i];
-			if('IRPF' === tax.type || 'IRPF' === tax.type) {
+			if(TaxType.IRPF === tax.type || TaxType.IRPF === tax.type) {
 				this._invoice.taxes[i].base = this.totalBaseIRPF();
 				this._invoice.taxes[i].quota = round(this._invoice.taxes[i].base / 100 * this._invoice.taxes[i].percentage);
 			}
@@ -916,7 +967,7 @@ export class AonInvoice extends AonElement {
 
 	updateVat() {
 		this._invoice.taxes.forEach((item, i) => {
-			if(item.type === 'IVA'){
+			if(TaxType.IVA === item.type || TaxType.IVA === item.tax){
 				this._invoice.taxes.splice(i, 1);
 			}
 		});
@@ -924,7 +975,8 @@ export class AonInvoice extends AonElement {
 			let base = this.totalBase(item.value);
 			if(base != 0) {
 				let tax = {
-					type: 'IVA',
+					tax: TaxType.IVA,
+					type: TaxType.IVA,
 					percentage: item.value,
 					base: base,
 					quota:  round(base / 100 * item.value)
@@ -1023,7 +1075,7 @@ export class AonInvoice extends AonElement {
 
 		// FINANCE DUE DATE
 		let tdFinanceDueDate = document.createElement('td');
-		tdFinanceDueDate.innerHTML = `<aon-date id="financeDueDate${i}" title="Fecha Vencimiento" ></aon-date>`;
+		tdFinanceDueDate.innerHTML = `<aon-date id="financeDueDate${i}" title="Fecha Vto" ></aon-date>`;
 		tr.appendChild(tdFinanceDueDate);
 		let financeDueDate = document.getElementById('financeDueDate' + i);
 		financeDueDate.setDate(finance.due_date);
@@ -1031,7 +1083,7 @@ export class AonInvoice extends AonElement {
 
 		// FINANCE PAYMETHOD
 		let tdDetailPaymethod = document.createElement('td');
-		tdDetailPaymethod.innerHTML = `<aon-select id="financePaymethod${i}" title="Forma de Pago"></aon-select>`;
+		tdDetailPaymethod.innerHTML = `<aon-select id="financePaymethod${i}" title="F. de Pago"></aon-select>`;
 		tr.appendChild(tdDetailPaymethod);
 		let financePaymethod = document.getElementById('financePaymethod' + i);
 		financePaymethod.options = JSON.stringify(Paymethods);
@@ -1126,7 +1178,7 @@ export class AonInvoice extends AonElement {
 	totalImpuestos() {
  		let total = 0;
 		for (let i = 0; i < this._invoice.taxes.length; i++) {
-			if('IVA' === this._invoice.taxes[i].type || 'IVA' ===  this._invoice.taxes[i].tax){
+			if(TaxType.IVA === this._invoice.taxes[i].type || TaxType.IVA ===  this._invoice.taxes[i].tax){
 				total += (this._invoice.taxes[i].base + this._invoice.taxes[i].quota);
 			} else {
 				total -= this._invoice.taxes[i].quota;

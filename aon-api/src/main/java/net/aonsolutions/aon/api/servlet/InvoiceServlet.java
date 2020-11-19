@@ -147,6 +147,7 @@ public class InvoiceServlet extends HttpServlet{
 
 				JSONObject json = new JSONObject(r.getJson());
 				json.put("id", r.getId());
+				json.put("status", getRawdocStatus(r.getStatus()));
 				if(r.getMimeType() != null){
 					JSONObject f = new JSONObject();
 				    String str = "domain="+ domain.getId() + "&id=" + r.getId() + "&attach_type=data";
@@ -255,6 +256,15 @@ public class InvoiceServlet extends HttpServlet{
 			} else st = RawdocStatus.INBOX;
 		}
 		return st;
+	}
+	
+	
+	private static String getRawdocStatus(RawdocStatus status) {
+		if(RawdocStatus.REJECTED.equals(status)) {
+			return "refused";
+		} else if(RawdocStatus.DRAFT.equals(status)) {
+			return "trash";
+		} else return "inbox";
 	}
 	
 	private static Boolean isContabilizada(String status) {

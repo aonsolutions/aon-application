@@ -1,8 +1,8 @@
 
-export const TaxType = [
-  {value:'IVA', name:'IVA'},
-  {value:'IRPF', name:'IRPF'}
-];
+export const TaxType = {
+  IVA: 'IVA',
+  IRPF: 'IRPF'
+}
 
 export const TaxIVAPercentage = [
   {value:21.0, name:'21%'},

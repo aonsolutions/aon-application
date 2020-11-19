@@ -29,7 +29,7 @@ export class AonAltaDirecta extends AonElement {
                 background-color: #fff;
                 background-clip: border-box;
                 border: 1px solid rgba(0,0,0,.125);
-                border-radius: .25rem;            
+                border-radius: .25rem;
               }
 
             </style>
@@ -47,7 +47,7 @@ export class AonAltaDirecta extends AonElement {
                             <aon-card id="${this.ID}ContratoCard" title="Datos del contrato"></aon-card>
                         </div>
                         <div class="aonCol-sm-12 offset-5">
-                            <button type="button" id="${this.ID}Submit">Comunicar</button>
+                            <button class="aonButton" type="button" id="${this.ID}Submit">Comunicar</button>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ export class AonAltaDirecta extends AonElement {
  	}
 
  	build() {
-         
+
         let aonMovements = this.getElement('aonComunica');
         aonMovements.removeToolbarOptions();
 
@@ -66,13 +66,13 @@ export class AonAltaDirecta extends AonElement {
         aonEmpresaCard.setContentHTML(`
             <div class="aonCol-sm-12 aonCol-md-4">
                 <aon-select name="centro_trabajo" id="centro_trabajo" title="Centro de trabajo"></aon-select>
-            </div> 
+            </div>
             <div class="aonCol-sm-12 aonCol-md-4">
                 <aon-select name="cuenta_cotizacion" id="cuenta_cotizacion" title="Cuenta de cotización"></aon-select>
-            </div> 
+            </div>
             <div class="aonCol-sm-12 aonCol-md-4">
                 <aon-input name="convenio" id="convenio" description="Convenio" type="text" value="60888888888888"></aon-input>
-            </div> 
+            </div>
         `);
 
         let aonTrabajadorCard = this.getElement(`${this.ID}TrabajadorCard`);
@@ -101,13 +101,13 @@ export class AonAltaDirecta extends AonElement {
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
-            </div> 
+            </div>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="grupo_cotizacion" id="grupo_cotizacion" title="Grupo de cotización"></aon-select>
-            </div> 
+            </div>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="ocupacion" id="ocupacion" title="Ocupación" ></aon-select>
-            </div> 
+            </div>
             <div class="aonCol-sm-12 aonCol-md-12" id="div_parcial" hidden>
                 <div class="aonCol-sm-3">
                     <aon-select id="tipo_jornada" title="Tipo de jornada"></aon-select>
@@ -170,7 +170,7 @@ export class AonAltaDirecta extends AonElement {
 
     selectTipoContrato(e){
         let {detail:{tipo_jornada}} = e;
-        tipo_jornada = parseInt(tipo_jornada); 
+        tipo_jornada = parseInt(tipo_jornada);
         let coeficiente_parcial= this.getElement('coeficiente_parcial');
         coeficiente_parcial.value = '';
         let div_parcial = this.getElement('div_parcial');
@@ -178,10 +178,10 @@ export class AonAltaDirecta extends AonElement {
             //si es parcial
             div_parcial.hidden =  false;
             coeficiente_parcial.required = true;
-        }  else { 
+        }  else {
             div_parcial.hidden = true;
             coeficiente_parcial.required = false;
-        } 
+        }
 
     }
 
@@ -297,7 +297,7 @@ export class AonAltaDirecta extends AonElement {
                     }
                 })
             );
-            if(resp.length>0){ 
+            if(resp.length>0){
                 horas_convenio.value = resp.find(r=>r).value;
             }
             // horas.value=3;
@@ -312,7 +312,7 @@ export class AonAltaDirecta extends AonElement {
         let calc = '';
         if(horas_convenio.value > 0 && horas.value > 0){
             calc =  Math.round( parseFloat( (parseFloat(horas.value) / parseFloat(horas_convenio.value) ) *  100) ).toString().padStart(3, "0");
-        } 
+        }
         this.getElement('coeficiente_parcial').setAttribute('value', calc);
     }
 
@@ -320,7 +320,7 @@ export class AonAltaDirecta extends AonElement {
         let horas_convenio = this.getElement('horas_convenio').value;
         let coef =  this.getElement('coeficiente_parcial').value;
         let horas = this.getElement('horas');
-        
+
         if(horas_convenio > 0 && coef > 0){
             let calc = (parseInt(coef) / 100) * horas_convenio;
             horas.value = calc;
@@ -337,7 +337,7 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {
             toast.start({message:'Alta NO procesada!', type: 'error'});
         }
-      
+
     }
 }
 window.customElements.define('aon-alta-directa', AonAltaDirecta);

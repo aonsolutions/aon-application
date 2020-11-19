@@ -187,8 +187,6 @@ export class AonUser extends AonElement {
 		table.setAttribute('id', 'aonUserRoleTable')
 		table.style.width = '100%';
 		card2.setContent(table);
-
-		componentHandler.upgradeAllRegistered();
 	}
 
 

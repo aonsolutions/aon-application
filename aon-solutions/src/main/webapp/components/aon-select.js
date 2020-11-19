@@ -159,6 +159,21 @@ export class AonSelect extends AonElement {
       div.classList.remove('is-visible');
     }
   }
+
+  setOptions(options) {
+    this.setAttribute('options', JSON.stringify(options));
+  }
+
+  setEnumOptions(options) {
+    let opts = [];
+    for(let key in options) {
+      opts.push({
+        value: key,
+        name: options[key]
+      });
+    }
+    this.setAttribute('options', JSON.stringify(opts));
+  }
 }
 
 window.customElements.define('aon-select', AonSelect);

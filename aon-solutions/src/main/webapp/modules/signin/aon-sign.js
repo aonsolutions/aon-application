@@ -76,7 +76,7 @@ export class AonSign extends AonElement {
 		content.appendChild(button);
 
 		let button2 = document.createElement('button');
-    button.className = 'aonButton';
+    button2.className = 'aonButton';
 		button2.style.backgroundColor = '#F39F1D';
 		button2.style.marginRight = '10px';
     button2.style.width = '100px';

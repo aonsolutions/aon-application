@@ -9,6 +9,7 @@ import './aon-invoice-list.js';
 export class AonInvoicePanel extends AonElement {
 
 	selected;
+	_filter;
 
 	INPUTFILE;
 
@@ -98,7 +99,7 @@ export class AonInvoicePanel extends AonElement {
 			}
 		];
 		aonInvoice.addSidenavOptions('CONFIGURACIÓN', settingOptions);
-		this.hasAttribute
+
 		let filter = {status:'inbox'};
 
 		if(this.hasAttribute('status')) {
@@ -113,15 +114,13 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	aonInvoiceList(filter) {
+		filter = filter || this._filter;
+		this._filter = filter;
 		let invoiceList = document.getElementById('aonInvoiceList');
 		if(invoiceList) {
 			invoiceList.setFilter(filter);
 		} else {
 			let aonInvoice = document.getElementById('aonInvoice');
-			aonInvoice.removeToolbarOptions();
-			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
-			aonInvoice.addToolbarOption('Upload', 'file_upload', () => this.addInvoiceFile());
-
 			aonInvoice.setContentHTML(filter
 				? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
 				: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
@@ -129,7 +128,9 @@ export class AonInvoicePanel extends AonElement {
 	}
 
 	addInvoice() {
-		let button = document.getElementById('aonInvoiceToolbarAddButton');
+		let aonInvoice = this.getElement('aonInvoice');
+		let aonInvoiceToolbar = this.getElement(aonInvoice.TOOLBAR);
+		let button = this.getElement(aonInvoiceToolbar.TOOL_SECTION + 'AddButton');
 
 		const top  = button.getBoundingClientRect().top;
 		const left = button.getBoundingClientRect().left;
@@ -195,8 +196,6 @@ export class AonInvoicePanel extends AonElement {
 				? `<aon-invoice-mobile invoice='${JSON.stringify(invoice)}'> </aon-invoice-mobile>`
 				: `<aon-invoice-mobile type="${type}"> </maon-invoice-mobile>`);
 		} else {
-			aonInvoice.removeToolbarOptions();
-			aonInvoice.addToolbarOption('Add', 'add', () => this.addInvoice());
 			aonInvoice.setContentHTML(invoice
 				? `<aon-invoice invoice='${JSON.stringify(invoice)}'> </aon-invoice>`
 				: `<aon-invoice type="${type}"> </aon-invoice>`);

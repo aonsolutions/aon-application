@@ -190,7 +190,7 @@ export class AonInvoiceMobile extends AonElement {
 
 		// CATEGORY
 		let tdCategory = document.createElement('td');
-		tdCategory.innerHTML = `<aon-input id="category" type="list" description="Categoría"></aon-input>`;
+		tdCategory.innerHTML = `<aon-select id="category" title="Categoría"></aon-select>`;
 		tr4.appendChild(tdCategory);
 		let category = document.getElementById('category');
 		category.options = JSON.stringify(getInvoiceCategories(this._invoice.type));
@@ -199,7 +199,7 @@ export class AonInvoiceMobile extends AonElement {
 
 		// PAYMETHOD
 		let tdPaymethod = document.createElement('td');
-		tdPaymethod.innerHTML = `<aon-input id="pay_method" type="list" description="Forma de Pago"></aon-input>`;
+		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
 		tr4.appendChild(tdPaymethod);
 		let paymethod = document.getElementById('pay_method');
 		paymethod.options = JSON.stringify(Paymethods);
@@ -227,7 +227,7 @@ export class AonInvoiceMobile extends AonElement {
 		// TRANSACTION
 		let tdTransaction = document.createElement('td');
 		tdTransaction.setAttribute('colspan', '4');
-		tdTransaction.innerHTML = `<aon-input id="transaction" type="list" description="Tipo Transacción"></aon-input>`;
+		tdTransaction.innerHTML = `<aon-select id="transaction" title="Tipo Transacción"></aon-select>`;
 		tr1.appendChild(tdTransaction);
 		let transaction = document.getElementById('transaction');
 		transaction.options = JSON.stringify(Transactions);
@@ -361,7 +361,8 @@ export class AonInvoiceMobile extends AonElement {
 	createTaxeFromTotal() {
 		if (this._invoice.taxes.length === 0) {
 			let tax = {
-				type: 'IVA',
+				tax: TaxType.IVA,
+				type: TaxType.IVA,
 				percentage: 21.0,
 				base: round(Number(this._invoice.total) / 1.21),
 				quota: round(Number(this._invoice.total / 1.21) * 0.21)
@@ -463,7 +464,7 @@ export class AonInvoiceMobile extends AonElement {
 		// DETAIL VAT
 		let tdDetailVat = document.createElement('td');
 		tdDetailVat.setAttribute('colspan','3');
-		tdDetailVat.innerHTML = `<aon-input id="dialogDetailVat${i}" type="list" description="%IVA"></aon-input>`;
+		tdDetailVat.innerHTML = `<aon-select id="dialogDetailVat${i}" title="%IVA"></aon-select>`;
 		tr3.appendChild(tdDetailVat);
 		let detailVat = document.getElementById('dialogDetailVat' + i);
 		detailVat.options = JSON.stringify(TaxIVAPercentage);
@@ -651,7 +652,8 @@ export class AonInvoiceMobile extends AonElement {
 	addTax() {
 		let i = this._invoice.taxes.length;
 		let tax = {
-			type: 'IVA',
+			tax: TaxType.IVA,
+			type: TaxType.IVA,
 			percentage: 0.0,
 			base: 0,
 			quota: 0
@@ -662,7 +664,7 @@ export class AonInvoiceMobile extends AonElement {
 	}
 
 	printTax(tax, i) {
-		let table = tax.type === 'IVA'
+		let table = TaxType.IVA === tax.type || TaxType.IVA === tax.tax
 			? document.getElementById('aonInvoiceItemTaxesCardTable')
 			: document.getElementById('aonInvoiceItemIRPFCardTable');
 
@@ -671,19 +673,19 @@ export class AonInvoiceMobile extends AonElement {
 		table.appendChild(tr);
 
 		// TAXTYPE
-		let tdTaxType = document.createElement('td');
-		tdTaxType.innerHTML = `<aon-input id="taxType${i}" type="list" description="Tipo"></aon-input>`;
+		let tdTaxType = this.createElement('td');
+		tdTaxType.innerHTML = `<aon-select id="taxType${i}" title="Tipo"></aon-select>`;
 		tr.appendChild(tdTaxType);
-		let taxType = document.getElementById('taxType' + i);
-		taxType.options = JSON.stringify(TaxType);
-		taxType.value = tax.type;
+		let taxType = this.getElement('taxType' + i);
+		taxType.setEnumOptions(TaxType);
+		taxType.value = tax.type || tax.tax;
 
 		// TAXPERCENT
 		let tdTaxPercentage= document.createElement('td');
-		tdTaxPercentage.innerHTML = `<aon-input id="taxPercentage${i}" type="list" description="%"></aon-input>`;
+		tdTaxPercentage.innerHTML = `<aon-select id="taxPercentage${i}" title="%"></aon-select>`;
 		tr.appendChild(tdTaxPercentage);
 		let taxPercentage = document.getElementById('taxPercentage' + i);
-		taxPercentage.options = JSON.stringify( tax.type === 'IVA' ? TaxIVAPercentage : TaxIRPFPercentage);
+		taxPercentage.options = JSON.stringify( TaxType.IVA === tax.type || TaxType.IVA === tax.tax ? TaxIVAPercentage : TaxIRPFPercentage);
 		taxPercentage.value = tax.percentage;
 		taxPercentage.addEventListener('select', () => this.updateTaxPercentage(i));
 
@@ -769,7 +771,8 @@ export class AonInvoiceMobile extends AonElement {
 		if (val) {
 			let i = this._invoice.taxes.length;
 			let tax = {
-				type: 'IRPF',
+				tax: TaxType.IRPF,
+				type: TaxType.IRPF,
 				percentage: 19.0,
 				base: 0,
 				quota: 0
@@ -779,7 +782,7 @@ export class AonInvoiceMobile extends AonElement {
 		} else {
 			for(let i = 0; i < this._invoice.taxes.length; i++) {
 				let tax = this._invoice.taxes[i];
-				if(tax.type === 'IRPF') {
+				if( TaxType.IRPF === tax.type ||  TaxType.IRPF === tax.tax) {
 					this.removeTax(i);
 				}
 			}
@@ -798,7 +801,7 @@ export class AonInvoiceMobile extends AonElement {
 	updateIRPF() {
 		for(let i = 0; i < this._invoice.taxes.length; i++) {
 			let tax = this._invoice.taxes[i];
-			if(tax.type === 'IRPF') {
+			if( TaxType.IRPF === tax.type || TaxType.IRPF === tax.tax) {
 				this._invoice.taxes[i].base = this.totalBaseIRPF();
 				this._invoice.taxes[i].quota = round(this._invoice.taxes[i].base / 100 * this._invoice.taxes[i].percentage);
 			}
@@ -807,7 +810,7 @@ export class AonInvoiceMobile extends AonElement {
 
 	updateVat() {
 		this._invoice.taxes.forEach((item, i) => {
-			if(item.type === 'IVA'){
+			if(TaxType.IVA === item.type  || TaxType.IVA === item.tax){
 				this._invoice.taxes.splice(i, 1);
 			}
 		});
@@ -815,7 +818,8 @@ export class AonInvoiceMobile extends AonElement {
 			let base = this.totalBase(item.value);
 			if(base != 0) {
 				let tax = {
-					type: 'IVA',
+					tax: TaxType.IVA,
+					type: TaxType.IVA,
 					percentage: item.value,
 					base: base,
 					quota:  round(base / 100 * item.value)
@@ -933,7 +937,7 @@ export class AonInvoiceMobile extends AonElement {
 		// FINANCE PAYMETHOD
 		let tdDetailPaymethod = document.createElement('td');
 		tdDetailPaymethod.setAttribute('colspan','2');
-		tdDetailPaymethod.innerHTML = `<aon-input id="dialogFinancePaymethod${i}" type="list" description="Forma de Pago"></aon-input>`;
+		tdDetailPaymethod.innerHTML = `<aon-select id="dialogFinancePaymethod${i}" title="Forma de Pago"></aon-select>`;
 		tr2.appendChild(tdDetailPaymethod);
 		let financePaymethod = document.getElementById('dialogFinancePaymethod' + i);
 		financePaymethod.options = JSON.stringify(Paymethods);
@@ -1091,7 +1095,7 @@ export class AonInvoiceMobile extends AonElement {
 	totalImpuestos() {
 		let total = 0;
 		for (let i = 0; i < this._invoice.taxes.length; i++) {
-			if(this._invoice.taxes[i].type === 'IVA'){
+			if(TaxType.IVA === this._invoice.taxes[i].type || TaxType.IVA === this._invoice.taxes[i].tax){
 				total += (this._invoice.taxes[i].base + this._invoice.taxes[i].quota);
 			} else {
 				total -= this._invoice.taxes[i].quota;

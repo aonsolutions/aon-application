@@ -65,8 +65,6 @@ export class AonCompany extends AonElement {
 
 			<!-- LOGO -->
 		`);
-
-		componentHandler.upgradeAllRegistered();
 	}
 
 }

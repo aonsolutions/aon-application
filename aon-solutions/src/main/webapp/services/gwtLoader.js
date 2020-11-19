@@ -8,7 +8,6 @@
 		const myNode = document.getElementById("rootPanel");
 		myNode.innerHTML = '';
 		myNode.innerHTML = html;
-		componentHandler.upgradeDom();
 	}
 
 	export const drawChartsCallback = () => {

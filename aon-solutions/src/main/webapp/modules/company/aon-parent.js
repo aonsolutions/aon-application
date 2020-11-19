@@ -194,7 +194,7 @@ export class AonParent extends AonElement {
 
 	buildLi(company, color) {
 		let li = document.createElement('li');
-		li.className = 'mdl-list__item mdl-list__item--two-line aonLi';
+		li.className = 'aonLi';
 		li.style.backgroundColor = company.parent ? '#E1ECFF' : color;
 		li.addEventListener('click', () => {
 			this.companySelection(company);
@@ -213,7 +213,7 @@ export class AonParent extends AonElement {
 		});
 
 		let span = document.createElement('span');
-		span.className = 'mdl-list__item-primary-content';
+		span.className = 'aonLiSpan';
 
 		let i = document.createElement('i');
 		i.className = 'material-icons aonAvatar';
@@ -226,7 +226,7 @@ export class AonParent extends AonElement {
 		span2.innerHTML = company.name;
 
 		let span3 = document.createElement('span');
-		span3.className = 'mdl-list__item-sub-title';
+		span3.className = 'aonLiSpanSubtitle';
 		span3.innerHTML = company.document;
 
 		span.appendChild(i);
