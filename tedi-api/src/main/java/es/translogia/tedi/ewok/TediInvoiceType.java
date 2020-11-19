@@ -34,7 +34,7 @@ public enum TediInvoiceType implements Serializable {
 	public abstract TediInvoiceTypeVisitor visit(TediInvoiceTypeVisitor visitor);
 
 	public static TediInvoiceType safeValueof(String type) {
-		if (type == null) return null;
+		if (type == null || "".equals(type.trim()) ) return null;
 		type = type.toUpperCase();  
 		return valueOf(type); 
 	}
