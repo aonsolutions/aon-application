@@ -119,6 +119,7 @@ export class AonMarketplace extends AonElement {
 
 			let contratado = r.includes(apps[key].app)
 			let contratar = document.createElement('button');
+			contratar.className = 'aonButton';
 			contratar.style.width = '110px';
 			contratar.style.padding = '0.3rem 0.8rem';
 			contratar.style.borderRadius = '25px';
@@ -207,6 +208,7 @@ export class AonMarketplace extends AonElement {
 
 			let contratado = r.includes(apps[key].app)
 			let contratar = document.createElement('button');
+			contratar.className = 'aonButton';
 			contratar.style.width = '110px';
 			contratar.style.padding = '0.5rem 1rem';
 			contratar.style.borderRadius = '25px';

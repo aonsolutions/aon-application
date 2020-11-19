@@ -26,7 +26,12 @@ a:hover {
   color: #12ccd1;
   text-decoration: underline;
 }
-button {
+
+form {
+  margin: 0;
+}
+
+.aonButton {
   display: inline-block;
   border: none;
   padding: 1rem 2rem;
@@ -44,7 +49,7 @@ button {
   outline: none !important;
 }
 
-button:active {
+.aonButton:active {
   transform: scale(0.99);
 }
 

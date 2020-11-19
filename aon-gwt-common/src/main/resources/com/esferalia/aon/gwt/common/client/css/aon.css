@@ -884,9 +884,25 @@ input[type="checkbox"]:focus + label {
 	width: auto;
 }
 
+@sprite .aon-icon-predetermine{
+	gwt-image: 'aonIconPredetermine';
+	width: auto;
+}
+
+@sprite .aon-icon-task-start{
+	gwt-image: 'aonIconTaskStart';
+	width: auto;
+}
+
+@sprite .aon-icon-attach-file{
+	gwt-image: 'aonIconAttachFile';
+	width: auto;
+}
+
 @sprite .aon-icon-enterprise {
 	gwt-image: "aonIconEnterprise";
 }
+
 @sprite .aon-icon-row-selector {
 	width: auto;
 	gwt-image: "aonIconRowSelector";

@@ -19,22 +19,6 @@ export class AonLogin extends AonElement {
 				  padding-top: 20px;
 				}
 
-				.sign-in {
-					right: 0px;
-					position: absolute;
-				}
-
-				.aon-input {
-					position: relative;
-					font-size: 16px;
-					display: inline-block;
-					box-sizing: border-box;
-					width: 300px;
-					max-width: 100%;
-					margin: 0;
-					padding: 20px 0;
-				}
-
 				.logo {
 				  width: 250px;
 					margin-left: 25px;
@@ -48,11 +32,6 @@ export class AonLogin extends AonElement {
 				  font-size: 9px;
 				  font-weight: normal;
 				  padding: 15px;
-				}
-
-				.remember-button {
-					padding: 0px !important;
-					width: 100%;
 				}
 
 				.aonErrorPanel {
@@ -92,7 +71,7 @@ export class AonLogin extends AonElement {
 							</div>
 
 							<div style="position:relative;">
-								<button id="aonLoginSignin" type="submit" style="width:100%">Iniciar Sesión</button>
+								<button class="aonButton" id="aonLoginSignin" type="submit" style="width:100%">Iniciar Sesión</button>
 							</div>
 
 						</div>
@@ -129,7 +108,7 @@ export class AonLogin extends AonElement {
 					</form>
 				</div>
 				<div>
-					<button id="aonLoginRememberSend" type="button">Enviar</button>
+					<button class="aonButton" id="aonLoginRememberSend" type="button">Enviar</button>
 				</div>
 			`);
 

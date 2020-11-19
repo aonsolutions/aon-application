@@ -23,28 +23,37 @@ export class AonComunica extends AonElement {
 		let aonComunica = this.getElement(this.AON_COMUNICA);
 
 		let options = [
-			{
-				name: 'Empleados',
-				icon: 'people',
-				fn: () => alert('Empleados!!')
-			},
+			// {
+			// 	name: 'Empleados',
+			// 	icon: 'people',
+			// 	fn: () => alert('Empleados!!')
+			// },
 			{
 				name: 'Contratos',
 				aonIcon: {
 					icon: 'contract',
 					color: 'black'
 				},
-				fn: () => startModule('aon_gwt_payroll', 'MainContrata', aonComunica.CONTENT)
+				fn: () => {
+					aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainContrata', aonComunica.CONTENT);
+				}
 			},
 			{
 				name: 'Partes IT',
 				icon: 'local_hospital',
-				fn: () => startModule('aon_gwt_payroll', 'MainIT', aonComunica.CONTENT)
+				fn: () => {
+					aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainIT', aonComunica.CONTENT);
+				}
 			},
 			{
 				name: 'CCC',
 				icon: 'account_balance',
-				fn: () => startModule('aon_gwt_payroll', 'MainCCC', aonComunica.CONTENT)
+				fn: () => {
+					aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainCCC', aonComunica.CONTENT);
+				}
 			},
 			{
 				name: 'Certificados',
@@ -52,7 +61,10 @@ export class AonComunica extends AonElement {
 					icon: 'cert',
 					color: 'black'
 				},
-				fn: () => startModule('aon_gwt_payroll', 'MainDigitalCertificates', aonComunica.CONTENT)
+				fn: () => {
+					aonComunica.removeToolbarOptions();
+					startModule('aon_gwt_payroll', 'MainDigitalCertificates', aonComunica.CONTENT);
+				}
 			},
 			{
 				name: 'Movimientos',
@@ -63,11 +75,12 @@ export class AonComunica extends AonElement {
 		aonComunica.addSidenavOptions('OPCIONES', options);
 
 		//if(this.isMobile()){
+		 this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
 		aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
 		//}
 
 		// aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
-		
+
 	}
 }
 window.customElements.define('aon-comunica', AonComunica);

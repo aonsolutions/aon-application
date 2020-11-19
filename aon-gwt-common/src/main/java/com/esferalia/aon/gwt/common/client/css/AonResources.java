@@ -370,7 +370,6 @@ public interface AonResources extends ClientBundle, Images {
 	@Source("images/headerBack.png")
 	ImageResource headerBack();
 	
-
 	@Source("images/aon-letter-a-orange-icon.png")
 	ImageResource aonLetterAOrangeIcon();
 
@@ -382,6 +381,15 @@ public interface AonResources extends ClientBundle, Images {
 	
 	@Source("images/aon-icon-brighteye.png")
 	ImageResource aonIconBrighteye();
+	
+	@Source("images/aon-icon-predetermine.png")
+	ImageResource aonIconPredetermine();
+	
+	@Source("images/aon-icon-task-start.gif")
+	ImageResource aonIconTaskStart();
+	
+	@Source("images/aon-icon-attach-file.png")
+	ImageResource aonIconAttachFile();
 	
 }
 

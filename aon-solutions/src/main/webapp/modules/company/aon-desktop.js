@@ -354,6 +354,7 @@ export class AonDesktop extends AonElement {
 		buttons.appendChild(moreInfo);
 		let contratado = r.includes(apps[key].app)
 		let contratar = document.createElement('button');
+		contratar.className = 'aonButton';
 		contratar.style.width = '110px';
 		contratar.style.padding = '0.3rem 0.8rem';
 		contratar.style.borderRadius = '25px';

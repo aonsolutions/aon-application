@@ -47,6 +47,7 @@ export class AonSign extends AonElement {
 		let content = document.getElementById(this.CONTENT);
 
 		let button = document.createElement('button');
+    button.className = 'aonButton';
 		button.style.backgroundColor = '#86D364';
 		button.style.marginRight = '10px';
     button.style.width = '100px';
@@ -63,6 +64,7 @@ export class AonSign extends AonElement {
     let content = document.getElementById(this.CONTENT);
 
 		let button = document.createElement('button');
+    button.className = 'aonButton';
 		button.style.backgroundColor = '#DC4D30';
 		button.style.marginRight = '10px';
     button.style.width = '100px';
@@ -74,6 +76,7 @@ export class AonSign extends AonElement {
 		content.appendChild(button);
 
 		let button2 = document.createElement('button');
+    button.className = 'aonButton';
 		button2.style.backgroundColor = '#F39F1D';
 		button2.style.marginRight = '10px';
     button2.style.width = '100px';
@@ -90,6 +93,7 @@ export class AonSign extends AonElement {
     let content = document.getElementById(this.CONTENT);
 
 		let button = document.createElement('button');
+    button.className = 'aonButton';
 		button.style.backgroundColor = '#86D364';
 		button.style.marginRight = '10px';
     button.style.width = '100px';

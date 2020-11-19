@@ -452,13 +452,14 @@ input[type="checkbox"]:focus + label {
 	-ms-user-select: none;
 	user-select: none;
 	cursor: pointer;
-	outline: 0;
+	outline: 0 !important;
 	border: none;
 	overflow: visible;	
 	display: inline-block;
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-color: inherit;
+	padding-left: 10px;
 }
 
 .aon_button:hover {

@@ -1256,6 +1256,15 @@ public interface AonCSS extends CssResource {
 	@ClassName("aon-icon-progress-bar")
 	String aonIconProgressBar();
 
+	@ClassName("aon-icon-predetermine")
+	String aonIconPredetermine();
+
+	@ClassName("aon-icon-task-start")
+	String aonIconTaskStart();
+
+	@ClassName("aon-icon-attach-file")
+	String aonIconAttachFile();
+
 	/*
 	 *********************************************
 	 ************************************** AONHUB
