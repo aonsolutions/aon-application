@@ -169,6 +169,18 @@ class AonApplication extends HTMLElement {
     }
   }
 
+  selectOption(optionName) {
+    const sidenav = document.getElementById(this.getId() + 'Sidenav');
+    const id = sidenav.id + optionName;
+    const li = document.getElementById(id);
+
+    document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
+      el.style.backgroundColor = 'transparent';
+    });
+    this.selected = id;
+    li.style.backgroundColor = '#ddd';
+  }
+
   setContent(element){
     let content = document.getElementById(this.getId() + 'Content');
     content.innerHTML = '';

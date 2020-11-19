@@ -1,5 +1,6 @@
 import { CARPETA_A_CONTABILIZAR, CARPETA_CONTABILIZADOS, CARPETA_FISCAL, bidoq } from "./aon-documental.js";
 import { AVAILABLE_OPTIONS, MULTIPLE_DOWNLOAD_OPTION, ADD_NOTE_OPTION, MULTIPLE_DELETE_OPTION } from './toolbar_options.js';
+import { getFileExtensionsConfig } from './upload.js';
 
 const ITEMS_PER_PAGE = 10;
 const TYPES = {
@@ -8,24 +9,43 @@ const TYPES = {
 };
 
 export const getList = async (page_this = 1) => {
+    const folder = new URLSearchParams(window.location.search).get('folder');
     const tagID = new URLSearchParams(window.location.search).get('tag');
-    const uploadButton = window.frameElement.ownerDocument.getElementById('aonDocumentalToolbarSubirButton');
+    const uploadButton = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
+
+    // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
+        const selectedFolderData = window.folders.find((currentFolder) => {
+            return parseInt(currentFolder.carpetaID) === parseInt(folder);
+        });
+        // Obtenemos el nombre de la carpeta seleccionada, el cual se utiliza en el ID de la opción
+        const folderName = selectedFolderData.carpeta;
+        // Obtenemos el sidenav
+        const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
+        // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
+        const selectedOptionID = sidenav.id + folderName;
+
+        // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
+        // Comprobamos también que la opción seleccionada no sea "A contabilizar", ya que por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
+        if (window.aonDocumental.selected !== selectedOptionID && parseInt(folder) !== parseInt(CARPETA_A_CONTABILIZAR)) {
+            window.aonDocumental.selectOption(folderName);
+        }
 
     window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
 
-    // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
-    // Si estamos filtrando por TAG eliminamos el boton de subir tambien
-    if ((parseInt(window.aonDocumentalContainer.folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
-        window.aonDocumental.removeToolbarOptions(['Subir']);
-    }
+    // Añadimos (si es necesario) la opción de subir documentos
+        // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
+        // Si estamos filtrando por TAG eliminamos el boton de subir tambien
+        if ((parseInt(folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
+            window.aonDocumental.removeToolbarOptions(['Subir']);
+        }
 
-    // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
-    // y no se este filtrando pot TAG
-    if (parseInt(window.aonDocumentalContainer.folder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
-        window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-            $('#upload-file').trigger('click');
-        }, 'Subir documentos');
-    }
+        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
+        // y no se este filtrando pot TAG
+        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
+            window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+                $('#upload-file').trigger('click');
+            }, 'Subir documentos');
+        }
 
     if (typeof window.folders !== 'undefined') {
         const subfolders = {};
@@ -33,13 +53,13 @@ export const getList = async (page_this = 1) => {
 
         // Recorremos las carpetas para almacenar en una variable todas las subcarpetas del cliente
         for (let i = 0; i < window.folders.length; i++) {
-            const folder = window.folders[i];
+            const currentFolder = window.folders[i];
 
-            foldersByID[folder.carpetaID] = folder;
+            foldersByID[currentFolder.carpetaID] = currentFolder;
 
-            if (folder.subcarpetas.length) {
-                for (let j = 0; j < folder.subcarpetas.length; j++) {
-                    const subfolder = folder.subcarpetas[j];
+            if (currentFolder.subcarpetas.length) {
+                for (let j = 0; j < currentFolder.subcarpetas.length; j++) {
+                    const subfolder = currentFolder.subcarpetas[j];
 
                     subfolders[subfolder.subcarpetaID] = subfolder.subcarpeta;
                 }
@@ -50,7 +70,7 @@ export const getList = async (page_this = 1) => {
             // Hacemos una petición a bidoq para obtener los documentos de la carpeta seleccionada
             const defaultRequestData = {
                 "method"    : "list_docs",
-                "carpeta"   : window.aonDocumentalContainer.folder,
+                "carpeta"   : folder,
                 "pagina"    : page_this - 1
             };
 
@@ -75,31 +95,32 @@ export const getList = async (page_this = 1) => {
                         const page_this_element = !documents.length ? documents.length : page_this_real;
 
                         const list = documents.map((document) => ({
-                            "id"            : document.id,
-                            "url"           : document.image,
-                            "date"          : document.date,
-                            "file_name"     : document.name,
-                            "category"      : (typeof foldersByID[document.service] !== 'undefined') ? {
+                            "id"                : document.id,
+                            "url"               : document.image,
+                            "date"              : document.date,
+                            "file_name"         : document.name,
+                            "stored_file_name"  : document.stored_file_name,
+                            "category"          : (typeof foldersByID[document.service] !== 'undefined') ? {
                                 "id": document.service,
                                 "name": foldersByID[document.service].carpeta
                             } : null,
-                            "subfolder"     : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
-                            "model"         : document.model,
-                            "year"          : document.year,
-                            "period"        : document.period,
-                            "type"          : (document.type == 1) ? 'received' : 'sent',
-                            "uploaded_by"   : document.uploaded_by,
-                            "tags"          : document.tags,
-                            "read"          : document.read
+                            "subfolder"         : (document.subcarpeta !== null && typeof subfolders[document.subcarpeta] !== 'undefined') ? subfolders[document.subcarpeta] : '',
+                            "model"             : document.model,
+                            "year"              : document.year,
+                            "period"            : document.period,
+                            "type"              : (document.type == 1) ? 'received' : 'sent',
+                            "uploaded_by"       : document.uploaded_by,
+                            "tags"              : document.tags,
+                            "read"              : document.read
                         }));
 
                         const paginationList = {
-                            "list"      : list,
+                            list,
                             "total_data": jsonData.total_resultados,                    // cantidad total de elementos
                             "total_page": jsonData.total_paginas + 1,                   // total de paginas
                             "page"      : jsonData.pagina_actual + 1,                   // pagina en la que estamos
                             "shown_page": page_this_element + ' - ' + (page_total - 1), // cantidad mostrada por paginas 1 - 10
-                        }
+                        };
 
                         resolve(paginationList);
                     } else {
@@ -121,8 +142,8 @@ export const getList = async (page_this = 1) => {
 // Creamos la tabla con los datos a listar
 //
 export const createTable = (data) => {
-    const FILE_NAME_MAX_LENGTH = 35;
     const list = data.list;
+    const folder = new URLSearchParams(window.location.search).get('folder');
 
     // Recorremos los datos a mostrar
     let tbody = '';
@@ -131,10 +152,10 @@ export const createTable = (data) => {
     let numberOfColumns = 8;
 
     if (list.length) {
-        const folder = window.folders.find((folder) => {
-            return parseInt(folder.carpetaID) === parseInt(window.aonDocumentalContainer.folder);
+        const selectedFolderData = window.folders.find((currentFolder) => {
+            return parseInt(currentFolder.carpetaID) === parseInt(folder);
         });
-        const hasSubfolders = (typeof folder !== 'undefined' && folder.subcarpetas.length);
+        const hasSubfolders = (typeof selectedFolderData !== 'undefined' && selectedFolderData.subcarpetas.length);
 
         if (hasSubfolders) {
             $('#subfolder_column').removeClass('d-none');
@@ -142,7 +163,7 @@ export const createTable = (data) => {
             numberOfColumns += 1;
         }
 
-        if (parseInt(window.aonDocumentalContainer.folder) === CARPETA_FISCAL) {
+        if (parseInt(folder) === CARPETA_FISCAL) {
             $('#model_column, #year_column, #period_column').removeClass('d-none');
 
             numberOfColumns += 3;
@@ -151,7 +172,7 @@ export const createTable = (data) => {
         $.each(list, function(i, item) {
             const allowedOptions = getAllowedOptions(item);
 
-            tbody+= '<tr data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.map((tag) => tag.id).join(',') + '">';
+            tbody+= '<tr class="show_doc_container" data-allowed_options="' +  allowedOptions.join(',')+ '" data-id="' + item.id + '" data-type="' + item.type + '" data-file_name="' + item.file_name + '" data-tags="' + item.tags.map((tag) => tag.id).join(',') + '">';
 
                 // Columna para seleccionar documentos
                 tbody+= `<td>
@@ -167,6 +188,8 @@ export const createTable = (data) => {
                             break;
                         case 'url': // No mostramos la URL en la tabla
                             break;
+                        case 'stored_file_name': // No mostramos el nombre almacenado del archivo en la tabla
+                            break;
                         case 'tags':
                             tbody+= `<td>
                                     <span>`;
@@ -179,19 +202,13 @@ export const createTable = (data) => {
                                 </td>`;
                             break;
                         case 'date':
-                            // Formateamos la fecha
-                            const date = new Date(val * 1000);
-                            const year = date.getFullYear();
-                            const month = "0" + (date.getMonth() + 1);
-                            const day = "0" + date.getDate();
-                            const formattedDate = day.substr(-2) + '-' + month.substr(-2) + '-' + year;
-
+                            const formattedDate = getFormattedDate(val);
                             tbody+= `<td class="show_doc pointer">
                                         <span>${formattedDate}</span>
                                     </td>`;
                             break;
                         case 'file_name':
-                            const truncatedFileName = (val.length > FILE_NAME_MAX_LENGTH) ? `${val.substr(0, FILE_NAME_MAX_LENGTH)}&hellip;` : val;
+                            const truncatedFileName = truncateString(val);
                             tbody+= `<td class="show_doc pointer" title="${val}">
                                         <span>${truncatedFileName}</span>
                                     </td>`;
@@ -213,7 +230,7 @@ export const createTable = (data) => {
                         case 'model':
                         case 'year':
                         case 'period':
-                            if (parseInt(window.aonDocumentalContainer.folder) === CARPETA_FISCAL) {
+                            if (parseInt(folder) === CARPETA_FISCAL) {
                                 let value = '';
 
                                 if (val !== null) {
@@ -268,26 +285,82 @@ export const createTable = (data) => {
     // Agregamos el cuerpo de la tabla
     $('.table tbody').html(tbody);
 
-    // Cogemos el paginado que tendía la tabla
+    // Obtenemos el paginado
     const pagination = createPaginate(data.page, data.total_page);
-
-    // Agregamos el paginado en el footer de la tabla
-    const tfoot =
-    '<tr>'+
-        '<td colspan="' + numberOfColumns + '">'+
-            '<div class="row">'+
-                '<div class="col-md-6">'+
-                    'Mostrando del '+data.shown_page+' de un total de '+data.total_data+' elementos'+
-                '</div>'+
-                '<div class="col-md-6">'+
-                    pagination+
-                '</div>'+
-            '</div>'+
-        '</td>'
-    '</tr>';
+    // Creamos el contenedor con la paginación para la tabla
+    const tablePagination = `
+        <tr>
+            <td colspan="${numberOfColumns}">
+                <div class="row">
+                    <div class="col-md-6">
+                        Mostrando del ${data.shown_page} de un total de ${data.total_data} elementos
+                    </div>
+                    <div class="col-md-6">
+                        ${pagination}
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+    // Creamos el contenedor con la paginación para las tarjetas
+    const cardsPagination = `
+        <div class="row">
+            <div class="col-md-6">
+                ${pagination}
+            </div>
+        </div>
+    `;
 
     // Agregamos el pie de la tabla
-    $('.table tfoot').html(tfoot);
+    $('.table tfoot').html(tablePagination);
+
+    // Creamos las tarjetas para el modo responsive
+    createCards(list);
+
+    $('#doc_cards_footer').html(cardsPagination);
+}
+
+function createCards(list) {
+    const { iconsByExtension } = getFileExtensionsConfig();
+    const cards = list.map((card) => {
+        const formattedDate = getFormattedDate(card.date);
+        const storedFileNameSplitted = card.stored_file_name.split('.');
+        const extension = storedFileNameSplitted[storedFileNameSplitted.length - 1].toLowerCase();
+        const docIcon = iconsByExtension[extension];
+        const truncatedUploadedBy = truncateString(card.uploaded_by);
+
+        return `
+            <div class="show_doc_container" data-id="${card.id}" data-type="${card.type}">
+                <div class="card mb-3 show_doc" role="button">
+                    <div class="card-header d-flex align-items-start">
+                        <ul class="list-inline mb-0 d-flex flex-wrap align-items-center">
+                            <li class="list-inline-item">
+                                <i class="material-icons align-middle">${docIcon}</i>
+                            </li>
+                            <li class="list-inline-item font-weight-bold">
+                                <span class="align-middle">${card.category.name}</span>
+                            </li>
+                            <li class="list-inline-item" title="${card.uploaded_by}">
+                                <span class="align-middle">${truncatedUploadedBy}</span>
+                            </li>
+                        </ul>
+                        <ul class="list-inline mb-0 d-flex ml-auto align-items-center">
+                            <li class="d-flex list-inline-item ml-auto">
+                                <small class="align-middle ml-1">${formattedDate}</small>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            ${card.file_name}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    $('#doc_cards_list').html(cards);
 }
 
 //
@@ -350,4 +423,20 @@ function getAllowedOptions(document) {
     }
 
     return allowedOptions;
+}
+
+function getFormattedDate(milliseconds) {
+    const date = new Date(milliseconds * 1000);
+    const year = date.getFullYear();
+    const month = "0" + (date.getMonth() + 1);
+    const day = "0" + date.getDate();
+    const formattedDate = day.substr(-2) + '-' + month.substr(-2) + '-' + year;
+
+    return formattedDate;
+}
+
+function truncateString(string) {
+    const FILE_NAME_MAX_LENGTH = 35;
+
+    return (string.length > FILE_NAME_MAX_LENGTH) ? `${string.substr(0, FILE_NAME_MAX_LENGTH)}&hellip;` : string;
 }

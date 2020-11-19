@@ -1,6 +1,7 @@
 import { requestBidoq } from  '../components/request.js';
 
-const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+export const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
+export const BIDOQ_TIPO_USUARIO = 6;
 
 // Local
 // const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
@@ -16,14 +17,15 @@ export const CARPETA_FISCAL = 8;
 
 export const bidoq = async (additionalData) => {
     // Unimos en un objeto los datos genéricos necesarios en todas las peticiones con los datos específicos de esta petición
-    const data = Object.assign({
+    const data = {
         "device_info": "phone",
         "app_code": "1",
         "operating_system_version": "4.2",
-        "clienteID":BIDOQ_CLIENTE_ID,
-        "sessionID":BIDOQ_SESSION_ID,
-        "app_version": "1.0"
-    }, additionalData);
+        "clienteID": BIDOQ_CLIENTE_ID,
+        "sessionID": BIDOQ_SESSION_ID,
+        "app_version": "1.0",
+        ...additionalData
+    };
 
     // Codificamos el objeto a una query string de URL
     const sendData = new URLSearchParams(data).toString();
@@ -41,7 +43,6 @@ export const bidoq = async (additionalData) => {
 
 class AonDocumental extends HTMLElement {
 
-    folder = null;
     page = null;
 
     constructor () {
@@ -72,14 +73,13 @@ class AonDocumental extends HTMLElement {
     }
 
     loadIndex({folder = 'pendientes', tag = null} = {}) {
-        const contentIframe = document.querySelector('iframe');
-        const aonDocumental = document.getElementById('aonDocumental');
-
         // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-        this.folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
+        folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
 
-        const tagParameter = (tag === null) ? '' : `?tag=${tag}`;
-        const indexURL = `./index.html${tagParameter}`;
+        const aonDocumental = document.getElementById('aonDocumental');
+        const contentIframe = document.querySelector('iframe');
+        const tagParameter = (tag === null) ? '' : `&tag=${tag}`;
+        const indexURL = `./index.html?folder=${folder}${tagParameter}`;
 
         if (contentIframe === null) {
             aonDocumental.setContentHTML(`<iframe src="${indexURL}" style="width:100%;height:100%;border:none;"></iframe>`);

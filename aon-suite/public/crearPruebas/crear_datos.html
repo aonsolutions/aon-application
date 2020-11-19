@@ -189,7 +189,7 @@
             
                     // Creamos el Json de alamacenamiento
                     const from        = NameRandom();
-                    const assignaedTo = NameRandom(2);
+                    const assignedTo  = NameRandom(2);
 
                     // Devolvemos el ticket
                     return ticket = {
@@ -198,7 +198,7 @@
                         subject      : subject[Math.floor((Math.random() * 5))],    // titulo del ticket
                         postings     : postings[Math.floor((Math.random() * 3))],   // select del destinatario
                         from         : from,                                        // creador del ticket
-                        assignaedTo  : assignaedTo,                                 // asigando a
+                        assignedTo   : assignedTo,                                 // asigando a
                         answer       : Math.floor((Math.random() * 2)),             // tienes que responder = 0 : respondido | 1 : responder
                         status       : 1,                                           // 0: Cerrado; 1: Abierto
                         message      : {
@@ -210,7 +210,7 @@
                                 message      : text,                                        // Mensaje
                             },
                             2 : {
-                                userName     : assignaedTo,                                 // Nombre del usuario del mensaje
+                                userName     : assignedTo,                                 // Nombre del usuario del mensaje
                                 userId       : "426",                                       // ID del usuario que crea el ticket
                                 userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
                                 messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
@@ -224,7 +224,7 @@
                                 message      : text,                                        // Mensaje
                             },
                             4 : {
-                                userName     : assignaedTo,                                 // Nombre del usuario del mensaje
+                                userName     : assignedTo,                                 // Nombre del usuario del mensaje
                                 userId       : "426",                                       // ID del usuario que crea el ticket
                                 userAvatar   : "http://placehold.it/50/55C1E7/fff&text=U",  // URL del avatar del usuario
                                 messageDate  : Today(),                                     // Hora y fecha de la creación del mensaje
