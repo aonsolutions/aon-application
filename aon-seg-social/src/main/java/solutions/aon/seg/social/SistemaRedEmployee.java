@@ -1,6 +1,5 @@
 	package solutions.aon.seg.social;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -20,6 +19,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.NoQueryData;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
@@ -33,12 +33,15 @@ public class SistemaRedEmployee {
 		public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream, final String certificatePassword,
 														  final String certificateType, String regimen, String ccc) throws SegSocialException {
 
-			byte[] cert = new byte[0];
+			byte[] cert;
 			try {
 				cert = certificateInputStream.readAllBytes();
-				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc);
-				ArrayList<Employee> prevs = (ArrayList<Employee>) getPrevEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc);
-				employees.addAll(prevs);
+				ArrayList<Employee> employees = new ArrayList<>();
+				try{employees.addAll(getEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc));}
+				catch(Exception e){e.printStackTrace();}
+				try{employees.addAll(getPrevEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc));}
+				catch(NoQueryData e){}
+
 				return employees;
 			} catch (IOException e) {throw new InvalidCertificateException();}
 
@@ -146,9 +149,8 @@ public class SistemaRedEmployee {
 			
 			try {return getEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-			catch (MalformedURLException e) {throw new SegSocialException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SegSocialException(e);}
+			catch (MalformedURLException | InterruptedException e) {throw new SegSocialException(e);}
+			catch (IOException e) {throw new CertificateNotFoundException();}
 			return null;
 		}
 
@@ -208,7 +210,7 @@ public class SistemaRedEmployee {
 				buscaPartesForm.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
 				buscaPartesForm.getInputByName("txt_SDFTESO62").setValueAttribute(ccc.substring(0, 2));
 				buscaPartesForm.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
-				buscaPartesForm.getInputByName("chk_chkgrupo1_1").setChecked(true);
+				buscaPartesForm.getInputByName("chk_chkgrupo1_2").setChecked(true);
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 				

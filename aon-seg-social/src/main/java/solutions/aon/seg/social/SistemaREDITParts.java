@@ -3,11 +3,8 @@ package solutions.aon.seg.social;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -215,7 +212,7 @@ public class SistemaREDITParts {
 	
 	//REGISTER IT START HANDLE EXCEPTIONS
 	public static void addItStart(InputStream certificateInputStream, String certificatePassword,String certificateType,
-			String regime, String ccc, String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, 
+			String regime, String ccc, String naf, Contingencies contingency, Optional<String> licenseNumber, Optional<String> cias, Date startdate,
 			ContractType contractType,  float baseCot , int cotDays) throws StatusCodeException, InvalidCertificateException, IOException, InvalidDataException {
 		
 		Toolkit.verifyData(new Object[]{regime, ccc, naf, contingency, licenseNumber, cias, startdate, contractType,baseCot,cotDays});
@@ -225,27 +222,28 @@ public class SistemaREDITParts {
 	}
 	
 	//REGISTER IT START
-	private static void addItStartImpl(InputStream certificateInputStream, String certificatePassword,String certificateType, String regime, String ccc,
-			String naf, Contingencies contingency, String licenseNumber, String cias, Date startdate, ContractType contractType, float base_cot , int cotDays) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
+	private static void addItStartImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc,
+									   String naf, Contingencies contingency, Optional<String> licenseNumber, Optional<String> cias, Date startdate, ContractType contractType, float base_cot , int cotDays) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException {
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
-			
+
+			if(licenseNumber.isEmpty() && cias.isEmpty()) throw new InvalidDataException("Rellena cias o número de colegiado");
+
+
 			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
 			HtmlOption type = document.querySelector("#tipoParte option:nth-child(2)");
 			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
-			
-			Integer[] arr_startDate = Toolkit.getDateArray(startdate);		
-			ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber, new int[]{2,4});
-			String[] arr_base_cot = Toolkit.splitDecimal(base_cot,2);
-			
+
 			HtmlInput n_coleg_1_in = document.querySelector("#ncol_0");
 			HtmlInput n_coleg_2_in = document.querySelector("#ncol_1");
 			HtmlInput n_coleg_3_in = document.querySelector("#ncol_2");
 			HtmlInput cias_in = document.querySelector("#cias");
 			HtmlInput startDate_dd_in = document.querySelector("#fechaBaja_dd");			
 			HtmlInput startDate_mm_in = document.querySelector("#fechaBaja_mm");			
-			HtmlInput startDate_aa_in = document.querySelector("#fechaBaja_aa");	
+			HtmlInput startDate_aa_in = document.querySelector("#fechaBaja_aa");
 
-						
+			Integer[] arr_startDate = Toolkit.getDateArray(startdate);
+			String[] arr_base_cot = Toolkit.splitDecimal(base_cot,2);
+
 			HtmlOption contract_type_opt = null;
 			HtmlInput cot_base_in_1 = null;
 			HtmlInput cot_base_in_2 = null;
@@ -265,19 +263,26 @@ public class SistemaREDITParts {
 					cot_days_in = document.querySelector("#diasCot");
 					break;
 			}
-						
-			n_coleg_1_in.setValueAttribute(n_coleg_arr_ls.get(0));
-			n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
-			n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
-			cias_in.setValueAttribute(cias);
+
+			cias_in.setValueAttribute(cias.get());
 			startDate_dd_in.setValueAttribute(arr_startDate[0] + "");
 			startDate_mm_in.setValueAttribute(arr_startDate[1] + "");
 			startDate_aa_in.setValueAttribute(arr_startDate[2] + "");
 			cot_base_in_1.setValueAttribute(arr_base_cot[0]);
 			cot_base_in_2.setValueAttribute(arr_base_cot[1]);
 			cot_days_in.setValueAttribute(cotDays + "");
-			
+
 			document = contract_type_opt.click();
+
+			if(licenseNumber.isPresent()){
+				ArrayList<String> n_coleg_arr_ls = Toolkit.splitString_m(licenseNumber.get(), new int[]{2,4});
+				n_coleg_1_in.setValueAttribute(n_coleg_arr_ls.get(0));
+				n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
+				n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
+			}
+			if(licenseNumber.isPresent()){
+				System.out.println();
+			}
 			
 			HtmlSubmitInput validate = document.querySelector("#Validar");
 			document = validate.click();

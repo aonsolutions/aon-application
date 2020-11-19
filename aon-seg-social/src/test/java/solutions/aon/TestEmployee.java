@@ -26,11 +26,11 @@ public class TestEmployee {
 
 	//GET TOTAL EMPLOYEES
 	@Test
-	public void getTotalEmployeesCertificateTest() throws SegSocialException {
+	public void getTotalEmployeesCertificateTest() throws SegSocialException, IOException {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-			System.out.println("result >> " + SistemaRedEmployee.getTotalEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062"));
+			SistemaRedEmployee.getTotalEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062");
 		}
-		catch (InvalidCertificateException e) {fail("owo");}
+		catch (InvalidCertificateException e) {}
 		catch (StatusCodeException e) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}

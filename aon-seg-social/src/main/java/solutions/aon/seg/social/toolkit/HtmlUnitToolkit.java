@@ -73,10 +73,19 @@ public class HtmlUnitToolkit {
 		catch(NumberFormatException nfe) {throw new SegSocialException ();}
 	}
 
+	//GETS THE SS STATUS CODE
+	public static String getSSmessage(HtmlPage htmlPage) throws SegSocialException {
+		String status = "";
+		try { return HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL"); }
+		catch (ElementNotFoundException e) {return "";}
+		catch(NumberFormatException e) {throw new SegSocialException (e);}
+	}
+
 	//MANAGES THE EXCEPTIONS
 	public static void manageStatusCode(HtmlPage htmlPage) throws SegSocialException {
 		Integer code = getSSCode(htmlPage);
-		InvalidDataException.checkCode(code);
+		String msg = getSSmessage(htmlPage);
+		InvalidDataException.checkCode(code,msg);
 	}
 
 	//SHOW HTML ELEMENTS AS XML

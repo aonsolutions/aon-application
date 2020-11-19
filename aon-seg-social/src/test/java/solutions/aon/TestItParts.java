@@ -27,9 +27,7 @@ public class TestItParts {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMTT.p12")) {			
 			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", "0111","01105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), Toolkit.parseDate("1-1-2020", "dd-MM-yyyy"));
 		}
-		catch (StatusCodeException e) {}
-		catch (InvalidCertificateException e) {}
-		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
+		catch (StatusCodeException | InvalidCertificateException e) {} catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
 		catch (Exception e) {fail("unknown exception");}
@@ -42,9 +40,7 @@ public class TestItParts {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
 			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", "0111","01105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), unreachableDate);
 		}
-		catch (InvalidDateException e) {}
-		catch (StatusCodeException e) {}
-		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (InvalidDateException | StatusCodeException e) {} catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -56,9 +52,7 @@ public class TestItParts {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
 			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", "0111","01105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), null);
 		}
-		catch (InvalidDataException e) {}
-		catch (StatusCodeException e) {}
-		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (InvalidDataException | StatusCodeException e) {} catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -70,9 +64,7 @@ public class TestItParts {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
 			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", "0211","01105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), new Date());
 		}
-		catch (StatusCodeException e) {}
-		catch (InvalidDataException e) {}
-		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (StatusCodeException | InvalidDataException e) {} catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -84,9 +76,7 @@ public class TestItParts {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
 			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", null,"01105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), new Date());
 		}
-		catch (StatusCodeException e) {}
-		catch (InvalidDataException e) {}
-		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (StatusCodeException | InvalidDataException e) {} catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -98,9 +88,7 @@ public class TestItParts {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
 			SistemaREDITParts.getIts(certificateInputStream, "jg@FNMT", "pkcs12", "0111","0X105360062", Toolkit.parseDate("1-1-2015", "dd-MM-yyyy"), new Date());
 		}
-		catch (StatusCodeException e) {}
-		catch (InvalidDataException e) {}
-		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (StatusCodeException | InvalidDataException e) {} catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
