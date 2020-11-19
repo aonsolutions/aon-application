@@ -67,7 +67,7 @@ public class ComunicaServlet extends HttpServlet{
 
 		} 
 		catch (Exception e) {
-//            e.printStackTrace(); 
+            e.printStackTrace(); 
 			resp.setStatus(500);
 			content = gjson.toJson(e.getMessage()).getBytes();
 		}
@@ -108,7 +108,7 @@ public class ComunicaServlet extends HttpServlet{
 		for (int i = 0; i < cccAll.length; i++) {
 		    String cti = cccAll[i][0];
 		    String regimen = cccAll[i][1];
-		    Collection<Employee> Employees = SistemaRED.getEmployees(certificateInputStream, "jg@FNMT", "pkcs12", regimen, cti);	
+		    Collection<Employee> Employees = SistemaRED.getTotalEmployees(certificateInputStream, "jg@FNMT", "pkcs12", regimen, cti);	
 		    for (Employee employee : Employees) {
 				employee.setCtaCti(cti);
 				employee.setRegime(regimen);
