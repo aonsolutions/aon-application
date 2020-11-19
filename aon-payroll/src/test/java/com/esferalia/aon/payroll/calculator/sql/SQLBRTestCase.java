@@ -390,7 +390,7 @@ public class SQLBRTestCase extends AbstractSQLTestCase {
 		endDate = getLastDayOfMonth(startDate);
 
 		monthDays = 30; //get(endDate, DAY_OF_MONTH);
-		int leaveOffset = (int) (Math.random() * get(endDate, DAY_OF_MONTH));
+		int leaveOffset = (int) 13; //(Math.random() * 20);
 		startITDate = add(endDate, Calendar.DAY_OF_MONTH, (-1) * leaveOffset);
 		endITDate = null;
 		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
