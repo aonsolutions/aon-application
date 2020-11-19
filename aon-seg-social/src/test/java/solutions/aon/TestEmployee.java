@@ -24,6 +24,19 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class TestEmployee {
 
+	//GET TOTAL EMPLOYEES
+	@Test
+	public void getTotalEmployeesCertificateTest() throws SegSocialException {
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
+			System.out.println("result >> " + SistemaRedEmployee.getTotalEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062"));
+		}
+		catch (InvalidCertificateException e) {fail("owo");}
+		catch (StatusCodeException e) {}
+		catch (SegSocialException e) {fail("unexpected SegSocialException");}
+		catch (FileNotFoundException e) {fail("File not found");}
+		catch (IOException e) {fail("IOException");}
+		catch (Exception e) {fail("unknown exception");}
+	}
 	
 	//GET EMPLOYEES TESTS
 	

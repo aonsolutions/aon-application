@@ -1,4 +1,6 @@
 	package solutions.aon.seg.social;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -30,10 +32,16 @@ public class SistemaRedEmployee {
 		//GETS BOTH REAL AND PREVIUS EMPLOYEES
 		public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream, final String certificatePassword,
 														  final String certificateType, String regimen, String ccc) throws SegSocialException {
-			ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(certificateInputStream,certificatePassword,certificateType,regimen,ccc);
-			ArrayList<Employee> prevs = (ArrayList<Employee>) getPrevEmployees(certificateInputStream,certificatePassword,certificateType,regimen,ccc);
-			employees.addAll(prevs);
-			return employees;
+
+			byte[] cert = new byte[0];
+			try {
+				cert = certificateInputStream.readAllBytes();
+				ArrayList<Employee> employees = (ArrayList<Employee>) getEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc);
+				ArrayList<Employee> prevs = (ArrayList<Employee>) getPrevEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc);
+				employees.addAll(prevs);
+				return employees;
+			} catch (IOException e) {throw new InvalidCertificateException();}
+
 		}
 
 		//CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIES
