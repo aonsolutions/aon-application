@@ -34,51 +34,63 @@
             <div class="col" id="atp_contenido_centro">
 
                 <!-- Main-->
-                <div class="container-fluid pt-5">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <h3 class="">Historial de solicitudes</h3>
-                        </div>
-                    </div>
-                    <div class="container-fluid pt-3">
+                <div class="container-fluid atp_caja_form">
+                    <form id="form" name="form" action="#" method="post">
                         <div class="row">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                        <!-- <h5 class="">Marcajes</h5> -->
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-12 col-12 text-right">
-                                        <label for="mes">Mes:</label>
-                                        <input type="month" id="mes" name="mes" step="1" min="" max="" value="2020-09">
-                                        <button type="button" form="form" id="actualizar" class="btn btn-info btn-sm"
-                                            data-boton="salida">Actualizar</button>
-                                    </div>
-                                </div>
-
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Fecha comienzo</th>
-                                                <th>Fecha fin</th>
-                                                <th>Hora comienzo</th>
-                                                <th>Hora fin</th>
-                                                <th>Tipo de solicitud</th>
-                                                <th>Nota</th>
-                                                <th>Fecha solicitud</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tablaMarcajes">
-
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="col-12 text-center">
+                                <h3 class="">Historial de solicitudes</h3>
                             </div>
-
                         </div>
+                        <div class="container-fluid pt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-lg-8 col-md-8 col-sm-6 col-12">
+                                            <!-- <h5 class="">Marcajes</h5> -->
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-12 text-right">
+                                            <!-- <label for="mes">Día:</label> -->
+                                            <!-- <input type="date" id="dia" name="dia" step="1" min="" max="" value=""> -->
+                                            <div class="form-group">
+                                                <label class="d-block atp_inputs" for="mes">
+                                                    <input class="" type="month" value="2020-09" id="mes" name="mes">
+                                                    <span>Mes</span>
+                                                </label>
 
-                    </div>
+                                            </div>
+                                            <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-12 text-right">
+                                            <label for="mes">Mes:</label>
+                                            <input type="month" id="mes" name="mes" step="1" min="" max=""
+                                                value="2020-09">
+                                            <button type="button" form="form" id="actualizar"
+                                                class="btn btn-info btn-sm" data-boton="salida">Actualizar</button>
+                                        </div> -->
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <!-- <th>Fecha solicitud</th> -->
+                                                        <th>Fecha comienzo</th>
+                                                        <th>Fecha fin</th>
+                                                        <th>Hora comienzo</th>
+                                                        <th>Hora fin</th>
+                                                        <th>Tipo de solicitud</th>
+                                                        <th>Nota</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tablaSolicitudes">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                    </form>
                 </div>
 
             </div><!-- end contenido centro -->
@@ -87,80 +99,156 @@
 
     <!-- Scripts -->
     <script src="../js/app.js"></script>
+    <script src="../js/crud.js"></script>
     <script>
 
 
         jQuery(function () {
-            var datosHistorial = {
-                historial: [
-                    {
-                        id: '1',
-                        fechaComienzo: '2020-09-30',
-                        fechaFin: '2020-09-30',
-                        horaComienzo: '08:00:00',
-                        horaFin: '14:00:00',
-                        nota: 'Todo correcto',
-                        tipoSolicitud: 'Horas extras',
-                        fechaSolicitud: '2020-09-30'
-                    },
-                    {
-                        id: '2',
-                        fechaComienzo: '2020-09-30',
-                        fechaFin: '2020-09-30',
-                        horaComienzo: 'Dia completo',
-                        horaFin: 'Dia completo',
-                        nota: 'Todo correcto',
-                        tipoSolicitud: 'Vacaciones',
-                        fechaSolicitud: '2020-09-30'
-                    },
-                    {
-                        id: '3',
-                        fechaComienzo: '2020-10-01',
-                        fechaFin: '2020-10-01',
-                        horaComienzo: 'Dia completo',
-                        horaFin: 'Dia completo',
-                        nota: 'Todo correcto',
-                        tipoSolicitud: 'Vacaciones',
-                        fechaSolicitud: '2020-09-30'
-                    },
-                    {
-                        id: '4',
-                        fechaComienzo: '2020-10-02',
-                        fechaFin: '2020-10-02',
-                        horaComienzo: 'Dia completo',
-                        horaFin: 'Dia completo',
-                        nota: 'Todo correcto',
-                        tipoSolicitud: 'Vacaciones',
-                        fechaSolicitud: '2020-09-30'
-                    },
-                ],
-            };
 
-            cargarHistorial(datosHistorial);
+            var fechaActualDB = getFechaActualDB();
+            var datosHistorial = readJsonApi('datosHistorialSolicitud');
+            cargarHistorial(datosHistorial, fechaActualDB);
+
+            $('#mes').val(fechaActualDB);
+
+            // var datosHistorial = {
+            //     historial: [
+            //         {
+            //             id: '1',
+            //             fechaComienzo: '2020-09-30',
+            //             fechaFin: '2020-09-30',
+            //             horaComienzo: '08:00:00',
+            //             horaFin: '14:00:00',
+            //             nota: 'Todo correcto',
+            //             tipoSolicitud: 'Horas extras',
+            //             fechaSolicitud: '2020-09-30'
+            //         },
+            //         {
+            //             id: '2',
+            //             fechaComienzo: '2020-09-30',
+            //             fechaFin: '2020-09-30',
+            //             horaComienzo: 'Dia completo',
+            //             horaFin: 'Dia completo',
+            //             nota: 'Todo correcto',
+            //             tipoSolicitud: 'Vacaciones',
+            //             fechaSolicitud: '2020-09-30'
+            //         },
+            //         {
+            //             id: '3',
+            //             fechaComienzo: '2020-10-01',
+            //             fechaFin: '2020-10-01',
+            //             horaComienzo: 'Dia completo',
+            //             horaFin: 'Dia completo',
+            //             nota: 'Todo correcto',
+            //             tipoSolicitud: 'Vacaciones',
+            //             fechaSolicitud: '2020-09-30'
+            //         },
+            //         {
+            //             id: '4',
+            //             fechaComienzo: '2020-10-02',
+            //             fechaFin: '2020-10-02',
+            //             horaComienzo: 'Dia completo',
+            //             horaFin: 'Dia completo',
+            //             nota: 'Todo correcto',
+            //             tipoSolicitud: 'Vacaciones',
+            //             fechaSolicitud: '2020-09-30'
+            //         },
+            //     ],
+            // };
+
+            // cargarHistorial(datosHistorial);
         });
 
-        function cargarHistorial(datosHistorial) {
-            var historial = datosHistorial['historial'];
+        function getFechaActualDB() {
+            var fechaActual = new Date();
+            // var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            // var str_dia = new String(dia)
+            // if (str_dia.length == 1) {
+            //     dia = "0" + dia;
+            // };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = annio + "-" + mes;
+
+            return fechaImprimible;
+            // alert(fechaImprimible);
+        }
+
+        function cargarHistorial(datosHistorial, fechaDB) {
+            var historial = datosHistorial;
             var hijo = "";
+            var mostrado = false;
+            var mesBucadoDB = getFechaMes(fechaDB);
+            var annioBucadoDB = getFechaAnnio(fechaDB);
 
             // var value;
             for (i in historial) {
                 // value = Number.parseInt(i) + 1;
-                hijo = hijo + "<tr>";
-                hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['fechaComienzo'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['fechaFin'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['horaComienzo'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['horaFin'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['tipoSolicitud'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
-                hijo = hijo + "<td>" + historial[i]['fechaSolicitud'] + "</td>";
-                hijo = hijo + "</tr>";
+                var mesDB = getFechaMes(historial[i]['fechaComienzoDB']);
+                var annioDB = getFechaAnnio(historial[i]['fechaComienzoDB']);
+                if (mesBucadoDB == mesDB && annioBucadoDB == annioDB) {
+                    hijo = hijo + "<tr>";
+                    // hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
+                    // hijo = hijo + "<td>" + historial[i]['fechaActualDB'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['fechaComienzo'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['fechaFin'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['horaComienzo'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['horaFin'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['tipoSolicitud'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['notaSolicitud'] + "</td>";
+                    hijo = hijo + "</tr>";
+                    mostrado = true;
+                }
+
             }
 
-            $("#tablaMarcajes").empty();
-            $(hijo).appendTo("#tablaMarcajes");
+            $("#tablaSolicitudes").empty();
+            if (mostrado) {
+
+            } else {
+                hijo = "<tr><td colspan='7'>No hay datos para mostrar</td></tr>";
+            }
+
+            $(hijo).appendTo("#tablaSolicitudes");
+
         }
+
+        function getFechaMes(fecha) {
+            var fechaActual = new Date(fecha);
+            var mes = fechaActual.getMonth() + 1;
+
+            return mes;
+            // alert(fechaImprimible);
+        }
+
+        function getFechaAnnio(fecha) {
+            var fechaActual = new Date(fecha);
+            var annio = fechaActual.getFullYear();
+
+            return annio;
+            // alert(fechaImprimible);
+        }
+
+        $('#mes').on('change', function (e) {
+            var fecha = $('#mes').val();
+            // console.log(fecha);
+            var fechaActualDB = getFechaActualDB();
+            var datosHistorial = readJsonApi('datosHistorialSolicitud');
+            // var idEmpleado = $('#empleado').val();
+
+            cargarHistorial(datosHistorial, fecha);
+        })
 
         function getFechaActual() {
             var fechaActual = new Date();
