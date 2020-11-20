@@ -7,7 +7,7 @@ import { API_URL } from "../environments/environments.js";
 //         {
 //             id: 1,
 //             nombre: 'NOMBRE1',
-//             last_name: 'APELLIDOS', 
+//             last_name: 'APELLIDOS',
 //             dni: '0Y777777X',
 //             mov: 'Alta',
 //             tipo_contrato: 'Jornada Parcial',
@@ -16,7 +16,7 @@ import { API_URL } from "../environments/environments.js";
 //         {
 //             id: 2,
 //             nombre: 'NOMBRE2',
-//             last_name: 'APELLIDOS', 
+//             last_name: 'APELLIDOS',
 //             dni: '0Y777777X',
 //             mov: 'Alta',
 //             tipo_contrato: 'Jornada completa',
@@ -25,7 +25,7 @@ import { API_URL } from "../environments/environments.js";
 //         {
 //             id: 3,
 //             nombre: 'NOMBRE3',
-//             last_name: 'APELLIDOS', 
+//             last_name: 'APELLIDOS',
 //             dni: '0Y777777X',
 //             mov: 'Alta',
 //             tipo_contrato: 'Jornada Parcial',
@@ -34,7 +34,7 @@ import { API_URL } from "../environments/environments.js";
 //         {
 //             id: 4,
 //             nombre: 'NOMBRE4',
-//             last_name: 'APELLIDOS', 
+//             last_name: 'APELLIDOS',
 //             dni: '0Y777777X',
 //             mov: 'Alta',
 //             tipo_contrato: 'Jornada completa',
@@ -43,7 +43,7 @@ import { API_URL } from "../environments/environments.js";
 //         {
 //             id: 5,
 //             nombre: 'NOMBRE5',
-//             last_name: 'APELLIDOS', 
+//             last_name: 'APELLIDOS',
 //             dni: '0Y777777X',
 //             mov: 'Alta',
 //             tipo_contrato: 'Jornada completa',
@@ -52,6 +52,7 @@ import { API_URL } from "../environments/environments.js";
 //     ]);
 // });
 
+export const getWorkplaceCCCs = () => get(`${API_URL}/workplace_ccc`);
 
 export const getMovements = () => get(`${API_URL}/comunica/movements`);
 
@@ -60,8 +61,8 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         {
             id: 1,
             nombre: 'NOMBRE1',
-            last_name1: 'APELLIDO1', 
-            last_name2: 'APELLIDO2', 
+            last_name1: 'APELLIDO1',
+            last_name2: 'APELLIDO2',
             dni: '111',
             mov: 'Alta',
             naf: '123123131',
@@ -71,8 +72,8 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         {
             id: 2,
             nombre: 'NOMBRE2',
-            last_name1: 'APELLIDO1', 
-            last_name2: 'APELLIDO2', 
+            last_name1: 'APELLIDO1',
+            last_name2: 'APELLIDO2',
             dni: '222',
             mov: 'Alta',
             naf: '123123131',
@@ -82,8 +83,8 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         {
             id: 3,
             nombre: 'NOMBRE3',
-            last_name1: 'APELLIDO1', 
-            last_name2: 'APELLIDO2', 
+            last_name1: 'APELLIDO1',
+            last_name2: 'APELLIDO2',
             dni: '333',
             mov: 'Alta',
             naf: '123123131',
@@ -93,8 +94,8 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         {
             id: 4,
             nombre: 'NOMBRE4',
-            last_name1: 'APELLIDO1', 
-            last_name2: 'APELLIDO2', 
+            last_name1: 'APELLIDO1',
+            last_name2: 'APELLIDO2',
             dni: '444',
             mov: 'Alta',
             naf: '123123131',
@@ -104,8 +105,8 @@ export const getPersonas = (dni) =>  new Promise((resolve) => {
         {
             id: 5,
             nombre: 'NOMBRE5',
-            last_name1: 'APELLIDO1', 
-            last_name2: 'APELLIDO2', 
+            last_name1: 'APELLIDO1',
+            last_name2: 'APELLIDO2',
             dni: '555',
             mov: 'Alta',
             naf: '123123131',
@@ -225,13 +226,13 @@ export const getGrupoCotizacion = () =>  new Promise((resolve) => {
 
 export const getOcupacion = () =>  new Promise((resolve) => {
     resolve([
-        {id:"1", name:"", value:""}, 
-        {id:"2", name:"Trabajos de oficina", value:"a"}, 
-        {id:"3", name:"Representantes comercio", value:"b"}, 
-        {id:"4", name:"Trabajos construcción", value:"d"}, 
-        {id:"5", name:"Conductores pasajeros y carga", value:"e"}, 
-        {id:"6", name:"Conductores de carga > 3,5 Tm", value:"f"}, 
-        {id:"7", name:"Personal de limpieza", value:"g"}, 
+        {id:"1", name:"", value:""},
+        {id:"2", name:"Trabajos de oficina", value:"a"},
+        {id:"3", name:"Representantes comercio", value:"b"},
+        {id:"4", name:"Trabajos construcción", value:"d"},
+        {id:"5", name:"Conductores pasajeros y carga", value:"e"},
+        {id:"6", name:"Conductores de carga > 3,5 Tm", value:"f"},
+        {id:"7", name:"Personal de limpieza", value:"g"},
         {id:"8", name:"Personal de seguridad", value:"h"},
         {id:"9", name:"Personal de vuelo", value:"i"},
         {id:"10", name:"Dependientes. cajeros", value:"z"},
@@ -251,7 +252,7 @@ export const getHorasConvenio = (tipo_jornada) =>  new Promise((resolve) => {
             "name": "40",
             "value": "40",
             "tipo_jornada": "semanal"
-        }, 
+        },
         {
             "id": "2",
             "name": "39",
