@@ -27,6 +27,8 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gson.GsonBuilder;
 
+import solutions.aon.seg.social.SistemaRED_I.Regime;
+
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -55,10 +57,14 @@ public class WorkplaceCCCServlet extends HttpServlet {
 			try(Connection connection = AonServletUtils.getConnection(domainName)) {
 				object = JooqWorkplace.getWorkplaces(null, domain.getId(), connection).stream().map(wp -> {
 					ActivitiesCCC activity = JooqWorkplace.getActivitiesCCC(wp, domainId, connection);
+					Collection<CCCInfo> cccs = activity.getCccs().values().stream().map(ccc -> {
+						ccc.setCccRegimeCode(Regime.values()[ccc.getType()].getValue());
+						return ccc;
+					}).collect(Collectors.toCollection(LinkedList::new));
 
 					return new WorkplaceCCC()
 							.setWorkplace(wp)
-							.setCcc(activity.getCccs().values());
+							.setCcc(cccs);
 				}).collect(Collectors.toCollection(LinkedList::new));
 
 			} catch (SQLException e) {
