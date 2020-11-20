@@ -165,11 +165,23 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						.replaceAll("\u00d1", "N")
 						.replaceAll("\\W", "")
 						;
+				// TODO: check surname not in ContextVariable.
+				
+				if ( isContextVariableName(surname) ) 
+					return super.getName();
+				
 				if ( !AonStringUtils.equalsIgnoreCase(surname, expression) )
 					return surname;
 			}
 			
 			return super.getName();
+		}
+
+		protected boolean isContextVariableName(String surname) {
+			return Arrays.stream( new ContextVariable[] {
+			ADDITIONAL_HOURS})
+			.map( v -> v.getName())
+			.anyMatch( n -> AonStringUtils.equals(n,surname));
 		}
 		
 	}

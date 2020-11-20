@@ -130,6 +130,19 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 
+	private static class AdditionalHoursContractPayment extends DelegateContractPayment{
+		
+		private AdditionalHoursContractPayment(IContractPayment contractPayment) {
+			super(contractPayment);
+		}
+		
+		@Override
+		public String getName() {
+			return ContextVariable.ADDITIONAL_BASE.getName().replace("BASE_", "");
+		}
+		
+	}
+
 	private static class PRORATIONContractPayment extends DelegateContractPayment{
 		
 		private PRORATIONContractPayment(IContractPayment contractPayment) {
@@ -398,7 +411,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				&& type.isBBCCExcluded() ) {
 				return Collections.emptyList();
 			}
-			
+
 			if ( AonStringUtils.equals(PREST_IT, payment.getName())) {
 				double ereFactor = getEreFactor(expressionContext, new Period(start, end));
 				if ( ereFactor > 0.00 ) {					
@@ -432,12 +445,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				return delegate.quote(new PRORATIONContractPayment(payment), start, end, amount);
 			}
 			
+			if ( type == PaymentType.CRA_0057 ) {				
+				payment = new AdditionalHoursContractPayment(payment);
+			}
+
 			if ( type.isBBCCIncluded() 
 				&& !type.isBBCCExcluded() ) {
 				return ( amount == 0.00 ) ? 
 				Collections.emptyList()  
 				: delegate.quote(new ALLContractPayment(payment), start, end, amount);
 			}
+			
 
 			return delegate.quote(payment, start, end, amount);
 		}
