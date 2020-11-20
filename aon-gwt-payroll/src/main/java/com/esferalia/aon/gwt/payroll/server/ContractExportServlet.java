@@ -25,19 +25,24 @@ public class ContractExportServlet extends HttpServlet {
 		// Get extension
 		String domainName = req.getParameter("domainName");
 		
+		String employeeFullName = req.getParameter("employeeFullName");
+		
 		// Get Attach Id
 		String contractIdStr = req.getParameter("contractId");
 		Integer contractId = Integer.parseInt(contractIdStr);
 		
-		String fileType = "application/pdf";
-        res.setContentType(fileType);
+		// Formative Level
+		String formativeLevelCode = req.getParameter("formativeLevel");
+		
+		// Make sure to show the download dialog
+        res.setHeader("Content-Disposition", "attachment; filename=\"" + employeeFullName + ".pdf\"");
         
-        // Make sure to show the download dialog
-        res.setHeader("Content-Disposition","inline; filename=Contrato");
+        String fileType = "application/pdf";
+        res.setContentType(fileType);
 		
 		try {
 			ServletOutputStream output = res.getOutputStream();
-			byte[] data = JooqContrataContract.contractFill(domainName, contractId, contractTypeStr);
+			byte[] data = JooqContrataContract.contractFill(domainName, contractId, contractTypeStr, formativeLevelCode);
 			output.write(data);
 			res.flushBuffer();
 		} catch (Exception e) {}

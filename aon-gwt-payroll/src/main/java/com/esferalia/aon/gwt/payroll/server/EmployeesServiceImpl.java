@@ -5159,9 +5159,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public String fillContract(String domainName, Integer contractType, Map<String, String> contractOtherData) {
+	public String fillContract(String domainName, Integer contractId, Integer contractType, String formativeLvl) {
 		try {
-			String base64Pdf = JooqContrataContract.contractFill(contractType, contractOtherData);
+			String base64Pdf = JooqContrataContract.contractFill(domainName, contractId, contractType, formativeLvl);
 			Writer stringWriter = new StringWriter();
 			
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);

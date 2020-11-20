@@ -314,8 +314,7 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 			@Override
-			public void fillContract(String currentDomainName, Integer contractType,
-					Map<String, String> contractOtherData, AsyncCallback<String> callback) {
+			public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<String> callback) {
 				// TODO Auto-generated method stub
 				
 			}

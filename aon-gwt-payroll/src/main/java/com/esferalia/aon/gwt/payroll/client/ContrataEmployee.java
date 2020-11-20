@@ -698,8 +698,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				break;
 			case 2:
 				contrataEmployeeObject.getContractOtherInfo(s -> {
-					exportContract.getElement().getStyle().clearDisplay();
-					contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					if(StringUtils.isBlank(contrataEmployeeObject.getFormativeLevel()))
+						contrataEmployeeObject.getContractSpecificData(su -> {
+							exportContract.getElement().getStyle().clearDisplay();
+							contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+						}, f -> {});
+					else {
+						exportContract.getElement().getStyle().clearDisplay();
+						contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
+					}
 				}, f -> {});
 				break;
 			case 3:
@@ -1469,6 +1476,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showPdf() {
 		ta.setVisible(false);
 		idc.setVisible(false);
+		afi.setVisible(false);
 		saveContract.setVisible(false);
 		deleteContract.setVisible(false);
 		listEmployees.setVisible(false);
@@ -1487,9 +1495,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		listEmployees.setVisible(true);
 		ta.setVisible(true);
 		idc.setVisible(true);
+		afi.setVisible(true);
+		
 		zoomListBox.setVisible(false);
 		closePDF.setVisible(false);
-		pdfViewer.setVisible(false);
+		downloadPDF.setVisible(false);
 		
 		pdfViewer.getElement().getStyle().setDisplay(Display.NONE);
 		tabLayOutPanel.getElement().getStyle().clearDisplay();
@@ -1607,7 +1617,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				onDownloadPDF(event);
 			}
 		});
-		toolbar.add(closePDF);
+		toolbar.add(downloadPDF);
 
 		return toolbar;
 
@@ -1658,13 +1668,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void onExportContract(ClickEvent event) {
 		contrataEmployeeObject.setContractOtherData(contractOtherData.getContractOtherData());
 		contrataEmployeeObject.setContractOtherInfo(s -> {
+//			showContract();
 			String fileDownloadURL = GWT.getModuleBaseURL()+ "contract_export/";
 			String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
 		            + "&contractId=" + contrataEmployeeObject.getContractData().getContractId()
-		            + "&contractType=" + contrataEmployeeObject.getContractData().getContractType();
-				
+		            + "&contractType=" + contrataEmployeeObject.getContractData().getContractType()
+		            + "&formativeLevel=" + contrataEmployeeObject.getFormativeLevel()
+		            + "&employeeFullName=" + contrataEmployeeObject.getEmployeeFullName();				
 			
-			Window.open(fileDownloadURL+query, "_blank", null);
+			Window.open(fileDownloadURL+query, "ContractExporter", "resizable=yes,scrollbars=yes,status=yes");
 		}, f -> {});
 	}
 

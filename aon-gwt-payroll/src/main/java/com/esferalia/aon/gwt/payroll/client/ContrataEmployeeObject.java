@@ -458,7 +458,7 @@ public class ContrataEmployeeObject {
 	}
 	
 	public void fillContract(Consumer<String> success, Consumer<Throwable> failure) {
-		employeesService.fillContract(getContractType(), getContractEmployeeInfo().getContractOtherData(), new AsyncCallback<String>() {
+		employeesService.fillContract(contractData.getContractId(), getContractType(), getFormativeLevel(), new AsyncCallback<String>() {
 			@Override
 			public void onSuccess(String result) {
 				success.accept(result);
@@ -925,6 +925,10 @@ public class ContrataEmployeeObject {
 
 	public void setEmployeePayMethodId(Integer paymethodId) {
 		this.employeeData.setPaymethodId(paymethodId);
+	}
+
+	public String getFormativeLevel() {
+		return this.employeeContractData.getContractSpecificData().getFormativeLevel();
 	}
 		
 }

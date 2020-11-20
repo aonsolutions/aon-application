@@ -736,9 +736,9 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void fillContract(String currentDomainName, Integer contractType, Map<String, String> contractOtherData, AsyncCallback<String> callback) {
+	public void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<String> callback) {
 		AON.start();
-		employeesServiceAsync.fillContract(currentDomainName, contractType, contractOtherData, new AsyncCallbackWrapper<String>(callback));
+		employeesServiceAsync.fillContract(currentDomainName, contractId, contractType, formativeLvl, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	

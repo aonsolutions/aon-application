@@ -715,7 +715,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public String fillContract(String currentDomainName, Integer contractType, Map<String, String> contractOtherData) {
+	public String fillContract(String currentDomainName,  Integer contractId, Integer contractType, String formativeLvl) {
 		// TODO Auto-generated method stub
 		return null;
 	}

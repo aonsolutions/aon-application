@@ -485,8 +485,8 @@ public class DomainEmployeesServiceAsync {
 
 	}
 	
-	public void fillContract(Integer contractType, Map<String, String> contractOtherData, AsyncCallback<String> callback) {
-		employeesServiceAsync.fillContract(getCurrentDomainName(), contractType, contractOtherData, callback);
+	public void fillContract(Integer contractId, Integer contractType, String formativeLvl, AsyncCallback<String> callback) {
+		employeesServiceAsync.fillContract(getCurrentDomainName(), contractId, contractType, formativeLvl, callback);
 	}
 	// ------------------------------------------------------------------------
 	
