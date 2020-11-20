@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {serializeForm} from '../../services/utils.js'
-import {getPersonas, getCentroTrabajo, getCuentaCotizacion, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getHorasConvenio} from '../../services/service.js'
+import {getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getHorasConvenio} from '../../services/service.js'
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-date.js';
@@ -68,10 +68,11 @@ export class AonAltaDirecta extends AonElement {
                 <aon-select name="centro_trabajo" id="centro_trabajo" title="Centro de trabajo"></aon-select>
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
-                <aon-select name="cuenta_cotizacion" id="cuenta_cotizacion" title="Cuenta de cotización"></aon-select>
+                <aon-select name="ctaCti" id="ctaCti" title="Cuenta de cotización"></aon-select>
+                <aon-input name="regimen" id="regimen" description="Regimen" visible="false"></aon-input>
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
-                <aon-input name="convenio" id="convenio" description="Convenio" type="text" value="60888888888888"></aon-input>
+                <aon-input name="convenio" id="convenio" description="Convenio" type="list"></aon-input>
             </div>
         `);
 
@@ -81,7 +82,7 @@ export class AonAltaDirecta extends AonElement {
                 <div id="${this.ID}DivDni"></div>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-input name="naf" id="naf" description="Número de afiliación" type="number" pattern="^[0-9]{1,12}$"></aon-input>
+                <aon-input name="nss" id="nss" description="Número de afiliación" type="number" pattern="^[0-9]{1,12}$"></aon-input>
             </div>
             <div class="aonCol-sm-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text"></aon-input>
@@ -97,13 +98,13 @@ export class AonAltaDirecta extends AonElement {
         let aonContratoCard = this.getElement(`${this.ID}ContratoCard`);
         aonContratoCard.setContentHTML(`
             <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-select name="tipo_contrato" id="tipo_contrato" title="Tipo de contrato"></aon-select>
+                <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-date name="fecha" id="fecha" title="Fecha inicio"></aon-date>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-select name="grupo_cotizacion" id="grupo_cotizacion" title="Grupo de cotización"></aon-select>
+                <aon-select name="grup_ctz" id="grup_ctz" title="Grupo de cotización"></aon-select>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="ocupacion" id="ocupacion" title="Ocupación" ></aon-select>
@@ -119,7 +120,7 @@ export class AonAltaDirecta extends AonElement {
                     <aon-input id="horas" description="Horas" type="number" ></aon-input>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-input name="coeficiente_parcial" id="coeficiente_parcial" description="Coeficiente Parcial" type="number" pattern="^[0-9]{1,3}$"></aon-input>
+                    <aon-input name="coefparcial" id="coefparcial" description="Coeficiente Parcial" type="number" pattern="^[0-9]{1,3}$"></aon-input>
                 </div>
             </div>
         `);
@@ -128,11 +129,19 @@ export class AonAltaDirecta extends AonElement {
        // aonAltaDirectaSubmit.style.marginLeft = '100%';
         aonAltaDirectaSubmit.addEventListener('click',()=>this.formSubmit());
 
-        let aonAltaDirectaDni = this.getElement(`${this.ID}DivDni`);
-        aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.ID}Dni" title="DNI/NIE" required="true"></aon-suggestion>`;
+        let centro_trabajo = this.getElement('centro_trabajo');
+        centro_trabajo.addEventListener('select', (e)=> this.listCuentaCotizacion(e));
 
-        let tipo_contrato = this.getElement('tipo_contrato');
-        tipo_contrato.addEventListener('select', (e)=> this.selectTipoContrato(e));
+        let ctaCti = this.getElement('ctaCti');
+        ctaCti.addEventListener('select', ({detail})=> {
+            this.getElement('regimen').setAttribute('value', detail.cccRegimeCode);
+        });   
+
+        let aonAltaDirectaDni = this.getElement(`${this.ID}DivDni`);
+        aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.ID}Dni" title="DNI/NIE" name="ipf"></aon-suggestion>`;
+
+        let type_cto = this.getElement('type_cto');
+        type_cto.addEventListener('select', (e)=> this.selectTipoContrato(e));
 
         let tipo_jornada = this.getElement('tipo_jornada');
         tipo_jornada.addEventListener('select', (e)=> this.selectTipojornada(e));
@@ -145,21 +154,24 @@ export class AonAltaDirecta extends AonElement {
             this.calculoCoef();
         });
 
-        let coeficiente_parcial = this.getElement('coeficiente_parcial');
-        coeficiente_parcial.addEventListener('keyup', (e) => this.calculoHoras());
+        let coefparcial = this.getElement('coefparcial');
+        coefparcial.addEventListener('keyup', (e) => this.calculoHoras());
+
 
         this.startFunctions();
 
     }
 
     startFunctions(){
-        this.suggestionDni();
         this.listCentroTrabajo();
-        this.listCuentaCotizacion();
+        this.suggestionDni();
         this.listTipoContrato();
         this.listTipoJornada();
         this.listGrupoCotizacion();
         this.listOcupacion();
+        this.listConvenios();
+       
+        // this.testFieldValues();
     }
 
     selectTipojornada(e){
@@ -171,16 +183,16 @@ export class AonAltaDirecta extends AonElement {
     selectTipoContrato(e){
         let {detail:{tipo_jornada}} = e;
         tipo_jornada = parseInt(tipo_jornada);
-        let coeficiente_parcial= this.getElement('coeficiente_parcial');
-        coeficiente_parcial.value = '';
+        let coefparcial= this.getElement('coefparcial');
+        coefparcial.value = '';
         let div_parcial = this.getElement('div_parcial');
         if(tipo_jornada){
             //si es parcial
             div_parcial.hidden =  false;
-            coeficiente_parcial.required = true;
+            coefparcial.required = true;
         }  else {
             div_parcial.hidden = true;
-            coeficiente_parcial.required = false;
+            coefparcial.required = false;
         }
 
     }
@@ -198,7 +210,7 @@ export class AonAltaDirecta extends AonElement {
 		});
 		searchSuggestion.addEventListener('select', ({detail}) => {
             if(detail){
-                this.getElement('naf').setAttribute('value', detail.naf);
+                this.getElement('nss').setAttribute('value', detail.nss);
                 this.getElement('nombre').setAttribute('value', detail.nombre);
                 this.getElement('apellido1').setAttribute('value', detail.last_name1);
                 this.getElement('apellido2').setAttribute('value', detail.last_name2);
@@ -209,24 +221,40 @@ export class AonAltaDirecta extends AonElement {
     async listCentroTrabajo(){
         let centro_trabajo = this.getElement('centro_trabajo');
         try {
-            const resp = await getCentroTrabajo();
-            centro_trabajo.options = JSON.stringify(resp);
+            const resp = await getWorkplaceCCCs();
+            centro_trabajo.options = JSON.stringify(
+                resp.map((r,index)=> {
+                    return {
+                        ...r,
+                        name: `${r.workplace.description}`,
+                        value: index
+                    }
+                })
+            );
         } catch (error) {}
     }
 
-    async listCuentaCotizacion(){
-        let cuenta_cotizacion = this.getElement('cuenta_cotizacion');
+    async listCuentaCotizacion(e){
+        let {detail:{ccc:cccs}} = e;
+        let ctaCti = this.getElement('ctaCti');
         try {
-            const resp = await getCuentaCotizacion();
-            cuenta_cotizacion.options = JSON.stringify(resp);
+            ctaCti.options = JSON.stringify(
+                cccs.map(r=> {
+                    return {
+                        ...r,
+                        name: `${r.cccRegimeCode} - ${r.ccc}`,
+                        value: r.ccc
+                    }
+                })
+            );
         } catch (error) {}
     }
 
     async listTipoContrato(){
-        let tipo_contrato = this.getElement('tipo_contrato');
+        let type_cto = this.getElement('type_cto');
         try {
             const resp = await getTipoContrato();
-            tipo_contrato.options = JSON.stringify(
+            type_cto.options = JSON.stringify(
                 resp.map(r=> {
                     return {
                         ...r,
@@ -254,11 +282,28 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {}
     }
 
+  
+    async listConvenios(){
+        let convenio = this.getElement('convenio');
+        try {
+            const resp = await getConvenios();
+            convenio.options = JSON.stringify(
+                resp.map(r=> {
+                    return {
+                        ...r,
+                        name: `${r.name}`,
+                        value: r.value
+                    }
+                })
+            );
+        } catch (error) {}
+    }
+
     async listGrupoCotizacion(){
-        let grupo_cotizacion = this.getElement('grupo_cotizacion');
+        let grup_ctz = this.getElement('grup_ctz');
         try {
             const resp = await getGrupoCotizacion();
-            grupo_cotizacion.options = JSON.stringify(
+            grup_ctz.options = JSON.stringify(
                 resp.map(r=> {
                     return {
                         ...r,
@@ -297,10 +342,7 @@ export class AonAltaDirecta extends AonElement {
                     }
                 })
             );
-            if(resp.length>0){
-                horas_convenio.value = resp.find(r=>r).value;
-            }
-            // horas.value=3;
+            if(resp.length>0) horas_convenio.value = resp.find(r=>r).value;
         } catch (error) {
             console.log(error)
         }
@@ -313,12 +355,12 @@ export class AonAltaDirecta extends AonElement {
         if(horas_convenio.value > 0 && horas.value > 0){
             calc =  Math.round( parseFloat( (parseFloat(horas.value) / parseFloat(horas_convenio.value) ) *  100) ).toString().padStart(3, "0");
         }
-        this.getElement('coeficiente_parcial').setAttribute('value', calc);
+        this.getElement('coefparcial').setAttribute('value', calc);
     }
 
     calculoHoras(){
         let horas_convenio = this.getElement('horas_convenio').value;
-        let coef =  this.getElement('coeficiente_parcial').value;
+        let coef =  this.getElement('coefparcial').value;
         let horas = this.getElement('horas');
 
         if(horas_convenio > 0 && coef > 0){
@@ -335,9 +377,36 @@ export class AonAltaDirecta extends AonElement {
             const resp = await postAltaDirecta(formJson);
             toast.start({message:'Alta procesada!', type: 'success', delay:3000});
         } catch (error) {
-            toast.start({message:'Alta NO procesada!', type: 'error'});
+            toast.start({message:error, type: 'error'});
         }
+    }
 
+
+    testFieldValues(){
+        let regimen =  "0111";
+        this.getElement('regimen').setAttribute('value', regimen);
+        
+        let ctaCti = "01105360062";
+        this.getElement('ctaCti').setAttribute('value',ctaCti);
+       
+        let nss = "010022757387";
+        this.getElement('nss').setAttribute('value',nss);
+
+        let ipf = "16262835H";
+        this.getElement('aonAltaDirectaDni').setAttribute('value',ipf);
+        
+        //second screen
+        let fecha = "28-12-2020";
+        this.getElement('fecha').setAttribute('value', fecha);
+
+        let convenio = "99001355011983";
+        this.getElement('convenio').setAttribute('value', convenio);
+
+        let grup_ctz = "03";
+        this.getElement('grup_ctz').setAttribute('value', grup_ctz);
+       
+        let type_cto = "402";   
+        this.getElement('type_cto').setAttribute('value', type_cto);
     }
 }
 window.customElements.define('aon-alta-directa', AonAltaDirecta);

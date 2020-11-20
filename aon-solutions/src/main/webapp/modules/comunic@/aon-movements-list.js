@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getMovements, getIDC, getTA} from '../../services/service.js';
+import {getMovements, getIDC, getTA, postDeleteMov} from '../../services/service.js';
 import '../../components/aon-table.js';
 import '../../components/aon-toast.js';
 
@@ -89,12 +89,22 @@ export class AonMovementsList extends AonElement {
 		console.log(data);
 	}
 
-	deleteMov(data, el){
-		if (confirm(`Estas seguro de anular el movimiento de ${data.nombres} ?`)) {
-			el.remove(); //delete td
+	async deleteMov(data, el){
+		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
+			
 			let toast = this.getElement(`divToast`);
-			toast.start({message:'Alta eliminada!', type: 'error'});
-			console.log("eliminar movimiento>>", data);
+			try {
+				// data = {
+				// 	...data,
+				// 	regime: "0111",
+				// 	ctaCti: "01105360062"
+				// }
+				await postDeleteMov(data);
+				toast.start({message:'Alta eliminada!', type: 'success'});
+				el.remove(); //delete td
+			} catch (error) {
+				toast.start({message:error, type: 'error'});
+			}
 		}	
 	}
 

@@ -32,6 +32,8 @@ public class Employee {
 	private String vinFam;
 	private String profesCat;
 	private String reducingCoefic;
+	private Integer ident;
+	private String md_ctz;
 	private Employee() {}
 	
 	public void accept(Visitor visitor) {
@@ -85,6 +87,10 @@ public class Employee {
 		}
 	}	
 	public Optional<String> getSex() {return Optional.of(sex);}
+	public Integer getIdent() {return ident;}
+	public String getColec() {return colec;}
+	public String getOcup() {return ocup;}
+	public Optional<String> getMdctz(){return Optional.ofNullable(md_ctz);}
 	
 	//TO_DO Generate getters y toString
 	@Override
@@ -180,7 +186,8 @@ public class Employee {
 		private String vinFam;
 		private String profesCat;
 		private String reducingCoefic;
-		
+		private Integer ident;
+		private String md_ctz;
 		public EmployeeBuilder(){}		
 		
 	
@@ -359,6 +366,15 @@ public class Employee {
 			return this;
 		}
 		
+		public EmployeeBuilder setIdent(Integer ident) {
+			this.ident = ident;
+			return this;
+		}
+		
+		public EmployeeBuilder setMdctz(String md_ctz) {
+			this.md_ctz = md_ctz;
+			return this;
+		}
 		
 		public Employee build(){
 			Employee employee = new Employee();
@@ -390,9 +406,11 @@ public class Employee {
 			employee.vinFam = this.vinFam;
 			employee.profesCat = this.profesCat;
 			employee.reducingCoefic = this.reducingCoefic;
-			
+			employee.ident = this.ident;
+			employee.md_ctz = this.md_ctz;
 			return employee;
 		}
+
 	}	
 	
 	public static interface Visitor{
@@ -479,15 +497,6 @@ public class Employee {
 		public void visitProfesCat(String profesCat) {}
 		@Override
 		public void visitReducingcoefic(String reducingCoefic) {}
-	}
-	
-
-	public void setRegime(String regime) {
-		this.regime = regime;
-	}
-	
-	public void setCtaCti(String ctaCti) {
-		this.ctaCti = ctaCti;
 	}
 	
 }

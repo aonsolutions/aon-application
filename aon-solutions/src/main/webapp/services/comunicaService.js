@@ -239,8 +239,6 @@ export const getOcupacion = () =>  new Promise((resolve) => {
     ] );
 });
 
-export const postAltaDirecta = (data) => post(`${API_URL}/comunica/alta-directa`, data);
-
 export const getTA = (data) => openPDF(`${API_URL}/comunica/pdf/get-ta`, data);
 
 export const getIDC = (data) => openPDF(`${API_URL}/comunica/pdf/get-idc`, data);
@@ -322,4 +320,13 @@ export const getHorasConvenio = (tipo_jornada) =>  new Promise((resolve) => {
     ];
     let filters =  jsonValues.filter(f=>f.tipo_jornada.indexOf(tipo_jornada) >= 0);
     resolve(filters);
+});
+
+export const postAltaDirecta = (data) => post(`${API_URL}/comunica/alta-directa`, data); //ALTA DIRECTA
+export const postDeleteMov = (data) => post(`${API_URL}/comunica/delete-mov`, data);  //DELETE MOV
+
+export const getConvenios = () =>  new Promise((resolve) => {
+    resolve([
+        {id:"1", name:"60888888888888", value:"60888888888888"}, 
+    ] );
 });
