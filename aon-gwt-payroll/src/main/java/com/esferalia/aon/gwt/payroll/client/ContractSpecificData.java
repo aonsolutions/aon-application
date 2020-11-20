@@ -12,6 +12,7 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.AcademicTitulation;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Document;
@@ -332,6 +333,8 @@ public class ContractSpecificData extends ResizeComposite {
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	private EmployeeContractInfo employeeContractInfo;
 	private Map<String, CNO> cnoMap;
+	
+	private FormativeLevel formativeLevel = new FormativeLevel();
 	
 	public ContractSpecificData() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -1257,28 +1260,31 @@ public class ContractSpecificData extends ResizeComposite {
 		// ListBox
 		formativeLevelLB.clear();
 		formativeLevelLB.addItem("-", "");
-		formativeLevelLB.addItem("ESTUDIOS PRIMARIOS INCOMPLETOS", "11");
-		formativeLevelLB.addItem("ESTUDIOS PRIMARIOS COMPLETO", "12");
-		formativeLevelLB.addItem("PROGRAMAS PARA FORMACION E INSERCION LABORAL QUE NO PRECISAN DE UNA TITULACION", "21");
-		formativeLevelLB.addItem("PRIMERA ETAPA DE EDUCACION SECUNDARIA SIN TITULO DE GRADUADO ESCOLAR O EQUIVALENTE", "22");
-		formativeLevelLB.addItem("PRIMERA ETAPA DE EDUCACION SECUNDARIA CON TITULO DE GRADUADO ESCOLAR O EQUIVALENTE", "23");
-		formativeLevelLB.addItem("PROGRAMAS PARA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION DE ESTUDIOS SECUNDARIOS DE PRIMERA ETAPA", "31");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE BACHILLERATO", "32");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO MEDIO DE FORMACION ESPECIFICA, ARTES PLASTICAS...", "33");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO MEDIO DE MUSICA Y DANZA", "34");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS PARA LA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION DE ESTUDIOS SECUNDARIOS DE SEGUNDA ETAPA", "41");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO SUPERIOR DE FORMACION PROFESIONAL ESPECIFICA Y EQUIVALENTE", "51");
-		formativeLevelLB.addItem("TITULOS PROPIOS DE LAS UNIVERSIDADES Y OTRAS ENSE" + String.valueOf("\u00D1") + "ANZAS QUE PRECISAN DEL TITULO", "52");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS PARA LA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA FORMACION PROFESIONAL", "53");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAR UNIVERSITARIAS DE PRIMER CICLO Y EQUIVALENTES", "54");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAR UNIVERSITARIAS DE SEGUNDO CICLO Y EQUIVALENTES", "55");
-		formativeLevelLB.addItem("ESTUDIOS OFICIALES DE ESPECIALIZACION PREFESIONAL", "56");
-		formativeLevelLB.addItem("PROGRAMAS DE POSTGRADO IMPARTIDOS POR LAS UNIVERSIDADES U OTRAS INSTITUCIONES", "57");
-		formativeLevelLB.addItem("PROGRAMAS DE FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION UNIVERSITARIA", "58");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS UNIVERSITARIAS DE GRADO", "59");
-		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS UNIVERSITARIAS DE MASTER", "60");
-		formativeLevelLB.addItem("DOCTORADO UNIVERSITARIO", "61");
-		formativeLevelLB.addItem("SIN ESTUDIOS", "80");
+		for(Entry<String, String> entry: formativeLevel.getFormativeLevelMap().entrySet())
+			formativeLevelLB.addItem(entry.getValue(), entry.getKey());
+		
+//		formativeLevelLB.addItem("ESTUDIOS PRIMARIOS INCOMPLETOS", "11");
+//		formativeLevelLB.addItem("ESTUDIOS PRIMARIOS COMPLETO", "12");
+//		formativeLevelLB.addItem("PROGRAMAS PARA FORMACION E INSERCION LABORAL QUE NO PRECISAN DE UNA TITULACION", "21");
+//		formativeLevelLB.addItem("PRIMERA ETAPA DE EDUCACION SECUNDARIA SIN TITULO DE GRADUADO ESCOLAR O EQUIVALENTE", "22");
+//		formativeLevelLB.addItem("PRIMERA ETAPA DE EDUCACION SECUNDARIA CON TITULO DE GRADUADO ESCOLAR O EQUIVALENTE", "23");
+//		formativeLevelLB.addItem("PROGRAMAS PARA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION DE ESTUDIOS SECUNDARIOS DE PRIMERA ETAPA", "31");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE BACHILLERATO", "32");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO MEDIO DE FORMACION ESPECIFICA, ARTES PLASTICAS...", "33");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO MEDIO DE MUSICA Y DANZA", "34");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS PARA LA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION DE ESTUDIOS SECUNDARIOS DE SEGUNDA ETAPA", "41");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS DE GRADO SUPERIOR DE FORMACION PROFESIONAL ESPECIFICA Y EQUIVALENTE", "51");
+//		formativeLevelLB.addItem("TITULOS PROPIOS DE LAS UNIVERSIDADES Y OTRAS ENSE" + String.valueOf("\u00D1") + "ANZAS QUE PRECISAN DEL TITULO", "52");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS PARA LA FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA FORMACION PROFESIONAL", "53");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAR UNIVERSITARIAS DE PRIMER CICLO Y EQUIVALENTES", "54");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAR UNIVERSITARIAS DE SEGUNDO CICLO Y EQUIVALENTES", "55");
+//		formativeLevelLB.addItem("ESTUDIOS OFICIALES DE ESPECIALIZACION PREFESIONAL", "56");
+//		formativeLevelLB.addItem("PROGRAMAS DE POSTGRADO IMPARTIDOS POR LAS UNIVERSIDADES U OTRAS INSTITUCIONES", "57");
+//		formativeLevelLB.addItem("PROGRAMAS DE FORMACION E INSERCION LABORAL QUE PRECISAN DE UNA TITULACION UNIVERSITARIA", "58");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS UNIVERSITARIAS DE GRADO", "59");
+//		formativeLevelLB.addItem("ENSE" + String.valueOf("\u00D1") + "ANZAS UNIVERSITARIAS DE MASTER", "60");
+//		formativeLevelLB.addItem("DOCTORADO UNIVERSITARIO", "61");
+//		formativeLevelLB.addItem("SIN ESTUDIOS", "80");
 		
 		academicTitulationLB.clear();
 		
