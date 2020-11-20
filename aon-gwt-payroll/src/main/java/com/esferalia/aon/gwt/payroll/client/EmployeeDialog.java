@@ -6,8 +6,14 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -18,7 +24,10 @@ import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
+import com.esferalia.aon.gwt.payroll.shared.FIEService.JsITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.FIEService;
+import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
@@ -26,11 +35,13 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -38,12 +49,16 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class EmployeeDialog extends CustomDialog {
+public abstract class EmployeeDialog extends AonCustomDialog {
 	
 	@SuppressWarnings("deprecation")
 	private class EmployeeImplementation extends Employee{
@@ -576,6 +591,9 @@ public abstract class EmployeeDialog extends CustomDialog {
 	@UiField (provided = true)
 	Employee employee;
 	
+	@UiField
+	HTMLPanel buttonsPanel;
+	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
 //	interface Callback {
@@ -587,6 +605,9 @@ public abstract class EmployeeDialog extends CustomDialog {
 	private ContractType contractType;
 	private Municipalities municipalities;
 	
+	private AonButton closeBtnDialog;
+	private AonButton acceptBtnDialog;
+	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
 	public EmployeeDialog() {
@@ -594,6 +615,8 @@ public abstract class EmployeeDialog extends CustomDialog {
 		
 		setCaption("Trabajador");
 		setWidget(binder.createAndBindUi(this));
+		
+		getButtonsPanel();
 		
 		employee.clear_employee.getElement().getStyle().setDisplay(Display.NONE);
 		employee.account.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -610,6 +633,8 @@ public abstract class EmployeeDialog extends CustomDialog {
 		setCaption("Trabajador");
 		setWidget(binder.createAndBindUi(this));
 		
+		getButtonsPanel();
+		
 		employee.clear_employee.getElement().getStyle().setDisplay(Display.NONE);
 		employee.account.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
@@ -624,48 +649,48 @@ public abstract class EmployeeDialog extends CustomDialog {
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
-	@UiHandler("cancelButton")
-	void onCancelButtonClick(ClickEvent clickEvent) {
-		hide();
-	}
-	
-	@UiHandler("acceptButton")
-	void onAcceptButtonClick(ClickEvent clickEvent) {
-		int ssRegime = employee.ssRegimeType.getSelectedIndex();
-		employeeDialogObject.setSSRegime(ssRegime);
-		
-		if(checkIfSaveIsPossible())
-			if(checkDates())
-//				if(checkPayMethod())
-				this.employeeDialogObject.createEmployeeContract(
-						r -> { 
-								hide();
-								if(null != employeeDialogObject.getWorkplaceObj()) 
-									EmployeeTree.invokeRefreshWorkplace();
-				
-								onAccept();
-//									cb.onAccept(this);
-								
-							 }, 
-						t -> {}
-				);
-//				else {
-//					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-//					dialog.center();
-//					dialog.show();
-//				}
-					
-			else{
-				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
-				dialog.center();
-				dialog.show();
-			}
-		else {
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
-			dialog.center();
-			dialog.show();
-		}
-	}
+//	@UiHandler("cancelButton")
+//	void onCancelButtonClick(ClickEvent clickEvent) {
+//		hide();
+//	}
+//	
+//	@UiHandler("acceptButton")
+//	void onAcceptButtonClick(ClickEvent clickEvent) {
+//		int ssRegime = employee.ssRegimeType.getSelectedIndex();
+//		employeeDialogObject.setSSRegime(ssRegime);
+//		
+//		if(checkIfSaveIsPossible())
+//			if(checkDates())
+////				if(checkPayMethod())
+//				this.employeeDialogObject.createEmployeeContract(
+//						r -> { 
+//								hide();
+//								if(null != employeeDialogObject.getWorkplaceObj()) 
+//									EmployeeTree.invokeRefreshWorkplace();
+//				
+//								onAccept();
+////									cb.onAccept(this);
+//								
+//							 }, 
+//						t -> {}
+//				);
+////				else {
+////					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
+////					dialog.center();
+////					dialog.show();
+////				}
+//					
+//			else{
+//				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+//				dialog.center();
+//				dialog.show();
+//			}
+//		else {
+//			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+//			dialog.center();
+//			dialog.show();
+//		}
+//	}
 	
 	protected abstract void onAccept();
 	
@@ -1280,5 +1305,64 @@ public abstract class EmployeeDialog extends CustomDialog {
 //		this.cb = callback;
 //		super.setPopupPositionAndShow(positionCallback);
 //	}
+	
+	private void getButtonsPanel() {
+		closeBtnDialog = new AonButton("Cerrar", AON.CSS.aonIconClose());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		acceptBtnDialog = new AonButton("Aceptar", AON.CSS.aonIconAccept());
+		acceptBtnDialog.setAccessKey('A');
+		acceptBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAcceptDialog(event);
+			}
+		});
+		
+		buttonsPanel.add(acceptBtnDialog);
+	}
+	
+	private void onCloseDialog(ClickEvent event) {
+		hide();
+	}
+	
+	private void onAcceptDialog(ClickEvent event) {
+		int ssRegime = employee.ssRegimeType.getSelectedIndex();
+		employeeDialogObject.setSSRegime(ssRegime);
+		
+		if(checkIfSaveIsPossible())
+			if(checkDates())
+				this.employeeDialogObject.createEmployeeContract(
+						r -> { 
+								hide();
+								
+								if(null != employeeDialogObject.getWorkplaceObj()) 
+									EmployeeTree.invokeRefreshWorkplace();
+				
+								onAccept();
+							 }, 
+						t -> {}
+				);	
+			else {
+				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
+				dialog.center();
+				dialog.show();
+			}
+		else {
+			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
+			dialog.center();
+			dialog.show();
+		}
+	}
 	
 }

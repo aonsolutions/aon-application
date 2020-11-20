@@ -8,13 +8,24 @@
 		.mr-10{
 			margin-right: 10px !important;
 		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			height: 20px;
+			margin: 5px 15px;
+		}
 	
 	</ui:Style>
 
 
 	<g:HTMLPanel styleName="aon-width-all aon-height-all" debugId="paymetDialogHTMLPanel"> 
+		<g:VerticalPanel>
+			<a:Employee ui:field="employee"/>
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
+		</g:VerticalPanel>
 
-		<table class="aon-width-all aon-height-all" >
+		<!-- table class="aon-width-all aon-height-all" >
 			<tr>
 				<td>
 					<a:Employee ui:field="employee"/>
@@ -29,8 +40,7 @@
 					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" styleName="gwt-Button {style.mr-10}" >Aceptar</g:Button>
 				</td>
 			</tr>
-		</table>
-
+		</table -->
 
 	</g:HTMLPanel>
 

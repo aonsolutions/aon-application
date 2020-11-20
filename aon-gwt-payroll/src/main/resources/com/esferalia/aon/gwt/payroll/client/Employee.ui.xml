@@ -99,7 +99,7 @@
 			border-style: solid; 
 			width: 975px; 
 			border-width: 1px; 
-			margin: 20px 10px;
+		    margin: 20px 10px 10px 10px;
 		}
 		
 		.styleBorder2{
