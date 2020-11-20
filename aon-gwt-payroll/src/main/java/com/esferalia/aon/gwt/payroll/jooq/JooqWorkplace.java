@@ -99,11 +99,14 @@ public class JooqWorkplace {
 		}
 		
 		//Payroll Data
-		 Result<Record> payrollWorkplaceRecords = dslContext.select().from(PAYROLL_WORKPLACE)
+		Result<Record> payrollWorkplaceRecords = dslContext.select().from(PAYROLL_WORKPLACE)
 				.where(PAYROLL_WORKPLACE.WORKPLACE.eq(workplaceId))
 				.fetch();
 		 
-		Record payrollWorkplaceRecord = payrollWorkplaceRecords.get(0);
+		Record payrollWorkplaceRecord = null;
+		
+		if(!payrollWorkplaceRecords.isEmpty())
+			payrollWorkplaceRecord = payrollWorkplaceRecords.get(0);
 		
 		Integer payrollWorkplaceId = null;
 		String workplaceCalendar = null;
