@@ -485,7 +485,7 @@ input[type="checkbox"]:focus + label {
 .aon_custom_dialog_header {
 	margin: 0px;
 	padding: 1px;
-	height: 22px;
+	/*height: 22px;*/
 	width: auto;
 	display: flex;
 	align-items: center;
@@ -499,6 +499,7 @@ input[type="checkbox"]:focus + label {
 	font-size: 1.2em;
 	flex-grow: 1;
 	cursor: grab;
+	border-bottom: solid #c4c4c4 1px;
 }
 
 .aon_custom_dialog_close {
