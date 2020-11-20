@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Test;
 
@@ -72,7 +73,9 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRedEmployee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062");					
 		}
-		catch (WrongRegimeException e) {}
+		catch (WrongRegimeException e) {
+			System.out.println(e.getMessage());
+		}
 		catch (StatusCodeException e) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}

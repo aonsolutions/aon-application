@@ -1,21 +1,8 @@
 package solutions.aon.seg.social;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.*;
-
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-
+import com.gargoylesoftware.htmlunit.html.*;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
@@ -23,12 +10,16 @@ import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.ITPart;
-import solutions.aon.seg.social.objects.It;
-import solutions.aon.seg.social.objects.ItPartId;
 import solutions.aon.seg.social.objects.ITPart.ITPartBuilder;
+import solutions.aon.seg.social.objects.It;
 import solutions.aon.seg.social.objects.It.ItBuilder;
+import solutions.aon.seg.social.objects.ItPartId;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 public class SistemaREDITParts {
 		
@@ -89,11 +80,8 @@ public class SistemaREDITParts {
 				case 403: throw new ForbiddenException();
 				default: throw new StatusCodeException(); 
 			}
-		}
-		catch (MalformedURLException e) { throw new SegSocialException(e); }
-		catch (IOException e) { throw new SegSocialException(e); }
-		catch (InterruptedException e) {throw new SegSocialException(e);}
-		
+		} catch (IOException | InterruptedException e) { throw new SegSocialException(e); }
+
 	}
 
 	//GET ALL THE ITPARTS
@@ -155,7 +143,7 @@ public class SistemaREDITParts {
 					Integer partNum = null;
 					
 					try {partNum = Integer.parseInt(data.get(13).trim());}
-					catch (NumberFormatException e) {}
+					catch (NumberFormatException ignored) {}
 					String partType = data.get(15);
 					Boolean cancelled = Toolkit.toBoolean(data.get(17));
 					Boolean wrong = Toolkit.toBoolean(data.get(19));
@@ -228,7 +216,6 @@ public class SistemaREDITParts {
 
 			if(licenseNumber.isEmpty() && cias.isEmpty()) throw new InvalidDataException("Rellena cias o número de colegiado");
 
-
 			HtmlPage document = webClient.getPage("https://w2.seg-social.es/isincaA/inicio.do");
 			HtmlOption type = document.querySelector("#tipoParte option:nth-child(2)");
 			document = fillCommonData(type.click(), regime, ccc, naf, contingency, PartType.BAJA);
@@ -241,14 +228,14 @@ public class SistemaREDITParts {
 			HtmlInput startDate_mm_in = document.querySelector("#fechaBaja_mm");			
 			HtmlInput startDate_aa_in = document.querySelector("#fechaBaja_aa");
 
-			Integer[] arr_startDate = Toolkit.getDateArray(startdate);
-			String[] arr_base_cot = Toolkit.splitDecimal(base_cot,2);
-
 			HtmlOption contract_type_opt = null;
 			HtmlInput cot_base_in_1 = null;
 			HtmlInput cot_base_in_2 = null;
 			HtmlInput cot_days_in = null;
-			
+
+			Integer[] arr_startDate = Toolkit.getDateArray(startdate);
+			String[] arr_base_cot = Toolkit.splitDecimal(base_cot,2);
+
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL: 	
 					contract_type_opt = document.querySelector("#tipoContrato option:nth-child(2)");	
@@ -280,9 +267,7 @@ public class SistemaREDITParts {
 				n_coleg_2_in.setValueAttribute(n_coleg_arr_ls.get(1));
 				n_coleg_3_in.setValueAttribute(n_coleg_arr_ls.get(2));
 			}
-			if(licenseNumber.isPresent()){
-				System.out.println();
-			}
+			if(licenseNumber.isPresent())	cias_in.setAttribute("value",cias.get());
 			
 			HtmlSubmitInput validate = document.querySelector("#Validar");
 			document = validate.click();
@@ -386,8 +371,6 @@ public class SistemaREDITParts {
 			HtmlInput date_in_mm = htmlPage.querySelector("#fechaBaja_mm");
 			HtmlInput date_in_aa = htmlPage.querySelector("#fechaBaja_aa");
 			HtmlInput continue_in = htmlPage.querySelector("#botonesANULAR input[name=boton]");
-
-
 
 		}
 	}

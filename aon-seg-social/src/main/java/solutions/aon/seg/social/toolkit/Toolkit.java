@@ -20,25 +20,25 @@ public class Toolkit {
 	public static void log(Object[] things) {
 		for (Object th : things) 
 			if(th != null) System.out.println(th.toString());
-			else System.out.println(th);
+			else System.out.println("[NOT FOUND]");
 	}
 	
 	//REMOVE EXTRA 0s FROM STRINGS
 	public static String removeExtraZeros(String code) {
-		String str = "";
+		StringBuilder str = new StringBuilder();
 		boolean extraZeros = true;
 		for (int i = 0; i < code.length(); i++) 
 			if(!extraZeros || code.charAt(i)!= '0') {
 				extraZeros = false;
-				str += code.charAt(i);		
+				str.append(code.charAt(i));
 			}
-		return str;
+		return str.toString();
 	}
 	
 	//PARSE A DATE WITH AN SPECIFIC FORMAT
 	public static Date parseDate(String dateStr,String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);	
-		Date formattedDate = null;		
+		Date formattedDate;
 		
 		try {
 			formattedDate = dateFormatter.parse(dateStr);
@@ -49,7 +49,7 @@ public class Toolkit {
 	//FORMAT DATE TO STRING IN A SPECIFIC FORMAT
 	public static Optional<String> formatDate(Date date, String format) {
 		SimpleDateFormat dateFormatter = new SimpleDateFormat(format);	
-		Optional<String> formattedDate = Optional.empty();		
+		Optional<String> formattedDate;
 		formattedDate = Optional.of(dateFormatter.format(date));
 		return formattedDate;	
 	}
@@ -63,8 +63,8 @@ public class Toolkit {
 	
 	//REMOVE NBFP CHARACTER FROMA A STRING
 	public static String removeNBSP(String cadena) {
-		String nbe=""+(char)160;
-		cadena=cadena.replace(nbe, "");
+		String nbe = "" + (char)160;
+		cadena = cadena.replace(nbe, "");
 		return cadena;
 	}
 	
@@ -88,7 +88,7 @@ public class Toolkit {
 	//SPLITS AN ARRAY MULTIPLE TIMES AND RETURNS AN ARRAY
 	public static ArrayList<String> splitString_m(String str, int[] indexes) throws InvalidDataException {
 		try {
-			ArrayList<String> result = new ArrayList<String>();
+			ArrayList<String> result = new ArrayList<>();
 			int ant = 0;
 			for (int i : indexes) {
 				String cut = str.substring(ant,i);
@@ -141,15 +141,13 @@ public class Toolkit {
 	
 	//GET AN UREACHABLE DATE
 	public static Date getUnreachableDate() {
-		Date d = addDays(new Date(), 10);
-		return d;
+		return addDays(new Date(), 10);
 	}
 
 	//RETURNS IF A DATE IS FUTURE
 	public static boolean isFuture(Date to) {
 		int r = to.compareTo(new Date());
-		if(r == 1) return true;
-		return false;
+		return r > 0;
 	}
 	
 	//SPLITS A FLOAT/DOUBLE 
@@ -163,8 +161,24 @@ public class Toolkit {
 		for (Object o : data) 
 			if(o ==  null || (o instanceof String && ((String) o).trim().equals(""))) throw new UnfilledMandatory();
 	}
+
+	//REMOVE WEIRD CARACTERS
 	public static String removeWeirdCharacters(String str) {
-		str=removeNBSP(str.replaceAll(""+((char)32), " ").trim());
+		str = removeNBSP(str.replaceAll(""+((char)32), " ").trim());
 		return str;
 	}
+
+	//REMOVE SPACES, ACTUALLY
+	public static String noSpaces(String str){
+		return str.replaceAll("\\s","");
+	}
+
+	//ADD A CHARACTER X TIMES TO A STRING LEFT SIDE
+	public static String appendStringLeft(String str, String append, int times){
+		StringBuilder strBuilder = new StringBuilder(str);
+		for (int i = 0; i < times; i++) strBuilder.insert(0, append);
+		str = strBuilder.toString();
+		return str;
+	}
+
 }

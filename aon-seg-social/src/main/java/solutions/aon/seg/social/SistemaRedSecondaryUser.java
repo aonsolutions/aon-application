@@ -1,9 +1,7 @@
 package solutions.aon.seg.social;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -40,14 +38,12 @@ public class SistemaRedSecondaryUser {
 				case 403:	throw new ForbiddenException();
 				default:	throw new SegSocialException(e);
 			}
-		}
-		catch (MalformedURLException e) {throw new SegSocialException(e);}
-		catch (IOException e) {throw new SegSocialException(e);}		
+		} catch (IOException e) {throw new SegSocialException(e);}
 	}
 	
 	//GET THE SECONDARY USER BY IPF
 	public static SecondaryUser getSecondaryUserByIpfImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipf) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException {
+			final String certificateType, final String ipf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
 		
@@ -78,15 +74,15 @@ public class SistemaRedSecondaryUser {
 		String main_user_naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFAUT");
 		
 		String name = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNOMBRESEC");
-		String province = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPROVSEC");;
-		String naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFSEC");;
-		String situation = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFSITSEC");;
+		String province = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFPROVSEC");
+		String naf = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFNAFSEC");
+		String situation = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFSITSEC");
 		Date situation_date = Toolkit.parseDate(HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFECSITSEC"),"dd/MM/yyyy");
-		String telephone = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELEFONOSEC");;
-		String fax = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFAXSEC");;
-		String mobile = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFMOVILSEC");;
-		String mail = HtmlUnitToolkit.getTrimmedById(htmlPage, "txtconcat1_2");;
-		
+		String telephone = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFTELEFONOSEC");
+		String fax = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFFAXSEC");
+		String mobile = HtmlUnitToolkit.getTrimmedById(htmlPage, "SDFMOVILSEC");
+		String mail = HtmlUnitToolkit.getTrimmedById(htmlPage, "txtconcat1_2");
+
 		SecondaryUserBuilder builder = new SecondaryUserBuilder();
 		
 		builder.setAuthoritation(authoritation)
@@ -103,23 +99,20 @@ public class SistemaRedSecondaryUser {
 		.setFax(fax)
 		.setMobile(mobile)
 		.setMail(mail);
-		
-		SecondaryUser user = builder.build();
-		return user;
+
+		return builder.build();
 	}
 	
 	//HANDLE EXCEPTIONS OF 
 	public static Collection<SecondaryUser> getSecondaryUsers(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType) throws SegSocialException{
 		try {return getSecondaryUsersImpl(certificateInputStream, certificatePassword, certificateType);}
-		catch (FailingHttpStatusCodeException e) {throw new SegSocialException(e);}
-		catch (MalformedURLException e) {throw new SegSocialException(e);}
-		catch (IOException e) {throw new SegSocialException(e);}	
+		catch (FailingHttpStatusCodeException | IOException e) {throw new SegSocialException(e);}
 	}
 	
 	//GET SECONDARY USERS 
 	public static Collection<SecondaryUser> getSecondaryUsersImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException{
+			final String certificateType) throws FailingHttpStatusCodeException, IOException, SegSocialException{
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=NRW67&E=I&AP=AUT");
 		
@@ -138,9 +131,9 @@ public class SistemaRedSecondaryUser {
 			
 			HtmlSubmitInput query_btn = htmlPage.querySelector("#Sub2205301004_72");
 			htmlPage = query_btn.click();
-			HtmlSubmitInput continue_btn = null;
+			HtmlSubmitInput continue_btn;
 			
-			ArrayList<SecondaryUser> users = new ArrayList<SecondaryUser>(); 
+			ArrayList<SecondaryUser> users = new ArrayList<>();
 			
 			do{
 				continue_btn = htmlPage.querySelector("#Sub2207101004_92");
@@ -156,20 +149,16 @@ public class SistemaRedSecondaryUser {
 	}
 	
 	//HANDLE EXCEPTIONS OF registerSecondaryUserImpl()
-	public static boolean registerSecondaryUserByNie(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String nie, String naf) throws SegSocialException {
+	public static void registerSecondaryUserByNie(final InputStream certificateInputStream, final String certificatePassword,
+												  final String certificateType, final String nie, String naf) throws SegSocialException {
 			try {
 				registerSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,nie,naf);
-				return true;
-			}
-			catch (FailingHttpStatusCodeException e) {throw new SegSocialException(e);}
-			catch (MalformedURLException e) {throw new SegSocialException(e);}
-			catch (IOException e) {throw new SegSocialException(e);}
+			} catch (FailingHttpStatusCodeException | IOException e) {throw new SegSocialException(e);}
 	}
 	
 	//REGISTER SECONDARY USER 
 	public static void registerSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipf, String naf) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException {
+			final String certificateType, final String ipf, String naf) throws FailingHttpStatusCodeException, IOException, SegSocialException {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 		
@@ -178,7 +167,7 @@ public class SistemaRedSecondaryUser {
 			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_1");
 			htmlPage = ch1.click();
 			
-			HtmlOption opt1 = (HtmlOption) htmlPage.querySelector("#inputgrupo1_1_1 option:nth-child(2)");
+			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_1_1 option:nth-child(2)");
 			htmlPage = opt1.click();
 			
 			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_1_2");
@@ -195,28 +184,26 @@ public class SistemaRedSecondaryUser {
 			htmlPage = next_submit_btn.click();
 			
 			HtmlSubmitInput final_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
-			htmlPage = final_submit_btn.click();
-			
+			final_submit_btn.click();
+
 		}		
 	}
 		
 	//HANDLE EXCEPTIONS OF deleteSecondaryUser
-	public static boolean deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String nie) throws SegSocialException {
+	public static void deleteSecondaryUser(final InputStream certificateInputStream, final String certificatePassword,
+										   final String certificateType, final String nie) throws SegSocialException {
 		try {
 			deleteSecondaryUserImpl(certificateInputStream,certificatePassword,certificateType,nie);
-			return true;
 		}
 		catch(FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);}	
 		catch(RuntimeException e) {throw new NotRespondingException();} 
 		catch (Exception  e) {throw new SegSocialException(e);}
-		return false;
-		
+
 	}
 	
 	//DELETE SECONDARY USER
 	public static void deleteSecondaryUserImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, final String ipf) throws StatusCodeException, MalformedURLException, IOException, SegSocialException, InterruptedException {
+			final String certificateType, final String ipf) throws IOException, SegSocialException, InterruptedException {
 		
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			
@@ -226,7 +213,7 @@ public class SistemaRedSecondaryUser {
 			HtmlCheckBoxInput ch1 = htmlPage.querySelector("#chkgrupo1_2");
 			htmlPage = ch1.click();
 			
-			HtmlOption opt1 = (HtmlOption) htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child(1)");
+			HtmlOption opt1 = htmlPage.querySelector("#inputgrupo1_2_1 option:nth-child(1)");
 			htmlPage = opt1.click();
 			
 			HtmlInput ipf_txt = htmlPage.querySelector("#inputgrupo1_2_2");
@@ -242,7 +229,7 @@ public class SistemaRedSecondaryUser {
 			HtmlSubmitInput final_submit_btn = htmlPage.querySelector("#Sub2207101004_99");
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			htmlPage = final_submit_btn.click();			
+			final_submit_btn.click();
 		}
 	}
 	
@@ -257,20 +244,4 @@ public class SistemaRedSecondaryUser {
 			final String certificateType, final String ipf) {
 		
 	}
-
-	//ipf	
-	//naf	291136796369
-	
-	public static void main(String[] args) {
-		try (final InputStream certificateInputStream = new FileInputStream(args[0])) {			
-			deleteSecondaryUser(certificateInputStream, "jg@FNMT", "pkcs12", "072828005T");
-		} catch (SegSocialException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
-
 }

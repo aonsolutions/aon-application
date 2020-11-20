@@ -40,7 +40,7 @@ public class SistemaRedEmployee {
 				try{employees.addAll(getEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc));}
 				catch(Exception e){e.printStackTrace();}
 				try{employees.addAll(getPrevEmployees(new ByteArrayInputStream(cert),certificatePassword,certificateType,regimen,ccc));}
-				catch(NoQueryData e){}
+				catch(NoQueryData ignored){}
 
 				return employees;
 			} catch (IOException e) {throw new InvalidCertificateException();}
@@ -161,7 +161,7 @@ public class SistemaRedEmployee {
 				try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 					
 				webClient.getOptions().setJavaScriptEnabled(false);
-				ArrayList<Employee> employees = new ArrayList<Employee>();
+				ArrayList<Employee> employees = new ArrayList<>();
 				
 				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -173,9 +173,8 @@ public class SistemaRedEmployee {
 				buscaPartesForm.getInputByName("chk_chkgrupo1_1").setChecked(true);
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
-				
-				employees = getEmployeesFromTable(htmlPage,employees);
-				return employees;
+
+				return getEmployeesFromTable(htmlPage,employees,regimen,ccc);
 			}
 		}
 		
@@ -188,9 +187,8 @@ public class SistemaRedEmployee {
 			
 			try {return getPrevEmployeesImpl(certificateInputStream, certificatePassword, certificateType, regimen, ccc);} 
 			catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
-			catch (MalformedURLException e) {throw new SegSocialException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SegSocialException(e);}
+			catch (MalformedURLException | InterruptedException e) {throw new SegSocialException(e);}
+			catch (IOException e) {throw new CertificateNotFoundException();}
 			return null;
 		}
 		
@@ -201,7 +199,7 @@ public class SistemaRedEmployee {
 				try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 					
 				webClient.getOptions().setJavaScriptEnabled(false);
-				ArrayList<Employee> employees = new ArrayList<Employee>();
+				ArrayList<Employee> employees = new ArrayList<>();
 				
 				HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR62&E=I&AP=AFIR");
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -213,17 +211,16 @@ public class SistemaRedEmployee {
 				buscaPartesForm.getInputByName("chk_chkgrupo1_2").setChecked(true);
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
-				
-				employees = getEmployeesFromTable(htmlPage,employees);
-				return employees;
+
+				return getEmployeesFromTable(htmlPage,employees,regimen,ccc);
 			}
 		}
 		
 		//COMMON GETEMPLOYEE CODE
-		private static ArrayList<Employee> getEmployeesFromTable(HtmlPage htmlPage, ArrayList<Employee> employees) throws IOException, SegSocialException {
+		private static ArrayList<Employee> getEmployeesFromTable(HtmlPage htmlPage, ArrayList<Employee> employees, String ccc, String regime) throws IOException, SegSocialException {
 			Iterable<DomElement> tableContent = htmlPage.getElementById("Sub1000112079").getLastElementChild().getChildElements();
-			ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();	
-			ArrayList<String> empData = new ArrayList<String>();
+			ArrayList<ArrayList<String>> data = new ArrayList<>();
+			ArrayList<String> empData = new ArrayList<>();
 			int i = 1;
 			boolean end = false;
 			
@@ -234,7 +231,7 @@ public class SistemaRedEmployee {
 						if(i == 5) {
 							empData.add(td.getVisibleText());	
 							data.add(empData);
-							empData = new ArrayList<String>();
+							empData = new ArrayList<>();
 							i=0;
 						}else 
 							if(i == 1 && td.getVisibleText().equals("")) break;
@@ -252,6 +249,7 @@ public class SistemaRedEmployee {
 					String name = empdata.get(1);
 					Date fra = Toolkit.parseDate(empdata.get(2), "dd-MM-yyyy");
 					String situation = empdata.get(3);
+					if(situation.equals("")) situation = "AL";
 					String ipf = empdata.get(4);
 					
 					if(ipf != null) ipf = Toolkit.removeExtraZeros(ipf.replace(" ", ""));
@@ -261,6 +259,8 @@ public class SistemaRedEmployee {
 					.setFra(fra)
 					.setSituation(situation)
 					.setIpf(ipf)
+					.setCtaCti(ccc)
+					.setRegime(regime)
 					.build();
 					
 					employees.add(employee);
@@ -288,9 +288,8 @@ public class SistemaRedEmployee {
 					throw new StatusCodeException();
 				}
 			} 
-			catch (MalformedURLException e) {throw new SegSocialException(e);} 
-			catch (IOException e) {throw new CertificateNotFoundException();} 
-			catch (InterruptedException e) {throw new SegSocialException(e);}
+			catch (MalformedURLException | InterruptedException e) {throw new SegSocialException(e);}
+			catch (IOException e) {throw new CertificateNotFoundException();}
 		}
 		
 		
@@ -310,14 +309,13 @@ public class SistemaRedEmployee {
 			String certificateType, String regime, String ccc,Date liquidationPeriod) throws SegSocialException {
 			InvalidCertificateException.checkCertificate(certificateInputStream);
 			try {return getCccLiquidationImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, liquidationPeriod);} 
-			catch (FailingHttpStatusCodeException e) {throw new StatusCodeException();} 
-			catch (MalformedURLException e) {throw new SegSocialException();} 
-			catch (IOException e) {throw new SegSocialException();} 			
+			catch (FailingHttpStatusCodeException e) {throw new StatusCodeException();}
+			catch (IOException e) {throw new SegSocialException();}
 		}
 		
 		
 		//GET PDF INFO 
-		public static byte[] getCccLiquidationImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc, Date liquidationPeriod) throws FailingHttpStatusCodeException, MalformedURLException, IOException, SegSocialException {
+		public static byte[] getCccLiquidationImpl(InputStream certificateInputStream, String certificatePassword, String certificateType, String regime, String ccc, Date liquidationPeriod) throws FailingHttpStatusCodeException, IOException, SegSocialException {
 			
 			try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 				
@@ -338,7 +336,7 @@ public class SistemaRedEmployee {
 				form.getInputByName("txt_SDFMES").setAttribute("value", splitDate[0]);
 				form.getInputByName("txt_SDFAO").setAttribute("value", splitDate[1]);
 									
-				HtmlInput submit = (HtmlInput)(form.querySelector("input[name=btn_Sub2207601004]"));
+				HtmlInput submit = form.querySelector("input[name=btn_Sub2207601004]");
 				webClient.getOptions().setRedirectEnabled(true);
 				InputStream stream = submit.click().getWebResponse().getContentAsStream();
 
