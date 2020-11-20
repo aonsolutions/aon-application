@@ -954,7 +954,7 @@ public class SistemaRED_I {
 	}
 	
 	//RETURNS A COLLECTION OF HASHMAPS CONTAINING EACH WORKER'S CALCULATION QUERY (WORKERS' NSS AS KEY)
-	public static Collection<Map<String, WorkerLiquidation>> WorkersCalculationQueryByCCC(final InputStream certificateInputStream,
+	public static Collection<Map<String, WorkerLiquidation>> workersCalculationQueryByCCC(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, final String ccc,
 			final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
 			final LiquidationOrigin liqOrigin) throws SegSocialException{
@@ -1187,10 +1187,56 @@ public class SistemaRED_I {
 			throw new CertificateNotFoundException();
 		}
 		return null;
-}	
+	}	
 	
 	
-	
+//	//RETURNS A COLLECTION OF ALL LIQUIDATIONS AVAILABLE FOR AN ENTERPRISE WITHIN THE DATE SPECIFIED
+//		public static Collection<Liquidation> CalculationQueryByLiqNumber(final InputStream certificateInputStream,
+//			final String certificatePassword, final String certificateType, final String liqNumber) throws SegSocialException{
+//			InvalidCertificateException.checkCertificate(certificateInputStream);
+//			Object[] arr_fields= {liqNumber};
+//			Toolkit.verifyData(arr_fields);
+//			try(WebClient webClient=HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
+//				webClient.getOptions().setJavaScriptEnabled(false);
+//				HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y200");
+//				htmlPage=htmlPage.getElementById("idOpcion2").click();
+//				htmlPage.getElementById("idNumeroLiquidacion").setAttribute("value", liqNumber);
+//				htmlPage=htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
+//				System.out.println(htmlPage.asXml());
+//				try {
+//					checkLiquidationExceptions(htmlPage);
+//				}catch(NullPointerException | ElementNotFoundException e) {
+//					Collection<Liquidation> ret= new ArrayList<Liquidation>();
+//					HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+//					DomNodeList<DomNode> liqList=formDatos.querySelectorAll("input[type='radio']");
+//					for (int i=0;i<liqList.size();i++) {
+//						HtmlRadioButtonInput radio=(HtmlRadioButtonInput)liqList.get(i);
+//						radio.click();
+//						formDatos.getInputByValue("Continuar").setChecked(true);
+//						htmlPage=formDatos.getInputByValue("Continuar").click();
+//						LiquidationBuilder lb=new LiquidationBuilder();
+//						for (DomNode domNode : htmlPage.querySelectorAll("table>tbody>tr")) {
+//							HtmlTableRow tr=(HtmlTableRow)domNode;
+//							liquidationDataType(tr, lb);
+//						}
+//						ret.add(lb.build());
+//						htmlPage=htmlPage.getElementById("SPM.ACC.ATRAS").click();
+//						formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
+//						liqList=formDatos.querySelectorAll("input[type='radio']");
+//					}
+//					
+//					return ret;
+//				}
+//				
+//			} catch (FailingHttpStatusCodeException e) {
+//				StatusCodeException.HandleStatusCodeException(e);
+//			} catch (MalformedURLException e) {
+//				throw new SegSocialException(e);
+//			} catch (IOException e) {
+//				throw new CertificateNotFoundException();
+//			}
+//			return null;	
+//		}
 	
 	
 	
@@ -1426,6 +1472,7 @@ public class SistemaRED_I {
 		}
 		
 	}
+	
 
 
 }
