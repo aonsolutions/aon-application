@@ -1,9 +1,11 @@
 package solutions.aon.seg.social.toolkit;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.gargoylesoftware.css.parser.CSSException;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 
@@ -14,6 +16,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.internal.CSSParseException;
+import solutions.aon.seg.social.exceptions.internal.InternalException;
 import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
 
 public class HtmlUnitToolkit {
@@ -24,12 +28,8 @@ public class HtmlUnitToolkit {
 		// try 20 times to wait .5 second each for filling the page.
 		for (int i = 0; i < 20; i++) {
 			R r = function.apply(htmlPage);
-			if (r != null) {
-				return Optional.of(r);
-			}
-			synchronized (htmlPage) {
-				htmlPage.wait(500);
-			}
+			if (r != null)  return Optional.of(r);
+			synchronized (htmlPage) {htmlPage.wait(500);}
 		}
 		return Optional.empty();
 	}
@@ -52,20 +52,20 @@ public class HtmlUnitToolkit {
 	
 	//GET TRIMMED STRING FROM HTML ELEMENT
 	public static String getTrimmedById(HtmlPage htmlPage, String id) {
-		return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent()).trim();
+		return Toolkit.removeNBSP(htmlPage.getElementById(id).getTextContent());
 	}
 	
 	//GETS THE SS STATUS CODE
 	public static Integer getSSCode(HtmlPage htmlPage) throws SegSocialException {
-		String status = "";
+		String status;
 		try {
 			status=HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL");
 			status=Toolkit.removeNBSP(status).replace(" ", "");
 			
 			if((status.length()>0)&&(status.charAt(0)=='*'))	status=status.substring(1);
 			if(status.equals(""))	return 3083;
-			if(status.indexOf("*")==-1) 
-				if(status.indexOf("-" ) == -1)	throw new SegSocialException (status);
+			if(!status.contains("*"))
+				if(!status.contains("-"))	throw new SegSocialException (status);
 				else return Integer.parseInt(status.substring(0, status.indexOf("-")));
 
 			return Integer.parseInt(status.substring(0, status.indexOf("*")));
@@ -75,7 +75,6 @@ public class HtmlUnitToolkit {
 
 	//GETS THE SS STATUS CODE
 	public static String getSSmessage(HtmlPage htmlPage) throws SegSocialException {
-		String status = "";
 		try { return HtmlUnitToolkit.getTrimmedById(htmlPage, "DIL"); }
 		catch (ElementNotFoundException e) {return "";}
 		catch(NumberFormatException e) {throw new SegSocialException (e);}
@@ -97,4 +96,26 @@ public class HtmlUnitToolkit {
 	public static void showAsText(HtmlElement[] elements) {
 		for (HtmlElement e : elements) { if(e != null) System.out.println(e.asText());}
 	}
+
+	//GET ELEMENT BY NAME
+	public static HtmlElement getByName(HtmlPage page, String name) throws InternalException {
+		try{return page.querySelector("*[name = " + name + "]");}
+		catch(CSSException e){ throw new CSSParseException();}
+		catch(Exception e){ throw new InternalException();}
+	}
+
+	//GET ELEMENT BY ID
+	public static HtmlElement getById(HtmlPage page, String id) throws InternalException {
+		try{return page.querySelector("#" + id);}
+		catch(CSSException e){ throw new CSSParseException();}
+		catch(Exception e){ throw new InternalException();}
+	}
+
+	//GET ELEMENT BY CLASS
+	public static HtmlElement getByClass(HtmlPage page, String _class) throws InternalException {
+		try{return page.querySelector("." + _class);}
+		catch(CSSException e){ throw new CSSParseException();}
+		catch(Exception e){ throw new InternalException();}
+	}
+
 }

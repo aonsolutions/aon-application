@@ -29,6 +29,8 @@ import solutions.aon.seg.social.objects.WorkerLiquidation;
 
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+
 public class TestCalculationQuery {
 
 	@Test
@@ -39,6 +41,8 @@ public class TestCalculationQuery {
 			for (Liquidation liquidation : liq) {
 				System.out.println(liq);
 			}
+		}catch (FailingHttpStatusCodeException e) {
+			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
@@ -57,6 +61,8 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
+		}catch (FailingHttpStatusCodeException e) {
+			
 		} catch (DataDoesNotExist e) {
 			
 		} catch (IOException e) {
@@ -66,6 +72,24 @@ public class TestCalculationQuery {
 		}
 	}
 	
+//	@Test
+//	public void testCalculationQueryDateNotFoundPast() {
+//		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+//			Date d=new SimpleDateFormat("dd-MM-yyyy").parse("01-01-1980");
+//			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+//			System.out.println(liq);
+//			fail("Shouldn't throw results");
+//		} catch (DataDoesNotExist e) {
+//			
+//		} catch (IOException e) {
+//			fail("Wrong certificate on test");
+//		} catch (SegSocialException e) {
+//			fail("Should have returned the object");
+//		} catch (ParseException e) {
+//			fail();
+//		}
+//	}
+	
 	@Test
 	public void testCalculationOriginNoData() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
@@ -73,6 +97,8 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.GENERADAS_POR_LA_TGSS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
+		}catch (FailingHttpStatusCodeException e) {
+			
 		} catch (LiquidationDoesNotExist e) {
 			
 		} catch (IOException e) {
@@ -91,6 +117,8 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL_ARTISTAS, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
+		}catch (FailingHttpStatusCodeException e) {
+			
 		} catch (WrongRegimeException e) {
 			
 		} catch (IOException e) {
@@ -109,6 +137,8 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (UnfilledMandatory e) {
 			
 		} catch (IOException e) {
@@ -127,6 +157,8 @@ public class TestCalculationQuery {
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105369062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			System.out.println(liq);
 			fail("Shouldn't throw results");
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (invalidCccException e) {
 			
 		} catch (IOException e) {
@@ -143,6 +175,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			fail("Shouldn't end");
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch(CertificateNotFoundException e) {
 			
 		} catch (IOException e) {
@@ -159,6 +193,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			fail("Shouldn't end");
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch(InvalidCertificateException e) {
 			
 		} catch (IOException e) {
@@ -175,6 +211,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkc12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			fail("Shouldn't end");
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch(InvalidCertificateException e) {
 			
 		} catch (IOException e) {
@@ -195,13 +233,15 @@ public class TestCalculationQuery {
 	public void testWorkersCalculationQueryOk() {
 		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
-			Collection<Map<String,WorkerLiquidation>> liq=SistemaRED_I.WorkersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
+			Collection<Map<String,WorkerLiquidation>> liq=SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, "jg@FNMT", "pkcs12", "01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			for (Map<String, WorkerLiquidation> map : liq) {
 				Iterator<String> it=map.keySet().iterator();
 				while(it.hasNext()) {
 					System.out.println(map.get(it.next()));
 				}
 			}
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
@@ -219,6 +259,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			WorkerLiquidation liq=SistemaRED_I.WorkerCalculationQueryByNAF(certificateInputStream, "jg@FNMT", "pkcs12","011005185924" ,"01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			System.out.println(liq);
+		}catch (FailingHttpStatusCodeException e) {
+			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
@@ -234,6 +276,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			WorkerLiquidation liq=SistemaRED_I.WorkerCalculationQueryByNAF(certificateInputStream, "jg@FNMT", "pkcs12","naf_falso" ,"01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			fail("Shouldn't find anything");
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (DataDoesNotExist e) {
 			
 		} catch (IOException e) {
@@ -253,6 +297,8 @@ public class TestCalculationQuery {
 			for (WorkerLiquidation workerLiquidation : liq) {
 				System.out.println(liq);
 			}
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (IOException e) {
 			fail("Wrong certificate on test");
 		} catch (SegSocialException e) {
@@ -268,6 +314,8 @@ public class TestCalculationQuery {
 			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
 			Collection<WorkerLiquidation> liq=SistemaRED_I.WorkerCalculationQueriesByNAF(certificateInputStream, "jg@FNMT", "pkcs12","naf_falso" ,"01105360062", Regime.GENERAL, d, d, LiquidationType.L00_NORMAL, LiquidationOrigin.TODAS);
 			fail("Shouldn't find anything");
+		} catch (FailingHttpStatusCodeException e) {
+			
 		} catch (DataDoesNotExist e) {
 			
 		} catch (IOException e) {
@@ -278,5 +326,22 @@ public class TestCalculationQuery {
 			fail("Test date fails");
 		}
 	}
+	
+//	@Test
+//	public void testCalculationQueryByLiqNumberOk() {
+//		try(InputStream certificateInputStream=TestCalculationQuery.class.getResourceAsStream("FNMT.p12")){
+//			Date d = new SimpleDateFormat("dd-MM-yyyy").parse("09-08-2020");
+//			Collection<Liquidation> liq=SistemaRED_I.CalculationQueryByLiqNumber(certificateInputStream, "jg@FNMT", "pkcs12", "01202000213486894");
+//			for (Liquidation liquidation : liq) {
+//				System.out.println(liq);
+//			}
+//		} catch (IOException e) {
+//			fail("Wrong certificate on test");
+//		} catch (SegSocialException e) {
+//			fail(""+e.getClass());
+//		} catch (ParseException e) {
+//			fail("Test date fails");
+//		}
+//	}
 
 }

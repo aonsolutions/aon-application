@@ -6,12 +6,17 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
+import solutions.aon.seg.social.SistemaRED_I.LiquidationOrigin;
+import solutions.aon.seg.social.SistemaRED_I.LiquidationType;
+import solutions.aon.seg.social.SistemaRED_I.Regime;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.statusCode.ForbiddenException;
 import solutions.aon.seg.social.objects.Employee;
+import solutions.aon.seg.social.objects.WorkerLiquidation;
 
 public class SistemaRED {
 
@@ -123,6 +128,22 @@ public class SistemaRED {
 		default:
 			throw new SegSocialException(e);
 		}
+	}
+	
+	public static Collection<Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, final String ccc, final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws SegSocialException{
+		return SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+	}
+	
+	public static Collection<Map<String, WorkerLiquidation>> getWorkersLiquidationsByCCC(final byte[] certificateData, final String certificatePassword,
+			final String certificateType, final String ccc, final Regime regime, final Date dateFrom, final Date dateTo, final LiquidationType liqType,
+			final LiquidationOrigin liqOrigin) throws SegSocialException{
+		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
+			return SistemaRED_I.workersCalculationQueryByCCC(certificateInputStream, certificatePassword, certificateType, ccc, regime, dateFrom, dateTo, liqType, liqOrigin);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}	
 	}
 
 	public static void main(String[] args)
