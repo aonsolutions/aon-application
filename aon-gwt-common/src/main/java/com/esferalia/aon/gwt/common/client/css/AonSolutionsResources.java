@@ -194,6 +194,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconFinanceGroup();
 	
+	@Source("icons/aon-icon-all-inbox.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAllInbox();
+
 	@Source("icons/aon-icon-inbox.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconInbox();
@@ -222,5 +226,9 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconDeleteForever();
 	
+	@Source("icons/aon-icon-add-task.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconAddTask();
+
 }
 

@@ -3913,6 +3913,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Papelera.")
 	String draftDocs();
 
+	@DefaultMessage("Todos.")
+	String all();
+
 
 }
 

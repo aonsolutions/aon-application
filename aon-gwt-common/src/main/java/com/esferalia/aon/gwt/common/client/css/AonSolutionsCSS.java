@@ -129,6 +129,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_finance_group")
 	String aonIconFinanceGroup();
 
+	@ClassName("aon_icon_all_inbox")
+	String aonIconAllInbox();
+	
 	@ClassName("aon_icon_inbox")
 	String aonIconInbox();
 
@@ -165,6 +168,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_tgss_fie")
 	String aonIconTgssFie();
 	
+	@ClassName("aon_icon_add_task")
+	String aonIconAddTask();
+
 	/* BASICS */
 	@ClassName("aon_selector")
 	String aonSelector();

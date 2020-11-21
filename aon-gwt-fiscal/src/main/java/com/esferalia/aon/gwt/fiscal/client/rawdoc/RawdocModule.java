@@ -60,7 +60,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -99,6 +98,7 @@ public class RawdocModule extends MainEntryPoint {
 	
 	private AonToolbar toolbar;
 	private AonToolbarButton searchButton;
+	private AonToolbarButton allInboxButton;
 	private AonToolbarButton inboxButton;
 	private AonToolbarButton rejectedButton;
 	private AonToolbarButton draftButton;
@@ -210,8 +210,13 @@ public class RawdocModule extends MainEntryPoint {
 		, TIT("Titular"					, 100,AON.CSS.aonTextLeft())
 		, AUTO(""						, 0  ,AON.CSS.aonTextLeft())
 		, AMO("Importe"					, 80 ,AON.CSS.aonTextRight())
-		, HST(""						, 20 ,AON.CSS.aonTextLeft())
-		, ACT(""						, 100 ,AON.CSS.aonTextLeft())
+		, ADJ(""						, 40 ,AON.CSS.aonTextCenter())
+		, HST(""						, 40 ,AON.CSS.aonTextCenter())
+		, ACC(""						, 40 ,AON.CSS.aonTextCenter())
+		, DEL(""						, 40 ,AON.CSS.aonTextCenter())
+		, REJ(""						, 40 ,AON.CSS.aonTextCenter())
+		, RES(""						, 40 ,AON.CSS.aonTextCenter())
+		, DLF(""						, 40 ,AON.CSS.aonTextCenter())
 		;
 
 		String headerLabel;
@@ -276,6 +281,15 @@ public class RawdocModule extends MainEntryPoint {
 
 		});
 		toolbar.add(searchButton);
+
+		allInboxButton = new AonToolbarButton( AON.MSG.all(), AON.CSS.aonIconAllInbox() );
+		allInboxButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				search( opt , null);
+			}
+		});
+		toolbar.add(allInboxButton);
 
 		inboxButton = new AonToolbarButton( AON.MSG.inbox(), AON.CSS.aonIconInbox() );
 		inboxButton.addClickHandler(new ClickHandler() {
@@ -374,6 +388,7 @@ public class RawdocModule extends MainEntryPoint {
 	}
 
 	private void search(RawdocModuleOptions opt, RawdocStatus status) {
+		clearFootInfo();
 		opt.setParams(
 			new RawdocParams()
 				.setDomain(opt.getDomain())
@@ -429,9 +444,19 @@ public class RawdocModule extends MainEntryPoint {
 		viewerContainer.setWidget(viewer);
 	}
 
-	public void addExtraInfo( String htmlText) {
-		HTMLPanel panel = new HTMLPanel(htmlText);
-		addExtraInfo(panel);
+	public void clearViewer( ) {
+		tabLayout.selectTab(viewerTabIndex);
+		viewerContainer.setWidget(new Label() );
+	}
+	
+	public void clearFootInfo( ) {
+		closeFootPanel();
+		clearExtraInfo();
+		clearViewer();
+	}
+	
+	public void clearExtraInfo( ) {
+		extraInfoContainer.setWidget(new Label());
 	}
 	
 	public void addExtraInfo( Widget widget) {
@@ -473,128 +498,265 @@ public class RawdocModule extends MainEntryPoint {
 	
 	private void paintRow(final RawdocModuleOptions opt, Rawdoc rawdoc, int row) {
 		int col = 0;
-		
 		Label nature = new Label(rawdoc.getNature() == null?"":rawdoc.getNature().getDescription());
 		Label type = new Label(rawdoc.getType() == null?"":rawdoc.getType().getDescription());
 		Label status = new Label(rawdoc.getStatus() == null?"":rawdoc.getStatus().getDescription());
 
-		AonTableButton logButton = new AonTableButton(AON.MSG.tracking(), AON.CSS.aonIconHistory());
-		logButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				addExtraInfo( new RawdocLogPanel( rawdoc.getLog()));
-			}
-		});
+		AonTableButton logButton = null;
+		if ( AonStringUtils.isBlank(rawdoc.getLog())) {
+			logButton = new AonTableButton(AON.MSG.tracking(), AON.CSS.aonIconHistory());
+			logButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					addExtraInfo( new RawdocLogPanel( rawdoc.getLog()));
+				}
+			});
+		}
 		
-		FlowPanel actions = new FlowPanel();
-		actions.setStyleName(AON.CSS.aonTextCenter());
-		AonTableButton accountEntry = new AonTableButton(AON.MSG.acceptInvoice(), AON.CSS.aonIconAccept());
-		accountEntry.setVisible(rawdoc.getStatus() == RawdocStatus.INBOX);
-		accountEntry.addClickHandler( new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				RAWDOC_SERVICE.parse(opt.getDomainName(), opt.getDomain(), opt.getUser(), rawdoc.getId() , new AsyncCallback<TediResult>() {
+		AonTableButton accountEntry = null;
+		if (rawdoc.getStatus() == RawdocStatus.INBOX) {
+			accountEntry = new AonTableButton(AON.MSG.acceptInvoice(), AON.CSS.aonIconAddTask());
+			accountEntry.addClickHandler( new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					RAWDOC_SERVICE.parse(opt.getDomainName(), opt.getDomain(), opt.getUser(), rawdoc.getId() , new AsyncCallback<TediResult>() {
 
-					@Override
-					public void onSuccess(TediResult result) {
-						CustomPopup entryDialog = new CustomPopup();
-						entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
-						entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
-						entryDialog.setAnimationEnabled(true);
-						entryDialog.setGlassEnabled(true);
-						entryDialog.setModal(true);
-						entryDialog.setCaption(AON.MSG.accountEntries());
-						AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
-						module.onModuleLoad(new AccountEntryModuleOptions()
-								.setParentWidget(entryDialog)
-								.setDomainName(opt.getDomainName())
-								.setDomain(opt.getDomain())
-								.setUser(opt.getUser())
-								.setConfiguration(opt.getConfiguration())
-								.setAccountingInvoice(result.getAccountingInvoice())
-								.setTediResult(result)
-								.setBackButtonVisible(false)
-								.setSessionLogTabVisible(false)
-								.setPreviewSectionVisible(true)
-								.setBalancesSectionVisible(false)
-								.setStatementTabVisible(false)
-								.setJournalTabVisible(false)
-								.setExtraInfoTabVisible(false)
-								.setExternalCallback(new ModuleCallback() {
+						@Override
+						public void onSuccess(TediResult result) {
+							CustomPopup entryDialog = new CustomPopup();
+							entryDialog.setWidth((Window.getClientWidth() - 100) + "px");
+							entryDialog.setHeight((Window.getClientHeight() - 100) + "px");
+							entryDialog.setAnimationEnabled(true);
+							entryDialog.setGlassEnabled(true);
+							entryDialog.setModal(true);
+							entryDialog.setCaption(AON.MSG.accountEntries());
+							AccountEntryModuleTEDI module = new AccountEntryModuleTEDI();
+							module.onModuleLoad(new AccountEntryModuleOptions()
+									.setParentWidget(entryDialog)
+									.setDomainName(opt.getDomainName())
+									.setDomain(opt.getDomain())
+									.setUser(opt.getUser())
+									.setConfiguration(opt.getConfiguration())
+									.setAccountingInvoice(result.getAccountingInvoice())
+									.setTediResult(result)
+									.setBackButtonVisible(false)
+									.setSessionLogTabVisible(false)
+									.setPreviewSectionVisible(true)
+									.setBalancesSectionVisible(false)
+									.setStatementTabVisible(false)
+									.setJournalTabVisible(false)
+									.setExtraInfoTabVisible(false)
+									.setExternalCallback(new ModuleCallback() {
 
+										@Override
+										public void onRemove(IAccountEntryWrapper removed) {
+											entryDialog.hide();
+										}
+
+										@Override
+										public void onFailure(Throwable caught) {
+											entryDialog.hide();
+										}
+
+										@Override
+										public void onExit() {
+											entryDialog.hide();
+										}
+
+										@Override
+										public void onChange(IAccountEntryWrapper changed) {
+											entryDialog.hide();
+											result.setAon((AccountingInvoice) changed);
+											refreshCell("CONTABILIZADO",row);
+										}
+									}));
+							entryDialog.center();
+							entryDialog.show();
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessageDialog msg = new AonMessageDialog();
+							msg.show("ERROR", "Se ha producido un error al intentar mostrar el documento de la factura.", new AonMessageDialogCallback() {
+								@Override
+								public void onAccept() {}
+							});
+						}
+					});
+				}
+			});
+			accountEntry.getElement().getStyle().setMarginRight(5, Unit.PX);
+		}
+		
+		AonTableButton delete = null;
+		if (rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.REJECTED) {
+			delete = new AonTableButton(AON.MSG.draftDocs(), AON.CSS.aonIconDelete());
+			delete.getElement().getStyle().setMarginRight(5, Unit.PX);
+			delete.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm(AON.MSG.confirmDraftAction(), new AonConfirmDialogCallback() {
+	
+						@Override
+						public void onCancel() {}
+	
+						@Override
+						public void onAccept() {
+								RAWDOC_SERVICE.toDraft(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
+										, new AsyncCallback<Void>() {
+											
+											@Override
+											public void onSuccess(Void result) {
+												refreshCell("PAPELERA",row);
+											}
+											
+											@Override
+											public void onFailure(Throwable caught) {
+												showError(caught.getMessage());
+											}
+										});
+						}
+					});
+				}
+			});
+		}
+		
+		AonTableButton reject = null;
+		if (rawdoc.getStatus() == RawdocStatus.INBOX) {
+			reject = new AonTableButton(AON.MSG.reject(), AON.CSS.aonIconReject());
+			reject.getElement().getStyle().setMarginRight(5, Unit.PX);
+			reject.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					final AonCustomDialog toast = new AonCustomDialog();
+					toast.setCaption(AON.MSG.rejectReason());
+					FlowPanel reasonPanel = new FlowPanel();
+					reasonPanel.setStyleName(AON.CSS.aonTextCenter());
+					reasonPanel.addStyleName(AON.CSS.aonPadding());
+					TextArea reason = new TextArea();
+					reason.setWidth("400px");
+					reason.setHeight("100px");
+					reason.addKeyUpHandler(new KeyUpHandler() {
+						@Override
+						public void onKeyUp(KeyUpEvent event) {
+							if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+								toast.hide();
+							}
+						}
+					});
+					
+					FlowPanel buttons = new FlowPanel();
+					buttons.setStyleName(AON.CSS.aonTextCenter());
+					buttons.addStyleName(AON.CSS.aonMarginTop());
+					
+					final Button okButton = new Button();
+					okButton.setStyleName(AON.CSS.aonOkButton());
+					okButton.setText( AON.MSG.accept());
+					okButton.addKeyUpHandler(new KeyUpHandler() {
+						@Override
+						public void onKeyUp(KeyUpEvent event) {
+							if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+								toast.hide();
+							}
+						}
+					});
+					okButton.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							if (AonStringUtils.isBlank( reason.getValue() )) {
+								AonMessageDialog msg = new AonMessageDialog();
+								msg.show("ERROR", "Debe indicar una raz\u00F3n para proceder a rechazar el documento.", new AonMessageDialogCallback() {
 									@Override
-									public void onRemove(IAccountEntryWrapper removed) {
-										entryDialog.hide();
+									public void onAccept() {}
+								});
+							} else {
+								okButton.setEnabled(false);
+								toast.hide();
+								RAWDOC_SERVICE.toRejected(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId(), reason.getValue()
+										, new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {
+										refreshCell("RECHAZADA",row);
 									}
-
+									
 									@Override
 									public void onFailure(Throwable caught) {
-										entryDialog.hide();
+										showError(caught.getMessage());
 									}
-
-									@Override
-									public void onExit() {
-										entryDialog.hide();
-									}
-
-									@Override
-									public void onChange(IAccountEntryWrapper changed) {
-										entryDialog.hide();
-										result.setAon((AccountingInvoice) changed);
-										actions.clear();
-										Label r = new Label(" CONTABILIZADO");
-										r.setStyleName(AON.CSS.aonColorGreen());
-										r.addStyleName(AON.CSS.aonBold());
-										actions.add( r );
-									}
-								}));
-						entryDialog.center();
-						entryDialog.show();
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						AonMessageDialog msg = new AonMessageDialog();
-						msg.show("ERROR", "Se ha producido un error al intentar mostrar el documento de la factura.", new AonMessageDialogCallback() {
-							@Override
-							public void onAccept() {}
-						});
-					}
-				});
-			}
-		});
+								});
+							}
+						}
+					});
+					buttons.add(okButton);
+					
+					final Button cancelButton = new Button();
+					cancelButton.setStyleName(AON.CSS.aonCancelButton());
+					cancelButton.addStyleName(AON.CSS.aonMarginLeft());
+					cancelButton.setText( AON.MSG.cancelAction());
+					cancelButton.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							cancelButton.setEnabled(false);
+							toast.hide();
+						}
+					});
+					cancelButton.addKeyUpHandler(new KeyUpHandler() {
+						@Override
+						public void onKeyUp(KeyUpEvent event) {
+							if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+								toast.hide();
+							}
+						}
+					});
+					buttons.add(cancelButton);
+					
+					reasonPanel.add(reason);
+					reasonPanel.add(buttons);
+					toast.add(reasonPanel);
+					
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							reason.setFocus(true);
+						}
+					});
+					toast.center();
+					toast.show();
+				}
+			});
+		}
 		
-		
-		accountEntry.getElement().getStyle().setMarginRight(5, Unit.PX);
-		actions.add(accountEntry);
-
-		AonTableButton delete = new AonTableButton(AON.MSG.draftDocs(), AON.CSS.aonIconDelete());
-		delete.setVisible(rawdoc.getStatus() == RawdocStatus.INBOX || rawdoc.getStatus() == RawdocStatus.REJECTED);
-		delete.getElement().getStyle().setMarginRight(5, Unit.PX);
-		delete.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				AonConfirmDialog cd = new AonConfirmDialog();
-				cd.confirm(AON.MSG.confirmDraftAction(), new AonConfirmDialogCallback() {
-
-					@Override
-					public void onCancel() {}
-
-					@Override
-					public void onAccept() {
-							RAWDOC_SERVICE.toDraft(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
+		AonTableButton restore = null;
+		if (rawdoc.getStatus() == RawdocStatus.DRAFT || rawdoc.getStatus() == RawdocStatus.REJECTED) {
+			restore = new AonTableButton(AON.MSG.restoreAction(),
+					rawdoc.getStatus() == RawdocStatus.REJECTED
+						?AON.CSS.aonIconRestoreRejected()
+						:AON.CSS.aonIconRestoreDeleted());
+			restore.getElement().getStyle().setMarginRight(5, Unit.PX);
+			restore.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm((rawdoc.getStatus() == RawdocStatus.REJECTED
+							?AON.MSG.confirmRestoreRejected()
+							:AON.MSG.confirmRestoreAction()), new AonConfirmDialogCallback() {
+	
+						@Override
+						public void onAccept() {
+							RAWDOC_SERVICE.toInbox(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
 									, new AsyncCallback<Void>() {
 										
 										@Override
 										public void onSuccess(Void result) {
-											actions.clear();
-											Label r = new Label(" PAPELERA");
-											r.setStyleName(AON.CSS.aonColorRed());
-											r.addStyleName(AON.CSS.aonBold());
-											actions.add( r );
+											refreshCell("INBOX",row);
 										}
 										
 										@Override
@@ -602,212 +764,58 @@ public class RawdocModule extends MainEntryPoint {
 											showError(caught.getMessage());
 										}
 									});
-					}
-				});
-			}
-		});
-		actions.add(delete);
-		
-		AonTableButton reject = new AonTableButton(AON.MSG.reject(), AON.CSS.aonIconReject());
-		reject.setVisible(rawdoc.getStatus() == RawdocStatus.INBOX);
-		reject.getElement().getStyle().setMarginRight(5, Unit.PX);
-		reject.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				final AonCustomDialog toast = new AonCustomDialog();
-				toast.setCaption(AON.MSG.rejectReason());
-				FlowPanel reasonPanel = new FlowPanel();
-				reasonPanel.setStyleName(AON.CSS.aonTextCenter());
-				reasonPanel.addStyleName(AON.CSS.aonPadding());
-				TextArea reason = new TextArea();
-				reason.setWidth("400px");
-				reason.setHeight("100px");
-				reason.addKeyUpHandler(new KeyUpHandler() {
-					@Override
-					public void onKeyUp(KeyUpEvent event) {
-						if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-							toast.hide();
 						}
-					}
-				});
+	
+						@Override
+						public void onCancel() {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					});
+				}
+			});
+		}
 
-		    	FlowPanel buttons = new FlowPanel();
-		    	buttons.setStyleName(AON.CSS.aonTextCenter());
-		    	buttons.addStyleName(AON.CSS.aonMarginTop());
-		    	
-		    	final Button okButton = new Button();
-		    	okButton.setStyleName(AON.CSS.aonOkButton());
-		    	okButton.setText( AON.MSG.accept());
-		    	okButton.addKeyUpHandler(new KeyUpHandler() {
-					@Override
-					public void onKeyUp(KeyUpEvent event) {
-						if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-							toast.hide();
-						}
-					}
-				});
-		    	okButton.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						if (AonStringUtils.isBlank( reason.getValue() )) {
-							AonMessageDialog msg = new AonMessageDialog();
-							msg.show("ERROR", "Debe indicar una raz\u00F3n para proceder a rechazar el documento.", new AonMessageDialogCallback() {
-								@Override
-								public void onAccept() {}
-							});
-						} else {
-							okButton.setEnabled(false);
-							toast.hide();
-							RAWDOC_SERVICE.toRejected(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId(), reason.getValue()
-									, new AsyncCallback<Void>() {
-								
-								@Override
-								public void onSuccess(Void result) {
-									actions.clear();
-									Label r = new Label(" RECHAZADA");
-									r.setStyleName(AON.CSS.aonColorRed());
-									r.addStyleName(AON.CSS.aonBold());
-									actions.add( r );
-								}
-								
-								@Override
-								public void onFailure(Throwable caught) {
-									showError(caught.getMessage());
-								}
-							});
-						}
-					}
-				});
-		    	buttons.add(okButton);
-		    	
-		    	final Button cancelButton = new Button();
-		    	cancelButton.setStyleName(AON.CSS.aonCancelButton());
-		    	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
-		    	cancelButton.setText( AON.MSG.cancelAction());
-		    	cancelButton.addClickHandler(new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						cancelButton.setEnabled(false);
-						toast.hide();
-					}
-				});
-		    	cancelButton.addKeyUpHandler(new KeyUpHandler() {
-					@Override
-					public void onKeyUp(KeyUpEvent event) {
-						if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-							toast.hide();
-						}
-					}
-				});
-		    	buttons.add(cancelButton);
+		AonTableButton deleteForever = null;
+		if (rawdoc.getStatus() == RawdocStatus.DRAFT) {
+			deleteForever = new AonTableButton(AON.MSG.deleteForeverAction(),AON.CSS.aonIconDeleteForever());
+			deleteForever.getElement().getStyle().setMarginRight(5, Unit.PX);
+			deleteForever.addClickHandler(new ClickHandler() {
 				
-				reasonPanel.add(reason);
-				reasonPanel.add(buttons);
-				toast.add(reasonPanel);
-
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						reason.setFocus(true);
-					}
-				});
-				toast.center();
-				toast.show();
-			}
-		});
-		actions.add(reject);
+				@Override
+				public void onClick(ClickEvent event) {
+					AonConfirmDialog cd = new AonConfirmDialog();
+					cd.confirm(AON.MSG.confirmDeleteForever(), new AonConfirmDialogCallback() {
+	
+						@Override
+						public void onAccept() {
+							RAWDOC_SERVICE.delete(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
+									, new AsyncCallback<Void>() {
+										
+										@Override
+										public void onSuccess(Void result) {
+											refreshCell("ELIMINADO",row);
+										}
+										
+										@Override
+										public void onFailure(Throwable caught) {
+											showError(caught.getMessage());
+										}
+									});
+						}
+	
+						@Override
+						public void onCancel() {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					});
+				}
+			});
+		}
 		
-		AonTableButton restore = new AonTableButton(AON.MSG.restoreAction(),
-				rawdoc.getStatus() == RawdocStatus.REJECTED
-					?AON.CSS.aonIconRestoreRejected()
-					:AON.CSS.aonIconRestoreDeleted());
-		restore.setVisible(rawdoc.getStatus() == RawdocStatus.DRAFT || rawdoc.getStatus() == RawdocStatus.REJECTED);
-		restore.getElement().getStyle().setMarginRight(5, Unit.PX);
-		restore.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				AonConfirmDialog cd = new AonConfirmDialog();
-				cd.confirm((rawdoc.getStatus() == RawdocStatus.REJECTED
-						?AON.MSG.confirmRestoreRejected()
-						:AON.MSG.confirmRestoreAction()), new AonConfirmDialogCallback() {
-
-					@Override
-					public void onAccept() {
-						RAWDOC_SERVICE.toInbox(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-								, new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										actions.clear();
-										Label r = new Label(" INBOX");
-										r.setStyleName(AON.CSS.aonColorGreen());
-										r.addStyleName(AON.CSS.aonBold());
-										actions.add( r );
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										showError(caught.getMessage());
-									}
-								});
-					}
-
-					@Override
-					public void onCancel() {
-						// TODO Auto-generated method stub
-						
-					}
-					
-				});
-			}
-		});
-		actions.add(restore);
-
-		AonTableButton deleteForever = new AonTableButton(AON.MSG.deleteForeverAction(),AON.CSS.aonIconDeleteForever());
-		deleteForever.setVisible(rawdoc.getStatus() == RawdocStatus.DRAFT);
-		deleteForever.getElement().getStyle().setMarginRight(5, Unit.PX);
-		deleteForever.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				AonConfirmDialog cd = new AonConfirmDialog();
-				cd.confirm(AON.MSG.confirmDeleteForever(), new AonConfirmDialogCallback() {
-
-					@Override
-					public void onAccept() {
-						RAWDOC_SERVICE.delete(opt.getDomainName(),opt.getDomain(),opt.getUser(), rawdoc.getId()
-								, new AsyncCallback<Void>() {
-									
-									@Override
-									public void onSuccess(Void result) {
-										actions.clear();
-										Label r = new Label(" ELIMINADO ");
-										r.setStyleName(AON.CSS.aonColorRed());
-										r.addStyleName(AON.CSS.aonBold());
-										actions.add( r );
-									}
-									
-									@Override
-									public void onFailure(Throwable caught) {
-										showError(caught.getMessage());
-									}
-								});
-					}
-
-					@Override
-					public void onCancel() {
-						// TODO Auto-generated method stub
-						
-					}
-					
-				});
-			}
-		});
-		actions.add(deleteForever);
-
 		AonTableButton viewDoc = new AonTableButton(AON.MSG.attach(), AON.CSS.aonIconPdf());
 		viewDoc.getElement().getStyle().setMarginRight(5, Unit.PX);
 		viewDoc.addClickHandler(new ClickHandler() {
@@ -824,10 +832,6 @@ public class RawdocModule extends MainEntryPoint {
 				showViewer(url);
 			}
 		});
-		
-		
-		
-		actions.add(viewDoc);
 
 		Label invReference = new Label();
 		Label invDate = new Label();
@@ -869,20 +873,45 @@ public class RawdocModule extends MainEntryPoint {
 		tab.setWidget(row, col, amount);
 		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight() );
 		++col;
-		if ( AonStringUtils.isBlank(rawdoc.getLog())) {
-			Label l = new Label();
-			l.setStyleName(AON.CSS.aonIconLabel());
-			tab.setWidget(row, col, l);
-		} else {
-			tab.setWidget(row, col, logButton);
+		tab.setWidget(row, col, ensureButton(viewDoc));
+		++col;
+		tab.setWidget(row, col, ensureButton(logButton));
+		++col;
+		tab.setWidget(row, col, ensureButton(accountEntry));
+		++col;
+		tab.setWidget(row, col, ensureButton(delete));
+		++col;
+		tab.setWidget(row, col, ensureButton(reject));
+		++col;
+		tab.setWidget(row, col, ensureButton(restore));
+		++col;
+		tab.setWidget(row, col, ensureButton(deleteForever));
+		++col;
+	}
+
+	private Widget ensureButton(Widget button) {
+		if (button == null) {
+			Label widget = new Label();
+			widget.setStyleName(AON.CSS.aonIconLabel());
+			return widget;	
 		}
-		++col;
-		tab.setWidget(row, col, actions);
-		++col;
+		return button;
 	}
 
 	private static native String b64encode(String a) /*-{
 	  return window.btoa(a);
 	}-*/;	
-	
+
+	private void refreshCell(String label, int row) {
+		clearFootInfo();
+		int col = COLS.ADJ.ordinal() - 1; 
+		for (int i = (COLS.values().length - 1) ; i >  col; i-- ) {
+			tab.removeCell(row, i);
+		}
+		tab.getFlexCellFormatter().setColSpan(row, COLS.ADJ.ordinal(), (COLS.values().length - col));
+		tab.setWidget(row, COLS.ADJ.ordinal(), new Label(label));
+		tab.getCellFormatter().setStyleName(row, COLS.ADJ.ordinal(), AON.CSS.aonTextCenter());
+		tab.getCellFormatter().addStyleName(row, COLS.ADJ.ordinal(), AON.CSS.aonBold());
+	}
+
 }		

@@ -96,6 +96,8 @@ input[type="checkbox"]:focus + label {
 .aon_icon_finance_pay { background-image: iconFinancePay;}
 @url iconFinanceGroup aonIconFinanceGroup;
 .aon_icon_finance_group { background-image: iconFinanceGroup;}
+@url iconAllInbox aonIconAllInbox;
+.aon_icon_all_inbox { background-image: iconAllInbox;}
 @url iconInbox aonIconInbox;
 .aon_icon_inbox { background-image: iconInbox;}
 @url iconReject aonIconReject;
@@ -120,6 +122,8 @@ input[type="checkbox"]:focus + label {
 .aon_icon_tgss_ta { background-image: iconTgssTa;}
 @url iconTgssFie aonIconTgssFie;
 .aon_icon_tgss_fie { background-image: iconTgssFie;}
+@url iconAddTask aonIconAddTask;
+.aon_icon_add_task { background-image: iconAddTask;}
 
 /* BASICS */
 .aon_selector {
