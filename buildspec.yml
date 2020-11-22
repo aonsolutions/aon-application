@@ -20,7 +20,8 @@ phases:
       - |
         [ $COMMIT_MESSAGE =~ ^HOTFIX ] \
         || [ $COMMIT_MESSAGE =~ ^SNAPSHOT ] \
-        || exit 0
+        || exit 130
+      - echo $COMMIT_MESSAGE
       - echo Entered the install phase...
       - /usr/local/bin/docker-entrypoint.sh
       # - command
