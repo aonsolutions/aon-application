@@ -17,11 +17,6 @@ phases:
       # name: version
       # name: version
     commands:
-      - |
-        [ $COMMIT_MESSAGE =~ ^HOTFIX ] \
-        || [ $COMMIT_MESSAGE =~ ^SNAPSHOT ] \
-        || exit 130
-      - echo $COMMIT_MESSAGE
       - echo Entered the install phase...
       - /usr/local/bin/docker-entrypoint.sh
       # - command
@@ -78,13 +73,17 @@ phases:
       # - command
   post_build:
     commands:
-      - if [[ $CODEBUILD_BUILD_SUCCEEDING != 0 ]]; then exit 255; fi 
       - echo Entered the post_build phase...
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI/aon-db-up2date:latest
       - docker push $REPOSITORY_URI/aon-solutions:latest
       - docker push $REPOSITORY_URI/aon-application:latest
+      - |
+        [ "${COMMIT_MESSAGE#HOTFIX}" != "${COMMIT_MESSAGE}" ] \
+        && docker tag aonsolutions/aon-solutions:latest $REPOSITORY_URI/aon-solutions:hotfix \
+        && docker push $REPOSITORY_URI/aon-solutions:hotfix \
+        || echo $COMMIT_MESSAGE
       - |
         printf '[
         {"name":"SNAPSH0T","imageUri":"%s/aon-application:latest"}
