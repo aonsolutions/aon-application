@@ -27,8 +27,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gson.GsonBuilder;
 
-import solutions.aon.seg.social.SistemaRED_I.Regime;
-
 
 @MultipartConfig
 @SuppressWarnings("serial")
@@ -58,7 +56,7 @@ public class WorkplaceCCCServlet extends HttpServlet {
 				object = JooqWorkplace.getWorkplaces(null, domain.getId(), connection).stream().map(wp -> {
 					ActivitiesCCC activity = JooqWorkplace.getActivitiesCCC(wp, domainId, connection);
 					Collection<CCCInfo> cccs = activity.getCccs().values().stream().map(ccc -> {
-						ccc.setCccRegimeCode(Regime.values()[ccc.getType()].getValue());
+						ccc.setCccRegimeCode(getCCCRegimeCode(ccc.getType()));
 						return ccc;
 					}).collect(Collectors.toCollection(LinkedList::new));
 
@@ -76,6 +74,31 @@ public class WorkplaceCCCServlet extends HttpServlet {
 			resp.setContentType("text/html");
 			resp.setContentLength(content.length);
 			os.write(content);	
+		}
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
 		}
 	}
 	
