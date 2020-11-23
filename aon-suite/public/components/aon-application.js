@@ -193,6 +193,16 @@ class AonApplication extends HTMLElement {
     li.style.backgroundColor = '#ddd';
   }
 
+  unselectOptions() {
+    let sidenav = document.getElementById(this.getId() + 'Sidenav');
+
+    document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
+      el.style.backgroundColor = 'transparent';
+    });
+
+    this.selected = null;
+  }
+
   setContent(element){
     let content = document.getElementById(this.getId() + 'Content');
     content.innerHTML = '';

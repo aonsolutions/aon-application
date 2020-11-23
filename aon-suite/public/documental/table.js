@@ -242,29 +242,34 @@ export const getList = async (page_this = 1) => {
     //
     // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
     //
-        let folderName = '';
-
-        if (folder === 'pendientes' || folder === 'recientes') {
-            folderName = (folder === 'pendientes') ? 'Pendientes' : 'Recientes';
+        // Si estamos filtrando por tags, deseleccionamos todas las opciones del sidenav
+        if (tagID !== null) {
+            window.aonDocumental.unselectOptions();
         } else {
-            // Obtenemos los datos de la carpeta seleccionada
-            const selectedFolderData = window.folders.find((currentFolder) => {
-                return parseInt(currentFolder.carpetaID) === parseInt(folder);
-            });
+            let folderName = '';
 
-            // Obtenemos el nombre de la carpeta seleccionada, el cual se utiliza en el ID de la opción
-            folderName = selectedFolderData.carpeta;
-        }
+            if (folder === 'pendientes' || folder === 'recientes') {
+                folderName = (folder === 'pendientes') ? 'Pendientes' : 'Recientes';
+            } else {
+                // Obtenemos los datos de la carpeta seleccionada
+                const selectedFolderData = window.folders.find((currentFolder) => {
+                    return parseInt(currentFolder.carpetaID) === parseInt(folder);
+                });
 
-        // Obtenemos el sidenav
-        const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
+                // Obtenemos el nombre de la carpeta seleccionada, el cual se utiliza en el ID de la opción
+                folderName = selectedFolderData.carpeta;
+            }
 
-        // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
-        const selectedOptionID = sidenav.id + folderName;
+            // Obtenemos el sidenav
+            const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
 
-        // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
-        if (window.aonDocumental.selected !== selectedOptionID) {
-            window.aonDocumental.selectOption(folderName);
+            // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
+            const selectedOptionID = sidenav.id + folderName;
+
+            // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
+            if (window.aonDocumental.selected !== selectedOptionID) {
+                window.aonDocumental.selectOption(folderName);
+            }
         }
 
     //
