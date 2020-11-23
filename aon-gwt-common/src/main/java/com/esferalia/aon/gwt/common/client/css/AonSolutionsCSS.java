@@ -406,9 +406,15 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_ok_button")
 	String aonOkButton();
+	
+	@ClassName("aon_ok_button_small")
+	String aonOkButtonSmall();
 
 	@ClassName("aon_cancel_button")
 	String aonCancelButton();
+	
+	@ClassName("aon_cancel_button_small")
+	String aonCancelButtonSmall();
 	
 	@ClassName("aon_accounting_invoice_panel")
 	String aonAccountingInvoicePanel();
