@@ -57,6 +57,8 @@ public class IdcplcccParser {
 		
 		SalaryPDFTemplate template = null;
 		
+		Parser parser = IdcplcccParser::parseFirstPage;
+		
 		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
             // Set the page interval to extract. 
 			// If we don't, then all pages would be extracted.
@@ -66,14 +68,13 @@ public class IdcplcccParser {
 			String text = stripper.getText(doc);
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
-			
-			parse(text, listener);	
+			parser = parser.parse(text, listener);	
 		}
 						
 			
 	}
 		
-	public static void parse(String text, IdcListener listener) throws IOException, UnknownPDFException {
+	private static Parser parseFirstPage(String text, IdcListener listener) throws IOException, UnknownPDFException {
 		//System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 			Matcher matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
@@ -100,36 +101,18 @@ public class IdcplcccParser {
 				throw new UnknownPDFException(e);
 			}
 			
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			String employeeeNss = null;
+			String employeeName = null;
+			
 			while ( true ) {
 				try {
 					matcher = find(reader, EMPLOYEE_NSS_NAME);
-					String employeeeNss = matcher.group("province") + matcher.group("nss");
-					String employeeName  = matcher.group("name");
+					employeeeNss = matcher.group("province") + matcher.group("nss");
+					employeeName  = matcher.group("name");
 					onEmployee(listener, employeeeNss, employeeName);
-					matcher = find(reader, EMPLOYEE_PERIOD_QUOTE);
-					Date startDate = simpleDateFormat.parse(matcher.group("start"));
-					Date endDate = simpleDateFormat.parse(matcher.group("end"));
-					onEmployeePeriod(listener, enterpriseCCC, employeeeNss, startDate, endDate);
-					String group = matcher.group("group");
-					onEmployeeQuoteGroup(listener, group);
 					
-					for ( Optional<Matcher> optional = attempt(reader, EMPLOYEE_QUOTE_PEC); 
-						optional.isPresent() ; optional = attempt(reader, EMPLOYEE_QUOTE_PEC)) {
-						
-						String code = optional.get().group("code");
-						String description = optional.get().group("description");
-						String tipo = optional.get().group("tipo");
-						String quota = optional.get().group("quota");
-						String colective = optional.get().group("colective"); 
-						String law = optional.get().group("law");
-						
-//						onEmployeeQuotePEC(listener, code, description, tipo, quota, colective, law);
-						
-						onEmployeeQuotePEC(listener, enterpriseCCC, employeeeNss, startDate, endDate, code, description,
-								tipo, quota);
-					}
-				
+					parseEmployeePeriods(listener, reader, enterpriseCCC, employeeeNss);
+									
 				} catch ( UnknownPDFException e ) {
 					// No more Employees
 					break;
@@ -137,7 +120,110 @@ public class IdcplcccParser {
 					throw new UnknownPDFException(e);					
 				} 
 			}
+			return getNextpageParser(enterpriseCCC, employeeeNss);
 		}
+	}
+
+	protected static void parseEmployeePeriods(IdcListener listener, BufferedReader reader, String enterpriseCCC,
+			String employeeeNss) throws IOException, UnknownPDFException, ParseException {
+		Optional<Matcher> optional = attempt(reader, EMPLOYEE_PERIOD_QUOTE);
+		while ( optional.isPresent() ) {
+			Matcher matcher = optional.get();
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			Date startDate = simpleDateFormat.parse(matcher.group("start"));
+			Date endDate = simpleDateFormat.parse(matcher.group("end"));
+			onEmployeePeriod(listener, enterpriseCCC, employeeeNss, startDate, endDate);
+			String group = matcher.group("group");
+			onEmployeeQuoteGroup(listener, group);
+			parseEmployeePeriodPECs(reader, listener, employeeeNss, enterpriseCCC, startDate, endDate);
+			optional = attempt(reader, EMPLOYEE_PERIOD_QUOTE);
+		}
+		
+	}
+
+	protected static Parser getNextpageParser(String enterpriseCCC, String employeeeNss) {
+		return (text, listener ) ->  parseNextPage(text, listener, enterpriseCCC, employeeeNss);
+	}
+	
+	private static Parser parseNextPage(String text, IdcListener listener, String enterpriseCCC, String employeeeNss ) throws IOException, UnknownPDFException {
+
+		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
+
+			find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
+			find(reader, ENTERPRISE_ACTIVITY);
+			find(reader, MAIN_PERIOD);
+			
+			find(reader, PEC_TYPE);
+			
+			Optional<Matcher> optional = attempt(reader, EMPLOYEE_NSS_NAME);
+			if ( optional.isPresent() ) {
+				Matcher matcher = optional.get();
+				employeeeNss = matcher.group("province") + matcher.group("nss");
+				String employeeName  = matcher.group("name");
+				onEmployee(listener, employeeeNss, employeeName);
+			}
+
+			parseEmployeePeriods(listener, reader, enterpriseCCC, employeeeNss);
+			
+			while ( true ) {
+				try {
+					Matcher matcher = find(reader, EMPLOYEE_NSS_NAME);
+					employeeeNss = matcher.group("province") + matcher.group("nss");
+					String employeeName  = matcher.group("name");
+					onEmployee(listener, employeeeNss, employeeName);
+					
+					parseEmployeePeriods(listener, reader, enterpriseCCC, employeeeNss);
+				} catch ( UnknownPDFException e ) {
+					// No more Employees
+					break;
+				} catch ( ParseException e ) {
+					throw new UnknownPDFException(e);					
+				} 
+			}
+			
+			return getNextpageParser(enterpriseCCC, employeeeNss);
+		} catch ( ParseException e ) {
+			throw new UnknownPDFException(e);					
+		} 
+	}
+	
+	
+	
+	private static void parseEmployeePeriodPECs(BufferedReader reader, IdcListener listener, String naf, String ccc, Date start, Date end) throws IOException {
+		
+		attempt(reader, EMPLOYEE_QUOTE_PEC).ifPresentOrElse(
+		(m) -> {
+			do {
+				String code = m.group("code");
+				String description = m.group("description");
+				String tipo = m.group("tipo");
+				String quota = m.group("quota");
+				
+				onEmployeeQuotePEC(listener, 
+						ccc, 
+						naf, 
+						start, 
+						end, 
+						code, 
+						description,
+						tipo, 
+						quota);
+				try {
+					m = attempt(reader, EMPLOYEE_QUOTE_PEC).orElse(null);
+				} catch (IOException e) {
+					m = null;
+				}
+			} while ( m != null );
+		},
+		() -> listener.onNoEmployeeQuotePEC(naf, ccc, start, end)
+		);	
+	}
+	
+
+
+
+	private static interface Parser {
+		Parser parse(String text, IdcListener listener) throws IOException, UnknownPDFException ;
 	}
 
 //	private static void onEmployeeQuotePEC(IdcListener listener, String code, String description, String tipo,
@@ -219,11 +305,11 @@ public class IdcplcccParser {
 		throw new UnknownPDFException(String.format("Pattern: '%s' Not found" ,  pattern.pattern()) );
 				
 	}	
-
-	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
+	
+	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException {
 		reader.mark(256);
-		String line = reader.readLine() ; 
-		//System.out.println(line);
+		String line = readLine(reader) ; 
+//		System.out.println(line);
 		Matcher matcher = pattern.matcher(line) ;
 		if ( matcher.matches() )
 			return Optional.of(matcher);
@@ -233,6 +319,14 @@ public class IdcplcccParser {
 		return Optional.empty();
 				
 	}		
+
+	private static String readLine(BufferedReader reader) throws IOException {
+		String line = reader.readLine();
+		while ( AonStringUtils.isBlank(line) )
+			line = reader.readLine();
+		return line;
+	}
+
 	//RAZÓN SOCIAL: AON SOLUTIONS S.L. C.C.C.: 01 105360062 DNI/NIE/CIF: 0B01487271 RÉGIMEN: REGIMEN GENERAL
 	private static final Pattern ENTERPRISE_NAME_CCC_CIF_REGIME = 
 	Pattern.compile(
@@ -250,6 +344,12 @@ public class IdcplcccParser {
 	//   
 	//99001355011983
 	
+	//PERIODO DE LIQUIDACIÓN:    OCTUBRE 2020 
+	private static final Pattern PEC_TYPE = 
+	Pattern.compile(
+	"^\\s*TIPO DE PECULIARIDAD.*$"
+	, Pattern.CASE_INSENSITIVE);
+
 	//PERIODO DE LIQUIDACIÓN:    OCTUBRE 2020 
 	private static final Pattern MAIN_PERIOD = 
 	Pattern.compile(

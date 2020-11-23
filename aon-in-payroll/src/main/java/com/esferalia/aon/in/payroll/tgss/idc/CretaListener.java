@@ -1,0 +1,331 @@
+package com.esferalia.aon.in.payroll.tgss.idc;
+
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
+
+import java.time.Month;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Optional;
+
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder.TipoIpf;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
+
+public class CretaListener implements IdcListener {
+	
+	Optional<String> cnae = Optional.empty();
+	Optional<TramoBuilder> tramoBuilder = Optional.empty();
+	Optional<TrabajadorBuilder> trabajadorBuilder = Optional.empty();
+	LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
+	TrabajadoresTramosBuilder trabajadoresTramosBuilder = new TrabajadoresTramosBuilder();
+	
+	
+	protected String getIpf( String naf ) {
+		return "51013253N";
+	}
+
+	protected TipoIpf getTipoIpf( String naf ) {
+		return TipoIpf.DNI;
+	}
+	
+	protected boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+		return false;
+	}
+	
+	protected boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
+		return false;
+	}
+
+	protected boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+		return false;
+	}
+
+	@Override
+	public void onPeriod(Date date) {
+		int year = get(date, Calendar.YEAR);
+
+		trabajadoresTramosBuilder.setAnhoDesde(year);
+		trabajadoresTramosBuilder.setAnhoHasta(year);
+		trabajadoresTramosBuilder.setAnhoControl(year);
+
+		Month month = Month.of(get(date, Calendar.MONTH) +1);
+
+		trabajadoresTramosBuilder.setMesDesde(month);
+		trabajadoresTramosBuilder.setMesHasta(month);
+		trabajadoresTramosBuilder.setMesControl(month);
+		
+		liquidacionMesBuilder.setAnho(year);
+		liquidacionMesBuilder.setMes(month);
+	
+	}
+
+	@Override
+	public void onEnterprise(String socialReason, String ccc, String nif, String economicActivityCode,
+			String economicActivityDescription, String regime, String fullCCC) {
+		trabajadoresTramosBuilder.setTipo("L0");
+		trabajadoresTramosBuilder.setCCC(getRegime(regime) + ccc);
+		cnae = Optional.ofNullable(economicActivityCode);
+	}
+	
+	@Override
+	public void onEmployee(String nss, String name) {
+		trabajadorBuilder
+		.ifPresent( trabj -> {
+			tramoBuilder.ifPresent(tramo -> trabj.addTramo(tramo.create()));
+			liquidacionMesBuilder.add(trabj.create());
+		}); 
+		
+		
+		TrabajadorBuilder builder = new TrabajadorBuilder();
+		builder.setNaf(nss);
+		
+		builder.setName(getName(name));		
+		builder.setFirstSurname(getFirstSurname(name));		
+		builder.setSecondSurname(getSecondSurname(name));		
+		
+		builder.setNumeroIpf(getIpf(nss));
+		builder.setTipoIpf(getTipoIpf(nss));
+		
+		tramoBuilder = Optional.empty();
+		trabajadorBuilder  = Optional.of(builder);
+	}
+	
+	@Override
+	public void onEmployeeQuoteGroup(String group) {
+		tramoBuilder.ifPresent(b -> b.setGrupoCotizacion(group));
+	}
+	
+	@Override
+	public void onEmployeePerido(String ssNum, String ccc, Date startDate, Date endDate) {
+		tramoBuilder.ifPresent(b -> trabajadorBuilder.get().addTramo(b.create()));
+
+		TramoBuilder builder = new TramoBuilder();
+		setDesdeHasta(startDate, endDate, builder);
+		
+		tramoBuilder = Optional.of(builder);
+	}
+	
+	@Override
+	public void onNoEmployeeQuotePEC(String ssNum, String ccc, Date start, Date end) {
+		tramoBuilder.ifPresent( b -> addActivoNormal(ssNum, ccc, start, end, b) );
+	}
+
+	protected void addActivoNormal(String ssNum, String ccc, Date start, Date end, TramoBuilder b) {
+		if ( isPartTimeEmployee(ssNum, ccc, start, end ))
+			;
+		else if ( isScholarEmployee(ssNum, ccc, start, end))
+			addBecariosNormal(b);
+		else if ( isTraining421Employee(ssNum, ccc, start, end))
+			addFormacionNormal(b);
+		else 
+			addTiempoCompletoNormal(b);
+	}
+
+	@Override
+	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
+			String quota, Date start, Date end) {
+		System.out.println(code + " " + description );
+		tramoBuilder.ifPresent( b -> {
+			switch (code) {
+			case "23": //IT.AT.PAGO DELEGADO
+				if ( isScholarEmployee(ssNum, ccc, start, end))
+					addIncapacidadTemporalATEPPagoDelegadoBecario(b);
+				else if ( isTraining421Employee(ssNum, ccc, start, end))
+					addIncapacidadTemporalATEPPagoDelegadoFormacion(b);
+				else 
+					addIncapacidadTemporalATEPPagoDelegadoEstandar(b);
+				break;
+
+			default:
+				break;
+			}
+			onNoEmployeeQuotePEC(ssNum, ccc, start, end);
+		});
+	}
+	
+	public TrabajadoresTramos getTrabajadoresTramos() {
+		tramoBuilder
+		.ifPresent(b -> trabajadorBuilder.get().addTramo(b.create()));
+		
+		trabajadorBuilder
+		.ifPresent( b -> liquidacionMesBuilder.add(b.create()));
+		
+		LiquidacionMes liquidacionMes = liquidacionMesBuilder.create();
+		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes);
+		
+		return trabajadoresTramosBuilder.create();
+	}
+	
+	private static String getName( String fullName) {
+		String names []  = fullName.split("\\s", -1);
+		return names.length > 0 ? names[0] : "-";
+	}
+	
+	private static String getFirstSurname( String fullName) {
+		String names []  = fullName.split("\\s", -1);
+		return names.length > 1 ? names[1] : "-";
+	}
+
+	private static String getSecondSurname( String fullName) {
+		String names []  = fullName.split("\\s", -1);
+		return names.length > 2 ? names[names.length-1] : "-";
+	}
+
+	private static String getRegime(String description) {
+		return "0111";	
+	}
+	
+	private static void setDesdeHasta(Date start, Date end, TramoBuilder tramoBuilder) {
+		int startYear = get(start, Calendar.YEAR);
+		int endYear = get(end, Calendar.YEAR);
+		Month startMonth = Month.of(get(start, Calendar.MONTH) +1);
+		Month endMonth = Month.of(get(end, Calendar.MONTH) +1);
+		int startDay = get(start, Calendar.DAY_OF_MONTH);
+		int endDay = get(end, Calendar.DAY_OF_MONTH);
+		
+		tramoBuilder.setAnhoDesde(startYear);
+		tramoBuilder.setMesDesde(startMonth);
+		tramoBuilder.setDiaDesde(startDay);
+		tramoBuilder.setAnhoHasta(endYear);
+		tramoBuilder.setMesHasta(endMonth);
+		tramoBuilder.setDiaHasta(endDay);
+	}
+	
+
+	
+	private static void addTiempoCompletoNormal(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// 2.1 Situación de activo "normal" 
+		// 2.1.1 Trabajador a Tiempo Completo  
+		
+		// Base de contingencias comunes
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("500");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Horas Extras Fuerza Mayor
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("501");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base Otras Horas Extras
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("502");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("601");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+										
+	}
+	
+	private static void addFormacionNormal(TramoBuilder tramoBuilder) {
+		
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// 3.1 Contratos para la formación (TRL 087)  
+		// 3.1.1 Tramo en situación de activo "normal"  
+	
+		// N horas formación teórica presencial 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("03");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas formación teórica a distancia 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("04");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas tutoría 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("06");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Bonificación tutoría
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("737");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Horas Extras Fuerza Mayor
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("501");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base Otras Horas Extras
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("502");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+	private static void addBecariosNormal(TramoBuilder tramoBuilder) {
+		
+	}
+	
+	private static void visitTiempoParcialNormal(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+
+		// 2.1 Situación de activo "normal" 
+		addTiempoCompletoNormal(tramoBuilder);
+		// 2.1.1 Trabajador a Tiempo Parcial
+		// N horas realizadas  a tiempo parcial 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("01");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas complementarias 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("02");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de horas complementarias
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("537");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+	private static void addIncapacidadTemporalATEPPagoDelegadoEstandar(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// 2.2 Situaciones de Incapacidad Temporal  
+		// 2.2.3 Incapacidad Temporal de AT Y EP pago delegado 
+		// Base de contingencias comunes en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("500");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Compensación IT AT y EP
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("663");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo en situación de IT
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("603");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+	private static void addIncapacidadTemporalATEPPagoDelegadoFormacion(TramoBuilder tramoBuilder) {
+		addIncapacidadTemporalATEPPagoDelegadoBecario(tramoBuilder);
+	}
+
+	private static void addIncapacidadTemporalATEPPagoDelegadoBecario(TramoBuilder tramoBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		// 3.2 Programas de formación (TRL 986) /becarios de investigación (TRL 933)  
+		// 3.2.2 Incapacidad Temporal de AT Y EP pago delegado 
+		// Compensación IT AT y EP
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("663");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+	
+}

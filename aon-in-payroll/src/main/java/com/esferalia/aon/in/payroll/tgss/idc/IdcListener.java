@@ -33,6 +33,9 @@ public interface IdcListener {
 //			String legislacion) {
 //	};
 
+	default void onNoEmployeeQuotePEC(String ssNum, String ccc, Date start, Date end) {
+	};
+
 	default void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
 	};

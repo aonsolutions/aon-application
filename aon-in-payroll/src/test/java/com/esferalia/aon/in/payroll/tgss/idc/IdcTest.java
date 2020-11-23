@@ -5,12 +5,15 @@ import static java.util.Calendar.MONTH;
 import static java.util.Calendar.OCTOBER;
 import static java.util.Calendar.SEPTEMBER;
 import static java.util.Calendar.YEAR;
+import static net.aonsolutions.core.tgss.creta.jaxb.Utils.marshal;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -23,9 +26,25 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.junit.Test;
 
-import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.payroll.tgss.creta.IndentXMLStreamWriter;
+import com.mchange.util.AssertException;
+
+import junit.framework.Assert;
+import net.aonsolutions.core.tgss.creta.jaxb.Utils;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.DatoSolicitado;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Liquidacion;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
+import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 
 public class IdcTest {
 
@@ -401,6 +420,146 @@ public class IdcTest {
 		}
 	}
 
+	@Test
+	public void testIdcplcccTrabajadoresTramos() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplccc.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {});
+			
+			marshal(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("01", liquidacion.getCcc().getProvincia());
+			assertEquals("105360062", liquidacion.getCcc().getNumero());
+			
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2020", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2020", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2020", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(8, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+
+				assertEquals(1, trabajador.getTramos().getTramo().size() );			
+				for ( Tramo tramo : trabajador.getTramos().getTramo() ) {
+					assertEquals("01", tramo.getFechaDesde().getDia());
+					assertEquals("10", tramo.getFechaDesde().getMes());
+					assertEquals("2020", tramo.getFechaDesde().getAnho());
+					assertEquals("31", tramo.getFechaHasta().getDia());
+					assertEquals("10", tramo.getFechaHasta().getMes());
+					assertEquals("2020", tramo.getFechaHasta().getAnho());
+					
+					assertTramoActivoNormal(tramo);
+				}
+			}
+			
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramosI() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccI.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+				@Override
+				public boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
+					return true;
+				}
+			});
+			
+			marshall(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("01", liquidacion.getCcc().getProvincia());
+			assertEquals("105577910", liquidacion.getCcc().getNumero());
+			
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2020", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2020", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2020", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(4, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+				assertEquals(1, trabajador.getTramos().getTramo().size() );	
+				for ( Tramo tramo : trabajador.getTramos().getTramo() ) {
+					assertEquals(0, tramo.getDatosTramo().getDato().size());		
+				}
+				
+			}
+			
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramosII() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try ( InputStream is = IdcTest.class.getResourceAsStream("idcplcccII.pdf") ){
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+				@Override
+				public boolean isScholarEmployee(String ssNum, String ccc, Date start, Date end) {
+					return true;
+				}
+			});
+			
+			marshall(trabajadoresTramos, System.out);
+			
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("01", liquidacion.getCcc().getProvincia());
+			assertEquals("105577910", liquidacion.getCcc().getNumero());
+			
+			assertEquals("10", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2020", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("10", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2020", liquidacion.getPeriodoHasta().getAnho());
+			
+			assertEquals(1,liquidacion.getLiquidacionMes().size());
+			
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("10", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2020", liquidacionesMes.getMesLiquidativo().getAnho());
+			
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(4, trabajadores.getTrabajador().size() );
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+				if ( "141026133260".equals(trabajador.getNaf())) 
+					continue;
+				assertEquals(1, trabajador.getTramos().getTramo().size() );			
+				for ( Tramo tramo : trabajador.getTramos().getTramo() ) {
+					assertEquals(0, tramo.getDatosTramo().getDato().size());		
+				}
+			}
+			
+			for ( Trabajador trabajador : trabajadores.getTrabajador() ) {
+				if ( !"141026133260".equals(trabajador.getNaf())) 
+					continue;
+				assertEquals(3, trabajador.getTramos().getTramo().size() );		
+				assertTramoITPagoDelegadoBecarios(trabajador.getTramos().getTramo().get(1));
+			}
+			
+			
+		}
+	}
+
 	private static class PEC {
 		private String pec;
 		private Date startDate;
@@ -447,6 +606,17 @@ public class IdcTest {
 //		return cal.getTime();
 //	}
 	
+	private static <T> void marshall(T t, OutputStream os) {
+		try {
+			XMLStreamWriter xsw = new IndentXMLStreamWriter(XMLOutputFactory.newInstance().createXMLStreamWriter(os),
+					"  ");
+			Utils.marshal(t, xsw);
+			os.close();
+		} catch (JAXBException | IOException | XMLStreamException e) {
+		}
+	}
+	
+	
 	private static Date getDate(int day, int month, int year) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY,0);
@@ -459,5 +629,74 @@ public class IdcTest {
 		return calendar.getTime();
 	}
 	
+	private static void assertTramoITPagoDirecto(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		
+		assertDatosSolicitado(datoSolicitados, "C", "509", "B");
+		try {
+			assertDatosSolicitado(datoSolicitados, "C", "603", "B");
+		} catch ( AssertException e ) {
+			assertDatosSolicitado(datoSolicitados, "C", "613", "B");
+		}
+	}
+
+	private static void assertTramoIT15PrimerosDias(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		
+		assertDatosSolicitado(datoSolicitados, "C", "500", "B");
+		try {
+			assertDatosSolicitado(datoSolicitados, "C", "603", "B");
+		} catch ( AssertException e ) {
+			assertDatosSolicitado(datoSolicitados, "C", "613", "B");
+		}
+	}
+	private static void assertTramoIT15PrimerosDiasDiario(Tramo tramo) {
+		assertTramoIT15PrimerosDias(tramo);
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertDatosSolicitado(datoSolicitados, "I", "51", "P");
+	}
+
+	private static void assertTramoITPagoDelegado(Tramo tramo) {
+		assertTramoIT15PrimerosDias(tramo);
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertDatosSolicitado(datoSolicitados, "C", "563", "B");
+	}
+
+	private static void assertTramoITPagoDelegadoBecarios(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertEquals(1, datoSolicitados.size());
+		assertDatosSolicitado(datoSolicitados, "C", "663", "B");
+	}
+
+	private static void assertTramoITATEPPagoDelegado(Tramo tramo) {
+		assertTramoIT15PrimerosDias(tramo);
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertDatosSolicitado(datoSolicitados, "C", "663", "B");
+	}
+
+	private static void assertTramoActivoNormal(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		
+		assertDatosSolicitado(datoSolicitados, "C", "500", "B");
+		assertDatosSolicitado(datoSolicitados, "C", "501", "P");
+		assertDatosSolicitado(datoSolicitados, "C", "502", "P");
+		try {
+			assertDatosSolicitado(datoSolicitados, "C", "601", "B");
+		} catch ( AssertException e ) {
+			assertDatosSolicitado(datoSolicitados, "C", "611", "B");
+		}
+	}
+	
+	private static void assertDatosSolicitado( List<DatoSolicitado> datoSolicitados, String tipoDato, String codigo, String  indicadorObligatoriedad) {
+		for ( DatoSolicitado datoSolicitado: datoSolicitados ){
+			if ( datoSolicitado.getCodigo().equals(codigo) ) {
+				assertEquals(tipoDato, datoSolicitado.getTipoDato());
+				assertEquals(indicadorObligatoriedad, datoSolicitado.getIndicadorObligatoriedad());
+				return;
+			}
+		}
+		
+		throw new AssertException("Dato Solicitado " + codigo + " Not Found");
+	}
 
 }
