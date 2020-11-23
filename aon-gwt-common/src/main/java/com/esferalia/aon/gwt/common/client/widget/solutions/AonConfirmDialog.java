@@ -36,7 +36,8 @@ public class AonConfirmDialog extends AonCustomDialog {
 		root.setStyleName(AON.CSS.aonPadding());
 		this.setWidget(root);
 	}
-    public void confirm(String msg, final AonConfirmDialogCallback callback) {
+    
+	public void confirm(String msg, final AonConfirmDialogCallback callback) {
     	confirm("Pregunta", msg, callback);
     }
     
@@ -101,6 +102,53 @@ public class AonConfirmDialog extends AonCustomDialog {
 			}
 		});
     	buttons.add(cancelButton);
+    	panel.add(buttons);
+    	root.setWidget(panel);
+    	
+    	center();
+    	show();
+    	
+	    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+	        public void execute() {
+	        	okButton.setFocus(true);        	
+	        }
+	    });
+    }
+	
+	public void info(String msg) {
+    	info("Aviso", msg);
+    }
+    
+	public void info(String header,String msg) {
+    	setCaption(header);
+    	FlowPanel panel = new FlowPanel();
+    	Label label = new Label(msg);
+    	label.setStyleName(AON.CSS.aonConfirmDialogMsg());
+    	panel.add(label);
+    	FlowPanel buttons = new FlowPanel();
+    	buttons.setStyleName(AON.CSS.aonTextCenter());
+    	
+    	final Button okButton = new Button();
+    	okButton.setStyleName(AON.CSS.aonOkButton());
+    	okButton.setText( AON.MSG.accept());
+    	okButton.addKeyUpHandler(new KeyUpHandler() {
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+					hide();	
+				}
+			}
+		});
+    	okButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				okButton.setEnabled(false);
+				hide();
+			}
+		});
+    	buttons.add(okButton);
+    	
     	panel.add(buttons);
     	root.setWidget(panel);
     	
