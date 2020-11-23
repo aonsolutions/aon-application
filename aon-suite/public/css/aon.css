@@ -411,6 +411,11 @@
 		font-size: 12px;
 	}
 
+	.aonMenuItemSpanTotal {
+		float: right;
+		padding-right: 20%;
+	}
+
   .aonDivButton {
     position: absolute;
     bottom: 20px;

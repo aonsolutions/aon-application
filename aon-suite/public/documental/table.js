@@ -235,43 +235,51 @@ export function getFoldersByID(folders) {
 }
 
 export const getList = async (page_this = 1) => {
-    const folder = new URLSearchParams(window.location.search).get('folder');
-    const tagID = new URLSearchParams(window.location.search).get('tag');
-    const uploadButton = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
+    const folder        = new URLSearchParams(window.location.search).get('folder');
+    const tagID         = new URLSearchParams(window.location.search).get('tag');
+    const uploadButton  = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
 
-    // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
-        const selectedFolderData = window.folders.find((currentFolder) => {
-            return parseInt(currentFolder.carpetaID) === parseInt(folder);
-        });
-        // Obtenemos el nombre de la carpeta seleccionada, el cual se utiliza en el ID de la opción
-        const folderName = selectedFolderData.carpeta;
-        // Obtenemos el sidenav
-        const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
-        // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
-        const selectedOptionID = sidenav.id + folderName;
+    //
+    // Si no mostramos la carpeta Pendientes
+    //
+    if(folder !== 'pendientes' && folder !== 'recientes'){
+        // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
+            const selectedFolderData = window.folders.find((currentFolder) => {
+                return parseInt(currentFolder.carpetaID) === parseInt(folder);
+            });
+            // Obtenemos el nombre de la carpeta seleccionada, el cual se utiliza en el ID de la opción
+            const folderName = selectedFolderData.carpeta;
+            // Obtenemos el sidenav
+            const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
+            // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
+            const selectedOptionID = sidenav.id + folderName;
 
-        // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
-        // Comprobamos también que la opción seleccionada no sea "A contabilizar", ya que por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-        if (window.aonDocumental.selected !== selectedOptionID && parseInt(folder) !== parseInt(CARPETA_A_CONTABILIZAR)) {
-            window.aonDocumental.selectOption(folderName);
-        }
+            // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
+            // Comprobamos también que la opción seleccionada no sea "A contabilizar", ya que por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
+            if (window.aonDocumental.selected !== selectedOptionID && parseInt(folder) !== parseInt(CARPETA_A_CONTABILIZAR)) {
+                window.aonDocumental.selectOption(folderName);
+            }
 
-    window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
+        window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
 
-    // Añadimos (si es necesario) la opción de subir documentos
-        // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
-        // Si estamos filtrando por TAG eliminamos el boton de subir tambien
-        if ((parseInt(folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
-            window.aonDocumental.removeToolbarOptions(['Subir']);
-        }
+        // Añadimos (si es necesario) la opción de subir documentos
+            // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
+            // Si estamos filtrando por TAG eliminamos el boton de subir tambien
+            if ((parseInt(folder) === CARPETA_CONTABILIZADOS && uploadButton !== null) || tagID !== null) {
+                window.aonDocumental.removeToolbarOptions(['Subir']);
+            }
 
-        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
-        // y no se este filtrando pot TAG
-        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
-            window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
-                $('#upload-file').trigger('click');
-            }, 'Subir documentos');
-        }
+            // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
+            // y no se este filtrando pot TAG
+            if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null && tagID === null) {
+                window.aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+                    $('#upload-file').trigger('click');
+                }, 'Subir documentos');
+            }
+    } else {
+        // Quitamos el boton de subir
+        window.aonDocumental.removeToolbarOptions(['Subir']);
+    }
 
     if (typeof window.folders !== 'undefined') {
         try {
