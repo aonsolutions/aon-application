@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractAttach;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -778,6 +779,10 @@ public class ContrataEmployeeObject {
 	
 	public void setContractJourneyDuration(TreeMap<Date, ArrayList<JourneyDuration>> contractJourneyDuration) {
 		contractData.setContractJourneyDuration(contractJourneyDuration);
+	}
+	
+	public  ContractJourneyDuration getContractJourneyDuration() {
+		return contractData.getContractJourneyDuration();
 	}
 	
 	// EMPLOYEE TABLE

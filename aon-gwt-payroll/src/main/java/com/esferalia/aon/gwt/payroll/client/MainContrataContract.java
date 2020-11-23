@@ -14,6 +14,8 @@ import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -199,12 +201,9 @@ public class MainContrataContract extends MainEntryPoint {
 	        @Override
 	        public void onSelectionChange(SelectionChangeEvent event) {
 	        	EmployeeContractInfo employeeContractInfo = selectionCCCInfoModel.getLastSelectedObject();
-	        	String fullName = employeeContractInfo.getEmployeeInfo().getFullName();
 	        	
 	        	DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	    		DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-	    		
-//	    		contrataEmployee = new ContrataEmployee();
 	    		
 	    		ContrataEmployeeObject contrataEmployeeDialogObject = new ContrataEmployeeObject(null, employeesService, enterprisesService);
 	    		contrataEmployee.setContrataEmployeeObject(contrataEmployeeDialogObject, employeeContractInfo);
@@ -675,7 +674,7 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 
 	private void maximizeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		splitLayoutPanel.setWidgetSize(footPanel, 100);
 	}
 
 	private void showFootPanel() {
@@ -704,7 +703,6 @@ public class MainContrataContract extends MainEntryPoint {
 	private void closeProgressPanel() {
 		footTabPanel.remove(progressPanel);
 		//footTabPanel.selectTab(progressPanel);
-
 	}
 
 	private void setSistemaREDVisible( boolean visible ){
@@ -744,11 +742,22 @@ public class MainContrataContract extends MainEntryPoint {
 		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
 			protected void onAccept() {
-				WarningDialog dialog = new WarningDialog("AVISO", "Desea dar de alta el contrato?");
-				dialog.setModal(true);
-				dialog.setAnimationEnabled(true);
-				dialog.center();
-				dialog.show();
+				AonConfirmDialog confirmDialog = new AonConfirmDialog();
+				confirmDialog.confirm(
+						"COMUNIC" + String.valueOf("\u0040"), 
+						String.valueOf("\u00BF") + "Desea dar de alta el contrato?",
+						new AonConfirmDialogCallback() {
+
+							@Override
+							public void onAccept() {
+								// TODO Auto-generated method stub
+							}
+
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+							}});
+				
 				redrawTable();
 			}
 		};

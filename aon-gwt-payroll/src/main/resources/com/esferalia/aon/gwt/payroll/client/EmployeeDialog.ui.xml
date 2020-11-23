@@ -12,8 +12,7 @@
 		.buttonsPanel{
 			display: flex;
 			justify-content: flex-end;
-			height: 20px;
-			margin: 5px 15px;
+			margin: 5px 10px;
 		}
 	
 	</ui:Style>
@@ -24,24 +23,6 @@
 			<a:Employee ui:field="employee"/>
 			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 		</g:VerticalPanel>
-
-		<!-- table class="aon-width-all aon-height-all" >
-			<tr>
-				<td>
-					<a:Employee ui:field="employee"/>
-				</td>
-			</tr>
-			<tr>
-			    
-			</tr>
-			<tr>
-				<td colspan="2" align="right">
-					<g:Button ui:field="cancelButton" debugId="paymetDialogCancelButton">Cancelar</g:Button>
-					<g:Button ui:field="acceptButton" debugId="paymetDialogAcceptButton" styleName="gwt-Button {style.mr-10}" >Aceptar</g:Button>
-				</td>
-			</tr>
-		</table -->
-
 	</g:HTMLPanel>
 
 </ui:UiBinder>

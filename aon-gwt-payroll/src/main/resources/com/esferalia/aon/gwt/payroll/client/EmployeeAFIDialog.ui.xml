@@ -194,6 +194,13 @@
 			padding-bottom: 15px;
 		}
 		
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin-top: 15px;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
@@ -279,10 +286,7 @@
 	    	</g:HorizontalPanel>
 		</div>
 		
-		<div class="{style.buttons}">
-			<g:Button ui:field="cancelButton">Cancelar</g:Button>
-			<g:Button ui:field="acceptButton">Aceptar</g:Button>
-		</div>
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 
 	</g:HTMLPanel>
 

@@ -7,13 +7,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -24,10 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
-import com.esferalia.aon.gwt.payroll.shared.FIEService.JsITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.FIEService;
-import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
@@ -35,7 +28,6 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Display;
@@ -45,14 +37,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
@@ -417,7 +408,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 
 		@Override
 		public void onContractJourneyDurationClick() {
-			ContractJourneyDialog dialog = new ContractJourneyDialog(employeeDialogObject.getContractStartDate(), employeeDialogObject.getContractEndDate()) {
+			ContractJourneyDialog dialog = new ContractJourneyDialog(
+					employeeDialogObject.getContractStartDate(), 
+					employeeDialogObject.getContractEndDate()) {
 
 				@Override
 				protected void onSave() {
@@ -425,7 +418,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 					if(contractJourneyDuration.getJourniesSize() != 0) {
 						String result = "Desde ";
 						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
+							if("HORAS_LUNES" == journeyDuration.getName()) result += formatFullDate.format(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
 							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
 							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
 							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
@@ -438,7 +431,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 					}else {
 						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+						employee.journeyDuration.setText(" ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+						employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
+						employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 					}
 					employeeDialogObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
 				}	
@@ -543,22 +538,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		public void onEmployeePayMethodChange() {
 			Integer payMethodId = Integer.parseInt(this.payMethod.getSelectedValue());
 			employeeDialogObject.setEmployeePayMethodId(-1 == payMethodId ? null : payMethodId);
-			
-//			byte methodPay = Byte.valueOf(this.payMethod.getSelectedValue()).byteValue();
-//			employeeDialogObject.setEmployeePayMethod(methodPay);
-//			
-//			this.account.setValue(null);
-//			this.bic.setValue(null);
-			
-//			if(this.payMethod.getSelectedIndex() == 3) { //TRANFERENCIA
-//				this.account.setEnabled(true);
-//				this.bic.setEnabled(true);
-//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), account);
-//				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), bic);
-//			} else {
-//				this.account.setEnabled(false);
-//				this.bic.setEnabled(false);
-//			}
 		}
 
 		@Override
@@ -596,17 +575,14 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
-//	interface Callback {
-//		void onAccept(EmployeeDialog dialog);
-//	}
-	
-//	private Callback cb;
 	private EmployeeDialogObject employeeDialogObject;
 	private ContractType contractType;
 	private Municipalities municipalities;
 	
-	private AonButton closeBtnDialog;
-	private AonButton acceptBtnDialog;
+	private Button closeBtnDialog;
+	private Button acceptBtnDialog;
+	
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
@@ -649,49 +625,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
 	
-//	@UiHandler("cancelButton")
-//	void onCancelButtonClick(ClickEvent clickEvent) {
-//		hide();
-//	}
-//	
-//	@UiHandler("acceptButton")
-//	void onAcceptButtonClick(ClickEvent clickEvent) {
-//		int ssRegime = employee.ssRegimeType.getSelectedIndex();
-//		employeeDialogObject.setSSRegime(ssRegime);
-//		
-//		if(checkIfSaveIsPossible())
-//			if(checkDates())
-////				if(checkPayMethod())
-//				this.employeeDialogObject.createEmployeeContract(
-//						r -> { 
-//								hide();
-//								if(null != employeeDialogObject.getWorkplaceObj()) 
-//									EmployeeTree.invokeRefreshWorkplace();
-//				
-//								onAccept();
-////									cb.onAccept(this);
-//								
-//							 }, 
-//						t -> {}
-//				);
-////				else {
-////					WarningDialog dialog = new WarningDialog("Aviso", "Si el metodo de pago es transferencia, debe rellenar obligatoriamente los campos de BIC y cuenta.");
-////					dialog.center();
-////					dialog.show();
-////				}
-//					
-//			else{
-//				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
-//				dialog.center();
-//				dialog.show();
-//			}
-//		else {
-//			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
-//			dialog.center();
-//			dialog.show();
-//		}
-//	}
-	
 	protected abstract void onAccept();
 	
 	private boolean checkIfSaveIsPossible() {
@@ -733,16 +666,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		else
 			return false;
 	}
-	
-//	private boolean checkPayMethod() {
-//		if(4 == this.employee.payMethod.getSelectedIndex()) {
-//			if("" == this.employee.bic.getValue() || "" == this.employee.account.getValue())
-//				return false;
-//			else
-//				return true;
-//		} else
-//			return true;
-//	}
 	
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 	
@@ -822,7 +745,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 				for(CCCInfo cccInfo :  this.employeeDialogObject.getCCCs().values())
 					if(cccInfo.getActivityId() == entry.getKey())
 						this.employee.activityCCC.addItem(entry.getValue() + " - " + getCCCType(cccInfo.getType()) + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
-//						this.employee.activityCCC.addItem(entry.getValue() + " - " + CCCType.values()[cccInfo.getType()] + "[" + cccInfo.getCcc() + "] - " +  cccInfo.getGeozone(), cccInfo.getActivityId() + "/" + cccInfo.getCccId() + "/" + cccInfo.getType());
 	}
 
 	private void initWorkplaces() {
@@ -858,12 +780,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		//SS REGIME
 		this.employee.ssRegimeType.setSelectedIndex(0);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.ssRegimeType);
-		
-		//ACTIVITY CCC
-//		if(this.employee.activityCCC.getItemCount() == 2) {
-//			this.employee.activityCCC.setSelectedIndex(1);
-//			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.employee.activityCCC);
-//		}
 		
 		//WORKPLACE
 		if(null != employeeDialogObject.getWorkplaceObj()) {
@@ -983,7 +899,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.email.setValue(employeeData.getEmail());
 		
 		setSelectedValueLB(employee.payMethod, null == employeeData.getPaymethodId() ? "-1" : employeeData.getPaymethodId().toString());
-//		employee.payMethod.setSelectedIndex(getPayMethodIndex(employeeData.getPayMethodTypeB()));
 		employee.account.setValue(employeeData.getAccount());
 		employee.bic.setValue(employeeData.getBic());
 		reformatAccount(this.employee.account);
@@ -1032,6 +947,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 			employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
 			employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+			employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
+			employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		} else
 			employee.showElementsFullTimeContract();
 		
@@ -1141,6 +1058,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 		employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
 		employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		employee.journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
 	}
 	
@@ -1242,19 +1161,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		return null;
 	}
 	
-	private int getPayMethodIndex(byte payMethodType) {
-		switch (payMethodType) {
-		case (byte) 0: //EFECTIVO
-			return 1;
-		case (byte) 4: //CHEQUE
-			return 2;
-		case (byte) 5: //TRANSFERENCIA
-			return 3;
-		default:
-			return 0;
-		}
-	}
-	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
 	    int indexToFind = 0;
@@ -1295,19 +1201,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 	}
 	
 	// ----------------------------------------------- CALLBACK TO SAVE ------------------------------------------------
-	
-//	public void show(Callback cb) {
-//		this.cb = cb;
-//		super.show();
-//	}
-//	
-//	public void setPopupPositionAndShow(PositionCallback positionCallback, Callback callback) {
-//		this.cb = callback;
-//		super.setPopupPositionAndShow(positionCallback);
-//	}
-	
+		
 	private void getButtonsPanel() {
-		closeBtnDialog = new AonButton("Cerrar", AON.CSS.aonIconClose());
+		closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
 		closeBtnDialog.setAccessKey('C');
 		closeBtnDialog.addClickHandler(new ClickHandler() {
 			@Override
@@ -1320,7 +1218,9 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		buttonsPanel.add(closeBtnDialog);
 		
-		acceptBtnDialog = new AonButton("Aceptar", AON.CSS.aonIconAccept());
+		acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtnDialog.setText( AON.MSG.accept());
 		acceptBtnDialog.setAccessKey('A');
 		acceptBtnDialog.addClickHandler(new ClickHandler() {
 			@Override
@@ -1354,14 +1254,12 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 						t -> {}
 				);	
 			else {
-				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
-				dialog.center();
-				dialog.show();
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Fechas", "La fecha de inicio no puede ser posterior a la fecha de fin.");
 			}
 		else {
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
-			dialog.center();
-			dialog.show();
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO: Campos obligatorios", "Hay que rellenar los campos azules correcta y obligatoriamente.");	
 		}
 	}
 	

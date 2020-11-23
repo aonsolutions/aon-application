@@ -12,6 +12,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx.DefaultFormat;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -44,6 +46,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -349,7 +352,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		@Override
 		public void onContractJourneyDurationClick() {
-			ContractJourneyDialog dialog = new ContractJourneyDialog(contrataEmployeeObject.getContractStartDate(), contrataEmployeeObject.getContractEndDate()) {
+			ContractJourneyDialog dialog = new ContractJourneyDialog(
+					contrataEmployeeObject.getContractStartDate(), 
+					contrataEmployeeObject.getContractEndDate(),
+					contrataEmployeeObject.getContractJourneyDuration()) {
 
 				@Override
 				protected void onSave() {
@@ -357,7 +363,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					if(contractJourneyDuration.getJourniesSize() != 0) {
 						String result = "Desde ";
 						for(JourneyDuration journeyDuration : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet().iterator().next().getValue()) {
-							if("HORAS_LUNES" == journeyDuration.getName()) result += formatDate(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
+							if("HORAS_LUNES" == journeyDuration.getName()) result += formatFullDate.format(journeyDuration.getStartDate()) + " ( L : " + journeyDuration.getExpression() + " ";
 							if("HORAS_MARTES" == journeyDuration.getName()) result += ", M : " + journeyDuration.getExpression() + " ";
 							if("HORAS_MIERCOLES" == journeyDuration.getName()) result += ", X : " + journeyDuration.getExpression() + " ";
 							if("HORAS_JUEVES" == journeyDuration.getName()) result += ", J : " + journeyDuration.getExpression() + " ";
@@ -370,7 +376,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 					}else {
 						employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 						employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-						employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+						employee.journeyDuration.setText(" ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+						employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
+						employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 					}
 					contrataEmployeeObject.setContractJourneyDuration(contractJourneyDuration.getContractJourneyDuration());
 				}	
@@ -599,6 +607,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private AonToolbarButton closePDF;
 	private ListBox zoomListBox;
 	private AonToolbarButton downloadPDF;
+	
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 	
@@ -1148,9 +1158,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Integer contractTypeId = contrataEmployeeObject.getContractType();
 		if((contractTypeId >= 200 && contractTypeId<300) || (contractTypeId >= 500 && contractTypeId<600)) {
 			employee.showElementsPartialTimeContract();
-			employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
-			employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
-			employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+			if(contrataEmployeeObject.getContractData().getContractJourneyDuration().getContractJourneyDuration().entrySet().size() == 0) {
+				employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
+				employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
+				employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+				employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
+				employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+			} else {
+				employee.journeyDuration.setText(contrataEmployeeObject.getContractData().getContractJourneyDuration().getJourneyText());
+			}
+			
 		} else
 			employee.showElementsFullTimeContract();
 		
@@ -1260,6 +1277,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		employee.journeyDuration.addStyleName("aon-finding-toolbar-item aon-icon-exception aon-finding-toolbar-item-no-border");
 		employee.journeyDuration.addStyleName(employee.style.journeyDurationWarning());
 		employee.journeyDuration.setText("ESPECIFICAR HORAS JORNADA EN EL CALENDARIO");
+		employee.journeyDuration.getElement().getStyle().setPaddingTop(5, Unit.PX);
+		employee.journeyDuration.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		employee.journeyDuration.setTitle("Las horas se deben definir en el calendario del empleado.");
 	}
 	
@@ -1640,29 +1659,33 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						t -> {}
 				);			
 			else{
-				WarningDialog dialog = new WarningDialog("Aviso", "La fecha de inicio no puede ser posterior a la fecha de fin.");
-				dialog.center();
-				dialog.show();
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Fechas", "La fecha de inicio no puede ser posterior a la fecha de fin.");
 			}
 		else {
-			WarningDialog dialog = new WarningDialog("Aviso", "Hay que rellenar los campos azules correcta y obligatoriamente.");
-			dialog.center();
-			dialog.show();
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO: Campos obligatorios", "Hay que rellenar los campos azules correcta y obligatoriamente.");
 		}
 	}
 
 	private void onDeleteContract(ClickEvent event) {
-		AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF") + "Realmente desea eliminar este contrato?") {
-			@Override
-			protected void onAccept() {
-				contrataEmployeeObject.deleteContract(s -> {
-					onListShow(true);
-				}, f-> {});
-			}
-		};
-		
-		dialog.center();
-		dialog.show();
+		AonConfirmDialog confirmDialog = new AonConfirmDialog();
+		confirmDialog.confirm(
+				"BORRADO", 
+				String.valueOf("\u00BF") + "Desea eliminar este contrato?",
+				new AonConfirmDialogCallback() {
+
+					@Override
+					public void onAccept() {
+						contrataEmployeeObject.deleteContract(s -> {
+							onListShow(true);
+						}, f-> {});
+					}
+
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
+					}});
 	}
 
 	private void onExportContract(ClickEvent event) {

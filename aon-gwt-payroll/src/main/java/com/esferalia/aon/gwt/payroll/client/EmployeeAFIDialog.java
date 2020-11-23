@@ -5,8 +5,11 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
@@ -14,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.StringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,13 +31,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class EmployeeAFIDialog extends CustomDialog {
+public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	
 	//Starting Service
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
@@ -89,10 +94,7 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	CheckBox generationAFICkBox;
 	
 	@UiField
-	Button acceptButton;
-	
-	@UiField
-	Button cancelButton;
+	HTMLPanel buttonsPanel;
 	
 	private ContractType contractType;
 	
@@ -114,6 +116,9 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 	
 	private ArrayList<Date> dateList;
 	private AFIChanges afiChangesMap;
+	
+	private Button closeBtnDialog;
+	private Button acceptBtnDialog;
 
 	// -------------------------------------------------------------------------------------------
 	// ----------------------------------- CONSTRUCTOR -------------------------------------------
@@ -123,6 +128,8 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		setCaption("Datos AFI");
 		
 		setWidget(binder.createAndBindUi(this));
+		
+		getButtonsPanel();
 		
 		this.contractType = new ContractType();
 		this.payrollDate = payrollDate;
@@ -136,13 +143,6 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 		this.workplaceId = workplaceId;
 		
 		checkStartEndContractAFI(startDate, endDate);	
-		
-		cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-			}
-		});
 		
 		impl.getEmployeeAFIChanges(contractId, new AsyncCallback<AFIChanges>() {
 
@@ -159,13 +159,13 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 				
 				initView();
 				
-				acceptButton.setEnabled(true);
+				acceptBtnDialog.setEnabled(true);
 				generationAFICkBox.setEnabled(true);
 			}
 		});
 		
 		//EnsureDebugID para TEST
-		this.acceptButton.ensureDebugId("input_accept");
+		this.acceptBtnDialog.ensureDebugId("input_accept");
 	}
 	
 	private void checkStartEndContractAFI(Date startDate, Date endDate) {
@@ -303,42 +303,47 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?") {
-							
-							@Override
-							protected void onAccept() {
-								//Find clicked button
-								int selectedButton = 0;
-								for(int i=0; i<tabsPanel.getWidgetCount(); i++){
-									HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(i);
-									Button dButton = (Button) hPanel.getWidget(1);
-									if(deleteButton.equals(dButton)){
-										break;
+						AonConfirmDialog confirmDialog = new AonConfirmDialog();
+						confirmDialog.confirm(
+								"BORRADO", 
+								String.valueOf("\u00BF") + "Desea eliminar este tramo?",
+								new AonConfirmDialogCallback() {
+
+									@Override
+									public void onAccept() {
+										//Find clicked button
+										int selectedButton = 0;
+										for(int i=0; i<tabsPanel.getWidgetCount(); i++){
+											HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(i);
+											Button dButton = (Button) hPanel.getWidget(1);
+											if(deleteButton.equals(dButton)){
+												break;
+											}
+											selectedButton++;
+										}
+										
+										//Get selected date
+										HorizontalPanel hPanel = (HorizontalPanel)tabsPanel.getWidget(selectedButton);
+										ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+										String dateStr = toggleButton.getText();
+										Integer date = Integer.parseInt(dateStr.split("/")[0]);
+										Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
+										Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
+										Date findingDate = new Date(year, month, date);
+										DateUtils.resetTime(findingDate);
+										
+										//Delete strech and update dates
+										afiChangesMap.deleteAFIChangeByDate(findingDate);
+										dateList.clear();
+										dateList.addAll(afiChangesMap.getAFIChanges().keySet());
+										tabsPanel.clear();
+										initView();
 									}
-									selectedButton++;
-								}
-								
-								//Get selected date
-								HorizontalPanel hPanel = (HorizontalPanel)tabsPanel.getWidget(selectedButton);
-								ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-								String dateStr = toggleButton.getText();
-								Integer date = Integer.parseInt(dateStr.split("/")[0]);
-								Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
-								Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
-								Date findingDate = new Date(year, month, date);
-								DateUtils.resetTime(findingDate);
-								
-								//Delete strech and update dates
-								afiChangesMap.deleteAFIChangeByDate(findingDate);
-								dateList.clear();
-								dateList.addAll(afiChangesMap.getAFIChanges().keySet());
-								tabsPanel.clear();
-								initView();
-							}
-						};
-						
-						confirm.center();
-						confirm.show();
+
+									@Override
+									public void onCancel() {
+										// TODO Auto-generated method stub
+									}});
 					}
 				});
 				
@@ -441,9 +446,8 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 					newDate.setValue(null);
 				}
 			}else {
-				WarningDialog dialog = new WarningDialog("Error fecha", "La fecha seleccionada es anterior a la fecha de inicio de contrato o anterior a la ultima nomina");
-				dialog.center();
-				dialog.show();
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Error fecha", "La fecha seleccionada es anterior a la fecha de inicio de contrato o anterior a la ultima nomina");
 			}
 		}
 	}
@@ -514,42 +518,47 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					AcceptCancelDialog confirm = new AcceptCancelDialog("Eliminar tramo", String.valueOf("\u00BF") + "Deasea eliminar este tramo?") {
-						
-						@Override
-						protected void onAccept() {
-							//Find clicked button
-							int selectedButton = 0;
-							for(int i=0; i<tabsPanel.getWidgetCount(); i++){
-								HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(i);
-								Button dButton = (Button) hPanel.getWidget(1);
-								if(deleteButton.equals(dButton)){
-									break;
+					AonConfirmDialog confirmDialog = new AonConfirmDialog();
+					confirmDialog.confirm(
+							"BORRADO", 
+							String.valueOf("\u00BF") + "Desea eliminar este contrato?",
+							new AonConfirmDialogCallback() {
+
+								@Override
+								public void onAccept() {
+									//Find clicked button
+									int selectedButton = 0;
+									for(int i=0; i<tabsPanel.getWidgetCount(); i++){
+										HorizontalPanel hPanel = (HorizontalPanel) tabsPanel.getWidget(i);
+										Button dButton = (Button) hPanel.getWidget(1);
+										if(deleteButton.equals(dButton)){
+											break;
+										}
+										selectedButton++;
+									}
+									
+									//Get selected date
+									HorizontalPanel hPanel = (HorizontalPanel)tabsPanel.getWidget(selectedButton);
+									ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
+									String dateStr = toggleButton.getText();
+									Integer date = Integer.parseInt(dateStr.split("/")[0]);
+									Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
+									Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
+									Date findingDate = new Date(year, month, date);
+									DateUtils.resetTime(findingDate);
+									
+									//Delete strech and update dates
+									afiChangesMap.deleteAFIChangeByDate(findingDate);
+									dateList.clear();
+									dateList.addAll(afiChangesMap.getAFIChanges().keySet());
+									tabsPanel.clear();
+									initView();
 								}
-								selectedButton++;
-							}
-							
-							//Get selected date
-							HorizontalPanel hPanel = (HorizontalPanel)tabsPanel.getWidget(selectedButton);
-							ToggleButton toggleButton = (ToggleButton) hPanel.getWidget(0);
-							String dateStr = toggleButton.getText();
-							Integer date = Integer.parseInt(dateStr.split("/")[0]);
-							Integer month = Integer.parseInt(dateStr.split("/")[1]) - 1;
-							Integer year = Integer.parseInt(dateStr.split("/")[2]) - 1900;
-							Date findingDate = new Date(year, month, date);
-							DateUtils.resetTime(findingDate);
-							
-							//Delete strech and update dates
-							afiChangesMap.deleteAFIChangeByDate(findingDate);
-							dateList.clear();
-							dateList.addAll(afiChangesMap.getAFIChanges().keySet());
-							tabsPanel.clear();
-							initView();
-						}
-					};
-					
-					confirm.center();
-					confirm.show();
+
+								@Override
+								public void onCancel() {
+									// TODO Auto-generated method stub
+								}});
 				}
 			});
 			
@@ -638,13 +647,6 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 			generationAFICkBox.setEnabled(false);
 			generationAFICkBox.setChecked(false);
 		}
-	}
-	
-	@UiHandler("acceptButton")
-	void onAcceptClick(ClickEvent event) {
-		onAccept();
-		hide();
-		onAcceptCb();
 	}
 	
 	protected abstract void onAcceptCb();
@@ -883,6 +885,46 @@ public abstract class EmployeeAFIDialog extends CustomDialog {
 						}
 				
 			});
+	}
+	
+	private void getButtonsPanel() {
+		closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtnDialog.setText( AON.MSG.accept());
+		acceptBtnDialog.setAccessKey('A');
+		acceptBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAcceptDialog(event);
+			}
+		});
+		
+		buttonsPanel.add(acceptBtnDialog);
+	}
+	
+	private void onCloseDialog(ClickEvent event) {
+		hide();
+	}
+	
+	private void onAcceptDialog(ClickEvent event) {
+		onAccept();
+		hide();
+		onAcceptCb();
 	}
 
 }
