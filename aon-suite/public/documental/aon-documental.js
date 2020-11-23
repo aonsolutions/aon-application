@@ -73,9 +73,6 @@ class AonDocumental extends HTMLElement {
     }
 
     loadIndex({folder = 'pendientes', tag = null} = {}) {
-        // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-        //folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
-
         const aonDocumental = document.getElementById('aonDocumental');
         const contentIframe = document.querySelector('iframe');
         const tagParameter = (tag === null) ? '' : `&tag=${tag}`;

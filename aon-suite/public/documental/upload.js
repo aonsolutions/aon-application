@@ -270,7 +270,13 @@ export function UploadDocumentos(){
         }
 
         function montarDivPrevios(){
-            var cerrarPrevio = ticketPrevio ? '' : '<div class="col-12"><div class="btn btn-warning float-right boton-cancelar-archivos"> <i class="material-icons align-middle">clear</i> <span id="upload-cerrar">Cerrar</span> </div></div>';
+            var cerrarPrevio = ticketPrevio ? '' : `
+                <div class="col-12">
+                    <div id="upload-cerrar" class="btn btn-warning float-right boton-cancelar-archivos">
+                        <i class="material-icons align-middle">clear</i>
+                        <span>Cerrar</span>
+                    </div>
+                </div>`;
             // Miramos si tenemos que cargar o no
             if ($('.files')[0] == undefined ){
                 var div = 

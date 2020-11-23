@@ -88,7 +88,7 @@ export function getDocumentsTableDOM(list) {
                         documentsTableDOM+= `<td>
                                 <span>`;
                                     if ($.isArray(val) && val.length) {
-                                        const tags = val.map((tag) => `<a class="documentTags" href="#" data-tag="${tag.id}">#${tag.name}</a>`).join('<br>');
+                                        const tags = val.map((tag) => `<a class="documentTags pointer" data-tag="${tag.id}">#${tag.name}</a>`).join('<br>');
 
                                         documentsTableDOM += tags;
                                     }
@@ -180,7 +180,7 @@ export function getDocumentsCardsDOM(list) {
 
         return `
             <div class="show_doc_container" data-id="${card.id}" data-type="${card.type}">
-                <div class="card mb-3 show_doc" role="button">
+                <div class="card mb-3 show_doc pointer">
                     <div class="card-header d-flex align-items-start">
                         <ul class="list-inline mb-0 d-flex flex-wrap align-items-center">
                             <li class="list-inline-item">
@@ -240,26 +240,37 @@ export const getList = async (page_this = 1) => {
     const uploadButton  = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
 
     //
-    // Si no mostramos la carpeta Pendientes
+    // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
     //
-    if(folder !== 'pendientes' && folder !== 'recientes'){
-        // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
+        let folderName = '';
+
+        if (folder === 'pendientes' || folder === 'recientes') {
+            folderName = (folder === 'pendientes') ? 'Pendientes' : 'Recientes';
+        } else {
+            // Obtenemos los datos de la carpeta seleccionada
             const selectedFolderData = window.folders.find((currentFolder) => {
                 return parseInt(currentFolder.carpetaID) === parseInt(folder);
             });
+
             // Obtenemos el nombre de la carpeta seleccionada, el cual se utiliza en el ID de la opción
-            const folderName = selectedFolderData.carpeta;
-            // Obtenemos el sidenav
-            const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
-            // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
-            const selectedOptionID = sidenav.id + folderName;
+            folderName = selectedFolderData.carpeta;
+        }
 
-            // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
-            // Comprobamos también que la opción seleccionada no sea "A contabilizar", ya que por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-            if (window.aonDocumental.selected !== selectedOptionID && parseInt(folder) !== parseInt(CARPETA_A_CONTABILIZAR)) {
-                window.aonDocumental.selectOption(folderName);
-            }
+        // Obtenemos el sidenav
+        const sidenav = window.parent.document.getElementById(window.aonDocumental.getId() + 'Sidenav');
 
+        // Con el ID del sidenav y el nombre de la carpeta obtenemos el ID de la opción
+        const selectedOptionID = sidenav.id + folderName;
+
+        // Comprobamos si la opción se encuentra ya seleccionada, si no, la seleccionamos
+        if (window.aonDocumental.selected !== selectedOptionID) {
+            window.aonDocumental.selectOption(folderName);
+        }
+
+    //
+    // Si no mostramos la carpeta Pendientes
+    //
+    if (folder !== 'pendientes' && folder !== 'recientes') {
         window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
 
         // Añadimos (si es necesario) la opción de subir documentos
