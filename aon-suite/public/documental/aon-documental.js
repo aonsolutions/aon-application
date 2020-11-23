@@ -4,12 +4,12 @@ export const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
 export const BIDOQ_TIPO_USUARIO = 6;
 
 // Local
-const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
-const BIDOQ_SESSION_ID = 'ZlVZZGk1dDVuRVNPTWlNSQ==';
+//const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
+//const BIDOQ_SESSION_ID = 'ZlVZZGk1dDVuRVNPTWlNSQ==';
 
 // DEV
-//const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
-//const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
+const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
+const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
 
 export const CARPETA_A_CONTABILIZAR = 5;
 export const CARPETA_CONTABILIZADOS = 14;
