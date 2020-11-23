@@ -18,7 +18,9 @@ if (typeof jQuery === 'undefined') {
 }
 
 import { BIDOQ_CLIENTE_ID, BIDOQ_TIPO_USUARIO, bidoq } from "./aon-documental.js";
-import { createTable, getList } from './table.js';
+import { getList, renderList, formatDocumentData, getDocumentsTableDOM, getDocumentsCardsDOM } from './table.js';
+
+const intersectionObserverIsSupported = "IntersectionObserver" in window;
 
 export function UploadDocumentos(){
     //  
@@ -432,6 +434,8 @@ export function UploadDocumentos(){
                         let response = JSON.parse(data);
 
                         if (typeof response !== 'undefined') {
+                            const list = [];
+
                             for (let i = 0; i < response.length; i++) {
                                 const documentResponse = response[i];
 
@@ -441,7 +445,21 @@ export function UploadDocumentos(){
                                     barraError(barra);
                                     // Error
                                     erroresPHP(recorrido, documentResponse.message);
+                                } else if (intersectionObserverIsSupported) {
+                                    // Formateamos los datos del documento y lo añadimos a la lista de elementos
+                                    const formattedDocumentData = formatDocumentData(documentResponse.datos, window.foldersByID, window.subfolders);
+
+                                    list.push(formattedDocumentData);
                                 }
+                            }
+
+                            // Si el navegador soporta Intersection Observer, añadimos a la lista los documentos subidos
+                            if (intersectionObserverIsSupported) {
+                                const documentsTable = getDocumentsTableDOM(list);
+                                const documentsCards = getDocumentsCardsDOM(list);
+
+                                $('#tabla_documentos tbody').prepend(documentsTable);
+                                $('#doc_cards_list').prepend(documentsCards);
                             }
 
                             if (!uploadError) {
@@ -719,12 +737,17 @@ export function getFileExtensionsConfig() {
 
 async function CargarDivAjaxDocumentos(id,url){
     // Poner la imagen del cargando
-        $('table tbody').html('<tr><td colspan="8"><center class="pt-5"><div class="lds-ripple"><div></div><div></div></div></center></td></tr>');
+    if (!intersectionObserverIsSupported) {
+        $('table tbody').html('<tr id="tabla_documentos_loader"><td colspan="8"><center class="pt-5"><div class="lds-ripple"><div></div><div></div></div></center></td></tr>');
+    }
+
     // Recargar tabla y paginado
         try {
-            const list = await getList();
+            if (!intersectionObserverIsSupported) {
+                const list = await getList();
 
-            createTable(list);
+                renderList(list);
+            }
         } catch (error) {
             const list = {
                 "list"      : [],
@@ -734,7 +757,7 @@ async function CargarDivAjaxDocumentos(id,url){
                 "shown_page": 0 + ' - ' + 0,    // cantidad mostrada por paginas 1 - 10
             }
 
-            createTable(list);
+            renderList(list);
 
             console.error(error);
         }

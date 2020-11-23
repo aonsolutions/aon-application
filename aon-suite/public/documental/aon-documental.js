@@ -80,6 +80,17 @@ class AonDocumental extends HTMLElement {
         const contentIframe = document.querySelector('iframe');
         const tagParameter = (tag === null) ? '' : `&tag=${tag}`;
         const indexURL = `./index.html?folder=${folder}${tagParameter}`;
+        const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
+
+        // Eliminamos todas las opciones de la barra de herramientas
+        aonDocumental.removeToolbarOptions();
+
+        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
+        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null) {
+            aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+                document.querySelector('iframe').contentWindow.document.getElementById('upload-file').click();
+            }, 'Subir documentos');
+        }
 
         if (contentIframe === null) {
             aonDocumental.setContentHTML(`<iframe src="${indexURL}" style="width:100%;height:100%;border:none;"></iframe>`);

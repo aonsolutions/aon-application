@@ -1,5 +1,7 @@
 import { bidoq } from './aon-documental.js';
-import { createTable, getList } from './table.js';
+import { getList, renderList } from './table.js';
+
+const intersectionObserverIsSupported = "IntersectionObserver" in window;
 
 export const SINGLE_DOWNLOAD_OPTION = 'singleDownload';
 export const MULTIPLE_DOWNLOAD_OPTION = 'multipleDownload';
@@ -182,26 +184,50 @@ async function multipleDeleteOption() {
             const response = JSON.parse(data);
 
             if (typeof response !== 'undefined') {
+                let failedToDeleteIDs = [];
+
                 if (typeof response.code !== 'undefined' && response.code === 0) {
                     avisoFlotante('Los documentos de tipo "Enviado" seleccionados han sido eliminados con éxito');
                 } else {
                     if (typeof response['1047'] !== 'undefined') {
+                        response['1047'].forEach((document) => {
+                            failedToDeleteIDs.push(document.id);
+                        });
                         avisoFlotante(`Ocurrieron errores al intentar eliminar algunos de los documentos`);
                     }
 
                     if (typeof response['1048'] !== 'undefined') {
-                        const failedDocuments = response['1048'].map((document) => {
-                            return document.name;
-                        }).join(', ');
+                        let failedToDeleteNames = [];
 
-                        avisoFlotante(`Los siguientes documentos no pudieron ser eliminados debido a que se encuentran marcados como incidencia: ${failedDocuments}`);
+                        response['1048'].forEach((document) => {
+                            failedToDeleteIDs.push(document.id);
+                            failedToDeleteNames.push(document.name);
+                        });
+
+                        failedToDeleteNames = failedToDeleteNames.join(', ');
+
+                        avisoFlotante(`Los siguientes documentos no pudieron ser eliminados debido a que se encuentran marcados como incidencia: ${failedToDeleteNames}`);
                     }
                 }
 
                 try {
-                    const list = await getList(window.aonDocumentalContainer.page);
+                    if (intersectionObserverIsSupported) {
+                        // Recorremos los documentos seleccionados
+                        $('.select_doc:checked').each(function() {
+                            // Obtenemos el ID del documento
+                            const documentContainer = $(this).closest('.show_doc_container');
+                            const id = documentContainer.data('id');
 
-                    createTable(list);
+                            // Si el ID no se encuentra entre los documentos que han fallado, eliminamos el documento de la lista
+                            if (!failedToDeleteIDs.includes(id)) {
+                                $(`.show_doc_container[data-id="${id}"]`).remove();
+                            }
+                        });
+                    } else {
+                        const list = await getList(window.aonDocumentalContainer.page);
+
+                        renderList(list);
+                    }
                 } catch (error) {
                     console.error(error.message);
                 }
