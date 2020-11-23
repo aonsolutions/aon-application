@@ -327,6 +327,6 @@ export const postDeleteMov = (data) => post(`${API_URL}/comunica/delete-mov`, da
 
 export const getConvenios = () =>  new Promise((resolve) => {
     resolve([
-        {id:"1", name:"60888888888888", value:"60888888888888"}, 
+        {id:"1", name:"- Sin convenio definido", value:"60888888888888"}, 
     ] );
 });

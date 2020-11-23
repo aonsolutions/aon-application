@@ -1,8 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
+import {setDate} from '../../services/utils.js';
 import {getMovements, getIDC, getTA, postDeleteMov} from '../../services/service.js';
 import '../../components/aon-table.js';
 import '../../components/aon-toast.js';
-
 
 export class AonMovementsList extends AonElement {
 
@@ -35,11 +35,11 @@ export class AonMovementsList extends AonElement {
 	}
 	 
 
-
  	build() {
 		let aonMovementTable = this.getElement('aonMovementTable');
 		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
+		aonMovementTable.addColumn('Movimiento', 'string', 'status');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
 		aonMovementTable.addColumn('Opción', 'fn', 'option');
 		this.getTable();
@@ -51,14 +51,19 @@ export class AonMovementsList extends AonElement {
 			try{
 				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
+				resp = resp.sort((a,b)=> new Date(b.fra) - new Date(a.fra));
+				console.log(resp);
 				resp.map(resp=>{
-					let {name:nombres, ipf, fra:fecha} = resp;
-					// let identificacion = ipf.toString().substring(0,1);
+					let {name:nombres, ipf, fra} = resp;
+					let fecha = setDate(fra);
+					let now =  setDate(new Date());
+					let status = fecha > now ? 'Previo'  : 'Consolidado';
 					let dni = ipf.toString().substring(1);
 					let data = {
 						nombres,
 						dni,
 						fecha,
+						status: `<b>${status}</b>`,
 						option:[
 							{
 								name:'Obtener TA',
@@ -77,7 +82,14 @@ export class AonMovementsList extends AonElement {
 							},
 						]
 					};
-					aonMovementTable.addRow(data, (el) => this.aonMovement(el, data));
+					let tr = aonMovementTable.addRow(data, (el) => this.aonMovement(el, data));	
+					if(tr){
+						if(fecha > now){ //prev
+							
+						} else {
+							tr.style.backgroundColor = "#faca8f";
+						}
+					}
 				})
 			} catch(e){
 				console.log(e);
@@ -91,14 +103,13 @@ export class AonMovementsList extends AonElement {
 
 	async deleteMov(data, el){
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
-			
 			let toast = this.getElement(`divToast`);
 			try {
-				// data = {
-				// 	...data,
-				// 	regime: "0111",
-				// 	ctaCti: "01105360062"
-				// }
+				data = {
+					...data,
+					regime: data.ctaCti,
+					ctaCti: data.regime
+				}
 				await postDeleteMov(data);
 				toast.start({message:'Alta eliminada!', type: 'success'});
 				el.remove(); //delete td
@@ -109,10 +120,20 @@ export class AonMovementsList extends AonElement {
 	}
 
 	getTa(data, el){
+		data = {
+			...data,
+			regime: data.ctaCti,
+			ctaCti: data.regime
+		}
 		getTA(data); // open pdf
 	}
 
 	getIdc(data, el) {
+		data = {
+			...data,
+			regime: data.ctaCti,
+			ctaCti: data.regime
+		}
 		getIDC(data); // open pdf
 	}
 

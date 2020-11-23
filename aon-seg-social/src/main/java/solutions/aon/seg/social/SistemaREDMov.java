@@ -7,6 +7,10 @@ import java.util.Calendar;
 
 import java.util.GregorianCalendar;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -23,6 +27,7 @@ import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateExcepti
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
+import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class SistemaREDMov {
 
@@ -41,7 +46,6 @@ public class SistemaREDMov {
 		return null;
 	}
 	
-	//HANDLE THE EXCEPTIONS OF MOV ALTA METHOD
 	public static Employee movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Employee employee) throws SegSocialException{
 		
@@ -56,7 +60,7 @@ public class SistemaREDMov {
 		return null;
 	}
 	
-	//HANDLE EXCEPTIONS OF deleteSecondaryUser
+	
 	private static Employee sendMovImpl(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
@@ -65,10 +69,12 @@ public class SistemaREDMov {
 	      	Integer mov = employee.getSituacion() == "AL" ? 0 : 1;
  			String dia="";
  			String mes="";
- 			String dni = padCharacter("0", 10, employee.getIpf()); // Tookit.appendStringLeft(string add, string, string vecs )
+ 			String dni =  padCharacter("0", 10, employee.getIpf());
  			System.out.println(dni);
  			String nss = employee.getNss();
  			String ctaCti = employee.getCtaCti().get();
+ 			
+ 			String ident = identity(employee.getIpf());
  			//Date
  			GregorianCalendar calendar = new GregorianCalendar();
  			calendar.setTime(employee.getFra());
@@ -89,7 +95,7 @@ public class SistemaREDMov {
 			jacadaForm.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0,2));
 			jacadaForm.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
 			jacadaForm.getInputByName("txt_SDFREGAFI_ayuda").setValueAttribute(employee.getRegime());
-			jacadaForm.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(employee.getIdent().toString());
+			jacadaForm.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident);
 			jacadaForm.getInputByName("txt_SDFNUMPFI").setValueAttribute(dni);
 			jacadaForm.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0,2));
 			jacadaForm.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
@@ -168,11 +174,95 @@ public class SistemaREDMov {
 		return employee;
 	}
 	
+	private static Employee movConsolidadoDeleteImpl(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, 
+			Employee employee) throws SegSocialException, IOException, InterruptedException  {
+		
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	Integer code;
+ 			String dia="";
+ 			String mes="";
+ 			Integer mov = employee.getSituacion().equals("AL") ? 0 : 1;
+ 			//Date
+			GregorianCalendar calendar = new GregorianCalendar();
+ 			calendar.setTime(employee.getFra());
+ 			String anio = ""+(calendar.get(Calendar.YEAR));
+ 			if(calendar.get(Calendar.DATE)<10) dia="0"+calendar.get(Calendar.DATE);
+ 			else dia=""+calendar.get(Calendar.DATE);
+ 			if((calendar.get(Calendar.MONTH)+1)<10) mes="0"+(calendar.get(Calendar.MONTH)+1);
+ 			else mes=""+(calendar.get(Calendar.MONTH)+1);
+ 			System.out.println(dia +"/"+mes+ "/"+anio);
+ 			
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
+			HtmlForm jacadaForm = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
+			//form fist
+			jacadaForm.getInputByName("NA5NumSegSocialCompleto").setValueAttribute(employee.getNss());
+			jacadaForm.getInputByName("CC1EmpresaAut").setValueAttribute(employee.getRegime() + employee.getCtaCti().get());
 	
-  private static String padCharacter(String c, int num, String str){
-      for(int i=0;i<num-str.length()+1;i++){str = c+str;}
-      return str;
-  }
+			HtmlOption option = (HtmlOption) jacadaForm.querySelectorAll("select[name=tipoImpresion]>option").get(2);				
+			option.click();
+		
+			HtmlInput btnSubmit = htmlPage.querySelector("#SPM.ACC.Confirmar");
+			htmlPage = btnSubmit.click();
+
+			
+			//HtmlUnitToolkit.manageErrorMessages(htmlPage);
+			
+		} 
+		return employee;
+	}
+	
+	private static String padCharacter(String c, int num, String str){
+	    for(int i=0;i<num-str.length()+1;i++){str = c+str;}
+	     return str;
+	}
+	
+	
+	private static String identity(String ipf) {
+		Pattern nif  = Pattern.compile(
+				//  -------- LEGAL_PERSON_NIF PATTERN  
+				// -------- (1) --> X00000000
+					"^[A-JUV]"
+					+"[\\s-_/]?"
+					+"[0-9]{2}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}"
+					+"[-_/\\.]?"
+					+"[0-9]{3}$"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		Pattern dni  = Pattern.compile(
+					"[0-9]?"
+					+"[0-9]"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/\\.]?"
+					+"[0-9]{3}"
+					+"[\\s-_/]?"
+					+"[A-Z]"
+					, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+				//  -------- NIE PATTERN 
+				// -------- (1) --> X0000000X
+		Pattern nie  = Pattern.compile(
+					"[XYZ]"
+					+"[\\s-_/]?"
+					+"[0-9]{7}"
+					+"[\\s-_/]?"
+					+"[A-HJ-NP-TV-Z]"
+				, Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+		
+		Map<Pattern, Integer> patterns = new HashMap<Pattern, Integer>();
+		patterns.put(nif, 1);
+		patterns.put(dni, 1);
+		patterns.put(nie, 6);
+		
+		String identity = "";
+		for (Entry<Pattern, Integer> entry : patterns.entrySet()) {
+			if ( entry.getKey().matcher(ipf).matches()) { identity = entry.getValue().toString(); break; }
+		}
+		return identity;
+	}
 //	public static void main(String[] args)  {
 //		try (final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/FNMT.p12")) {			
 //		    

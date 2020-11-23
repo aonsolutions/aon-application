@@ -39,7 +39,6 @@ import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.invalidData.NoQueryData;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "ComunicaServlet", urlPatterns = {"/ms/api/comunica/*"})
@@ -51,7 +50,7 @@ public class ComunicaServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("AON EXAMPLE SERVLET - GET METHOD");
 		OutputStream os = resp.getOutputStream();
-		Gson gjson = new GsonBuilder().setDateFormat("YYYY-MM-dd").create();
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		byte content [] = gjson.toJson(null).getBytes();
 		
 		try {
@@ -106,7 +105,7 @@ public class ComunicaServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		LOGGER.info("USER SERVLET - POST METHOD");
 		OutputStream os = resp.getOutputStream();
-		Gson gjson = new GsonBuilder().setDateFormat("YYYY-MM-dd").create();
+		Gson gjson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 		byte content [] = gjson.toJson(null).getBytes();
 		
 		try {
@@ -191,7 +190,7 @@ public class ComunicaServlet extends HttpServlet{
 		String regimen = json.getString("regimen");
 		String ctaCti = json.getString("ctaCti");
 		String nss = json.getString("nss");
-		Integer ident = Integer.parseInt("1");
+		
 		String ipf = json.getString("ipf");
 		
 		//second screen
@@ -211,7 +210,6 @@ public class ComunicaServlet extends HttpServlet{
 		.setRegime(regimen)
 		.setCtaCti(ctaCti)
 		.setNss(nss)
-		.setIdent(ident)
 		.setIpf(ipf)
 		.setFra(fecha)
 		.setOcup(ocupacion)
@@ -236,7 +234,7 @@ public class ComunicaServlet extends HttpServlet{
 		String nss = json.getString("nss");
 
 		//second screen
-		Date fecha = Toolkit.parseDate("2020-12-28", "yyyy-MM-dd");
+		Date fecha = Toolkit.parseDate(json.getString("fra"), "yyyy-MM-dd");
 
 		EmployeeBuilder builder = new EmployeeBuilder();
 		Employee employee = builder.setSituation(situacion)
@@ -248,5 +246,6 @@ public class ComunicaServlet extends HttpServlet{
 		 
 		return SistemaREDMov.movPrevDelete(certificateInputStream, certificatePassword, certificateType, employee);
 	}
+	
 	
 }

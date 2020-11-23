@@ -47,3 +47,21 @@ export const serializeForm = (form)=> {
   inputs.map(({name,value}) => obj[name] = value);
   return obj;
 } 
+
+const formatDate = (d) => {
+  let day = d.getDate();
+  if(day <= 9) day = '0'+ day;
+  let month = d.getMonth() + 1;
+  if(month <= 9) month = '0'+ month;
+  let year = d.getFullYear();
+  return day + '-' + month + '-' + year;
+}
+
+export const setDate = (date) => formatDate(new Date(date));
+
+export const addDays = (date, days) =>  {
+  let result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return formatDate(result);
+}
+

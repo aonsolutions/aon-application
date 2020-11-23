@@ -72,7 +72,7 @@ export class AonAltaDirecta extends AonElement {
                 <aon-input name="regimen" id="regimen" description="Regimen" visible="false"></aon-input>
             </div>
             <div class="aonCol-sm-12 aonCol-md-4">
-                <aon-input name="convenio" id="convenio" description="Convenio" type="list"></aon-input>
+                <aon-select name="convenio" id="convenio" title="Convenio" type="list"></aon-select>
             </div>
         `);
 
@@ -222,8 +222,9 @@ export class AonAltaDirecta extends AonElement {
         let centro_trabajo = this.getElement('centro_trabajo');
         try {
             const resp = await getWorkplaceCCCs();
+            let centros = resp.filter(r=>r.ccc && r.ccc.length > 0);
             centro_trabajo.options = JSON.stringify(
-                resp.map((r,index)=> {
+                centros.map((r,index)=> {
                     return {
                         ...r,
                         name: `${r.workplace.description}`,
@@ -281,7 +282,6 @@ export class AonAltaDirecta extends AonElement {
             );
         } catch (error) {}
     }
-
   
     async listConvenios(){
         let convenio = this.getElement('convenio');

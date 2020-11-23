@@ -93,6 +93,7 @@ export class AonTable extends AonElement {
 			});
 
 			body.appendChild(tr);
+			return tr;
 		}
 
 		removeRows() {

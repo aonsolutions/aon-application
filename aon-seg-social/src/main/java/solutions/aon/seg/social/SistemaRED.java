@@ -146,6 +146,18 @@ public class SistemaRED {
 		}	
 	}
 
+	public static Employee sendMov(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, Employee employee) throws SegSocialException {
+		
+		return SistemaREDMov.sendMov(certificateInputStream, certificatePassword, certificateType, employee);
+	}
+	
+	public static Employee movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, Employee employee) throws SegSocialException {
+		
+		return SistemaREDMov.movPrevDelete(certificateInputStream, certificatePassword, certificateType, employee);
+	}
+	
 	public static void main(String[] args)
 			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
