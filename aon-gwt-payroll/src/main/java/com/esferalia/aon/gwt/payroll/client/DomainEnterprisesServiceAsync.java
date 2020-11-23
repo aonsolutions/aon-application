@@ -235,7 +235,7 @@ public class DomainEnterprisesServiceAsync {
 	
 	// SS_BONUS DIALOG
 	public void getEmployeeSSBonuses(Integer contractId, AsyncCallback<List<SSBonusData>> asyncCallback) {
-		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), contractId, asyncCallback);
+		enterprisesServiceAsync.getEmployeeSSBonuses(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
 	}
 	
 	public void getBonusConcepts(AsyncCallback<List<SSBonusData>> asyncCallback) {

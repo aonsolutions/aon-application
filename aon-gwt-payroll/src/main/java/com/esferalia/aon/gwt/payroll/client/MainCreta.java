@@ -434,7 +434,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			// Synchronize cret@ messages. 
 			Task syncTask = new Task();
 			syncTask.setDescription("Sincronizando mensajes");
-			progressPanel.showIndeterminateTask(syncTask);
+			progressPanel.showTask(syncTask);
 			//sync( new MainCretaSyncCallback(syncTask), enterprises.size() > 1 ? Collections.emptyList() : getCCCs(enterprises) );
 			
 			List<CCC> cccs = getCCCs(enterprises,0,LIMIT*2);

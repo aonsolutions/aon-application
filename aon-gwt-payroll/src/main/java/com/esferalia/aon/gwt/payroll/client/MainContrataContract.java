@@ -623,7 +623,7 @@ public class MainContrataContract extends MainEntryPoint {
 				protected void newEmployees(AffiliatedNotFound affiliatedNotFound []) {
 					syncTask = new Task();
 					syncTask.setDescription("Importando trabajadores desde la Seguridad Social (Sistema R.E.D)");
-					progressPanel.showIndeterminateTask(syncTask);
+					progressPanel.showTask(syncTask);
 					super.newEmployees(affiliatedNotFound);
 				}
 				

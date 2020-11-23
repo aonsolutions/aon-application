@@ -85,7 +85,7 @@ public interface EnterprisesServiceAsync {
 	void getEmployeePeculiarities(String currentDomainName, Integer contractId, AsyncCallback<Peculiarities> asyncCallback);
 	void setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities,
 			AsyncCallback<String> asyncCallback);
-	void getEmployeeSSBonuses(String currentDomainName, Integer contractId,
+	void getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId,
 			AsyncCallback<List<SSBonusData>> asyncCallback);
 	void getBonusConcepts(String currentDomainName, AsyncCallback<List<SSBonusData>> asyncCallback);
 	void setEmployeeSSBonuses(String currentDomainName, Integer contractId, List<SSBonusData> ssBonuses,

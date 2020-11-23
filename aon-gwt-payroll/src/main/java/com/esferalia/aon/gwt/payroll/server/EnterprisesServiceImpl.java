@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 
-import org.jooq.impl.DSL;
 import org.jooq.tools.json.JSONObject;
 
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
@@ -84,6 +83,7 @@ import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
@@ -1878,10 +1878,29 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId) {
+	public List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
+			
+			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
+			Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);			
+			
+			PAYROLL.getContract(
+					currentDomainName, 
+					parentDomainId, 
+					currentUser, 
+					p -> p.getIdProperty().eq(contractId))
+			.ifPresent( contract -> SistemaREDServlet.addBonus(
+					currentUser, 
+					currentDomainName, 
+					domainId, 
+					userId, 
+					contract.getSsRegime().getCode(), 
+					contract.getEnterpriseCCC(), 
+					contract.getPersonSsNumber()) );
+			
 			return JooqSSBonus.getSSBonus(connection, contractId);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);

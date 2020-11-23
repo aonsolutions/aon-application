@@ -272,40 +272,6 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		return employee;
 	}	
 
-	private void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
-			String ccc, String ...nafs) {
-		
-		try {
-			Date today = new Date();
-			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(new Date());
-
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, today);
-			
-			for ( String naf : nafs ) {
-				Bonus bonuses [] =
-				Idcplccc.getSSBonuses(data).stream()
-				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
-				.map( b -> 
-				new Bonus()
-				.setExpression(b.getFormula())
-				.setDescription(b.getDescription())
-				.setType(BonusType.SOCIAL_SECURITY)
-				.setStartDate(b.getStartDate())
-				.setEndDate(b.getEndDate().equals(lastDayOfMonth) ? null : b.getEndDate())
-				)
-				.toArray(Bonus[]::new)
-				;
-				PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, firstDayOfMonth, lastDayOfMonth, bonuses);					
-			}
-			
-		} catch ( Exception e ) {
-			
-		}
-		 
-				
-	}
 	
 
 	private void doRestoreEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
@@ -427,5 +393,39 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		writer.write(base64);
 	}
 	
+	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+			String ccc, String ...nafs) {
+		
+		try {
+			Date today = new Date();
+			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
+			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(new Date());
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, today);
+			
+			for ( String naf : nafs ) {
+				Bonus bonuses [] =
+				Idcplccc.getSSBonuses(data).stream()
+				.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
+				.map( b -> 
+				new Bonus()
+				.setExpression(b.getFormula())
+				.setDescription(b.getDescription())
+				.setType(BonusType.SOCIAL_SECURITY)
+				.setStartDate(b.getStartDate())
+				.setEndDate(b.getEndDate().equals(lastDayOfMonth) ? null : b.getEndDate())
+				)
+				.toArray(Bonus[]::new)
+				;
+				PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, firstDayOfMonth, lastDayOfMonth, bonuses);					
+			}
+			
+		} catch ( Exception e ) {
+			
+		}
+		 
+				
+	}
 
 }

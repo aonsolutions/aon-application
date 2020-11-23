@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
+import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -87,6 +89,10 @@ public class SSBonusDraft extends CustomDialog {
 	
 	@UiField
 	Hidden idcDomainNameHidden;
+	
+	@UiField
+	ProgressPanel progressPanel;
+	
 // ------------------------------------------------------------ VARIABLES DE LA CLASE ----------------------------------------------------
 		
 //	private SSBonusDraftObject ssBonusDraftObject;
@@ -108,19 +114,33 @@ public class SSBonusDraft extends CustomDialog {
 		this.ssBonuses = new ArrayList<>();
 		this.contractId = contractId;
 
+		progressPanel.addAttachHandler(e -> {
+			// Synchronize cret@ messages.
+			Task syncTask = new Task();
+			syncTask.setDescription("Comprobando bonificaciones...");
+			progressPanel.showTask(syncTask);
+			syncTask.messageChanged("Sistema RED...");
+		});
+
 		impl.getEmployeeSSBonuses(this.contractId, new AsyncCallback<List<SSBonusData>>() {
 			
 			@Override
 			public void onSuccess(List<SSBonusData> result) {
+				hideProgressPanel();
 				ssBonuses = result;
 				showTable();
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				
+				hideProgressPanel();
+			}
+
+			protected void hideProgressPanel() {
+				progressPanel.setVisible(false);
 			}
 		});
+		
 		
 		this.idcUserNameHidden.setValue(Wnd.getCurrentUser());
 		this.idcDomainNameHidden.setValue(Wnd.getCurrentDomainNameURL());

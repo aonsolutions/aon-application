@@ -136,7 +136,7 @@ public interface EnterprisesService extends RemoteService {
 
 	String setEmployeePeculiarities(String currentDomainName, Integer contractId, Peculiarities peculiarities);
 
-	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, Integer contractId);
+	List<SSBonusData> getEmployeeSSBonuses(String currentDomainName, String currentUser, Integer contractId);
 
 	List<SSBonusData> getBonusConcepts(String currentDomainName);
 

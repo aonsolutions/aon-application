@@ -2598,7 +2598,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				// Synchronize cret@ messages.
 				Task syncTask = new Task();
 				syncTask.setDescription("Sincronizando mensajes");
-				progressPanel.showIndeterminateTask(syncTask);
+				progressPanel.showTask(syncTask);
 				MainCreta.sync(new EmployeeTreeSyncCallback(syncTask), getCCs());
 			});
 			showProgressPanel();

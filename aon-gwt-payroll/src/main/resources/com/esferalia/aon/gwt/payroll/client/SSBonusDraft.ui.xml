@@ -214,6 +214,12 @@
 			text-align: right;
 		}
 
+		.progress {
+			height: 70px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+
 	</ui:style>
 	
 	<ui:import field="com.google.gwt.user.client.ui.FormPanel.*" />
@@ -221,13 +227,13 @@
 	<ui:import field="com.esferalia.aon.gwt.payroll.shared.SSBonusService.Parameter.*" />
 	
 	<g:HTMLPanel>
-		<g:FlowPanel>
-			<g:FlowPanel styleName="aon-finding-title-toolbar">
+		<g:FlowPanel visible="false" >
+			<g:FlowPanel styleName="aon-finding-title-toolbar" >
 				<g:HorizontalPanel>
 					<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
 						<g:Button ui:field='idcButton'
 							styleName='aon-finding-toolbar-item aon-icon-segsocial-small' text="Informe de Cotizaci&oacute;n IDC"
-							enabled="true" />					
+							enabled="true" visible="false"/>					
 
 						<g:FormPanel visible="false" ui:field="idcFormPanel" method="{METHOD_POST}" action="{SS_BONUS_URL}/{IDC}"  encoding="{ENCODING_MULTIPART}">
 							<g:VerticalPanel visible="false" >
@@ -274,6 +280,10 @@
             		</g:HTMLPanel>
 	        </g:HTMLPanel> 
 	    </g:ScrollPanel>
+	   
+	    <div>
+	    	<a:ProgressPanel ui:field="progressPanel" styleName="{style.progress}" ></a:ProgressPanel>
+	    </div>
 		
 		<div class="{style.buttons}">
 			<g:Button ui:field="cancelButton">Cancelar</g:Button>

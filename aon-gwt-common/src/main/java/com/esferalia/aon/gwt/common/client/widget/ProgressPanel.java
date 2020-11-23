@@ -60,6 +60,10 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 			return this;
 		}
 		
+		public boolean canStop() {
+			return false;
+		}
+		
 	}
 	
 	
@@ -82,15 +86,15 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 
 
 	
-	public void showIndeterminateTask(final Task indeterminateTask){
+	public void showTask(final Task task){
 		
-		tasks.add(indeterminateTask);
+		tasks.add(task);
 		
 		int row = flexTable.getRowCount();
 		
 		int descriptionRow = row;
 		flexTable.insertRow(descriptionRow);
-		flexTable.setText(descriptionRow, 0, indeterminateTask.getDescription());
+		flexTable.setText(descriptionRow, 0, task.getDescription());
 		
 		int progressRow = row + 1;
 		flexTable.insertRow(progressRow);
@@ -103,15 +107,17 @@ public class ProgressPanel extends ResizeComposite implements ProvidesResize {
 		cleanButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
 		cleanButton.addStyleName(AON.AON_ICON_DELETE);
 		cleanButton.addClickHandler(e -> cleanTask(row));
+		cleanButton.setVisible(task.canStop());
 		
 		flexTable.setWidget(progressRow, 0, paperProgress);
 		flexTable.setWidget(progressRow, 1, cleanButton);
 		flexTable.getColumnFormatter().addStyleName(0, AON.AON_WIDTH_ALL);
 		
+				
 		
 		int messageRow = row + 2;
 		flexTable.insertRow(messageRow);
-		indeterminateTask.addTaskListener( new TaskListener() {
+		task.addTaskListener( new TaskListener() {
 			
 			@Override
 			public void finished() {

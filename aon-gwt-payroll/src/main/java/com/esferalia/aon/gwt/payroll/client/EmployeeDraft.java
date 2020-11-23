@@ -770,8 +770,9 @@ public class EmployeeDraft extends Composite {
 	@UiHandler("bonificationsButton")
 	void onBonificationsButtonClick(ClickEvent event) {
 		SSBonusDraft dialog = new SSBonusDraft(this.employeeDraftObject.getContractId());
-		dialog.center();
-		dialog.show();
+		dialog.setPopupPositionAndShow((x,y) -> dialog.center() );
+//		dialog.center();
+
 	}
 	
 	@UiHandler("undoButton")

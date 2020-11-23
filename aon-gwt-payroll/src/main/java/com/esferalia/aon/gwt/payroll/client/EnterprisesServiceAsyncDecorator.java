@@ -384,9 +384,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getEmployeeSSBonuses(String domain, Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
+	public void getEmployeeSSBonuses(String domain, String user, Integer contractId, AsyncCallback<List<SSBonusData>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getEmployeeSSBonuses(domain, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
+		enterprisesServiceAsync.getEmployeeSSBonuses(domain, user, contractId, new AsyncCallbackWrapper<List<SSBonusData>>(callback));
 	}
 
 	@Override
