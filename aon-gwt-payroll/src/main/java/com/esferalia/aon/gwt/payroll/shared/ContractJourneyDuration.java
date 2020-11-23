@@ -99,7 +99,7 @@ public class ContractJourneyDuration implements Serializable {
 				for(JourneyDuration journey : jouneryEntry.getValue()) {
 					if(!visitedDays.contains(journey.getName()) && journey.getExpression() != "0") {
 						visitedDays.add(journey.getName());
-						hours += Double.parseDouble(((null == journey.getExpression() || "" == journey.getExpression()) ? "0" : journey.getExpression()));
+						hours += Double.parseDouble(((null == journey.getExpression() || "" == journey.getExpression() || "NL" == journey.getExpression()) ? "0" : journey.getExpression()));
 						if("HORAS_LUNES" == journey.getName()) result += " L : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
 						if("HORAS_MARTES" == journey.getName()) result += ", M : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";
 						if("HORAS_MIERCOLES" == journey.getName()) result += ", X : " + ((null == journey.getExpression() || "" == journey.getExpression()) ? "NL" : journey.getExpression()) + " ";

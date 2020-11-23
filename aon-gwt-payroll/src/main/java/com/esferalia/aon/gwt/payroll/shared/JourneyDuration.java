@@ -23,7 +23,7 @@ public class JourneyDuration implements Serializable {
 	}
 
 	public String getExpression() {
-		return expression;
+		return null == expression ? "NL" : expression;
 	}
 
 	public void setExpression(String expression) {

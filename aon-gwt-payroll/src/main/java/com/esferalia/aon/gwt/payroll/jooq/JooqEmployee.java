@@ -457,15 +457,22 @@ public class JooqEmployee {
 		TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
 		if(null != contractJourneyDuration)
 			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-				 for(JourneyDuration journey : entry.getValue()) {
-					 
+				for(JourneyDuration journey : entry.getValue()) {
 					 java.util.Date endDateAux = journey.getEndDate();
-					 
-					 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-								CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-							.values(domain, journey.getName(), contractId, journey.getExpression(), 
-									new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
-							.execute();
+					  
+					 if(null != journey.getExpression() && "NL" != journey.getExpression())
+						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, journey.getName(), contractId, journey.getExpression(), 
+										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+								.execute();
+					 else {
+						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, journey.getName(), contractId, null, 
+										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+								.execute();
+					 }
 				 }
 			}
 		
@@ -1479,33 +1486,28 @@ public class JooqEmployee {
 				.execute();
 		}
 		
-//		if(!contractJourneyDuration.isEmpty()){
-//		 
-//			//ACTUALIZAR DURACION JORNADA
-//			dslContext.delete(CONTRACT_DATA)
-//				.where(CONTRACT_DATA.NAME.like("HORAS%"))
-//				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-//				.execute();
-//			 
-//			 for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
-//				 for(JourneyDuration journey : entry.getValue()) {
-//					 java.util.Date endDateAux = journey.getEndDate();
-//					  
-//					 if(null != journey.getExpression())
-//						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
-//									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
-//								.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
-//										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
-//								.execute();
-//				 }
-//			 }
-//		 }else{
-//			//ACTUALIZAR DURACION JORNADA
-//			dslContext.delete(CONTRACT_DATA)
-//				.where(CONTRACT_DATA.NAME.like("HORAS%"))
-//				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
-//				.execute();
-//		 }
+		if(!contractJourneyDuration.isEmpty()){
+		 
+			for(Entry<java.util.Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.entrySet()) {
+				 for(JourneyDuration journey : entry.getValue()) {
+					 java.util.Date endDateAux = journey.getEndDate();
+					  
+					 if(null != journey.getExpression() && "NL" != journey.getExpression())
+						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, journey.getName(), contractData.getContractId(), journey.getExpression(), 
+										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+								.execute();
+					 else {
+						 dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+									CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+								.values(domain, journey.getName(), contractData.getContractId(), null, 
+										new Date(journey.getStartDate().getTime()), (null == endDateAux) ? null : new Date(endDateAux.getTime()))
+								.execute();
+					 }
+				 }
+			}
+		}
 		
 
 		//ACTUALIZAR FECHA INICIO Y FIN: contract, contract_data, contract_info, contract_bonus, contract_deduction, contract_embargo,

@@ -4,45 +4,48 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map.Entry;
 
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ContractJourneyDialog extends CustomDialog {
+public abstract class ContractJourneyDialog extends AonCustomDialog {
 
-	interface Binder extends UiBinder<Widget, ContractJourneyDialog> {
-
-	}
+	interface Binder extends UiBinder<Widget, ContractJourneyDialog> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 	
 	@UiField
 	MyStyle style;
 	
-//	@UiField
-//	Label newJourney;
+	@UiField
+	HTMLPanel north;
 	
 	@UiField
-	Label saveJourney;
-	
-	@UiField
-	VerticalPanel newJourneyTable;
+	DeckPanel mainDeckPanel;
 	
 	@UiField
 	DateBoxEx startDatePeriod;
@@ -72,26 +75,155 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 	Button acceptJourney;
 	
 	@UiField
-	Grid journeyTable;
+	Grid contractJourneyDataTableHeader;
+	
+	@UiField
+	ScrollPanel contractJourneyScrollPanel;
+	
+	@UiField
+	DeckPanel deckPanel;
+	
+	@UiField
+	Grid contractJourneyDataTable;
+	
+	@UiField
+	HTMLPanel buttonsPanel;
 
 	interface MyStyle extends CssResource {
 		String bold();
 		String widthTB();
 		String hide();
+		String headerLabelStyle();
 		String backgroudGrey();
+		String minWindth100();
+	}
+
+	private ContractJourneyDuration contractJourneyDuration;
+	private Date contractStartDate;
+	private Date contractEndDate;
+	
+	private Button closeBtnDialog;
+	private Button acceptBtnDialog;
+	
+	private AonToolbar toolbar;
+	private AonToolbarButton listIT;
+	private AonToolbarButton backListIT;
+	
+	private DateTimeFormat formatFullDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
+	public ContractJourneyDialog(Date contractStartDate, Date contractEndDate, ContractJourneyDuration contractJourneyDuration) {
+		setCaption("DURACION DE LA JORNADA");
+		
+		setWidget(binder.createAndBindUi(this));
+		
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
+		this.contractJourneyDuration = contractJourneyDuration;
+		
+//		this.setWidth("445px");
+		
+		mainDeckPanel.showWidget(0);
+//		mainDeckPanel.setWidth("425px");
+		deckPanel.showWidget(0);
+//		deckPanel.setWidth("400px");
+		
+		getButtonsPanel();
+		
+		toolbar = getToolbarPanel();
+		north.add(toolbar);
+		north.setHeight("50px");
+		
+		showListJourney();
+		initializeView();
+		paintTable();
 	}
 	
-//	@UiHandler("newJourney")
-//	void onNewJourneyCleck(ClickEvent event) {
-//		newJourneyBox();
-//	}
+	public ContractJourneyDialog(Date contractStartDate, Date contractEndDate) {
+		setCaption("DURACION DE LA JORNADA");
+		
+		setWidget(binder.createAndBindUi(this));
+		
+		this.contractStartDate = contractStartDate;
+		this.contractEndDate = contractEndDate;
+		this.contractJourneyDuration = new ContractJourneyDuration();
+		
+		mainDeckPanel.showWidget(0);
+//		mainDeckPanel.setWidth("425px");
+		deckPanel.showWidget(0);
+//		deckPanel.setWidth("400px");
+		
+		getButtonsPanel();
+		
+		toolbar = getToolbarPanel();
+		north.add(toolbar);
+		north.setHeight("50px");
+		
+		showListJourney();
+		initializeView();
+		paintTable();
+	}
+	
+	private void initializeView() {
+		initAttachmentsTable();
+		paintHeaderContractBonusTable();
+		
+		setScrollPanelsHeight();
+		setColumnsWidth();
+	}
+	
+	private void initAttachmentsTable() {
+		contractJourneyDataTableHeader.clear();
+		contractJourneyDataTableHeader.resize(0, 0);
+		contractJourneyDataTableHeader.resizeColumns(4);
+		contractJourneyDataTable.clear();
+		contractJourneyDataTable.resize(0, 0);
+		contractJourneyDataTable.resizeColumns(4);
+	}
+	
+	private void paintHeaderContractBonusTable() {
+		int row = contractJourneyDataTableHeader.insertRow(contractJourneyDataTableHeader.getRowCount());
+		
+		Label startDate = new Label("F. INICIO");
+		Label endDate = new Label("F. FIN");
+		Label description = new Label("DESCRIPCI" + String.valueOf("\u00D3") + "N");
+		Label blank = new Label("");
+		
+		description.addStyleName(style.headerLabelStyle());
+		startDate.addStyleName(style.headerLabelStyle());
+		endDate.addStyleName(style.headerLabelStyle());
+		startDate.getElement().getStyle().setPaddingLeft(10, Unit.PX);
+		
+		contractJourneyDataTableHeader.setWidget(row, 0, startDate);
+		contractJourneyDataTableHeader.setWidget(row, 1, endDate);
+		contractJourneyDataTableHeader.setWidget(row, 2, description);
+		contractJourneyDataTableHeader.setWidget(row, 3, blank);
+	}
+	
+	private void setScrollPanelsHeight() {
+		contractJourneyScrollPanel.setHeight(100 + "px");
+	}
+	
+	private void setColumnsWidth() {
+		contractJourneyDataTableHeader.getCellFormatter().getElement(0, 0).getStyle().setWidth(100, Unit.PX);
+		contractJourneyDataTableHeader.getCellFormatter().getElement(0, 1).getStyle().setWidth(100, Unit.PX);
+		contractJourneyDataTableHeader.getCellFormatter().getElement(0, 2).getStyle().setWidth(250, Unit.PX);
+		contractJourneyDataTableHeader.getCellFormatter().getElement(0, 3).getStyle().setWidth(50, Unit.PX);
+		
+		contractJourneyDataTable.getColumnFormatter().addStyleName(0, style.minWindth100());
+		contractJourneyDataTable.getColumnFormatter().addStyleName(1, style.minWindth100());
+//		contractJourneyDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(100, Unit.PX);
+//		contractJourneyDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(100, Unit.PX);
+		contractJourneyDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(250, Unit.PX);
+		contractJourneyDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(50, Unit.PX);
+	}
+	
+	// ---------------------------------------------------- UI FIELD
 	
 	@UiHandler("startDatePeriod")
 	void onStartDateChanged(ValueChangeEvent<Date> event) {
 		if(null == startDatePeriod.getValue() || contractJourneyDuration.isOverlapDate(startDatePeriod.getValue())) {
-			WarningDialog warning = new WarningDialog("AVISO", "La fecha seleccionada solapa con algun tramo ya creado.");
-			warning.center();
-			warning.show();
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO: Fecha solapada", "La fecha seleccionada solapa con algun tramo ya creado.");
 			startDatePeriod.setValue(null);
 		}else {
 			contractJourneyDuration.setEndDatePreviusPeriod(startDatePeriod.getValue());
@@ -101,9 +233,8 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 	@UiHandler("acceptJourney")
 	void onAcceptJourneyClick(ClickEvent event) {
 		if(null == startDatePeriod.getValue()) {
-			WarningDialog warning = new WarningDialog("AVISO", "La fecha seleccionada no puede estar vacia.");
-			warning.center();
-			warning.show();
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO: Fecha vacia", "La fecha seleccionada no puede estar vacia.");
 			startDatePeriod.setValue(null);
 		}else {
 			Date startDate = startDatePeriod.getValue();
@@ -168,65 +299,21 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 			journies.add(sunday);
 			
 			contractJourneyDuration.setContractJourneyDuration(startDate, journies);
-			newJourneyTable.addStyleName(style.hide());
-			clearTable();
+			
+			showListJourney();
+			resetContractJourneyDataTableStructure();
 			paintTable();
 		}
 	}
-
-	private ContractJourneyDuration contractJourneyDuration;
-	private Date contractStartDate;
-	private Date contractEndDate;
 	
-	public ContractJourneyDialog(Date contractStartDate, Date contractEndDate, ContractJourneyDuration contractJourneyDuration) {
-		setCaption("DURACION DE LA JORNADA");
-		
-		setWidget(binder.createAndBindUi(this));
-		
-		this.contractStartDate = contractStartDate;
-		this.contractEndDate = contractEndDate;
-		this.contractJourneyDuration = contractJourneyDuration;
-		
-		newJourneyTable.addStyleName(style.hide());
-		journeyTable.getRowFormatter().addStyleName(0, style.backgroudGrey());
-		clearTable();
-		paintTable();
-		
-		this.saveJourney.addClickHandler(new ClickHandler() {	
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-				onSave();
-			}
-		});
-	}
+	// ---------------------------------------------------- AUX METHDOS
 	
-	public ContractJourneyDialog(Date contractStartDate, Date contractEndDate) {
-		setCaption("DURACION DE LA JORNADA");
+	private void resetContractJourneyDataTableStructure() {
+		contractJourneyDataTable.clear();
+		contractJourneyDataTable.resize(0, 0);
+		contractJourneyDataTable.resizeColumns(4);
 		
-		setWidget(binder.createAndBindUi(this));
-		
-		this.contractStartDate = contractStartDate;
-		this.contractEndDate = contractEndDate;
-		this.contractJourneyDuration = new ContractJourneyDuration();
-		
-		newJourneyTable.addStyleName(style.hide());
-		journeyTable.getRowFormatter().addStyleName(0, style.backgroudGrey());
-		clearTable();
-		paintTable();
-		
-		this.saveJourney.addClickHandler(new ClickHandler() {	
-			@Override
-			public void onClick(ClickEvent event) {
-				hide();
-				onSave();
-			}
-		});
-	}
-	
-	private void clearTable() {
-		for(int i = journeyTable.getRowCount()-1; i > 0; i--)
-			journeyTable.removeRow(i);
+		setColumnsWidth();
 	}
 	
 	public void newJourneyBox() {
@@ -244,19 +331,19 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 		newFriday.setValue(null);
 		newSaturday.setValue(null);
 		newSunday.setValue(null);
-		newJourneyTable.removeStyleName(style.hide());
+		showNewJourney();
 	}
 	
 	private void paintTable() {
 		if(contractJourneyDuration.getJourniesSize() == 0) {
-			journeyTable.addStyleName(style.hide());
 			newJourneyBox();
+			deckPanel.showWidget(0);
 		}else {
-			journeyTable.removeStyleName(style.hide());
-			
+			showListJourney();
+			deckPanel.showWidget(1);
 			for(Entry<Date, ArrayList<JourneyDuration>> entry : contractJourneyDuration.getContractJourneyDuration().descendingMap().entrySet()) {
-				int newRow = journeyTable.insertRow(journeyTable.getRowCount());
-				Label startDate = new Label(formatDate(entry.getKey()));
+				int newRow = contractJourneyDataTable.insertRow(contractJourneyDataTable.getRowCount());
+				Label startDate = new Label(formatFullDate.format(entry.getKey()));
 				Label endDate = new Label();
 				HorizontalPanel hPanel = new HorizontalPanel();;
 				Label monday = new Label("L");
@@ -296,7 +383,7 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 				sundayTB.addStyleName(style.widthTB());
 				
 				for(JourneyDuration journey : entry.getValue()) {
-					if(null != journey.getEndDate()) endDate.setText(formatDate(journey.getEndDate()));
+					if(null != journey.getEndDate()) endDate.setText(formatFullDate.format(journey.getEndDate()));
 					if("HORAS_LUNES" == journey.getName()) mondayTB.setValue(journey.getExpression());
 					if("HORAS_MARTES" == journey.getName()) tuesdayTB.setValue(journey.getExpression());
 					if("HORAS_MIERCOLES" == journey.getName()) wednesdayTB.setValue(journey.getExpression());
@@ -327,42 +414,21 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 				deleteButton.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
-						contractJourneyDuration.delete(parseStringToDate(startDate.getText()));
+						contractJourneyDuration.delete(formatFullDate.parse(startDate.getText()));
 						contractJourneyDuration.setEndDatePreviusPeriod(null);
-						clearTable();
+						resetContractJourneyDataTableStructure();
 						paintTable();
 					}
 				});
 				
 				hPanelButtons.add(deleteButton);
-				hPanelButtons.addStyleName(style.hide());
 				
-				journeyTable.setWidget(newRow, 0, startDate);
-				journeyTable.setWidget(newRow, 1, endDate);
-				journeyTable.setWidget(newRow, 2, hPanel);
-				journeyTable.setWidget(newRow, 3, hPanelButtons);
+				contractJourneyDataTable.setWidget(newRow, 0, startDate);
+				contractJourneyDataTable.setWidget(newRow, 1, endDate);
+				contractJourneyDataTable.setWidget(newRow, 2, hPanel);
+				contractJourneyDataTable.setWidget(newRow, 3, hPanelButtons);
 			}
-			
-			journeyTable.getWidget(1, 3).removeStyleName(style.hide());
-		
 		}
-	}
-	
-	private Date parseStringToDate(String dateText) {
-		String dayStr = dateText.split("/")[0];
-		String monthStr = dateText.split("/")[1];
-		String yearStr = dateText.split("/")[2];
-		
-		Integer day = Integer.parseInt(dayStr);
-		Integer month = Integer.parseInt(monthStr) -1 ;
-		Integer year = Integer.parseInt(yearStr) - 1900;
-		
-		return new Date(year, month, day);
-	}
-	
-
-	protected String formatDate(Date date) {
-		return date.getDate() + "/" + (date.getMonth()+1) + "/" + (date.getYear()+1900);
 	}
 	
 	public ContractJourneyDuration getContractJourneyDuration() {
@@ -370,5 +436,93 @@ public abstract class ContractJourneyDialog extends CustomDialog {
 	}
 
 	protected abstract void onSave();
+	
+	private void getButtonsPanel() {
+		closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtnDialog.setText( AON.MSG.accept());
+		acceptBtnDialog.setAccessKey('A');
+		acceptBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAcceptDialog(event);
+			}
+		});
+		
+		buttonsPanel.add(acceptBtnDialog);
+	}
+	
+	private void onCloseDialog(ClickEvent event) {
+		hide();
+	}
+	
+	private void onAcceptDialog(ClickEvent event) {
+		hide();
+		onSave();
+	}
+	
+	private void showNewJourney() {
+		mainDeckPanel.showWidget(0);
+		this.setWidth("425px");
+		listIT.setVisible(true);
+		backListIT.setVisible(false);
+	}
+	
+	private void showListJourney() {
+		mainDeckPanel.showWidget(1);
+		this.setWidth("625px");
+		backListIT.setVisible(true);
+		listIT.setVisible(false);
+	}
+	
+	private AonToolbar getToolbarPanel() {
+		AonToolbar toolbar = new AonToolbar("");
+		
+		listIT = new AonToolbarButton( "Listar Jornadas", AON.CSS.aonIconAdd() );
+		listIT.setAccessKey('L');
+		listIT.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onListIT(event);
+			}
+		});
+		toolbar.add(listIT);
+		
+		backListIT = new AonToolbarButton( "Volver", AON.CSS.aonIconBack() );
+		backListIT.setAccessKey('B');
+		backListIT.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onBackListIT(event);
+			}
+		});
+		toolbar.add(backListIT);
+
+		return toolbar;
+
+	}
+	
+	private void onListIT(ClickEvent event) {
+		showListJourney();
+	}
+	
+	private void onBackListIT(ClickEvent event) {
+		showNewJourney();
+	}
 
 }
