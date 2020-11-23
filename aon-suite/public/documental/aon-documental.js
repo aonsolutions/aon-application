@@ -4,12 +4,12 @@ export const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
 export const BIDOQ_TIPO_USUARIO = 6;
 
 // Local
-// const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
-// const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
+const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
+const BIDOQ_SESSION_ID = 'ZlVZZGk1dDVuRVNPTWlNSQ==';
 
 // DEV
-const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
-const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
+//const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
+//const BIDOQ_SESSION_ID = 'c2d3Y3lRUzExdFBxckxlTQ==';
 
 export const CARPETA_A_CONTABILIZAR = 5;
 export const CARPETA_CONTABILIZADOS = 14;
@@ -65,7 +65,7 @@ class AonDocumental extends HTMLElement {
         const tags = await this.getTags();
         aonDocumental.dataset['tags'] = JSON.stringify(tags);
 
-        this.addDocumentOptions(aonDocumental);
+        this.addDocumentOptions(aonDocumental, folders);
 
         this.addCategoryOptions(aonDocumental, folders);
 
@@ -74,7 +74,7 @@ class AonDocumental extends HTMLElement {
 
     loadIndex({folder = 'pendientes', tag = null} = {}) {
         // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-        folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
+        //folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
 
         const aonDocumental = document.getElementById('aonDocumental');
         const contentIframe = document.querySelector('iframe');
@@ -132,11 +132,20 @@ class AonDocumental extends HTMLElement {
         }
     }
 
-    addDocumentOptions(aonDocumental) {
+    addDocumentOptions(aonDocumental, folders) {
+        // Coger las cantidades
+        const documentArrayTotalUnread = folders.map((folder) => {
+            return parseInt(folder.total_no_leidos);
+        });
+        // Sumar las cantidades
+        const documentTotalUnread = documentArrayTotalUnread.reduce((a, b) => a + b, 0);
+
         let documentOptions = [
             {
-                name: 'Pendientes',
-                icon: 'inbox',
+                name    : 'Pendientes',
+                icon    : 'inbox',
+                total   : documentTotalUnread,
+                folder  : 'Pendientes',
                 fn: () => this.loadIndex({folder: 'pendientes'}),
                 default: true
             },
@@ -153,8 +162,10 @@ class AonDocumental extends HTMLElement {
     addCategoryOptions(aonDocumental, folders) {
         const categoryOptions = folders.map((folder) => {
             const option = {
-                name: folder.carpeta,
-                icon: 'folder',
+                name    : folder.carpeta,
+                icon    : 'folder',
+                total   : folder.total_no_leidos,
+                folder  : folder.carpetaID,
                 fn: () => this.loadIndex({folder: folder.carpetaID})
             };
 

@@ -169,7 +169,7 @@
                         //
                             if(type === 'received' && doc.read == 0){
                                 // El documento es subido por el asesor, y no esta marcado como leido
-                                UpdateReadDocument(id, type);
+                                UpdateReadDocument(id, type, doc.folder);
                             }
 
                         // Almacenamos en una variable global la información del documento que estamos viendo actualmente
@@ -371,9 +371,9 @@
             //
             // Marcar documento como leído
             //
-                async function UpdateReadDocument(id, type){
+                async function UpdateReadDocument(id, type, folder){
                     type = (type === 'sent') ? 2 : 1;
-                    
+                   
                     const data = await bidoq({
                         "method": "editar_doc_leido",
                         id,
@@ -385,6 +385,30 @@
                     if (typeof response !== 'undefined') {
                         if (response.code === 0) {
                             //alert('Documento marcado como leído con éxito');
+                            // Al marcarlo como leído, descontamos uno del total
+                            if(type == 1){
+                                // Solo si es cliente
+                                // Si es de la tabla en la que tenemos los documentos recibido del cliente
+                                //
+                                // Cogemos la cantidad total
+                                //
+                                    const parentBody    = window.parent.document.body
+                                    let cantidadTotal   = $('#aonMenuItemSpanTotalPendientes', parentBody).length ? $('#aonMenuItemSpanTotalPendientes', parentBody).html() : 0;
+                                    // Restamos 
+                                    if(cantidadTotal > 0){
+                                        cantidadTotal = (cantidadTotal - 1) == 0 ? '' : cantidadTotal - 1;
+                                        $('#aonMenuItemSpanTotalPendientes', parentBody).html(cantidadTotal);
+                                    }
+                                //
+                                // Cogemos la cantidad total de la carpeta
+                                //
+                                    let cantidad        = $('#aonMenuItemSpanTotal'+folder, parentBody).length ? $('#aonMenuItemSpanTotal'+folder, parentBody).html() : 0;
+                                    // Restamos 
+                                    if(cantidad > 0){
+                                        cantidad = (cantidad - 1) == 0 ? '' : cantidad - 1;
+                                        $('#aonMenuItemSpanTotal'+folder, parentBody).html(cantidad);
+                                    }
+                            }
                         }
                     }
                 }

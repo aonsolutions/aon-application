@@ -123,6 +123,18 @@ class AonApplication extends HTMLElement {
       span.innerHTML = option.name;
       li.appendChild(span);
 
+      // Agregar un total a los datos
+      if(option.total && option.total > 0 ) {
+        let span        = document.createElement('span');
+        if(option.folder){
+          // Metemos el ID con la carpeta que es
+          span.id       = 'aonMenuItemSpanTotal'+option.folder;
+        }
+        span.className  = 'aonMenuItemSpanTotal';
+        span.innerHTML  = option.total;
+        li.appendChild(span);
+      }
+
       li.addEventListener('mouseover', () => {
         if(!this.selected || this.selected !== id)
           li.style.backgroundColor = '#f1f1f1';
