@@ -276,12 +276,13 @@ export const getList = async (page_this = 1) => {
             }
         }
 
+    // Borramos las opciones de la barra de herramientas
+    window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
+
     //
     // Si no mostramos la carpeta Pendientes
     //
     if (folder !== 'pendientes' && folder !== 'recientes') {
-        window.aonDocumental.removeToolbarOptions(AVAILABLE_OPTIONS.map((option) => option.name));
-
         // Añadimos (si es necesario) la opción de subir documentos
             // Si existe el botón de subir documentos y estamos en la carpeta "Contabilizados", lo eliminamos
             // Si estamos filtrando por TAG eliminamos el boton de subir tambien
