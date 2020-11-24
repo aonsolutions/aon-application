@@ -178,6 +178,12 @@
 		.w232{
 			width: 232px;
 		}
+		
+		.buttonsPanel{
+			display: flex;
+			justify-content: flex-end;
+			margin: 5px 10px;
+		}
 	</ui:Style>
 
 
@@ -348,17 +354,9 @@
 									</g:HTMLPanel>
 								</td>
 							</tr>
-							<tr>
-							    
-							</tr>
-							<tr>
-								<td colspan="2" align="right">
-									<g:Button ui:field="cancelButton" debugId="activityDialogCancelButton">Cancelar</g:Button>
-									<g:Button ui:field="acceptButton" debugId="activityDialogAcceptButton" >Aceptar</g:Button>
-								</td>
-							</tr>
 						</table>
 					</g:HTMLPanel>
+					<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
 				</g:VerticalPanel>
 				<g:VerticalPanel>
 					<g:HTMLPanel ui:field="mainTablePanel" styleName="aon-width-all {style.mt10}">

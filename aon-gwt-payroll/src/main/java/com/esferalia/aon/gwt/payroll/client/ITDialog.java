@@ -8,8 +8,10 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
-import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -52,7 +54,7 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
-public abstract class ITDialog extends CustomDialog {
+public abstract class ITDialog extends AonCustomDialog {
 
 	// -------------------------------------------------- UiBinder --------------------------------------------------
 	
@@ -130,12 +132,6 @@ public abstract class ITDialog extends CustomDialog {
 	Label newConfirmationPart;
 	
 	@UiField
-	Button cancelButton;
-	
-	@UiField
-	Button acceptButton;
-	
-	@UiField
 	HTMLPanel mainTablePanel;
 	
 	@UiField
@@ -149,6 +145,9 @@ public abstract class ITDialog extends CustomDialog {
 	
 	@UiField(provided = true)
 	DataGrid<IT> itDataGrid;
+	
+	@UiField
+	HTMLPanel buttonsPanel;
 	
 	// -------------------------------------------- Variables de la clase---------------------------------------------
 	
@@ -164,6 +163,9 @@ public abstract class ITDialog extends CustomDialog {
 	private AonToolbarButton backListIT;
 	private AonToolbarButton newIT;
 	
+	private Button closeBtnDialog;
+	private Button acceptBtnDialog;
+	
 	// ------------------------------------------------- CONSTRUCTOR --------------------------------------------------
 
 	public ITDialog(String caption) {	
@@ -172,6 +174,8 @@ public abstract class ITDialog extends CustomDialog {
 		toolbar = getToolbarPanel();
 		north.add(toolbar);
 		north.setHeight("50px");
+		
+		getButtonsPanel();
 	}
 	
 	public ITDialog(String caption, Boolean advanced) {	
@@ -180,6 +184,8 @@ public abstract class ITDialog extends CustomDialog {
 		toolbar = getToolbarPanel();
 		north.add(toolbar);
 		north.setHeight("50px");
+		
+		getButtonsPanel();
 		
 		if(advanced)
 			showListOption();
@@ -414,27 +420,6 @@ public abstract class ITDialog extends CustomDialog {
 	}
 	
 	// -------------------------------------------------- UiHandlers --------------------------------------------------
-	
-	@UiHandler("cancelButton")
-	public void onCancelClick(ClickEvent event) {
-		hide();
-	}
-	
-	@UiHandler("acceptButton")
-	public void onSaveClick(ClickEvent event) {
-		if(checkIfSaveIsPossible()) {
-			if(null == this.it.getId() || -1 == this.it.getId())
-				itDialogObject.addIT(this.it);
-			onAccept();
-			hide();
-		} else {
-			WarningDialog dialog = new WarningDialog("ERROR", "La fecha y la causa de baja deben estar rellenadas.");
-			dialog.setModal(true);
-			dialog.setAnimationEnabled(true);
-			dialog.show();
-			dialog.center();
-		}
-	}
 	
 	@UiHandler("itStartDate")
 	public void onItStartDateChange(ValueChangeEvent<Date> event) {
@@ -1402,24 +1387,26 @@ public abstract class ITDialog extends CustomDialog {
 	private void onDeleteIT(ClickEvent event) {
 		if(null != this.it.getId()) {
 			if(this.it.getIsParent()) {
-				WarningDialog dialog = new WarningDialog("ERROR", "No se puede eliminar este parte por que tiene reca" + String.valueOf("\u00ED") + "da.");
-				dialog.setModal(true);
-				dialog.setAnimationEnabled(true);
-				dialog.show();
-				dialog.center();
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: Reca"+ String.valueOf("\u00ED") + "da", "No se puede eliminar este parte por que tiene reca" + String.valueOf("\u00ED") + "da.");
 			} else {
-				AcceptCancelDialog dialog = new AcceptCancelDialog("AVISO", String.valueOf("\u00BF") + "Realmente desea eliminar el parte IT?") {
-					@Override
-					protected void onAccept() {
-						onDelete(it);	
-						hide();
-						ITDialog.this.hide();
-					}
-				};
-				dialog.setModal(true);
-				dialog.setAnimationEnabled(true);
-				dialog.show();
-				dialog.center();
+				AonConfirmDialog confirmDialog = new AonConfirmDialog();
+				confirmDialog.confirm(
+						"BORRADO", 
+						String.valueOf("\u00BF") + "Realmente desea eliminar el parte IT?",
+						new AonConfirmDialogCallback() {
+
+							@Override
+							public void onAccept() {
+								onDelete(it);	
+								hide();
+								ITDialog.this.hide();
+							}
+
+							@Override
+							public void onCancel() {
+								// TODO Auto-generated method stub
+							}});
 			}
 		}
 	}
@@ -1464,6 +1451,52 @@ public abstract class ITDialog extends CustomDialog {
 		newIT.setVisible(false);
 		deleteIT.setVisible(false);
 		listIT.setVisible(true);
+	}
+	
+	private void getButtonsPanel() {
+		closeBtnDialog = new Button();
+		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
+		closeBtnDialog.setText( AON.MSG.cancelAction());
+		closeBtnDialog.setAccessKey('C');
+		closeBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onCloseDialog(event);
+			}
+		});
+		
+		closeBtnDialog.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
+		buttonsPanel.add(closeBtnDialog);
+		
+		acceptBtnDialog = new Button();
+		acceptBtnDialog.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtnDialog.setText( AON.MSG.accept());
+		acceptBtnDialog.setAccessKey('A');
+		acceptBtnDialog.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onAcceptDialog(event);
+			}
+		});
+		
+		buttonsPanel.add(acceptBtnDialog);
+	}
+	
+	private void onCloseDialog(ClickEvent event) {
+		hide();
+	}
+	
+	private void onAcceptDialog(ClickEvent event) {
+		if(checkIfSaveIsPossible()) {
+			if(null == this.it.getId() || -1 == this.it.getId())
+				itDialogObject.addIT(this.it);
+			onAccept();
+			hide();
+		} else {
+			AonConfirmDialog dialog = new AonConfirmDialog();
+			dialog.info("AVISO: Fechas", "La fecha y la causa de baja deben estar rellenadas.");
+		}
 	}
 	
 }

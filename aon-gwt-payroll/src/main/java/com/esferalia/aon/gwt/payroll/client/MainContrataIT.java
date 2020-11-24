@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MultiFileUpload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
@@ -210,11 +211,8 @@ public class MainContrataIT extends MainEntryPoint {
 					protected void onDelete(IT it) {
 						mainContrataITObject.deleteIT(it,
 								s -> {
-									WarningDialog dialog = new WarningDialog("AVISO", "El parte IT ha sido borrado correctamente.");
-									dialog.setModal(true);
-									dialog.setAnimationEnabled(true);
-									dialog.show();
-									dialog.center();
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
 									mainContrataITObject.getEmployeesInfo(false,
 											t -> {
@@ -231,11 +229,8 @@ public class MainContrataIT extends MainEntryPoint {
 					protected void onAccept() {
 						mainContrataITObject.createUpdateITEmployee(employeeITInfo,
 								s -> {
-									WarningDialog dialog = new WarningDialog("AVISO", s);
-									dialog.setModal(true);
-									dialog.setAnimationEnabled(true);
-									dialog.show();
-									dialog.center();
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
 									mainContrataITObject.getEmployeesInfo(false,
 											t -> {
@@ -416,11 +411,8 @@ public class MainContrataIT extends MainEntryPoint {
 					protected void onDelete(IT it) {
 						mainContrataITObject.deleteIT(it,
 								s -> {
-									WarningDialog dialog = new WarningDialog("AVISO", "El parte IT ha sido borrado correctamente.");
-									dialog.setModal(true);
-									dialog.setAnimationEnabled(true);
-									dialog.show();
-									dialog.center();
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Borrado", "El parte IT ha sido borrado correctamente.");
 									
 									mainContrataITObject.getEmployeesInfo(false,
 											t -> {
@@ -439,11 +431,8 @@ public class MainContrataIT extends MainEntryPoint {
 					protected void onAccept() {
 						mainContrataITObject.createUpdateITEmployee(itEmployee,
 								s -> {
-									WarningDialog dialog = new WarningDialog("AVISO", s);
-									dialog.setModal(true);
-									dialog.setAnimationEnabled(true);
-									dialog.show();
-									dialog.center();
+									AonConfirmDialog dialog = new AonConfirmDialog();
+									dialog.info("AVISO: Creaci" + String.valueOf("\u00F3") + "n", s);
 									
 									mainContrataITObject.getEmployeesInfo(false,
 											t -> {
