@@ -3,14 +3,12 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Raddinfo.RADDINFO;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
-import org.jooq.conf.ParamType;
-
 import com.esferalia.aon.occam.api.AONContext;
 
 public class OCRDAO {
 	
 	private static final int DOMAIN = 0;
-	private static final String DOMAIN_NAME = "console-pro.ecastellano.euk";
+	private static final String DOMAIN_NAME = "console.aonsolutions.org";
 	
 	private static final String OCR_REF_PATTERN = "OCR_REF_PATTERN";
  
@@ -28,7 +26,11 @@ public class OCRDAO {
 				.stream()
 				.map( rec -> rec.getValue(RADDINFO.VALUE))
 				.toArray(String[]::new);
+		} catch (Throwable t) {
+			// TODO Asignar el dominio correctamente
+			return null;
 		}
+		
 	}
 	
 }
