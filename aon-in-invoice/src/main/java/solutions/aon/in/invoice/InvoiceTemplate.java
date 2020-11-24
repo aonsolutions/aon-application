@@ -1,9 +1,9 @@
 package solutions.aon.in.invoice;
 
-import java.io.IOException;
+import solutions.aon.in.invoice.pdf.InvoicePDFException;
 
 public interface InvoiceTemplate {
 	
-	public  InvoiceTemplate parse( String text, InvoiceBuilder<?> handler) throws IOException, UnknownInvoiceException ;
+	public  InvoiceTemplate parse( String text, InvoiceBuilder<?> handler) throws InvoicePDFException;
 
 }

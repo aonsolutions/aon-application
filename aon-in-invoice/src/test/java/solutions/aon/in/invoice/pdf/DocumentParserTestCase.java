@@ -95,19 +95,13 @@ public class DocumentParserTestCase {
 				+ ((FAKER.random().nextInt(0, 100) < 80)?FAKER.lorem().characters(FAKER.random().nextInt(0, 50),true):"") 
 				;
 		}
-		System.out.println("[" + randomText + "]");
 		return randomText;
 	}
 
 	
 	@Test
 	public void testLegalPersonNIF() throws IOException, UnknownInvoiceException {
-		System.out.println();
-		System.out.println("------------------------------");
-		System.out.println("- testLegalPersonNIF ---------");
-		System.out.println("------------------------------");
 		for (String text : VALID_LEGAL_PERSON_NIFS) {
-			System.out.println( "\t["+ text +"]");
 			Collection<Document> nifs = DocumentParser.getNifs( text  );
 			assertNotNull(text,nifs);
 			assertEquals(text,1,nifs.size());
@@ -118,13 +112,8 @@ public class DocumentParserTestCase {
 	
 	@Test
 	public void testDNI() throws IOException, UnknownInvoiceException {
-		System.out.println();
-		System.out.println("-------------------");
-		System.out.println("- testDNI ---------");
-		System.out.println("-------------------");
 		for (String text : VALID_DNIS) {
 			text = getLorem( text );
-			System.out.println( "\t["+ text +"]");	
 			Collection<Document> nifs = DocumentParser.getNifs( text );
 			assertNotNull(text,nifs);
 			assertEquals(text,1,nifs.size());
@@ -135,12 +124,7 @@ public class DocumentParserTestCase {
 	
 	@Test
 	public void testNIE() throws IOException, UnknownInvoiceException {
-		System.out.println();
-		System.out.println("-------------------");
-		System.out.println("- testNIE ---------");
-		System.out.println("-------------------");
 		for (String text : VALID_NIES) {
-			System.out.println( "\t["+ text +"]");
 			Collection<Document> nifs = DocumentParser.getNifs( text  );
 			assertNotNull(text,nifs);
 			assertEquals(text,1,nifs.size());
@@ -152,10 +136,6 @@ public class DocumentParserTestCase {
 	
 	@Test
 	public void testXXX() throws IOException, UnknownInvoiceException {
-		System.out.println();
-		System.out.println("-------------------");
-		System.out.println("- testXXX ---------");
-		System.out.println("-------------------");
 		String text = "* Orange Espagne, S.A.U. Con sede social en Pque. Emp. La Finca, Pº del Club Deportivo, 1, Edif.8, 28223 Pozuelo de Alarcón, Madrid. Inscrita en el Registro Mercantil de Madrid, tomo 13.183, folio 129, hoja M-213468, CIF A-82009812 *";
 		Collection<Document> nifs = DocumentParser.getNifs( text  );
 		assertNotNull(text,nifs);

@@ -1,85 +1,58 @@
 package solutions.aon.in.invoice.templates;
 
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TotalParser {
 	
-	public static List<Double> getAmounts(String text) {
-		Locale ES = new Locale("es");
-		String ds = Character.toString(DecimalFormatSymbols.getInstance( ES ).getDecimalSeparator());
-		String gs = Character.toString(DecimalFormatSymbols.getInstance( ES ).getGroupingSeparator());
-		System.out.println( "DecimalSeparator ..: " + ds);
-		System.out.println( "GroupingSeparator ..: " + gs);
-		String digitPattern = "(?<integ>-?\\+?(\\d+\\"+gs+")*\\d+)"+"\\"+ds+"(?<fract>\\d+)";
-		
+	private static final Locale ES = new Locale("es");
+	private static final String DS = Character.toString(DecimalFormatSymbols.getInstance( ES ).getDecimalSeparator());
+	private static final String GS = Character.toString(DecimalFormatSymbols.getInstance( ES ).getGroupingSeparator());
+	private static final String INTEGER_KEY = "integ";
+	private static final String FRACTION_KEY = "fract";
+	private static final String DP = "(?<"+INTEGER_KEY+">-?\\+?(\\d+\\"+GS+")*\\d+)"+"\\"+DS+"(?<"+FRACTION_KEY+">\\d+)";
+	private static final Pattern DP_PATTERN = Pattern.compile( DP , Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
+	
+	public static Double getTotal(String text) {
 		String[] patterns = {
-			"total.+pagar.*"+digitPattern+"\\b",
-			"total.+factura.*"+digitPattern+"\\b",
-			"total.*"+digitPattern+"\\b"
+			"total\\s+pagar.*"+DP+"\\b",
+			"total\\s+a\\s+pagar.*"+DP+"\\b",
+			"total\\s+importe\\s+factura.*"+DP+"\\b",
+			"total\\s+factura.*"+DP+"\\b"
+//			"total\\s+"+DP+"\\b"
 		};
 		
-		List<Double> amounts = new ArrayList<Double>();
-		boolean added = false;
+		Double retAmount = null;
 		for (String pat : patterns) {
 			Pattern pattern = Pattern.compile( pat , Pattern.MULTILINE|Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(text);
-			int index = 0;
-			while (index <= text.length() && matcher.find(index) ) {
-				String integ = matcher.group("integ");
-				integ = integ.replaceAll("O", "0")
-							 .replaceAll( "\\" + gs , "");
-				String fract = matcher.group("fract");
-				String str = integ + "." + fract;
-				Double amount = null;
-				try {
-					amount = Double.parseDouble(str);
-				} catch (NullPointerException | NumberFormatException  e ) {
-				}
-				
-				if (amount != null) {
-					int i = matcher.start();
-					String prefix = substr(text,i-1, 1).toUpperCase();
-					boolean fake = prefix.matches("[-\\"+gs+"\\+\\"+ds+"0-9]") || prefix.matches("[\\w]");
-					if ( !fake ) {
-						if ( (text.length() - matcher.end()) > 0 )  {
-							String suffix = substr(text,matcher.end(), 1).toUpperCase();
-							fake = suffix.matches("[-\\"+gs+"\\+\\"+ds+"0-9]") || suffix.matches("[\\w]");
-							fake = fake || suffix.matches("[\\w]");
-						}
+			if (matcher.find()) {
+				Matcher mat = DP_PATTERN.matcher(matcher.group());
+				if (mat.find()) {
+					String tot = mat.group();
+					tot = tot.replaceAll("O", "0")
+							 .replaceAll( "\\" + GS , "")
+					 		 .replaceAll( "\\" + DS , ".");
+					try {
+						retAmount = Double.parseDouble(tot);
+						break;
+					} catch (NullPointerException | NumberFormatException  e ) {
 					}
-					if ( !fake ) {
-						added = true;
-						amounts.add(amount);
-					} 
-					index = matcher.end() + 1 ;
-				} else {
-					index = matcher.start() + 1 ;
 				}
 			}
-			if (added) break;
 		}
-		return amounts;
+		return retAmount;
 	}
-		
-	private static String substr(String str, int start, int length) {
-		int beginIndex = Math.max(start, 0);
-		int endIndex = Math.min(str.length()+1, start+length);
-		return str.substring(beginIndex, endIndex);
-	}
-
+	
 	public static void main(String[] args) {
-		String text = "Total Factura 						105,50";
-		Collection<Double> totals = TotalParser.getAmounts( text );
-		System.out.println( "Totals..:" );
-		for (Double total : totals) {
-			System.out.println( total );
-		}
+		String text = "Get JetBrains Toolbox with its 15+ code editors for "
+				+ "all languages and technologies included in one app. Total Factura 2.105,50 "
+				+ "all languages and technologies included in one "
+				;
+		Double total = TotalParser.getTotal( text );
+		System.out.println( "Total..: "  + total );
 		System.out.println( "END" );
 	}
 }

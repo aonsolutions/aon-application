@@ -71,7 +71,6 @@ public class DocumentTypeParserTestCase {
 	
 	@Test
 	public void testValidDNIS() throws IOException, UnknownInvoiceException {
-		System.out.println("- test VALID DNIS ---------");
 		for (String dni : VALID_DNIS) {
 			assertTrue(dni + " is not a valid DNI", DocumentType.DNI.accept(dni));
 		}
@@ -79,7 +78,6 @@ public class DocumentTypeParserTestCase {
 	
 	@Test
 	public void testWrongDNIS() throws IOException, UnknownInvoiceException {
-		System.out.println("- test WRONG DNIS ---------");
 		for (String dni : WRONG_DNIS) {
 			assertFalse(dni + " is a valid DNI", DocumentType.DNI.accept(dni));
 		}
@@ -87,7 +85,6 @@ public class DocumentTypeParserTestCase {
 
 	@Test
 	public void testValidNIES() throws IOException, UnknownInvoiceException {
-		System.out.println("- test VALID NIES ---------");
 		for (String nie : VALID_NIES) {
 			assertTrue(nie + " is not a valid NIE", DocumentType.NIE.accept(nie));
 		}
@@ -95,7 +92,6 @@ public class DocumentTypeParserTestCase {
 
 	@Test
 	public void testWrongNIES() throws IOException, UnknownInvoiceException {
-		System.out.println("- test WRONG NIES ---------");
 		for (String dni : WRONG_NIES) {
 			assertFalse(dni + " is a valid NIE", DocumentType.NIE.accept(dni));
 		}
@@ -103,7 +99,6 @@ public class DocumentTypeParserTestCase {
 
 	@Test
 	public void testValidLegalPersonNIFS() throws IOException, UnknownInvoiceException {
-		System.out.println("- test VALID LEGAL PERSON NIFS ---------");
 		for (String nie : VALID_LEGAL_PERSON_NIFS) {
 			assertTrue(nie + " is not a valid LEGAL PERSON NIF", DocumentType.LEGAL_PERSON_NIF.accept(nie));
 		}

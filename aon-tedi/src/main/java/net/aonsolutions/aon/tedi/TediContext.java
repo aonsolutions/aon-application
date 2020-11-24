@@ -6,11 +6,9 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 public class TediContext {
 	
 	private AONContext aonContext;
-
 	private String domainName;
 	private Integer domain;
 	private String user;
-	
 	private AonConfiguration aonConfiguration;
 
 	public AONContext getAONContext() {

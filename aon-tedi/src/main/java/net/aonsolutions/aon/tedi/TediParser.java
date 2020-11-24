@@ -58,6 +58,7 @@ import es.translogia.tedi.ewok.TediNif;
 import es.translogia.tedi.ewok.TediPayMethod;
 import es.translogia.tedi.ewok.TediRegistry;
 import es.translogia.tedi.ewok.TediTaxType;
+import es.translogia.tedi.json.TediInvoiceJSON;
 import net.aonsolutions.aon.tedi.visitors.InvoiceTypeVisitor;
 
 public class TediParser {
@@ -434,6 +435,11 @@ public class TediParser {
 	}
 	
 	public static TediResult toFullInvoice(AONContext ctx, AonConfiguration aonCtx, TediInvoice tedi) {
+		
+		System.out.println( TediInvoiceJSON.toJSON( tedi ).toString(2) );
+		
+		
+		
 		AccountingInvoice ai = new AccountingInvoice();
 		ai.setInvoice(new Invoice());
 		
@@ -868,9 +874,10 @@ public class TediParser {
 		} else {
 			expAccount = AccountDAO.get(ctx, "629000000");
 			if (expAccount == null) {
-				expAccount = AccountDAO.getAccounts(ctx, filter -> filter.getCodeProperty().like("629%") )
-						.findFirst()
-						.orElse(null);
+				expAccount = AccountDAO.getAccounts(ctx, filter -> filter.getCodeProperty().like("629%")
+					.and( filter.getEntryEnabledProperty().eq((byte) 1) ) )
+					.findFirst()
+					.orElse(null);
 			}
 		}
 		return expAccount;

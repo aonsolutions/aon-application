@@ -97,19 +97,24 @@ public class ConfigurationDAO {
 				.setDefaultCreditor(getDefaultCreditor(ctx))
 				.setOCRActive(SecurityDAO.isOCRActive(ctx, ctx.getDomainId()))
 		;
-		SeriesDAO
-			.getSeries(ctx,
-					p -> 
-					p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
-					.and(p.getActiveProperty().eq((byte) 1)  )
-					.and(p.getInvoiceProperty().eq((byte) 1)  
-					.or(p.getRectificationProperty().eq((byte) 1) )))
+		if (conf != null) {
+			SeriesDAO.getSeries(ctx, p -> p.getDomainProperty().in( SecurityDAO.getInheritanceDomainIds(ctx) )
+							.and(p.getActiveProperty().eq((byte) 1)  )
+							.and(p.getInvoiceProperty().eq((byte) 1)  
+								.or(p.getRectificationProperty().eq((byte) 1) )))
 			.forEach(series -> {
 				conf.addInvoiceSalesSeries(series.getCode());
 				if (series.isRectification()) {
 					conf.addInvoiceRectificationSalesSeries(series.getCode());
 				} 
-				});
+			});
+			if (conf.getCompany() != null && conf.getCompany().getId() != null) {
+				conf.getCompany().setAddress( RegistryDAO.getRAddressStream(ctx, 
+					p -> p.getRegistryProperty().eq(conf.getCompany().getId()))
+					.findFirst().orElse(null));
+			}
+		}
+			
 		return conf;
 	}
 	

@@ -22,22 +22,22 @@ public class AmountParserTestCase {
 			  put("10,25", 10.25);
     	      put("100,25", 100.25);
     	      put("10,253245235", 10.253245235);
-    	      put("100;253245235", 100.253245235);
+    	      put("100;253245235", null);
     	      put("1000,253245235", 1000.253245235);
     	      put("10000,253245235", 10000.253245235);
-    	      put("100,25â‚¬", 100.25);
-    	      put("100,25 â‚¬", 100.25);
+    	      put("100,25â\u20ac¬", null);
+    	      put("100,25 â\u20ac¬", 100.25);
     	      put("100,25 $", 100.25);
     	      put("100,25$", 100.25);
     	      
     	      put("-100,25", -100.25);
     	      put("+100,25",  100.25);
     	      
-    	      put("1111.100,25â‚¬", 1111100.25);
-    	      put("1.111.100,25â‚¬", 1111100.25);
+    	      put("1111.100,25 \u20ac¬", 1111100.25);
+    	      put("1.111.100,25 \u20ac¬", 1111100.25);
     	      // WRONG
     	      put(".25", null);
-    	      put(".111.111.111.111.111.100,25â‚¬", null);
+    	      put(".111.111.111.111.111.100,25â\u20ac¬", null);
     	      put("X100,25 $", null);
     	      put("100", null);
     	      
@@ -48,27 +48,16 @@ public class AmountParserTestCase {
 
     @Test
 	public void testAmount() throws IOException, UnknownInvoiceException {
-		System.out.println();
-		System.out.println("--------------------");
-		System.out.println("---- testAmount ----");
-		System.out.println("--------------------");
-		System.out.println( "\tAmounts: " );
 		for ( String text : AMOUNTS.keySet()) {
-			System.out.print( "\t\t["+text +"]\t");
 			Collection<Double> amounts = AmountParser.getAmounts( text  );
 			assertNotNull(text,amounts);
 			Double expected = AMOUNTS.get(text);
 			if ( expected == null) {
-				System.out.println( "\t\tNULL as expected");
 				assertEquals(text,0,amounts.size());
 			} else {
-				for (Double amount : amounts ) {
-					System.out.println( "\t\t{Parsed # Expected} ..: {"+amount + "  #  " + AMOUNTS.get(text)+"}");
-				}
 				assertEquals(text,1,amounts.size());
 				assertEquals(text,AMOUNTS.get(text),amounts.stream().findFirst().get().doubleValue(),0);
 			}
-			System.out.println( "\t ------------------------------");
 		}
 		
 	}

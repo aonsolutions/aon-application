@@ -18,67 +18,65 @@ public class InvoicePDFParser {
 	private static final InvoiceTemplate PDF_TEMPLATES [] = {AutoMLTemplate.AUTO_ML_TEMPLATE,};
 	
 	
-	public static void parse( File file , InvoiceBuilder<?> invoiceBuilder) throws IOException, UnknownInvoiceException {
-		try (PDDocument doc = PDDocument.load(file))
-		{
-			parser(doc, invoiceBuilder);
+	public static void parse( File file , InvoiceBuilder<?> handler) throws InvoicePDFException {
+		try (PDDocument doc = PDDocument.load(file)) {
+			parser(doc, handler);
+		} catch (IOException e) {
+			throw new InvoicePDFException(e);
+		} catch (UnknownInvoiceException e) {
+			throw new InvoicePDFException(e);
 		}
 	}
 
-	public static void parse( InputStream is , InvoiceBuilder<?> invoiceBuilder) throws IOException , UnknownInvoiceException {
-		try (PDDocument doc = PDDocument.load(is))
-		{
-			parser(doc, invoiceBuilder);
-		}
+	public static void parse( InputStream is , InvoiceBuilder<?> handler) throws InvoicePDFException {
+		try (PDDocument doc = PDDocument.load(is)) {
+			parser(doc, handler);
+		} catch (IOException e) {
+			throw new InvoicePDFException(e);
+		} catch (UnknownInvoiceException e) {
+			throw new InvoicePDFException(e);
+		} 
 	}
 	
-	private static void parser(PDDocument doc, InvoiceBuilder<?> invoiceBuilder) throws IOException, UnknownInvoiceException {
+	private static void parser(PDDocument doc, InvoiceBuilder<?> handler) throws InvoicePDFException, IOException, UnknownInvoiceException {
         AccessPermission ap = doc.getCurrentAccessPermission();
-		if (!ap.canExtractContent())
-		{
-			throw new IOException("You do not have permission to extract text");
+		if (!ap.canExtractContent()) {
+			throw new InvoicePDFException("You do not have permission to extract text");
 		}
-		
 		PDFTextStripper stripper= new PDFTextStripper();
-		
 		stripper.setSortByPosition(true);
-		
 		InvoiceTemplate template = null;
-		
 		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
-            // Set the page interval to extract. 
-			// If we don't, then all pages would be extracted.
+            // Set the page interval to extract. If we don't, then all pages would be extracted.
 			stripper.setStartPage(p);
 			stripper.setEndPage(p);
 			
 			String text = stripper.getText(doc);
-//System.out.println(text);
 			if (text == null || (text.length()) == 0) {
 				continue;
 			}
-			template = parse(template, text, invoiceBuilder);
-			
+//System.out.println(text);
+			template = parse(template, text, handler);
 		}
+		handler.finalizeParse();
 	}
 	
-	private static InvoiceTemplate parse ( InvoiceTemplate invoiceTemplate, String text, InvoiceBuilder<?> invoiceBuilder) throws UnknownInvoiceException, IOException {
+	private static InvoiceTemplate parse ( InvoiceTemplate invoiceTemplate, String text, InvoiceBuilder<?> handler) throws InvoicePDFException {
 		if ( invoiceTemplate == null ) {
 			for (InvoiceTemplate pdfTemplate : PDF_TEMPLATES ) {
 				try {
-					return pdfTemplate.parse(text, invoiceBuilder);
-				} catch ( InvoicePDFException e ) {
-					return pdfTemplate;
-				} catch ( Exception e ) {
-					e.printStackTrace();
+					return pdfTemplate.parse(text, handler);
+				} catch ( Throwable e ) {
+					throw new InvoicePDFException(e);
 				}
 			}
-			throw new UnknownInvoiceException("Formato de factura desconocido");
+			throw new InvoicePDFException("Formato de factura desconocido");
 		
 		} else {
 			try {
-				return invoiceTemplate.parse(text, invoiceBuilder);
+				return invoiceTemplate.parse(text, handler);
 			} catch ( InvoicePDFException e ) {
-				return invoiceTemplate;
+				throw new InvoicePDFException(e);
 			}
 		}
 	}

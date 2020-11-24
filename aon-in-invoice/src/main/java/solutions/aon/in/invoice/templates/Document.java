@@ -2,6 +2,7 @@ package solutions.aon.in.invoice.templates;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,5 +132,18 @@ public class Document {
 		}
 		return null;
 	}
-
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(data,type); 
+	}
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Document other = (Document) obj;
+        return Objects.equals(data, other.getData()) 
+    		&& Objects.equals(type, other.getType()); 
+    }
 }

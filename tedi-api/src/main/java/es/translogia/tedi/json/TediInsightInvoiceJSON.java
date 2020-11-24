@@ -55,20 +55,21 @@ public enum TediInsightInvoiceJSON {
 		},
 		(insight, json) -> json.put(IConstants.AMOUNTS, insight.getAmounts())
 	),
-	REFERENCES(
-		(insight, json) -> {
-			JSONArray referencesArray = json.optJSONArray(IConstants.REFERENCES);
-			if (referencesArray != null) {
-				String references [] = new String [referencesArray.length()];
-				for (int i = 0; i < referencesArray.length(); i++ ) {
-					references[i] = referencesArray.getString(i);
-				}
-				insight.setReferences(references);
-			}
-			return insight;			
-		},
-		(insight, json) -> json.put(IConstants.REFERENCES, insight.getReferences())
-	);
+//	REFERENCES(
+//		(insight, json) -> {
+//			JSONArray referencesArray = json.optJSONArray(IConstants.REFERENCES);
+//			if (referencesArray != null) {
+//				String references [] = new String [referencesArray.length()];
+//				for (int i = 0; i < referencesArray.length(); i++ ) {
+//					references[i] = referencesArray.getString(i);
+//				}
+//				insight.setReferences(references);
+//			}
+//			return insight;			
+//		},
+//		(insight, json) -> json.put(IConstants.REFERENCES, insight.getReferences())
+//	)
+	;
 
 	private ITediInsightInvoiceFromJSON fromJSON;
 	private ITediInsightInvoiceToJSON toJSON;

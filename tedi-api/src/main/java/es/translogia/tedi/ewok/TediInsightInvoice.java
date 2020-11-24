@@ -7,11 +7,11 @@ public class TediInsightInvoice implements Serializable {
 
 	private static final long serialVersionUID = 6858816497836464586L;
 	
-	private Date dates [];
-	private TediNif nifs [];
-	private Double amounts [];
-	private String references [];
-	
+	private Date dates[];
+	private TediNif nifs[];
+	private Double amounts[];
+	private Date issueDate;
+	private Double total;
 	
 	public Date[] getDates() {
 		return dates;
@@ -39,14 +39,30 @@ public class TediInsightInvoice implements Serializable {
 		this.amounts = amounts;
 		return this;
 	}
-	
-	public String[] getReferences() {
-		return references;
+
+	public Date getIssueDate() {
+		return issueDate;
 	}
-	
-	public TediInsightInvoice setReferences(String[] references) {
-		this.references = references;
+
+	public TediInsightInvoice setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
 		return this;
 	}
 
+	public Double getTotal() {
+		return total;
+	}
+
+	public TediInsightInvoice setTotal(Double total) {
+		this.total = total;
+		return this;
+	}
+	
+	public boolean hasIssueDate() {
+		return getIssueDate() != null;
+	}
+	
+	public boolean hasTotal() {
+		return getTotal() != null;
+	}
 }

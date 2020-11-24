@@ -14,14 +14,14 @@ import java.util.regex.Pattern;
 public class DateParser {
 	
 	protected static final String DATES_PATTERN = 
-			"(?<day>0?[1-9]|[12][0-9]|3[01])"
-			+"(?:[-|/|\\.|\\p{Blank}*|\\h*])"
+			 "(?<day>0?[1-9]|[12][0-9]|3[01])"
+			+"(?<sep1>[-|/|\\.|\\p{Blank}*|\\h*])"
 			+"(?:de|\\/)?"
-			+"(?:\\p{Blank}*)"
+			+"(?:\\p{Blank}*)?"
 			+"(?<month>0?[1-9]|1[012]|[a-z]+\\.?)"
-			+"(?:[-|/|\\.|\\p{Blank}*|\\h*])"
+			+"(?<sep2>[-|/|\\.|\\p{Blank}*|\\h*])"
 			+"(?:de|del|\\/)?"
-			+"(?:\\p{Blank}*|\\h*)"
+			+"(?:\\p{Blank}*|\\h*)?"
 			+"(?<year>20\\d{2}|[12][0-9])";
 
 	public static Collection<Date> getDates(String text) {
@@ -59,6 +59,13 @@ public class DateParser {
 						boolean match = suffix.matches("[-_,;\\)\\]\\s\\.]");
 						fake = !match;
 					}
+				}
+				if ( !fake ) {
+					String sep1 = matcher.group("sep1");
+					sep1 = sep1 != null ? sep1.trim() : "";  
+					String sep2 = matcher.group("sep2");
+					sep2 = sep2 != null ? sep2.trim() : "";
+					fake = !sep1.equals(sep2);
 				}
 				if ( !fake ) {
 					dates.add(date);
@@ -122,7 +129,6 @@ public class DateParser {
     	      put("septiembr", 9);
     	      put("septiembre", 9);
     	      put("oct", 10);
-    	      put("oct", 10);
     	      put("octu", 10);
     	      put("octub", 10);
     	      put("octubr", 10);
@@ -146,7 +152,7 @@ public class DateParser {
 
 	public static void main(String[] args) {
 		Collection<Date> dates = DateParser.getDates(
-			"Información de la factura Id de la factura CI0003829550-1020 Fecha emisión 31/10/2020 Período Facturación 01/10/2020 - 31/10/2020 Fecha Vencimiento 07/11/2020" );
+			"Madrid, 01 Oct. 18 - Factura 28-J8M0-010437" );
 		for (Date date : dates) {
 			System.out.println( date );
 		}

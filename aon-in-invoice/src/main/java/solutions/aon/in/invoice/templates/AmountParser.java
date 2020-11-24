@@ -14,7 +14,15 @@ public class AmountParser {
 		Locale ES = new Locale("es");
 		String ds = Character.toString(DecimalFormatSymbols.getInstance( ES ).getDecimalSeparator());
 		String gs = Character.toString(DecimalFormatSymbols.getInstance( ES ).getGroupingSeparator());
-		
+		List<Double> amounts = getAmounts(text,ds,gs);
+		if (amounts == null || amounts.size() == 0) {
+			// Try in english.
+			amounts = getAmounts(text,gs,ds);	
+		}
+		return amounts;
+	}
+	
+	public static List<Double> getAmounts(String text, String ds, String gs) {
 //		System.out.println( "Using '"+ds+"' as Decimal Separator and '"+gs+"' as Grouping Separator");
 		
 		String pat = "(?<integ>-?\\+?(\\d+\\"+gs+")*\\d+)"
@@ -78,33 +86,7 @@ public class AmountParser {
 	}
 
 	public static void main(String[] args) {
-		String text = "Total Factura 					105,50 \n\n Total a Pagar 105,50\u20AC";
-//		String text = 
-//			"FacturaRef. : A/11215Fecha facturación : 01/01/2019"
-//			+"Fecha de vencimiento : 01/01/2019"
-//			+"Código cliente : 430270"
-//			+"Ref. contrato : CT1601-0103 / 01/01/2016"
-//			+"Emisor: Enviar a:"
-//			+"AYSER - Desarrollos Informáticos, S.L. UDAPA S.Coop."
-//			+" Postas, 1 - ático izquierda. ARRIURDINA, 6 - POL. IND. JUNDIZ"
-//			+" 01001 Vitoria-Gasteiz 01015 VITORIA"
-//			+" Álava Álava"
-//			+" CIF/NIF: F01131978"
-//			+"  Teléfono: 945132358"
-//			+"  Correo: ayser@ayser.com"
-//			+"  Web: www.ayser.com"
-//			+"  Importes visualizados en Euros"
-//			+"  Descripción IVA P.U. Cant. Base imponible"
-//						+"  365_EMP_ESSENTIALS - O365BsnessEssentials ShrdSvr SNGL SubsVL 21% 71,76 1 71,76"			//71.76 71.76
-//			+"  OLP NL Annual Qlfd"
-//			+"  (De 14/02/2019 a 14/02/2020)"
-//			+"  Condiciones de pago: Pago a la entrega Base imponible 71,76"											//71.76
-//			+"  Total IVA 21% 15,07"																					//15.07
-//			+"  Forma de pago: Domiciliación Total 86,83"																//86.83
-//			+"  Sociedad Limitada - CIF/NIF: B01304419 - Núm. seguridad social: 01/1019918-39"
-//			+"  CNAE: 6203 - CIF intra.: ES-B01304419 1/1"
-//			+"  Powered by TCPDF (www.tcpdf.org)"
-;
+		String text = "Total Factura 2.105,50\u20ac";;
 		Collection<Double> amounts = AmountParser.getAmounts( text );
 		
 		System.out.println( "Amounts..:" );

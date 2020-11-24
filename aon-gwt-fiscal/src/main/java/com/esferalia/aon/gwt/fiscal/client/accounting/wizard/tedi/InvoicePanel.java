@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog.AonMessageDialogCallback;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionEvent;
 import com.esferalia.aon.gwt.fiscal.client.AccountEntrySelectionHandler;
 import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
@@ -488,7 +490,13 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
+						AonMessageDialog d = new AonMessageDialog();
+						d.show("ERROR INESPERADO", caught.getMessage(), new AonMessageDialogCallback() {
+							@Override
+							public void onAccept() {
+								reset(invoiceCallback.getInvoice().getAccountEntry(), null);
+							}
+						});
 					}
 				});		
 			} else {

@@ -5,7 +5,7 @@ import java.util.List;
 import solutions.aon.in.invoice.InvoiceBuilder;
 
 public class InvoiceTaxParser {
-	
+	/*
 	private static final double IVA_PERCENTS [] = {21.0, 10.0, 4.0};
 	private static final double IRPF_PERCENTS [] = {19.0};
 
@@ -64,11 +64,6 @@ public class InvoiceTaxParser {
 		return indexOf;
 	}
 	
-	
-	/**
-	 * Intento de parseo de una factura con una sola base de IVA, siendo el  
-	 * total factura el número más alto de la factura.
-	 */
 	private static boolean simpleVATInvoice(Double[] amounts, InvoiceBuilder<?> handler) {
 		boolean matched = false;
 		iva: {
@@ -144,4 +139,5 @@ public class InvoiceTaxParser {
 			}
 		}
 	}
+*/	
 }

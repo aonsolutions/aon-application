@@ -2,31 +2,21 @@ package solutions.aon.in.invoice;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
 
 import solutions.aon.in.invoice.templates.Document;
-import solutions.aon.in.invoice.templates.InvoiceTax;
 
 public interface InvoiceBuilder<T extends Object>  {
 	
+	T get();
 	void addInsightNifs( Collection<Document> nifs);
 	void addInsightDates( Collection<Date> dates);
 	void addInsightAmounts( Collection<Double> amounts);
-	void setInsightTotals( Collection<Double> totals);
+	void setInsightIssueDate( Date issueDate );
+	void setInsightTotal( Double total );
 	
+	void setReference( String reference);
+	String[] getReferencePatterns();
 	
-	void setIssueDate( Date date);
-	void setReference( String referecne);
-	double getTotal();
-	void setTotal( double total);
-	LinkedList<InvoiceTax> getTaxes();
-	void setTax( InvoiceTax tax);
-
-	String getSenderDocument();
+	void finalizeParse();
 	
-	boolean hasIssueDate();
-	boolean hasTotal();
-	boolean hasReference();
-	boolean hasSender();
-	boolean hasTaxes();
 }
