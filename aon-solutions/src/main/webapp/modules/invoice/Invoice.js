@@ -17,7 +17,6 @@ export class Invoice {
   status;
   irpf;
   suplidos;
-  totalSuplidos;
 
   constructor(type) {
     this.type = type || 'emitida';
@@ -53,9 +52,11 @@ export class Invoice {
     this.taxes = [];
     this.details = [];
     this.finances = [];
-    this.irpf = false;
-    this.suplidos = false;
-    this.totalSuplidos = 0;
+    this.suplidos = {
+      active:false,
+      description: '',
+      total: 0
+    };
     this.status = 'inbox';
   }
 
@@ -100,9 +101,11 @@ export class Invoice {
       this.taxes = invoice.taxes || [];
       this.details = invoice.details || [];
       this.finances = invoice.finances || [];
-      this.irpf = invoice.irpf || false;
-      this.suplidos = invoice.suplidos || false;
-      this.totalSuplidos = invoice.totalSuplidos || 0;
+      this.suplidos = invoice.suplidos || {
+        active: false,
+        description: '',
+        total: 0
+      };
       this.file = invoice.file || undefined;
     }
   }

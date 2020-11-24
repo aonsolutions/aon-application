@@ -471,29 +471,6 @@ export class AonInvoiceMobile extends AonElement {
 		detailVat.value = detail.vat;
 		detailVat.addEventListener('select', () => this.changeVat(i));
 
-		let tr4 = document.createElement('tr');
-		t.appendChild(tr4);
-
-		// DETAIL IRPF
-		let tdDetailIrpf = document.createElement('td');
-		tdDetailIrpf.setAttribute('colspan','3');
-		tdDetailIrpf.innerHTML = `<aon-checkbox id="dialogDetailIrpf${i}" description="IRPF"></aon-checkbox>`;
-		tr4.appendChild(tdDetailIrpf);
-		let detailIrpf = document.getElementById('dialogDetailIrpf' + i);
-		detailIrpf.value = detail.irpf;
-		detailIrpf.disabled = !this._invoice.irpf ? 'disabled' : undefined;
-		detailIrpf.addEventListener('change', () => this.updateDetailIRPF(i));
-
-		// DETAIL SUPLIDOS
-		let tdDetailSuplidos = document.createElement('td');
-		tdDetailSuplidos.setAttribute('colspan','3');
-		tdDetailSuplidos.innerHTML = `<aon-checkbox id="dialogDetailSuplidos${i}" description="Suplidos"></aon-checkbox>`;
-		tr4.appendChild(tdDetailSuplidos);
-		let detailSuplidos = document.getElementById('dialogDetailSuplidos' + i);
-		detailSuplidos.value = detail.suplidos;
-		detailSuplidos.disabled = !this._invoice.suplidos ? 'disabled' : undefined;
-		detailSuplidos.addEventListener('change', () => this.updateDetailSuplidos(i));
-
 		let tr5 = document.createElement('tr');
 		t.appendChild(tr5);
 
@@ -504,6 +481,7 @@ export class AonInvoiceMobile extends AonElement {
 		let tdButton = document.createElement('td');
 		tdButton.setAttribute('colspan','3');
 		let b = document.createElement('button');
+		b.className = 'aonButton';
 		b.innerHTML = 'Aceptar';
 		b.addEventListener('click', () => {
 			d.close();
@@ -610,15 +588,6 @@ export class AonInvoiceMobile extends AonElement {
 			value = document.getElementById('dialogDetailVat' + index).value;
 		}
 	 	this._invoice.details[index].vat = Number(value);
-		this.updateTaxes();
-		this.save();
-	}
-
-	updateDetailIRPF(index, value) {
-		if(!value) {
-			value = document.getElementById('dialogDetailIrpf' + index).getValue();
-		}
-		this._invoice.details[index].irpf = value;
 		this.updateTaxes();
 		this.save();
 	}
@@ -865,25 +834,6 @@ export class AonInvoiceMobile extends AonElement {
 			detailSuplidos.disabled = !value ? 'disabled' : undefined;
 		}
 		this.save();
-	}
-
-	updateDetailSuplidos(index, value) {
-		if(!value) {
-			value = document.getElementById('dialogDetailSuplidos' + index).getValue();
-		}
-		this._invoice.details[index].suplidos = value;
-		let vat = document.getElementById('dialogDetailVat' + index);
-		let irpf = document.getElementById('dialogDetailIrpf' + index);
-
-		this._invoice.details[index].irpf = value ? false : this._invoice.details[index].irpf;
-		this._invoice.details[index].vat = value ? undefined : 21;
-		irpf.disabled = value ? 'disabled' : undefined;
-		irpf.value = this._invoice.details[index].irpf;
-		if(value) {
-			vat.readonly = 'readonly';
-		}
-		vat.value = this._invoice.details[index].vat;
-		this.updateTaxes();
 	}
 
 	updateSuplidos() {

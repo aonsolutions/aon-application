@@ -587,6 +587,13 @@ form {
   padding: 15px 22px;
 }
 
+.aonCardTitle {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #5f6368;
+  font-weight: bold;
+}
+
 .aonDialog {
   display: none;
   position: fixed;

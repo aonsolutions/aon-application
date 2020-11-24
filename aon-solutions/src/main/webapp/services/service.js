@@ -1,3 +1,5 @@
+import './AonStringUtils.js'
+
 export * from './authService.js';
 
 export * from './invoiceService.js';

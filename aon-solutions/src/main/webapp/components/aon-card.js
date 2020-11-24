@@ -60,6 +60,7 @@ export class AonCard extends AonElement {
 
 		let title = this.createElement('div');
 		title.id = this.TITLE;
+		title.className = 'aonCardTitle';
 		title.innerHTML = this.title;
 		div.appendChild(title);
 

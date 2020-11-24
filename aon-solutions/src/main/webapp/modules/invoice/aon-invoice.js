@@ -12,8 +12,13 @@ import '../../components/aon-date.js';
 import '../../components/aon-select.js';
 import '../../components/aon-input.js';
 import '../../components/aon-checkbox.js';
+import '../../components/aon-switch.js';
 import '../../components/aon-dialog.js';
 import '../../components/aon-viewer.js';
+
+import * as CONSTANT from "../../environments/constants.js";
+
+import * as MSG from "../../environments/msg.js";
 
 export class AonInvoice extends AonElement {
 
@@ -70,14 +75,11 @@ export class AonInvoice extends AonElement {
 			<div style="display:flex;">
 				<div id="aonInvoiceData" style="width:100%">
 					<div id="aonInvoiceDiv" style="display:flex;">
-						<aon-card id="aonInvoiceItemDataCard" title="Datos Factura" style="width:50%"> </aon-card>
-						<div id="aonInvoiceTaxDiv" style="width:50%">
-							<aon-card id="aonInvoiceItemTaxesCard" title="Detalle Impuestos"> </aon-card>
-							<aon-card id="aonInvoiceItemIRPFCard"> </aon-card>
-						</div>
+						<aon-card id="aonInvoiceItemDataCard" title="${MSG.AON_MSG_INVOICE_DATA}" style="width:50%"> </aon-card>
+						<aon-card id="aonInvoiceItemTaxesCard" title="${MSG.AON_MSG_TAXES_DETAIL}" style="width:50%"> </aon-card>
 					</div>
-					<aon-card id="aonInvoiceItemDetailCard" title="Conceptos Factura"> </aon-card>
-					<aon-card id="aonInvoiceItemFinanceCard" title="Vencimientos"> </aon-card>
+					<aon-card id="aonInvoiceItemDetailCard" title="${MSG.AON_MSG_INVOICE_CONCEPTS}"> </aon-card>
+					<aon-card id="aonInvoiceItemFinanceCard" title="${MSG.AON_MSG_EXPIRATIONS}"> </aon-card>
 				</div>
 				<div id="aonInvoiceFile">
 				</div>
@@ -90,16 +92,15 @@ export class AonInvoice extends AonElement {
 
 	getInvoiceTitle() {
 		if(this._invoice.isEmitida()) {
-			return 'Factura Emitida';
+			return MSG.AON_MSG_INVOICE_ISSUED;
 		} else if(this._invoice.isTicket()){
-			return 'Ticket'
-		} else return 'Factura Recibida';
+			return MSG.AON_MSG_TICKET;
+		} else return MSG.AON_MSG_INVOICE_RECEIVED;
 	}
 	build() {
 		this.buildData();
 		if(!this.isTicket()){
 			this.buildTaxes();
-			this.buildIRPF();
 			this.buildDetail();
 			this.buildFinance();
 			this.printTaxes();
@@ -107,12 +108,15 @@ export class AonInvoice extends AonElement {
 			this.printFinances();
 		} else {
 			document.getElementById('aonInvoiceItemTaxesCard').style.display = 'none';
-			document.getElementById('aonInvoiceItemIRPFCard').style.display = 'none';
 			document.getElementById('aonInvoiceItemDetailCard').style.display = 'none';
 			document.getElementById('aonInvoiceItemFinanceCard').style.display = 'none';
 		}
 
 		let invoiceToolbar = this.getElement(this.TOOLBAR);
+
+		invoiceToolbar.addButton('NextInvoice', 'keyboard_arrow_right', () => this.nextInvoice());
+
+		invoiceToolbar.addButton('previewInvoice', 'keyboard_arrow_left', () => this.previewInvoice());
 
 		if(this._invoice.file) {
 			invoiceToolbar.addButton('ShowFile', 'visibility_off', () => {
@@ -177,7 +181,7 @@ export class AonInvoice extends AonElement {
 			dataDiv.style.width = '50%';
 
 			document.getElementById('aonInvoiceDiv').style.display = 'block';
-			document.getElementById('aonInvoiceTaxDiv').style.width = '100%';
+			document.getElementById('aonInvoiceItemTaxesCard').style.width = '100%';
 
 			fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
 		}
@@ -199,7 +203,7 @@ export class AonInvoice extends AonElement {
 			fileDiv.style.width = '50%';
 			dataDiv.style.width = '50%';
 			document.getElementById('aonInvoiceDiv').style.display = 'block';
-			document.getElementById('aonInvoiceTaxDiv').style.width = '100%';
+			document.getElementById('aonInvoiceItemTaxesCard').style.width = '100%';
 			this.attach(READER.result, file.type);
 			fileDiv.innerHTML = `<aon-viewer type="${file.type}" file="${READER.result}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
 		};
@@ -229,46 +233,50 @@ export class AonInvoice extends AonElement {
 		const status = this._invoice.status;
 		if('refused' === status) {
 			return [{
-					name: 'Restaurar Factura',
+					name: MSG.AON_MSG_RESTORE_INVOICE,
 					icon: '360',
 					fn: () => this.restoreInvoice()
 				}, {
-					name: 'Enviar a la Papelera',
+					name: MSG.AON_MSG_TO_TRASH,
 					icon: 'delete',
 					fn: () => this.trashInvoice()
 				}];
 		} else if('trash' === status) {
 			return [{
-					name: 'Restaurar Factura',
+					name: MSG.AON_MSG_RESTORE_INVOICE,
 					icon: '360',
 					fn: () => this.restoreInvoice()
 				}, {
-					name: 'Borrar Definitivamente',
+					name: MSG.AON_MSG_DELETE_FOREVER,
 					icon: 'delete_sweep',
 					fn: () => this.removeInvoice()
 				}];
 		} else return [{
-				name: 'Rechazar Factura',
-				icon: 'reply',
+				name: MSG.AON_MSG_REJECT_INVOICE,
+				icon: 'report',
 				fn: () => this.refuseInvoice()
 			}, {
-				name: 'Adjuntar Fichero',
+				name: MSG.AON_MSG_ADD_FILE,
 				icon: 'attach_file',
 				fn: () => this.addInvoiceFile()
 			}, {
-				name: 'Imprimir Factura',
+				name: MSG.AON_MSG_PRINT_INVOICE,
 				icon: 'print',
 				fn: () => this.printInvoice()
 			}, {
-				name: 'Enviar Factura',
+				name: MSG.AON_MSG_SEND_INVOICE,
 				icon: 'mail',
 				fn: () => this.sendInvoice()
 			}, {
-				name: 'Añadir Comentario',
+				name: MSG.AON_MSG_ADD_COMMENT,
 				icon: 'comment',
 				fn: () => this.addInvoiceComment()
 			}, {
-				name: 'Enviar a la Papelera',
+				name: MSG.AON_MSG_RECTIFY_INVOICE,
+				icon: 'swap_calls',
+				fn: () => this.rectifyInvoice()
+			}, {
+				name: MSG.AON_MSG_TO_TRASH,
 				icon: 'delete',
 				fn: () => this.trashInvoice()
 			}];
@@ -279,24 +287,32 @@ export class AonInvoice extends AonElement {
 		aip.aonInvoiceList();
 	}
 
+	previewInvoice() {
+
+	}
+
+	nextInvoice() {
+
+	}
+
 	refuseInvoice() {
-		this._invoice.status = 'refused';
+		this._invoice.status = CONSTANT.REFUSED;
 		this.save();
 	}
 
 	trashInvoice() {
-		this._invoice.status = 'trash';
+		this._invoice.status = CONSTANT.TRASH;
 		this.save();
 	}
 
 	restoreInvoice() {
-		this._invoice.status = 'inbox';
+		this._invoice.status = CONSTANT.INBOX;
 		this.save();
 	}
 
 	removeInvoice() {
 		deleteInvoices([this._invoice.id]).then(() => {
-			alert('La Factura se ha borrado Definitivamente.')
+			alert(MSG.AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION)
 			this.back();
 		});
 	}
@@ -304,7 +320,9 @@ export class AonInvoice extends AonElement {
 	addInvoiceFile() {
 		let el = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
 		el.click();
+	}
 
+	rectifyInvoice() {
 
 	}
 
@@ -466,7 +484,8 @@ export class AonInvoice extends AonElement {
 
 		// TRANSACTION
 		let tdTransaction = document.createElement('td');
-		tdTransaction.setAttribute('colspan', '4');
+		tdTransaction.setAttribute('colspan', '1');
+		tdTransaction.style.width = '160px';
 		tdTransaction.innerHTML = `<aon-select id="transaction" title="Tipo Transacción"></aon-select>`;
 		tr1.appendChild(tdTransaction);
 		let transaction = document.getElementById('transaction');
@@ -474,59 +493,72 @@ export class AonInvoice extends AonElement {
 		transaction.value = this._invoice.transaction;
 		transaction.addEventListener('select', () => this.update('transaction'));
 
+		// let tr2 = document.createElement('tr');
+		// table.appendChild(tr2);
+
+		let tdCriterioCaja = document.createElement('td');
+		tdCriterioCaja.setAttribute('colspan', '1');
+		tdCriterioCaja.innerHTML = `<aon-switch id="criterioCaja" title="Criterio de Caja"></aon-switch>`;
+		tr1.appendChild(tdCriterioCaja);
+
+		let tdSuplidos= document.createElement('td');
+		tdSuplidos.setAttribute('colspan', '1');
+		tdSuplidos.innerHTML = `<aon-switch id="suplidos" title="Suplidos"></aon-switch>`;
+		tr1.appendChild(tdSuplidos);
+		let suplidos = this.getElement('suplidos');
+		suplidos.checked = this._invoice.suplidos.active;
+		suplidos.addEventListener('change', () => this.updateSuplidos());
+
+		let tableSuplidos = document.createElement('table');
+		tableSuplidos.style.width = '100%';
+		div.appendChild(tableSuplidos);
+
+		let trSuplidos = document.createElement('tr');
+		trSuplidos.id = 'trSuplidos';
+		trSuplidos.style.display = this._invoice.suplidos.active ? 'table-row' : 'none';
+		tableSuplidos.appendChild(trSuplidos);
+
+		let tdConceptoSuplidos = document.createElement('td');
+		tdConceptoSuplidos.style.width = '75%'
+		tdConceptoSuplidos.setAttribute('colspan', '3');
+		tdConceptoSuplidos.innerHTML = `<aon-input id="conceptoSuplidos" description="Concepto"></aon-input>`;
+		trSuplidos.appendChild(tdConceptoSuplidos);
+		let conceptoSuplidos = this.getElement('conceptoSuplidos');
+		conceptoSuplidos.value = this._invoice.suplidos.description;
+		conceptoSuplidos.addEventListener('change', () => this.updateSuplidos());
+
+		let tdTotalSuplidos = document.createElement('td');
+		tdTotalSuplidos.setAttribute('colspan', '1');
+		tdTotalSuplidos.innerHTML = `<aon-input id="totalSuplidos" description="Total Suplidos"></aon-input>`;
+		trSuplidos.appendChild(tdTotalSuplidos);
+		let totalSuplidos = this.getElement('totalSuplidos');
+		totalSuplidos.value = this._invoice.suplidos.total;
+		totalSuplidos.addEventListener('change', () => this.updateSuplidos());
+
 		let taxesTable = document.createElement('table');
 		taxesTable.id = 'aonInvoiceItemTaxesCardTable';
 		taxesTable.style.width = '100%';
 		div.appendChild(taxesTable);
 
-		let addDiv = document.createElement('div');
-		div.appendChild(addDiv);
-
-		addDiv.innerHTML = `<aon-icon-button id="aonInvoiceItemTaxesCardAddButton" icon="add"> </aon-icon-button>`;
-		let addButton = document.getElementById('aonInvoiceItemTaxesCardAddButton');
-		addButton.addEventListener('click', () => this.addTax());
-	}
-
-	buildIRPF(){
-		let card = document.getElementById('aonInvoiceItemIRPFCard');
-		let div = document.createElement('div');
-		card.setContent(div);
-
-		let table = document.createElement('table');
-		table.style.width = '100%';
-		div.appendChild(table);
-
-		let tr1 = document.createElement('tr');
-		table.appendChild(tr1);
-
-		// IRPF
-		let tdIRPF = document.createElement('td');
-		tdIRPF.setAttribute('colspan', '2');
-		tdIRPF.innerHTML = `<aon-checkbox id="irpfCheckbox" description="IRPF"></aon-checkbox>`;
-		tr1.appendChild(tdIRPF);
-		let irpf = document.getElementById('irpfCheckbox');
-		irpf.value = this._invoice.irpf;
-		irpf.addEventListener('change', () => {
-			this.changeIRPF();
-		});
-
-		// SUPLIDOS
-		let tdSuplidos = document.createElement('td');
-		tdSuplidos.innerHTML = `<aon-checkbox id="suplidosCheckbox" description="Suplidos"></aon-checkbox>`;
-		tr1.appendChild(tdSuplidos);
-		let suplidos = document.getElementById('suplidosCheckbox');
-		suplidos.value = this._invoice.suplidos;
-		suplidos.addEventListener('change', () => this.changeSuplidos());
-
-		// TOTAL SUPLIDOS
-		let tdTotalSuplidos = document.createElement('td');
-		tdTotalSuplidos.innerHTML = `<aon-input id="t-suplidos" description="Total Suplidos" visible="false"></aon-input>`;
-		tr1.appendChild(tdTotalSuplidos);
-
 		let irpfTable = document.createElement('table');
 		irpfTable.id = 'aonInvoiceItemIRPFCardTable';
 		irpfTable.style.width = '100%';
 		div.appendChild(irpfTable);
+
+		let addDiv = document.createElement('div');
+		div.appendChild(addDiv);
+
+		addDiv.innerHTML = `
+			<aon-icon-button id="aonInvoiceItemTaxesCardAddButton" icon="add"> </aon-icon-button>
+			<aon-switch id="irpf" title="IRPF" style="position:absolute;margin-top: 10px; margin-left:10px;"></aon-switch>
+			`;
+
+		let addButton = document.getElementById('aonInvoiceItemTaxesCardAddButton');
+		addButton.addEventListener('click', () => this.addTax());
+
+		let irpf = document.getElementById('irpf');
+		irpf.checked = this._invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
+		irpf.addEventListener('change', () => this.changeIRPF());
 	}
 
 	buildDetail(){
@@ -607,12 +639,8 @@ export class AonInvoice extends AonElement {
 				quota: round(Number(this._invoice.total / 1.21) * 0.21)
 		 	};
 			this._invoice.taxes.push(tax);
+			this.getElement('total').readonly = 'readonly';
 			this.printTax(tax, 0);
-		} else if(this._invoice.taxes.length === 1){
-			this._invoice.taxes[0].base = round(this._invoice.total / (1 + this._invoice.taxes[0].percentage / 100));
-			this._invoice.taxes[0].quota = round(this._invoice.total - this._invoice.taxes[0].base);
-			document.getElementById('taxBase0').value = this._invoice.taxes[0].base;
-			document.getElementById('taxQuota0').value = this._invoice.taxes[0].quota;
 		}
 	}
 
@@ -690,24 +718,6 @@ export class AonInvoice extends AonElement {
 		detailVat.value = detail.vat;
 		detailVat.addEventListener('select', () => this.changeVat(i));
 
-		// DETAIL IRPF
-		let tdDetailIrpf = document.createElement('td');
-		tdDetailIrpf.innerHTML = `<aon-checkbox id="detailIrpf${i}" description="IRPF"></aon-checkbox>`;
-		tr.appendChild(tdDetailIrpf);
-		let detailIrpf = document.getElementById('detailIrpf' + i);
-		detailIrpf.value = detail.irpf;
-		detailIrpf.disabled = !this._invoice.irpf ? 'disabled' : undefined;
-		detailIrpf.addEventListener('change', () => this.updateDetailIRPF(i));
-
-		// DETAIL SUPLIDOS
-		let tdDetailSuplidos = document.createElement('td');
-		tdDetailSuplidos.innerHTML = `<aon-checkbox id="detailSuplidos${i}" description="Suplidos"></aon-checkbox>`;
-		tr.appendChild(tdDetailSuplidos);
-		let detailSuplidos = document.getElementById('detailSuplidos' + i);
-		detailSuplidos.value = detail.suplidos;
-		detailSuplidos.disabled = !this._invoice.suplidos ? 'disabled' : undefined;
-		detailSuplidos.addEventListener('change', () => this.updateDetailSuplidos(i));
-
 		// REMOVER DETAIL
 		let tdRemoveButton = document.createElement('td');
 		tdRemoveButton.innerHTML = `<aon-icon-button id="detailRemove${i}" icon="remove_circle" ></aon-icon-button>`;
@@ -769,15 +779,6 @@ export class AonInvoice extends AonElement {
 		this.save();
 	}
 
-	updateDetailIRPF(index, value) {
-		if(!value) {
-			value = document.getElementById('detailIrpf' + index).getValue();
-		}
-		this._invoice.details[index].irpf = value;
-		this.updateTaxes();
-		this.save();
-	}
-
 	calculatePrice(index) {
 		if (this._invoice.details[index].price && this._invoice.details[index].quantity) {
 			let price = this._invoice.details[index].price;
@@ -798,6 +799,7 @@ export class AonInvoice extends AonElement {
 	removeDetail(index) {
 		document.getElementById('detail' + index).remove();
 		this._invoice.details.splice(index, 1);
+		alert(this._invoice.details.length);
 		this.updateTaxes();
 		this.save();
 	}
@@ -829,7 +831,7 @@ export class AonInvoice extends AonElement {
 
 		// TAXTYPE
 		let tdTaxType = document.createElement('td');
-		tdTaxType.innerHTML = `<aon-select id="taxType${i}" title="Tipo"></aon-select>`;
+		tdTaxType.innerHTML = `<aon-select id="taxType${i}" title="Tipo" readonly="true"></aon-select>`;
 		tr.appendChild(tdTaxType);
 		let taxType = this.getElement('taxType' + i);
 		taxType.setEnumOptions(TaxType);
@@ -865,7 +867,12 @@ export class AonInvoice extends AonElement {
 		tdRemoveButton.innerHTML = `<aon-icon-button id="taxRemove${i}" icon="remove_circle" ></aon-icon-button>`;
 		tr.appendChild(tdRemoveButton);
 		let removeButton = document.getElementById('taxRemove' + i);
-		removeButton.addEventListener('click', () => this.removeTax(i));
+		removeButton.addEventListener('click', () => {
+			this.removeTax(i);
+			if(TaxType.IRPF === tax.type || TaxType.IRPF === tax.tax ) {
+				this.getElement('irpf').checked = false;
+			}
+		});
 	}
 
 	printTaxes() {
@@ -883,8 +890,7 @@ export class AonInvoice extends AonElement {
 		this._invoice.taxes[index].percentage = Number(value);
 		this._invoice.taxes[index].quota = round(this._invoice.taxes[index].base / 100 * Number(value));
 		document.getElementById('taxQuota' + index).value = this._invoice.taxes[index].quota;
-
-		this.updateTaxesTotal();
+		this.updateTax();
 		this.save();
 	}
 
@@ -895,7 +901,7 @@ export class AonInvoice extends AonElement {
 		this._invoice.taxes[index].base = Number(value);
 		this._invoice.taxes[index].quota = round(Number(value) / 100 * this._invoice.taxes[index].percentage);
 		document.getElementById('taxQuota' + index).value = this._invoice.taxes[index].quota;
-		this.updateTaxesTotal();
+		this.updateTax();
 		this.save();
 	}
 
@@ -906,32 +912,31 @@ export class AonInvoice extends AonElement {
 		this._invoice.taxes[index].quota = Number(value);
 		this._invoice.taxes[index].base = round((value * 100) / this._invoice.taxes[index].percentage);
 		document.getElementById('taxBase' + index).value = this._invoice.taxes[index].base;
-
-		this.updateTaxesTotal();
+		this.updateTax();
 		this.save();
 	}
 
 	removeTax(index) {
 		this._invoice.taxes.splice(index, 1);
 		document.getElementById('tax' + index).remove();
-		this.updateTaxesTotal();
+		this.updateTax();
 		this.save();
 	}
 
 	// IRPF FUNCTIONS
 	changeIRPF(val) {
 		if(!val) {
-			val = document.getElementById('irpfCheckbox').getValue();
+			val = this.getElement('irpf').isChecked();
 		}
-		this._invoice.irpf = val;
 		if (val) {
 			let i = this._invoice.taxes.length;
+			let base = this.totalBaseIRPF();
 			let tax = {
 				tax: TaxType.IRPF,
 				type: TaxType.IRPF,
 				percentage: 19.0,
-				base: 0,
-				quota: 0
+				base: base,
+				quota: round(base / 100 * 19.0)
 			};
 			this._invoice.taxes.push(tax);
 			this.printTax(tax, i);
@@ -942,16 +947,9 @@ export class AonInvoice extends AonElement {
 					this._invoice.taxes.splice(i, 1);
 				}
 			}
+			this.clearElement('aonInvoiceItemIRPFCardTable');
 		}
-		for(let j = 0; j < this._invoice.details.length; j++){
-			let detailIrpf = document.getElementById('detailIrpf' + j)
-			if(!val){
-				this._invoice.details[j].irpf = false;
-				detailIrpf.value = false;
-			}
-			detailIrpf.disabled = !val ? 'disabled' : undefined;
-		}
-		this.updateTaxes();
+		this.updateTaxesTotal();
 		this.save();
 	}
 
@@ -966,11 +964,9 @@ export class AonInvoice extends AonElement {
 	}
 
 	updateVat() {
-		this._invoice.taxes.forEach((item, i) => {
-			if(TaxType.IVA === item.type || TaxType.IVA === item.tax){
-				this._invoice.taxes.splice(i, 1);
-			}
-		});
+		alert('ANTES ' + this._invoice.taxes.length);
+		this._invoice.taxes = this._invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)
+		alert('DESPUES ' + this._invoice.taxes.length);
 		TaxIVAPercentage.forEach((item, i) => {
 			let base = this.totalBase(item.value);
 			if(base != 0) {
@@ -987,66 +983,46 @@ export class AonInvoice extends AonElement {
 	}
 
 	updateTaxes() {
-		this.updateIRPF();
 		this.updateVat();
+		this.updateIRPF();
 		this.printTaxes();
-		this.updateSuplidos();
+		this.updateTaxesTotal();
+
+	}
+
+	updateTax() {
+		this.updateIRPF();
+		this.printTaxes();
 		this.updateTaxesTotal();
 	}
 
 	updateTaxesTotal() {
-		this._invoice.total = round(this.totalImpuestos() + this.totalSuplidos());
-		let total = document.getElementById('total');
+		this._invoice.total = round(this.totalImpuestos() + this._invoice.suplidos.total);
+		let total = this.getElement('total');
 		total.value = this._invoice.total;
-		if(this._invoice.taxes.length > 1) {
+		if(this._invoice.taxes.length > 0) {
 			total.readonly = 'readonly';
 		}
 	}
-	// END IRPF FUNCTIONS
-
-	// SUPLIDOS FUNCTIONS
-
-	changeSuplidos(value) {
-		if(!value) {
-			value = document.getElementById('suplidosCheckbox').getValue();
-		}
-		this._invoice.suplidos = value;
-		document.getElementById('t-suplidos').visible = value;
-		for(let j = 0; j < this._invoice.details.length; j++){
-			let detailSuplidos = document.getElementById('detailSuplidos' + j);
-			if(!value) {
-				this._invoice.details[j].suplidos = false;
-				detailSuplidos.value = false;
-			}
-			detailSuplidos.disabled = !value ? 'disabled' : undefined;
-		}
-		this.save();
-	}
-
-	updateDetailSuplidos(index, value) {
-		if(!value) {
-			value = document.getElementById('detailSuplidos' + index).getValue();
-		}
-		this._invoice.details[index].suplidos = value;
-		let vat = document.getElementById('detailVat' + index);
-		let irpf = document.getElementById('detailIrpf' + index);
-
-		this._invoice.details[index].irpf = value ? false : this._invoice.details[index].irpf;
-		this._invoice.details[index].vat = value ? undefined : 21;
-		irpf.disabled = value ? 'disabled' : undefined;
-		irpf.value = this._invoice.details[index].irpf;
-		if(value) {
-			vat.readonly = 'readonly';
-		}
-		vat.value = this._invoice.details[index].vat;
-
-		this.updateTaxes();
-		this.save();
-	}
 
 	updateSuplidos() {
-		this._invoice.totalSuplidos = this.totalSuplidos();
-		document.getElementById('t-suplidos').value = this._invoice.totalSuplidos;
+		let suplidos = this.getElement('suplidos');
+		let conceptoSuplidos = this.getElement('conceptoSuplidos');
+		let totalSuplidos = this.getElement('totalSuplidos');
+		if(suplidos.isChecked()) {
+			this._invoice.suplidos = {
+				active: suplidos.isChecked(),
+				description: conceptoSuplidos.value,
+				total: Number(totalSuplidos.value)
+			}
+		} else {
+			this._invoice.suplidos = {
+				active: false,
+				description: '',
+				total: 0
+			}
+		}
+		this.getElement('trSuplidos').style.display = suplidos.isChecked() ? 'table-row' : 'none';
 		this.updateTaxesTotal();
 		this.save();
 	}
@@ -1199,9 +1175,9 @@ export class AonInvoice extends AonElement {
 
 	totalBaseIRPF() {
 		let total = 0;
-		for (let i = 0; i < this._invoice.details.length; i++) {
-			if (this._invoice.details[i].irpf) {
-				total += this._invoice.details[i].amount;
+		for (let i = 0; i < this._invoice.taxes.length; i++) {
+			if (TaxType.IVA === this._invoice.taxes[i].type || TaxType.IVA === this._invoice.taxes[i].tax) {
+				total += this._invoice.taxes[i].base;
 			}
 		}
 		return total;
