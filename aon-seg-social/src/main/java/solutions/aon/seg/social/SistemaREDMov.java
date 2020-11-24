@@ -3,8 +3,10 @@ package solutions.aon.seg.social;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Calendar;
-
+import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import java.util.HashMap;
@@ -19,13 +21,21 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.CertificateNotFoundException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
-
+import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
+import solutions.aon.seg.social.exceptions.invalidData.LiquidationDoesNotExist;
+import solutions.aon.seg.social.exceptions.invalidData.NotExistingYetException;
+import solutions.aon.seg.social.exceptions.invalidData.PendingProcessesException;
+import solutions.aon.seg.social.exceptions.invalidData.UnfilledMandatory;
+import solutions.aon.seg.social.exceptions.invalidData.invalidCccException;
+import solutions.aon.seg.social.exceptions.invalidData.outOfTimeException;
 import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
 import solutions.aon.seg.social.objects.Employee;
+import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
@@ -46,12 +56,12 @@ public class SistemaREDMov {
 		return null;
 	}
 	
-	public static Employee movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws SegSocialException{
+	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, ArrayList<String> nssList) throws SegSocialException{
 		
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		
-		try {return movPrevDeleteImpl(certificateInputStream, certificatePassword, certificateType, employee);} 
+		try {return ipfxnafImpl(certificateInputStream, certificatePassword, certificateType, nssList);} 
 		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
 		catch (MalformedURLException e) {throw new SegSocialException(e);} 
 		catch (IOException e) {throw new CertificateNotFoundException();} 
@@ -60,17 +70,51 @@ public class SistemaREDMov {
 		return null;
 	}
 	
+	public static void movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String situation, String regimen, String ctaCti, String nss, Date fecha) throws SegSocialException{
+		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		
+		try {movPrevDeleteImpl(certificateInputStream, certificatePassword, certificateType,situation, regimen, ctaCti, nss, fecha);} 
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
+		return;
+	}
+	
+	
+	public static void altaConsolidadaDelete(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String situation, String regimen, String ctaCti, String nss) throws SegSocialException{
+		
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		
+		try {altaConsolidadaDeleteImpl(certificateInputStream, certificatePassword, certificateType, situation, regimen, ctaCti, nss);} 
+		catch (FailingHttpStatusCodeException e) {StatusCodeException.HandleStatusCodeException(e);} 
+		catch (MalformedURLException e) {throw new SegSocialException(e);} 
+		catch (IOException e) {throw new CertificateNotFoundException();} 
+		catch (InterruptedException e) {throw new SegSocialException(e);}
+		catch (Exception e) {throw new SegSocialException(e);}
+	}
 	
 	private static Employee sendMovImpl(
 			final InputStream certificateInputStream, final String certificatePassword, final String certificateType, 
 			Employee employee
 	) throws SegSocialException, IOException, InterruptedException  {
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	      	Integer mov = employee.getSituacion() == "AL" ? 0 : 1;
+	    	String situacion = null;
+	    	Integer mov = null;
+	    	if(  "AL".equalsIgnoreCase(employee.getSituacion()) ) { //ALTA
+	    		situacion = "01";
+	    		mov = 0;
+	    	} else if ( "BJ".equalsIgnoreCase(employee.getSituacion()) ) { //BAJA
+	    		situacion = "63";
+	    		mov = 1;
+	    	}
  			String dia="";
  			String mes="";
  			String dni =  padCharacter("0", 10, employee.getIpf());
- 			System.out.println(dni);
  			String nss = employee.getNss();
  			String ctaCti = employee.getCtaCti().get();
  			
@@ -103,7 +147,7 @@ public class SistemaREDMov {
 			HtmlInput btnSubmit = htmlPage.querySelector("#Sub2207401004");
 			htmlPage = btnSubmit.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
-			String situacion = "01";
+			
 			HtmlForm jacadaForm1 = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			jacadaForm1.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situacion); 
 			jacadaForm1.getInputByName("txt_SDFFREALDD").setValueAttribute(dia); 
@@ -126,18 +170,17 @@ public class SistemaREDMov {
 	    return employee;
 	}
 
-	private static Employee movPrevDeleteImpl(final InputStream certificateInputStream, 
+	private static void movPrevDeleteImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
-			Employee employee) throws SegSocialException, IOException, InterruptedException  {
+			String situation, String regimen, String ctaCti, String nss, Date fecha) throws SegSocialException, IOException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	    	Integer code;
  			String dia="";
  			String mes="";
- 			Integer mov = employee.getSituacion().equals("AL") ? 0 : 1;
+ 			Integer mov = "AL".equalsIgnoreCase(situation) ? 0 : 1;
  			//Date
 			GregorianCalendar calendar = new GregorianCalendar();
- 			calendar.setTime(employee.getFra());
+ 			calendar.setTime(fecha);
  			String anio = ""+(calendar.get(Calendar.YEAR));
  			if(calendar.get(Calendar.DATE)<10) dia="0"+calendar.get(Calendar.DATE);
  			else dia=""+calendar.get(Calendar.DATE);
@@ -150,11 +193,11 @@ public class SistemaREDMov {
 			
 			HtmlForm jacadaForm = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 			//form fist
-			jacadaForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(employee.getNss().substring(0,2));
-			jacadaForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(employee.getNss().substring(2));
-			jacadaForm.getInputByName("txt_SDFREGCC_ayuda").setValueAttribute(employee.getRegime());
-			jacadaForm.getInputByName("txt_SDFTESCC").setValueAttribute(employee.getCtaCti().get().substring(0,2));
-			jacadaForm.getInputByName("txt_SDFNUMCC").setValueAttribute(employee.getCtaCti().get().substring(2));
+			jacadaForm.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0,2));
+			jacadaForm.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
+			jacadaForm.getInputByName("txt_SDFREGCC_ayuda").setValueAttribute(regimen);
+			jacadaForm.getInputByName("txt_SDFTESCC").setValueAttribute(ctaCti);
+			jacadaForm.getInputByName("txt_SDFNUMCC").setValueAttribute(ctaCti);
 			HtmlOption option = (HtmlOption) jacadaForm.querySelectorAll("select[name=cbo_ListaAltasBajas001]>option").get(mov);				
 			option.click();
 			jacadaForm.getInputByName("txt_SDFDIAB").setValueAttribute(dia); 
@@ -171,54 +214,83 @@ public class SistemaREDMov {
 			htmlPage = btnSubmit1.click();
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 		} 
-		return employee;
 	}
 	
-	private static Employee movConsolidadoDeleteImpl(final InputStream certificateInputStream, 
+	private static void altaConsolidadaDeleteImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
-			Employee employee) throws SegSocialException, IOException, InterruptedException  {
+			String situation, String regimen, String ctaCti, String nss) throws SegSocialException, IOException, InterruptedException  {
 		
 	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
-	    	Integer code;
- 			String dia="";
- 			String mes="";
- 			Integer mov = employee.getSituacion().equals("AL") ? 0 : 1;
- 			//Date
-			GregorianCalendar calendar = new GregorianCalendar();
- 			calendar.setTime(employee.getFra());
- 			String anio = ""+(calendar.get(Calendar.YEAR));
- 			if(calendar.get(Calendar.DATE)<10) dia="0"+calendar.get(Calendar.DATE);
- 			else dia=""+calendar.get(Calendar.DATE);
- 			if((calendar.get(Calendar.MONTH)+1)<10) mes="0"+(calendar.get(Calendar.MONTH)+1);
- 			else mes=""+(calendar.get(Calendar.MONTH)+1);
- 			System.out.println(dia +"/"+mes+ "/"+anio);
  			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00E");
-			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			handleSegSocialExceptions(htmlPage);
 			
-			HtmlForm jacadaForm = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
+			HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
 			//form fist
-			jacadaForm.getInputByName("NA5NumSegSocialCompleto").setValueAttribute(employee.getNss());
-			jacadaForm.getInputByName("CC1EmpresaAut").setValueAttribute(employee.getRegime() + employee.getCtaCti().get());
+			formDatos.getInputByName("NA5NumSegSocialCompleto").setValueAttribute(nss);
+			formDatos.getInputByName("CC1EmpresaAut").setValueAttribute(regimen +  ctaCti);
 	
-			HtmlOption option = (HtmlOption) jacadaForm.querySelectorAll("select[name=tipoImpresion]>option").get(2);				
+			HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipoImpresion]>option").get(2);				
 			option.click();
+			
+			htmlPage = formDatos.getInputByName("SPM.ACC.Confirmar").click();
 		
-			HtmlInput btnSubmit = htmlPage.querySelector("#SPM.ACC.Confirmar");
-			htmlPage = btnSubmit.click();
-
-			
-			//HtmlUnitToolkit.manageErrorMessages(htmlPage);
-			
+			handleSegSocialExceptions(htmlPage);
 		} 
-		return employee;
 	}
 	
+	private static Collection<Employee> ipfxnafImpl(final InputStream certificateInputStream, 
+			final String certificatePassword, final String certificateType, 
+			ArrayList<String> nssList) throws Exception  {
+		
+		if(nssList.size() >= 7) throw new Exception("nss max 7");
+		
+	    try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+	    	
+	      HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24M00C");
+	      HtmlForm formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("formDatos")).orElseThrow();
+	      
+    	  for (int i=0;i<nssList.size();i++) {
+    		   formDatos.getInputByName("NA1NumSegSocialSinDC" + Integer.toString((i+1))).setValueAttribute(nssList.get(i).substring(0, 10));
+    	  }
+    	  htmlPage = formDatos.getInputByName("SPM.ACC.Consultar").click();
+    	  
+    	  HtmlTable table = htmlPage.querySelector("#ARQcapaPrincipal > fieldset > table");
+    	  String nombre;
+    	  String ipf;
+    	  String nss;
+    	  ArrayList<Employee> employees = new ArrayList<>();
+    	  
+    	  EmployeeBuilder builder = new EmployeeBuilder();
+    	  for (int i = 1; i < table.getRowCount(); i++) {
+    		  nss = table.getRow(i).getCell(1).getTextContent().trim().replaceAll("\u200b", ""); //nss
+    		  ipf = table.getRow(i).getCell(2).getVisibleText().trim().replaceAll("\u200b", "").replaceAll("\\s",""); //ipf
+    		  nombre = table.getRow(i).getCell(3).getTextContent().trim().replaceAll("\u200b", "");
+			  if(!nombre.isEmpty() && !ipf.isEmpty()) {
+					Employee employee = builder.setNss(nss)
+					.setName(nombre)
+					.setIpf(ipf)
+					.build();
+					employees.add(employee);
+			  }
+
+    	  }
+    	  return employees;
+		} 
+	}
+	
+	private static void handleSegSocialExceptions(HtmlPage htmlPage) throws SegSocialException{
+		try {
+			String error=htmlPage.querySelector("#ARQContenMensaje>ul >.mensajeError").getVisibleText();
+			if(!error.isEmpty()) {
+				throw new InvalidDataException(error);
+			}
+		} catch (NullPointerException e) {}
+	}
 	private static String padCharacter(String c, int num, String str){
 	    for(int i=0;i<num-str.length()+1;i++){str = c+str;}
 	     return str;
 	}
-	
 	
 	private static String identity(String ipf) {
 		Pattern nif  = Pattern.compile(
@@ -263,60 +335,57 @@ public class SistemaREDMov {
 		}
 		return identity;
 	}
+	
+	
 //	public static void main(String[] args)  {
-//		try (final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/FNMT.p12")) {			
-//		    
-//			String certificatePassword = "jg@FNMT";
-//		    String certificateType = "pkcs12";
-//			//first screen
-//			String situacion = "Alta";
-//			String regimen = "0111";
-//			String ctaCti = "01105360062";
-//			String nss = "010022757387";
-//			Integer ident = Integer.parseInt("1");
-//			String ipf = "016262835H";
-//			
-//			//second screen
-//			Date fecha = Toolkit.parseDate("28-12-2020", "dd-MM-yyyy");
-//			String ocupacion = "a";
-//			String coefparcial = null;
-//			String convenio = "99001355011983";
-//			String grup_ctz = "03";
-//			String type_cto = "402";
-//			String md_ctz = ""; //para regimen agrario
-//			
-//			EmployeeBuilder builder = new EmployeeBuilder();
-//			Employee employee = builder.setSituation(situacion)
-//			.setRegime(regimen)
-//			.setCtaCti(ctaCti)
-//			.setNss(nss)
-//			.setIdent(ident)
-//			.setIpf(ipf)
-//			.setFra(fecha)
-//			.setOcup(ocupacion)
-//			.setCoef(coefparcial)
-//			.setColec(convenio)
-//			.setGc(grup_ctz)
-//			.setContract(type_cto)
-//			.setMdctz(md_ctz)
-//			.build();
-//			
-//			alta(certificateInputStream, certificatePassword, certificateType, employee);
-//			
-//			
-//			//delete mov previos
-////			EmployeeBuilder builder = new EmployeeBuilder();
-////			Employee employee = builder.setSituation(situacion)
-////			.setRegime(regimen)
-////			.setCtaCti(ctaCti)
-////			.setNss(nss)
-////			.setFra(fecha)
-////			.build();
-////			movprevdelete(certificateInputStream, certificatePassword, certificateType, employee);
+////		try (final FileInputStream certificateInputStream =  new FileInputStream("src/test/resources/solutions/aon/FNMT.p12")) {			
 //
+////			String certificatePassword = "jg@FNMT";
+////		    String certificateType = "pkcs12";
+////		    ArrayList<String> nssList = new ArrayList<>();
+////		    nssList.add("291136796369");	
+////		    
+////			System.out.println(ipfxnafImpl(certificateInputStream, certificatePassword, certificateType, nssList));
+////			//first screen
+////			String situation = "AL";
+////			String regimen = "0111";
+////			String ctaCti = "01105360062";
+////			String nss = "010022757387";
+////			Integer ident = Integer.parseInt("1");
+////			String ipf = "016262835H";
+////			
+////			//second screen
+//////			Date fecha = Toolkit.parseDate("28-12-2020", "dd-MM-yyyy");
+////			String ocupacion = "a";
+////			String coefparcial = null;
+////			String convenio = "99001355011983";
+////			String grup_ctz = "03";
+////			String type_cto = "402";
+////			String md_ctz = ""; //para regimen agrario
+////			
+//////			EmployeeBuilder builder = new EmployeeBuilder();
+//////			Employee employee = builder.setSituation(situation)
+//////				.setRegime(regimen)
+//////				.setCtaCti(ctaCti)
+//////				.setNss(nss)
+//////				.build();
+//////			
+////			altaConsolidadaDelete(certificateInputStream, certificatePassword, certificateType, situation, regimen, ctaCti, nss);
+////			
+////			
+////			//delete mov previos
+//////			EmployeeBuilder builder = new EmployeeBuilder();
+//////			Employee employee = builder.setSituation(situacion)
+//////			.setRegime(regimen)
+//////			.setCtaCti(ctaCti)
+//////			.setNss(nss)
+//////			.setFra(fecha)
+//////			.build();
+//////			movprevdelete(certificateInputStream, certificatePassword, certificateType, employee);
+////
 //		} catch (Exception e) {
 //			e.printStackTrace();
-//			System.out.println(e.getMessage());
+////			System.out.println(e.getMessage());
 //		}
 //	}
 

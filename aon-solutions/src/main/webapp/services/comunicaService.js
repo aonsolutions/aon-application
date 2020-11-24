@@ -56,6 +56,8 @@ export const getWorkplaceCCCs = () => get(`${API_URL}/workplace_ccc`);
 
 export const getMovements = () => get(`${API_URL}/comunica/movements`);
 
+export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
+
 export const getPersonas = (dni) =>  new Promise((resolve) => {
     let jsonValues= [
         {

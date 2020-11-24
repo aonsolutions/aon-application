@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {serializeForm} from '../../services/utils.js'
-import {getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getHorasConvenio} from '../../services/service.js'
+import {getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getHorasConvenio, getIpfxnaf} from '../../services/service.js'
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-date.js';
@@ -79,10 +79,10 @@ export class AonAltaDirecta extends AonElement {
         let aonTrabajadorCard = this.getElement(`${this.ID}TrabajadorCard`);
         aonTrabajadorCard.setContentHTML(`
             <div class="aonCol-sm-12 aonCol-md-6">
-                <div id="${this.ID}DivDni"></div>
+                <aon-input name="nss" id="nss" description="Número de afiliación" type="number" pattern="^[0-9]{1,12}$"></aon-input>
             </div>
             <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-input name="nss" id="nss" description="Número de afiliación" type="number" pattern="^[0-9]{1,12}$"></aon-input>
+                <div id="${this.ID}DivDni"></div>
             </div>
             <div class="aonCol-sm-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text"></aon-input>
@@ -97,6 +97,7 @@ export class AonAltaDirecta extends AonElement {
 
         let aonContratoCard = this.getElement(`${this.ID}ContratoCard`);
         aonContratoCard.setContentHTML(`
+            <aon-input name="situation" id="situation" description="Situacion" value="AL" visible="false"></aon-input>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
             </div>
@@ -136,6 +137,9 @@ export class AonAltaDirecta extends AonElement {
         ctaCti.addEventListener('select', ({detail})=> {
             this.getElement('regimen').setAttribute('value', detail.cccRegimeCode);
         });   
+
+        let nss = this.getElement('nssInput');
+        nss.addEventListener('blur', (e)=> this.getIpf(e));
 
         let aonAltaDirectaDni = this.getElement(`${this.ID}DivDni`);
         aonAltaDirectaDni.innerHTML = `<aon-suggestion id="${this.ID}Dni" title="DNI/NIE" name="ipf"></aon-suggestion>`;
@@ -329,6 +333,7 @@ export class AonAltaDirecta extends AonElement {
             );
         } catch (error) {}
     }
+    
 
     async listHorasConvenio(data){
         let horas_convenio = this.getElement('horas_convenio');
@@ -369,6 +374,37 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
+    async getIpf({target}){
+        let nss = target.value;
+        let apellido1 = this.getElement('apellido1');
+        let apellido2 = this.getElement('apellido2');
+        let nombre = this.getElement('nombre');
+        let dni = this.getElement('aonAltaDirectaDni');
+        if(nss.length >9){
+            try {
+                const resp = await getIpfxnaf({nss});
+                if(resp.length){
+                    let [datos] = resp;
+                    this.getElement('nss').setAttribute('value', datos.nss);
+                    dni.setAttribute('value', datos.ipf.toString().substring(1));
+                    nombre.setAttribute('value', datos.name);
+                    apellido1.hidden = apellido2.hidden = true;
+                }
+                else {
+                    dni.setAttribute('value', "");
+                    nombre.setAttribute('value', "");
+                    apellido1.hidden = apellido2.hidden = false;
+                }
+            } catch (error) {}
+        }
+        else {
+            dni.setAttribute('value', "");
+            nombre.setAttribute('value', "");
+            apellido1.hidden = apellido2.hidden = false;
+        }
+    }
+
+
     async formSubmit(){
         let aonAltaDirectaForm = this.getElement( `${this.ID}Form`);
         let formJson = serializeForm(aonAltaDirectaForm);
@@ -396,7 +432,7 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('aonAltaDirectaDni').setAttribute('value',ipf);
         
         //second screen
-        let fecha = "28-12-2020";
+        let fecha = "24-11-2020";
         this.getElement('fecha').setAttribute('value', fecha);
 
         let convenio = "99001355011983";

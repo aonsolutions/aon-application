@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -152,10 +153,22 @@ public class SistemaRED {
 		return SistemaREDMov.sendMov(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
-	public static Employee movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, Employee employee) throws SegSocialException {
+	public static void movPrevDelete(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String situation, String regimen, String ctaCti, String nss, Date fecha) throws SegSocialException {
 		
-		return SistemaREDMov.movPrevDelete(certificateInputStream, certificatePassword, certificateType, employee);
+		SistemaREDMov.movPrevDelete(certificateInputStream, certificatePassword, certificateType, situation, regimen, ctaCti, nss, fecha);
+	}
+	
+	public static void altaConsolidadaDelete(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String situation, String regimen, String ctaCti, String nss) throws SegSocialException {
+		
+		SistemaREDMov.altaConsolidadaDelete(certificateInputStream, certificatePassword, certificateType,  situation, regimen, ctaCti, nss);
+	}
+	
+	public static Collection<Employee> ipfxnaf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, ArrayList<String> nssList) throws SegSocialException 
+	{
+		return SistemaREDMov.ipfxnaf(certificateInputStream, certificatePassword, certificateType, nssList);
 	}
 	
 	public static void main(String[] args)

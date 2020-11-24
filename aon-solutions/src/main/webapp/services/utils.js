@@ -65,3 +65,13 @@ export const addDays = (date, days) =>  {
   return formatDate(result);
 }
 
+
+export const getDayMonth = (date) =>  {
+  let months = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  let d = new Date(date);
+  let day = d.getDate();
+  if(day <= 9) day = '0'+ day;
+  let month = months[d.getMonth()];
+  return day + '-' + month;
+}
+

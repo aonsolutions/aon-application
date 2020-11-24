@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {setDate} from '../../services/utils.js';
+import {setDate, getDayMonth } from '../../services/utils.js';
 import {getMovements, getIDC, getTA, postDeleteMov} from '../../services/service.js';
 import '../../components/aon-table.js';
 import '../../components/aon-toast.js';
@@ -52,44 +52,41 @@ export class AonMovementsList extends AonElement {
 				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
 				resp = resp.sort((a,b)=> new Date(b.fra) - new Date(a.fra));
-				console.log(resp);
-				resp.map(resp=>{
-					let {name:nombres, ipf, fra} = resp;
-					let fecha = setDate(fra);
-					let now =  setDate(new Date());
-					let status = fecha > now ? 'Previo'  : 'Consolidado';
+				resp.map(res=>{
+					let {name:nombres, ipf, fra, situation} = res;
+					let fecha = getDayMonth(fra);
+					let prev =  setDate(fra) > setDate(new Date()); // true == prev
+					let status = prev ? 
+					`<span style="font-weight: 700;">${situation==="AL" ? "Alta" : "Baja"} Previa</span> ` :
+					`<span style="font-weight: 700;color: #B32000;">${situation==="AL" ? "Alta" : "Baja"} Consolidada</span>`;
+					res = {...res, prev};
 					let dni = ipf.toString().substring(1);
 					let data = {
+						...res,
 						nombres,
 						dni,
 						fecha,
-						status: `<b>${status}</b>`,
+						status,
+						prev,
 						option:[
 							{
 								name:'Obtener TA',
 								icon:'print',
-								fn: (el) => this.getTa(resp, el)
+								fn: (el) => this.getTa(res, el)
 							},
 							{
 								name:'Obtener IDC',
 								icon:'print',
-								fn: (el) => this.getIdc(resp, el)
+								fn: (el) => this.getIdc(res, el)
 							},
 							{
 								name:'Anular',
 								icon:'delete',
-								fn: (el) => this.deleteMov(resp, el)
+								fn: (el) => this.deleteMov(res, el)
 							},
 						]
 					};
-					let tr = aonMovementTable.addRow(data, (el) => this.aonMovement(el, data));	
-					if(tr){
-						if(fecha > now){ //prev
-							
-						} else {
-							tr.style.backgroundColor = "#faca8f";
-						}
-					}
+					aonMovementTable.addRow(data, (el) => this.aonMovement(el, data));	
 				})
 			} catch(e){
 				console.log(e);
@@ -102,14 +99,10 @@ export class AonMovementsList extends AonElement {
 	}
 
 	async deleteMov(data, el){
+		console.log(data);
 		if (confirm(`Estas seguro de anular el movimiento de ${data.name} ?`)) {
 			let toast = this.getElement(`divToast`);
 			try {
-				data = {
-					...data,
-					regime: data.ctaCti,
-					ctaCti: data.regime
-				}
 				await postDeleteMov(data);
 				toast.start({message:'Alta eliminada!', type: 'success'});
 				el.remove(); //delete td
@@ -120,20 +113,10 @@ export class AonMovementsList extends AonElement {
 	}
 
 	getTa(data, el){
-		data = {
-			...data,
-			regime: data.ctaCti,
-			ctaCti: data.regime
-		}
 		getTA(data); // open pdf
 	}
 
 	getIdc(data, el) {
-		data = {
-			...data,
-			regime: data.ctaCti,
-			ctaCti: data.regime
-		}
 		getIDC(data); // open pdf
 	}
 

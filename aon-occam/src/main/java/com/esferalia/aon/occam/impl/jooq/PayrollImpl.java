@@ -12,9 +12,11 @@ import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
+import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.impl.jooq.dao.CCCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
 
@@ -64,7 +66,12 @@ public class PayrollImpl implements IPayroll {
 			ContractDAO.getAgreementLevelCategoryStream(ctx, filter));
 	}
 
-
+	// -------------------- CCC
+	@Override
+	public Stream<CCCInfo> getCCCStream(AONContext ctx){
+		return ctx.getDslContext().transactionResult((configuration) ->
+			CCCDAO.getCCCStream(ctx));
+	}
 	
 	
 
