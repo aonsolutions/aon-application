@@ -239,6 +239,10 @@ export const getList = async (page_this = 1) => {
     const tagID         = new URLSearchParams(window.location.search).get('tag');
     const uploadButton  = window.parent.document.getElementById('aonDocumentalToolbarSubirButton');
 
+    if (intersectionObserverIsSupported) {
+        $('#loader').removeClass('d-none');
+    }
+
     //
     // Seleccionamos en el sidenav la opción de la que vamos a obtener los datos (necesario por si se vuelve atrás en el navegador)
     //
@@ -366,6 +370,8 @@ export const renderList = (data) => {
     renderCards(list);
 
     if (intersectionObserverIsSupported) {
+        $('#loader').addClass('d-none');
+
         // Comprobamos que el observer no haya sido ya inicializado y que además el listado obtenido tenga más de una página
         if (typeof window.observer === 'undefined' && list.length && data.total_page > 1) {
             window.observer = initInfiteScrollObserver(['#intersectionObserverTarget']);
@@ -418,55 +424,68 @@ function renderCards(list) {
     }
 }
 
-function initInfiteScrollObserver(targetSelectors) {
+function initInfiteScrollObserver(targetSelector) {
+    // Almacenamos en una variable global el tiempo transcurrido entre una intersección y otra
+    window.previousIntersectingTime = undefined;
+
+    // Devolvemos el objeto para comprobar si el IntersectionObserver ha sido ya creado
     let observer = undefined;
 
-    // Obtenemos los elementos que queremos observar y comprobamos si existen
-    const elementsToObserve = targetSelectors
-        .map((targetSelector) => document.querySelector(targetSelector))
-        .filter((element) => element !== null);
+    // Obtenemos el elemento que queremos observar
+    const elementToObserve = document.querySelector(targetSelector);
 
     // Definimos las opciones que tendrá el observer
     const options = {
-        root: document,
-        rootMargin: '0px 0px 100px 0px',
-        threshold: 0
+        root: document, // Indicamos que el elemento raíz es el document para que la propiedad rootMargin funcione en el iframe
+        rootMargin: '0px 0px 100px 0px', // Especificamos un margin-bottom para que se ejecute el callback x píxeles antes de que el elemento sea visible
+        threshold: 0 // Establecemos qué % del elemento debe ser visible para que se ejecute el callback
     };
 
-    // Si existen elementos a observar
-    if (elementsToObserve.length) {
-        // Creamos el observer pasando la función que se ejecutará cada vez que los elementos sean visibles, junto con las opciones
+    // Si existe el elemento a observar
+    if (elementToObserve !== null) {
+        // Creamos el observer pasando la función callback que se ejecutará cada vez que el elemento sea visible, junto con las opciones
         observer = new IntersectionObserver(getMoreDocsToScroll, options);
 
-        // Empezamos a observar los elementos
-        elementsToObserve.forEach((element) => {
-            observer.observe(element);
-        });
+        // Empezamos a observar el elemento
+        observer.observe(elementToObserve);
     }
 
     return observer;
 }
 
-function getMoreDocsToScroll(entries, observer) {
-    // Si el scroll se acerca al elemento que estamos observando
-    entries.forEach(async (entry) => {
-        if (entry.isIntersecting) {
-            // Indicamos que queremos solicitar la siguiente página
-            window.aonDocumentalContainer.page += 1;
+async function getMoreDocsToScroll([entry], observer) {
+    // Comprobamos si es la primera vez que el scroll se acerca al elemento que estamos observando
+    const firstTimeIntersecting = (typeof window.previousIntersectingTime === 'undefined');
+    // Creamos una variable para comprobar si ha transcurrido el tiempo suficiente entre una intersección y otra como para volver a ejecutar la petición
+    let intersectionDelayed = false;
 
-            // Obtenemos los documentos de la siguiente página
-            const list = await getList(window.aonDocumentalContainer.page);
+    // Si no es la primera vez que el scroll se acerca al elemento, comprobamos el tiempo transcurrido entre la intersección anterior y esta
+    if (!firstTimeIntersecting) {
+        const intersectionTimeDiff = entry.time - window.previousIntersectingTime;
 
-            // Añadimos los nuevos elementos a la lista
-            renderList(list);
+        // Comprobamos que el margen de tiempo entre una intersección y otra no sea demasiado pequeño, de este modo evitamos ejecutar la petición más de una vez en poco tiempo
+        intersectionDelayed = (intersectionTimeDiff >= 500);
+    }
 
-            // Si la página solicitada es la última
-            if (list.page >= list.total_page) {
-                // Dejamos de observar todos los elementos
-                observer.disconnect();
-            }
+    // Si el scroll se acerca al elemento que estamos observando, comprobamos que haya pasado suficiente tiempo entre la intersección anterior y esta
+    if (entry.isIntersecting && (firstTimeIntersecting || intersectionDelayed)) {
+        window.previousIntersectingTime = entry.time
+
+        // Indicamos que queremos solicitar la siguiente página
+        window.aonDocumentalContainer.page += 1;
+
+        // Obtenemos los documentos de la siguiente página
+        const list = await getList(window.aonDocumentalContainer.page);
+
+        // Añadimos los nuevos elementos a la lista
+        renderList(list);
+
+        // Si la página solicitada es la última
+        if (list.page >= list.total_page) {
+            // Dejamos de observar todos los elementos
+            observer.disconnect();
         }
-    });
+    }
 }
 
 //

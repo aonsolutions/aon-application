@@ -741,10 +741,21 @@ export function getFileExtensionsConfig() {
     };
 }
 
-async function CargarDivAjaxDocumentos(id,url){
+async function CargarDivAjaxDocumentos(id, url) {
     // Poner la imagen del cargando
     if (!intersectionObserverIsSupported) {
-        $('table tbody').html('<tr id="tabla_documentos_loader"><td colspan="8"><center class="pt-5"><div class="lds-ripple"><div></div><div></div></div></center></td></tr>');
+        $('table tbody').html(`
+            <tr id="tabla_documentos_loader">
+                <td colspan="8">
+                    <center class="pt-5">
+                        <div class="lds-ripple">
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </center>
+                </td>
+            </tr>
+        `);
     }
 
     // Recargar tabla y paginado
