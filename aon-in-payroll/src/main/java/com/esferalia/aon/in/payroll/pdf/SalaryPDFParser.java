@@ -8,13 +8,14 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
 
+import com.esferalia.aon.in.payroll.pdf.templates.A3PDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.templates.AltaiPDFTemplate;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryPDFParser {
 	
-	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {AltaiPDFTemplate.ALTAI_PDF_TEMPLATE };
+	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, A3PDFTemplate.A3_PDF_TEMPLATE };
 	
 	
 	public static void parse( File file , ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {

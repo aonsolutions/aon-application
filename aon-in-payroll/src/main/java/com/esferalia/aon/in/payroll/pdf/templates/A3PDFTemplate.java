@@ -13,6 +13,8 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class A3PDFTemplate implements SalaryPDFTemplate {
 
+	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
+
 	@Override
 	public SalaryPDFTemplate parse(String text, ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
 		salaryBuilder.createNewSalary();
