@@ -24,14 +24,14 @@ public class SistemaRED {
 
 	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream, final String certificatePassword,
 													  final String certificateType, String regimen, String ccc) throws SegSocialException {
-		return SistemaRedEmployee.getTotalEmployees(certificateInputStream,certificatePassword,certificateType,regimen,ccc);
+		return SistemaRED_Employee.getTotalEmployees(certificateInputStream,certificatePassword,certificateType,regimen,ccc);
 	}
 
 	public static Collection<Employee> getEmployees(final byte certificateData [], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException 
 	{
 		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {
-			return SistemaRedEmployee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+			return SistemaRED_Employee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 		} catch ( IOException e ) {throw new SegSocialException(e);}
 	}
 	
@@ -39,20 +39,20 @@ public class SistemaRED {
 			final String certificateType, String regimen, String ccc) throws SegSocialException 
 	{
 		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {
-			return SistemaRedEmployee.getPrevEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+			return SistemaRED_Employee.getPrevEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 		} catch ( IOException e ) {throw new SegSocialException(e);}
 	}
 
 	public static Collection<Employee> getEmployees(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException 
 	{
-		return SistemaRedEmployee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+		return SistemaRED_Employee.getEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
 	}
 
 	public static Employee getEmployee(final byte certificateData [], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try  ( InputStream certificateInputStream = new ByteArrayInputStream(certificateData) ) {		
-			return SistemaRedEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss);
+			return SistemaRED_Employee.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen, ccc, nss);
 		} catch ( IOException e ) {
 			throw new SegSocialException(e);
 		}
@@ -61,7 +61,7 @@ public class SistemaRED {
 	public static Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		
-		return SistemaRedEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType,regimen,  ccc, nss);
+		return SistemaRED_Employee.getEmployee(certificateInputStream, certificatePassword, certificateType,regimen,  ccc, nss);
 	}
 	
 	

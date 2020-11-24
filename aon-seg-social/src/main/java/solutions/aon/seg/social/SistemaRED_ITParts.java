@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class SistemaREDITParts {
+public class SistemaRED_ITParts {
 		
 	
 	//GET ITs

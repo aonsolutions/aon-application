@@ -27,7 +27,7 @@ import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 	
-public class SistemaRedEmployee {
+public class SistemaRED_Employee {
 
 		//GETS BOTH REAL AND PREVIUS EMPLOYEES
 		public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream, final String certificatePassword,
@@ -212,7 +212,7 @@ public class SistemaRedEmployee {
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 
-				return getEmployeesFromTable(htmlPage,employees,regimen,ccc);
+				return getEmployeesFromTable(htmlPage,employees,ccc,regimen);
 			}
 		}
 		

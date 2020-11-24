@@ -11,8 +11,7 @@ import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.*;
 
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
@@ -85,6 +84,19 @@ public class HtmlUnitToolkit {
 		Integer code = getSSCode(htmlPage);
 		String msg = getSSmessage(htmlPage);
 		InvalidDataException.checkCode(code,msg);
+	}
+
+	//MANAGES THE EXCEPTIONS OF NEW UI
+	public static void manageStatusMessage(HtmlPage document) throws SegSocialException {
+		DomNodeList<DomNode> errors = document.querySelectorAll(".mensajeError");
+		if(errors.size() == 0) return;
+
+		StringBuilder errorList = new StringBuilder();
+		for (DomNode err: errors) {
+			HtmlListItem error = (HtmlListItem) err;
+			errorList.append(error.getValueAttribute()).append(" ");
+		}
+		throw new InvalidDataException(errorList.toString());
 	}
 
 	//SHOW HTML ELEMENTS AS XML

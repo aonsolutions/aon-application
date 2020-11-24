@@ -25,7 +25,7 @@ import solutions.aon.seg.social.objects.SecondaryUser.SecondaryUserBuilder;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class SistemaRedSecondaryUser {
+public class SistemaRED_Secondary_User {
 
 	//HANDLE SECONDARYUSERS EXCEPTIONS
 	public static SecondaryUser getSecondaryUserByIpf(final InputStream certificateInputStream, final String certificatePassword,

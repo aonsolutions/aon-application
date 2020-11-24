@@ -8,16 +8,16 @@ import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import solutions.aon.seg.social.SistemaREDITParts;
-import solutions.aon.seg.social.SistemaREDITParts.Contingencies;
-import solutions.aon.seg.social.SistemaREDITParts.ContractType;
+import solutions.aon.seg.social.SistemaRED_ITParts;
+import solutions.aon.seg.social.SistemaRED_ITParts.Contingencies;
+import solutions.aon.seg.social.SistemaRED_ITParts.ContractType;
 
 public class TestItRegister {
  
 	@Test
 	public void registerItCertificateTest() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITParts.addItStart(certificateInputStream,"jg@FNMT","pkcs12", "0111", "01105360062", "291136796369", Contingencies.ENFERMEDAD_COMUN, Optional.of("1342341245"), Optional.of("0123456789"), new Date(), ContractType.RESTO_Y_AUTONOMOS,2.3f,23);
+			SistemaRED_ITParts.addItStart(certificateInputStream,"jg@FNMT","pkcs12", "0111", "01105360062", "291136796369", Contingencies.ENFERMEDAD_COMUN, Optional.of("1342341245"), Optional.of("0123456789"), new Date(), ContractType.RESTO_Y_AUTONOMOS,2.3f,23);
 		} catch (Exception e) {System.err.println(e);}
 	}
 	
