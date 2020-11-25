@@ -50,6 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -67,6 +68,7 @@ import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.YesExtraException;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.PaymentVariable;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -467,6 +469,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 	}
 
 	protected void fillEmployeeData(IContractSalaryCalculatorContext ctx) {
+		
 		salaryBuilder.setEmployeeName(ctx.getEmployeeName());
 		salaryBuilder.setEmployeeDocument(ctx.getEmployeeDocument());
 		salaryBuilder.setRegistration(ctx.getRegistration());
@@ -474,6 +477,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		salaryBuilder.setCategory(ctx.getCategory());
 		salaryBuilder.setQuoteGroup(ctx.getQuoteGroup());
 		salaryBuilder.setSeniorityDate(ctx.getSeniorityDate());
+		salaryBuilder.setRegime(Optional.ofNullable(ctx.getSSRegime()).orElse(SSRegimeType.GENERAL).getCode());
 	}
 
 	protected void fillSalaryData(IContractSalaryCalculatorContext ctx) {

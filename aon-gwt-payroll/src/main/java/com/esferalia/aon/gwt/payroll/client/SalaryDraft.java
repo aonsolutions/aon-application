@@ -2532,8 +2532,8 @@ public class SalaryDraft extends ResizeComposite
 	private boolean autoSave = true;
 	private MenuItem autoSaveMenuItem;
 	
-	private boolean dummies = false;
-	private MenuItem dummiesMenuItem;
+//	private boolean dummies = false;
+//	private MenuItem dummiesMenuItem;
 	
 	private static final DateTimeFormat MONTH_FORMAT = DateTimeFormat
 			.getFormat(PredefinedFormat.MONTH_ABBR);
@@ -2552,6 +2552,10 @@ public class SalaryDraft extends ResizeComposite
 		initSalaryDb();
 		export2JS(this);
 	}
+	
+	public void calculate() {
+		salaryDraftObject.calculate(this);
+	}
 
 	public void setSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
 		showDraft();
@@ -2569,7 +2573,8 @@ public class SalaryDraft extends ResizeComposite
 		salaryButton.setVisible(!isSettle());
 		settleButton.setVisible(isSettle());
 		settleButton.setVisible(isAutomatic());
-		salaryDraftObject.calculate(this);
+		
+		calculateAndSync();
 		
 	}
 
@@ -2584,7 +2589,7 @@ public class SalaryDraft extends ResizeComposite
 	// ------------------------------------------------------------------------
 	@Override
 	public Calculate getCalculate() {
-		return dummies ? Calculate.DUMMIES : Calculate.STANDARD;
+		return Calculate.STANDARD;
 	}
 	
 	@Override
@@ -2943,7 +2948,8 @@ public class SalaryDraft extends ResizeComposite
 
 	private void onChangedSalaryDraftObject(SalaryDraftObject salaryDraftObject) {
 		
-		salaryDraftObject.calculate(this);
+		calculateAndSync();
+			
 
 		syncSalarySelect();
 
@@ -2959,6 +2965,33 @@ public class SalaryDraft extends ResizeComposite
 		undoAllButton.setEnabled(salaryDraftObject.hasDrafts());
 
 	}
+
+	protected void calculateAndSync() {
+		salaryDraftObject.calculate(new CalculateCallback() {
+			
+			@Override
+			public Calculate getCalculate() {
+				return SalaryDraft.this.getCalculate();
+			}
+			
+			@Override
+			public void onCalculateSucces(SalaryDraftObject object) {
+				SalaryDraft.this.onCalculateSucces(object);
+				if ( isCostsVisible() )
+					SalaryDraft.this.salaryDraftObject.synchronize(SalaryDraft.this);
+			}
+			
+			@Override
+			public void onCalculateFailure(Throwable throwable) {
+				SalaryDraft.this.onCalculateFailure(throwable);
+			}
+		});
+	}
+
+	private Boolean isCostsVisible() {
+		return costsCheck.getValue();
+	}
+	
 
 	private void dumpSalaryDraft(boolean displayChanges) {
 
@@ -3072,7 +3105,7 @@ public class SalaryDraft extends ResizeComposite
 		acceptButton.setEnabled(salaryDraftObject.hasDrafts());
 		undoButton.setEnabled(salaryDraftObject.canUndo());
 		redoButton.setEnabled(salaryDraftObject.canRedo());
-		if (costsCheck.getValue())
+		if (isCostsVisible()) 
 			showCosts(true);
 		
 		initEventsCheck();
@@ -3081,6 +3114,7 @@ public class SalaryDraft extends ResizeComposite
 		eventsTable.setVisible(eventsCheck.isVisible() && eventsCheck.getValue());
 		eventsTableSpace.setVisible(eventsTable.isVisible()/*eventsTable.getRowCount() > 0*/);
 		showPaymentsEvents(eventsTable.isVisible());
+
 	}
 
 	
@@ -3343,6 +3377,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiHandler("costsCheck")
 	void onCostsCheckChange(ValueChangeEvent<Boolean> event) {
 		showCosts();
+		if ( isCostsVisible()) 
+			salaryDraftObject.synchronize(this);
 	}
 	
 	@UiHandler("saveButton")
@@ -4840,7 +4876,7 @@ public class SalaryDraft extends ResizeComposite
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				boolean down = event.getValue();
 				if (down) {
-					if (!costsCheck.getValue()) {
+					if (!isCostsVisible()) {
 						costsCheck.setValue(true);
 						showCosts(true);
 					}
@@ -4983,7 +5019,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private void showCosts() {
-		showCosts(costsCheck.getValue());
+		showCosts(isCostsVisible());
 	}
 
 	private void showCosts(boolean show) {
@@ -5005,6 +5041,7 @@ public class SalaryDraft extends ResizeComposite
 					- (2 /* new line */ + 1 /* blanks line */);
 			hideBonus(bonusBeforeRow - (bonusCount));
 		}
+		
 	}
 
 	private void dumpCosts(int beforeRow ) {
@@ -5353,9 +5390,7 @@ public class SalaryDraft extends ResizeComposite
 		return percentPanel;
 	}
 
-	private void calculate() {
-		salaryDraftObject.calculate(this);
-	}
+
 
 	private void calculate(final CalculateCallback callback) {
 		salaryDraftObject.calculate(new CalculateCallback() {
@@ -5760,7 +5795,7 @@ public class SalaryDraft extends ResizeComposite
 		else 
 			salaryDraftObject.addDraftSection(section);
 		
-		calculate();
+		salaryDraftObject.calculate(this);
 		
 	}
 	

@@ -191,6 +191,39 @@ public abstract class EnterpriseStatus implements Serializable {
 		});
 	}
 
+	public static void ifSistemaREDError(EnterpriseStatus enterpriseStatus, Runnable onError,
+			Runnable onSuccess) {
+		enterpriseStatus.visit(new Visitor() {
+	
+			@Override
+			public void up2Date() {
+				onSuccess.run();
+			}
+	
+			@Override
+			public void forbidden() {
+				onError.run();
+			}
+	
+			@Override
+			public void saltraCredentialsNotFound() {
+				onError.run();
+			}
+	
+			
+			@Override
+			public void affiliatedAtTrash(AffiliatedAtTrash affiliatedAtTrash) {
+				onError.run();
+			}
+			
+			@Override
+			public void affiliatedNotFound(AffiliatedNotFound affiliatedNotFound) {
+				onError.run();
+			}
+			
+			
+		});
+	}
 
 	public static <T extends EnterpriseStatus> T trace( T status ) {
 		status.visit(new Visitor() {

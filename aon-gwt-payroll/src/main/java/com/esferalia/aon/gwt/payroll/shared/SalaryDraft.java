@@ -29,6 +29,7 @@ public class SalaryDraft extends SalaryPreview {
 	private String enterpriseDocument;
 	private String enterpriseCCC;
 
+	private String regime;
 	private String employeeCity;
 	private String employeeAddress;
 	private String employeeName;
@@ -591,6 +592,15 @@ public class SalaryDraft extends SalaryPreview {
 	public SalaryDraft setCommunity(String community) {
 		this.community = community;
 		return this;
+	}
+	
+	public SalaryDraft setRegime(String regime) {
+		this.regime = regime;
+		return this;
+	}
+	
+	public String getRegime() {
+		return regime;
 	}
 
 	public SalaryDraft setProrationBase(Double prorationBase) {

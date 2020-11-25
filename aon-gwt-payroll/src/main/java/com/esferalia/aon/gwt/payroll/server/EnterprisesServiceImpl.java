@@ -1883,23 +1883,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(currentDomainName);
 			
-			Integer domainId = AonServletUtils.getDomainID(currentDomainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
-			Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);			
-			
-			PAYROLL.getContract(
-					currentDomainName, 
-					parentDomainId, 
-					currentUser, 
-					p -> p.getIdProperty().eq(contractId))
-			.ifPresent( contract -> SistemaREDServlet.addBonus(
-					currentUser, 
-					currentDomainName, 
-					domainId, 
-					userId, 
-					contract.getSsRegime().getCode(), 
-					contract.getEnterpriseCCC(), 
-					contract.getPersonSsNumber()) );
+			syncBonus(currentDomainName, currentUser, contractId, connection);
 			
 			return JooqSSBonus.getSSBonus(connection, contractId);
 		} catch (SQLException e) {
@@ -1913,6 +1897,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			}
 		}
 	}
+
 
 	@Override
 	public List<SSBonusData> getBonusConcepts(String currentDomainName) {
@@ -2467,4 +2452,24 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 	
+	private static void syncBonus(String currentDomainName, String currentUser, Integer contractId, Connection connection)
+			throws SQLException {
+		Integer domainId = AonServletUtils.getDomainID(currentDomainName);
+		Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
+		Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);			
+		
+		PAYROLL.getContract(
+				currentDomainName, 
+				parentDomainId, 
+				currentUser, 
+				p -> p.getIdProperty().eq(contractId))
+		.ifPresent( contract -> SistemaREDServlet.addBonus(
+				currentUser, 
+				currentDomainName, 
+				domainId, 
+				userId, 
+				contract.getSsRegime().getCode(), 
+				contract.getEnterpriseCCC(), 
+				contract.getPersonSsNumber()) );
+	}
 }

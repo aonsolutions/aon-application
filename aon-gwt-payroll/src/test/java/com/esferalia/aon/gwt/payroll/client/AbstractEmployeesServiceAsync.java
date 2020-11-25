@@ -220,7 +220,7 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void saveSalary(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
+	public void saveSalary(String domain, String user, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
 			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
 		failure(callback);
 	}
@@ -253,8 +253,8 @@ public abstract class AbstractEmployeesServiceAsync implements EmployeesServiceA
 	}
 
 	@Override
-	public void calculateSalaryDraft4Dummies(String domain, com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft,
-			AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
+	public void syncSalaryDraft(String domain, String user,
+			com.esferalia.aon.gwt.payroll.shared.SalaryDraft salaryDraft, AsyncCallback<com.esferalia.aon.gwt.payroll.shared.SalaryDraft> callback) throws IllegalArgumentException {
 		failure(callback);
 
 	}

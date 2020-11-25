@@ -465,9 +465,9 @@ public class EmployeeDAO {
 	private static boolean equals( Bonus bonus, ContractBonusRecord record) {
 		if( equals(bonus.getStartDate(),record.getStartDate())
 				&& equals(bonus.getEndDate(),record.getEndDate())
-				&& AonStringUtils.equals(bonus.getExpression(), record.getExpression()))
+				&& AonStringUtils.equals(getExpression(bonus), getExpression(record)))
 			return true;
-		if ( AonStringUtils.equals(bonus.getExpression(), record.getExpression()) ){
+		if (  AonStringUtils.equals(getExpression(bonus), getExpression(record)) ){
 			if ((compare( record.getStartDate(), bonus.getStartDate()) <= 0 )
 				&& (compare( record.getEndDate(), bonus.getEndDate()) >= 0 )
 				&& (AonDateUtils.get(bonus.getStartDate(), Calendar.DAY_OF_MONTH) == 1 )
@@ -475,8 +475,17 @@ public class EmployeeDAO {
 				return true;
 		}
 		
+		
 		return false;
 				
+	}
+	
+	private static String getExpression(Bonus bonus) {
+		return Optional.ofNullable(bonus.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
+	}
+
+	private static String getExpression(ContractBonusRecord record) {
+		return Optional.ofNullable(record.getExpression()).map( b -> b.replaceAll("/\\*[^\\*]*\\*/", "")).orElse("");
 	}
 	
 	private static boolean equals ( Date d1, Date d2) {

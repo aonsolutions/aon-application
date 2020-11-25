@@ -159,6 +159,7 @@ import com.esferalia.aon.gwt.payroll.sql.SQLITData;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLStatistics;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -1017,8 +1018,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft)
+	public SalaryDraft syncSalaryDraft(String domain, String user, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
+		try ( Connection conn = AonServletUtils.getConnection(domain)) {
+			syncBonus(conn, domain, user, salaryDraft);
+		} catch ( Throwable t ) {
+			
+		}
 		calculate(domain, salaryDraft, new SmartContractSalaryCalculator<ISalary>());
 		return salaryDraft;
 	}
@@ -1541,11 +1547,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft)
+	public SalaryDraft saveSalary(String domain, String user, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
+			syncBonus(conn, domain, user, salaryDraft);
 			calculateAndSave(conn, salaryDraft);
 			return salaryDraft;
 		} catch (SQLException e) {
@@ -1567,6 +1574,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
+			
+			
+			
 			calculateAndSave(conn, salaryDraft, sections);
 			return salaryDraft;
 		} catch (SQLException e) {
@@ -5214,5 +5224,24 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet implements
 			return "0111";
 		}
 	}
+	
+	private static void syncBonus( Connection connection, String currentDomainName, String currentUser, SalaryDraft salaryDraft)
+			throws SQLException {
+		Integer domainId = AonServletUtils.getDomainID(currentDomainName);
+		Integer parentDomainId = AonServletUtils.getParentDomainID(currentDomainName); 
+		Integer userId = AonServletUtils.getUserID(connection, currentUser, domainId, parentDomainId);			
+		
+		SistemaREDServlet.addBonus(
+				currentUser, 
+				currentDomainName, 
+				domainId, 
+				userId, 
+				salaryDraft.getStartDate(),
+				salaryDraft.getRegime(), 
+				salaryDraft.getEnterpriseCCC(), 
+				salaryDraft.getEmployeeSS())
+		;
+	}
+
 
 }

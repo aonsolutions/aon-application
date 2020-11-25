@@ -76,10 +76,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	String getSalaryReceiptHTML(String domain, Salary salary, int zoom)
 			throws IllegalArgumentException;
 
-	void saveSalaryDraft(String domain, SalaryDraft salaryDraft)
+	void saveSalaryDraft(String domain,SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
-	SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft)
+	SalaryDraft saveSalary(String domain,  String user, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 	
 	SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft, Date sections [])
@@ -100,7 +100,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	SalaryDraft calculateSalaryDraft(String domain, SalaryDraft salaryDraft, Date sections [])
 			throws IllegalArgumentException;
 
-	SalaryDraft calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft)
+	SalaryDraft syncSalaryDraft(String domain, String user, SalaryDraft salaryDraft)
 			throws IllegalArgumentException;
 
 	String getSalaryDraftReceipt(String domain, SalaryDraft salaryDraft, String mime)

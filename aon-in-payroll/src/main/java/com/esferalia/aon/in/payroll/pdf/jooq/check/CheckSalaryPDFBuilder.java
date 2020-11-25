@@ -37,6 +37,11 @@ public class CheckSalaryPDFBuilder<T extends ISalary> implements SalaryPDFBuilde
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void setRegime(String regime) {
+		// TODO Auto-generated method stub
+	}
 
 	@Override
 	public void setEnterpriseCity(String enterpriseCity) {

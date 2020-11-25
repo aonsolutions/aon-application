@@ -62,6 +62,11 @@ public abstract class AbstractSQLSalaryBuilder<T extends ISalary> implements ISa
 	}
 	
 	@Override
+	public void setRegime(String regime) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void setEnterpriseCity(String enterpriseCity) {
 		//TODO: salary.setEnterpriseCity(enterpriseCity);
 	}

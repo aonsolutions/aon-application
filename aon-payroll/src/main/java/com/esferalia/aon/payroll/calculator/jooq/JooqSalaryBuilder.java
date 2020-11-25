@@ -40,6 +40,7 @@ import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -121,6 +122,11 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	@Override
 	public void setCcc(String ccc) {
 		insertMoreSalary = insertMoreSalary.set(SALARY.CCC, ccc);
+	}
+	
+	@Override
+	public void setRegime(String regime) {
+		//TODO: insertMoreSalary = insertMoreSalary.set(SALARY.SS_REGIME, SSRegimeType);	
 	}
 	
 	@Override

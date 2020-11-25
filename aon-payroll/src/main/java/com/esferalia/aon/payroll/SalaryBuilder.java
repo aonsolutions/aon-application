@@ -34,6 +34,10 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 	@Override
 	public void setContract(Object contract) {
 	}
+	
+	@Override
+	public void setRegime(String regime) {
+	}
 
 	@Override
 	public void setCcc(String ccc) {

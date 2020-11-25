@@ -41,6 +41,12 @@ public class MockSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 	
 	@Override
+	public void setRegime(String regime) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public void setEnterpriseCity(String enterpriseCity) {
 		// TODO Auto-generated method stub
 		

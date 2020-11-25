@@ -30,6 +30,7 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 
 	private Object contract;
 	private String ccc;
+	private String regime;
 	private String enterpriseCity;
 	private String enterpriseName;
 	private String enterpriseAddress;
@@ -660,6 +661,11 @@ public class CollectSalaryBuilder<T  extends ISalary> implements ISalaryBuilder<
 	@Override
 	public void setCcc(String ccc) {
 		this.ccc = ccc;
+	}
+	
+	@Override
+	public void setRegime(String regime) {
+		this.regime = regime;
 	}
 	
 	@Override

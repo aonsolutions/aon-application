@@ -39,6 +39,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -443,29 +444,61 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 			}
 		};
 		
-		callback.getCalculate().accept( new CalculateVisitor() {
-			
-			@Override
-			public void visitStandard() {
-				Date sections [] = getSections();
-				if ( sections != null && sections.length > 0 )
-					employeesServiceAsync.calculateSalaryDraft(salaryDraft,
-							sections,asyncCallback);
-				else 
-					employeesServiceAsync.calculateSalaryDraft(salaryDraft,
-							asyncCallback);
-			}
-			
-			@Override
-			public void visit4Dummies() {
-				employeesServiceAsync.calculateSalaryDraft4Dummies(salaryDraft,
-						asyncCallback);
-			}
-
-		});
+		Date sections [] = getSections();
+		
+		if ( sections != null && sections.length > 0 )
+			employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+					sections,asyncCallback);
+		else 
+			employeesServiceAsync.calculateSalaryDraft(salaryDraft,
+					asyncCallback);
 	}
 
+	public void synchronize(final CalculateCallback callback) {
+		if ( isUp2Date(salaryDraft, 12 * 3600 * 1000) ) 
+			return;
+//		salaryDraft.getBonuses().stream()
+//		.filter(b -> b.getExpression() );
+
+		setDraftType(salaryDraft);
+		setDraftPeriod(getDraftStartDate(), getDraftEndDate(), salaryDraft);
+		
+		removeSalaryPart(salaryDraft);
+
+		salaryDraft.setDraftLeaveIts(getDrafLeaveIts());
+		
+		final AsyncCallback<SalaryDraft> asyncCallback = new AsyncCallback<SalaryDraft>() {
+
+			@Override
+			public void onSuccess(SalaryDraft result) {
+				SalaryDraftObject.this.salaryDraft = result;
+				callback.onCalculateSucces(SalaryDraftObject.this);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onCalculateFailure(caught);
+			}
+		};
+		
+		employeesServiceAsync.syncSalaryDraft(salaryDraft,
+				asyncCallback);
+	}
 	
+	private boolean isUp2Date(SalaryDraft salaryDraft, long limit) {
+		long time = new Date().getTime() ;
+		RegExp regExp = RegExp.compile("epoch:([0-9]+)");
+		for (Bonus bonus : salaryDraft.getBonuses()) {
+			MatchResult result = regExp.exec(bonus.getExpression());
+			if ( result == null )
+				return false;
+			long epoch = Long.parseLong(result.getGroup(1));		
+			if ( (time - epoch) > limit ) 
+				return false;
+		}
+		return salaryDraft.getBonuses().size() > 0;
+	}
+		
 //	public void addCalendarVariablesDraft(){
 //		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesList(getDraftStartDate(), getDraftEndDate()));
 //		addCalendarDraft(employeeCalendarDraftObjectData.getVariablesListCE(getDraftStartDate(), getDraftEndDate()));

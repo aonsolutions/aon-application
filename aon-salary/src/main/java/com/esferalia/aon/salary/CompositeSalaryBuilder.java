@@ -45,6 +45,12 @@ public class CompositeSalaryBuilder<E extends ISalary,T extends ISalaryBuilder<E
 		for (ISalaryBuilder<E> builder : builders)
 			builder.setCcc(ccc);
 	}
+	
+	@Override
+	public void setRegime(String regime) {
+		for (ISalaryBuilder<E> builder : builders)
+			builder.setRegime(regime);
+	}
 
 	@Override
 	public void setEnterpriseCity(String enterpriseCity) {

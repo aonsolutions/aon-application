@@ -62,6 +62,11 @@ public class LazySalaryBuilder<S extends ISalaryBuilder<T>, T extends ISalary> i
 	public void setCcc(String ccc) {
 		calls.add( () -> salaryBuilder.setCcc(ccc));
 	}
+	
+	@Override
+	public void setRegime(String regime) {
+		calls.add( () -> salaryBuilder.setRegime(regime));
+	}
 
 	@Override
 	public void setEnterpriseCity(String enterpriseCity) {

@@ -95,6 +95,9 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			case UP2DATE_REPORT:
 				doUp2DateReportPost(req, resp);
 				break;
+			case IDC_CCC_REPORT:
+				doIdcCCCReportPost(req, resp);
+				break;
 			case UP2DATE_CCC_REPORT:
 				doUp2DateCCCReportPost(req, resp);
 				break;
@@ -137,6 +140,35 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			}
 			
 			resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+			
+		}
+		
+	}
+
+	private void doIdcCCCReportPost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException ,SegSocialException{
+		String userLogin = req.getParameter(Parameter.USER.name());
+		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		try ( Connection connection = getConnection(req);
+			OutputStream os = resp.getOutputStream();
+			Writer writer = new OutputStreamWriter(os)){
+			
+			
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+			
+			String regime = req.getParameter(Parameter.REGIME.name());
+			String ccc = req.getParameter(Parameter.CCC.name());
+
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);		
+			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+			
+			
+			resp.setStatus(HttpServletResponse.SC_OK);
+			String base64 = Base64.getEncoder().encodeToString(data);
+			encodeURIComponent("application/pdf", base64, writer);
 			
 		}
 		
@@ -396,13 +428,18 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String ...nafs) {
 		
+		addBonus(userLogin, domainName, domainId, userId, new Date(), regime, ccc, nafs);
+	}
+
+	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, Date date, String regime,
+			String ccc, String ...nafs) {
+		
 		try {
-			Date today = new Date();
-			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(new Date());
-			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(new Date());
+			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(date);
+			Date lastDayOfMonth = AonDateUtils.getLastDayOfMonth(date);
 
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, today);
+			byte data [] = SistemaRED.getIDCCCC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
 			
 			for ( String naf : nafs ) {
 				Bonus bonuses [] =
@@ -414,18 +451,15 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				.setDescription(b.getDescription())
 				.setType(BonusType.SOCIAL_SECURITY)
 				.setStartDate(b.getStartDate())
-				.setEndDate(b.getEndDate().equals(lastDayOfMonth) ? null : b.getEndDate())
+				.setEndDate(b.getEndDate())
 				)
 				.toArray(Bonus[]::new)
 				;
 				PAYROLL.setBonuses(domainName, domainId, userLogin, ccc, naf, firstDayOfMonth, lastDayOfMonth, bonuses);					
 			}
 			
-		} catch ( Exception e ) {
-			
+		} catch ( Throwable e ) {
+			e.printStackTrace();
 		}
-		 
-				
 	}
-
 }

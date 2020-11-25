@@ -369,6 +369,78 @@ public abstract class EmployeeStatus implements Serializable {
 		});
 	}
 
+	public static void ifSistemaREDError(EmployeeStatus employeeStatus, Runnable onError, Runnable onSuccess) {
+		employeeStatus.visit(new Visitor() {
+	
+			@Override
+			public void up2Date() {
+				onSuccess.run();
+			}
+			
+			@Override
+			public void forbidden() {
+				onError.run();
+			}
+	
+			@Override
+			public void invalidData() {
+				onError.run();
+			}
+	
+			@Override
+			public void endDateNotFound() {
+				onError.run();
+			}
+	
+			@Override
+			public void employeeNotFound() {
+				onError.run();
+			}
+	
+			@Override
+			public void occupationNotFound() {
+				onError.run();
+			}
+	
+			@Override
+			public void saltraCredentialsNotFound() {
+				onError.run();
+			}
+	
+			@Override
+			public void mismatchedStartDate(MismatchedStartDate status) {
+				onError.run();
+			}
+	
+			@Override
+			public void mismatchedPartialFactor(MismatchedPartialFactor status) {
+				onError.run();
+			}
+	
+			@Override
+			public void mismatchedOccupation(MismatchedOccupation status) {
+				onError.run();
+			}
+	
+			@Override
+			public void mismatchedContractType(MismatchedContractType status) {
+				onError.run();
+			}
+	
+			@Override
+			public void mismatchedCCC(MismatchedCCC status) {
+				onError.run();
+			}
+	
+			@Override
+			public void mismatchedQuoteGroup(MismatchedQuoteGroup status) {
+				onError.run();
+	
+			}
+	
+		});
+	}
+
 	public static void trace(AndEmployeeStatus employeeStatus) {
 		employeeStatus.visit(new Visitor() {
 			

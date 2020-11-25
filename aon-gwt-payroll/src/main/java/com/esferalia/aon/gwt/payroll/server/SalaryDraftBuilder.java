@@ -299,6 +299,11 @@ public class SalaryDraftBuilder
 		salaryDraft.setEnterpriseCCC(ccc);
 
 	}
+	
+	@Override
+	public void setRegime(String regime) {
+		salaryDraft.setRegime(regime);
+	}
 
 	@Override
 	public void setEnterpriseName(String enterpriseName) {

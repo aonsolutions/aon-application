@@ -84,7 +84,7 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void saveSalaryDraft(String domain, SalaryDraft salaryDraft, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 
-	void saveSalary(String domain, SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
+	void saveSalary(String domain, String user, SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
 	void saveSalary(String domain, SalaryDraft salaryDraft, Date sections[], AsyncCallback<SalaryDraft> callback)
@@ -102,8 +102,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
-	void calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft,
-			AsyncCallback<SalaryDraft> callback)
+	void syncSalaryDraft(String domain, String user,
+			SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException;
 
 	void eval(String domain, String expression, SalaryDraft salaryDraft,

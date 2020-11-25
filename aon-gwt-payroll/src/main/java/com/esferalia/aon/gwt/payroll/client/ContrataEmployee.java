@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDEnabled;
+import static com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.ifSistemaREDError;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractType.ModelRecord;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Messages;
@@ -981,14 +983,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						employeeStatus.visit(this);
 						selectResultsPanel();
 						ifSistemaREDEnabled(employeeStatus, () -> {
-							showFootPanel();
 							ContrataEmployee.this.setTGSSVisible(true);
 							//ContrataEmployee.this.setOnSaved(e -> run());
 						}, () -> {
-							closeFootPanel();
 							ContrataEmployee.this.setTGSSVisible(false);
 
 						});
+						ifSistemaREDError(employeeStatus, 
+								ContrataEmployee.this::showFootPanel, 
+								ContrataEmployee.this::closeFootPanel);
+
 					}, throwable -> {
 						closeFootPanel();
 						ContrataEmployee.this.setTGSSVisible(false);
@@ -1002,13 +1006,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			selectResultsPanel();
 
 			ifSistemaREDEnabled(employeeStatus, () -> {
-				showFootPanel();
 				ContrataEmployee.this.setTGSSVisible(true);
-				//ContrataEmployee.this.setOnSaved(e -> sistemaREDResults.run());
 			}, () -> {
-				closeFootPanel();
 				ContrataEmployee.this.setTGSSVisible(false);
 			});
+			
+			ifSistemaREDError(employeeStatus, this::showFootPanel, this::closeFootPanel);
 
 		}, throwable -> {
 			closeFootPanel();

@@ -70,7 +70,6 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		this.testTotalLiquid = testTotalPayment;
 	}
 
-
 	
 	public void setTestEnterpriseCost(boolean testEnterpriseCost) {
 		this.testEnterpriseCost = testEnterpriseCost;

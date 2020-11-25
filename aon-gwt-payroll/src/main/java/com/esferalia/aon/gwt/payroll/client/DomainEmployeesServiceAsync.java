@@ -234,7 +234,7 @@ public class DomainEmployeesServiceAsync {
 
 	public void saveSalary(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
-		employeesServiceAsync.saveSalary(getCurrentDomainName(),  salaryDraft, callback);
+		employeesServiceAsync.saveSalary(getCurrentDomainName(),  getCurrentUser(), salaryDraft, callback);
 	}
 
 	public void saveSalary(SalaryDraft salaryDraft, Date[] sections, AsyncCallback<SalaryDraft> callback)
@@ -256,9 +256,9 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.calculateSalaryDraft(getCurrentDomainName(),  salaryDraft, sections, callback);
 	}
 
-	public void calculateSalaryDraft4Dummies(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
+	public void syncSalaryDraft(SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
-		employeesServiceAsync.calculateSalaryDraft4Dummies(getCurrentDomainName(),  salaryDraft, callback);
+		employeesServiceAsync.syncSalaryDraft(getCurrentDomainName(),  getCurrentUser(), salaryDraft, callback);
 	}
 
 	public void eval(String expression, SalaryDraft salaryDraft, AsyncCallback<List<Result>> callback)

@@ -259,7 +259,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft saveSalary(String domain, SalaryDraft salaryDraft)
+	public SalaryDraft saveSalary(String domain, String user, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");
@@ -342,7 +342,7 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public SalaryDraft calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft)
+	public SalaryDraft syncSalaryDraft(String domain, String user, SalaryDraft salaryDraft)
 			throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		System.out.println("Auto-generated method stub");

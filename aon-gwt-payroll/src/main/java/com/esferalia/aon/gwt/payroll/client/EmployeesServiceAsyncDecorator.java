@@ -252,11 +252,11 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void saveSalary(String domain, SalaryDraft salaryDraft,
+	public void saveSalary(String domain,  String user, SalaryDraft salaryDraft,
 			AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.saveSalary(domain, salaryDraft,
+		employeesServiceAsync.saveSalary(domain, user, salaryDraft,
 				new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
@@ -318,12 +318,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	}
 
 	@Override
-	public void calculateSalaryDraft4Dummies(String domain, SalaryDraft salaryDraft,
-			AsyncCallback<SalaryDraft> callback)
+	public void syncSalaryDraft(String domain, String user,
+			SalaryDraft salaryDraft, AsyncCallback<SalaryDraft> callback)
 			throws IllegalArgumentException {
 		AON.start();
-		employeesServiceAsync.calculateSalaryDraft4Dummies(domain, salaryDraft,
-				new AsyncCallbackWrapper<SalaryDraft>(callback));
+		employeesServiceAsync.syncSalaryDraft(domain, user,
+				salaryDraft, new AsyncCallbackWrapper<SalaryDraft>(callback));
 	}
 
 	@Override

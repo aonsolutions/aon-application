@@ -1698,9 +1698,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		private CCC ccc;
 		
+		private Button idcButton;
 		private Button up2DateButton;
 		
 		public CCCCretaDetail() {			
+			idcButton = addSLDButton(new Button("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", (ClickHandler) e -> onClickIdcButton(e)));
 			up2DateButton = addSLDButton(new Button("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", (ClickHandler) e -> onClickUp2DateSSButton(e)));
 		}
 
@@ -1708,6 +1710,15 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			this.ccc = ccc;
 		}
 		
+		protected void setSLDButtonsVisible(boolean enabled) {
+			setIdcButtonVisible(enabled);
+			setUp2DateButtonVisible(enabled);
+		}
+		
+		protected void setIdcButtonVisible(boolean enabled) {
+			idcButton.setVisible(enabled);
+		}
+
 		protected void setUp2DateButtonVisible(boolean enabled) {
 			up2DateButton.setVisible(enabled);
 		}
@@ -1750,6 +1761,40 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			cmd.execute();
 		}
 		
+		void onClickIdcButton(ClickEvent e) {
+			XMLHttpRequest xhr = XMLHttpRequest.create();
+			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.IDC_CCC_REPORT);
+			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhr.setOnReadyStateChange(new ReadyStateChangeHandler() {
+				@Override
+				public void onReadyStateChange(XMLHttpRequest xhr) {
+					int state = xhr.getReadyState();
+					if (state != XMLHttpRequest.DONE)
+						return;
+					try {
+						String dataURI = xhr.getResponseText();
+						showPFDF(dataURI, employeeDetail);
+						AON.stop();
+					} catch ( Throwable t ) {
+						AON.fail();
+					}
+				}
+			});
+
+			StringBuffer requestDataBuffer = new StringBuffer();
+
+			requestDataBuffer
+			.append(SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL())
+			.append("&" +SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser() )
+			.append("&" +SistemaREDService.Parameter.REGIME.name() + "=" + ccc.getRegime() )
+			.append("&" +SistemaREDService.Parameter.CCC.name() + "=" + ccc.getCode() )
+			;
+			
+			xhr.send(requestDataBuffer.toString());
+			AON.start();
+			
+		}
+
 		void onClickUp2DateSSButton(ClickEvent e) {
 			XMLHttpRequest xhr = XMLHttpRequest.create();
 			xhr.open("POST", SistemaREDService.SISTEMA_RED_URL+ "/" + SistemaREDService.UP2DATE_CCC_REPORT);
@@ -2769,16 +2814,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						employeeStatus.visit(this);
 						selectResultsPanel();
 						EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
-							showFootPanel();
 							getEmployeeDraft().setTaVisible(true);
 							getEmployeeDraft().setIdcVisible(true);
 							getEmployeeDraft().setOnSaved(e -> run());
 						}, () -> {
-							closeFootPanel();
 							getEmployeeDraft().setTaVisible(false);
 							getEmployeeDraft().setIdcVisible(false);
 
 						});
+						EmployeeStatus.ifSistemaREDError(
+								employeeStatus,
+								EmployeeTree.this::showFootPanel,
+								EmployeeTree.this::closeFootPanel					
+								);
 					}, throwable -> {
 						closeFootPanel();
 						getEmployeeDraft().setTaVisible(false);
@@ -2792,15 +2840,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			selectResultsPanel();
 
 			EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
-				showFootPanel();
 				getEmployeeDraft().setTaVisible(true);
 				getEmployeeDraft().setIdcVisible(true);
 				getEmployeeDraft().setOnSaved(e -> sistemaREDResults.run());
 			}, () -> {
-				closeFootPanel();
 				getEmployeeDraft().setTaVisible(false);
 				getEmployeeDraft().setIdcVisible(false);
 			});
+			
+			EmployeeStatus.ifSistemaREDError(
+					employeeStatus,
+					EmployeeTree.this::showFootPanel,
+					EmployeeTree.this::closeFootPanel					
+					);
 
 		}, throwable -> {
 			closeFootPanel();
@@ -2844,15 +2896,17 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						enterpiseStatus.visit(this);
 						selectResultsPanel();
 						EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
-							showFootPanel();
-							getCCCCretaDetail().setUp2DateButtonVisible(true);
+							getCCCCretaDetail().setSLDButtonsVisible(true);
 						}, () -> {
-							closeFootPanel();
-							getCCCCretaDetail().setUp2DateButtonVisible(false);
+							getCCCCretaDetail().setSLDButtonsVisible(false);
 						});
+						EnterpriseStatus.ifSistemaREDError(enterpiseStatus, 
+								EmployeeTree.this::showFootPanel, 
+								EmployeeTree.this::closeFootPanel);
+
 					}, throwable -> {
 						closeFootPanel();
-						getCCCCretaDetail().setUp2DateButtonVisible(false);
+						getCCCCretaDetail().setSLDButtonsVisible(false);
 
 					});
 				}
@@ -2864,16 +2918,19 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			selectResultsPanel();
 
 			EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
-				showFootPanel();
-				getCCCCretaDetail().setUp2DateButtonVisible(true);
+				getCCCCretaDetail().setSLDButtonsVisible(true);
 			}, () -> {
-				closeFootPanel();
-				getCCCCretaDetail().setUp2DateButtonVisible(false);
+				getCCCCretaDetail().setSLDButtonsVisible(false);
 			});
+			
+			EnterpriseStatus.ifSistemaREDError(enterpiseStatus, 
+					this::showFootPanel, 
+					this::closeFootPanel);
+			
 
 		}, throwable -> {
 			closeFootPanel();
-			getCCCCretaDetail().setUp2DateButtonVisible(false);
+			getCCCCretaDetail().setSLDButtonsVisible(false);
 		});
 	}
 	// ------------------------------------------------------ Protected methods

@@ -32,6 +32,8 @@ public interface ISalaryBuilder<T extends ISalary> {
 
 	// ------------------------------------------------------------------------
 	// Employee related data
+	
+	public void setRegime(String regime);
 
 	public void setRegistration(Integer registration);
 
@@ -44,7 +46,7 @@ public interface ISalaryBuilder<T extends ISalary> {
 	public void setEmployeeDocument(String employeeDocument);
 
 	public void setSocialSecurityNumber(String socialSecurityNumber);
-
+	
 	public void setCategory(String category);
 
 	public void setQuoteGroup(String quoteGroup);

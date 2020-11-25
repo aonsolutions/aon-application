@@ -70,6 +70,10 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 	}
 
 	@Override
+	public void setRegime(String regime) {
+	}
+
+	@Override
 	public void setCategory(String category) {
 	}
 
@@ -78,6 +82,7 @@ public abstract class AbstractSalaryBuilder<T extends ISalary> implements ISalar
 
 	}
 
+	
 	@Override
 	public void setSeniorityDate(Date seniorityDate) {
 

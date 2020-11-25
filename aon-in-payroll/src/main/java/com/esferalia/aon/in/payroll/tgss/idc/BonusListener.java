@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -161,10 +162,14 @@ class BonusListener  implements IdcListener {
 		ssBonus.setEndDate(end);
 		ssBonus.setDescription(String.format(new Locale("es", "ES"),"%s (%.2f%%)", description, percent));
 		ssBonus.setFormula(String.format(Locale.ROOT,
-				"/*pec:%s,quota:%s*/" +
+				"/*epoch:%d,pec:%s,quota:%s*/" +
 				"/*read-only*/( %s ) * %.2f / 100.00/**/", 
-				code, quota,  
-				QUOTA_EXPRESSION_MAP.get(quota), percent));
+				Calendar.getInstance().getTimeInMillis(),
+				code, 
+				quota,  
+				QUOTA_EXPRESSION_MAP.get(quota), 
+				percent
+				));
 		
 		return ssBonus;
 	}
