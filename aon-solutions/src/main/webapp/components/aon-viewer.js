@@ -44,6 +44,70 @@ export class AonViewer extends AonElement {
 		} else if(this.type && this.type.includes('image')){
 			this.printImage();
 		}
+
+		let div = this.createElement('div');
+		div.id = 'aonViewerButtonsDiv';
+		div.style.display = 'none';
+		this.appendChild(div);
+
+		this.addEventListener('mouseover', () => {
+			div.style.display = 'block';
+		});
+
+		this.addEventListener('mouseleave', () => {
+			div.style.display = 'none';
+		});
+		this.buildButtons();
+	}
+
+	removeButtons() {
+		let div = this.getElement('aonViewerButtonsDiv');
+		div.innerHTML = '';
+	}
+
+	buildButtons() {
+		let div = this.getElement('aonViewerButtonsDiv');
+		let mail = this.createElement('span');
+		mail.style.position = 'fixed';
+		mail.style.right = '20px';
+		mail.style.top = '160px';
+		mail.innerHTML = `<aon-icon-button id="aonViewerButtonsDivEmail" icon="email" background="#f1f1f1"></aon-icon-button>`;
+		div.appendChild(mail);
+
+		let print = this.createElement('span');
+		print.style.position = 'fixed';
+		print.style.right = '20px';
+		print.style.top = '210px';
+		print.innerHTML = `<aon-icon-button id="aonViewerButtonsDivPrint" icon="print" background="#f1f1f1"></aon-icon-button>`;
+		div.appendChild(print);
+
+		let openTab = this.createElement('span');
+		openTab.style.position = 'fixed';
+		openTab.style.right = '20px';
+		openTab.style.top = '260px';
+		openTab.innerHTML = `<aon-icon-button id="aonViewerButtonsDivOpenTab" icon="open_in_new" background="#f1f1f1"></aon-icon-button>`;
+		div.appendChild(openTab);
+
+		let ajustar = this.createElement('span');
+		ajustar.style.position = 'fixed';
+		ajustar.style.right = '20px';
+		ajustar.style.bottom = '120px';
+		ajustar.innerHTML = `<aon-icon-button id="aonViewerButtonsDivAjustar" icon="zoom_out_map" background="#f1f1f1"></aon-icon-button>`;
+		div.appendChild(ajustar);
+
+		let zoomPlus = this.createElement('span');
+		zoomPlus.style.position = 'fixed';
+		zoomPlus.style.right = '20px';
+		zoomPlus.style.bottom = '70px';
+		zoomPlus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomPlus" icon="zoom_in" background="#f1f1f1"></aon-icon-button>`;
+		div.appendChild(zoomPlus);
+
+		let zoomMinus = this.createElement('span')
+		zoomMinus.style.position = 'fixed';
+		zoomMinus.style.right = '20px';
+		zoomMinus.style.bottom = '20px';
+		zoomMinus.innerHTML = `<aon-icon-button id="aonViewerButtonsDivZoomMinus" icon="zoom_out" background="#f1f1f1"></aon-icon-button>`;
+		div.appendChild(zoomMinus);
 	}
 
 	printImage() {

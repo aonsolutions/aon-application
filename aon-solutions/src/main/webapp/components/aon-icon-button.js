@@ -80,6 +80,14 @@ export class AonIconButton extends AonElement {
 		this.setAttribute('title', title);
 	}
 
+	get background() {
+		return this.getAttribute('background');
+	}
+
+	set background(background) {
+		this.setAttribute('background', background);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('disabled' === name){
 			document.getElementById(this.getAttribute('id') + 'IconButton').setAttribute('disabled', newValue);
@@ -116,11 +124,12 @@ export class AonIconButton extends AonElement {
 	}
 
 	build() {
+		let background = this.hasAttribute('background') ? this.getAttribute('background') : 'transparent';
 		let button = document.createElement('button');
 		button.setAttribute('id', this.BUTTON);
 		button.className = "aonIconButton";
 		button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
-
+		button.style.backgroundColor = background;
 		if(this.hasAttribute('title')){
 				button.title = this.getAttribute('title');
 		}
@@ -141,7 +150,7 @@ export class AonIconButton extends AonElement {
 			});
 
 			button.addEventListener('mouseleave', () => {
-				button.style.backgroundColor = 'transparent';
+				button.style.backgroundColor = background;
 				button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
 			});
 
