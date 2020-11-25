@@ -10,6 +10,7 @@ export const AON_MSG_INVOICE_DATA = 'Dades Factura';
 export const AON_MSG_INVOICE_CONCEPTS = 'Conceptes Factura';
 export const AON_MSG_INVOICE_ISSUED = 'Factura Emesa';
 export const AON_MSG_INVOICE_RECEIVED = 'Factura Rebuda';
+export const AON_MSG_INVOICE_NUMBER = 'Número Factura';
 
 export const AON_MSG_TICKET = 'Tiquet';
 export const AON_MSG_TAXES_DETAIL= 'Detall Impostos';
@@ -20,3 +21,7 @@ export const AON_MSG_TO_TRASH = 'Enviar a la Paperera';
 export const AON_MSG_DELETE_FOREVER = 'Esborrar Definitivament';
 export const AON_MSG_ADD_FILE = 'Adjuntar Fitxer';
 export const AON_MSG_ADD_COMMENT = 'Afegir Comentari';
+
+export const AON_MSG_DATE = 'Data';
+export const AON_MSG_AMOUNT = 'Import';
+export const AON_MSG_HOLDER = 'Titular';

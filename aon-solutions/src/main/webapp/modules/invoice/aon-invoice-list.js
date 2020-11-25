@@ -3,22 +3,25 @@ import {Paymethods} from '../../services/paymethod.js';
 import {getInvoices} from '../../services/service.js';
 import '../../components/aon-table.js';
 
+import * as CONSTANT from "../../environments/constants.js";
+import * as MSG from "../../environments/msg.js";
+
 export class AonInvoiceList extends AonElement {
 
 	static get observedAttributes() {
-		return ['filter'];
+		return [CONSTANT.FILTER];
 	}
 
 	get filter() {
-    return this.getAttribute('filter');
+    return this.getAttribute(CONSTANT.FILTER);
   }
 
   set filter(filter) {
-    this.setAttribute('filter', filter);
+    this.setAttribute(CONSTANT.FILTER, filter);
   }
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		if('filter' === name) {
+		if(CONSTANT.FILTER === name) {
 			this.init();
 		}
 	}
@@ -36,14 +39,13 @@ export class AonInvoiceList extends AonElement {
 
  	build() {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
-		aonInvoiceTable.addColumn('Fecha', 'date', 'dateTable');
-		aonInvoiceTable.addColumn('Nº Factura', 'string', 'reference');
-		aonInvoiceTable.addColumn('Titular', 'string', 'name');
-		aonInvoiceTable.addColumn('Importe', 'number', 'total');
-		aonInvoiceTable.addColumn('Forma de Pago', 'string', 'paymethod');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_DATE, 'date', 'dateTable');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_INVOICE_NUMBER, 'string', 'reference');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_HOLDER, 'string', 'name');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_AMOUNT, 'number', 'total');
+		aonInvoiceTable.addColumn(MSG.AON_MSG_PAYMETHOD, 'string', 'paymethod');
 		// INFO
 		// aonInvoiceTable.addColumn('', '', '');
-
 		this.init();
 	}
 

@@ -10,6 +10,7 @@ export const AON_MSG_INVOICE_DATA = 'Invoice Data';
 export const AON_MSG_INVOICE_CONCEPTS = 'Invoice Concepts';
 export const AON_MSG_INVOICE_ISSUED = 'Invoice Issued';
 export const AON_MSG_INVOICE_RECEIVED = 'Invoice Received';
+export const AON_MSG_INVOICE_NUMBER = 'Invoice Number';
 
 export const AON_MSG_TICKET = 'Ticket';
 export const AON_MSG_TAXES_DETAIL= 'Taxes Detail';
@@ -20,3 +21,7 @@ export const AON_MSG_TO_TRASH = 'Send to Trash';
 export const AON_MSG_DELETE_FOREVER = 'Delete Permanently';
 export const AON_MSG_ADD_FILE = 'Add File';
 export const AON_MSG_ADD_COMMENT = 'Add Comment';
+
+export const AON_MSG_DATE = 'Date';
+export const AON_MSG_AMOUNT = 'Amount';
+export const AON_MSG_HOLDER = 'Holder';

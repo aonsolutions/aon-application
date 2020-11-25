@@ -1,4 +1,4 @@
-export const 3D_ROTATION = '3d_rotation';
+export const _3D_ROTATION = '3d_rotation';
 export const ACCESSIBILITY = 'accessibility';
 export const ACCESSIBILITY_NEW = 'accessibility_new';
 export const ACCESSIBLE = 'accessible';
@@ -62,6 +62,7 @@ export const CHROME_READER_MODE = 'chrome_reader_mode';
 export const CLASS = 'class';
 export const CLOSE_FULLSCREEN = 'close_fullscreen';
 export const CODE = 'code';
+export const COMMENT = 'comment';
 export const COMMENT_BANK = 'comment_bank';
 export const COMMUTE = 'commute';
 export const COMPARE_ARROWS = 'compare_arrows';

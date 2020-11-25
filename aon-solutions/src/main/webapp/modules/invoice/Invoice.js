@@ -121,4 +121,16 @@ export class Invoice {
   isTicket() {
     return this.type === 'ticket';
   }
+
+  isInbox() {
+    return this.status === 'inbox';
+  }
+
+  isRejected() {
+    return this.status === 'refused' || this.status  === 'rejected';
+  }
+
+  isDraft() {
+    return this.status === 'trash' || this.status === 'draft';
+  }
 }

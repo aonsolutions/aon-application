@@ -1,3 +1,7 @@
+import * as CONSTANT from "../../environments/constants.js";
+import * as MSG from "../../environments/msg.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
+
 
 export const TaxType = {
   IVA: 'IVA',
@@ -16,3 +20,66 @@ export const TaxIRPFPercentage = [
   {value:15.0, name:'15%'},
   {value:7.0, name:'7%'}
 ];
+
+export const InvoiceAction = {
+  NEXT: {
+    id: 'NextInvoice',
+    name: MSG.AON_MSG_NEXT,
+    icon: 'keyboard_arrow_right'
+  },
+  PREVIOUS: {
+    id: 'PreviousInvoice',
+    name: MSG.AON_MSG_PREVIOUS,
+    icon: 'keyboard_arrow_left'
+  },
+  DUPLICATE: {
+    id: 'Duplicate',
+    name: MSG.AON_MSG_DUPLICATE_INVOICE,
+    icon: 'file_copy'
+  },
+  RECTIFY: {
+    id: 'Rectify',
+    name: MSG.AON_MSG_RECTIFY_INVOICE,
+    icon: 'swap_calls'
+  },
+  REJECT: {
+    id: 'Reject',
+    name: MSG.AON_MSG_REJECT_INVOICE,
+    icon: 'report'
+  },
+  ACCOUNTING: {
+    id: 'Accounting',
+    name: MSG.AON_MSG_ACCOUNTING_INVOICE,
+    icon: MATERIAL_ICONS.ADD_TASK
+  },
+  DELETE: {
+    id: 'Delete',
+    name: MSG.AON_MSG_TO_TRASH,
+    icon: 'delete'
+  },
+  RESTORE: {
+    id: 'Restore',
+    name: MSG.AON_MSG_RESTORE_INVOICE,
+    icon: '360'
+  },
+  DELETE_FOREVER: {
+    id: 'DeleteForever',
+    name: MSG.AON_MSG_DELETE_FOREVER,
+    icon: 'delete_sweep'
+  },
+  COMMENT: {
+    id: CONSTANT.COMMENT.initCap(),
+    name: MSG.AON_MSG_ADD_COMMENT,
+    icon: MATERIAL_ICONS.COMMENT
+  },
+  SHOW_FILE: {
+    id: 'ShowFile',
+    name: MSG.AON_MSG_SHOW_FILE,
+    icon: 'visibility'
+  },
+  ADD_FILE: {
+    id: 'AddFile',
+    name: MSG.AON_MSG_ADD_FILE,
+    icon: 'attach_file'
+  }
+}

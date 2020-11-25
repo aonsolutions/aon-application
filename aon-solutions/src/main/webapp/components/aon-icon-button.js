@@ -72,6 +72,14 @@ export class AonIconButton extends AonElement {
 		this.setAttribute('disabled', disabled);
 	}
 
+	get title() {
+		return this.getAttribute('title');
+	}
+
+	set title(title) {
+		this.setAttribute('title', title);
+	}
+
 	attributeChangedCallback(name, oldValue, newValue) {
 		if('disabled' === name){
 			document.getElementById(this.getAttribute('id') + 'IconButton').setAttribute('disabled', newValue);
@@ -112,6 +120,10 @@ export class AonIconButton extends AonElement {
 		button.setAttribute('id', this.BUTTON);
 		button.className = "aonIconButton";
 		button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
+
+		if(this.hasAttribute('title')){
+				button.title = this.getAttribute('title');
+		}
 
 		if(this.getAttribute('disabled')){
 			button.setAttribute('disabled', true);

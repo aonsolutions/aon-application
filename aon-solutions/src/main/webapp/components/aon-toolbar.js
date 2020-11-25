@@ -131,6 +131,18 @@ export class AonToolbar extends AonElement {
 		return header;
 	}
 
+	addSeparator() {
+		let span = document.createElement('span');
+		let hr = this.createElement('hr');
+		hr.className = 'aonSeparator';
+		span.appendChild(hr);
+
+		let toolSection = this.getElement(this.TOOL_SECTION);
+		if(toolSection.children.length > 0) {
+			toolSection.insertBefore(span, toolSection.children[0]);
+		} else toolSection.appendChild(span);
+	}
+
 	addButton(name, icon, fn) {
 		const id = this.TOOL_SECTION + name + 'Button';
 		let button = `<aon-icon-button id="${id}" icon="${icon}"> </aon-icon-button>`;
@@ -145,6 +157,36 @@ export class AonToolbar extends AonElement {
 
 		let b = document.getElementById(id);
 		b.addEventListener('click', fn);
+	}
+
+	addButton2(action, fn) {
+		const id = this.TOOL_SECTION + action.id + 'Button';
+		let span = document.createElement('span');
+		span.innerHTML= `<aon-icon-button id="${id}" icon="${action.icon}" title="${action.name}"> </aon-icon-button>`;
+
+		let toolSection = this.getElement(this.TOOL_SECTION);
+		toolSection.style.paddingRight = this.getAttribute('opened') || this.isMobile() ? '0px' : '40px';
+		if(toolSection.children.length > 0) {
+			toolSection.insertBefore(span, toolSection.children[0]);
+		} else toolSection.appendChild(span);
+
+		let b = document.getElementById(id);
+		b.addEventListener('click', fn);
+	}
+
+	addButtonTitle(action, fn) {
+		const id = this.TITLE_SECTION + action.id + 'Button';
+		if(this.getElement(id) == null) {
+			let span = document.createElement('span');
+			span.style.marginRight = '20px';
+			span.innerHTML = `<aon-icon-button id="${id}" icon="${action.icon}" title="${action.name}"> </aon-icon-button>`;
+
+			let titleSection = this.getElement(this.TITLE_SECTION);
+			titleSection.insertBefore(span, titleSection.children[0]);
+
+			let b = document.getElementById(id);
+			b.addEventListener('click', fn);
+		}
 	}
 
 	removeButton(name) {

@@ -1,9 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Transactions} from '../../services/transaction.js';
 import {Paymethods} from '../../services/paymethod.js';
-import {TaxType, TaxIVAPercentage, TaxIRPFPercentage} from './invoiceEnums.js';
+import {TaxType, TaxIVAPercentage, TaxIRPFPercentage, InvoiceAction} from './invoiceEnums.js';
 import {getInvoiceCategories} from '../../services/invoiceCategory.js';
-import {insertInvoice, deleteInvoices} from '../../services/service.js';
+import {insertInvoice, deleteInvoices, getUserAppRole} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
 import {ToolbarType} from '../../models/enums.js';
@@ -17,13 +17,13 @@ import '../../components/aon-dialog.js';
 import '../../components/aon-viewer.js';
 
 import * as CONSTANT from "../../environments/constants.js";
-
 import * as MSG from "../../environments/msg.js";
+import * as MATERIAL_ICONS from "../../environments/materialIcons.js";
 
 export class AonInvoice extends AonElement {
 
 	_invoice;
-
+	_roles;
 	TOOLBAR;
 
   static get observedAttributes() {
@@ -73,7 +73,7 @@ export class AonInvoice extends AonElement {
 			<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${this.getInvoiceTitle()}"> </aon-toolbar>
 
 			<div style="display:flex;">
-				<div id="aonInvoiceData" style="width:100%">
+				<div id="aonInvoiceData" class="aonSubContent" style="width:100%">
 					<div id="aonInvoiceDiv" style="display:flex;">
 						<aon-card id="aonInvoiceItemDataCard" title="${MSG.AON_MSG_INVOICE_DATA}" style="width:50%"> </aon-card>
 						<aon-card id="aonInvoiceItemTaxesCard" title="${MSG.AON_MSG_TAXES_DETAIL}" style="width:50%"> </aon-card>
@@ -81,13 +81,17 @@ export class AonInvoice extends AonElement {
 					<aon-card id="aonInvoiceItemDetailCard" title="${MSG.AON_MSG_INVOICE_CONCEPTS}"> </aon-card>
 					<aon-card id="aonInvoiceItemFinanceCard" title="${MSG.AON_MSG_EXPIRATIONS}"> </aon-card>
 				</div>
-				<div id="aonInvoiceFile">
+				<div id="aonInvoiceFile" class="aonSubContent">
 				</div>
 			</div>
 			<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
 		`;
 
-		this.build();
+		getUserAppRole().then(roles => {
+			this._roles = roles;
+			this.build();
+		});
+
   }
 
 	getInvoiceTitle() {
@@ -97,6 +101,7 @@ export class AonInvoice extends AonElement {
 			return MSG.AON_MSG_TICKET;
 		} else return MSG.AON_MSG_INVOICE_RECEIVED;
 	}
+
 	build() {
 		this.buildData();
 		if(!this.isTicket()){
@@ -112,44 +117,54 @@ export class AonInvoice extends AonElement {
 			document.getElementById('aonInvoiceItemFinanceCard').style.display = 'none';
 		}
 
+		this.buildInvoiceToolbar();
+
+		if(!this._invoice.file) {
+			let input = document.createElement('input');
+		 	input.id = 'aonInvoiceToolbarAddFileButtonInput'
+			input.style.display = 'none';
+			input.type = 'file';
+			input.addEventListener('change', () => this.preview());
+			this.appendChild(input);
+		}
+	}
+
+	buildInvoiceToolbar() {
 		let invoiceToolbar = this.getElement(this.TOOLBAR);
+		invoiceToolbar.removeButtons();
 
-		invoiceToolbar.addButton('NextInvoice', 'keyboard_arrow_right', () => this.nextInvoice());
+		invoiceToolbar.addButton2(InvoiceAction.NEXT, () => this.nextInvoice());
+		invoiceToolbar.addButton2(InvoiceAction.PREVIOUS, () => this.previousInvoice());
 
-		invoiceToolbar.addButton('previewInvoice', 'keyboard_arrow_left', () => this.previewInvoice());
+		invoiceToolbar.addSeparator();
 
-		if(this._invoice.file) {
-			invoiceToolbar.addButton('ShowFile', 'visibility_off', () => {
-				let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'ShowFileButton');
-				let visible = 'visibility_off' === button.icon;
-				let fileDiv = document.getElementById('aonInvoiceFile');
-				let dataDiv = document.getElementById('aonInvoiceData');
-				if(visible) {
-						button.icon = 'visibility';
-						fileDiv.style.display = 'none'
-						dataDiv.style.width = '100%'
-				} else {
-						button.icon = 'visibility_off';
-						fileDiv.style.display = 'block';
-						fileDiv.style.width = '50%';
-						dataDiv.style.width = '50%';
-				}
-			});
+		if(this._invoice.isInbox()) {
+			invoiceToolbar.addButton2(InvoiceAction.DUPLICATE, () => {});
+			invoiceToolbar.addButton2(InvoiceAction.RECTIFY, () => {});
+			invoiceToolbar.addSeparator();
 		}
 
-		invoiceToolbar.addButton('Options', 'more_vert', () => {
-			let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
-			const top  = button.getBoundingClientRect().top;
-			const left = button.getBoundingClientRect().left;
-			let d = document.getElementById('aonDialogInvoiceOption');
-			d.setMenuOptions(this.getOptions(), top, left);
-			d.open();
-		});
+		if(this._invoice.isInbox() && (this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER'))) {
+			invoiceToolbar.addButton2(InvoiceAction.ACCOUNTING, () => {});
+			invoiceToolbar.addButton2(InvoiceAction.REJECT, () => this.rejectInvoice());
+			invoiceToolbar.addSeparator();
+		}
+
+		if(this._invoice.isRejected()) {
+			invoiceToolbar.addButton2(InvoiceAction.DELETE, () => this.trashInvoice());
+			invoiceToolbar.addButton2(InvoiceAction.RESTORE, () => this.restoreInvoice());
+		} else if(this._invoice.isDraft()) {
+			invoiceToolbar.addButton2(InvoiceAction.DELETE_FOREVER, () => this.removeInvoice());
+			invoiceToolbar.addButton2(InvoiceAction.RESTORE, () => this.restoreInvoice());
+		} else if(this._invoice.isInbox()){
+			invoiceToolbar.addButton2(InvoiceAction.DELETE, () => this.trashInvoice());
+			invoiceToolbar.addButton2(InvoiceAction.COMMENT, () => this.addInvoiceComment());
+		}
 
 		invoiceToolbar.addButton('Back', 'arrow_back', () => this.back());
-		// let aonInvoice = document.getElementById('aonInvoice');
-		// aonInvoice.addToolbarOption('Options', 'more_vert', () => {
-		// 	let button = document.getElementById('');
+
+		// invoiceToolbar.addButton('Options', 'more_vert', () => {
+		// 	let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
 		// 	const top  = button.getBoundingClientRect().top;
 		// 	const left = button.getBoundingClientRect().left;
 		// 	let d = document.getElementById('aonDialogInvoiceOption');
@@ -157,34 +172,32 @@ export class AonInvoice extends AonElement {
 		// 	d.open();
 		// });
 
-		if(!this._invoice.file) {
-			let fileDiv = document.getElementById('aonInvoiceFile');
-			fileDiv.style.display = 'none';
-			// aonInvoice.addToolbarOption('AddFile', 'attach_file', () => {
-			// 	let el = document.getElementById('aonInvoiceToolbarAddFileButtonInput');
-			// 	el.click();
-			// });
-			//let button = document.getElementById('aonInvoiceToolbarAddFileButton');
-			let input = document.createElement('input');
-		 	input.id = 'aonInvoiceToolbarAddFileButtonInput'
-			input.style.display = 'none';
-			input.type = 'file';
-			input.addEventListener('change', () => this.preview());
-			this.appendChild(input);
+		if(!this._invoice.file && !this._invoice.isEmitida()){
+			invoiceToolbar.addButtonTitle(InvoiceAction.ADD_FILE, () => this.preview());
 		} else {
-			let fileDiv = document.getElementById('aonInvoiceFile');
-			let dataDiv = document.getElementById('aonInvoiceData');
-			fileDiv.className = 'aonContent';
-			dataDiv.className = 'aonContent';
-			fileDiv.style.display = 'block';
-			fileDiv.style.width = '50%';
-			dataDiv.style.width = '50%';
-
-			document.getElementById('aonInvoiceDiv').style.display = 'block';
-			document.getElementById('aonInvoiceItemTaxesCard').style.width = '100%';
-
-			fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+			invoiceToolbar.addButtonTitle(InvoiceAction.SHOW_FILE, () => {
+				let button = this.getElement(invoiceToolbar.TITLE_SECTION + 'ShowFileButton');
+				let visible = 'visibility_off' === button.icon;
+				let fileDiv = document.getElementById('aonInvoiceFile');
+				let dataDiv = document.getElementById('aonInvoiceData');
+				if(visible) {
+					button.icon = 'visibility';
+					fileDiv.style.display = 'none'
+					dataDiv.style.width = '100%'
+					document.getElementById('aonInvoiceDiv').style.display = 'flex';
+					document.getElementById('aonInvoiceItemTaxesCard').style.width = '50%';
+				} else {
+					button.icon = 'visibility_off';
+					fileDiv.style.display = 'block';
+					fileDiv.style.width = '50%';
+					dataDiv.style.width = '50%';
+					document.getElementById('aonInvoiceDiv').style.display = 'block';
+					document.getElementById('aonInvoiceItemTaxesCard').style.width = '100%';
+					fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+				}
+			});
 		}
+
 	}
 
 	preview() {
@@ -197,8 +210,6 @@ export class AonInvoice extends AonElement {
 		const READER = new FileReader();
 		READER.readAsDataURL(file);
 		READER.onload = (_event) => {
-			fileDiv.className = 'aonContent';
-			dataDiv.className = 'aonContent';
 			fileDiv.style.display = 'block';
 			fileDiv.style.width = '50%';
 			dataDiv.style.width = '50%';
@@ -229,65 +240,12 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
-	getOptions() {
-		const status = this._invoice.status;
-		if('refused' === status) {
-			return [{
-					name: MSG.AON_MSG_RESTORE_INVOICE,
-					icon: '360',
-					fn: () => this.restoreInvoice()
-				}, {
-					name: MSG.AON_MSG_TO_TRASH,
-					icon: 'delete',
-					fn: () => this.trashInvoice()
-				}];
-		} else if('trash' === status) {
-			return [{
-					name: MSG.AON_MSG_RESTORE_INVOICE,
-					icon: '360',
-					fn: () => this.restoreInvoice()
-				}, {
-					name: MSG.AON_MSG_DELETE_FOREVER,
-					icon: 'delete_sweep',
-					fn: () => this.removeInvoice()
-				}];
-		} else return [{
-				name: MSG.AON_MSG_REJECT_INVOICE,
-				icon: 'report',
-				fn: () => this.refuseInvoice()
-			}, {
-				name: MSG.AON_MSG_ADD_FILE,
-				icon: 'attach_file',
-				fn: () => this.addInvoiceFile()
-			}, {
-				name: MSG.AON_MSG_PRINT_INVOICE,
-				icon: 'print',
-				fn: () => this.printInvoice()
-			}, {
-				name: MSG.AON_MSG_SEND_INVOICE,
-				icon: 'mail',
-				fn: () => this.sendInvoice()
-			}, {
-				name: MSG.AON_MSG_ADD_COMMENT,
-				icon: 'comment',
-				fn: () => this.addInvoiceComment()
-			}, {
-				name: MSG.AON_MSG_RECTIFY_INVOICE,
-				icon: 'swap_calls',
-				fn: () => this.rectifyInvoice()
-			}, {
-				name: MSG.AON_MSG_TO_TRASH,
-				icon: 'delete',
-				fn: () => this.trashInvoice()
-			}];
-	}
-
 	back() {
 		let aip = document.querySelector('aon-invoice-panel');
 		aip.aonInvoiceList();
 	}
 
-	previewInvoice() {
+	previousInvoice() {
 
 	}
 
@@ -295,19 +253,22 @@ export class AonInvoice extends AonElement {
 
 	}
 
-	refuseInvoice() {
+	rejectInvoice() {
 		this._invoice.status = CONSTANT.REFUSED;
 		this.save();
+		this.buildInvoiceToolbar();
 	}
 
 	trashInvoice() {
 		this._invoice.status = CONSTANT.TRASH;
 		this.save();
+		this.buildInvoiceToolbar();
 	}
 
 	restoreInvoice() {
 		this._invoice.status = CONSTANT.INBOX;
 		this.save();
+		this.buildInvoiceToolbar();
 	}
 
 	removeInvoice() {
@@ -387,7 +348,7 @@ export class AonInvoice extends AonElement {
 		}
 		// DATE
 		let tdDate = document.createElement('td');
-		tdDate.innerHTML = `<aon-date id="date" title="Fecha"></aon-date>`;
+		tdDate.innerHTML = `<aon-date id="date" title="${MSG.AON_MSG_DATE}"></aon-date>`;
 		tr.appendChild(tdDate);
 		let date = document.getElementById('date');
 		date.setDate(this._invoice.date);
@@ -457,7 +418,7 @@ export class AonInvoice extends AonElement {
 		// PAYMETHOD
 		let tdPaymethod = document.createElement('td');
 		tdPaymethod.setAttribute('colspan', '2');
-		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="Forma de Pago"></aon-select>`;
+		tdPaymethod.innerHTML = `<aon-select id="pay_method" title="${MSG.AON_MSG_PAYMETHOD}"></aon-select>`;
 		tr4.appendChild(tdPaymethod);
 		let paymethod = document.getElementById('pay_method');
 		paymethod.options = JSON.stringify(Paymethods);
@@ -703,7 +664,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL AMOUNT
 		let tdDetailAmount = document.createElement('td');
-		tdDetailAmount.innerHTML = `<aon-input id="detailAmount${i}" description="Importe"></aon-input>`;
+		tdDetailAmount.innerHTML = `<aon-input id="detailAmount${i}" description="${MSG.AON_MSG_AMOUNT}"></aon-input>`;
 		tr.appendChild(tdDetailAmount);
 		let detailAmount = document.getElementById('detailAmount' + i);
 		detailAmount.readonly = 'readonly';
@@ -799,7 +760,6 @@ export class AonInvoice extends AonElement {
 	removeDetail(index) {
 		document.getElementById('detail' + index).remove();
 		this._invoice.details.splice(index, 1);
-		alert(this._invoice.details.length);
 		this.updateTaxes();
 		this.save();
 	}
@@ -964,9 +924,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	updateVat() {
-		alert('ANTES ' + this._invoice.taxes.length);
 		this._invoice.taxes = this._invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)
-		alert('DESPUES ' + this._invoice.taxes.length);
 		TaxIVAPercentage.forEach((item, i) => {
 			let base = this.totalBase(item.value);
 			if(base != 0) {
@@ -1068,7 +1026,7 @@ export class AonInvoice extends AonElement {
 
 		// FINANCE AMOUNT
 		let tdFinanceAmount = document.createElement('td');
-		tdFinanceAmount.innerHTML = `<aon-input id="financeAmount${i}" description="Importe"></aon-input>`;
+		tdFinanceAmount.innerHTML = `<aon-input id="financeAmount${i}" description="${MSG.AON_MSG_AMOUNT}"></aon-input>`;
 		tr.appendChild(tdFinanceAmount);
 		let financeAmount = document.getElementById('financeAmount' + i);
 		financeAmount.value = finance.amount;
