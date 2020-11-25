@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.TextCell;
+import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.metrics.StatsEventLogger;
@@ -2035,9 +2036,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		logEvent("start");
 		// Inject rich styles.
+		AON.ensureInjected();
 		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
 		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
 		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+
 		logEvent("richStylesInjected");
 
 		employees = new Employees(true, true);
