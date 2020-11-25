@@ -4,8 +4,8 @@ export const BIDOQ_CLIENTE_ID = 'e688cab2-04fe-44cc-9771-e934ad63f5fb';
 export const BIDOQ_TIPO_USUARIO = 6;
 
 // Local
-// const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
-// const BIDOQ_SESSION_ID = 'b3RJRmU5SHBYelpVUi1sMw==';
+//const BIDOQ_URL = 'http://localhost/mispapeles/api/v2/index.php';
+//const BIDOQ_SESSION_ID = 'ZlVZZGk1dDVuRVNPTWlNSQ==';
 
 // DEV
 const BIDOQ_URL = 'https://dev.mispapeles.es/api/v2/index.php';
@@ -65,7 +65,7 @@ class AonDocumental extends HTMLElement {
         const tags = await this.getTags();
         aonDocumental.dataset['tags'] = JSON.stringify(tags);
 
-        this.addDocumentOptions(aonDocumental);
+        this.addDocumentOptions(aonDocumental, folders);
 
         this.addCategoryOptions(aonDocumental, folders);
 
@@ -73,13 +73,21 @@ class AonDocumental extends HTMLElement {
     }
 
     loadIndex({folder = 'pendientes', tag = null} = {}) {
-        // Por ahora cargamos el listado de "Pendientes" como si fuera el listado de la carpeta "A contabilizar"
-        folder = (folder === 'pendientes') ? CARPETA_A_CONTABILIZAR : folder;
-
         const aonDocumental = document.getElementById('aonDocumental');
         const contentIframe = document.querySelector('iframe');
         const tagParameter = (tag === null) ? '' : `&tag=${tag}`;
         const indexURL = `./index.html?folder=${folder}${tagParameter}`;
+        const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
+
+        // Eliminamos todas las opciones de la barra de herramientas
+        aonDocumental.removeToolbarOptions();
+
+        // Añadimos el botón de subir documentos si no se ha añadido ya y siempre y cuando no estemos en la carpeta "Contabilizados"
+        if (parseInt(folder) !== CARPETA_CONTABILIZADOS && uploadButton === null) {
+            aonDocumental.addToolbarOption('Subir', 'file_upload', () => {
+                document.querySelector('iframe').contentWindow.document.getElementById('upload-file').click();
+            }, 'Subir documentos');
+        }
 
         if (contentIframe === null) {
             aonDocumental.setContentHTML(`<iframe src="${indexURL}" style="width:100%;height:100%;border:none;"></iframe>`);
@@ -132,11 +140,20 @@ class AonDocumental extends HTMLElement {
         }
     }
 
-    addDocumentOptions(aonDocumental) {
+    addDocumentOptions(aonDocumental, folders) {
+        // Coger las cantidades
+        const documentArrayTotalUnread = folders.map((folder) => {
+            return parseInt(folder.total_no_leidos);
+        });
+        // Sumar las cantidades
+        const documentTotalUnread = documentArrayTotalUnread.reduce((a, b) => a + b, 0);
+
         let documentOptions = [
             {
-                name: 'Pendientes',
-                icon: 'inbox',
+                name    : 'Pendientes',
+                icon    : 'inbox',
+                total   : documentTotalUnread,
+                folder  : 'Pendientes',
                 fn: () => this.loadIndex({folder: 'pendientes'}),
                 default: true
             },
@@ -153,8 +170,10 @@ class AonDocumental extends HTMLElement {
     addCategoryOptions(aonDocumental, folders) {
         const categoryOptions = folders.map((folder) => {
             const option = {
-                name: folder.carpeta,
-                icon: 'folder',
+                name    : folder.carpeta,
+                icon    : 'folder',
+                total   : folder.total_no_leidos,
+                folder  : folder.carpetaID,
                 fn: () => this.loadIndex({folder: folder.carpetaID})
             };
 

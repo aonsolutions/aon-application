@@ -31,37 +31,47 @@
                     <input type="file" name="document[]" multiple id="upload-file"> 
                 </form>
                 <div class="col-md-12 archivos-previos"></div>
-                <div class="row justify-content-center">
+                <div class="row flex-column">
                     <div class="col-12">
-                        <!-- Tabla que ocultamos cuando se alcanza el breakpoint "sm" -->
-                        <div class="table-responsive-sm d-none d-md-block">
-                            <table class="table" id="tabla_documentos">
-                                <thead>
-                                    <tr>
-                                        <th class="align-middle"></th>
-                                        <th class="align-middle">Fecha</th>
-                                        <th class="align-middle">Nombre</th>
-                                        <th class="align-middle">Categoría</th>
-                                        <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
-                                        <th class="align-middle d-none" id="model_column">Modelo</th>
-                                        <th class="align-middle d-none" id="year_column">Año</th>
-                                        <th class="align-middle d-none" id="period_column">Período</th>
-                                        <th class="align-middle">Tipo</th>
-                                        <th class="align-middle">Subido por</th>
-                                        <th class="align-middle">Etiquetas</th>
-                                        <th class="text-center align-middle">Leído</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                                <tfoot></tfoot>
-                            </table>
+                        <div class="min-vh-100">
+                            <!-- Tabla que ocultamos cuando se alcanza el breakpoint "sm" -->
+                            <div class="table-responsive-sm d-none d-md-block">
+                                <table class="table" id="tabla_documentos">
+                                    <thead>
+                                        <tr>
+                                            <th class="align-middle"></th>
+                                            <th class="align-middle">Fecha</th>
+                                            <th class="align-middle">Nombre</th>
+                                            <th class="align-middle">Categoría</th>
+                                            <th class="align-middle d-none" id="subfolder_column">Subcarpeta</th>
+                                            <th class="align-middle d-none" id="model_column">Modelo</th>
+                                            <th class="align-middle d-none" id="year_column">Año</th>
+                                            <th class="align-middle d-none" id="period_column">Período</th>
+                                            <th class="align-middle">Tipo</th>
+                                            <th class="align-middle">Subido por</th>
+                                            <th class="align-middle">Etiquetas</th>
+                                            <th class="text-center align-middle">Leído</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot></tfoot>
+                                </table>
+                            </div>
+                            <!-- Tarjetas para el diseño responsive que se ven solo cuando se alcanza el breakpoint "sm" -->
+                            <div id="doc_cards_container" class="d-block d-md-none">
+                                <div id="doc_cards_list"></div>
+                                <div id="doc_cards_footer"></div>
+                            </div>
                         </div>
-                        <!-- Tarjetas para el diseño responsive que se ven solo cuando se alcanza el breakpoint "sm" -->
-                        <div id="doc_cards_container" class="d-block d-md-none">
-                            <div id="doc_cards_list"></div>
-                            <div id="doc_cards_footer"></div>
+                        <div id="loader" class="d-none">
+                            <div class="d-flex justify-content-center">
+                                <div class="lds-ripple">
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
                         </div>
+                        <div id="intersectionObserverTarget"></div>
                     </div>
                 </div>
                 <!-- FIN VISTA -->
@@ -103,7 +113,7 @@
     <script src="../js/app.js"></script>
     <script type="module">
         import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
-        import { createTable, getList } from './table.js';
+        import { getList, renderList, getNumberOfColumns, selectedFolderHasSubfolders, getFoldersByID } from './table.js';
         import { UploadDocumentos } from './upload.js';
         import {
             AVAILABLE_OPTIONS,
@@ -122,11 +132,21 @@
 
                 // Obtenemos las carpetas del cliente
                 window.folders = $(window.aonDocumental).data('folders');
+                // Obtenemos las carpetas y subcarpetas por ID
+                const foldersAndSubfolders = getFoldersByID(window.folders);
+                window.foldersByID = foldersAndSubfolders.foldersByID;
+                window.subfolders = foldersAndSubfolders.subfolders;
+                // Obtenemos la carpeta seleccionada
+                window.folder = new URLSearchParams(window.location.search).get('folder');
+                // Obtenemos el nº de columnas para la carpeta seleccionada
+                window.numberOfColumns = getNumberOfColumns();
+                // Comprobamos si la carpeta seleccionada tiene subcarpetas
+                window.selectedFolderHasSubfolders = selectedFolderHasSubfolders();
 
                 try {
                     const list = await getList();
 
-                    createTable(list);
+                    renderList(list);
                 } catch (error) {
                     const list = {
                         "list": [],
@@ -136,7 +156,7 @@
                         "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
                     }
 
-                    createTable(list);
+                    renderList(list);
 
                     console.error(error);
                 }
@@ -155,7 +175,7 @@
                 try {
                     const list = await getList(page);
 
-                    createTable(list);
+                    renderList(list);
                 } catch (error) {
                     console.error(error);
                 }

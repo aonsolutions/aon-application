@@ -23,15 +23,15 @@ class AonSignin extends HTMLElement {
 				fn: () => this.loadEmployee()
 			},
 			{
-				name: 'Marcaje desde administrador',
-				icon: 'admin_panel_settings',
-				fn: () => this.loadAdmin()
-			},
-			{
 				name: 'Historial de marcajes',
 				icon: 'history',
 				fn: () => this.loadHistory()
 			},
+			{
+				name: 'Marcaje desde administrador',
+				icon: 'admin_panel_settings',
+				fn: () => this.loadAdmin()
+			},	
 			{
 				name: 'Solicitud de vacaciones',
 				icon: 'flight_takeoff',

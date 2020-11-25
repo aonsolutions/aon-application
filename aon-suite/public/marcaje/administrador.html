@@ -34,14 +34,9 @@
 
             <!-- start contenido centro -->
             <div class="col" id="atp_contenido_centro">
-                <!-- <div class="container-fluid">
-      <div class="row justify-content-center">
-        
-      </div>
-    </div> -->
 
                 <!-- Main-->
-                <div class="container-fluid pt-5 atp_caja_form">
+                <div class="container-fluid atp_caja_form">
                     <form id="form" name="form" action="#" method="post">
                         <div class="row">
                             <div class="col-12 text-center">
@@ -60,7 +55,7 @@
                                 <div class="col-lg-3 col-md-6">
                                     <div class="form-group">
                                         <select class="d-block atp_input" id="empleado" name="empleado">
-                                            <option value='' disabled selected>- Selecciona un empleado -</option>
+                                            <!-- <option value='' disabled selected>- Selecciona un empleado -</option> -->
                                         </select>
                                     </div>
 
@@ -110,8 +105,9 @@
 
                                                 <select class="d-block atp_input tipoMarcaje" id="tipoEntrada"
                                                     name="tipoEntrada">
-                                                    <option value='' disabled selected>- Selecciona tipo de marcaje -</option>
-                                                    <option value='1'>Marcaje sin incidencia</option>
+                                                    <!-- <option value='' disabled selected>- Selecciona tipo de marcaje -
+                                                    </option> -->
+                                                    <option value='1' selected>Marcaje sin incidencia</option>
                                                     <option value='2'>Ausencia justificada</option>
                                                     <option value='3'>Baja médica</option>
                                                     <option value='4'>Compensación horas extras</option>
@@ -159,10 +155,10 @@
                                             <div class="form-group">
                                                 <label class="d-block atp_inputs" for="fechaSalida">
                                                     <input class="" type="date" value="" id="fechaSalida"
-                                                    name="fechaSalida">
+                                                        name="fechaSalida">
                                                     <span>Fecha</span>
                                                 </label>
-                                               
+
                                             </div>
 
                                         </div>
@@ -170,23 +166,24 @@
                                             <div class="form-group">
                                                 <label class="d-block atp_inputs" for="horaSalida">
                                                     <input class="" type="time" value="" id="horaSalida"
-                                                    name="horaSalida">
+                                                        name="horaSalida">
                                                     <span>Hora</span>
                                                 </label>
-                                                
+
                                             </div>
 
                                         </div>
 
 
                                         <div class="col-lg-6 col-md-12">
-                                   
+
                                             <div class="form-group">
-                                             
+
                                                 <select class="d-block atp_input tipoMarcaje" id="tipoSalida"
                                                     name="tipoSalida">
-                                                    <option value='' disabled selected>- Selecciona tipo de marcaje -</option>                                             
-                                                    <option value='1'>Marcaje sin incidencia</option>
+                                                    <!-- <option value='' disabled selected>- Selecciona tipo de marcaje -
+                                                    </option> -->
+                                                    <option value='1' selected>Marcaje sin incidencia</option>
                                                     <option value='2'>Ausencia justificada</option>
                                                     <option value='3'>Baja médica</option>
                                                     <option value='4'>Compensación horas extras</option>
@@ -212,7 +209,7 @@
                                                 </label>
 
 
-                                              
+
                                             </div>
                                         </div>
 
@@ -225,9 +222,9 @@
                             </div>
 
                             <div class="row pt-3">
-                                <div class="col-lg-3 col-md-6">
+                                <div class="col-lg-4 col-md-6">
                                     <button type="submit" form="form" id="botonEntradaSalida"
-                                        class="btn btn-info">Marcar</button>
+                                        class="btn btn-info">Marcar entrada y salida</button>
                                 </div>
                             </div>
 
@@ -240,42 +237,50 @@
 
                 <br>
                 <div class="border-top my-3"></div>
-                <div class="container-fluid pt-3">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                                    <h5 class="">Historial</h5>
+                <div class="container-fluid atp_caja_form">
+                    <form id="formHistorial" name="form" action="#" method="post">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-lg-9 col-md-9 col-sm-6 col-12">
+                                        <h5 class="">Historial</h5>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-6 col-12 text-right">
+                                        <!-- <label for="mes">Día:</label> -->
+                                        <!-- <input type="date" id="dia" name="dia" step="1" min="" max="" value=""> -->
+                                        <div class="form-group">
+                                            <label class="d-block atp_inputs" for="dia">
+                                                <input class="" type="date" value="" id="dia" name="dia">
+                                                <span>Fecha</span>
+                                            </label>
+
+                                        </div>
+                                        <!-- <button type="button" form="form" id="actualizar" class="btn btn-info btn-sm"
+                                            data-boton="salida">Actualizar</button> -->
+                                    </div>
                                 </div>
-                                <div class="col-lg-6 col-md-6 col-sm-12 col-12 text-right">
-                                    <!-- <label for="mes">Día:</label> -->
-                                    <input type="date" id="mes" name="mes" step="1" min="" max="" value="">
-                                    <button type="button" form="form" id="actualizar" class="btn btn-info btn-sm"
-                                        data-boton="salida">Actualizar</button>
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <!-- <th>#</th> -->
+                                                <th>Fecha</th>
+                                                <th>Hora</th>
+                                                <th>Tipo de marcaje</th>
+                                                <th>Nota</th>
+                                                <th>Marcaje</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaMarcajes">
+
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Fecha</th>
-                                            <th>Hora</th>
-                                            <th>Tipo de marcaje</th>
-                                            <th>Nota</th>
-                                            <th>Marcaje</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tablaMarcajes">
-
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
-
-                    </div>
-
+                    </form>
                 </div>
 
                 <!-- The Modal -->
@@ -335,73 +340,77 @@
 
     <!-- Scripts -->
     <script src="../js/app.js"></script>
+    <script src="../js/crud.js"></script>
     <script>
 
-        function getDatosSession(nombreDato) {
-            var idUsuario;
-            if (sessionStorage.getItem(nombreDato)) {
-                // Restaura el contenido al campo de texto
-                idUsuario = sessionStorage.getItem(nombreDato);
-            } else {
-                idUsuario = 0;
-            }
-            // console.log(idUsuario);
-            return idUsuario;
-        }
+        // function getDatosSession(nombreDato) {
+        //     var idUsuario;
+        //     if (sessionStorage.getItem(nombreDato)) {
+        //         // Restaura el contenido al campo de texto
+        //         idUsuario = sessionStorage.getItem(nombreDato);
+        //     } else {
+        //         idUsuario = 0;
+        //     }
+        //     // console.log(idUsuario);
+        //     return idUsuario;
+        // }
 
-        var idAdministrador = getDatosSession('idAdministrador');
+        // var idAdministrador = getDatosSession('idAdministrador');
+
+        // var idEmpleado = 0;
 
         jQuery(function () {
 
-
+            // console.log("si");
             var datos = {
                 empleados: [
                     {
-                        id: '1',                            // id
+                        idEmpleado: '1',                            // id
                         documento: '12345678A',             // dni
                         nombre: 'Juan Muriel Fernadez',     // nombre y apellidos
                     },
                     {
-                        id: '2',                            // id
+                        idEmpleado: '2',                            // id
                         documento: '23456781A',             // dni
                         nombre: 'Jaime Perez Ruiz',         // nombre y apellidos
                     },
                 ],
             };
 
-            // cargarEmpleadosAjax(idAdministrador);
-
             cargarEmpleados(datos);
             setFecha();
             setHora();
 
-            var fechaActual = getFechaActualDB();
-            $('#mes').val(fechaActual);
-            var datosA = "";//indicaremos el id del empleado, fecha, idUsuario
-            datosHistorial = obtenerHistorialAjax(datosA);
-            cargarHistorial(datosHistorial, fechaActual);
+            var fechaActualDB = getFechaActualDB();
+            var datosHistorial = readJsonApi('datosHistorialAdmin');
+            var idEmpleado = $('#empleado').val();
 
-            $('#mes').val(fechaActual);
+            cargarHistorial(datosHistorial, fechaActualDB, idEmpleado);
+            $('#dia').val(fechaActualDB);
+
+            // var fechaActual = getFechaActualDB();
+            // $('#dia').val(fechaActual);
+            // var datosA = "";//indicaremos el id del empleado, fecha, idUsuario
+            // datosHistorial = obtenerHistorialAjax(datosA);
+            // cargarHistorial(datosHistorial, fechaActual);
+
+            // $('#dia').val(fechaActual);
 
         });
 
-
-
-
-
-        function cargarHistorial(datosHistorial, fecha) {
-            var historial = datosHistorial['historial'];
+        function cargarHistorial(datosHistorial, fechaActualDB, idEmpleado) {
+            var historial = datosHistorial;
             var hijo = "";
             var mostrado = false;
 
             // var value;
             for (i in historial) {
                 // value = Number.parseInt(i) + 1;
-                if (fecha == historial[i]['fecha']) {
+                if (fechaActualDB == historial[i]['fechaDB'] && idEmpleado == historial[i]['idEmpleado']) {
                     hijo = hijo + "<tr>";
-                    hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
-                    hijo = hijo + "<td>" + historial[i]['fechaFormateada'] + "</td>";
-                    hijo = hijo + "<td>" + historial[i]['hora'] + "</td>";
+                    // hijo = hijo + "<td>" + historial[i]['id'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['fecha'] + "</td>";
+                    hijo = hijo + "<td>" + historial[i]['reloj'] + "</td>";
                     hijo = hijo + "<td>" + historial[i]['tipoMarcaje'] + "</td>";
                     hijo = hijo + "<td>" + historial[i]['nota'] + "</td>";
                     hijo = hijo + "<td>" + historial[i]['marcaje'] + "</td>";
@@ -419,6 +428,8 @@
             }
 
             $(hijo).appendTo("#tablaMarcajes");
+            $('#dia').val(fechaActualDB);
+
         }
 
         function obtenerHistorialAjax(fecha, idEmpleado) {
@@ -524,13 +535,39 @@
             // alert(fechaImprimible);
         }
 
+        function getFechaFormatoES(date) {
+            var fechaActual = date;
+            var dia = fechaActual.getDate();
+            var mes = fechaActual.getMonth() + 1;
+            var annio = fechaActual.getFullYear();
+
+            var str_dia = new String(dia)
+            if (str_dia.length == 1) {
+                dia = "0" + dia;
+            };
+
+
+            var str_mes = new String(mes)
+            if (str_mes.length == 1) {
+                mes = "0" + mes;
+            }
+
+            var str_annio = new String(annio)
+            annio = str_annio;
+
+            var fechaImprimible = dia + "/" + mes + "/" + annio;
+
+            return fechaImprimible;
+            // alert(fechaImprimible);
+        }
+
         function cargarEmpleados(datos) {
             var empleados = datos['empleados'];
 
             // var value;
             for (i in empleados) {
                 // value = Number.parseInt(i) + 1;
-                $("<option value='" + empleados[i]['id'] + "'>" + empleados[i]['nombre'] + "</option>").appendTo("#empleado");
+                $("<option value='" + empleados[i]['idEmpleado'] + "'>" + empleados[i]['nombre'] + "</option>").appendTo("#empleado");
             }
         }
 
@@ -579,14 +616,70 @@
 
         $('form').submit(function (e) {
             e.preventDefault();
-            var data = $(this).serializeFormJSON();
-            console.log(data);
-            var cadena = JSON.stringify(data);
-            var empleado = cadena.replace(/,/g, ", ");
-            $(".modal-body").empty();
-            $("<p>" + empleado + "</p>").appendTo(".modal-body");
-            $('#myModal').modal('show');
+            // var data = $(this).serializeFormJSON();
+            // console.log(data);
+            // var cadena = JSON.stringify(data);
+            // var empleado = cadena.replace(/,/g, ", ");
+            // $(".modal-body").empty();
+            // $("<p>" + empleado + "</p>").appendTo(".modal-body");
+            // $('#myModal').modal('show');
             // alert(JSON.stringify(data));
+
+            var dateEntrada = new Date($('#fechaEntrada').val());
+            var dateSalida = new Date($('#fechaSalida').val());
+            var dateEntradaES = getFechaFormatoES(dateEntrada);
+            var dateSalidaES = getFechaFormatoES(dateSalida);
+
+            var fechaActual = getFechaActual();
+            var fechaActualDB = getFechaActualDB();
+            var datosEntrada = {
+
+                fechaDB: $('#fechaEntrada').val(),
+                fecha: dateEntradaES,
+                reloj: $('#horaEntrada').val(),
+                tipoMarcajeId: $('#tipoEntrada').val(),
+                nota: $('#notaEntrada').val(),
+                marcaje: 'Entrada',
+                idEmpleado: $('#empleado').val(),
+                tipoMarcaje: $('#tipoEntrada option:selected').text(),
+
+            };
+
+            let dataCreateEntrada = {
+                name: 'datosHistorialAdmin',   // Donde almacenamos los datos
+                json: datosEntrada,     // Datos
+            };
+
+            createJsonApi(dataCreateEntrada);
+
+            var datosSalida = {
+
+                fechaDB: $('#fechaSalida').val(),
+                fecha: dateSalidaES,
+                reloj: $('#horaSalida').val(),
+                tipoMarcajeId: $('#tipoSalida').val(),
+                nota: $('#notaSalida').val(),
+                marcaje: 'Salida',
+                idEmpleado: $('#empleado').val(),
+                tipoMarcaje: $('#tipoSalida option:selected').text(),
+
+            };
+
+            let dataCreateSalida = {
+                name: 'datosHistorialAdmin',   // Donde almacenamos los datos
+                json: datosSalida,     // Datos
+            };
+
+            createJsonApi(dataCreateSalida);
+
+            // console.log(readJsonApi('datosHistorial'));
+
+            var datosHistorial = readJsonApi('datosHistorialAdmin');
+
+            var idEmpleado = $('#empleado').val();
+
+            cargarHistorial(datosHistorial, fechaActualDB, idEmpleado);
+
         });
 
         function setHora() {
@@ -668,13 +761,40 @@
 
         }
 
-        $('#actualizar').on('click', function (e) {
-            var idEmpleado = $('select[id=empleado]').val();
-            var fecha = $('#mes').val();
-            // console.log(idEmpleado);
-            // alert(mes);
-            var datosHistorial = obtenerHistorialAjax(fecha, idEmpleado);
-            cargarHistorial(datosHistorial, fecha);
+        // $('#actualizar').on('click', function (e) {
+        //     var idEmpleado = $('select[id=empleado]').val();
+        //     var fecha = $('#dia').val();
+        //     // console.log(idEmpleado);
+        //     // alert(mes);
+        //     var datosHistorial = obtenerHistorialAjax(fecha, idEmpleado);
+        //     cargarHistorial(datosHistorial, fecha);
+        // })
+
+        $('#dia').on('change', function (e) {
+            var fecha = $('#dia').val();
+            // console.log(fecha);
+            var fechaActualDB = getFechaActualDB();
+            var datosHistorial = readJsonApi('datosHistorialAdmin');
+            var idEmpleado = $('#empleado').val();
+
+            cargarHistorial(datosHistorial, fecha, idEmpleado);
+        })
+
+        $('#empleado').on('change', function (e) {
+            var fecha = $('#dia').val();
+            // console.log(fecha);
+            var fechaActualDB = getFechaActualDB();
+            var datosHistorial = readJsonApi('datosHistorialAdmin');
+            var idEmpleado = $('#empleado').val();
+
+            cargarHistorial(datosHistorial, fecha, idEmpleado);
+            // console.log("hola");
+            // var fecha = $('#dia').val();
+            // // console.log(fecha);
+            // var fechaActualDB = getFechaActualDB();
+            // var datosHistorial = readJsonApi('datosHistorialAdmin');
+
+            // cargarHistorial(datosHistorial, fecha);
         })
 
 

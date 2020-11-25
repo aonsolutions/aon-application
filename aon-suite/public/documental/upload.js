@@ -18,7 +18,9 @@ if (typeof jQuery === 'undefined') {
 }
 
 import { BIDOQ_CLIENTE_ID, BIDOQ_TIPO_USUARIO, bidoq } from "./aon-documental.js";
-import { createTable, getList } from './table.js';
+import { getList, renderList, formatDocumentData, getDocumentsTableDOM, getDocumentsCardsDOM } from './table.js';
+
+const intersectionObserverIsSupported = "IntersectionObserver" in window;
 
 export function UploadDocumentos(){
     //  
@@ -109,12 +111,7 @@ export function UploadDocumentos(){
                 }
             });
         }
-    
-        // Abrir input file para el comentario del ticket
-        $(document).on('click', '#ticket-comentario-subir-precarga', function() {
-            document.getElementById('upload-file').click();
-        });
-    
+
         // Subir por input
         $(document).on('change', '#upload-file', function() {
             subirDocumentos(this, this);
@@ -273,7 +270,13 @@ export function UploadDocumentos(){
         }
 
         function montarDivPrevios(){
-            var cerrarPrevio = ticketPrevio ? '' : '<div class="col-12"><div class="btn btn-warning float-right boton-cancelar-archivos"> <i class="material-icons align-middle">clear</i> <span id="upload-cerrar">Cerrar</span> </div></div>';
+            var cerrarPrevio = ticketPrevio ? '' : `
+                <div class="col-12">
+                    <div id="upload-cerrar" class="btn btn-warning float-right boton-cancelar-archivos">
+                        <i class="material-icons align-middle">clear</i>
+                        <span>Cerrar</span>
+                    </div>
+                </div>`;
             // Miramos si tenemos que cargar o no
             if ($('.files')[0] == undefined ){
                 var div = 
@@ -349,7 +352,7 @@ export function UploadDocumentos(){
                     }
                 } else {
                     // No podemos mostrar el previo, mostramos la extencion del documento a subir
-                    metemosPrevio = '<div class="previo-mal">'+documentoIcono(documento)+'</div>';
+                    metemosPrevio = '<div class="previo-mal"><i class="material-icons">'+documentoIcono(documento)+'</i></div>';
                 }
             } else {
                 // No se permite subir este documento
@@ -437,6 +440,8 @@ export function UploadDocumentos(){
                         let response = JSON.parse(data);
 
                         if (typeof response !== 'undefined') {
+                            const list = [];
+
                             for (let i = 0; i < response.length; i++) {
                                 const documentResponse = response[i];
 
@@ -446,7 +451,21 @@ export function UploadDocumentos(){
                                     barraError(barra);
                                     // Error
                                     erroresPHP(recorrido, documentResponse.message);
+                                } else if (intersectionObserverIsSupported) {
+                                    // Formateamos los datos del documento y lo añadimos a la lista de elementos
+                                    const formattedDocumentData = formatDocumentData(documentResponse.datos, window.foldersByID, window.subfolders);
+
+                                    list.push(formattedDocumentData);
                                 }
+                            }
+
+                            // Si el navegador soporta Intersection Observer, añadimos a la lista los documentos subidos
+                            if (intersectionObserverIsSupported) {
+                                const documentsTable = getDocumentsTableDOM(list);
+                                const documentsCards = getDocumentsCardsDOM(list);
+
+                                $('#tabla_documentos tbody').prepend(documentsTable);
+                                $('#doc_cards_list').prepend(documentsCards);
                             }
 
                             if (!uploadError) {
@@ -658,12 +677,35 @@ export function UploadDocumentos(){
 }
 
 export function getFileExtensionsConfig() {
+    const iconsByExtension = {
+        tiff: 'text_snippet',
+        tif: 'text_snippet',
+        txt: 'text_snippet',
+        rtf: 'text_snippet',
+        odt: 'text_snippet',
+        doc: 'text_snippet',
+        docx: 'text_snippet',
+        ods: 'text_snippet',
+        xls: 'text_snippet',
+        xlsx: 'text_snippet',
+        xlsb: 'text_snippet',
+        n43: 'text_snippet',
+        bmp: 'photo',
+        jpg: 'photo',
+        jpeg: 'photo',
+        png: 'photo',
+        gif: 'photo',
+        pdf: 'picture_as_pdf',
+        zip: 'archive',
+        rar: 'archive',
+    };
+
     // Extensiones que se permiten en algunos casos
     const allowed = [
         'bmp', 'jpg', 'jpeg', 'png', 'gif',
         'tiff', 'tif', 'txt', 'rtf', 'odt',
         'doc', 'docx', 'ods', 'xls', 'pdf',
-        'xlsx', 'xlsb', 'zip', 'rar'
+        'xlsx', 'xlsb', 'n43', 'zip', 'rar'
     ];
     // Extensiones no permitidas dependiendo del tipo de usuario
     const notAllowedByUserType = {
@@ -676,35 +718,53 @@ export function getFileExtensionsConfig() {
     ];
     // Iconos que mostramos en lugar de la previsualización según la extensión del archivo
     const havePreviewIconsByExtension = {
-        txt  : '<i class="material-icons">text_snippet</i>',
-        rtf  : '<i class="material-icons">text_snippet</i>',
-        odt  : '<i class="material-icons">text_snippet</i>',
-        doc  : '<i class="material-icons">text_snippet</i>',
-        docx : '<i class="material-icons">text_snippet</i>',
-        ods  : '<i class="material-icons">text_snippet</i>',
-        xls  : '<i class="material-icons">text_snippet</i>',
-        xlsx : '<i class="material-icons">text_snippet</i>',
-        xlsb : '<i class="material-icons">text_snippet</i>',
-        zip  : '<i class="material-icons">archive</i>',
-        rar  : '<i class="material-icons">archive</i>'
+        txt  : iconsByExtension['txt'],
+        rtf  : iconsByExtension['rtf'],
+        odt  : iconsByExtension['odt'],
+        doc  : iconsByExtension['doc'],
+        docx : iconsByExtension['docx'],
+        ods  : iconsByExtension['ods'],
+        xls  : iconsByExtension['xls'],
+        xlsx : iconsByExtension['xlsx'],
+        xlsb : iconsByExtension['xlsb'],
+        n43  : iconsByExtension['n43'],
+        zip  : iconsByExtension['zip'],
+        rar  : iconsByExtension['rar']
     };
 
     return {
         allowed,
         notAllowedByUserType,
+        iconsByExtension,
         havePreview,
         havePreviewIconsByExtension
     };
 }
 
-async function CargarDivAjaxDocumentos(id,url){
+async function CargarDivAjaxDocumentos(id, url) {
     // Poner la imagen del cargando
-        $('table tbody').html('<tr><td colspan="8"><center class="pt-5"><div class="lds-ripple"><div></div><div></div></div></center></td></tr>');
+    if (!intersectionObserverIsSupported) {
+        $('table tbody').html(`
+            <tr id="tabla_documentos_loader">
+                <td colspan="8">
+                    <center class="pt-5">
+                        <div class="lds-ripple">
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </center>
+                </td>
+            </tr>
+        `);
+    }
+
     // Recargar tabla y paginado
         try {
-            const list = await getList();
+            if (!intersectionObserverIsSupported) {
+                const list = await getList();
 
-            createTable(list);
+                renderList(list);
+            }
         } catch (error) {
             const list = {
                 "list"      : [],
@@ -714,7 +774,7 @@ async function CargarDivAjaxDocumentos(id,url){
                 "shown_page": 0 + ' - ' + 0,    // cantidad mostrada por paginas 1 - 10
             }
 
-            createTable(list);
+            renderList(list);
 
             console.error(error);
         }
