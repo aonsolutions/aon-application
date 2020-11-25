@@ -80,13 +80,19 @@ export class AonViewer extends AonElement {
 		print.style.top = '210px';
 		print.innerHTML = `<aon-icon-button id="aonViewerButtonsDivPrint" icon="print" background="#f1f1f1"></aon-icon-button>`;
 		div.appendChild(print);
+		let printButton =this.getElement('aonViewerButtonsDivPrint');
+		printButton.addEventListener('click', () => {
 
-		let openTab = this.createElement('span');
-		openTab.style.position = 'fixed';
-		openTab.style.right = '20px';
-		openTab.style.top = '260px';
-		openTab.innerHTML = `<aon-icon-button id="aonViewerButtonsDivOpenTab" icon="open_in_new" background="#f1f1f1"></aon-icon-button>`;
-		div.appendChild(openTab);
+		});
+
+		let download = this.createElement('span');
+		download.style.position = 'fixed';
+		download.style.right = '20px';
+		download.style.top = '260px';
+		download.innerHTML = `<aon-icon-button id="aonViewerButtonsDivDownload" icon="download" background="#f1f1f1"></aon-icon-button>`;
+		div.appendChild(download);
+		let downloadButton = this.getElement('aonViewerButtonsDivDownload');
+		downloadButton.addEventListener('click', () => open(this.file));
 
 		let ajustar = this.createElement('span');
 		ajustar.style.position = 'fixed';
@@ -117,6 +123,7 @@ export class AonViewer extends AonElement {
 
 		this.appendChild(img);
 	}
+
 	printPdf() {
 		let me = this;
 		let width = this.getAttribute('width');

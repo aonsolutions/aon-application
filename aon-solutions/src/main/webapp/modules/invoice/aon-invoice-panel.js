@@ -5,6 +5,7 @@ import './aon-invoice.js';
 import './aon-invoice-mobile.js';
 import './aon-invoice-list.js';
 
+import * as MSG from "../../environments/msg.js";
 
 export class AonInvoicePanel extends AonElement {
 
@@ -28,7 +29,7 @@ export class AonInvoicePanel extends AonElement {
 
 	connectedCallback () {
 		this.innerHTML = `
-			<aon-application id="aonInvoice" title="Facturas" drag_and_drop="true"></aon-application>
+			<aon-application id="aonInvoice" title="${MSG.AON_MSG_INVOICES}" drag_and_drop="true"></aon-application>
 			<aon-dialog id="aonDialogAddOption" type="menu" > </aon-dialog>
 			<input id="${this.INPUTFILE}" style='display:none;' type='file' name='file' multiple>
 		`;
@@ -55,50 +56,50 @@ export class AonInvoicePanel extends AonElement {
 
 		let pendingOptions = [
 			{
-				name: 'Inbox',
+				name: MSG.AON_MSG_INBOX,
 				icon: 'inbox',
 				fn: () => this.aonInvoiceList({status:'inbox'})
 			},
 			{
-				name: 'Rechazadas',
+				name: MSG.AON_MSG_REJECTEDS,
 				icon: 'report',
 				fn: () => this.aonInvoiceList({status:'refused'})
 			},
 			{
-				name: 'Papelera',
+				name: MSG.AON_MSG_TRASH,
 				icon: 'delete',
 				fn: () => this.aonInvoiceList({status:'trash'})
 			}
 		];
-		aonInvoice.addSidenavOptions('PENDIENTES', pendingOptions);
+		aonInvoice.addSidenavOptions(MSG.AON_MSG_PENDINGS.toUpperCase(), pendingOptions);
 
 		let accountingOptions = [
 			{
-				name: 'Emitidas',
+				name: MSG.AON_MSG_ISSUEDS,
 				icon: 'unarchive',
 				fn: () => {}
 			},
 			{
-				name: 'Recibidas',
+				name: MSG.AON_MSG_RECEIVEDS,
 				icon: 'archive',
 				fn: () => {}
 			},
 			{
-				name: 'Tickets/Justificantes',
+				name: MSG.AON_MSG_TICKETS,
 				icon: 'receipt',
 				fn: () => {}
 			}
 		];
-		aonInvoice.addSidenavOptions('CONTABILIZADAS', accountingOptions);
+		aonInvoice.addSidenavOptions(MSG.AON_MSG_ACCOUNTEDS.toUpperCase(), accountingOptions);
 
 		let settingOptions = [
 			{
-				name: 'Impresión Facturas',
+				name: MSG.AON_MSG_PRINTING_INVOICES,
 				icon: 'print',
 				fn: () => {}
 			}
 		];
-		aonInvoice.addSidenavOptions('CONFIGURACIÓN', settingOptions);
+		aonInvoice.addSidenavOptions(MSG.AON_MSG_SETTING.toUpperCase(), settingOptions);
 
 		let filter = {status:'inbox'};
 
@@ -107,8 +108,8 @@ export class AonInvoicePanel extends AonElement {
 		}
 
 		let toolbar = this.getElement(aonInvoice.TOOLBAR);
-		if(filter.status === 'inbox') toolbar.setAttribute('option', 'Inbox');
-		else if(filter.status === 'refused') toolbar.setAttribute('option', 'Rechazadas');
+		if(filter.status === 'inbox') toolbar.setAttribute('option', MSG.AON_MSG_INBOX);
+		else if(filter.status === 'refused') toolbar.setAttribute('option', MSG.AON_MSG_REJECTEDS);
 
 		this.aonInvoiceList(filter);
 	}

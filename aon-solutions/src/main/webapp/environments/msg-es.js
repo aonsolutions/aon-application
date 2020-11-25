@@ -11,17 +11,57 @@ export const AON_MSG_INVOICE_CONCEPTS = 'Conceptos Factura';
 export const AON_MSG_INVOICE_ISSUED = 'Factura Emitida';
 export const AON_MSG_INVOICE_RECEIVED = 'Factura Recibida';
 export const AON_MSG_INVOICE_NUMBER = 'Número Factura';
+export const AON_MSG_DUPLICATE_INVOICE = 'Duplicar Factura';
+export const AON_MSG_RECORD_INVOICE = 'Contabilizar Factura';
 
 export const AON_MSG_TICKET = 'Ticket';
+export const AON_MSG_TICKETS = 'Tickets';
+
 export const AON_MSG_TAXES_DETAIL= 'Detalle Impuestos';
 export const AON_MSG_EXPIRATIONS= 'Vencimientos';
 
 export const AON_MSG_PAYMETHOD = 'Forma de Pago';
+export const AON_MSG_REJECTED = 'Rechazada';
+export const AON_MSG_REJECTEDS = 'Rechazadas';
+export const AON_MSG_TRASH = 'Papelera';
 export const AON_MSG_TO_TRASH = 'Enviar a la Papelera';
 export const AON_MSG_DELETE_FOREVER = 'Borrar Definitivamente';
 export const AON_MSG_ADD_FILE = 'Adjuntar Fichero';
+export const AON_MSG_SHOW_FILE = 'Mostrar Fichero';
 export const AON_MSG_ADD_COMMENT = 'Añadir Comentario';
 
 export const AON_MSG_DATE = 'Fecha';
 export const AON_MSG_AMOUNT = 'Importe';
 export const AON_MSG_HOLDER = 'Titular';
+
+export const AON_MSG_BACK = 'Atrás';
+export const AON_MSG_NEXT = 'Siguiente';
+export const AON_MSG_PREVIOUS = 'Anterior';
+
+export const AON_MSG_PENDING = 'Pendiente';
+export const AON_MSG_PENDINGS = 'Pendientes';
+
+export const AON_MSG_ACCOUNTED = 'Contabilizada';
+export const AON_MSG_ACCOUNTEDS = 'Contabilizadas';
+
+export const AON_MSG_RECEIVED = 'Recibida';
+export const AON_MSG_RECEIVEDS = 'Recibidas';
+
+
+export const AON_MSG_ISSUED = 'Emitida';
+export const AON_MSG_ISSUEDS ='Emitidas';
+
+export const AON_MSG_SETTING = 'Configuración';
+
+export const AON_MSG_INBOX = 'Bandeja de Entrada';
+export const AON_MSG_PRINTING_INVOICES = 'Impresión de Facturas';
+
+export const AON_MSG_SUPPLIED = 'Suplidos';
+export const AON_MSG_TOTAL_SUPPLIED = 'Total Suplidos';
+export const AON_MSG_TOTAL = 'Total';
+
+export const AON_MSG_BOX_CRITERION = 'Criterio de Caja';
+export const AON_MSG_CONCEPT = 'Concepto';
+export const AON_MSG_CONCEPTS = 'Conceptos';
+export const AON_MSG_QUANTITY = 'Cantidad';
+export const AON_MSG_PRICE = 'Precio';

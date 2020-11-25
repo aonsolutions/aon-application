@@ -2,7 +2,7 @@ export const AON_MSG_INVOICE = 'Faktura';
 export const AON_MSG_INVOICES = 'Fakturak';
 export const AON_MSG_RESTORE_INVOICE = 'Fakturak Berreskuratu';
 export const AON_MSG_REJECT_INVOICE = 'Faktura Baztertu';
-export const AON_MSG_PRINT_INVOICE = 'Faktura Imprimatu';
+export const AON_MSG_PRINT_INVOICE = 'Faktura Inprimatu';
 export const AON_MSG_SEND_INVOICE = 'Faktura Bidali';
 export const AON_MSG_RECTIFY_INVOICE = 'Faktura Zuzendu';
 export const AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION = 'Faktura betirako ezabatu da.';
@@ -11,18 +11,56 @@ export const AON_MSG_INVOICE_CONCEPTS = 'Fakturaren Kontzeptuak';
 export const AON_MSG_INVOICE_ISSUED = 'Igorritako Faktura';
 export const AON_MSG_INVOICE_RECEIVED = 'Jasotako Faktura';
 export const AON_MSG_INVOICE_NUMBER = 'Faktura Zenbakia';
-
+export const AON_MSG_DUPLICATE_INVOICE = 'Faktura Bikoiztu';
+export const AON_MSG_RECORD_INVOICE = 'Faktura Kontabilizatu';
 
 export const AON_MSG_TICKET = 'Tiket';
+export const AON_MSG_TICKETS = 'Tiketak';
+
 export const AON_MSG_TAXES_DETAIL= 'Zergak';
 export const AON_MSG_EXPIRATIONS= 'Epemugak';
 
 export const AON_MSG_PAYMETHOD = 'Ordainketa Era';
+export const AON_MSG_REJECTED = 'Baztertua';
+export const AON_MSG_REJECTEDS = 'Baztertuak';
+export const AON_MSG_TRASH = 'Paperontzia';
 export const AON_MSG_TO_TRASH = 'Paperontzira Bidali';
 export const AON_MSG_DELETE_FOREVER = 'Betirako Ezabatu';
-export const AON_MSG_ADD_FILE = 'Fitxategi Erantsi';
+export const AON_MSG_ADD_FILE = 'Fitxategia Erantsi';
+export const AON_MSG_SHOW_FILE = 'Fitxategia Erakutsi';
 export const AON_MSG_ADD_COMMENT = 'Iruzkina Gehitu';
 
 export const AON_MSG_DATE = 'Data';
 export const AON_MSG_AMOUNT = 'Zenbatekoa';
 export const AON_MSG_HOLDER = 'Titularra';
+
+export const AON_MSG_BACK = 'Atzera';
+export const AON_MSG_NEXT = 'Hurrengoa';
+export const AON_MSG_PREVIOUS = 'Aurrekoa';
+
+export const AON_MSG_PENDING = 'Zain';
+export const AON_MSG_PENDINGS = 'Zain Daudenak';
+
+export const AON_MSG_ACCOUNTED = 'Kontabilizatuta';
+export const AON_MSG_ACCOUNTEDS = 'Kontabilizatutak';
+
+export const AON_MSG_RECEIVED = 'Jasotakoa';
+export const AON_MSG_RECEIVEDS = 'Jasotakoak';
+
+export const AON_MSG_ISSUED = 'Igorritakoa';
+export const AON_MSG_ISSUEDS ='Igorritakoak';
+
+export const AON_MSG_SETTING = 'Konfigurazioa';
+
+export const AON_MSG_INBOX = 'Sarrera-Ontzia';
+export const AON_MSG_PRINTING_INVOICES = 'Fakturen Inprimazioa';
+
+export const AON_MSG_SUPPLIED = 'Ordezkatuak';
+export const AON_MSG_TOTAL_SUPPLIED = 'Guztira Ordezkatuak';
+export const AON_MSG_TOTAL = 'Guztira';
+
+export const AON_MSG_BOX_CRITERION = 'Kutxa-Irizpidea';
+export const AON_MSG_CONCEPT = 'Kontzeptua';
+export const AON_MSG_CONCEPTS = 'Kontzeptuak';
+export const AON_MSG_QUANTITY = 'Kantitatea';
+export const AON_MSG_PRICE = 'Prezioa';

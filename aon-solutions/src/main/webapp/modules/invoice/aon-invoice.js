@@ -140,7 +140,7 @@ export class AonInvoice extends AonElement {
 
 		if(this._invoice.isInbox()) {
 			invoiceToolbar.addButton2(InvoiceAction.DUPLICATE, () => {});
-			invoiceToolbar.addButton2(InvoiceAction.RECTIFY, () => {});
+			invoiceToolbar.addButton2(InvoiceAction.RECTIFY, () => this.printInvoice());
 			invoiceToolbar.addSeparator();
 		}
 
@@ -161,7 +161,7 @@ export class AonInvoice extends AonElement {
 			invoiceToolbar.addButton2(InvoiceAction.COMMENT, () => this.addInvoiceComment());
 		}
 
-		invoiceToolbar.addButton('Back', 'arrow_back', () => this.back());
+		invoiceToolbar.addButton2(InvoiceAction.BACK, () => this.back());
 
 		// invoiceToolbar.addButton('Options', 'more_vert', () => {
 		// 	let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
@@ -173,7 +173,7 @@ export class AonInvoice extends AonElement {
 		// });
 
 		if(!this._invoice.file && !this._invoice.isEmitida()){
-			invoiceToolbar.addButtonTitle(InvoiceAction.ADD_FILE, () => this.preview());
+			invoiceToolbar.addButtonTitle(InvoiceAction.ADD_FILE, () => this.addInvoiceFile());
 		} else {
 			invoiceToolbar.addButtonTitle(InvoiceAction.SHOW_FILE, () => {
 				let button = this.getElement(invoiceToolbar.TITLE_SECTION + 'ShowFileButton');
@@ -356,7 +356,7 @@ export class AonInvoice extends AonElement {
 
 		// TOTAL
 		let tdTotal = document.createElement('td');
-		tdTotal.innerHTML = `<aon-input id="total" description="Total"></aon-input>`;
+		tdTotal.innerHTML = `<aon-input id="total" description="${MSG.AON_MSG_TOTAL}"></aon-input>`;
 		tr.appendChild(tdTotal);
 		let total = document.getElementById('total');
 		total.value = this._invoice.total;
@@ -459,12 +459,12 @@ export class AonInvoice extends AonElement {
 
 		let tdCriterioCaja = document.createElement('td');
 		tdCriterioCaja.setAttribute('colspan', '1');
-		tdCriterioCaja.innerHTML = `<aon-switch id="criterioCaja" title="Criterio de Caja"></aon-switch>`;
+		tdCriterioCaja.innerHTML = `<aon-switch id="criterioCaja" title="${MSG.AON_MSG_BOX_CRITERION}"></aon-switch>`;
 		tr1.appendChild(tdCriterioCaja);
 
 		let tdSuplidos= document.createElement('td');
 		tdSuplidos.setAttribute('colspan', '1');
-		tdSuplidos.innerHTML = `<aon-switch id="suplidos" title="Suplidos"></aon-switch>`;
+		tdSuplidos.innerHTML = `<aon-switch id="suplidos" title="${MSG.AON_MSG_SUPPLIED}"></aon-switch>`;
 		tr1.appendChild(tdSuplidos);
 		let suplidos = this.getElement('suplidos');
 		suplidos.checked = this._invoice.suplidos.active;
@@ -480,9 +480,9 @@ export class AonInvoice extends AonElement {
 		tableSuplidos.appendChild(trSuplidos);
 
 		let tdConceptoSuplidos = document.createElement('td');
-		tdConceptoSuplidos.style.width = '75%'
+		tdConceptoSuplidos.style.width = '70%';
 		tdConceptoSuplidos.setAttribute('colspan', '3');
-		tdConceptoSuplidos.innerHTML = `<aon-input id="conceptoSuplidos" description="Concepto"></aon-input>`;
+		tdConceptoSuplidos.innerHTML = `<aon-input id="conceptoSuplidos" description="${MSG.AON_MSG_CONCEPT}"></aon-input>`;
 		trSuplidos.appendChild(tdConceptoSuplidos);
 		let conceptoSuplidos = this.getElement('conceptoSuplidos');
 		conceptoSuplidos.value = this._invoice.suplidos.description;
@@ -490,7 +490,7 @@ export class AonInvoice extends AonElement {
 
 		let tdTotalSuplidos = document.createElement('td');
 		tdTotalSuplidos.setAttribute('colspan', '1');
-		tdTotalSuplidos.innerHTML = `<aon-input id="totalSuplidos" description="Total Suplidos"></aon-input>`;
+		tdTotalSuplidos.innerHTML = `<aon-input id="totalSuplidos" description="${MSG.AON_MSG_TOTAL_SUPPLIED}"></aon-input>`;
 		trSuplidos.appendChild(tdTotalSuplidos);
 		let totalSuplidos = this.getElement('totalSuplidos');
 		totalSuplidos.value = this._invoice.suplidos.total;
@@ -632,7 +632,7 @@ export class AonInvoice extends AonElement {
 		// DETAIL DESCRIPTION
 		let tdDetailDescription = document.createElement('td');
 		tdDetailDescription.setAttribute('colspan','3');
-		tdDetailDescription.innerHTML = `<aon-input id="detailDescription${i}" description="Concepto"></aon-input>`;
+		tdDetailDescription.innerHTML = `<aon-input id="detailDescription${i}" description="${MSG.AON_MSG_CONCEPT}"></aon-input>`;
 		tr.appendChild(tdDetailDescription);
 		let detailDescription = document.getElementById('detailDescription' + i);
 		detailDescription.value = detail.description;
@@ -640,7 +640,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL QUANTITY
 		let tdDetailQuantity = document.createElement('td');
-		tdDetailQuantity.innerHTML = `<aon-input id="detailQuantity${i}" description="Cantidad"></aon-input>`;
+		tdDetailQuantity.innerHTML = `<aon-input id="detailQuantity${i}" description="${MSG.AON_MSG_QUANTITY}"></aon-input>`;
 		tr.appendChild(tdDetailQuantity);
 		let detailQuantity = document.getElementById('detailQuantity' + i);
 		detailQuantity.value = detail.quantity;
@@ -648,7 +648,7 @@ export class AonInvoice extends AonElement {
 
 		// DETAIL PRICE
 		let tdDetailPrice = document.createElement('td');
-		tdDetailPrice.innerHTML = `<aon-input id="detailPrice${i}" description="Precio"></aon-input>`;
+		tdDetailPrice.innerHTML = `<aon-input id="detailPrice${i}" description="${MSG.AON_MSG_PRICE}"></aon-input>`;
 		tr.appendChild(tdDetailPrice);
 		let detailPrice = document.getElementById('detailPrice' + i);
 		detailPrice.value = detail.price;

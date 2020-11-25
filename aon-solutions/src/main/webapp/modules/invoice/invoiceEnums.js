@@ -22,6 +22,11 @@ export const TaxIRPFPercentage = [
 ];
 
 export const InvoiceAction = {
+  BACK: {
+    id: 'Back',
+    name: MSG.AON_MSG_BACK,
+    icon: 'arrow_back'
+  },
   NEXT: {
     id: 'NextInvoice',
     name: MSG.AON_MSG_NEXT,
@@ -49,7 +54,7 @@ export const InvoiceAction = {
   },
   ACCOUNTING: {
     id: 'Accounting',
-    name: MSG.AON_MSG_ACCOUNTING_INVOICE,
+    name: MSG.AON_MSG_RECORD_INVOICE,
     icon: MATERIAL_ICONS.ADD_TASK
   },
   DELETE: {

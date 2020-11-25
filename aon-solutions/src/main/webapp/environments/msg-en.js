@@ -11,17 +11,55 @@ export const AON_MSG_INVOICE_CONCEPTS = 'Invoice Concepts';
 export const AON_MSG_INVOICE_ISSUED = 'Invoice Issued';
 export const AON_MSG_INVOICE_RECEIVED = 'Invoice Received';
 export const AON_MSG_INVOICE_NUMBER = 'Invoice Number';
-
+export const AON_MSG_DUPLICATE_INVOICE = 'Duplicate Invoice';
+export const AON_MSG_RECORD_INVOICE = 'Record Invoice';
 export const AON_MSG_TICKET = 'Ticket';
+export const AON_MSG_TICKETS = 'Tickets';
 export const AON_MSG_TAXES_DETAIL= 'Taxes Detail';
 export const AON_MSG_EXPIRATIONS= 'Expirations';
 
 export const AON_MSG_PAYMETHOD = 'Payment Method';
+export const AON_MSG_REJECTED = 'Rejected';
+export const AON_MSG_REJECTEDS = 'Rejected';
+export const AON_MSG_TRASH = 'Trash';
 export const AON_MSG_TO_TRASH = 'Send to Trash';
 export const AON_MSG_DELETE_FOREVER = 'Delete Permanently';
 export const AON_MSG_ADD_FILE = 'Add File';
+export const AON_MSG_SHOW_FILE = 'Show File';
 export const AON_MSG_ADD_COMMENT = 'Add Comment';
 
 export const AON_MSG_DATE = 'Date';
 export const AON_MSG_AMOUNT = 'Amount';
 export const AON_MSG_HOLDER = 'Holder';
+
+export const AON_MSG_BACK = 'Back';
+export const AON_MSG_NEXT = 'Next';
+export const AON_MSG_PREVIOUS = 'Previous';
+
+export const AON_MSG_PENDING = 'Pending';
+export const AON_MSG_PENDINGS = 'Pendings';
+
+export const AON_MSG_ACCOUNTED = 'Accounted';
+export const AON_MSG_ACCOUNTEDS = 'Accounted';
+
+export const AON_MSG_RECEIVED = 'Received';
+export const AON_MSG_RECEIVEDS = 'Received';
+
+
+export const AON_MSG_ISSUED = 'Issued';
+export const AON_MSG_ISSUEDS ='Issued';
+
+
+export const AON_MSG_SETTING = 'Setting';
+export const AON_MSG_INBOX = 'Inbox';
+export const AON_MSG_PRINTING_INVOICES = 'Printing Invoices';
+
+export const AON_MSG_SUPPLIED = 'Supplied';
+export const AON_MSG_TOTAL_SUPPLIED = 'Total Supplied';
+export const AON_MSG_TOTAL = 'Total';
+
+export const AON_MSG_BOX_CRITERION = 'Box Criterion';
+export const AON_MSG_CONCEPT = 'Concept';
+export const AON_MSG_CONCEPTS = 'Concepts';
+export const AON_MSG_QUANTITY = 'Quantity';
+export const AON_MSG_PRICE = 'Price';
