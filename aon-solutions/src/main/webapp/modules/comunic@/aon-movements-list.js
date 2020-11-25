@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {setDate, getDayMonth } from '../../services/utils.js';
+import { getDayMonth, addDays } from '../../services/utils.js';
 import {getMovements, getIDC, getTA, postDeleteMov} from '../../services/service.js';
 import '../../components/aon-table.js';
 import '../../components/aon-toast.js';
@@ -36,57 +36,61 @@ export class AonMovementsList extends AonElement {
 	 
 
  	build() {
+		this.getTable();
+	}
+
+	async getTable() {
 		let aonMovementTable = this.getElement('aonMovementTable');
 		aonMovementTable.addColumn('Apellidos y nombre', 'string', 'nombres');
 		aonMovementTable.addColumn('DNI/NIE', 'string', 'dni');
 		aonMovementTable.addColumn('Movimiento', 'string', 'status');
 		aonMovementTable.addColumn('Fecha', 'date', 'fecha');
 		aonMovementTable.addColumn('Opción', 'fn', 'option');
-		this.getTable();
-	}
-
-	async getTable() {
-		let aonMovementTable = this.getElement('aonMovementTable');
 		if(aonMovementTable) {
-			try{
+			try {
 				let resp = await getMovements(this.getFilter());
 				aonMovementTable.removeRows();
 				resp = resp.sort((a,b)=> new Date(b.fra) - new Date(a.fra));
-				resp.map(res=>{
+				resp.map( res => {
 					let {name:nombres, ipf, fra, situation} = res;
 					let fecha = getDayMonth(fra);
-					let prev =  setDate(fra) > setDate(new Date()); // true == prev
+					let date_now = new Date();
+					let date_prev = addDays(date_now, -2);
+					let prev = new Date(fra).getTime() > date_now.getTime();
 					let status = prev ? 
 					`<span style="font-weight: 700;">${situation==="AL" ? "Alta" : "Baja"} Previa</span> ` :
 					`<span style="font-weight: 700;color: #B32000;">${situation==="AL" ? "Alta" : "Baja"} Consolidada</span>`;
-					res = {...res, prev};
 					let dni = ipf.toString().substring(1);
-					let data = {
+					let option = [
+						{
+							name:'Obtener TA',
+							icon:'print',
+							fn: (el) => this.getTa(res, el)
+						},
+						{
+							name:'Obtener IDC',
+							icon:'print',
+							fn: (el) => this.getIdc(res, el)
+						}
+					];
+					if( "AL" === situation && (date_prev.getTime() <= new Date(fra).getTime())  ) {
+						option.push({
+							name:'Anular',
+							icon:'delete',
+							fn: (el) => this.deleteMov(res, el)
+						});
+					}
+					res = {
 						...res,
 						nombres,
 						dni,
 						fecha,
 						status,
 						prev,
-						option:[
-							{
-								name:'Obtener TA',
-								icon:'print',
-								fn: (el) => this.getTa(res, el)
-							},
-							{
-								name:'Obtener IDC',
-								icon:'print',
-								fn: (el) => this.getIdc(res, el)
-							},
-							{
-								name:'Anular',
-								icon:'delete',
-								fn: (el) => this.deleteMov(res, el)
-							},
-						]
+						option
 					};
-					aonMovementTable.addRow(data, (el) => this.aonMovement(el, data));	
+
+					aonMovementTable.addRow(res, (el) => this.aonMovement(el, res));	
 				})
 			} catch(e){
 				console.log(e);

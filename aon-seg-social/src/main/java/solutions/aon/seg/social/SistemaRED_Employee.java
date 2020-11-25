@@ -217,7 +217,7 @@ public class SistemaRED_Employee {
 		}
 		
 		//COMMON GETEMPLOYEE CODE
-		private static ArrayList<Employee> getEmployeesFromTable(HtmlPage htmlPage, ArrayList<Employee> employees, String ccc, String regime) throws IOException, SegSocialException {
+		private static ArrayList<Employee> getEmployeesFromTable(HtmlPage htmlPage, ArrayList<Employee> employees, String regime, String ccc) throws IOException, SegSocialException {
 			Iterable<DomElement> tableContent = htmlPage.getElementById("Sub1000112079").getLastElementChild().getChildElements();
 			ArrayList<ArrayList<String>> data = new ArrayList<>();
 			ArrayList<String> empData = new ArrayList<>();

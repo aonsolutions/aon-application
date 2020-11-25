@@ -3,6 +3,7 @@ import {serializeForm} from '../../services/utils.js'
 import {getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getHorasConvenio, getIpfxnaf} from '../../services/service.js'
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
+import '../../components/aon-number.js';
 import '../../components/aon-date.js';
 import '../../components/aon-suggestion.js';
 import '../../components/aon-toast.js';
@@ -87,11 +88,13 @@ export class AonAltaDirecta extends AonElement {
             <div class="aonCol-sm-12">
                 <aon-input name="nombre" id="nombre" description="Nombre" type="text"></aon-input>
             </div>
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-input name="apellido" id="apellido1" description="1er Apellido" type="text"></aon-input>
-            </div>
-            <div class="aonCol-sm-12 aonCol-md-6">
-                <aon-input name="apellido2" id="apellido2" description="2do Apellido" type="text"></aon-input>
+            <div id="div_apellidos" hidden>
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-input name="apellido" id="apellido1" description="1er Apellido" type="text"></aon-input>
+                </div>
+                <div class="aonCol-sm-12 aonCol-md-6">
+                    <aon-input name="apellido2" id="apellido2" description="2do Apellido" type="text"></aon-input>
+                </div>
             </div>
         `);
 
@@ -118,7 +121,7 @@ export class AonAltaDirecta extends AonElement {
                     <aon-select id="horas_convenio" title="Horas convenio"></aon-select>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-input id="horas" description="Horas" type="number" ></aon-input>
+                    <aon-number id="horas" description="Horas" type="text" ></aon-number>
                 </div>
                 <div class="aonCol-sm-3">
                     <aon-input name="coefparcial" id="coefparcial" description="Coeficiente Parcial" type="number" pattern="^[0-9]{1,3}$"></aon-input>
@@ -163,8 +166,9 @@ export class AonAltaDirecta extends AonElement {
 
 
         this.startFunctions();
-
     }
+
+
 
     startFunctions(){
         this.listCentroTrabajo();
@@ -334,7 +338,6 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {}
     }
     
-
     async listHorasConvenio(data){
         let horas_convenio = this.getElement('horas_convenio');
         try {
@@ -376,10 +379,12 @@ export class AonAltaDirecta extends AonElement {
 
     async getIpf({target}){
         let nss = target.value;
-        let apellido1 = this.getElement('apellido1');
-        let apellido2 = this.getElement('apellido2');
+        let div_apellidos = this.getElement('div_apellidos');
         let nombre = this.getElement('nombre');
         let dni = this.getElement('aonAltaDirectaDni');
+        dni.setAttribute('value', "");
+        nombre.setAttribute('value', "");
+        
         if(nss.length >9){
             try {
                 const resp = await getIpfxnaf({nss});
@@ -388,19 +393,14 @@ export class AonAltaDirecta extends AonElement {
                     this.getElement('nss').setAttribute('value', datos.nss);
                     dni.setAttribute('value', datos.ipf.toString().substring(1));
                     nombre.setAttribute('value', datos.name);
-                    apellido1.hidden = apellido2.hidden = true;
+                    div_apellidos.hidden = true;
                 }
                 else {
-                    dni.setAttribute('value', "");
-                    nombre.setAttribute('value', "");
-                    apellido1.hidden = apellido2.hidden = false;
+                    div_apellidos.hidden = false;
                 }
-            } catch (error) {}
-        }
-        else {
-            dni.setAttribute('value', "");
-            nombre.setAttribute('value', "");
-            apellido1.hidden = apellido2.hidden = false;
+            } catch (error) {
+                div_apellidos.hidden = false;
+            }
         }
     }
 
@@ -432,7 +432,7 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('aonAltaDirectaDni').setAttribute('value',ipf);
         
         //second screen
-        let fecha = "24-11-2020";
+        let fecha = "25-11-2020";
         this.getElement('fecha').setAttribute('value', fecha);
 
         let convenio = "99001355011983";
@@ -444,5 +444,7 @@ export class AonAltaDirecta extends AonElement {
         let type_cto = "402";   
         this.getElement('type_cto').setAttribute('value', type_cto);
     }
+
+    
 }
 window.customElements.define('aon-alta-directa', AonAltaDirecta);

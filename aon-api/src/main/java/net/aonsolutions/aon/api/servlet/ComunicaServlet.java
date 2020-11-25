@@ -132,10 +132,9 @@ public class ComunicaServlet extends HttpServlet{
 			Utils.addCorsHeader(resp);
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
-			User user = AON_SOLUTIONS.getUser(domain, token);
+			//User user = AON_SOLUTIONS.getUser(domain, token);
 //			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
 //			LOGGER.info("certificate>>"+certificate.getPassword());
-			
 			if(pathInfo != null) {
 				if("alta-directa".equalsIgnoreCase(pathInfo[1])) {
 					try {
@@ -185,7 +184,7 @@ public class ComunicaServlet extends HttpServlet{
                 try{
                     employees.addAll(SistemaRED.getTotalEmployees(new ByteArrayInputStream(cert), certificatePassword, certificateType, regimen, cti));
                 } catch(Exception e) {
-                	// e.printStackTrace();
+//                	 e.printStackTrace();
                 }
             });	
 		} catch (IOException e) {

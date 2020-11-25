@@ -42,7 +42,7 @@ export const decimalAdjust = (type, value, exp)  => {
 }
 
 export const serializeForm = (form)=> {
-  let inputs = [...form.querySelectorAll('aon-input, aon-select, aon-date')];
+  let inputs = [...form.querySelectorAll('aon-input, aon-select, aon-date, aon-select, aon-number')];
   let obj= {}
   inputs.map(({name,value}) => obj[name] = value);
   return obj;
@@ -62,7 +62,7 @@ export const setDate = (date) => formatDate(new Date(date));
 export const addDays = (date, days) =>  {
   let result = new Date(date);
   result.setDate(result.getDate() + days);
-  return formatDate(result);
+  return result;
 }
 
 
