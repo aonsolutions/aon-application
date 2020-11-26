@@ -159,7 +159,7 @@ export class AonInvoice extends AonElement {
 		}
 
 		if(this._invoice.isInbox() && (this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER'))) {
-			invoiceToolbar.addButton2(InvoiceAction.ACCOUNTING, () => {});
+			invoiceToolbar.addButton2(InvoiceAction.ACCOUNTING, () => this.development());
 			invoiceToolbar.addButton2(InvoiceAction.REJECT, () => this.rejectInvoice());
 			invoiceToolbar.addSeparator();
 		}
@@ -198,7 +198,14 @@ export class AonInvoice extends AonElement {
 					dataDiv.style.width = '50%';
 					document.getElementById('aonInvoiceDiv').style.display = 'block';
 					document.getElementById('aonInvoiceItemTaxesCard').style.width = '100%';
-					fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+
+					if(!this._invoice.file && this._invoice.isEmitida()){
+						let json = btoa(JSON.stringify(this._invoice));
+						let url = '/ms/api/download_invoice_pdf?json=' + json;
+						fileDiv.innerHTML = `<aon-viewer type="application/pdf" file="${url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+					} else {
+						fileDiv.innerHTML = `<aon-viewer type="${this._invoice.file.type}" file="${this._invoice.file.url}" width="${fileDiv.offsetWidth}"><aon-viewer>`;
+					}
 				}
 			});
 		}
@@ -240,14 +247,15 @@ export class AonInvoice extends AonElement {
 			aonInvoice.startLoader();
 			insertInvoice(data).then((r) => {
 				aonInvoice.stopLoader();
-				this.getInvoice().id = r.id;
+				this._invoice.createInvoice(r);
+				this.build();
 			});
 		}
 	}
 
 	development() {
 		let d = document.getElementById('aonDialogInvoiceDevelopment');
-		d.setContentHTML('Esta opción está en desarrollo');
+		d.setContentHTML('Esta opción está en desarrollo...');
 		d.open();
 	}
 
@@ -292,7 +300,9 @@ export class AonInvoice extends AonElement {
 
 	removeInvoice() {
 		deleteInvoices([this._invoice.id]).then(() => {
-			alert(MSG.AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION)
+			let d = document.getElementById('aonDialogInvoiceDevelopment');
+			d.setContentHTML(MSG.AON_MSG_DELETE_FOREVER_INVOICE_CONFIRMATION);
+			d.open();
 			this.back();
 		});
 	}
@@ -326,6 +336,7 @@ export class AonInvoice extends AonElement {
 
 	buildData(){
 		let card = document.getElementById('aonInvoiceItemDataCard');
+		card.setContentHTML('');
 		let table = document.createElement('table');
 		table.style.width = '100%';
 		card.setContent(table);
@@ -456,6 +467,7 @@ export class AonInvoice extends AonElement {
 
 	buildTaxes(){
 		let card = document.getElementById('aonInvoiceItemTaxesCard');
+		card.setContentHTML('');
 		let div = document.createElement('div');
 		card.setContent(div);
 
@@ -547,6 +559,7 @@ export class AonInvoice extends AonElement {
 
 	buildDetail(){
 		let card = document.getElementById('aonInvoiceItemDetailCard');
+		card.setContentHTML('');
 		let div = document.createElement('div');
 		card.setContent(div);
 
@@ -566,6 +579,7 @@ export class AonInvoice extends AonElement {
 
 	buildFinance(){
 		let card = document.getElementById('aonInvoiceItemFinanceCard');
+		card.setContentHTML('');
 		let div = document.createElement('div');
 		card.setContent(div);
 
