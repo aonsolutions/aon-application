@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 
@@ -169,6 +170,12 @@ public class SistemaRED {
 			final String certificateType, ArrayList<String> nssList) throws SegSocialException 
 	{
 		return SistemaREDMov.ipfxnaf(certificateInputStream, certificatePassword, certificateType, nssList);
+	}
+	
+	public static String nafxipf(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException 
+	{
+		return SistemaREDMov.nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1, apellido2);
 	}
 	
 	public static void main(String[] args)

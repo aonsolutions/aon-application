@@ -212,7 +212,7 @@ public class SistemaRED_Employee {
 				htmlPage = buscaPartesForm.getInputByName("btn_Sub2207601004").click();
 				HtmlUnitToolkit.manageStatusCode(htmlPage);
 
-				return getEmployeesFromTable(htmlPage,employees,ccc,regimen);
+				return getEmployeesFromTable(htmlPage,employees, regimen, ccc);
 			}
 		}
 		

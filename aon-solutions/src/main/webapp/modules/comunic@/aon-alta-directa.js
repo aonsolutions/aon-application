@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {serializeForm} from '../../services/utils.js'
-import {getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getHorasConvenio, getIpfxnaf} from '../../services/service.js'
+import {getPersonas, getWorkplaceCCCs, getConvenios, getTipoContrato, getOcupacion, getGrupoCotizacion, postAltaDirecta, getTipoJornada, getIpfxnaf, getNafxipf} from '../../services/service.js'
 import '../../components/aon-card.js';
 import '../../components/aon-input.js';
 import '../../components/aon-number.js';
@@ -90,7 +90,7 @@ export class AonAltaDirecta extends AonElement {
             </div>
             <div id="div_apellidos" hidden>
                 <div class="aonCol-sm-12 aonCol-md-6">
-                    <aon-input name="apellido" id="apellido1" description="1er Apellido" type="text"></aon-input>
+                    <aon-input name="apellido1" id="apellido1" description="1er Apellido" type="text"></aon-input>
                 </div>
                 <div class="aonCol-sm-12 aonCol-md-6">
                     <aon-input name="apellido2" id="apellido2" description="2do Apellido" type="text"></aon-input>
@@ -100,7 +100,6 @@ export class AonAltaDirecta extends AonElement {
 
         let aonContratoCard = this.getElement(`${this.ID}ContratoCard`);
         aonContratoCard.setContentHTML(`
-            <aon-input name="situation" id="situation" description="Situacion" value="AL" visible="false"></aon-input>
             <div class="aonCol-sm-12 aonCol-md-6">
                 <aon-select name="type_cto" id="type_cto" title="Tipo de contrato"></aon-select>
             </div>
@@ -118,19 +117,19 @@ export class AonAltaDirecta extends AonElement {
                     <aon-select id="tipo_jornada" title="Tipo de jornada"></aon-select>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-select id="horas_convenio" title="Horas convenio"></aon-select>
+                    <aon-number id="horas_convenio" description="Horas convenio" format="true" decimals="2"></aon-number>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-number id="horas" description="Horas" type="text" ></aon-number>
+                    <aon-number id="horas" description="Horas" format="true" decimals="2"></aon-number>
                 </div>
                 <div class="aonCol-sm-3">
-                    <aon-input name="coefparcial" id="coefparcial" description="Coeficiente Parcial" type="number" pattern="^[0-9]{1,3}$"></aon-input>
+                    <aon-number name="coefparcial" id="coefparcial" description="Coeficiente Parcial"></aon-number>
                 </div>
             </div>
+            <aon-input name="situation" id="situation" description="Situacion" value="AL" visible="false"></aon-input>
         `);
-        // pattern="^(0|[1-9]\d*){1,2}(\.\d+){1,2}?$"
+
         let aonAltaDirectaSubmit = this.getElement(`${this.ID}Submit`);
-       // aonAltaDirectaSubmit.style.marginLeft = '100%';
         aonAltaDirectaSubmit.addEventListener('click',()=>this.formSubmit());
 
         let centro_trabajo = this.getElement('centro_trabajo');
@@ -157,18 +156,21 @@ export class AonAltaDirecta extends AonElement {
         horas_convenio.addEventListener('select', () => this.calculoCoef());
 
         let horas = this.getElement('horas');
-        horas.addEventListener('keyup', ()=> {
+        horas.addEventListener('blur', ()=> {
             this.calculoCoef();
         });
 
         let coefparcial = this.getElement('coefparcial');
-        coefparcial.addEventListener('keyup', (e) => this.calculoHoras());
+        coefparcial.addEventListener('blur', (e) => this.calculoHoras());
 
+        let apellido1 = this.getElement('apellido1');
+        apellido1.addEventListener('blur', (e) => this.getNaf());
+
+        let apellido2 = this.getElement('apellido2');
+        apellido2.addEventListener('blur', (e) => this.getNaf());
 
         this.startFunctions();
     }
-
-
 
     startFunctions(){
         this.listCentroTrabajo();
@@ -178,13 +180,15 @@ export class AonAltaDirecta extends AonElement {
         this.listGrupoCotizacion();
         this.listOcupacion();
         this.listConvenios();
-       
         // this.testFieldValues();
     }
 
     selectTipojornada(e){
         let {detail:{value}} = e;
-        this.listHorasConvenio(value);
+        let hr = 0;
+        if("semanal" == value) hr = 40;
+        else if("diaria" == value) hr = 8;
+        this.getElement("horas_convenio").value = hr;
         this.calculoCoef();
     }
 
@@ -337,33 +341,16 @@ export class AonAltaDirecta extends AonElement {
             );
         } catch (error) {}
     }
-    
-    async listHorasConvenio(data){
-        let horas_convenio = this.getElement('horas_convenio');
-        try {
-            const resp = await getHorasConvenio(data);
-            horas_convenio.options = JSON.stringify(
-                resp.map(r=> {
-                    return {
-                        name: `${r.name}`,
-                        value: r.value
-                    }
-                })
-            );
-            if(resp.length>0) horas_convenio.value = resp.find(r=>r).value;
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
     calculoCoef(){
-        let horas_convenio = this.getElement('horas_convenio');
-        let horas = this.getElement('horas');
-        let calc = '';
-        if(horas_convenio.value > 0 && horas.value > 0){
-            calc =  Math.round( parseFloat( (parseFloat(horas.value) / parseFloat(horas_convenio.value) ) *  100) ).toString().padStart(3, "0");
+        let horas_convenio = this.getElement('horas_convenio').value;
+        let horas = this.getElement('horas').value ;
+        let coef = '';
+        if(horas_convenio > 0 && horas > 0){
+            let calc =  Math.round( parseFloat( (parseFloat(horas) / parseFloat(horas_convenio) ) *  100) );
+            if(calc > 0 && calc <=99.99) coef = calc.toString().padStart(3, "0"); 
         }
-        this.getElement('coefparcial').setAttribute('value', calc);
+        this.getElement('coefparcial').value = coef;
     }
 
     calculoHoras(){
@@ -371,9 +358,8 @@ export class AonAltaDirecta extends AonElement {
         let coef =  this.getElement('coefparcial').value;
         let horas = this.getElement('horas');
 
-        if(horas_convenio > 0 && coef > 0){
-            let calc = (parseInt(coef) / 100) * horas_convenio;
-            horas.value = calc;
+        if(horas_convenio > 0 && coef > 0  && coef <=99.99){
+            horas.value = (parseInt(coef) / 100) * horas_convenio;
         }
     }
 
@@ -385,7 +371,7 @@ export class AonAltaDirecta extends AonElement {
         dni.setAttribute('value', "");
         nombre.setAttribute('value', "");
         
-        if(nss.length >9){
+        if( nss.length > 9 ){
             try {
                 const resp = await getIpfxnaf({nss});
                 if(resp.length){
@@ -394,8 +380,7 @@ export class AonAltaDirecta extends AonElement {
                     dni.setAttribute('value', datos.ipf.toString().substring(1));
                     nombre.setAttribute('value', datos.name);
                     div_apellidos.hidden = true;
-                }
-                else {
+                } else {
                     div_apellidos.hidden = false;
                 }
             } catch (error) {
@@ -417,6 +402,19 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
+    async getNaf(){
+        let ipf = this.getElement('aonAltaDirectaDni');
+        let apellido1 = this.getElement('apellido1');
+        let apellido2 = this.getElement('apellido2');
+        if( ipf && ipf.value && apellido1 ){
+            try {
+                const resp = await getNafxipf({ipf:ipf.value, apellido1: apellido1.value, apellido2:apellido2.value});
+                if(resp.length){
+                    this.getElement('nss').setAttribute('value', resp);
+                }
+            } catch (error) {}
+        }
+    }
 
     testFieldValues(){
         let regimen =  "0111";
@@ -432,7 +430,7 @@ export class AonAltaDirecta extends AonElement {
         this.getElement('aonAltaDirectaDni').setAttribute('value',ipf);
         
         //second screen
-        let fecha = "25-11-2020";
+        let fecha = "28-12-2020";
         this.getElement('fecha').setAttribute('value', fecha);
 
         let convenio = "99001355011983";

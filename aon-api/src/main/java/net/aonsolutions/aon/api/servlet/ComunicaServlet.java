@@ -36,9 +36,10 @@ import solutions.aon.seg.social.objects.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaREDMov;
 import solutions.aon.seg.social.exceptions.SegSocialException;
 import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
-
+import java.util.Optional;
 @SuppressWarnings("serial")
 @WebServlet(name = "ComunicaServlet", urlPatterns = {"/ms/api/comunica/*"})
 public class ComunicaServlet extends HttpServlet{
@@ -93,10 +94,25 @@ public class ComunicaServlet extends HttpServlet{
 						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
 					    String certificatePassword = "jg@FNMT";
 					    String certificateType = "pkcs12";
-						content = gjson.toJson(this.ipfxnaf(domain, "", certificateInputStream, certificatePassword, certificateType, req.getParameter("nss"))).getBytes();
+						content = gjson.toJson(this.ipfxnaf(certificateInputStream, certificatePassword, certificateType, req.getParameter("nss"))).getBytes();
 					}
 					catch (SegSocialException e) {resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();}
 				} 
+				else if("nafxipf".equalsIgnoreCase(pathInfo[1])) {// mov de empleados prev de empleados
+					try {
+						LOGGER.info("NAFXIPF SERVLET - GET METHOD");
+						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
+					    String certificatePassword = "jg@FNMT";
+					    String certificateType = "pkcs12";
+						content = gjson.toJson(
+							this.nafxipf(certificateInputStream, certificatePassword, certificateType, 
+							req.getParameter("ipf"), 
+							req.getParameter("apellido1"), 
+							req.getParameter("apellido2")
+						) ).getBytes();
+					}
+					catch (SegSocialException e) {resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();}
+				}
 			}
 
 		} 
@@ -142,7 +158,7 @@ public class ComunicaServlet extends HttpServlet{
 						final InputStream certificateInputStream = ComunicaServlet.class.getResourceAsStream("FNMT.p12");
 					    String certificatePassword = "jg@FNMT";
 					    String certificateType = "pkcs12";
-					    content = gjson.toJson(sendMov(certificateInputStream, certificatePassword, certificateType, json)).getBytes();
+					    content = gjson.toJson(sendAlta(certificateInputStream, certificatePassword, certificateType, json)).getBytes();
 					} catch (SegSocialException e) {
 						e.printStackTrace();
 				    	resp.setStatus(500);content = gjson.toJson(e.getCause().getMessage()).getBytes();
@@ -195,7 +211,7 @@ public class ComunicaServlet extends HttpServlet{
 	}
 	
 	
-	private Collection<Employee> ipfxnaf(Domain domain, String login, final InputStream certificateInputStream, final String certificatePassword,
+	private Collection<Employee> ipfxnaf(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType, String nss) throws Exception {
 			if(nss.isEmpty()) {
 				throw new Exception("nss requerido");
@@ -206,11 +222,10 @@ public class ComunicaServlet extends HttpServlet{
 		    return SistemaRED.ipfxnaf(certificateInputStream, certificatePassword, certificateType, nssList);
 	}
 	
-	private Employee sendMov(final InputStream certificateInputStream, final String certificatePassword,
+	private Employee sendAlta(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType , JSONObject json) throws SegSocialException, Exception{
 		validateSendMov(json);
 		//first screen
-		String situation =  json.optString("situation"); //AL = Alta, BJ = Baja
 		String regimen = json.optString("regimen");
 		String ctaCti = json.optString("ctaCti");
 		String nss = json.optString("nss");
@@ -228,7 +243,7 @@ public class ComunicaServlet extends HttpServlet{
 //        Ctz mensual = 1
 //        Jornadas reales = 2
 		EmployeeBuilder builder = new EmployeeBuilder();
-		Employee employee = builder.setSituation(situation)
+		Employee employee = builder
 		.setRegime(regimen)
 		.setCtaCti(ctaCti)
 		.setNss(nss)
@@ -242,7 +257,7 @@ public class ComunicaServlet extends HttpServlet{
 		.setMdctz(md_ctz)
 		.build();
 		 
-		return SistemaRED.sendMov(certificateInputStream, certificatePassword, certificateType, employee);
+		return SistemaREDMov.sendAlta(certificateInputStream, certificatePassword, certificateType, employee);
 	}
 	
 	private void movDelete(final InputStream certificateInputStream, final String certificatePassword,
@@ -263,6 +278,11 @@ public class ComunicaServlet extends HttpServlet{
 		} else {
 			SistemaRED.altaConsolidadaDelete(certificateInputStream, certificatePassword, certificateType, situation, regimen, ctaCti, nss);
 		}
+	}
+	
+	private String nafxipf(final InputStream certificateInputStream, final String certificatePassword,
+			  final String certificateType , String ipf, String apellido1, String apellido2) throws SegSocialException{
+		return SistemaRED.nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1,  apellido2);
 	}
 	
 	private void validateSendMov(JSONObject json) throws Exception {

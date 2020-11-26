@@ -228,6 +228,11 @@ export class AonInput extends AonElement {
 
       this.value = input.value;
 	    this.dispatchEvent(new Event('keyup'));
+    });
+    
+
+    input.addEventListener('blur', (e) => {
+	    this.dispatchEvent(new Event('blur'));
 		});
 
     label.appendChild(input);

@@ -8,6 +8,7 @@ export class AonNumber extends AonElement {
     ICON_LABEL;
     INPUT;
     DESCRIPTION;
+    LOCALE;
 
     static get observedAttributes() {
         return ['value', 'disabled', 'readonly', 'visible', 'options', 'description'];
@@ -85,10 +86,26 @@ export class AonNumber extends AonElement {
         this.setAttribute('disabled', disabled);
     }
 
+    get format() {
+        return "true" == this.getAttribute('format');
+    }
+
+    set format(format) {
+        this.setAttribute('format', format);
+    }
+
+    get decimals() {
+        return this.getAttribute('decimals');
+    }
+
+    set decimals(decimals) {
+        this.setAttribute('decimals', decimals);
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         if('value' === name) {
             let input = this.getElement(this.INPUT);
-            if(newValue && 'undefined' !== newValue && input) input.value = this.onBlur(newValue);
+            if(newValue && 'undefined' !== newValue && input && !isNaN(newValue)) input.value = this.onBlur(newValue);
             if(input && newValue === '') input.value = '';
          }
         if ('disabled' === name) {
@@ -121,6 +138,7 @@ export class AonNumber extends AonElement {
         this.ICON_LABEL = this.id + 'IconLabel';
         this.INPUT = this.id + 'Input';
         this.DESCRIPTION = this.id + 'Description';
+        this.LOCALE = 'de-DE';
     }
 
     connectedCallback() {
@@ -146,6 +164,7 @@ export class AonNumber extends AonElement {
         input.name = this.getAttribute('name');
         input.value = this.getAttribute('value') ? this.getAttribute('value') : '';
         input.type = 'text';
+        input.autocomplete="off"
         input.style.textAlign = 'right'
         if ('date' === this.getAttribute('type')) {
             this.style.minWidth = '150px';
@@ -153,11 +172,12 @@ export class AonNumber extends AonElement {
         if (this.isDisabled())
             input.disabled = true;
 
-        input.addEventListener('keyup', (e) => {
-            // let reg = new RegExp(/[^0-9\.,]/g);
-            // if(!reg.test(e.target.value)) {e.preventDefault();}
-            input.value = input.value.replace(/[^0-9\.,]/g,'');
-            this.dispatchEvent(new Event('keyup'));
+        input.addEventListener('keypress', (ev) => {
+            let keyChar = String.fromCharCode(ev.which || ev.keyCode);
+            let reg = new RegExp(/[^0-9]/g);
+            if(this.format) reg = new RegExp(/[^0-9\.,]/g);
+            if(reg.test(keyChar)) ev.preventDefault();
+            this.dispatchEvent(new Event('keypress'));
         });
   
         input.addEventListener('focus', ({target}) => {
@@ -185,9 +205,6 @@ export class AonNumber extends AonElement {
         span.innerHTML = this.getAttribute('description');
 
         label.appendChild(span);
-
-
-
         label.style.display = this.isVisible() ? 'block' : 'none';
 
         div.appendChild(label);
@@ -222,14 +239,17 @@ export class AonNumber extends AonElement {
     }
 
     onBlur(value){
-        if (value.indexOf(".") == -1 && value.indexOf(",") == -1 ) value += ".00";
-        return value.replace('.', ',').replace(/(\d)(?=(\d{3})+(,\d{1,3}))/g, '$1.');
+        let newValue = value;
+        let decimals = this.decimals || 0;
+        if(this.format){
+            newValue = new Intl.NumberFormat(this.LOCALE,  { minimumFractionDigits: decimals }).format(value.replace(",",".")); 
+        } 
+        return newValue;
     }
 
     onFocus(value){
         return value.replace(/\./g, "").replace(/\,/g, ".");
     }
-
 
     isVisible() {
         return !this.hasAttribute('visible') || (this.hasAttribute('visible') && 'false' !== this.getAttribute('visible'));
@@ -255,7 +275,6 @@ export class AonNumber extends AonElement {
     setDisabled(disabled) {
         this.setAttribute('disabled', disabled);
     }
-
 }
 
 window.customElements.define('aon-number', AonNumber);

@@ -73,7 +73,7 @@ export class AonMovementsList extends AonElement {
 							fn: (el) => this.getIdc(res, el)
 						}
 					];
-					if( "AL" === situation && (date_prev.getTime() <= new Date(fra).getTime())  ) {
+					if( ("AL" === situation || "BJ" === situation) && (date_prev.getTime() <= new Date(fra).getTime())  ) {
 						option.push({
 							name:'Anular',
 							icon:'delete',
@@ -108,9 +108,9 @@ export class AonMovementsList extends AonElement {
 			let toast = this.getElement(`divToast`);
 			try {
 				await postDeleteMov(data);
-				toast.start({message:'Alta eliminada!', type: 'success'});
+				toast.start({message:`${data.situation == "AL" ? "Alta" : "Baja"} eliminada!`, type: 'success'});
 				el.remove(); //delete td
-			} catch (error) {
+			} catch (error) { 
 				toast.start({message:error, type: 'error'});
 			}
 		}	
