@@ -761,6 +761,25 @@ public class AccountingInvoiceDAO {
 			if (accInvoice.getAttach() != null) {
 				insertInvoiceAttach( ctx, accInvoice);
 			}
+			if ( accInvoice.isFromRawdoc()) {
+				RawdocDAO.delete(ctx, accInvoice.getInvoice().getDomain(), accInvoice.getAttach().getId());
+			}
+			if ( accInvoice.isTediParsed() ) {
+				try {
+					new Thread( new Runnable() {
+						@Override
+						public void run() {
+							System.out.println(" OPENING Thread");		
+							OCRDAO.teachReferenceCode(ctx.getUser(), accInvoice.getInvoice().getRegistryDocument(), accInvoice.getInvoice().getReferenceCode());
+						}
+					}).start();
+				} catch (Throwable t) {
+					System.out.println(" ERROR!");
+					t.printStackTrace();
+				}
+			}
+
+			
 			ctx.log().info("------ [END OK] INSERT INVOICE");
 			return entries;
 		} catch (IOException t) {
@@ -808,9 +827,6 @@ public class AccountingInvoiceDAO {
 			ctx.log().info("INSERT INVOICE ATTACH (invoice: "+ accInvoice.getAttach().getAttachModule() + " id : " +  attachId + ")");
 		} else {
 			ctx.log().info("INSERT INVOICE ATTACH (NO NEEDED - NO DATA)");
-		}
-		if ( accInvoice.isTediParsed()) {
-			RawdocDAO.delete(ctx, accInvoice.getInvoice().getDomain(), accInvoice.getAttach().getId());
 		}
 	}
 

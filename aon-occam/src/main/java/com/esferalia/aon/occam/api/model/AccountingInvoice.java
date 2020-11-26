@@ -17,6 +17,7 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	private static final long serialVersionUID = -4435280253306756102L;
 	
 	private boolean tediParsed;
+	private boolean fromRawdoc;
 	
 	private AccountEntry accountEntry;
 	private Invoice invoice;
@@ -51,6 +52,13 @@ public class AccountingInvoice implements Serializable, IAccountEntryWrapper {
 	}
 	public AccountingInvoice setTediParsed(boolean tediParsed) {
 		this.tediParsed = tediParsed;
+		return this;
+	}
+	public boolean isFromRawdoc() {
+		return fromRawdoc;
+	}
+	public AccountingInvoice setFromRawdoc(boolean fromRawdoc) {
+		this.fromRawdoc = fromRawdoc;
 		return this;
 	}
 	public boolean hasTotal() {

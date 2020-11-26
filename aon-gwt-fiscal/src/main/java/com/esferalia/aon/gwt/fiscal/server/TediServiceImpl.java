@@ -28,7 +28,10 @@ public class TediServiceImpl extends AonStatelessRemoteServiceServlet implements
 			IDataUrlSerializer serializer = new DataUrlSerializer();
 			DataUrl unserialized = serializer.unserialize(content);
 			ByteArrayInputStream input = new ByteArrayInputStream(unserialized.getData());
-			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input); 
+			TediResult result = TEDI.parse(new TediContext().setDomainName(domainName).setDomain(domain).setUser(user), input);
+			result.getAccountingInvoice()
+				.setFromRawdoc(false)
+				.setTediParsed(true);
 			return result;
 		} catch ( TediException t) {
 			t.printStackTrace();
