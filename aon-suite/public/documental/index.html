@@ -24,9 +24,10 @@
 
     <body>
         <!-- start contenido centro -->
-        <div id="atp_contenido_centro">
+        <div id="atp_contenido_centro" class="col pt-3">
             <div class="container-fluid">
                 <!-- INICIO VISTA -->
+                <aon-search-box id="aonHeaderSearchBox"></aon-search-box>
                 <form class="d-none" enctype="multipart/form-data">
                     <input type="file" name="document[]" multiple id="upload-file"> 
                 </form>
@@ -58,7 +59,7 @@
                                 </table>
                             </div>
                             <!-- Tarjetas para el diseño responsive que se ven solo cuando se alcanza el breakpoint "sm" -->
-                            <div id="doc_cards_container" class="d-block d-md-none">
+                            <div id="doc_cards_container" class="d-block d-md-none mt-2">
                                 <div id="doc_cards_list"></div>
                                 <div id="doc_cards_footer"></div>
                             </div>
@@ -111,6 +112,7 @@
 
     <!-- Scripts -->
     <script src="../js/app.js"></script>
+    <script type="module" src="../components/aon-search-box.js"></script>
     <script type="module">
         import { CARPETA_A_CONTABILIZAR, bidoq } from './aon-documental.js';
         import { getList, renderList, getNumberOfColumns, selectedFolderHasSubfolders, getFoldersByID } from './table.js';
@@ -122,24 +124,34 @@
             MULTIPLE_DELETE_OPTION,
             getOptionButtons
         } from './toolbar_options.js';
+        import { debounce } from './utils.js';
 
         //
         // Eventos
         //
             $(document).ready(async function() {
+                // Comprobamos si el navegador soporta IntersectionObserver, utilizado para el infinite scroll
+                window.intersectionObserverIsSupported = "IntersectionObserver" in window;
+
+                // Obtenemos la carpeta seleccionada
+                window.folder = new URLSearchParams(window.location.search).get('folder');
+
+                // Obtenemos el componente aon-application
                 window.aonDocumental = window.parent.document.getElementById('aonDocumental');
+                // Obtenemos el componente aon-documental
                 window.aonDocumentalContainer = window.parent.document.querySelector('aon-documental');
 
                 // Obtenemos las carpetas del cliente
                 window.folders = $(window.aonDocumental).data('folders');
+
                 // Obtenemos las carpetas y subcarpetas por ID
                 const foldersAndSubfolders = getFoldersByID(window.folders);
                 window.foldersByID = foldersAndSubfolders.foldersByID;
                 window.subfolders = foldersAndSubfolders.subfolders;
-                // Obtenemos la carpeta seleccionada
-                window.folder = new URLSearchParams(window.location.search).get('folder');
+
                 // Obtenemos el nº de columnas para la carpeta seleccionada
                 window.numberOfColumns = getNumberOfColumns();
+
                 // Comprobamos si la carpeta seleccionada tiene subcarpetas
                 window.selectedFolderHasSubfolders = selectedFolderHasSubfolders();
 
@@ -173,7 +185,7 @@
                 const page = $(this).data('page');
 
                 try {
-                    const list = await getList(page);
+                    const list = await getList({page});
 
                     renderList(list);
                 } catch (error) {
@@ -214,7 +226,7 @@
                             }
                         }
 
-                        // Si ya estan todas las opciones disponibles en el array de opciones que vamos a añadir a la barra de herramientas, salimos del bucle
+                        // Si ya están todas las opciones disponibles en el array de opciones que vamos a añadir a la barra de herramientas, salimos del bucle
                         if (allowedOptionsText.length === AVAILABLE_OPTIONS.length) {
                             return false;
                         }
@@ -292,5 +304,40 @@
 
                 window.aonDocumentalContainer.loadIndex({tag: tagID});
             });
+
+            $(document).on('keyup', 'aon-search-box', debounce(async (e) => {
+                const value = $(e.target).val().trim();
+
+                // Comprobamos si el valor del término de búsqueda ha cambiado para hacer una nueva petición
+                if (window.aonDocumentalContainer.search !== value) {
+                    // Especificamos que queremos el listado filtrado por el término de búsqueda indicado
+                    window.aonDocumentalContainer.search = value;
+
+                    try {
+                        const list = await getList({loading: true});
+
+                        // Si existe un observer, lo desconectamos para poder crear uno nuevo
+                        if (typeof window.observer !== 'undefined') {
+                            window.observer.disconnect();
+
+                            window.observer = undefined;
+                        }
+
+                        renderList(list, true);
+                    } catch (error) {
+                        const list = {
+                            "list": [],
+                            "total_data": 0, // cantidad total de elementos
+                            "total_page": 1, // total de paginas
+                            "page": 1, // pagina en la que estamos
+                            "shown_page": 0 + ' - ' + 0, // cantidad mostrada por paginas 1 - 10
+                        }
+
+                        renderList(list);
+
+                        console.error(error);
+                    }
+                }
+            }, 250));
     </script>
 </html>

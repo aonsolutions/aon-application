@@ -20,8 +20,6 @@ if (typeof jQuery === 'undefined') {
 import { BIDOQ_CLIENTE_ID, BIDOQ_TIPO_USUARIO, bidoq } from "./aon-documental.js";
 import { getList, renderList, formatDocumentData, getDocumentsTableDOM, getDocumentsCardsDOM } from './table.js';
 
-const intersectionObserverIsSupported = "IntersectionObserver" in window;
-
 export function UploadDocumentos(){
     //  
     // Configuracion 
@@ -451,7 +449,7 @@ export function UploadDocumentos(){
                                     barraError(barra);
                                     // Error
                                     erroresPHP(recorrido, documentResponse.message);
-                                } else if (intersectionObserverIsSupported) {
+                                } else if (window.intersectionObserverIsSupported) {
                                     // Formateamos los datos del documento y lo añadimos a la lista de elementos
                                     const formattedDocumentData = formatDocumentData(documentResponse.datos, window.foldersByID, window.subfolders);
 
@@ -459,8 +457,8 @@ export function UploadDocumentos(){
                                 }
                             }
 
-                            // Si el navegador soporta Intersection Observer, añadimos a la lista los documentos subidos
-                            if (intersectionObserverIsSupported) {
+                            // Si el navegador soporta IntersectionObserver, añadimos a la lista los documentos subidos
+                            if (window.intersectionObserverIsSupported) {
                                 const documentsTable = getDocumentsTableDOM(list);
                                 const documentsCards = getDocumentsCardsDOM(list);
 
@@ -742,26 +740,10 @@ export function getFileExtensionsConfig() {
 }
 
 async function CargarDivAjaxDocumentos(id, url) {
-    // Poner la imagen del cargando
-    if (!intersectionObserverIsSupported) {
-        $('table tbody').html(`
-            <tr id="tabla_documentos_loader">
-                <td colspan="8">
-                    <center class="pt-5">
-                        <div class="lds-ripple">
-                            <div></div>
-                            <div></div>
-                        </div>
-                    </center>
-                </td>
-            </tr>
-        `);
-    }
-
     // Recargar tabla y paginado
         try {
-            if (!intersectionObserverIsSupported) {
-                const list = await getList();
+            if (!window.intersectionObserverIsSupported) {
+                const list = await getList({loading: true});
 
                 renderList(list);
             }

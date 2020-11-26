@@ -1,8 +1,6 @@
 import { bidoq } from './aon-documental.js';
 import { getList, renderList } from './table.js';
 
-const intersectionObserverIsSupported = "IntersectionObserver" in window;
-
 export const SINGLE_DOWNLOAD_OPTION = 'singleDownload';
 export const MULTIPLE_DOWNLOAD_OPTION = 'multipleDownload';
 export const EDIT_OPTION = 'edit';
@@ -211,7 +209,7 @@ async function multipleDeleteOption() {
                 }
 
                 try {
-                    if (intersectionObserverIsSupported) {
+                    if (window.intersectionObserverIsSupported) {
                         // Recorremos los documentos seleccionados
                         $('.select_doc:checked').each(function() {
                             // Obtenemos el ID del documento
@@ -224,7 +222,7 @@ async function multipleDeleteOption() {
                             }
                         });
                     } else {
-                        const list = await getList(window.aonDocumentalContainer.page);
+                        const list = await getList({page: window.aonDocumentalContainer.page});
 
                         renderList(list);
                     }

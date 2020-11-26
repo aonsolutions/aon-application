@@ -17386,3 +17386,37 @@ body::-webkit-scrollbar-thumb {
 	background-color: #cfcfcf;
 }
 
+.aonIconButton {
+	border-radius: 50%;
+	font-size: 24px;
+	height: 40px;
+	margin: 0;
+	min-width: 40px;
+	width: 40px;
+	padding: 0;
+	overflow: hidden;
+	color: inherit;
+	line-height: normal;
+	background: 0 0;
+	border: none;
+	position: relative;
+	display: inline-block;
+	outline: none !important;
+	cursor: pointer;
+}
+
+.aonIconButton .material-icons {
+	margin-top: 5px;
+	margin-left: 1px;
+}
+
+.aonSearchBox {
+	position: absolute;
+	height: 40px;
+	border: none;
+	-webkit-appearance: none;
+	outline: 0px;
+	font-size: 14px;
+	width: 100%;
+}
+

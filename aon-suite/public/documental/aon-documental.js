@@ -44,6 +44,7 @@ export const bidoq = async (additionalData) => {
 class AonDocumental extends HTMLElement {
 
     page = null;
+    search = null;
 
     constructor () {
         super();
@@ -79,6 +80,9 @@ class AonDocumental extends HTMLElement {
         const indexURL = `./index.html?folder=${folder}${tagParameter}`;
         const uploadButton = document.getElementById('aonDocumentalToolbarSubirButton');
 
+        // Reseteamos el término de búsqueda
+        this.search = null;
+
         // Eliminamos todas las opciones de la barra de herramientas
         aonDocumental.removeToolbarOptions();
 
@@ -98,6 +102,9 @@ class AonDocumental extends HTMLElement {
 
     loadShow(id, type) {
         const contentIframe = document.querySelector('iframe');
+
+        // Reseteamos el término de búsqueda
+        this.search = null;
 
         contentIframe.src = `./show.html?id=${id}&type=${type}`;
     }
