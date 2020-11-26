@@ -13,6 +13,8 @@ export const AON_MSG_INVOICE_RECEIVED = 'Jasotako Faktura';
 export const AON_MSG_INVOICE_NUMBER = 'Faktura Zenbakia';
 export const AON_MSG_DUPLICATE_INVOICE = 'Faktura Bikoiztu';
 export const AON_MSG_RECORD_INVOICE = 'Faktura Kontabilizatu';
+export const AON_MSG_PENDING_INVOICES = 'Zain Dauden Fakturak';
+export const AON_MSG_REJECTED_INVOICES = 'Baztertu Diren Fakturak';
 
 export const AON_MSG_TICKET = 'Tiket';
 export const AON_MSG_TICKETS = 'Tiketak';
@@ -64,3 +66,5 @@ export const AON_MSG_CONCEPT = 'Kontzeptua';
 export const AON_MSG_CONCEPTS = 'Kontzeptuak';
 export const AON_MSG_QUANTITY = 'Kantitatea';
 export const AON_MSG_PRICE = 'Prezioa';
+export const AON_MSG_IRPF = 'PFEZ';
+export const AON_MSG_VAT = 'BEZ';

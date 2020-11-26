@@ -6,6 +6,7 @@ import {getInvoiceCategories} from '../../services/invoiceCategory.js';
 import {insertInvoice, deleteInvoices, getUserAppRole} from '../../services/service.js';
 import {isNumber, round} from '../../services/utils.js';
 import {Invoice} from './Invoice.js';
+import {getNextInvoice, getPreviousInvoice} from './InvoiceCache.js';
 import {ToolbarType} from '../../models/enums.js';
 import '../../components/aon-card.js';
 import '../../components/aon-date.js';
@@ -85,6 +86,7 @@ export class AonInvoice extends AonElement {
 				</div>
 			</div>
 			<aon-dialog id="aonDialogInvoiceOption" type="menu" > </aon-dialog>
+			<aon-dialog id="aonDialogInvoiceDevelopment" width="400px"> </aon-dialog>
 		`;
 
 		getUserAppRole().then(roles => {
@@ -139,9 +141,21 @@ export class AonInvoice extends AonElement {
 		invoiceToolbar.addSeparator();
 
 		if(this._invoice.isInbox()) {
-			invoiceToolbar.addButton2(InvoiceAction.DUPLICATE, () => {});
-			invoiceToolbar.addButton2(InvoiceAction.RECTIFY, () => this.printInvoice());
-			invoiceToolbar.addSeparator();
+			invoiceToolbar.addButton('Options', 'more_vert', () => {
+				let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
+				const top  = button.getBoundingClientRect().top;
+				const left = button.getBoundingClientRect().left;
+				let d = document.getElementById('aonDialogInvoiceOption');
+				let rectify = InvoiceAction.RECTIFY;
+				rectify.fn = () => this.development();
+				let duplicate = InvoiceAction.DUPLICATE;
+				duplicate.fn = () => this.development();
+				d.setMenuOptions([rectify, duplicate], top, left);
+				d.open();
+			});
+			// invoiceToolbar.addButton2(InvoiceAction.DUPLICATE, () => {});
+			// invoiceToolbar.addButton2(InvoiceAction.RECTIFY, () => this.printInvoice());
+			// invoiceToolbar.addSeparator();
 		}
 
 		if(this._invoice.isInbox() && (this._roles.includes('ADMIN') || this._roles.includes('INVOICE_MANAGER'))) {
@@ -162,15 +176,6 @@ export class AonInvoice extends AonElement {
 		}
 
 		invoiceToolbar.addButton2(InvoiceAction.BACK, () => this.back());
-
-		// invoiceToolbar.addButton('Options', 'more_vert', () => {
-		// 	let button = this.getElement(invoiceToolbar.TOOL_SECTION + 'OptionsButton');
-		// 	const top  = button.getBoundingClientRect().top;
-		// 	const left = button.getBoundingClientRect().left;
-		// 	let d = document.getElementById('aonDialogInvoiceOption');
-		// 	d.setMenuOptions(this.getOptions(), top, left);
-		// 	d.open();
-		// });
 
 		if(!this._invoice.file && !this._invoice.isEmitida()){
 			invoiceToolbar.addButtonTitle(InvoiceAction.ADD_FILE, () => this.addInvoiceFile());
@@ -240,17 +245,31 @@ export class AonInvoice extends AonElement {
 		}
 	}
 
+	development() {
+		let d = document.getElementById('aonDialogInvoiceDevelopment');
+		d.setContentHTML('Esta opción está en desarrollo');
+		d.open();
+	}
+
 	back() {
 		let aip = document.querySelector('aon-invoice-panel');
 		aip.aonInvoiceList();
 	}
 
 	previousInvoice() {
-
+		let invoice = getPreviousInvoice();
+		if(invoice) {
+			let aip = document.querySelector('aon-invoice-panel');
+			aip.aonInvoice(invoice.type, invoice);
+		}
 	}
 
 	nextInvoice() {
-
+		let invoice = getNextInvoice();
+		if(invoice) {
+			let aip = document.querySelector('aon-invoice-panel');
+			aip.aonInvoice(invoice.type, invoice);
+		}
 	}
 
 	rejectInvoice() {
@@ -298,7 +317,11 @@ export class AonInvoice extends AonElement {
 	}
 
 	addInvoiceComment() {
+		this.development();
+	}
 
+	recordInvoice() {
+		this.development();
 	}
 
 	buildData(){

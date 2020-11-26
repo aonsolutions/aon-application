@@ -4,6 +4,8 @@ import {rootPanel} from '../../services/gwtLoader.js';
 import './aon-desktop.js';
 import '../signin/aon-sign.js';
 
+import * as MSG from "../../environments/msg.js";
+
 export class AonParent extends AonElement {
 
 	companies;
@@ -54,7 +56,7 @@ export class AonParent extends AonElement {
 				icon: 'notifications',
 				fn: () => {}
 			},{
-				name: 'Facturas Pendientes',
+				name: MSG.AON_MSG_PENDING_INVOICES,
 				count: inboxCount,
 				icon: 'inbox',
 				fn: () => {
@@ -63,7 +65,7 @@ export class AonParent extends AonElement {
 					}
 				}
 			}, {
-				name: 'Facturas Rechazadas',
+				name: MSG.AON_MSG_REJECTED_INVOICES,
 				count: rejectedCount,
 				icon: 'report',
 				fn: () => {

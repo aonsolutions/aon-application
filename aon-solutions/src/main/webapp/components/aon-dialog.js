@@ -105,7 +105,7 @@ export class AonDialog extends AonElement {
 		content.appendChild(widget);
 	}
 
-	setContentHtml(html) {
+	setContentHTML(html) {
 		let content = document.getElementById(this.getAttribute('id') + 'DialogContent');
 		content.innerHTML = html;
 	}

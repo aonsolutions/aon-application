@@ -1,6 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
 import {Paymethods} from '../../services/paymethod.js';
 import {getInvoices} from '../../services/service.js';
+
+import {setInvoices, setIndex} from './InvoiceCache.js';
+
 import '../../components/aon-table.js';
 
 import * as CONSTANT from "../../environments/constants.js";
@@ -53,6 +56,7 @@ export class AonInvoiceList extends AonElement {
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
 		if(aonInvoiceTable) {
 			getInvoices(this.getFilter()).then(invoices => {
+				setInvoices(invoices);
 				aonInvoiceTable.removeRows();
 				invoices.forEach((invoice, i) => {
 					invoice.name = invoice.type === 'emitida'
@@ -65,7 +69,7 @@ export class AonInvoiceList extends AonElement {
 					let month = date.getMonth() + 1;
 					let year = date.getFullYear();
 					invoice.dateTable = day + '/' + month + '/' + year;
-					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice));
+					aonInvoiceTable.addRow(invoice, () => this.aonInvoice(invoice, i));
 				});
 			});
 		}
@@ -80,7 +84,8 @@ export class AonInvoiceList extends AonElement {
 		});
 		return value;
 	}
-	aonInvoice(invoice) {
+	aonInvoice(invoice, i) {
+		setIndex(i);
 		let aip = document.querySelector('aon-invoice-panel');
 		aip.aonInvoice(invoice.type, invoice);
 	}

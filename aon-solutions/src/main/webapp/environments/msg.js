@@ -2,15 +2,15 @@ import * as MSG_EN from './msg-en.js';
 import * as MSG_EUS from './msg-eus.js';
 import * as MSG_CAT from './msg-cat.js';
 import * as MSG_ES from './msg-es.js';
+import * as MSG_GAL from './msg-gal.js';
 
 const ES = 'es';
 const EN = 'en';
 const EUS = 'eus';
 const CAT = 'cat';
-
+const GAL = 'gal';
 
 let language = localStorage.getItem('aon_language') || ES;
-let msg = './msg-es.js'
 
 let MSG = MSG_ES;
 
@@ -20,6 +20,8 @@ if(EN === language) {
   MSG = MSG_EUS;
 } else if(CAT === language) {
   MSG = MSG_CAT;
+} else if(GAL === language) {
+  MSG = MSG_GAL;
 }
 
 export const AON_MSG_INVOICE = MSG.AON_MSG_INVOICE;
@@ -37,6 +39,8 @@ export const AON_MSG_INVOICE_RECEIVED = MSG.AON_MSG_INVOICE_RECEIVED;
 export const AON_MSG_INVOICE_NUMBER = MSG.AON_MSG_INVOICE_NUMBER;
 export const AON_MSG_DUPLICATE_INVOICE = MSG.AON_MSG_DUPLICATE_INVOICE;
 export const AON_MSG_RECORD_INVOICE = MSG.AON_MSG_RECORD_INVOICE;
+export const AON_MSG_PENDING_INVOICES = MSG.AON_MSG_PENDING_INVOICES;
+export const AON_MSG_REJECTED_INVOICES = MSG.AON_MSG_REJECTED_INVOICES;
 
 export const AON_MSG_TICKET = MSG.AON_MSG_TICKET;
 export const AON_MSG_TICKETS = MSG.AON_MSG_TICKETS;
@@ -87,3 +91,5 @@ export const AON_MSG_CONCEPT = MSG.AON_MSG_CONCEPT;
 export const AON_MSG_CONCEPTS = MSG.AON_MSG_CONCEPTS;
 export const AON_MSG_QUANTITY = MSG.AON_MSG_QUANTITY;
 export const AON_MSG_PRICE = MSG.AON_MSG_PRICE;
+export const AON_MSG_IRPF = MSG.AON_MSG_IRPF;
+export const AON_MSG_VAT = MSG.AON_MSG_VAT;

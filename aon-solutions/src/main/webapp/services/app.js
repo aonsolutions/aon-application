@@ -1,3 +1,5 @@
+import * as MSG from "../../environments/msg.js";
+
 export const MenuApps = ['accounting', 'fiscal', 'payroll', 'comunica', 'documental', 'invoice', 'timecontrol', 'management', 'tools'];
 
 export const Apps = {
@@ -96,7 +98,7 @@ export const Apps = {
   },
   INVOICE: {
     app: 'invoice',
-    title: 'Facturas',
+    title: MSG.AON_MSG_INVOICES,
     description: 'Gestion de Facturas.',
     icon: 'aon_app',
     color: '#B50061',
@@ -356,32 +358,6 @@ export const PayrollMenu =
       title: 'Carga de datos',
       content:'<aon-imports></aon-imports>',
     }];
-    export const PortalMenu =
-      [{
-        title:'Documental.',
-        content: '<aon-documental></aon-documental>'
-      },{
-        title:'Facturas.',
-        content: '<aon-invoice-panel></aon-invoice-panel>'
-      },{
-        title: 'Contable.',
-        content: '<aon-contable></aon-aon-contable>'
-      },{
-        title: 'Fiscal.',
-        content: '<aon-fiscal></aon-fiscal>'
-      },{
-        title: 'Laboral.',
-        content: '<aon-laboral></aon-laboral>'
-      },{
-        title: 'Control de Horario.',
-        content: '<aon-signin></aon-signin>'
-      },{
-        title: 'Messenger.',
-        content: '<aon-messenger></aon-messenger>'
-      }, {
-        title: 'Faqs.',
-        content: '<aon-faqs></aon-faqs>'
-      }];
 
 export const ArabaFiscalMenu =
   [{

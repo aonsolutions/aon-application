@@ -13,6 +13,9 @@ export const AON_MSG_INVOICE_RECEIVED = 'Factura Recibida';
 export const AON_MSG_INVOICE_NUMBER = 'Número Factura';
 export const AON_MSG_DUPLICATE_INVOICE = 'Duplicar Factura';
 export const AON_MSG_RECORD_INVOICE = 'Contabilizar Factura';
+export const AON_MSG_PENDING_INVOICES = 'Facturas Pendientes';
+export const AON_MSG_REJECTED_INVOICES = 'Facturas Rechazados';
+
 
 export const AON_MSG_TICKET = 'Ticket';
 export const AON_MSG_TICKETS = 'Tickets';
@@ -65,3 +68,5 @@ export const AON_MSG_CONCEPT = 'Concepto';
 export const AON_MSG_CONCEPTS = 'Conceptos';
 export const AON_MSG_QUANTITY = 'Cantidad';
 export const AON_MSG_PRICE = 'Precio';
+export const AON_MSG_IRPF = 'IRPF';
+export const AON_MSG_VAT = 'IVA';

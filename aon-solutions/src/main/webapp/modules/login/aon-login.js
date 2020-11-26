@@ -100,7 +100,7 @@ export class AonLogin extends AonElement {
 			this.buildLogo();
 
 			let dialog = document.getElementById('aonDialogLogin');
-			dialog.setContentHtml(`
+			dialog.setContentHTML(`
 				<h4> Recuperar Contraseña</h4>
 				<div>
 					<form action="#">

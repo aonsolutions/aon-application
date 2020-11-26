@@ -7,6 +7,8 @@ import '../../components/aon-application.js';
 import '../../components/aon-suggestion.js';
 import '../marketplace/aon-marketplace.js';
 
+import * as MSG from "../../environments/msg.js";
+
 export class AonMobileDesktop extends AonElement {
 
 	SUGGESTION;
@@ -151,12 +153,12 @@ export class AonMobileDesktop extends AonElement {
 
 		ul.appendChild(this.buildNotificationsLi('Documentos sin leer', 'snippet_folder', 0, () => {}));
 		ul.appendChild(this.buildNotificationsLi('Notificaciones', 'notifications', 0, () => {}));
-		ul.appendChild(this.buildNotificationsLi('Facturas Pendientes', 'inbox', inboxCount, () => {
+		ul.appendChild(this.buildNotificationsLi(MSG.AON_MSG_PENDING_INVOICES, 'inbox', inboxCount, () => {
 			if(inboxCount > 0) {
 				rootPanel('<aon-invoice-panel></aon-invoice-panel>');
 			}
 		}));
-		ul.appendChild(this.buildNotificationsLi('Facturas Rechazadas', 'report', rejectedCount, () => {
+		ul.appendChild(this.buildNotificationsLi(MSG.AON_MSG_REJECTED_INVOICES, 'report', rejectedCount, () => {
 			if(rejectedCount > 0) {
 				rootPanel('<aon-invoice-panel status="refused"></aon-invoice-panel>');
 			}

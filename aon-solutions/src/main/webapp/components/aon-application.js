@@ -275,7 +275,8 @@ export class AonApplication extends AonElement {
 
       		li.addEventListener('click', () => {
       			document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
-          		el.style.backgroundColor = 'transparent';
+							if(el.id !== sidenav.id) 
+          			el.style.backgroundColor = 'transparent';
         		});
         		this.selected = id;
         		li.style.backgroundColor = '#ddd';
