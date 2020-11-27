@@ -408,6 +408,10 @@ public class InvoiceImport {
 				throw new Exception("La Referencia o Serie/Número son incorrectas.");
 			}
 			
+			if(ivs.get(i).getSerie() != null && ivs.get(i).getSerie().length() > 5) {
+				throw new Exception("La serie no puede tener más de 5 carácteres");
+			}
+			
 			AccountingInvoice ai = new AccountingInvoice();
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
@@ -459,7 +463,7 @@ public class InvoiceImport {
 					if(gz.getCode().equals(ivs.get(i).getCountry().getIso2())) {
 						crgz = gz;
 					}
-					if(gz.getCode().equals(pr.getId())) {
+					if(pr != null && gz.getCode().equals(pr.getId())) {
 						prgz = gz;
 					}
 				}
