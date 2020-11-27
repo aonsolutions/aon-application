@@ -11,6 +11,7 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
+@SuppressWarnings("ALL")
 public class A3PDFTemplate implements SalaryPDFTemplate {
 
 	public static final A3PDFTemplate A3_PDF_TEMPLATE = new A3PDFTemplate();
@@ -62,16 +63,16 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	//    09000  MIRANDA DE EBRO                                      
 	//    BURGOS                                                      
 	//NIF. J01409838                                                      8052                        
-	//EMPRESA DOMICILIO Nº INS. S.S.
+	//EMPRESA DOMICILIO Nï¿½ INS. S.S.
 	//RESTAURANTE EL VISO, S.C          CL REAL 32 BJ                     01/1034816-96               
-	//TRABAJADOR/A CATEGORIA NºMATRIC ANTIGUEDAD D.N.I.
+	//TRABAJADOR/A CATEGORIA Nï¿½MATRIC ANTIGUEDAD D.N.I.
 	//IVANOV , PETAR GEORGIEV           FREGADOR                  1 OCT 08   X8865220P   
-	//Nº AFILIACION. S.S. TARIFA COD.CT SECCION NRO. PERIODO TOT. DIAS
+	//Nï¿½ AFILIACION. S.S. TARIFA COD.CT SECCION NRO. PERIODO TOT. DIAS
 	//48/10454983-40     7  200              4  MENS 01 ENE 20 a 31 ENE 20          30  
 	//CUANTIA PRECIO CONCEPTO DEVENGOS DEDUCCIONES
 	//30,00     26,741     1  *Salario Base                               802,24                   
-	//4  *Antigüedad                                 128,36                   
-	//30,00      1,039    95  *Plus Manutención                            31,17                   
+	//4  *Antigï¿½edad                                 128,36                   
+	//30,00      1,039    95  *Plus Manutenciï¿½n                            31,17                   
 	//124  *P.p.extras                                 169,00                   
 	//147  *Bonus octubre                               78,20                   
 	//240  *Domingos-festiv                             51,34                   
@@ -91,24 +92,24 @@ public class A3PDFTemplate implements SalaryPDFTemplate {
 	//                                                                  
 	//REM. TOTAL P.P.EXTRAS BASE S.S. BASE A.T. Y DES. BASE I.R.P.F. T. DEVENGADO T.  A DEDUCIR
 	//1.260,31                  1.260,31        1.260,31     1.260,31    1.260,31        161,61     
-	//* Percepciones Salariales  sujetas a Cot. S.S. - Percepciones no Salariales excluídas Cot. S.S.
+	//* Percepciones Salariales  sujetas a Cot. S.S. - Percepciones no Salariales excluï¿½das Cot. S.S.
 	//                                                                  
 	//FECHA                                                        SELLO EMPRESA RECIBI
 	//31 ENERO      2020                                                              
-	//ARMIÑON                                                                         
+	//ARMIï¿½ON                                                                         
 	//LIQUIDO A PERCIBIR
 	//                                         1.098,70        
 	//IBAN:                                                                                                     
 	//SWIFT/BIC:                                                                                                     COSTE EMPRESA:        1.656,05   
-	//DETERMINACIÓN DE LAS B. DE COTIZACIÓN A LA S.S. Y CONCEPTOS DE RECAUDACIÓN CONJUNTA Y APORTACIÓN DE LA EMPRESA
-	//CONCEPTO BASE TIPO APORTACIÓN EMPRESARIAL
+	//DETERMINACIï¿½N DE LAS B. DE COTIZACIï¿½N A LA S.S. Y CONCEPTOS DE RECAUDACIï¿½N CONJUNTA Y APORTACIï¿½N DE LA EMPRESA
+	//CONCEPTO BASE TIPO APORTACIï¿½N EMPRESARIAL
 	//1. Contingencias comunes.................................................... .. .. ..    1.260,31          23,60           297,43          
 	//AT y EP................................. .. .. ..    1.260,31           1,50            18,90           
 	//2. Contingencias profe- Desempleo............................ .. .. ..    1.260,31           5,50            69,32          
 	//sionales y conceptos de
-	//recaudación conjunta Formación Profesional..........
+	//recaudaciï¿½n conjunta Formaciï¿½n Profesional..........
 	//.. ... .    1.260,31           0,60             7,56           
-	//Fondo Garantía Salarial......... .. .. .    1.260,31           0,20             2,52           
-	//3. Cotización adicional horas extraordinarias........................ .. .. .                                                       
+	//Fondo Garantï¿½a Salarial......... .. .. .    1.260,31           0,20             2,52           
+	//3. Cotizaciï¿½n adicional horas extraordinarias........................ .. .. .                                                       
 
 }

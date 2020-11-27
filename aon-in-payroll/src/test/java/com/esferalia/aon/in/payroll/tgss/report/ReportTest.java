@@ -1,9 +1,8 @@
 package com.esferalia.aon.in.payroll.tgss.report;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 import org.junit.Test;
 
@@ -16,8 +15,6 @@ public class ReportTest {
 		try ( InputStream is = ReportTest.class.getResourceAsStream("cccvidalaboral.pdf") ){
 			CCCVidaLaboral.parse(is);
 		}
-		
-		// TODO Auto-generated method stub
 	}
 
 }

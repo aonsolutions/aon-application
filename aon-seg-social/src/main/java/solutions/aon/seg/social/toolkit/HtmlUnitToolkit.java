@@ -1,6 +1,5 @@
 package solutions.aon.seg.social.toolkit;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.function.Function;

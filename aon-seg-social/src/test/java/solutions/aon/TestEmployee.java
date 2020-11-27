@@ -1,38 +1,31 @@
 package solutions.aon;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
+import solutions.aon.seg.social.SistemaRED_Employee;
+import solutions.aon.seg.social.exceptions.SegSocialException;
+import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
+import solutions.aon.seg.social.exceptions.invalidData.*;
+import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
+import solutions.aon.seg.social.objects.Employee;
+import solutions.aon.seg.social.toolkit.Toolkit;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 
-import org.junit.Test;
-
-import solutions.aon.seg.social.SistemaRED_Employee;
-import solutions.aon.seg.social.exceptions.SegSocialException;
-import solutions.aon.seg.social.exceptions.certificate.InvalidCertificateException;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDataException;
-import solutions.aon.seg.social.exceptions.invalidData.InvalidDateException;
-import solutions.aon.seg.social.exceptions.invalidData.SyntaxException;
-import solutions.aon.seg.social.exceptions.invalidData.WrongRegimeException;
-import solutions.aon.seg.social.exceptions.invalidData.invalidCccException;
-import solutions.aon.seg.social.exceptions.statusCode.StatusCodeException;
-import solutions.aon.seg.social.objects.Employee;
-import solutions.aon.seg.social.toolkit.Toolkit;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestEmployee {
 
 	//GET TOTAL EMPLOYEES
 	@Test
-	public void getTotalEmployeesCertificateTest() throws SegSocialException, IOException {
+	public void getTotalEmployeesCertificateTest() {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getTotalEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062");
 		}
-		catch (InvalidCertificateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -47,8 +40,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","01105360062");					
 		}
-		catch (InvalidCertificateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -60,8 +52,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs102","0111","01105360062");					
 		}
-		catch (InvalidCertificateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -73,10 +64,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062");					
 		}
-		catch (WrongRegimeException e) {
-			System.out.println(e.getMessage());
-		}
-		catch (StatusCodeException e) {}
+		catch (WrongRegimeException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -88,8 +76,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12",null,"01105360062");					
 		}
-		catch (InvalidDataException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidDataException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -101,8 +88,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0111","011205360062");					
 		}
-		catch (invalidCccException e) {}
-		catch (StatusCodeException e) {}
+		catch (invalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -115,8 +101,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211",null);					
 		}
-		catch (InvalidDataException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidDataException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -127,13 +112,13 @@ public class TestEmployee {
 	@Test 
 	public void getEmployeesObjectTypeTest() {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
-			ArrayList<Employee> employees = (ArrayList<Employee>) SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","011205360062");	
+			ArrayList<Employee> employees = (ArrayList<Employee>) SistemaRED_Employee.getEmployees(certificateInputStream,"jg@FNMT","pkcs12","0211","011205360062");
+			assert employees != null;
 			for (Employee employee : employees) {
-				if(employee == null || !(employee instanceof Employee)) assertTrue(false);
+				if(employee == null) fail();
 			}
 		}
-		catch (invalidCccException e) {}
-		catch (StatusCodeException e) {}
+		catch (invalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -149,8 +134,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployee(certificateInputStream,"jg@FNT","pkcs12","0111","01105360062", "011005185924");					
 		}
-		catch (InvalidCertificateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -163,8 +147,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployee(certificateInputStream,"jg@FNMT","pkcsx12","0111","01105360062", "011005185924");					
 		}
-		catch (InvalidCertificateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -177,8 +160,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployee(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062", "011005185924");
 		}
-		catch (WrongRegimeException e) {}
-		catch (StatusCodeException e) {}
+		catch (WrongRegimeException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -192,8 +174,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployee(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360z062", "011005185924");					
 		}
-		catch (invalidCccException e) {}
-		catch (StatusCodeException e) {}
+		catch (invalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -203,12 +184,10 @@ public class TestEmployee {
 	
 	@Test
 	public void getEmployeeNssTest() {
-		
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getEmployee(certificateInputStream,"jg@FNMT","pkcs12","0211","01105360062", "011z005185924");					
 		}
-		catch (SyntaxException e) {}
-		catch (StatusCodeException e) {}
+		catch (SyntaxException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -223,8 +202,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getCccLiquidation(certificateInputStream, "g@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy"));				
 		}
-		catch (InvalidCertificateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -237,8 +215,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getCccLiquidation(certificateInputStream, "jg@FNMT", "ppkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy"));				
 		}
-		catch (InvalidCertificateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidCertificateException | StatusCodeException ignored) {}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
 		catch (IOException e) {fail("IOException");}
@@ -251,8 +228,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0z111", "01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy"));				
 		}
-		catch (WrongRegimeException e) {}
-		catch (StatusCodeException e) {}
+		catch (WrongRegimeException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -266,8 +242,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "z01105360062",Toolkit.parseDate("2-9-2020", "dd-MM-yyyy"));				
 		}
-		catch (invalidCccException e) {}
-		catch (StatusCodeException e) {}
+		catch (invalidCccException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -281,8 +256,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			SistemaRED_Employee.getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-200", "dd-MM-yyyy"));				
 		}
-		catch (InvalidDateException e) {}
-		catch (StatusCodeException e) {}
+		catch (InvalidDateException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}
@@ -296,8 +270,7 @@ public class TestEmployee {
 		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {
 			assertTrue(SistemaRED_Employee.getCccLiquidation(certificateInputStream, "jg@FNMT", "pkcs12", "0111", "01105360062",Toolkit.parseDate("2-9-200", "dd-MM-yyyy")).length!=0);				
 		}
-		catch (WrongRegimeException e) {}
-		catch (StatusCodeException e) {}
+		catch (WrongRegimeException | StatusCodeException ignored) {}
 		catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
 		catch (SegSocialException e) {fail("unexpected SegSocialException");}
 		catch (FileNotFoundException e) {fail("File not found");}

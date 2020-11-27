@@ -177,8 +177,14 @@ public class Toolkit {
 	public static String appendStringLeft(String str, String append, int times){
 		StringBuilder strBuilder = new StringBuilder(str);
 		for (int i = 0; i < times; i++) strBuilder.insert(0, append);
-		str = strBuilder.toString();
-		return str;
+		return strBuilder.toString();
+	}
+
+	//FILL A STRING WITH A CHARACTER (LEFT SIDE)
+	public static String fillStringLeft(String str, String append, int max){
+		StringBuilder strBuilder = new StringBuilder(str);
+		while (strBuilder.length() < max) strBuilder.insert(0, append);
+		return strBuilder.toString();
 	}
 
 }
