@@ -1119,11 +1119,17 @@ public class MainCRANew extends MainEntryPoint {
 							if(StringUtils.isBlank(p)) {
 								mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
 										v -> {
-											for(CCCInfo cccInfo : cccsSelected) {
-												cccInfo.getCRADates().add(findingDate);
+											if(null == v) {
+												for(CCCInfo cccInfo : cccsSelected) {
+													cccInfo.getCRADates().add(findingDate);
+												}
+												showCRAS();
+												initCRATable();
+											} else {
+												WarningDialog warning = new WarningDialog("ERROR", v);
+												warning.center();
+												warning.show();
 											}
-											showCRAS();
-											initCRATable();
 										}, 
 										f -> {});
 							}else {
@@ -1133,11 +1139,17 @@ public class MainCRANew extends MainEntryPoint {
 									protected void onAccept() {
 										mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "N",
 												v -> {
-													for(CCCInfo cccInfo : cccsSelected) {
-														cccInfo.getCRADates().add(findingDate);
+													if(null == v) {
+														for(CCCInfo cccInfo : cccsSelected) {
+															cccInfo.getCRADates().add(findingDate);
+														}
+														showCRAS();
+														initCRATable();
+													} else {
+														WarningDialog warning = new WarningDialog("ERROR", v);
+														warning.center();
+														warning.show();
 													}
-													showCRAS();
-													initCRATable();
 												}, 
 												f -> {});
 									}
@@ -1153,17 +1165,23 @@ public class MainCRANew extends MainEntryPoint {
 					protected void onAccept() {
 						mainCRAObjectNew.createNewCRA(findingDate, cccList, cccIdList, cccId, "R",
 								v -> {
-									WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
-											+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
-									warning.center();
-									warning.show();
-									
-									for(CCCInfo cccInfo : cccsSelected) {
-										cccInfo.getCRADates().add(findingDate);
+									if(null == v){
+										WarningDialog warning = new WarningDialog("INTRUCCIONES", "Para poder llevar a cabo la rectificaci"+String.valueOf("\u00F3")+"n del fichero "
+												+ "CRA, deber"+String.valueOf("\u00E1")+" seguir las siguientes instrucciones : \n\n 1- Enviar el CRA Rectificativo que se ha generado en el historial de CRAs rectificativos. ");
+										warning.center();
+										warning.show();
+										
+										for(CCCInfo cccInfo : cccsSelected) {
+											cccInfo.getCRADates().add(findingDate);
+										}
+										
+										showCRAS();
+										initCRATable();
+									} else {
+										WarningDialog warning = new WarningDialog("ERROR", v);
+										warning.center();
+										warning.show();
 									}
-									
-									showCRAS();
-									initCRATable();
 								}, 
 								f -> {});
 					}

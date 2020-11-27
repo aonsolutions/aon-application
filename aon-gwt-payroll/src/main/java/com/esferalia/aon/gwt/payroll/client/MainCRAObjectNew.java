@@ -166,6 +166,9 @@ public class MainCRAObjectNew {
 
 			@Override
 			public void onSuccess(String result) {
+				if(null != result)
+					success.accept(result);
+				
 				getCRAs(defaultLiquidDate.getTime(), s -> {
 					success.accept(result);
 				}, f -> {});

@@ -1805,6 +1805,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domainName);
 			
+			Boolean existAnySalary = Cra.existAnySalary(cccList, findingDate, connection);
+			
+			if(!existAnySalary) {
+				return "No existe n" + String.valueOf("\u00F3") + "minas con valores para notificar en el CRA.";
+			}
+			
 			JSONObject mainCRAJSON = Cra.getMainCRAByCRA(cccList, findingDate, connection);
 			String agrarianAFI = MainCRAGenerator.generateMainCRA(mainCRAJSON);
 			

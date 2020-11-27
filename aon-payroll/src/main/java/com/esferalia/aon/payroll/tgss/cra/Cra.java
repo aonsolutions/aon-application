@@ -150,6 +150,94 @@ public class Cra {
 	}
 	
 	// ********************************************************************************************************************************************
+	//													CHECK EXIST PAYROLL
+	// ********************************************************************************************************************************************
+	
+	@SuppressWarnings("unchecked")
+	public static boolean existAnySalary(List<String> cccList, long findingDate, Connection connection)  {
+		// Get dslContext for given connection
+		AONContext ctx = new AONContext(connection);
+		DSLContext dslContext = ctx.getDslContext();
+		
+		// Given findingDate set start and end date
+		Calendar startDate = Calendar.getInstance();
+		startDate.setTimeInMillis(findingDate);
+		startDate.set(Calendar.DAY_OF_MONTH, 1);
+		
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTimeInMillis(findingDate);
+		endDate.set(Calendar.DAY_OF_MONTH, endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+		
+		Date startDateSQL = new Date(startDate.getTimeInMillis());
+		Date endDateSQL = new Date(endDate.getTimeInMillis());
+		
+		boolean existAnySalary = false;
+		
+		for(int i=0; i<cccList.size(); i++) {
+			
+			String ccc = cccList.get(i);
+			
+			// GET Salaries from DB (employees)
+			Result<Record> salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.START_DATE.ge(startDateSQL))
+					.and(SALARY.END_DATE.le(endDateSQL))
+					.and(SALARY.CCC.eq(ccc))
+					.and(SALARY.TYPE.eq((byte)0))
+					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+					.fetch();
+			
+			// TODO : eliminar cuando avergigue por que se pone ss_regime 0 en vez de 3 en este caso
+			salaryRecords = filterRETARecords(salaryRecords, dslContext);
+			
+			if(salaryRecords.isNotEmpty()){
+				existAnySalary = true;
+				return existAnySalary;
+			}
+			
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// 											NOMINA ATRASOS
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			// GET Atrasos SALARY from DB (employees)
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CHARGE_DATE.between(startDateSQL, endDateSQL))
+					.and(SALARY.CCC.eq(ccc))
+					.and(SALARY.TYPE.eq((byte)3))
+					.and(SALARY.SS_REGIME.notEqual((byte)3))
+					.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+					.fetch();
+			
+			if(salaryRecords.isNotEmpty()){
+				existAnySalary = true;
+				return existAnySalary;
+			}
+			
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			// 											FINIQUITOS
+			// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			
+			//GET Settlements SALARY from DB (employees) use ISSUE_DATE cause settlement can have OLD startDate...
+			salaryRecords = dslContext.select().from(SALARY)
+					.where(SALARY.CCC.eq(ccc))
+						.and(SALARY.ISSUE_DATE.between(startDateSQL, endDateSQL)
+								.or(SALARY.END_DATE.between(startDateSQL, endDateSQL)))
+						.and(SALARY.TYPE.eq((byte)2))
+						.and(SALARY.SS_REGIME.notEqual((byte)3))
+						.and(SALARY.TOTAL_PAYMENT.gt(0.00))
+					.fetch();
+			
+			if(salaryRecords.isNotEmpty()){
+				existAnySalary = true;
+				return existAnySalary;
+			}
+		}
+		
+		return existAnySalary;
+	}
+	
+	
+	// ********************************************************************************************************************************************
 	//													GENERATE JSON AGRARIAN
 	// ********************************************************************************************************************************************
 	
@@ -241,7 +329,7 @@ public class Cra {
 				err.put("ERR", "No hay ninguna nómina emitida para este periodo.");
 				errors.add(err);
 			
-			}else {
+			} else {
 			
 				// Prepare DDE
 				JSONObject dde = new JSONObject();
@@ -464,7 +552,13 @@ public class Cra {
 						.and(SALARY.TOTAL_PAYMENT.gt(0.00))
 					.fetch();
 			
-			if(!salaryRecords.isEmpty()){
+			if(salaryRecords.isEmpty()){
+				
+				JSONObject err = new JSONObject();
+				err.put("ERR2", "No hay ninguna nómina emitida para este periodo.");
+				errors.add(err);
+			
+			} else {
 				
 				// Prepare FINIQ
 				JSONObject finiq = new JSONObject();
