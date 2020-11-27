@@ -275,14 +275,16 @@ export class AonApplication extends AonElement {
 
       		li.addEventListener('click', () => {
       			document.querySelectorAll(`[id^='${sidenav.id}']`).forEach((el, i) => {
-							if(el.id !== sidenav.id) 
+							if(el.id !== sidenav.id)
           			el.style.backgroundColor = 'transparent';
         		});
         		this.selected = id;
         		li.style.backgroundColor = '#ddd';
-			    	let toolbar = this.getElement(this.TOOLBAR);
-						toolbar.setAttribute('option', option.name);
-        		option.fn();
+						if(!this.isMobile()){
+			    		let toolbar = this.getElement(this.TOOLBAR);
+							toolbar.setAttribute('option', option.name);
+						}
+						option.fn();
 						if(this.isMobile()) {
 							this.closeSidenav();
 						}

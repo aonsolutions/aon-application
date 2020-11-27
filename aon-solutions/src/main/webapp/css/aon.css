@@ -108,7 +108,7 @@ form {
 .rootMobilePanel {
   position: relative;
   margin-right: 100px;
-  height: calc(100vh - 163px);
+  height: calc(100vh - 122px);
   overflow-y: auto;
   margin: 0;
 }

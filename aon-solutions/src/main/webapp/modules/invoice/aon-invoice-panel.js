@@ -4,6 +4,7 @@ import {Invoice} from './Invoice.js';
 import './aon-invoice.js';
 import './aon-invoice-mobile.js';
 import './aon-invoice-list.js';
+import './aon-mobile-invoice-list.js';
 
 import * as MSG from "../../environments/msg.js";
 
@@ -107,10 +108,11 @@ export class AonInvoicePanel extends AonElement {
 			filter = {status: this.getAttribute('status')};
 		}
 
-		let toolbar = this.getElement(aonInvoice.TOOLBAR);
-		if(filter.status === 'inbox') toolbar.setAttribute('option', MSG.AON_MSG_INBOX);
-		else if(filter.status === 'refused') toolbar.setAttribute('option', MSG.AON_MSG_REJECTEDS);
-
+		if(!this.isMobile()){
+			let toolbar = this.getElement(aonInvoice.TOOLBAR);
+			if(filter.status === 'inbox') toolbar.setAttribute('option', MSG.AON_MSG_INBOX);
+			else if(filter.status === 'refused') toolbar.setAttribute('option', MSG.AON_MSG_REJECTEDS);
+		}
 		this.aonInvoiceList(filter);
 	}
 
@@ -122,9 +124,15 @@ export class AonInvoicePanel extends AonElement {
 			invoiceList.setFilter(filter);
 		} else {
 			let aonInvoice = document.getElementById('aonInvoice');
-			aonInvoice.setContentHTML(filter
-				? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
-				: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
+			if(this.isMobile()) {
+				aonInvoice.setContentHTML(filter
+					? `<aon-mobile-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-mobile-invoice-list>`
+					: `<aon-mobile-invoice-list id="aonInvoiceList"></aon-mobile-invoice-list>`);
+			}  else {
+				aonInvoice.setContentHTML(filter
+					? `<aon-invoice-list id="aonInvoiceList" filter='${JSON.stringify(filter)}'></aon-invoice-list>`
+					: `<aon-invoice-list id="aonInvoiceList"></aon-invoice-list>`);
+			}
 		}
 	}
 
