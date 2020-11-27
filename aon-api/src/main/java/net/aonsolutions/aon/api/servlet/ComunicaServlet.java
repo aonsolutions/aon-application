@@ -149,8 +149,9 @@ public class ComunicaServlet extends HttpServlet{
 			resp.setStatus(HttpServletResponse.SC_OK);
 			
 			//User user = AON_SOLUTIONS.getUser(domain, token);
-//			Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-//			LOGGER.info("certificate>>"+certificate.getPassword());
+			//LOGGER.info("CERTIFICATE");
+			//Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId());
+			//System.out.println(certificate);
 			if(pathInfo != null) {
 				if("alta-directa".equalsIgnoreCase(pathInfo[1])) {
 					try {
@@ -280,7 +281,7 @@ public class ComunicaServlet extends HttpServlet{
 		}
 	}
 	
-	private String nafxipf(final InputStream certificateInputStream, final String certificatePassword,
+	private Employee nafxipf(final InputStream certificateInputStream, final String certificatePassword,
 			  final String certificateType , String ipf, String apellido1, String apellido2) throws SegSocialException{
 		return SistemaRED.nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1,  apellido2);
 	}

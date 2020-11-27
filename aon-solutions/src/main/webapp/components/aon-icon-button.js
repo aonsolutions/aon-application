@@ -5,7 +5,7 @@ export class AonIconButton extends AonElement {
 	BUTTON;
 
 	static get observedAttributes() {
-		return ['disabled', 'visible', 'icon'];
+		return ['disabled', 'visible', 'icon', 'color'];
 	}
 
 	get id() {
@@ -111,6 +111,11 @@ export class AonIconButton extends AonElement {
 		if('image' === name){
 			let image = document.getElementById(this.getAttribute('id') + 'Image');
 			if(image) image.src = this.getAttribute('image');
+		}
+
+		if('color' === name){
+			let button = this.getElement(this.BUTTON);
+			button.style.color = this.getAttribute('color') ? this.getAttribute('color') : '#5f6368';
 		}
 	}
 

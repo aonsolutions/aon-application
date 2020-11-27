@@ -90,7 +90,7 @@ public class SistemaREDMov {
 		return null;
 	}
 	
-	public static String nafxipf(final InputStream certificateInputStream, final String certificatePassword,
+	public static Employee nafxipf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException{
 		
 		InvalidCertificateException.checkCertificate(certificateInputStream);
@@ -325,7 +325,7 @@ public class SistemaREDMov {
 		} 
 	}
 	
-	private static String nafxipfImpl(final InputStream certificateInputStream, 
+	private static Employee nafxipfImpl(final InputStream certificateInputStream, 
 			final String certificatePassword, final String certificateType, 
 			String ipf, String apellido1, String apellido2) throws Exception  {
 		
@@ -347,8 +347,14 @@ public class SistemaREDMov {
     	  htmlPage = formDatos.getInputByName("SPM.ACC.Continuar").click();
     	  handleSegSocialExceptions(htmlPage);
    
-    	  String naf = htmlPage.querySelector("#ARQcapaPrincipal > fieldset > div:nth-child(4) > div > p > span:nth-child(2)").getTextContent().trim();
-    	  return naf;
+    	  String nss = htmlPage.querySelector("#ARQcapaPrincipal > fieldset > div:nth-child(4) > div > p > span:nth-child(2)").getTextContent().trim();
+    	  String name = htmlPage.querySelector("#ARQcapaPrincipal > fieldset > div:nth-child(3) > div > p > span:nth-child(2)").getTextContent().trim();
+    	  EmployeeBuilder builder = new EmployeeBuilder();
+    	  Employee employee = builder
+			.setNss(nss)
+			.setName(name)
+			.build();
+    	  return employee;
 		} 
 	}
 	

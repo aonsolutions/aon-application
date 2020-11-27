@@ -172,7 +172,7 @@ public class SistemaRED {
 		return SistemaREDMov.ipfxnaf(certificateInputStream, certificatePassword, certificateType, nssList);
 	}
 	
-	public static String nafxipf(final InputStream certificateInputStream, final String certificatePassword,
+	public static Employee nafxipf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String apellido1, String apellido2) throws SegSocialException 
 	{
 		return SistemaREDMov.nafxipf(certificateInputStream, certificatePassword, certificateType, ipf, apellido1, apellido2);

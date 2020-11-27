@@ -131,13 +131,18 @@ export class AonSuggestion extends AonElement {
     });
   }
 
-  addIcon(icon) {
-    this.getElement(this.INPUT).addIcon(icon);
+  addIcon(icon, color) {
+    this.getElement(this.INPUT).addIcon(icon, color);
   }
 
   addIconButton(icon, fn) {
     this.getElement(this.INPUT).addIconButton(icon, fn);
   }
+
+  loading(start) {
+    this.getElement(this.INPUT).loading(start);
+  }
+ 
 
   closeOptions() {
     let div = this.getElement(this.OPTIONS);

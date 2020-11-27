@@ -141,7 +141,13 @@ export class AonInput extends AonElement {
     }
 
     if('disabled' === name){
-      document.getElementById(this.getAttribute('id') + 'Input').setAttribute('disabled', this.isDisabled());
+      let el = this.getElement(this.getAttribute('id') + 'Input');
+      if(el){
+        if(newValue == "false"){
+          el.removeAttribute('disabled');
+        } else 
+          el.setAttribute('disabled', this.isDisabled());
+      }
     }
 
     if('readonly' === name){
@@ -220,12 +226,6 @@ export class AonInput extends AonElement {
     });
 
     input.addEventListener('keyup', (e) => {
-      let {value, pattern} = e.target;
-      if(pattern && value){
-        if( value.match(pattern) ){}
-        else e.target.value = value.slice(0, -1);
-      }
-
       this.value = input.value;
 	    this.dispatchEvent(new Event('keyup'));
     });
@@ -305,9 +305,13 @@ export class AonInput extends AonElement {
     }
   }
 
-  addIcon(icon) {
+  addIcon(icon, color) {
     let div = this.getElement(this.DIV);
-    let iconLabel = this.createElement('label');
+    let iconLabel = this.getElement(this.ICON);
+    if(!iconLabel) {
+      iconLabel = this.createElement('label');
+      div.appendChild(iconLabel)
+    }
     iconLabel.style.position = 'absolute';
     iconLabel.style.top = '5px';
     iconLabel.style.right = '0px';
@@ -315,7 +319,9 @@ export class AonInput extends AonElement {
     iconLabel.setAttribute('id', this.ICON);
     iconLabel.setAttribute('for', this.INPUT);
     iconLabel.innerHTML = `<aon-icon-button id="${this.ICON_LABEL}" icon="${icon}" noHover="true"></aon-icon-button>`;
-    div.appendChild(iconLabel);
+
+    if(color)
+      this.getElement(this.ICON_LABEL).color = color;
   }
 
   addIconButton(icon, fn) {
@@ -524,6 +530,23 @@ export class AonInput extends AonElement {
   setFilled(filled){
     this.setAttribute('filled', filled);
   }
+
+  loading(valor){
+    let label = this.getElement(this.getAttribute('id') + 'Label');
+    let id = this.getAttribute('id') + 'Loading';
+    let div_load = this.getElement(id);
+    if(valor && !div_load){
+      div_load = this.createElement('div');
+      div_load.id =  id;
+      div_load.classList.add("aonIconContainer");
+      let load_i =  this.createElement('i');
+      load_i.classList.add("aonLoader");
+      div_load.appendChild(load_i);
+      label.appendChild(div_load);
+    } else if(!valor) 
+      div_load.remove();
+  }
+
 }
 
 window.customElements.define('aon-input',  AonInput);

@@ -76,9 +76,9 @@ export class AonComunica extends AonElement {
 
 		//if(this.isMobile()){
 		 this.getElement(aonComunica.TOOLBAR).setAttribute('option', 'Movimientos');
-		 aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
+		//  aonComunica.setContentHTML(`<aon-movements id="${this.MOVEMENTS}" ></aon-movements>`);
 		//}
-		// aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
+		aonComunica.setContentHTML(`<aon-alta-directa></aon-alta-directa>`);
 
 	}
 }
